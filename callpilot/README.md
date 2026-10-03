@@ -4,6 +4,18 @@ CallPilot is the desktop build of the **Call Desk** spec: one screen that answer
 
 It is open, recorded with notice, and built so every transcript and AI card could be read out in court without embarrassment. There is no invisibility mode and no send button.
 
+
+<p align="center">
+  <a href="https://github.com/dannykaleem07-commits/logo/releases/download/callpilot-latest/CallPilot-Setup.exe">
+    <img alt="Download CallPilot for Windows" src="https://img.shields.io/badge/%E2%AC%87%EF%B8%8F%20Download%20CallPilot%20for%20Windows-CallPilot--Setup.exe-1466D2?style=for-the-badge&logo=windows&logoColor=white">
+  </a>
+  &nbsp;
+  <a href="https://github.com/dannykaleem07-commits/logo/releases/download/callpilot-latest/CallPilot.exe">
+    <img alt="Portable EXE" src="https://img.shields.io/badge/Portable-CallPilot.exe-072647?style=for-the-badge&logo=windows&logoColor=white">
+  </a>
+</p>
+<p align="center"><a href="https://github.com/dannykaleem07-commits/logo/releases/tag/callpilot-latest">All files &amp; checksums</a> · Windows 10 2004+ / 11 · SmartScreen: <i>More info → Run anyway</i></p>
+
 ![Cockpit](docs/main.png)
 
 ## The cockpit
@@ -134,7 +146,7 @@ Decisions still needed before that build: current phone setup, where files live 
 
 ## Getting started
 
-1. **Install** `CallPilot-Setup.exe` (or run the portable `CallPilot.exe`) from GitHub Actions → *Build CallPilot (Windows EXE)* → latest run → Artifacts, or from a `callpilot-v*` release. Windows 10 2004+ / Windows 11. SmartScreen: *More info → Run anyway* (the EXE is not code-signed).
+1. **Install**: click the download button at the top of this page (`CallPilot-Setup.exe`), or use the portable `CallPilot.exe`. Every green build refreshes the [`callpilot-latest`](https://github.com/dannykaleem07-commits/logo/releases/tag/callpilot-latest) release; versioned releases are published from *Actions → Run workflow → version*. Windows 10 2004+ / Windows 11. SmartScreen: *More info → Run anyway* (the EXE is not code-signed).
 2. **Settings → API keys**: Anthropic (Claude) or OpenAI, plus Deepgram for live speech. DeepL optional.
 3. **Settings → Audio sources**: start the call app, *Refresh*, tick the app marked 🔊.
 4. **Attach a file** (or create one), pick the **call type**, press **● Start call**. Say the recording notice; the dot turns red.

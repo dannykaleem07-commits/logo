@@ -47,4 +47,16 @@ python3 build/build_logo.py
 
 The [`callpilot/`](callpilot/) folder contains **CallPilot**, a Windows app for live calls. It transcribes and translates calls and gives AI reply suggestions, with a pre-loaded *Courtesy Cars UK – Accident Management* call hub. See [`callpilot/README.md`](callpilot/README.md).
 
-Each push builds the Windows `.exe` with GitHub Actions (*Build CallPilot (Windows EXE)*).
+
+<p align="center">
+  <a href="https://github.com/dannykaleem07-commits/logo/releases/download/callpilot-latest/CallPilot-Setup.exe">
+    <img alt="Download CallPilot for Windows" src="https://img.shields.io/badge/%E2%AC%87%EF%B8%8F%20Download%20CallPilot%20for%20Windows-CallPilot--Setup.exe-1466D2?style=for-the-badge&logo=windows&logoColor=white">
+  </a>
+  &nbsp;
+  <a href="https://github.com/dannykaleem07-commits/logo/releases/download/callpilot-latest/CallPilot.exe">
+    <img alt="Portable EXE" src="https://img.shields.io/badge/Portable-CallPilot.exe-072647?style=for-the-badge&logo=windows&logoColor=white">
+  </a>
+</p>
+<p align="center"><a href="https://github.com/dannykaleem07-commits/logo/releases/tag/callpilot-latest">All files &amp; checksums</a> · Windows 10 2004+ / 11 · SmartScreen: <i>More info → Run anyway</i></p>
+
+Each push builds the Windows `.exe` with GitHub Actions and refreshes the `callpilot-latest` release.
