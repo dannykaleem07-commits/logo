@@ -25,8 +25,23 @@ def _find_output_device(name: str):
     return None
 
 
-def speak(text: str, device_name: str = "", voice: str = "alloy",
+_current: dict = {"stop": None}
+
+
+def stop() -> None:
+    """Interrupt whatever is being spoken (a new card supersedes the old whisper)."""
+    try:
+        import sounddevice as sd
+
+        sd.stop()
+    except Exception:  # noqa: BLE001
+        pass
+
+
+def speak(text: str, device_name: str = "", voice: str = "alloy", ear: str = "both",
           on_done=None, on_error=None) -> threading.Thread:
+    """Speak `text`. ear="left"/"right" plays into one headset ear only (whisper mode)."""
+
     def run():
         try:
             import openai
@@ -37,6 +52,10 @@ def speak(text: str, device_name: str = "", voice: str = "alloy",
                     model="gpt-4o-mini-tts", voice=voice, input=text, response_format="pcm") as r:
                 pcm = b"".join(r.iter_bytes())
             audio = np.frombuffer(pcm, dtype=np.int16)
+            if ear in ("left", "right"):
+                stereo = np.zeros((audio.size, 2), dtype=np.int16)
+                stereo[:, 0 if ear == "left" else 1] = audio
+                audio = stereo
             sd.play(audio, samplerate=24000, device=_find_output_device(device_name), blocking=True)
             if on_done:
                 on_done()

@@ -1,18 +1,18 @@
 """The live call brain.
 
-Pipeline for every caller turn (target timings on a normal connection):
+For every final transcript line:
 
-    0 ms     local filler chosen from the caller's intent ("I'm sorry to hear that…")
-    <5 ms    instant approved answer if the question matches the hub's Q&A bank
-    ~0.5 s   first words of the AI answer (SAY) start streaming
-    …        MORE streams in while the agent is already speaking SAY
-    end      ASK (questions to collect missing data) + WARN (compliance)
+    <1 ms   entities extracted on-device (dates, deadlines, figures, regs, admissions, allegations)
+            -> chips in the transcript line, pins into the chronology, 10 s audio clip saved
+    <1 ms   rule cards from the trigger table (injury, fraud, authority, offer, distress…)
+    <5 ms   approved answer from the hub's Q&A bank -> instant Say card
+    ~0.5 s  the fast model's SAY streams in; MORE / ASK / WATCH / SOURCE follow
+    end     every card is logged with shown / used / dismissed / ignored
 
-Speculative drafting: while the caller is still talking, once their words stop
-changing for a moment the draft starts early. If the final words match, the
-draft is kept (saving the whole model round-trip), otherwise it restarts.
-
-This module has no Qt dependency; the UI subscribes through `emit`.
+Speculative drafting starts the model while the caller is still finishing; if
+their final words match, the draft is adopted and a whole round-trip is saved.
+At most three cards are on screen (ask / say / watch). This module has no Qt
+dependency; the UI subscribes through `emit`.
 """
 
 from __future__ import annotations
@@ -26,12 +26,15 @@ import time
 from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 
+from callpilot.ai import pins as pinx
+from callpilot.ai.cards import CardDeck, RuleContext, banned_filter, rule_cards
 from callpilot.ai.compliance import ComplianceMonitor, classify_intent, pick_filler
+from callpilot.ai.copilot_prompts import EXTRACT_SYSTEM, LIVE_FORMAT, THEIR_RULE
 from callpilot.ai.providers import Cancelled, LLMProvider
 from callpilot.ai.streamparse import is_none, parse_sections, split_questions
 from callpilot.ai.translator import Translator, language_name
 from callpilot.core.config import Settings
-from callpilot.core.models import AGENT, CALLER, Segment, Suggestion
+from callpilot.core.models import AGENT, ASK, CALLER, SAY, WATCH, Card, Pin, Segment, Task
 from callpilot.core.redact import redact_payment
 from callpilot.hubs.model import Hub
 
@@ -39,35 +42,7 @@ log = logging.getLogger(__name__)
 
 Emit = Callable[[str, object], None]
 
-FORMAT_RULES = """
-## Output format (strict)
-Reply ONLY with these tagged lines, in this order, no preamble, no markdown:
-SAY: <the single most important sentence to say right now – direct answer or next step, max 25 words>
-MORE: <what to say next, 1-3 short spoken sentences that complete the answer; 'none' if SAY is enough>
-ASK: <up to 2 questions to collect missing required information, separated by ' | '; 'none' if nothing>
-WARN: <one short compliance/risk reminder for the agent only if relevant, else 'none'>
-{their_rule}
-Everything after SAY/MORE/THEIR is spoken aloud by the agent, so write natural spoken language
-in first person as the agent. Do not repeat what the agent already said. Do not invent facts,
-prices or promises that are not in the knowledge base – if unknown, tell the agent to check/offer a call back.
-The agent has ALREADY said a short filler (e.g. "Okay, I understand"), so start SAY with the substance.
-"""
-
-THEIR_RULE = ("THEIR: <the SAY and MORE text translated into {lang}, so the agent can read it out "
-              "to the caller in their own language>")
-
-EXTRACT_SYSTEM = """You extract structured claim data from a live call transcript.
-Return ONLY a JSON object whose keys are exactly: {keys}.
-Use a short string value for each key, or "" if not stated yet. Never guess.
-Normalise: dates as DD/MM/YYYY HH:MM when known, UK registrations in upper case without spaces."""
-
-SUMMARY_SYSTEM = """You write post-call notes for a contact-centre CRM.
-Return ONLY a JSON object with keys:
-"summary" (3-6 sentence factual summary), "outcome" (one line), "next_actions" (list of strings),
-"follow_up_date" (string or ""), "liability_view" (one of: "non-fault likely", "fault likely",
-"disputed", "unclear"), "vulnerability" (string or ""), "compliance_gaps" (list of strings),
-"caller_sentiment" (one of: "positive", "neutral", "negative"), "quality_score" (0-100 integer,
-how well the agent handled the call against the hub rules), "coaching_tip" (one sentence)."""
+THIRD_PARTY_TYPES = {"handler", "engineer", "bodyshop", "council", "solicitor"}
 
 
 def similar(a: str, b: str) -> float:
@@ -86,23 +61,33 @@ def extract_json(text: str) -> dict:
 
 
 class _Generation:
-    def __init__(self, turn_text: str, speculative: bool):
+    def __init__(self, turn_text: str, speculative: bool, segment_id: str):
         self.turn_text = turn_text
         self.speculative = speculative
+        self.segment_id = segment_id
         self.cancel = threading.Event()
         self.started = time.perf_counter()
-        self.suggestion: Suggestion | None = None
+        self.say: Card | None = None
+        self.ask: Card | None = None
+        self.watch: Card | None = None
         self.thread: threading.Thread | None = None
         self.published = False
+        self.first_token_ms = 0.0
 
 
 class CallSession:
     def __init__(self, settings: Settings, hub: Hub, provider: LLMProvider | None, emit: Emit,
-                 translator: Translator | None = None):
+                 translator: Translator | None = None, case_file=None, call_type: str = "",
+                 recorder=None, call_id: str = ""):
         self.settings = settings
         self.hub = hub
         self.provider = provider
         self.emit = emit
+        self.case_file = case_file
+        self.call_type = call_type
+        self.third_party = call_type in THIRD_PARTY_TYPES
+        self.recorder = recorder
+        self.call_id = call_id or f"call-{int(time.time())}"
         self.translator = translator or Translator(provider, settings.translation.engine)
         self.matcher = hub.build_matcher()
         self.index = hub.build_index()
@@ -110,20 +95,44 @@ class CallSession:
                                          hub.escalation_triggers)
         self.segments: list[Segment] = []
         self.fields: dict[str, str] = {f.key: "" for f in hub.capture_fields}
+        self.field_sources: dict[str, str] = {}
+        self.confirmed_fields: set[str] = set()
+        if case_file is not None and getattr(case_file, "intake", None):
+            for k, v in case_file.intake.items():
+                if k in self.fields and v:
+                    self.fields[k] = v
+        self.pins: list[Pin] = []
+        self.tasks: list[Task] = []
+        self.cards_log: list[Card] = []
+        self.deck = CardDeck(self._deck_changed, self.cards_log)
         self.caller_language = ""
         self.started_at = time.time()
         self.ended_at: float | None = None
+        self.notice_given_at: float | None = None
         self.summary: dict = {}
-        self._system = hub.system_prompt()
+        self.banned = list(hub.forbidden_phrases) + list(getattr(hub, "status_banned", []) or [])
+        self._system_blocks = [self._hub_block(), case_file.summary_for_prompt() if case_file else ""]
         self._pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="callpilot")
         self._lock = threading.RLock()
         self._gen: _Generation | None = None
         self._pending_caller: list[str] = []
+        self._pending_ids: list[str] = []
         self._spec_timer: threading.Timer | None = None
         self._finals_since_extract = 0
         self._turn_counter = 0
         self._ended = False
-        self.suggestions: list[Suggestion] = []
+        self._last_interim = ""
+        if self.third_party and case_file is not None and not case_file.has_signed_authority():
+            self.deck.show(Card(WATCH, "No signed authority on file – confirm identity and authority before "
+                                       "discussing the file.", ["rule:authority"], pinned_top=True, origin="rule"))
+
+    # ================================================================= prompt blocks
+    def _hub_block(self) -> str:
+        text = self.hub.system_prompt()
+        ct = (getattr(self.hub, "call_types", {}) or {}).get(self.call_type)
+        if ct:
+            text += f"\n\n## This call type: {self.call_type.replace('_', ' ')}\n{ct}"
+        return text
 
     # ================================================================= input
     def on_transcript(self, speaker: str, text: str, is_final: bool, language: str = "",
@@ -131,51 +140,147 @@ class CallSession:
         seg = Segment(speaker=speaker, text=text.strip(), is_final=is_final, language=language)
         if segment_id:
             seg.id = segment_id
-        self.emit("segment", seg)
         if not is_final:
+            self.emit("segment", seg)
             if speaker == CALLER:
-                self._maybe_speculate(" ".join(self._pending_caller + [seg.text]))
+                self._maybe_speculate(" ".join(self._pending_caller + [seg.text]), seg.id)
             return seg
         if not seg.text:
+            self.emit("segment", seg)
             if speaker == CALLER and end_of_turn and self._pending_caller:
                 self._caller_turn_complete()
             return seg
+        # -- on-device extraction first, so chips land with the line
+        ents = pinx.extract(seg.text, seg.start)
+        seg.entities = [(e.kind, e.text) for e in ents]
         with self._lock:
             self.segments.append(seg)
+        self.emit("segment", seg)
+        for e in pinx.worth_pinning(ents):
+            self._add_pin(Pin(e.kind, e.value, e.text if e.kind in ("figure", "deadline") else seg.text,
+                              seg.id, speaker, due_at=e.due), seg)
         self._finals_since_extract += 1
         if language and speaker == CALLER:
             self._note_caller_language(language)
         if self.settings.translation.enabled and self.settings.translation.engine != "off":
             self._pool.submit(self._translate_segment, seg)
+        # -- rules (instant cards)
+        ctx = RuleContext(speaker=speaker, call_type=self.call_type, third_party=self.third_party,
+                          signed_authority=(self.case_file.has_signed_authority() if self.case_file else None),
+                          missing_fields=self.missing_required(), earlier_values=dict(self.fields))
+        for c in rule_cards(seg.text, ents, ctx):
+            c.segment_id = seg.id
+            self._show_card(c)
         if speaker == CALLER:
             for a in self.monitor.check_caller(seg.text):
                 self.emit("alert", a)
             self.emit("sentiment", self.monitor.state.sentiment)
             self._pending_caller.append(seg.text)
+            self._pending_ids.append(seg.id)
             if end_of_turn:
                 self._caller_turn_complete()
         else:
             for a in self.monitor.check_agent(seg.text):
                 self.emit("alert", a)
-            self.emit("disclosures", dict(self.monitor.state.disclosures_done))
+            self._disclosures_changed()
         if self._finals_since_extract >= max(1, self.settings.ai.extract_every_n_turns):
             self._finals_since_extract = 0
             self._pool.submit(self._extract_fields)
         return seg
 
     def ask(self, question: str) -> None:
-        """Agent typed a question for the co-pilot ("what if they ask about X?")."""
-        self._start_generation(f"[Agent asks the co-pilot privately] {question}", speculative=False)
+        """Operator typed a question for the AI ("caller wants a 7-seater, what do I say?")."""
+        self._start_generation(f"[Handler asks the assistant privately] {question}", speculative=False,
+                               segment_id="")
 
     def regenerate(self) -> None:
-        last = next((s.text for s in reversed(self.segments) if s.speaker == CALLER), "")
+        last = next((s for s in reversed(self.segments) if s.speaker == CALLER), None)
         if last:
-            self._start_generation(last, speculative=False)
+            self._start_generation(last.text, speculative=False, segment_id=last.id)
+
+    # ================================================================= operator actions
+    def mark_card(self, card_type: str | None, action: str) -> Card | None:
+        return self.deck.mark(card_type, action)
+
+    def pin_last_line(self) -> Pin | None:
+        seg = next((s for s in reversed(self.segments)), None)
+        if not seg:
+            return None
+        pin = Pin("pinned", seg.text[:80], seg.text, seg.id, seg.speaker)
+        self._add_pin(pin, seg)
+        return pin
+
+    def add_task(self, title: str, due_at: str = "", owner: str = "us") -> Task:
+        seg = next((s for s in reversed(self.segments)), None)
+        t = Task(title=title, due_at=due_at, owner=owner, source_segment_id=seg.id if seg else "")
+        self.tasks.append(t)
+        self.emit("task", t)
+        return t
+
+    def set_field(self, key: str, value: str, confirmed: bool | None = None) -> None:
+        self.fields[key] = value
+        if confirmed is True:
+            self.confirmed_fields.add(key)
+        elif confirmed is False:
+            self.confirmed_fields.discard(key)
+        self.emit("fields", self.fields_payload())
+
+    def notice_given(self) -> None:
+        if self.notice_given_at is None:
+            self.notice_given_at = time.time()
+            for d in self.monitor.state.disclosures_done:
+                if "record" in d.lower():
+                    self.monitor.state.disclosures_done[d] = True
+            self._disclosures_changed()
+
+    def missing_required(self) -> list[str]:
+        return [f.label for f in self.hub.capture_fields if f.required and not self.fields.get(f.key, "").strip()]
+
+    def fields_payload(self) -> dict:
+        return {"values": dict(self.fields), "sources": dict(self.field_sources),
+                "confirmed": sorted(self.confirmed_fields)}
+
+    # ================================================================= internals
+    def _disclosures_changed(self) -> None:
+        done = dict(self.monitor.state.disclosures_done)
+        if self.notice_given_at is None and any(ok and "record" in d.lower() for d, ok in done.items()):
+            self.notice_given_at = time.time()
+        self.emit("disclosures", done)
+        self.emit("notice", self.notice_given_at is not None)
+
+    def _add_pin(self, pin: Pin, seg: Segment) -> None:
+        if any(p.segment_id == pin.segment_id and p.kind == pin.kind and p.value == pin.value for p in self.pins):
+            return
+        if self.recorder is not None and self.settings.recording.clips:
+            try:
+                p = self.recorder.clip(f"{self.call_id}-{pin.id}")
+                pin.clip_path = str(p) if p else ""
+            except Exception:  # noqa: BLE001
+                log.exception("clip failed")
+        seg.pinned = True
+        self.pins.append(pin)
+        self.emit("pin", pin)
+        self.emit("segment", seg)
+
+    def _deck_changed(self) -> None:
+        self.emit("cards", self.deck.visible())
+
+    def _show_card(self, card: Card) -> None:
+        clean, hits = banned_filter(card.text, self.banned)
+        if hits:
+            log.info("banned phrase removed from card: %s", hits)
+            card.text = clean
+            card.sources = card.sources + ["filtered"]
+        if card.more:
+            card.more, _ = banned_filter(card.more, self.banned)
+        self.deck.show(card)
 
     # ================================================================= turn handling
     def _caller_turn_complete(self) -> None:
         text = " ".join(self._pending_caller).strip()
+        seg_id = self._pending_ids[-1] if self._pending_ids else ""
         self._pending_caller = []
+        self._pending_ids = []
         if self._spec_timer:
             self._spec_timer.cancel()
         if not text:
@@ -184,38 +289,43 @@ class CallSession:
             gen = self._gen
             if gen and gen.speculative and not gen.cancel.is_set() and similar(gen.turn_text, text) >= 0.85:
                 gen.speculative = False  # adopt the in-flight draft – it already answers this
+                gen.segment_id = seg_id
                 log.debug("speculative draft adopted")
-                if gen.suggestion is not None:
-                    if gen.suggestion.done:
-                        self._publish(gen)
-                    else:
-                        self.emit("suggestion", gen.suggestion)
+                self._surface(gen)
+                if gen.say is not None and gen.say.done:
+                    self._publish(gen)
                 return
-        self._start_generation(text, speculative=False)
+        self._start_generation(text, speculative=False, segment_id=seg_id)
 
-    def _publish(self, gen: "_Generation") -> None:
-        """Emit the finished suggestion exactly once (caller may or may not hold the lock)."""
+    def _surface(self, gen: _Generation) -> None:
+        """Put a generation's cards on the deck (used when a speculative draft is adopted)."""
+        for c in (gen.say, gen.ask, gen.watch):
+            if c is not None and c.text:
+                c.segment_id = gen.segment_id
+                self._show_card(c)
+
+    def _publish(self, gen: _Generation) -> None:
         with self._lock:
-            if gen.published or gen.suggestion is None:
+            if gen.published:
                 return
             gen.published = True
-            self.suggestions.append(gen.suggestion)
-        sug = gen.suggestion
-        self.emit("suggestion", sug)
-        self.emit("latency", {"first_token_ms": round(sug.first_token_ms), "total_ms": round(sug.total_ms)})
+        self.emit("latency", {"first_token_ms": round(gen.first_token_ms),
+                              "total_ms": round((time.perf_counter() - gen.started) * 1000)})
 
-    def _maybe_speculate(self, partial: str) -> None:
+    def _maybe_speculate(self, partial: str, seg_id: str) -> None:
         if not self.settings.ai.speculative or self.provider is None:
             return
         if len(partial.split()) < 5:
             return
         if self._spec_timer:
             self._spec_timer.cancel()
-        self._spec_timer = threading.Timer(0.30, self._start_generation, args=(partial, True, self._turn_counter))
+        self._spec_timer = threading.Timer(0.30, self._start_generation,
+                                           args=(partial, True, seg_id, self._turn_counter))
         self._spec_timer.daemon = True
         self._spec_timer.start()
 
-    def _start_generation(self, turn_text: str, speculative: bool, expected_turn: int | None = None) -> None:
+    def _start_generation(self, turn_text: str, speculative: bool, segment_id: str,
+                          expected_turn: int | None = None) -> None:
         with self._lock:
             if self._ended:
                 return
@@ -223,68 +333,79 @@ class CallSession:
                 return  # a late timer from a turn that has already moved on
             if self._gen:
                 if speculative:
-                    # A draft must never interrupt a real answer that is already being written.
-                    if not self._gen.speculative and not self._gen.cancel.is_set() and not self._gen.suggestion.done:
-                        return
+                    live = self._gen.say
+                    if not self._gen.speculative and not self._gen.cancel.is_set() and live is not None and not live.done:
+                        return  # a draft must never interrupt a real answer that is being written
                     if similar(self._gen.turn_text, turn_text) >= 0.9:
                         return
                 self._gen.cancel.set()
-            gen = _Generation(turn_text, speculative)
+            gen = _Generation(turn_text, speculative, segment_id)
             self._gen = gen
             self._turn_counter += 1
-            turn_id = f"t{self._turn_counter}"
-        gen.suggestion = sug = Suggestion(turn_id=turn_id)
-        # 1) instant local filler
-        sug.filler = pick_filler(classify_intent(turn_text), self.hub.fillers)
-        # 2) instant approved answer from the hub Q&A bank
+        intent = classify_intent(turn_text)
+        say = Card(SAY, "", [], segment_id=segment_id, done=False, origin="llm")
+        say.filler = pick_filler(intent, self.hub.fillers)
         match = self.matcher.match(turn_text)
         if match:
-            sug.source = "instant-kb"
-            sug.say_now, sug.continue_with = _split_first_sentence(match[1])
-        if not speculative:
-            self.emit("suggestion", sug)
+            say.origin = "playbook"
+            say.sources = [f"Q&A: {match[0][:60]}"]
+            say.text, say.more = _split_first_sentence(match[1])
+        gen.say = say
+        if not speculative and (match or self.provider is None):
+            self._show_card(say)
         if self.provider is None:
-            sug.done = True
-            if not speculative:
-                self.emit("suggestion", sug)
+            say.done = True
             return
         gen.thread = threading.Thread(target=self._run_generation, args=(gen,), daemon=True,
-                                      name="callpilot-suggest")
+                                      name="callpilot-cards")
         gen.thread.start()
 
+    # ---------------------------------------------------------------- prompt assembly
     def _context_block(self, turn_text: str) -> str:
         hits = self.index.search(turn_text, k=4)
-        filled = {k: v for k, v in self.fields.items() if v}
         labels = {f.key: f.label for f in self.hub.capture_fields}
-        missing = [labels[k] for k, v in self.fields.items() if not v and
-                   any(f.key == k and f.required for f in self.hub.capture_fields)]
+        filled = {labels.get(k, k): v for k, v in self.fields.items() if v}
         lines = ["<context>"]
         if hits:
-            lines.append("Most relevant knowledge:")
+            lines.append("Retrieved playbook extracts:")
             lines += [f"- {h.text}" for h in hits]
         if filled:
-            lines.append("Already captured: " + "; ".join(f"{labels.get(k, k)}={v}" for k, v in filled.items()))
+            lines.append("Intake captured: " + "; ".join(f"{k}={v}" for k, v in list(filled.items())[:25]))
+        missing = self.missing_required()
         if missing:
-            lines.append("Still missing (required): " + ", ".join(missing))
+            lines.append("Intake still missing (required): " + ", ".join(missing))
         md = self.monitor.missing_disclosures()
         if md:
             lines.append("Disclosures not yet made: " + ", ".join(md))
+        if self.pins:
+            lines.append("Pinned so far: " + "; ".join(f"{p.kind}: {p.value}" for p in self.pins[-8:]))
         if self.caller_language:
             lines.append(f"Caller language: {language_name(self.caller_language)}. "
-                         f"Agent language: {self.settings.translation.agent_language}.")
+                         f"Handler language: {self.settings.translation.agent_language}.")
+        who = "a third party (insurer handler / engineer / supplier)" if self.third_party else "the client / caller"
+        lines.append(f"The other party on this call is {who}.")
         lines.append("</context>")
         return "\n".join(lines)
 
-    def _transcript_block(self, max_turns: int = 24) -> str:
+    def _transcript_block(self, window_s: float | None = None, max_turns: int = 0) -> str:
         with self._lock:
-            segs = self.segments[-max_turns:]
+            segs = list(self.segments)
+        if window_s:
+            cutoff = time.time() - window_s
+            recent = [s for s in segs if s.start >= cutoff]
+            if len(recent) < 4:
+                recent = segs[-4:]
+            segs = recent
+        elif max_turns:
+            segs = segs[-max_turns:]
         rows = []
         for s in segs:
-            who = "AGENT" if s.speaker == AGENT else "CALLER"
+            who = "US" if s.speaker == AGENT else "CALLER"
+            t = time.strftime("%H:%M:%S", time.localtime(s.start))
             txt = s.text
             if s.translation and s.translation != s.text:
                 txt += f"  [translation: {s.translation}]"
-            rows.append(f"{who}: {txt}")
+            rows.append(f"[{s.id} {t}] {who}: {txt}")
         return "\n".join(rows)
 
     def _want_their(self) -> str:
@@ -292,61 +413,54 @@ class CallSession:
         if not (tr.reply_in_caller_language and self.caller_language):
             return ""
         lang = language_name(self.caller_language)
-        if lang.lower() == tr.agent_language.lower():
-            return ""
-        return lang
+        return "" if lang.lower() == tr.agent_language.lower() else lang
 
-    def build_messages(self, turn_text: str) -> tuple[str, list[dict]]:
+    def build_messages(self, turn_text: str) -> tuple[list[str], list[dict]]:
         their = self._want_their()
-        system = self._system + "\n" + FORMAT_RULES.format(
-            their_rule=THEIR_RULE.format(lang=their) if their else "")
-        user = (f"{self._context_block(turn_text)}\n\n<transcript>\n{self._transcript_block()}\n"
-                f"</transcript>\n\nThe caller just said: \"{turn_text}\"\n"
-                f"Write the agent's next words in the required format. Agent language: "
+        window = int(self.settings.ai.context_window_s or 90)
+        fmt = LIVE_FORMAT.format(window=window, their_rule=THEIR_RULE.format(lang=their) if their else "")
+        system = [self._system_blocks[0] + "\n" + fmt, self._system_blocks[1]]
+        user = (f"{self._context_block(turn_text)}\n\n<transcript>\n{self._transcript_block(window_s=window)}\n"
+                f"</transcript>\n\nThe other party just said: \"{turn_text}\"\n"
+                f"Write the cards in the required format. Handler language: "
                 f"{self.settings.translation.agent_language}.")
         if self.settings.privacy.redact_payment_data_before_cloud:
             user = redact_payment(user)
         return system, [{"role": "user", "content": user}]
 
+    # ---------------------------------------------------------------- streaming
     def _run_generation(self, gen: _Generation) -> None:
-        sug = gen.suggestion
-        assert sug is not None
+        say = gen.say
+        assert say is not None
         system, messages = self.build_messages(gen.turn_text)
         buf = ""
         last_emit = 0.0
-        instant_say = sug.say_now if sug.source == "instant-kb" else ""
-        instant_more = sug.continue_with if sug.source == "instant-kb" else ""
+        instant = (say.text, say.more) if say.origin == "playbook" else None
         try:
             for delta in self.provider.stream(system, messages, self.settings.ai.suggestion_max_tokens,
                                               cancel=gen.cancel, fast=True):
                 if not buf:
-                    sug.first_token_ms = (time.perf_counter() - gen.started) * 1000
+                    gen.first_token_ms = (time.perf_counter() - gen.started) * 1000
                 buf += delta
                 now = time.perf_counter()
                 if now - last_emit > 0.04:
                     last_emit = now
-                    self._apply_sections(sug, buf, instant_say, instant_more)
-                    if not gen.speculative:
-                        self.emit("suggestion", sug)
+                    self._apply_sections(gen, buf, instant, final=False)
         except Cancelled:
             return
         except Exception as e:  # noqa: BLE001 - surface any provider/network error to the UI
-            log.exception("suggestion failed")
+            log.exception("cards failed")
             if gen.speculative or gen.cancel.is_set():
-                return  # a failed background draft must not blank what is on screen
-            self.emit("error", f"AI suggestion failed: {e}")
-            sug.done = True
-            self.emit("suggestion", sug)
+                return
+            self.emit("error", f"AI cards failed: {e}")
+            say.done = True
+            if say.text:
+                self.deck.update(say)
             return
         if gen.cancel.is_set():
             return
-        self._apply_sections(sug, buf, instant_say, instant_more)
-        sug.done = True
-        sug.total_ms = (time.perf_counter() - gen.started) * 1000
-        # A speculative draft that was never adopted is silently dropped; if it was
-        # adopted (speculative flipped to False) it is published now in full.
+        self._apply_sections(gen, buf, instant, final=True)
         if gen.speculative:
-            # Wait briefly in case the caller's turn completes and adopts it.
             deadline = time.time() + 4.0
             while gen.speculative and time.time() < deadline and not gen.cancel.is_set():
                 time.sleep(0.05)
@@ -354,22 +468,50 @@ class CallSession:
                 return
         self._publish(gen)
 
-    def _apply_sections(self, sug: Suggestion, buf: str, instant_say: str, instant_more: str) -> None:
+    def _apply_sections(self, gen: _Generation, buf: str, instant, final: bool) -> None:
         sec = parse_sections(buf)
-        say = sec.get("SAY", "")
-        more = sec.get("MORE", "")
-        if instant_say:
-            # The approved wording stays on screen; the AI adds context-specific follow-on.
-            sug.say_now = instant_say
-            extra = more if not is_none(more) else ""
-            sug.continue_with = " ".join(p for p in (instant_more, extra) if p).strip()
+        say = gen.say
+        assert say is not None
+        s_txt, more = sec.get("SAY", ""), sec.get("MORE", "")
+        src = sec.get("SOURCE", "")
+        sources = [s.strip() for s in re.split(r"\s*[|;]\s*", src) if s.strip() and not is_none(s)] if src else []
+        if instant:
+            say.text = instant[0]
+            extra = "" if is_none(more) else more
+            say.more = " ".join(p for p in (instant[1], extra) if p).strip()
+            say.sources = list(dict.fromkeys(say.sources + sources))
         else:
-            sug.say_now = say
-            sug.continue_with = "" if is_none(more) else more
-        sug.ask_next = split_questions(sec.get("ASK", ""))
-        warn = sec.get("WARN", "")
-        sug.warnings = [] if is_none(warn) else [warn]
-        sug.translated = sec.get("THEIR", "")
+            say.text = "" if is_none(s_txt) else s_txt
+            say.more = "" if is_none(more) else more
+            say.sources = sources or (["model"] if final else [])
+        say.translated = sec.get("THEIR", "")
+        say.done = final
+        if say.text and not gen.speculative:
+            if self.deck.slots[SAY] is say:
+                self.deck.update(say)
+            else:
+                say.segment_id = gen.segment_id
+                self._show_card(say)
+        asks = split_questions(sec.get("ASK", ""))
+        if asks and not gen.speculative and ("ASK" in sec) and (final or "WATCH" in sec):
+            if gen.ask is None:
+                gen.ask = Card(ASK, " | ".join(asks[:2]), sources or ["intake"], segment_id=gen.segment_id,
+                               origin="llm")
+                self._show_card(gen.ask)
+            elif gen.ask.text != " | ".join(asks[:2]):
+                gen.ask.text = " | ".join(asks[:2])
+                self.deck.update(gen.ask)
+        elif asks and gen.speculative and gen.ask is None and final:
+            gen.ask = Card(ASK, " | ".join(asks[:2]), sources or ["intake"], segment_id=gen.segment_id, origin="llm")
+        watch = sec.get("WATCH", "")
+        if watch and not is_none(watch) and ("SOURCE" in sec or final):
+            if gen.watch is None:
+                gen.watch = Card(WATCH, watch, sources or ["model"], segment_id=gen.segment_id, origin="llm")
+                if not gen.speculative:
+                    self._show_card(gen.watch)
+            elif gen.watch.text != watch:
+                gen.watch.text = watch
+                self.deck.update(gen.watch)
 
     # ================================================================= background jobs
     def _note_caller_language(self, lang: str) -> None:
@@ -410,19 +552,39 @@ class CallSession:
             out = self.provider.complete(
                 EXTRACT_SYSTEM.format(keys=", ".join(keys)),
                 [{"role": "user", "content": f"Fields:\n{hints}\n\nTranscript:\n{transcript}"}],
-                3000, fast=True)
+                4000, fast=True)
         except Exception as e:  # noqa: BLE001
             log.warning("field extraction failed: %s", e)
             return
         data = extract_json(out)
+        values = data.get("fields") if isinstance(data.get("fields"), dict) else data
+        srcs = data.get("field_sources") if isinstance(data.get("field_sources"), dict) else {}
         changed = False
         for k in keys:
-            v = str(data.get(k, "") or "").strip()
+            if k in self.confirmed_fields:
+                continue  # the operator's confirmed value wins
+            v = str((values or {}).get(k, "") or "").strip()
             if v and v != self.fields.get(k):
                 self.fields[k] = v
+                if srcs.get(k):
+                    self.field_sources[k] = str(srcs[k])
                 changed = True
         if changed:
-            self.emit("fields", dict(self.fields))
+            self.emit("fields", self.fields_payload())
+        seg_by_id = {s.id: s for s in self.segments}
+        for p in data.get("pins", []) or []:
+            if not isinstance(p, dict) or not p.get("quote"):
+                continue
+            seg = seg_by_id.get(str(p.get("segment_id", "")))
+            if seg is None:
+                seg = next((s for s in self.segments if p["quote"][:30].lower() in s.text.lower()), None)
+            if seg is None:
+                continue
+            kind = str(p.get("kind", "commitment"))
+            if kind not in ("date", "deadline", "commitment", "figure", "admission", "allegation"):
+                continue
+            self._add_pin(Pin(kind, str(p.get("value", ""))[:80], str(p["quote"]), seg.id, seg.speaker,
+                              due_at=str(p.get("due_at", "") or "")), seg)
 
     # ================================================================= end of call
     def end(self, summarize: bool = True) -> dict:
@@ -433,22 +595,21 @@ class CallSession:
             self._spec_timer.cancel()
         if self._gen:
             self._gen.cancel.set()
+        self.deck.clear()
         if summarize and self.provider is not None and self.segments:
+            from callpilot.ai.wrapup import run_wrapup
+
             self._extract_fields()
-            transcript = self._transcript_block(max_turns=1000)
-            if self.settings.privacy.redact_payment_data_before_cloud:
-                transcript = redact_payment(transcript)
             try:
-                out = self.provider.complete(
-                    SUMMARY_SYSTEM,
-                    [{"role": "user", "content":
-                        "Hub rules:\n" + "\n".join(f"- {r}" for r in self.hub.rules) +
-                        f"\n\nCaptured fields: {json.dumps(self.fields)}\n"
-                        f"Disclosures made: {json.dumps(self.monitor.state.disclosures_done)}\n\n"
-                        f"Transcript:\n{transcript}"}],
-                    8000, fast=False)
-                self.summary = extract_json(out) or {"summary": out.strip()}
+                self.summary = run_wrapup(
+                    self.provider, business=self.hub.company or self.hub.name, hub_rules=self.hub.rules,
+                    status_line=getattr(self.hub, "status_line", "") or "", call_type=self.call_type,
+                    transcript_rows=[s.to_dict() for s in self.segments], pins=[p.to_dict() for p in self.pins],
+                    intake=self.fields, file_summary=self._system_blocks[1],
+                    disclosures=dict(self.monitor.state.disclosures_done), banned=self.banned,
+                    agent_name=self.settings.agent_name, call_started=self.started_at)
             except Exception as e:  # noqa: BLE001
+                log.exception("wrap-up failed")
                 self.summary = {"summary": "", "error": str(e)}
             self.emit("summary", self.summary)
         self._pool.shutdown(wait=False, cancel_futures=True)
@@ -456,15 +617,22 @@ class CallSession:
 
     def to_record(self) -> dict:
         return {
-            "hub_id": self.hub.id, "hub_name": self.hub.name,
+            "call_id": self.call_id, "hub_id": self.hub.id, "hub_name": self.hub.name,
+            "call_type": self.call_type, "file_id": getattr(self.case_file, "id", "") if self.case_file else "",
             "started_at": self.started_at, "ended_at": self.ended_at,
+            "notice_given_at": self.notice_given_at,
             "caller_language": self.caller_language,
             "segments": [s.to_dict() for s in self.segments],
-            "fields": self.fields, "summary": self.summary,
+            "fields": self.fields, "field_sources": self.field_sources,
+            "confirmed_fields": sorted(self.confirmed_fields),
+            "pins": [p.to_dict() for p in self.pins],
+            "tasks": [t.to_dict() for t in self.tasks],
+            "summary": self.summary,
             "alerts": self.monitor.state.alerts,
             "disclosures": self.monitor.state.disclosures_done,
-            "suggestions": [{"turn": s.turn_id, "text": s.full_text(), "source": s.source,
-                             "first_token_ms": round(s.first_token_ms)} for s in self.suggestions],
+            "ai_cards": [c.to_dict() for c in self.cards_log],
+            "recording": str(self.recorder.path) if self.recorder is not None else "",
+            "recording_pauses": list(self.recorder.pauses) if self.recorder is not None else [],
         }
 
 

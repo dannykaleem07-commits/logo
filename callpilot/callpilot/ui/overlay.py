@@ -1,7 +1,8 @@
 """Always-on-top teleprompter that floats over WhatsApp/Teams during a call.
 
 Frameless, translucent, draggable, optionally click-through, and hidden from
-screen-shares/recordings on Windows 10 2004+.
+screen-shares/recordings on Windows 10 2004+. Shows the same three cards as the
+cockpit, Watch out first.
 """
 
 from __future__ import annotations
@@ -12,7 +13,7 @@ from PySide6.QtCore import QPoint, Qt
 from PySide6.QtGui import QColor, QPainter
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
-from callpilot.core.models import Suggestion
+from callpilot.core.models import ASK, SAY, WATCH, Card
 from callpilot.ui import winutil
 
 
@@ -25,6 +26,7 @@ class OverlayWindow(QWidget):
         self._opacity = opacity
         self._exclude = exclude_capture
         self.font_pt = font_pt
+        self._last: list[Card] = []
         lay = QVBoxLayout(self)
         lay.setContentsMargins(16, 10, 16, 14)
         bar = QHBoxLayout()
@@ -35,8 +37,8 @@ class OverlayWindow(QWidget):
         for txt, slot in (("A−", lambda: self._zoom(-1)), ("A+", lambda: self._zoom(1)), ("✕", self.hide)):
             b = QPushButton(txt)
             b.setFixedSize(26, 22)
-            b.setStyleSheet("QPushButton{background:transparent;color:#8EA0BD;border:none;font-weight:700;padding:0;font-size:10pt}"
-                            "QPushButton:hover{color:white}")
+            b.setStyleSheet("QPushButton{background:transparent;color:#8EA0BD;border:none;font-weight:700;"
+                            "padding:0;font-size:10pt}QPushButton:hover{color:white}")
             b.clicked.connect(slot)
             bar.addWidget(b)
         lay.addLayout(bar)
@@ -58,9 +60,7 @@ class OverlayWindow(QWidget):
 
     def _zoom(self, d: int) -> None:
         self.font_pt = max(9, min(32, self.font_pt + d))
-        self.body.setText(self.body.text())
-        if hasattr(self, "_last"):
-            self.show_suggestion(self._last)
+        self.show_cards(self._last)
 
     def paintEvent(self, _):
         p = QPainter(self)
@@ -85,31 +85,34 @@ class OverlayWindow(QWidget):
     def set_status(self, text: str) -> None:
         self.status.setText(text)
 
-    def show_suggestion(self, s: Suggestion | None) -> None:
-        self._last = s
-        if s is None:
-            self.body.setText("<span style='color:#8EA0BD'>Waiting for the caller…</span>")
+    def show_cards(self, cards: list[Card]) -> None:
+        self._last = list(cards)
+        if not cards:
+            self.body.setText("<span style='color:#8EA0BD'>Listening…</span>")
             return
         f = self.font_pt
+        by = {c.type: c for c in cards}
         parts = []
-        if s.filler:
-            parts.append(f"<div style='color:#8EA0BD;font-style:italic;font-size:{f - 2}pt'>"
-                         f"“{html.escape(s.filler)}”</div>")
-        if s.say_now:
-            parts.append(f"<div style='color:white;font-weight:700;font-size:{f + 2}pt;margin-top:4px'>"
-                         f"{html.escape(s.say_now)}</div>")
-        if s.continue_with:
-            parts.append(f"<div style='color:#DCE6F5;font-size:{f}pt;margin-top:4px'>"
-                         f"{html.escape(s.continue_with)}</div>")
-        if s.translated:
-            parts.append(f"<div style='color:#FBBF24;font-size:{f - 1}pt;margin-top:6px'>🌐 "
-                         f"{html.escape(s.translated)}</div>")
-        if s.ask_next:
+        w = by.get(WATCH)
+        if w:
+            parts.append(f"<div style='color:#EF4444;font-weight:700;font-size:{f - 1}pt'>⚠ {html.escape(w.text)}</div>")
+        s = by.get(SAY)
+        if s:
+            if s.filler:
+                parts.append(f"<div style='color:#8EA0BD;font-style:italic;font-size:{f - 2}pt;margin-top:4px'>"
+                             f"“{html.escape(s.filler)}”</div>")
+            if s.text:
+                parts.append(f"<div style='color:white;font-weight:700;font-size:{f + 2}pt;margin-top:2px'>"
+                             f"{html.escape(s.text)}</div>")
+            if s.more:
+                parts.append(f"<div style='color:#DCE6F5;font-size:{f}pt;margin-top:4px'>{html.escape(s.more)}</div>")
+            if s.translated:
+                parts.append(f"<div style='color:#FBBF24;font-size:{f - 1}pt;margin-top:6px'>🌐 "
+                             f"{html.escape(s.translated)}</div>")
+        a = by.get(ASK)
+        if a:
             parts.append(f"<div style='color:#7DD3FC;font-size:{f - 3}pt;margin-top:6px'>❓ "
-                         + " &nbsp;•&nbsp; ".join(html.escape(q) for q in s.ask_next) + "</div>")
-        if s.warnings:
-            parts.append(f"<div style='color:#F59E0B;font-size:{f - 3}pt;margin-top:6px'>⚠ "
-                         f"{html.escape(' '.join(s.warnings))}</div>")
+                         + " &nbsp;•&nbsp; ".join(html.escape(q) for q in a.text.split(" | ")) + "</div>")
         self.body.setText("".join(parts))
         self.adjustSize()
         self.resize(max(self.width(), 560), self.height())

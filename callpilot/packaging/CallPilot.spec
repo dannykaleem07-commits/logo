@@ -9,7 +9,7 @@ ROOT = Path(SPECPATH).parent
 hidden = (
     collect_submodules("pynput")
     + collect_submodules("keyring.backends")
-    + ["websockets.sync.client", "win32ctypes.core", "win32ctypes.pywin32", "pyaudiowpatch", "pycaw.pycaw", "comtypes.stream", "docx", "pypdf"]
+    + ["websockets.sync.client", "win32ctypes.core", "win32ctypes.pywin32", "win32com.client", "pythoncom", "pywintypes", "pyaudiowpatch", "pycaw.pycaw", "comtypes.stream", "docx", "pypdf"]
 )
 
 a = Analysis(

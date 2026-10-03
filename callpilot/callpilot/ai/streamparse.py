@@ -16,8 +16,8 @@ from __future__ import annotations
 
 import re
 
-TAGS = ("FILLER", "SAY", "MORE", "ASK", "WARN", "THEIR")
-_TAG_RE = re.compile(r"(?m)^\s*\**\s*(FILLER|SAY|MORE|ASK|WARN|THEIR)\s*\**\s*:\s*\**\s*")
+TAGS = ("FILLER", "SAY", "MORE", "ASK", "WATCH", "WARN", "SOURCE", "THEIR")
+_TAG_RE = re.compile(r"(?m)^\s*\**\s*(FILLER|SAY|MORE|ASK|WATCH|WARN|SOURCE|THEIR)\s*\**\s*:\s*\**\s*")
 
 
 def parse_sections(buf: str) -> dict[str, str]:
@@ -37,7 +37,8 @@ def parse_sections(buf: str) -> dict[str, str]:
             tail = re.search(r"\n\s*\**([A-Z]{1,5})$", val)
             if tail and any(t.startswith(tail.group(1)) for t in TAGS):
                 val = val[:tail.start()].strip()
-        out[m.group(1)] = (out.get(m.group(1), "") + " " + val).strip() if m.group(1) in out else val
+        key = "WATCH" if m.group(1) == "WARN" else m.group(1)
+        out[key] = (out.get(key, "") + " " + val).strip() if key in out else val
     return out
 
 

@@ -60,7 +60,19 @@ class HubEditor(QDialog):
         gf.addRow("Opening script", self.greeting)
         gf.addRow("Closing script", self.closing)
         gf.addRow("Recording / consent notice", self.consent)
+        self.status_line = QLineEdit(hub.status_line)
+        self.status_line.setPlaceholderText("Footer on every email draft, e.g. 'Paralegal services. Not a firm of solicitors.'")
+        gf.addRow("Status line (email footer)", self.status_line)
         tabs.addTab(g, "General")
+
+        # ---------------- call types
+        ctw = QWidget()
+        ctl = QVBoxLayout(ctw)
+        ctl.addWidget(QLabel("Instructions the AI gets for each call type (new accident, handler, engineer, bodyshop, "
+                             "client chase, council). One block per type: 'key: instructions'."))
+        self.call_types = QPlainTextEdit("\n\n".join(f"{k}: {v}" for k, v in hub.call_types.items()))
+        ctl.addWidget(self.call_types)
+        tabs.addTab(ctw, "Call types")
 
         # ---------------- rules
         r = QWidget()
@@ -250,6 +262,13 @@ class HubEditor(QDialog):
         h.greeting = self.greeting.toPlainText().strip()
         h.closing = self.closing.toPlainText().strip()
         h.consent_script = self.consent.toPlainText().strip()
+        h.status_line = self.status_line.text().strip()
+        cts = {}
+        for block in re.split(r"\n\s*\n", self.call_types.toPlainText()):
+            m = re.match(r"\s*([a-z_]+)\s*:\s*(.+)", block.strip(), re.S)
+            if m:
+                cts[m.group(1)] = m.group(2).strip()
+        h.call_types = cts
         h.rules = _lines(self.rules.toPlainText())
         h.forbidden_phrases = _lines(self.forbidden.toPlainText())
         h.required_disclosures = _lines(self.disclosures.toPlainText())

@@ -34,12 +34,15 @@ class SpeechSettings:
 @dataclass
 class AISettings:
     provider: str = "anthropic"          # "anthropic" | "openai"
-    anthropic_model: str = "claude-opus-5-5"
+    anthropic_model: str = "claude-haiku-4-5-20251001"   # live cards: speed first
+    anthropic_wrapup_model: str = "claude-sonnet-5-5"    # wrap-up, email and notes: quality
     anthropic_effort: str = "low"        # low effort keeps live suggestions fast
     anthropic_fast_mode: bool = False    # Opus fast mode (research preview, premium pricing)
     anthropic_fallbacks: bool = True     # server-side refusal fallbacks
-    openai_model: str = "gpt-4.1"
-    speculative: bool = True             # start drafting while the caller is still finishing
+    openai_model: str = "gpt-4.1-mini"
+    openai_wrapup_model: str = "gpt-4.1"
+    speculative: bool = True
+    context_window_s: int = 90           # transcript seconds sent with each live card request             # start drafting while the caller is still finishing
     suggestion_max_tokens: int = 1200
     extract_every_n_turns: int = 2
 
@@ -53,6 +56,28 @@ class TranslationSettings:
     speak_replies: bool = False          # voice-interpreter mode (TTS)
     tts_output_device: str = ""          # e.g. "CABLE Input (VB-Audio Virtual Cable)"
     tts_voice: str = "alloy"
+
+
+@dataclass
+class RecordingSettings:
+    enabled: bool = True                 # record the call (two tracks: caller L, you R)
+    clips: bool = True                   # keep a 10 s audio clip behind every pin
+
+
+@dataclass
+class WhisperSettings:
+    enabled: bool = False                # read the top card quietly into the headset
+    device: str = ""                     # output device (your headset)
+    ear: str = "left"                    # "left" | "right" | "both"
+    voice: str = "alloy"
+    types: list[str] = field(default_factory=lambda: ["say", "watch"])
+
+
+@dataclass
+class EmailSettings:
+    method: str = "outlook"              # "outlook" (Drafts via Outlook desktop) | "eml" | "clipboard"
+    from_name: str = ""
+    signature: str = ""
 
 
 @dataclass
@@ -78,6 +103,8 @@ class UISettings:
     hotkey_overlay: str = "<ctrl>+<shift>+o"
     hotkey_copy: str = "<ctrl>+<shift>+c"
     hotkey_toggle_call: str = "<ctrl>+<shift>+l"
+    hotkey_pin: str = "<ctrl>+<shift>+p"
+    auto_answer: bool = True
     font_pt: int = 11
     window_geometry: str = ""
     overlay_geometry: str = ""
@@ -90,6 +117,9 @@ class Settings:
     ai: AISettings = field(default_factory=AISettings)
     translation: TranslationSettings = field(default_factory=TranslationSettings)
     privacy: PrivacySettings = field(default_factory=PrivacySettings)
+    recording: RecordingSettings = field(default_factory=RecordingSettings)
+    whisper: WhisperSettings = field(default_factory=WhisperSettings)
+    email: EmailSettings = field(default_factory=EmailSettings)
     ui: UISettings = field(default_factory=UISettings)
     active_hub: str = "courtesy-cars-accident-management"
     agent_name: str = ""

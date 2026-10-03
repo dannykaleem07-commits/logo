@@ -1,17 +1,18 @@
-"""Reusable widgets: transcript, suggestion card, level meters, claim form."""
+"""Reusable widgets: transcript, card stack, intake form + progress ring, file pane, meters."""
 
 from __future__ import annotations
 
 import datetime as dt
 import html
+import re
 from collections import OrderedDict
 
-from PySide6.QtCore import Qt, QTimer, Signal
-from PySide6.QtGui import QColor, QPainter
-from PySide6.QtWidgets import (QApplication, QFrame, QGridLayout, QHBoxLayout, QLabel, QLineEdit,
+from PySide6.QtCore import QRectF, Qt, QTimer, Signal
+from PySide6.QtGui import QColor, QPainter, QPen
+from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout, QHBoxLayout, QLabel, QLineEdit,
                                QPushButton, QSizePolicy, QTextBrowser, QVBoxLayout, QWidget)
 
-from callpilot.core.models import AGENT, Segment, Suggestion
+from callpilot.core.models import AGENT, ASK, SAY, WATCH, Card, Segment
 from callpilot.ui.theme import palette
 
 
@@ -33,7 +34,7 @@ class LevelMeter(QWidget):
         self.label = label
         self.db = -120.0
         self.c = palette(theme)
-        self.setFixedSize(120, 18)
+        self.setFixedSize(90, 18)
         self.setToolTip(f"{label} level")
 
     def set_db(self, db: float) -> None:
@@ -52,14 +53,71 @@ class LevelMeter(QWidget):
         p.drawRoundedRect(0, 4, int(self.width() * frac), 10, 5, 5)
 
 
-class SentimentMeter(QLabel):
-    def set_value(self, v: float) -> None:
-        face = "🙂" if v > 0.25 else ("😟" if v < -0.25 else "😐")
-        self.setText(f"Caller mood {face}")
+class RecordDot(QLabel):
+    """Red while recording; amber until the recording notice has been given; grey when idle."""
+
+    def __init__(self):
+        super().__init__("● idle")
+        self.setObjectName("badge")
+
+    def set_state(self, recording: bool, notice_given: bool, paused: bool = False):
+        if not recording:
+            self.setText("● idle")
+            self.setStyleSheet("")
+        elif paused:
+            self.setText("❚❚ recording paused")
+            self.setStyleSheet("color:#8EA0BD;font-weight:700;")
+        elif notice_given:
+            self.setText("● recording · notice given")
+            self.setStyleSheet("color:#EF4444;font-weight:700;")
+        else:
+            self.setText("● recording · NOTICE NOT YET GIVEN")
+            self.setStyleSheet("color:#F59E0B;font-weight:700;")
+
+
+class ProgressRing(QWidget):
+    def __init__(self, theme: str = "dark"):
+        super().__init__()
+        self.c = palette(theme)
+        self.done, self.total = 0, 0
+        self.setFixedSize(64, 64)
+
+    def set_progress(self, done: int, total: int):
+        self.done, self.total = done, total
+        self.setToolTip(f"{done} of {total} required fields confirmed")
+        self.update()
+
+    def paintEvent(self, _):
+        p = QPainter(self)
+        p.setRenderHint(QPainter.Antialiasing)
+        rect = QRectF(6, 6, self.width() - 12, self.height() - 12)
+        pen = QPen(QColor(self.c["panel2"]), 7)
+        p.setPen(pen)
+        p.drawEllipse(rect)
+        frac = (self.done / self.total) if self.total else 0.0
+        col = self.c["good"] if frac >= 1 else (self.c["accent"] if frac > 0.5 else self.c["warn"])
+        pen.setColor(QColor(col))
+        pen.setCapStyle(Qt.RoundCap)
+        p.setPen(pen)
+        p.drawArc(rect, 90 * 16, -int(360 * 16 * frac))
+        p.setPen(QColor(self.c["text"]))
+        f = p.font()
+        f.setBold(True)
+        f.setPointSize(10)
+        p.setFont(f)
+        p.drawText(self.rect(), Qt.AlignCenter, f"{self.done}/{self.total}" if self.total else "–")
+
+
+# ====================================================================== transcript
+_CHIP_STYLE = {
+    "date": "#1F7BFF", "deadline": "#F59E0B", "figure": "#22C55E", "reg": "#A78BFA", "ref": "#A78BFA",
+    "commitment": "#F59E0B", "admission": "#EF4444", "allegation": "#EF4444",
+}
 
 
 class TranscriptView(QTextBrowser):
-    """Live transcript; interim results update in place, rendered at ≤10 fps."""
+    """Live transcript. Interim lines update in place; dates, regs and money become chips;
+    pinned lines get a coloured left edge; auto-scroll pauses while you scroll up."""
 
     def __init__(self, theme: str = "dark"):
         super().__init__()
@@ -86,6 +144,18 @@ class TranscriptView(QTextBrowser):
             self.segments[seg.id] = seg
         self._dirty = True
 
+    def _line_html(self, s: Segment) -> str:
+        body = html.escape(s.text)
+        for kind, text in sorted(s.entities, key=lambda e: -len(e[1])):
+            col = _CHIP_STYLE.get(kind)
+            if not col:
+                continue
+            esc = html.escape(text)
+            body = re.sub(re.escape(esc),
+                          f"<span style='background:{col}22;border:1px solid {col};border-radius:6px;"
+                          f"padding:0 4px;color:{col}' title='{kind}'>{esc}</span>", body, count=1)
+        return body
+
     def _render(self) -> None:
         if not self._dirty:
             return
@@ -95,182 +165,318 @@ class TranscriptView(QTextBrowser):
         rows = []
         for s in self.segments.values():
             agent = s.speaker == AGENT
-            who = "You" if agent else "Caller"
+            who = "Us" if agent else "Caller"
             col = self.c["agent"] if agent else self.c["caller"]
             t = dt.datetime.fromtimestamp(s.start).strftime("%H:%M:%S")
             style = "" if s.is_final else f"color:{self.c['muted']};"
             lang = f" · {html.escape(s.language.upper())}" if s.language and not agent else ""
-            body = html.escape(s.text)
-            row = (f"<div style='margin:6px 0;'><span style='color:{col};font-weight:700'>{who}</span>"
-                   f"<span style='color:{self.c['muted']};font-size:small'>  {t}{lang}</span><br>"
-                   f"<span style='{style}'>{body}</span>")
+            edge = f"border-left:3px solid {self.c['warn']};padding-left:8px;" if s.pinned else "padding-left:11px;"
+            row = (f"<div style='margin:6px 0;{edge}'><span style='color:{col};font-weight:700'>{who}</span>"
+                   f"<span style='color:{self.c['muted']};font-size:small'>  {t}{lang}"
+                   f"{' · 📌' if s.pinned else ''}</span><br>"
+                   f"<span style='{style}'>{self._line_html(s)}</span>")
             if self.show_translation and s.translation:
-                row += (f"<br><span style='color:{self.c['muted']}'>↳ "
-                        f"{html.escape(s.translation)}</span>")
+                row += f"<br><span style='color:{self.c['muted']}'>↳ {html.escape(s.translation)}</span>"
             rows.append(row + "</div>")
         self.setHtml("".join(rows) or
-                     f"<p style='color:{self.c['muted']}'>Start a call – live transcript appears here.</p>")
+                     f"<p style='color:{self.c['muted']}'>Start a call – the live transcript appears here.</p>")
         if at_bottom:
             bar.setValue(bar.maximum())
 
 
-class WrapLabel(QLabel):
-    def __init__(self, name: str):
-        super().__init__()
-        self.setObjectName(name)
-        self.setWordWrap(True)
-        self.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        self.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
+# ====================================================================== cards
+class CardWidget(QFrame):
+    used = Signal(object)
+    dismissed = Signal(object)
 
+    TITLES = {ASK: "ASK NEXT", SAY: "SAY THIS", WATCH: "WATCH OUT"}
 
-class SuggestionPanel(QFrame):
-    regenerate = Signal()
-    speak = Signal(str)
-    closing = Signal()
-
-    def __init__(self):
+    def __init__(self, theme: str = "dark"):
         super().__init__()
         self.setObjectName("card")
-        self.current: Suggestion | None = None
+        self.c = palette(theme)
+        self.card: Card | None = None
         lay = QVBoxLayout(self)
-        lay.setContentsMargins(18, 14, 18, 14)
-        lay.setSpacing(8)
+        lay.setContentsMargins(16, 10, 16, 12)
+        lay.setSpacing(6)
         top = QHBoxLayout()
-        top.addWidget(section("Say next"))
+        self.title = QLabel("")
+        self.title.setObjectName("section")
+        top.addWidget(self.title)
         top.addStretch()
         self.src = QLabel("")
         self.src.setObjectName("badge")
+        self.src.setMaximumWidth(360)
         top.addWidget(self.src)
         lay.addLayout(top)
-        self.filler = WrapLabel("filler")
-        self.say = WrapLabel("say")
-        self.more = WrapLabel("more")
-        self.their_title = section("In the caller's language")
-        self.their = WrapLabel("their")
-        self.warn = WrapLabel("warnbox")
+        self.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)
+        self.filler = QLabel("")
+        self.filler.setObjectName("filler")
+        self.filler.setWordWrap(True)
+        self.text = QLabel("")
+        self.text.setWordWrap(True)
+        self.text.setTextInteractionFlags(Qt.TextSelectableByMouse)
+        self.text.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Minimum)
+        self.more = QLabel("")
+        self.more.setObjectName("more")
+        self.more.setWordWrap(True)
+        self.their = QLabel("")
+        self.their.setObjectName("their")
+        self.their.setWordWrap(True)
         lay.addWidget(self.filler)
-        lay.addWidget(self.say)
+        lay.addWidget(self.text)
         lay.addWidget(self.more)
-        lay.addWidget(self.their_title)
         lay.addWidget(self.their)
-        lay.addWidget(self.warn)
-        lay.addWidget(section("Ask next"))
-        self.ask_box = QVBoxLayout()
-        self.ask_box.setSpacing(6)
-        lay.addLayout(self.ask_box)
-        lay.addStretch()
         btns = QHBoxLayout()
-        self.btn_regen = QPushButton("⟳ Regenerate")
-        self.btn_copy = QPushButton("⧉ Copy")
-        self.btn_speak = QPushButton("🔊 Speak")
-        self.btn_close = QPushButton("👋 Closing script")
-        self.btn_close.clicked.connect(self.closing.emit)
-        self.btn_regen.clicked.connect(self.regenerate.emit)
-        self.btn_copy.clicked.connect(self.copy)
-        self.btn_speak.clicked.connect(lambda: self.speak.emit(self._speak_text()))
-        for b in (self.btn_regen, self.btn_copy, self.btn_speak, self.btn_close):
-            btns.addWidget(b)
+        self.btn_used = QPushButton("✓ Used  (Space)")
+        self.btn_dismiss = QPushButton("✕  (Esc)")
+        self.btn_copy = QPushButton("⧉")
+        self.btn_copy.setFixedWidth(36)
+        self.btn_used.clicked.connect(lambda: self.used.emit(self.card))
+        self.btn_dismiss.clicked.connect(lambda: self.dismissed.emit(self.card))
+        self.btn_copy.clicked.connect(self._copy)
+        btns.addWidget(self.btn_used)
+        btns.addWidget(self.btn_dismiss)
+        btns.addWidget(self.btn_copy)
         btns.addStretch()
         lay.addLayout(btns)
-        self.show_suggestion(None)
 
-    def _speak_text(self) -> str:
-        if not self.current:
-            return ""
-        return self.current.translated or self.current.full_text()
+    def _copy(self):
+        if self.card:
+            QApplication.clipboard().setText(self.card.translated or self.card.spoken())
 
-    def copy(self) -> None:
-        if self.current:
-            QApplication.clipboard().setText(self.current.translated or self.current.full_text())
-
-    def show_suggestion(self, s: Suggestion | None) -> None:
-        self.current = s
-        if s is None:
-            self.filler.setText("Waiting for the caller…")
-            for w in (self.say, self.more, self.their, self.their_title, self.warn):
-                w.setVisible(False)
-            self.src.setText("")
-            self._set_asks([])
+    def set_card(self, c: Card | None, is_top: bool = False):
+        self.card = c
+        self.setVisible(c is not None)
+        if c is None:
             return
-        self.filler.setText(f"“{s.filler}”" if s.filler else "")
-        self.say.setText(s.say_now or ("…" if not s.done else ""))
-        self.say.setVisible(True)
-        self.more.setText(s.continue_with)
-        self.more.setVisible(bool(s.continue_with))
-        self.their.setText(s.translated)
-        self.their.setVisible(bool(s.translated))
-        self.their_title.setVisible(bool(s.translated))
-        self.warn.setText("⚠ " + " ".join(s.warnings) if s.warnings else "")
-        self.warn.setVisible(bool(s.warnings))
-        src = "⚡ Approved answer" if s.source == "instant-kb" else "AI"
-        if s.first_token_ms:
-            src += f" · {s.first_token_ms / 1000:.2f}s"
-        if not s.done:
-            src += " · writing…"
-        self.src.setText(src)
-        self._set_asks(s.ask_next)
-
-    def _set_asks(self, asks: list[str]) -> None:
-        while self.ask_box.count():
-            w = self.ask_box.takeAt(0).widget()
-            if w:
-                w.deleteLater()
-        for q in asks:
-            chip = QLabel("❓ " + q)
-            chip.setObjectName("chip")
-            chip.setWordWrap(True)
-            chip.setTextInteractionFlags(Qt.TextSelectableByMouse)
-            self.ask_box.addWidget(chip)
+        self.title.setText(self.TITLES.get(c.type, c.type.upper()) + ("  ▸" if is_top else ""))
+        if c.type == WATCH:
+            self.setStyleSheet(f"QFrame#card{{border:1px solid {self.c['bad']};background:rgba(239,68,68,0.10);}}")
+            self.text.setObjectName("say")
+            self.text.setStyleSheet(f"color:{self.c['bad']};font-weight:700;")
+        elif c.type == SAY:
+            self.setStyleSheet(f"QFrame#card{{border:1px solid {self.c['accent']};}}")
+            self.text.setStyleSheet(f"color:{self.c['say']};font-weight:700;font-size:15pt;")
+        else:
+            self.setStyleSheet("")
+            self.text.setStyleSheet("font-size:13pt;")
+        self.filler.setText(f"“{c.filler}”" if (c.type == SAY and c.filler) else "")
+        self.filler.setVisible(bool(c.type == SAY and c.filler))
+        txt = c.text if c.type != ASK else "\n".join("❓ " + q for q in c.text.split(" | ") if q)
+        self.text.setText(txt or ("…" if not c.done else ""))
+        self.more.setText(c.more)
+        self.more.setVisible(bool(c.more))
+        self.their.setText(("🌐 " + c.translated) if c.translated else "")
+        self.their.setVisible(bool(c.translated))
+        origin = {"playbook": "⚡ approved answer", "rule": "rule", "llm": "AI", "script": "script"}.get(c.origin, c.origin)
+        src = " · ".join(s for s in c.sources[:2] if s and s != "model")
+        label = origin + (f" · {src}" if src else "") + ("" if c.done else " · writing…")
+        self.src.setText(label if len(label) <= 48 else label[:46] + "…")
+        self.src.setToolTip("\n".join(c.sources))
 
 
-class FieldsPanel(QWidget):
-    """Auto-filled claim form; agent can correct values by hand."""
+class CardsPanel(QWidget):
+    """Max three cards: Watch out on top (only red element), then Say this, then Ask next."""
 
-    edited = Signal(str, str)
+    used = Signal(object)
+    dismissed = Signal(object)
 
-    def __init__(self):
+    def __init__(self, theme: str = "dark"):
+        super().__init__()
+        lay = QVBoxLayout(self)
+        lay.setContentsMargins(0, 0, 0, 0)
+        lay.setSpacing(10)
+        self.widgets = {t: CardWidget(theme) for t in (WATCH, SAY, ASK)}
+        for w in self.widgets.values():
+            w.used.connect(self.used.emit)
+            w.dismissed.connect(self.dismissed.emit)
+            w.setVisible(False)
+            lay.addWidget(w)
+        self.empty = QLabel("Listening… cards appear here when the caller asks something, a field is missing, "
+                            "a date or figure is given, or a risk is heard.")
+        self.empty.setObjectName("filler")
+        self.empty.setWordWrap(True)
+        lay.addWidget(self.empty)
+        lay.addStretch()
+
+    def show_cards(self, cards: list[Card]):
+        by_type = {c.type: c for c in cards}
+        top = next((by_type[t] for t in (WATCH, SAY, ASK) if t in by_type), None)
+        for t, w in self.widgets.items():
+            w.set_card(by_type.get(t), is_top=(by_type.get(t) is top))
+        self.empty.setVisible(not cards)
+
+
+# ====================================================================== intake
+class IntakePanel(QWidget):
+    """Live intake form. AI fills values (greyed until you tick them); nothing saves unconfirmed."""
+
+    edited = Signal(str, str, bool)   # key, value, confirmed
+
+    def __init__(self, theme: str = "dark"):
         super().__init__()
         self.setObjectName("formpanel")
+        self.c = palette(theme)
         self.grid = QGridLayout(self)
         self.grid.setColumnStretch(1, 1)
         self.edits: dict[str, QLineEdit] = {}
+        self.checks: dict[str, QCheckBox] = {}
+        self.sources: dict[str, QLabel] = {}
         self.required: dict[str, bool] = {}
-        self.progress = QLabel("")
-        self.progress.setObjectName("badge")
 
     def set_fields(self, fields) -> None:
         while self.grid.count():
             w = self.grid.takeAt(0).widget()
             if w:
+                w.setParent(None)   # hide at once; deleteLater alone leaves ghosts until the loop spins
                 w.deleteLater()
         self.edits.clear()
-        self.grid.addWidget(self.progress, 0, 0, 1, 2)
-        for i, f in enumerate(fields, start=1):
+        self.checks.clear()
+        self.sources.clear()
+        self.required.clear()
+        for i, f in enumerate(fields):
             lbl = QLabel(f.label + (" *" if f.required else ""))
             lbl.setToolTip(f.hint)
             e = QLineEdit()
             e.setPlaceholderText(f.hint or "listening…")
-            e.editingFinished.connect(lambda k=f.key, w=e: self.edited.emit(k, w.text()))
+            chk = QCheckBox()
+            chk.setToolTip("Confirmed – only ticked values are saved to the file")
+            src = QLabel("")
+            src.setObjectName("badge")
+            src.setVisible(False)
+            e.editingFinished.connect(lambda k=f.key, w=e, c=chk: self.edited.emit(k, w.text(), c.isChecked()))
+            chk.toggled.connect(lambda on, k=f.key, w=e: self.edited.emit(k, w.text(), on))
             self.grid.addWidget(lbl, i, 0)
             self.grid.addWidget(e, i, 1)
+            self.grid.addWidget(src, i, 2)
+            self.grid.addWidget(chk, i, 3)
             self.edits[f.key] = e
+            self.checks[f.key] = chk
+            self.sources[f.key] = src
             self.required[f.key] = f.required
-        self._update_progress()
 
-    def update_values(self, values: dict) -> None:
+    def update_values(self, payload: dict) -> None:
+        values = payload.get("values", payload)
+        srcs = payload.get("sources", {})
         for k, v in values.items():
             e = self.edits.get(k)
-            if e is not None and v and not e.hasFocus():
-                e.setText(v)
-        self._update_progress()
+            if e is None or not v or e.hasFocus() or self.checks[k].isChecked():
+                continue
+            e.setText(v)
+            e.setStyleSheet(f"color:{self.c['muted']};font-style:italic;")  # AI-filled, unconfirmed
+            if srcs.get(k):
+                self.sources[k].setText("🎧")
+                self.sources[k].setToolTip(f"Heard at transcript line {srcs[k]}")
+                self.sources[k].setVisible(True)
+        for k, chk in self.checks.items():
+            if chk.isChecked():
+                self.edits[k].setStyleSheet("")
 
-    def _update_progress(self) -> None:
+    def progress(self) -> tuple[int, int]:
         req = [k for k, r in self.required.items() if r]
-        done = sum(1 for k in req if self.edits[k].text().strip())
-        self.progress.setText(f"Required captured: {done}/{len(req)}")
+        done = sum(1 for k in req if self.edits[k].text().strip() and self.checks[k].isChecked())
+        return done, len(req)
 
-    def values(self) -> dict:
-        return {k: e.text() for k, e in self.edits.items()}
+    def missing(self) -> list[str]:
+        return [k for k, r in self.required.items() if r and not self.edits[k].text().strip()]
+
+    def values(self, confirmed_only: bool = False) -> dict:
+        return {k: e.text() for k, e in self.edits.items()
+                if (not confirmed_only or self.checks[k].isChecked()) and e.text().strip()}
+
+    def confirm_all_filled(self) -> None:
+        for k, e in self.edits.items():
+            if e.text().strip():
+                self.checks[k].setChecked(True)
+
+
+# ====================================================================== file pane
+class FilePane(QFrame):
+    """Left column: the file, read-only during the call."""
+
+    change_file = Signal()
+
+    def __init__(self, theme: str = "dark"):
+        super().__init__()
+        self.setObjectName("card")
+        self.c = palette(theme)
+        lay = QVBoxLayout(self)
+        lay.setContentsMargins(16, 12, 16, 12)
+        top = QHBoxLayout()
+        top.addWidget(section("File"))
+        top.addStretch()
+        self.btn = QPushButton("Attach file…")
+        self.btn.clicked.connect(self.change_file.emit)
+        top.addWidget(self.btn)
+        lay.addLayout(top)
+        self.body = QTextBrowser()
+        self.body.setOpenExternalLinks(False)
+        lay.addWidget(self.body, 1)
+        self.show_file(None)
+
+    def show_file(self, f, today: dt.date | None = None):
+        if f is None:
+            self.body.setHtml(f"<p style='color:{self.c['muted']}'>No file attached.<br>Unknown caller = "
+                              f"new-enquiry mode. Attach or create a file so the AI knows the history, "
+                              f"and the wrap-up has somewhere to save.</p>")
+            return
+        today = today or dt.date.today()
+        rows = [f"<h3 style='margin:0'>{html.escape(f.client_name or 'Untitled')}</h3>",
+                f"<p style='color:{self.c['muted']};margin:2px 0 8px 0'>{html.escape(f.business)} · "
+                f"{html.escape(f.reference or '')}</p>"]
+
+        def kv(k, v, col=None):
+            v = html.escape(str(v))
+            style = f"color:{col};font-weight:700" if col else ""
+            rows.append(f"<div><span style='color:{self.c['muted']}'>{k}</span>&nbsp; <span style='{style}'>{v}</span></div>")
+
+        kv("Reg", f.reg or "–")
+        kv("Stage", f.stage)
+        hd = f.hire_days(today)
+        if hd is not None:
+            kv("Hire days", f"{hd} (since {f.hire_start})", self.c["warn"] if hd > 21 else None)
+        nd = f.next_deadline()
+        if nd:
+            left = nd.days_left(today)
+            col = self.c["bad"] if left <= 2 else (self.c["warn"] if left <= 7 else None)
+            kv("Next deadline", f"{nd.due_at} · {nd.kind} · {nd.text}  ({left}d)", col)
+        kv("Signed authority", f"✅ {f.signed_authority_at}" if f.has_signed_authority() else "❌ NOT ON FILE",
+           None if f.has_signed_authority() else self.c["bad"])
+        if f.insurer or f.tp_insurer:
+            kv("Insurers", f"{f.insurer or '?'} / TP {f.tp_insurer or '?'}")
+        if f.summary:
+            rows.append(f"<p style='margin-top:8px'>{html.escape(f.summary)}</p>")
+        recent = sorted(f.chronology, key=lambda c: c.event_date)[-5:]
+        if recent:
+            rows.append(f"<div style='color:{self.c['muted']};margin-top:8px'>CHRONOLOGY</div>")
+            for c in reversed(recent):
+                rows.append(f"<div><b>{c.event_date}</b> {html.escape(c.text)}</div>")
+        self.body.setHtml("".join(rows))
+
+
+class PinsList(QTextBrowser):
+    def __init__(self, theme: str = "dark"):
+        super().__init__()
+        self.c = palette(theme)
+        self.pins = []
+
+    def clear_all(self):
+        self.pins = []
+        self.setHtml("")
+
+    def add(self, pin):
+        self.pins.append(pin)
+        rows = []
+        for p in reversed(self.pins):
+            col = _CHIP_STYLE.get(p.kind, self.c["muted"])
+            t = dt.datetime.fromtimestamp(p.at).strftime("%H:%M:%S")
+            due = f" · due {p.due_at}" if p.due_at else ""
+            clip = " · 🔊" if p.clip_path else ""
+            rows.append(f"<div style='margin:4px 0'><span style='color:{col};font-weight:700'>{p.kind.upper()}</span> "
+                        f"<span style='color:{self.c['muted']}'>{t}{due}{clip}</span><br>"
+                        f"<b>{html.escape(p.value)}</b><br><span style='color:{self.c['muted']}'>“{html.escape(p.quote[:140])}”</span></div>")
+        self.setHtml("".join(rows))
 
 
 class AskBar(QWidget):
@@ -281,7 +487,7 @@ class AskBar(QWidget):
         lay = QHBoxLayout(self)
         lay.setContentsMargins(0, 0, 0, 0)
         self.edit = QLineEdit()
-        self.edit.setPlaceholderText("Ask the co-pilot privately… e.g. “caller wants a 7-seater, what do I say?”")
+        self.edit.setPlaceholderText("Ask AI (A)… e.g. “they want a 7-seater, what do I say?”")
         btn = QPushButton("Ask")
         btn.setObjectName("primary")
         lay.addWidget(self.edit, 1)

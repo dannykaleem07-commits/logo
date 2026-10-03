@@ -7,7 +7,7 @@ import threading
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox,
                                QFormLayout, QHBoxLayout, QInputDialog, QLabel, QLineEdit, QListWidget,
-                               QListWidgetItem, QMessageBox, QPushButton, QSpinBox, QTabWidget,
+                               QListWidgetItem, QMessageBox, QPlainTextEdit, QPushButton, QSpinBox, QTabWidget,
                                QVBoxLayout, QWidget)
 
 from callpilot.ai.translator import LANGUAGES
@@ -15,8 +15,9 @@ from callpilot.core import secrets
 from callpilot.core.config import Settings
 from callpilot.core.crypto import BadPassphrase, Vault
 
-CLAUDE_MODELS = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-4-5", "claude-fable-5-1"]
-OPENAI_MODELS = ["gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"]
+CLAUDE_LIVE = ["claude-haiku-4-5-20251001", "claude-sonnet-5-5", "claude-opus-5-5"]
+CLAUDE_WRAP = ["claude-sonnet-5-5", "claude-opus-5-5", "claude-haiku-4-5-20251001", "claude-fable-5-1"]
+OPENAI_MODELS = ["gpt-4.1-mini", "gpt-4.1", "gpt-4o", "gpt-4o-mini"]
 STT_LANGS = ["multi", "en", "en-GB", "es", "fr", "de", "it", "pt", "nl", "pl", "ro", "ru", "uk", "tr",
              "hi", "ja", "ko", "zh", "ar", "sv", "da", "no", "fi", "bg", "cs", "el", "hu", "sk", "vi",
              "id", "ms", "ta"]
@@ -84,6 +85,7 @@ class SettingsDialog(QDialog):
         self._build_speech()
         self._build_audio()
         self._build_translation()
+        self._build_calldesk()
         self._build_privacy()
         self._build_ui()
         self.tabs.setCurrentIndex(start_tab)
@@ -125,8 +127,12 @@ class SettingsDialog(QDialog):
         self.provider.addItem("ChatGPT (OpenAI)", "openai")
         self.provider.setCurrentIndex(0 if a.provider == "anthropic" else 1)
         f.addRow("Provider", self.provider)
-        self.claude_model = _combo(CLAUDE_MODELS, a.anthropic_model, editable=True)
-        f.addRow("Claude model", self.claude_model)
+        self.claude_model = _combo(CLAUDE_LIVE, a.anthropic_model, editable=True)
+        self.claude_model.setToolTip("Live cards: speed first. Haiku 4.5 is the recommended live model.")
+        f.addRow("Claude model – live cards", self.claude_model)
+        self.claude_wrap = _combo(CLAUDE_WRAP, a.anthropic_wrapup_model, editable=True)
+        self.claude_wrap.setToolTip("Wrap-up, file note and email: quality first.")
+        f.addRow("Claude model – wrap-up", self.claude_wrap)
         self.effort = _combo(["low", "medium", "high"], a.anthropic_effort)
         self.effort.setToolTip("Lower effort = faster live suggestions. 'low' is recommended on calls.")
         f.addRow("Claude effort", self.effort)
@@ -137,7 +143,15 @@ class SettingsDialog(QDialog):
         self.fallbacks.setChecked(a.anthropic_fallbacks)
         f.addRow("", self.fallbacks)
         self.openai_model = _combo(OPENAI_MODELS, a.openai_model, editable=True)
-        f.addRow("ChatGPT model", self.openai_model)
+        f.addRow("ChatGPT model – live cards", self.openai_model)
+        self.openai_wrap = _combo(OPENAI_MODELS, a.openai_wrapup_model, editable=True)
+        f.addRow("ChatGPT model – wrap-up", self.openai_wrap)
+        self.window_s = QSpinBox()
+        self.window_s.setRange(30, 600)
+        self.window_s.setSuffix(" s")
+        self.window_s.setValue(a.context_window_s)
+        self.window_s.setToolTip("Only this much recent transcript is sent with each card request; the hub and file are cached.")
+        f.addRow("Transcript window per card", self.window_s)
         self.speculative = QCheckBox("Speculative drafting (start answering before the caller finishes)")
         self.speculative.setChecked(a.speculative)
         f.addRow("", self.speculative)
@@ -294,6 +308,45 @@ class SettingsDialog(QDialog):
                             t.tts_voice, editable=True)
         f.addRow("Voice", self.voice)
 
+    def _build_calldesk(self):
+        from callpilot.audio.capture import list_output_devices
+
+        r, w, em = self.s.recording, self.s.whisper, self.s.email
+        f = self._tab("Recording, whisper && email")
+        self.rec_enabled = QCheckBox("Record calls (two tracks: caller left, you right; encrypted after the call)")
+        self.rec_enabled.setChecked(r.enabled)
+        self.rec_clips = QCheckBox("Keep a 10-second audio clip behind every pin")
+        self.rec_clips.setChecked(r.clips)
+        f.addRow("", self.rec_enabled)
+        f.addRow("", self.rec_clips)
+        self.wh_enabled = QCheckBox("Whisper the top card into my headset (toggle with W during a call)")
+        self.wh_enabled.setChecked(w.enabled)
+        f.addRow("", self.wh_enabled)
+        self.wh_device = _device_combo(list_output_devices(), w.device)
+        f.addRow("Headset device", self.wh_device)
+        self.wh_ear = _combo(["left", "right", "both"], w.ear)
+        f.addRow("Ear", self.wh_ear)
+        self.wh_voice = _combo(["alloy", "ash", "coral", "echo", "fable", "nova", "onyx", "sage", "shimmer"], w.voice, editable=True)
+        f.addRow("Whisper voice", self.wh_voice)
+        self.wh_types = QComboBox()
+        for label, val in (("Watch out + Say this", "say,watch"), ("Watch out only", "watch"), ("Everything", "say,watch,ask")):
+            self.wh_types.addItem(label, val)
+        self.wh_types.setCurrentIndex(max(0, self.wh_types.findData(",".join(w.types))))
+        f.addRow("Whisper which cards", self.wh_types)
+        self.em_method = QComboBox()
+        for label, val in (("Outlook desktop → Drafts folder", "outlook"), ("Open .eml in default mail app", "eml"),
+                           ("Copy to clipboard", "clipboard")):
+            self.em_method.addItem(label, val)
+        self.em_method.setCurrentIndex(max(0, self.em_method.findData(em.method)))
+        f.addRow("“As discussed” email goes to", self.em_method)
+        self.em_sig = QPlainTextEdit(em.signature)
+        self.em_sig.setMaximumHeight(80)
+        self.em_sig.setPlaceholderText("Your email signature (the hub's status line is added underneath)")
+        f.addRow("Signature", self.em_sig)
+        note = QLabel("The app has no send capability. Every email is a draft; the final click is yours.")
+        note.setObjectName("section")
+        f.addRow("", note)
+
     def _build_privacy(self):
         p = self.s.privacy
         f = self._tab("Privacy && security")
@@ -358,7 +411,8 @@ class SettingsDialog(QDialog):
         f.addRow("", self.click_through)
         self.hk = {}
         for key, label in (("hotkey_toggle_call", "Start / end call"), ("hotkey_regenerate", "Regenerate"),
-                           ("hotkey_overlay", "Show / hide overlay"), ("hotkey_copy", "Copy suggestion")):
+                           ("hotkey_overlay", "Show / hide overlay"), ("hotkey_copy", "Copy top card"),
+                           ("hotkey_pin", "Pin last line (global)")):
             e = QLineEdit(getattr(u, key))
             e.setPlaceholderText("<ctrl>+<shift>+x")
             self.hk[key] = e
@@ -374,6 +428,7 @@ class SettingsDialog(QDialog):
         cfg = AISettings(**{**self.s.ai.__dict__})
         cfg.provider = self.provider.currentData()
         cfg.anthropic_model = self.claude_model.currentText()
+        cfg.anthropic_wrapup_model = self.claude_wrap.currentText()
         cfg.openai_model = self.openai_model.currentText()
 
         def run():
@@ -436,6 +491,9 @@ class SettingsDialog(QDialog):
                               self.s.privacy, self.s.ui)
         a.provider = self.provider.currentData()
         a.anthropic_model = self.claude_model.currentText().strip()
+        a.anthropic_wrapup_model = self.claude_wrap.currentText().strip()
+        a.openai_wrapup_model = self.openai_wrap.currentText().strip()
+        a.context_window_s = self.window_s.value()
         a.anthropic_effort = self.effort.currentText()
         a.anthropic_fast_mode = self.fast.isChecked()
         a.anthropic_fallbacks = self.fallbacks.isChecked()
@@ -461,6 +519,15 @@ class SettingsDialog(QDialog):
         t.speak_replies = self.speak.isChecked()
         t.tts_output_device = self.tts_dev.currentData()
         t.tts_voice = self.voice.currentText()
+        self.s.recording.enabled = self.rec_enabled.isChecked()
+        self.s.recording.clips = self.rec_clips.isChecked()
+        self.s.whisper.enabled = self.wh_enabled.isChecked()
+        self.s.whisper.device = self.wh_device.currentData()
+        self.s.whisper.ear = self.wh_ear.currentText()
+        self.s.whisper.voice = self.wh_voice.currentText()
+        self.s.whisper.types = self.wh_types.currentData().split(",")
+        self.s.email.method = self.em_method.currentData()
+        self.s.email.signature = self.em_sig.toPlainText()
         p.save_sessions = self.save_sessions.isChecked()
         p.encrypt_sessions = self.encrypt.isChecked()
         p.retention_days = self.retention.value()

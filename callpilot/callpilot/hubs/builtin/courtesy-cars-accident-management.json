@@ -20,7 +20,8 @@
     "If the accident involved injury, or details were not exchanged at the scene, remind the caller of the legal duty to report it to the police as soon as reasonably practicable, and in any case within 24 hours.",
     "Spot vulnerability (age, health, distress, language barrier, financial difficulty) and adapt: slow down, check understanding, offer a call-back.",
     "Never ask for full card numbers on a recorded line.",
-    "Confirm spelling of names and registrations back to the caller using the phonetic alphabet."
+    "Confirm spelling of names and registrations back to the caller using the phonetic alphabet.",
+    "When a third party makes a promise or gives a date, repeat it back and confirm it will be put in writing today."
   ],
   "forbidden_phrases": [
     "it's free",
@@ -253,5 +254,13 @@
       "required": false
     }
   ],
-  "version": 1
+  "version": 1,
+  "status_line": "Courtesy Cars UK – accident management. We arrange replacement vehicles, recovery and repairs and recover the cost from the at-fault insurer. We do not give legal advice; injury matters are referred to a regulated solicitor.",
+  "call_types": {
+    "new_accident": "First notification of loss. Priorities in order: is anyone hurt; reassure; take the full intake (date, time, location, both registrations, third-party insurer, driveable or not, where the car is, recovery and storage, witnesses, dashcam, injuries); explain the replacement-vehicle service with the hire terms summary; agree next steps. Ask next cards should chase the missing intake fields one at a time.",
+    "handler": "The other party is an insurer claims handler. Goal: authority, liability acceptance, hire rate and period agreed, payment dates. Confirm every commitment back with a date and say it will be put in writing today. Never accept a first figure; ask which specific lines are disputed and on what basis. Log every day of insurer delay. Do not discuss injury.",
+    "engineer": "The other party is an engineer or assessor. Ask whether the inspection was physical or desktop, which estimating system and version, whether ADAS calibration and OEM parts are accounted for, and the pre-accident value inputs (trim, mileage, options, service history). Get the report date and the authority date.",
+    "client_chase": "Existing client calling for an update. Open the file summary, give the position in two lines, what happens next with a date, and what you need from them. Do not re-ask intake already on file unless confirming.",
+    "bodyshop": "The other party is a repairer. Confirm: car arrived date, estimate sent date, authority received date, parts ETA, completion date, storage per day. Every date is a pin."
+  }
 }

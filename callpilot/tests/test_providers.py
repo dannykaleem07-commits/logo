@@ -41,7 +41,7 @@ def test_claude_request_shape_and_stream():
         seen.append((dict(req.headers), json.loads(req.content)))
         return httpx.Response(200, headers={"content-type": "text/event-stream"}, text=_sse(STREAM))
 
-    p = _provider(handler)
+    p = _provider(handler, anthropic_model="claude-opus-5-5")
     out = "".join(p.stream("SYSTEM", [{"role": "user", "content": "hi"}], 300))
     assert out == "SAY: Hello there."
     headers, body = seen[0]
@@ -64,7 +64,7 @@ def test_claude_degrades_when_beta_rejected():
                 "type": "invalid_request_error", "message": "fallbacks: not enabled for this organization"}})
         return httpx.Response(200, headers={"content-type": "text/event-stream"}, text=_sse(STREAM))
 
-    p = _provider(handler)
+    p = _provider(handler, anthropic_model="claude-opus-5-5", anthropic_wrapup_model="claude-opus-5-5")
     assert "Hello" in p.complete("S", [{"role": "user", "content": "hi"}], 100)
     assert "fallbacks" in calls[0] and "fallbacks" not in calls[-1]
 
@@ -76,7 +76,25 @@ def test_fast_mode_flag():
         seen.append((dict(req.headers), json.loads(req.content)))
         return httpx.Response(200, headers={"content-type": "text/event-stream"}, text=_sse(STREAM))
 
-    p = _provider(handler, anthropic_fast_mode=True)
-    p.complete("S", [{"role": "user", "content": "x"}], 50)
+    p = _provider(handler, anthropic_fast_mode=True, anthropic_model="claude-opus-5-5")
+    p.complete("S", [{"role": "user", "content": "x"}], 50, fast=True)
     headers, body = seen[0]
     assert body["speed"] == "fast" and "fast-mode-2026-02-01" in headers["anthropic-beta"]
+
+
+def test_haiku_live_and_sonnet_wrapup_split():
+    seen = []
+
+    def handler(req):
+        seen.append((dict(req.headers), json.loads(req.content)))
+        return httpx.Response(200, headers={"content-type": "text/event-stream"}, text=_sse(STREAM))
+
+    p = _provider(handler)  # defaults: Haiku live, Sonnet 5.5 wrap-up
+    p.complete(["HUB", "FILE"], [{"role": "user", "content": "x"}], 50, fast=True)
+    p.complete("S", [{"role": "user", "content": "x"}], 50, fast=False)
+    live, wrap = seen[0][1], seen[1][1]
+    assert live["model"].startswith("claude-haiku-4-5") and "output_config" not in live
+    assert [b["text"] for b in live["system"]] == ["HUB", "FILE"]
+    assert all(b["cache_control"] == {"type": "ephemeral"} for b in live["system"])
+    assert wrap["model"] == "claude-sonnet-5-5" and wrap["output_config"] == {"effort": "medium"}
+    assert "anthropic-beta" not in seen[0][0]

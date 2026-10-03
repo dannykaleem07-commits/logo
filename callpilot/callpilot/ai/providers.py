@@ -24,10 +24,10 @@ class Cancelled(Exception):
 class LLMProvider(Protocol):
     name: str
 
-    def stream(self, system: str, messages: list[dict], max_tokens: int,
+    def stream(self, system: "str | list[str]", messages: list[dict], max_tokens: int,
                cancel: threading.Event | None = None, fast: bool = True) -> Iterator[str]: ...
 
-    def complete(self, system: str, messages: list[dict], max_tokens: int,
+    def complete(self, system: "str | list[str]", messages: list[dict], max_tokens: int,
                  fast: bool = False) -> str: ...
 
 
@@ -48,26 +48,30 @@ class ClaudeProvider:
         self._use_fast = cfg.anthropic_fast_mode
         self._use_cache = True
 
-    def _kwargs(self, system: str, messages: list[dict], max_tokens: int, effort: str) -> dict:
+    def _model(self, fast: bool) -> str:
+        return self.cfg.anthropic_model if fast else (self.cfg.anthropic_wrapup_model or self.cfg.anthropic_model)
+
+    def _kwargs(self, system: str, messages: list[dict], max_tokens: int, effort: str, model: str) -> dict:
         kw: dict = {
-            "model": self.cfg.anthropic_model,
+            "model": model,
             "max_tokens": max_tokens,
             "messages": messages,
         }
+        blocks = system if isinstance(system, list) else [system]
         if self._use_cache:
-            # Hub prompt is large and identical for every turn of a call -> cache it.
-            kw["system"] = [{"type": "text", "text": system, "cache_control": {"type": "ephemeral"}}]
+            # Hub prompt + file summary are identical for every turn of a call -> cache them.
+            kw["system"] = [{"type": "text", "text": b, "cache_control": {"type": "ephemeral"}} for b in blocks if b]
         else:
-            kw["system"] = system
-        if self.cfg.anthropic_model.startswith(("claude-opus-5", "claude-sonnet-5", "claude-fable",
-                                                "claude-opus-4-8", "claude-opus-4-7")):
+            kw["system"] = "\n\n".join(b for b in blocks if b)
+        if model.startswith(("claude-opus-5", "claude-sonnet-5", "claude-fable",
+                             "claude-opus-4-8", "claude-opus-4-7")):
             kw["output_config"] = {"effort": effort}
         betas = []
-        if self._use_fallbacks and self.cfg.anthropic_model in (
+        if self._use_fallbacks and model in (
                 "claude-opus-5-5", "claude-opus-5", "claude-fable-5-1", "claude-sonnet-5-5"):
             betas.append("server-side-fallback-2026-07-01")
             kw["fallbacks"] = "default"
-        if self._use_fast and self.cfg.anthropic_model in ("claude-opus-5-5", "claude-opus-5"):
+        if self._use_fast and model in ("claude-opus-5-5", "claude-opus-5"):
             betas.append("fast-mode-2026-02-01")
             kw["speed"] = "fast"
         if betas:
@@ -95,8 +99,9 @@ class ClaudeProvider:
 
     def stream(self, system, messages, max_tokens, cancel=None, fast=True):
         effort = self.cfg.anthropic_effort if fast else "medium"
+        model = self._model(fast)
         for attempt in range(3):
-            kw = self._kwargs(system, messages, max_tokens, effort)
+            kw = self._kwargs(system, messages, max_tokens, effort, model)
             try:
                 with self._open(kw) as s:
                     for text in s.text_stream:
@@ -129,9 +134,11 @@ class OpenAIProvider:
         self.cfg = cfg
 
     def stream(self, system, messages, max_tokens, cancel=None, fast=True):
-        msgs = [{"role": "system", "content": system}] + messages
+        sys_text = "\n\n".join(system) if isinstance(system, list) else system
+        msgs = [{"role": "system", "content": sys_text}] + messages
+        model = self.cfg.openai_model if fast else (self.cfg.openai_wrapup_model or self.cfg.openai_model)
         resp = self.client.chat.completions.create(
-            model=self.cfg.openai_model, messages=msgs, stream=True,
+            model=model, messages=msgs, stream=True,
             max_completion_tokens=max_tokens,
         )
         try:

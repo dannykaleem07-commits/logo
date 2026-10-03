@@ -1,9 +1,10 @@
-"""Wires audio -> speech -> co-pilot for one call. UI-agnostic."""
+"""Wires audio -> recorder -> speech -> brain for one call. UI-agnostic."""
 
 from __future__ import annotations
 
 import logging
 import time
+import uuid
 from collections import deque
 from collections.abc import Callable
 
@@ -19,13 +20,18 @@ log = logging.getLogger(__name__)
 
 
 class CallController:
-    def __init__(self, settings: Settings, hub: Hub, emit: Callable[[str, object], None]):
+    def __init__(self, settings: Settings, hub: Hub, emit: Callable[[str, object], None],
+                 case_file=None, call_type: str = ""):
         self.settings = settings
         self.hub = hub
         self.emit = emit
+        self.case_file = case_file
+        self.call_type = call_type
         self.channels: dict[str, Channel] = {}
         self.engines = {}
         self.session: CallSession | None = None
+        self.recorder = None
+        self.call_id = time.strftime("%Y%m%d-%H%M%S-") + uuid.uuid4().hex[:6]
         self._recent_caller: deque[tuple[float, str]] = deque(maxlen=20)
         self.running = False
 
@@ -36,7 +42,15 @@ class CallController:
             provider = make_provider(self.settings.ai)
         except Exception as e:  # noqa: BLE001
             self.emit("error", f"AI provider unavailable ({e}). Transcription will still run.")
-        self.session = CallSession(self.settings, self.hub, provider, self.emit)
+        if self.settings.recording.enabled:
+            try:
+                from callpilot.audio.recorder import CallRecorder
+
+                self.recorder = CallRecorder(self.call_id)
+            except Exception as e:  # noqa: BLE001
+                self.emit("error", f"Recording unavailable: {e}")
+        self.session = CallSession(self.settings, self.hub, provider, self.emit, case_file=self.case_file,
+                                   call_type=self.call_type, recorder=self.recorder, call_id=self.call_id)
 
         a = self.settings.audio
         if a.mic_enabled:
@@ -53,6 +67,8 @@ class CallController:
                 eng.start()
                 self.engines[speaker] = eng
                 ch.subscribe(eng.feed)
+                if self.recorder is not None:
+                    ch.subscribe(lambda frame, sp=speaker: self.recorder.feed(sp, frame))
                 ch.start()
                 started.append(ch)
                 if speaker == CALLER:
@@ -66,6 +82,8 @@ class CallController:
                 eng.stop()
             self.channels.clear()
             self.engines.clear()
+            if self.recorder is not None:
+                self.recorder.close()
             raise
         self.running = True
         self.emit("call_started", time.time())
@@ -81,13 +99,27 @@ class CallController:
                 log.exception("stopping STT")
         self.channels.clear()
         self.engines.clear()
+        if self.recorder is not None:
+            try:
+                self.recorder.close()
+            except Exception:  # noqa: BLE001
+                log.exception("closing recorder")
         summary = self.session.end(summarize=summarize) if self.session else {}
         self.emit("call_ended", summary)
         return summary
 
+    # ------------------------------------------------------------------ controls
     def set_muted(self, speaker: str, muted: bool) -> None:
         if speaker in self.channels:
             self.channels[speaker].muted = muted
+
+    def pause_recording(self, paused: bool) -> None:
+        """Card-payment pause: audio, transcript and AI all stop until resumed."""
+        if self.recorder is not None:
+            (self.recorder.pause if paused else self.recorder.resume)()
+        for ch in self.channels.values():
+            ch.muted = paused
+        self.emit("recording_paused", paused)
 
     def levels(self) -> dict[str, float]:
         return {k: ch.level_db for k, ch in self.channels.items()}

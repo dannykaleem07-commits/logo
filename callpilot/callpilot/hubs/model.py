@@ -41,6 +41,8 @@ class Hub:
     knowledge: str = ""
     documents: list[dict] = field(default_factory=list)     # [{"name": ..., "text": ...}]
     capture_fields: list[CaptureField] = field(default_factory=list)
+    call_types: dict = field(default_factory=dict)      # {"handler": "instructions…", ...}
+    status_line: str = ""                               # footer on every email draft
     version: int = 1
 
     # ------------------------------------------------------------ serialisation

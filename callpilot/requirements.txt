@@ -15,3 +15,4 @@ python-docx>=1.1
 PyAudioWPatch>=0.2.12; sys_platform == "win32"
 pycaw>=20240210; sys_platform == "win32"
 comtypes>=1.4; sys_platform == "win32"
+pywin32>=306; sys_platform == "win32"
