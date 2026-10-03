@@ -40,3 +40,11 @@ The inner blue arc and the top of the road have a subtle blue gradient, as in th
 pip install fonttools pillow numpy scipy scikit-image cairosvg
 python3 build/build_logo.py
 ```
+
+---
+
+# CallPilot (desktop app)
+
+The [`callpilot/`](callpilot/) folder contains **CallPilot**, a Windows app for live calls. It transcribes and translates calls and gives AI reply suggestions, with a pre-loaded *Courtesy Cars UK – Accident Management* call hub. See [`callpilot/README.md`](callpilot/README.md).
+
+Each push builds the Windows `.exe` with GitHub Actions (*Build CallPilot (Windows EXE)*).

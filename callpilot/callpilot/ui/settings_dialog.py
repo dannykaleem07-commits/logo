@@ -1,0 +1,483 @@
+"""Settings: API keys, AI, speech, audio sources, translation, privacy, interface."""
+
+from __future__ import annotations
+
+import threading
+
+from PySide6.QtCore import Qt, QTimer, Signal
+from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox,
+                               QFormLayout, QHBoxLayout, QInputDialog, QLabel, QLineEdit, QListWidget,
+                               QListWidgetItem, QMessageBox, QPushButton, QSpinBox, QTabWidget,
+                               QVBoxLayout, QWidget)
+
+from callpilot.ai.translator import LANGUAGES
+from callpilot.core import secrets
+from callpilot.core.config import Settings
+from callpilot.core.crypto import BadPassphrase, Vault
+
+CLAUDE_MODELS = ["claude-opus-5-5", "claude-sonnet-5-5", "claude-haiku-4-5", "claude-fable-5-1"]
+OPENAI_MODELS = ["gpt-4.1", "gpt-4.1-mini", "gpt-4o", "gpt-4o-mini"]
+STT_LANGS = ["multi", "en", "en-GB", "es", "fr", "de", "it", "pt", "nl", "pl", "ro", "ru", "uk", "tr",
+             "hi", "ja", "ko", "zh", "ar", "sv", "da", "no", "fi", "bg", "cs", "el", "hu", "sk", "vi",
+             "id", "ms", "ta"]
+
+
+DEFAULT_DEVICE = "(Windows default)"
+
+
+def _device_combo(names, current) -> QComboBox:
+    c = QComboBox()
+    c.addItem(DEFAULT_DEVICE, "")
+    for n in names:
+        c.addItem(n, n)
+    if current and c.findData(current) < 0:
+        c.addItem(current, current)
+    c.setCurrentIndex(max(0, c.findData(current)))
+    return c
+
+
+def _combo(items, current, editable=False) -> QComboBox:
+    c = QComboBox()
+    c.setEditable(editable)
+    c.addItems(items)
+    if current not in items:
+        c.addItem(current)
+    c.setCurrentText(current)
+    return c
+
+
+class KeyEdit(QWidget):
+    def __init__(self, name: str):
+        super().__init__()
+        self.name = name
+        lay = QHBoxLayout(self)
+        lay.setContentsMargins(0, 0, 0, 0)
+        self.edit = QLineEdit(secrets.get(name))
+        self.edit.setEchoMode(QLineEdit.Password)
+        self.edit.setPlaceholderText("not set")
+        eye = QPushButton("👁")
+        eye.setFixedWidth(40)
+        eye.setCheckable(True)
+        eye.toggled.connect(lambda on: self.edit.setEchoMode(QLineEdit.Normal if on else QLineEdit.Password))
+        lay.addWidget(self.edit, 1)
+        lay.addWidget(eye)
+
+    def save(self) -> None:
+        if self.edit.text().strip() != secrets.get(self.name):
+            secrets.set(self.name, self.edit.text())
+
+
+class SettingsDialog(QDialog):
+    _test_done = Signal(str)
+
+    def __init__(self, settings: Settings, parent=None, start_tab: int = 0, audit=None):
+        super().__init__(parent)
+        self.setWindowTitle("CallPilot settings")
+        self.resize(760, 640)
+        self.s = settings
+        self.audit = audit
+        root = QVBoxLayout(self)
+        self.tabs = QTabWidget()
+        root.addWidget(self.tabs)
+        self._build_keys()
+        self._build_ai()
+        self._build_speech()
+        self._build_audio()
+        self._build_translation()
+        self._build_privacy()
+        self._build_ui()
+        self.tabs.setCurrentIndex(start_tab)
+        bb = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
+        bb.accepted.connect(self._save)
+        bb.rejected.connect(self.reject)
+        root.addWidget(bb)
+        self._test_done.connect(lambda msg: QMessageBox.information(self, "Connection test", msg))
+
+    # ------------------------------------------------------------------ tabs
+    def _tab(self, title: str) -> QFormLayout:
+        w = QWidget()
+        f = QFormLayout(w)
+        f.setLabelAlignment(Qt.AlignRight)
+        f.setVerticalSpacing(10)
+        self.tabs.addTab(w, title)
+        return f
+
+    def _build_keys(self):
+        f = self._tab("API keys")
+        note = QLabel("Keys are stored in Windows Credential Manager (DPAPI-protected, per Windows user). "
+                      "They are never written to disk in plain text or sent anywhere except the provider.")
+        note.setWordWrap(True)
+        f.addRow(note)
+        self.keys = {n: KeyEdit(n) for n in secrets.KNOWN_KEYS}
+        f.addRow("Anthropic (Claude)", self.keys["anthropic_api_key"])
+        f.addRow("OpenAI (ChatGPT / Whisper / TTS)", self.keys["openai_api_key"])
+        f.addRow("Deepgram (live speech)", self.keys["deepgram_api_key"])
+        f.addRow("DeepL (optional translation)", self.keys["deepl_api_key"])
+        test = QPushButton("Test AI connection")
+        test.clicked.connect(self._test_ai)
+        f.addRow("", test)
+
+    def _build_ai(self):
+        a = self.s.ai
+        f = self._tab("AI co-pilot")
+        self.provider = QComboBox()
+        self.provider.addItem("Claude (Anthropic)", "anthropic")
+        self.provider.addItem("ChatGPT (OpenAI)", "openai")
+        self.provider.setCurrentIndex(0 if a.provider == "anthropic" else 1)
+        f.addRow("Provider", self.provider)
+        self.claude_model = _combo(CLAUDE_MODELS, a.anthropic_model, editable=True)
+        f.addRow("Claude model", self.claude_model)
+        self.effort = _combo(["low", "medium", "high"], a.anthropic_effort)
+        self.effort.setToolTip("Lower effort = faster live suggestions. 'low' is recommended on calls.")
+        f.addRow("Claude effort", self.effort)
+        self.fast = QCheckBox("Fast mode (Opus only, up to 2.5× faster output, premium pricing)")
+        self.fast.setChecked(a.anthropic_fast_mode)
+        f.addRow("", self.fast)
+        self.fallbacks = QCheckBox("Automatic fallback model if a request is declined")
+        self.fallbacks.setChecked(a.anthropic_fallbacks)
+        f.addRow("", self.fallbacks)
+        self.openai_model = _combo(OPENAI_MODELS, a.openai_model, editable=True)
+        f.addRow("ChatGPT model", self.openai_model)
+        self.speculative = QCheckBox("Speculative drafting (start answering before the caller finishes)")
+        self.speculative.setChecked(a.speculative)
+        f.addRow("", self.speculative)
+        self.max_tokens = QSpinBox()
+        self.max_tokens.setRange(150, 4000)
+        self.max_tokens.setValue(a.suggestion_max_tokens)
+        f.addRow("Max suggestion length (tokens)", self.max_tokens)
+        self.extract_n = QSpinBox()
+        self.extract_n.setRange(1, 20)
+        self.extract_n.setValue(a.extract_every_n_turns)
+        f.addRow("Update claim form every N lines", self.extract_n)
+
+    def _build_speech(self):
+        sp = self.s.speech
+        f = self._tab("Speech")
+        self.engine = QComboBox()
+        for label, key in (("Deepgram streaming (fastest, recommended)", "deepgram"),
+                           ("OpenAI transcription (accurate)", "openai"),
+                           ("Offline – faster-whisper on this PC (private)", "local")):
+            self.engine.addItem(label, key)
+        self.engine.setCurrentIndex(max(0, self.engine.findData(sp.engine)))
+        f.addRow("Engine", self.engine)
+        self.dg_model = _combo(["nova-3", "nova-2", "nova-3-medical"], sp.deepgram_model, editable=True)
+        f.addRow("Deepgram model", self.dg_model)
+        self.oa_model = _combo(["gpt-4o-transcribe", "gpt-4o-mini-transcribe", "whisper-1"], sp.openai_model,
+                               editable=True)
+        f.addRow("OpenAI model", self.oa_model)
+        self.local_model = _combo(["tiny", "base", "small", "medium", "large-v3", "distil-large-v3"],
+                                  sp.local_model)
+        f.addRow("Offline model", self.local_model)
+        self.stt_lang = _combo(STT_LANGS, sp.language, editable=True)
+        self.stt_lang.setToolTip("'multi' auto-detects and follows language switches mid-call.")
+        f.addRow("Spoken language", self.stt_lang)
+        self.endpoint = QSpinBox()
+        self.endpoint.setRange(100, 2000)
+        self.endpoint.setSuffix(" ms")
+        self.endpoint.setValue(sp.endpoint_ms)
+        self.endpoint.setToolTip("How much silence ends the caller's turn. Lower = faster suggestions.")
+        f.addRow("End-of-turn silence", self.endpoint)
+
+    def _build_audio(self):
+        from callpilot.audio.capture import list_input_devices, list_output_devices
+
+        au = self.s.audio
+        f = self._tab("Audio sources")
+        self.mic_enabled = QCheckBox("Transcribe my microphone (shows what you said)")
+        self.mic_enabled.setChecked(au.mic_enabled)
+        f.addRow("", self.mic_enabled)
+        self.mic = _device_combo(list_input_devices(), au.mic_device)
+        f.addRow("Microphone", self.mic)
+        self.mode = QComboBox()
+        for label, key in (("Selected apps only (recommended)", "apps"),
+                           ("All computer audio", "system"), ("Off", "off")):
+            self.mode.addItem(label, key)
+        self.mode.setCurrentIndex(max(0, self.mode.findData(au.capture_mode)))
+        f.addRow("Caller audio from", self.mode)
+        box = QVBoxLayout()
+        self.apps = QListWidget()
+        self.apps.setMinimumHeight(180)
+        box.addWidget(self.apps)
+        row = QHBoxLayout()
+        refresh = QPushButton("Refresh running apps")
+        self.show_all = QCheckBox("Show every process")
+        add = QPushButton("Add by name…")
+        row.addWidget(refresh)
+        row.addWidget(self.show_all)
+        row.addStretch()
+        row.addWidget(add)
+        box.addLayout(row)
+        hint = QLabel("🔊 = currently playing audio. Tip: start the WhatsApp call first, then tick the app "
+                      "with 🔊. Per-app capture needs Windows 10 (2004) or Windows 11.")
+        hint.setWordWrap(True)
+        hint.setObjectName("section")
+        box.addWidget(hint)
+        wrap = QWidget()
+        wrap.setLayout(box)
+        f.addRow("Apps to listen to", wrap)
+        refresh.clicked.connect(self._refresh_apps)
+        self.show_all.toggled.connect(self._refresh_apps)
+        add.clicked.connect(self._add_app)
+        self.loopback = _device_combo(list_output_devices(), au.loopback_device)
+        self.loopback.setToolTip("Used for 'All computer audio'")
+        f.addRow("Output device (system mode)", self.loopback)
+        self._refresh_apps()
+
+    def _refresh_apps(self):
+        checked = set(a.lower() for a in self._checked_apps()) if self.apps.count() else \
+            set(a.lower() for a in self.s.audio.target_apps)
+        self.apps.clear()
+        seen = set()
+        try:
+            from callpilot.audio.apps import list_apps
+
+            for app in list_apps(include_all=self.show_all.isChecked()):
+                it = QListWidgetItem(app.label)
+                it.setData(Qt.UserRole, app.exe)
+                it.setFlags(it.flags() | Qt.ItemIsUserCheckable)
+                it.setCheckState(Qt.Checked if app.exe.lower() in checked else Qt.Unchecked)
+                self.apps.addItem(it)
+                seen.add(app.exe.lower())
+        except Exception as e:  # noqa: BLE001
+            self.apps.addItem(f"Could not list apps: {e}")
+        for exe in sorted(checked - seen):
+            it = QListWidgetItem(f"{exe}  (not running)")
+            it.setData(Qt.UserRole, exe)
+            it.setFlags(it.flags() | Qt.ItemIsUserCheckable)
+            it.setCheckState(Qt.Checked)
+            self.apps.addItem(it)
+
+    def _add_app(self):
+        name, ok = QInputDialog.getText(self, "Add app", "Executable name (e.g. WhatsApp.exe):")
+        if ok and name.strip():
+            exe = name.strip() if name.strip().lower().endswith(".exe") else name.strip() + ".exe"
+            it = QListWidgetItem(exe)
+            it.setData(Qt.UserRole, exe)
+            it.setFlags(it.flags() | Qt.ItemIsUserCheckable)
+            it.setCheckState(Qt.Checked)
+            self.apps.addItem(it)
+
+    def _checked_apps(self) -> list[str]:
+        out = []
+        for i in range(self.apps.count()):
+            it = self.apps.item(i)
+            if it.checkState() == Qt.Checked and it.data(Qt.UserRole):
+                out.append(it.data(Qt.UserRole))
+        return out
+
+    def _build_translation(self):
+        from callpilot.audio.capture import list_output_devices
+
+        t = self.s.translation
+        f = self._tab("Translation")
+        self.tr_enabled = QCheckBox("Translate the conversation live")
+        self.tr_enabled.setChecked(t.enabled)
+        f.addRow("", self.tr_enabled)
+        self.tr_engine = QComboBox()
+        for label, key in (("AI model (best for slang & context)", "llm"), ("DeepL", "deepl")):
+            self.tr_engine.addItem(label, key)
+        self.tr_engine.setCurrentIndex(max(0, self.tr_engine.findData(t.engine)))
+        f.addRow("Engine", self.tr_engine)
+        self.agent_lang = _combo(sorted(LANGUAGES.values()), t.agent_language)
+        f.addRow("My language", self.agent_lang)
+        self.reply_their = QCheckBox("Also write suggested replies in the caller's language")
+        self.reply_their.setChecked(t.reply_in_caller_language)
+        f.addRow("", self.reply_their)
+        self.speak = QCheckBox("Enable 🔊 Speak button (voice interpreter via OpenAI TTS)")
+        self.speak.setChecked(t.speak_replies)
+        f.addRow("", self.speak)
+        self.tts_dev = _device_combo(list_output_devices(), t.tts_output_device)
+        self.tts_dev.setToolTip("Choose 'CABLE Input' (VB-Audio) to send the voice into the call, "
+                                "then select 'CABLE Output' as the microphone in WhatsApp.")
+        f.addRow("Speak to device", self.tts_dev)
+        self.voice = _combo(["alloy", "ash", "coral", "echo", "fable", "nova", "onyx", "sage", "shimmer"],
+                            t.tts_voice, editable=True)
+        f.addRow("Voice", self.voice)
+
+    def _build_privacy(self):
+        p = self.s.privacy
+        f = self._tab("Privacy && security")
+        self.save_sessions = QCheckBox("Save call history")
+        self.save_sessions.setChecked(p.save_sessions)
+        self.encrypt = QCheckBox("Encrypt call history (AES-256-GCM)")
+        self.encrypt.setChecked(p.encrypt_sessions)
+        self.retention = QSpinBox()
+        self.retention.setRange(0, 3650)
+        self.retention.setSuffix(" days (0 = keep forever)")
+        self.retention.setValue(p.retention_days)
+        self.redact_saved = QCheckBox("Redact personal data (phone, email, NI no., DOB, postcode) in saved history")
+        self.redact_saved.setChecked(p.redact_saved_pii)
+        self.redact_cloud = QCheckBox("Strip card / bank details before anything is sent to AI providers")
+        self.redact_cloud.setChecked(p.redact_payment_data_before_cloud)
+        self.exclude = QCheckBox("Hide CallPilot windows from screen-sharing and recordings")
+        self.exclude.setChecked(p.exclude_windows_from_capture)
+        self.consent = QCheckBox("Remind me to read the recording / consent notice at call start")
+        self.consent.setChecked(p.consent_reminder)
+        for w in (self.save_sessions, self.encrypt):
+            f.addRow("", w)
+        f.addRow("Auto-delete after", self.retention)
+        for w in (self.redact_saved, self.redact_cloud, self.exclude, self.consent):
+            f.addRow("", w)
+        pw = QPushButton("Set / change master passphrase…")
+        pw.clicked.connect(self._change_passphrase)
+        f.addRow("App lock", pw)
+        self.require_unlock = QCheckBox("Ask for the passphrase every time CallPilot starts")
+        self.require_unlock.setChecked(p.require_unlock or Vault.has_passphrase())
+        self.require_unlock.setEnabled(False)
+        f.addRow("", self.require_unlock)
+        verify = QPushButton("Verify tamper-evident audit log")
+        verify.clicked.connect(self._verify_audit)
+        f.addRow("Audit", verify)
+
+    def _build_ui(self):
+        u = self.s.ui
+        f = self._tab("Interface")
+        self.agent_name = QLineEdit(self.s.agent_name)
+        self.agent_name.setPlaceholderText("Used in opening scripts")
+        f.addRow("Your name", self.agent_name)
+        self.theme = _combo(["dark", "light"], u.theme)
+        f.addRow("Theme", self.theme)
+        self.font_pt = QSpinBox()
+        self.font_pt.setRange(8, 18)
+        self.font_pt.setValue(u.font_pt)
+        f.addRow("Font size", self.font_pt)
+        self.overlay = QCheckBox("Show floating teleprompter during calls")
+        self.overlay.setChecked(u.overlay_enabled)
+        f.addRow("", self.overlay)
+        self.opacity = QDoubleSpinBox()
+        self.opacity.setRange(0.4, 1.0)
+        self.opacity.setSingleStep(0.05)
+        self.opacity.setValue(u.overlay_opacity)
+        f.addRow("Overlay opacity", self.opacity)
+        self.overlay_font = QSpinBox()
+        self.overlay_font.setRange(9, 32)
+        self.overlay_font.setValue(u.overlay_font_pt)
+        f.addRow("Overlay font size", self.overlay_font)
+        self.click_through = QCheckBox("Overlay is click-through (mouse passes to the app below)")
+        self.click_through.setChecked(u.overlay_click_through)
+        f.addRow("", self.click_through)
+        self.hk = {}
+        for key, label in (("hotkey_toggle_call", "Start / end call"), ("hotkey_regenerate", "Regenerate"),
+                           ("hotkey_overlay", "Show / hide overlay"), ("hotkey_copy", "Copy suggestion")):
+            e = QLineEdit(getattr(u, key))
+            e.setPlaceholderText("<ctrl>+<shift>+x")
+            self.hk[key] = e
+            f.addRow(label, e)
+
+    # ------------------------------------------------------------------ actions
+    def _test_ai(self):
+        for k in self.keys.values():
+            k.save()
+        from callpilot.ai.providers import make_provider
+        from callpilot.core.config import AISettings
+
+        cfg = AISettings(**{**self.s.ai.__dict__})
+        cfg.provider = self.provider.currentData()
+        cfg.anthropic_model = self.claude_model.currentText()
+        cfg.openai_model = self.openai_model.currentText()
+
+        def run():
+            try:
+                import time
+
+                t0 = time.perf_counter()
+                p = make_provider(cfg)
+                out = p.complete("Reply with exactly: OK", [{"role": "user", "content": "ping"}], 50, fast=True)
+                self._test_done.emit(f"✅ {p.name} replied “{out.strip()[:40]}” in "
+                                     f"{time.perf_counter() - t0:.2f}s")
+            except Exception as e:  # noqa: BLE001
+                self._test_done.emit(f"❌ {e}")
+
+        threading.Thread(target=run, daemon=True).start()
+
+    def _change_passphrase(self):
+        current = None
+        if Vault.has_passphrase():
+            current, ok = QInputDialog.getText(self, "Current passphrase", "Current passphrase:",
+                                               QLineEdit.Password)
+            if not ok:
+                return
+        new, ok = QInputDialog.getText(self, "New passphrase",
+                                       "New passphrase (leave empty to remove the app lock):",
+                                       QLineEdit.Password)
+        if not ok:
+            return
+        if new:
+            again, ok = QInputDialog.getText(self, "Confirm", "Repeat new passphrase:", QLineEdit.Password)
+            if not ok or again != new:
+                QMessageBox.warning(self, "Passphrase", "Passphrases do not match.")
+                return
+            if len(new) < 10:
+                QMessageBox.warning(self, "Passphrase", "Use at least 10 characters.")
+                return
+        try:
+            Vault.change_passphrase(current, new or None)
+        except BadPassphrase:
+            QMessageBox.warning(self, "Passphrase", "Current passphrase is wrong.")
+            return
+        self.require_unlock.setChecked(bool(new))
+        if self.audit:
+            self.audit.record("passphrase_changed", enabled=bool(new))
+        QMessageBox.information(self, "Passphrase", "Saved." if new else "App lock removed.")
+
+    def _verify_audit(self):
+        if not self.audit:
+            return
+        ok, n = self.audit.verify()
+        if ok:
+            QMessageBox.information(self, "Audit log", f"✅ Audit log intact ({n} entries).")
+        else:
+            QMessageBox.critical(self, "Audit log", f"❌ Audit log has been altered at entry {n}.")
+
+    def _save(self):
+        for k in self.keys.values():
+            k.save()
+        a, sp, au, t, p, u = (self.s.ai, self.s.speech, self.s.audio, self.s.translation,
+                              self.s.privacy, self.s.ui)
+        a.provider = self.provider.currentData()
+        a.anthropic_model = self.claude_model.currentText().strip()
+        a.anthropic_effort = self.effort.currentText()
+        a.anthropic_fast_mode = self.fast.isChecked()
+        a.anthropic_fallbacks = self.fallbacks.isChecked()
+        a.openai_model = self.openai_model.currentText().strip()
+        a.speculative = self.speculative.isChecked()
+        a.suggestion_max_tokens = self.max_tokens.value()
+        a.extract_every_n_turns = self.extract_n.value()
+        sp.engine = self.engine.currentData()
+        sp.deepgram_model = self.dg_model.currentText().strip()
+        sp.openai_model = self.oa_model.currentText().strip()
+        sp.local_model = self.local_model.currentText()
+        sp.language = self.stt_lang.currentText().strip()
+        sp.endpoint_ms = self.endpoint.value()
+        au.mic_enabled = self.mic_enabled.isChecked()
+        au.mic_device = self.mic.currentData()
+        au.capture_mode = self.mode.currentData()
+        au.target_apps = self._checked_apps()
+        au.loopback_device = self.loopback.currentData()
+        t.enabled = self.tr_enabled.isChecked()
+        t.engine = self.tr_engine.currentData()
+        t.agent_language = self.agent_lang.currentText()
+        t.reply_in_caller_language = self.reply_their.isChecked()
+        t.speak_replies = self.speak.isChecked()
+        t.tts_output_device = self.tts_dev.currentData()
+        t.tts_voice = self.voice.currentText()
+        p.save_sessions = self.save_sessions.isChecked()
+        p.encrypt_sessions = self.encrypt.isChecked()
+        p.retention_days = self.retention.value()
+        p.redact_saved_pii = self.redact_saved.isChecked()
+        p.redact_payment_data_before_cloud = self.redact_cloud.isChecked()
+        p.exclude_windows_from_capture = self.exclude.isChecked()
+        p.consent_reminder = self.consent.isChecked()
+        p.require_unlock = self.require_unlock.isChecked()
+        self.s.agent_name = self.agent_name.text().strip()
+        u.theme = self.theme.currentText()
+        u.font_pt = self.font_pt.value()
+        u.overlay_enabled = self.overlay.isChecked()
+        u.overlay_opacity = self.opacity.value()
+        u.overlay_font_pt = self.overlay_font.value()
+        u.overlay_click_through = self.click_through.isChecked()
+        for key, e in self.hk.items():
+            setattr(u, key, e.text().strip())
+        if self.audit:
+            self.audit.record("settings_saved", provider=a.provider, stt=sp.engine, capture=au.capture_mode)
+        QTimer.singleShot(0, self.accept)

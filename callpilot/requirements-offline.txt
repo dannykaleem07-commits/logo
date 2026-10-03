@@ -1,0 +1,2 @@
+# Optional: fully offline speech recognition (adds ~150 MB+ to the build)
+faster-whisper>=1.0
