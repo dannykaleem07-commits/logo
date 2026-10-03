@@ -77,6 +77,21 @@ class WhisperSettings:
 
 
 @dataclass
+class VoiceAgentSettings:
+    employee_name: str = ""              # the name the AI uses on the call ("" = your name)
+    voice: str = "coral"
+    output_device: str = ""              # virtual cable input (e.g. "CABLE Input") on real calls
+    handoff_line: str = ""
+    take_over_on_handoff: bool = True
+
+
+@dataclass
+class ExportSettings:
+    auto_save_calls: bool = True         # save transcript + recording to the computer after every call
+    folder: str = ""                     # "" = Documents/CallPilot/Calls
+
+
+@dataclass
 class EmailSettings:
     method: str = "outlook"              # "outlook" (Drafts via Outlook desktop) | "eml" | "clipboard"
     from_name: str = ""
@@ -124,9 +139,12 @@ class Settings:
     privacy: PrivacySettings = field(default_factory=PrivacySettings)
     recording: RecordingSettings = field(default_factory=RecordingSettings)
     whisper: WhisperSettings = field(default_factory=WhisperSettings)
+    voice_agent: VoiceAgentSettings = field(default_factory=VoiceAgentSettings)
+    export: ExportSettings = field(default_factory=ExportSettings)
     email: EmailSettings = field(default_factory=EmailSettings)
     ui: UISettings = field(default_factory=UISettings)
     active_hub: str = "courtesy-cars-accident-management"
+    active_business: str = "courtesy-cars"
     agent_name: str = ""
     first_run: bool = True
 

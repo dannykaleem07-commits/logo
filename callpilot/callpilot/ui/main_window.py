@@ -22,6 +22,8 @@ from callpilot.ai.translator import language_name
 from callpilot.core import config
 from callpilot.core.audit import AuditLog
 from callpilot.core.controller import CallController
+from callpilot.core.business import BusinessStore
+from callpilot.core.export import default_export_dir, export_call
 from callpilot.core.files import CaseFile, FileStore
 from callpilot.core.memory import MemoryStore
 from callpilot.core.models import SAY, WATCH, Card
@@ -61,6 +63,9 @@ class MainWindow(QMainWindow):
         self.store = SessionStore(settings.privacy)
         self.files = FileStore()
         self.memory = MemoryStore()
+        self.businesses = BusinessStore()
+        self.last_record: dict | None = None
+        self.ai_mode = False
         self.controller: CallController | None = None
         self.case_file: CaseFile | None = None
         self._saved_sessions: set[int] = set()
@@ -329,6 +334,35 @@ class MainWindow(QMainWindow):
         hid = self.hub_combo.currentData()
         return self.hubs.get(hid) if hid else None
 
+    def current_business(self):
+        hub = self.current_hub()
+        if hub and hub.business_id:
+            return self.businesses.get(hub.business_id)
+        return None
+
+    def _edit_business(self):
+        from callpilot.ui.business_editor import BusinessEditor
+
+        b = self.current_business()
+        if b is None:
+            hub = self.current_hub()
+            b = self.businesses.new(hub.company or hub.name if hub else "My business")
+            if hub:
+                hub.business_id = b.id
+                self.hubs.save(hub)
+
+        def open_hub(h):
+            dlg = HubEditor(h, provider_factory=lambda: make_provider(self.s.ai), parent=self)
+            if dlg.exec():
+                self.hubs.save(dlg.hub)
+                return True
+            return False
+
+        dlg = BusinessEditor(b, self.businesses, self.hubs, self, open_hub_editor=open_hub)
+        dlg.exec()
+        self.audit.record("business_saved", business=b.id)
+        self._load_hubs(self.current_hub().id if self.current_hub() else None)
+
     def _on_hub_changed(self, *_):
         hub = self.current_hub()
         if not hub:
@@ -449,7 +483,9 @@ class MainWindow(QMainWindow):
         self.status_lbl.setText("Connecting audio and speech…")
         ct = self.call_type.currentData() or ""
         self.controller = CallController(self.s, hub, self.bridge.event.emit, case_file=self.case_file, call_type=ct,
-                                         memory=self.memory)
+                                         memory=self.memory, business=self.current_business(),
+                                         rehearse=getattr(self, "_rehearse_next", False))
+        self._rehearse_next = False
         self._show_script(hub.greeting, "Opening script", hub.consent_script if self.s.privacy.consent_reminder else "")
 
         def run():
@@ -528,11 +564,91 @@ class MainWindow(QMainWindow):
         try:
             rec = self._encrypt_recording(rec)
             f = self.store.save(rec)
+            self.last_record = rec
+            if self.s.export.auto_save_calls:
+                try:
+                    dest = Path(self.s.export.folder) if self.s.export.folder else default_export_dir()
+                    folder = export_call(rec, dest, vault=self.store.vault)
+                    self.status_lbl.setText(f"Call saved to {folder}")
+                except Exception as e:  # noqa: BLE001
+                    self.bridge.event.emit("error", f"Could not save the call to disk: {e}")
             self.audit.record("call_saved", file=f.name if f else None, segments=len(sess.segments), hub=hub.id,
                               case_file=self.case_file.id if self.case_file else "", wrote_file=saved_to_file,
                               cards=len(rec.get("ai_cards", [])), pins=len(rec.get("pins", [])))
         except Exception as e:  # noqa: BLE001
             self.bridge.event.emit("error", f"Could not save call: {e}")
+
+    # ================================================================ AI mode / rehearsal / exports
+    def _toggle_ai_mode(self, on: bool):
+        if not self.controller or not self.controller.running:
+            self.ai_mode = False
+            return
+        if on and not self.s.voice_agent.output_device and not self.controller.rehearse:
+            QMessageBox.information(self, "AI mode",
+                                    "AI mode speaks into the call through a virtual audio cable.\n\n"
+                                    "1. Install VB-Audio Virtual Cable (free).\n"
+                                    "2. Settings → AI mode → output device = 'CABLE Input'.\n"
+                                    "3. In WhatsApp/Teams set the microphone to 'CABLE Output'.\n\n"
+                                    "Until then you can rehearse: ⚙ → Rehearse with the AI.")
+            on = False
+        self.ai_mode = on
+        self.controller.set_ai_mode(on)
+        self.audit.record("ai_mode", on=on)
+
+    def _rehearse(self):
+        if self.controller is not None:
+            return
+        if QMessageBox.question(self, "Rehearse with the AI",
+                                "You play the caller through your microphone; the AI employee answers out loud "
+                                "through your speakers. Nothing is sent to a call app. Start?") != QMessageBox.Yes:
+            return
+        self._rehearse_next = True
+        self._start_call()
+
+    def _open_calls(self):
+        from callpilot.ui.calls_dialog import CallsDialog
+
+        CallsDialog(self.store, self.s, self, audit=self.audit).exec()
+
+    def _download_transcript(self):
+        from callpilot.core.sessions import export_text
+
+        rec = None
+        if self.controller and self.controller.session and self.controller.session.segments:
+            rec = self.controller.session.to_record()
+        elif self.last_record:
+            rec = self.last_record
+        if not rec:
+            QMessageBox.information(self, "Transcript", "No call to download yet.")
+            return
+        from callpilot.core.export import call_folder_name
+
+        f, _ = QFileDialog.getSaveFileName(self, "Download transcript",
+                                           str(Path.home() / "Downloads" / f"{call_folder_name(rec)} transcript.txt"),
+                                           "Text (*.txt);;Word (*.docx)")
+        if not f:
+            return
+        if f.lower().endswith(".docx"):
+            from callpilot.core.export import transcript_docx
+
+            transcript_docx(rec, Path(f))
+        else:
+            Path(f).write_text(export_text(rec), encoding="utf-8")
+        self.status_lbl.setText(f"Transcript saved: {f}")
+        self.audit.record("transcript_downloaded", path=f)
+
+    def _save_call_to_computer(self):
+        rec = self.last_record
+        if not rec:
+            QMessageBox.information(self, "Save call", "End the call first, then save it.")
+            return
+        d = QFileDialog.getExistingDirectory(self, "Save call to…", str(default_export_dir()))
+        if d:
+            folder = export_call(rec, Path(d), vault=self.store.vault)
+            self.status_lbl.setText(f"Call saved to {folder}")
+            from callpilot.ui.calls_dialog import open_folder
+
+            open_folder(folder)
 
     def _learn_in_background(self, rec: dict, hub, sess):
         """Self-training: remember what worked on this call for the next one."""
@@ -645,6 +761,12 @@ class MainWindow(QMainWindow):
             self._finish_call(payload or {})
         elif kind == "summary":
             pass  # consumed by the wrap-up dialog
+        elif kind == "ai_mode":
+            pass  # the simple view renders this
+        elif kind == "handoff":
+            self.status_lbl.setText("⚠ The AI asked you to take over – press Take over")
+            if self.tray:
+                self.tray.showMessage("CallPilot", "The AI employee needs you on the call.", QSystemTrayIcon.Warning, 5000)
         elif kind == "learned":
             n = int(payload.get("added", 0)) + int(payload.get("deterministic", 0))
             self.status_lbl.setText(f"Learned {n} new thing{'s' if n != 1 else ''} from that call"

@@ -206,5 +206,7 @@
     "client_chase": "Client update call. Position in two lines, what happens next with a date, what we need from them. Take instructions cold; never suggest an account."
   },
   "status_line": "Fixmyfile provides paralegal and dispute services. Not a firm of solicitors. Not regulated by the SRA.",
-  "version": 1
+  "version": 1,
+  "business_id": "fixmyfile",
+  "scripts": []
 }

@@ -87,9 +87,10 @@ class _Generation:
 class CallSession:
     def __init__(self, settings: Settings, hub: Hub, provider: LLMProvider | None, emit: Emit,
                  translator: Translator | None = None, case_file=None, call_type: str = "",
-                 recorder=None, call_id: str = "", memory=None):
+                 recorder=None, call_id: str = "", memory=None, business=None):
         self.settings = settings
         self.hub = hub
+        self.business = business
         self.provider = provider
         self.emit = emit
         self.case_file = case_file
@@ -121,7 +122,8 @@ class CallSession:
         self.ended_at: float | None = None
         self.notice_given_at: float | None = None
         self.summary: dict = {}
-        self.banned = list(hub.forbidden_phrases) + list(getattr(hub, "status_banned", []) or [])
+        self.banned = list(hub.forbidden_phrases) + list(getattr(business, "banned_phrases", []) or [])
+        self.turn_listeners: list = []   # callables(turn_text, segment_id) – e.g. the AI voice agent
         subject = (case_file.client_name if case_file is not None else "") or ""
         self._system_blocks = [self._hub_block(), case_file.summary_for_prompt() if case_file else "",
                                self.memory.prompt_block(hub.id, subject) if self.memory is not None else ""]
@@ -141,7 +143,7 @@ class CallSession:
 
     # ================================================================= prompt blocks
     def _hub_block(self) -> str:
-        text = self.hub.system_prompt()
+        text = self.hub.system_prompt(business=self.business)
         ct = (getattr(self.hub, "call_types", {}) or {}).get(self.call_type)
         if ct:
             text += f"\n\n## This call type: {self.call_type.replace('_', ' ')}\n{ct}"
@@ -245,6 +247,18 @@ class CallSession:
         elif confirmed is False:
             self.confirmed_fields.discard(key)
         self.emit("fields", self.fields_payload())
+        self.emit("need", self.missing_required())
+
+    def add_agent_line(self, text: str, language: str = "") -> Segment:
+        """A line the AI employee spoke (AI mode) – goes into the transcript as 'us'."""
+        seg = Segment(speaker=AGENT, text=text.strip(), is_final=True, language=language)
+        with self._lock:
+            self.segments.append(seg)
+        self.emit("segment", seg)
+        for a in self.monitor.check_agent(seg.text):
+            self.emit("alert", a)
+        self._disclosures_changed()
+        return seg
 
     def notice_given(self) -> None:
         if self.notice_given_at is None:
@@ -317,6 +331,11 @@ class CallSession:
                     self._publish(gen)
                 return
         self._start_generation(text, speculative=False, segment_id=seg_id)
+        for cb in list(self.turn_listeners):
+            try:
+                cb(text, seg_id)
+            except Exception:  # noqa: BLE001
+                log.exception("turn listener failed")
 
     def _surface(self, gen: _Generation) -> None:
         """Put a generation's cards on the deck (used when a speculative draft is adopted)."""
@@ -520,11 +539,12 @@ class CallSession:
         if instant:
             say.text = instant[0]
             extra = "" if is_none(more) else more
-            say.more = " ".join(p for p in (instant[1], extra) if p).strip()
+            say.more = _grow(say.more, " ".join(p for p in (instant[1], extra) if p).strip())
             say.sources = list(dict.fromkeys(say.sources + sources))
         else:
-            say.text = "" if is_none(s_txt) else s_txt
-            say.more = "" if is_none(more) else more
+            # Append-only: once words are on screen they never change; the model can only add.
+            say.text = _grow(say.text, "" if is_none(s_txt) else s_txt)
+            say.more = _grow(say.more, "" if is_none(more) else more)
             say.sources = sources or (["model"] if final else [])
         say.translated = sec.get("THEIR", "")
         say.done = final
@@ -613,6 +633,7 @@ class CallSession:
                 changed = True
         if changed:
             self.emit("fields", self.fields_payload())
+            self.emit("need", self.missing_required())
         seg_by_id = {s.id: s for s in self.segments}
         for p in data.get("pins", []) or []:
             if not isinstance(p, dict) or not p.get("quote"):
@@ -677,6 +698,30 @@ class CallSession:
             "recording": str(self.recorder.path) if self.recorder is not None else "",
             "recording_pauses": list(self.recorder.pauses) if self.recorder is not None else [],
         }
+
+
+def _grow(shown: str, new: str) -> str:
+    """Return text that keeps everything already shown and only appends.
+
+    If the new text extends the shown text, use it. If the model re-wrote an
+    earlier word, anchor on the last words the reader has seen and append only
+    what follows them, so the reader's eye is never pulled back to the start.
+    """
+    if not shown:
+        return new
+    if not new or new == shown:
+        return shown
+    if new.startswith(shown):
+        return new
+    words = shown.split()
+    for k in (4, 3, 2):
+        if len(words) >= k:
+            anchor = " ".join(words[-k:])
+            idx = new.rfind(anchor)
+            if idx >= 0:
+                tail = new[idx + len(anchor):].strip()
+                return (shown.rstrip() + " " + tail) if tail else shown
+    return shown
 
 
 def _split_first_sentence(text: str) -> tuple[str, str]:

@@ -74,6 +74,15 @@ class HubEditor(QDialog):
         ctl.addWidget(self.call_types)
         tabs.addTab(ctw, "Call types")
 
+        # ---------------- scripts
+        scw = QWidget()
+        scl = QVBoxLayout(scw)
+        scl.addWidget(QLabel("Scripts you read out on this type of call (opening and closing come from General). "
+                             "One script per block: a title line, then the text. Blank line between scripts."))
+        self.scripts_edit = QPlainTextEdit("\n\n".join(f"{sc.get('title', '')}\n{sc.get('text', '')}" for sc in hub.scripts))
+        scl.addWidget(self.scripts_edit)
+        tabs.addTab(scw, f"Scripts ({len(hub.scripts)})")
+
         # ---------------- rules
         r = QWidget()
         rf = QFormLayout(r)
@@ -269,6 +278,12 @@ class HubEditor(QDialog):
             if m:
                 cts[m.group(1)] = m.group(2).strip()
         h.call_types = cts
+        scripts = []
+        for block in re.split(r"\n\s*\n", self.scripts_edit.toPlainText()):
+            lines = [ln for ln in block.strip().splitlines() if ln.strip()]
+            if len(lines) >= 2:
+                scripts.append({"title": lines[0].strip(), "text": " ".join(ln.strip() for ln in lines[1:]), "when": ""})
+        h.scripts = scripts
         h.rules = _lines(self.rules.toPlainText())
         h.forbidden_phrases = _lines(self.forbidden.toPlainText())
         h.required_disclosures = _lines(self.disclosures.toPlainText())

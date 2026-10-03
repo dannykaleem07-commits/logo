@@ -1,21 +1,28 @@
 # CallPilot
 
-CallPilot listens to the call (the other person through WhatsApp / Teams / Zoom / your softphone, and you through your mic), writes down what is said, and shows you **what to say next**. It remembers your past calls and trains itself after every one.
+CallPilot listens to the call (the other person through WhatsApp / Teams / Zoom / your softphone, and you through your mic), writes down what is said, and shows you **what to say next** and **what you still need to find out**. It remembers your past calls and trains itself after every one. Everything is organised **Business profile → Call hub → Call & transcript**: the business holds the rules and scripts for every call it takes, each hub is one call type with its own answers and intake, and every call is saved, downloadable and (if you choose) recorded. Switch on **AI mode** and a named member of the team takes the call in a realistic voice while you watch.
 
 ![Simple view](docs/simple.png)
 
 ## The simple view (default)
 
-Two panes. Left: *they said · you said*. Right: **Say next** – one big answer, written while the caller is still finishing. A red line above it if there is a risk, a grey "then ask" line under it.
+Two panes and a scripts rail. Left: *they said · you said*. Middle: **Say next** – one big answer, written while the caller is still finishing. A red line above it if there is a risk, a blue "then ask" line under it and an amber **Still need:** line listing the intake details you have not captured yet. Right: the **scripts** for this business and hub, in call order.
 
-- **● Start call** – or let it start itself: when WhatsApp (or another call app) begins playing audio, a banner offers to listen.
-- **AI** dropdown – *Fastest* (Claude Haiku 4.5), *Balanced* (Claude Sonnet 5.5), *Smart* (Claude Opus 5.5), *Max* (Claude Fable 5.1 – slower, deepest), or *ChatGPT*.
-- **Hub** – which company's brain to use (Courtesy Cars, Fixmyfile, or your own).
+- **Business › Hub** – pick the business (Courtesy Cars UK, Fixmyfile, or your own), then the call hub under it. The breadcrumb is the hierarchy: business rules apply to every hub, the hub adds the call-type specifics.
+- **● Start call** – or let it start itself: when WhatsApp (or another call app) begins playing audio, a banner offers to listen. **+ New call** ends the current call (saving it) and opens a fresh one in one click.
+- **It never changes what you are reading.** An answer only ever grows – new words are appended, the start stays put (enforced in the engine as well as the screen). If a better answer arrives while you are still reading, it waits in a green **Next answer ready** bar: press **→** or *Show it* when you are done, or it comes through on its own after a few seconds.
+- **Scripts** – click any script (opening, recording notice, terms, status line, closing) and it is pinned on top, full size, until you press **Done reading**; answers queue behind it. Reading the recording notice marks the call as notified.
 - **Said it (Space)** / **Another answer (Ctrl+R)** / **Not this (Esc)** – and every one of those teaches it.
+- **AI** dropdown – *Fastest* (Claude Haiku 4.5), *Balanced* (Claude Sonnet 5.5), *Smart* (Claude Opus 5.5), *Max* (Claude Fable 5.1 – slower, deepest), or *ChatGPT*.
+- **🤖 AI mode** – an AI employee takes the call (below). **👤 Take over** hands it back.
 - **🧠 badge** – how much it has learned: answers, facts, lessons.
+- **⬇ Transcript** – download this call's transcript as .txt or .docx. **Calls** – every call on this PC: read, search, download, save the whole call, play the recording.
 - **Advanced ▾** – opens the full Call Desk cockpit underneath (file, intake form, pins, checklist, wrap-up tools). Settings → Interface switches the default view.
 - **Earlier answers** – the last few suggestions sit under the current one; click to bring one back. ⧉ copies, 🔊 reads it aloud.
-- **First run** – a four-step setup (AI key with a connection test → speech engine → which app to listen to, with a live microphone meter → your name). An amber banner tells you if anything is still missing; ⚙ → *Run setup again* any time.
+- **⚙** – Business profile…, Edit / train this hub…, Rehearse with the AI…, Settings…, Run setup again…, Save last call to computer…, Call history…, Floating overlay.
+- **First run** – a four-step setup (AI key with a connection test → speech engine → which app to listen to, with a live microphone meter → your name). An amber banner tells you if anything is still missing; a second banner appears when a newer build is available to download.
+
+![Script pinned while reading](docs/simple_script.png)
 
 ![Setup](docs/setup.png)
 
@@ -108,16 +115,45 @@ When you end the call the screen flips to **Wrap up** (one call to the stronger 
 - **One button saves the lot to the file.** Nothing saves silently. Intake values the AI heard stay greyed and unconfirmed until you tick them.
 - The email goes to **Outlook → Drafts** (desktop Outlook via COM), or opens as an unsent `.eml` in your mail app, or copies to the clipboard. **The app has no send capability**; the final click is yours. The hub's status line is appended as the footer.
 
-## Call hubs and call types
+## Business profiles → Call hubs → Calls
 
-A hub is a company's brain: persona, tone, opening / closing / consent scripts, rules, banned phrases, mandatory disclosures, escalation keywords, filler phrases, a Q&A bank, a knowledge base (paste text or import PDF / Word / TXT / CSV), intake fields, a status line and **per-call-type instructions**.
+**Business profile** (⚙ → *Business profile…*): the name, website, legal **status line** (what you say when asked who you are; also the email footer), **house rules the AI must follow on every call**, **banned phrases** (alerted if you say them, filtered from AI output), the **scripts** you read out, the email signature, and the list of call hubs under the business. Set a rule once here and every hub of that business follows it.
 
-Two hubs ship pre-loaded:
+**Call hub**: one call type's brain under a business – persona, tone, opening / closing / consent scripts, extra rules, Q&A bank, knowledge base (paste text or import PDF / Word / TXT / CSV), intake fields (what the app chases in the *Still need* line), escalation keywords, disclosures and **per-call-type instructions**. ⚙ → *Edit / train this hub…* or the *Call hubs* tab of the business profile.
 
-- **Courtesy Cars UK – Accident Management**: FNOL, replacement vehicles, recovery, repairs, write-offs, injury referral, police reporting. Call types: new accident, insurer handler, engineer, bodyshop, client chase.
-- **Fixmyfile – Insurer, engineer & bodyshop calls**: the handler-call coach. Make them particularise any fraud allegation, ask who bears the burden, push back on the first number with a figure and a reason, log every day of insurer delay, confirm every commitment in writing today, status wording that never implies regulated status, injury is a regulated area. Call types: handler, engineer, bodyshop, council, client chase.
+**Call & transcript**: every call is saved encrypted on this PC and, by default, written to *Documents\CallPilot\Calls\<date hub – caller>* as transcript.txt / .srt / .docx, call.json, pins.csv, the as-discussed email draft and recording.wav.
 
-**✨ Generate Q&A from knowledge** turns your documents into an answer bank. Review every answer before saving. Both hubs are templates: have them checked against your real policies before live use.
+Two businesses and three hubs ship pre-loaded:
+
+- **Courtesy Cars UK → Accident Management**: FNOL, replacement vehicles, recovery, repairs, write-offs, injury referral, police reporting. Call types: new accident, insurer handler, engineer, bodyshop, client chase.
+- **Fixmyfile → CIFAS marker removal** – the CIFAS specialist hub, built from fixmyfile.co.uk's service pages and the Fixmyfile playbook: what a CIFAS marker is and the categories, how to find out (DSAR to CIFAS), the three-step process (file, evidence, representation), honest eligibility (strong vs weak cases), bank account closures and mortgage knock-on effects, timescales, what the client must send this week, the Financial Ombudsman route, GDPR and the data controller, and the status wording. Intake: name, contact, email for the portal link, date of birth, addresses, how they found out, lender, marker category and date, what the lender alleges, the client's account of events, evidence held, other lenders affected, urgency, signed authority, fee explained. Rules: never say "guaranteed removal", never quote a success rate, never give regulated advice, never imply solicitor status. Call types: new enquiry, client chase, CIFAS member / lender, CIFAS itself, credit reference agency.
+- **Fixmyfile → Insurer, engineer & bodyshop calls**: the handler-call coach. Make them particularise any fraud allegation, ask who bears the burden, push back on the first number with a figure and a reason, log every day of insurer delay, confirm every commitment in writing today. Call types: handler, engineer, bodyshop, council, client chase.
+
+![Business profile](docs/business.png)
+
+![CIFAS hub](docs/simple_cifas.png)
+
+**✨ Generate Q&A from knowledge** turns your documents into an answer bank. Review every answer before saving. The built-in hubs are templates: fees, timescales and guarantees must be checked against your live terms before use.
+
+## AI mode: an AI employee takes the call
+
+Press **🤖 AI mode** on a live call and a named member of the team (Settings → *AI mode & saving* → employee name, voice) answers the caller in a realistic voice, using the business rules, the hub's answers and what it has learned from you. Every line it says is in the transcript as *You* and shown in the Say panel, so you can follow the call and step in. Press **👤 Take over** at any moment.
+
+- **Audio**: it speaks into the device you choose. On a real call that is a virtual cable (install the free VB-Audio Virtual Cable; CallPilot speaks into *CABLE Input*, and WhatsApp / Teams uses *CABLE Output* as its microphone). The caller still comes in through the normal app capture.
+- **Barge-in**: if the caller talks over it, it stops and listens.
+- **Hand-off**: on a request for a person, a complaint, injury, police, court, fraud, distress or anything outside the playbook it says the hand-off line ("Let me pass you to a colleague…"), goes quiet, and a banner asks you to take over.
+- **What it says about itself**: it does not announce that it is automated. If a caller asks directly whether they are talking to a real person it answers truthfully in one sentence and offers a colleague. You are responsible for whether using an automated agent on your calls is permitted for your business and in your jurisdiction.
+- **Train it**: ⚙ → **Rehearse with the AI…** starts a call with your microphone as the caller and your speakers as its voice. Talk to it as a customer would; mark its answers *Said it* / *Not this*, add rules in the business profile and answers in the hub, and it uses them on the next call. Rehearsals are saved like any other call.
+
+![AI mode](docs/simple_ai.png)
+
+## Saving, downloading and recording calls
+
+- **Recording** (Settings → *Recording, whisper & email*): stereo WAV, caller left / you right, encrypted on disk, with the recording notice time stamped in the transcript. Pause with one click when card details are read out.
+- **Auto-save** (Settings → *AI mode & saving*): after every call the transcript (.txt, .srt, .docx), call.json, pins.csv, the as-discussed email draft and the decrypted recording.wav are written to *Documents\CallPilot\Calls* (or the folder you choose).
+- **⬇ Transcript** on the call screen downloads the current or last call's transcript; **Calls** lists every call with search, download, *Save whole call to computer…*, *Recording* and *Delete*; the wrap-up dialog has **💾 Save call to computer…**.
+
+![Calls](docs/calls.png)
 
 ## Files, pins, deadlines and search
 
@@ -180,11 +216,12 @@ Decisions still needed before that build: current phone setup, where files live 
 
 ## Getting started
 
-1. **Install**: click the download button at the top of this page (`CallPilot-Setup.exe`), or use the portable `CallPilot.exe`. Every green build refreshes the [`callpilot-latest`](https://github.com/dannykaleem07-commits/logo/releases/tag/callpilot-latest) release; versioned releases are published from *Actions → Run workflow → version*. Windows 10 2004+ / Windows 11. SmartScreen: *More info → Run anyway* (the EXE is not code-signed).
+1. **Install**: click the download button at the top of this page (`CallPilot-Setup.exe`), or use the portable `CallPilot.exe`. The installer closes a running copy, keeps your settings and calls, offers *Start with Windows*, and the app shows a banner with a download link when a newer build is published. Every green build refreshes the [`callpilot-latest`](https://github.com/dannykaleem07-commits/logo/releases/tag/callpilot-latest) release; versioned releases are published from *Actions → Run workflow → version*. Windows 10 2004+ / Windows 11. SmartScreen: *More info → Run anyway* (the EXE is not code-signed).
 2. **Settings → API keys**: Anthropic (Claude) or OpenAI, plus Deepgram for live speech. DeepL optional.
 3. **Settings → Audio sources**: start the call app, *Refresh*, tick the app marked 🔊.
-4. **Attach a file** (or create one), pick the **call type**, press **● Start call**. Say the recording notice; the dot turns red.
-5. End the call → **Wrap up** → tick what to keep → **Save wrap-up** → open the email draft.
+4. Pick the **business** and **hub**, press **● Start call** (or **+ New call**). Click *Recording notice* in the scripts rail and read it; the dot turns red.
+5. Read the **Say next** answer; glance at **Still need** for what to ask; press **Space** when you've said it. **⬇ Transcript** or **Calls** afterwards.
+6. End the call → **Wrap up** → tick what to keep → **Save wrap-up** → open the email draft. The call is saved to your computer automatically.
 
 ## Building from source
 

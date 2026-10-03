@@ -1,0 +1,35 @@
+{
+  "id": "courtesy-cars",
+  "name": "Courtesy Cars UK",
+  "tagline": "Accident management: replacement vehicles, recovery and repairs at no upfront cost to the non-fault driver.",
+  "website": "",
+  "status_line": "Courtesy Cars UK – accident management. We arrange replacement vehicles, recovery and repairs and recover the cost from the at-fault insurer. We do not give legal advice; injury matters are referred to a regulated solicitor.",
+  "rules": [
+    "Never describe the service as 'free'. Say 'no upfront cost to you' – costs are recovered from the at-fault party's insurer.",
+    "Never guarantee an outcome, a delivery time or that liability will be accepted. Use 'we aim to' or 'normally'.",
+    "Never admit liability on a caller's behalf; tell callers not to admit fault to the other driver or their insurer.",
+    "Injury is referred to the panel solicitor with consent – never advised on.",
+    "Read the hire terms summary and get verbal agreement before arranging a vehicle."
+  ],
+  "banned_phrases": [
+    "it's free",
+    "completely free",
+    "guaranteed",
+    "you'll definitely win",
+    "100% sure"
+  ],
+  "scripts": [
+    {
+      "title": "Hire terms summary",
+      "when": "terms",
+      "text": "Before I book the car, the short version of the terms: the vehicle is provided on a credit hire basis, which means the daily charges are claimed from the at-fault driver's insurer, not from you, as long as you cooperate with the claim. You'll need to keep the car insured under our cover for approved drivers only, return it when your own car is back or your settlement is paid, and let us know straight away if anything changes. You'll get the full terms by email to sign. Are you happy for me to go ahead on that basis?"
+    },
+    {
+      "title": "Tell your own insurer",
+      "when": "",
+      "text": "One more thing – you should let your own insurer know about the accident, it's usually a condition of your policy, even though you're not claiming on it. Just tell them it's being handled as a non-fault claim through us."
+    }
+  ],
+  "email_signature": "",
+  "version": 1
+}

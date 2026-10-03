@@ -37,6 +37,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
 
+      - name: Stamp the build with the commit
+        shell: pwsh
+        run: |
+          "COMMIT = '${{ github.sha }}'`nBUILT = '$(Get-Date -Format o)'" | Set-Content callpilot/_build.py
+
       - name: Unit tests
         run: python -m pytest -q
 

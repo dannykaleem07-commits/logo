@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import threading
+from pathlib import Path
 
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (QCheckBox, QComboBox, QDialog, QDialogButtonBox, QDoubleSpinBox,
@@ -86,6 +87,7 @@ class SettingsDialog(QDialog):
         self._build_audio()
         self._build_translation()
         self._build_calldesk()
+        self._build_aimode()
         self._build_memory()
         self._build_privacy()
         self._build_ui()
@@ -354,6 +356,52 @@ class SettingsDialog(QDialog):
         note.setObjectName("section")
         f.addRow("", note)
 
+    def _build_aimode(self):
+        from callpilot.audio.capture import list_output_devices
+
+        va, ex = self.s.voice_agent, self.s.export
+        f = self._tab("AI mode && saving")
+        note = QLabel("AI mode: a named member of the team takes the call in a realistic voice. It uses the business "
+                      "rules, the hub's answers and what it has learned from you. It hands the call back to you on "
+                      "escalation words, distress, a request for a person, or anything outside the playbook. It does "
+                      "not announce that it is automated, but answers truthfully if a caller asks directly.")
+        note.setWordWrap(True)
+        f.addRow(note)
+        self.va_name = QLineEdit(va.employee_name)
+        self.va_name.setPlaceholderText("Name it uses on the call (empty = your name)")
+        f.addRow("Employee name", self.va_name)
+        self.va_voice = _combo(["coral", "alloy", "ash", "echo", "fable", "nova", "onyx", "sage", "shimmer"], va.voice, editable=True)
+        f.addRow("Voice", self.va_voice)
+        self.va_device = _device_combo(list_output_devices(), va.output_device)
+        self.va_device.setToolTip("On a real call choose the virtual cable input (e.g. 'CABLE Input'); set WhatsApp's "
+                                  "microphone to 'CABLE Output'. Rehearsal uses your speakers.")
+        f.addRow("Speaks into (virtual cable)", self.va_device)
+        self.va_handoff = QLineEdit(va.handoff_line)
+        self.va_handoff.setPlaceholderText("Let me pass you to a colleague who can help with that – one moment please.")
+        f.addRow("Hand-off line", self.va_handoff)
+        f.addRow(QLabel(""))
+        self.ex_auto = QCheckBox("After every call, save the transcript, summary, pins and recording to my computer")
+        self.ex_auto.setChecked(ex.auto_save_calls)
+        f.addRow("", self.ex_auto)
+        row = QHBoxLayout()
+        self.ex_folder = QLineEdit(ex.folder)
+        self.ex_folder.setPlaceholderText("Documents\\CallPilot\\Calls")
+        pick = QPushButton("Choose…")
+
+        def choose():
+            from PySide6.QtWidgets import QFileDialog
+
+            d = QFileDialog.getExistingDirectory(self, "Save calls to…", self.ex_folder.text() or str(Path.home()))
+            if d:
+                self.ex_folder.setText(d)
+
+        pick.clicked.connect(choose)
+        row.addWidget(self.ex_folder, 1)
+        row.addWidget(pick)
+        wrap = QWidget()
+        wrap.setLayout(row)
+        f.addRow("Save calls to", wrap)
+
     def _build_memory(self):
         from callpilot.core.memory import MemoryStore
 
@@ -600,6 +648,12 @@ class SettingsDialog(QDialog):
         self.s.whisper.ear = self.wh_ear.currentText()
         self.s.whisper.voice = self.wh_voice.currentText()
         self.s.whisper.types = self.wh_types.currentData().split(",")
+        self.s.voice_agent.employee_name = self.va_name.text().strip()
+        self.s.voice_agent.voice = self.va_voice.currentText()
+        self.s.voice_agent.output_device = self.va_device.currentData()
+        self.s.voice_agent.handoff_line = self.va_handoff.text().strip()
+        self.s.export.auto_save_calls = self.ex_auto.isChecked()
+        self.s.export.folder = self.ex_folder.text().strip()
         self.s.email.method = self.em_method.currentData()
         self.s.email.signature = self.em_sig.toPlainText()
         p.save_sessions = self.save_sessions.isChecked()

@@ -21,13 +21,15 @@ log = logging.getLogger(__name__)
 
 class CallController:
     def __init__(self, settings: Settings, hub: Hub, emit: Callable[[str, object], None],
-                 case_file=None, call_type: str = "", memory=None):
+                 case_file=None, call_type: str = "", memory=None, business=None, rehearse: bool = False):
         self.settings = settings
         self.hub = hub
         self.emit = emit
         self.case_file = case_file
         self.call_type = call_type
         self.memory = memory
+        self.business = business
+        self.rehearse = rehearse          # you play the caller through the mic; the AI answers aloud
         self.channels: dict[str, Channel] = {}
         self.engines = {}
         self.session: CallSession | None = None
@@ -35,6 +37,7 @@ class CallController:
         self.call_id = time.strftime("%Y%m%d-%H%M%S-") + uuid.uuid4().hex[:6]
         self._recent_caller: deque[tuple[float, str]] = deque(maxlen=20)
         self.running = False
+        self.voice_agent = None
 
     # ------------------------------------------------------------------ lifecycle
     def start(self) -> None:
@@ -52,12 +55,16 @@ class CallController:
                 self.emit("error", f"Recording unavailable: {e}")
         self.session = CallSession(self.settings, self.hub, provider, self.emit, case_file=self.case_file,
                                    call_type=self.call_type, recorder=self.recorder, call_id=self.call_id,
-                                   memory=self.memory)
+                                   memory=self.memory, business=self.business)
 
         a = self.settings.audio
-        if a.mic_enabled:
+        if self.rehearse:
+            self.channels[CALLER] = Channel(CALLER, [MicSource(a.mic_device)])
+        elif a.mic_enabled:
             self.channels[AGENT] = Channel(AGENT, [MicSource(a.mic_device)])
-        if a.capture_mode == "apps" and a.target_apps:
+        if self.rehearse:
+            pass
+        elif a.capture_mode == "apps" and a.target_apps:
             self.channels[CALLER] = Channel(CALLER, [AppSource(a.target_apps)])
         elif a.capture_mode == "system":
             self.channels[CALLER] = Channel(CALLER, [SystemLoopbackSource(a.loopback_device)])
@@ -101,6 +108,8 @@ class CallController:
                 log.exception("stopping STT")
         self.channels.clear()
         self.engines.clear()
+        if self.voice_agent is not None:
+            self.voice_agent.stop()
         if self.recorder is not None:
             try:
                 self.recorder.close()
@@ -114,6 +123,23 @@ class CallController:
     def set_muted(self, speaker: str, muted: bool) -> None:
         if speaker in self.channels:
             self.channels[speaker].muted = muted
+
+    def set_ai_mode(self, on: bool) -> None:
+        """AI employee takes the call (or hands it back)."""
+        if self.session is None:
+            return
+        if on:
+            if self.voice_agent is None:
+                from callpilot.ai.voice_agent import VoiceAgent
+
+                self.voice_agent = VoiceAgent(self.session, self.settings, self.emit, rehearse=self.rehearse)
+            if not self.rehearse:
+                self.set_muted(AGENT, True)   # your mic stays out of the call while the AI speaks
+            self.voice_agent.start(say_opening=not any(s.speaker == AGENT for s in self.session.segments))
+        elif self.voice_agent is not None:
+            self.voice_agent.stop()
+            if not self.rehearse:
+                self.set_muted(AGENT, False)
 
     def pause_recording(self, paused: bool) -> None:
         """Card-payment pause: audio, transcript and AI all stop until resumed."""
@@ -132,6 +158,8 @@ class CallController:
         if self.session is None:
             return
         now = time.time()
+        if speaker == CALLER and text and self.voice_agent is not None and self.voice_agent.active:
+            self.voice_agent.barge_in()
         if speaker == CALLER and is_final and text:
             self._recent_caller.append((now, text))
         if speaker == AGENT and is_final and text and self._is_echo(text, now):

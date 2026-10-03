@@ -1,0 +1,50 @@
+{
+  "id": "fixmyfile",
+  "name": "Fixmyfile",
+  "tagline": "Paralegal and dispute services: CIFAS marker removal, credit file repair, CCJ and default disputes, motor claims and private disputes. Not a firm of solicitors.",
+  "website": "https://fixmyfile.co.uk",
+  "status_line": "Fixmyfile provides paralegal and dispute services. Not a firm of solicitors. Not regulated by the SRA.",
+  "rules": [
+    "Status wording: we 'assist' the client and are 'instructed to correspond on their behalf' – never 'solicitor', 'lawyer', 'legal advice', 'we act for' or 'our client'.",
+    "Win on evidence, procedure, burden, money and nerve – never on a false document, a false account or a false name. Take the client's account cold; never suggest what happened.",
+    "Never promise an outcome, a removal, a payout or a timescale. Describe the argument and its strength honestly. The money-back guarantee has written conditions – quote them, never paraphrase them wider.",
+    "Make the other side particularise. Vague allegations are strong until you demand specifics in writing.",
+    "The burden is theirs: a member loading a marker, an insurer alleging fraud, a council alleging a contravention.",
+    "Paper beats memory: confirm every call in writing the same day – 'as discussed, you confirmed X'.",
+    "Signed authority on file before any third party is contacted. No authority, no call.",
+    "14-day cancellation right on distance contracts: if the client wants work to start now, get the express request in writing.",
+    "Personal injury and complaints against FCA-regulated firms about financial products are regulated activity – flag it, never advise on it, refer out.",
+    "Never take card details on a recorded line – use the secure payment link in the client portal."
+  ],
+  "banned_phrases": [
+    "solicitor",
+    "lawyer",
+    "legal advice",
+    "we act for",
+    "our client",
+    "guaranteed removal",
+    "we guarantee",
+    "no win no fee",
+    "100%",
+    "definitely be removed"
+  ],
+  "scripts": [
+    {
+      "title": "Who we are (status)",
+      "when": "",
+      "text": "Just so it's clear what we are: Fixmyfile provides paralegal and dispute services. We're not a firm of solicitors and we're not regulated by the SRA. We assist you and correspond on your behalf, and if anything needs a solicitor we'll tell you straight away."
+    },
+    {
+      "title": "Fee, portal and cancellation",
+      "when": "terms",
+      "text": "The way it works: you'll get a secure link to our client portal where you upload your documents, pay for the service and track your case at every stage. Our fees and the money-back guarantee conditions are set out in writing there – please read them before you pay. You have a fourteen-day cancellation right; if you'd like us to start work straight away inside that period, you confirm that in the portal and we get going today."
+    },
+    {
+      "title": "Signed authority",
+      "when": "",
+      "text": "Before we can speak to anyone about your file – CIFAS, the bank, the insurer – we need your signed authority. That's one form in the portal; it takes about a minute and we can't start without it."
+    }
+  ],
+  "email_signature": "",
+  "version": 1
+}

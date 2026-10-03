@@ -43,6 +43,8 @@ class Hub:
     capture_fields: list[CaptureField] = field(default_factory=list)
     call_types: dict = field(default_factory=dict)      # {"handler": "instructions…", ...}
     status_line: str = ""                               # footer on every email draft
+    business_id: str = ""                               # the business profile this hub belongs to
+    scripts: list[dict] = field(default_factory=list)   # [{"title":..., "text":..., "when":...}]
     version: int = 1
 
     # ------------------------------------------------------------ serialisation
@@ -79,13 +81,28 @@ class Hub:
         return BM25(chunks)
 
     # ------------------------------------------------------------ prompt
-    def system_prompt(self, max_kb_chars: int = 400_000) -> str:
+    def all_scripts(self, business=None) -> list[dict]:
+        out = []
+        if self.greeting:
+            out.append({"title": "Opening", "text": self.greeting, "when": "opening"})
+        if self.consent_script:
+            out.append({"title": "Recording notice", "text": self.consent_script, "when": "consent"})
+        if business is not None:
+            out += [s.to_dict() if hasattr(s, "to_dict") else dict(s) for s in business.scripts]
+        out += [dict(s) for s in self.scripts if s.get("text")]
+        if self.closing:
+            out.append({"title": "Closing", "text": self.closing, "when": "closing"})
+        return out
+
+    def system_prompt(self, max_kb_chars: int = 400_000, business=None) -> str:
         """Stable text (cache-friendly: no timestamps or per-call data)."""
         lines = [
             f"You are the live call co-pilot for {self.company or self.name}.",
             "A human agent is on a live phone/WhatsApp call. You see the transcript and must "
             "give them words they can say out loud immediately.",
         ]
+        if business is not None:
+            lines += ["", business.prompt_block()]
         if self.persona:
             lines += ["", "## Agent persona", self.persona]
         if self.tone:

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import datetime as dt
 import html
+from pathlib import Path
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QFormLayout, QHBoxLayout, QLabel,
@@ -107,6 +108,8 @@ class WrapUpDialog(QDialog):
         bottom.addWidget(self.save_to_file)
         bottom.addStretch()
         bb = QDialogButtonBox()
+        self.btn_export = bb.addButton("💾 Save call to computer…", QDialogButtonBox.ActionRole)
+        self.btn_export.clicked.connect(self._export)
         self.btn_save = bb.addButton("Save wrap-up", QDialogButtonBox.AcceptRole)
         self.btn_save.setObjectName("primary")
         bb.addButton("Close without saving to file", QDialogButtonBox.RejectRole)
@@ -262,6 +265,18 @@ class WrapUpDialog(QDialog):
                 f.intake[k] = v
         if call_id not in f.call_ids:
             f.call_ids.append(call_id)
+
+    def _export(self):
+        from PySide6.QtWidgets import QFileDialog
+
+        from callpilot.core.export import default_export_dir, export_call
+
+        d = QFileDialog.getExistingDirectory(self, "Save call to…", str(default_export_dir()))
+        if d:
+            rec = dict(self.rec)
+            rec["wrapup"] = self.result_payload()
+            folder = export_call(rec, Path(d))
+            QMessageBox.information(self, "Saved", f"Transcript, summary, pins and email draft saved to:\n{folder}")
 
     def _save(self):
         self.saved = True
