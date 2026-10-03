@@ -65,6 +65,8 @@ class MainWindow(QMainWindow):
         self.call_started_at: float | None = None
         self._notice_flag = False
         self._rec_paused = False
+        self._wrapping_up = False
+        self._prep_session = None
         self._last_whispered = ""
         self.bridge = Bridge()
         self.bridge.event.connect(self._on_event)
@@ -406,6 +408,8 @@ class MainWindow(QMainWindow):
 
     # ================================================================ call control
     def _toggle_call(self):
+        if self._wrapping_up:
+            return  # the wrap-up screen owns the desk until it is saved or closed
         if self.controller and self.controller.running:
             self._end_call()
         elif self.controller is None:
@@ -416,6 +420,9 @@ class MainWindow(QMainWindow):
         if not hub:
             QMessageBox.warning(self, "Start call", "Create or select a call hub first.")
             return
+        if self._prep_session is not None:
+            self._prep_session.end(summarize=False)
+            self._prep_session = None
         self.transcript.clear_all()
         self.alerts.clear()
         self.pins_view.clear_all()
@@ -489,16 +496,21 @@ class MainWindow(QMainWindow):
         sess = ctl.session
         rec = sess.to_record()
         hub = ctl.hub
-        dlg = WrapUpDialog(self.s, rec, self.case_file, hub, self)
+        confirmed = self.intake.values(confirmed_only=True)  # snapshot before anything can reset the form
+        case_file = self.case_file
+        dlg = WrapUpDialog(self.s, rec, case_file, hub, self)
         saved_to_file = False
-        if dlg.exec() and dlg.saved:
-            rec["wrapup"] = dlg.result_payload()
-            if self.case_file is not None and dlg.save_to_file.isChecked():
-                confirmed = self.intake.values(confirmed_only=True)
-                dlg.apply_to_file(self.case_file, sess.call_id, confirmed)
-                self.files.save(self.case_file)
-                self.file_pane.show_file(self.case_file)
-                saved_to_file = True
+        self._wrapping_up = True
+        try:
+            if dlg.exec() and dlg.saved:
+                rec["wrapup"] = dlg.result_payload()
+                if case_file is not None and dlg.save_to_file.isChecked():
+                    dlg.apply_to_file(case_file, sess.call_id, confirmed)
+                    self.files.save(case_file)
+                    self.file_pane.show_file(case_file)
+                    saved_to_file = True
+        finally:
+            self._wrapping_up = False
         self._saved_sessions.add(id(sess))
         try:
             rec = self._encrypt_recording(rec)
@@ -532,6 +544,8 @@ class MainWindow(QMainWindow):
         if kind == "segment":
             self.transcript.upsert(payload)
         elif kind == "cards":
+            if self.controller is None and self._prep_session is None:
+                return  # a straggler from a call that has ended
             cards = payload if self.chk_auto.isChecked() else [c for c in payload if c.type == WATCH]
             self.cards.show_cards(cards)
             self.overlay.show_cards(cards)
@@ -703,8 +717,11 @@ class MainWindow(QMainWindow):
         except Exception as e:  # noqa: BLE001
             QMessageBox.warning(self, "Ask", str(e))
             return
-        self._prep_session = CallSession(self.s, hub, prov, self.bridge.event.emit, case_file=self.case_file,
-                                         call_type=self.call_type.currentData() or "")
+        if self._prep_session is None or self._prep_session.hub.id != hub.id:
+            if self._prep_session is not None:
+                self._prep_session.end(summarize=False)
+            self._prep_session = CallSession(self.s, hub, prov, self.bridge.event.emit, case_file=self.case_file,
+                                             call_type=self.call_type.currentData() or "")
         self._prep_session.ask(text)
 
     def _maybe_whisper(self, cards: list[Card]):

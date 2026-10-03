@@ -40,9 +40,9 @@ class CallRecorder:
     # ------------------------------------------------------------- input
     def feed(self, speaker: str, frame: bytes) -> None:
         """Frames arrive on separate clocks; interleave once both sides have one."""
-        if self.closed:
-            return
         with self._lock:
+            if self.closed:
+                return
             key = "agent" if speaker == "agent" else "caller"
             self._pending[key].append(frame)
             while self._pending["caller"] and self._pending["agent"]:

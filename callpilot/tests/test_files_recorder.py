@@ -72,8 +72,8 @@ def test_email_draft_and_qa(tmp_path):
     p = d.save_eml(tmp_path)
     assert p.exists() and p.suffix == ".eml"
     assert not hasattr(d, "send")
-    qa = qa_checklist({"email": {"body": "x"}, "required_intake_keys": ["a", "b"], "compliance_gaps": []},
-                      {"Call is recorded": True, "Hire terms read": False}, {"a": "1", "b": ""})
+    qa = qa_checklist({"email": {"body": "x"}, "compliance_gaps": []},
+                      {"Call is recorded": True, "Hire terms read": False}, {"a": "1", "b": ""}, required_keys=["a", "b"])
     assert qa["items"]["Recording notice given"] is True
     assert qa["items"]["Intake complete (1/2)"] is False
     assert 0 < qa["score"] < 100

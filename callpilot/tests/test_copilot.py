@@ -314,3 +314,55 @@ def test_notice_and_manual_pin_and_confirmed_field():
     assert pin.kind == "pinned" and sess.segments[-1].pinned
     sess.set_field("caller_name", "J Smith", confirmed=True)
     assert "caller_name" in sess.confirmed_fields
+
+
+def test_failed_speculative_draft_is_not_adopted():
+    s = Settings()
+    s.translation.enabled = False
+    events, emit = _collect()
+
+    class Flaky(FakeProvider):
+        def __init__(self):
+            super().__init__(REPLY)
+            self.n = 0
+
+        def stream(self, system, messages, max_tokens, cancel=None, fast=True):
+            sys_text = "\n".join(system) if isinstance(system, list) else system
+            if "How to answer" in sys_text:
+                self.n += 1
+                if self.n == 1:
+                    yield "SAY: part"
+                    raise RuntimeError("boom")
+            yield from super().stream(system, messages, max_tokens, cancel, fast)
+
+    prov = Flaky()
+    sess = CallSession(s, _hub(), prov, emit)
+    sess.on_transcript(CALLER, "someone went into the back of my car at the lights today", False, "en", False)
+    assert _wait(lambda: prov.n == 1 and sess._gen is not None and sess._gen.failed, 3)
+    sess.on_transcript(CALLER, "someone went into the back of my car at the lights today", True, "en", True)
+    assert _wait(lambda: any(c.done and "like-for-like" in c.more for c in _cards(events, SAY)))
+    assert prov.n == 2  # a fresh real generation ran
+
+
+def test_dismissed_card_does_not_pop_back_while_streaming():
+    s = Settings()
+    s.ai.speculative = False
+    s.translation.enabled = False
+    events, emit = _collect()
+    sess = CallSession(s, _hub(), FakeProvider(REPLY, delay=0.03), emit)
+    sess.on_transcript(CALLER, "what happens if my car is written off completely", True, "en", True)
+    assert _wait(lambda: any(c.text for c in _cards(events, SAY)))
+    sess.mark_card(SAY, "dismissed")
+    time.sleep(0.6)
+    assert sess.deck.slots[SAY] is None
+    assert all(c.action != "dismissed" for c in sess.deck.visible())
+
+
+def test_pin_false_positives_are_quiet():
+    quiet = ["I hit the brakes as soon as I saw him", "I didn't see the letter until Monday",
+             "I'll be there in an hour or two", "she's at the day care centre", "I accept that's annoying",
+             "the car was speeding up the hill", "I may call back in two minutes"]
+    for t in quiet:
+        kinds = {e.kind for e in extract(t)}
+        assert not kinds & {"admission", "deadline"}, (t, kinds)
+    assert any(e.kind == "admission" for e in extract("I hit the back of him, it was my fault"))

@@ -32,7 +32,8 @@ def extract_json(text: str) -> dict:
 
 def run_wrapup(provider, *, business: str, hub_rules: list[str], status_line: str, call_type: str,
                transcript_rows: list[dict], pins: list[dict], intake: dict, file_summary: str,
-               disclosures: dict, banned: list[str], agent_name: str, call_started: float) -> dict:
+               disclosures: dict, banned: list[str], agent_name: str, call_started: float,
+               required_keys: list[str] | None = None) -> dict:
     """Returns the wrap-up JSON (see WRAPUP_SYSTEM) with banned phrases filtered out."""
     rows = []
     for r in transcript_rows:
@@ -66,11 +67,11 @@ def run_wrapup(provider, *, business: str, hub_rules: list[str], status_line: st
     data["email"] = email
     if hits:
         data.setdefault("compliance_gaps", []).append("Banned phrases removed from AI output: " + ", ".join(sorted(set(hits))))
-    data["qa"] = qa_checklist(data, disclosures, intake)
+    data["qa"] = qa_checklist(data, disclosures, intake, required_keys)
     return data
 
 
-def qa_checklist(data: dict, disclosures: dict, intake: dict) -> dict:
+def qa_checklist(data: dict, disclosures: dict, intake: dict, required_keys: list[str] | None = None) -> dict:
     """Post-call QA: scored against the checklist, not vibes."""
     items = {}
     notice = next((v for k, v in disclosures.items() if "record" in k.lower()), None)
@@ -79,8 +80,13 @@ def qa_checklist(data: dict, disclosures: dict, intake: dict) -> dict:
     for k, v in disclosures.items():
         if "record" not in k.lower():
             items[k] = bool(v)
-    required = data.get("required_intake_keys") or []
-    if required:
+    required = list(required_keys or [])
+    if not required:
+        # fall back to the model's list of still-empty required keys
+        still_empty = data.get("required_intake_keys") or []
+        if still_empty:
+            items[f"Intake complete ({len(still_empty)} missing)"] = False
+    else:
         done = sum(1 for k in required if str(intake.get(k, "")).strip())
         items[f"Intake complete ({done}/{len(required)})"] = done == len(required)
     items["Follow-up email drafted"] = bool((data.get("email") or {}).get("body"))

@@ -72,7 +72,16 @@ class _Generation:
         self.watch: Card | None = None
         self.thread: threading.Thread | None = None
         self.published = False
+        self.failed = False
         self.first_token_ms = 0.0
+
+    def usable(self) -> bool:
+        """A draft can be adopted only while it is streaming or finished cleanly."""
+        if self.failed or self.cancel.is_set():
+            return False
+        if self.thread is not None and self.thread.is_alive():
+            return True
+        return self.say is not None and self.say.done
 
 
 class CallSession:
@@ -287,7 +296,7 @@ class CallSession:
             return
         with self._lock:
             gen = self._gen
-            if gen and gen.speculative and not gen.cancel.is_set() and similar(gen.turn_text, text) >= 0.85:
+            if gen and gen.speculative and gen.usable() and similar(gen.turn_text, text) >= 0.85:
                 gen.speculative = False  # adopt the in-flight draft – it already answers this
                 gen.segment_id = seg_id
                 log.debug("speculative draft adopted")
@@ -336,7 +345,7 @@ class CallSession:
                     live = self._gen.say
                     if not self._gen.speculative and not self._gen.cancel.is_set() and live is not None and not live.done:
                         return  # a draft must never interrupt a real answer that is being written
-                    if similar(self._gen.turn_text, turn_text) >= 0.9:
+                    if self._gen.usable() and similar(self._gen.turn_text, turn_text) >= 0.9:
                         return
                 self._gen.cancel.set()
             gen = _Generation(turn_text, speculative, segment_id)
@@ -351,10 +360,11 @@ class CallSession:
             say.sources = [f"Q&A: {match[0][:60]}"]
             say.text, say.more = _split_first_sentence(match[1])
         gen.say = say
+        if self.provider is None:
+            say.done = True
         if not speculative and (match or self.provider is None):
             self._show_card(say)
         if self.provider is None:
-            say.done = True
             return
         gen.thread = threading.Thread(target=self._run_generation, args=(gen,), daemon=True,
                                       name="callpilot-cards")
@@ -447,17 +457,23 @@ class CallSession:
                     last_emit = now
                     self._apply_sections(gen, buf, instant, final=False)
         except Cancelled:
+            say.done = True  # never leave a half card marked "writing…"
+            if self.deck.slots[SAY] is say:
+                self.deck.update(say)
             return
         except Exception as e:  # noqa: BLE001 - surface any provider/network error to the UI
             log.exception("cards failed")
-            if gen.speculative or gen.cancel.is_set():
-                return
-            self.emit("error", f"AI cards failed: {e}")
+            gen.failed = True
+            gen.cancel.set()
             say.done = True
+            if gen.speculative:
+                return  # a failed background draft must not blank what is on screen, nor be adopted
+            self.emit("error", f"AI cards failed: {e}")
             if say.text:
                 self.deck.update(say)
             return
         if gen.cancel.is_set():
+            say.done = True
             return
         self._apply_sections(gen, buf, instant, final=True)
         if gen.speculative:
@@ -465,10 +481,13 @@ class CallSession:
             while gen.speculative and time.time() < deadline and not gen.cancel.is_set():
                 time.sleep(0.05)
             if gen.speculative or gen.cancel.is_set():
+                gen.cancel.set()  # unadopted: never adoptable later, never blocks the next draft
                 return
         self._publish(gen)
 
     def _apply_sections(self, gen: _Generation, buf: str, instant, final: bool) -> None:
+        if self._ended:
+            return
         sec = parse_sections(buf)
         say = gen.say
         assert say is not None
@@ -489,7 +508,7 @@ class CallSession:
         if say.text and not gen.speculative:
             if self.deck.slots[SAY] is say:
                 self.deck.update(say)
-            else:
+            elif not say.action:  # a card the operator used/dismissed must not pop back
                 say.segment_id = gen.segment_id
                 self._show_card(say)
         asks = split_questions(sec.get("ASK", ""))
@@ -498,7 +517,7 @@ class CallSession:
                 gen.ask = Card(ASK, " | ".join(asks[:2]), sources or ["intake"], segment_id=gen.segment_id,
                                origin="llm")
                 self._show_card(gen.ask)
-            elif gen.ask.text != " | ".join(asks[:2]):
+            elif gen.ask.text != " | ".join(asks[:2]) and not gen.ask.action:
                 gen.ask.text = " | ".join(asks[:2])
                 self.deck.update(gen.ask)
         elif asks and gen.speculative and gen.ask is None and final:
@@ -509,7 +528,7 @@ class CallSession:
                 gen.watch = Card(WATCH, watch, sources or ["model"], segment_id=gen.segment_id, origin="llm")
                 if not gen.speculative:
                     self._show_card(gen.watch)
-            elif gen.watch.text != watch:
+            elif gen.watch.text != watch and not gen.watch.action:
                 gen.watch.text = watch
                 self.deck.update(gen.watch)
 
@@ -607,7 +626,8 @@ class CallSession:
                     transcript_rows=[s.to_dict() for s in self.segments], pins=[p.to_dict() for p in self.pins],
                     intake=self.fields, file_summary=self._system_blocks[1],
                     disclosures=dict(self.monitor.state.disclosures_done), banned=self.banned,
-                    agent_name=self.settings.agent_name, call_started=self.started_at)
+                    agent_name=self.settings.agent_name, call_started=self.started_at,
+                    required_keys=[f.key for f in self.hub.capture_fields if f.required])
             except Exception as e:  # noqa: BLE001
                 log.exception("wrap-up failed")
                 self.summary = {"summary": "", "error": str(e)}

@@ -62,7 +62,7 @@ class WrapUpDialog(QDialog):
         left.addTab(self.dead_list, f"Deadlines ({self.dead_list.count()})")
         self.task_list = self._checklist(
             [(f"{t.get('title', '')}  ({t.get('owner', 'us')}{', due ' + t['due_at'] if t.get('due_at') else ''})", t)
-             for t in (self.summary.get("tasks", []) or []) + record.get("tasks", [])], checked=True)
+             for t in self._all_tasks()], checked=True)
         left.addTab(self.task_list, f"Tasks ({self.task_list.count()})")
         gaps = QTextBrowser()
         gaps.setHtml(self._qa_html())
@@ -125,12 +125,29 @@ class WrapUpDialog(QDialog):
                 out.append(p)
         return out
 
+    def _all_tasks(self) -> list[dict]:
+        out, seen = [], set()
+        for t in (self.summary.get("tasks", []) or []) + (self.rec.get("tasks", []) or []):
+            key = str(t.get("title", "")).strip().lower()
+            if key and key not in seen:
+                seen.add(key)
+                out.append(t)
+        return out
+
     def _all_deadlines(self) -> list[dict]:
-        out = list(self.summary.get("deadlines", []) or [])
-        for p in self.rec.get("pins", []) or []:
-            if p.get("kind") == "deadline" and p.get("due_at"):
-                out.append({"kind": "reply", "due_at": p["due_at"], "text": p.get("quote", "")[:100],
-                            "segment_id": p.get("segment_id", "")})
+        out, seen = [], set()
+        existing = {(d.due_at[:10], d.text[:40].lower()) for d in (self.file.deadlines if self.file else [])}
+        for d in list(self.summary.get("deadlines", []) or []) + [
+                {"kind": "reply", "due_at": p["due_at"], "text": p.get("quote", "")[:100], "segment_id": p.get("segment_id", "")}
+                for p in (self.rec.get("pins", []) or []) if p.get("kind") == "deadline" and p.get("due_at")]:
+            key = (str(d.get("due_at", ""))[:10], str(d.get("text", ""))[:40].lower())
+            if key in seen or key in existing or not d.get("due_at"):
+                continue
+            # same due date already listed with different wording -> keep the first only
+            if any(k[0] == key[0] for k in seen):
+                continue
+            seen.add(key)
+            out.append(d)
         return out
 
     def _checklist(self, items, checked=True) -> QListWidget:
@@ -214,21 +231,32 @@ class WrapUpDialog(QDialog):
     def apply_to_file(self, f: CaseFile, call_id: str, confirmed_intake: dict) -> None:
         payload = self.result_payload()
         today = dt.date.today().isoformat()
+        chron_texts = []
         for c in payload["chronology"]:
-            f.chronology.append(ChronologyEntry(c.get("event_date") or today, c.get("text", ""), "call", call_id))
+            if c.get("text", "").strip():
+                f.chronology.append(ChronologyEntry(c.get("event_date") or today, c.get("text", ""), "call", call_id))
+                chron_texts.append(c["text"].lower())
         for p in payload["pins"]:
-            if p.get("kind") in ("commitment", "admission", "allegation", "deadline", "figure"):
-                f.chronology.append(ChronologyEntry(today, f"[{p['kind']}] {p.get('value', '')} – “{p.get('quote', '')[:160]}”",
+            val = str(p.get("value", "")).strip()
+            if p.get("kind") in ("commitment", "admission", "allegation", "deadline", "figure") and val \
+                    and not any(val.lower() in t for t in chron_texts):
+                f.chronology.append(ChronologyEntry(today, f"[{p['kind']}] {val} – “{p.get('quote', '')[:160]}”",
                                                     "call", call_id))
         for d in payload["deadlines"]:
             if d.get("due_at"):
                 f.deadlines.append(Deadline(d.get("kind", "other"), d["due_at"], d.get("text", ""), call_id))
+        seen_tasks = {t.get("title", "").strip().lower() for t in f.tasks}
         for t in payload["tasks"]:
-            f.tasks.append({"title": t.get("title", ""), "owner": t.get("owner", "us"), "due_at": t.get("due_at", ""),
-                            "source_call_id": call_id, "done": False})
+            title = str(t.get("title", "")).strip()
+            if title and title.lower() not in seen_tasks:
+                seen_tasks.add(title.lower())
+                f.tasks.append({"title": title, "owner": t.get("owner", "us"), "due_at": t.get("due_at", ""),
+                                "source_call_id": call_id, "done": False})
         if payload["file_note"].strip():
             f.chronology.append(ChronologyEntry(today, "Call note: " + payload["file_note"].strip()[:1500], "call", call_id))
-            f.summary = (self.summary.get("summary") or f.summary)[:1200]
+            new = (self.summary.get("summary") or "").strip()
+            if new:
+                f.summary = (f"{today}: {new}\n" + f.summary)[:2000]  # running summary, newest first
         for k, v in confirmed_intake.items():
             if v:
                 f.intake[k] = v

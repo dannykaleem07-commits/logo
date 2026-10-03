@@ -31,7 +31,7 @@ RX = {
     "date_long_us": re.compile(rf"\b({_MONTH_RE})\s+(\d{{1,2}})(?:st|nd|rd|th)?(?:,?\s+(\d{{4}}))?\b", re.I),
     "weekday": re.compile(rf"\b(?:(this|next)\s+)?({_DAY_RE})\b", re.I),
     "relative": re.compile(r"\b(today|tomorrow|end of (?:the )?(?:week|month)|next week)\b", re.I),
-    "within": re.compile(r"\b(?:within|in|inside)\s+(?:the\s+next\s+)?(\d{1,3}|[a-z\-]+(?:\s[a-z]+)?)\s+(working\s+days?|business\s+days?|days?|weeks?|months?|hours?)\b", re.I),
+    "within": re.compile(r"\b(?:within|in|inside)\s+(?:the\s+next\s+)?(\d{1,3}|[a-z\-]+(?:\s[a-z]+)?)\s+(working\s+days?|business\s+days?|days?|weeks?|months?)\b(?!\s+(?:care|or\s+two|or\s+so|or\s+three|ago|late))", re.I),
     "got_days": re.compile(r"\b(?:you(?:'ve| have)|we(?:'ve| have)|they(?:'ve| have))\s+(?:got\s+)?(\d{1,3}|[a-z\-]+)\s+(working\s+days?|days?|weeks?)\b", re.I),
     "by": re.compile(rf"\b(?:by|before|no later than)\s+((?:close of play|cop|5\s?pm|midday|noon)\s+)?((?:this|next)\s+)?({_DAY_RE}|tomorrow|end of (?:the )?(?:week|month)|\d{{1,2}}(?:st|nd|rd|th)?\s+{_MONTH_RE}(?:\s+\d{{4}})?|{_MONTH_RE}\s+\d{{1,2}}(?:st|nd|rd|th)?)\b", re.I),
     "money": re.compile(r"(?:£\s?\d[\d,]*(?:\.\d{1,2})?(?:\s?(?:k|thousand|grand))?|\b\d[\d,]*(?:\.\d{1,2})?\s?(?:pounds?|quid|grand)\b|\b\d[\d,]*(?:\.\d{1,2})?\s?(?:a|per)\s+day\b)", re.I),
@@ -45,9 +45,11 @@ COMMITMENT = re.compile(
     r"(?:is|are) booked (?:in |for )?|has been (?:booked|authorised|approved|agreed)|we(?:'ve| have) (?:authorised|approved|agreed)|"
     r"you(?:'ll| will) (?:have|get|receive)|(?:engineer|inspection|collection|delivery|payment|cheque|bacs)\s+(?:is|will be|has been)\s+\w+)\b", re.I)
 ADMISSION = re.compile(
-    r"\b(?:(?:it was|that was|i was|we were) (?:my|our|his|her|their) fault|i accept|we accept (?:liability|fault|responsibility)|"
-    r"liability (?:is|has been) (?:accepted|admitted|conceded)|(?:we|i) (?:admit|concede)|i hit|i went into|i didn't see|wasn't looking|"
-    r"i was on (?:my|the) phone|i(?:'d| had) been drinking|ran the red|i was speeding)\b", re.I)
+    r"\b(?:(?:it was|that was|it's|it is) (?:my|our) fault|(?:i|we) accept (?:liability|fault|responsibility|(?:it|that) was (?:my|our) fault)|"
+    r"liability (?:is|has been) (?:accepted|admitted|conceded)|(?:we|i) (?:admit|concede) (?:liability|fault|it was)|"
+    r"i hit (?:him|her|them|their|the (?:car|vehicle|van|bike|cyclist|back of))|i went into (?:him|her|them|the back)|"
+    r"i didn't see (?:him|her|them|it coming|the (?:car|van|bike|cyclist|light|sign|motorbike))|i wasn't looking|"
+    r"i was on (?:my|the) phone|i(?:'d| had) been drinking|ran (?:the|a) red light|i was speeding\b(?!\s+up))", re.I)
 ALLEGATION = re.compile(
     r"\b(?:fraud(?:ulent)?|staged|induced|not consistent|inconsistent with|we(?:'re| are) investigating|under investigation|"
     r"exaggerat\w+|fabricat\w+|low[\s-]?velocity|lvi|pre[\s-]?existing damage|phantom passenger|misrepresent\w+|avoid(?:ed|ance) (?:the|your) policy|"
@@ -157,8 +159,6 @@ def extract(text: str, when: float | None = None) -> list[Entity]:
             due = base + dt.timedelta(weeks=n)
         elif unit.startswith("month"):
             due = base + dt.timedelta(days=30 * n)
-        elif unit.startswith("hour"):
-            due = base + dt.timedelta(days=max(1, n // 24))
         else:
             due = base + dt.timedelta(days=n)
         add("deadline", m.group(0), f"{n} {unit}", due.isoformat())
