@@ -107,7 +107,7 @@ class CallController:
         self.session.on_transcript(speaker, text, is_final, language, end_of_turn, segment_id)
 
     def _is_echo(self, text: str, now: float) -> bool:
-        return any(now - t < 6 and similar(text, c) > 0.75 for t, c in self._recent_caller)
+        return any(now - t < 6 and similar(text, c) > 0.75 for t, c in list(self._recent_caller))
 
     def _on_stt_error(self, msg: str) -> None:
         self.emit("error", msg)

@@ -56,6 +56,8 @@ class DeepgramEngine(STTEngine):
         self._thread: threading.Thread | None = None
         self._seg_id = uuid.uuid4().hex[:12]
         self._turn_has_text = False
+        self._closing = False
+        self._ws = None
 
     def _url(self) -> str:
         params = {
@@ -74,15 +76,26 @@ class DeepgramEngine(STTEngine):
         self._thread.start()
 
     def stop(self) -> None:
-        self._stop.set()
+        self._closing = True
         try:
-            self._q.put_nowait(None)
+            self._q.put(None, timeout=0.5)  # sender sends CloseStream -> Deepgram flushes final words
         except queue.Full:
             pass
         if self._thread:
-            self._thread.join(timeout=3)
+            self._thread.join(timeout=2.5)
+        self._stop.set()
+        ws = self._ws
+        if ws is not None:
+            try:
+                ws.close()
+            except Exception:  # noqa: BLE001
+                pass
+        if self._thread:
+            self._thread.join(timeout=1.5)
 
     def feed(self, frame: bytes) -> None:
+        if self._closing:
+            return
         try:
             self._q.put_nowait(frame)
         except queue.Full:
@@ -97,22 +110,28 @@ class DeepgramEngine(STTEngine):
                 with connect(self._url(), additional_headers={
                         "Authorization": f"Token {secrets.get('deepgram_api_key')}"},
                         open_timeout=10, max_size=2**22) as ws:
+                    self._ws = ws
                     backoff = 1.0
                     sender = threading.Thread(target=self._sender, args=(ws,), daemon=True)
                     sender.start()
                     for msg in ws:
                         if isinstance(msg, str):
-                            self._handle(json.loads(msg))
+                            try:
+                                self._handle(json.loads(msg))
+                            except Exception:  # noqa: BLE001 - a callback bug must not drop the socket
+                                log.exception("transcript callback failed")
                     sender.join(timeout=1)
+                if self._closing:
+                    break
             except Exception as e:  # noqa: BLE001
-                if self._stop.is_set():
+                if self._stop.is_set() or self._closing:
                     break
                 self.on_error(f"Speech connection ({self.speaker}) dropped: {e}. Reconnecting…")
                 time.sleep(backoff)
                 backoff = min(backoff * 2, 15)
 
     def _sender(self, ws) -> None:
-        while not self._stop.is_set():
+        while True:
             try:
                 item = self._q.get(timeout=1)
             except queue.Empty:
@@ -219,7 +238,10 @@ class _ChunkedEngine(STTEngine):
             except Exception as e:  # noqa: BLE001
                 self.on_error(f"Transcription failed: {e}")
                 text, lang = "", ""
-            self.on_result(self.speaker, text.strip(), True, lang, True, seg_id)
+            try:
+                self.on_result(self.speaker, text.strip(), True, lang, True, seg_id)
+            except Exception:  # noqa: BLE001 - keep transcribing even if a consumer misbehaves
+                log.exception("transcript callback failed")
 
     def _transcribe(self, audio: np.ndarray) -> tuple[str, str]:
         raise NotImplementedError

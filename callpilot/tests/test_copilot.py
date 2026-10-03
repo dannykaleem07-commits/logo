@@ -164,3 +164,40 @@ def test_compliance_and_intent():
     assert classify_intent("How long will it take?") == "question"
     assert classify_intent("I'm hurt and scared") == "distress"
     assert extract_json('noise {"a": 1} tail') == {"a": 1}
+
+
+class _FailingProvider(FakeProvider):
+    def stream(self, system, messages, max_tokens, cancel=None, fast=True):
+        if "co-pilot" in system:
+            raise RuntimeError("rate limited")
+        yield from super().stream(system, messages, max_tokens, cancel, fast)
+
+
+def test_failed_speculative_draft_does_not_blank_screen():
+    s = Settings()
+    s.translation.enabled = False
+    events, emit = _collect()
+    sess = CallSession(s, _hub(), _FailingProvider(REPLY), emit)
+    sess.on_transcript(CALLER, "someone went into the back of my car at the lights today", False, "en", False)
+    time.sleep(0.6)
+    assert not any(k == "error" for k, _ in events)
+    assert not any(k == "suggestion" for k, _ in events)
+
+
+def test_late_speculation_never_cancels_real_answer():
+    s = Settings()
+    s.ai.speculative = False
+    s.translation.enabled = False
+    events, emit = _collect()
+    prov = FakeProvider(REPLY, delay=0.02)
+    sess = CallSession(s, _hub(), prov, emit)
+    sess.on_transcript(CALLER, "who pays for the repairs to my car", True, "en", True)
+    time.sleep(0.05)
+    # a stale timer firing after the real turn started
+    sess._start_generation("who pays for the", True, expected_turn=0)
+    sess._start_generation("who pays for the repairs to", True)
+    assert _wait(lambda: any(k == "suggestion" and p.done for k, p in events))
+    done = [p for k, p in events if k == "suggestion" and p.done]
+    assert done[-1].continue_with and len([c for c in prov.calls if "co-pilot" in c[0]]) == 1
+    sess.end(summarize=False)
+    assert len(sess.suggestions) == 1

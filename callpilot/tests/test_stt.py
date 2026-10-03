@@ -55,3 +55,31 @@ def test_chunked_engine_segments_on_silence():
     finals = [o for o in out if o[2] and o[1]]
     assert out[0][1] == "…" and not out[0][2]
     assert len(finals) == 1 and finals[0][4] and finals[0][5] == out[0][5]
+
+
+def test_deepgram_stop_sends_close_stream():
+    import json
+
+    class FakeWS:
+        def __init__(self):
+            self.sent = []
+            self.closed = False
+
+        def send(self, data):
+            self.sent.append(data)
+
+        def close(self):
+            self.closed = True
+
+    eng = DeepgramEngine("caller", SpeechSettings(), lambda *a: None, lambda e: None)
+    ws = FakeWS()
+    eng._ws = ws
+    import threading
+
+    t = threading.Thread(target=eng._sender, args=(ws,), daemon=True)
+    t.start()
+    eng.feed(b"\x00\x00" * 10)
+    eng.stop()
+    t.join(timeout=2)
+    assert not t.is_alive()
+    assert json.loads(ws.sent[-1]) == {"type": "CloseStream"}

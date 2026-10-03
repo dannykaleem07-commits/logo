@@ -187,10 +187,12 @@ class ProcessLoopbackCapture:
         self.error: str | None = None
         self._started = threading.Event()
 
-    def start(self, timeout: float = 5.0) -> None:
+    def start(self, timeout: float = 8.0) -> None:
         self._thread = threading.Thread(target=self._run, daemon=True, name=f"proc-loopback-{self.pid}")
         self._thread.start()
-        self._started.wait(timeout)
+        if not self._started.wait(timeout):
+            self.stop()
+            raise OSError(f"audio capture for pid {self.pid} did not start within {timeout:.0f}s")
         if self.error:
             raise OSError(self.error)
 
@@ -219,6 +221,7 @@ class ProcessLoopbackCapture:
         _check(fn(VIRTUAL_AUDIO_DEVICE_PROCESS_LOOPBACK, byref(IID_IAudioClient), byref(pv),
                   handler.ptr, byref(op)), "ActivateAudioInterfaceAsync")
         if not handler.done.wait(5.0):
+            _release(op)
             raise OSError("audio activation timed out")
         _release(op)
         _check(handler.hr, "process loopback activation")

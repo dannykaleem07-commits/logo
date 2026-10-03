@@ -2,14 +2,14 @@
 # Produces dist/CallPilot.exe (single file, no console window).
 from pathlib import Path
 
-from PyInstaller.utils.hooks import collect_submodules
+from PyInstaller.utils.hooks import collect_submodules, copy_metadata
 
 ROOT = Path(SPECPATH).parent
 
 hidden = (
     collect_submodules("pynput")
     + collect_submodules("keyring.backends")
-    + ["websockets.sync.client", "pyaudiowpatch", "pycaw.pycaw", "comtypes.stream", "docx", "pypdf"]
+    + ["websockets.sync.client", "win32ctypes.core", "win32ctypes.pywin32", "pyaudiowpatch", "pycaw.pycaw", "comtypes.stream", "docx", "pypdf"]
 )
 
 a = Analysis(
@@ -18,7 +18,7 @@ a = Analysis(
     datas=[
         (str(ROOT / "callpilot" / "hubs" / "builtin"), "callpilot/hubs/builtin"),
         (str(ROOT / "assets" / "icon.png"), "assets"),
-    ],
+    ] + copy_metadata("keyring"),  # keyring discovers WinVaultKeyring through entry-point metadata
     hiddenimports=hidden,
     excludes=["tkinter", "matplotlib", "IPython", "pytest", "PySide6.QtWebEngineCore",
               "PySide6.QtWebEngineWidgets", "PySide6.Qt3DCore", "PySide6.QtQuick", "PySide6.QtQml",

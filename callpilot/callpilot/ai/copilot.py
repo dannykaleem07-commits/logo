@@ -93,6 +93,7 @@ class _Generation:
         self.started = time.perf_counter()
         self.suggestion: Suggestion | None = None
         self.thread: threading.Thread | None = None
+        self.published = False
 
 
 class CallSession:
@@ -121,6 +122,7 @@ class CallSession:
         self._spec_timer: threading.Timer | None = None
         self._finals_since_extract = 0
         self._turn_counter = 0
+        self._ended = False
         self.suggestions: list[Suggestion] = []
 
     # ================================================================= input
@@ -184,11 +186,23 @@ class CallSession:
                 gen.speculative = False  # adopt the in-flight draft – it already answers this
                 log.debug("speculative draft adopted")
                 if gen.suggestion is not None:
-                    self.emit("suggestion", gen.suggestion)
-                    if gen.thread is not None and not gen.thread.is_alive() and gen.suggestion.done:
-                        self.suggestions.append(gen.suggestion)
+                    if gen.suggestion.done:
+                        self._publish(gen)
+                    else:
+                        self.emit("suggestion", gen.suggestion)
                 return
         self._start_generation(text, speculative=False)
+
+    def _publish(self, gen: "_Generation") -> None:
+        """Emit the finished suggestion exactly once (caller may or may not hold the lock)."""
+        with self._lock:
+            if gen.published or gen.suggestion is None:
+                return
+            gen.published = True
+            self.suggestions.append(gen.suggestion)
+        sug = gen.suggestion
+        self.emit("suggestion", sug)
+        self.emit("latency", {"first_token_ms": round(sug.first_token_ms), "total_ms": round(sug.total_ms)})
 
     def _maybe_speculate(self, partial: str) -> None:
         if not self.settings.ai.speculative or self.provider is None:
@@ -197,15 +211,23 @@ class CallSession:
             return
         if self._spec_timer:
             self._spec_timer.cancel()
-        self._spec_timer = threading.Timer(0.30, self._start_generation, args=(partial, True))
+        self._spec_timer = threading.Timer(0.30, self._start_generation, args=(partial, True, self._turn_counter))
         self._spec_timer.daemon = True
         self._spec_timer.start()
 
-    def _start_generation(self, turn_text: str, speculative: bool) -> None:
+    def _start_generation(self, turn_text: str, speculative: bool, expected_turn: int | None = None) -> None:
         with self._lock:
+            if self._ended:
+                return
+            if speculative and expected_turn is not None and expected_turn != self._turn_counter:
+                return  # a late timer from a turn that has already moved on
             if self._gen:
-                if speculative and similar(self._gen.turn_text, turn_text) >= 0.9:
-                    return
+                if speculative:
+                    # A draft must never interrupt a real answer that is already being written.
+                    if not self._gen.speculative and not self._gen.cancel.is_set() and not self._gen.suggestion.done:
+                        return
+                    if similar(self._gen.turn_text, turn_text) >= 0.9:
+                        return
                 self._gen.cancel.set()
             gen = _Generation(turn_text, speculative)
             self._gen = gen
@@ -310,6 +332,8 @@ class CallSession:
             return
         except Exception as e:  # noqa: BLE001 - surface any provider/network error to the UI
             log.exception("suggestion failed")
+            if gen.speculative or gen.cancel.is_set():
+                return  # a failed background draft must not blank what is on screen
             self.emit("error", f"AI suggestion failed: {e}")
             sug.done = True
             self.emit("suggestion", sug)
@@ -328,10 +352,7 @@ class CallSession:
                 time.sleep(0.05)
             if gen.speculative or gen.cancel.is_set():
                 return
-        with self._lock:
-            self.suggestions.append(sug)
-        self.emit("suggestion", sug)
-        self.emit("latency", {"first_token_ms": round(sug.first_token_ms), "total_ms": round(sug.total_ms)})
+        self._publish(gen)
 
     def _apply_sections(self, sug: Suggestion, buf: str, instant_say: str, instant_more: str) -> None:
         sec = parse_sections(buf)
@@ -406,6 +427,8 @@ class CallSession:
     # ================================================================= end of call
     def end(self, summarize: bool = True) -> dict:
         self.ended_at = time.time()
+        with self._lock:
+            self._ended = True
         if self._spec_timer:
             self._spec_timer.cancel()
         if self._gen:

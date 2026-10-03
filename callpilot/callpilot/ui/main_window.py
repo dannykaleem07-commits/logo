@@ -52,6 +52,7 @@ class MainWindow(QMainWindow):
         self.hubs = HubStore()
         self.store = SessionStore(settings.privacy)
         self.controller: CallController | None = None
+        self._saved_sessions: set[int] = set()
         self.call_started_at: float | None = None
         self.bridge = Bridge()
         self.bridge.event.connect(self._on_event)
@@ -368,6 +369,7 @@ class MainWindow(QMainWindow):
 
     def _finish_call(self, summary: dict):
         ctl, self.controller = self.controller, None
+        self._saved_sessions.add(id(ctl.session)) if ctl and ctl.session else None
         self.call_started_at = None
         self.btn_call.setEnabled(True)
         self.btn_call.setObjectName("start")
@@ -418,6 +420,8 @@ class MainWindow(QMainWindow):
             self.alerts.insertItem(0, f"{time.strftime('%H:%M:%S')}  {payload}")
         elif kind == "call_started":
             self.call_started_at = time.time()
+            if self.controller:
+                self.controller.set_muted("agent", self.btn_mute.isChecked())
             self.btn_call.setEnabled(True)
             self.btn_call.setObjectName("danger")
             self.btn_call.setText("■  End call")
@@ -593,14 +597,21 @@ class MainWindow(QMainWindow):
             self.overlay.restoreGeometry(QByteArray.fromBase64(og.encode()))
 
     def closeEvent(self, e):
-        if self.controller and self.controller.running:
-            if QMessageBox.question(self, "Quit", "A call is in progress. End it and quit?") != QMessageBox.Yes:
-                e.ignore()
-                return
-            ctl = self.controller
-            ctl.stop(summarize=False)
-            if ctl.session and ctl.session.segments:
-                self.store.save(ctl.session.to_record())
+        ctl = self.controller
+        if ctl is not None:
+            if ctl.running:
+                if QMessageBox.question(self, "Quit", "A call is in progress. End it and quit?") != QMessageBox.Yes:
+                    e.ignore()
+                    return
+                ctl.stop(summarize=False)
+            # Either we just stopped it, or it is still wrapping up in the background:
+            # save the transcript now so nothing is lost when the process exits.
+            if ctl.session and ctl.session.segments and id(ctl.session) not in self._saved_sessions:
+                self._saved_sessions.add(id(ctl.session))
+                try:
+                    self.store.save(ctl.session.to_record())
+                except Exception:  # noqa: BLE001
+                    log.exception("saving call on close")
         self.s.ui.window_geometry = bytes(self.saveGeometry().toBase64()).decode()
         self.s.ui.overlay_geometry = bytes(self.overlay.saveGeometry().toBase64()).decode()
         config.save(self.s)
