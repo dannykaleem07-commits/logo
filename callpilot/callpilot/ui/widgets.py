@@ -165,21 +165,29 @@ class TranscriptView(QTextBrowser):
         rows = []
         for s in self.segments.values():
             agent = s.speaker == AGENT
-            who = "Us" if agent else "Caller"
+            who = "You" if agent else "Caller"
             col = self.c["agent"] if agent else self.c["caller"]
-            t = dt.datetime.fromtimestamp(s.start).strftime("%H:%M:%S")
+            bg = self.c["bubble_agent"] if agent else self.c["bubble_caller"]
+            t = dt.datetime.fromtimestamp(s.start).strftime("%H:%M")
             style = "" if s.is_final else f"color:{self.c['muted']};"
             lang = f" · {html.escape(s.language.upper())}" if s.language and not agent else ""
-            edge = f"border-left:3px solid {self.c['warn']};padding-left:8px;" if s.pinned else "padding-left:11px;"
-            row = (f"<div style='margin:6px 0;{edge}'><span style='color:{col};font-weight:700'>{who}</span>"
-                   f"<span style='color:{self.c['muted']};font-size:small'>  {t}{lang}"
-                   f"{' · 📌' if s.pinned else ''}</span><br>"
-                   f"<span style='{style}'>{self._line_html(s)}</span>")
+            pin = " · 📌" if s.pinned else ""
+            align = "right" if agent else "left"
+            body = self._line_html(s)
             if self.show_translation and s.translation:
-                row += f"<br><span style='color:{self.c['muted']}'>↳ {html.escape(s.translation)}</span>"
-            rows.append(row + "</div>")
+                body += (f"<br><span style='color:{self.c['muted']};font-size:small'>↳ "
+                         f"{html.escape(s.translation)}</span>")
+            rows.append(
+                f"<table width='100%' cellspacing='0' cellpadding='0' style='margin:3px 0'><tr>"
+                f"<td align='{align}'>"
+                f"<table cellspacing='0' cellpadding='9' bgcolor='{bg}' style='max-width:86%'><tr><td>"
+                f"<span style='color:{col};font-weight:700;font-size:small'>{who}</span>"
+                f"<span style='color:{self.c['muted']};font-size:small'>&nbsp; {t}{lang}{pin}</span><br>"
+                f"<span style='{style}'>{body}</span>"
+                f"</td></tr></table></td></tr></table>")
         self.setHtml("".join(rows) or
-                     f"<p style='color:{self.c['muted']}'>Start a call – the live transcript appears here.</p>")
+                     f"<p style='color:{self.c['muted']};margin:18px 6px'>Press <b>Start call</b>. "
+                     f"What the caller says appears on the left, what you say on the right.</p>")
         if at_bottom:
             bar.setValue(bar.maximum())
 

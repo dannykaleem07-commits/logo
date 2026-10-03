@@ -14,6 +14,10 @@ Two panes. Left: *they said · you said*. Right: **Say next** – one big answer
 - **Said it (Space)** / **Another answer (Ctrl+R)** / **Not this (Esc)** – and every one of those teaches it.
 - **🧠 badge** – how much it has learned: answers, facts, lessons.
 - **Advanced ▾** – opens the full Call Desk cockpit underneath (file, intake form, pins, checklist, wrap-up tools). Settings → Interface switches the default view.
+- **Earlier answers** – the last few suggestions sit under the current one; click to bring one back. ⧉ copies, 🔊 reads it aloud.
+- **First run** – a four-step setup (AI key with a connection test → speech engine → which app to listen to, with a live microphone meter → your name). An amber banner tells you if anything is still missing; ⚙ → *Run setup again* any time.
+
+![Setup](docs/setup.png)
 
 ## Memory and self-training
 

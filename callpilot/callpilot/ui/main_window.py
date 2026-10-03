@@ -19,7 +19,7 @@ from callpilot import __app_name__, __version__
 from callpilot.ai import tts
 from callpilot.ai.providers import make_provider
 from callpilot.ai.translator import language_name
-from callpilot.core import config, paths
+from callpilot.core import config
 from callpilot.core.audit import AuditLog
 from callpilot.core.controller import CallController
 from callpilot.core.files import CaseFile, FileStore
@@ -894,16 +894,14 @@ class MainWindow(QMainWindow):
 def first_run_message(win: MainWindow):
     if not win.s.first_run:
         return
+    from callpilot.ui.setup_wizard import SetupWizard
+
+    if hasattr(win, "_run_setup"):
+        win._run_setup()
+    else:
+        SetupWizard(win.s, win).exec()
     win.s.first_run = False
     config.save(win.s)
-    QMessageBox.information(
-        win, "Welcome to CallPilot",
-        "Three quick steps:\n\n"
-        "1. Settings → API keys: add your Anthropic (Claude) or OpenAI key, plus a Deepgram key for live speech.\n"
-        "2. Settings → Audio sources: tick WhatsApp (or Teams / Zoom / your softphone).\n"
-        "3. Attach a file (or start in new-enquiry mode), pick the call type and press ● Start call.\n\n"
-        f"Your data folder: {paths.app_data_dir()}")
-    win._open_settings(0)
 
 
 __all__ = ["MainWindow", "first_run_message", "FileEditor"]
