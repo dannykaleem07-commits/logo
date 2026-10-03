@@ -1,6 +1,36 @@
-# CallPilot — Call Desk
+# CallPilot
 
-CallPilot is the desktop build of the **Call Desk** spec: one screen that answers every Courtesy Cars and Fixmyfile call. It pops the file, transcribes both sides live, has AI suggest the next question, the right answer and the risk to watch, fills the intake form and the chronology as the call runs, and drafts the "as discussed" email before you hang up.
+CallPilot listens to the call (the other person through WhatsApp / Teams / Zoom / your softphone, and you through your mic), writes down what is said, and shows you **what to say next**. It remembers your past calls and trains itself after every one.
+
+![Simple view](docs/simple.png)
+
+## The simple view (default)
+
+Two panes. Left: *they said · you said*. Right: **Say next** – one big answer, written while the caller is still finishing. A red line above it if there is a risk, a grey "then ask" line under it.
+
+- **● Start call** – or let it start itself: when WhatsApp (or another call app) begins playing audio, a banner offers to listen.
+- **AI** dropdown – *Fastest* (Claude Haiku 4.5), *Balanced* (Claude Sonnet 5.5), *Smart* (Claude Opus 5.5), *Max* (Claude Fable 5.1 – slower, deepest), or *ChatGPT*.
+- **Hub** – which company's brain to use (Courtesy Cars, Fixmyfile, or your own).
+- **Said it (Space)** / **Another answer (Ctrl+R)** / **Not this (Esc)** – and every one of those teaches it.
+- **🧠 badge** – how much it has learned: answers, facts, lessons.
+- **Advanced ▾** – opens the full Call Desk cockpit underneath (file, intake form, pins, checklist, wrap-up tools). Settings → Interface switches the default view.
+
+## Memory and self-training
+
+After every call, in the background, CallPilot:
+
+1. **Remembers the answers that worked** – every suggestion you marked *Said it*, and every caller question you answered in your own words, becomes a remembered answer. Next time a caller asks something similar it is on screen instantly, in your words, before the AI has even been asked.
+2. **Forgets what you reject** – *Not this* lowers that answer's score; three rejections and it is gone.
+3. **Distils the call with the stronger model** – new Q&A pairs, durable facts about the caller or company ("Aviva handler wants rate evidence by email"), and lessons about how you like to handle things ("lead with reassurance, keep it to two sentences").
+4. **Uses all of it live** – the memory is cached into the prompt at call start (preferences, facts about this caller, answers that worked), and the three most relevant memories are added to every card request.
+
+Everything it learns is encrypted on your PC and reviewable in **Settings → Memory**: delete anything that is wrong, teach an answer by hand, or forget everything. Nothing is uploaded anywhere except, as part of the prompt, to the AI provider you chose.
+
+---
+
+## Advanced view: Call Desk
+
+The cockpit from the Call Desk spec: one screen that answers every Courtesy Cars and Fixmyfile call. It pops the file, transcribes both sides live, has AI suggest the next question, the right answer and the risk to watch, fills the intake form and the chronology as the call runs, and drafts the "as discussed" email before you hang up.
 
 It is open, recorded with notice, and built so every transcript and AI card could be read out in court without embarrassment. There is no invisibility mode and no send button.
 

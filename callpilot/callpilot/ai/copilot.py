@@ -87,7 +87,7 @@ class _Generation:
 class CallSession:
     def __init__(self, settings: Settings, hub: Hub, provider: LLMProvider | None, emit: Emit,
                  translator: Translator | None = None, case_file=None, call_type: str = "",
-                 recorder=None, call_id: str = ""):
+                 recorder=None, call_id: str = "", memory=None):
         self.settings = settings
         self.hub = hub
         self.provider = provider
@@ -98,7 +98,9 @@ class CallSession:
         self.recorder = recorder
         self.call_id = call_id or f"call-{int(time.time())}"
         self.translator = translator or Translator(provider, settings.translation.engine)
+        self.memory = memory if (memory is not None and settings.ai.use_memory) else None
         self.matcher = hub.build_matcher()
+        self.learned_matcher = self.memory.matcher(hub.id) if self.memory is not None else None
         self.index = hub.build_index()
         self.monitor = ComplianceMonitor(hub.forbidden_phrases, hub.required_disclosures,
                                          hub.escalation_triggers)
@@ -120,7 +122,9 @@ class CallSession:
         self.notice_given_at: float | None = None
         self.summary: dict = {}
         self.banned = list(hub.forbidden_phrases) + list(getattr(hub, "status_banned", []) or [])
-        self._system_blocks = [self._hub_block(), case_file.summary_for_prompt() if case_file else ""]
+        subject = (case_file.client_name if case_file is not None else "") or ""
+        self._system_blocks = [self._hub_block(), case_file.summary_for_prompt() if case_file else "",
+                               self.memory.prompt_block(hub.id, subject) if self.memory is not None else ""]
         self._pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="callpilot")
         self._lock = threading.RLock()
         self._gen: _Generation | None = None
@@ -209,7 +213,15 @@ class CallSession:
 
     # ================================================================= operator actions
     def mark_card(self, card_type: str | None, action: str) -> Card | None:
-        return self.deck.mark(card_type, action)
+        c = self.deck.mark(card_type, action)
+        if c is not None and c.type == SAY and self.memory is not None and action in ("used", "dismissed"):
+            q = next((s.text for s in self.segments if s.id == c.segment_id), "")
+            if q:
+                try:
+                    self.memory.feedback(q, c.spoken(), action == "used", self.hub.id, self.call_id)
+                except Exception:  # noqa: BLE001
+                    log.exception("memory feedback failed")
+        return c
 
     def pin_last_line(self) -> Pin | None:
         seg = next((s for s in reversed(self.segments)), None)
@@ -354,11 +366,17 @@ class CallSession:
         intent = classify_intent(turn_text)
         say = Card(SAY, "", [], segment_id=segment_id, done=False, origin="llm")
         say.filler = pick_filler(intent, self.hub.fillers)
-        match = self.matcher.match(turn_text)
+        match = self.learned_matcher.match(turn_text, threshold=0.6) if self.learned_matcher else None
         if match:
             say.origin = "playbook"
-            say.sources = [f"Q&A: {match[0][:60]}"]
+            say.sources = [f"memory: {match[0][:60]}"]
             say.text, say.more = _split_first_sentence(match[1])
+        else:
+            match = self.matcher.match(turn_text)
+            if match:
+                say.origin = "playbook"
+                say.sources = [f"Q&A: {match[0][:60]}"]
+                say.text, say.more = _split_first_sentence(match[1])
         gen.say = say
         if self.provider is None:
             say.done = True
@@ -389,6 +407,11 @@ class CallSession:
             lines.append("Disclosures not yet made: " + ", ".join(md))
         if self.pins:
             lines.append("Pinned so far: " + "; ".join(f"{p.kind}: {p.value}" for p in self.pins[-8:]))
+        if self.memory is not None:
+            hits = self.memory.search(self.hub.id, turn_text, k=3)
+            if hits:
+                lines.append("From memory of past calls:")
+                lines += [f"- ({e.kind}) " + (f"Q: {e.question} -> A: {e.text}" if e.question else e.text) for e in hits]
         if self.caller_language:
             lines.append(f"Caller language: {language_name(self.caller_language)}. "
                          f"Handler language: {self.settings.translation.agent_language}.")
@@ -429,7 +452,7 @@ class CallSession:
         their = self._want_their()
         window = int(self.settings.ai.context_window_s or 90)
         fmt = LIVE_FORMAT.format(window=window, their_rule=THEIR_RULE.format(lang=their) if their else "")
-        system = [self._system_blocks[0] + "\n" + fmt, self._system_blocks[1]]
+        system = [self._system_blocks[0] + "\n" + fmt, self._system_blocks[1], self._system_blocks[2]]
         user = (f"{self._context_block(turn_text)}\n\n<transcript>\n{self._transcript_block(window_s=window)}\n"
                 f"</transcript>\n\nThe other party just said: \"{turn_text}\"\n"
                 f"Write the cards in the required format. Handler language: "

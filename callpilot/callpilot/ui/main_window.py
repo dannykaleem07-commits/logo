@@ -23,6 +23,7 @@ from callpilot.core import config, paths
 from callpilot.core.audit import AuditLog
 from callpilot.core.controller import CallController
 from callpilot.core.files import CaseFile, FileStore
+from callpilot.core.memory import MemoryStore
 from callpilot.core.models import SAY, WATCH, Card
 from callpilot.core.sessions import SessionStore
 from callpilot.hubs.model import Hub, HubStore
@@ -59,6 +60,7 @@ class MainWindow(QMainWindow):
         self.hubs = HubStore()
         self.store = SessionStore(settings.privacy)
         self.files = FileStore()
+        self.memory = MemoryStore()
         self.controller: CallController | None = None
         self.case_file: CaseFile | None = None
         self._saved_sessions: set[int] = set()
@@ -92,15 +94,41 @@ class MainWindow(QMainWindow):
 
     # ================================================================ layout
     def _build(self):
+        self._build_header()
+        self._build_columns()
+        self._build_bottom()
+        self._build_statusbar_widgets()
         root = QWidget()
         root.setObjectName("root")
         self.setCentralWidget(root)
         v = QVBoxLayout(root)
         v.setContentsMargins(0, 0, 0, 0)
         v.setSpacing(0)
+        v.addWidget(self._header)
+        body = QWidget()
+        bl = QHBoxLayout(body)
+        bl.setContentsMargins(12, 12, 12, 6)
+        split = QSplitter(Qt.Horizontal)
+        split.addWidget(self.file_pane)
+        split.addWidget(self._centre)
+        split.addWidget(self._right_panel)
+        split.setSizes([300, 640, 560])
+        bl.addWidget(split)
+        v.addWidget(body, 1)
+        v.addWidget(self._bottom)
+        sb = QStatusBar()
+        self.setStatusBar(sb)
+        sb.addWidget(QLabel("Us"))
+        sb.addWidget(self.mic_meter)
+        sb.addWidget(QLabel("Caller"))
+        sb.addWidget(self.caller_meter)
+        sb.addWidget(self.status_lbl, 1)
+        sb.addPermanentWidget(QLabel("🔒 AES-256 · DPAPI · keys in Credential Manager"))
+        self._install_shortcuts()
+        self._set_call_buttons(False)
 
-        # ---------------- top bar
-        header = QFrame()
+    def _build_header(self):
+        header = self._header = QFrame()
         header.setObjectName("header")
         h = QHBoxLayout(header)
         h.setContentsMargins(18, 8, 18, 8)
@@ -136,6 +164,7 @@ class MainWindow(QMainWindow):
         self.timer_lbl = QLabel("00:00")
         self.lang_badge = QLabel("")
         self.lang_badge.setObjectName("badge")
+        self.lang_badge.setVisible(False)
         self.latency_badge = QLabel("")
         self.latency_badge.setObjectName("badge")
         for b in (self.rec_dot, self.timer_lbl, self.lang_badge, self.latency_badge):
@@ -163,21 +192,12 @@ class MainWindow(QMainWindow):
         self.btn_settings.clicked.connect(lambda: self._open_settings())
         for b in (self.btn_mute, self.btn_overlay, self.btn_history, self.btn_settings):
             h.addWidget(b)
-        v.addWidget(header)
 
-        # ---------------- three columns
-        body = QWidget()
-        bl = QHBoxLayout(body)
-        bl.setContentsMargins(12, 12, 12, 6)
-        split = QSplitter(Qt.Horizontal)
-        bl.addWidget(split)
-        v.addWidget(body, 1)
-
+    def _build_columns(self):
         self.file_pane = FilePane(self.s.ui.theme)
         self.file_pane.change_file.connect(self._pick_file)
-        split.addWidget(self.file_pane)
 
-        centre = card()
+        centre = self._centre = card()
         cl = QVBoxLayout(centre)
         cl.setContentsMargins(16, 12, 16, 12)
         top = QHBoxLayout()
@@ -185,6 +205,7 @@ class MainWindow(QMainWindow):
         top.addStretch()
         self.sentiment = QLabel("")
         self.sentiment.setObjectName("badge")
+        self.sentiment.setVisible(False)
         top.addWidget(self.sentiment)
         cl.addLayout(top)
         self.transcript = TranscriptView(self.s.ui.theme)
@@ -192,9 +213,8 @@ class MainWindow(QMainWindow):
         self.ask_bar = AskBar()
         self.ask_bar.asked.connect(self._ask)
         cl.addWidget(self.ask_bar)
-        split.addWidget(centre)
 
-        right = QWidget()
+        right = self._right_panel = QWidget()
         rl = QVBoxLayout(right)
         rl.setContentsMargins(0, 0, 0, 0)
         rl.setSpacing(10)
@@ -236,11 +256,9 @@ class MainWindow(QMainWindow):
         self.tabs.addTab(self.alerts, "Alerts")
         il.addWidget(self.tabs, 1)
         rl.addWidget(intake_box, 3)
-        split.addWidget(right)
-        split.setSizes([300, 640, 560])
 
-        # ---------------- bottom bar
-        bottom = QFrame()
+    def _build_bottom(self):
+        bottom = self._bottom = QFrame()
         bottom.setObjectName("header")
         b = QHBoxLayout(bottom)
         b.setContentsMargins(18, 8, 18, 8)
@@ -265,21 +283,13 @@ class MainWindow(QMainWindow):
             b.addWidget(w)
         b.addStretch()
         b.addWidget(self.btn_wrap)
-        v.addWidget(bottom)
 
-        sb = QStatusBar()
-        self.setStatusBar(sb)
+    def _build_statusbar_widgets(self):
         self.mic_meter = LevelMeter("Us", self.s.ui.theme)
         self.caller_meter = LevelMeter("Caller", self.s.ui.theme)
         self.status_lbl = QLabel("Ready")
-        sec = QLabel("🔒 AES-256 · DPAPI · keys in Credential Manager")
-        sb.addWidget(QLabel("Us"))
-        sb.addWidget(self.mic_meter)
-        sb.addWidget(QLabel("Caller"))
-        sb.addWidget(self.caller_meter)
-        sb.addWidget(self.status_lbl, 1)
-        sb.addPermanentWidget(sec)
 
+    def _install_shortcuts(self):
         # in-app hotkeys (the spec's single keys), only when the window has focus and no text box does
         for key, slot in (("Space", lambda: self._card_action(None, "used")), ("Escape", lambda: self._card_action(None, "dismissed")),
                           ("P", self._pin), ("T", self._task), ("W", lambda: self.chk_whisper.toggle()),
@@ -287,7 +297,6 @@ class MainWindow(QMainWindow):
             sc = QShortcut(QKeySequence(key), self)
             sc.setContext(Qt.WindowShortcut)
             sc.activated.connect(slot)
-        self._set_call_buttons(False)
 
     def _apply_theme(self):
         QApplication.instance().setStyleSheet(stylesheet(self.s.ui.theme, self.s.ui.font_pt))
@@ -424,6 +433,8 @@ class MainWindow(QMainWindow):
             self._prep_session.end(summarize=False)
             self._prep_session = None
         self.transcript.clear_all()
+        self.lang_badge.setVisible(False)
+        self.sentiment.setVisible(False)
         self.alerts.clear()
         self.pins_view.clear_all()
         self.tabs.setTabText(1, "Pins")
@@ -437,7 +448,8 @@ class MainWindow(QMainWindow):
         self.btn_call.setText("Starting…")
         self.status_lbl.setText("Connecting audio and speech…")
         ct = self.call_type.currentData() or ""
-        self.controller = CallController(self.s, hub, self.bridge.event.emit, case_file=self.case_file, call_type=ct)
+        self.controller = CallController(self.s, hub, self.bridge.event.emit, case_file=self.case_file, call_type=ct,
+                                         memory=self.memory)
         self._show_script(hub.greeting, "Opening script", hub.consent_script if self.s.privacy.consent_reminder else "")
 
         def run():
@@ -512,6 +524,7 @@ class MainWindow(QMainWindow):
         finally:
             self._wrapping_up = False
         self._saved_sessions.add(id(sess))
+        self._learn_in_background(rec, hub, sess)
         try:
             rec = self._encrypt_recording(rec)
             f = self.store.save(rec)
@@ -520,6 +533,27 @@ class MainWindow(QMainWindow):
                               cards=len(rec.get("ai_cards", [])), pins=len(rec.get("pins", [])))
         except Exception as e:  # noqa: BLE001
             self.bridge.event.emit("error", f"Could not save call: {e}")
+
+    def _learn_in_background(self, rec: dict, hub, sess):
+        """Self-training: remember what worked on this call for the next one."""
+        if not self.s.ai.learn_after_calls or not rec.get("segments"):
+            return
+        provider = sess.provider
+        banned = list(sess.banned)
+        memory = self.memory
+        self.status_lbl.setText("Learning from this call…")
+
+        def run():
+            from callpilot.ai.learn import learn_from_call
+
+            try:
+                res = learn_from_call(provider, rec, memory, banned)
+                self.audit.record("learned", **{k: v for k, v in res.items() if k != "error"})
+                self.bridge.event.emit("learned", res)
+            except Exception as e:  # noqa: BLE001
+                self.bridge.event.emit("error", f"Learning failed: {e}")
+
+        threading.Thread(target=run, daemon=True, name="callpilot-learn").start()
 
     def _encrypt_recording(self, rec: dict) -> dict:
         """Move the plain WAV into the vault (AES-GCM) once the call is over."""
@@ -573,8 +607,10 @@ class MainWindow(QMainWindow):
         elif kind == "sentiment":
             face = "🙂" if payload > 0.25 else ("😟" if payload < -0.25 else "😐")
             self.sentiment.setText(f"mood {face}")
+            self.sentiment.setVisible(True)
         elif kind == "language":
             self.lang_badge.setText(f"Caller: {language_name(payload)}")
+            self.lang_badge.setVisible(True)
         elif kind == "latency":
             self.overlay.set_status(f"CallPilot · {payload['first_token_ms'] / 1000:.2f}s")
             self.status_lbl.setText(f"Live · first words in {payload['first_token_ms'] / 1000:.2f}s")
@@ -609,6 +645,10 @@ class MainWindow(QMainWindow):
             self._finish_call(payload or {})
         elif kind == "summary":
             pass  # consumed by the wrap-up dialog
+        elif kind == "learned":
+            n = int(payload.get("added", 0)) + int(payload.get("deterministic", 0))
+            self.status_lbl.setText(f"Learned {n} new thing{'s' if n != 1 else ''} from that call"
+                                    + (f" ({payload['error']})" if payload.get("error") else ""))
 
     def _update_rec_dot(self):
         live = bool(self.controller and self.controller.running and self.s.recording.enabled)
@@ -720,8 +760,8 @@ class MainWindow(QMainWindow):
         if self._prep_session is None or self._prep_session.hub.id != hub.id:
             if self._prep_session is not None:
                 self._prep_session.end(summarize=False)
-            self._prep_session = CallSession(self.s, hub, prov, self.bridge.event.emit, case_file=self.case_file,
-                                             call_type=self.call_type.currentData() or "")
+                self._prep_session = CallSession(self.s, hub, prov, self.bridge.event.emit, case_file=self.case_file,
+                                             call_type=self.call_type.currentData() or "", memory=self.memory)
         self._prep_session.ask(text)
 
     def _maybe_whisper(self, cards: list[Card]):

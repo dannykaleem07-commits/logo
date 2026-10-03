@@ -63,6 +63,7 @@ def main() -> int:
     from callpilot.core.audit import AuditLog
     from callpilot.ui import winutil
     from callpilot.ui.main_window import MainWindow, first_run_message
+    from callpilot.ui.simple_window import SimpleWindow
 
     winutil.set_app_user_model_id()
     QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
@@ -80,7 +81,7 @@ def main() -> int:
     audit = AuditLog(vault.mac_key)
     audit.record("app_started", version=__version__)
 
-    win = MainWindow(settings, audit, icon)
+    win = (MainWindow if settings.ui.mode == "advanced" else SimpleWindow)(settings, audit, icon)
     win.show()
     QTimer.singleShot(400, lambda: first_run_message(win))
     return app.exec()

@@ -86,6 +86,7 @@ class SettingsDialog(QDialog):
         self._build_audio()
         self._build_translation()
         self._build_calldesk()
+        self._build_memory()
         self._build_privacy()
         self._build_ui()
         self.tabs.setCurrentIndex(start_tab)
@@ -152,6 +153,12 @@ class SettingsDialog(QDialog):
         self.window_s.setValue(a.context_window_s)
         self.window_s.setToolTip("Only this much recent transcript is sent with each card request; the hub and file are cached.")
         f.addRow("Transcript window per card", self.window_s)
+        self.learn = QCheckBox("Train itself after every call (remember answers that worked, facts, your preferences)")
+        self.learn.setChecked(a.learn_after_calls)
+        f.addRow("", self.learn)
+        self.use_memory = QCheckBox("Use memory of past calls while suggesting")
+        self.use_memory.setChecked(a.use_memory)
+        f.addRow("", self.use_memory)
         self.speculative = QCheckBox("Speculative drafting (start answering before the caller finishes)")
         self.speculative.setChecked(a.speculative)
         f.addRow("", self.speculative)
@@ -347,6 +354,63 @@ class SettingsDialog(QDialog):
         note.setObjectName("section")
         f.addRow("", note)
 
+    def _build_memory(self):
+        from callpilot.core.memory import MemoryStore
+
+        w = QWidget()
+        lay = QVBoxLayout(w)
+        lay.addWidget(QLabel("Everything the AI has learned from your calls. Tick-free: select a row and delete it "
+                             "if it is wrong. Answers with a higher score are offered first."))
+        self.mem_store = MemoryStore()
+        self.mem_list = QListWidget()
+        lay.addWidget(self.mem_list, 1)
+        row = QHBoxLayout()
+        add = QPushButton("+ Teach an answer…")
+        rem = QPushButton("Delete selected")
+        clear = QPushButton("Forget everything")
+        add.clicked.connect(self._mem_add)
+        rem.clicked.connect(self._mem_delete)
+        clear.clicked.connect(self._mem_clear)
+        for b in (add, rem, clear):
+            row.addWidget(b)
+        row.addStretch()
+        lay.addLayout(row)
+        self.tabs.addTab(w, "Memory")
+        self._mem_refresh()
+
+    def _mem_refresh(self):
+        self.mem_list.clear()
+        for e in sorted(self.mem_store.entries, key=lambda e: (e.kind, -e.score)):
+            label = {"answer": "💬", "fact": "📌", "lesson": "🎓"}.get(e.kind, "•")
+            text = f"{label} [{e.score:.1f}] " + (f"Q: {e.question}  →  A: {e.text}" if e.question else
+                                                  (f"{e.subject}: " if e.subject else "") + e.text)
+            it = QListWidgetItem(text[:220])
+            it.setData(Qt.UserRole, e.id)
+            it.setToolTip(text)
+            self.mem_list.addItem(it)
+
+    def _mem_add(self):
+        from callpilot.core.memory import MemoryEntry
+
+        q, ok = QInputDialog.getText(self, "Teach an answer", "When the caller says…")
+        if not ok or not q.strip():
+            return
+        a, ok = QInputDialog.getMultiLineText(self, "Teach an answer", "…you want to say:")
+        if ok and a.strip():
+            self.mem_store.add(MemoryEntry("answer", a.strip(), question=q.strip(), hub_id=self.s.active_hub,
+                                           score=2.0, origin="manual"))
+            self._mem_refresh()
+
+    def _mem_delete(self):
+        for it in self.mem_list.selectedItems():
+            self.mem_store.remove(it.data(Qt.UserRole))
+        self._mem_refresh()
+
+    def _mem_clear(self):
+        if QMessageBox.question(self, "Memory", "Forget everything the AI has learned?") == QMessageBox.Yes:
+            self.mem_store.clear()
+            self._mem_refresh()
+
     def _build_privacy(self):
         p = self.s.privacy
         f = self._tab("Privacy && security")
@@ -388,6 +452,14 @@ class SettingsDialog(QDialog):
         self.agent_name = QLineEdit(self.s.agent_name)
         self.agent_name.setPlaceholderText("Used in opening scripts")
         f.addRow("Your name", self.agent_name)
+        self.mode = QComboBox()
+        self.mode.addItem("Simple – transcript + what to say next (recommended)", "simple")
+        self.mode.addItem("Advanced – full Call Desk cockpit", "advanced")
+        self.mode.setCurrentIndex(max(0, self.mode.findData(u.mode)))
+        f.addRow("View (restart to apply)", self.mode)
+        self.auto_detect = QCheckBox("Offer to start when WhatsApp / Teams / Zoom begins playing audio")
+        self.auto_detect.setChecked(u.auto_detect_calls)
+        f.addRow("", self.auto_detect)
         self.theme = _combo(["dark", "light"], u.theme)
         f.addRow("Theme", self.theme)
         self.font_pt = QSpinBox()
@@ -499,6 +571,8 @@ class SettingsDialog(QDialog):
         a.anthropic_fallbacks = self.fallbacks.isChecked()
         a.openai_model = self.openai_model.currentText().strip()
         a.speculative = self.speculative.isChecked()
+        a.learn_after_calls = self.learn.isChecked()
+        a.use_memory = self.use_memory.isChecked()
         a.suggestion_max_tokens = self.max_tokens.value()
         a.extract_every_n_turns = self.extract_n.value()
         sp.engine = self.engine.currentData()
@@ -537,6 +611,8 @@ class SettingsDialog(QDialog):
         p.consent_reminder = self.consent.isChecked()
         p.require_unlock = self.require_unlock.isChecked()
         self.s.agent_name = self.agent_name.text().strip()
+        u.mode = self.mode.currentData()
+        u.auto_detect_calls = self.auto_detect.isChecked()
         u.theme = self.theme.currentText()
         u.font_pt = self.font_pt.value()
         u.overlay_enabled = self.overlay.isChecked()

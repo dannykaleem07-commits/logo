@@ -34,6 +34,9 @@ class SpeechSettings:
 @dataclass
 class AISettings:
     provider: str = "anthropic"          # "anthropic" | "openai"
+    preset: str = "balanced"             # see MODEL_PRESETS
+    learn_after_calls: bool = True       # self-training after every call
+    use_memory: bool = True              # remember facts/answers between calls
     anthropic_model: str = "claude-haiku-4-5-20251001"   # live cards: speed first
     anthropic_wrapup_model: str = "claude-sonnet-5-5"    # wrap-up, email and notes: quality
     anthropic_effort: str = "low"        # low effort keeps live suggestions fast
@@ -95,6 +98,8 @@ class PrivacySettings:
 @dataclass
 class UISettings:
     theme: str = "dark"
+    mode: str = "simple"                 # "simple" (two panes) | "advanced" (cockpit)
+    auto_detect_calls: bool = True       # offer to start when a call app begins playing audio
     overlay_enabled: bool = True
     overlay_opacity: float = 0.92
     overlay_font_pt: int = 15
@@ -150,6 +155,33 @@ def _merge_dataclass(obj: Any, data: dict[str, Any]) -> Any:
         if f.name in data:
             setattr(obj, f.name, data[f.name])
     return obj
+
+
+# Model presets shown in the simple view. (model, live effort, wrap-up model)
+MODEL_PRESETS: dict[str, dict] = {
+    "fastest":  {"label": "Fastest – Claude Haiku 4.5", "provider": "anthropic",
+                 "live": "claude-haiku-4-5-20251001", "effort": "low", "wrap": "claude-sonnet-5-5"},
+    "balanced": {"label": "Balanced – Claude Sonnet 5.5", "provider": "anthropic",
+                 "live": "claude-sonnet-5-5", "effort": "low", "wrap": "claude-sonnet-5-5"},
+    "smart":    {"label": "Smart – Claude Opus 5.5", "provider": "anthropic",
+                 "live": "claude-opus-5-5", "effort": "low", "wrap": "claude-opus-5-5"},
+    "fable":    {"label": "Max – Claude Fable 5.1 (slower, deepest)", "provider": "anthropic",
+                 "live": "claude-fable-5-1", "effort": "medium", "wrap": "claude-fable-5-1"},
+    "chatgpt":  {"label": "ChatGPT – GPT-4.1", "provider": "openai",
+                 "live": "gpt-4.1", "effort": "low", "wrap": "gpt-4.1"},
+}
+
+
+def apply_preset(ai: "AISettings", key: str) -> None:
+    p = MODEL_PRESETS.get(key)
+    if not p:
+        return
+    ai.preset = key
+    ai.provider = p["provider"]
+    if p["provider"] == "anthropic":
+        ai.anthropic_model, ai.anthropic_effort, ai.anthropic_wrapup_model = p["live"], p["effort"], p["wrap"]
+    else:
+        ai.openai_model, ai.openai_wrapup_model = p["live"], p["wrap"]
 
 
 _lock = threading.Lock()

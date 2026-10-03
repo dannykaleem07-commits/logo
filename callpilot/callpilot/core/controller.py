@@ -21,12 +21,13 @@ log = logging.getLogger(__name__)
 
 class CallController:
     def __init__(self, settings: Settings, hub: Hub, emit: Callable[[str, object], None],
-                 case_file=None, call_type: str = ""):
+                 case_file=None, call_type: str = "", memory=None):
         self.settings = settings
         self.hub = hub
         self.emit = emit
         self.case_file = case_file
         self.call_type = call_type
+        self.memory = memory
         self.channels: dict[str, Channel] = {}
         self.engines = {}
         self.session: CallSession | None = None
@@ -50,7 +51,8 @@ class CallController:
             except Exception as e:  # noqa: BLE001
                 self.emit("error", f"Recording unavailable: {e}")
         self.session = CallSession(self.settings, self.hub, provider, self.emit, case_file=self.case_file,
-                                   call_type=self.call_type, recorder=self.recorder, call_id=self.call_id)
+                                   call_type=self.call_type, recorder=self.recorder, call_id=self.call_id,
+                                   memory=self.memory)
 
         a = self.settings.audio
         if a.mic_enabled:
