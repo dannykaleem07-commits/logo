@@ -134,12 +134,13 @@ class CallController:
 
                 self.voice_agent = VoiceAgent(self.session, self.settings, self.emit, rehearse=self.rehearse)
             if not self.rehearse:
+                self._agent_muted_before_ai = AGENT in self.channels and self.channels[AGENT].muted
                 self.set_muted(AGENT, True)   # your mic stays out of the call while the AI speaks
             self.voice_agent.start(say_opening=not any(s.speaker == AGENT for s in self.session.segments))
         elif self.voice_agent is not None:
             self.voice_agent.stop()
             if not self.rehearse:
-                self.set_muted(AGENT, False)
+                self.set_muted(AGENT, getattr(self, "_agent_muted_before_ai", False))
 
     def pause_recording(self, paused: bool) -> None:
         """Card-payment pause: audio, transcript and AI all stop until resumed."""
@@ -158,8 +159,14 @@ class CallController:
         if self.session is None:
             return
         now = time.time()
-        if speaker == CALLER and text and self.voice_agent is not None and self.voice_agent.active:
-            self.voice_agent.barge_in()
+        va = self.voice_agent
+        if speaker == CALLER and text and va is not None and va.active:
+            if va.hears_itself(now):
+                # rehearsal: the mic is picking up the agent's own voice from the speakers
+                self.session.on_transcript(CALLER, "", True, "", False, segment_id)
+                return
+            if not va.rehearse:
+                va.barge_in()
         if speaker == CALLER and is_final and text:
             self._recent_caller.append((now, text))
         if speaker == AGENT and is_final and text and self._is_echo(text, now):

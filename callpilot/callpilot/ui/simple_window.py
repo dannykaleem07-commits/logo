@@ -224,6 +224,9 @@ class SayPanel(QFrame):
                 self.next_bar.show()
             self._render_side(w, a)
             return
+        # rendering the live deck directly: anything still queued is older than this
+        self.queued = None
+        self.next_bar.hide()
         self._render(s, w, a)
 
     def _render_side(self, w: Card | None, a: Card | None):
@@ -343,6 +346,8 @@ class ScriptsPanel(QFrame):
 
 class SimpleWindow(MainWindow):
     """Same engine and the same logic as the cockpit; a much simpler face."""
+
+    _ai_label = ""
 
     def _build(self):
         self._build_header()
@@ -628,7 +633,7 @@ class SimpleWindow(MainWindow):
     def _update_rec_dot(self):
         super()._update_rec_dot()
         live = bool(self.controller and self.controller.running)
-        self._set_state(live, self._notice_flag, self._rec_paused)
+        self._set_state(live, self._notice_flag, self._rec_paused, ai=self._ai_label if self.ai_mode else "")
         self.say_panel.listening = live
 
     # ------------------------------------------------------------- events
@@ -649,7 +654,8 @@ class SimpleWindow(MainWindow):
             st = payload.get("state", "idle")
             label = {"idle": "AI listening", "thinking": "AI thinking…", "speaking": "AI speaking…",
                      "handoff": "AI needs you"}.get(st, "AI")
-            self._set_state(True, self._notice_flag, self._rec_paused, ai=label if payload.get("active") else "")
+            self._ai_label = label if payload.get("active") else ""
+            self._set_state(True, self._notice_flag, self._rec_paused, ai=self._ai_label)
         elif kind == "handoff":
             self.handoff_banner.label.setText("🤖  The AI asked for a colleague – take over the call now.")
             self.handoff_banner.show()
@@ -716,6 +722,7 @@ class SimpleWindow(MainWindow):
         self.btn_ai.setObjectName("danger" if self.ai_mode else "ghost")
         self.btn_ai.setStyle(self.btn_ai.style())
         if not self.ai_mode:
+            self._ai_label = ""
             self.handoff_banner.hide()
             self._set_state(bool(self.controller and self.controller.running), self._notice_flag, self._rec_paused)
 

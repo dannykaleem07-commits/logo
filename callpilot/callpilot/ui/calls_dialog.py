@@ -74,6 +74,7 @@ class CallsDialog(QDialog):
         q = self.search.text().strip().lower()
         self.list.clear()
         self.files = []
+        self.current = None
         for f in self.store.list():
             try:
                 rec = self.store.load(f)

@@ -320,6 +320,7 @@ class CallSession:
             self._spec_timer.cancel()
         if not text:
             return
+        adopted = False
         with self._lock:
             gen = self._gen
             if gen and gen.speculative and gen.usable() and similar(gen.turn_text, text) >= 0.85:
@@ -329,9 +330,10 @@ class CallSession:
                 self._surface(gen)
                 if gen.say is not None and gen.say.done:
                     self._publish(gen)
-                return
-        self._start_generation(text, speculative=False, segment_id=seg_id)
-        for cb in list(self.turn_listeners):
+                adopted = True
+        if not adopted:
+            self._start_generation(text, speculative=False, segment_id=seg_id)
+        for cb in list(self.turn_listeners):   # AI mode etc. hear every completed turn, adopted or not
             try:
                 cb(text, seg_id)
             except Exception:  # noqa: BLE001

@@ -9,7 +9,7 @@ import re
 import shutil
 from pathlib import Path
 
-from callpilot.core.sessions import export_srt, export_text
+from callpilot.core.sessions import export_srt, export_text, redact_record
 
 
 def default_export_dir() -> Path:
@@ -25,7 +25,7 @@ def _safe(name: str) -> str:
 
 
 def call_folder_name(rec: dict) -> str:
-    stamp = dt.datetime.fromtimestamp(rec.get("started_at", 0)).strftime("%Y-%m-%d %H-%M")
+    stamp = dt.datetime.fromtimestamp(rec.get("started_at", 0)).strftime("%Y-%m-%d %H-%M-%S")
     who = (rec.get("fields") or {}).get("caller_name") or (rec.get("fields") or {}).get("client_name") or \
         (rec.get("fields") or {}).get("handler_name") or ""
     hub = rec.get("hub_name", "call").split("–")[0].strip()
@@ -113,3 +113,19 @@ def export_call(rec: dict, dest: Path | None = None, vault=None, include_recordi
         except Exception:  # noqa: BLE001
             pass
     return folder
+
+
+def export_dir_for(settings) -> Path:
+    return Path(settings.export.folder) if settings.export.folder else default_export_dir()
+
+
+def auto_export(rec: dict, settings, vault=None) -> Path | None:
+    """The after-every-call save, honouring the privacy settings: nothing is written when
+    sessions are not kept, PII is redacted when the store redacts, and the recording only
+    goes out when it was kept. Returns the folder, or None when nothing was written."""
+    priv = settings.privacy
+    if not settings.export.auto_save_calls or not priv.save_sessions:
+        return None
+    if priv.redact_saved_pii:
+        rec = redact_record(rec)
+    return export_call(rec, export_dir_for(settings), vault=vault, include_recording=bool(rec.get("recording")))

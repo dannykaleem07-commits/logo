@@ -23,11 +23,11 @@ from callpilot.core import config
 from callpilot.core.audit import AuditLog
 from callpilot.core.controller import CallController
 from callpilot.core.business import BusinessStore
-from callpilot.core.export import default_export_dir, export_call
+from callpilot.core.export import auto_export, default_export_dir, export_call
 from callpilot.core.files import CaseFile, FileStore
 from callpilot.core.memory import MemoryStore
 from callpilot.core.models import SAY, WATCH, Card
-from callpilot.core.sessions import SessionStore
+from callpilot.core.sessions import SessionStore, redact_record
 from callpilot.hubs.model import Hub, HubStore
 from callpilot.ui import winutil
 from callpilot.ui.file_dialog import FileEditor, FilePicker
@@ -344,12 +344,11 @@ class MainWindow(QMainWindow):
         from callpilot.ui.business_editor import BusinessEditor
 
         b = self.current_business()
+        link_hub = None
         if b is None:
             hub = self.current_hub()
-            b = self.businesses.new(hub.company or hub.name if hub else "My business")
-            if hub:
-                hub.business_id = b.id
-                self.hubs.save(hub)
+            b = self.businesses.new((hub.company or hub.name) if hub else "My business")
+            link_hub = hub   # attached below, only if the profile is saved
 
         def open_hub(h):
             dlg = HubEditor(h, provider_factory=lambda: make_provider(self.s.ai), parent=self)
@@ -359,8 +358,11 @@ class MainWindow(QMainWindow):
             return False
 
         dlg = BusinessEditor(b, self.businesses, self.hubs, self, open_hub_editor=open_hub)
-        dlg.exec()
-        self.audit.record("business_saved", business=b.id)
+        if dlg.exec():
+            if link_hub is not None:
+                link_hub.business_id = b.id
+                self.hubs.save(link_hub)
+            self.audit.record("business_saved", business=b.id)
         self._load_hubs(self.current_hub().id if self.current_hub() else None)
 
     def _on_hub_changed(self, *_):
@@ -459,6 +461,7 @@ class MainWindow(QMainWindow):
             self._start_call()
 
     def _start_call(self):
+        rehearse, self._rehearse_next = getattr(self, "_rehearse_next", False), False
         hub = self.current_hub()
         if not hub:
             QMessageBox.warning(self, "Start call", "Create or select a call hub first.")
@@ -484,8 +487,7 @@ class MainWindow(QMainWindow):
         ct = self.call_type.currentData() or ""
         self.controller = CallController(self.s, hub, self.bridge.event.emit, case_file=self.case_file, call_type=ct,
                                          memory=self.memory, business=self.current_business(),
-                                         rehearse=getattr(self, "_rehearse_next", False))
-        self._rehearse_next = False
+                                         rehearse=rehearse)
         self._show_script(hub.greeting, "Opening script", hub.consent_script if self.s.privacy.consent_reminder else "")
 
         def run():
@@ -565,13 +567,7 @@ class MainWindow(QMainWindow):
             rec = self._encrypt_recording(rec)
             f = self.store.save(rec)
             self.last_record = rec
-            if self.s.export.auto_save_calls:
-                try:
-                    dest = Path(self.s.export.folder) if self.s.export.folder else default_export_dir()
-                    folder = export_call(rec, dest, vault=self.store.vault)
-                    self.status_lbl.setText(f"Call saved to {folder}")
-                except Exception as e:  # noqa: BLE001
-                    self.bridge.event.emit("error", f"Could not save the call to disk: {e}")
+            self._auto_export_in_background(rec)
             self.audit.record("call_saved", file=f.name if f else None, segments=len(sess.segments), hub=hub.id,
                               case_file=self.case_file.id if self.case_file else "", wrote_file=saved_to_file,
                               cards=len(rec.get("ai_cards", [])), pins=len(rec.get("pins", [])))
@@ -579,21 +575,55 @@ class MainWindow(QMainWindow):
             self.bridge.event.emit("error", f"Could not save call: {e}")
 
     # ================================================================ AI mode / rehearsal / exports
+    def _auto_export_in_background(self, rec: dict):
+        """After-call save to Documents\\CallPilot\\Calls: honours the privacy settings (nothing when
+        sessions are not kept, redacted when the store redacts) and never blocks the window."""
+        if not (self.s.export.auto_save_calls and self.s.privacy.save_sessions):
+            return
+        settings, vault, emit = self.s, self.store.vault, self.bridge.event.emit
+
+        def run():
+            try:
+                folder = auto_export(rec, settings, vault=vault)
+                if folder is not None:
+                    emit("exported", str(folder))
+            except Exception as e:  # noqa: BLE001
+                emit("error", f"Could not save the call to disk: {e}")
+
+        threading.Thread(target=run, daemon=True, name="callpilot-export").start()
+
     def _toggle_ai_mode(self, on: bool):
         if not self.controller or not self.controller.running:
             self.ai_mode = False
             return
-        if on and not self.s.voice_agent.output_device and not self.controller.rehearse:
-            QMessageBox.information(self, "AI mode",
-                                    "AI mode speaks into the call through a virtual audio cable.\n\n"
-                                    "1. Install VB-Audio Virtual Cable (free).\n"
-                                    "2. Settings → AI mode → output device = 'CABLE Input'.\n"
-                                    "3. In WhatsApp/Teams set the microphone to 'CABLE Output'.\n\n"
-                                    "Until then you can rehearse: ⚙ → Rehearse with the AI.")
-            on = False
+        if on and not self.controller.rehearse:
+            dev = self.s.voice_agent.output_device
+            if not dev:
+                QMessageBox.information(self, "AI mode",
+                                        "AI mode speaks into the call through a virtual audio cable.\n\n"
+                                        "1. Install VB-Audio Virtual Cable (free).\n"
+                                        "2. Settings → AI mode → output device = 'CABLE Input'.\n"
+                                        "3. In WhatsApp/Teams set the microphone to 'CABLE Output'.\n\n"
+                                        "Until then you can rehearse: ⚙ → Rehearse with the AI.")
+                on = False
+            else:
+                try:
+                    present = tts.find_output_device(dev) is not None
+                except Exception:  # noqa: BLE001
+                    present = True   # cannot enumerate here; speak() will report if it is missing
+                if not present:
+                    QMessageBox.warning(self, "AI mode", f"The output device '{dev}' is not connected, so the AI "
+                                        "would speak into the room instead of the call.\n\nPlug in / enable the "
+                                        "virtual cable or choose another device in Settings → AI mode.")
+                    on = False
         self.ai_mode = on
-        self.controller.set_ai_mode(on)
-        self.audit.record("ai_mode", on=on)
+        try:
+            self.controller.set_ai_mode(on)
+        except Exception as e:  # noqa: BLE001
+            log.exception("ai mode")
+            self.ai_mode = False
+            self.bridge.event.emit("error", f"AI mode could not start: {e}")
+        self.audit.record("ai_mode", on=self.ai_mode)
 
     def _rehearse(self):
         if self.controller is not None:
@@ -644,6 +674,8 @@ class MainWindow(QMainWindow):
             return
         d = QFileDialog.getExistingDirectory(self, "Save call to…", str(default_export_dir()))
         if d:
+            if self.s.privacy.redact_saved_pii:
+                rec = redact_record(rec)
             folder = export_call(rec, Path(d), vault=self.store.vault)
             self.status_lbl.setText(f"Call saved to {folder}")
             from callpilot.ui.calls_dialog import open_folder
@@ -767,6 +799,8 @@ class MainWindow(QMainWindow):
             self.status_lbl.setText("⚠ The AI asked you to take over – press Take over")
             if self.tray:
                 self.tray.showMessage("CallPilot", "The AI employee needs you on the call.", QSystemTrayIcon.Warning, 5000)
+        elif kind == "exported":
+            self.status_lbl.setText(f"Call saved to {payload}")
         elif kind == "learned":
             n = int(payload.get("added", 0)) + int(payload.get("deterministic", 0))
             self.status_lbl.setText(f"Learned {n} new thing{'s' if n != 1 else ''} from that call"

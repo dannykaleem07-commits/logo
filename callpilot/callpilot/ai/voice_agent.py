@@ -23,6 +23,7 @@ from __future__ import annotations
 import logging
 import re
 import threading
+import time
 
 from callpilot.ai import tts
 from callpilot.ai.cards import banned_filter
@@ -66,6 +67,8 @@ class VoiceAgent:
         self._cancel = threading.Event()
         self._gen_lock = threading.Lock()
         self._turn_seq = 0
+        self._utt = 0                    # utterance token: only the latest utterance may change state
+        self.last_spoke_at = 0.0
         self.lines_spoken: list[str] = []
         session.turn_listeners.append(self._on_caller_turn)
 
@@ -88,8 +91,18 @@ class VoiceAgent:
         """Caller started talking while we were speaking: stop and listen."""
         if self.state == "speaking":
             self._cancel.set()
+            self._utt += 1               # the interrupted utterance may no longer change state
             tts.stop()
+            self.last_spoke_at = time.time()
             self._set_state("handoff" if self.lines_spoken and self.lines_spoken[-1] == self._handoff_line() else "idle")
+
+    def hears_itself(self, now: float | None = None) -> bool:
+        """Rehearsal: the mic is the caller and the speakers are the agent, so its own voice
+        comes back as caller speech. True while speaking and for a moment afterwards."""
+        if not self.rehearse:
+            return False
+        now = now or time.time()
+        return self.state == "speaking" or (now - self.last_spoke_at) < 1.2
 
     def _set_state(self, st: str) -> None:
         self.state = st
@@ -116,6 +129,9 @@ class VoiceAgent:
                 spoken = self._generate(text)
             except Exception as e:  # noqa: BLE001
                 log.exception("voice reply failed")
+                if not self.active or seq != self._turn_seq:
+                    self._set_state("idle")   # taken over / superseded meanwhile: say nothing
+                    return
                 self.emit("error", f"AI mode could not answer: {e}")
                 self._handoff()
                 return
@@ -155,6 +171,10 @@ class VoiceAgent:
     # ------------------------------------------------------------- speech
     def _speak(self, text: str, then: str = "idle") -> None:
         """Speak `text`; when it has been said, move to state `then` (idle, or handoff)."""
+        if not self.active:
+            return
+        self._utt += 1
+        token = self._utt
         self._set_state("speaking")
         self.lines_spoken.append(text)
         seg = self.session.add_agent_line(text)
@@ -162,14 +182,19 @@ class VoiceAgent:
         device = "" if self.rehearse else self.s.voice_agent.output_device
 
         def finished():
-            if self.state == "speaking":
+            self.last_spoke_at = time.time()
+            if token == self._utt and self.state == "speaking":
                 self._set_state(then)
 
         def failed(err: str):
             self.emit("error", f"AI voice failed: {err}")
-            self._set_state(then)
+            if token == self._utt:
+                self._set_state(then)
 
-        tts.speak(text, device, self.s.voice_agent.voice, ear="both", on_done=finished, on_error=failed)
+        try:
+            tts.speak(text, device, self.s.voice_agent.voice, ear="both", on_done=finished, on_error=failed)
+        except Exception as e:  # noqa: BLE001
+            failed(str(e))
 
     def _handoff(self, speak: bool = True) -> None:
         """Say the hand-off line, then stay quiet in state 'handoff' until a human takes over."""

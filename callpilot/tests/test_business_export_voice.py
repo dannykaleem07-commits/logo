@@ -265,3 +265,126 @@ def test_voice_agent_barge_in_stops_speech(monkeypatch):
     agent.barge_in()
     assert agent.state == "idle"
     assert ("ai_mode", {"active": True, "state": "idle"}) in events
+
+
+# ----------------------------------------------------------------- review fixes
+def test_turn_listeners_fire_even_when_a_speculative_draft_is_adopted():
+    """Live use: an interim ≥5 words starts a speculative draft which the final adopts – the
+    AI employee must still be told about the turn."""
+    s = Settings()
+    s.ai.speculative = True
+    hub = HubStore().get("courtesy-cars-accident-management")
+    heard = []
+    sess = CallSession(s, hub, FakeProvider("SAY: No upfront cost.\nMORE: none\nASK: none\nWATCH: none\nSOURCE: Q&A\n",
+                                            delay=0.01), lambda k, p: None)
+    sess.turn_listeners.append(lambda text, seg_id: heard.append(text))
+    sess.on_transcript(CALLER, "do I have to pay anything for the courtesy", False)
+    time.sleep(0.3)   # let the speculative draft start
+    sess.on_transcript(CALLER, "do I have to pay anything for the courtesy car", True)
+    assert _wait(lambda: heard, 3), "turn listener was not called"
+    assert heard == ["do I have to pay anything for the courtesy car"]
+    sess.end(summarize=False)
+
+
+class _BlockingProvider(FakeProvider):
+    """Blocks inside stream() until released, then fails – lets a test take over mid-generation."""
+
+    def __init__(self):
+        super().__init__("")
+        self.entered = threading.Event()
+        self.release = threading.Event()
+
+    def stream(self, system, messages, max_tokens, cancel=None, fast=True):
+        self.calls.append((system, messages, fast))
+        self.entered.set()
+        self.release.wait(5)
+        raise RuntimeError("provider down")
+        yield  # pragma: no cover
+
+
+def test_voice_agent_says_nothing_after_take_over_even_if_generation_fails(monkeypatch):
+    spoken = []
+    monkeypatch.setattr(voice_agent.tts, "speak",
+                        lambda text, device_name="", voice="alloy", ear="both", on_done=None, on_error=None:
+                        (spoken.append(text), on_done and on_done(), threading.Thread())[-1])
+    monkeypatch.setattr(voice_agent.tts, "stop", lambda: None)
+    s = Settings()
+    events = []
+    prov = _BlockingProvider()
+    sess = CallSession(s, HubStore().get("courtesy-cars-accident-management"), prov, lambda k, p: events.append((k, p)))
+    agent = VoiceAgent(sess, s, lambda k, p: events.append((k, p)))
+    agent.start(say_opening=False)
+    agent._on_caller_turn("Can you tell me about the hire terms", "s1")
+    assert prov.entered.wait(3)
+    agent.stop()                      # human takes over while the model is still thinking
+    prov.release.set()
+    assert _wait(lambda: agent.state == "idle" and not agent._gen_lock.locked(), 3)
+    time.sleep(0.1)
+    assert spoken == [], "hand-off line must not be spoken after take-over"
+    assert ("handoff", True) not in events
+    assert not any(k == "error" for k, _ in events)
+
+
+def test_voice_agent_ignores_the_end_of_an_interrupted_utterance(monkeypatch):
+    callbacks = []
+    monkeypatch.setattr(voice_agent.tts, "speak",
+                        lambda text, device_name="", voice="alloy", ear="both", on_done=None, on_error=None:
+                        (callbacks.append(on_done), threading.Thread())[-1])
+    monkeypatch.setattr(voice_agent.tts, "stop", lambda: None)
+    s = Settings()
+    sess = CallSession(s, HubStore().get("courtesy-cars-accident-management"), FakeProvider("x"), lambda k, p: None)
+    agent = VoiceAgent(sess, s, lambda k, p: None)
+    agent.start(say_opening=True)       # utterance 1 starts (callback deferred)
+    assert agent.state == "speaking"
+    agent.barge_in()                    # caller talks over it
+    assert agent.state == "idle"
+    agent._speak("Second line")         # utterance 2
+    assert agent.state == "speaking"
+    callbacks[0]()                      # utterance 1 finally reports done – must not flip state
+    assert agent.state == "speaking"
+    callbacks[1]()
+    assert agent.state == "idle"
+    sess.end(summarize=False)
+
+
+def test_rehearsal_echo_detection():
+    s = Settings()
+    sess = CallSession(s, HubStore().get("courtesy-cars-accident-management"), FakeProvider("x"), lambda k, p: None)
+    live = VoiceAgent(sess, s, lambda k, p: None, rehearse=False)
+    reh = VoiceAgent(sess, s, lambda k, p: None, rehearse=True)
+    live.state = reh.state = "speaking"
+    assert not live.hears_itself()
+    assert reh.hears_itself()
+    reh.state = "idle"
+    reh.last_spoke_at = time.time()
+    assert reh.hears_itself()
+    reh.last_spoke_at = time.time() - 5
+    assert not reh.hears_itself()
+    sess.end(summarize=False)
+
+
+def test_auto_export_respects_privacy_settings(tmp_path):
+    from callpilot.core.export import auto_export
+
+    rec = _record()
+    rec["segments"].append({"speaker": "caller", "text": "my card number is 4111 1111 1111 1111", "start": rec["started_at"] + 9,
+                            "end": rec["started_at"] + 12, "language": "", "translation": ""})
+    s = Settings()
+    s.export.folder = str(tmp_path)
+    s.privacy.save_sessions = False
+    assert auto_export(rec, s) is None and not list(tmp_path.iterdir())
+    s.privacy.save_sessions = True
+    s.privacy.redact_saved_pii = True
+    folder = auto_export(rec, s)
+    assert folder is not None
+    txt = (folder / "transcript.txt").read_text(encoding="utf-8")
+    assert "4111 1111 1111 1111" not in txt and "Someone hit me" in txt
+    assert "4111 1111 1111 1111" not in (folder / "call.json").read_text(encoding="utf-8")
+    s.export.auto_save_calls = False
+    assert auto_export(rec, s) is None
+
+
+def test_call_folder_names_do_not_collide_within_a_minute():
+    a, b = _record(), _record()
+    b["started_at"] += 7
+    assert call_folder_name(a) != call_folder_name(b)

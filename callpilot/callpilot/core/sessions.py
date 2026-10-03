@@ -24,6 +24,11 @@ def _redact_record(rec: dict) -> dict:
     return rec
 
 
+def redact_record(rec: dict) -> dict:
+    """A copy of the record with PII redacted (what the store saves when redaction is on)."""
+    return _redact_record(rec)
+
+
 class SessionStore:
     def __init__(self, privacy: PrivacySettings, root: Path | None = None, vault: Vault | None = None):
         self.privacy = privacy
