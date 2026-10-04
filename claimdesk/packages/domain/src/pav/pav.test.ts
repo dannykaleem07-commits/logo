@@ -323,9 +323,11 @@ describe('assessPav', () => {
     expect(r).toContain('7.5p per mile from the fallback band');
     expect(r).toContain('assumption');
     expect(r).toContain('3 adverts were excluded');
-    expect(r).toContain('c5 (price on application');
-    expect(r).toContain('c6 (previous write-off (Cat N)');
-    expect(r).toContain('c7 (normalised price £21,850.00');
+    // Each excluded advert is named in full so the paragraph can go into a letter unedited.
+    expect(r).toContain('c5 — 2019 Volkswagen Golf, 45,000 miles, Auto Trader (price on application');
+    expect(r).toContain('c6 — 2019 Volkswagen Golf, 47,000 miles, Auto Trader (previous write-off (Cat N)');
+    expect(r).toContain('c7 — 2019 Volkswagen Golf, 46,000 miles, Auto Trader (normalised price £21,850.00');
+    expect(r).not.toContain('Manually excluded');
     expect(r).toContain('condition adjustment of +0%');
     expect(r).toContain('4 adverts remain (3 dealer, 1 private)');
     expect(r).toContain('median normalised price is £14,175.00');
@@ -378,5 +380,128 @@ describe('assessPav', () => {
   it('falls back to the latest capture time for createdAt when now is not supplied', () => {
     const a = assessPav(subject, [comp('a', { pricePence: 1_400_000, capturedAt: '2026-09-30T08:00:00Z' }), comp('b', { pricePence: 1_400_000, capturedAt: '2026-10-02T08:00:00Z' })]);
     expect(a.createdAt).toBe('2026-10-02T08:00:00Z');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Adversarial verification: inputs that would print a wrong number in a letter, re-run idempotency,
+// BST/GMT ordering, boundary conditions. Every expected figure below is computed by hand in a comment.
+// ---------------------------------------------------------------------------
+
+describe('adversarial: re-running the assessment on its own output', () => {
+  it('is idempotent: computed exclusions are re-evaluated, never frozen as "manual", and the prose is identical', () => {
+    const first = assessPav(subject, seven, { id: 'pav-1', claimId: 'claim-1', now: '2026-10-04T09:00:00Z' });
+    // The API stores first.comparables (with excluded/exclusionReason/normalisedPricePence set) and re-runs.
+    const second = assessPav(subject, first.comparables, { id: 'pav-1', claimId: 'claim-1', now: '2026-10-04T09:00:00Z' });
+    expect(second.medianPence).toBe(1_417_500);
+    expect(second.keptCount).toBe(4);
+    expect(second.comparables.filter((c) => c.excluded).map((c) => c.id).sort()).toEqual(['c5', 'c6', 'c7']);
+    expect(second.comparables.some((c) => c.exclusionReason?.includes('Manually excluded'))).toBe(false);
+    expect(second.reasoning).toBe(first.reasoning);
+    expect(second.auditTrail.filter((l) => l.startsWith('Cleared stale computed exclusion'))).toHaveLength(3);
+  });
+
+  it('a stale outlier exclusion is re-admitted when the new advert set no longer makes it an outlier', () => {
+    // c7 (£22,000) was an outlier among five. Add five more adverts around £21,000–£22,500 at the subject
+    // mileage and it is no longer one. Feeding c7 back in with its old reason must NOT keep it out.
+    const first = assessPav(subject, seven, { now: '2026-10-04T09:00:00Z' });
+    const staleC7 = first.comparables.find((c) => c.id === 'c7')!;
+    expect(staleC7.excluded).toBe(true);
+    const highEnd = [2_100_000, 2_150_000, 2_200_000, 2_250_000, 2_120_000].map((p, i) => comp(`h${i}`, { pricePence: p, mileage: 48_000 }));
+    const second = assessPav(subject, [...seven.filter((c) => c.id !== 'c7'), staleC7, ...highEnd], { now: '2026-10-04T09:00:00Z' });
+    const c7 = second.comparables.find((c) => c.id === 'c7')!;
+    expect(c7.excluded).toBe(false);
+    expect(c7.exclusionReason).toBeUndefined();
+  });
+
+  it('a genuine manual exclusion survives a re-run with exactly one prefix', () => {
+    const manual = comp('man', { pricePence: 1_400_000, excluded: true, exclusionReason: 'advert withdrawn by dealer' });
+    const first = assessPav(subject, [...seven, manual], { now: '2026-10-04T09:00:00Z' });
+    const second = assessPav(subject, first.comparables, { now: '2026-10-04T09:00:00Z' });
+    const m = second.comparables.find((c) => c.id === 'man')!;
+    expect(m.excluded).toBe(true);
+    expect(m.exclusionReason).toBe('Manually excluded: advert withdrawn by dealer');
+    expect(second.medianPence).toBe(first.medianPence);
+  });
+});
+
+describe('adversarial: invalid numbers must never reach the letter', () => {
+  it('an advert with no usable mileage is excluded with a reason and the median is computed from the rest', () => {
+    // Four priced adverts at the subject mileage: 13,900 / 14,100 / 14,300 / 14,500. Tukey: median 14,200,
+    // Q1 = median(13,900, 14,100) = 14,000, Q3 = median(14,300, 14,500) = 14,400.
+    const comps = [
+      comp('a', { pricePence: 1_390_000 }),
+      comp('b', { pricePence: 1_410_000 }),
+      comp('c', { pricePence: 1_430_000 }),
+      comp('d', { pricePence: 1_450_000 }),
+      comp('nan', { pricePence: 1_420_000, mileage: Number.NaN }),
+    ];
+    const a = assessPav(subject, comps, { now: '2026-10-04T09:00:00Z' });
+    expect(a.keptCount).toBe(4);
+    expect(a.medianPence).toBe(1_420_000);
+    expect(a.iqrLowPence).toBe(1_400_000);
+    expect(a.iqrHighPence).toBe(1_440_000);
+    const nan = a.comparables.find((c) => c.id === 'nan')!;
+    expect(nan.excluded).toBe(true);
+    expect(nan.exclusionReason).toContain('mileage not recorded or invalid');
+    expect(a.reasoning).not.toContain('NaN');
+    expect(a.auditTrail.join('\n')).not.toContain('£NaN');
+  });
+
+  it('an advert with a non-numeric distance is kept with a warning, not excluded as "NaN miles beyond"', () => {
+    const r = filterComparables(subject, [comp('nd', { pricePence: 1_400_000, distanceMiles: Number.NaN })]);
+    expect(r.kept).toHaveLength(1);
+    expect(r.excluded).toHaveLength(0);
+    expect(r.warnings.some((w) => w.includes('nd has no recorded distance'))).toBe(true);
+    expect(r.audit.join('\n')).not.toContain('NaN');
+  });
+
+  it('refuses a subject whose odometer or year is not a number', () => {
+    expect(() => assessPav({ ...subject, odometerAtLoss: Number.NaN }, seven)).toThrow(RangeError);
+    expect(() => assessPav({ ...subject, odometerAtLoss: -1 }, seven)).toThrow(RangeError);
+    expect(() => assessPav({ ...subject, year: Number.NaN }, seven)).toThrow(RangeError);
+  });
+
+  it('a non-numeric condition adjustment is treated as 0% in the prose and audit, with a warning', () => {
+    const a = assessPav({ ...subject, conditionAdjustmentPct: Number.NaN }, seven, { now: '2026-10-04T09:00:00Z' });
+    expect(a.conditionAdjustmentPct).toBe(0);
+    expect(a.medianPence).toBe(1_417_500); // unchanged from the 0% fixture
+    expect(a.reasoning).toContain('condition adjustment of +0%');
+    expect(a.reasoning).not.toContain('NaN');
+    expect(a.auditTrail.join('\n')).not.toContain('NaN');
+    expect(a.warnings.some((w) => w.includes('not a number'))).toBe(true);
+  });
+});
+
+describe('adversarial: BST/GMT and boundaries', () => {
+  it('createdAt falls back to the latest capture by INSTANT: 09:00+01:00 (BST) is earlier than 08:30Z', () => {
+    const a = assessPav(subject, [
+      comp('bst', { pricePence: 1_400_000, capturedAt: '2026-10-02T09:00:00+01:00' }), // 08:00Z
+      comp('utc', { pricePence: 1_400_000, capturedAt: '2026-10-02T08:30:00Z' }), // later instant, sorts earlier as text
+    ]);
+    expect(a.createdAt).toBe('2026-10-02T08:30:00Z');
+  });
+
+  it('the outlier test is strict: a price exactly on median + 1.5×IQR is kept, one penny over is excluded', () => {
+    // Sorted normalised prices 100, 110, 120, 130, X (in £): median 120; Q1 = 105; Q3 = (130 + X)/2.
+    // Upper bound = 120 + 1.5 × ((130 + X)/2 − 105) equals X when X = 240 (IQR 80, bound 120 + 120).
+    const mk = (id: string, pounds: number): Comparable => ({ ...comp(id, { pricePence: pounds * 100 }), normalisedPricePence: pounds * 100 });
+    const onBound = excludeOutliers([mk('a', 100), mk('b', 110), mk('c', 120), mk('d', 130), mk('x', 240)]);
+    expect(onBound.stats?.iqr).toBe(8_000);
+    expect(onBound.upperBoundPence).toBe(24_000);
+    expect(onBound.comps.find((c) => c.id === 'x')?.excluded).toBeFalsy();
+    const overBound = excludeOutliers([mk('a', 100), mk('b', 110), mk('c', 120), mk('d', 130), mk('x', 240.01)]);
+    // Q3 = (130 + 240.01)/2 = 185.005; IQR = 80.005; bound = 120 + 120.0075 = 240.0075 < 240.01
+    expect(overBound.comps.find((c) => c.id === 'x')?.excluded).toBe(true);
+  });
+
+  it('the mileage window is inclusive at both ends (36,000 and 60,000 pass; 35,999 and 60,001 fail)', () => {
+    const r = filterComparables(subject, [
+      comp('lo', { pricePence: 1, mileage: 36_000 }),
+      comp('hi', { pricePence: 1, mileage: 60_000 }),
+      comp('lo1', { pricePence: 1, mileage: 35_999 }),
+      comp('hi1', { pricePence: 1, mileage: 60_001 }),
+    ]);
+    expect(r.kept.map((c) => c.id)).toEqual(['lo', 'hi']);
   });
 });

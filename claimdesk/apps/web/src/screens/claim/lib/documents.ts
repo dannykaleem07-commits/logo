@@ -3,7 +3,7 @@
  * until a person clears it with a reason (ARCHITECTURE convention 5).
  */
 import type { ConsistencyFlag, ConsistencyReport, GeneratedDocument } from '@ccguk/domain';
-import type { TemplateMeta } from '../../../api/client';
+import type { SupersedeDocumentBody, TemplateMeta } from '../../../api/client';
 
 export const TEMPLATE_KIND_ORDER = ['letter', 'invoice', 'form', 'agreement', 'statement', 'report', 'schedule', 'pack', 'bundle', 'notice', 'certificate'] as const;
 
@@ -231,10 +231,15 @@ export interface SupersedeForm {
   reason: string;
 }
 
-export function supersedeDataFrom(doc: Pick<GeneratedDocument, 'id' | 'templateVersion'>, form: SupersedeForm, today: string): { ok: true; data: Record<string, unknown> } | { ok: false; errors: Record<string, string> } {
+/**
+ * Body for POST /documents/:id/supersede (apps/api `supersedeDocumentBody`: reason, reExecutedOn, data?). The API
+ * links the new version to this one and renders the "re-executed on [date], supersedes version [n]" line itself;
+ * the date is never earlier than today and the API also refuses dates before creation (lesson b).
+ */
+export function supersedeBodyFrom(form: SupersedeForm, today: string): { ok: true; body: SupersedeDocumentBody } | { ok: false; errors: Record<string, string> } {
   const errors: Record<string, string> = {};
   if (form.reason.trim().length < 3) errors.reason = 'Why is this version being re-executed?';
   if (form.reExecutedOn && form.reExecutedOn > today) errors.reExecutedOn = 'The re-execution date cannot be in the future';
   if (Object.keys(errors).length) return { ok: false, errors };
-  return { ok: true, data: { supersedesId: doc.id, supersedesVersion: doc.templateVersion, reExecutedOn: form.reExecutedOn || today, reExecutionReason: form.reason.trim() } };
+  return { ok: true, body: { reason: form.reason.trim(), reExecutedOn: form.reExecutedOn || today } };
 }

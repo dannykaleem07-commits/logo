@@ -26,7 +26,19 @@ export const REGULATED_STATUS_PHRASES: readonly string[] = [
   'legal advice from our lawyers',
   'our lawyers',
   'our lawyer',
-  'our legal team'
+  'our legal team',
+  'our legal advice',
+  'our legal department'
+];
+
+/**
+ * Regulated-status wording that needs a pattern rather than a phrase. "Seek independent legal advice" is a sentence
+ * every letter may (and should) contain, so only CCGUK giving the advice is blocked.
+ */
+export const REGULATED_STATUS_REGEXES: readonly RegExp[] = [
+  /\b(?:we|CCGUK|Courtesy\s+Cars(?:\s+Group)?(?:\s+UK)?(?:\s+Ltd)?)\s+(?:can|will|shall|may|do|also)?\s*(?:give|provide|offer|supply|be\s+providing|be\s+giving)\s+(?:you\s+)?(?:with\s+)?(?:full\s+|free\s+|expert\s+|specialist\s+)?legal\s+(?:advice|representation|services)\b/gi,
+  /\b(?:we|CCGUK)\s+(?:are|is)\s+(?:a\s+)?(?:firm\s+of\s+)?(?:solicitors|lawyers|a\s+law\s+firm|legal\s+representatives)\b/gi,
+  /\b(?:conduct|conducting|issue|issuing)\s+(?:the\s+|these\s+|court\s+)?(?:litigation|proceedings)\s+on\s+(?:your|the\s+claimant['’]s|our\s+customer['’]s)\s+behalf\b/gi
 ];
 
 /** Wording that reads like a solicitor–client retainer: warn with the perimeter-safe alternative (perimeter.md Part 2). */
@@ -92,7 +104,7 @@ function phraseRegex(phrase: string): RegExp {
   return new RegExp(`\\b${escaped}\\b`, 'gi');
 }
 
-const NEGATION_BEFORE = /\b(?:not|nor|never|neither|is\s+not|are\s+not|isn['’]t|aren['’]t)\s*$/i;
+const NEGATION_BEFORE = /\b(?:not|nor|never|neither|is\s+not|are\s+not|isn['’]t|aren['’]t|cannot|can['’]t|won['’]t|don['’]t|doesn['’]t)\s*$/i;
 
 /**
  * BANNED_PHRASE (block) for the disclaimer phrases; REGULATED_STATUS_IMPLIED (block) for wording implying regulated
@@ -121,6 +133,15 @@ export function bannedPhraseCheck(text: string): ConsistencyFlag[] {
     while ((m = re.exec(text)) !== null) {
       const before = text.slice(Math.max(0, m.index - 24), m.index);
       if (NEGATION_BEFORE.test(before)) continue; // "is not regulated by the SRA"
+      statusMatches.push({ index: m.index, length: m[0].length, text: m[0] });
+    }
+  }
+  for (const re of REGULATED_STATUS_REGEXES) {
+    const g = new RegExp(re.source, 'gi');
+    let m: RegExpExecArray | null;
+    while ((m = g.exec(text)) !== null) {
+      const before = text.slice(Math.max(0, m.index - 24), m.index);
+      if (NEGATION_BEFORE.test(before)) continue; // "we do not provide legal advice"
       statusMatches.push({ index: m.index, length: m[0].length, text: m[0] });
     }
   }

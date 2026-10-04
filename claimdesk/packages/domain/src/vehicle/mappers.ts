@@ -40,7 +40,8 @@ export function mapVesFuelType(raw: string | undefined): FuelType | undefined {
   if (f === 'DIESEL') return 'diesel';
   if (f === 'ELECTRICITY' || f === 'ELECTRIC') return 'electric';
   if (f.includes('PLUG')) return 'plugin_hybrid';
-  if (f.includes('HYBRID') || f === 'ELECTRIC DIESEL' || f.includes('ELECTRIC/')) return 'hybrid';
+  // VES values seen: HYBRID ELECTRIC, ELECTRIC DIESEL, PETROL/ELECTRIC, DIESEL/ELECTRIC
+  if (f.includes('HYBRID') || (f.includes('ELECTRIC') && (f.includes('PETROL') || f.includes('DIESEL')))) return 'hybrid';
   if (f.includes('GAS') || f.includes('LPG')) return 'lpg';
   return 'other';
 }

@@ -7,9 +7,13 @@
  *
  * Shapes follow @ccguk/domain types (Estimate, EstimateLine, EstimateTotals, TotalLossAssessment, PavSubject,
  * Comparable, SalvageCategory, HeadOfLoss). The engines compute; the API assembles; the template prints. Every
- * amount and date is printed through format.ts. The only arithmetic here is deriving an estimate line's amount
- * (hours × rate, quantity × unit price) when the API has not supplied `amountPence` on the line — section totals
- * and the net / VAT / gross figures always come from the data (EstimateTotals).
+ * amount and date is printed through format.ts. The only per-line arithmetic is the domain engine's own
+ * `estimateLineAmount` (the same function computeTotals uses), applied when the API has not supplied `amountPence`
+ * on the line — section totals and the net / VAT / gross figures always come from the data (EstimateTotals).
+ *
+ * Before a figure is printed it is reconciled: estimate lines must add to the ledger totals, the total-loss routes
+ * must add up, and a schedule's heads, payments and interest must agree with its totals. A mismatch throws
+ * ReportConsistencyError rather than printing a document that contradicts itself (BLUEPRINT §3.7).
  *
  * The engineer, not CCGUK staff, signs an engineer's report; the claimant verifies a schedule of loss used in
  * proceedings (litigant in person). Nothing here implies regulated status.
@@ -29,6 +33,7 @@ import type {
   TotalLossAssessment,
   Track
 } from '@ccguk/domain';
+import { estimateLineAmount as domainLineAmount } from '@ccguk/domain';
 import { brand } from '../brand.js';
 import { type BaseDocumentData, type FigureRow, type Signatory, sampleBaseData, sampleRecipient } from '../common.js';
 import {
@@ -59,9 +64,29 @@ import {
   statementOfTruth,
   subjectBlock
 } from '../layout.js';
-import { type AnyTemplate, registerTemplate, type Template } from '../registry.js';
+import { type AnyTemplate, DocumentDataError, registerTemplate, type Template } from '../registry.js';
 
 type DateLike = ISODate | ISODateTime;
+
+/**
+ * Thrown when the figures supplied for a report or schedule contradict each other (lines that do not add to their
+ * totals, a route that does not sum, payments that do not match the amount received). Those are assembly or engine
+ * bugs, not drafting points for an approver to clear, so the document is never produced.
+ */
+export class ReportConsistencyError extends Error {
+  readonly templateId: string;
+  readonly problems: string[];
+  constructor(templateId: string, problems: string[]) {
+    super(`Template ${templateId}: figures do not reconcile — ${problems.join('; ')}`);
+    this.name = 'ReportConsistencyError';
+    this.templateId = templateId;
+    this.problems = problems;
+  }
+}
+
+function assertConsistent(templateId: string, problems: string[]): void {
+  if (problems.length > 0) throw new ReportConsistencyError(templateId, problems);
+}
 
 // ---------------------------------------------------------------------------
 // Shared pieces
@@ -77,13 +102,17 @@ table.estimate{font-size:8.5pt;}
 table.estimate tr.group{break-after:avoid;page-break-after:avoid;}
 table.estimate tr.group td{background:var(--tint);color:var(--navy);font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:8pt;}
 table.data caption{break-after:avoid;page-break-after:avoid;}
-table.estimate td.small-note{font-size:7.5pt;color:var(--silver);}
+.small-note,table.estimate td.small-note{font-size:7.5pt;color:var(--silver);}
+table.estimate tr.group td .group-note{font-weight:400;text-transform:none;letter-spacing:0;color:var(--silver);}
+table.comparables tr.comparable-note td{border-bottom:1px solid var(--rule);padding-top:0;font-size:7pt;color:var(--silver);}
+table.comparables tr.comparable-main td{border-bottom:0;}
 .excluded{color:#8A1C1C;font-weight:700;letter-spacing:.04em;}
 table.excluded-lines td{color:#555;}
 table.comparables{font-size:7.8pt;}
 table.comparables th,table.comparables td{padding:1.3mm 1.6mm;}
 table.comparables td.url{font-size:6.8pt;word-break:break-all;color:var(--silver);}
-table.comparables td.trim{white-space:nowrap;}
+table.comparables td.trim,table.comparables td.tight{white-space:nowrap;}
+table.comparables td.source{min-width:28mm;}
 table.comparables tr.excluded-row td{color:var(--silver);}
 table.audit{font-size:8.5pt;}
 .declaration ol>li{margin-bottom:1.4mm;}
@@ -169,16 +198,43 @@ export interface EstimateView extends Omit<Estimate, 'id' | 'claimId' | 'vehicle
   basis?: string;
 }
 
-/** Amount for a line: the supplied `amountPence`, else hours × rate (labour, paint), quantity × unit price, or materials. */
-export function estimateLineAmount(line: EstimateLineView, est: Pick<EstimateView, 'labourRatePence' | 'paintRatePence'>): Pence {
+/** The rates and paint-materials method a line's amount depends on (the domain engine's EstimateBasis). */
+export type EstimateBasisView = Pick<EstimateView, 'labourRatePence' | 'paintRatePence' | 'paintMaterialsMethod' | 'paintMaterialsPerHourPence'>;
+
+/**
+ * Amount for a line: the supplied `amountPence`, else what the domain engine counts for it (`estimateLineAmount` in
+ * @ccguk/domain — the same arithmetic computeTotals uses, so a paint line under the per-hour materials method carries
+ * its materials). Using the engine's function means the printed lines add to the engine's totals by construction.
+ */
+export function estimateLineAmount(line: EstimateLineView, est: EstimateBasisView): Pence {
   if (line.amountPence !== undefined) return line.amountPence;
-  if (line.hours !== undefined) {
-    const rate = line.ratePence ?? (line.kind === 'paint' ? est.paintRatePence : est.labourRatePence);
-    return Math.round(line.hours * rate);
+  return domainLineAmount(line, est).amountPence;
+}
+
+/** Paint lines under the per-hour materials method include materials at this rate; otherwise undefined. */
+function paintMaterialsPerHour(est: EstimateBasisView): Pence | undefined {
+  return est.paintMaterialsMethod === 'per_hour' && est.paintMaterialsPerHourPence !== undefined ? est.paintMaterialsPerHourPence : undefined;
+}
+
+/**
+ * Every reconciliation an estimate must satisfy before it is printed: the claimable lines add to the net, the
+ * pre-existing lines add to the excluded figure, the heads add to the net, and net + VAT = gross.
+ */
+export function estimateConsistencyProblems(est: EstimateView): string[] {
+  const problems: string[] = [];
+  const t = est.totals;
+  const claimed = est.lines.filter((l) => !l.preExisting);
+  const excluded = est.lines.filter((l) => l.preExisting);
+  const claimedSum = claimed.reduce((a, l) => a + estimateLineAmount(l, est), 0);
+  const excludedSum = excluded.reduce((a, l) => a + estimateLineAmount(l, est), 0);
+  if (claimedSum !== t.netPence) problems.push(`the accident-damage lines total ${formatGBP(claimedSum)} but totals.netPence is ${formatGBP(t.netPence)}`);
+  if (excludedSum !== t.preExistingExcludedPence) {
+    problems.push(`the pre-existing lines total ${formatGBP(excludedSum)} but totals.preExistingExcludedPence is ${formatGBP(t.preExistingExcludedPence)}`);
   }
-  if (line.unitPence !== undefined) return Math.round(line.quantity * line.unitPence);
-  if (line.materialsPence !== undefined) return line.materialsPence;
-  return 0;
+  const heads = t.labourPence + t.partsPence + t.paintLabourPence + t.paintMaterialsPence + t.otherPence;
+  if (heads !== t.netPence) problems.push(`labour + parts + paint labour + paint materials + other is ${formatGBP(heads)} but totals.netPence is ${formatGBP(t.netPence)}`);
+  if (t.netPence + t.vatPence !== t.grossPence) problems.push(`totals.grossPence ${formatGBP(t.grossPence)} is not net ${formatGBP(t.netPence)} + VAT ${formatGBP(t.vatPence)}`);
+  return problems;
 }
 
 const LINE_GROUP_ORDER: EstimateLineKind[] = ['labour', 'part', 'paint', 'materials', 'adas', 'diagnostic', 'specialist', 'sundry'];
@@ -205,8 +261,12 @@ function lineQuantity(l: EstimateLineView): string {
   return formatNumber(l.quantity);
 }
 
-function lineRate(l: EstimateLineView, est: Pick<EstimateView, 'labourRatePence' | 'paintRatePence'>): string {
-  if (l.hours !== undefined) return formatGBP(l.ratePence ?? (l.kind === 'paint' ? est.paintRatePence : est.labourRatePence));
+function lineRate(l: EstimateLineView, est: EstimateBasisView): string {
+  if (l.hours !== undefined) {
+    const rate = formatGBP(l.ratePence ?? (l.kind === 'paint' ? est.paintRatePence : est.labourRatePence));
+    const materials = l.kind === 'paint' ? paintMaterialsPerHour(est) : undefined;
+    return materials !== undefined ? `${rate} + ${formatGBP(materials)} materials` : rate;
+  }
   if (l.unitPence !== undefined) return formatGBP(l.unitPence);
   return '';
 }
@@ -215,7 +275,12 @@ function lineRows(lines: ReadonlyArray<EstimateLineView>, est: EstimateView, exc
   const groups = LINE_GROUP_ORDER.filter((k) => lines.some((l) => l.kind === k));
   const out: string[] = [];
   for (const kind of groups) {
-    out.push(`<tr class="group"><td colspan="6">${escapeHtml(LINE_GROUP_LABELS[kind])}${excluded ? ' — EXCLUDED' : ''}</td></tr>`);
+    const perHour = kind === 'paint' ? paintMaterialsPerHour(est) : undefined;
+    const groupNote =
+      perHour !== undefined
+        ? ` <span class="group-note">— hours at ${escapeHtml(formatRate(est.paintRatePence, 'hour'))} plus materials at ${escapeHtml(formatRate(perHour, 'paint hour'))}</span>`
+        : '';
+    out.push(`<tr class="group"><td colspan="6">${escapeHtml(LINE_GROUP_LABELS[kind])}${excluded ? ' — EXCLUDED' : ''}${groupNote}</td></tr>`);
     for (const l of lines.filter((x) => x.kind === kind)) {
       const item = `${l.panel ? `${escapeHtml(l.panel)}: ` : ''}${escapeHtml(l.description)}${excluded ? ' <span class="excluded">EXCLUDED</span>' : ''}${
         l.note ? `<span class="note">${escapeHtml(l.note)}</span>` : ''
@@ -243,7 +308,8 @@ function paintMaterialsLabel(est: EstimateView): string {
 }
 
 /** The itemised estimate: accident lines grouped by kind, pre-existing lines in their own EXCLUDED table, then the ledger totals. */
-export function estimateSection(est: EstimateView): string {
+export function estimateSection(est: EstimateView, templateId = 'report.engineer'): string {
+  assertConsistent(templateId, estimateConsistencyProblems(est));
   const headings = ['Operation', 'Item', 'Part / source', 'Quantity', 'Rate', 'Amount'];
   const head = `<thead><tr>${headings.map((h, i) => `<th${i >= 3 ? ' class="num"' : ''}>${escapeHtml(h)}</th>`).join('')}</tr></thead>`;
   const claimed = est.lines.filter((l) => !l.preExisting);
@@ -384,7 +450,7 @@ export interface EngineerReportData extends BaseDocumentData {
     durationWorkingDays?: number;
     durationNote?: string;
   };
-  totalLoss?: TotalLossAssessment;
+  totalLoss?: TotalLossView;
   pav?: PavSummary;
   salvage?: {
     category: SalvageCategory;
@@ -497,8 +563,64 @@ function vehicleTable(v: EngineerReportData['vehicle']): string {
   return keyValueTable(rows);
 }
 
-/** Repair route vs total-loss route, from the TotalLossAssessment the engine produced. */
-export function totalLossSection(tl: TotalLossAssessment): string {
+/**
+ * The total-loss assessment as the API supplies it: the domain TotalLossAssessment, plus the engine's own breakdown
+ * fields when the API passes the full assessTotalLoss result (PAV − salvage, and the hire until the total-loss
+ * payment that the engine adds to the total-loss route).
+ */
+export type TotalLossView = TotalLossAssessment & {
+  netPavPence?: Pence;
+  hireToPaymentPence?: Pence;
+  daysToTlPayment?: number;
+};
+
+/**
+ * Every reconciliation the total-loss comparison must satisfy before it is printed (domain/totalloss arithmetic):
+ * projected hire = days × rate; repair route = repair + hire + storage; total-loss route = PAV − salvage + hire to
+ * payment (never less than PAV − salvage); and the margin is PAV − salvage against the repair route.
+ */
+export function totalLossConsistencyProblems(tl: TotalLossView): string[] {
+  const problems: string[] = [];
+  const hire = tl.projectedHireDays * tl.hireDailyRatePence;
+  if (hire !== tl.projectedHirePence) {
+    problems.push(`projected hire ${formatGBP(tl.projectedHirePence)} is not ${formatNumber(tl.projectedHireDays)} days × ${formatGBP(tl.hireDailyRatePence)} (${formatGBP(hire)})`);
+  }
+  const repairRoute = tl.repairNetPence + tl.projectedHirePence + tl.projectedStoragePence;
+  if (repairRoute !== tl.repairRouteCostPence) {
+    problems.push(`repair route ${formatGBP(tl.repairRouteCostPence)} is not repair + hire + storage (${formatGBP(repairRoute)})`);
+  }
+  const netPav = tl.pavPence - tl.salvagePence;
+  if (tl.netPavPence !== undefined && tl.netPavPence !== netPav) {
+    problems.push(`netPavPence ${formatGBP(tl.netPavPence)} is not PAV ${formatGBP(tl.pavPence)} − salvage ${formatGBP(tl.salvagePence)}`);
+  }
+  const hireToPayment = tl.totalLossRouteCostPence - netPav;
+  if (hireToPayment < 0) {
+    problems.push(`total-loss route ${formatGBP(tl.totalLossRouteCostPence)} is less than PAV − salvage (${formatGBP(netPav)})`);
+  }
+  if (tl.hireToPaymentPence !== undefined && tl.hireToPaymentPence !== hireToPayment) {
+    problems.push(`hireToPaymentPence ${formatGBP(tl.hireToPaymentPence)} is not total-loss route ${formatGBP(tl.totalLossRouteCostPence)} − (PAV − salvage) ${formatGBP(netPav)}`);
+  }
+  if (tl.daysToTlPayment !== undefined && tl.hireToPaymentPence !== undefined && tl.daysToTlPayment * tl.hireDailyRatePence !== tl.hireToPaymentPence) {
+    problems.push(`hire to payment ${formatGBP(tl.hireToPaymentPence)} is not ${formatNumber(tl.daysToTlPayment)} days × ${formatGBP(tl.hireDailyRatePence)}`);
+  }
+  if (Math.abs(tl.marginPence) !== Math.abs(netPav - tl.repairRouteCostPence)) {
+    problems.push(`marginPence ${formatGBP(tl.marginPence)} is not (PAV − salvage) ${formatGBP(netPav)} against the repair route ${formatGBP(tl.repairRouteCostPence)}`);
+  }
+  if (tl.decision === 'repair' && netPav < tl.repairRouteCostPence) problems.push('decision is "repair" but the repair route exceeds PAV − salvage');
+  if (tl.decision === 'total_loss' && netPav > tl.repairRouteCostPence) problems.push('decision is "total_loss" but the repair route is below PAV − salvage');
+  return problems;
+}
+
+/**
+ * Repair route vs total-loss route, from the TotalLossAssessment the engine produced. The decision follows the
+ * engine's classic insurer test (repair + projected hire + storage against PAV − salvage); the full total-loss route,
+ * with hire until the total-loss payment, is shown alongside (domain/totalloss).
+ */
+export function totalLossSection(tl: TotalLossView, templateId = 'report.engineer'): string {
+  assertConsistent(templateId, totalLossConsistencyProblems(tl));
+  const netPav = tl.netPavPence ?? tl.pavPence - tl.salvagePence;
+  const hireToPayment = tl.hireToPaymentPence ?? tl.totalLossRouteCostPence - netPav;
+  const margin = Math.abs(tl.marginPence);
   const repairRows: FigureRow[] = [
     { label: 'Repair cost (net)', valuePence: tl.repairNetPence },
     {
@@ -516,23 +638,40 @@ export function totalLossSection(tl: TotalLossAssessment): string {
       note: `${SALVAGE_SOURCE_LABELS[tl.salvageSource]}${tl.salvageCategory ? `; ${SALVAGE_CATEGORY_LABELS[tl.salvageCategory]}` : ''}`,
       valuePence: -tl.salvagePence
     },
-    { label: 'Total-loss route total', valuePence: tl.totalLossRouteCostPence, emphasis: true }
+    { label: 'Pre-accident value less salvage', valuePence: netPav, emphasis: true }
   ];
+  if (hireToPayment > 0) {
+    tlRows.push({
+      label: 'Hire until the total-loss payment',
+      note: tl.daysToTlPayment !== undefined ? `${plural(tl.daysToTlPayment, 'day')} at ${formatRate(tl.hireDailyRatePence, 'day')}` : 'per the assessment',
+      valuePence: hireToPayment
+    });
+    tlRows.push({ label: 'Total-loss route total', valuePence: tl.totalLossRouteCostPence, emphasis: true });
+  }
+  const repairRoute = formatGBP(tl.repairRouteCostPence);
+  const netPavText = formatGBP(netPav);
   let verdict: string;
   switch (tl.decision) {
     case 'repair':
-      verdict = `Repair. The repair route costs less than the total-loss route; the margin between the routes is ${formatGBP(tl.marginPence)}.`;
+      verdict = `Repair. The repair route (${repairRoute}) is below the pre-accident value less salvage (${netPavText}) by ${formatGBP(margin)}.`;
       break;
     case 'total_loss':
-      verdict = `Total loss. The total-loss route costs less than the repair route; the margin between the routes is ${formatGBP(tl.marginPence)}.`;
+      verdict =
+        netPav <= 0
+          ? `Total loss. The salvage figure is not below the pre-accident value, so any repair spend exceeds the vehicle’s net value.`
+          : `Total loss. The repair route (${repairRoute}) exceeds the pre-accident value less salvage (${netPavText}) by ${formatGBP(margin)}.`;
       break;
     default:
-      verdict = `Borderline. The margin between the routes is ${formatGBP(tl.marginPence)}; the decision turns on the engineering factors noted below.`;
+      verdict = `Borderline. The repair route (${repairRoute}) is within ${formatGBP(margin)} of the pre-accident value less salvage (${netPavText}); a change in the hire period, the salvage figure or the parts price could alter the outcome.`;
   }
+  const fullRoutes =
+    hireToPayment > 0
+      ? ` Taking the full routes, with hire until the total-loss payment: repair route ${repairRoute} against total-loss route ${formatGBP(tl.totalLossRouteCostPence)}.`
+      : '';
   return `<p>The comparison is commercial: the cost of repairing the vehicle, with the hire and storage that the repair period would cause, against its pre-accident value less what the salvage would realise. Salvage is taken from an actual bid or offer where one exists, never from a fixed percentage. Whether the vehicle can be repaired is an engineering question answered separately above.</p>
 <div class="avoid-break">${figuresTable(repairRows, { caption: 'Repair route' })}</div>
 <div class="avoid-break">${figuresTable(tlRows, { caption: 'Total-loss route' })}
-<p class="verdict">Assessment: ${escapeHtml(verdict)}</p></div>
+<p class="verdict">Assessment: ${escapeHtml(verdict)}${escapeHtml(fullRoutes)}</p></div>
 ${bulletList(tl.notes)}`;
 }
 
@@ -566,27 +705,36 @@ function expertDeclaration(): string {
     'I have not, without forming an independent view, included or excluded anything which has been suggested to me by others, including those instructing me.',
     'I will notify those instructing me immediately and confirm in writing if, for any reason, my existing report requires any correction or qualification.',
     'I understand that my report will form the evidence to be given under oath or affirmation; that the court may at any stage direct a discussion to take place between experts; that the court may direct that, following a discussion between the experts, the parties should prepare a statement of the issues on which the experts agree and disagree with a summary of the reasons; that I may be required to attend court to be cross-examined on my report; and that I am likely to be the subject of public adverse criticism by the judge if the court concludes that I have not taken reasonable care in trying to meet the standards set out above.',
-    'I have read Part 35 of the Civil Procedure Rules and Practice Direction 35, including the Guidance for the Instruction of Experts in Civil Claims, and I have complied with their requirements.'
+    'I am aware of the requirements of Part 35 of the Civil Procedure Rules, Practice Direction 35 and the Guidance for the Instruction of Experts in Civil Claims 2014, and I have complied with them.'
   ];
   return `<div class="declaration">${numberedList(items)}</div>`;
 }
 
 function courtSections(d: EngineerReportData): string {
   const c = d.court;
-  const feeCap = c?.smallClaimsExpertFeeCapPence;
+  if (!c || !c.substanceOfInstructions || c.substanceOfInstructions.trim() === '') {
+    // PD 35 para 3.2(3) and CPR 35.10(3): a report for court must state the substance of all material instructions.
+    throw new DocumentDataError('report.engineer', ['court.substanceOfInstructions']);
+  }
+  const physical = d.inspection.basis === 'physical';
+  const factsAndOpinion = physical
+    ? `<p>Facts stated from my own inspection of the vehicle and from the records I have identified are within my own knowledge. The circumstances of the accident are as described to me by the claimant and are not within my knowledge; I have assessed the damage against that account. The inspection described in section 3 was carried out by me personally, and the estimate is my own.</p>`
+    : `<p>I did not inspect the vehicle. The facts stated from the photographs and records identified in section 3 are within my own knowledge only so far as those documents show them, and this report is a desktop assessment on that material. The circumstances of the accident are as described to me by the claimant and are not within my knowledge; I have assessed the damage against that account. The estimate is my own.</p>`;
+  const feeCap = c.smallClaimsExpertFeeCapPence;
   const smallClaims = `<h3>Small claims track</h3>
 <p>If this claim is allocated to the small claims track, CPR 27.2 disapplies most of Part 35. No expert evidence may be given at a hearing without the court’s permission (CPR 27.5). The fee recoverable for an expert is limited${
     feeCap !== undefined ? ` to ${escapeHtml(formatGBP(feeCap))}` : ''
   } by PD 27A paragraph 7.3(2). The fee for this report is ${escapeHtml(formatGBP(d.report.feePence))}.${
-    c?.track ? ` The claim is currently understood to be on the ${escapeHtml(c.track.replace('_', ' '))} track.` : ''
+    c.track ? ` The claim is currently understood to be on the ${escapeHtml(c.track.replace('_', ' '))} track.` : ''
   }</p>`;
   return `<h2>Part 35 content</h2>
+<p>This report is addressed to the court (PD 35 paragraph 3.1). It is prepared on the instructions of the party identified in section 1; the claimant is the party to the proceedings.</p>
 <h3>Substance of instructions (PD 35 paragraph 3.2(3))</h3>
-${nl2p(c?.substanceOfInstructions ?? d.instructions.purpose)}
-${c?.literature && c.literature.length > 0 ? `<h3>Literature and material relied on (PD 35 paragraph 3.2(2))</h3>${bulletList(c.literature)}` : ''}
-${c?.rangeOfOpinion ? `<h3>Range of opinion (PD 35 paragraph 3.2(6))</h3>${nl2p(c.rangeOfOpinion)}` : ''}
-<h3>Facts and opinion</h3>
-<p>Facts stated from my own inspection and from the records I have identified are within my own knowledge. The circumstances of the accident are as described to me by the claimant and are not within my knowledge; I have assessed the damage against that account. The inspection and the estimate were carried out by me personally.</p>
+${nl2p(c.substanceOfInstructions)}
+${c.literature && c.literature.length > 0 ? `<h3>Literature and material relied on (PD 35 paragraph 3.2(2))</h3>${bulletList(c.literature)}` : ''}
+${c.rangeOfOpinion ? `<h3>Range of opinion (PD 35 paragraph 3.2(6))</h3>${nl2p(c.rangeOfOpinion)}` : ''}
+<h3>Facts and opinion (PD 35 paragraph 3.2(4) and (5))</h3>
+${factsAndOpinion}
 <h3>Expert’s duty to the court (CPR 35.3)</h3>
 <p>I understand that my duty is to help the court on matters within my expertise and that this duty overrides any obligation to the person from whom I have received instructions or by whom I am paid. I have complied with that duty and will continue to do so.</p>
 <h3>Expert’s declaration</h3>
@@ -763,7 +911,6 @@ export function sampleEngineerReport(overrides: Partial<EngineerReportData> = {}
       { id: 'pa2', kind: 'paint', operation: 'Refinish', panel: 'Bonnet', description: 'Refinish bonnet', quantity: 1, hours: 2.5, ratePence: 4800, source: 'library', confirmedByEngineer: true },
       { id: 'pa3', kind: 'paint', operation: 'Refinish', panel: 'NSF wing', description: 'Refinish nearside front wing', quantity: 1, hours: 1.8, ratePence: 4800, source: 'library', confirmedByEngineer: true },
       { id: 'pa4', kind: 'paint', operation: 'Blend', panel: 'NSF door', description: 'Blend nearside front door for colour match', quantity: 1, hours: 1, ratePence: 4800, source: 'library', confirmedByEngineer: true },
-      { id: 'm1', kind: 'materials', operation: 'Materials', description: 'Paint materials, 7.3 paint hours', quantity: 1, materialsPence: 21900, source: 'manual', confirmedByEngineer: true },
       { id: 'a1', kind: 'adas', operation: 'Calibrate', panel: 'Front camera', description: 'Front camera recalibration after bonnet replacement', quantity: 1, unitPence: 15000, source: 'manual', confirmedByEngineer: true, note: 'Required by the manufacturer’s repair method after bonnet removal.' },
       { id: 'd1', kind: 'diagnostic', operation: 'Scan', description: 'Pre- and post-repair diagnostic scan', quantity: 1, unitPence: 6000, source: 'manual', confirmedByEngineer: true },
       { id: 'x1', kind: 'labour', operation: 'Repair', panel: 'Rear bumper', description: 'Scuff and scratches to rear bumper, offside corner', quantity: 1, hours: 1, ratePence: 4800, source: 'manual', confirmedByEngineer: true, preExisting: true, note: 'Weathered damage with road grime in the scratches; unrelated to a frontal impact.' },
@@ -775,7 +922,7 @@ export function sampleEngineerReport(overrides: Partial<EngineerReportData> = {}
       paintLabourPence: 35040,
       paintMaterialsPence: 21900,
       otherPence: 21000,
-      preExistingExcludedPence: 12000,
+      preExistingExcludedPence: 16500,
       netPence: 197350,
       vatPence: 39470,
       grossPence: 236820,
@@ -783,20 +930,23 @@ export function sampleEngineerReport(overrides: Partial<EngineerReportData> = {}
       paintHours: 7.3
     }
   };
-  const totalLoss: TotalLossAssessment = {
+  const totalLoss: TotalLossView = {
     repairNetPence: 197350,
     projectedRepairWorkingDays: 8,
-    projectedHireDays: 12,
+    projectedHireDays: 14,
     hireDailyRatePence: 4980,
-    projectedHirePence: 59760,
+    projectedHirePence: 69720,
     projectedStoragePence: 36000,
     pavPence: 1625000,
     salvagePence: 215000,
     salvageSource: 'bid',
-    repairRouteCostPence: 293110,
-    totalLossRouteCostPence: 1410000,
+    repairRouteCostPence: 303070,
+    totalLossRouteCostPence: 1514580,
     decision: 'repair',
-    marginPence: 1116890,
+    marginPence: 1106930,
+    netPavPence: 1410000,
+    hireToPaymentPence: 104580,
+    daysToTlPayment: 21,
     notes: ['No structural damage was found; the front chassis legs, suspension and steering are undamaged.', 'Parts are available from the dealer within three working days.']
   };
   return {
@@ -938,7 +1088,12 @@ export interface PavReportData extends BaseDocumentData {
   /** Generated reasoning paragraph, approved by the engineer. */
   reasoning: string;
   auditTrail: PavAuditEntry[];
-  approver: Signatory & { qualifications?: string; approvedAt: DateLike };
+  approver: Signatory & {
+    qualifications?: string;
+    approvedAt: DateLike;
+    /** The firm the approving engineer signs for, when not CCGUK. Defaults to "for and on behalf of Courtesy Cars Group UK Ltd". */
+    company?: string;
+  };
 }
 
 const PAV_REQUIRED = [
@@ -980,31 +1135,46 @@ const SELLER_LABELS: Record<Comparable['seller'], string> = { dealer: 'Dealer', 
 const CONDITION_LABELS: Record<PavSubject['conditionGrade'], string> = { excellent: 'Excellent', good: 'Good', average: 'Average', poor: 'Poor' };
 const SERVICE_HISTORY_LABELS: Record<NonNullable<PavSubject['serviceHistory']>, string> = { full: 'Full', partial: 'Partial', none: 'None', unknown: 'Unknown' };
 
-/** Comparables with capture evidence, normalised price and inclusion status; the URL prints under the source. */
+/**
+ * Comparables with capture evidence, normalised price and inclusion status. Each advert takes two rows: the figures,
+ * then a note row with the URL, any Cat S/N, ex-fleet or POA flag and the exclusion reason, so no column is squeezed.
+ */
 export function comparablesTable(comparables: ReadonlyArray<Comparable>): string {
   if (comparables.length === 0) return '<p>No comparables were captured.</p>';
-  const headings = ['#', 'Captured', 'Source and URL', 'Advert price', 'Mileage', 'Year', 'Trim', 'Seller', 'Distance', 'Normalised', 'Status'];
+  const headings = ['#', 'Captured', 'Source', 'Advert price', 'Mileage', 'Year', 'Trim', 'Seller', 'Distance', 'Normalised', 'Status'];
   const numeric = new Set([3, 4, 5, 8, 9]);
   const head = `<thead><tr>${headings.map((h, i) => `<th${numeric.has(i) ? ' class="num"' : ''}>${escapeHtml(h)}</th>`).join('')}</tr></thead>`;
   const body = comparables
     .map((c, i) => {
-      const flags = [c.writeOffCategory ? `Cat ${c.writeOffCategory}` : '', c.exFleet ? 'ex-fleet' : '', c.priceOnApplication ? 'POA' : ''].filter(Boolean).join(', ');
+      const flags = [c.writeOffCategory ? `Category ${c.writeOffCategory} history` : '', c.exFleet ? 'ex-fleet' : '', c.priceOnApplication ? 'price on application' : ''].filter(Boolean);
       const cells: string[] = [
-        escapeHtml(String(i + 1)),
-        escapeHtml(formatDateTime(c.capturedAt)),
-        `${escapeHtml(c.source)}${c.url ? `<br><span class="url">${escapeHtml(c.url)}</span>` : ''}`,
-        escapeHtml(c.priceOnApplication ? 'POA' : formatGBP(c.pricePence)),
-        escapeHtml(formatMiles(c.mileage)),
-        escapeHtml(String(c.year)),
-        `${escapeHtml(c.trim ?? '—')}${flags ? `<br><span class="small-note">${escapeHtml(flags)}</span>` : ''}`,
-        escapeHtml(SELLER_LABELS[c.seller]),
-        escapeHtml(c.distanceMiles !== undefined ? formatMiles(c.distanceMiles) : '—'),
-        escapeHtml(c.normalisedPricePence !== undefined ? formatGBP(c.normalisedPricePence) : '—'),
-        c.excluded ? `<span class="excluded">EXCLUDED</span> — ${escapeHtml(c.exclusionReason ?? 'reason not recorded')}` : 'Included'
+        String(i + 1),
+        formatDateTime(c.capturedAt),
+        c.source,
+        c.priceOnApplication ? 'POA' : formatGBP(c.pricePence),
+        formatMiles(c.mileage),
+        String(c.year),
+        c.trim ?? '—',
+        SELLER_LABELS[c.seller],
+        c.distanceMiles !== undefined ? formatMiles(c.distanceMiles) : '—',
+        c.normalisedPricePence !== undefined ? formatGBP(c.normalisedPricePence) : '—'
       ];
-      return `<tr${c.excluded ? ' class="excluded-row"' : ''}>${cells
-        .map((cell, ci) => `<td${numeric.has(ci) ? ' class="num"' : ci === 6 ? ' class="trim"' : ''}>${cell}</td>`)
-        .join('')}</tr>`;
+      const status = c.excluded ? '<span class="excluded">EXCLUDED</span>' : 'Included';
+      const notes: string[] = [];
+      if (c.url) notes.push(`URL: ${escapeHtml(c.url)}`);
+      if (c.evidenceId) notes.push(`Evidence ${escapeHtml(c.evidenceId)}`);
+      if (flags.length > 0) notes.push(escapeHtml(flags.join(', ')));
+      if (c.excluded) notes.push(`<span class="excluded">Excluded</span> — ${escapeHtml(c.exclusionReason ?? 'reason not recorded')}`);
+      const rowClass = c.excluded ? 'comparable-main excluded-row' : 'comparable-main';
+      const cellClass = (ci: number): string => {
+        if (numeric.has(ci)) return ' class="num"';
+        if (ci === 2) return ' class="source"';
+        if (ci === 6) return ' class="trim"';
+        return ci === 1 || ci === 7 ? ' class="tight"' : '';
+      };
+      const main = `<tr class="${rowClass}">${cells.map((cell, ci) => `<td${cellClass(ci)}>${escapeHtml(cell)}</td>`).join('')}<td class="tight">${status}</td></tr>`;
+      const note = notes.length > 0 ? `<tr class="comparable-note${c.excluded ? ' excluded-row' : ''}"><td></td><td colspan="10">${notes.join(' · ')}</td></tr>` : '';
+      return `${main}\n${note}`;
     })
     .join('\n');
   return `<table class="data comparables">${head}<tbody>\n${body}\n</tbody></table>`;
@@ -1113,7 +1283,11 @@ ${dataTable(['Date and time', 'Action', 'By', 'Detail'], auditRows, { className:
 <p>Approved by ${escapeHtml(d.approver.name)}, ${escapeHtml(d.approver.role)}${d.approver.qualifications ? ` (${escapeHtml(d.approver.qualifications)})` : ''}, on ${escapeHtml(
       formatDateLong(d.approver.approvedAt)
     )}.</p>
-${signatureBlock({ name: d.approver.name, role: d.approver.qualifications ? `${d.approver.role} — ${d.approver.qualifications}` : d.approver.role }, d.approver.approvedAt)}`;
+${signatureBlock(
+      { name: d.approver.name, role: d.approver.qualifications ? `${d.approver.role} — ${d.approver.qualifications}` : d.approver.role },
+      d.approver.approvedAt,
+      d.approver.company ? { onBehalfOf: d.approver.company } : {}
+    )}`;
 
     return baseLayout({
       title: 'Pre-accident value report',
@@ -1332,6 +1506,33 @@ const STATUS_LABELS: Record<NonNullable<ScheduleOfLossHead['status']>, string> =
   disputed: 'Disputed'
 };
 
+/**
+ * Every reconciliation a schedule of loss must satisfy before it is printed: the heads add to the net and VAT totals,
+ * gross = net + VAT, payments listed add to the amount received, the interest line equals the interest total, and the
+ * total claimed is gross − received + interest (domain/quantum schedule arithmetic).
+ */
+export function scheduleConsistencyProblems(d: ScheduleOfLossData): string[] {
+  const problems: string[] = [];
+  const t = d.totals;
+  const net = d.heads.reduce((a, h) => a + h.netPence, 0);
+  const vat = d.heads.reduce((a, h) => a + (h.vatPence ?? 0), 0);
+  if (net !== t.netPence) problems.push(`the heads total ${formatGBP(net)} net but totals.netPence is ${formatGBP(t.netPence)}`);
+  if (vat !== (t.vatPence ?? 0)) problems.push(`the heads carry ${formatGBP(vat)} VAT but totals.vatPence is ${formatGBP(t.vatPence ?? 0)}`);
+  if (t.netPence + (t.vatPence ?? 0) !== t.grossPence) problems.push(`totals.grossPence ${formatGBP(t.grossPence)} is not net ${formatGBP(t.netPence)} + VAT ${formatGBP(t.vatPence ?? 0)}`);
+  if (d.payments && d.payments.length > 0) {
+    const paid = d.payments.reduce((a, p) => a + p.amountPence, 0);
+    if (paid !== t.receivedPence) problems.push(`the payments listed total ${formatGBP(paid)} but totals.receivedPence is ${formatGBP(t.receivedPence)}`);
+  }
+  if (d.interest && d.interest.amountPence !== t.interestPence) {
+    problems.push(`the interest line is ${formatGBP(d.interest.amountPence)} but totals.interestPence is ${formatGBP(t.interestPence)}`);
+  }
+  if (!d.interest && t.interestPence !== 0) problems.push(`totals.interestPence is ${formatGBP(t.interestPence)} but no interest line is supplied`);
+  if (t.grossPence - t.receivedPence + t.interestPence !== t.totalPence) {
+    problems.push(`totals.totalPence ${formatGBP(t.totalPence)} is not gross ${formatGBP(t.grossPence)} − received ${formatGBP(t.receivedPence)} + interest ${formatGBP(t.interestPence)}`);
+  }
+  return problems;
+}
+
 export const scheduleOfLossTemplate: Template<ScheduleOfLossData> = {
   id: 'schedule.loss',
   version: '1.0.0',
@@ -1343,6 +1544,8 @@ export const scheduleOfLossTemplate: Template<ScheduleOfLossData> = {
   titleFor: (d) => `Schedule of loss — ${d.claim.claimantName}`,
   sample: () => sampleScheduleOfLoss(),
   render: (d) => {
+    if (d.heads.length === 0) throw new DocumentDataError('schedule.loss', ['heads']);
+    assertConsistent('schedule.loss', scheduleConsistencyProblems(d));
     const showVat = d.heads.some((h) => h.vatPence !== undefined);
     const showStatus = d.heads.some((h) => h.status);
     const lines: ScheduleLine[] = d.heads.map((h) => ({

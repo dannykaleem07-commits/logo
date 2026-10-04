@@ -18,6 +18,13 @@ export interface ExtractedAmount {
   perUnit?: 'day' | 'hour' | 'mile' | 'week' | 'month';
   /** 'net' when followed by "+ VAT"/"ex VAT", 'gross' when "inc VAT"/"including VAT". */
   vatHint?: 'net' | 'gross';
+  /**
+   * How specific the keyword that gave the context was: 'strong' = a payment/offer/invoice verb or a status word
+   * (claimed, outstanding, balance, total, due); 'weak' = a generic noun (charges, costs, claim). Ledger-mismatch
+   * checks for claimed figures only fire on strong keywords, so an itemised breakdown line ("call-out £90") is not
+   * compared with a head total.
+   */
+  strength?: 'strong' | 'weak';
 }
 
 const AMOUNT_RE = /£\s?(\d{1,3}(?:,\d{3})+|\d+)(?:\.(\d{2}))?(?!\d)/g;
@@ -54,8 +61,11 @@ export function extractAmounts(text: string): ExtractedAmount[] {
     if (pence === null) continue;
     const start = m.index;
     const end = m.index + m[0].length;
-    const before = text.slice(Math.max(0, start - BEFORE_WINDOW), start);
-    const after = text.slice(end, end + AFTER_WINDOW);
+    // Keywords are read within the amount's own sentence: "…admin £25.00. The outstanding balance is £232.60" must
+    // not make £25.00 an outstanding figure, and "We received your letter. £1,287 remains outstanding" must not make
+    // £1,287 a payment. Newlines are not sentence ends (a two-cell table row "Amount received | £1,287.00" is one unit).
+    const before = sentenceTail(text.slice(Math.max(0, start - BEFORE_WINDOW), start));
+    const after = sentenceHead(text.slice(end, end + AFTER_WINDOW));
 
     let best: { ctx: AmountContext; distance: number; tier: 'strong' | 'weak' } | undefined;
     let paidBefore = false; // a non-negated payment verb before the amount, in this sentence, with no other £ amount between
@@ -87,6 +97,7 @@ export function extractAmounts(text: string): ExtractedAmount[] {
       index: start,
       context: best?.ctx ?? 'unknown'
     };
+    if (best) item.strength = best.tier;
     const unit = after.match(PER_UNIT_RE);
     if (unit && unit[1]) item.perUnit = unit[1].toLowerCase() as ExtractedAmount['perUnit'];
     else if (unit && unit[2]) item.perUnit = ADVERB_UNIT[unit[2].toLowerCase().replace(/\s+/g, ' ')];
@@ -96,6 +107,21 @@ export function extractAmounts(text: string): ExtractedAmount[] {
     out.push(item);
   }
   return out;
+}
+
+/** The part of `s` after its last sentence end ("." / "!" / "?" followed by whitespace). */
+function sentenceTail(s: string): string {
+  const re = /[.!?]\s+/g;
+  let cut = 0;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(s)) !== null) cut = m.index + m[0].length;
+  return s.slice(cut);
+}
+
+/** The part of `s` before its first sentence end. */
+function sentenceHead(s: string): string {
+  const m = /[.!?](?:\s|$)/.exec(s);
+  return m ? s.slice(0, m.index) : s;
 }
 
 function excerpt(text: string, start: number, end: number, radius = 40): string {
@@ -174,15 +200,24 @@ export interface DeadlineOptions {
 }
 
 const DEADLINE_KEYWORD_RE = /\b(by|before|no later than|not later than|on or before|until|deadline(?: of| is)?|due(?: on| by)?|within)\b/gi;
-const DEMAND_CUE_RE = /\b(require[sd]?|respond|reply|pay|payment|remit|settle|confirm|provide|send|return|response|please|must|should|expect|deadline|due|forward|supply|produce|serve|file|issue|comply|respon)\w*/i;
-const PASSIVE_BEFORE_RE = /\b(?:was|were|been|is|are|be|being)\s+(?:collected|delivered|returned|signed|received|sent|issued|paid|made|repaired|inspected|instructed|completed|authorised|authorized|notified|confirmed|settled|agreed|released|written|dated|caused|driven)\s*$/i;
+const DEMAND_CUE_RE = /\b(require[sd]?|respond|reply|pay|paid|payment|remit|settle|confirm|provide|send|return|response|please|must|should|shall|expect|deadline|due|owed|forward|supply|produce|serve|file|issue|comply|respon|invoice|(?:is|are)\s+to\s+be)\w*/i;
+/**
+ * A past-tense passive before "by" ("was collected by 4 October", "has been paid by 1 October") describes an event,
+ * not a deadline. Modal passives ("must be made by", "should be received by", "is to be paid by") ARE demands and
+ * must stay in: they are the commonest deadline phrasing in letters.
+ */
+const PASSIVE_BEFORE_RE = /\b(?:was|were|(?:has|have|had)\s+been)\s+(?:collected|delivered|returned|signed|received|sent|issued|paid|made|repaired|inspected|instructed|completed|authorised|authorized|notified|confirmed|settled|agreed|released|written|dated|caused|driven)\s*$/i;
 /** What may sit between "by" and the date: a time ("5pm", "5:00 pm", "17:00 hrs", "noon", "close of business"), "on", a weekday, "the". */
 const DEADLINE_GAP_RE = /^\s*(?:(?:\d{1,2}(?:[:.]\d{2})?\s*(?:am|pm|hrs|hours|noon|o['’]clock)?|noon|midday|midnight|close\s+of\s+(?:business|play)|end\s+of\s+(?:the\s+)?(?:day|business))\s*,?\s*)?(?:on\s+)?(?:(?:Mon|Tues?|Wednes|Thurs?|Fri|Satur|Sun)day,?\s+)?(?:the\s+)?$/i;
-const RELATIVE_RE = /\bwithin\s+(\d{1,3}|one|two|three|four|five|six|seven|ten|fourteen|twenty[-\s]one|twenty[-\s]eight|thirty)\s+(working\s+|business\s+|calendar\s+|clear\s+)?(days?|months?)\b/gi;
+const NUMBER_WORD = '\\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|twelve|fourteen|fifteen|twenty[-\\s]one|twenty[-\\s]eight|twenty|thirty|sixty|ninety';
+const RELATIVE_RE = new RegExp(`\\bwithin\\s+(${NUMBER_WORD})\\s+(working\\s+|business\\s+|calendar\\s+|clear\\s+)?(days?|weeks?|months?)\\b`, 'gi');
 
-const RELATIVE_FROM_LETTER_RE = /\b(\d{1,3}|one|two|three|four|five|six|seven|ten|fourteen|twenty[-\s]one|twenty[-\s]eight|thirty)\s+(working\s+|business\s+|calendar\s+|clear\s+)?(days?|months?)\s+(?:from|of|after)\s+(?:the\s+)?date\s+of\s+this\s+(?:letter|notice|email)\b/gi;
+const RELATIVE_FROM_LETTER_RE = new RegExp(`\\b(${NUMBER_WORD})\\s+(working\\s+|business\\s+|calendar\\s+|clear\\s+)?(days?|weeks?|months?)\\s+(?:from|of|after)\\s+(?:the\\s+)?date\\s+of\\s+this\\s+(?:letter|notice|email)\\b`, 'gi');
 
-const WORDS: Record<string, number> = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, ten: 10, fourteen: 14, 'twenty one': 21, 'twenty-one': 21, 'twenty eight': 28, 'twenty-eight': 28, thirty: 30 };
+const WORDS: Record<string, number> = {
+  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10, twelve: 12, fourteen: 14, fifteen: 15, twenty: 20,
+  'twenty one': 21, 'twenty-one': 21, 'twenty eight': 28, 'twenty-eight': 28, thirty: 30, sixty: 60, ninety: 90
+};
 
 /**
  * Dates that are stated as deadlines: an absolute date preceded (within 25 characters) by a deadline keyword and a demand
@@ -217,18 +252,21 @@ export function extractDeadlines(text: string, opts: DeadlineOptions = {}): Extr
 
   if (opts.baseDate) {
     const addWd = opts.addWorkingDays ?? ((date: ISODate, n: number) => calendarAddWorkingDays(date, n));
-    const seen = new Set<number>();
+    // "within 14 days of the date of this letter" matches both patterns at different offsets: one deadline, not two.
+    const covered: Array<[number, number]> = [];
     for (const re of [RELATIVE_RE, RELATIVE_FROM_LETTER_RE]) {
       re.lastIndex = 0;
       let m: RegExpExecArray | null;
       while ((m = re.exec(text)) !== null) {
-        if (seen.has(m.index)) continue;
+        const mStart = m.index;
+        const mEnd = m.index + m[0].length;
+        if (covered.some(([s, e]) => mStart < e && mEnd > s)) continue;
         const before = text.slice(Math.max(0, m.index - 80), m.index);
         if (!DEMAND_CUE_RE.test(before) && !DEMAND_CUE_RE.test(text.slice(m.index + m[0].length, m.index + m[0].length + 40))) continue;
         const nRaw = (m[1] ?? '').toLowerCase().replace(/\s+/g, ' ');
         const n = /^\d+$/.test(nRaw) ? Number(nRaw) : WORDS[nRaw];
         if (!n) continue;
-        seen.add(m.index);
+        covered.push([mStart, mEnd]);
         const qualifier = (m[2] ?? '').trim().toLowerCase();
         const unit = (m[3] ?? '').toLowerCase();
         const working = qualifier === 'working' || qualifier === 'business';
@@ -237,6 +275,10 @@ export function extractDeadlines(text: string, opts: DeadlineOptions = {}): Extr
         if (unit.startsWith('month')) {
           iso = addCalendarMonths(opts.baseDate, n);
           item.months = n;
+        } else if (unit.startsWith('week')) {
+          iso = addCalendarDays(opts.baseDate, 7 * n);
+          item.days = 7 * n;
+          item.workingDays = false;
         } else {
           iso = working ? addWd(opts.baseDate, n) : addCalendarDays(opts.baseDate, n);
           item.days = n;
@@ -283,6 +325,12 @@ export function extractCitations(text: string): ExtractedCitation[] {
     let start = m.index;
     const cut = raw.search(/\s+\[\d{4}\]/);
     if (cut >= 0) raw = raw.slice(0, cut);
+    // a name never runs past a sentence end ("Esure Insurance Ltd. Copley v Lawn" is two things); rescan from the cut
+    const sentenceEnd = raw.search(/\.\s+(?=[A-Z])/);
+    if (sentenceEnd >= 0) {
+      raw = raw.slice(0, sentenceEnd + 1);
+      CASE_NAME_RE.lastIndex = m.index + raw.length;
+    }
     // drop leading sentence words ("See Stevens v …", "In Copley v …") and trailing punctuation
     let lead: RegExpMatchArray | null;
     while ((lead = raw.match(LEADING_WORD_RE)) !== null) {

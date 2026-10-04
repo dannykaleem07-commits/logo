@@ -96,12 +96,20 @@ function latestCapture(comps: Comparable[]): ISODateTime | undefined {
 }
 
 export function assessPav(subject: PavSubject, comps: Comparable[], opts: AssessPavOptions = {}): PavAssessmentResult {
+  // The subject's odometer and year drive every comparison; NaN compares false against every bound,
+  // so a bad subject would silently pass every advert and print "£NaN" in the letter. Refuse instead.
+  if (!Number.isFinite(subject.odometerAtLoss) || subject.odometerAtLoss < 0) {
+    throw new RangeError(`subject.odometerAtLoss must be a non-negative finite number of miles (got ${String(subject.odometerAtLoss)})`);
+  }
+  if (!Number.isFinite(subject.year)) throw new RangeError(`subject.year must be a finite year (got ${String(subject.year)})`);
+
   const audit: string[] = [];
   const warnings: string[] = [];
+  const clampedPct = clampConditionPct(subject.conditionAdjustmentPct);
 
   audit.push(PAV_MEASURE_BASIS);
   audit.push(
-    `Subject: ${subject.year} ${subject.make} ${subject.model}${subject.trim ? ` ${subject.trim}` : ''} (${subject.registration}), ${formatMiles(subject.odometerAtLoss)} at loss (${subject.odometerBasis === 'projected_from_mot' ? 'projected from MOT history' : 'odometer reading'}), condition ${subject.conditionGrade}, condition adjustment ${subject.conditionAdjustmentPct >= 0 ? '+' : ''}${subject.conditionAdjustmentPct}%${subject.serviceHistory ? `, service history ${subject.serviceHistory}` : ''}${subject.exFleet ? ', ex-fleet' : ''}${subject.previousWriteOffCategory ? `, previous write-off Cat ${subject.previousWriteOffCategory}` : ''}.`,
+    `Subject: ${subject.year} ${subject.make} ${subject.model}${subject.trim ? ` ${subject.trim}` : ''} (${subject.registration}), ${formatMiles(subject.odometerAtLoss)} at loss (${subject.odometerBasis === 'projected_from_mot' ? 'projected from MOT history' : 'odometer reading'}), condition ${subject.conditionGrade}, condition adjustment ${clampedPct >= 0 ? '+' : ''}${clampedPct}%${subject.serviceHistory ? `, service history ${subject.serviceHistory}` : ''}${subject.exFleet ? ', ex-fleet' : ''}${subject.previousWriteOffCategory ? `, previous write-off Cat ${subject.previousWriteOffCategory}` : ''}.`,
   );
   audit.push(`${comps.length} advert(s) supplied, each captured manually (URL, screenshot/PDF, timestamp, hash) — never scraped.`);
 
@@ -117,7 +125,6 @@ export function assessPav(subject: PavSubject, comps: Comparable[], opts: Assess
   if (regression.assumption) warnings.push(regression.note);
 
   // 3. Normalise
-  const clampedPct = clampConditionPct(subject.conditionAdjustmentPct);
   if (!Number.isFinite(subject.conditionAdjustmentPct)) {
     warnings.push(`Condition adjustment is not a number (${String(subject.conditionAdjustmentPct)}); treated as 0%. The engineer must record a figure between −10% and +10%.`);
   } else if (clampedPct !== subject.conditionAdjustmentPct) {
@@ -252,7 +259,7 @@ export function pavReasoning(a: ReasoningInput): string {
         : `The per-mile factor is ${a.perMilePence}p per mile from the fallback price band; this is an assumption, not a figure derived from the adverts.`,
     );
   }
-  const pct = Math.max(-10, Math.min(10, s.conditionAdjustmentPct));
+  const pct = clampConditionPct(s.conditionAdjustmentPct); // NaN → 0, never "NaN%" in a letter
   parts.push(
     `Each advert was adjusted to the subject's mileage at that factor, option adjustments were applied where recorded, and a condition adjustment of ${pct >= 0 ? '+' : ''}${pct}% was applied for the subject's ${s.conditionGrade} condition${pct === 0 ? ' (no adjustment)' : ''}.`,
   );

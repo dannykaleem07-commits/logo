@@ -100,8 +100,9 @@ describe('buildCertificate', () => {
     expect(cert.json.integrity).toEqual({ hashMatchesDocument: true, signedAfterCreation: true });
     // the OTP token itself never appears; only its fingerprint
     expect(JSON.stringify(cert.json)).not.toContain('f'.repeat(64));
-    expect(cert.lines).toContain('Signed: 21 September 2026 10:30 UTC');
-    expect(cert.lines).toContain('Identity verified by one-time passcode sent by SMS to amir@example.com, verified 21 September 2026 10:29 UTC');
+    // 21 September 2026 is in British Summer Time: the signer saw 11:30 on their own clock; the UTC instant stays alongside
+    expect(cert.lines).toContain('Signed: 21 September 2026 11:30 BST (10:30 UTC)');
+    expect(cert.lines).toContain('Identity verified by one-time passcode sent by SMS to amir@example.com, verified 21 September 2026 11:29 BST (10:29 UTC)');
     expect(cert.lines).toContain('Document: Credit hire agreement (agreement.credit_hire v1.2.0, id doc-cha-1)');
     expect(cert.lines).toContain(`Hash at signing: ${'b'.repeat(64)} (matches document)`);
     expect(cert.lines.at(-1)).toBe('Signature time is after document creation.');
@@ -124,7 +125,8 @@ describe('buildCertificate', () => {
 
   it('includes the supersession line for re-executed documents', () => {
     const cert = buildCertificate({ document: { ...document, supersedesId: 'doc-cha-0', reExecutedOn: '2026-10-04' }, signature, otpToken: 'f'.repeat(64), generatedAt: '2026-10-04T12:00:00Z' });
-    expect(cert.lines).toContain('Supersedes document doc-cha-0; re-executed on 2026-10-04');
+    // the certificate is a human-read document: the re-execution date is printed long-form, never as raw ISO
+    expect(cert.lines).toContain('Supersedes document doc-cha-0; re-executed on 4 October 2026');
     expect(cert.json.document.supersedesId).toBe('doc-cha-0');
   });
 });
@@ -149,7 +151,7 @@ describe('signatureDateChecks and reExecutionLine', () => {
     expect(flags).toHaveLength(1);
     expect(flags[0]!.code).toBe('DATE_BEFORE_CREATION');
     expect(flags[0]!.severity).toBe('block');
-    expect(flags[0]!.message).toContain('signed on 20 September 2026 18:00 UTC but was created on 21 September 2026 10:00 UTC');
+    expect(flags[0]!.message).toContain('signed on 20 September 2026 19:00 BST (18:00 UTC) but was created on 21 September 2026 11:00 BST (10:00 UTC)');
     expect(flags[0]!.excerpt).toBe('d1');
   });
 
@@ -181,7 +183,57 @@ describe('signatureDateChecks and reExecutionLine', () => {
   it('formats dates', () => {
     expect(formatLongDate('2026-10-04')).toBe('4 October 2026');
     expect(formatLongDate('2026-01-31T23:59:00Z')).toBe('31 January 2026');
-    expect(formatLongDateTime('2026-10-04T09:05:00Z')).toBe('4 October 2026 09:05 UTC');
+    expect(formatLongDateTime('2026-10-04T09:05:00Z')).toBe('4 October 2026 10:05 BST (09:05 UTC)');
+    expect(formatLongDateTime('2026-01-15T09:05:00Z')).toBe('15 January 2026 09:05 GMT (09:05 UTC)');
+    // BST ends 01:00 UTC on Sunday 25 October 2026 (last Sunday of October)
+    expect(formatLongDateTime('2026-10-25T00:30:00Z')).toBe('25 October 2026 01:30 BST (00:30 UTC)');
+    expect(formatLongDateTime('2026-10-25T01:30:00Z')).toBe('25 October 2026 01:30 GMT (01:30 UTC)');
+    expect(formatLongDateTime('2026-10-24T23:30:00+01:00')).toBe('24 October 2026 23:30 BST (22:30 UTC)');
     expect(formatLongDate('garbage')).toBe('garbage');
+  });
+});
+
+describe('adversarial: BST and the London calendar date', () => {
+  const sig = (signedAt: string): SignatureRecord => ({
+    signerPartyId: 'p-claimant',
+    signerName: 'Amir Hussain',
+    signerContact: 'amir@example.com',
+    otpChannel: 'email',
+    otpVerifiedAt: signedAt,
+    ipAddress: '203.0.113.9',
+    userAgent: 'UA',
+    signedAt,
+    documentSha256: 'b'.repeat(64),
+    certificateId: 'CERT-X'
+  });
+
+  it('two agreements signed on 1 July 2026 London time are a duplicate even though their UTC dates differ', () => {
+    // 2026-06-30T23:30:00Z is 00:30 BST on 1 July 2026; a UTC-date comparison would have missed this pair
+    const docs: GeneratedDocument[] = [
+      fixtureDocument('d1', 'agreement.credit_hire', { createdAt: '2026-06-30T20:00:00Z', signature: sig('2026-06-30T23:30:00Z') }),
+      fixtureDocument('d2', 'agreement.storage', { title: 'Storage agreement', createdAt: '2026-06-30T20:00:00Z', signature: sig('2026-07-01T08:00:00Z') })
+    ];
+    const flags = signatureDateChecks(docs, 'claim-1');
+    expect(flags.map((f) => f.code)).toEqual(['DUPLICATE_SIGNATURE_DATE']);
+    expect(flags[0]!.draftValue).toBe('2026-07-01');
+    expect(flags[0]!.message).toContain('signed on 1 July 2026');
+  });
+
+  it('a signature 30 minutes after creation across UTC midnight is not "before creation"', () => {
+    const docs: GeneratedDocument[] = [fixtureDocument('d1', 'agreement.credit_hire', { createdAt: '2026-06-30T23:00:00Z', signature: sig('2026-06-30T23:30:00Z') })];
+    expect(signatureDateChecks(docs, 'claim-1')).toEqual([]);
+  });
+
+  it('re-execution line uses the London date of an instant', () => {
+    const previous = fixtureDocument('d0', 'agreement.credit_hire', { templateVersion: '1.2.0' });
+    // 23:30 UTC on 30 June = 00:30 BST on 1 July
+    expect(reExecutionLine(previous, '2026-06-30T23:30:00Z')).toBe('re-executed on 1 July 2026, supersedes version 1.2.0');
+  });
+
+  it('OTP expiry is an absolute instant: an offset-bearing issuedAt verifies against a Z now', () => {
+    const otp = generateOtp({ ...base, issuedAt: '2026-10-04T11:00:00+01:00' }); // 10:00Z
+    expect(otp.expiresAt).toBe('2026-10-04T10:10:00.000Z');
+    expect(verifyOtp({ ...base, issuedAt: '2026-10-04T11:00:00+01:00', token: otp.token, code: otp.code, now: '2026-10-04T10:09:59Z' }).ok).toBe(true);
+    expect(verifyOtp({ ...base, issuedAt: '2026-10-04T11:00:00+01:00', token: otp.token, code: otp.code, now: '2026-10-04T10:10:01Z' }).reason).toBe('expired');
   });
 });

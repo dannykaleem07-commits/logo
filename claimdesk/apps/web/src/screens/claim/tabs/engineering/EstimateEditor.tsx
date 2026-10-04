@@ -76,7 +76,7 @@ export function EstimateEditor({ view }: { view: ClaimView }) {
   const totals = estimate?.totals;
   const unconfirmed = unconfirmedLines(lines);
   const suggestLine = lines.find((l) => l.id === suggestFor);
-  const suggestion = useLabourSuggestion(claimId, suggestLine ? { panel: suggestLine.panel, operation: suggestLine.operation } : null);
+  const suggestion = useLabourSuggestion(suggestLine ? { make: view.vehicle.make, model: view.vehicle.model, panel: suggestLine.panel, operation: suggestLine.operation } : null);
   const reconciled = estimate?.importedTotalPence !== undefined && totals ? Math.abs(estimate.importedTotalPence - totals.netPence) <= 100 : undefined;
 
   return (

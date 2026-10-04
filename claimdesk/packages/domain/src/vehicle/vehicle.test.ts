@@ -414,3 +414,60 @@ describe('DVSA MOT history mapper', () => {
     expect(mapDvsaMotHistory({})).toEqual({ motHistory: [], odometer: [] });
   });
 });
+
+describe('adversarial: registration, mapper and projection traps', () => {
+  it('Q plates (indeterminate age) are a valid prefix-format mark', () => {
+    expect(registrationFormat('Q123 ABC')).toBe('prefix');
+    expect(formatRegistration('Q123ABC')).toBe('Q123 ABC');
+  });
+
+  it('a current-format mark with Z in the area code or Q in the random letters is rejected', () => {
+    expect(isValidUkRegistration('ZB12 CDE')).toBe(false);
+    expect(isValidUkRegistration('AB12 CDQ')).toBe(false);
+    expect(isValidUkRegistration('AB12 CDZ')).toBe(true); // Z is permitted in the random letters
+  });
+
+  it('the legacy dotted completedDate shape is parsed, not silently dropped', () => {
+    const r = mapDvsaMotHistory({ motTests: [{ completedDate: '2026.03.01 10:15:00', testResult: 'PASSED', odometerValue: '61200', odometerUnit: 'mi', odometerResultType: 'READ', defects: [] }] });
+    expect(r.motHistory).toHaveLength(1);
+    expect(r.motHistory[0]!.completedDate).toBe('2026-03-01');
+    expect(r.odometer[0]!.miles).toBe(61_200);
+  });
+
+  it('maps the slash-form hybrid fuel descriptions and does not invent a reading for NO_ODOMETER', () => {
+    expect(mapVesFuelType('PETROL/ELECTRIC')).toBe('hybrid');
+    expect(mapVesFuelType('DIESEL/ELECTRIC')).toBe('hybrid');
+    expect(mapVesFuelType('ELECTRIC DIESEL')).toBe('hybrid');
+    expect(mapVesFuelType('PLUG-IN HYBRID ELECTRIC')).toBe('plugin_hybrid');
+    expect(mapVesFuelType('PETROL/GAS')).toBe('lpg');
+    const r = mapDvsaMotHistory({ motTests: [{ completedDate: '2026-03-01T10:15:00.000Z', testResult: 'PASSED', odometerValue: '0', odometerUnit: 'MI', odometerResultType: 'NO_ODOMETER', defects: [] }] });
+    expect(r.motHistory[0]!.odometerMiles).toBeUndefined();
+    expect(r.odometer).toEqual([]);
+  });
+
+  it('km → miles conversion is rounded to whole miles, never a float', () => {
+    // 100,000 km ÷ 1.609344 = 62,137.1 → 62,137
+    expect(kmToMiles(100_000)).toBe(62_137);
+    expect(Number.isInteger(kmToMiles(86_905))).toBe(true);
+  });
+
+  it('a backwards projection (atDate before the first MOT) still anchors on a real reading', () => {
+    const t = (completedDate: string, odometerMiles: number): MotTest => ({ completedDate, result: 'PASSED', odometerMiles, odometerUnit: 'mi', defects: [] });
+    const history = [t('2025-03-01', 54_000), t('2026-03-01', 61_200)];
+    // 30 days before the first test at 7,200/365 per day: 54,000 − 592 = 53,408
+    const r = projectOdometer(history, '2025-01-30');
+    expect(r.fromTest?.completedDate).toBe('2025-03-01');
+    expect(daysBetween('2025-03-01', '2025-01-30')).toBe(-30);
+    expect(r.miles).toBe(54_000 + Math.round((-30 * 7_200) / 365));
+    expect(r.miles).toBe(53_408);
+  });
+
+  it('same-day readings that disagree are a VARIANCE, and two km-as-miles readings on one day are UNIT_SUSPECT', () => {
+    const out = mileageConflicts([
+      { source: 'handover', date: '2026-09-21', miles: 12_400 },
+      { source: 'photo', date: '2026-09-21', miles: 19_956 } // 12,400 × 1.609344 = 19,955.9
+    ]);
+    expect(out.map((c) => c.code).sort()).toEqual(['UNIT_SUSPECT', 'VARIANCE']);
+    expect(out.some((c) => c.code === 'NON_MONOTONIC')).toBe(false);
+  });
+});

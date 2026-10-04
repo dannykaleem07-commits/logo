@@ -12,6 +12,7 @@
  * GET /analytics/* against the types below and remove the `asList` normalisation if the API always returns arrays.
  */
 import type {
+  Address,
   CaseAcceptance,
   Claim,
   ClaimBundle,
@@ -259,33 +260,140 @@ export interface WitnessInput {
   independent?: boolean;
 }
 
+/** An existing party by id, or the details for a new one (apps/api schemas/parties.ts `partyRef`). */
+export type PartyRef = { id: Id } | PartyInput;
+
+/** Vehicle details for POST /claims (apps/api schemas/vehicles.ts `vehicleInput`); `manual`/`lookupId` are web hints the API ignores. */
+export interface ClaimVehicleInput extends VehicleInput {
+  odometer?: Array<{ source: Vehicle['odometer'][number]['source']; date: ISODate; miles: number; note?: string }>;
+}
+export type VehicleRef = { id: Id } | ClaimVehicleInput;
+
+/**
+ * The intervention offer captured by the script-guard question, sent inline with the FNOL
+ * (apps/api schemas/claims.ts `fnolOffer`). The client's decision is recorded afterwards with PATCH offers.
+ */
+export interface FnolOfferInput {
+  offerorName: string;
+  receivedAt?: ISODateTime;
+  channel: InterventionOffer['channel'];
+  offerorPartyId?: Id;
+  vehicleClassOffered?: string;
+  dailyRatePence?: Pence;
+  rateIncludesVat?: boolean;
+  terms?: InterventionOffer['terms'];
+  /** Script guard (lesson m): the API refuses `true`; the web never sets it. */
+  clientToldToIgnore?: false;
+}
+
+/**
+ * POST /claims — mirrors apps/api schemas/claims.ts `createClaimBody`. The descriptive web fields at the end
+ * (`channel`, `disclosure`, `witnesses`, `services`) are additive: zod strips unknown keys, and the wizard
+ * records witnesses and services through their own routes after the claim exists.
+ */
 export interface CreateClaimBody {
-  /** Channel the FNOL came through. */
-  channel: 'phone' | 'whatsapp' | 'web_form' | 'in_person' | 'email';
-  /** Call-recording disclosure (BLUEPRINT §3.1): read and acknowledged before any detail is taken. */
-  disclosure: { callRecordingReadAt: ISODateTime; acknowledged: true; acknowledgedBy?: string };
-  claimant: PartyInput;
-  driver?: PartyInput; // omitted when the claimant drove
-  vehicle: VehicleInput;
+  claimant: PartyRef;
+  driver?: PartyRef; // omitted when the claimant drove
+  vehicle: VehicleRef;
+  thirdParties?: PartyRef[];
+  thirdPartyVehicle?: VehicleRef;
+  atFaultInsurer?: PartyRef;
+  atFaultInsurerRef?: string;
+  clientInsurer?: PartyRef;
+  clientPolicyNumber?: string;
   accident: Claim['accident'];
-  thirdParty?: {
-    registration?: string;
-    driverName?: string;
-    insurerName?: string;
-    insurerId?: Id;
-    insurerPolicyNumber?: string;
-    contact?: string;
-  };
-  witnesses: WitnessInput[];
-  clientInsurer?: { name?: string; policyNumber?: string };
-  /** Injury → referral out, no fee (lesson j). */
-  injury?: { reported: boolean; referralTo?: string; notes?: string };
-  services: { hire: boolean; recovery: boolean; storage: boolean; engineer: boolean; notes?: string };
+  liability?: Claim['liability'];
   handlerId?: Id;
-  gtaSubscriber?: false;
+  /** Injury → referral out, no fee (lesson j). The API routes the referral when `accident.injuries` is true. */
+  injuryReferralTo?: string;
+  interventionOffer?: FnolOfferInput;
+  /** Set when any service is agreed at FNOL: the API appends `services_agreed` (starts the GTA 4.1 NCAF clock). */
+  servicesAgreedAt?: ISODateTime;
+  fnolAt?: ISODateTime;
+  /** Call-recording disclosure (BLUEPRINT §3.1) read and acknowledged before any detail was taken. */
+  callRecordingDisclosed?: boolean;
+  notes?: string;
+  // --- descriptive web fields (ignored by the API today; documented in apps/web/README.md) ---
+  channel?: 'phone' | 'whatsapp' | 'web_form' | 'in_person' | 'email';
+  disclosure?: { callRecordingReadAt: ISODateTime; acknowledged: true; acknowledgedBy?: string };
+  witnesses?: WitnessInput[];
+  services?: { hire: boolean; recovery: boolean; storage: boolean; engineer: boolean; notes?: string };
+}
+
+/** `PATCH /claims/:id` is strict: only these keys are accepted (apps/api schemas/claims.ts `claimPatchBody`). */
+export interface ClaimPatchBody {
+  accident?: Partial<Claim['accident']>;
+  liability?: Claim['liability'];
+  liabilityScore?: number;
+  driverId?: Id | null;
+  thirdPartyIds?: Id[];
+  thirdPartyVehicleId?: Id | null;
+  atFaultInsurerId?: Id | null;
+  atFaultInsurerRef?: string | null;
+  clientInsurerId?: Id | null;
+  clientPolicyNumber?: string | null;
+  handlerId?: Id | null;
+  track?: Claim['track'] | null;
+}
+
+/** What the API learned at intake (apps/api routes/claims.ts `IntakeReport`); every field optional for older builds. */
+export interface IntakeReport {
+  validation?: { ok: boolean; missing: string[]; warnings?: string[] };
+  crossFile?: { severity?: string; message?: string; duplicateClaimIds?: Id[]; isFleetUnit?: boolean };
+  liability?: { score: number; reasons: string[] };
+  injury?: { referredTo: string; message: string; feeTaken: false };
+  offer?: { id: Id; replyDueBy: string };
+  flags?: ClaimFlag[];
+}
+
+export interface CreateClaimResult {
+  claim: Claim;
+  intake?: IntakeReport;
+}
+
+/**
+ * POST /claims replies `{ claim, intake }` (201). Older or alternative builds may reply with the bare claim or
+ * `{ ...claim, intake }`; all three normalise to `CreateClaimResult`. Pure; unit-tested.
+ */
+export function normaliseCreateClaimResult(res: unknown): CreateClaimResult {
+  if (!res || typeof res !== 'object') throw new ApiError(502, 'BAD_RESPONSE', 'POST /claims returned no claim', '/api/claims', res);
+  const r = res as Record<string, unknown>;
+  const inner = r.claim;
+  if (inner && typeof inner === 'object' && typeof (inner as Claim).id === 'string') {
+    return { claim: inner as Claim, intake: (r.intake as IntakeReport | undefined) ?? undefined };
+  }
+  if (typeof r.id === 'string' && typeof r.reference === 'string') {
+    const { intake, ...claim } = r;
+    return { claim: claim as unknown as Claim, intake: (intake as IntakeReport | undefined) ?? undefined };
+  }
+  throw new ApiError(502, 'BAD_RESPONSE', 'POST /claims returned an unexpected shape', '/api/claims', res);
 }
 
 export type InterventionOfferInput = Omit<InterventionOffer, 'id' | 'claimId' | 'evidenceIds'> & { evidenceIds?: Id[] };
+
+/** `PATCH /claims/:id/offers/:oid` is strict (apps/api schemas/offers.ts `patchOfferBody`). */
+export interface OfferPatchBody {
+  clientDecision?: 'accepted' | 'declined';
+  clientReasons?: string;
+  clientDecisionAt?: ISODateTime;
+  suitable?: boolean;
+  suitabilityReasons?: string[];
+  replySentAt?: ISODateTime;
+  replyDocumentId?: Id;
+  evidenceIds?: Id[];
+}
+
+/**
+ * Many write routes reply with an envelope (`{ event, effects, clocks }`, `{ offer, replyClock }`, `{ hire, … }`).
+ * Return the named entity when present, otherwise the body itself (an API that replies with the bare entity).
+ */
+export function unwrap<T>(res: unknown, key: string): T {
+  if (res && typeof res === 'object' && !Array.isArray(res)) {
+    const inner = (res as Record<string, unknown>)[key];
+    if (inner && typeof inner === 'object') return inner as T;
+  }
+  return res as T;
+}
 
 export interface CreateEventBody {
   type: ClaimEvent['type'];
@@ -342,6 +450,53 @@ export type VehicleLookupResult =
       fleetUnit?: { id: Id; registration: string; status?: FleetUnit['status'] } | null;
       warnings?: string[];
     };
+
+/** The API's own reply shape (apps/api services/lookup.ts `VehicleLookupResponse`). */
+export type ApiLookupResponse =
+  | { status: 'manual_required'; registration: string; fields?: readonly string[]; providers?: Record<string, string>; vehicle?: Vehicle; reason?: string }
+  | { status: 'ok' | 'partial'; registration: string; vehicle: Vehicle; providers?: Record<string, string>; lookupIds?: Id[] };
+
+const PROVIDER_LABEL: Record<string, string> = { dvla_ves: 'DVLA VES', dvsa_mot: 'DVSA MOT history' };
+const FAILURE_LABEL: Record<string, string> = { no_key: 'no API key configured', network: 'network error', rate_limited: 'rate limited', invalid_payload: 'unexpected payload' };
+
+function describeProviders(providers: Record<string, string> | undefined): string[] {
+  if (!providers) return [];
+  return Object.entries(providers)
+    .filter(([, state]) => state !== 'ok')
+    .map(([p, state]) => `${PROVIDER_LABEL[p] ?? p}: ${FAILURE_LABEL[state] ?? state.replace(/^http_/, 'HTTP ')}`);
+}
+
+/**
+ * API lookup reply → the web's `VehicleLookupResult`. `partial` (one provider answered) is treated as `ok` with a
+ * warning per failed provider; `manual_required` carries the reasons and any vehicle already on file. The fleet
+ * hard stop (lessons f, h) comes from `vehicle.ownership === 'fleet'`; `linkedClaims` are passed in by the caller
+ * (GET /vehicles/:id lists the claims on the registration). Pure; unit-tested.
+ */
+export function normaliseLookupResult(raw: ApiLookupResponse | VehicleLookupResult, registration: string, linkedClaims?: LinkedClaimRef[]): VehicleLookupResult {
+  const r = raw as ApiLookupResponse & { ves?: unknown; linkedClaims?: unknown };
+  // Already in the web shape (an API that mirrors apps/web/README.md)? Pass it through.
+  if (r.status === 'ok' && ('ves' in r || 'linkedClaims' in r) && !('providers' in r)) return raw as VehicleLookupResult;
+  const vehicle = r.vehicle;
+  const fleetUnit = vehicle && vehicle.ownership === 'fleet' ? { id: vehicle.id, registration: vehicle.registration } : null;
+  const warnings = describeProviders(r.providers);
+  if (r.status === 'manual_required') {
+    const reason = (r as { reason?: string }).reason ?? (warnings.length ? warnings.join('; ') : 'The lookup services did not return this registration.');
+    return { status: 'manual_required', registration: r.registration || registration, reason, partial: vehicle, linkedClaims, fleetUnit, warnings };
+  }
+  const lookups = vehicle?.lookups ?? [];
+  const latest = (provider: string) => [...lookups].filter((l) => l.provider === provider).sort((a, b) => b.requestedAt.localeCompare(a.requestedAt))[0];
+  return {
+    status: 'ok',
+    registration: r.registration || registration,
+    vehicle: vehicle!,
+    ves: latest('dvla_ves'),
+    mot: latest('dvsa_mot'),
+    motHistory: vehicle?.motHistory,
+    linkedClaims,
+    fleetUnit,
+    warnings: r.status === 'partial' ? ['Partial lookup — one provider did not answer.', ...warnings] : warnings
+  };
+}
 
 export interface TemplateMeta {
   id: string;
@@ -462,22 +617,48 @@ export interface InterventionsAnalytics {
   byInsurer?: Array<{ insurerName: string; offers: number; accepted: number }>;
 }
 
+/**
+ * GET/PATCH /settings (apps/api routes/settings.ts over @ccguk/db `Settings`). The registered office is an
+ * `Address`; the rate card uses `perMilePence` / `adminPence` on the way out and accepts the web spellings
+ * (`recoveryPerLoadedMilePence` / `recoveryAdminPence`) on the way in — both are typed here.
+ */
+export interface RateCardView {
+  recoveryCalloutPence: Pence;
+  perMilePence?: Pence;
+  adminPence?: Pence;
+  recoveryPerLoadedMilePence?: Pence;
+  recoveryAdminPence?: Pence;
+  storageDailyPence: Pence;
+  engineerFeePence: Pence;
+  vatRate: number;
+}
 export interface Settings {
-  registeredOffice?: string;
+  companyName?: string;
+  registeredName?: string;
+  registeredOffice?: Address | string;
   companyNumber?: string;
   vatNumber?: string;
   icoRegistration?: string;
   bank?: { accountName: string; sortCode: string; accountNumber: string; bankName?: string };
-  rateCard?: {
-    recoveryCalloutPence: Pence;
-    recoveryPerLoadedMilePence: Pence;
-    recoveryAdminPence: Pence;
-    storageDailyPence: Pence;
-    engineerFeePence: Pence;
-    vatRate: number;
-  };
-  apiKeys?: { dvlaVes: boolean; dvsaMot: boolean; companiesHouse: boolean; gateway: boolean; anthropic?: boolean };
+  rateCard?: RateCardView;
+  apiKeys?: { dvlaVes: boolean; dvsaMot: boolean; companiesHouse: boolean; gateway: boolean; esign?: boolean; anthropic?: boolean };
+  warnings?: Array<{ code: string; message: string }>;
   [key: string]: unknown;
+}
+
+/** GET /engineering/labour-library/suggest → one row per make/model/panel/operation group. */
+export interface LabourSuggestionRow {
+  make?: string;
+  model?: string;
+  panel?: string;
+  operation?: string;
+  count: number;
+  medianHours: number;
+  minHours?: number;
+  maxHours?: number;
+  /** null until the library holds enough approved observations for the group. */
+  suggestedHours: number | null;
+  note: string;
 }
 
 export interface WatchPollResult {
@@ -495,6 +676,34 @@ export interface PenaltyTransitionBody {
 export interface EstimateImportBody {
   text?: string;
   evidenceId?: Id;
+  importedTotalPence?: Pence;
+  labourRatePence?: Pence;
+}
+
+/** POST /claims/:id/pav and /pav/assess (apps/api schemas/services.ts `pavBody`). */
+export interface PavBody {
+  subject?: Partial<PavAssessment['subject']>;
+  comparables?: Array<Omit<Comparable, 'id'> & { id?: Id }>;
+  tradeGuidePence?: Pence;
+  tradeGuideSource?: string;
+  /** Departing from the median needs a reason, which is audited. */
+  override?: { pavPence: Pence; reason: string };
+  iqrMultiplier?: number;
+  filter?: Record<string, unknown>;
+}
+
+export interface SupersedeDocumentBody {
+  reason?: string;
+  reExecutedOn?: ISODate;
+  data?: Record<string, unknown>;
+}
+
+export interface IssueReportResult {
+  report: EngineerReport;
+  event?: ClaimEvent;
+  document?: GeneratedDocument | null;
+  documentNote?: string;
+  clocks?: Clock[];
 }
 
 // ---------------------------------------------------------------------------
@@ -513,8 +722,8 @@ export const api = {
     return asList<ClaimSummary>(res);
   },
   getClaim: (id: Id, signal?: AbortSignal) => get<ClaimBundle>(`/claims/${seg(id)}`, undefined, signal),
-  createClaim: (body: CreateClaimBody) => post<Claim>('/claims', body),
-  updateClaim: (id: Id, body: Partial<Claim> & { flags?: ClaimFlag[] }) => patch<Claim>(`/claims/${seg(id)}`, body),
+  createClaim: async (body: CreateClaimBody): Promise<CreateClaimResult> => normaliseCreateClaimResult(await post<unknown>('/claims', body)),
+  updateClaim: (id: Id, body: ClaimPatchBody) => patch<Claim>(`/claims/${seg(id)}`, body),
   setClaimStatus: (id: Id, body: { status: ClaimStatus; reason?: string }) => post<Claim>(`/claims/${seg(id)}/status`, body),
   getClocks: async (id: Id, signal?: AbortSignal) => asList<Clock>(await get<unknown>(`/claims/${seg(id)}/clocks`, undefined, signal)),
   getGates: async (id: Id, signal?: AbortSignal) => asList<GateResult>(await get<unknown>(`/claims/${seg(id)}/gates`, undefined, signal)),
@@ -534,9 +743,16 @@ export const api = {
     asList<Vehicle>(await get<unknown>('/vehicles', query, signal)),
   createVehicle: (body: VehicleInput) => post<Vehicle>('/vehicles', body),
   getVehicle: (id: Id, signal?: AbortSignal) => get<Vehicle>(`/vehicles/${seg(id)}`, undefined, signal),
+  /**
+   * POST /vehicles/lookup `{registration}` → DVLA VES + DVSA MOT (live if keys, else manual_required). The API's
+   * reply is normalised (see normaliseLookupResult) and, when the vehicle is already on file, enriched with the
+   * claims on that registration (GET /vehicles/:id → `claims`) so the wizard can show the cross-file banner and the
+   * fleet hard stop before anything is posted.
+   */
   lookupVehicle: async (registration: string): Promise<VehicleLookupResult> => {
+    let raw: ApiLookupResponse;
     try {
-      return await post<VehicleLookupResult>('/vehicles/lookup', { registration });
+      raw = await post<ApiLookupResponse>('/vehicles/lookup', { registration });
     } catch (e) {
       // Some API builds signal manual entry with an error code rather than a 200 body; normalise both.
       if (isApiError(e) && /manual_required/i.test(e.code)) {
@@ -544,32 +760,44 @@ export const api = {
       }
       throw e;
     }
+    let linkedClaims: LinkedClaimRef[] | undefined;
+    const vehicleId = raw.vehicle?.id;
+    if (vehicleId) {
+      try {
+        const detail = await get<Vehicle & { claims?: Array<{ id: Id; reference: string; status: ClaimStatus }> }>(`/vehicles/${seg(vehicleId)}`);
+        linkedClaims = (detail.claims ?? []).map((c) => ({ claimId: c.id, reference: c.reference, status: c.status, relation: 'same_registration' as const }));
+      } catch {
+        linkedClaims = undefined; // enrichment only; the API re-runs the cross-file check on POST /claims
+      }
+    }
+    return normaliseLookupResult(raw, registration, linkedClaims);
   },
-  addOdometer: (vehicleId: Id, body: Vehicle['odometer'][number]) => post<Vehicle>(`/vehicles/${seg(vehicleId)}/odometer`, body),
+  addOdometer: async (vehicleId: Id, body: Vehicle['odometer'][number]) => unwrap<Vehicle>(await post<unknown>(`/vehicles/${seg(vehicleId)}/odometer`, body), 'vehicle'),
   getMileageConflicts: (vehicleId: Id, signal?: AbortSignal) => get<unknown>(`/vehicles/${seg(vehicleId)}/mileage-conflicts`, undefined, signal),
 
   // ledger & events
   getLedger: async (claimId: Id, signal?: AbortSignal) => asList<LedgerEntry>(await get<unknown>(`/claims/${seg(claimId)}/ledger`, undefined, signal)),
   postLedger: (claimId: Id, body: CreateLedgerBody) => post<LedgerEntry>(`/claims/${seg(claimId)}/ledger`, body),
   getEvents: async (claimId: Id, signal?: AbortSignal) => asList<ClaimEvent>(await get<unknown>(`/claims/${seg(claimId)}/events`, undefined, signal)),
-  postEvent: (claimId: Id, body: CreateEventBody) => post<ClaimEvent>(`/claims/${seg(claimId)}/events`, body),
+  postEvent: async (claimId: Id, body: CreateEventBody) => unwrap<ClaimEvent>(await post<unknown>(`/claims/${seg(claimId)}/events`, body), 'event'),
 
   // hire / storage / recovery
   getHire: async (claimId: Id, signal?: AbortSignal) => asList<HireAgreement>(await get<unknown>(`/claims/${seg(claimId)}/hire`, undefined, signal)),
-  postHire: (claimId: Id, body: Partial<HireAgreement>) => post<HireAgreement>(`/claims/${seg(claimId)}/hire`, body),
-  endHire: (claimId: Id, hireId: Id, body: { endAt: ISODateTime; endTrigger: HireAgreement['endTrigger']; odometerIn?: number; collectedAt?: ISODateTime }) =>
-    post<HireAgreement>(`/claims/${seg(claimId)}/hire/${seg(hireId)}/end`, body),
+  postHire: async (claimId: Id, body: Partial<HireAgreement> & { use?: FleetUse; overrideAllocation?: { reason: string } }) =>
+    unwrap<HireAgreement>(await post<unknown>(`/claims/${seg(claimId)}/hire`, body), 'hire'),
+  endHire: async (claimId: Id, hireId: Id, body: { endAt: ISODateTime; endTrigger: HireAgreement['endTrigger']; odometerIn?: number; collectedAt?: ISODateTime; reason?: string }) =>
+    unwrap<HireAgreement>(await post<unknown>(`/claims/${seg(claimId)}/hire/${seg(hireId)}/end`, body), 'hire'),
   getStorage: async (claimId: Id, signal?: AbortSignal) => asList<StorageRecord>(await get<unknown>(`/claims/${seg(claimId)}/storage`, undefined, signal)),
   postStorage: (claimId: Id, body: Partial<StorageRecord>) => post<StorageRecord>(`/claims/${seg(claimId)}/storage`, body),
-  endStorage: (claimId: Id, storageId: Id, body: { endAt: ISODateTime; endTrigger: StorageRecord['endTrigger'] }) =>
-    post<StorageRecord>(`/claims/${seg(claimId)}/storage/${seg(storageId)}/end`, body),
+  endStorage: async (claimId: Id, storageId: Id, body: { endAt: ISODateTime; endTrigger: StorageRecord['endTrigger']; reason?: string }) =>
+    unwrap<StorageRecord>(await post<unknown>(`/claims/${seg(claimId)}/storage/${seg(storageId)}/end`, body), 'storage'),
   getRecovery: async (claimId: Id, signal?: AbortSignal) => asList<RecoveryRecord>(await get<unknown>(`/claims/${seg(claimId)}/recovery`, undefined, signal)),
-  postRecovery: (claimId: Id, body: Partial<RecoveryRecord>) => post<RecoveryRecord>(`/claims/${seg(claimId)}/recovery`, body),
+  postRecovery: async (claimId: Id, body: Partial<RecoveryRecord> & { counterpartyId?: Id }) => unwrap<RecoveryRecord>(await post<unknown>(`/claims/${seg(claimId)}/recovery`, body), 'recovery'),
 
   // intervention register
   getOffers: async (claimId: Id, signal?: AbortSignal) => asList<InterventionOffer>(await get<unknown>(`/claims/${seg(claimId)}/offers`, undefined, signal)),
-  postOffer: (claimId: Id, body: InterventionOfferInput) => post<InterventionOffer>(`/claims/${seg(claimId)}/offers`, body),
-  updateOffer: (claimId: Id, offerId: Id, body: Partial<InterventionOffer>) => patch<InterventionOffer>(`/claims/${seg(claimId)}/offers/${seg(offerId)}`, body),
+  postOffer: async (claimId: Id, body: InterventionOfferInput) => unwrap<InterventionOffer>(await post<unknown>(`/claims/${seg(claimId)}/offers`, body), 'offer'),
+  updateOffer: async (claimId: Id, offerId: Id, body: OfferPatchBody) => unwrap<InterventionOffer>(await patch<unknown>(`/claims/${seg(claimId)}/offers/${seg(offerId)}`, body), 'offer'),
 
   // evidence
   uploadEvidence: (claimId: Id, file: File | Blob, fields: EvidenceUploadFields) => {
@@ -592,17 +820,29 @@ export const api = {
     post<GeneratedDocument>(`/documents/${seg(id)}/send`, body),
   startSign: (id: Id, body: SignStartBody) => post<SignStartResult>(`/documents/${seg(id)}/sign/start`, body),
   verifySign: (id: Id, body: SignVerifyBody) => post<GeneratedDocument>(`/documents/${seg(id)}/sign/verify`, body),
+  /** POST /documents/:id/supersede — new version carrying "re-executed on [date], supersedes version [n]" (lesson b). */
+  supersedeDocument: (id: Id, body: SupersedeDocumentBody) => post<GeneratedDocument>(`/documents/${seg(id)}/supersede`, body),
 
   // engineering
   getEstimate: (claimId: Id, signal?: AbortSignal) => get<Estimate | null>(`/claims/${seg(claimId)}/estimate`, undefined, signal),
   postEstimate: (claimId: Id, body: Partial<Estimate>) => post<Estimate>(`/claims/${seg(claimId)}/estimate`, body),
-  importEstimate: (claimId: Id, body: EstimateImportBody) => post<Estimate>(`/claims/${seg(claimId)}/estimate/import`, body),
+  importEstimate: async (claimId: Id, body: EstimateImportBody) => unwrap<Estimate>(await post<unknown>(`/claims/${seg(claimId)}/estimate/import`, body), 'estimate'),
+  /** GET /engineering/labour-library/suggest?make=&model=&panel=&operation= — medians of CCGUK's own approved estimates. */
+  labourSuggest: async (q: { make?: string; model?: string; panel?: string; operation?: string }, signal?: AbortSignal) =>
+    asList<LabourSuggestionRow>(await get<unknown>('/engineering/labour-library/suggest', q, signal)),
   getPav: (claimId: Id, signal?: AbortSignal) => get<PavAssessment | null>(`/claims/${seg(claimId)}/pav`, undefined, signal),
-  postPav: (claimId: Id, body: Partial<PavAssessment>) => post<PavAssessment>(`/claims/${seg(claimId)}/pav`, body),
+  postPav: (claimId: Id, body: PavBody) => post<PavAssessment>(`/claims/${seg(claimId)}/pav`, body),
   addComparable: (claimId: Id, body: Omit<Comparable, 'id'>) => post<PavAssessment>(`/claims/${seg(claimId)}/pav/comparables`, body),
-  assessPav: (claimId: Id, body: Record<string, unknown> = {}) => post<PavAssessment>(`/claims/${seg(claimId)}/pav/assess`, body),
+  assessPav: (claimId: Id, body: PavBody = {}) => post<PavAssessment>(`/claims/${seg(claimId)}/pav/assess`, body),
+  /** POST /claims/:id/pav/:pid/approve — a person approves the assessment (the API needs ≥3 retained comparables). */
+  approvePav: (claimId: Id, pavId: Id) => post<PavAssessment>(`/claims/${seg(claimId)}/pav/${seg(pavId)}/approve`, {}),
   getEngineerReport: (claimId: Id, signal?: AbortSignal) => get<EngineerReport | null>(`/claims/${seg(claimId)}/engineer-report`, undefined, signal),
   postEngineerReport: (claimId: Id, body: Partial<EngineerReport>) => post<EngineerReport>(`/claims/${seg(claimId)}/engineer-report`, body),
+  /** PATCH /claims/:id/engineer-report/:rid — edits an unissued report (an issued report is never edited). */
+  updateEngineerReport: (claimId: Id, reportId: Id, body: Partial<EngineerReport>) => patch<EngineerReport>(`/claims/${seg(claimId)}/engineer-report/${seg(reportId)}`, body),
+  /** POST /claims/:id/engineer-report/:rid/issue → report_issued event, storage/off-hire triggers, report.engineer draft. */
+  issueEngineerReport: (claimId: Id, reportId: Id, body: { force?: boolean } = {}) =>
+    post<IssueReportResult>(`/claims/${seg(claimId)}/engineer-report/${seg(reportId)}/issue`, body),
   assessTotalLoss: (claimId: Id, body: Record<string, unknown> = {}) => post<TotalLossAssessment>(`/claims/${seg(claimId)}/total-loss/assess`, body),
   predictTotalLoss: (claimId: Id, body: TotalLossPredictionInput) => post<TotalLossPrediction>(`/claims/${seg(claimId)}/total-loss/predict`, body),
 

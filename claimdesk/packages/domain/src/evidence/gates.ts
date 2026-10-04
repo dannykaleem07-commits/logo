@@ -5,8 +5,18 @@
  * Status: green = every item present; amber = at least half present; red otherwise.
  * `missing` is written as what to collect, in plain English.
  */
-import type { ClaimBundle, Evidence, EvidenceGate, GateResult, GeneratedDocument, HireAgreement, ISODateTime } from '../types.js';
+import type { ClaimBundle, Evidence, EvidenceGate, GateResult, GeneratedDocument, HireAgreement, ISODate, ISODateTime } from '../types.js';
 import { formatGBP } from '../money.js';
+import { londonDate } from '../calendar/index.js';
+
+/** The England & Wales calendar date an instant falls on (labels must not print the UTC date of a BST evening). */
+function day(iso: ISODateTime): ISODate {
+  try {
+    return londonDate(iso);
+  } catch {
+    return iso.slice(0, 10);
+  }
+}
 
 export const EVIDENCE_GATES: EvidenceGate[] = ['need', 'use', 'period', 'rate', 'impecuniosity', 'mitigation', 'enforceability', 'liability'];
 
@@ -237,12 +247,12 @@ function mitigationItems(bundle: ClaimBundle): Item[] {
     {
       label: offers.length === 0 ? 'No intervention offers logged (client asked at FNOL: what, by whom, when)' : `Client decision recorded for every logged offer (${offers.length})`,
       present: undecided.length === 0,
-      collect: `Record the client's decision and reasons for ${undecided.length} pending intervention offer${undecided.length === 1 ? '' : 's'} (${undecided.map((o) => `${o.offerorName} ${o.receivedAt.slice(0, 10)}`).join('; ')})`
+      collect: `Record the client's decision and reasons for ${undecided.length} pending intervention offer${undecided.length === 1 ? '' : 's'} (${undecided.map((o) => `${o.offerorName} ${day(o.receivedAt)}`).join('; ')})`
     },
     {
       label: offers.length === 0 ? 'No intervention offers awaiting a written reply' : `Written reply sent for every logged offer (${offers.length})`,
       present: unanswered.length === 0,
-      collect: `Send and log a written reply (within 1 working day) to ${unanswered.length} offer${unanswered.length === 1 ? '' : 's'} (${unanswered.map((o) => `${o.offerorName} ${o.receivedAt.slice(0, 10)}`).join('; ')})`
+      collect: `Send and log a written reply (within 1 working day) to ${unanswered.length} offer${unanswered.length === 1 ? '' : 's'} (${unanswered.map((o) => `${o.offerorName} ${day(o.receivedAt)}`).join('; ')})`
     }
   ];
 }
@@ -257,22 +267,22 @@ function enforceabilityItems(bundle: ClaimBundle): Item[] {
     const p = hireLabel(h, many);
     const e = h.enforceability;
     items.push({
-      label: `${p}Cancellation information provided (CCR 2013 Sch 2)${e.cancellationInfoProvidedAt ? ` on ${e.cancellationInfoProvidedAt.slice(0, 10)}` : ''}`,
+      label: `${p}Cancellation information provided (CCR 2013 Sch 2)${e.cancellationInfoProvidedAt ? ` on ${day(e.cancellationInfoProvidedAt)}` : ''}`,
       present: !!e.cancellationInfoProvidedAt,
       collect: `${p}Provide and record the pre-contract cancellation information (Consumer Contracts Regulations 2013 Sch 2)`
     });
     items.push({
-      label: `${p}Schedule 3 cancellation form provided${e.schedule3FormProvidedAt ? ` on ${e.schedule3FormProvidedAt.slice(0, 10)}` : ''}`,
+      label: `${p}Schedule 3 cancellation form provided${e.schedule3FormProvidedAt ? ` on ${day(e.schedule3FormProvidedAt)}` : ''}`,
       present: !!e.schedule3FormProvidedAt,
       collect: `${p}Provide and record the Sch 3 model cancellation form (form.cancellation_sch3)`
     });
     items.push({
-      label: `${p}Express request to start during the cancellation period${e.expressRequestToStartAt ? ` on ${e.expressRequestToStartAt.slice(0, 10)}` : ''}`,
+      label: `${p}Express request to start during the cancellation period${e.expressRequestToStartAt ? ` on ${day(e.expressRequestToStartAt)}` : ''}`,
       present: !!e.expressRequestToStartAt,
       collect: `${p}Obtain the client's express written request to start the hire within the 14-day cancellation period (reg 36; form.express_request_to_start)`
     });
     items.push({
-      label: `${p}Agreement signed${h.signedAt ? ` on ${h.signedAt.slice(0, 10)}` : ''}`,
+      label: `${p}Agreement signed${h.signedAt ? ` on ${day(h.signedAt)}` : ''}`,
       present: !!h.signedAt,
       collect: `${p}Get the hire agreement e-signed (OTP, hash and certificate)`
     });

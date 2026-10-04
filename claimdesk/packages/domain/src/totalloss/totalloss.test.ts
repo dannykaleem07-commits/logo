@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import type { EngineerReport, TotalLossPredictionInput } from '../types.js';
 import { assessTotalLoss, projectedHireDays, workingDaysToCalendarDays } from './assess.js';
 import { predictTotalLoss, sigmoid, TL_PREDICTOR_WEIGHTS } from './predict.js';
-import { SALVAGE_CODE_PRINCIPLES, SALVAGE_CODE_VERIFICATION, describeSalvageCategory, salvageCategories, salvageCategoryAffectsPav } from './salvage.js';
+import { SALVAGE_CODE_PRINCIPLES, SALVAGE_CODE_VERIFICATION, SALVAGE_OPERATING_RULES, describeSalvageCategory, salvageCategories, salvageCategoryAffectsPav } from './salvage.js';
 import { engineerReportChecklist, SMALL_CLAIMS_EXPERT_FEE_CAP_PENCE } from './checklist.js';
 
 describe('assessTotalLoss', () => {
@@ -87,6 +87,9 @@ describe('assessTotalLoss', () => {
     const a = assessTotalLoss({ repairNetPence: 100_000, repairWorkingDays: 5, hireDailyRatePence: 5_000, pavPence: 800_000, salvage: { pence: 100_000, source: 'estimate', category: 'B' } });
     expect(a.notes.some((n) => n.includes('Salvage is an estimate only. Obtain actual bids'))).toBe(true);
     expect(a.notes.some((n) => n.includes('Cat B salvage cannot return to the road'))).toBe(true);
+    // The arithmetic alone reads "repair" (£1,000 + 9 days × £50 = £1,450 vs £7,000) but a Cat B shell
+    // is destroyed under the ABI Code: the decision must not contradict the note.
+    expect(a.decision).toBe('total_loss');
   });
 
   it('salvage at or above PAV is a total loss whatever the repair cost', () => {
@@ -249,7 +252,10 @@ describe('salvageCategories (ABI Code, 28 May 2025)', () => {
     expect(SALVAGE_CODE_VERIFICATION.status).toBe('unverified');
     expect(SALVAGE_CODE_PRINCIPLES.some((p) => p.includes('Appropriately Qualified Person'))).toBe(true);
     expect(SALVAGE_CODE_PRINCIPLES.some((p) => p.includes('not on the cost of repair'))).toBe(true);
-    expect(SALVAGE_CODE_PRINCIPLES.some((p) => p.includes('never a fixed percentage'))).toBe(true);
+    // "Use actual bids, never a fixed %" is CCGUK's operating rule (BLUEPRINT §4.7), NOT a provision of
+    // the ABI Code, which governs categorisation only. It must never be cited as the Code.
+    expect(SALVAGE_CODE_PRINCIPLES.some((p) => p.includes('fixed percentage'))).toBe(false);
+    expect(SALVAGE_OPERATING_RULES.some((p) => p.includes('never a fixed percentage'))).toBe(true);
   });
   it('describes a category with the EV note on request', () => {
     expect(describeSalvageCategory('N')).toMatch(/^Cat N \(Non-structurally damaged, repairable\): /);
@@ -401,5 +407,135 @@ describe('engineerReportChecklist', () => {
     const r = engineerReportChecklist({ ...complete, forCourt: true, feePence: 80_000 }, { track: 'small_claims', courtDeclarations: { substanceOfInstructions: true, dutyToCourt: true, statementOfTruth: true, expertDeclaration: true } });
     expect(r.ok).toBe(true);
     expect(r.notes.some((n) => n.includes('Engineer fee £800.00 exceeds the £750.00 small-claims cap'))).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Adversarial verification: the categorisation must win over the arithmetic, the borderline band is
+// inclusive, day conversions are hand-checked for off-by-one, and citations stay off the wrong track.
+// ---------------------------------------------------------------------------
+
+describe('adversarial: Cat A/B salvage settles the decision', () => {
+  it('Cat A or Cat B forces total_loss even when the arithmetic favours repair, and the note says why', () => {
+    for (const category of ['A', 'B'] as const) {
+      const a = assessTotalLoss({ repairNetPence: 100_000, repairWorkingDays: 5, hireDailyRatePence: 5_000, pavPence: 800_000, salvage: { pence: 100_000, source: 'bid', category } });
+      // repair route £1,000 + 9 days × £50 = £1,450 against £7,000: arithmetic reads repair
+      expect(a.repairRouteCostPence).toBe(145_000);
+      expect(a.marginPence).toBe(555_000);
+      expect(a.decision).toBe('total_loss');
+      expect(a.notes[2]).toContain(`Decision: total loss — the salvage is categorised Cat ${category}`);
+      expect(a.notes[2]).toContain('which on its own reads repair');
+    }
+  });
+  it('Cat S and Cat N leave the arithmetic to decide', () => {
+    for (const category of ['S', 'N'] as const) {
+      const a = assessTotalLoss({ repairNetPence: 100_000, repairWorkingDays: 5, hireDailyRatePence: 5_000, pavPence: 800_000, salvage: { pence: 100_000, source: 'bid', category } });
+      expect(a.decision).toBe('repair');
+      expect(a.notes[2]).toContain('Decision: repair.');
+    }
+  });
+});
+
+describe('adversarial: boundaries and day arithmetic', () => {
+  it('the borderline band is inclusive at exactly 10% of PAV − salvage', () => {
+    // netPav £8,000; hire 2 handover days × £600 = £1,200; repair £6,000 → route £7,200 → margin £800 = 10.00%
+    const exact = assessTotalLoss({ repairNetPence: 600_000, repairWorkingDays: 0, hireDailyRatePence: 60_000, pavPence: 1_000_000, salvage: { pence: 200_000, source: 'bid' } });
+    expect(exact.marginPence).toBe(80_000);
+    expect(exact.marginPct).toBe(10);
+    expect(exact.decision).toBe('borderline');
+    // one penny less repair cost → margin £800.01 → outside the band → repair
+    const over = assessTotalLoss({ repairNetPence: 599_999, repairWorkingDays: 0, hireDailyRatePence: 60_000, pavPence: 1_000_000, salvage: { pence: 200_000, source: 'bid' } });
+    expect(over.marginPence).toBe(80_001);
+    expect(over.decision).toBe('repair');
+    // mirror image: route £8,800 → margin −£800 → borderline; £8,800.01 → total loss
+    const under = assessTotalLoss({ repairNetPence: 760_000, repairWorkingDays: 0, hireDailyRatePence: 60_000, pavPence: 1_000_000, salvage: { pence: 200_000, source: 'bid' } });
+    expect(under.marginPence).toBe(-80_000);
+    expect(under.decision).toBe('borderline');
+    expect(assessTotalLoss({ repairNetPence: 760_001, repairWorkingDays: 0, hireDailyRatePence: 60_000, pavPence: 1_000_000, salvage: { pence: 200_000, source: 'bid' } }).decision).toBe('total_loss');
+  });
+
+  it('working → calendar days: hand-checked values where ×1.4 does not land on an integer', () => {
+    // 2 wd × 7/5 = 2.8 → 3; 4 → 5.6 → 6; 6 → 8.4 → 9; 7 → 9.8 → 10; 8 → 11.2 → 12; 20 → 28 exactly; 2.5 → 3.5 → 4
+    expect(workingDaysToCalendarDays(2)).toBe(3);
+    expect(workingDaysToCalendarDays(4)).toBe(6);
+    expect(workingDaysToCalendarDays(6)).toBe(9);
+    expect(workingDaysToCalendarDays(7)).toBe(10);
+    expect(workingDaysToCalendarDays(8)).toBe(12);
+    expect(workingDaysToCalendarDays(20)).toBe(28);
+    expect(workingDaysToCalendarDays(2.5)).toBe(4);
+    // and the hire projection in the note uses the same figures
+    const a = assessTotalLoss({ repairNetPence: 100_000, repairWorkingDays: 7, hireDailyRatePence: 4_232, pavPence: 800_000, salvage: { pence: 100_000, source: 'bid' } });
+    expect(a.projectedHireDays).toBe(12);
+    expect(a.projectedHirePence).toBe(50_784); // 12 × £42.32
+    expect(a.notes[0]).toContain('projected hire of 12 days (7 working days of repair = 10 calendar days, plus 2 handover days) at £42.32 per day = £507.84');
+  });
+
+  it('predictor thresholds are strict (exactly 60% / 90% / 7 years / 10 years do not step up) and "none" is ignored', () => {
+    const base: TotalLossPredictionInput = { vehicleAgeYears: 5, pavBandPence: 1_000_000, damageZones: ['front'], airbagsDeployed: false, structuralIndicators: ['none'], driveable: true };
+    const ratioW = (repair: number): number => predictTotalLoss({ ...base, roughRepairPence: repair }).factors.find((f) => f.factor === 'repair_to_pav_ratio')!.weight;
+    expect(ratioW(600_000)).toBe(0);
+    expect(ratioW(600_001)).toBe(1.2);
+    expect(ratioW(900_000)).toBe(1.2);
+    expect(ratioW(900_001)).toBe(2.0);
+    const ageW = (age: number): number | undefined => predictTotalLoss({ ...base, vehicleAgeYears: age }).factors.find((f) => f.factor === 'vehicle_age')?.weight;
+    expect(ageW(7)).toBeUndefined();
+    expect(ageW(7.5)).toBe(0.3);
+    expect(ageW(10)).toBe(0.3);
+    expect(ageW(10.5)).toBe(0.6);
+    // 'none' alongside a real indicator counts as one indicator, not two
+    expect(predictTotalLoss({ ...base, structuralIndicators: ['none', 'pillar'] }).factors.find((f) => f.factor === 'structural_indicators')?.weight).toBe(1);
+    // probability is monotonic in age
+    const p5 = predictTotalLoss({ ...base, vehicleAgeYears: 5 }).probability;
+    const p8 = predictTotalLoss({ ...base, vehicleAgeYears: 8 }).probability;
+    const p12 = predictTotalLoss({ ...base, vehicleAgeYears: 12 }).probability;
+    expect(p8).toBeGreaterThan(p5);
+    expect(p12).toBeGreaterThan(p8);
+  });
+});
+
+describe('adversarial: citations stay on the right track', () => {
+  const report: EngineerReport = {
+    id: 'rep-2',
+    claimId: 'claim-2',
+    vehicleId: 'veh-2',
+    engineerPartyId: 'eng-1',
+    engineerQualifications: 'IAEA',
+    instructedBy: 'Courtesy Cars Group UK Ltd',
+    instructedAt: '2026-09-28T09:00:00Z',
+    inspectionAt: '2026-09-30T10:00:00Z',
+    inspectionPlace: 'Yard',
+    inspectionBasis: 'physical',
+    inspectionConditions: 'Dry',
+    odometerMiles: 1,
+    preAccidentCondition: 'Good',
+    damageDescription: 'Front',
+    consistentWithCircumstances: true,
+    consistencyNote: 'Consistent',
+    repairMethod: 'Replace',
+    roadworthy: true,
+    roadworthyReason: 'Cosmetic only',
+    repairDurationWorkingDays: 3,
+    adasNotes: 'None fitted',
+    evNotes: 'Not applicable',
+    photoEvidenceIds: ['ev-1'],
+    forCourt: true,
+    feePence: 28_500,
+  };
+  const declared = { substanceOfInstructions: true, dutyToCourt: true, statementOfTruth: true, expertDeclaration: true };
+
+  it('a fast-track report never carries the small-claims PD 27A £750 cap or CPR 27 notes', () => {
+    const r = engineerReportChecklist(report, { track: 'fast', courtDeclarations: declared });
+    expect(r.ok).toBe(true);
+    expect(r.notes.join('\n')).not.toContain('PD 27A');
+    expect(r.notes.join('\n')).not.toContain('CPR 27');
+    expect(r.notes.join('\n')).not.toContain('£750');
+    // the CPR 35 verification caveat still travels with the court items
+    expect(r.notes.some((n) => n.includes('CPR 35 / PD 35 references'))).toBe(true);
+  });
+
+  it('a non-court report carries no CPR 35 or PD 27A text at all', () => {
+    const r = engineerReportChecklist({ ...report, forCourt: false }, { track: 'small_claims' });
+    expect(r.courtItemsChecked).toEqual([]);
+    expect(r.notes.join('\n')).not.toMatch(/CPR 35|PD 35|PD 27A|CPR 27/);
   });
 });

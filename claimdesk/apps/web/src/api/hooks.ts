@@ -29,6 +29,7 @@ import {
   type Settings,
   type SignStartBody,
   type SignVerifyBody,
+  type SupersedeDocumentBody,
   type VehicleInput
 } from './client';
 import { dueState } from '../lib/clocks';
@@ -233,9 +234,29 @@ export function useAssessPav(claimId: Id) {
   const invalidate = useInvalidateClaim();
   return useMutation({ mutationFn: (body?: Record<string, unknown>) => api.assessPav(claimId, body), onSuccess: () => invalidate(claimId) });
 }
+export function useApprovePav(claimId: Id) {
+  const invalidate = useInvalidateClaim();
+  return useMutation({ mutationFn: (pavId: Id) => api.approvePav(claimId, pavId), onSuccess: () => invalidate(claimId) });
+}
 export function usePostEngineerReport(claimId: Id) {
   const invalidate = useInvalidateClaim();
   return useMutation({ mutationFn: (body: Parameters<typeof api.postEngineerReport>[1]) => api.postEngineerReport(claimId, body), onSuccess: () => invalidate(claimId) });
+}
+/** Save the report: PATCH the current unissued report, or POST a new (supplementary) one when none / issued. */
+export function useSaveEngineerReport(claimId: Id) {
+  const invalidate = useInvalidateClaim();
+  return useMutation({
+    mutationFn: ({ body, reportId }: { body: Parameters<typeof api.postEngineerReport>[1]; reportId?: Id }) =>
+      reportId ? api.updateEngineerReport(claimId, reportId, body) : api.postEngineerReport(claimId, body),
+    onSuccess: () => invalidate(claimId)
+  });
+}
+export function useIssueEngineerReport(claimId: Id) {
+  const invalidate = useInvalidateClaim();
+  return useMutation({
+    mutationFn: ({ reportId, force }: { reportId: Id; force?: boolean }) => api.issueEngineerReport(claimId, reportId, force ? { force } : {}),
+    onSuccess: () => invalidate(claimId)
+  });
 }
 export function useAssessTotalLoss(claimId: Id) {
   return useMutation({ mutationFn: (body?: Record<string, unknown>) => api.assessTotalLoss(claimId, body) });
@@ -346,6 +367,10 @@ export function useStartSign(docId: Id) {
 export function useVerifySign(docId: Id, claimId?: Id) {
   const invalidate = useInvalidateDocument();
   return useMutation({ mutationFn: (body: SignVerifyBody) => api.verifySign(docId, body), onSuccess: () => invalidate(docId, claimId) });
+}
+export function useSupersedeDocument(docId: Id, claimId?: Id) {
+  const invalidate = useInvalidateDocument();
+  return useMutation({ mutationFn: (body: SupersedeDocumentBody) => api.supersedeDocument(docId, body), onSuccess: () => invalidate(docId, claimId) });
 }
 
 // ---------------------------------------------------------------------------

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import type { EngineerReport, SalvageCategory } from '@ccguk/domain';
 import { SMALL_CLAIMS_EXPERT_FEE_CAP_PENCE, formatGBP } from '@ccguk/domain';
-import { useCreateDocument, useEngineerReport, useParties, usePostEngineerReport } from '../../../../api/hooks';
+import { useEngineerReport, useIssueEngineerReport, useParties, useSaveEngineerReport } from '../../../../api/hooks';
 import { Card } from '../../../../components/Card';
 import { Badge } from '../../../../components/Badge';
 import { Button } from '../../../../components/Button';
@@ -25,8 +25,8 @@ export function EngineerReportForm({ view }: { view: ClaimView }) {
   const [form, setForm] = useState<ReportForm>(() => reportFormFrom(report));
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [dirty, setDirty] = useState(false);
-  const save = usePostEngineerReport(claimId);
-  const create = useCreateDocument(claimId);
+  const save = useSaveEngineerReport(claimId);
+  const issue = useIssueEngineerReport(claimId);
   const engineers = useParties({ role: 'engineer', limit: 100 });
   const navigate = useNavigate();
   const toast = useToast();
@@ -54,21 +54,31 @@ export function EngineerReportForm({ view }: { view: ClaimView }) {
       return;
     }
     setErrors({});
-    save.mutate(r.body, {
-      onSuccess: () => {
-        setDirty(false);
-        toast.success('Report saved — checklist re-evaluated');
+    // An unissued report is edited in place (PATCH); after issue a save starts a supplementary report (POST).
+    save.mutate(
+      { body: r.body, reportId: report && !report.issuedAt ? report.id : undefined },
+      {
+        onSuccess: () => {
+          setDirty(false);
+          toast.success('Report saved — checklist re-evaluated');
+        }
       }
-    });
+    );
   };
 
+  /** Issue = the report_issued event (storage/off-hire triggers) plus the report.engineer draft, in one API call. */
   const generate = () => {
-    create.mutate(
-      { templateId: 'report.engineer' },
+    if (!report) return;
+    issue.mutate(
+      { reportId: report.id },
       {
-        onSuccess: (doc) => {
-          toast.success('Report drafted — review the consistency report before approval');
-          navigate(`/claims/${claimId}/documents/${doc.id}`);
+        onSuccess: (res) => {
+          if (res.document?.id) {
+            toast.success('Report issued and drafted — review the consistency report before approval');
+            navigate(`/claims/${claimId}/documents/${res.document.id}`);
+          } else {
+            toast.warn(`Report issued. ${res.documentNote ?? 'Draft the report.engineer document from the Documents tab.'}`);
+          }
         }
       }
     );

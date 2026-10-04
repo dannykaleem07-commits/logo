@@ -4,7 +4,7 @@
  */
 import { createHash } from 'node:crypto';
 import type { GeneratedDocument, ISODateTime, SignatureRecord } from '../types.js';
-import { formatLongDateTime } from './dates.js';
+import { formatLongDate, formatLongDateTime } from './dates.js';
 
 export interface BuildCertificateInput {
   document: Pick<GeneratedDocument, 'id' | 'templateId' | 'templateVersion' | 'title' | 'sha256' | 'createdAt'> & Partial<Pick<GeneratedDocument, 'claimId' | 'supersedesId' | 'reExecutedOn'>>;
@@ -104,7 +104,7 @@ export function buildCertificate(input: BuildCertificateInput): Certificate {
     `Document: ${document.title} (${document.templateId} v${document.templateVersion}, id ${document.id})`,
     `Document created: ${formatLongDateTime(document.createdAt)}`,
     `Document SHA-256: ${document.sha256}`,
-    ...(document.supersedesId ? [`Supersedes document ${document.supersedesId}${document.reExecutedOn ? `; re-executed on ${document.reExecutedOn}` : ''}`] : []),
+    ...(document.supersedesId ? [`Supersedes document ${document.supersedesId}${document.reExecutedOn ? `; re-executed on ${formatLongDate(document.reExecutedOn)}` : ''}`] : []),
     `Signer: ${signature.signerName} (party ${signature.signerPartyId})`,
     `Identity verified by one-time passcode sent by ${signature.otpChannel === 'sms' ? 'SMS' : 'email'} to ${signature.signerContact}, verified ${formatLongDateTime(signature.otpVerifiedAt)}`,
     `Signed: ${formatLongDateTime(signature.signedAt)}`,

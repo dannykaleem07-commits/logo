@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { Comparable, FuelType, PavAssessment, SalvageCategory, Transmission } from '@ccguk/domain';
 import { formatGBP } from '@ccguk/domain';
 import { api } from '../../../../api/client';
-import { useAddComparable, useAssessPav, usePav, usePostPav } from '../../../../api/hooks';
+import { useAddComparable, useApprovePav, useAssessPav, usePav, usePostPav } from '../../../../api/hooks';
 import { Card } from '../../../../components/Card';
 import { Table, type Column } from '../../../../components/Table';
 import { Badge } from '../../../../components/Badge';
@@ -33,6 +33,7 @@ export function PavWorkbench({ view }: { view: ClaimView }) {
   const [pavOverride, setPavOverride] = useState<number | null>(null);
   const postPav = usePostPav(claimId);
   const assess = useAssessPav(claimId);
+  const approvePav = useApprovePav(claimId);
   const toast = useToast();
 
   const stamp = pav ? `${pav.id}:${pav.createdAt}` : 'none';
@@ -49,19 +50,26 @@ export function PavWorkbench({ view }: { view: ClaimView }) {
     const r = subjectFrom(subject, view.vehicle);
     if (!r.ok) return setSubjectErrors(r.errors);
     setSubjectErrors({});
-    // TODO wire when @ccguk/api lands: confirm POST /claims/:id/pav accepts a partial { subject } and keeps existing comparables.
-    postPav.mutate({ ...(pav ? { id: pav.id, comparables: pav.comparables } : {}), subject: r.body }, { onSuccess: () => toast.success('Subject saved') });
+    // POST /claims/:id/pav creates a new assessment from the subject and the comparables it is given, so the
+    // current comparables are re-sent (the API re-runs normalisation and exclusions; computed fields are dropped).
+    const comparables = (pav?.comparables ?? []).map(({ normalisedPricePence: _n, excluded: _e, exclusionReason: _r, ...c }) => c);
+    postPav.mutate({ subject: r.body, ...(comparables.length ? { comparables } : {}) }, { onSuccess: () => toast.success('Subject saved') });
   };
 
+  /**
+   * Approval goes through POST /claims/:id/pav/:pid/approve (the approver is the signed-in user; the API needs
+   * at least three retained comparables). A departure from the median is first re-assessed with
+   * `override: { pavPence, reason }` — the reason is audited — and that new assessment is the one approved.
+   */
   const approve = () => {
     if (!result || approver.trim().length < 2) return;
-    const body: Partial<PavAssessment> = { ...result, approvedBy: approver.trim(), approvedAt: new Date().toISOString() };
+    const done = () => toast.success('PAV approved — the report and the PAV challenge letter render from this figure');
     if (pavOverride !== null && pavOverride !== result.medianPence) {
       if (overrideReason.trim().length < 5) return toast.error('Give the reason for departing from the median');
-      body.pavPence = pavOverride;
-      body.overrideReason = overrideReason.trim();
+      assess.mutate({ override: { pavPence: pavOverride, reason: `${overrideReason.trim()} (approver: ${approver.trim()})` } }, { onSuccess: (p) => approvePav.mutate(p.id, { onSuccess: done }) });
+      return;
     }
-    postPav.mutate(body, { onSuccess: () => toast.success('PAV approved — the report and the PAV challenge letter render from this figure') });
+    approvePav.mutate(result.id, { onSuccess: done });
   };
 
   const columns: Column<Comparable>[] = [

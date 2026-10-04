@@ -1,17 +1,24 @@
-import { describe, expect, it } from 'vitest';
+import { afterAll, describe, expect, it } from 'vitest';
 import { brand } from '../brand.js';
 import { formatGBP } from '../format.js';
 import { findProhibitedContent, htmlToText } from '../guards.js';
 import { DocumentDataError, getTemplate, hasTemplate, listTemplates, missingRequiredData, renderTemplate } from '../registry.js';
+import { closeBrowser, renderPdf } from '../render.js';
 import {
   engineerFeeInvoiceTemplate,
   hireInvoiceTemplate,
   type InvoiceBaseData,
+  InvoiceConsistencyError,
+  invoiceArithmeticProblems,
   invoiceTemplates,
   isVatRegistered,
   recoveryInvoiceTemplate,
   storageInvoiceTemplate
 } from './invoices.js';
+
+afterAll(async () => {
+  await closeBrowser();
+});
 
 /** Perimeter phrases that must never appear on an account sent to the at-fault insurer (perimeter.md). */
 const BANNED_IN_INVOICES = [
@@ -101,6 +108,13 @@ describe('invoices: every template renders its sample cleanly', () => {
       }
       if (/\bGTA\b/.test(text)) expect(text).toContain('industry benchmark');
       expect(text).not.toMatch(/\bentitled?\b/i);
+      // Perimeter: the only mention of regulation or solicitors is the mandatory status line; no forum is named.
+      const withoutStatus = text.split(brand.company.statusLine).join(' ');
+      expect(withoutStatus).not.toMatch(/regulat|solicitor|lawyer|legal advice|litigation friend/i);
+      expect(withoutStatus).not.toMatch(/\b(FOS|Ombudsman|FCA)\b/);
+      expect(text).not.toMatch(/must pay|you are obliged|you are required/i);
+      // The Part 6 disclosure is in the screen footer; renderPdf repeats it with the status line on every page.
+      expect(html).toContain(brand.tradingDisclosure(data.settings.registeredOffice));
     });
   }
 
@@ -152,7 +166,8 @@ describe('invoice.hire', () => {
     expect(text).toContain('Hire started 10 August 2026, 09:30');
     expect(text).toContain('Hire ended 2 September 2026, 11:00');
     expect(text).toContain('each 24-hour period, or part of one, from the start of hire counts as one day');
-    expect(text).toContain('10 August 2026 to 2 September 2026 (24 days)');
+    expect(text).toContain('10 August 2026 to 2 September 2026 · GTA group M (industry benchmark)');
+    expect(text).not.toContain('(24 days)'); // the period never carries a day count the template computed itself
     expect(text).toContain('24 days £49.80 £1,195.20');
     expect(text).toContain('Daily rate £49.80 per day excluding VAT');
   });
@@ -192,7 +207,7 @@ describe('invoice.storage', () => {
     expect(text).toContain('Storage from 9 August 2026, 16:40');
     expect(text).toContain('Storage to 16 August 2026');
     expect(text).toContain('Daily rate £45.00 per day excluding VAT');
-    expect(text).toContain('9 August 2026 to 16 August 2026 (8 days) 8 days £45.00 £360.00');
+    expect(text).toContain('9 August 2026 to 16 August 2026 8 days £45.00 £360.00');
     expect(text).toContain('Total due £360.00');
   });
 
@@ -201,7 +216,9 @@ describe('invoice.storage', () => {
     expect(text).toContain('Collect-or-pay notice sent to you 14 August 2026; collection or authority to dispose requested by 16 August 2026, 17:00');
     expect(text).toContain('On 14 August 2026 we gave you written notice to collect the vehicle or authorise its disposal by 16 August 2026, 17:00');
     expect(text).toContain('Storage after that notice continued at your election and is attributable to you');
-    expect(text).toContain('The vehicle was recovered from the scene of the accident to Example Yard on 9 August 2026');
+    expect(text).toContain('The vehicle was taken into storage at Example Yard on 9 August 2026, the day of the accident');
+    expect(text).toContain('The engineer’s report was issued on 14 August 2026 and sent to you on 14 August 2026');
+    expect(text).toContain('Storage ended on 16 August 2026');
   });
 
   it('omits the notice line when no notice was sent', () => {
@@ -220,7 +237,7 @@ describe('invoice.recovery', () => {
     expect(text).toContain('Date and time 9 August 2026, 16:10');
     expect(text).toContain('From Junction of High Street and Station Road, Example Town');
     expect(text).toContain('To Example Yard, Unit 1, Example Industrial Estate, Example Town, EX2 2BB');
-    expect(text).toContain('Recovery call-out 9 August 2026, 16:10 — attendance and loading at the scene 1 £90.00 £90.00');
+    expect(text).toContain('Recovery call-out 9 August 2026, 16:10 — attendance and loading at Junction of High Street and Station Road, Example Town 1 £90.00 £90.00');
     expect(text).toContain('31 miles £3.00 £93.00');
     expect(text).toContain('Administration Booking, recovery paperwork and condition photographs 1 £25.00 £25.00');
     expect(text).toContain('Net total £208.00');
@@ -261,4 +278,92 @@ describe('invoice.engineer_fee', () => {
   it('exposes the recovery template for the pack order', () => {
     expect(recoveryInvoiceTemplate.id).toBe('invoice.recovery');
   });
+});
+
+// ---------------------------------------------------------------------------
+// Adversarial: figures that do not reconcile are never printed
+// ---------------------------------------------------------------------------
+
+describe('invoices: reconciliation (InvoiceConsistencyError)', () => {
+  const hire = hireInvoiceTemplate.sample();
+
+  it('the sample figures reconcile exactly', () => {
+    expect(invoiceArithmeticProblems(hire, [hire.hire.hirePence])).toEqual([]);
+  });
+
+  it('refuses a hire invoice whose days × rate is not the ledger amount (the ledger, not the template, multiplies)', () => {
+    const bad = { ...hire, hire: { ...hire.hire, days: 23 } };
+    expect(() => renderTemplate('invoice.hire', bad)).toThrow(InvoiceConsistencyError);
+    expect(() => renderTemplate('invoice.hire', bad)).toThrow(/23 × £49\.80 is £1,145\.40 but the ledger amount is £1,195\.20/);
+  });
+
+  it('refuses charge lines that do not add to the net total (File 1: £1,287 stated against £1,112)', () => {
+    const bad = { ...hire, totals: { netPence: 128700, vatPence: 0, grossPence: 128700 } };
+    let err: unknown;
+    try {
+      renderTemplate('invoice.hire', bad);
+    } catch (e) {
+      err = e;
+    }
+    expect(err).toBeInstanceOf(InvoiceConsistencyError);
+    expect((err as InvoiceConsistencyError).templateId).toBe('invoice.hire');
+    expect((err as InvoiceConsistencyError).problems.join(' ')).toContain('the charge lines total £1,195.20 but totals.netPence is £1,287.00');
+  });
+
+  it('refuses a gross that is not net + VAT, and VAT charged by a company with no VAT number', () => {
+    expect(() => renderTemplate('invoice.hire', { ...hire, totals: { netPence: 119520, vatPence: 0, grossPence: 119521 } })).toThrow(/is not net/);
+    expect(() => renderTemplate('invoice.hire', { ...hire, totals: { netPence: 119520, vatPence: 23904, grossPence: 143424 } })).toThrow(/VAT not applicable/);
+  });
+
+  it('refuses a balance that is not gross − received', () => {
+    expect(() => renderTemplate('invoice.hire', { ...hire, receivedPence: 111200, balancePence: 8000 })).toThrow(/balancePence/);
+  });
+
+  it('allows a capped additional-driver line below the product, never above it', () => {
+    const base = { ...hire, totals: { netPence: 130520, vatPence: 0, grossPence: 130520 } };
+    const capped = { ...base, hire: { ...hire.hire, additionalDriver: { days: 24, dailyRatePence: 550, amountPence: 11000, capApplied: true } } };
+    expect(() => renderTemplate('invoice.hire', capped)).not.toThrow();
+    const uncapped = { ...base, hire: { ...hire.hire, additionalDriver: { days: 24, dailyRatePence: 550, amountPence: 11000 } } };
+    expect(() => renderTemplate('invoice.hire', uncapped)).toThrow(/Additional driver: 24 × £5\.50 is £132\.00/);
+    const over = { ...base, hire: { ...hire.hire, additionalDriver: { days: 10, dailyRatePence: 550, amountPence: 11000, capApplied: true } } };
+    expect(() => renderTemplate('invoice.hire', over)).toThrow(/capped line may be below the product, never above it/);
+  });
+
+  it('refuses storage and recovery accounts whose quantity × rate is not the ledger amount', () => {
+    const storage = storageInvoiceTemplate.sample();
+    expect(() => renderTemplate('invoice.storage', { ...storage, storage: { ...storage.storage, dailyRatePence: 4000 } })).toThrow(InvoiceConsistencyError);
+    const recovery = recoveryInvoiceTemplate.sample();
+    expect(() => renderTemplate('invoice.recovery', { ...recovery, recovery: { ...recovery.recovery, loadedMiles: 30 } })).toThrow(/Loaded mileage: 30 × £3\.00 is £90\.00 but the ledger amount is £93\.00/);
+    const fee = engineerFeeInvoiceTemplate.sample();
+    expect(() => renderTemplate('invoice.engineer_fee', { ...fee, feePence: 30000 })).toThrow(InvoiceConsistencyError);
+  });
+
+  it('never prints a day count it computed: a hire of two calendar dates but one 24-hour period shows the ledger’s one day', () => {
+    const oneDay = {
+      ...hire,
+      hire: { ...hire.hire, startAt: '2026-08-10T23:00:00+01:00', endAt: '2026-08-11T09:00:00+01:00', days: 1, hirePence: 4980 },
+      totals: { netPence: 4980, vatPence: 0, grossPence: 4980 }
+    };
+    const t = renderText('invoice.hire', oneDay);
+    expect(t).toContain('10 August 2026 to 11 August 2026 · GTA group M');
+    expect(t).toContain('Days charged 1 day');
+    expect(t).not.toContain('2 days');
+  });
+
+  it('refuses non-integer pence', () => {
+    expect(() => renderTemplate('invoice.hire', { ...hire, totals: { netPence: 1195.2, vatPence: 0, grossPence: 1195.2 } })).toThrow(/not integer pence/);
+  });
+});
+
+describe('invoices: PDF', () => {
+  it('each account prints on A4 within two pages with the reference in the running header', async () => {
+    for (const template of invoiceTemplates) {
+      const { html } = renderTemplate(template.id, template.sample());
+      const { pdf, pages, sha256 } = await renderPdf(html, { reference: 'CCG-2026-00012' });
+      expect(pdf.subarray(0, 5).toString('latin1')).toBe('%PDF-');
+      expect(sha256).toMatch(/^[0-9a-f]{64}$/);
+      expect(pages, `${template.id} pages`).toBeGreaterThanOrEqual(1);
+      expect(pages, `${template.id} pages`).toBeLessThanOrEqual(2);
+    }
+  }, 120_000);
 });

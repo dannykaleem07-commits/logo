@@ -337,3 +337,86 @@ describe('summariseLines', () => {
     expect(s.warnings.some((w) => w.includes('not been confirmed'))).toBe(true);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Adversarial verification: real PDF header text that must NOT become repair lines, discount lines
+// whose sign must survive, and a basis statement that must agree with the arithmetic.
+// ---------------------------------------------------------------------------
+
+describe('adversarial: header and identity text from an estimate PDF', () => {
+  it('produces no lines from dates, vehicle descriptions, registration, VIN, phone and reference numbers', () => {
+    const header = [
+      'Date: 04/10/2026',
+      'Estimate date 04.10.26  Time 10:30',
+      'Vehicle: Volkswagen Golf 2019 1.5 TSI Match',
+      'Reg AB19CDE',
+      'Registration AB19 CDE',
+      'VIN WVWZZZ1KZAW000001',
+      'Tel 02012345678',
+      'Estimate No 12345678  Claim ref ABC123456',
+      'Mileage 48,120',
+      'Policy No 9876543210',
+    ].join('\n');
+    expect(parseEstimateText(header)).toEqual([]);
+  });
+
+  it('a date on a genuine line does not become a price or a quantity', () => {
+    const out = parseEstimateLine('Replace Front bumper cover 5Q0807221 1.20 £245.60 04/10/2026', 1);
+    expect(out).toHaveLength(2);
+    expect(out[0]).toMatchObject({ kind: 'part', partNumber: '5Q0807221', unitPence: 24_560, quantity: 1 });
+    expect(out[1]).toMatchObject({ kind: 'labour', hours: 1.2 });
+  });
+
+  it('genuine lines without an operation word still parse when they carry a part number, a £ price or explicit hours', () => {
+    expect(parseEstimateLine('Front bumper cover 5Q0807221 1.20 245.60', 1).map((l) => `${l.kind}:${l.unitPence ?? ''}:${l.hours ?? ''}`)).toEqual(['part:24560:', 'labour::1.2']);
+    expect(parseEstimateLine('Environmental waste disposal 15.00', 2)).toMatchObject([{ kind: 'sundry', unitPence: 1_500 }]);
+    expect(parseEstimateLine('Headlamp NSF 1.50 hrs', 3)).toMatchObject([{ kind: 'labour', hours: 1.5 }]);
+    expect(parseEstimateLine('Headlamp NSF £320.00', 4)).toMatchObject([{ kind: 'part', unitPence: 32_000 }]);
+    // a bare figure with no £, no hrs, no part number and no operation is not an estimate line
+    expect(parseEstimateLine('Headlamp NSF 1.50', 5)).toEqual([]);
+  });
+});
+
+describe('adversarial: discounts and credits keep their sign', () => {
+  it('"-£50.00", "(£50.00)" and "Less discount £50.00" all parse as a −£50.00 sundry', () => {
+    for (const text of ['Less discount -£50.00', 'Discount (£50.00)', 'Less discount £50.00', 'Credit note £-50.00']) {
+      const out = parseEstimateLine(text, 1);
+      expect(out, text).toHaveLength(1);
+      expect(out[0], text).toMatchObject({ kind: 'sundry', unitPence: -5_000, quantity: 1 });
+    }
+  });
+
+  it('a parsed discount reduces the net and reconciles against the bodyshop total that nets it off', () => {
+    const text = ['Repair NSF wing 2.50', 'Replace Front bumper cover 5Q0807221 1.20 £245.60', 'Less discount -£50.00'].join('\n');
+    const imported = parseEstimateText(text);
+    const est: EstimateInput = { ...estimate, lines: imported };
+    const t = computeTotals(est);
+    // labour (2.5 + 1.2) × £48 = £177.60; parts £245.60; other −£50.00 → net £373.20
+    expect(t.labourPence).toBe(17_760);
+    expect(t.partsPence).toBe(24_560);
+    expect(t.otherPence).toBe(-5_000);
+    expect(t.netPence).toBe(37_320);
+    expect(reconcile(est, 37_320).reconciled).toBe(true);
+    // had the sign been dropped the net would read £473.20 and the import would NOT reconcile
+    expect(reconcile(est, 47_320).reconciled).toBe(false);
+  });
+});
+
+describe('adversarial: basis statement agrees with the arithmetic', () => {
+  it('names per-line rate overrides instead of claiming every hour was at the estimate rate', () => {
+    const s = summariseLines({
+      ...estimate,
+      lines: [
+        line('L1', { kind: 'labour', operation: 'Replace', panel: 'Front bumper', hours: 1.2 }), // £48
+        line('L2', { kind: 'labour', operation: 'Repair', panel: 'Roof', hours: 2, ratePence: 6_000 }), // specialist £60
+        line('PA1', { kind: 'paint', operation: 'Refinish', panel: 'Front bumper', hours: 2.0 }),
+      ],
+    });
+    // 1.2 × 4800 + 2 × 6000 = 5,760 + 12,000 = 17,760
+    expect(s.totals.labourPence).toBe(17_760);
+    expect(s.basisStatement).toContain('Labour 3.20 hrs at £48.00 per hour except 1 line(s) at the rate stated on the line');
+    expect(s.basisStatement).toContain('paint 2.00 hrs at £48.00 per hour;');
+    // the unchanged case keeps the plain wording
+    expect(summariseLines(estimate).basisStatement).toContain('Labour 3.70 hrs at £48.00 per hour; paint');
+  });
+});

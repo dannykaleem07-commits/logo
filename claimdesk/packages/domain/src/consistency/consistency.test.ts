@@ -470,3 +470,144 @@ describe('clearFlag and report shape', () => {
     expect(of(r.flags, 'OFFER_DENIED_BUT_LOGGED')[0]!.message).toContain('Enterprise (for esure) on 24 September 2026 by email at £23.30/day');
   });
 });
+
+describe('adversarial verification — misses, false positives and clock traps', () => {
+  const gta67 = () => {
+    const b = greenBundle();
+    b.clocks = [fixtureClock('gta_6_7_settlement_1_month', '2026-10-02T09:00:00Z', '2026-11-02T17:00:00Z', { label: 'GTA 6.7 settlement (1 month from clean pack)', basis: 'GTA 6.7 (16 March 2026 wording) — benchmark' })];
+    return b;
+  };
+
+  it('"Payment must be made by 18 October 2026" is a deadline and is blocked before the GTA 6.7 month runs', () => {
+    const r = checkDraft('Payment must be made by 18 October 2026.', ctx(gta67(), { templateId: 'pack.gta_payment' }));
+    const f = of(r.flags, 'DEADLINE_TOO_EARLY');
+    expect(f).toHaveLength(1);
+    expect(f[0]!.severity).toBe('block');
+    expect(f[0]!.message).toContain('15 days earlier');
+    expect(r.blocked).toBe(true);
+    // the same date in a past-tense event sentence is not a deadline
+    expect(of(checkDraft('The vehicle was collected by 18 October 2026.', ctx(gta67(), { templateId: 'pack.gta_payment' })).flags, 'DEADLINE_TOO_EARLY')).toEqual([]);
+  });
+
+  it('"within 14 days of the date of this letter" produces exactly one deadline flag', () => {
+    const r = checkDraft('Please remit within 14 days of the date of this letter.', ctx(gta67(), { templateId: 'pack.gta_payment' }));
+    expect(of(r.flags, 'DEADLINE_TOO_EARLY')).toHaveLength(1);
+    expect(of(r.flags, 'DEADLINE_TOO_EARLY')[0]!.draftValue).toBe('2026-10-18');
+  });
+
+  it('the £1,287 case is caught when "paid" is further from the figure than "charges"', () => {
+    const r = checkDraft('You have paid the storage charges of £1,287.', ctx(greenBundle()));
+    expect(of(r.flags, 'AMOUNT_PAID_MISMATCH')).toHaveLength(1);
+    expect(r.blocked).toBe(true);
+  });
+
+  it('the £1,287 case is caught in a two-cell HTML table ("Amount received" | "£1,287.00")', () => {
+    const html = '<table><tr><td>Amount received</td><td>&pound;1,287.00</td></tr><tr><td>Balance outstanding</td><td>&pound;232.60</td></tr></table>';
+    const r = checkDraft(html, ctx(greenBundle()));
+    expect(of(r.flags, 'AMOUNT_PAID_MISMATCH').map((f) => f.draftValue)).toEqual(['£1,287.00']);
+    expect(of(r.flags, 'AMOUNT_CLAIMED_MISMATCH')).toEqual([]);
+  });
+
+  it('invoice VAT lines and itemised breakdown lines are not claimed-total mismatches', () => {
+    const b = greenBundle();
+    // hire 49,800 net + VAT 9,960 = 59,760; total VAT across the ledger 9,960 + 5,400 + 2,300 = 17,660
+    const text = 'Hire £498.00, VAT £99.60, total £597.60. Total VAT £176.60. Recovery charges: call-out £90.00 plus admin £25.00. Recovery total £115.00.';
+    expect(of(checkDraft(text, ctx(b, { templateId: 'invoice.hire' })).flags, 'AMOUNT_CLAIMED_MISMATCH')).toEqual([]);
+    // but a wrong total still warns
+    expect(of(checkDraft('Recovery total £135.00.', ctx(b, { templateId: 'invoice.recovery' })).flags, 'AMOUNT_CLAIMED_MISMATCH')).toHaveLength(1);
+  });
+
+  it('"You have not made any offer in respect of the pre-accident value" is not an intervention denial', () => {
+    expect(of(checkDraft('You have not made any offer in respect of the pre-accident value.', ctx(greenBundle())).flags, 'OFFER_DENIED_BUT_LOGGED')).toEqual([]);
+    expect(of(checkDraft('You have not made any offer of a replacement vehicle.', ctx(greenBundle())).flags, 'OFFER_DENIED_BUT_LOGGED')).toHaveLength(1);
+  });
+
+  it('storage that ended at 00:30 BST on 1 July is "until 1 July 2026", and the UTC date 30 June is wrong', () => {
+    const b = greenBundle();
+    b.storage = [fixtureStorage({ startAt: '2026-06-24T14:00:00Z', endAt: '2026-06-30T23:30:00Z' })];
+    expect(of(checkDraft('Storage ran from 24 June 2026 until 1 July 2026.', ctx(b)).flags, 'STORAGE_END_MISMATCH')).toEqual([]);
+    const wrong = of(checkDraft('Storage ran from 24 June 2026 until 30 June 2026.', ctx(b)).flags, 'STORAGE_END_MISMATCH');
+    expect(wrong).toHaveLength(1);
+    expect(wrong[0]!.message).toContain('ends on 1 July 2026');
+  });
+
+  it('hire across the October clock change: 10:00 BST 20 Oct → 10:00 GMT 30 Oct is 10 days, and 11 is an inflated head', () => {
+    const b = greenBundle();
+    b.hire = [fixtureHire({ startAt: '2026-10-20T09:00:00Z', deliveredAt: '2026-10-20T09:00:00Z', endAt: '2026-10-30T10:00:00Z', collectedAt: '2026-10-30T10:00:00Z' })];
+    const c = ctx(b, { draftCreatedAt: '2026-11-01T10:00:00Z' });
+    expect(of(checkDraft('The vehicle was on hire from 20 October 2026 to 30 October 2026 (10 days).', c).flags, 'HIRE_PERIOD_MISMATCH')).toEqual([]);
+    const inflated = of(checkDraft('The vehicle was on hire for 11 days.', c).flags, 'HIRE_PERIOD_MISMATCH');
+    expect(inflated).toHaveLength(1);
+    expect(inflated[0]!.message).toBe('Draft states 11 days of hire; the hire agreement gives 10 chargeable days (20 October 2026 to 30 October 2026).');
+  });
+
+  it('a chaser sent on day 7 stating "within 7 days" matches the day-14 rung and is clean', () => {
+    const b = greenBundle();
+    b.clocks = [
+      fixtureClock('chaser_day_7', '2026-10-01T09:00:00Z', '2026-10-08T17:00:00+01:00'),
+      fixtureClock('chaser_day_14', '2026-10-01T09:00:00Z', '2026-10-15T17:00:00+01:00')
+    ];
+    expect(checkDraft('Please remit within 7 days.', ctx(b, { templateId: 'letter.chaser_7', draftCreatedAt: '2026-10-08T10:00:00Z' })).flags).toEqual([]);
+  });
+
+  it('a complaint stating "within eight weeks" agrees with the DISP clock; "within four weeks" is too early', () => {
+    const b = greenBundle();
+    // complaint sent 4 Oct 2026; DISP 1.6.2R eight weeks → 29 Nov 2026
+    b.clocks = [fixtureClock('disp_final_response_8_weeks', '2026-10-04T10:00:00Z', '2026-11-29T17:00:00Z', { label: 'DISP final response (8 weeks)', basis: 'DISP 1.6.2R' })];
+    expect(checkDraft('Please provide your final response within eight weeks.', ctx(b, { templateId: 'letter.complaint_disp' })).flags).toEqual([]);
+    const early = of(checkDraft('Please provide your final response within four weeks.', ctx(b, { templateId: 'letter.complaint_disp' })).flags, 'DEADLINE_TOO_EARLY');
+    expect(early).toHaveLength(1);
+    expect(early[0]!.draftValue).toBe('2026-11-01');
+    expect(early[0]!.message).toContain('28 days earlier');
+  });
+
+  it('GTA as law: "GTA 6.7 requires", "under the GTA you are required", "GTA entitles" each block once', () => {
+    const b = greenBundle();
+    for (const phrase of ['GTA 6.7 requires settlement within one month.', 'Under the GTA you are required to settle within one month.', 'The GTA entitles us to the full rate.', 'GTA paragraph 6.8.6 entitles us to a 10% uplift.']) {
+      expect(of(checkDraft(phrase, ctx(b)).flags, 'GTA_CITED_AS_LAW'), phrase).toHaveLength(1);
+    }
+    expect(of(checkDraft('The GTA requires payment within one month.', ctx(b)).flags, 'GTA_CITED_AS_LAW')).toHaveLength(1);
+    // the templates' own framing passes
+    expect(of(checkDraft('Industry practice is that a clean pack is settled within one calendar month (GTA 6.7). The GTA is an industry benchmark for a non-subscriber.', ctx(b)).flags, 'GTA_CITED_AS_LAW')).toEqual([]);
+  });
+
+  it('the claim\'s own parties in a heading are not an unverified case citation', () => {
+    const b = greenBundle(); // claimant Amir Hussain, insurer esure Insurance Ltd
+    const r = checkDraft('Re: Hussain v Esure Insurance Ltd. Copley v Lawn applies.', ctx(b));
+    expect(of(r.flags, 'UNVERIFIED_CITATION').map((f) => f.draftValue)).toEqual(['Copley v Lawn']);
+  });
+
+  it('regulated status: giving legal advice is blocked, recommending independent legal advice is not', () => {
+    expect(bannedPhraseCheck('We can provide you with legal advice on the claim.').map((f) => [f.code, f.severity])).toEqual([['REGULATED_STATUS_IMPLIED', 'block']]);
+    expect(bannedPhraseCheck('We are a firm of solicitors.').map((f) => f.draftValue)).toEqual(['We are a firm of solicitors']);
+    expect(bannedPhraseCheck('We are regulated by the Solicitors Regulation Authority.')).toHaveLength(1);
+    expect(bannedPhraseCheck('You may wish to seek independent legal advice. We do not provide legal advice and we are not a firm of solicitors.')).toEqual([]);
+  });
+
+  it('the invoice payee check tolerates table layout and still catches the trading name', () => {
+    const b = greenBundle();
+    const ok = '<table><tr><td>Account name</td><td>Courtesy Cars Group UK Ltd</td></tr><tr><td>Sort code</td><td>20-00-00</td></tr></table>';
+    expect(of(checkDraft(ok, ctx(b, { templateId: 'invoice.hire' })).flags, 'PAYEE_MISMATCH')).toEqual([]);
+    const bad = '<table><tr><td>Account name</td><td>Courtesy Cars UK</td></tr><tr><td>Sort code</td><td>20-00-00</td></tr></table>';
+    expect(of(checkDraft(bad, ctx(b, { templateId: 'invoice.hire' })).flags, 'PAYEE_MISMATCH')[0]!.draftValue).toBe('Courtesy Cars UK');
+  });
+
+  it('a legitimate full letter built from the live-file figures stays clean', () => {
+    const b = greenBundle();
+    // the pack covering letter is the dispatch: the GTA 6.7 month runs from its date, 4 Oct → 4 Nov 2026
+    b.clocks = [fixtureClock('gta_6_7_settlement_1_month', DRAFT_AT, '2026-11-04T17:00:00Z', { label: 'GTA 6.7 settlement (1 month from clean pack)', basis: 'GTA 6.7 (16 March 2026 wording) — benchmark' })];
+    const text = [
+      'Your ref: ESR/2026/44871. Our ref: CCG-2026-00012.',
+      'We are instructed to correspond on behalf of the claimant, Mr Amir Hussain.',
+      'The claimant\'s vehicle was on hire from 21 September 2026 to 1 October 2026 (10 days at £49.80 per day plus VAT). Storage ran from 20 September 2026 until 26 September 2026 (6 days at £45.00 per day).',
+      'Hire £498.00, VAT £99.60, total £597.60. Storage £270.00, VAT £54.00, total £324.00. Recovery £115.00. Engineer fee £285.00.',
+      'We acknowledge receipt of £1,112.00 on 1 October 2026. The outstanding balance is £232.60.',
+      'Your offer of a small hatchback at £20.37 per day on 22 September 2026 was declined for the reasons in the enclosed questionnaire.',
+      'Industry practice is that a clean pack is settled within one calendar month (GTA 6.7); payment must be made by 4 November 2026.',
+      'Courtesy Cars Group UK Ltd is not a firm of solicitors and is not regulated by the SRA.'
+    ].join('\n');
+    const r = checkDraft(text, ctx(b, { templateId: 'pack.gta_payment' }));
+    expect(r.flags).toEqual([]);
+    expect(r.blocked).toBe(false);
+  });
+});

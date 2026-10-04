@@ -1,6 +1,7 @@
+import { rmSync } from 'node:fs';
 import type { FastifyInstance, InjectOptions } from 'fastify';
 import { buildApp } from '../app.js';
-import { testConfig } from '../config.js';
+import { scratchRoot, testConfig } from '../config.js';
 import { buildContext, silentLogger, type AppContext } from '../context.js';
 
 export interface TestApp {
@@ -34,7 +35,14 @@ export async function createTestApp(now = '2026-10-05T09:00:00.000Z'): Promise<T
       }
       return { status: res.statusCode, body: body as never };
     },
-    close: () => app.close(),
+    close: async () => {
+      await app.close();
+      try {
+        rmSync(scratchRoot(ctx.config), { recursive: true, force: true });
+      } catch {
+        /* scratch dir already gone */
+      }
+    },
   };
 }
 

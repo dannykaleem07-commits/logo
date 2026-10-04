@@ -281,7 +281,7 @@ export interface DsarData extends BaseDocumentData {
 
 export const dsarTemplate: Template<DsarData> = {
   id: 'letter.dsar',
-  version: '1.1.0',
+  version: '1.2.0',
   kind: 'letter',
   title: 'Subject access request',
   recipientRole: 'at_fault_insurer',
@@ -343,7 +343,7 @@ ${h2('The data subject')}
 ${keyValueTable(identity)}
 ${h2('What is requested')}
 ${numberedList(scope)}
-${p('Please supply recordings as the original audio files and documents in their original electronic form (Article 15(3)). Transcripts, summaries or screen recordings do not satisfy the request.')}
+${p('Please supply the copy in a commonly used electronic form (Article 15(3)): recordings as audio files and documents as they are held. A transcript or summary of a recording is not a copy of it; if you intend to supply one in place of the recording, say so and give the reason.')}
 ${h2('Exemptions')}
 ${p('If you withhold any item, provide a schedule listing each item withheld and the exemption relied on for that item. Legal professional privilege and the crime and taxation exemption in Schedule 2 to the Data Protection Act 2018 are narrow and must be justified item by item; a blanket refusal will be treated as a refusal to comply. Third-party personal data may be redacted; the substance of decisions about the data subject may not.')}
 ${h2('Timing and fee')}
@@ -567,9 +567,15 @@ const SERVICE_HISTORY_LABEL: Record<NonNullable<PavChallengeData['assessment']['
   unknown: 'unknown'
 };
 
+const SELLER_LABEL: Record<PavComparableRow['seller'], string> = {
+  dealer: 'Dealer',
+  private: 'Private seller',
+  unknown: 'Seller not stated'
+};
+
 export const pavChallengeTemplate: Template<PavChallengeData> = {
   id: 'letter.pav_challenge',
-  version: '1.1.0',
+  version: '1.2.0',
   kind: 'letter',
   title: 'Pre-accident value challenge',
   recipientRole: 'at_fault_insurer',
@@ -668,12 +674,12 @@ ${d.inputsChallenged.map((r) => `<tr><td>${escapeHtml(r.item)}</td><td>${escapeH
     const compTable =
       d.comparables.length === 0
         ? ''
-        : `<table class="data"><caption>Comparables (dated captures enclosed)</caption><thead><tr><th>Source</th><th class="num">Year</th><th class="num">Mileage</th><th class="num">Advertised</th><th class="num">Adjusted</th><th class="num">Distance</th><th>Captured</th></tr></thead><tbody>
+        : `<table class="data"><caption>Comparables (dated captures enclosed)</caption><thead><tr><th>Source</th><th class="num">Year</th><th class="num">Mileage</th><th class="num">Advertised</th><th class="num">Adjusted</th><th>Captured</th></tr></thead><tbody>
 ${d.comparables
-  .map(
-    (r) =>
-      `<tr><td class="nowrap">${escapeHtml(r.source)}<span class="note">${escapeHtml(r.seller)}</span></td><td class="num">${escapeHtml(String(r.year))}</td><td class="num">${escapeHtml(formatNumber(r.mileage))}</td><td class="num">${formatGBP(r.pricePence)}</td><td class="num">${formatGBP(r.normalisedPricePence)}</td><td class="num">${r.distanceMiles !== undefined ? escapeHtml(formatMiles(r.distanceMiles)) : ''}</td><td class="nowrap">${escapeHtml(formatDateTime(r.capturedAt))}</td></tr>`
-  )
+  .map((r) => {
+    const note = [SELLER_LABEL[r.seller] ?? r.seller, r.distanceMiles !== undefined ? `${formatMiles(r.distanceMiles)} away` : ''].filter((x) => x !== '').join(', ');
+    return `<tr><td>${escapeHtml(r.source)}<span class="note">${escapeHtml(note)}</span></td><td class="num">${escapeHtml(String(r.year))}</td><td class="num">${escapeHtml(formatNumber(r.mileage))}</td><td class="num">${formatGBP(r.pricePence)}</td><td class="num">${formatGBP(r.normalisedPricePence)}</td><td class="nowrap">${escapeHtml(formatDateTime(r.capturedAt))}</td></tr>`;
+  })
   .join('\n')}
 </tbody></table>`;
     const fosPara = d.againstOwnInsurer
@@ -805,7 +811,8 @@ export const particularisationDemandTemplate: Template<ParticularisationDemandDa
     const al = d.allegationLetter;
     const from = al.author ? ` from your ${al.author}` : '';
     const ref = al.reference ? `, reference ${al.reference}` : '';
-    const demands = ALLEGATION_DEMANDS[d.allegationKind];
+    // An unmapped kind (data typed by hand, or a newer API enum) falls back to the generic demand rather than crashing.
+    const demands = ALLEGATION_DEMANDS[d.allegationKind] ?? ALLEGATION_DEMANDS.other;
     const body = `
 ${subjectBlock(d.claim, CLAIMANT_LABEL)}
 <p>Dear Sirs,</p>
@@ -872,7 +879,7 @@ export interface LetterBeforeClaimData extends BaseDocumentData {
 
 export const letterBeforeClaimTemplate: Template<LetterBeforeClaimData> = {
   id: 'letter.letter_before_claim',
-  version: '1.0.0',
+  version: '1.1.0',
   kind: 'letter',
   title: 'Letter of claim',
   recipientRole: 'at_fault_insurer',
@@ -959,10 +966,10 @@ export const letterBeforeClaimTemplate: Template<LetterBeforeClaimData> = {
         : '';
     const responseWhy = cl.isBusiness || d.responseDays > 14 ? `${plural(d.responseDays, 'day')} is a reasonable time for a claim of this kind.` : `${plural(d.responseDays, 'day')} is a reasonable time for a straightforward claim of this kind (Practice Direction, paragraph 6(b)).`;
     const requirements = [
-      `Confirm in writing whether you accept liability for the accident. If you do not, state your reasons and the facts you rely on (Practice Direction, paragraph 6(c)).`,
+      `Confirm in writing whether you accept liability for the accident. If you do not, state your reasons and identify the facts and the parts of this claim you dispute (Practice Direction, paragraph 6(b)).`,
       `If you accept liability, pay ${formatGBP(d.totalWithInterestPence)} (the schedule total of ${formatGBP(d.scheduleTotalPence)} plus interest to ${formatDateLong(d.interest.toDate)}), with further interest at ${formatGBP(d.interest.dailyPence)} per day to the date of payment.`,
-      'If you dispute any item in the schedule, identify the line, the amount you say is recoverable, your reasons and the documents you rely on. A general denial is not a response.',
-      'Send copies of the documents you hold that are relevant to the accident: your account, photographs, dashcam footage, and any estimate or report on your own vehicle (Practice Direction, paragraph 6(c) and (d)).',
+      'If you dispute any item in the schedule, identify the line, the amount you say is recoverable, your reasons and the documents you rely on (Practice Direction, paragraph 6(b)). A general denial is not a response.',
+      'Send copies of the documents you hold that are relevant to the accident: your account, photographs, dashcam footage, and any estimate or report on your own vehicle (Practice Direction, paragraph 6(c)).',
       'Confirm your insurer’s name and claim reference, and whether your insurer will deal with this claim on your behalf. If so, please pass this letter to them today.'
     ];
     const body = `

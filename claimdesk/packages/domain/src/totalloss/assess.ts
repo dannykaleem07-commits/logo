@@ -100,10 +100,16 @@ export function assessTotalLoss(input: TotalLossInput): TotalLossAssessmentResul
   const marginPence = netPavPence - repairRouteCostPence;
   const marginPct = netPavPence > 0 ? Math.round((marginPence / netPavPence) * 10000) / 100 : null;
 
-  let decision: TotalLossAssessment['decision'];
-  if (netPavPence <= 0) decision = 'total_loss';
-  else if (Math.abs(marginPence) <= (netPavPence * borderlinePct) / 100) decision = 'borderline';
-  else decision = marginPence < 0 ? 'total_loss' : 'repair';
+  // Cat A (scrap) and Cat B (break) vehicles can never return to the road under the ABI Code, so an
+  // Appropriately Qualified Person's A/B categorisation settles the decision whatever the arithmetic
+  // says; the arithmetic is still reported so the letter can show both routes.
+  const unrepairableCategory = input.salvage.category === 'A' || input.salvage.category === 'B';
+
+  let arithmeticDecision: TotalLossAssessment['decision'];
+  if (netPavPence <= 0) arithmeticDecision = 'total_loss';
+  else if (Math.abs(marginPence) <= (netPavPence * borderlinePct) / 100) arithmeticDecision = 'borderline';
+  else arithmeticDecision = marginPence < 0 ? 'total_loss' : 'repair';
+  const decision: TotalLossAssessment['decision'] = unrepairableCategory ? 'total_loss' : arithmeticDecision;
 
   const notes: string[] = [];
   notes.push(
@@ -114,19 +120,21 @@ export function assessTotalLoss(input: TotalLossInput): TotalLossAssessmentResul
   notes.push(
     `Total-loss route: PAV ${formatGBP(input.pavPence)} less salvage ${formatGBP(input.salvage.pence)} (${salvageSourceText[input.salvage.source]}${input.salvage.category ? `, Cat ${input.salvage.category}` : ''}) = ${formatGBP(netPavPence)}, plus hire until the total-loss payment, estimated at ${daysToTlPayment} days at ${formatGBP(input.hireDailyRatePence)} per day = ${formatGBP(hireToPaymentPence)}. Total-loss route total ${formatGBP(totalLossRouteCostPence)}.`,
   );
-  const testLine =
+  const decisionText: Record<TotalLossAssessment['decision'], string> = { repair: 'repair', total_loss: 'total loss', borderline: 'borderline' };
+  const arithmeticLine =
     netPavPence <= 0
-      ? `Classic insurer test: PAV less salvage is ${formatGBP(netPavPence)}, so any repair spend exceeds it. Decision: total loss.`
+      ? `Classic insurer test: PAV less salvage is ${formatGBP(netPavPence)}, so any repair spend exceeds it.`
       : `Classic insurer test: repair plus hire plus storage ${formatGBP(repairRouteCostPence)} against PAV less salvage ${formatGBP(netPavPence)}. ` +
         (marginPence >= 0
-          ? `The repair route is ${formatGBP(marginPence)} (${marginPct}%) cheaper. `
-          : `The repair route is ${formatGBP(-marginPence)} (${Math.abs(marginPct ?? 0)}%) dearer. `) +
-        (decision === 'borderline'
-          ? `This is within ${borderlinePct}% of PAV less salvage, so the decision is borderline: a change in the hire period, the salvage figure or the parts price could flip it. Decision: borderline.`
-          : decision === 'repair'
-            ? 'Decision: repair.'
-            : 'Decision: total loss.');
-  notes.push(testLine);
+          ? `The repair route is ${formatGBP(marginPence)} (${marginPct}%) cheaper.`
+          : `The repair route is ${formatGBP(-marginPence)} (${Math.abs(marginPct ?? 0)}%) dearer.`) +
+        (arithmeticDecision === 'borderline'
+          ? ` This is within ${borderlinePct}% of PAV less salvage, so the ${unrepairableCategory ? 'arithmetic alone' : 'decision'} is borderline: a change in the hire period, the salvage figure or the parts price could flip it.`
+          : '');
+  const decisionLine = unrepairableCategory
+    ? ` Decision: total loss — the salvage is categorised Cat ${input.salvage.category} (${input.salvage.category === 'A' ? 'scrap' : 'break for parts'}) under the ABI Code and cannot return to the road, so the categorisation decides it, not the arithmetic (which on its own reads ${decisionText[arithmeticDecision]}).`
+    : ` Decision: ${decisionText[decision]}.`;
+  notes.push(arithmeticLine + decisionLine);
   notes.push(
     `Comparing the two full routes, ${
       repairRouteCostPence <= totalLossRouteCostPence
@@ -140,7 +148,7 @@ export function assessTotalLoss(input: TotalLossInput): TotalLossAssessmentResul
   if (input.salvage.source === 'estimate') {
     notes.push('Salvage is an estimate only. Obtain actual bids (e.g. Copart, SYNETIQ, e2e) or a written offer before the figure is asserted to the insurer.');
   }
-  if (input.salvage.category === 'A' || input.salvage.category === 'B') {
+  if (unrepairableCategory) {
     notes.push(`Cat ${input.salvage.category} salvage cannot return to the road; the vehicle is a total loss regardless of the arithmetic.`);
   }
 

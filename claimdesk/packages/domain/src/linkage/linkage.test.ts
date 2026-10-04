@@ -39,8 +39,11 @@ describe('normalisers', () => {
   it('normalises emails, addresses and bank keys', () => {
     expect(normaliseEmail('  Danny@Example.COM ')).toBe('danny@example.com');
     expect(normaliseEmail('not-an-email')).toBeUndefined();
-    expect(normaliseAddressKey({ line1: '66 Paul Street', postcode: 'ec2a 4px' })).toBe('EC2A4PX|66');
-    expect(normaliseAddressKey({ line1: 'Flat 2, Rose Court', postcode: 'E1 6AN' })).toBe('E16AN|flat');
+    // postcode | numbered tokens (house and flat numbers) | first street word that is not a dwelling word
+    expect(normaliseAddressKey({ line1: '66 Paul Street', postcode: 'ec2a 4px' })).toBe('EC2A4PX|66|paul');
+    expect(normaliseAddressKey({ line1: 'Flat 2, Rose Court', postcode: 'E1 6AN' })).toBe('E16AN|2|rose');
+    expect(normaliseAddressKey({ line1: 'Flat 7 Rose Court', postcode: 'E1 6AN' })).toBe('E16AN|7|rose');
+    expect(normaliseAddressKey({ line1: '14 Elm Rd', postcode: 'IG1 1AA' })).toBe(normaliseAddressKey({ line1: '14, Elm Road', postcode: 'ig11aa' }));
     expect(normaliseAddressKey({ line1: '12 High Street', town: 'Barking', postcode: '' })).toBe('12 high street|barking');
     expect(normaliseAddressKey(undefined)).toBeUndefined();
     expect(normaliseBankKey({ accountName: 'x', sortCode: '20-00-00', accountNumber: '12345678' })).toBe('20000012345678');
@@ -205,5 +208,34 @@ describe('witnessIndependence', () => {
     expect(r.score).toBe(0);
     expect(r.independent).toBe(false);
     expect(r.reasons).toHaveLength(4);
+  });
+});
+
+describe('adversarial: normalisation traps', () => {
+  it('a bracketed trunk zero after +44 does not produce a 12-digit number', () => {
+    // '+44 (0)7700 900123' is how UK numbers are often written; naive +44→0 gives 007700900123
+    expect(normalisePhone('+44 (0)7700 900123')).toBe('07700900123');
+    expect(normalisePhone('+44 (0)20 7052 5403')).toBe('02070525403');
+    expect(normalisePhone('+44 (0)7700 900123')).toBe(normalisePhone('07700900123'));
+  });
+
+  it('two flats in one block are not the same address, so neighbours stay independent witnesses', () => {
+    const claimant: Party = party('c', 'Amir Hussain', { address: { line1: 'Flat 2, Rose Court', postcode: 'E1 6AN' } });
+    const neighbour: Party = party('w', 'Tariq Khan', { address: { line1: 'Flat 7, Rose Court', postcode: 'E1 6AN' } });
+    const r = witnessIndependence(neighbour, claimant);
+    expect(r.independent).toBe(true);
+    expect(r.score).toBe(1);
+    // the same flat written two ways is the same address
+    const sameFlat: Party = party('w2', 'Tariq Khan', { address: { line1: 'Flat 2 Rose Court', postcode: 'E16AN' } });
+    const r2 = witnessIndependence(sameFlat, claimant);
+    expect(r2.independent).toBe(false);
+    expect(r2.score).toBe(0.5); // 1 − 0.5 address penalty
+  });
+
+  it('phone matching survives formatting differences in either register', () => {
+    const claimant = party('c', 'Amir Hussain', { phone: '+44 (0)7700 900123' });
+    const staff = party('s', 'Zara Patel', { phone: '07700900123' });
+    const out = findConnections([claimant], { staff: [staff], suppliers: [], previousClients: [] });
+    expect(out.map((c) => [c.field, c.confidence])).toEqual([['phone', 0.9]]);
   });
 });

@@ -6,6 +6,10 @@ export const partyRole = z.enum([
   'recovery_agent', 'storage_yard', 'solicitor', 'supplier', 'salvage_buyer', 'council', 'police', 'other',
 ]);
 
+/**
+ * Party details. `roles` is optional so the web client's `PartyInput` (roles inferred from the position in the FNOL:
+ * claimant, driver, witness, insurer) parses; every consumer applies a default when it is absent.
+ */
 export const partyInput = z.object({
   kind: z.enum(['individual', 'company', 'public_body']).default('individual'),
   name: z.string().trim().min(1),
@@ -18,7 +22,7 @@ export const partyInput = z.object({
   vatRegistered: z.boolean().optional(),
   drivingLicenceNumber: z.string().optional(),
   bank: bankDetailsSchema.optional(),
-  roles: z.array(partyRole).min(1),
+  roles: z.array(partyRole).min(1).optional(),
   notes: z.string().optional(),
 });
 
@@ -39,3 +43,4 @@ export const connectionsQuery = z.object({ claimId: z.string().optional() });
 
 export type PartyInput = z.infer<typeof partyInput>;
 export type PartyRef = z.infer<typeof partyRef>;
+export type PartyRoleValue = z.infer<typeof partyRole>;

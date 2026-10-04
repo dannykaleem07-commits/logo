@@ -9,9 +9,12 @@ export type { QuartileStats } from './stats.js';
 
 export {
   DEFAULT_FILTER_OPTIONS,
+  MANUAL_EXCLUSION_PREFIX,
   resolveFilterOptions,
   filterComparables,
   specificationMismatches,
+  isComputedExclusionReason,
+  stripManualPrefix,
   mileageWindow as comparableMileageWindow,
   describeRadius,
   describeComparable,

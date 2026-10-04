@@ -142,18 +142,22 @@ function ledgerSets(ledger: LedgerEntry[]): LedgerSets {
   const claimedEntries = ledger.filter((e) => CLAIMED_KINDS.has(e.kind));
   const paidSet = new Set<Pence>();
   const claimedSet = new Set<Pence>();
+  const vat = (e: LedgerEntry): Pence => e.vatPence ?? 0;
   const addAll = (entries: LedgerEntry[], set: Set<Pence>) => {
     for (const e of entries) {
       set.add(e.amountPence);
       set.add(gross(e));
+      if (e.vatPence) set.add(e.vatPence); // an invoice's "VAT £23.00" line is a ledger figure too
     }
     set.add(sum(entries, (e) => e.amountPence));
     set.add(sum(entries, gross));
+    set.add(sum(entries, vat));
     const heads = new Set(entries.map((e) => e.head));
     for (const h of heads) {
       const hs = entries.filter((e) => e.head === h);
       set.add(sum(hs, (e) => e.amountPence));
       set.add(sum(hs, gross));
+      set.add(sum(hs, vat));
     }
   };
   addAll(paidEntries, paidSet);
@@ -223,6 +227,9 @@ export function amountChecks(text: string, amounts: ExtractedAmount[], ctx: Draf
       );
     } else if (a.context === 'claimed' || a.context === 'invoice') {
       if (sets.claimedEntries.length === 0) continue;
+      // Only a status word (claimed/outstanding/balance/total/due) or an invoice keyword makes a figure comparable with
+      // a ledger head: "call-out £90" inside an itemised recovery account is a component, not a claimed total.
+      if (a.strength === 'weak') continue;
       if (sets.claimedSet.has(a.pence)) continue;
       const head = headNear(text, a.index, 0);
       const headEntries = head ? sets.claimedEntries.filter((e) => e.head === head) : [];
@@ -626,32 +633,61 @@ const GTA_LAW_PATTERNS: RegExp[] = [
   /\b(?:obliged|bound|required)\s+(?:by|under)\s+the\s+GTA\b/gi,
   /\bbreach\s+of\s+(?:the\s+)?GTA\b/gi,
   /\byour\s+obligations?\s+under\s+the\s+GTA\b/gi,
-  /\bunder\s+GTA\s+(?:paragraph|para\.?|clause)\s*[\d.]+\s*,?\s*(?:you\s+(?:are|must)|payment\s+is|is\s+payable|are\s+payable)\b/gi
+  /\bunder\s+(?:the\s+)?GTA(?:\s+(?:paragraph|para\.?|clause|section))?\s*[\d.]*(?:\([a-z]\))?\s*,?\s*(?:you\s+(?:are|must|have|will|shall)|payment\s+is|is\s+payable|are\s+payable|we\s+are\s+entitled)\b/gi,
+  // "GTA 6.7 requires", "GTA paragraph 6.8.6 entitles", "GTA entitles"
+  /\bGTA(?:\s+(?:paragraph|para\.?|clause|section))?\s*[\d.]*(?:\([a-z]\))?\s+(?:requires|obliges|entitles|mandates|compels)\b/gi,
+  /\bGTA\s+(?:paragraph|para\.?|clause|section)\s*[\d.]+(?:\([a-z]\))?\s+(?:provides|states|says)\s+that\s+you\s+(?:must|are|shall)\b/gi
 ];
 const GTA_BENCHMARK_RE = /benchmark|industry\s+practice|industry\s+standard/i;
 
 export function gtaChecks(text: string, ctx: DraftContext): ConsistencyFlag[] {
-  const flags: Array<ConsistencyFlag & { index: number }> = [];
   if (ctx.bundle.claim.gtaSubscriber !== false) return [];
+  const matches: Array<{ index: number; length: number; text: string }> = [];
   for (const re of GTA_LAW_PATTERNS) {
     re.lastIndex = 0;
     let m: RegExpExecArray | null;
     while ((m = re.exec(text)) !== null) {
       const around = text.slice(Math.max(0, m.index - 60), m.index + m[0].length + 60);
       if (GTA_BENCHMARK_RE.test(around)) continue;
-      flags.push({
-        ...flag('GTA_CITED_AS_LAW', 'block',
-          `"${normaliseSpace(m[0])}" asserts the GTA as a legal entitlement. CCGUK is not a GTA subscriber: under GTA 2.7(j) the agreement has no standing in law for claims outside it and is not to be cited as such in legal proceedings (paragraph wording to be verified against the 16 March 2026 text; kb gta.json carries the Verification record). Cite GTA rates and timescales only as an industry benchmark.`,
-          { draftValue: normaliseSpace(m[0]), excerpt: excerptAround(text, m.index, m[0].length) }),
-        index: m.index
-      });
+      matches.push({ index: m.index, length: m[0].length, text: m[0] });
     }
   }
-  return flags.sort((a, b) => a.index - b.index).map(({ index: _i, ...f }) => f);
+  // several patterns may hit one phrase ("the GTA requires" / "GTA requires"): keep the longest match at each position
+  matches.sort((a, b) => a.index - b.index || b.length - a.length);
+  const flags: ConsistencyFlag[] = [];
+  let coveredTo = -1;
+  for (const m of matches) {
+    if (m.index < coveredTo) continue;
+    coveredTo = m.index + m.length;
+    flags.push(
+      flag('GTA_CITED_AS_LAW', 'block',
+        `"${normaliseSpace(m.text)}" asserts the GTA as a legal entitlement. CCGUK is not a GTA subscriber: under GTA 2.7(j) the agreement has no standing in law for claims outside it and is not to be cited as such in legal proceedings (paragraph wording to be verified against the 16 March 2026 text; kb gta.json carries the Verification record). Cite GTA rates and timescales only as an industry benchmark.`,
+        { draftValue: normaliseSpace(m.text), excerpt: excerptAround(text, m.index, m.length) })
+    );
+  }
+  return flags;
 }
 
 function citationKey(s: string): string {
   return s.toLowerCase().replace(/[’']/g, "'").replace(/\s+/g, ' ').trim();
+}
+
+const GENERIC_NAME_TOKENS = new Set(['ltd', 'limited', 'plc', 'llp', 'insurance', 'insurer', 'group', 'uk', 'the', 'of', 'and', 'mr', 'mrs', 'ms', 'miss', 'dr']);
+
+/** Significant lower-case tokens of the claim's own parties (claimant, driver, third parties, insurer). */
+function ownPartyTokens(ctx: DraftContext): Set<string> {
+  const b = ctx.bundle;
+  const names = [b.claimant?.name, b.driver?.name, b.atFaultInsurer?.name, ...b.thirdParties.map((p) => p.name)].filter((n): n is string => !!n);
+  const out = new Set<string>();
+  for (const n of names) for (const t of n.toLowerCase().split(/[^a-z0-9'’]+/)) if (t.length > 2 && !GENERIC_NAME_TOKENS.has(t)) out.add(t);
+  return out;
+}
+
+/** "Hussain v esure" in a letter heading is the claim, not an authority. */
+function isOwnPartyCaseName(caseName: string, own: Set<string>): boolean {
+  const sides = caseName.toLowerCase().split(/\s+v\.?\s+/);
+  if (sides.length !== 2) return false;
+  return sides.some((side) => side.split(/[^a-z0-9'’]+/).some((t) => t.length > 2 && own.has(t)));
 }
 
 export function citationChecks(text: string, ctx: DraftContext): ConsistencyFlag[] {
@@ -659,11 +695,13 @@ export function citationChecks(text: string, ctx: DraftContext): ConsistencyFlag
   const found = extractCitations(text);
   if (found.length === 0) return flags;
   const kb = (ctx.kbCitations ?? []).map((c) => ({ key: citationKey(c.citation), verified: c.verified }));
+  const own = ownPartyTokens(ctx);
   const seen = new Set<string>();
   for (const c of found) {
     const key = citationKey(c.citation);
     if (seen.has(key)) continue;
     seen.add(key);
+    if (c.kind === 'case_name' && c.caseName && isOwnPartyCaseName(c.caseName, own)) continue;
     let matched: { key: string; verified: boolean } | undefined;
     if (c.neutral) {
       const nk = citationKey(c.neutral);

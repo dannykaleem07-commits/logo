@@ -92,7 +92,20 @@ export function summariseLines(estimate: EstimateInput): EstimateSummary {
     }
   }
   const t = detail.totals;
-  const basisStatement = `Labour ${t.labourHours.toFixed(2)} hrs at ${formatGBP(estimate.labourRatePence)} per hour; paint ${t.paintHours.toFixed(2)} hrs at ${formatGBP(estimate.paintRatePence)} per hour; ${paintMaterialsBasis(estimate)}; VAT at ${Math.round(estimate.vatRate * 100)}% on the net.`;
+  // A line may carry its own rate (imported "@ £55.00" or a specialist rate). The basis statement must
+  // not then claim every hour was charged at the estimate rate: the arithmetic would not agree with it.
+  const claimable = estimate.lines.filter((l) => l.preExisting !== true);
+  const labourRateOverrides = claimable.filter((l) => (l.kind === 'labour' || l.kind === 'part') && l.hours && l.ratePence !== undefined && l.ratePence !== estimate.labourRatePence).length;
+  const paintRateOverrides = claimable.filter((l) => l.kind === 'paint' && l.hours && l.ratePence !== undefined && l.ratePence !== estimate.paintRatePence).length;
+  const labourBasis =
+    labourRateOverrides > 0
+      ? `Labour ${t.labourHours.toFixed(2)} hrs at ${formatGBP(estimate.labourRatePence)} per hour except ${labourRateOverrides} line(s) at the rate stated on the line`
+      : `Labour ${t.labourHours.toFixed(2)} hrs at ${formatGBP(estimate.labourRatePence)} per hour`;
+  const paintBasis =
+    paintRateOverrides > 0
+      ? `paint ${t.paintHours.toFixed(2)} hrs at ${formatGBP(estimate.paintRatePence)} per hour except ${paintRateOverrides} line(s) at the rate stated on the line`
+      : `paint ${t.paintHours.toFixed(2)} hrs at ${formatGBP(estimate.paintRatePence)} per hour`;
+  const basisStatement = `${labourBasis}; ${paintBasis}; ${paintMaterialsBasis(estimate)}; VAT at ${Math.round(estimate.vatRate * 100)}% on the net.`;
   const preExistingStatement =
     preExistingLines.length === 0
       ? 'No pre-existing damage was identified on this estimate.'

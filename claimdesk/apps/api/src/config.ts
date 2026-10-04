@@ -3,6 +3,8 @@
  * API keys are never exposed through the API — only their presence flags (Settings.apiKeysPresent).
  */
 import { config as loadDotenv } from 'dotenv';
+import { randomUUID } from 'node:crypto';
+import os from 'node:os';
 import path from 'node:path';
 
 export interface ApiKeys {
@@ -98,21 +100,30 @@ export function loadConfig(overrides: Partial<AppConfig> = {}): AppConfig {
   return cfg;
 }
 
-/** Config for tests: in-memory database, no keys, scratch directories. */
+/**
+ * Config for tests: in-memory database, no keys, a fresh scratch directory per app under the OS temp dir
+ * (`<tmp>/claimdesk-api-tests/<uuid>/{evidence,documents}`) — `test/helpers.ts` removes it on close.
+ */
 export function testConfig(overrides: Partial<AppConfig> = {}): AppConfig {
   const keys: ApiKeys = {};
+  const scratch = path.join(os.tmpdir(), 'claimdesk-api-tests', randomUUID());
   return {
     env: 'test',
     port: 0,
     host: '127.0.0.1',
     databasePath: ':memory:',
-    evidenceDir: path.join(process.cwd(), '.test-data', 'evidence'),
-    documentsDir: path.join(process.cwd(), '.test-data', 'documents'),
-    webDistDir: path.join(process.cwd(), '.test-data', 'no-web-dist'),
+    evidenceDir: path.join(scratch, 'evidence'),
+    documentsDir: path.join(scratch, 'documents'),
+    webDistDir: path.join(scratch, 'no-web-dist'),
     keys,
     keysPresent: keysPresence(keys),
     defaultUserId: 'handler',
     lookupTimeoutMs: 2_000,
     ...overrides,
   };
+}
+
+/** The per-test scratch root (parent of evidence/documents), for cleanup. */
+export function scratchRoot(config: AppConfig): string {
+  return path.dirname(config.evidenceDir);
 }

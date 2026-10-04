@@ -46,7 +46,26 @@ const RATE_RE = /@\s*(£\s?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?|£\s?\d+(?:\.\d{1,2}
 const DATE_TOKEN_RE = /^(?:\d{4}-\d{2}-\d{2}|\d{1,2}-\d{1,2}-\d{2,4})$/;
 const HEADER_LINE = /^\s*(op(?:eration)?|description|desc|part\s*(?:no|number)|qty|hours|hrs|price|net|line)\b/i;
 
-const PRICE_RE = /£\s?-?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?|£\s?-?\d+(?:\.\d{1,2})?/g;
+/**
+ * Dates (04/10/2026, 04.10.26, 2026-10-04, 4-10-2026) and clock times (10:30) are removed before any
+ * number is read: "Date: 04/10/2026" otherwise yields a £2,026.00 part with quantity 4.
+ */
+const DATE_OR_TIME_RE = /(?<![\w.])(?:\d{4}-\d{1,2}-\d{1,2}|\d{1,2}[\/.-]\d{1,2}[\/.-]\d{2,4}|\d{1,2}:\d{2}(?::\d{2})?)(?![\w.])/g;
+/** UK registration marks (AB19CDE) and 17-character VINs are identifiers, never part numbers. */
+const UK_REG_RE = /^[A-Z]{2}\d{2}[A-Z]{3}$/i;
+const VIN_RE = /^[A-HJ-NPR-Z0-9]{17}$/i;
+/**
+ * Header / identity lines from an estimate PDF (vehicle, registration, claim and policy numbers,
+ * dates, contact details). Skipped when the line carries no operation word and no repair-kind
+ * keyword; "Replace engine mount" or "Repair vehicle underside" still parse.
+ */
+const IDENTITY_LINE_RE =
+  /\b(reg(?:istration)?(?:\s*(?:no|number|mark))?|vin|chassis(?:\s*no)?|vehicle|make|model|claim(?:\s*(?:no|ref|number))?|policy(?:\s*(?:no|number))?|invoice(?:\s*(?:no|number))?|estimate(?:\s*(?:no|number|date))?|job(?:\s*(?:no|number|card))?|tel(?:ephone)?|phone|mobile|fax|e-?mail|date|postcode|insurer|customer|owner|address|assessor|engineer(?:'s)?(?:\s*fee)?|repairer|bodyshop|mileage|odometer|colour|first\s*reg)\b/i;
+/** A discount, credit or "less ..." line reduces the estimate; its figure is carried negative. */
+const DISCOUNT_RE = /\b(discount|credit(?:\s*note)?|less|rebate|allowance|deduct(?:ion)?)\b/i;
+
+/** £ prices, with an optional minus before or after the £ sign, or wrapped in brackets ((£50.00) = −£50.00). */
+const PRICE_RE = /\(\s*£\s?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?\s*\)|\(\s*£\s?\d+(?:\.\d{1,2})?\s*\)|-?£\s?-?\d{1,3}(?:,\d{3})*(?:\.\d{1,2})?|-?£\s?-?\d+(?:\.\d{1,2})?/g;
 const HOURS_RE = /\b(\d+(?:\.\d+)?)\s*(?:hrs?|hours?|h)\b/gi;
 const QTY_RE = /\b(?:qty|quantity)\s*[:=]?\s*(\d+)\b|\b(\d+)\s*(?:x|×|off|pcs?|no\.?)\s/gi;
 const PART_RE = /\b[A-Z0-9][A-Z0-9-]{4,18}[A-Z0-9]\b/gi;
@@ -67,6 +86,7 @@ export function canonicalOperation(text: string): CanonicalOperation | undefined
 function isPartNumberToken(token: string): boolean {
   if (token.length < 6 || token.length > 20) return false;
   if (DATE_TOKEN_RE.test(token)) return false;
+  if (UK_REG_RE.test(token) || VIN_RE.test(token)) return false;
   const hasDigit = /\d/.test(token);
   const hasLetter = /[A-Za-z]/.test(token);
   if (hasDigit && hasLetter) return true;
@@ -89,7 +109,7 @@ export interface ParsedTokens {
 
 /** Pull the recognisable tokens out of one line of text. Exported for tests and for the import UI's preview. */
 export function tokeniseLine(raw: string): ParsedTokens {
-  let work = raw.replace(/\s+/g, ' ').trim();
+  let work = raw.replace(/\s+/g, ' ').trim().replace(DATE_OR_TIME_RE, ' ');
   let ratePence: number | undefined;
   work = work.replace(RATE_RE, (_m, r: string) => {
     const p = parseGBP(r.replace(/\s/g, ''));
@@ -101,8 +121,13 @@ export function tokeniseLine(raw: string): ParsedTokens {
   });
   const pricesPence: number[] = [];
   work = work.replace(PRICE_RE, (m) => {
-    const p = parseGBP(m.replace(/\s/g, ''));
-    if (p !== null) pricesPence.push(p);
+    const compact = m.replace(/\s/g, '');
+    const bracketed = compact.startsWith('(') && compact.endsWith(')');
+    const body = bracketed ? compact.slice(1, -1) : compact;
+    // parseGBP accepts "-£50.00"; normalise "£-50.00" to the same shape.
+    const negative = bracketed || body.startsWith('-') || body.startsWith('£-');
+    const p = parseGBP(body.replace(/^-?£-?/, '£'));
+    if (p !== null) pricesPence.push(negative ? -p : p);
     return ' ';
   });
   let hours: number | undefined;
@@ -167,7 +192,13 @@ function reinterpretBareHoursAsPrice(kind: EstimateLineKind, t: ParsedTokens): P
   return { ...t, hours: undefined, pricesPence: [Math.round(t.hours * 100)] };
 }
 
+/** True when the line names a repair kind even without an operation word (sundries, materials, ADAS…). */
+function hasKindKeyword(text: string): boolean {
+  return ADAS_RE.test(text) || DIAG_RE.test(text) || MATERIALS_RE.test(text) || SUNDRY_RE.test(text) || SPECIALIST_RE.test(text) || PAINT_RE.test(text);
+}
+
 function classify(text: string, t: ParsedTokens): EstimateLineKind {
+  if (t.operation === undefined && DISCOUNT_RE.test(text) && t.pricesPence.length > 0) return 'sundry';
   if (t.operation === 'Calibrate' || ADAS_RE.test(text)) return 'adas';
   if (t.operation === 'Diagnose' || DIAG_RE.test(text)) return 'diagnostic';
   if (MATERIALS_RE.test(text) && !PAINT_RE.test(text.replace(MATERIALS_RE, ''))) return 'materials';
@@ -199,10 +230,26 @@ export function parseEstimateLine(raw: string, lineNo: number, idPrefix = 'impor
   const hasOperation = canonicalOperation(text) !== undefined;
   if (SKIP_LINE.test(text) && !hasOperation) return [];
   if (HEADER_LINE.test(text) && !/\d/.test(text)) return [];
+  const kindKeyword = hasKindKeyword(text);
+  // Header and identity lines ("Reg AB19CDE", "Date: 04/10/2026", "Vehicle: Golf 2019 1.5 TSI", "Tel …")
+  // are not repair lines, however many numbers they carry.
+  if (!hasOperation && !kindKeyword && IDENTITY_LINE_RE.test(text)) return [];
   const t0 = tokeniseLine(text);
   if (t0.operation === undefined && t0.partNumber === undefined && t0.pricesPence.length === 0 && t0.hours === undefined && t0.ratePence === undefined) return [];
+  if (!hasOperation && !kindKeyword) {
+    // Without an operation word or a repair-kind keyword, a line must carry something unambiguous:
+    // a £ price, an explicit hours marker, a rate, or a part number next to a figure. A bare
+    // "2019 1.5" (a vehicle description) or a lone identifier is not an estimate line.
+    const explicitMoney = /£/.test(text) || t0.ratePence !== undefined;
+    const partWithFigure = t0.partNumber !== undefined && (t0.pricesPence.length > 0 || t0.hours !== undefined);
+    if (!explicitMoney && !t0.hoursExplicit && !partWithFigure) return [];
+  }
   const kind = classify(text, t0);
-  const t = reinterpretBareHoursAsPrice(kind, t0);
+  let t = reinterpretBareHoursAsPrice(kind, t0);
+  if (kind === 'sundry' && DISCOUNT_RE.test(text) && t.operation === undefined) {
+    // "Less discount £50.00" reduces the estimate even when the sign was not printed.
+    t = { ...t, pricesPence: t.pricesPence.map((p) => (p > 0 ? -p : p)) };
+  }
   const panel = stripOperationWord(t.remainder) || undefined;
   const base = {
     operation: t.operation ?? 'Other',

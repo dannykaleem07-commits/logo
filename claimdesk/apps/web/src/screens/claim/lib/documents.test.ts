@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { GeneratedDocument } from '@ccguk/domain';
-import { approvalBlocker, canSend, canSign, extraDataBody, extraDataFields, flagCounts, groupTemplates, humanise, isBlocked, sortDocuments, supersedeDataFrom } from './documents';
+import { approvalBlocker, canSend, canSign, extraDataBody, extraDataFields, flagCounts, groupTemplates, humanise, isBlocked, sortDocuments, supersedeBodyFrom } from './documents';
 
 const doc = (over: Partial<GeneratedDocument>): GeneratedDocument => ({
   id: 'd1',
@@ -85,13 +85,14 @@ describe('approval gate (lesson a: £1,287 stated vs £1,112 received blocks)', 
     const docs = [doc({ id: 'old', status: 'superseded', createdAt: '2026-09-03T00:00:00Z' }), doc({ id: 'a', createdAt: '2026-09-01T00:00:00Z' }), doc({ id: 'b', createdAt: '2026-09-02T00:00:00Z' })];
     expect(sortDocuments(docs).map((d) => d.id)).toEqual(['b', 'a', 'old']);
   });
-  it('re-execution carries the real date and supersedes the version (lesson b)', () => {
+  it('re-execution carries the real date and goes to POST /documents/:id/supersede (lesson b)', () => {
     const today = '2026-10-04';
-    expect(supersedeDataFrom(doc({}), { reExecutedOn: '', reason: '' }, today).ok).toBe(false);
-    expect(supersedeDataFrom(doc({}), { reExecutedOn: '2026-10-05', reason: 'Client signed the wrong copy' }, today).ok).toBe(false);
-    expect(supersedeDataFrom(doc({}), { reExecutedOn: '', reason: 'Client signed the wrong copy' }, today)).toEqual({
+    expect(supersedeBodyFrom({ reExecutedOn: '', reason: '' }, today).ok).toBe(false);
+    expect(supersedeBodyFrom({ reExecutedOn: '2026-10-05', reason: 'Client signed the wrong copy' }, today).ok).toBe(false);
+    expect(supersedeBodyFrom({ reExecutedOn: '', reason: 'Client signed the wrong copy' }, today)).toEqual({
       ok: true,
-      data: { supersedesId: 'd1', supersedesVersion: '1.0.0', reExecutedOn: today, reExecutionReason: 'Client signed the wrong copy' }
+      body: { reason: 'Client signed the wrong copy', reExecutedOn: today }
     });
+    expect(supersedeBodyFrom({ reExecutedOn: '2026-10-01', reason: 'Re-signed after correction' }, today)).toEqual({ ok: true, body: { reason: 'Re-signed after correction', reExecutedOn: '2026-10-01' } });
   });
 });

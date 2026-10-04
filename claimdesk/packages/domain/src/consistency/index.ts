@@ -42,6 +42,7 @@ export {
   BANNED_PHRASES,
   REGULATED_STATUS_PHRASES,
   REGULATED_STATUS_WARN_PHRASES,
+  REGULATED_STATUS_REGEXES,
   REGISTERED_NAME
 } from './legacy.js';
 export { toPlainText } from './text.js';

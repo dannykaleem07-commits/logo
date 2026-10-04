@@ -13,6 +13,12 @@
  *
  * Every figure is supplied by the API from the ledger. The template prints it through format.ts and never adds,
  * multiplies or retypes an amount. Templates never read the clock: the invoice date and tax point come from data.
+ *
+ * Before anything is printed the figures are reconciled (`assertInvoiceArithmetic`): the charge lines must add to the
+ * net total, net + VAT must equal the gross, each quantity × rate must equal the line amount the ledger holds, and
+ * "VAT not applicable" can never sit beside a VAT charge. A mismatch throws InvoiceConsistencyError — an invoice that
+ * contradicts itself (BLUEPRINT §3.7, live File 1: £1,287 stated against £1,112 received) is never generated.
+ * Day counts are likewise never computed here: the period prints as two dates and the days charged come from the ledger.
  */
 import type { ISODate, ISODateTime, Pence } from '@ccguk/domain';
 import { brand } from '../brand.js';
@@ -23,13 +29,13 @@ import {
   formatDateTime,
   formatGBP,
   formatMiles,
+  formatNumber,
   formatPercent,
   formatRate,
   formatRegistration,
   numberedList,
   plural,
-  toISODate,
-  formatPeriod
+  toISODate
 } from '../format.js';
 import { baseLayout, callout, figuresTable, keyValueTable, type ScheduleLine, scheduleTable, subjectBlock } from '../layout.js';
 import { type AnyTemplate, registerTemplate, type Template } from '../registry.js';
@@ -87,7 +93,16 @@ const INVOICE_REQUIRED = [
 ] as const;
 
 const INVOICE_CSS = `
-.invoice-meta{display:flex;gap:10mm;margin:0 0 4mm;}
+.doc-invoice .masthead{margin-bottom:4mm;}
+.doc-invoice .doc-title{margin-bottom:3mm;}
+.doc-invoice .letter-block{margin-bottom:4mm;}
+.doc-invoice table.subject{margin-bottom:3mm;}
+.doc-invoice table.data{margin:2mm 0 3mm;}
+.doc-invoice table.kv th,.doc-invoice table.kv td{padding:1mm 2.5mm;}
+.doc-invoice table.data td,.doc-invoice table.data th{padding:1.2mm 2.5mm;}
+.doc-invoice h2{margin:4mm 0 1.5mm;}
+.doc-invoice .callout{margin:3mm 0;padding:2.5mm 4mm;}
+.doc-invoice p{margin-bottom:2mm;}
 .basis{font-size:9.5pt;}
 .payee .kv{margin:1mm 0 2mm;}
 .payee p{margin:0;}
@@ -114,10 +129,35 @@ export class InvoiceConsistencyError extends Error {
   }
 }
 
+/**
+ * A quantity × rate the ledger says equals `amountPence`. `capped` lines (GTA 5.4 additional-driver benchmark cap) may be
+ * below the product but never above it.
+ */
+export interface InvoiceProduct {
+  label: string;
+  quantity: number;
+  ratePence: Pence;
+  amountPence: Pence;
+  capped?: boolean;
+}
+
 /** Every reconciliation an invoice's figures must satisfy before it is printed (integer pence, no rounding). */
-export function invoiceArithmeticProblems(d: InvoiceBaseData, lineNetPence: ReadonlyArray<Pence>): string[] {
+export function invoiceArithmeticProblems(d: InvoiceBaseData, lineNetPence: ReadonlyArray<Pence>, products: ReadonlyArray<InvoiceProduct> = []): string[] {
   const problems: string[] = [];
   const t = d.totals;
+  for (const key of ['netPence', 'vatPence', 'grossPence'] as const) {
+    if (!Number.isInteger(t[key])) problems.push(`totals.${key} is not integer pence (${String(t[key])})`);
+  }
+  for (const p of products) {
+    const expected = Math.round(p.quantity * p.ratePence);
+    if (p.capped ? p.amountPence > expected : p.amountPence !== expected) {
+      problems.push(
+        `${p.label}: ${formatNumber(p.quantity)} × ${formatGBP(p.ratePence)} is ${formatGBP(expected)} but the ledger amount is ${formatGBP(p.amountPence)}${
+          p.capped ? ' (a capped line may be below the product, never above it)' : ''
+        }`
+      );
+    }
+  }
   const linesTotal = lineNetPence.reduce((a, b) => a + b, 0);
   if (linesTotal !== t.netPence) {
     problems.push(`the charge lines total ${formatGBP(linesTotal)} but totals.netPence is ${formatGBP(t.netPence)}`);
@@ -134,8 +174,13 @@ export function invoiceArithmeticProblems(d: InvoiceBaseData, lineNetPence: Read
   return problems;
 }
 
-export function assertInvoiceArithmetic(templateId: string, d: InvoiceBaseData, lineNetPence: ReadonlyArray<Pence>): void {
-  const problems = invoiceArithmeticProblems(d, lineNetPence);
+export function assertInvoiceArithmetic(
+  templateId: string,
+  d: InvoiceBaseData,
+  lineNetPence: ReadonlyArray<Pence>,
+  products: ReadonlyArray<InvoiceProduct> = []
+): void {
+  const problems = invoiceArithmeticProblems(d, lineNetPence, products);
   if (problems.length > 0) throw new InvoiceConsistencyError(templateId, problems);
 }
 
@@ -164,11 +209,12 @@ export function invoiceTotalsTable(d: InvoiceBaseData): string {
  * Reconciles the lines to the ledger totals first (InvoiceConsistencyError): the net total printed under the lines is
  * the ledger's figure, so the two must agree.
  */
-function chargesTable(templateId: string, d: InvoiceBaseData, lines: ScheduleLine[], caption = 'Charges'): string {
+function chargesTable(templateId: string, d: InvoiceBaseData, lines: ScheduleLine[], products: ReadonlyArray<InvoiceProduct> = [], caption = 'Charges'): string {
   assertInvoiceArithmetic(
     templateId,
     d,
-    lines.map((l) => l.netPence)
+    lines.map((l) => l.netPence),
+    products
   );
   return `<div class="avoid-break">${scheduleTable(lines, { caption, showVat: false, totals: { netPence: d.totals.netPence }, totalLabel: 'Net total' })}</div>`;
 }
@@ -330,14 +376,16 @@ export const hireInvoiceTemplate: Template<HireInvoiceData> = {
     const lines: ScheduleLine[] = [
       {
         description: `Hire of ${vehicleName}, registration ${formatRegistration(d.vehicle.registration)}`,
-        detail: `${formatPeriod(toISODate(d.hire.startAt), toISODate(d.hire.endAt))} · GTA group ${d.vehicle.gtaGroup} (industry benchmark)`,
+        detail: `${formatDateLong(d.hire.startAt)} to ${formatDateLong(d.hire.endAt)} · GTA group ${d.vehicle.gtaGroup} (industry benchmark)`,
         quantity: plural(d.hire.days, 'day'),
         ratePence: d.hire.dailyRatePence,
         netPence: d.hire.hirePence
       }
     ];
+    const products: InvoiceProduct[] = [{ label: 'Hire', quantity: d.hire.days, ratePence: d.hire.dailyRatePence, amountPence: d.hire.hirePence }];
     const ad = d.hire.additionalDriver;
     if (ad) {
+      products.push({ label: 'Additional driver', quantity: ad.days, ratePence: ad.dailyRatePence, amountPence: ad.amountPence, capped: ad.capApplied === true });
       const detailParts = [ad.name ? `Driver: ${ad.name}` : '', ad.capApplied ? 'Charged at the capped amount' : ''].filter(Boolean);
       lines.push({
         description: ad.nonStandardRisk ? 'Additional driver (non-standard risk)' : 'Additional driver',
@@ -349,6 +397,7 @@ export const hireInvoiceTemplate: Template<HireInvoiceData> = {
     }
     const ew = d.hire.excessWaiver;
     if (ew) {
+      products.push({ label: 'Excess reduction', quantity: ew.days, ratePence: ew.dailyRatePence, amountPence: ew.amountPence });
       lines.push({
         description: 'Excess reduction (collision damage waiver)',
         detail:
@@ -379,7 +428,7 @@ export const hireInvoiceTemplate: Template<HireInvoiceData> = {
     const body = `
 ${claimTable(d)}
 ${particulars}
-${chargesTable('invoice.hire', d, lines)}
+${chargesTable('invoice.hire', d, lines, products)}
 ${invoiceTotalsTable(d)}
 ${callout(
   `<p>The vehicle was supplied to ${escapeHtml(d.claim.claimantName)} on credit terms under hire agreement ${escapeHtml(
@@ -465,7 +514,7 @@ export const storageInvoiceTemplate: Template<StorageInvoiceData> = {
     const lines: ScheduleLine[] = [
       {
         description: `Storage of ${formatRegistration(d.claim.vehicleRegistration)}${d.claim.vehicleDescription ? `, ${d.claim.vehicleDescription}` : ''} at ${s.location}`,
-        detail: formatPeriod(toISODate(s.startAt), toISODate(s.endAt)),
+        detail: `${formatDateLong(s.startAt)} to ${formatDateLong(s.endAt)}`,
         quantity: plural(s.days, 'day'),
         ratePence: s.dailyRatePence,
         netPence: s.amountPence
@@ -510,7 +559,7 @@ export const storageInvoiceTemplate: Template<StorageInvoiceData> = {
     const body = `
 ${claimTable(d)}
 ${keyValueTable(rows, 'Storage particulars')}
-${chargesTable('invoice.storage', d, lines)}
+${chargesTable('invoice.storage', d, lines, [{ label: 'Storage', quantity: s.days, ratePence: s.dailyRatePence, amountPence: s.amountPence }])}
 ${invoiceTotalsTable(d)}
 ${callout(
   `<p>Storage was supplied to ${escapeHtml(
@@ -610,7 +659,7 @@ export const recoveryInvoiceTemplate: Template<RecoveryInvoiceData> = {
     const body = `
 ${claimTable(d)}
 ${keyValueTable(rows, 'Recovery particulars')}
-${chargesTable('invoice.recovery', d, lines)}
+${chargesTable('invoice.recovery', d, lines, [{ label: 'Loaded mileage', quantity: r.loadedMiles, ratePence: r.perLoadedMilePence, amountPence: r.mileagePence }])}
 ${invoiceTotalsTable(d)}
 ${callout(
   `<p>The vehicle was recovered on ${escapeHtml(formatDateLong(r.at))} from ${escapeHtml(r.fromLocation)} to ${escapeHtml(r.toLocation)}, following the accident on ${escapeHtml(
@@ -753,7 +802,7 @@ export const engineerFeeInvoiceTemplate: Template<EngineerFeeInvoiceData> = {
     const body = `
 ${claimTable(d)}
 ${keyValueTable(rows, 'The engineer and the instruction')}
-${chargesTable('invoice.engineer_fee', d, lines, 'Fee')}
+${chargesTable('invoice.engineer_fee', d, lines, [{ label: 'Fee', quantity: 1, ratePence: d.feePence, amountPence: d.feePence }], 'Fee')}
 ${invoiceTotalsTable(d)}
 <h2>Work done</h2>
 ${d.workDone.length > 0 ? numberedList(d.workDone) : '<p>No itemised list of the work done was supplied with this fee note.</p>'}

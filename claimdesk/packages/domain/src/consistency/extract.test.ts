@@ -109,3 +109,55 @@ describe('day arithmetic', () => {
     expect(chargeableDays('2026-09-20T14:00:00Z', '2026-09-20T15:00:00Z')).toBe(1); // minimum 1
   });
 });
+
+describe('adversarial: deadline and amount extraction', () => {
+  it('modal passives are demands: "must be made by", "should be received by", "is to be paid by"', () => {
+    const d = extractDeadlines('Payment must be made by 18 October 2026. The balance should be received by 19 October 2026. The invoice is to be paid by 20 October 2026.');
+    expect(d.map((x) => x.iso)).toEqual(['2026-10-18', '2026-10-19', '2026-10-20']);
+  });
+
+  it('past passives are events, not deadlines: "was collected by", "has been paid by"', () => {
+    expect(extractDeadlines('The vehicle was collected by 1 October 2026 and the account has been paid by 2 October 2026.')).toEqual([]);
+  });
+
+  it('"within 14 days of the date of this letter" is one deadline, not two', () => {
+    const d = extractDeadlines('Please remit within 14 days of the date of this letter.', { baseDate: '2026-10-04' });
+    expect(d).toHaveLength(1);
+    expect(d[0]).toMatchObject({ iso: '2026-10-18', days: 14, workingDays: false });
+  });
+
+  it('weeks are 7n calendar days: eight weeks from 4 October 2026 is 29 November 2026', () => {
+    // 4 Oct + 27 days = 31 Oct; + 29 days = 29 Nov
+    const d = extractDeadlines('Please provide your final response within eight weeks.', { baseDate: '2026-10-04' });
+    expect(d).toHaveLength(1);
+    expect(d[0]).toMatchObject({ iso: '2026-11-29', days: 56 });
+  });
+
+  it('a deadline with a time and weekday between "by" and the date is found', () => {
+    const d = extractDeadlines('We require your response by 5:00pm on Friday 16 October 2026.');
+    expect(d.map((x) => x.iso)).toEqual(['2026-10-16']);
+  });
+
+  it('records keyword strength so breakdown lines are not compared with head totals', () => {
+    const a = extractAmounts('Recovery charges: call-out £90.00 plus admin £25.00. The outstanding balance is £232.60.');
+    expect(a.map((x) => [x.pence, x.context, x.strength])).toEqual([
+      [9_000, 'claimed', 'weak'],
+      [2_500, 'claimed', 'weak'],
+      [23_260, 'claimed', 'strong']
+    ]);
+    expect(extractAmounts('Call-out £90.')[0]!.strength).toBeUndefined();
+  });
+
+  it('"offering £900" is an offer, and a payment verb beats a nearer generic noun', () => {
+    expect(extractAmounts('We received your letter of 1 October 2026 offering £900 for the PAV.')[0]!.context).toBe('offered');
+    expect(extractAmounts('You have paid the storage charges of £1,287.')[0]!.context).toBe('paid');
+  });
+
+  it('chargeable days are counted on the London wall clock across the October clock change', () => {
+    // 10:00 BST on 20 October → 10:00 GMT on 30 October is 10 days on the agreement (10 days 1 hour elapsed)
+    expect(chargeableDays('2026-10-20T09:00:00Z', '2026-10-30T10:00:00Z')).toBe(10);
+    // and across the March change the other way: 10:00 GMT 25 March → 10:00 BST 4 April is 10 days (9 days 23 hours elapsed)
+    expect(chargeableDays('2027-03-25T10:00:00Z', '2027-04-04T09:00:00Z')).toBe(10);
+    expect(calendarDaysBetween('2026-06-30T23:30:00Z', '2026-07-01T08:00:00Z')).toBe(0); // both 1 July in London
+  });
+});

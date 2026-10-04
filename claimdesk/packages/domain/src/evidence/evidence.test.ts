@@ -178,5 +178,39 @@ describe('guidedShotList', () => {
   });
 });
 
-// keep the unused import linter quiet for fixtures used only via greenBundle
+describe('adversarial: gate labels and document status', () => {
+  it('prints the England & Wales date of a BST-evening signature, not the UTC date', () => {
+    const b = greenBundle();
+    // 23:30 UTC on 30 June 2026 is 00:30 BST on 1 July 2026
+    b.hire = [fixtureHire({ signedAt: '2026-06-30T23:30:00Z', enforceability: { ...fixtureHire().enforceability, expressRequestToStartAt: '2026-06-30T23:20:00Z' } })];
+    const r = evaluateGate(b, 'enforceability');
+    expect(r.status).toBe('green');
+    expect(r.present[2]).toBe('Express request to start during the cancellation period on 2026-07-01');
+    expect(r.present[3]).toBe('Agreement signed on 2026-07-01');
+  });
+
+  it('a voided or superseded statement of means is not on file', () => {
+    const b = greenBundle();
+    b.documents = b.documents.map((d) => (d.templateId === 'form.statement_of_means' ? { ...d, status: 'void' } : d));
+    const r = evaluateGate(b, 'impecuniosity');
+    expect(r.status).toBe('amber'); // 2 of 3
+    expect(r.missing[0]).toContain('Signed statement of means');
+  });
+
+  it('an odometer photo two days after delivery does not prove the delivery reading', () => {
+    const b = greenBundle();
+    b.evidence = b.evidence.map((e) => (e.id === 'ev-odo-out' ? { ...e, capturedAt: '2026-09-23T10:10:00Z' } : e));
+    const r = evaluateGate(b, 'use');
+    expect(r.status).toBe('amber'); // 3 of 4
+    expect(r.missing).toEqual(['Take a guided odometer photo at delivery (captureShot "odometer", within a day of handover)']);
+  });
+
+  it('the pending-offer item prints the London date the offer was received', () => {
+    const b = greenBundle();
+    b.offers = [fixtureOffer({ receivedAt: '2026-06-30T23:30:00Z', clientDecision: 'pending', replySentAt: undefined })];
+    const r = evaluateGate(b, 'mitigation');
+    expect(r.missing[0]).toBe("Record the client's decision and reasons for 1 pending intervention offer (esure 2026-07-01)");
+  });
+});
+
 void fixtureDocument;

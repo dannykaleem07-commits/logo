@@ -52,6 +52,53 @@ export const fnolOffer = z.object({
   clientToldToIgnore: z.literal(false).optional(),
 });
 
+/** A witness as the FNOL wizard records it (web client `WitnessInput`); `relationship` is the domain's spelling. */
+export const fnolWitness = z.object({
+  name: z.string().trim().min(1),
+  phone: z.string().optional(),
+  email: z.string().optional(),
+  address: addressSchema.optional(),
+  /** How the client knows the witness — "none" when independent (lesson g). */
+  relationshipToClaimant: z.string().optional(),
+  relationship: z.string().optional(),
+  independent: z.boolean().optional(),
+});
+
+/** The other side as the FNOL wizard records it (web client `CreateClaimBody.thirdParty`). */
+export const fnolThirdParty = z.object({
+  registration: z.string().optional(),
+  /** True when the other driver failed to stop and the plate is genuinely unknown (MIB Untraced route). */
+  registrationUnknown: z.boolean().optional(),
+  driverName: z.string().optional(),
+  name: z.string().optional(),
+  insurerName: z.string().optional(),
+  insurerId: id.optional(),
+  insurerPolicyNumber: z.string().optional(),
+  contact: z.string().optional(),
+});
+
+/** The client's own insurer: an existing party id, full party details, or the wizard's `{ name, policyNumber }`. */
+export const fnolClientInsurer = partyInput.partial().extend({ id: id.optional(), policyNumber: z.string().optional() });
+
+export const fnolDisclosure = z.object({
+  callRecordingReadAt: isoDateTime.optional(),
+  acknowledged: z.boolean().optional(),
+  acknowledgedBy: z.string().optional(),
+});
+
+export const fnolServices = z.object({
+  hire: z.boolean().optional(),
+  recovery: z.boolean().optional(),
+  storage: z.boolean().optional(),
+  engineer: z.boolean().optional(),
+  notes: z.string().optional(),
+});
+
+/**
+ * POST /claims. Accepts both the API's native shape (claimant/vehicle/thirdPartyVehicle/atFaultInsurer/...) and the web
+ * client's FNOL-wizard shape (channel/disclosure/thirdParty/witnesses/clientInsurer{name,policyNumber}/injury/services);
+ * `services/intake.ts` normalises them into one before anything is written.
+ */
 export const createClaimBody = z.object({
   claimant: partyRef,
   driver: partyRef.optional(),
@@ -60,7 +107,7 @@ export const createClaimBody = z.object({
   thirdPartyVehicle: vehicleRef.optional(),
   atFaultInsurer: partyRef.optional(),
   atFaultInsurerRef: z.string().optional(),
-  clientInsurer: partyRef.optional(),
+  clientInsurer: fnolClientInsurer.optional(),
   clientPolicyNumber: z.string().optional(),
   accident: accidentDetails,
   liability: liabilityPosition.default('unknown'),
@@ -72,6 +119,21 @@ export const createClaimBody = z.object({
   fnolAt: isoDateTime.optional(),
   callRecordingDisclosed: z.boolean().optional(),
   notes: z.string().optional(),
+  // ----- intake questions (domain validateFnol) -----
+  /** The handler confirms the account was taken cold (open questions, verbatim). */
+  takenCold: z.boolean().optional(),
+  /** undefined = the witnesses question was not asked; [] = asked, none. */
+  witnesses: z.array(fnolWitness).optional(),
+  /** "Has anyone offered you a vehicle?" — the script-guard question. */
+  offerDisclosed: z.boolean().optional(),
+  offerDetails: z.object({ what: z.string().optional(), byWhom: z.string().optional(), when: z.string().optional() }).optional(),
+  // ----- web-client FNOL wizard shape -----
+  channel: z.enum(['phone', 'whatsapp', 'web_form', 'in_person', 'email']).optional(),
+  disclosure: fnolDisclosure.optional(),
+  thirdParty: fnolThirdParty.optional(),
+  injury: z.object({ reported: z.boolean(), referralTo: z.string().optional(), notes: z.string().optional() }).optional(),
+  services: fnolServices.optional(),
+  gtaSubscriber: z.literal(false).optional(),
 });
 
 export const claimPatchBody = z

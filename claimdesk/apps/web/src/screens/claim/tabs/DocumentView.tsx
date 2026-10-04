@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { ConsistencyFlag, GeneratedDocument } from '@ccguk/domain';
 import { api, type SignStartResult } from '../../../api/client';
-import { useApproveDocument, useClearFlag, useCreateDocument, useDocument, useSendDocument, useStartSign, useVerifySign } from '../../../api/hooks';
+import { useApproveDocument, useClearFlag, useCreateDocument, useDocument, useSendDocument, useStartSign, useSupersedeDocument, useVerifySign } from '../../../api/hooks';
 import { Card } from '../../../components/Card';
 import { Badge, DocumentStatusBadge, SeverityBadge } from '../../../components/Badge';
 import { Button } from '../../../components/Button';
@@ -18,7 +18,7 @@ import { todayISO } from '../../../lib/dates';
 import type { ClaimView } from '../claimFile';
 import { ReasonDialog } from '../components/ReasonDialog';
 import { shortHash } from '../lib/evidence';
-import { approvalBlocker, canSend, canSign, consistencyCodeLabel, flagCounts, isBlocked, SEND_VIA_OPTIONS, supersedeDataFrom } from '../lib/documents';
+import { approvalBlocker, canSend, canSign, consistencyCodeLabel, flagCounts, isBlocked, SEND_VIA_OPTIONS, supersedeBodyFrom } from '../lib/documents';
 
 type Dialog = 'send' | 'sign' | 'supersede' | null;
 
@@ -471,22 +471,19 @@ function SupersedeDialog({ doc, view, onClose }: { doc: GeneratedDocument; view:
   const today = todayISO();
   const [form, setForm] = useState({ reExecutedOn: today, reason: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const create = useCreateDocument(view.claim.id);
+  const supersede = useSupersedeDocument(doc.id, view.claim.id);
   const navigate = useNavigate();
   const toast = useToast();
   const submit = () => {
-    const r = supersedeDataFrom(doc, form, today);
+    const r = supersedeBodyFrom(form, today);
     if (!r.ok) return setErrors(r.errors);
-    create.mutate(
-      { templateId: doc.templateId, data: r.data, recipientPartyId: doc.recipientPartyId },
-      {
-        onSuccess: (d) => {
-          toast.success(`New version drafted — carries "re-executed on ${form.reExecutedOn}, supersedes v${doc.templateVersion}"`);
-          onClose();
-          navigate(`/claims/${view.claim.id}/documents/${d.id}`);
-        }
+    supersede.mutate(r.body, {
+      onSuccess: (d) => {
+        toast.success(`New version drafted — carries "re-executed on ${r.body.reExecutedOn}, supersedes v${doc.templateVersion}"`);
+        onClose();
+        navigate(`/claims/${view.claim.id}/documents/${d.id}`);
       }
-    );
+    });
   };
   return (
     <Modal
@@ -496,7 +493,7 @@ function SupersedeDialog({ doc, view, onClose }: { doc: GeneratedDocument; view:
       footer={
         <>
           <Button onClick={onClose}>Cancel</Button>
-          <Button variant="primary" loading={create.isPending} onClick={submit}>
+          <Button variant="primary" loading={supersede.isPending} onClick={submit}>
             Draft new version
           </Button>
         </>
@@ -512,7 +509,7 @@ function SupersedeDialog({ doc, view, onClose }: { doc: GeneratedDocument; view:
         <p className="small muted">Lesson b: a re-executed document carries the actual signing date and the line “re-executed on [date], supersedes version [n]”. The old version stays on file as superseded; its hash is unchanged.</p>
         <DateInput label="Re-executed on" value={form.reExecutedOn} onChange={(v) => setForm((f) => ({ ...f, reExecutedOn: v }))} max={today} error={errors.reExecutedOn} hint="Never earlier than today; the API also refuses dates before creation" />
         <TextArea label="Why" required value={form.reason} onChange={(v) => setForm((f) => ({ ...f, reason: v }))} rows={3} error={errors.reason} autoFocus />
-        <ApiErrorNotice error={create.error} what="draft the new version" />
+        <ApiErrorNotice error={supersede.error} what="draft the new version" />
       </form>
     </Modal>
   );
