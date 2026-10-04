@@ -55,36 +55,43 @@ jobs:
           $proc = Start-Process -FilePath $exe -ArgumentList '--demo','--no-browser' -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\cd-out.log" -RedirectStandardError "$env:RUNNER_TEMP\cd-err.log"
           $ok = $false
           for ($i = 0; $i -lt 90; $i++) {
-            try { $h = Invoke-RestMethod http://localhost:4000/api/health -TimeoutSec 2; if ($h.ok) { $ok = $true; break } } catch { }
+            try { $h = Invoke-RestMethod http://127.0.0.1:4000/api/health -TimeoutSec 5; if ($h.ok) { $ok = $true; break } } catch { }
             Start-Sleep -Seconds 2
           }
           Get-Content "$env:RUNNER_TEMP\cd-out.log" -Tail 40
           Get-Content "$env:RUNNER_TEMP\cd-err.log" -Tail 40
           if (-not $ok) { throw 'ClaimDesk did not start' }
           $jar = "$env:RUNNER_TEMP\cookies.txt"
-          $code = curl.exe -s -o NUL -w "%{http_code}" http://localhost:4000/api/claims
+          $code = curl.exe -s -o NUL -w "%{http_code}" http://127.0.0.1:4000/api/claims
           if ($code -ne '401') { throw "expected 401 before sign-in, got $code" }
-          $defaults = curl.exe -s http://localhost:4000/api/auth/login-defaults | ConvertFrom-Json
+          $defaults = curl.exe -s http://127.0.0.1:4000/api/auth/login-defaults | ConvertFrom-Json
           if ($defaults.username -ne 'courtesycars' -or $defaults.password -ne 'CourtesyCars123!') { throw 'login defaults are not pre-filled' }
           Set-Content -Path "$env:RUNNER_TEMP\login.json" -Value '{"username":"courtesycars","password":"CourtesyCars123!"}' -NoNewline
-          $code = curl.exe -s -o NUL -w "%{http_code}" -c $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\login.json" http://localhost:4000/api/auth/login
+          $code = curl.exe -s -o NUL -w "%{http_code}" -c $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\login.json" http://127.0.0.1:4000/api/auth/login
           if ($code -ne '200') { throw "sign-in failed: $code" }
-          $claims = curl.exe -s -b $jar http://localhost:4000/api/claims | ConvertFrom-Json
+          $claims = curl.exe -s -b $jar http://127.0.0.1:4000/api/claims | ConvertFrom-Json
           Write-Host "claims: $($claims.total)"
           if ($claims.total -lt 4) { throw 'example claims missing' }
           $file1 = ($claims.items | Where-Object { $_.reference -eq 'CCG-2026-00001' }).id
           Set-Content -Path "$env:RUNNER_TEMP\doc.json" -Value '{"templateId":"letter.chaser_7"}' -NoNewline
-          $doc = curl.exe -s -b $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\doc.json" "http://localhost:4000/api/claims/$file1/documents" | ConvertFrom-Json
+          $doc = curl.exe -s -b $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\doc.json" "http://127.0.0.1:4000/api/claims/$file1/documents" | ConvertFrom-Json
           Write-Host "document: $($doc.id) $($doc.status)"
           Set-Content -Path "$env:RUNNER_TEMP\empty.json" -Value '{}' -NoNewline
-          $appr = curl.exe -s -b $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\empty.json" "http://localhost:4000/api/documents/$($doc.id)/approve" | ConvertFrom-Json
+          $appr = curl.exe -s -b $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\empty.json" "http://127.0.0.1:4000/api/documents/$($doc.id)/approve" | ConvertFrom-Json
           Write-Host "approved: $($appr.status)"
-          curl.exe -s -b $jar -o "$env:RUNNER_TEMP\letter.pdf" "http://localhost:4000/api/documents/$($doc.id)/pdf"
+          curl.exe -s -b $jar -o "$env:RUNNER_TEMP\letter.pdf" "http://127.0.0.1:4000/api/documents/$($doc.id)/pdf"
           $head = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes("$env:RUNNER_TEMP\letter.pdf")[0..4])
           Write-Host "pdf header: $head  size: $((Get-Item "$env:RUNNER_TEMP\letter.pdf").Length)"
           if ($head -ne '%PDF-') { throw 'PDF was not rendered' }
-          $page = curl.exe -s http://localhost:4000/
+          $page = curl.exe -s http://127.0.0.1:4000/
           if (-not ($page -match 'ClaimDesk')) { throw 'web app not served' }
+          # the browser opens http://localhost:4000, which Windows tries on ::1 first: it must answer at once
+          $code = curl.exe -s -m 5 -o NUL -w "%{http_code}" 'http://[::1]:4000/api/health'
+          Write-Host "[::1] -> $code"
+          $sw = [System.Diagnostics.Stopwatch]::StartNew()
+          $h = Invoke-RestMethod http://localhost:4000/api/health -TimeoutSec 2
+          Write-Host "localhost -> ok=$($h.ok) in $($sw.ElapsedMilliseconds) ms"
+          if (-not $h.ok) { throw 'http://localhost:4000 did not answer' }
           Stop-Process -Id $proc.Id -Force
           Write-Host 'Smoke test passed'
 

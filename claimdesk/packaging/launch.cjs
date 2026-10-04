@@ -18,6 +18,8 @@ const SEED_ONLY = has('--seed-only');
 const NO_BROWSER = has('--no-browser') || process.env.CLAIMDESK_NO_BROWSER === '1';
 const PORT = Number(process.env.PORT || 4000);
 const URL_BASE = `http://localhost:${PORT}`;
+// Our own checks go straight to IPv4: on Windows a refused ::1 connection stalls ~2s before falling back.
+const PROBE_BASE = `http://127.0.0.1:${PORT}`;
 
 function pause(code) {
   if (!process.stdin.isTTY || NO_BROWSER) process.exit(code);
@@ -44,7 +46,7 @@ function persistentSecret(file) {
 
 function health() {
   return new Promise((resolve) => {
-    const req = http.get(`${URL_BASE}/api/health`, { timeout: 1500 }, (res) => {
+    const req = http.get(`${PROBE_BASE}/api/health`, { timeout: 1500 }, (res) => {
       let body = '';
       res.on('data', (c) => (body += c));
       res.on('end', () => resolve(res.statusCode === 200 && body.includes('@ccguk/api')));
@@ -70,7 +72,7 @@ function configureEnvironment() {
   const secret = persistentSecret(path.join(home, 'secret.key'));
   const set = (k, v) => { if (process.env[k] === undefined || process.env[k] === '') process.env[k] = v; };
   set('NODE_ENV', 'production');
-  set('HOST', '127.0.0.1');
+  set('HOST', 'localhost'); // Fastify binds both 127.0.0.1 and ::1 for 'localhost', so the browser never waits on IPv6
   set('PORT', String(PORT));
   set('DATA_DIR', dataDir);
   set('DATABASE_PATH', path.join(dataDir, 'claimdesk.sqlite'));
