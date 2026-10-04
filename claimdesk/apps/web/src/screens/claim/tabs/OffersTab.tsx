@@ -24,7 +24,7 @@ import { CHANNEL_LABEL, CHANNEL_OPTIONS, DECISION_LABEL, decisionBodyFrom, empty
 const REPLY_TONE: Record<ReplyState, 'green' | 'red' | 'amber' | 'grey'> = { sent: 'green', late: 'amber', overdue: 'red', due: 'amber', none: 'grey' };
 const REPLY_WORD: Record<ReplyState, string> = { sent: 'replied in time', late: 'replied late', overdue: 'reply overdue', due: 'reply due', none: 'no reply clock' };
 
-type Dialog = { kind: 'add' } | { kind: 'edit'; offer: InterventionOffer } | { kind: 'decision'; offer: InterventionOffer } | { kind: 'reply'; offer: InterventionOffer } | null;
+type Dialog = { kind: 'add' } | { kind: 'edit'; offer: InterventionOffer } | { kind: 'decision'; offer: InterventionOffer } | { kind: 'reply'; offer: InterventionOffer } | { kind: 'draftReply'; offer: InterventionOffer } | null;
 
 /** Lesson c: the intervention register. Every offer, the client's decision in their words, and the written reply within 1 working day. */
 export function OffersTab({ view }: { view: ClaimView }) {
@@ -39,9 +39,9 @@ export function OffersTab({ view }: { view: ClaimView }) {
   const toast = useToast();
   const offerEvents = useMemo(() => new Map(view.events.filter((e) => e.type === 'intervention_offer').map((e) => [String((e.data as { offerId?: string } | undefined)?.offerId ?? ''), e.id])), [view.events]);
 
-  const generateReply = (o: InterventionOffer) => {
+  const generateReply = (o: InterventionOffer, termsExplained: boolean) => {
     create.mutate(
-      { templateId: 'letter.intervention_reply', data: { offerId: o.id }, recipientPartyId: o.offerorPartyId },
+      { templateId: 'letter.intervention_reply', data: { offerId: o.id, offer: { termsExplained } }, recipientPartyId: o.offerorPartyId },
       {
         onSuccess: (doc) => {
           toast.success('Reply drafted — check the consistency report, approve, then send and mark the reply sent');
@@ -150,7 +150,7 @@ export function OffersTab({ view }: { view: ClaimView }) {
       render: (o) => (
         <div className="stack-sm" style={{ gap: 4, alignItems: 'flex-end' }}>
           {!o.replySentAt && (
-            <Button size="sm" variant="primary" onClick={() => generateReply(o)} loading={create.isPending}>
+            <Button size="sm" variant="primary" onClick={() => setDialog({ kind: 'draftReply', offer: o })} loading={create.isPending} disabled={o.clientDecision === 'pending'} title={o.clientDecision === 'pending' ? "Record the client's decision first" : undefined}>
               Generate reply
             </Button>
           )}
@@ -201,6 +201,18 @@ export function OffersTab({ view }: { view: ClaimView }) {
       {(dialog?.kind === 'add' || dialog?.kind === 'edit') && <OfferDialog claimId={claimId} view={view} offer={dialog.kind === 'edit' ? dialog.offer : undefined} onClose={() => setDialog(null)} />}
       {dialog?.kind === 'decision' && <DecisionDialog claimId={claimId} offer={dialog.offer} onClose={() => setDialog(null)} />}
       {dialog?.kind === 'reply' && <ReplySentDialog claimId={claimId} view={view} offer={dialog.offer} onClose={() => setDialog(null)} />}
+      {dialog?.kind === 'draftReply' && (
+        <DraftReplyDialog
+          offer={dialog.offer}
+          pending={create.isPending}
+          error={create.error}
+          onCancel={() => setDialog(null)}
+          onDraft={(termsExplained) => {
+            generateReply(dialog.offer, termsExplained);
+            setDialog(null);
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -400,3 +412,34 @@ function ReplySentDialog({ claimId, view, offer, onClose }: { claimId: string; v
   );
 }
 
+
+/** Copley v Lawn: the reply states whether the insurer explained the cost and terms of its offer, so the handler answers it. */
+function DraftReplyDialog({ offer, pending, error, onCancel, onDraft }: { offer: InterventionOffer; pending: boolean; error: unknown; onCancel: () => void; onDraft: (termsExplained: boolean) => void }) {
+  const [termsExplained, setTermsExplained] = useState<boolean | undefined>();
+  return (
+    <Modal
+      open
+      title={`Draft the written reply to ${offer.offerorName}`}
+      onClose={onCancel}
+      footer={
+        <>
+          <Button onClick={onCancel}>Cancel</Button>
+          <Button variant="primary" loading={pending} disabled={termsExplained === undefined} onClick={() => termsExplained !== undefined && onDraft(termsExplained)}>
+            Draft reply
+          </Button>
+        </>
+      }
+    >
+      <div className="stack">
+        <YesNo
+          label="Did the insurer explain the cost and terms of the offer to the claimant?"
+          hint="Answer from the call note or the offer in writing. The reply states this as fact (Copley v Lawn [2009] EWCA Civ 580), so it must come from the record, not an assumption."
+          required
+          value={termsExplained}
+          onChange={setTermsExplained}
+        />
+        <ApiErrorNotice error={error} what="draft the reply" />
+      </div>
+    </Modal>
+  );
+}

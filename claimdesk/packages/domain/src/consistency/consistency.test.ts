@@ -611,3 +611,25 @@ describe('adversarial verification — misses, false positives and clock traps',
     expect(r.blocked).toBe(false);
   });
 });
+
+describe('PAYEE_MISMATCH — prose and HTML entities are not payee fields (live pack false positives)', () => {
+  it('ignores explanatory prose and reads the name up to a middle-dot separator', () => {
+    const b = greenBundle();
+    const html =
+      '<p>Payment details Account name: Courtesy Cars Group UK Ltd &middot; Sort code 00-00-00 &middot; Account number 00000000</p>' +
+      '<p>The account name is our exact registered name, so Confirmation of Payee returns a full match.</p>';
+    expect(of(checkDraft(html, ctx(b, { templateId: 'pack.gta_payment' })).flags, 'PAYEE_MISMATCH')).toEqual([]);
+  });
+  it('still blocks a trading name in a labelled field followed by a middle dot', () => {
+    const b = greenBundle();
+    const html = '<p>Account name: Courtesy Cars UK &middot; Sort code 00-00-00</p>';
+    const f = of(checkDraft(html, ctx(b, { templateId: 'pack.gta_payment' })).flags, 'PAYEE_MISMATCH');
+    expect(f).toHaveLength(1);
+    expect(f[0]!.draftValue).toBe('Courtesy Cars UK');
+  });
+  it('reads "payable to" in prose but not "pay to"', () => {
+    const b = greenBundle();
+    expect(of(checkDraft('Cheques payable to Courtesy Cars Ltd.', ctx(b, { templateId: 'invoice.hire' })).flags, 'PAYEE_MISMATCH')[0]!.draftValue).toBe('Courtesy Cars Ltd');
+    expect(of(checkDraft('You agreed to pay to the claimant the sum due.', ctx(b, { templateId: 'invoice.hire' })).flags, 'PAYEE_MISMATCH')).toEqual([]);
+  });
+});

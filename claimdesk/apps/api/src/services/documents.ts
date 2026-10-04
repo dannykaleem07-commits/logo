@@ -29,7 +29,7 @@ import {
   type ISODateTime,
   type SignatureRecord,
 } from '@ccguk/domain';
-import { DocumentDataError, TemplateNotFoundError, getTemplate, hasTemplate, listTemplates, mergePdfs, renderPdf, renderTemplate, sha256Hex, type TemplateMeta } from '@ccguk/documents';
+import { DocumentDataError, TemplateNotFoundError, getTemplate, hasTemplate, htmlToText, listTemplates, mergePdfs, renderPdf, renderTemplate, sha256Hex, type TemplateMeta } from '@ccguk/documents';
 import type { Actor } from '@ccguk/db';
 import type { AppContext } from '../context.js';
 import { badRequest, conflict, HttpError, notFound } from '../errors.js';
@@ -171,7 +171,10 @@ export function createClaimDocument(ctx: AppContext, input: CreateClaimDocumentI
     html = html.replace(/<\/body>/i, `<p class="small muted re-execution">${assembled.data.reExecutionLine}</p></body>`);
   }
   const checked = runConsistency(ctx, html, bundle, input.templateId, assembled.recipientRole, now);
-  const { report, cleared } = reconcileLedgerFigures(ctx, bundle, input, assembled, checked, now);
+  const reconciled = reconcileLedgerFigures(ctx, bundle, input, assembled, checked, now);
+  const cleared = reconciled.cleared;
+  const unused = unusedExtraFlags(input.extra, html);
+  const report: ConsistencyReport = unused.length ? { ...reconciled.report, flags: [...reconciled.report.flags, ...unused] } : reconciled.report;
   return ctx.db.transaction((tx) => {
     const draftInput = {
       claimId: input.claimId,
@@ -198,6 +201,30 @@ export function createClaimDocument(ctx: AppContext, input: CreateClaimDocumentI
     });
     return stored;
   });
+}
+
+/**
+ * Handler text the template never prints is a silent loss: the handler believes the paragraph is in the letter.
+ * Every free-text leaf of the extras (12+ characters, not an id) must appear in the rendered text; otherwise a warn
+ * flag names the field so the handler can move the text to a field the template declares.
+ */
+export function unusedExtraFlags(extra: Record<string, unknown> | undefined, html: string): ConsistencyFlag[] {
+  if (!extra) return [];
+  const norm = (s: string): string => s.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/\s+/g, ' ').trim().toLowerCase();
+  const text = norm(htmlToText(html));
+  const out: ConsistencyFlag[] = [];
+  const walk = (v: unknown, p: string): void => {
+    if (typeof v === 'string') {
+      if (v.trim().length >= 12 && !/(^|\.)(id|[a-z]+Id)$/.test(p) && !text.includes(norm(v))) {
+        out.push({ code: 'UNKNOWN_REFERENCE', severity: 'warn', message: `The text supplied in "${p}" does not appear in the document: this template does not print that field. Use one of the template's declared fields (GET /api/templates).`, draftValue: v.slice(0, 120) });
+      }
+      return;
+    }
+    if (Array.isArray(v)) v.forEach((x, i) => walk(x, `${p}[${i}]`));
+    else if (v && typeof v === 'object') for (const [k, x] of Object.entries(v)) walk(x, p ? `${p}.${k}` : k);
+  };
+  walk(extra, '');
+  return out;
 }
 
 /**

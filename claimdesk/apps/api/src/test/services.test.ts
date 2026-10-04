@@ -107,6 +107,39 @@ describe('documents: draft → consistency → approve → PDF → send → sign
     expect(chaser!.requiredData).toContain('totals.receivedPence');
   });
 
+  it('intervention reply: refuses until the client decision and the terms-explained answer are recorded, then drafts against the chosen offer', async () => {
+    const ids = seedFileOne();
+    const now = t.ctx.now();
+    const at = new Date(Date.parse(now) - 3_600_000).toISOString();
+    const created = await t.api<{ offer?: { id: string }; id?: string }>('POST', `/claims/${ids.claimId}/offers`, { receivedAt: at, channel: 'phone', offerorName: 'Example Insurance intervention team', vehicleClassOffered: 'Group B', dailyRatePence: 2037 });
+    expect(created.status).toBe(201);
+    const offerId = (created.body.offer?.id ?? created.body.id)!;
+    const pending = await t.api<ErrorBody>('POST', `/claims/${ids.claimId}/documents`, { templateId: 'letter.intervention_reply', data: { offerId } });
+    expect(pending.status).toBe(409);
+    expect(pending.body.error.code).toBe('OFFER_DECISION_PENDING');
+    const patched = await t.api('PATCH', `/claims/${ids.claimId}/offers/${offerId}`, { clientDecision: 'declined', clientReasons: 'Smaller class and a £500 excess.', clientDecisionAt: now, suitable: false, suitabilityReasons: ['Smaller vehicle class'] });
+    expect(patched.status).toBe(200);
+    const noTerms = await t.api<ErrorBody>('POST', `/claims/${ids.claimId}/documents`, { templateId: 'letter.intervention_reply', data: { offerId } });
+    expect(noTerms.status).toBe(400);
+    expect(noTerms.body.error.details?.code).toBe('OFFER_TERMS_EXPLAINED_REQUIRED');
+    const ok = await t.api<GeneratedDocument>('POST', `/claims/${ids.claimId}/documents`, { templateId: 'letter.intervention_reply', data: { offerId, offer: { termsExplained: false } } });
+    expect(ok.status).toBe(201);
+    expect(ok.body.html).toContain('Copley v Lawn');
+    expect(ok.body.html).toContain('£20.37');
+    const unknownOffer = await t.api<ErrorBody>('POST', `/claims/${ids.claimId}/documents`, { templateId: 'letter.intervention_reply', data: { offerId: '00000000-0000-4000-8000-000000000000', offer: { termsExplained: false } } });
+    expect(unknownOffer.status).toBe(404);
+  });
+
+  it('warns when handler text is supplied in a field the template never prints (no silent loss)', async () => {
+    const ids = seedFileOne();
+    const res = await t.api<GeneratedDocument>('POST', `/claims/${ids.claimId}/documents`, { templateId: 'letter.chaser_7', data: { additionalParagraph: 'We note that £1,287 was received on 25 September 2026.' } });
+    expect(res.status).toBe(201);
+    expect(res.body.html).not.toContain('1,287');
+    const warn = res.body.consistency?.flags.find((f) => f.code === 'UNKNOWN_REFERENCE');
+    expect(warn?.severity).toBe('warn');
+    expect(warn?.message).toContain('additionalParagraph');
+  });
+
   it('builds letter.chaser_7 on File 1 from the ledger (unblocked), blocks a draft asserting £1,287 received, and approves to PDF only after clearing', async () => {
     const ids = seedFileOne();
     const clean = await t.api<GeneratedDocument>('POST', `/claims/${ids.claimId}/documents`, { templateId: 'letter.chaser_7' });
@@ -376,6 +409,9 @@ describe('watch, analytics, settings', () => {
     expect(ins?.payments).toBe(1);
     expect(ins?.days).toBeGreaterThanOrEqual(19);
     expect(ins?.days).toBeLessThanOrEqual(20);
+    // claimed 853,140p (recovery 15,100 + engineer 28,500 + PAV 650,000 + storage 45,000 + hire 114,540) less 111,200p paid
+    expect(ins?.outstandingPence).toBe(741940);
+    expect(dd.body.outstandingPence).toBe(741940);
     const red = await t.api<{ byHead: Array<{ head: string; claimedPence: number; paidPence: number; reducedPence: number }> }>('GET', '/analytics/reductions');
     const hire = red.body.byHead.find((h) => h.head === 'hire');
     expect(hire).toMatchObject({ claimedPence: 114540, paidPence: 111200, reducedPence: 3340 });

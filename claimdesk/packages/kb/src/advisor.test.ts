@@ -218,3 +218,17 @@ describe('stance: GTA is a benchmark, the FOS is not open, and "verify" items ca
     expect(INJURY_PERIMETER).toMatch(/no referral fee/);
   });
 });
+
+describe('advisor aliases and keyword forum checks', () => {
+  it('maps fos / ombudsman onto the complaint playbook with the forum-not-open check', () => {
+    for (const t of ['fos', 'FOS', 'ombudsman', 'Financial Ombudsman']) {
+      const a = advise(t);
+      expect(a.topic).toBe('complaint');
+      expect(a.forumChecks.some((c) => c.includes('DISP 2.7'))).toBe(true);
+    }
+  });
+  it('adds the GTA benchmark check to free-text rate questions and the LSA check to court questions', () => {
+    expect(advise('gta rates for a golf').forumChecks.some((c) => c.startsWith('GTA_CITED_AS_LAW'))).toBe(true);
+    expect(advise('issue proceedings').forumChecks.some((c) => /reserved|LSA|Legal Services Act/i.test(c))).toBe(true);
+  });
+});

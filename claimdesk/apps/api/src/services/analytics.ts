@@ -51,7 +51,7 @@ export function debtorDays(ctx: AppContext): DebtorDays {
     const events = ctx.repos.listEvents(ctx.db, claim.id);
     const pack = events.find((e) => e.type === 'payment_pack_sent');
     const position = ctx.repos.ledgerPosition(ctx.db, claim.id);
-    const outstanding = Math.max(0, (position as { totals?: { outstanding?: number } }).totals?.outstanding ?? 0);
+    const outstanding = Math.max(0, position.totals.outstandingPence);
     const ins = insurerName(ctx, claim);
     const bucket = perInsurer.get(ins.name) ?? { insurerId: ins.id, insurerName: ins.name, samples: [], outstanding: 0, claims: new Set<string>() };
     const handler = claim.handlerId ? ctx.repos.getUser(ctx.db, claim.handlerId) : undefined;

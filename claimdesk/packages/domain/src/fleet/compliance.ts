@@ -27,14 +27,14 @@ export const DEFAULT_WARN_DAYS = 30;
 /** TfL zero-emission-capable requirement for vehicles licensed as a London PHV for the first time (BLUEPRINT §5.2). */
 export const TFL_ZEC_RULE = {
   basis: 'Private Hire Vehicles (London) Act 1998 ss.2, 6, 7, 12; TfL PHV licensing requirements — zero emission capable (ZEC) for vehicles licensed for the first time',
-  options: [
-    { maxCo2Gkm: 50, minZeroEmissionRangeMiles: 10 },
-    { maxCo2Gkm: 75, minZeroEmissionRangeMiles: 20 },
-  ],
+  options: [{ maxCo2Gkm: 75, minZeroEmissionRangeMiles: 20 }],
+  /** The blueprint's '≤50 g/km with 10 miles' limb was not found on TfL PHV pages; 50 g/km belongs to the taxi definition. Not applied. */
+  taxiOnlyNote: '≤50 g/km limb belongs to the taxi (Hackney carriage) definition, not PHV — not applied (RESEARCH-CORRECTIONS #12).',
   euroStandard: 'Euro 6',
   verification: {
     status: 'unverified',
-    sourceNote: 'BLUEPRINT §5.2 (TfL PHV) — confirm the current ZEC thresholds and any age limits on tfl.gov.uk before relying on them; zero-emission range is not in DVLA VES data and must come from the manufacturer specification.',
+    sourceUrl: 'https://tfl.gov.uk/info-for/taxis-and-private-hire/licensing/vehicle-requirements',
+    sourceNote: 'Search snippets of TfL pages (4 Oct 2026): PHVs first licensed from 1 January 2023 must emit no more than 75 g/km CO2 with a minimum 20-mile zero-emission range, and meet Euro 6. Confirm on tfl.gov.uk; zero-emission range is not in DVLA VES data and must come from the manufacturer specification.',
   } as Verification,
 } as const;
 
@@ -67,7 +67,7 @@ export function phvEligibility(vehicle: Vehicle, zeroEmissionRangeMiles?: number
     co2Ok = false;
     reasons.push(`CO2 ${co2} g/km exceeds the 75 g/km ceiling.`);
   } else {
-    const option = co2 <= 50 ? TFL_ZEC_RULE.options[0] : TFL_ZEC_RULE.options[1];
+    const option = TFL_ZEC_RULE.options[0];
     const canHaveRange = vehicle.fuelType === 'plugin_hybrid' || vehicle.fuelType === 'hybrid' || vehicle.fuelType === undefined || vehicle.fuelType === 'other';
     if (zeroEmissionRangeMiles !== undefined) {
       co2Ok = zeroEmissionRangeMiles >= option.minZeroEmissionRangeMiles;
@@ -165,7 +165,7 @@ export function complianceAlerts(units: FleetUnitRecord[], now: ISODateTime, opt
     // PHV eligibility
     if (unit.phvLicensed || unit.declaredUses.includes('pco')) {
       const e = phvEligibility(vehicle, opts.zeroEmissionRangeMilesByVehicleId?.[vehicle.id]);
-      if (e.eligible === false) push('PHV_NOT_ELIGIBLE', 'block', `${reg}: cannot be newly licensed as a London PHV — ${e.reasons.join(' ')} (TfL ZEC rule: ≤ 50 g/km with ≥ 10 miles zero-emission range, or ≤ 75 g/km with ≥ 20 miles, and Euro 6; verification: ${e.verification.status}).`);
+      if (e.eligible === false) push('PHV_NOT_ELIGIBLE', 'block', `${reg}: cannot be newly licensed as a London PHV — ${e.reasons.join(' ')} (TfL ZEC rule: ≤ 75 g/km CO2 with ≥ 20 miles zero-emission range, and Euro 6; verification: ${e.verification.status}).`);
       else if (e.eligible === 'unknown') push('PHV_NOT_ELIGIBLE', 'warn', `${reg}: London PHV eligibility unconfirmed — ${e.reasons.join(' ')} (verification: ${e.verification.status}).`);
     }
 

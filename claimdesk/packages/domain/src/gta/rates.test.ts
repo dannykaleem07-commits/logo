@@ -3,13 +3,14 @@ import type { GtaRate } from '../types.js';
 import { defaultGtaRates, gtaRate, gtaGroupsOn, GTA_WORDING_DATE } from './rates.js';
 
 describe('defaultGtaRates', () => {
-  it('ships the verified 2026–27 figures S1 £42.32, M £56.66, M1 £65.49 ex VAT', () => {
+  it('ships the blueprint 2026–27 figures S1 £42.32, M £56.66, M1 £65.49 ex VAT as unverified fallbacks', () => {
     const byGroup = Object.fromEntries(defaultGtaRates.map((r) => [r.group, r]));
     expect(byGroup['S1']).toMatchObject({ dailyRatePence: 4232, period: '2026-27', effectiveFrom: '2026-07-01', effectiveTo: '2027-06-30' });
     expect(byGroup['M']).toMatchObject({ dailyRatePence: 5666, period: '2026-27' });
     expect(byGroup['M1']).toMatchObject({ dailyRatePence: 6549, period: '2026-27' });
     for (const g of ['S1', 'M', 'M1']) {
-      expect(byGroup[g]!.verification).toMatchObject({ status: 'verified', sourceNote: 'GTA 2026–27 rate table' });
+      // never 'verified' in code: a human records the source (ARCHITECTURE convention 6)
+      expect(byGroup[g]!.verification).toMatchObject({ status: 'unverified', sourceUrl: 'https://www.gtacredithire.com/rates/' });
     }
   });
   it('ships CP1 £64.64 and CP2 £73.34 as unverified 2025–26 figures', () => {

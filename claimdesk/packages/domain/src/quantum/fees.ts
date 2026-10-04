@@ -9,7 +9,7 @@
 import type { Pence, Verification } from '../types.js';
 import { formatGBP } from '../money.js';
 
-export type FeeKind = 'issue' | 'hearing_small_claims';
+export type FeeKind = 'issue' | 'hearing_small_claims' | 'hearing_fast' | 'application';
 
 export interface FeeBand {
   kind: FeeKind;
@@ -94,7 +94,7 @@ export function courtFee(claimPence: Pence, fees: FeeBand[] = defaultCourtFees, 
     feePence = Math.round((claimPence * band.pct) / 100);
     if (band.capPence !== undefined) feePence = Math.min(feePence, band.capPence);
   } else throw new Error('courtFee: fee band has neither feePence nor pct');
-  const label = kind === 'issue' ? 'Issue fee' : 'Small claims hearing fee';
+  const label = kind === 'issue' ? 'Issue fee' : kind === 'hearing_small_claims' ? 'Small claims hearing fee' : kind === 'hearing_fast' ? 'Fast track hearing fee' : 'Application fee';
   const note =
     `${label} for a claim of ${formatGBP(claimPence)}: ` +
     (band.pct !== undefined ? `${band.pct}% of the claim value` : `fixed band ${formatGBP(band.fromPence)}–${band.toPence === OPEN ? 'no upper limit' : formatGBP(band.toPence)}`) +

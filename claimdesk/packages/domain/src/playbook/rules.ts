@@ -104,7 +104,7 @@ export const defaultPlaybookRules: PlaybookRule[] = [
   {
     code: 'SPLIT_HEADS_INTERIM',
     title: 'Demand payment of the undisputed heads now; interim payment on hire',
-    basis: ['BLUEPRINT §7.4 — pay undisputed heads (PAV, recovery) now and dispute hire separately', 'CPR 25.6–25.9 (r.25.7 interim payment once litigated)', 'money.md §4 — never concede a head to buy speed'],
+    basis: ['BLUEPRINT §7.4 — pay undisputed heads (PAV, recovery) now and dispute hire separately', 'CPR 25.20–25.26 (Section V interim payments, rewritten from 6 April 2025) once litigated', 'money.md §4 — never concede a head to buy speed'],
     templateId: 'letter.chaser_7',
     trigger: 'A reduction_received event disputes hire only (data.disputedHeads = ["hire"]) and the undisputed heads are unpaid.',
     defaultPriority: 'today',

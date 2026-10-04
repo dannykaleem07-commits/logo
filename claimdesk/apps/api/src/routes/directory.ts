@@ -8,7 +8,7 @@ import type { AppContext } from '../context.js';
 import { notFound } from '../errors.js';
 import { parse } from '../schemas/common.js';
 import { directoryFailedBody, directoryQuery, directoryVerifyBody, gtaRatesQuery, kbAdviseQuery, kbSearchQuery } from '../schemas/services.js';
-import { adviseTopic, filterDirectory, GET_PAID_FASTER, gtaRatesOn, kbEntries, loadCourtFees, loadDirectory, mergedDirectory, searchKb } from '../services/kb.js';
+import { adviseTopic, filterDirectory, GET_PAID_FASTER, gtaRatesOn, kbEntries, loadCourtFees, loadDirectory, mergedDirectory, searchKnowledgeBase } from '../services/kb.js';
 import { params } from './helpers.js';
 
 export function registerDirectoryRoutes(app: FastifyInstance, ctx: AppContext): void {
@@ -73,8 +73,8 @@ export function registerDirectoryRoutes(app: FastifyInstance, ctx: AppContext): 
   // ----- Knowledge base ---------------------------------------------------------
   app.get('/kb/search', async (request) => {
     const q = parse(kbSearchQuery, request.query);
-    const hits = searchKb(kbEntries(ctx), q.q, { type: q.type as KbEntryType | undefined, topic: q.topic, limit: q.limit });
-    return { items: hits.map((h) => ({ ...h.entry, score: h.score })), total: hits.length, query: q.q };
+    const hits = searchKnowledgeBase(q.q, { type: q.type as KbEntryType | undefined, topic: q.topic, limit: q.limit });
+    return { items: hits.map((h) => ({ ...h.entry, score: h.score, highlights: h.highlights })), total: hits.length, query: q.q };
   });
 
   app.get('/kb/entries/:id', async (request) => {

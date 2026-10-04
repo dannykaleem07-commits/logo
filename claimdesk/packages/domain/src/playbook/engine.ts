@@ -350,7 +350,7 @@ export function nextActions(bundle: ClaimBundle, ctxIn: PlaybookContext): Playbo
         const litigated = !!first('proceedings_issued');
         add(
           make('SPLIT_HEADS_INTERIM', {
-            why: `The reduction received ${londonDate(reduction.at)} disputes hire only, so ${formatGBP(undisputed)} of undisputed heads is payable now${litigated ? ' and an interim payment application under CPR 25.7 is open' : ' (interim payment under CPR 25.7 once litigated)'} — use the chaser template with a split-heads note, and keep hire in the schedule at full value.`,
+            why: `The reduction received ${londonDate(reduction.at)} disputes hire only, so ${formatGBP(undisputed)} of undisputed heads is payable now${litigated ? ' and an interim payment application under CPR 25.20–25.26 is open' : ' (interim payment under CPR 25.20–25.26 once litigated)'} — use the chaser template with a split-heads note, and keep hire in the schedule at full value.`,
             dueAt: addWorkingDays(reduction.at, 1),
             valuePence: undisputed,
           }),

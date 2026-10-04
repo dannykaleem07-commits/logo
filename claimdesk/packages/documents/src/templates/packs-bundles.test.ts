@@ -147,7 +147,7 @@ describe('pack.gta_payment', () => {
     expect(() => renderTemplate('pack.gta_payment', { ...data, totals: { ...data.totals, netPence: 128700 } })).toThrow(/heads sum to £1,886\.20 \/ £377\.24 \/ £2,263\.44 but totals say £1,287\.00/);
     const badHead = data.heads.map((h, i) => (i === 0 ? { ...h, grossPence: h.grossPence - 100 } : h));
     expect(() => renderTemplate('pack.gta_payment', { ...data, heads: badHead })).toThrow(/does not equal gross/);
-    expect(() => renderTemplate('pack.gta_payment', { ...data, hire: { ...data.hire, days: 23 } })).toThrow(/inclusive day count/);
+    expect(() => renderTemplate('pack.gta_payment', { ...data, hire: { ...data.hire, days: 23 } })).toThrow(/chargeable day count/);
     expect(() => renderTemplate('pack.gta_payment', { ...data, heads: [], totals: { netPence: 0, vatPence: 0, grossPence: 0 } })).toThrow(/no heads of claim/);
     expect(() => renderTemplate('pack.gta_payment', data)).not.toThrow();
   });

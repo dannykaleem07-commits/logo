@@ -579,7 +579,6 @@ export function loadCourtFees(): CourtFeeBand[] {
 export function toDomainFeeBands(bands: CourtFeeBand[] = loadCourtFees()): FeeBand[] {
   const out: FeeBand[] = [];
   for (const b of bands) {
-    if (b.kind !== 'issue' && b.kind !== 'hearing_small_claims') continue;
     const band: FeeBand = {
       kind: b.kind,
       fromPence: b.fromPence,

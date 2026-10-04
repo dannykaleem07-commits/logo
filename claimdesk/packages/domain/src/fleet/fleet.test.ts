@@ -65,10 +65,7 @@ describe('complianceAlerts', () => {
 
   it('PHV eligibility encodes the TfL ZEC rule as unverified data: neither current CCGUK unit qualifies', () => {
     expect(TFL_ZEC_RULE.verification.status).toBe('unverified');
-    expect(TFL_ZEC_RULE.options).toEqual([
-      { maxCo2Gkm: 50, minZeroEmissionRangeMiles: 10 },
-      { maxCo2Gkm: 75, minZeroEmissionRangeMiles: 20 },
-    ]);
+    expect(TFL_ZEC_RULE.options).toEqual([{ maxCo2Gkm: 75, minZeroEmissionRangeMiles: 20 }]);
     const petrolGolf = complianceAlerts([{ unit: fleetUnit({ phvLicensed: true }), vehicle: fleetVehicle(), policy: policy() }], NOW);
     expect(petrolGolf[0]).toMatchObject({ code: 'PHV_NOT_ELIGIBLE', severity: 'block' });
     expect(petrolGolf[0]!.message).toContain('exceeds the 75 g/km ceiling');
@@ -78,7 +75,7 @@ describe('complianceAlerts', () => {
     // pco declared use triggers the check too; plug-in hybrid at 40 g/km with unknown range is a warning
     const phev = complianceAlerts([{ unit: fleetUnit({ declaredUses: ['credit_hire', 'pco'] }), vehicle: fleetVehicle({ fuelType: 'plugin_hybrid', co2Gkm: 40 }), policy: policy({ coveredUses: ['credit_hire', 'pco'] }) }], NOW);
     expect(phev[0]).toMatchObject({ code: 'PHV_NOT_ELIGIBLE', severity: 'warn' });
-    expect(phev[0]!.message).toContain('≥ 10 miles zero-emission range');
+    expect(phev[0]!.message).toContain('≥ 20 miles zero-emission range');
     // with the range known it is eligible → no alert
     expect(complianceAlerts([{ unit: fleetUnit({ phvLicensed: true }), vehicle: fleetVehicle({ fuelType: 'plugin_hybrid', co2Gkm: 40 }), policy: policy() }], NOW, { zeroEmissionRangeMilesByVehicleId: { 'v-fleet-1': 25 } })).toEqual([]);
   });

@@ -236,7 +236,7 @@ describe('nextActions — payment pack, chasers and escalation', () => {
     const a = byCode(nextActions(unpaid, { now: '2026-10-09T12:00:00+01:00', clocks: [], gates: greenGates() }), 'SPLIT_HEADS_INTERIM')!;
     // storage 32,400 + recovery 13,800 + engineer 28,500 = 74,700 undisputed
     expect(a).toMatchObject({ dueAt: '2026-10-09T10:00:00+01:00', priority: 'now', valuePence: 74_700, templateId: 'letter.chaser_7' });
-    expect(a.why).toContain('CPR 25.7 once litigated');
+    expect(a.why).toContain('CPR 25.20–25.26 once litigated');
     expect(a.why).toContain('£747.00');
     const paid = file1Bundle({ events: unpaid.events });
     expect(byCode(nextActions(paid, { now: '2026-10-09T12:00:00+01:00', clocks: [], gates: greenGates() }), 'SPLIT_HEADS_INTERIM')).toBeUndefined();

@@ -775,11 +775,12 @@ describe('integration — evaluateGates, payment pack, late payment, total loss 
     expect(pavNet).toBe(tl.netPavPence);
   });
 
-  it('acceptance: admitted liability with footage, hire a fraction of the other heads → accept, no perimeter flags', () => {
+  it('acceptance: admitted liability with footage, hire a fraction of the other heads → accept; only the standing LSA litigation flag', () => {
     const gates = evaluateGates(b);
     const a = assessAcceptance(b, { gates });
     expect(a.decision).toBe('accept');
-    expect(a.perimeterFlags).toEqual([]);
+    // LSA 2007 s.12: litigation steps are always drafts for the claimant/solicitor — a standing flag, not an injury flag.
+    expect(a.perimeterFlags).toEqual(['LSA_LITIGATION_DRAFTS_ONLY']);
     expect(a.costsExposure).toBe('low');
     expect(a.impecuniosityReadiness).toBe('ready');
     expect(a.enforceabilityReadiness).toBe('ready');

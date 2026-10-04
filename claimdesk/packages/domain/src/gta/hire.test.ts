@@ -45,7 +45,8 @@ describe('calculateHire', () => {
     expect(r.grossPence).toBe(59760);
     expect(r.breakdown).toHaveLength(1);
     expect(r.breakdown[0]).toMatchObject({ code: 'hire', quantity: 10, unitPence: 4980, amountPence: 49800 });
-    expect(r.warnings).toEqual([]);
+    // the only warning is the honest one: the fallback GTA benchmark rate is unverified until a human records the source
+    expect(r.warnings).toEqual([expect.stringMatching(/GTA benchmark rate for .* is unverified/)]);
   });
   it('adds the GTA benchmark line (group M 2026–27 £56.66) without asserting it as law', () => {
     const r = calculateHire(mkHire(), '2026-07-16T10:00:00+01:00');
@@ -59,7 +60,8 @@ describe('calculateHire', () => {
     expect(r.netPence).toBe(55300);
     expect(r.vatPence).toBe(11060);
     expect(r.grossPence).toBe(66360);
-    expect(r.warnings).toEqual([]);
+    // the only warning is the honest one: the fallback GTA benchmark rate is unverified until a human records the source
+    expect(r.warnings).toEqual([expect.stringMatching(/GTA benchmark rate for .* is unverified/)]);
   });
   it('one non-standard-risk additional driver for 25 days is capped at £110 (GTA 5.4)', () => {
     // 25 × £5.50 = £137.50 → capped £110.00; hire 25 × £49.80 = £1,245.00
@@ -89,7 +91,7 @@ describe('calculateHire', () => {
   it('standard-risk additional drivers are free; unevidenced non-standard drivers are charged with a warning', () => {
     const free = calculateHire(mkHire({ additionalDrivers: [{ partyId: 'ad1', nonStandardRisk: false, evidenceIds: [] }] }), '2026-07-16T10:00:00+01:00');
     expect(free.additionalDriverPence).toBe(0);
-    expect(free.warnings).toEqual([]);
+    expect(free.warnings).toEqual([expect.stringMatching(/GTA benchmark rate for .* is unverified/)]);
     const unevidenced = calculateHire(mkHire({ additionalDrivers: [{ partyId: 'ad1', nonStandardRisk: true, evidenceIds: [] }] }), '2026-07-16T10:00:00+01:00');
     expect(unevidenced.additionalDriverPence).toBe(5500);
     expect(unevidenced.warnings[0]).toMatch(/no supporting evidence/);

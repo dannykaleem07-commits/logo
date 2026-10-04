@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addressLines,
   daysInclusive,
+  chargeableDays,
   escapeHtml,
   formatDateLong,
   formatDateShort,
@@ -104,5 +105,18 @@ describe('html helpers', () => {
     expect(numberedList([])).toBe('');
     expect(joinAnd(['a', 'b', 'c'])).toBe('a, b and c');
     expect(joinAnd(['a'])).toBe('a');
+  });
+});
+
+describe('chargeableDays follows the ledger convention', () => {
+  it('counts 24-hour periods for timed periods and inclusive days for plain dates', () => {
+    // 10:00 to 10:00, 23 days later: 23 chargeable days (the File 1 ledger figure), not 24 calendar dates.
+    expect(chargeableDays('2026-08-10T10:00:00.000Z', '2026-09-02T10:00:00.000Z')).toBe(23);
+    expect(formatPeriod('2026-08-10T10:00:00.000Z', '2026-09-02T10:00:00.000Z')).toContain('(23 days)');
+    // one minute into the next period starts another day
+    expect(chargeableDays('2026-08-10T10:00:00.000Z', '2026-09-02T10:01:00.000Z')).toBe(24);
+    expect(chargeableDays('2026-08-10', '2026-09-02')).toBe(24);
+    // an explicit ledger figure always wins
+    expect(formatPeriod('2026-08-10', '2026-09-02', 23)).toBe('10 August 2026 to 2 September 2026 (23 days)');
   });
 });

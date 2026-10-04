@@ -118,7 +118,9 @@ export function addWorkingDaysSimple(iso: ISODate, n: number): ISODate {
 
 const ENTITIES: Record<string, string> = {
   '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&apos;': "'", '&nbsp;': ' ',
-  '&pound;': '£', '&#163;': '£', '&#xa3;': '£', '&#xA3;': '£', '&ndash;': '–', '&mdash;': '—', '&#8211;': '–', '&#8212;': '—'
+  '&pound;': '£', '&#163;': '£', '&#xa3;': '£', '&#xA3;': '£', '&ndash;': '–', '&mdash;': '—', '&#8211;': '–', '&#8212;': '—',
+  '&middot;': '·', '&bull;': '•', '&rsquo;': '’', '&lsquo;': '‘', '&ldquo;': '“', '&rdquo;': '”', '&hellip;': '…', '&times;': '×',
+  '&minus;': '−', '&euro;': '€', '&sect;': '§', '&para;': '¶', '&deg;': '°', '&copy;': '©', '&reg;': '®', '&rarr;': '→', '&larr;': '←'
 };
 
 /** HTML → plain text. Block-level closers become newlines; other tags become spaces; common entities are decoded. */

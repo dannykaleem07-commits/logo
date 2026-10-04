@@ -216,7 +216,9 @@ describe('court fees', () => {
     expect(issue.find((f) => f.fromPence === 300001)?.feePence).toBe(20500);
     expect(issue.find((f) => f.fromPence === 500001)?.feePence).toBe(45500);
     const domain = toDomainFeeBands();
-    expect(domain.every((b) => b.kind === 'issue' || b.kind === 'hearing_small_claims')).toBe(true);
+    // every kind flows through to the domain (FeeKind widened): none dropped
+    expect(domain).toHaveLength(loadCourtFees().length);
+    expect(new Set(domain.map((b) => b.kind))).toEqual(new Set(loadCourtFees().map((b) => b.kind)));
     expect(domain.some((b) => b.toPence === Number.MAX_SAFE_INTEGER)).toBe(true);
     const hearing = domain.filter((b) => b.kind === 'hearing_small_claims');
     expect(hearing.find((b) => b.fromPence === 0)?.feePence).toBe(2700);

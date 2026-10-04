@@ -499,7 +499,12 @@ export function hireChecks(text: string, ctx: DraftContext): ConsistencyFlag[] {
 }
 
 const PAYEE_TEMPLATES = (templateId: string) => templateId.startsWith('invoice.') || templateId === 'letter.vendor_verification_pack' || templateId.startsWith('pack.');
-const PAYEE_RE = /\b(payee|account name|payable to|pay to|cheques?\s+payable\s+to|beneficiary(?:\s+name)?)\s*[:\-–—]?\s*([^\n,;<]{3,80}?)\s*(?=\n|,|;|\.\s|\.$|$|\bsort\s+code\b|\baccount\s+(?:no|number)\b|\biban\b)/gi;
+/**
+ * A payee is read only from a labelled field: "Payee:", "Account name:" or "Beneficiary:" followed by a colon/dash or a
+ * table-cell break, or "payable to <name>". Prose such as "the account name is our exact registered name" or
+ * "Confirmation of Payee returns a full match" is not a payee field and is never read as one.
+ */
+const PAYEE_RE = /\b(?:(?:payee|account\s+name|beneficiary(?:\s+name)?)\s*(?:[:\-–—]|\n)|(?:cheques?\s+)?payable\s+to\b)[ \t]*\n?[ \t]*([^\n,;<·•|]{3,80}?)\s*(?=\n|,|;|·|•|\||\.\s|\.$|$|\bsort\s+code\b|\baccount\s+(?:no|number)\b|\biban\b)/gi;
 
 function normaliseName(s: string): string {
   return s.toLowerCase().replace(/[.,;:]/g, '').replace(/\s+/g, ' ').trim();
@@ -513,7 +518,7 @@ export function payeeChecks(text: string, ctx: DraftContext): ConsistencyFlag[] 
   let m: RegExpExecArray | null;
   PAYEE_RE.lastIndex = 0;
   while ((m = PAYEE_RE.exec(text)) !== null) {
-    const name = (m[2] ?? '').trim();
+    const name = (m[1] ?? '').trim();
     if (!name) continue;
     if (normaliseName(name) === want) continue;
     flags.push(

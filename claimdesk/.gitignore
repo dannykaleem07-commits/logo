@@ -10,3 +10,4 @@ data/documents/
 out/
 coverage/
 .DS_Store
+.test-data/

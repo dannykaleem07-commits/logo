@@ -8,7 +8,7 @@
  *  - Dates: ISO strings in (`YYYY-MM-DD` or full ISO 8601). Date-times are shown in Europe/London.
  *  - Invalid dates throw — a document must never render "Invalid Date".
  */
-import { formatGBP, sumPence } from '@ccguk/domain';
+import { formatGBP, sumPence, hireDays } from '@ccguk/domain';
 import type { Address, ISODate, ISODateTime, Pence } from '@ccguk/domain';
 
 export { formatGBP, sumPence };
@@ -142,10 +142,21 @@ export function daysInclusive(start: ISODate | ISODateTime, end: ISODate | ISODa
   return Math.round((ub - ua) / 86_400_000) + 1;
 }
 
-/** `10 August 2026 to 2 September 2026 (24 days)` — inclusive count, matching hire and storage billing. */
-export function formatPeriod(start: ISODate | ISODateTime, end: ISODate | ISODateTime): string {
-  const days = daysInclusive(start, end);
-  return `${formatDateLong(start)} to ${formatDateLong(end)} (${plural(days, 'day')})`;
+/**
+ * Chargeable days for a period, using the same convention as the ledger:
+ * - date-times (hire, storage with times): 24-hour periods started, on the London wall clock (@ccguk/domain hireDays);
+ * - plain dates: inclusive calendar count.
+ * A letter must never print a day count that differs from the invoice, so templates pass the ledger figure when they have it.
+ */
+export function chargeableDays(start: ISODate | ISODateTime, end: ISODate | ISODateTime): number {
+  const timed = start.includes('T') && end.includes('T');
+  return timed ? hireDays(start, end) : daysInclusive(start, end);
+}
+
+/** `10 August 2026 to 2 September 2026 (23 days)` — `days` is the ledger figure when known; otherwise {@link chargeableDays}. */
+export function formatPeriod(start: ISODate | ISODateTime, end: ISODate | ISODateTime, days?: number): string {
+  const n = days ?? chargeableDays(start, end);
+  return `${formatDateLong(start)} to ${formatDateLong(end)} (${plural(n, 'day')})`;
 }
 
 function pad2(n: number): string {

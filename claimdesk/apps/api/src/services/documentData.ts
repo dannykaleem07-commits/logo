@@ -30,7 +30,7 @@ import {
 } from '@ccguk/domain';
 import type { Settings } from '@ccguk/db';
 import type { AppContext } from '../context.js';
-import { badRequest, conflict } from '../errors.js';
+import { badRequest, conflict, notFound } from '../errors.js';
 import { gtaRatesFor } from './kb.js';
 import { absoluteEvidencePath } from './evidence.js';
 import { existsSync, readFileSync } from 'node:fs';
@@ -89,6 +89,8 @@ export interface BuildInput {
   recipientPartyId?: Id;
   user: { id: Id; name: string; role: string };
   now: ISODateTime;
+  /** Handler-supplied extras (read-only here: selectors such as offerId; never amounts the ledger knows). */
+  extra?: Record<string, unknown>;
 }
 
 export interface AssembledData {
@@ -498,9 +500,17 @@ const builders: Record<string, Builder> = {
 
   'letter.intervention_reply': (b, base) => {
     const { bundle, ctx, now } = b;
-    const offer = [...bundle.offers].sort((x, y) => y.receivedAt.localeCompare(x.receivedAt)).find((o) => !o.replySentAt) ?? [...bundle.offers].sort((x, y) => y.receivedAt.localeCompare(x.receivedAt))[0];
+    // Newest first by instant (receivedAt strings may carry different offsets, so never sort them as text).
+    const byNewest = [...bundle.offers].sort((x, y) => Date.parse(y.receivedAt) - Date.parse(x.receivedAt));
+    const requested = typeof b.extra?.offerId === 'string' ? b.extra.offerId : undefined;
+    if (requested && !bundle.offers.some((o) => o.id === requested)) throw notFound('intervention offer', requested);
+    const offer = requested ? bundle.offers.find((o) => o.id === requested) : (byNewest.find((o) => !o.replySentAt) ?? byNewest[0]);
     if (!offer) throw conflict('NO_OFFER', 'No intervention offer is logged on this claim');
     if (offer.clientDecision === 'pending') throw conflict('OFFER_DECISION_PENDING', 'Record the client decision (accepted/declined with reasons) on the offer before replying');
+    const supplied = (b.extra?.offer as { termsExplained?: unknown } | undefined)?.termsExplained;
+    if (typeof supplied !== 'boolean') {
+      throw badRequest('State whether the insurer explained the cost and terms of its offer to the claimant: data.offer.termsExplained = true or false (Copley v Lawn [2009] EWCA Civ 580). The letter states it as fact, so it must come from the handler, not be assumed.', { code: 'OFFER_TERMS_EXPLAINED_REQUIRED', field: 'offer.termsExplained' });
+    }
     const hire = hireBlock(ctx, bundle, now);
     if (!hire) throw conflict('NO_HIRE', 'No hire agreement on this claim');
     return {
@@ -941,7 +951,7 @@ export function assembleTemplateData(ctx: AppContext, bundle: ClaimBundle, templ
     templateId,
   };
   const builder = builders[templateId] ?? genericBuilder;
-  const derived = stripUndefined(builder({ ctx, bundle, templateId, recipientRole, recipientPartyId: opts.recipientPartyId, user, now }, base));
+  const derived = stripUndefined(builder({ ctx, bundle, templateId, recipientRole, recipientPartyId: opts.recipientPartyId, user, now, extra: opts.extra }, base));
   const conflicts: string[] = [];
   const merged = mergeExtra(stripUndefined(opts.extra ?? {}), derived, '', conflicts);
   if (conflicts.length) {

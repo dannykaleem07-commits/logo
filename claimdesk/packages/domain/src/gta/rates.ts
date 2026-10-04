@@ -26,7 +26,7 @@ export const defaultGtaRates: GtaRate[] = [
     period: '2026-27',
     effectiveFrom: '2026-07-01',
     effectiveTo: '2027-06-30',
-    verification: { status: 'verified', sourceNote: 'GTA 2026–27 rate table', verifiedAt: '2026-10-04' },
+    verification: { status: 'unverified', sourceUrl: 'https://www.gtacredithire.com/rates/', sourceNote: 'Blueprint figure (GTA 2026–27 rate table). Fallback only — the API serves @ccguk/kb gta-rates.json. Confirm against the 2026–27 rate spreadsheet.' },
   },
   {
     group: 'M',
@@ -35,7 +35,7 @@ export const defaultGtaRates: GtaRate[] = [
     period: '2026-27',
     effectiveFrom: '2026-07-01',
     effectiveTo: '2027-06-30',
-    verification: { status: 'verified', sourceNote: 'GTA 2026–27 rate table', verifiedAt: '2026-10-04' },
+    verification: { status: 'unverified', sourceUrl: 'https://www.gtacredithire.com/rates/', sourceNote: 'Blueprint figure (GTA 2026–27 rate table). Fallback only — the API serves @ccguk/kb gta-rates.json. Confirm against the 2026–27 rate spreadsheet.' },
   },
   {
     group: 'M1',
@@ -44,7 +44,7 @@ export const defaultGtaRates: GtaRate[] = [
     period: '2026-27',
     effectiveFrom: '2026-07-01',
     effectiveTo: '2027-06-30',
-    verification: { status: 'verified', sourceNote: 'GTA 2026–27 rate table', verifiedAt: '2026-10-04' },
+    verification: { status: 'unverified', sourceUrl: 'https://www.gtacredithire.com/rates/', sourceNote: 'Blueprint figure (GTA 2026–27 rate table). Fallback only — the API serves @ccguk/kb gta-rates.json. Confirm against the 2026–27 rate spreadsheet.' },
   },
   {
     group: 'CP1',

@@ -8,6 +8,7 @@ import path from 'node:path';
 import * as db from '@ccguk/db';
 import type { DatabaseHandle, Db, Settings } from '@ccguk/db';
 import type { GtaRate, InsurerDirectoryEntry, ISODateTime, KbEntry } from '@ccguk/domain';
+import * as kbPkg from '@ccguk/kb';
 import { loadConfig, type AppConfig } from './config.js';
 import { resolveEngines, type DomainEngines } from './engines.js';
 
@@ -101,8 +102,7 @@ export function buildKbLoaders(logger: Logger): KbLoaders {
   const files = ['cases.json', 'statutes.json', 'cpr.json', 'gta.json', 'fca.json', 'fos.json', 'guidance.json'];
   const loaders = files.map((f) => jsonLoader<KbEntry>(dataDir, f, logger));
   let entriesCache: KbEntry[] | undefined;
-  return {
-    dataDir,
+  const raw = {
     gtaRates: jsonLoader<GtaRate>(dataDir, 'gta-rates.json', logger),
     directory: jsonLoader<InsurerDirectoryEntry>(dataDir, 'insurer-directory.json', logger),
     playbookRules: jsonLoader<unknown>(dataDir, 'playbook-rules.json', logger),
@@ -110,6 +110,27 @@ export function buildKbLoaders(logger: Logger): KbLoaders {
       if (!entriesCache) entriesCache = loaders.flatMap((l) => l());
       return entriesCache;
     },
+  };
+  // Prefer the validated @ccguk/kb loaders; fall back to the raw JSON only if validation throws (logged).
+  const viaKb = <T>(name: string, fn: () => T, fallback: () => T): (() => T) => {
+    let cache: T | undefined;
+    return () => {
+      if (cache !== undefined) return cache;
+      try {
+        cache = fn();
+      } catch (err) {
+        logger.warn(`kb: @ccguk/kb ${name} failed validation; serving raw JSON`, { error: String(err) });
+        cache = fallback();
+      }
+      return cache;
+    };
+  };
+  return {
+    dataDir,
+    gtaRates: viaKb('loadGtaRates', () => kbPkg.loadGtaRates(), raw.gtaRates),
+    directory: viaKb('loadDirectory', () => kbPkg.loadDirectory(), raw.directory),
+    playbookRules: viaKb<unknown[]>('loadPlaybookRules', () => kbPkg.loadPlaybookRules(), raw.playbookRules),
+    entries: viaKb('loadAll', () => kbPkg.loadAll(), raw.entries),
   };
 }
 

@@ -806,10 +806,48 @@ function searchFallback(topic: string): TopicSpec {
  * search-assembled list. Every cited id is checked against the KB and listed in `unverifiedCitations` unless
  * its verification is 'verified'.
  */
+/** Common handler words mapped onto the curated topics, so "fos" or "ombudsman" get the complaint playbook and its forum check. */
+export const TOPIC_ALIASES: Readonly<Record<string, AdviceTopic>> = {
+  fos: 'complaint',
+  ombudsman: 'complaint',
+  financial_ombudsman: 'complaint',
+  complaints: 'complaint',
+  disp: 'complaint',
+  basic_hire_rate: 'bhr',
+  rate: 'bhr',
+  offer: 'mitigation',
+  intervention: 'mitigation',
+  courtesy_car: 'mitigation',
+  impecunious: 'impecuniosity',
+  hire_period: 'period',
+  valuation: 'pav',
+  write_off: 'total_loss',
+  payment: 'payment_pack',
+  pack: 'payment_pack',
+  court: 'litigation',
+  proceedings: 'litigation',
+  non_party_costs: 'costs_exposure',
+  s172: 'nip',
+  parking: 'pcn',
+  subject_access: 'dsar',
+};
+
+/** Forum and perimeter checks that must accompany any advice whose topic text touches these words. */
+function keywordForumChecks(key: string): string[] {
+  const out: string[] = [];
+  if (/fos|ombudsman|complain|disp/.test(key)) out.push(FORUM_NOT_OPEN);
+  if (/gta|rate|credit_hire|bhr/.test(key)) out.push(GTA_BENCHMARK);
+  if (/litig|court|proceed|part_?36|judgment|claim_form/.test(key)) out.push(RESERVED_ACTIVITY);
+  if (/injur|whiplash|personal_injury/.test(key)) out.push(INJURY_PERIMETER);
+  return out;
+}
+
 export function advise(topic: AdviceTopic | string): Advice {
   const key = topic.trim().toLowerCase().replace(/[\s-]+/g, '_');
-  if (isKnownTopic(key)) return finish(key, TOPICS[key]);
-  return finish(key, searchFallback(key));
+  const resolved = isKnownTopic(key) ? key : TOPIC_ALIASES[key];
+  const advice = resolved ? finish(resolved, TOPICS[resolved]) : finish(key, searchFallback(key));
+  for (const check of keywordForumChecks(key)) if (!advice.forumChecks.includes(check)) advice.forumChecks.push(check);
+  return advice;
 }
 
 /** The entries cited by a piece of advice, in first-citation order (for rendering a sources list). */

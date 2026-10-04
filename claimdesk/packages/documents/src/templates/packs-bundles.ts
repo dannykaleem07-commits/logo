@@ -22,7 +22,7 @@ import type { HireEndTrigger, ISODate, ISODateTime, Pence } from '@ccguk/domain'
 import { brand } from '../brand.js';
 import { type BaseDocumentData, GTA_BENCHMARK_SENTENCE, type Signatory, sampleBaseData, sampleRecipient } from '../common.js';
 import {
-  daysInclusive,
+  chargeableDays,
   escapeHtml,
   formatDateLong,
   formatDateTime,
@@ -336,9 +336,9 @@ export const gtaPaymentPackTemplate: Template<GtaPaymentPackData> = {
         `pack.gta_payment: heads sum to ${formatGBP(sumNet)} / ${formatGBP(sumVat)} / ${formatGBP(sumGross)} but totals say ${formatGBP(d.totals.netPence)} / ${formatGBP(d.totals.vatPence)} / ${formatGBP(d.totals.grossPence)}`
       );
     }
-    const inclusiveDays = daysInclusive(d.hire.startAt, d.hire.endAt);
-    if (d.hire.days !== inclusiveDays) {
-      throw new PackDataError(`pack.gta_payment: hire.days (${d.hire.days}) does not match the inclusive day count of the hire period, ${formatPeriod(d.hire.startAt, d.hire.endAt)}`);
+    const expectedDays = chargeableDays(d.hire.startAt, d.hire.endAt);
+    if (d.hire.days !== expectedDays) {
+      throw new PackDataError(`pack.gta_payment: hire.days (${d.hire.days}) does not match the chargeable day count of the hire period, ${formatPeriod(d.hire.startAt, d.hire.endAt)}`);
     }
 
     const present = new Set<PackComponentId>([...SELF_RENDERED_COMPONENTS, ...d.present]);
@@ -378,7 +378,7 @@ ${dataTable(['Document', 'Basis', 'Status'], contentsRows, { html: true })}
 
 <h2>Payment required</h2>
 ${scheduleTable(lines, { caption: 'Heads of claim', totals: d.totals, totalLabel: 'Total payable' })}
-<p>Each line is supported by the invoice in the source column and the documents listed above. Hire ran from ${escapeHtml(formatPeriod(d.hire.startAt, d.hire.endAt))} at ${escapeHtml(
+<p>Each line is supported by the invoice in the source column and the documents listed above. Hire ran from ${escapeHtml(formatPeriod(d.hire.startAt, d.hire.endAt, d.hire.days))} at ${escapeHtml(
       formatRate(d.hire.dailyRatePence, 'day')
     )}; the Hire Period Validation Form enclosed sets out every milestone and monitoring check with its source.</p>
 

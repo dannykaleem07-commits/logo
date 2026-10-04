@@ -3,12 +3,14 @@
  * guidance, GTA rates, court fees, the insurer directory split across part files), a ranked search, the advisor and
  * the directory status computation (verification is data — nothing here upgrades `unverified` to `verified`).
  *
- * `@ccguk/kb` currently exports only types; when its loaders/search/advisor land they can replace these functions.
+ * Entries, rates, directory and playbook rules come from the validated @ccguk/kb loaders (via ctx.kb); search and the
+ * advisor delegate to @ccguk/kb. The local BM25 `searchKb` remains for callers that pass their own entry list.
  */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 import { defaultGtaRates, GTA_NON_SUBSCRIBER_NOTE, gtaGroupsOn, gtaRate, type GtaRate, type InsurerDirectoryEntry, type ISODate, type KbEntry, type Verification } from '@ccguk/domain';
 import type { DirectoryOverride } from '@ccguk/db';
+import { advise as kbAdvise, citedEntries, search as kbSearch } from '@ccguk/kb';
 import type { AppContext } from '../context.js';
 
 export interface CourtFee {
@@ -49,6 +51,12 @@ export function resetKbCache(): void {
 
 /** All insurer directory entries: `insurer-directory.json` plus any `insurer-directory.part-*.json`, de-duplicated by id. */
 export function loadDirectory(ctx: AppContext): InsurerDirectoryEntry[] {
+  const fromKb = ctx.kb.directory();
+  if (fromKb.length) {
+    return fromKb
+      .map((e) => ({ ...e, copycatDomains: e.copycatDomains ?? [], copycatNumbers: e.copycatNumbers ?? [], brands: e.brands ?? [] }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+  }
   const dir = ctx.kb.dataDir;
   if (!dir) return [];
   const key = `${dir}/__directory__`;
@@ -257,24 +265,31 @@ const TOPIC_SUMMARY: Record<string, string> = {
   limitation: 'Six years for the tort and contract claims (Limitation Act 1980 ss.2, 5); three years where personal injury is involved (s.11) — injury is referred out, no fee.',
 };
 
-/** Cited guidance for a topic. Human-approved before use; nothing here is sent automatically. */
-export function adviseTopic(ctx: AppContext, topic: string): KbAdvice {
-  const key = topic.trim().toLowerCase().replace(/[\s-]+/g, '_');
-  const entries = kbEntries(ctx);
-  let picked = entries.filter((e) => e.topics.includes(key) || e.tags.map((t) => t.toLowerCase().replace(/[\s-]+/g, '_')).includes(key));
-  if (picked.length === 0) picked = searchKb(entries, topic, { limit: 8 }).map((h) => h.entry);
-  picked = picked.slice(0, 10);
-  const points = picked.map((e) => ({ text: e.principle, citations: [e.id], verified: e.verification?.status === 'verified' }));
-  const caveats: string[] = [];
-  const unverified = picked.filter((e) => e.verification?.status !== 'verified');
-  if (unverified.length) caveats.push(`${unverified.length} of ${picked.length} citations are UNVERIFIED — verify on Find Case Law / legislation.gov.uk and record the source URL before relying on them in a letter.`);
-  if (/fos|ombudsman|complain/.test(key)) caveats.push('Forum check: a third-party claimant cannot take the at-fault insurer to the Financial Ombudsman (DISP 2.7). Use DISP 1 → letter before claim → proceedings.');
-  if (/gta|rate|credit_hire|bhr/.test(key)) caveats.push('GTA is an industry benchmark for a non-subscriber (GTA 2.7(j)) — never cite it as a legal entitlement.');
-  if (/injur|pi|whiplash/.test(key)) caveats.push('Perimeter: any injury element is referred out with no fee (FCA claims management perimeter).');
-  if (/litig|court|proceed|part36|judgment/.test(key)) caveats.push('Perimeter: litigation documents are drafts for the claimant (litigant in person) or an instructed solicitor to sign; CCGUK does not conduct litigation (LSA 2007 s.12).');
+/** Ranked search over the whole knowledge base via @ccguk/kb (paragraph-aware BM25 with topic tags). */
+export function searchKnowledgeBase(query: string, opts: KbSearchOptions = {}): Array<KbSearchHit & { highlights: string[] }> {
+  return kbSearch(query, {
+    ...(opts.type ? { types: [opts.type as KbEntry['type']] } : {}),
+    ...(opts.topic ? { topics: [opts.topic] } : {}),
+    limit: opts.limit ?? 20,
+  }).map((h) => ({ entry: h.entry, score: Math.round(h.score * 1000) / 1000, highlights: h.highlights }));
+}
+
+/** Cited guidance for a topic from the @ccguk/kb advisor. Human-approved before use; nothing here is sent automatically. */
+export function adviseTopic(ctx: AppContext, topic: string): KbAdvice & { forumChecks: string[]; unverifiedCitations: string[] } {
+  const advice = kbAdvise(topic);
+  const entries = citedEntries(advice);
+  const byId = new Map(kbEntries(ctx).map((e) => [e.id, e] as const));
+  const points = advice.points.map((p) => ({
+    text: p.text,
+    citations: p.citations,
+    verified: p.citations.length > 0 && p.citations.every((id) => byId.get(id)?.verification?.status === 'verified'),
+  }));
+  const caveats = [...advice.forumChecks, ...advice.caveats];
+  if (advice.unverifiedCitations.length) {
+    caveats.push(`${advice.unverifiedCitations.length} cited entries are UNVERIFIED — open the source URL and record it before relying on them in a letter.`);
+  }
   caveats.push('Status line: Courtesy Cars Group UK Ltd is not a firm of solicitors and is not regulated by the SRA; this is guidance for the handler, not legal advice to the client.');
-  const summary = TOPIC_SUMMARY[key] ?? (picked.length ? `${picked.length} knowledge-base entries relate to "${topic}". Read the principles below and verify each citation before use.` : `No knowledge-base entry matches "${topic}".`);
-  return { topic, summary, points, caveats, entries: picked };
+  return { topic: advice.topic, summary: advice.summary || TOPIC_SUMMARY[advice.topic] || '', points, caveats, entries, forumChecks: advice.forumChecks, unverifiedCitations: advice.unverifiedCitations };
 }
 
 export interface GetPaidFasterStep {

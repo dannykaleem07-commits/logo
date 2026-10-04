@@ -111,6 +111,7 @@ export {
   MEDIATION_CAVEAT,
   BLUEPRINT_STEP_TITLES,
   advise,
+  TOPIC_ALIASES,
   citedEntries,
   getPaidFasterPlan,
 } from './advisor.js';
