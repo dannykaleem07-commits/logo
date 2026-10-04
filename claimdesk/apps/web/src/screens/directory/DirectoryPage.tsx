@@ -114,7 +114,6 @@ function DirectoryCard({ entry, today, onVerify, onFail }: { entry: InsurerDirec
           </Badge>
         </span>
       }
-      actions={<VerificationBadge verification={entry.verification} />}
     >
       {entry.brands?.length > 0 && <div className="dir-brands">Brands: {entry.brands.join(' · ')}</div>}
       {status.warning && (

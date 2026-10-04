@@ -469,6 +469,15 @@ export function useCycleTimes() {
 export function useInterventionsAnalytics() {
   return useQuery({ queryKey: qk.analytics('interventions'), queryFn: ({ signal }) => api.analyticsInterventions(signal), staleTime: 60_000 });
 }
+export function useUsers() {
+  return useQuery({ queryKey: ['users'] as const, queryFn: ({ signal }) => api.getUsers(signal), staleTime: 10 * 60_000 });
+}
+/** Display name for a user id: the name when known, otherwise the id (never blank). */
+export function useUserName(id: string | undefined): string | undefined {
+  const q = useUsers();
+  if (!id) return undefined;
+  return q.data?.find((u) => u.id === id)?.name ?? id;
+}
 export function useSettings() {
   return useQuery({ queryKey: qk.settings, queryFn: ({ signal }) => api.getSettings(signal), staleTime: 5 * 60_000 });
 }

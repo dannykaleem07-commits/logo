@@ -37,6 +37,12 @@ function view(ctx: AppContext) {
 export function registerSettingsRoutes(app: FastifyInstance, ctx: AppContext): void {
   app.get('/settings', async () => view(ctx));
 
+  /** Read-only staff list for display (names on claims, approver labels). No credentials are stored or returned. */
+  app.get('/users', async () => {
+    const items = ctx.repos.listUsers(ctx.db).map((u) => ({ id: u.id, name: u.name, email: u.email, role: u.role, mfaEnabled: Boolean(u.mfaEnabled) }));
+    return { items, total: items.length };
+  });
+
   app.patch('/settings', async (request) => {
     const body = parse(settingsPatchBody, request.body);
     const legacy = legacyCheck(JSON.stringify(body));

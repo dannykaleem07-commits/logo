@@ -1,6 +1,6 @@
 import { Link, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { formatRegistration } from '@ccguk/domain';
-import { useClaim } from '../../api/hooks';
+import { useClaim, useUserName } from '../../api/hooks';
 import { PageHeader } from '../../components/PageHeader';
 import { Tabs, type TabItem } from '../../components/Tabs';
 import { Loading } from '../../components/Spinner';
@@ -38,6 +38,8 @@ export function ClaimFilePage() {
   const { id, '*': rest } = useParams();
   const navigate = useNavigate();
   const bundle = useClaim(id);
+  // Hooks before any early return: resolve the handler's name for the header.
+  const handlerName = useUserName((bundle.data as ClaimView | undefined)?.claim?.handlerId);
   const current = (rest ?? '').split('/')[0] || 'overview';
 
   if (bundle.isLoading) {
@@ -104,7 +106,7 @@ export function ClaimFilePage() {
               {view.claim.atFaultInsurerRef ? <span className="muted"> ref {view.claim.atFaultInsurerRef}</span> : view.atFaultInsurer ? <span className="muted"> (no handling ref yet)</span> : null}
             </span>
             <span>·</span>
-            <span>handler {view.claim.handlerId ?? <span className="muted">unassigned</span>}</span>
+            <span>handler {handlerName ?? <span className="muted">unassigned</span>}</span>
           </span>
         }
       />

@@ -13,11 +13,19 @@ import { Table, type Column } from '../../../components/Table';
 import { openClocks } from '../../../lib/clocks';
 import type { ClaimView } from '../claimFile';
 import { useClaimAcceptance, useClaimClocks, useClaimGates } from '../useClaimDerived';
+import { useUserName } from '../../../api/hooks';
+
+/** Plain-English labels for the acceptance perimeter flags (the codes stay in the audit trail). */
+const PERIMETER_LABEL: Record<string, string> = {
+  LSA_LITIGATION_DRAFTS_ONLY: 'Litigation documents are drafts for the claimant or a solicitor to sign (Legal Services Act 2007 s.12)',
+  PERSONAL_INJURY_REFER_OUT: 'Personal injury element: refer out to a PI solicitor, no referral fee (LASPO 2012 ss.56–60)',
+};
 import { GatesRow } from '../components/GatesRow';
 import { BasisText } from '../components/BasisText';
 import { headLabel, positionByHead, type HeadPosition } from '../lib/ledger';
 
 export function OverviewTab({ view }: { view: ClaimView }) {
+  const handlerName = useUserName(view.claim.handlerId);
   const now = new Date();
   const clocks = useClaimClocks(view);
   const gates = useClaimGates(view);
@@ -68,8 +76,8 @@ export function OverviewTab({ view }: { view: ClaimView }) {
                 )
               },
               { label: 'At-fault insurer', value: view.atFaultInsurer ? `${view.atFaultInsurer.name}${c.atFaultInsurerRef ? ` · ref ${c.atFaultInsurerRef}` : ' · no handling reference yet'}` : '—' },
-              { label: "Client's insurer", value: [view.claim.clientInsurerId, c.clientPolicyNumber ? `policy ${c.clientPolicyNumber}` : ''].filter(Boolean).join(' · ') || '—' },
-              { label: 'Handler', value: c.handlerId ?? '—' },
+              { label: "Client's insurer", value: [view.claim.clientInsurerId ? ((view as { clientInsurer?: { name?: string } }).clientInsurer?.name ?? 'On file') : '', c.clientPolicyNumber ? `policy ${c.clientPolicyNumber}` : ''].filter(Boolean).join(' · ') || '—' },
+              { label: 'Handler', value: handlerName ?? '—' },
               { label: 'Track', value: c.track ? c.track.replace(/_/g, ' ') : '—' },
               { label: 'GTA', value: c.gtaSubscriber ? 'Subscriber' : 'Non-subscriber — GTA figures are an industry benchmark only (GTA 2.7(j))' },
               { label: 'Injury', value: c.injuryReferral ? `Referred to ${c.injuryReferral.referredTo} on ${c.injuryReferral.referredAt.slice(0, 10)} — no fee taken` : c.accident.injuries ? 'Reported — referral required (no fee)' : 'None reported' },
@@ -199,7 +207,7 @@ export function AcceptanceCard({ a }: { a: CaseAcceptance }) {
               </Badge>
             )
           },
-          { label: 'Perimeter', value: a.perimeterFlags.length ? a.perimeterFlags.map((f) => f.replace(/_/g, ' ').toLowerCase()).join('; ') : 'No perimeter flags', hidden: false }
+          { label: 'Perimeter', value: a.perimeterFlags.length ? a.perimeterFlags.map((f) => PERIMETER_LABEL[f] ?? f.replace(/_/g, ' ').toLowerCase()).join('; ') : 'No perimeter flags', hidden: false }
         ]}
       />
       {a.conditions.length > 0 && (

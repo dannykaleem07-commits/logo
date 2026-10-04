@@ -13,6 +13,7 @@
  */
 import type {
   Address,
+  User,
   CaseAcceptance,
   Claim,
   ClaimBundle,
@@ -903,6 +904,7 @@ export const api = {
 
   // settings
   getSettings: (signal?: AbortSignal) => get<Settings>('/settings', undefined, signal),
+  getUsers: async (signal?: AbortSignal) => asList<User>(await get<unknown>('/users', undefined, signal)),
   updateSettings: (body: Partial<Settings>) => patch<Settings>('/settings', body)
 };
 
