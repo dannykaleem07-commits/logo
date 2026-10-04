@@ -1,5 +1,6 @@
 import { afterAll, describe, expect, it } from 'vitest';
-import { closeBrowser, htmlSha256, launchArgs, mergePdfs, pdfPageCount, renderPdf, resolveChromium, scanPlaywrightBrowsers } from './render.js';
+import { PDFDocument } from 'pdf-lib';
+import { closeBrowser, htmlSha256, htmlTitle, launchArgs, mergePdfs, pdfPageCount, renderPdf, resolveChromium, scanPlaywrightBrowsers, sha256Hex } from './render.js';
 import { exampleLetterTemplate } from './templates/_example.js';
 import { baseLayout, pageBreak } from './layout.js';
 import { sampleBaseData } from './common.js';
@@ -73,4 +74,34 @@ describe('installed browser candidates', () => {
     const { installedBrowserCandidates } = await import('./render.js');
     expect(installedBrowserCandidates('linux', {} as NodeJS.ProcessEnv)).toEqual([]);
   });
+});
+
+describe('PDF metadata (§A.12)', () => {
+  it('stamps Author/Creator/Producer/Title/Subject/Keywords/Language and hashes the stamped bytes', async () => {
+    const html = exampleLetterTemplate.render(exampleLetterTemplate.sample());
+    const { pdf, sha256, pages } = await renderPdf(html, { reference: 'CCG-2026-00012', metadata: { title: 'Letter — CCG-2026-00012', subject: 'Letter', keywords: ['CCG-2026-00012', 'letter.example'] } });
+    expect(sha256).toBe(sha256Hex(pdf));
+    const doc = await PDFDocument.load(pdf, { updateMetadata: false });
+    expect(doc.getPageCount()).toBe(pages);
+    expect(doc.getAuthor()).toBe('Courtesy Cars Group UK Ltd');
+    expect(doc.getCreator()).toBe('ClaimDesk');
+    expect(doc.getProducer()).toBe('ClaimDesk — Courtesy Cars Group UK Ltd');
+    expect(doc.getTitle()).toBe('Letter — CCG-2026-00012');
+    expect(doc.getSubject()).toBe('Letter');
+    expect(doc.getKeywords()).toBe('CCG-2026-00012 letter.example');
+    expect(pdf.toString('latin1')).toMatch(/\/Lang \(en-GB\)/);
+  }, 60_000);
+
+  it('defaults the Title to the HTML <title>; mergePdfs sets Author and copies the first Title', async () => {
+    const html = exampleLetterTemplate.render(exampleLetterTemplate.sample());
+    const a = await renderPdf(html, { reference: 'CCG-2026-00012' });
+    const docA = await PDFDocument.load(a.pdf, { updateMetadata: false });
+    expect(docA.getTitle()).toBe(htmlTitle(html));
+    expect(docA.getAuthor()).toBe('Courtesy Cars Group UK Ltd');
+    const merged = await mergePdfs([a.pdf, a.pdf]);
+    const m = await PDFDocument.load(merged, { updateMetadata: false });
+    expect(m.getTitle()).toBe(htmlTitle(html));
+    expect(m.getAuthor()).toBe('Courtesy Cars Group UK Ltd');
+    expect(m.getCreator()).toBe('ClaimDesk');
+  }, 60_000);
 });

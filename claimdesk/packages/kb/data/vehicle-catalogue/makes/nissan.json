@@ -1,0 +1,2749 @@
+{
+ "make": "Nissan",
+ "slug": "nissan",
+ "dvlaNames": [
+  "NISSAN"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Pixo",
+   "slug": "pixo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2009,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "UA0 (2009–2013)",
+     "from": 2009,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "n-tec"
+     ],
+     "engines": [
+      "1.0 12v 68PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S1"
+    }
+   ]
+  },
+  {
+   "name": "Micra",
+   "slug": "micra",
+   "aliases": [
+    "Micra C+C",
+    "Micra 160SR",
+    "Micra EV",
+    "Micra N-Sport"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "K11 (1992–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "GX",
+      "SE",
+      "Sport+",
+      "Tempest",
+      "Activ",
+      "Inspira"
+     ],
+     "engines": [
+      "1.0 16v 60PS petrol",
+      "1.3 16v 75PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "K12 (2003–2010)",
+     "from": 2003,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Spirita",
+      "Initia",
+      "Sport",
+      "Sport+",
+      "SVE",
+      "Tekna",
+      "Active Luxury",
+      "160SR",
+      "Visia",
+      "Acenta",
+      "N-Tec",
+      "C+C"
+     ],
+     "engines": [
+      "1.0 16v 65PS petrol",
+      "1.2 16v 65PS petrol",
+      "1.2 16v 80PS petrol",
+      "1.4 16v 88PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.5 dCi 65PS diesel",
+      "1.5 dCi 82PS diesel",
+      "1.5 dCi 86PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "K13 (2010–2017)",
+     "from": 2010,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Visia Limited Edition",
+      "Acenta",
+      "Acenta Limited Edition",
+      "N-Tec",
+      "Tekna"
+     ],
+     "engines": [
+      "1.2 80PS petrol",
+      "1.2 DIG-S 98PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "K14 (2017–2023)",
+     "from": 2017,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Visia+",
+      "Acenta",
+      "N-Connecta",
+      "Tekna",
+      "N-Sport",
+      "Bose Personal Edition"
+     ],
+     "engines": [
+      "1.0 71PS petrol",
+      "0.9 IG-T 90PS petrol",
+      "1.0 IG-T 100PS petrol",
+      "1.0 DIG-T 117PS petrol",
+      "1.5 dCi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk6 electric (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Engage",
+      "Advance",
+      "Evolve"
+     ],
+     "engines": [
+      "40kWh 122PS electric",
+      "52kWh 150PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Note",
+   "slug": "note",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2006,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "E11 (2006–2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "Acenta R",
+      "Tekna",
+      "N-Tec",
+      "N-Tec+"
+     ],
+     "engines": [
+      "1.4 88PS petrol",
+      "1.6 110PS petrol",
+      "1.5 dCi 68PS diesel",
+      "1.5 dCi 86PS diesel",
+      "1.5 dCi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E12 (2013–2017)",
+     "from": 2013,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "Acenta Premium",
+      "N-Tec",
+      "Tekna",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.2 80PS petrol",
+      "1.2 DIG-S 98PS petrol",
+      "1.5 dCi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cube",
+   "slug": "cube",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2010,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Z12 (2010–2011)",
+     "from": 2010,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Kaizen"
+     ],
+     "engines": [
+      "1.6 110PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Almera",
+   "slug": "almera",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "N16 (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "S",
+      "SE",
+      "SE+",
+      "Sport",
+      "SVE",
+      "Tekna"
+     ],
+     "engines": [
+      "1.5 90PS petrol",
+      "1.8 116PS petrol",
+      "1.5 dCi 82PS diesel",
+      "2.2 Di 110PS diesel",
+      "2.2 dCi 112PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Almera Tino",
+   "slug": "almera-tino",
+   "aliases": [
+    "Tino"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "V10 (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SVE"
+     ],
+     "engines": [
+      "1.8 116PS petrol",
+      "2.0 136PS petrol",
+      "2.2 Di 115PS diesel",
+      "2.2 dCi 112PS diesel",
+      "2.2 dCi 136PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Pulsar",
+   "slug": "pulsar",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2014,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "C13 (2014–2018)",
+     "from": 2014,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "N-Connecta",
+      "N-Tec",
+      "Tekna",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.2 DIG-T 115PS petrol",
+      "1.6 DIG-T 190PS petrol",
+      "1.5 dCi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Primera",
+   "slug": "primera",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "P11 (1996–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SVE",
+      "Sport",
+      "SRi"
+     ],
+     "engines": [
+      "1.6 16v 106PS petrol",
+      "1.8 16v 114PS petrol",
+      "2.0 16v 140PS petrol",
+      "2.0 TD 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "P12 (2002–2007)",
+     "from": 2002,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "S",
+      "SE",
+      "SVE",
+      "Tekna"
+     ],
+     "engines": [
+      "1.6 109PS petrol",
+      "1.8 116PS petrol",
+      "2.0 140PS petrol",
+      "1.9 dCi 120PS diesel",
+      "2.2 dCi 126PS diesel",
+      "2.2 dCi 139PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Maxima QX",
+   "slug": "maxima-qx",
+   "aliases": [
+    "Maxima"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "A33 (2000–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE"
+     ],
+     "engines": [
+      "2.0 V6 140PS petrol",
+      "3.0 V6 200PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Juke",
+   "slug": "juke",
+   "aliases": [
+    "Juke Nismo",
+    "Juke Nismo RS",
+    "Juke Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2010,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "F15 (2010–2019)",
+     "from": 2010,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "Acenta Premium",
+      "N-Connecta",
+      "N-Tec",
+      "Tekna",
+      "Nismo",
+      "Nismo RS",
+      "Shiro",
+      "Kuro",
+      "Bose Personal Edition"
+     ],
+     "engines": [
+      "1.6 94PS petrol",
+      "1.6 117PS petrol",
+      "1.2 DIG-T 115PS petrol",
+      "1.6 DIG-T 190PS petrol",
+      "1.6 DIG-T 200PS petrol",
+      "1.6 DIG-T 218PS petrol",
+      "1.5 dCi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F16 (2019–)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "Acenta Premium",
+      "N-Connecta",
+      "N-Design",
+      "N-Sport",
+      "Tekna",
+      "Tekna+",
+      "Premiere Edition",
+      "Enigma",
+      "Kiiro"
+     ],
+     "engines": [
+      "1.0 DIG-T 117PS petrol",
+      "1.0 DIG-T 114PS petrol",
+      "1.6 Hybrid 143PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Qashqai",
+   "slug": "qashqai",
+   "aliases": [
+    "Qashqai+2",
+    "Qashqai +2",
+    "Qashqai e-Power"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2007,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "J10 (2007–2014)",
+     "from": 2007,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "Tekna",
+      "N-Tec",
+      "N-Tec+",
+      "360",
+      "Pure Drive",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.6 115PS petrol",
+      "1.6 117PS petrol",
+      "2.0 141PS petrol",
+      "1.5 dCi 106PS diesel",
+      "1.5 dCi 110PS diesel",
+      "1.6 dCi 130PS diesel",
+      "2.0 dCi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "J11 (2014–2021)",
+     "from": 2014,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "Acenta Premium",
+      "N-Connecta",
+      "N-Tec",
+      "N-Vision",
+      "N-Motion",
+      "Tekna",
+      "Tekna+",
+      "Black Edition",
+      "360"
+     ],
+     "engines": [
+      "1.2 DIG-T 115PS petrol",
+      "1.3 DIG-T 140PS petrol",
+      "1.3 DIG-T 160PS petrol",
+      "1.6 DIG-T 163PS petrol",
+      "1.5 dCi 110PS diesel",
+      "1.5 dCi 115PS diesel",
+      "1.6 dCi 130PS diesel",
+      "1.7 dCi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "M2"
+    },
+    {
+     "name": "J12 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta Premium",
+      "N-Connecta",
+      "N-Design",
+      "Tekna",
+      "Tekna+",
+      "Premiere Edition"
+     ],
+     "engines": [
+      "1.3 DIG-T mHEV 140PS mild-hybrid petrol",
+      "1.3 DIG-T mHEV 158PS mild-hybrid petrol",
+      "1.5 e-Power 190PS hybrid",
+      "1.5 e-Power 205PS hybrid"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "M2"
+    }
+   ]
+  },
+  {
+   "name": "X-Trail",
+   "slug": "x-trail",
+   "aliases": [
+    "XTrail",
+    "X Trail",
+    "X-Trail e-Power"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2001,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "T30 (2001–2007)",
+     "from": 2001,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Sport",
+      "SE",
+      "SVE",
+      "Columbia",
+      "Aventura"
+     ],
+     "engines": [
+      "2.0 140PS petrol",
+      "2.5 165PS petrol",
+      "2.2 Di 114PS diesel",
+      "2.2 dCi 136PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T31 (2007–2014)",
+     "from": 2007,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Acenta",
+      "SE",
+      "Sport",
+      "Aventura",
+      "Sport Expedition",
+      "Aventura Explorer",
+      "Tekna",
+      "N-Tec",
+      "Platinum"
+     ],
+     "engines": [
+      "2.0 141PS petrol",
+      "2.0 dCi 150PS diesel",
+      "2.0 dCi 173PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T32 (2014–2022)",
+     "from": 2014,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "N-Connecta",
+      "N-Vision",
+      "N-Tec",
+      "Tekna"
+     ],
+     "engines": [
+      "1.6 DIG-T 163PS petrol",
+      "1.3 DIG-T 160PS petrol",
+      "1.6 dCi 130PS diesel",
+      "1.7 dCi 150PS diesel",
+      "2.0 dCi 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T33 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Acenta Premium",
+      "N-Connecta",
+      "N-Trek",
+      "Tekna",
+      "Tekna+"
+     ],
+     "engines": [
+      "1.5 VC-T mHEV 163PS mild-hybrid petrol",
+      "1.5 e-Power 204PS hybrid",
+      "1.5 e-Power e-4ORCE 213PS hybrid"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Murano",
+   "slug": "murano",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2005,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Z50 (2005–2008)",
+     "from": 2005,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Murano"
+     ],
+     "engines": [
+      "3.5 V6 234PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Z51 (2008–2011)",
+     "from": 2008,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Murano"
+     ],
+     "engines": [
+      "3.5 V6 256PS petrol",
+      "2.5 dCi 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Pathfinder",
+   "slug": "pathfinder",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2005,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "R51 (2005–2014)",
+     "from": 2005,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Aventura",
+      "Acenta",
+      "Tekna",
+      "Platinum"
+     ],
+     "engines": [
+      "2.5 dCi 174PS diesel",
+      "2.5 dCi 190PS diesel",
+      "3.0 V6 dCi 231PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Terrano II",
+   "slug": "terrano-ii",
+   "aliases": [
+    "Terrano",
+    "Terrano 2"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "R20 (1993–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE+",
+      "SVE"
+     ],
+     "engines": [
+      "2.4 116PS petrol",
+      "2.7 TDi 125PS diesel",
+      "3.0 Di 154PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Patrol",
+   "slug": "patrol",
+   "aliases": [
+    "Patrol GR"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "Y61 Patrol GR (1997–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SVE"
+     ],
+     "engines": [
+      "2.8 TDi 130PS diesel",
+      "3.0 Di 158PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "350Z",
+   "slug": "350z",
+   "aliases": [
+    "350Z Roadster",
+    "350 Z"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2003,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "Z33 (2003–2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "GT Pack",
+      "GT4"
+     ],
+     "engines": [
+      "3.5 V6 280PS petrol",
+      "3.5 V6 300PS petrol",
+      "3.5 V6 313PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "370Z",
+   "slug": "370z",
+   "aliases": [
+    "370Z Roadster",
+    "370Z Nismo",
+    "370 Z"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2009,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Z34 (2009–2020)",
+     "from": 2009,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "GT Edition",
+      "Nismo",
+      "50th Anniversary"
+     ],
+     "engines": [
+      "3.7 V6 328PS petrol",
+      "3.7 V6 344PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GT-R",
+   "slug": "gt-r",
+   "aliases": [
+    "GTR",
+    "GT-R Nismo"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2009,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "R35 (2009–2022)",
+     "from": 2009,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Black Edition",
+      "Premium Edition",
+      "Recaro",
+      "Track Edition",
+      "Prestige",
+      "Pure",
+      "50th Anniversary",
+      "Nismo"
+     ],
+     "engines": [
+      "3.8 V6 twin-turbo 485PS petrol",
+      "3.8 V6 twin-turbo 530PS petrol",
+      "3.8 V6 twin-turbo 550PS petrol",
+      "3.8 V6 twin-turbo 570PS petrol",
+      "3.8 V6 twin-turbo 600PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Leaf",
+   "slug": "leaf",
+   "aliases": [
+    "LEAF",
+    "Leaf e+"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2011,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 ZE0/AZE0 (2011–2017)",
+     "from": 2011,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "Tekna",
+      "Black Edition"
+     ],
+     "engines": [
+      "24kWh 109PS electric",
+      "30kWh 109PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 ZE1 (2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "N-Connecta",
+      "Tekna",
+      "2.Zero",
+      "e+ N-Connecta",
+      "e+ Tekna",
+      "Shiro"
+     ],
+     "engines": [
+      "40kWh 150PS electric",
+      "62kWh 217PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Engage",
+      "Engage+",
+      "Advance",
+      "Evolve"
+     ],
+     "engines": [
+      "52kWh 177PS electric",
+      "75kWh 218PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ariya",
+   "slug": "ariya",
+   "aliases": [
+    "ARIYA",
+    "Ariya e-4ORCE",
+    "Ariya Nismo"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "FE0 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Engage",
+      "Engage+",
+      "Advance",
+      "Evolve",
+      "Evolve+",
+      "Nismo"
+     ],
+     "engines": [
+      "63kWh 218PS electric",
+      "87kWh 242PS electric",
+      "87kWh e-4ORCE 306PS electric",
+      "87kWh e-4ORCE Nismo 435PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Evalia",
+   "slug": "evalia",
+   "aliases": [
+    "NV200 Evalia",
+    "e-NV200 Evalia",
+    "NV200 Combi",
+    "e-NV200 Combi"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2010,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "M20 NV200 / e-NV200 Evalia (2010–2021)",
+     "from": 2010,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Acenta",
+      "Tekna"
+     ],
+     "engines": [
+      "1.6 110PS petrol",
+      "1.5 dCi 90PS diesel",
+      "1.5 dCi 110PS diesel",
+      "24kWh 109PS electric",
+      "40kWh 109PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "NV200",
+   "slug": "nv200",
+   "aliases": [
+    "NV 200"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2009,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "M20 (2009–2021)",
+     "from": 2009,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "SE",
+      "Acenta",
+      "Tekna"
+     ],
+     "engines": [
+      "1.6 110PS petrol",
+      "1.5 dCi 86PS diesel",
+      "1.5 dCi 90PS diesel",
+      "1.5 dCi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "e-NV200",
+   "slug": "e-nv200",
+   "aliases": [
+    "eNV200",
+    "e-NV200 Van"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2014,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "ME0 (2014–2021)",
+     "from": 2014,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "Tekna"
+     ],
+     "engines": [
+      "24kWh 109PS electric",
+      "40kWh 109PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Kubistar",
+   "slug": "kubistar",
+   "aliases": [],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2003,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "X76 (2003–2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "SE"
+     ],
+     "engines": [
+      "1.5 dCi 65PS diesel",
+      "1.5 dCi 82PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "NV250",
+   "slug": "nv250",
+   "aliases": [],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2019,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "X61 (2019–2021)",
+     "from": 2019,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta"
+     ],
+     "engines": [
+      "1.5 dCi 80PS diesel",
+      "1.5 dCi 95PS diesel",
+      "1.5 dCi 115PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Townstar",
+   "slug": "townstar",
+   "aliases": [
+    "Townstar EV",
+    "Townstar Combi"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "XFK (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "Tekna",
+      "Tekna+"
+     ],
+     "engines": [
+      "1.3 DIG-T 130PS petrol",
+      "45kWh 122PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Primastar",
+   "slug": "primastar",
+   "aliases": [
+    "Primastar Combi"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2002,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "X83 (2002–2016)",
+     "from": 2002,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "minibus",
+       "doors": [
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "SE"
+     ],
+     "engines": [
+      "1.9 dCi 82PS diesel",
+      "1.9 dCi 100PS diesel",
+      "2.0 dCi 90PS diesel",
+      "2.0 dCi 115PS diesel",
+      "2.5 dCi 135PS diesel",
+      "2.5 dCi 146PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "X82 Primastar (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "minibus",
+       "doors": [
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "Acenta",
+      "Tekna",
+      "Tekna+"
+     ],
+     "engines": [
+      "2.0 dCi 110PS diesel",
+      "2.0 dCi 130PS diesel",
+      "2.0 dCi 150PS diesel",
+      "2.0 dCi 170PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "NV300",
+   "slug": "nv300",
+   "aliases": [
+    "NV300 Combi"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2016,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "X82 NV300 (2016–2021)",
+     "from": 2016,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "minibus",
+       "doors": [
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Acenta",
+      "Tekna"
+     ],
+     "engines": [
+      "1.6 dCi 95PS diesel",
+      "1.6 dCi 120PS diesel",
+      "1.6 dCi 125PS diesel",
+      "1.6 dCi 145PS diesel",
+      "2.0 dCi 120PS diesel",
+      "2.0 dCi 145PS diesel",
+      "2.0 dCi 170PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Interstar",
+   "slug": "interstar",
+   "aliases": [
+    "Interstar-e"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2003,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "X70 (2003–2010)",
+     "from": 2003,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "SE"
+     ],
+     "engines": [
+      "1.9 dCi 82PS diesel",
+      "2.5 dCi 100PS diesel",
+      "2.5 dCi 120PS diesel",
+      "2.5 dCi 146PS diesel",
+      "3.0 dCi 136PS diesel",
+      "3.0 dCi 156PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "X62 Interstar (2022–2024)",
+     "from": 2022,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "Acenta",
+      "Tekna"
+     ],
+     "engines": [
+      "2.3 dCi 135PS diesel",
+      "2.3 dCi 150PS diesel",
+      "2.3 dCi 165PS diesel",
+      "2.3 dCi 180PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "Acenta",
+      "Tekna"
+     ],
+     "engines": [
+      "2.0 dCi 105PS diesel",
+      "2.0 dCi 130PS diesel",
+      "2.0 dCi 150PS diesel",
+      "2.0 dCi 170PS diesel",
+      "87kWh 143PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "NV400",
+   "slug": "nv400",
+   "aliases": [
+    "NV 400"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2011,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "X62 NV400 (2011–2021)",
+     "from": 2011,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Tekna"
+     ],
+     "engines": [
+      "2.3 dCi 100PS diesel",
+      "2.3 dCi 110PS diesel",
+      "2.3 dCi 125PS diesel",
+      "2.3 dCi 130PS diesel",
+      "2.3 dCi 135PS diesel",
+      "2.3 dCi 145PS diesel",
+      "2.3 dCi 150PS diesel",
+      "2.3 dCi 165PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cabstar",
+   "slug": "cabstar",
+   "aliases": [
+    "NT400 Cabstar",
+    "NT400"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2006,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "F24 Cabstar (2006–2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        4
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 dCi 110PS diesel",
+      "2.5 dCi 131PS diesel",
+      "3.0 dCi 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "NT400 Cabstar (2014–2019)",
+     "from": 2014,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        4
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 dCi 130PS diesel",
+      "3.0 dCi 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Navara",
+   "slug": "navara",
+   "aliases": [
+    "Pick-Up",
+    "Pickup",
+    "D22",
+    "D40",
+    "NP300",
+    "Navara NP300",
+    "King Cab",
+    "Double Cab"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2000,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "D22 (1998–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pick-Up",
+      "Navara"
+     ],
+     "engines": [
+      "2.5 TD 103PS diesel",
+      "2.5 dCi 133PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "gtaGroup": "CP1"
+    },
+    {
+     "name": "D40 (2005–2015)",
+     "from": 2005,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Aventura",
+      "Outlaw",
+      "Acenta",
+      "Tekna",
+      "Platinum"
+     ],
+     "engines": [
+      "2.5 dCi 144PS diesel",
+      "2.5 dCi 174PS diesel",
+      "2.5 dCi 190PS diesel",
+      "3.0 V6 dCi 231PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    },
+    {
+     "name": "D23 NP300 (2016–2022)",
+     "from": 2016,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Visia",
+      "Acenta",
+      "Acenta+",
+      "N-Connecta",
+      "Tekna",
+      "N-Guard",
+      "Off-Roader AT32",
+      "Trek-1°"
+     ],
+     "engines": [
+      "2.3 dCi 160PS diesel",
+      "2.3 dCi 190PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    }
+   ]
+  }
+ ]
+}

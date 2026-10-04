@@ -1,0 +1,995 @@
+{
+ "make": "Jaguar",
+ "slug": "jaguar",
+ "dvlaNames": [
+  "JAGUAR"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "XK",
+   "slug": "xk",
+   "aliases": [
+    "XK8",
+    "XKR",
+    "XKR-S"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "X100 XK8/XKR (1996–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "XK8",
+      "XKR",
+      "XKR 100",
+      "XKR Portfolio"
+     ],
+     "engines": [
+      "4.0 V8 294PS petrol",
+      "4.0 V8 Supercharged 375PS petrol",
+      "4.2 V8 300PS petrol",
+      "4.2 V8 Supercharged 406PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "X150 (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "XK",
+      "XK Portfolio",
+      "XK Signature",
+      "XK Dynamic R",
+      "XKR",
+      "XKR-S"
+     ],
+     "engines": [
+      "4.2 V8 300PS petrol",
+      "4.2 V8 Supercharged 420PS petrol",
+      "5.0 V8 385PS petrol",
+      "5.0 V8 Supercharged 510PS petrol",
+      "5.0 V8 Supercharged 550PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "S-Type",
+   "slug": "s-type",
+   "aliases": [
+    "S-Type R",
+    "S Type"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "X200 (1999–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "XS",
+      "R"
+     ],
+     "engines": [
+      "2.5 V6 201PS petrol",
+      "3.0 V6 238PS petrol",
+      "4.0 V8 285PS petrol",
+      "4.2 V8 300PS petrol",
+      "4.2 V8 Supercharged 406PS petrol",
+      "2.7 V6 D 207PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X-Type",
+   "slug": "x-type",
+   "aliases": [
+    "X-Type Estate",
+    "X Type"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2001,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "X400 (2001–2009)",
+     "from": 2001,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "S",
+      "SE",
+      "Sport",
+      "Sovereign",
+      "Executive",
+      "Sport Premium",
+      "Luxury"
+     ],
+     "engines": [
+      "2.0 V6 157PS petrol",
+      "2.5 V6 196PS petrol",
+      "3.0 V6 231PS petrol",
+      "2.0 D 130PS diesel",
+      "2.2 D 155PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "XJ",
+   "slug": "xj",
+   "aliases": [
+    "XJ6",
+    "XJ8",
+    "XJR",
+    "XJ LWB",
+    "XJR575",
+    "Sovereign"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "X308 (1997–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "XJ8",
+      "Sport",
+      "Executive",
+      "Sovereign",
+      "XJR"
+     ],
+     "engines": [
+      "3.2 V8 243PS petrol",
+      "4.0 V8 294PS petrol",
+      "4.0 V8 Supercharged 375PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "X350/X358 (2003–2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "XJ6",
+      "XJ8",
+      "SE",
+      "Sport",
+      "Sport Premium",
+      "Executive",
+      "Sovereign",
+      "Portfolio",
+      "XJR",
+      "Super V8"
+     ],
+     "engines": [
+      "3.0 V6 243PS petrol",
+      "3.5 V8 262PS petrol",
+      "4.2 V8 300PS petrol",
+      "4.2 V8 Supercharged 406PS petrol",
+      "2.7 V6 D 207PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "X351 (2009–2019)",
+     "from": 2010,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Luxury",
+      "Premium Luxury",
+      "Portfolio",
+      "R-Sport",
+      "Supersport",
+      "Autobiography",
+      "XJR",
+      "XJR575",
+      "Ultimate"
+     ],
+     "engines": [
+      "3.0 V6 D 275PS diesel",
+      "3.0 V6 D 300PS diesel",
+      "3.0 V6 Supercharged 340PS petrol",
+      "5.0 V8 385PS petrol",
+      "5.0 V8 Supercharged 470PS petrol",
+      "5.0 V8 Supercharged 510PS petrol",
+      "5.0 V8 Supercharged 550PS petrol",
+      "5.0 V8 Supercharged 575PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "XF",
+   "slug": "xf",
+   "aliases": [
+    "XF Sportbrake",
+    "XFR",
+    "XFR-S"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2008,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "X250 (2008–2015)",
+     "from": 2008,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Luxury",
+      "Premium Luxury",
+      "SE",
+      "SE Business",
+      "Sport",
+      "Portfolio",
+      "S",
+      "R-Sport",
+      "SV8",
+      "XFR",
+      "XFR-S"
+     ],
+     "engines": [
+      "2.2 i4 D 163PS diesel",
+      "2.2 i4 D 190PS diesel",
+      "2.2 i4 D 200PS diesel",
+      "2.7 V6 D 207PS diesel",
+      "3.0 V6 D 240PS diesel",
+      "3.0 V6 D 275PS diesel",
+      "2.0 i4 240PS petrol",
+      "3.0 V6 238PS petrol",
+      "4.2 V8 300PS petrol",
+      "4.2 V8 Supercharged 420PS petrol",
+      "5.0 V8 385PS petrol",
+      "5.0 V8 Supercharged 510PS petrol",
+      "5.0 V8 Supercharged 550PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "X260 (2015–2024)",
+     "from": 2015,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Prestige",
+      "Portfolio",
+      "R-Sport",
+      "S",
+      "First Edition",
+      "Chequered Flag",
+      "Landmark",
+      "300 Sport",
+      "SE",
+      "HSE",
+      "R-Dynamic SE",
+      "R-Dynamic HSE",
+      "R-Dynamic S",
+      "R-Dynamic Black"
+     ],
+     "engines": [
+      "2.0 i4 D 163PS diesel",
+      "2.0 i4 D 180PS diesel",
+      "2.0 i4 D 240PS diesel",
+      "3.0 V6 D 300PS diesel",
+      "2.0 D200 MHEV 204PS mild-hybrid diesel",
+      "2.0 i4 200PS petrol",
+      "2.0 i4 250PS petrol",
+      "2.0 i4 300PS petrol",
+      "3.0 V6 Supercharged 380PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "XE",
+   "slug": "xe",
+   "aliases": [
+    "XE SV Project 8"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2015,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "X760 (2015–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Prestige",
+      "Portfolio",
+      "R-Sport",
+      "S",
+      "Landmark",
+      "300 Sport"
+     ],
+     "engines": [
+      "2.0 i4 D 163PS diesel",
+      "2.0 i4 D 180PS diesel",
+      "2.0 i4 D 240PS diesel",
+      "2.0 i4 200PS petrol",
+      "2.0 i4 240PS petrol",
+      "2.0 i4 250PS petrol",
+      "2.0 i4 300PS petrol",
+      "3.0 V6 Supercharged 340PS petrol",
+      "3.0 V6 Supercharged 380PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "X760 facelift (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "HSE",
+      "R-Dynamic S",
+      "R-Dynamic SE",
+      "R-Dynamic HSE",
+      "R-Dynamic Black",
+      "300 Sport"
+     ],
+     "engines": [
+      "2.0 D180 180PS diesel",
+      "2.0 D200 MHEV 204PS mild-hybrid diesel",
+      "2.0 P250 250PS petrol",
+      "2.0 P300 300PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "F-Type",
+   "slug": "f-type",
+   "aliases": [
+    "F-Type R",
+    "F-Type SVR",
+    "F Type"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2013,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "X152 (2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "F-Type",
+      "S",
+      "V8 S",
+      "R",
+      "SVR",
+      "R-Dynamic",
+      "400 Sport",
+      "British Design Edition",
+      "Chequered Flag"
+     ],
+     "engines": [
+      "2.0 i4 300PS petrol",
+      "3.0 V6 Supercharged 340PS petrol",
+      "3.0 V6 Supercharged 380PS petrol",
+      "3.0 V6 Supercharged 400PS petrol",
+      "5.0 V8 Supercharged 495PS petrol",
+      "5.0 V8 Supercharged 550PS petrol",
+      "5.0 V8 Supercharged 575PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "X152 facelift (2020–2024)",
+     "from": 2020,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "F-Type",
+      "First Edition",
+      "R-Dynamic",
+      "R-Dynamic Black",
+      "R",
+      "75",
+      "R 75"
+     ],
+     "engines": [
+      "2.0 P300 300PS petrol",
+      "3.0 V6 P380 380PS petrol",
+      "5.0 V8 P450 450PS petrol",
+      "5.0 V8 P575 575PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "F-Pace",
+   "slug": "f-pace",
+   "aliases": [
+    "F-Pace SVR",
+    "F Pace",
+    "FPCE",
+    "FPC"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2016,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "X761 (2016–2020)",
+     "from": 2016,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "F-Pace",
+      "Prestige",
+      "Portfolio",
+      "R-Sport",
+      "S",
+      "First Edition",
+      "Chequered Flag",
+      "300 Sport",
+      "SVR"
+     ],
+     "engines": [
+      "2.0 i4 D 163PS diesel",
+      "2.0 i4 D 180PS diesel",
+      "2.0 i4 D 240PS diesel",
+      "3.0 V6 D 300PS diesel",
+      "2.0 i4 250PS petrol",
+      "2.0 i4 300PS petrol",
+      "3.0 V6 Supercharged 340PS petrol",
+      "3.0 V6 Supercharged 380PS petrol",
+      "5.0 V8 Supercharged 550PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "X761 facelift (2021–2025)",
+     "from": 2021,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "HSE",
+      "R-Dynamic S",
+      "R-Dynamic SE",
+      "R-Dynamic HSE",
+      "R-Dynamic Black",
+      "300 Sport",
+      "400 Sport",
+      "SVR"
+     ],
+     "engines": [
+      "2.0 D165 MHEV 163PS mild-hybrid diesel",
+      "2.0 D200 MHEV 204PS mild-hybrid diesel",
+      "3.0 D300 MHEV 300PS mild-hybrid diesel",
+      "2.0 P250 250PS petrol",
+      "3.0 P400 MHEV 400PS mild-hybrid petrol",
+      "2.0 P400e 404PS plug-in-hybrid",
+      "5.0 V8 SVR 550PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "E-Pace",
+   "slug": "e-pace",
+   "aliases": [
+    "E Pace"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2017,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "X540 (2018–2020)",
+     "from": 2017,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "E-Pace",
+      "S",
+      "SE",
+      "HSE",
+      "R-Dynamic",
+      "R-Dynamic S",
+      "R-Dynamic SE",
+      "R-Dynamic HSE",
+      "First Edition",
+      "Chequered Flag"
+     ],
+     "engines": [
+      "2.0 i4 D 150PS diesel",
+      "2.0 i4 D 180PS diesel",
+      "2.0 i4 D 240PS diesel",
+      "2.0 i4 200PS petrol",
+      "2.0 i4 249PS petrol",
+      "2.0 i4 300PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "X540 facelift (2021–2024)",
+     "from": 2021,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "HSE",
+      "R-Dynamic S",
+      "R-Dynamic SE",
+      "R-Dynamic HSE",
+      "R-Dynamic Black",
+      "300 Sport"
+     ],
+     "engines": [
+      "2.0 D165 163PS diesel",
+      "2.0 D165 MHEV 163PS mild-hybrid diesel",
+      "2.0 D200 MHEV 204PS mild-hybrid diesel",
+      "2.0 P200 MHEV 200PS mild-hybrid petrol",
+      "2.0 P250 MHEV 249PS mild-hybrid petrol",
+      "2.0 P300 MHEV 300PS mild-hybrid petrol",
+      "1.5 P300e 309PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "I-Pace",
+   "slug": "i-pace",
+   "aliases": [
+    "I Pace",
+    "EV400"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2018,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "X590 (2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "HSE",
+      "First Edition",
+      "R-Dynamic SE",
+      "R-Dynamic HSE",
+      "R-Dynamic HSE Black"
+     ],
+     "engines": [
+      "90kWh EV400 400PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

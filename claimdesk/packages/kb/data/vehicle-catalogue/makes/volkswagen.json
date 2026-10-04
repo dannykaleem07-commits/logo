@@ -1,0 +1,4756 @@
+{
+ "make": "Volkswagen",
+ "slug": "volkswagen",
+ "dvlaNames": [
+  "VOLKSWAGEN",
+  "VW"
+ ],
+ "aliases": [
+  "VW",
+  "Volkswagen Commercial Vehicles",
+  "VWCV"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. XL1 omitted: left-hand drive only."
+ },
+ "models": [
+  {
+   "name": "Lupo",
+   "slug": "lupo",
+   "aliases": [
+    "Lupo GTI",
+    "Lupo 3L"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1998–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "S",
+      "Sport",
+      "Match",
+      "GTI"
+     ],
+     "engines": [
+      "1.0 50PS petrol",
+      "1.4 60PS petrol",
+      "1.4 75PS petrol",
+      "1.4 16v 75PS petrol",
+      "1.4 16v 100PS petrol",
+      "1.6 16v GTI 125PS petrol",
+      "1.7 SDI 60PS diesel",
+      "1.4 TDI 75PS diesel",
+      "1.2 TDI 61PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Fox",
+   "slug": "fox",
+   "aliases": [
+    "Urban Fox"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2006,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2011)",
+     "from": 2006,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Fox",
+      "Urban Fox"
+     ],
+     "engines": [
+      "1.2 55PS petrol",
+      "1.4 75PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "up!",
+   "slug": "up",
+   "aliases": [
+    "Up",
+    "UP!",
+    "e-up!",
+    "up! GTI",
+    "Take Up",
+    "Move Up",
+    "High Up"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2012,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2012–2023; facelift 2016)",
+     "from": 2012,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Take up!",
+      "Move up!",
+      "High up!",
+      "Club up!",
+      "Rock up!",
+      "Cross up!",
+      "up! beats",
+      "R-Line",
+      "White up!",
+      "Black up!",
+      "up! GTI",
+      "e-up!"
+     ],
+     "engines": [
+      "1.0 MPI 60PS petrol",
+      "1.0 MPI 65PS petrol",
+      "1.0 MPI 75PS petrol",
+      "1.0 TSI 90PS petrol",
+      "1.0 TSI 115PS petrol",
+      "18.7kWh 82PS electric",
+      "32.3kWh 83PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Polo",
+   "slug": "polo",
+   "aliases": [
+    "Polo GTI",
+    "Polo BlueMotion",
+    "Polo Classic",
+    "Polo Estate",
+    "CrossPolo",
+    "Cross Polo",
+    "Polo R-Line",
+    "Polo Match"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk3 6N2 (1999–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "S",
+      "SE",
+      "Match",
+      "GTI"
+     ],
+     "engines": [
+      "1.0 50PS petrol",
+      "1.4 60PS petrol",
+      "1.4 16v 75PS petrol",
+      "1.4 16v 100PS petrol",
+      "1.6 16v GTI 125PS petrol",
+      "1.9 SDI 64PS diesel",
+      "1.4 TDI 75PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 9N (2002–2009)",
+     "from": 2002,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "S",
+      "SE",
+      "Sport",
+      "Match",
+      "Twist",
+      "Dune",
+      "Polo Fun",
+      "BlueMotion",
+      "GT",
+      "GTI"
+     ],
+     "engines": [
+      "1.2 55PS petrol",
+      "1.2 64PS petrol",
+      "1.2 70PS petrol",
+      "1.4 75PS petrol",
+      "1.4 80PS petrol",
+      "1.4 16v 100PS petrol",
+      "1.4 FSI 86PS petrol",
+      "1.8 Turbo GTI 150PS petrol",
+      "1.9 SDI 64PS diesel",
+      "1.4 TDI 70PS diesel",
+      "1.4 TDI 75PS diesel",
+      "1.4 TDI 80PS diesel",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    },
+    {
+     "name": "Mk5 6R (2009–2017)",
+     "from": 2009,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Match",
+      "Match Edge",
+      "Moda",
+      "SEL",
+      "R-Line",
+      "Beats",
+      "Black Edition",
+      "BlueMotion",
+      "BlueGT",
+      "GT",
+      "GTI"
+     ],
+     "engines": [
+      "1.2 60PS petrol",
+      "1.2 70PS petrol",
+      "1.0 MPI 60PS petrol",
+      "1.0 MPI 75PS petrol",
+      "1.4 85PS petrol",
+      "1.2 TSI 90PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.4 TSI ACT BlueGT 140PS petrol",
+      "1.4 TSI ACT BlueGT 150PS petrol",
+      "1.4 TSI GTI 180PS petrol",
+      "1.8 TSI GTI 192PS petrol",
+      "1.2 TDI 75PS diesel",
+      "1.6 TDI 75PS diesel",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "1.4 TDI 75PS diesel",
+      "1.4 TDI 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    },
+    {
+     "name": "Mk6 AW (2017–present; facelift 2021)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Beats",
+      "SEL",
+      "United",
+      "R-Line",
+      "Match",
+      "Life",
+      "Style",
+      "Active",
+      "Black Edition",
+      "GTI",
+      "GTI+",
+      "GTI Edition 25"
+     ],
+     "engines": [
+      "1.0 MPI 65PS petrol",
+      "1.0 MPI 80PS petrol",
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.5 TSI 150PS petrol",
+      "2.0 TSI GTI 200PS petrol",
+      "2.0 TSI GTI 207PS petrol",
+      "1.6 TDI 80PS diesel",
+      "1.6 TDI 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    }
+   ]
+  },
+  {
+   "name": "Golf",
+   "slug": "golf",
+   "aliases": [
+    "Golf GTI",
+    "Golf R",
+    "Golf GTD",
+    "Golf GTE",
+    "Golf Estate",
+    "Golf Variant",
+    "Golf Alltrack",
+    "e-Golf",
+    "Golf R32",
+    "Golf eHybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk4 (1997–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "S",
+      "SE",
+      "Match",
+      "GT",
+      "GTI",
+      "GT TDI",
+      "V5",
+      "V6 4Motion",
+      "R32"
+     ],
+     "engines": [
+      "1.4 16v 75PS petrol",
+      "1.6 100PS petrol",
+      "1.6 105PS petrol",
+      "1.6 FSI 110PS petrol",
+      "1.8 20v 125PS petrol",
+      "1.8 Turbo 150PS petrol",
+      "1.8 Turbo 180PS petrol",
+      "2.0 115PS petrol",
+      "2.3 V5 150PS petrol",
+      "2.3 V5 170PS petrol",
+      "2.8 V6 204PS petrol",
+      "3.2 V6 R32 241PS petrol",
+      "1.9 SDI 68PS diesel",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 110PS diesel",
+      "1.9 TDI 115PS diesel",
+      "1.9 TDI 130PS diesel",
+      "1.9 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    },
+    {
+     "name": "Mk5 (2004–2009)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Match",
+      "Sport",
+      "GT",
+      "GT Sport",
+      "BlueMotion",
+      "GTI",
+      "GTI Edition 30",
+      "GTI Pirelli",
+      "R32"
+     ],
+     "engines": [
+      "1.4 75PS petrol",
+      "1.4 80PS petrol",
+      "1.4 FSI 90PS petrol",
+      "1.6 102PS petrol",
+      "1.6 FSI 115PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.4 TSI 140PS petrol",
+      "1.4 TSI 170PS petrol",
+      "2.0 FSI 150PS petrol",
+      "2.0 TFSI GTI 200PS petrol",
+      "2.0 TFSI GTI 230PS petrol",
+      "3.2 V6 R32 250PS petrol",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 105PS diesel",
+      "2.0 SDI 75PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    },
+    {
+     "name": "Mk6 (2009–2013)",
+     "from": 2009,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Match",
+      "GT",
+      "BlueMotion",
+      "GTI",
+      "GTI Edition 35",
+      "GTD",
+      "R"
+     ],
+     "engines": [
+      "1.4 80PS petrol",
+      "1.6 102PS petrol",
+      "1.2 TSI 85PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.4 TSI 160PS petrol",
+      "2.0 TSI GTI 210PS petrol",
+      "2.0 TSI GTI 235PS petrol",
+      "2.0 TSI R 270PS petrol",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "2.0 TDI 110PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    },
+    {
+     "name": "Mk7 (2013–2020)",
+     "from": 2013,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Nav",
+      "Match",
+      "Match Edition",
+      "GT",
+      "GT Edge",
+      "R-Line",
+      "R-Line Edition",
+      "BlueMotion",
+      "Alltrack",
+      "GTI",
+      "GTI Performance",
+      "GTI Clubsport",
+      "GTI Clubsport S",
+      "GTI TCR",
+      "GTD",
+      "GTE",
+      "R",
+      "e-Golf"
+     ],
+     "engines": [
+      "1.0 TSI 85PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.2 TSI 85PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.2 TSI 110PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.4 TSI 125PS petrol",
+      "1.4 TSI 140PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.5 TSI EVO 130PS petrol",
+      "1.5 TSI EVO 150PS petrol",
+      "2.0 TSI GTI 220PS petrol",
+      "2.0 TSI GTI 230PS petrol",
+      "2.0 TSI GTI 245PS petrol",
+      "2.0 TSI GTI 265PS petrol",
+      "2.0 TSI GTI 290PS petrol",
+      "2.0 TSI R 300PS petrol",
+      "2.0 TSI R 310PS petrol",
+      "1.4 TSI GTE 204PS plug-in-hybrid",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "1.6 TDI 110PS diesel",
+      "1.6 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 184PS diesel",
+      "24.2kWh 115PS electric",
+      "35.8kWh 136PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    },
+    {
+     "name": "Mk8 (2020–2024)",
+     "from": 2020,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Style",
+      "Active",
+      "Match",
+      "R-Line",
+      "Black Edition",
+      "Alltrack",
+      "GTI",
+      "GTI Clubsport",
+      "GTD",
+      "GTE",
+      "R",
+      "R 20 Years"
+     ],
+     "engines": [
+      "1.0 TSI 110PS petrol",
+      "1.0 eTSI 110PS mild-hybrid petrol",
+      "1.5 TSI 130PS petrol",
+      "1.5 TSI 150PS petrol",
+      "1.5 eTSI 150PS mild-hybrid petrol",
+      "1.4 TSI eHybrid 204PS plug-in-hybrid",
+      "1.4 TSI GTE 245PS plug-in-hybrid",
+      "2.0 TSI GTI 245PS petrol",
+      "2.0 TSI GTI Clubsport 300PS petrol",
+      "2.0 TSI R 320PS petrol",
+      "2.0 TSI R 333PS petrol",
+      "2.0 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI GTD 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    },
+    {
+     "name": "Mk8.5 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Match",
+      "Style",
+      "R-Line",
+      "Black Edition",
+      "GTI",
+      "GTI Clubsport",
+      "GTE",
+      "R",
+      "R Black Edition"
+     ],
+     "engines": [
+      "1.5 TSI 116PS petrol",
+      "1.5 eTSI 116PS mild-hybrid petrol",
+      "1.5 eTSI 150PS mild-hybrid petrol",
+      "1.5 TSI eHybrid 204PS plug-in-hybrid",
+      "1.5 TSI eHybrid 272PS plug-in-hybrid",
+      "2.0 TSI GTI 265PS petrol",
+      "2.0 TSI GTI Clubsport 300PS petrol",
+      "2.0 TSI R 333PS petrol",
+      "2.0 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    }
+   ]
+  },
+  {
+   "name": "Golf Cabriolet",
+   "slug": "golf-cabriolet",
+   "aliases": [
+    "Golf Convertible",
+    "Golf GTI Cabriolet",
+    "Golf R Cabriolet"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "Mk4-styled Cabriolet (1998–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Avantgarde",
+      "Colour Concept"
+     ],
+     "engines": [
+      "1.6 100PS petrol",
+      "2.0 115PS petrol",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk6 Cabriolet (2011–2016)",
+     "from": 2011,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "GT",
+      "R-Line",
+      "GTI",
+      "Exclusive",
+      "Final Edition"
+     ],
+     "engines": [
+      "1.2 TSI 105PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.4 TSI 125PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.4 TSI 160PS petrol",
+      "2.0 TSI GTI 210PS petrol",
+      "2.0 TSI GTI 220PS petrol",
+      "2.0 TSI R 265PS petrol",
+      "1.6 TDI 105PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Golf Plus",
+   "slug": "golf-plus",
+   "aliases": [
+    "Golf+"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2005,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2005–2014; facelift 2009)",
+     "from": 2005,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Match",
+      "Luna"
+     ],
+     "engines": [
+      "1.4 80PS petrol",
+      "1.6 102PS petrol",
+      "1.6 FSI 115PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.4 TSI 140PS petrol",
+      "1.4 TSI 160PS petrol",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 105PS diesel",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "2.0 TDI 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Golf SV",
+   "slug": "golf-sv",
+   "aliases": [
+    "Golf Sportsvan",
+    "Golf SV Match"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2014,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2014–2020)",
+     "from": 2014,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Nav",
+      "Match",
+      "GT"
+     ],
+     "engines": [
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.2 TSI 85PS petrol",
+      "1.2 TSI 110PS petrol",
+      "1.4 TSI 125PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.5 TSI EVO 130PS petrol",
+      "1.5 TSI EVO 150PS petrol",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 110PS diesel",
+      "1.6 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Bora",
+   "slug": "bora",
+   "aliases": [
+    "Bora Estate",
+    "Bora Variant"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1999–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "S",
+      "SE",
+      "Sport",
+      "V5",
+      "V6 4Motion"
+     ],
+     "engines": [
+      "1.6 100PS petrol",
+      "1.6 105PS petrol",
+      "2.0 115PS petrol",
+      "1.8 Turbo 150PS petrol",
+      "2.3 V5 150PS petrol",
+      "2.3 V5 170PS petrol",
+      "2.8 V6 204PS petrol",
+      "1.9 SDI 68PS diesel",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 115PS diesel",
+      "1.9 TDI 130PS diesel",
+      "1.9 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Jetta",
+   "slug": "jetta",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2005,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Mk5 (2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "1.6 102PS petrol",
+      "1.6 FSI 115PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.4 TSI 140PS petrol",
+      "1.4 TSI 170PS petrol",
+      "2.0 FSI 150PS petrol",
+      "2.0 TFSI 200PS petrol",
+      "1.9 TDI 105PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk6 (2011–2018)",
+     "from": 2011,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Nav",
+      "Sport",
+      "GT",
+      "GT Sport"
+     ],
+     "engines": [
+      "1.2 TSI 105PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.4 TSI 125PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.6 TDI 105PS diesel",
+      "2.0 TDI 110PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Beetle",
+   "slug": "beetle",
+   "aliases": [
+    "New Beetle",
+    "Beetle Cabriolet",
+    "Beetle Convertible",
+    "Beetle Dune"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "New Beetle (1999–2010)",
+     "from": 2000,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Beetle",
+      "Luna",
+      "Sport"
+     ],
+     "engines": [
+      "1.4 75PS petrol",
+      "1.6 102PS petrol",
+      "2.0 115PS petrol",
+      "1.8 Turbo 150PS petrol",
+      "2.3 V5 150PS petrol",
+      "2.3 V5 170PS petrol",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "A5 (2011–2019)",
+     "from": 2012,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Beetle",
+      "Design",
+      "Sport",
+      "Turbo",
+      "Dune",
+      "R-Line",
+      "Black Edition",
+      "Design Plus",
+      "Final Edition"
+     ],
+     "engines": [
+      "1.2 TSI 105PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.4 TSI 160PS petrol",
+      "2.0 TSI 200PS petrol",
+      "2.0 TSI 220PS petrol",
+      "1.6 TDI 105PS diesel",
+      "2.0 TDI 110PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Scirocco",
+   "slug": "scirocco",
+   "aliases": [
+    "Scirocco R",
+    "Scirocco GTS"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2008,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "Mk3 (2008–2017)",
+     "from": 2008,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Scirocco",
+      "GT",
+      "GTS",
+      "R-Line",
+      "Match",
+      "R",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.4 TSI 122PS petrol",
+      "1.4 TSI 125PS petrol",
+      "1.4 TSI 160PS petrol",
+      "2.0 TSI 200PS petrol",
+      "2.0 TSI 210PS petrol",
+      "2.0 TSI 220PS petrol",
+      "2.0 TSI R 265PS petrol",
+      "2.0 TSI R 280PS petrol",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.0 TDI 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Eos",
+   "slug": "eos",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2006,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2015)",
+     "from": 2006,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Eos",
+      "Sport",
+      "SE",
+      "Exclusive",
+      "GT"
+     ],
+     "engines": [
+      "1.6 FSI 115PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.4 TSI 160PS petrol",
+      "2.0 FSI 150PS petrol",
+      "2.0 TFSI 200PS petrol",
+      "2.0 TFSI 210PS petrol",
+      "3.2 V6 250PS petrol",
+      "2.0 TDI 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Passat",
+   "slug": "passat",
+   "aliases": [
+    "Passat Estate",
+    "Passat Variant",
+    "Passat Alltrack",
+    "Passat GTE",
+    "Passat R36",
+    "Passat W8"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "B5.5 (2000–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Highline",
+      "V5",
+      "V6 4Motion",
+      "W8"
+     ],
+     "engines": [
+      "1.6 102PS petrol",
+      "2.0 115PS petrol",
+      "2.0 130PS petrol",
+      "1.8 Turbo 150PS petrol",
+      "1.8 Turbo 170PS petrol",
+      "2.3 V5 170PS petrol",
+      "2.8 V6 193PS petrol",
+      "4.0 W8 275PS petrol",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 115PS diesel",
+      "1.9 TDI 130PS diesel",
+      "2.0 TDI 136PS diesel",
+      "2.5 V6 TDI 150PS diesel",
+      "2.5 V6 TDI 163PS diesel",
+      "2.5 V6 TDI 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B6 (2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Highline",
+      "GT",
+      "BlueMotion",
+      "R36"
+     ],
+     "engines": [
+      "1.6 102PS petrol",
+      "1.6 FSI 115PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.8 TSI 160PS petrol",
+      "2.0 FSI 150PS petrol",
+      "2.0 TFSI 200PS petrol",
+      "3.2 V6 FSI 250PS petrol",
+      "3.6 V6 R36 300PS petrol",
+      "1.9 TDI 105PS diesel",
+      "1.6 TDI 105PS diesel",
+      "2.0 TDI 110PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B7 (2010–2014)",
+     "from": 2011,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Highline",
+      "Executive",
+      "R-Line",
+      "Alltrack",
+      "BlueMotion"
+     ],
+     "engines": [
+      "1.4 TSI 122PS petrol",
+      "1.8 TSI 160PS petrol",
+      "2.0 TSI 210PS petrol",
+      "1.6 TDI 105PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.0 TDI 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B8 (2014–2023; facelift 2019)",
+     "from": 2015,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Business",
+      "SE Nav",
+      "Sport",
+      "GT",
+      "R-Line",
+      "R-Line Edition",
+      "Executive",
+      "Alltrack",
+      "GTE",
+      "GTE Advance"
+     ],
+     "engines": [
+      "1.4 TSI 125PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.5 TSI EVO 150PS petrol",
+      "1.8 TSI 180PS petrol",
+      "2.0 TSI 220PS petrol",
+      "2.0 TSI 280PS petrol",
+      "1.4 TSI GTE 218PS plug-in-hybrid",
+      "1.6 TDI 120PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.0 BiTDI 240PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B9 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Elegance",
+      "R-Line"
+     ],
+     "engines": [
+      "1.5 eTSI 150PS mild-hybrid petrol",
+      "1.5 TSI eHybrid 204PS plug-in-hybrid",
+      "1.5 TSI eHybrid 272PS plug-in-hybrid",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 193PS diesel"
+     ],
+     "fuels": [
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CC",
+   "slug": "cc",
+   "aliases": [
+    "Passat CC"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2008,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "Passat CC / CC (2008–2017)",
+     "from": 2008,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "CC",
+      "GT",
+      "Sport",
+      "R-Line",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.8 TSI 160PS petrol",
+      "2.0 TSI 200PS petrol",
+      "2.0 TSI 210PS petrol",
+      "3.6 V6 FSI 300PS petrol",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.0 TDI 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Arteon",
+   "slug": "arteon",
+   "aliases": [
+    "Arteon Shooting Brake",
+    "Arteon R",
+    "Arteon eHybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2017,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2017–2024; facelift 2020)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "fastback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "shooting-brake",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Elegance",
+      "R-Line",
+      "R-Line Edition",
+      "Black Edition",
+      "R"
+     ],
+     "engines": [
+      "1.5 TSI EVO 150PS petrol",
+      "2.0 TSI 190PS petrol",
+      "2.0 TSI 280PS petrol",
+      "2.0 TSI R 320PS petrol",
+      "1.4 TSI eHybrid 218PS plug-in-hybrid",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.0 TDI 200PS diesel",
+      "2.0 BiTDI 240PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Phaeton",
+   "slug": "phaeton",
+   "aliases": [
+    "Phaeton LWB",
+    "Phaeton W12"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2003,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2002–2016)",
+     "from": 2003,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Phaeton",
+      "LWB"
+     ],
+     "engines": [
+      "3.2 V6 241PS petrol",
+      "4.2 V8 335PS petrol",
+      "6.0 W12 420PS petrol",
+      "6.0 W12 450PS petrol",
+      "3.0 V6 TDI 225PS diesel",
+      "3.0 V6 TDI 233PS diesel",
+      "3.0 V6 TDI 240PS diesel",
+      "5.0 V10 TDI 313PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sharan",
+   "slug": "sharan",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1995–2010)",
+     "from": 2000,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Executive"
+     ],
+     "engines": [
+      "2.0 115PS petrol",
+      "1.8 Turbo 150PS petrol",
+      "2.8 V6 204PS petrol",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 115PS diesel",
+      "1.9 TDI 130PS diesel",
+      "1.9 TDI 150PS diesel",
+      "2.0 TDI 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2010–2022)",
+     "from": 2010,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Nav",
+      "SEL",
+      "Executive"
+     ],
+     "engines": [
+      "1.4 TSI 150PS petrol",
+      "2.0 TDI 115PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.0 TDI 177PS diesel",
+      "2.0 TDI 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Touran",
+   "slug": "touran",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2003,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2003–2015)",
+     "from": 2003,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Match",
+      "Highline"
+     ],
+     "engines": [
+      "1.6 102PS petrol",
+      "1.6 FSI 115PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.4 TSI 140PS petrol",
+      "1.4 TSI 170PS petrol",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 105PS diesel",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2015–2022)",
+     "from": 2015,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Family",
+      "SEL",
+      "R-Line"
+     ],
+     "engines": [
+      "1.2 TSI 110PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.5 TSI EVO 150PS petrol",
+      "1.6 TDI 110PS diesel",
+      "1.6 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tiguan",
+   "slug": "tiguan",
+   "aliases": [
+    "Tiguan R",
+    "Tiguan eHybrid",
+    "Tiguan R-Line"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2008,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2007–2016)",
+     "from": 2008,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Escape",
+      "Match",
+      "R-Line",
+      "Track & Field",
+      "Track & Style",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.4 TSI 150PS petrol",
+      "1.4 TSI 160PS petrol",
+      "2.0 TSI 170PS petrol",
+      "2.0 TSI 180PS petrol",
+      "2.0 TSI 200PS petrol",
+      "2.0 TSI 210PS petrol",
+      "2.0 TDI 110PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.0 TDI 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2016–2024; facelift 2020)",
+     "from": 2016,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Nav",
+      "SEL",
+      "Match",
+      "R-Line",
+      "R-Line Tech",
+      "Active",
+      "Life",
+      "Elegance",
+      "Black Edition",
+      "R"
+     ],
+     "engines": [
+      "1.4 TSI 125PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.5 TSI EVO 130PS petrol",
+      "1.5 TSI EVO 150PS petrol",
+      "2.0 TSI 180PS petrol",
+      "2.0 TSI 190PS petrol",
+      "2.0 TSI 220PS petrol",
+      "2.0 TSI 245PS petrol",
+      "2.0 TSI R 320PS petrol",
+      "1.4 TSI eHybrid 245PS plug-in-hybrid",
+      "2.0 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.0 TDI 200PS diesel",
+      "2.0 TDI 240PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Match",
+      "Elegance",
+      "R-Line",
+      "R-Line Edition"
+     ],
+     "engines": [
+      "1.5 eTSI 130PS mild-hybrid petrol",
+      "1.5 eTSI 150PS mild-hybrid petrol",
+      "1.5 TSI eHybrid 204PS plug-in-hybrid",
+      "1.5 TSI eHybrid 272PS plug-in-hybrid",
+      "2.0 TSI 204PS petrol",
+      "2.0 TSI 265PS petrol",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 193PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tiguan Allspace",
+   "slug": "tiguan-allspace",
+   "aliases": [
+    "Tiguan Allspace 7-seat"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2018,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2017–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Nav",
+      "SEL",
+      "Match",
+      "R-Line",
+      "R-Line Tech",
+      "Life",
+      "Elegance",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.4 TSI 150PS petrol",
+      "1.5 TSI EVO 150PS petrol",
+      "2.0 TSI 190PS petrol",
+      "2.0 TSI 245PS petrol",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.0 TDI 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tayron",
+   "slug": "tayron",
+   "aliases": [
+    "Tayron eHybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Elegance",
+      "R-Line"
+     ],
+     "engines": [
+      "1.5 eTSI 150PS mild-hybrid petrol",
+      "1.5 TSI eHybrid 204PS plug-in-hybrid",
+      "1.5 TSI eHybrid 272PS plug-in-hybrid",
+      "2.0 TSI 204PS petrol",
+      "2.0 TSI 265PS petrol",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 193PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Touareg",
+   "slug": "touareg",
+   "aliases": [
+    "Touareg R",
+    "Touareg R50",
+    "Touareg V10"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2003,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2002–2010)",
+     "from": 2003,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Altitude",
+      "Escape",
+      "R50",
+      "V10"
+     ],
+     "engines": [
+      "3.2 V6 220PS petrol",
+      "3.2 V6 241PS petrol",
+      "3.6 V6 FSI 280PS petrol",
+      "4.2 V8 310PS petrol",
+      "4.2 V8 350PS petrol",
+      "6.0 W12 450PS petrol",
+      "2.5 R5 TDI 174PS diesel",
+      "3.0 V6 TDI 225PS diesel",
+      "3.0 V6 TDI 240PS diesel",
+      "5.0 V10 TDI 313PS diesel",
+      "5.0 V10 TDI 350PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2010–2018)",
+     "from": 2010,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Altitude",
+      "Escape",
+      "R-Line",
+      "R-Line Plus"
+     ],
+     "engines": [
+      "3.0 V6 TDI 204PS diesel",
+      "3.0 V6 TDI 240PS diesel",
+      "3.0 V6 TDI 245PS diesel",
+      "3.0 V6 TDI 262PS diesel",
+      "4.2 V8 TDI 340PS diesel",
+      "3.0 V6 TSI Hybrid 380PS hybrid"
+     ],
+     "fuels": [
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2018–present; facelift 2024)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SEL",
+      "R-Line",
+      "R-Line Tech",
+      "Black Edition",
+      "Elegance",
+      "R"
+     ],
+     "engines": [
+      "3.0 V6 TDI 231PS diesel",
+      "3.0 V6 TDI 286PS diesel",
+      "3.0 V6 TSI 340PS petrol",
+      "3.0 V6 TSI eHybrid 381PS plug-in-hybrid",
+      "3.0 V6 TSI eHybrid 462PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "T-Roc",
+   "slug": "t-roc",
+   "aliases": [
+    "T-Roc R",
+    "TRoc",
+    "T Roc"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2017–2025; facelift 2022)",
+     "from": 2017,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Nav",
+      "SEL",
+      "Design",
+      "R-Line",
+      "Life",
+      "Style",
+      "Active",
+      "Match",
+      "Black Edition",
+      "R",
+      "R Black Edition"
+     ],
+     "engines": [
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.5 TSI EVO 150PS petrol",
+      "2.0 TSI 190PS petrol",
+      "2.0 TSI R 300PS petrol",
+      "1.6 TDI 115PS diesel",
+      "2.0 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2025–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Style",
+      "R-Line"
+     ],
+     "engines": [
+      "1.5 eTSI 116PS mild-hybrid petrol",
+      "1.5 eTSI 150PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "T-Roc Cabriolet",
+   "slug": "t-roc-cabriolet",
+   "aliases": [
+    "T-Roc Convertible"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2020,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2020–2025)",
+     "from": 2020,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "R-Line",
+      "Style",
+      "Black Edition",
+      "R-Line Edition"
+     ],
+     "engines": [
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.5 TSI EVO 150PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "T-Cross",
+   "slug": "t-cross",
+   "aliases": [
+    "TCross",
+    "T Cross"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2019–present; facelift 2024)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SEL",
+      "R-Line",
+      "United",
+      "Active",
+      "Life",
+      "Style",
+      "Match",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.5 TSI EVO 150PS petrol",
+      "1.6 TDI 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Taigo",
+   "slug": "taigo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Style",
+      "R-Line",
+      "Match",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.5 TSI EVO 150PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ID.3",
+   "slug": "id-3",
+   "aliases": [
+    "ID3",
+    "ID 3",
+    "ID.3 GTX"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2020–present; facelift 2023)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1st Edition",
+      "Life",
+      "Business",
+      "Family",
+      "Style",
+      "Tech",
+      "Max",
+      "Pure",
+      "Pro",
+      "Pro S",
+      "Match",
+      "GTX",
+      "GTX Performance"
+     ],
+     "engines": [
+      "45kWh 150PS electric",
+      "52kWh 170PS electric",
+      "58kWh 204PS electric",
+      "59kWh 204PS electric",
+      "77kWh 204PS electric",
+      "77kWh 231PS electric",
+      "79kWh 286PS electric",
+      "79kWh 326PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ID.4",
+   "slug": "id-4",
+   "aliases": [
+    "ID4",
+    "ID 4",
+    "ID.4 GTX"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1st Edition",
+      "Life",
+      "Style",
+      "Family",
+      "Tech",
+      "Max",
+      "Pure",
+      "Pro",
+      "Pro S",
+      "Match",
+      "GTX"
+     ],
+     "engines": [
+      "52kWh 148PS electric",
+      "52kWh 170PS electric",
+      "77kWh 174PS electric",
+      "77kWh 204PS electric",
+      "77kWh 286PS electric",
+      "77kWh 299PS electric",
+      "77kWh 340PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ID.5",
+   "slug": "id-5",
+   "aliases": [
+    "ID5",
+    "ID 5",
+    "ID.5 GTX"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Style",
+      "Tech",
+      "Pro",
+      "Pro S",
+      "Match",
+      "GTX"
+     ],
+     "engines": [
+      "77kWh 174PS electric",
+      "77kWh 204PS electric",
+      "77kWh 286PS electric",
+      "77kWh 299PS electric",
+      "77kWh 340PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ID.7",
+   "slug": "id-7",
+   "aliases": [
+    "ID7",
+    "ID 7",
+    "ID.7 Tourer",
+    "ID.7 GTX"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pro Match",
+      "Pro S Match",
+      "GTX"
+     ],
+     "engines": [
+      "77kWh 286PS electric",
+      "86kWh 286PS electric",
+      "86kWh 340PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ID. Buzz",
+   "slug": "id-buzz",
+   "aliases": [
+    "ID Buzz",
+    "ID.Buzz",
+    "ID. Buzz LWB",
+    "ID. Buzz GTX"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "1st Edition",
+      "Life",
+      "Style",
+      "Pro",
+      "GTX"
+     ],
+     "engines": [
+      "77kWh 204PS electric",
+      "79kWh 286PS electric",
+      "86kWh 286PS electric",
+      "86kWh 340PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Caddy",
+   "slug": "caddy",
+   "aliases": [
+    "Caddy Maxi",
+    "Caddy Cargo",
+    "Caddy Kombi",
+    "Caddy C20",
+    "e-Caddy",
+    "Caddy Maxi Cargo"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (1995–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.4 60PS petrol",
+      "1.9 SDI 64PS diesel",
+      "1.9 TDI 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk3 (2004–2015; facelift 2010)",
+     "from": 2004,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "C20",
+      "Startline",
+      "Trendline",
+      "Highline",
+      "Sportline",
+      "Kombi",
+      "BlueMotion"
+     ],
+     "engines": [
+      "1.4 80PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.9 SDI 69PS diesel",
+      "2.0 SDI 70PS diesel",
+      "1.9 TDI 105PS diesel",
+      "1.6 TDI 75PS diesel",
+      "1.6 TDI 102PS diesel",
+      "2.0 TDI 110PS diesel",
+      "2.0 TDI 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 (2015–2020)",
+     "from": 2015,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Startline",
+      "Trendline",
+      "Highline",
+      "Kombi",
+      "Black Edition",
+      "BlueMotion"
+     ],
+     "engines": [
+      "1.0 TSI 102PS petrol",
+      "1.4 TSI 125PS petrol",
+      "2.0 TDI 75PS diesel",
+      "2.0 TDI 102PS diesel",
+      "2.0 TDI 122PS diesel",
+      "2.0 TDI 150PS diesel",
+      "37.3kWh 112PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk5 (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Commerce",
+      "Commerce Plus",
+      "Commerce Pro"
+     ],
+     "engines": [
+      "1.5 TSI 114PS petrol",
+      "2.0 TDI 75PS diesel",
+      "2.0 TDI 102PS diesel",
+      "2.0 TDI 122PS diesel",
+      "1.5 TSI eHybrid 150PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Caddy Life",
+   "slug": "caddy-life",
+   "aliases": [
+    "Caddy Maxi Life",
+    "Caddy Life 7-seat",
+    "Caddy California"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2005,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk3 (2004–2015)",
+     "from": 2005,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Maxi Life"
+     ],
+     "engines": [
+      "1.4 80PS petrol",
+      "1.6 102PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.9 TDI 105PS diesel",
+      "1.6 TDI 102PS diesel",
+      "2.0 TDI 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 (2015–2020)",
+     "from": 2015,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Maxi Life",
+      "C20 Life"
+     ],
+     "engines": [
+      "1.0 TSI 102PS petrol",
+      "1.4 TSI 125PS petrol",
+      "2.0 TDI 102PS diesel",
+      "2.0 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk5 (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Style",
+      "Maxi Life"
+     ],
+     "engines": [
+      "1.5 TSI 114PS petrol",
+      "2.0 TDI 122PS diesel",
+      "1.5 TSI eHybrid 150PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Transporter",
+   "slug": "transporter",
+   "aliases": [
+    "Transporter Kombi",
+    "Transporter T28",
+    "Transporter T30",
+    "Transporter T32",
+    "e-Transporter",
+    "Transporter Sportline",
+    "T5",
+    "T6",
+    "T6.1"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "T4 (1990–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.0 84PS petrol",
+      "2.8 VR6 204PS petrol",
+      "1.9 TD 68PS diesel",
+      "2.4 D 78PS diesel",
+      "2.5 TDI 88PS diesel",
+      "2.5 TDI 102PS diesel",
+      "2.5 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T5 (2003–2015; T5.1 2009)",
+     "from": 2003,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Startline",
+      "Trendline",
+      "Highline",
+      "Sportline",
+      "Kombi"
+     ],
+     "engines": [
+      "3.2 V6 235PS petrol",
+      "1.9 TDI 86PS diesel",
+      "1.9 TDI 105PS diesel",
+      "2.5 TDI 130PS diesel",
+      "2.5 TDI 174PS diesel",
+      "2.0 TDI 84PS diesel",
+      "2.0 TDI 102PS diesel",
+      "2.0 TDI 114PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 BiTDI 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T6 (2015–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Startline",
+      "Trendline",
+      "Highline",
+      "Sportline",
+      "Kombi",
+      "Black Edition"
+     ],
+     "engines": [
+      "2.0 TSI 150PS petrol",
+      "2.0 TSI 204PS petrol",
+      "2.0 TDI 84PS diesel",
+      "2.0 TDI 102PS diesel",
+      "2.0 TDI 114PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 BiTDI 204PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T6.1 (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Startline",
+      "Trendline",
+      "Highline",
+      "Sportline",
+      "Kombi",
+      "Black Edition",
+      "Edition"
+     ],
+     "engines": [
+      "2.0 TDI 90PS diesel",
+      "2.0 TDI 110PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 199PS diesel",
+      "37.3kWh 112PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T7 (2024–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Commerce",
+      "Commerce Plus",
+      "Commerce Pro",
+      "Sportline"
+     ],
+     "engines": [
+      "2.0 TDI 110PS diesel",
+      "2.0 TDI 136PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.5 PHEV 232PS plug-in-hybrid",
+      "64kWh 116PS electric",
+      "64kWh 136PS electric",
+      "64kWh 218PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Caravelle",
+   "slug": "caravelle",
+   "aliases": [
+    "Transporter Caravelle",
+    "Shuttle",
+    "Transporter Shuttle"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "T4 (1990–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "Caravelle"
+     ],
+     "engines": [
+      "2.8 VR6 204PS petrol",
+      "2.5 TDI 102PS diesel",
+      "2.5 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "T5 (2003–2015)",
+     "from": 2003,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Executive"
+     ],
+     "engines": [
+      "3.2 V6 235PS petrol",
+      "2.5 TDI 130PS diesel",
+      "2.5 TDI 174PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 BiTDI 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T6 (2015–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Executive"
+     ],
+     "engines": [
+      "2.0 TSI 204PS petrol",
+      "2.0 TDI 150PS diesel",
+      "2.0 BiTDI 204PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T6.1 (2019–2022)",
+     "from": 2019,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Executive"
+     ],
+     "engines": [
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 199PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Multivan",
+   "slug": "multivan",
+   "aliases": [
+    "Multivan eHybrid",
+    "Multivan LWB",
+    "T7 Multivan"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "T7 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Style",
+      "Energetic",
+      "Edition",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.5 TSI 136PS petrol",
+      "2.0 TSI 204PS petrol",
+      "2.0 TDI 150PS diesel",
+      "1.4 TSI eHybrid 218PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "California",
+   "slug": "california",
+   "aliases": [
+    "California Ocean",
+    "California Beach",
+    "California Coast",
+    "Transporter California"
+   ],
+   "vehicleType": "camper",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2005,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "T5 (2005–2015)",
+     "from": 2005,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "camper",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Beach",
+      "SE",
+      "SE Comfortline"
+     ],
+     "engines": [
+      "2.5 TDI 130PS diesel",
+      "2.5 TDI 174PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 180PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T6 (2015–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "camper",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Beach",
+      "Ocean",
+      "Coast"
+     ],
+     "engines": [
+      "2.0 TDI 102PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 204PS diesel",
+      "2.0 TSI 150PS petrol",
+      "2.0 TSI 204PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T6.1 (2019–2024)",
+     "from": 2020,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "camper",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Beach",
+      "Beach Tour",
+      "Beach Camper",
+      "Coast",
+      "Ocean"
+     ],
+     "engines": [
+      "2.0 TDI 110PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 199PS diesel",
+      "2.0 TSI 204PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T7 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "camper",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Beach Tour",
+      "Beach Camper",
+      "Coast",
+      "Ocean"
+     ],
+     "engines": [
+      "2.0 TDI 150PS diesel",
+      "2.0 TSI 204PS petrol",
+      "1.5 TSI eHybrid 245PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Grand California",
+   "slug": "grand-california",
+   "aliases": [
+    "Grand California 600",
+    "Grand California 680",
+    "Grand Cali"
+   ],
+   "vehicleType": "camper",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Crafter-based (2019–present)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "camper",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      {
+       "name": "600",
+       "engines": [
+        "2.0 TDI 177PS diesel"
+       ]
+      },
+      {
+       "name": "680",
+       "engines": [
+        "2.0 TDI 177PS diesel",
+        "2.0 TDI 4MOTION 177PS diesel"
+       ]
+      }
+     ],
+     "engines": [
+      "2.0 TDI 177PS diesel",
+      "2.0 TDI 4MOTION 177PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Factory motorhome on the Crafter Mk2 (8-speed automatic, front-wheel drive; 4MOTION optional on the 680). 600 (6.0 m, 3.5 t, up to 4 berths with the optional cab bunk); 680 (6.8 m, 2 berths) is plated at 3.88 t in the UK, so needs a C1 licence. Four belted travel seats."
+    }
+   ]
+  },
+  {
+   "name": "LT",
+   "slug": "lt",
+   "aliases": [
+    "LT28",
+    "LT35",
+    "LT46"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "Mk2 (1996–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 TDI 109PS diesel",
+      "2.8 TDI 158PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "LT Minibus",
+   "slug": "lt-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "Mk2 (1996–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        14,
+        15
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 TDI 109PS diesel",
+      "2.8 TDI 158PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Crafter",
+   "slug": "crafter",
+   "aliases": [
+    "Crafter CR30",
+    "Crafter CR35",
+    "Crafter CR50",
+    "e-Crafter",
+    "Crafter Luton",
+    "Crafter Tipper"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2006,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2017)",
+     "from": 2006,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 TDI 88PS diesel",
+      "2.5 TDI 109PS diesel",
+      "2.5 TDI 136PS diesel",
+      "2.5 TDI 163PS diesel",
+      "2.0 TDI 109PS diesel",
+      "2.0 TDI 136PS diesel",
+      "2.0 TDI 163PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2017–present)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Startline",
+      "Trendline",
+      "Highline",
+      "Commerce",
+      "Commerce Plus"
+     ],
+     "engines": [
+      "2.0 TDI 102PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 163PS diesel",
+      "2.0 TDI 177PS diesel",
+      "35.8kWh 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Crafter Minibus",
+   "slug": "crafter-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2006,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2017)",
+     "from": 2006,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 TDI 88PS diesel",
+      "2.5 TDI 109PS diesel",
+      "2.5 TDI 136PS diesel",
+      "2.5 TDI 163PS diesel",
+      "2.0 TDI 109PS diesel",
+      "2.0 TDI 136PS diesel",
+      "2.0 TDI 163PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2017–present)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "Startline",
+      "Trendline",
+      "Highline",
+      "Commerce",
+      "Commerce Plus"
+     ],
+     "engines": [
+      "2.0 TDI 102PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 163PS diesel",
+      "2.0 TDI 177PS diesel",
+      "35.8kWh 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ID. Buzz Cargo",
+   "slug": "id-buzz-cargo",
+   "aliases": [
+    "ID Buzz Cargo",
+    "ID.Buzz Cargo"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "Commerce",
+      "Commerce Plus"
+     ],
+     "engines": [
+      "77kWh 204PS electric",
+      "79kWh 286PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Amarok",
+   "slug": "amarok",
+   "aliases": [
+    "Amarok Aventura",
+    "Amarok Double Cab",
+    "Amarok PanAmericana"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2011,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2010–2020; facelift 2016)",
+     "from": 2011,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        2,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Startline",
+      "Trendline",
+      "Highline",
+      "Atacama",
+      "Canyon",
+      "Ultimate",
+      "Aventura",
+      "Black Edition",
+      "Highline Plus"
+     ],
+     "engines": [
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 163PS diesel",
+      "2.0 TDI 180PS diesel",
+      "2.0 BiTDI 180PS diesel",
+      "3.0 V6 TDI 204PS diesel",
+      "3.0 V6 TDI 224PS diesel",
+      "3.0 V6 TDI 258PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2022–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Startline",
+      "Life",
+      "Style",
+      "PanAmericana",
+      "Aventura",
+      "Black Edition"
+     ],
+     "engines": [
+      "2.0 TDI 170PS diesel",
+      "2.0 TDI 205PS diesel",
+      "3.0 V6 TDI 240PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

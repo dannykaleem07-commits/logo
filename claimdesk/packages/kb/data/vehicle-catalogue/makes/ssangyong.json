@@ -1,0 +1,859 @@
+{
+ "make": "SsangYong",
+ "slug": "ssangyong",
+ "dvlaNames": [
+  "SSANGYONG",
+  "SSANG YONG",
+  "KGM",
+  "KGM MOBILITY"
+ ],
+ "aliases": [
+  "KGM",
+  "KGM Mobility",
+  "KGM SsangYong",
+  "Ssang Yong"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Musso",
+   "slug": "musso",
+   "aliases": [
+    "Musso Sports",
+    "Musso Rhino",
+    "Musso Saracen",
+    "Musso Rebel",
+    "Musso LWB",
+    "Musso Grand"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "FJ SUV (1993–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.3 16v 150PS petrol",
+      "3.2 24v 220PS petrol",
+      "2.9 TD 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Musso Sports Q100 (2003–2006)",
+     "from": 2003,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.9 TD 120PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Q200 pick-up (2018–)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "EX",
+      "Rebel",
+      "Saracen",
+      "Rhino"
+     ],
+     "engines": [
+      "2.2 e-XDi 181PS diesel",
+      "2.2 e-XDi 202PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    }
+   ]
+  },
+  {
+   "name": "Korando",
+   "slug": "korando",
+   "aliases": [
+    "Korando C",
+    "Korando e-Motion"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "KJ (1996–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Korando"
+     ],
+     "engines": [
+      "2.3 16v 150PS petrol",
+      "3.2 24v 220PS petrol",
+      "2.9 TD 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "C200 Korando C (2010–2019)",
+     "from": 2010,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SX",
+      "EX",
+      "ELX"
+     ],
+     "engines": [
+      "2.0 e-XGi 149PS petrol",
+      "2.0 e-XDi 149PS diesel",
+      "2.0 e-XDi 175PS diesel",
+      "2.2 e-XDi 178PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C300 (2019–)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "EX",
+      "ELX",
+      "Ultimate",
+      "Pioneer",
+      "Ventura"
+     ],
+     "engines": [
+      "1.5 T-GDi 163PS petrol",
+      "1.6 e-XDi 136PS diesel",
+      "61.5kWh 190PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Rexton",
+   "slug": "rexton",
+   "aliases": [
+    "Rexton II",
+    "Rexton W",
+    "RX270"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2002,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Y200 (2002–2006)",
+     "from": 2002,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Rexton"
+     ],
+     "engines": [
+      "3.2 24v 220PS petrol",
+      "2.7 Xdi 165PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Y250 Rexton II (2006–2012)",
+     "from": 2006,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Rexton"
+     ],
+     "engines": [
+      "2.7 Xdi 165PS diesel",
+      "2.7 Xdi 186PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Y290 Rexton W (2013–2017)",
+     "from": 2013,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "EX",
+      "ELX"
+     ],
+     "engines": [
+      "2.0 e-XDi 155PS diesel",
+      "2.2 e-XDi 178PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Y400 (2017–)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "EX",
+      "ELX",
+      "Ultimate",
+      "Ventura"
+     ],
+     "engines": [
+      "2.2 e-XDi 181PS diesel",
+      "2.2 e-XDi 202PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Kyron",
+   "slug": "kyron",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2005,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "D100 (2005–2012)",
+     "from": 2005,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "EX"
+     ],
+     "engines": [
+      "2.0 Xdi 141PS diesel",
+      "2.7 Xdi 165PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Actyon",
+   "slug": "actyon",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2006,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "C100 (2006–2011)",
+     "from": 2006,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE"
+     ],
+     "engines": [
+      "2.0 Xdi 141PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "J120 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Actyon"
+     ],
+     "engines": [
+      "1.5 T-GDi 163PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Actyon Sports",
+   "slug": "actyon-sports",
+   "aliases": [],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2007,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Q150 (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE"
+     ],
+     "engines": [
+      "2.0 Xdi 141PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Korando Sports",
+   "slug": "korando-sports",
+   "aliases": [],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2012,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Q150 (2012–2018)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "EX"
+     ],
+     "engines": [
+      "2.0 e-XDi 155PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Rodius",
+   "slug": "rodius",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2005,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "A100 (2005–2013)",
+     "from": 2005,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Rodius"
+     ],
+     "engines": [
+      "2.7 Xdi 165PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Turismo",
+   "slug": "turismo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2013,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "A200 (2013–2018)",
+     "from": 2013,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "EX",
+      "ELX"
+     ],
+     "engines": [
+      "2.0 e-XDi 155PS diesel",
+      "2.2 e-XDi 178PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tivoli",
+   "slug": "tivoli",
+   "aliases": [
+    "Tivoli XLV",
+    "Tivoli Grand"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2015,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "X100 (2015–)",
+     "from": 2015,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "EX",
+      "ELX",
+      "Ultimate",
+      "Ventura"
+     ],
+     "engines": [
+      "1.6 e-XGi 128PS petrol",
+      "1.6 e-XDi 115PS diesel",
+      "1.2 T-GDi 128PS petrol",
+      "1.5 T-GDi 163PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "X100 Tivoli XLV (2016–2019)",
+     "from": 2016,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "EX",
+      "ELX"
+     ],
+     "engines": [
+      "1.6 e-XGi 128PS petrol",
+      "1.6 e-XDi 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "X150 Tivoli Grand (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Ventura",
+      "Ultimate"
+     ],
+     "engines": [
+      "1.5 T-GDi 163PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Torres",
+   "slug": "torres",
+   "aliases": [
+    "Torres EVX"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "J100 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "K40",
+      "K50"
+     ],
+     "engines": [
+      "1.5 T-GDi 163PS petrol",
+      "73.4kWh 207PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

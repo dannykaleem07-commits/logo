@@ -200,7 +200,7 @@ describe('every template renders its sample within the perimeter', () => {
       });
 
       it('prints the real company details, never a placeholder office (design doc §H)', () => {
-        expect(html).not.toContain('[registered office]');
+        expect(html).not.toMatch(/\[registered office\]/);
         expect(htmlToText(html)).toContain('44 Syon Lane, Isleworth, London TW7 5NQ');
         expect(htmlToText(html)).toContain('claims@courtesycars.net');
       });

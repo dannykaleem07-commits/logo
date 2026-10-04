@@ -1,0 +1,236 @@
+{
+ "make": "Omoda",
+ "slug": "omoda",
+ "dvlaNames": [
+  "OMODA",
+  "CHERY OMODA"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "5",
+   "slug": "5",
+   "aliases": [
+    "Omoda 5",
+    "O5",
+    "C5",
+    "5 SHS-H",
+    "Omoda 5 SHS-H"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Launch spec (2024–2025)",
+     "from": 2024,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Knight",
+      "Noble"
+     ],
+     "engines": [
+      "1.6 TGDI 186PS petrol",
+      "1.6 TGDI 147PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Knight",
+      "Noble"
+     ],
+     "engines": [
+      "1.6 TGDI 147PS petrol",
+      "1.5 TGDI SHS-H 224PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "E5",
+   "slug": "e5",
+   "aliases": [
+    "Omoda E5"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Knight",
+      "Noble"
+     ],
+     "engines": [
+      "61kWh 204PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "7",
+   "slug": "7",
+   "aliases": [
+    "Omoda 7",
+    "C7",
+    "7 SHS-P",
+    "Omoda 7 SHS-P"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Knight",
+      "Noble",
+      "Noble Tech"
+     ],
+     "engines": [
+      "1.6 TGDI 147PS petrol",
+      "1.5 TGDI SHS-P 204PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "9",
+   "slug": "9",
+   "aliases": [
+    "Omoda 9",
+    "9 SHS",
+    "9 SHS-P",
+    "Omoda 9 SHS-P"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Noble",
+      "Black Noble"
+     ],
+     "engines": [
+      "1.5 TGDI SHS-P AWD 449PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

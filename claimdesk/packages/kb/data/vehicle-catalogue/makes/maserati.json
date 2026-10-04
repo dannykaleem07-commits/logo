@@ -1,0 +1,680 @@
+{
+ "make": "Maserati",
+ "slug": "maserati",
+ "dvlaNames": [
+  "MASERATI"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "3200 GT",
+   "slug": "3200-gt",
+   "aliases": [
+    "3200GT",
+    "3200 GTA",
+    "3200 GT Assetto Corsa"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "3200 GT (1998–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "3200 GT",
+      "3200 GTA",
+      "Assetto Corsa"
+     ],
+     "engines": [
+      "3.2 V8 twin-turbo 370PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Coupe",
+   "slug": "coupe",
+   "aliases": [
+    "4200 GT",
+    "Coupe GT",
+    "Coupe Cambiocorsa",
+    "GranSport",
+    "Coupe 4200"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2002,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "Coupé / GranSport (2002–2007)",
+     "from": 2002,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Coupe GT",
+      "Coupe Cambiocorsa",
+      "GranSport",
+      "GranSport MC Victory"
+     ],
+     "engines": [
+      "4.2 V8 390PS petrol",
+      "4.2 V8 400PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Spyder",
+   "slug": "spyder",
+   "aliases": [
+    "Spyder GT",
+    "Spyder Cambiocorsa",
+    "GranSport Spyder",
+    "Spyder 4200"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2002,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "Spyder / GranSport Spyder (2002–2007)",
+     "from": 2002,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Spyder GT",
+      "Spyder Cambiocorsa",
+      "GranSport Spyder"
+     ],
+     "engines": [
+      "4.2 V8 390PS petrol",
+      "4.2 V8 400PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Quattroporte",
+   "slug": "quattroporte",
+   "aliases": [
+    "Quattroporte S",
+    "Quattroporte GTS",
+    "Quattroporte Sport GT S",
+    "Quattroporte Diesel",
+    "Quattroporte Trofeo"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2004,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "Quattroporte V (2004–2012)",
+     "from": 2004,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Quattroporte",
+      "DuoSelect",
+      "Automatica",
+      "Executive GT",
+      "Sport GT",
+      "Quattroporte S",
+      "Sport GT S",
+      "GTS"
+     ],
+     "engines": [
+      "4.2 V8 400PS petrol",
+      "4.7 V8 430PS petrol",
+      "4.7 V8 440PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Quattroporte VI (2013–2023)",
+     "from": 2013,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Quattroporte Diesel",
+      "Quattroporte S",
+      "S Q4",
+      "GTS",
+      "GranLusso",
+      "GranSport",
+      "Modena",
+      "Trofeo"
+     ],
+     "engines": [
+      "3.0 V6 250PS diesel",
+      "3.0 V6 275PS diesel",
+      "3.0 V6 twin-turbo 350PS petrol",
+      "3.0 V6 twin-turbo 410PS petrol",
+      "3.0 V6 twin-turbo 430PS petrol",
+      "3.8 V8 twin-turbo 530PS petrol",
+      "3.8 V8 twin-turbo 580PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GranTurismo",
+   "slug": "granturismo",
+   "aliases": [
+    "GranCabrio",
+    "Gran Turismo",
+    "GranTurismo S",
+    "GranTurismo MC Stradale",
+    "GranTurismo Folgore",
+    "GranCabrio Folgore"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2007,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "GranTurismo / GranCabrio Mk1 (2007–2019)",
+     "from": 2007,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "GranTurismo",
+      "GranTurismo S",
+      "GranTurismo S Automatic",
+      "GranTurismo Sport",
+      "GranTurismo MC",
+      "MC Stradale",
+      "GranCabrio",
+      "GranCabrio Sport",
+      "GranCabrio MC"
+     ],
+     "engines": [
+      "4.2 V8 405PS petrol",
+      "4.7 V8 440PS petrol",
+      "4.7 V8 460PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "GranTurismo / GranCabrio Mk2 (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Modena",
+      "Trofeo",
+      "Folgore",
+      "GranCabrio Trofeo",
+      "GranCabrio Folgore"
+     ],
+     "engines": [
+      "3.0 V6 Nettuno twin-turbo 490PS petrol",
+      "3.0 V6 Nettuno twin-turbo 550PS petrol",
+      "92.5kWh tri-motor 761PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ghibli",
+   "slug": "ghibli",
+   "aliases": [
+    "Ghibli S",
+    "Ghibli S Q4",
+    "Ghibli Hybrid",
+    "Ghibli Trofeo",
+    "Ghibli Diesel"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2013,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Ghibli (2013–2020)",
+     "from": 2013,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Ghibli",
+      "Ghibli Diesel",
+      "Ghibli S",
+      "Ghibli S Q4",
+      "GranLusso",
+      "GranSport",
+      "Nerissimo"
+     ],
+     "engines": [
+      "3.0 V6 250PS diesel",
+      "3.0 V6 275PS diesel",
+      "3.0 V6 twin-turbo 350PS petrol",
+      "3.0 V6 twin-turbo 410PS petrol",
+      "3.0 V6 twin-turbo 430PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Ghibli facelift (2020–2024)",
+     "from": 2020,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "Hybrid",
+      "Modena",
+      "Modena S",
+      "Trofeo",
+      "Ultima"
+     ],
+     "engines": [
+      "2.0 turbo 330PS mild-hybrid petrol",
+      "3.0 V6 275PS diesel",
+      "3.0 V6 twin-turbo 350PS petrol",
+      "3.0 V6 twin-turbo 430PS petrol",
+      "3.8 V8 twin-turbo 580PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Levante",
+   "slug": "levante",
+   "aliases": [
+    "Levante S",
+    "Levante GTS",
+    "Levante Trofeo",
+    "Levante Hybrid",
+    "Levante Diesel"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2016,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Levante (2016–2024)",
+     "from": 2016,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Levante",
+      "Levante Diesel",
+      "Levante S",
+      "GranLusso",
+      "GranSport",
+      "GT Hybrid",
+      "Modena",
+      "GTS",
+      "Trofeo",
+      "Ultima"
+     ],
+     "engines": [
+      "3.0 V6 275PS diesel",
+      "3.0 V6 twin-turbo 350PS petrol",
+      "3.0 V6 twin-turbo 430PS petrol",
+      "2.0 turbo 330PS mild-hybrid petrol",
+      "3.8 V8 twin-turbo 530PS petrol",
+      "3.8 V8 twin-turbo 580PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "MC20",
+   "slug": "mc20",
+   "aliases": [
+    "MC20 Cielo",
+    "MCPura",
+    "MCPura Cielo"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "MC20 / MC20 Cielo (2021–2024)",
+     "from": 2021,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "MC20",
+      "MC20 Cielo"
+     ],
+     "engines": [
+      "3.0 V6 Nettuno twin-turbo 630PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "MCPura / MCPura Cielo (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "MCPura",
+      "MCPura Cielo"
+     ],
+     "engines": [
+      "3.0 V6 Nettuno twin-turbo 630PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Grecale",
+   "slug": "grecale",
+   "aliases": [
+    "Grecale GT",
+    "Grecale Modena",
+    "Grecale Trofeo",
+    "Grecale Folgore"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Grecale (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "Modena",
+      "Trofeo",
+      "Folgore"
+     ],
+     "engines": [
+      "2.0 turbo 300PS mild-hybrid petrol",
+      "2.0 turbo 330PS mild-hybrid petrol",
+      "3.0 V6 Nettuno twin-turbo 530PS petrol",
+      "105kWh dual-motor 557PS electric"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "petrol",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

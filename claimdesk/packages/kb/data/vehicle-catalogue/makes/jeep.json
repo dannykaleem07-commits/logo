@@ -1,0 +1,894 @@
+{
+ "make": "Jeep",
+ "slug": "jeep",
+ "dvlaNames": [
+  "JEEP"
+ ],
+ "aliases": [
+  "Chrysler Jeep"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Gladiator omitted (left-hand drive only in the UK)."
+ },
+ "models": [
+  {
+   "name": "Avenger",
+   "slug": "avenger",
+   "aliases": [
+    "Avenger e-Hybrid",
+    "Avenger 4xe",
+    "Avenger Electric"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Longitude",
+      "Altitude",
+      "Summit",
+      "1st Edition",
+      "Upland"
+     ],
+     "engines": [
+      "1.2 100PS petrol",
+      "1.2 e-Hybrid 100PS mild-hybrid petrol",
+      "1.2 4xe 136PS mild-hybrid petrol",
+      "54kWh 156PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cherokee",
+   "slug": "cherokee",
+   "aliases": [
+    "Cherokee Trailhawk"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "XJ (1984–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Limited"
+     ],
+     "engines": [
+      "4.0 I6 184PS petrol",
+      "2.5 TD 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "KJ (2001–2007)",
+     "from": 2001,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Limited",
+      "Renegade",
+      "Extreme Sport"
+     ],
+     "engines": [
+      "2.4 150PS petrol",
+      "3.7 V6 204PS petrol",
+      "2.5 CRD 143PS diesel",
+      "2.8 CRD 150PS diesel",
+      "2.8 CRD 163PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "KK (2008–2013)",
+     "from": 2008,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Limited",
+      "Overland"
+     ],
+     "engines": [
+      "3.7 V6 205PS petrol",
+      "2.8 CRD 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "KL (2014–2020, facelift 2019)",
+     "from": 2014,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Longitude",
+      "Longitude+",
+      "Limited",
+      "Trailhawk",
+      "Overland",
+      "Night Eagle"
+     ],
+     "engines": [
+      "3.2 V6 272PS petrol",
+      "2.0 MultiJet 140PS diesel",
+      "2.0 MultiJet 170PS diesel",
+      "2.2 MultiJet 185PS diesel",
+      "2.2 MultiJet 195PS diesel",
+      "2.2 MultiJet 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Commander",
+   "slug": "commander",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2006,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "XK (2006–2010)",
+     "from": 2006,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Limited",
+      "Overland"
+     ],
+     "engines": [
+      "3.0 V6 CRD 218PS diesel",
+      "5.7 V8 HEMI 326PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Compass",
+   "slug": "compass",
+   "aliases": [
+    "Compass 4xe",
+    "Compass e-Hybrid",
+    "Compass Trailhawk"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2007,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "MK49 (2007–2010)",
+     "from": 2007,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Limited"
+     ],
+     "engines": [
+      "2.0 156PS petrol",
+      "2.4 170PS petrol",
+      "2.0 CRD 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "MK49 facelift (2011–2014)",
+     "from": 2011,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Limited"
+     ],
+     "engines": [
+      "2.0 156PS petrol",
+      "2.4 170PS petrol",
+      "2.2 CRD 136PS diesel",
+      "2.2 CRD 163PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "MP (2017–2021)",
+     "from": 2017,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Longitude",
+      "Limited",
+      "Trailhawk",
+      "Opening Edition",
+      "Night Eagle",
+      "S",
+      "80th Anniversary"
+     ],
+     "engines": [
+      "1.4 MultiAir 140PS petrol",
+      "1.4 MultiAir 170PS petrol",
+      "1.3 GSE 150PS petrol",
+      "1.6 MultiJet 120PS diesel",
+      "2.0 MultiJet 140PS diesel",
+      "2.0 MultiJet 170PS diesel",
+      "1.3 4xe 190PS plug-in-hybrid",
+      "1.3 4xe 240PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "MP facelift (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Longitude",
+      "Limited",
+      "Night Eagle",
+      "S",
+      "Trailhawk",
+      "Upland",
+      "Altitude",
+      "Summit",
+      "High Altitude"
+     ],
+     "engines": [
+      "1.3 T4 130PS petrol",
+      "1.3 T4 150PS petrol",
+      "1.6 MultiJet 130PS diesel",
+      "1.5 e-Hybrid 130PS mild-hybrid petrol",
+      "1.3 4xe 190PS plug-in-hybrid",
+      "1.3 4xe 240PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Grand Cherokee",
+   "slug": "grand-cherokee",
+   "aliases": [
+    "Grand Cherokee 4xe",
+    "Grand Cherokee SRT",
+    "Grand Cherokee SRT8"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "WJ (1999–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Laredo",
+      "Limited",
+      "Overland"
+     ],
+     "engines": [
+      "4.0 I6 190PS petrol",
+      "4.7 V8 223PS petrol",
+      "3.1 TD 140PS diesel",
+      "2.7 CRD 163PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "WK (2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Laredo",
+      "Limited",
+      "Overland",
+      "SRT8"
+     ],
+     "engines": [
+      "4.7 V8 235PS petrol",
+      "5.7 V8 HEMI 326PS petrol",
+      "6.1 V8 SRT8 425PS petrol",
+      "3.0 V6 CRD 218PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "WK2 (2011–2020)",
+     "from": 2011,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Laredo",
+      "Limited",
+      "Limited Plus",
+      "Overland",
+      "Summit",
+      "S Limited",
+      "Trailhawk",
+      "Night Eagle",
+      "SRT8",
+      "SRT"
+     ],
+     "engines": [
+      "3.6 V6 286PS petrol",
+      "5.7 V8 HEMI 352PS petrol",
+      "6.4 V8 SRT 468PS petrol",
+      "3.0 V6 CRD 241PS diesel",
+      "3.0 V6 CRD 250PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "WL (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Summit Reserve"
+     ],
+     "engines": [
+      "2.0 4xe 380PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Patriot",
+   "slug": "patriot",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2007,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "MK74 (2007–2011)",
+     "from": 2007,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Limited"
+     ],
+     "engines": [
+      "2.4 170PS petrol",
+      "2.0 CRD 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Renegade",
+   "slug": "renegade",
+   "aliases": [
+    "Renegade 4xe",
+    "Renegade e-Hybrid",
+    "Renegade Trailhawk"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2015,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "BU (2015–2018)",
+     "from": 2015,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Longitude",
+      "Limited",
+      "Trailhawk",
+      "Opening Edition",
+      "Night Eagle"
+     ],
+     "engines": [
+      "1.6 E-torQ 110PS petrol",
+      "1.4 MultiAir 140PS petrol",
+      "1.4 MultiAir 170PS petrol",
+      "1.6 MultiJet 120PS diesel",
+      "2.0 MultiJet 140PS diesel",
+      "2.0 MultiJet 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "BU facelift (2018–)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Longitude",
+      "Limited",
+      "Trailhawk",
+      "Night Eagle",
+      "S",
+      "80th Anniversary",
+      "Upland"
+     ],
+     "engines": [
+      "1.0 GSE 120PS petrol",
+      "1.3 GSE 150PS petrol",
+      "1.6 MultiJet 120PS diesel",
+      "1.6 MultiJet 130PS diesel",
+      "1.5 e-Hybrid 130PS mild-hybrid petrol",
+      "1.3 4xe 190PS plug-in-hybrid",
+      "1.3 4xe 240PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Wrangler",
+   "slug": "wrangler",
+   "aliases": [
+    "Wrangler Unlimited",
+    "Wrangler 4xe",
+    "Wrangler Rubicon"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "TJ (1997–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Sahara",
+      "Renegade"
+     ],
+     "engines": [
+      "2.4 145PS petrol",
+      "4.0 I6 177PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "JK (2007–2018)",
+     "from": 2007,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Sahara",
+      "Rubicon",
+      "Overland",
+      "Polar",
+      "Mountain",
+      "Night Eagle",
+      "Black Edition",
+      "75th Anniversary"
+     ],
+     "engines": [
+      "3.8 V6 199PS petrol",
+      "3.6 V6 284PS petrol",
+      "2.8 CRD 177PS diesel",
+      "2.8 CRD 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "JL (2018–)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Sahara",
+      "Overland",
+      "Rubicon",
+      "Night Eagle",
+      "80th Anniversary"
+     ],
+     "engines": [
+      "2.0 GME 272PS petrol",
+      "2.2 MultiJet 200PS diesel",
+      "2.0 4xe 380PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

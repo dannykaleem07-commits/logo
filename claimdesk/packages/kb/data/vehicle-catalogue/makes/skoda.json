@@ -1,0 +1,1485 @@
+{
+ "make": "Skoda",
+ "slug": "skoda",
+ "dvlaNames": [
+  "SKODA"
+ ],
+ "aliases": [
+  "Škoda"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Felicia",
+   "slug": "felicia",
+   "aliases": [
+    "Felicia Estate"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "6U (1994–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "GLX",
+      "Silverline"
+     ],
+     "engines": [
+      "1.3 MPI 54PS petrol",
+      "1.3 MPI 68PS petrol",
+      "1.6 MPI 75PS petrol",
+      "1.9 D 64PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Fabia",
+   "slug": "fabia",
+   "aliases": [
+    "Fabia Estate",
+    "Fabia Saloon",
+    "Fabia vRS",
+    "Fabia Scout",
+    "Fabia Monte Carlo",
+    "Fabia 130"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 6Y (1999–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Comfort",
+      "Ambiente",
+      "Elegance",
+      "Sport",
+      "vRS"
+     ],
+     "engines": [
+      "1.0 MPI 50PS petrol",
+      "1.2 HTP 55PS petrol",
+      "1.2 HTP 64PS petrol",
+      "1.4 MPI 68PS petrol",
+      "1.4 16v 75PS petrol",
+      "1.4 16v 100PS petrol",
+      "2.0 MPI 115PS petrol",
+      "1.9 SDI 64PS diesel",
+      "1.4 TDI 70PS diesel",
+      "1.4 TDI 75PS diesel",
+      "1.4 TDI 80PS diesel",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 5J (2007–2014; estate to 2015)",
+     "from": 2007,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Level 1",
+      "Level 2",
+      "Level 3",
+      "S",
+      "SE",
+      "Elegance",
+      "Sport",
+      "Monte Carlo",
+      "Scout",
+      "GreenLine",
+      "Black Edition",
+      "vRS"
+     ],
+     "engines": [
+      "1.2 HTP 60PS petrol",
+      "1.2 HTP 70PS petrol",
+      "1.4 16v 86PS petrol",
+      "1.6 16v 105PS petrol",
+      "1.2 TSI 86PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.4 TSI 180PS petrol",
+      "1.2 TDI 75PS diesel",
+      "1.4 TDI 70PS diesel",
+      "1.4 TDI 80PS diesel",
+      "1.6 TDI 75PS diesel",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "1.9 TDI 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 NJ (2014–2021)",
+     "from": 2014,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE L",
+      "SE Drive",
+      "SE Comfort",
+      "SE Technology",
+      "Colour Edition",
+      "Monte Carlo"
+     ],
+     "engines": [
+      "1.0 MPI 60PS petrol",
+      "1.0 MPI 75PS petrol",
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.2 TSI 90PS petrol",
+      "1.2 TSI 110PS petrol",
+      "1.4 TDI 75PS diesel",
+      "1.4 TDI 90PS diesel",
+      "1.4 TDI 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 PJ (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE Comfort",
+      "Colour Edition",
+      "SE L",
+      "Monte Carlo",
+      "130"
+     ],
+     "engines": [
+      "1.0 MPI 80PS petrol",
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.5 TSI 150PS petrol",
+      "1.5 TSI 177PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Roomster",
+   "slug": "roomster",
+   "aliases": [
+    "Roomster Scout"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2006,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "5J (2006–2015)",
+     "from": 2006,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Plus",
+      "Elegance",
+      "Scout",
+      "GreenLine",
+      "Seven"
+     ],
+     "engines": [
+      "1.2 HTP 70PS petrol",
+      "1.4 16v 86PS petrol",
+      "1.6 16v 105PS petrol",
+      "1.2 TSI 86PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.2 TDI 75PS diesel",
+      "1.4 TDI 70PS diesel",
+      "1.4 TDI 80PS diesel",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "1.9 TDI 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Octavia",
+   "slug": "octavia",
+   "aliases": [
+    "Octavia Hatch",
+    "Octavia Estate",
+    "Octavia vRS",
+    "Octavia Scout",
+    "Octavia iV",
+    "Octavia Tour"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 1U (1996–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Ambiente",
+      "Elegance",
+      "SE",
+      "SLX",
+      "Laurin & Klement",
+      "4x4",
+      "vRS"
+     ],
+     "engines": [
+      "1.4 MPI 60PS petrol",
+      "1.4 16v 75PS petrol",
+      "1.6 MPI 75PS petrol",
+      "1.6 MPI 102PS petrol",
+      "2.0 MPI 115PS petrol",
+      "1.8 T 150PS petrol",
+      "1.8 T 180PS petrol",
+      "1.9 SDI 68PS diesel",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 110PS diesel",
+      "1.9 TDI 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 1Z (2004–2013)",
+     "from": 2004,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Ambiente",
+      "Elegance",
+      "Laurin & Klement",
+      "S",
+      "SE",
+      "Scout",
+      "GreenLine",
+      "Black Edition",
+      "vRS"
+     ],
+     "engines": [
+      "1.2 TSI 105PS petrol",
+      "1.4 16v 75PS petrol",
+      "1.4 16v 80PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.6 MPI 102PS petrol",
+      "1.6 FSI 115PS petrol",
+      "1.8 TSI 160PS petrol",
+      "2.0 FSI 150PS petrol",
+      "2.0 TFSI 200PS petrol",
+      "1.6 TDI 105PS diesel",
+      "1.9 TDI 105PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 5E (2013–2020)",
+     "from": 2013,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE L",
+      "SE Technology",
+      "SE Drive",
+      "SE Business",
+      "Elegance",
+      "Laurin & Klement",
+      "Scout",
+      "GreenLine",
+      "vRS",
+      "vRS 230",
+      "vRS 245"
+     ],
+     "engines": [
+      "1.0 TSI 115PS petrol",
+      "1.2 TSI 86PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.2 TSI 110PS petrol",
+      "1.4 TSI 140PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.5 TSI 150PS petrol",
+      "1.8 TSI 180PS petrol",
+      "2.0 TSI 220PS petrol",
+      "2.0 TSI 230PS petrol",
+      "2.0 TSI 245PS petrol",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "1.6 TDI 110PS diesel",
+      "1.6 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 NX (2020–present; facelift 2024)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE First Edition",
+      "SE",
+      "SE Technology",
+      "SE Drive",
+      "SE L",
+      "SE L First Edition",
+      "Sportline",
+      "Laurin & Klement",
+      "Edition",
+      "vRS"
+     ],
+     "engines": [
+      "1.0 TSI 110PS petrol",
+      "1.0 e-TEC 110PS mild-hybrid petrol",
+      "1.5 TSI 115PS petrol",
+      "1.5 TSI 150PS petrol",
+      "1.5 e-TEC 150PS mild-hybrid petrol",
+      "2.0 TSI 190PS petrol",
+      "2.0 TSI 245PS petrol",
+      "2.0 TSI 265PS petrol",
+      "1.4 TSI iV 204PS plug-in-hybrid",
+      "1.4 TSI iV 245PS plug-in-hybrid",
+      "2.0 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Superb",
+   "slug": "superb",
+   "aliases": [
+    "Superb Hatch",
+    "Superb Estate",
+    "Superb iV",
+    "Superb Scout"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2002,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 3U (2002–2008)",
+     "from": 2002,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Comfort",
+      "Elegance",
+      "Laurin & Klement"
+     ],
+     "engines": [
+      "1.8 T 150PS petrol",
+      "2.0 MPI 115PS petrol",
+      "2.8 V6 193PS petrol",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 130PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.5 TDI 155PS diesel",
+      "2.5 TDI 163PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 3T (2008–2015)",
+     "from": 2008,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Business",
+      "Elegance",
+      "Laurin & Klement",
+      "GreenLine"
+     ],
+     "engines": [
+      "1.4 TSI 125PS petrol",
+      "1.8 TSI 160PS petrol",
+      "3.6 FSI V6 260PS petrol",
+      "1.6 TDI 105PS diesel",
+      "1.9 TDI 105PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 3V (2015–2023)",
+     "from": 2015,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Technology",
+      "SE Business",
+      "SE L",
+      "SE L Executive",
+      "Sportline",
+      "Sportline Plus",
+      "Laurin & Klement",
+      "Scout",
+      "GreenLine"
+     ],
+     "engines": [
+      "1.4 TSI 125PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.5 TSI 150PS petrol",
+      "2.0 TSI 190PS petrol",
+      "2.0 TSI 220PS petrol",
+      "2.0 TSI 272PS petrol",
+      "2.0 TSI 280PS petrol",
+      "1.4 TSI iV 218PS plug-in-hybrid",
+      "1.6 TDI 120PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.0 TDI 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 3Y (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE Technology",
+      "SE L",
+      "Sportline",
+      "Laurin & Klement"
+     ],
+     "engines": [
+      "1.5 TSI 150PS mild-hybrid petrol",
+      "2.0 TSI 204PS petrol",
+      "2.0 TSI 265PS petrol",
+      "1.5 TSI iV 204PS plug-in-hybrid",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 193PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Yeti",
+   "slug": "yeti",
+   "aliases": [
+    "Yeti Outdoor"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2009,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "5L (2009–2017; facelift 2014)",
+     "from": 2009,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Elegance",
+      "Experience",
+      "GreenLine",
+      "SE Business",
+      "SE Drive",
+      "SE L",
+      "Laurin & Klement",
+      "Monte Carlo",
+      "Outdoor"
+     ],
+     "engines": [
+      "1.2 TSI 105PS petrol",
+      "1.2 TSI 110PS petrol",
+      "1.4 TSI 125PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.8 TSI 160PS petrol",
+      "1.6 TDI 105PS diesel",
+      "2.0 TDI 110PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Citigo",
+   "slug": "citigo",
+   "aliases": [
+    "Citigo e iV",
+    "Citigo-e iV"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2012,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "NF (2012–2021; Citigo e iV 2020–2021)",
+     "from": 2012,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE L",
+      "Elegance",
+      "GreenTech",
+      "Monte Carlo",
+      "Colour Edition",
+      "Black Edition",
+      "e iV SE",
+      "e iV SE L"
+     ],
+     "engines": [
+      "1.0 MPI 60PS petrol",
+      "1.0 MPI 75PS petrol",
+      "36.8kWh 83PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Rapid",
+   "slug": "rapid",
+   "aliases": [
+    "Rapid Spaceback"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2013,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "NH (2012–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Connect",
+      "SE Sport",
+      "SE Tech",
+      "SE Technology",
+      "Elegance",
+      "Sport",
+      "Monte Carlo",
+      "GreenLine"
+     ],
+     "engines": [
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.2 MPI 75PS petrol",
+      "1.2 TSI 86PS petrol",
+      "1.2 TSI 90PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.2 TSI 110PS petrol",
+      "1.4 TSI 125PS petrol",
+      "1.4 TDI 90PS diesel",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "1.6 TDI 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Scala",
+   "slug": "scala",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "NW (2019–present; facelift 2024)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Technology",
+      "SE L",
+      "SE Comfort",
+      "First Edition",
+      "Edition",
+      "Monte Carlo"
+     ],
+     "engines": [
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.5 TSI 150PS petrol",
+      "1.6 TDI 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Kamiq",
+   "slug": "kamiq",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "NW4 (2019–present; facelift 2024)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Drive",
+      "SE Technology",
+      "SE L",
+      "First Edition",
+      "Edition",
+      "Monte Carlo"
+     ],
+     "engines": [
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.5 TSI 150PS petrol",
+      "1.6 TDI 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Karoq",
+   "slug": "karoq",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "NU (2017–present; facelift 2022)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Technology",
+      "SE Drive",
+      "SE L",
+      "Edition",
+      "Sportline",
+      "Scout"
+     ],
+     "engines": [
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.5 TSI 150PS petrol",
+      "2.0 TSI 190PS petrol",
+      "1.6 TDI 115PS diesel",
+      "2.0 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Kodiaq",
+   "slug": "kodiaq",
+   "aliases": [
+    "Kodiaq vRS",
+    "Kodiaq iV",
+    "Kodiaq Scout",
+    "Kodiaq Sportline"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 NS (2016–2024)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Drive",
+      "SE Technology",
+      "SE L",
+      "SE L Executive",
+      "Edition",
+      "Sportline",
+      "Scout",
+      "Laurin & Klement",
+      "vRS"
+     ],
+     "engines": [
+      "1.4 TSI 125PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.5 TSI 150PS petrol",
+      "2.0 TSI 180PS petrol",
+      "2.0 TSI 190PS petrol",
+      "2.0 TSI 245PS petrol",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.0 TDI 200PS diesel",
+      "2.0 TDI 240PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 PS (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE L",
+      "SE L Executive",
+      "Sportline",
+      "Laurin & Klement",
+      "vRS"
+     ],
+     "engines": [
+      "1.5 TSI 150PS mild-hybrid petrol",
+      "2.0 TSI 204PS petrol",
+      "2.0 TSI 265PS petrol",
+      "1.5 TSI iV 204PS plug-in-hybrid",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 193PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Enyaq",
+   "slug": "enyaq",
+   "aliases": [
+    "Enyaq iV",
+    "Enyaq Coupe",
+    "Enyaq Coupé",
+    "Enyaq Coupe iV",
+    "Enyaq vRS"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2021–present; Coupe from 2022, facelift 2025)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Loft",
+      "Lodge",
+      "Lounge",
+      "Suite",
+      "ecoSuite",
+      "Founders Edition",
+      "SE",
+      "SE L",
+      "Edition",
+      "Sportline",
+      "Sportline Plus",
+      "vRS"
+     ],
+     "engines": [
+      "55kWh 148PS electric",
+      "62kWh 180PS electric",
+      "63kWh 204PS electric",
+      "82kWh 204PS electric",
+      "82kWh 265PS electric",
+      "82kWh 286PS electric",
+      "82kWh 299PS electric",
+      "82kWh 340PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Elroq",
+   "slug": "elroq",
+   "aliases": [
+    "Elroq vRS"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE L",
+      "Edition",
+      "vRS"
+     ],
+     "engines": [
+      "55kWh 170PS electric",
+      "63kWh 204PS electric",
+      "82kWh 286PS electric",
+      "82kWh 340PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Epiq",
+   "slug": "epiq",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Epiq"
+     ],
+     "engines": [
+      "37kWh 116PS electric",
+      "37kWh 135PS electric",
+      "52kWh 211PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  }
+ ]
+}

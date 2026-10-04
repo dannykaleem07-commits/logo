@@ -1,0 +1,815 @@
+{
+ "make": "Iveco",
+ "slug": "iveco",
+ "dvlaNames": [
+  "IVECO"
+ ],
+ "aliases": [
+  "Iveco Ford",
+  "IVECO-FORD"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Daily 'trims' are Iveco GVW/model designations (e.g. 35S14 = 3.5t single rear wheel, 35C = twin rear wheel); engine outputs by generation and eDaily power figures are approximate."
+ },
+ "models": [
+  {
+   "name": "Daily",
+   "slug": "daily",
+   "aliases": [
+    "eDaily",
+    "Daily Hi-Matic",
+    "Daily Crew Cab",
+    "35S",
+    "35C",
+    "50C",
+    "65C",
+    "70C",
+    "72C",
+    "TurboDaily",
+    "Turbo Daily"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Daily III (1999–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        7
+       ]
+      },
+      {
+       "body": "camper",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "29L",
+      "35S",
+      "35C",
+      "40C",
+      "50C",
+      "65C"
+     ],
+     "engines": [
+      "2.3 HPI 95PS diesel",
+      "2.3 HPI 116PS diesel",
+      "2.8 TD 106PS diesel",
+      "2.8 HPI 125PS diesel",
+      "2.8 HPT 146PS diesel",
+      "3.0 HPI 136PS diesel",
+      "3.0 HPI 166PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Daily IV (2006–2011)",
+     "from": 2006,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        7
+       ]
+      },
+      {
+       "body": "camper",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "29L",
+      "35S",
+      "35C",
+      "50C",
+      "65C"
+     ],
+     "engines": [
+      "2.3 HPI 96PS diesel",
+      "2.3 HPI 116PS diesel",
+      "2.3 HPI 126PS diesel",
+      "3.0 HPI 146PS diesel",
+      "3.0 HPT 176PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Daily 2011 update (2011–2014)",
+     "from": 2011,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        7
+       ]
+      },
+      {
+       "body": "camper",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "35S",
+      "35C",
+      "50C",
+      "65C",
+      "70C"
+     ],
+     "engines": [
+      "2.3 106PS diesel",
+      "2.3 126PS diesel",
+      "2.3 146PS diesel",
+      "3.0 146PS diesel",
+      "3.0 170PS diesel",
+      "3.0 205PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Daily 2014 (2014–2019)",
+     "from": 2014,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        7
+       ]
+      },
+      {
+       "body": "camper",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "35S",
+      "35C",
+      "50C",
+      "65C",
+      "70C",
+      "72C",
+      "Hi-Matic"
+     ],
+     "engines": [
+      "2.3 106PS diesel",
+      "2.3 116PS diesel",
+      "2.3 126PS diesel",
+      "2.3 136PS diesel",
+      "2.3 146PS diesel",
+      "2.3 156PS diesel",
+      "3.0 150PS diesel",
+      "3.0 170PS diesel",
+      "3.0 180PS diesel",
+      "3.0 205PS diesel",
+      "3.0 210PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Daily 2019 (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        7
+       ]
+      },
+      {
+       "body": "camper",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "35S",
+      "35C",
+      "50C",
+      "65C",
+      "70C",
+      "72C",
+      "Hi-Matic"
+     ],
+     "engines": [
+      "2.3 116PS diesel",
+      "2.3 136PS diesel",
+      "2.3 156PS diesel",
+      "3.0 160PS diesel",
+      "3.0 180PS diesel",
+      "3.0 210PS diesel",
+      "eDaily 37-111kWh 122PS electric",
+      "eDaily 37-111kWh 190PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Daily 2024 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        7
+       ]
+      },
+      {
+       "body": "camper",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "35S",
+      "35C",
+      "50C",
+      "65C",
+      "70C",
+      "72C",
+      "Hi-Matic"
+     ],
+     "engines": [
+      "2.3 120PS diesel",
+      "2.3 136PS diesel",
+      "2.3 160PS diesel",
+      "3.0 180PS diesel",
+      "3.0 207PS diesel",
+      "eDaily 37-111kWh 190PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Daily Minibus",
+   "slug": "daily-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Daily III (1999–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        12,
+        14,
+        16,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "29L",
+      "35S",
+      "35C",
+      "40C",
+      "50C",
+      "65C"
+     ],
+     "engines": [
+      "2.3 HPI 95PS diesel",
+      "2.3 HPI 116PS diesel",
+      "2.8 TD 106PS diesel",
+      "2.8 HPI 125PS diesel",
+      "2.8 HPT 146PS diesel",
+      "3.0 HPI 136PS diesel",
+      "3.0 HPI 166PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Daily IV (2006–2011)",
+     "from": 2006,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        12,
+        14,
+        16,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "29L",
+      "35S",
+      "35C",
+      "50C",
+      "65C"
+     ],
+     "engines": [
+      "2.3 HPI 96PS diesel",
+      "2.3 HPI 116PS diesel",
+      "2.3 HPI 126PS diesel",
+      "3.0 HPI 146PS diesel",
+      "3.0 HPT 176PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Daily 2011 update (2011–2014)",
+     "from": 2011,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        12,
+        14,
+        16,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "35S",
+      "35C",
+      "50C",
+      "65C",
+      "70C"
+     ],
+     "engines": [
+      "2.3 106PS diesel",
+      "2.3 126PS diesel",
+      "2.3 146PS diesel",
+      "3.0 146PS diesel",
+      "3.0 170PS diesel",
+      "3.0 205PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Daily 2014 (2014–2019)",
+     "from": 2014,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        12,
+        14,
+        16,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "35S",
+      "35C",
+      "50C",
+      "65C",
+      "70C",
+      "72C",
+      "Hi-Matic"
+     ],
+     "engines": [
+      "2.3 106PS diesel",
+      "2.3 116PS diesel",
+      "2.3 126PS diesel",
+      "2.3 136PS diesel",
+      "2.3 146PS diesel",
+      "2.3 156PS diesel",
+      "3.0 150PS diesel",
+      "3.0 170PS diesel",
+      "3.0 180PS diesel",
+      "3.0 205PS diesel",
+      "3.0 210PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Daily 2019 (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        12,
+        14,
+        16,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "35S",
+      "35C",
+      "50C",
+      "65C",
+      "70C",
+      "72C",
+      "Hi-Matic"
+     ],
+     "engines": [
+      "2.3 116PS diesel",
+      "2.3 136PS diesel",
+      "2.3 156PS diesel",
+      "3.0 160PS diesel",
+      "3.0 180PS diesel",
+      "3.0 210PS diesel",
+      "eDaily 37-111kWh 122PS electric",
+      "eDaily 37-111kWh 190PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Daily 2024 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        12,
+        14,
+        16,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "35S",
+      "35C",
+      "50C",
+      "65C",
+      "70C",
+      "72C",
+      "Hi-Matic"
+     ],
+     "engines": [
+      "2.3 120PS diesel",
+      "2.3 136PS diesel",
+      "2.3 160PS diesel",
+      "3.0 180PS diesel",
+      "3.0 207PS diesel",
+      "eDaily 37-111kWh 190PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Massif",
+   "slug": "massif",
+   "aliases": [
+    "Massif Station Wagon",
+    "Massif Pick-up"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2008,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2008–2011)",
+     "from": 2008,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "3.0 HPI 146PS diesel",
+      "3.0 HPT 176PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  }
+ ]
+}

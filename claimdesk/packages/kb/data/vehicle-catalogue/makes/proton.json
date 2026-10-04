@@ -1,0 +1,418 @@
+{
+ "make": "Proton",
+ "slug": "proton",
+ "dvlaNames": [
+  "PROTON"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Proton UK detail is thin: trim names, engine outputs and end-of-sale years (UK car sales wound down c.2013–2015) are lower-confidence; Exora UK availability unconfirmed."
+ },
+ "models": [
+  {
+   "name": "Persona",
+   "slug": "persona",
+   "aliases": [
+    "Wira",
+    "Compact",
+    "Persona Compact",
+    "Persona 300",
+    "Persona 400"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "Wira-based (1993–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Persona"
+     ],
+     "engines": [
+      "1.3 12v 75PS petrol",
+      "1.5 12v 90PS petrol",
+      "1.6 16v 113PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Gen-2-based saloon (2008–2014)",
+     "from": 2008,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GLS",
+      "GSX"
+     ],
+     "engines": [
+      "1.6 CamPro 110PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Satria",
+   "slug": "satria",
+   "aliases": [
+    "Satria GTi",
+    "GTi"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1994–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GTi"
+     ],
+     "engines": [
+      "1.3 12v 75PS petrol",
+      "1.5 12v 90PS petrol",
+      "1.6 16v 113PS petrol",
+      "1.8 16v GTi 140PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Impian",
+   "slug": "impian",
+   "aliases": [
+    "Waja"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2001,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2001–2009)",
+     "from": 2001,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GLS",
+      "GSX"
+     ],
+     "engines": [
+      "1.6 105PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Gen-2",
+   "slug": "gen-2",
+   "aliases": [
+    "Gen 2",
+    "GEN2"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2004,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2004–2012)",
+     "from": 2004,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GLS",
+      "GSX"
+     ],
+     "engines": [
+      "1.3 CamPro 94PS petrol",
+      "1.6 CamPro 110PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Savvy",
+   "slug": "savvy",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2005,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2005–2011)",
+     "from": 2005,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Street",
+      "Style"
+     ],
+     "engines": [
+      "1.2 75PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Satria Neo",
+   "slug": "satria-neo",
+   "aliases": [
+    "Neo"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2006,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B-Line",
+      "GSX",
+      "Lux",
+      "Sport",
+      "R3"
+     ],
+     "engines": [
+      "1.3 CamPro 94PS petrol",
+      "1.6 CamPro 112PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Arena",
+   "slug": "arena",
+   "aliases": [
+    "Jumbuck"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2003,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2003–2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.5 12v 88PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Exora",
+   "slug": "exora",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2011,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2011–2014)",
+     "from": 2011,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "GSX"
+     ],
+     "engines": [
+      "1.6 CamPro 125PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

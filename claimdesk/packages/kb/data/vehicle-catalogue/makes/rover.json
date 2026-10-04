@@ -1,0 +1,511 @@
+{
+ "make": "Rover",
+ "slug": "rover",
+ "dvlaNames": [
+  "ROVER"
+ ],
+ "aliases": [
+  "MG Rover"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. MG Rover entered administration April 2005; late-registered stock may show 2005–2006 registration dates. Rover 200/400/600/800 ended before 2000. The classic Mini (to October 2000) is recorded by DVLA as ROVER MINI and is listed here; the 2001-on MINI is the MINI make."
+ },
+ "models": [
+  {
+   "name": "25",
+   "slug": "25",
+   "aliases": [
+    "Rover 25",
+    "25 GTi",
+    "25 Commerce"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "R3 (1999–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "i",
+      "iL",
+      "iS",
+      "iSi",
+      "iE",
+      "GSi",
+      "GTi",
+      "Impression",
+      "Impression S",
+      "Club",
+      "Classic",
+      "Spirit",
+      "Sprint",
+      "Sport"
+     ],
+     "engines": [
+      "1.1 75PS petrol",
+      "1.4 84PS petrol",
+      "1.4 103PS petrol",
+      "1.6 109PS petrol",
+      "1.8 117PS petrol",
+      "1.8 VVC 145PS petrol",
+      "2.0 TD 101PS diesel",
+      "2.0 TD 113PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2004–2005)",
+     "from": 2004,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Club",
+      "Spirit",
+      "Sprint",
+      "SE",
+      "Sport",
+      "Impression"
+     ],
+     "engines": [
+      "1.1 75PS petrol",
+      "1.4 84PS petrol",
+      "1.4 103PS petrol",
+      "1.6 109PS petrol",
+      "1.8 117PS petrol",
+      "2.0 TD 101PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "45",
+   "slug": "45",
+   "aliases": [
+    "Rover 45"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "RT (1999–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "i",
+      "iL",
+      "iS",
+      "iSi",
+      "Club",
+      "Classic",
+      "Impression",
+      "Spirit",
+      "Connoisseur"
+     ],
+     "engines": [
+      "1.4 103PS petrol",
+      "1.6 109PS petrol",
+      "1.8 117PS petrol",
+      "2.0 V6 150PS petrol",
+      "2.0 TD 101PS diesel",
+      "2.0 TD 113PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2004–2005)",
+     "from": 2004,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Club",
+      "Spirit",
+      "Connoisseur",
+      "SE"
+     ],
+     "engines": [
+      "1.4 103PS petrol",
+      "1.6 109PS petrol",
+      "1.8 117PS petrol",
+      "2.0 TD 101PS diesel",
+      "2.0 TD 113PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "75",
+   "slug": "75",
+   "aliases": [
+    "Rover 75",
+    "75 Tourer",
+    "75 V8",
+    "75 Vanden Plas"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "R40 (1999–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Classic SE",
+      "Club",
+      "Club SE",
+      "Connoisseur",
+      "Connoisseur SE",
+      "Contemporary"
+     ],
+     "engines": [
+      "1.8 120PS petrol",
+      "1.8 Turbo 150PS petrol",
+      "2.0 V6 150PS petrol",
+      "2.5 V6 177PS petrol",
+      "2.0 CDT 116PS diesel",
+      "2.0 CDTi 131PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2004–2005)",
+     "from": 2004,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Club",
+      "Contemporary",
+      "Contemporary SE",
+      "Connoisseur",
+      "Connoisseur SE",
+      "Holland & Holland",
+      "V8",
+      "Vanden Plas"
+     ],
+     "engines": [
+      "1.8 120PS petrol",
+      "1.8 Turbo 150PS petrol",
+      "2.5 V6 177PS petrol",
+      "4.6 V8 260PS petrol",
+      "2.0 CDTi 131PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CityRover",
+   "slug": "cityrover",
+   "aliases": [
+    "City Rover"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2003,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2003–2005)",
+     "from": 2003,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Solo",
+      "Select",
+      "Sprite",
+      "Style"
+     ],
+     "engines": [
+      "1.4 85PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mini",
+   "slug": "mini",
+   "aliases": [
+    "Rover Mini",
+    "Classic Mini",
+    "Mini Classic",
+    "Mini Cooper",
+    "Mini Cooper Sport",
+    "Mini Seven"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2000,
+    "to": 2000
+   },
+   "generations": [
+    {
+     "name": "Mk VII MPi (1996–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Seven",
+      "Cooper",
+      "Cooper Sport"
+     ],
+     "engines": [
+      {
+       "label": "1.3 MPi petrol",
+       "cc": 1275,
+       "fuel": "petrol",
+       "transmissions": [
+        "manual"
+       ]
+      }
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "Classic Mini, built at Longbridge until 4 October 2000; trims are the final 'Mini Classic' range from April 2000. 1275cc A-series MPi (quoted at 62–63bhp). Four-speed manual; the AP automatic was rare in the UK and its 2000 availability is not recorded. The BMW-era MINI (2001 on) is the MINI make."
+    }
+   ]
+  },
+  {
+   "name": "Streetwise",
+   "slug": "streetwise",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2003,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2003–2005)",
+     "from": 2003,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE"
+     ],
+     "engines": [
+      "1.4 103PS petrol",
+      "1.6 109PS petrol",
+      "2.0 TD 101PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

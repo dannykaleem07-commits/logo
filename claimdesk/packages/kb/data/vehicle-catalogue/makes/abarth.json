@@ -1,0 +1,514 @@
+{
+ "make": "Abarth",
+ "slug": "abarth",
+ "dvlaNames": [
+  "ABARTH"
+ ],
+ "aliases": [
+  "Fiat Abarth",
+  "Fiat 500 Abarth",
+  "Fiat Grande Punto Abarth"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Early Abarth-branded cars (2008–2009) may appear on DVLA records under make FIAT."
+ },
+ "models": [
+  {
+   "name": "500",
+   "slug": "500",
+   "aliases": [
+    "Abarth 500",
+    "500C",
+    "500 esseesse",
+    "500 Abarth"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2008,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "Abarth 500 (2008–2016)",
+     "from": 2008,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "500",
+      "esseesse"
+     ],
+     "engines": [
+      "1.4 T-Jet 135PS petrol",
+      "1.4 T-Jet 160PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "595",
+   "slug": "595",
+   "aliases": [
+    "595C",
+    "595 Turismo",
+    "595 Competizione",
+    "595 Pista",
+    "595 esseesse",
+    "F595"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2013,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Series 3 (2013–2016)",
+     "from": 2013,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "595",
+      "Turismo",
+      "Competizione",
+      "50th Anniversario",
+      "Yamaha Factory Racing"
+     ],
+     "engines": [
+      "1.4 T-Jet 140PS petrol",
+      "1.4 T-Jet 160PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Series 4 (2016–2024)",
+     "from": 2016,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "595",
+      "Turismo",
+      "Competizione",
+      "Pista",
+      "esseesse",
+      "Scorpioneoro",
+      "Monster Energy Yamaha"
+     ],
+     "engines": [
+      "1.4 T-Jet 145PS petrol",
+      "1.4 T-Jet 165PS petrol",
+      "1.4 T-Jet 180PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "695",
+   "slug": "695",
+   "aliases": [
+    "695C",
+    "695 Tributo Ferrari",
+    "695 Edizione Maserati",
+    "695 Biposto",
+    "695 Rivale",
+    "695 XSR"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2009,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "695 limited/special editions (2009–2024)",
+     "from": 2009,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Tributo Ferrari",
+      "Edizione Maserati",
+      "Biposto",
+      "Rivale",
+      "XSR Yamaha",
+      "70th Anniversario",
+      "esseesse",
+      "Tributo 131 Rally",
+      "695"
+     ],
+     "engines": [
+      "1.4 T-Jet 180PS petrol",
+      "1.4 T-Jet 190PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Punto",
+   "slug": "punto",
+   "aliases": [
+    "Grande Punto",
+    "Grande Punto Abarth",
+    "Punto Evo",
+    "Punto Evo Abarth",
+    "Punto Supersport",
+    "Punto esseesse"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2008,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Grande Punto Abarth (2008–2010)",
+     "from": 2008,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Abarth",
+      "esseesse"
+     ],
+     "engines": [
+      "1.4 T-Jet 155PS petrol",
+      "1.4 T-Jet 180PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Punto Evo Abarth (2010–2012)",
+     "from": 2010,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Abarth",
+      "esseesse"
+     ],
+     "engines": [
+      "1.4 MultiAir Turbo 165PS petrol",
+      "1.4 MultiAir Turbo 180PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Abarth Punto (2014–2015)",
+     "from": 2014,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Punto",
+      "Supersport"
+     ],
+     "engines": [
+      "1.4 Turbo 165PS petrol",
+      "1.4 Turbo 180PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "124 Spider",
+   "slug": "124-spider",
+   "aliases": [
+    "124",
+    "124 GT",
+    "124 Rally Tribute",
+    "Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2016,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2016–2019)",
+     "from": 2016,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "124 Spider",
+      "Turismo",
+      "Scorpione",
+      "GT"
+     ],
+     "engines": [
+      "1.4 MultiAir 170PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "500e",
+   "slug": "500e",
+   "aliases": [
+    "Abarth 500e",
+    "500e Cabrio"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "500e",
+      "Turismo",
+      "Scorpionissima"
+     ],
+     "engines": [
+      "42kWh 155PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "600e",
+   "slug": "600e",
+   "aliases": [
+    "Abarth 600e",
+    "600"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Turismo",
+      "Scorpionissima"
+     ],
+     "engines": [
+      "54kWh 240PS electric",
+      "54kWh 280PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

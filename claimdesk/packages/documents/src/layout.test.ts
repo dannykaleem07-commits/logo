@@ -74,7 +74,7 @@ describe('baseLayout', () => {
     expect(html).toContain('9 August 2026');
     expect(html).toContain(brand.company.statusLine);
     expect(html).toContain(brand.tradingDisclosure('44 Syon Lane, Isleworth, London TW7 5NQ'));
-    expect(html).not.toContain('[registered office]');
+    expect(html).not.toMatch(/\[registered office\]/);
     expect(html).toContain(brand.typography.fontStack);
     expect(html).toContain('Yours faithfully');
     expect(html).toContain('for and on behalf of Courtesy Cars Group UK Ltd');
@@ -97,7 +97,7 @@ describe('baseLayout', () => {
     expect(invoice).toContain('Company no. 17430389');
     expect(invoice).toContain('VAT number GB000000000');
     expect(invoice).toContain('44 Syon Lane, Isleworth, London TW7 5NQ');
-    expect(invoice).not.toContain('[registered office]');
+    expect(invoice).not.toMatch(/\[registered office\]/);
     expect(invoice).toContain('<h1>Invoice</h1>');
     expect(invoice).toContain('Due date</th><td>18 October 2026');
     expect(invoice).not.toContain('Yours faithfully');

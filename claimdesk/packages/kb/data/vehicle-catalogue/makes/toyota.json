@@ -1,0 +1,3396 @@
+{
+ "make": "Toyota",
+ "slug": "toyota",
+ "dvlaNames": [
+  "TOYOTA"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Aygo",
+   "slug": "aygo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2005,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2005–2014)",
+     "from": 2005,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Aygo",
+      "Aygo +",
+      "Platinum",
+      "Blue",
+      "Go",
+      "Move",
+      "Ice",
+      "Fire",
+      "Black",
+      "Sport"
+     ],
+     "engines": [
+      "1.0 VVT-i 68PS petrol",
+      "1.4 D-4D 54PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2014–2022)",
+     "from": 2014,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "x",
+      "x-play",
+      "x-pression",
+      "x-pure",
+      "x-clusiv",
+      "x-cite",
+      "x-trend",
+      "x-press",
+      "x-plore",
+      "x-claim",
+      "x-wave",
+      "JBL Edition"
+     ],
+     "engines": [
+      "1.0 VVT-i 69PS petrol",
+      "1.0 VVT-i 72PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Aygo X",
+   "slug": "aygo-x",
+   "aliases": [
+    "Aygo X Cross",
+    "Aygo X Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–2025)",
+     "from": 2022,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "Edge",
+      "Exclusive",
+      "Limited Edition",
+      "Air Edge",
+      "Undercover"
+     ],
+     "engines": [
+      "1.0 VVT-i 72PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Hybrid facelift (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Aygo X"
+     ],
+     "engines": [
+      "1.5 Hybrid 116PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "iQ",
+   "slug": "iq",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2009,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "AJ10 (2009–2014)",
+     "from": 2009,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "iQ",
+      "iQ2",
+      "iQ3"
+     ],
+     "engines": [
+      "1.0 VVT-i 68PS petrol",
+      "1.33 Dual VVT-i 98PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Yaris",
+   "slug": "yaris",
+   "aliases": [
+    "Yaris Hybrid",
+    "Yaris GRMN",
+    "Yaris T Sport"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 XP10 (1999–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "GS",
+      "CDX",
+      "Colour Collection",
+      "T3",
+      "T Spirit",
+      "T Sport"
+     ],
+     "engines": [
+      "1.0 VVT-i 68PS petrol",
+      "1.3 VVT-i 87PS petrol",
+      "1.5 VVT-i 106PS petrol",
+      "1.4 D-4D 75PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 XP90 (2006–2011)",
+     "from": 2006,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "T2",
+      "T3",
+      "T Spirit",
+      "TR",
+      "SR",
+      "Zinc",
+      "Edition"
+     ],
+     "engines": [
+      "1.0 VVT-i 69PS petrol",
+      "1.3 VVT-i 87PS petrol",
+      "1.33 Dual VVT-i 101PS petrol",
+      "1.8 VVT-i 133PS petrol",
+      "1.4 D-4D 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 XP130 (2011–2020)",
+     "from": 2011,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "T2",
+      "T3",
+      "T4",
+      "TR",
+      "T Spirit",
+      "Active",
+      "Icon",
+      "Icon Tech",
+      "Sport",
+      "Excel",
+      "Design",
+      "Y20",
+      "Bi-Tone",
+      "GR Sport"
+     ],
+     "engines": [
+      "1.0 VVT-i 69PS petrol",
+      "1.0 VVT-i 72PS petrol",
+      "1.33 Dual VVT-i 99PS petrol",
+      "1.5 Dual VVT-iE 111PS petrol",
+      "1.4 D-4D 90PS diesel",
+      "1.5 Hybrid 100PS hybrid",
+      "1.8 Supercharged GRMN 212PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 XP210 (2020–present)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Icon",
+      "Design",
+      "Dynamic",
+      "Excel",
+      "GR Sport",
+      "Launch Edition",
+      "Premiere Edition"
+     ],
+     "engines": [
+      "1.5 Hybrid 116PS hybrid",
+      "1.5 Hybrid 130PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GR Yaris",
+   "slug": "gr-yaris",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "GXPA16 (2020–2024)",
+     "from": 2020,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "GR Yaris",
+      "Circuit Pack",
+      "Convenience Pack"
+     ],
+     "engines": [
+      "1.6 Turbo 261PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "GXPA16 facelift (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Circuit Pack",
+      "Aero Performance Pack"
+     ],
+     "engines": [
+      "1.6 Turbo 280PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Yaris Cross",
+   "slug": "yaris-cross",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "XP210 (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Icon",
+      "Design",
+      "Dynamic",
+      "Excel",
+      "Premiere Edition",
+      "GR Sport"
+     ],
+     "engines": [
+      "1.5 Hybrid 116PS hybrid",
+      "1.5 Hybrid 130PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Yaris Verso",
+   "slug": "yaris-verso",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "XP20 (2000–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "CDX",
+      "T3",
+      "T Spirit",
+      "Colour Collection"
+     ],
+     "engines": [
+      "1.3 VVT-i 87PS petrol",
+      "1.5 VVT-i 106PS petrol",
+      "1.4 D-4D 75PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Urban Cruiser",
+   "slug": "urban-cruiser",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2009,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "XP110 (2009–2014)",
+     "from": 2009,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Urban Cruiser"
+     ],
+     "engines": [
+      "1.33 Dual VVT-i 101PS petrol",
+      "1.4 D-4D 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Electric (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Urban Cruiser"
+     ],
+     "engines": [
+      "49kWh FWD 144PS electric",
+      "61kWh FWD 174PS electric",
+      "61kWh AWD 184PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Verso-S",
+   "slug": "verso-s",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2011,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "XP120 (2011–2015)",
+     "from": 2011,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "T2",
+      "TR",
+      "T Spirit"
+     ],
+     "engines": [
+      "1.33 Dual VVT-i 99PS petrol",
+      "1.4 D-4D 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Corolla",
+   "slug": "corolla",
+   "aliases": [
+    "Corolla Touring Sports",
+    "Corolla Hybrid",
+    "Corolla Commercial",
+    "Corolla T Sport"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E110 (1997–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "GS",
+      "CDX"
+     ],
+     "engines": [
+      "1.4 VVT-i 97PS petrol",
+      "1.6 VVT-i 110PS petrol",
+      "2.0 D 72PS diesel",
+      "2.0 D-4D 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E120 (2002–2007)",
+     "from": 2002,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "T2",
+      "T3",
+      "T Spirit",
+      "T Sport",
+      "T180",
+      "Colour Collection"
+     ],
+     "engines": [
+      "1.4 VVT-i 97PS petrol",
+      "1.6 VVT-i 110PS petrol",
+      "1.8 VVTL-i 192PS petrol",
+      "1.4 D-4D 90PS diesel",
+      "2.0 D-4D 90PS diesel",
+      "2.0 D-4D 116PS diesel",
+      "2.2 D-CAT 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E210 (2019–2022)",
+     "from": 2019,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Icon",
+      "Icon Tech",
+      "Design",
+      "Excel",
+      "GR Sport",
+      "Trek"
+     ],
+     "engines": [
+      "1.2 Turbo 116PS petrol",
+      "1.8 Hybrid 122PS hybrid",
+      "2.0 Hybrid 184PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    },
+    {
+     "name": "E210 facelift (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "panel-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Icon",
+      "Design",
+      "Excel",
+      "GR Sport"
+     ],
+     "engines": [
+      "1.8 Hybrid 140PS hybrid",
+      "2.0 Hybrid 196PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    }
+   ]
+  },
+  {
+   "name": "Auris",
+   "slug": "auris",
+   "aliases": [
+    "Auris Touring Sports",
+    "Auris Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2007,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "E150 (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "T2",
+      "T3",
+      "TR",
+      "T Spirit",
+      "T4",
+      "T180",
+      "SR",
+      "SR180",
+      "Colour Collection",
+      "Edition"
+     ],
+     "engines": [
+      "1.33 Dual VVT-i 101PS petrol",
+      "1.4 VVT-i 97PS petrol",
+      "1.6 VVT-i 124PS petrol",
+      "1.6 Valvematic 132PS petrol",
+      "1.4 D-4D 90PS diesel",
+      "2.0 D-4D 126PS diesel",
+      "2.2 D-CAT 177PS diesel",
+      "1.8 Hybrid 136PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E180 (2013–2018)",
+     "from": 2013,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Icon",
+      "Icon+",
+      "Icon Tech",
+      "Sport",
+      "Design",
+      "Excel",
+      "Business Edition",
+      "Business Edition Plus",
+      "Freedom"
+     ],
+     "engines": [
+      "1.33 Dual VVT-i 99PS petrol",
+      "1.6 Valvematic 132PS petrol",
+      "1.2 Turbo 116PS petrol",
+      "1.4 D-4D 90PS diesel",
+      "1.6 D-4D 112PS diesel",
+      "2.0 D-4D 124PS diesel",
+      "1.8 Hybrid 136PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Prius",
+   "slug": "prius",
+   "aliases": [
+    "Prius Plug-in",
+    "Prius Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Mk1 NHW11 (2000–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Prius"
+     ],
+     "engines": [
+      "1.5 VVT-i Hybrid 72PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Mk2 NHW20 (2004–2009)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "T3",
+      "T4",
+      "T Spirit"
+     ],
+     "engines": [
+      "1.5 VVT-i Hybrid 110PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 XW30 (2009–2015)",
+     "from": 2009,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "T3",
+      "T4",
+      "T Spirit",
+      "Active",
+      "Icon",
+      "Business Edition",
+      "Excel"
+     ],
+     "engines": [
+      "1.8 VVT-i Hybrid 136PS hybrid",
+      "1.8 Plug-in Hybrid 136PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 XW50 (2016–2022)",
+     "from": 2016,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Business Edition",
+      "Business Edition Plus",
+      "Excel"
+     ],
+     "engines": [
+      "1.8 VVT-i Hybrid 122PS hybrid",
+      "1.8 Plug-in Hybrid 122PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Prius+",
+   "slug": "prius-plus",
+   "aliases": [
+    "Prius Plus"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2012,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "ZVW40 (2012–2021)",
+     "from": 2012,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "T4",
+      "T Spirit",
+      "Icon",
+      "Excel"
+     ],
+     "engines": [
+      "1.8 VVT-i Hybrid 136PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Avensis",
+   "slug": "avensis",
+   "aliases": [
+    "Avensis Tourer",
+    "Avensis Estate"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Mk1 T220 (1997–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "GS",
+      "CDX"
+     ],
+     "engines": [
+      "1.6 VVT-i 110PS petrol",
+      "1.8 VVT-i 129PS petrol",
+      "2.0 VVT-i 150PS petrol",
+      "2.0 TD 90PS diesel",
+      "2.0 D-4D 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 T250 (2003–2008)",
+     "from": 2003,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "T2",
+      "T3-S",
+      "T3-X",
+      "T4",
+      "T Spirit",
+      "T180",
+      "TR",
+      "Colour Collection"
+     ],
+     "engines": [
+      "1.6 VVT-i 110PS petrol",
+      "1.8 VVT-i 129PS petrol",
+      "2.0 VVT-i 147PS petrol",
+      "2.4 VVT-i 163PS petrol",
+      "2.0 D-4D 116PS diesel",
+      "2.0 D-4D 126PS diesel",
+      "2.2 D-4D 150PS diesel",
+      "2.2 D-CAT 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 T270 (2009–2018)",
+     "from": 2009,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "T2",
+      "TR",
+      "T4",
+      "T Spirit",
+      "Active",
+      "Icon",
+      "Icon Business Edition",
+      "Business Edition",
+      "Excel",
+      "Design"
+     ],
+     "engines": [
+      "1.6 Valvematic 132PS petrol",
+      "1.8 Valvematic 147PS petrol",
+      "2.0 Valvematic 152PS petrol",
+      "2.0 D-4D 126PS diesel",
+      "2.2 D-4D 150PS diesel",
+      "2.2 D-CAT 177PS diesel",
+      "1.6 D-4D 112PS diesel",
+      "2.0 D-4D 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Camry",
+   "slug": "camry",
+   "aliases": [
+    "Camry Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "XV20 (1997–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "CDX"
+     ],
+     "engines": [
+      "2.2 131PS petrol",
+      "3.0 V6 190PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "XV30 (2001–2004)",
+     "from": 2001,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Camry"
+     ],
+     "engines": [
+      "2.4 VVT-i 152PS petrol",
+      "3.0 V6 186PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "XV70 (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "Excel"
+     ],
+     "engines": [
+      "2.5 Hybrid 218PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mirai",
+   "slug": "mirai",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2015,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 JPD10 (2015–2020)",
+     "from": 2015,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Mirai"
+     ],
+     "engines": [
+      "Fuel Cell 154PS hydrogen"
+     ],
+     "fuels": [
+      "hydrogen"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Mk2 JPD20 (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "Excel"
+     ],
+     "engines": [
+      "Fuel Cell 182PS hydrogen"
+     ],
+     "fuels": [
+      "hydrogen"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Corolla Verso",
+   "slug": "corolla-verso",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2002,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2002–2004)",
+     "from": 2002,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "T2",
+      "T3",
+      "T Spirit"
+     ],
+     "engines": [
+      "1.6 VVT-i 110PS petrol",
+      "1.8 VVT-i 135PS petrol",
+      "2.0 D-4D 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 AR10 (2004–2009)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "T2",
+      "T3",
+      "T Spirit",
+      "T180",
+      "TR",
+      "Colour Collection"
+     ],
+     "engines": [
+      "1.6 VVT-i 110PS petrol",
+      "1.8 VVT-i 129PS petrol",
+      "2.0 D-4D 116PS diesel",
+      "2.2 D-4D 136PS diesel",
+      "2.2 D-CAT 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Verso",
+   "slug": "verso",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2009,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "AR20 (2009–2018)",
+     "from": 2009,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "T2",
+      "TR",
+      "T Spirit",
+      "T4",
+      "Active",
+      "Icon",
+      "Icon Plus",
+      "Design",
+      "Excel"
+     ],
+     "engines": [
+      "1.6 Valvematic 132PS petrol",
+      "1.8 Valvematic 147PS petrol",
+      "2.0 D-4D 126PS diesel",
+      "2.2 D-4D 150PS diesel",
+      "2.2 D-CAT 177PS diesel",
+      "1.6 D-4D 112PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Avensis Verso",
+   "slug": "avensis-verso",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2001,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "XM20 (2001–2006)",
+     "from": 2001,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "CDX",
+      "T2",
+      "T3",
+      "T Spirit"
+     ],
+     "engines": [
+      "2.0 VVT-i 150PS petrol",
+      "2.0 D-4D 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Picnic",
+   "slug": "picnic",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "XM10 (1996–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "CDX"
+     ],
+     "engines": [
+      "2.0 128PS petrol",
+      "2.2 TD 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Previa",
+   "slug": "previa",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "XR30 (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "CDX",
+      "T2",
+      "T3",
+      "T Spirit"
+     ],
+     "engines": [
+      "2.4 VVT-i 156PS petrol",
+      "2.0 D-4D 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Proace City Verso",
+   "slug": "proace-city-verso",
+   "aliases": [
+    "Proace City Verso Electric"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2020–present)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "Excel"
+     ],
+     "engines": [
+      "1.2 110PS petrol",
+      "1.2 130PS petrol",
+      "1.5 D-4D 100PS diesel",
+      "1.5 D-4D 130PS diesel",
+      "50kWh Electric 136PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "M"
+    }
+   ]
+  },
+  {
+   "name": "Proace Verso",
+   "slug": "proace-verso",
+   "aliases": [
+    "Proace Verso Electric",
+    "Proace Verso Shuttle"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2016,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2016–present)",
+     "from": 2016,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        6,
+        7,
+        8
+       ]
+      },
+      {
+       "body": "minibus",
+       "doors": [
+        5
+       ],
+       "seats": [
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "Shuttle",
+      "Family",
+      "VIP"
+     ],
+     "engines": [
+      "1.6 D-4D 115PS diesel",
+      "1.5 D-4D 120PS diesel",
+      "2.0 D-4D 145PS diesel",
+      "2.0 D-4D 150PS diesel",
+      "2.0 D-4D 180PS diesel",
+      "50kWh Electric 136PS electric",
+      "75kWh Electric 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Celica",
+   "slug": "celica",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "T230 (1999–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "190",
+      "T Sport"
+     ],
+     "engines": [
+      "1.8 VVT-i 143PS petrol",
+      "1.8 VVTL-i 192PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "MR2",
+   "slug": "mr2",
+   "aliases": [
+    "MR2 Roadster",
+    "MR-S"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "W30 MR2 Roadster (1999–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Roadster",
+      "TF300"
+     ],
+     "engines": [
+      "1.8 VVT-i 140PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GT86",
+   "slug": "gt86",
+   "aliases": [
+    "86",
+    "GT 86"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2012,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "ZN6 (2012–2021)",
+     "from": 2012,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "GT86",
+      "Pro",
+      "Blackline",
+      "Club Series"
+     ],
+     "engines": [
+      "2.0 Boxer 200PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GR86",
+   "slug": "gr86",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2022,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "ZN8 (2022–2023)",
+     "from": 2022,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "GR86"
+     ],
+     "engines": [
+      "2.4 Boxer 234PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "GR Supra",
+   "slug": "gr-supra",
+   "aliases": [
+    "Supra"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2019,
+    "to": 2026
+   },
+   "generations": [
+    {
+     "name": "A90 (2019–2026)",
+     "from": 2019,
+     "to": 2026,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Pro",
+      "A90 Edition",
+      "Launch Edition",
+      "Lightweight"
+     ],
+     "engines": [
+      "3.0 340PS petrol",
+      "2.0 258PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C-HR",
+   "slug": "c-hr",
+   "aliases": [
+    "C-HR Hybrid",
+    "CHR"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2016,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 AX10 (2016–2023)",
+     "from": 2016,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Icon",
+      "Excel",
+      "Dynamic",
+      "Design",
+      "GR Sport",
+      "Launch Edition"
+     ],
+     "engines": [
+      "1.2 Turbo 116PS petrol",
+      "1.8 Hybrid 122PS hybrid",
+      "2.0 Hybrid 184PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 AX20 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Icon",
+      "Design",
+      "Excel",
+      "GR Sport",
+      "Premiere Edition"
+     ],
+     "engines": [
+      "1.8 Hybrid 140PS hybrid",
+      "2.0 Hybrid 197PS hybrid",
+      "2.0 Plug-in Hybrid 223PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "RAV4",
+   "slug": "rav4",
+   "aliases": [
+    "RAV4 Hybrid",
+    "RAV4 Plug-in",
+    "RAV 4"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 XA20 (2000–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "NRG",
+      "GX",
+      "VX",
+      "XT3",
+      "XT4"
+     ],
+     "engines": [
+      "1.8 VVT-i 125PS petrol",
+      "2.0 VVT-i 150PS petrol",
+      "2.0 D-4D 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 XA30 (2006–2012)",
+     "from": 2006,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "XT3",
+      "XT4",
+      "XT-R",
+      "T180",
+      "SR",
+      "Invincible"
+     ],
+     "engines": [
+      "2.0 VVT-i 152PS petrol",
+      "2.0 Valvematic 158PS petrol",
+      "2.2 D-4D 136PS diesel",
+      "2.2 D-4D 150PS diesel",
+      "2.2 D-CAT 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 XA40 (2013–2018)",
+     "from": 2013,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Icon",
+      "Icon Tech",
+      "Business Edition",
+      "Business Edition Plus",
+      "Invincible",
+      "Design",
+      "Excel"
+     ],
+     "engines": [
+      "2.0 Valvematic 152PS petrol",
+      "2.0 D-4D 124PS diesel",
+      "2.0 D-4D 143PS diesel",
+      "2.2 D-4D 150PS diesel",
+      "2.5 Hybrid 197PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk5 XA50 (2019–present)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Icon",
+      "Design",
+      "Excel",
+      "Dynamic",
+      "Adventure",
+      "GR Sport"
+     ],
+     "engines": [
+      "2.5 Hybrid 218PS hybrid",
+      "2.5 Hybrid AWD-i 222PS hybrid",
+      "2.5 Plug-in Hybrid 306PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "bZ4X",
+   "slug": "bz4x",
+   "aliases": [
+    "BZ4X"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–2025)",
+     "from": 2022,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "Motion",
+      "Vision"
+     ],
+     "engines": [
+      "71.4kWh FWD 204PS electric",
+      "72.8kWh AWD 218PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "bZ4X"
+     ],
+     "engines": [
+      "57.7kWh FWD 167PS electric",
+      "73.1kWh FWD 224PS electric",
+      "74.7kWh AWD 343PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Highlander",
+   "slug": "highlander",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2021,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "XU70 (2021–2024)",
+     "from": 2021,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Excel"
+     ],
+     "engines": [
+      "2.5 Hybrid AWD-i 248PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Land Cruiser",
+   "slug": "land-cruiser",
+   "aliases": [
+    "Land Cruiser Colorado",
+    "Land Cruiser Utility",
+    "Land Cruiser Commercial",
+    "LandCruiser"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "J90 Colorado (1996–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "GX",
+      "VX"
+     ],
+     "engines": [
+      "3.4 V6 178PS petrol",
+      "3.0 TD 125PS diesel",
+      "3.0 D-4D 163PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "J120 (2003–2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "LC2",
+      "LC3",
+      "LC4",
+      "LC5",
+      "Invincible"
+     ],
+     "engines": [
+      "3.0 D-4D 166PS diesel",
+      "3.0 D-4D 173PS diesel",
+      "4.0 V6 249PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "J150 (2009–2024)",
+     "from": 2009,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      },
+      {
+       "body": "panel-van",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "LC3",
+      "LC4",
+      "LC5",
+      "Active",
+      "Icon",
+      "Invincible",
+      "Utility"
+     ],
+     "engines": [
+      "3.0 D-4D 190PS diesel",
+      "2.8 D-4D 177PS diesel",
+      "2.8 D-4D 204PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "J250 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Icon",
+      "Invincible",
+      "First Edition"
+     ],
+     "engines": [
+      "2.8 D-4D 204PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Land Cruiser Amazon",
+   "slug": "land-cruiser-amazon",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "J100 (1998–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "Land Cruiser Amazon"
+     ],
+     "engines": [
+      "4.2 TD 204PS diesel",
+      "4.7 V8 235PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Land Cruiser V8",
+   "slug": "land-cruiser-v8",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2008,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "J200 (2008–2015)",
+     "from": 2008,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "Land Cruiser V8"
+     ],
+     "engines": [
+      "4.5 D-4D V8 286PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Hilux",
+   "slug": "hilux",
+   "aliases": [
+    "Hilux Invincible",
+    "Hilux Double Cab",
+    "Hilux Extra Cab",
+    "Hilux Single Cab"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk6 N140/N170 (1997–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "EX",
+      "Raider"
+     ],
+     "engines": [
+      "2.4 D 80PS diesel",
+      "2.5 D-4D 102PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "gtaGroup": "CP1"
+    },
+    {
+     "name": "Mk7 AN10/AN20 (2005–2016)",
+     "from": 2005,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "HL2",
+      "HL3",
+      "Invincible",
+      "Active",
+      "Invincible X"
+     ],
+     "engines": [
+      "2.5 D-4D 102PS diesel",
+      "2.5 D-4D 120PS diesel",
+      "2.5 D-4D 144PS diesel",
+      "3.0 D-4D 171PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    },
+    {
+     "name": "Mk8 AN120/AN130 (2016–present)",
+     "from": 2016,
+     "to": null,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Icon",
+      "Invincible",
+      "Invincible X",
+      "GR Sport"
+     ],
+     "engines": [
+      "2.4 D-4D 150PS diesel",
+      "2.8 D-4D 204PS diesel",
+      "2.8 D-4D Hybrid 48V 204PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    }
+   ]
+  },
+  {
+   "name": "Hiace",
+   "slug": "hiace",
+   "aliases": [],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2000,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "H100 (1989–2012)",
+     "from": 2000,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "280",
+      "300",
+      "GS"
+     ],
+     "engines": [
+      "2.4 D 79PS diesel",
+      "2.5 D-4D 95PS diesel",
+      "2.5 D-4D 117PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Proace",
+   "slug": "proace",
+   "aliases": [
+    "Proace Electric",
+    "Proace Crew Cab"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2013,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2013–2016)",
+     "from": 2013,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.6 D-4D 90PS diesel",
+      "2.0 D-4D 128PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 (2016–present)",
+     "from": 2016,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Comfort",
+      "Icon",
+      "Design"
+     ],
+     "engines": [
+      "1.6 D-4D 95PS diesel",
+      "1.6 D-4D 115PS diesel",
+      "1.5 D-4D 100PS diesel",
+      "1.5 D-4D 120PS diesel",
+      "2.0 D-4D 120PS diesel",
+      "2.0 D-4D 145PS diesel",
+      "2.0 D-4D 150PS diesel",
+      "2.0 D-4D 180PS diesel",
+      "50kWh Electric 136PS electric",
+      "75kWh Electric 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Proace City",
+   "slug": "proace-city",
+   "aliases": [
+    "Proace City Electric",
+    "Proace City Crew Cab"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2020–present)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Icon"
+     ],
+     "engines": [
+      "1.2 110PS petrol",
+      "1.5 D-4D 75PS diesel",
+      "1.5 D-4D 100PS diesel",
+      "1.5 D-4D 130PS diesel",
+      "50kWh Electric 136PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Proace Max",
+   "slug": "proace-max",
+   "aliases": [
+    "Proace Max Electric"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.2 D 120PS diesel",
+      "2.2 D 140PS diesel",
+      "2.2 D 180PS diesel",
+      "110kWh Electric 270PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

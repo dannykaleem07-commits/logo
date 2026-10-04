@@ -1,0 +1,1886 @@
+{
+ "make": "Volvo",
+ "slug": "volvo",
+ "dvlaNames": [
+  "VOLVO"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "S40",
+   "slug": "s40",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1995–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "CD",
+      "Classic"
+     ],
+     "engines": [
+      "1.6 109PS petrol",
+      "1.8 122PS petrol",
+      "2.0 140PS petrol",
+      "2.0 T 160PS petrol",
+      "1.9 T4 200PS petrol",
+      "1.9 D 102PS diesel",
+      "1.9 D 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2004–2012)",
+     "from": 2004,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Lux",
+      "SE Sport",
+      "Sport",
+      "R-Design",
+      "ES",
+      "DRIVe"
+     ],
+     "engines": [
+      "1.6 100PS petrol",
+      "1.8 125PS petrol",
+      "1.8 Flexifuel 125PS petrol",
+      "2.0 145PS petrol",
+      "2.4 140PS petrol",
+      "2.4i 170PS petrol",
+      "2.5 T5 220PS petrol",
+      "2.5 T5 230PS petrol",
+      "1.6 D 109PS diesel",
+      "1.6 DRIVe 109PS diesel",
+      "1.6 DRIVe 115PS diesel",
+      "2.0 D 136PS diesel",
+      "2.4 D5 180PS diesel",
+      "2.0 D3 150PS diesel",
+      "2.4 D4 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "V40",
+   "slug": "v40",
+   "aliases": [
+    "V40 Cross Country",
+    "V40 R-Design"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "Mk1 estate (1995–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "CD",
+      "Classic"
+     ],
+     "engines": [
+      "1.6 109PS petrol",
+      "1.8 122PS petrol",
+      "2.0 140PS petrol",
+      "2.0 T 160PS petrol",
+      "1.9 T4 200PS petrol",
+      "1.9 D 102PS diesel",
+      "1.9 D 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 hatchback (2012–2019)",
+     "from": 2012,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "ES",
+      "SE",
+      "SE Lux",
+      "SE Nav",
+      "R-Design",
+      "R-Design Nav",
+      "R-Design Pro",
+      "Momentum",
+      "Inscription",
+      "Cross Country",
+      "Cross Country Pro",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.6 D2 115PS diesel",
+      "2.0 D2 120PS diesel",
+      "2.0 D3 150PS diesel",
+      "2.0 D4 177PS diesel",
+      "2.0 D4 190PS diesel",
+      "1.6 T3 150PS petrol",
+      "1.6 T4 180PS petrol",
+      "2.5 T5 254PS petrol",
+      "2.0 T2 122PS petrol",
+      "2.0 T3 152PS petrol",
+      "2.0 T4 190PS petrol",
+      "2.0 T5 245PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "V50",
+   "slug": "v50",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2004,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2004–2012)",
+     "from": 2004,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Lux",
+      "SE Sport",
+      "Sport",
+      "R-Design",
+      "ES",
+      "DRIVe"
+     ],
+     "engines": [
+      "1.6 100PS petrol",
+      "1.8 125PS petrol",
+      "1.8 Flexifuel 125PS petrol",
+      "2.0 145PS petrol",
+      "2.4 140PS petrol",
+      "2.4i 170PS petrol",
+      "2.5 T5 220PS petrol",
+      "2.5 T5 230PS petrol",
+      "1.6 D 109PS diesel",
+      "1.6 DRIVe 109PS diesel",
+      "1.6 DRIVe 115PS diesel",
+      "2.0 D 136PS diesel",
+      "2.4 D5 180PS diesel",
+      "2.0 D3 150PS diesel",
+      "2.4 D4 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C30",
+   "slug": "c30",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2006,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Lux",
+      "Sport",
+      "R-Design",
+      "ES",
+      "DRIVe"
+     ],
+     "engines": [
+      "1.6 100PS petrol",
+      "1.8 125PS petrol",
+      "1.8 Flexifuel 125PS petrol",
+      "2.0 145PS petrol",
+      "2.4i 170PS petrol",
+      "2.5 T5 230PS petrol",
+      "1.6 D 109PS diesel",
+      "1.6 DRIVe 115PS diesel",
+      "2.0 D 136PS diesel",
+      "2.0 D3 150PS diesel",
+      "2.4 D4 177PS diesel",
+      "2.4 D5 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C70",
+   "slug": "c70",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1997–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "C70"
+     ],
+     "engines": [
+      "2.0 T 163PS petrol",
+      "2.4 T 193PS petrol",
+      "2.3 T5 240PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Mk2 coupe-cabriolet (2006–2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Lux",
+      "Sport",
+      "R-Design",
+      "ES",
+      "Inscription"
+     ],
+     "engines": [
+      "2.4i 170PS petrol",
+      "2.5 T5 230PS petrol",
+      "2.0 D 136PS diesel",
+      "2.0 D3 150PS diesel",
+      "2.4 D4 177PS diesel",
+      "2.4 D5 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "S60",
+   "slug": "s60",
+   "aliases": [
+    "S60 R",
+    "S60 Polestar",
+    "S60 Recharge"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2000–2009)",
+     "from": 2000,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "SE Lux",
+      "Sport Lux",
+      "SE Sport",
+      "R"
+     ],
+     "engines": [
+      "2.4 140PS petrol",
+      "2.4 170PS petrol",
+      "2.0 T 180PS petrol",
+      "2.4 T 200PS petrol",
+      "2.3 T5 250PS petrol",
+      "2.4 T5 260PS petrol",
+      "2.5 R 300PS petrol",
+      "2.4 D 130PS diesel",
+      "2.4 D5 163PS diesel",
+      "2.4 D5 185PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2010–2018)",
+     "from": 2010,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "ES",
+      "SE",
+      "SE Lux",
+      "SE Nav",
+      "SE Lux Nav",
+      "R-Design",
+      "R-Design Nav",
+      "R-Design Lux",
+      "R-Design Lux Nav",
+      "Business Edition",
+      "Polestar"
+     ],
+     "engines": [
+      "1.6 DRIVe 115PS diesel",
+      "1.6 D2 115PS diesel",
+      "2.0 D2 120PS diesel",
+      "2.0 D3 150PS diesel",
+      "2.0 D3 163PS diesel",
+      "2.0 D4 181PS diesel",
+      "2.0 D4 190PS diesel",
+      "2.4 D5 205PS diesel",
+      "2.4 D5 215PS diesel",
+      "1.6 T3 150PS petrol",
+      "1.6 T4 180PS petrol",
+      "2.0 T5 240PS petrol",
+      "2.0 T5 245PS petrol",
+      "3.0 T6 304PS petrol",
+      "2.0 T6 306PS petrol",
+      "3.0 Polestar 350PS petrol",
+      "2.0 Polestar 367PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Momentum",
+      "R-Design",
+      "R-Design Plus",
+      "R-Design Pro",
+      "Inscription",
+      "Inscription Plus",
+      "Polestar Engineered",
+      "Core",
+      "Plus",
+      "Ultimate"
+     ],
+     "engines": [
+      "2.0 T5 250PS petrol",
+      "2.0 B5 250PS mild-hybrid petrol",
+      "2.0 T8 Twin Engine 390PS plug-in-hybrid",
+      "2.0 T8 Recharge 455PS plug-in-hybrid",
+      "2.0 T8 Polestar Engineered 405PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "S70",
+   "slug": "s70",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2000
+   },
+   "generations": [
+    {
+     "name": "S70 (1997–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE"
+     ],
+     "engines": [
+      "2.0 126PS petrol",
+      "2.5 144PS petrol",
+      "2.5 170PS petrol",
+      "2.3 T5 250PS petrol",
+      "2.5 TDI 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "V70",
+   "slug": "v70",
+   "aliases": [
+    "V70 R"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1996–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE"
+     ],
+     "engines": [
+      "2.5 144PS petrol",
+      "2.5 170PS petrol",
+      "2.5 T 193PS petrol",
+      "2.3 T5 250PS petrol",
+      "2.5 TDI 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2000–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "SE Lux",
+      "SE Sport",
+      "Sport Lux",
+      "R"
+     ],
+     "engines": [
+      "2.4 140PS petrol",
+      "2.4 170PS petrol",
+      "2.0 T 180PS petrol",
+      "2.4 T 200PS petrol",
+      "2.5 T 210PS petrol",
+      "2.3 T5 250PS petrol",
+      "2.4 T5 260PS petrol",
+      "2.5 R 300PS petrol",
+      "2.4 D 130PS diesel",
+      "2.4 D 163PS diesel",
+      "2.4 D5 163PS diesel",
+      "2.4 D5 185PS diesel",
+      "2.4 Bi-Fuel 140PS lpg"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "lpg"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2007–2016)",
+     "from": 2007,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Lux",
+      "ES",
+      "R-Design",
+      "SE Nav",
+      "SE Lux Nav",
+      "R-Design Nav",
+      "Business Edition"
+     ],
+     "engines": [
+      "2.0 145PS petrol",
+      "2.5 T 200PS petrol",
+      "3.2 238PS petrol",
+      "3.0 T6 285PS petrol",
+      "3.0 T6 304PS petrol",
+      "1.6 T4 180PS petrol",
+      "2.0 T5 240PS petrol",
+      "1.6 DRIVe 109PS diesel",
+      "1.6 DRIVe 115PS diesel",
+      "2.0 D 136PS diesel",
+      "2.4 D 163PS diesel",
+      "2.4 D5 185PS diesel",
+      "2.4 D5 205PS diesel",
+      "2.4 D5 215PS diesel",
+      "2.0 D3 163PS diesel",
+      "2.0 D4 163PS diesel",
+      "2.4 D4 181PS diesel",
+      "2.0 D4 181PS diesel",
+      "2.0 D4 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "XC70",
+   "slug": "xc70",
+   "aliases": [
+    "V70 XC",
+    "V70 Cross Country"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "Mk1 V70 XC/XC70 (2000–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Lux"
+     ],
+     "engines": [
+      "2.4 T 200PS petrol",
+      "2.5 T 210PS petrol",
+      "2.4 D5 163PS diesel",
+      "2.4 D5 185PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2007–2016)",
+     "from": 2007,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Lux",
+      "ES",
+      "SE Nav",
+      "SE Lux Nav",
+      "Business Edition"
+     ],
+     "engines": [
+      "3.2 238PS petrol",
+      "3.0 T6 285PS petrol",
+      "3.0 T6 304PS petrol",
+      "2.4 D 175PS diesel",
+      "2.4 D5 185PS diesel",
+      "2.4 D5 205PS diesel",
+      "2.4 D5 215PS diesel",
+      "2.4 D4 163PS diesel",
+      "2.4 D4 181PS diesel",
+      "2.0 D4 181PS diesel",
+      "2.0 D4 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "S80",
+   "slug": "s80",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1998–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "SE Lux",
+      "Executive"
+     ],
+     "engines": [
+      "2.4 140PS petrol",
+      "2.4 170PS petrol",
+      "2.0 T 180PS petrol",
+      "2.5 T 210PS petrol",
+      "2.9 204PS petrol",
+      "2.8 T6 272PS petrol",
+      "2.4 D 130PS diesel",
+      "2.4 D5 163PS diesel",
+      "2.4 D5 185PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2006–2016)",
+     "from": 2006,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Lux",
+      "Executive",
+      "ES",
+      "SE Nav",
+      "SE Lux Nav",
+      "Business Edition"
+     ],
+     "engines": [
+      "2.5 T 200PS petrol",
+      "3.2 238PS petrol",
+      "4.4 V8 315PS petrol",
+      "3.0 T6 285PS petrol",
+      "3.0 T6 304PS petrol",
+      "2.0 T5 240PS petrol",
+      "1.6 DRIVe 109PS diesel",
+      "1.6 DRIVe 115PS diesel",
+      "2.0 D 136PS diesel",
+      "2.4 D 163PS diesel",
+      "2.4 D5 185PS diesel",
+      "2.4 D5 205PS diesel",
+      "2.4 D5 215PS diesel",
+      "2.0 D3 163PS diesel",
+      "2.4 D4 163PS diesel",
+      "2.0 D4 181PS diesel",
+      "2.0 D4 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "S90",
+   "slug": "s90",
+   "aliases": [
+    "S90 Recharge"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2016,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2016–2024)",
+     "from": 2016,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Momentum",
+      "Inscription",
+      "R-Design",
+      "Momentum Plus",
+      "Inscription Plus",
+      "R-Design Plus",
+      "Inscription Pro",
+      "Core",
+      "Plus",
+      "Ultimate"
+     ],
+     "engines": [
+      "2.0 D4 190PS diesel",
+      "2.0 D5 235PS diesel",
+      "2.0 T5 254PS petrol",
+      "2.0 B5 250PS mild-hybrid petrol",
+      "2.0 T8 Twin Engine 390PS plug-in-hybrid",
+      "2.0 T8 Recharge 455PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "V90",
+   "slug": "v90",
+   "aliases": [
+    "V90 Cross Country",
+    "V90 Recharge"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2016,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2016–2025)",
+     "from": 2016,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Momentum",
+      "Inscription",
+      "R-Design",
+      "Momentum Plus",
+      "Inscription Plus",
+      "R-Design Plus",
+      "Core",
+      "Plus",
+      "Ultimate",
+      "Cross Country",
+      "Cross Country Pro",
+      "Cross Country Plus",
+      "Cross Country Ultimate"
+     ],
+     "engines": [
+      "2.0 D4 190PS diesel",
+      "2.0 D5 235PS diesel",
+      "2.0 T5 254PS petrol",
+      "2.0 B4 197PS mild-hybrid diesel",
+      "2.0 B5 235PS mild-hybrid diesel",
+      "2.0 B5 250PS mild-hybrid petrol",
+      "2.0 B6 300PS mild-hybrid petrol",
+      "2.0 T8 Twin Engine 390PS plug-in-hybrid",
+      "2.0 T8 Recharge 455PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "V60",
+   "slug": "v60",
+   "aliases": [
+    "V60 Cross Country",
+    "V60 Polestar",
+    "V60 Recharge",
+    "V60 D6 Twin Engine"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2010,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2010–2018)",
+     "from": 2010,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "ES",
+      "SE",
+      "SE Lux",
+      "SE Nav",
+      "SE Lux Nav",
+      "R-Design",
+      "R-Design Nav",
+      "R-Design Lux Nav",
+      "Business Edition",
+      "Polestar",
+      "Cross Country",
+      "Cross Country Lux",
+      "Cross Country Lux Nav"
+     ],
+     "engines": [
+      "1.6 DRIVe 115PS diesel",
+      "1.6 D2 115PS diesel",
+      "2.0 D2 120PS diesel",
+      "2.0 D3 150PS diesel",
+      "2.0 D3 163PS diesel",
+      "2.0 D4 181PS diesel",
+      "2.0 D4 190PS diesel",
+      "2.4 D5 205PS diesel",
+      "2.4 D5 215PS diesel",
+      "2.4 D6 Twin Engine diesel 285PS plug-in-hybrid",
+      "1.6 T3 150PS petrol",
+      "1.6 T4 180PS petrol",
+      "2.0 T5 240PS petrol",
+      "2.0 T5 245PS petrol",
+      "3.0 T6 304PS petrol",
+      "2.0 T6 306PS petrol",
+      "3.0 Polestar 350PS petrol",
+      "2.0 Polestar 367PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2018–present)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Momentum",
+      "R-Design",
+      "Inscription",
+      "Momentum Plus",
+      "R-Design Plus",
+      "Inscription Plus",
+      "R-Design Edition",
+      "Core",
+      "Plus",
+      "Ultimate",
+      "Cross Country",
+      "Cross Country Plus",
+      "Polestar Engineered",
+      "Black Edition"
+     ],
+     "engines": [
+      "2.0 D3 150PS diesel",
+      "2.0 D4 190PS diesel",
+      "2.0 B4 197PS mild-hybrid diesel",
+      "2.0 T5 250PS petrol",
+      "2.0 B4 197PS mild-hybrid petrol",
+      "2.0 B5 250PS mild-hybrid petrol",
+      "2.0 T6 Twin Engine 340PS plug-in-hybrid",
+      "2.0 T8 Twin Engine 390PS plug-in-hybrid",
+      "2.0 T6 Recharge 350PS plug-in-hybrid",
+      "2.0 T8 Recharge 455PS plug-in-hybrid",
+      "2.0 T8 Polestar Engineered 405PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "XC40",
+   "slug": "xc40",
+   "aliases": [
+    "XC40 Recharge",
+    "XC40 T5 Recharge"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2018–2022)",
+     "from": 2017,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Momentum",
+      "R-Design",
+      "Inscription",
+      "First Edition",
+      "Momentum Pro",
+      "R-Design Pro",
+      "Inscription Pro",
+      "Plus",
+      "Pro"
+     ],
+     "engines": [
+      "1.5 T2 129PS petrol",
+      "1.5 T3 163PS petrol",
+      "2.0 T4 190PS petrol",
+      "2.0 T5 247PS petrol",
+      "2.0 D3 150PS diesel",
+      "2.0 D4 190PS diesel",
+      "2.0 B4 197PS mild-hybrid petrol",
+      "1.5 T4 Recharge 211PS plug-in-hybrid",
+      "1.5 T5 Recharge 262PS plug-in-hybrid",
+      "78kWh P8 Recharge Twin Motor 408PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk1 facelift (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Core",
+      "Plus",
+      "Ultimate",
+      "Black Edition"
+     ],
+     "engines": [
+      "2.0 B3 163PS mild-hybrid petrol",
+      "2.0 B4 197PS mild-hybrid petrol",
+      "1.5 T4 Recharge 211PS plug-in-hybrid",
+      "1.5 T5 Recharge 262PS plug-in-hybrid",
+      "69kWh Recharge Single Motor 231PS electric",
+      "69kWh Recharge Single Motor 238PS electric",
+      "82kWh Recharge Single Motor Extended Range 252PS electric",
+      "78kWh Recharge Twin Motor 408PS electric",
+      "82kWh Recharge Twin Motor 408PS electric"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EX40",
+   "slug": "ex40",
+   "aliases": [
+    "XC40 Recharge Pure Electric",
+    "XC40 Electric"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Core",
+      "Plus",
+      "Ultra",
+      "Black Edition"
+     ],
+     "engines": [
+      "69kWh Single Motor 238PS electric",
+      "82kWh Single Motor Extended Range 252PS electric",
+      "82kWh Twin Motor 408PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EC40",
+   "slug": "ec40",
+   "aliases": [
+    "C40",
+    "C40 Recharge"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "C40/EC40 (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "First Edition",
+      "Plus",
+      "Ultimate",
+      "Core",
+      "Ultra",
+      "Black Edition"
+     ],
+     "engines": [
+      "78kWh Twin Motor 408PS electric",
+      "69kWh Single Motor 231PS electric",
+      "69kWh Single Motor 238PS electric",
+      "82kWh Single Motor Extended Range 252PS electric",
+      "82kWh Twin Motor 408PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EX30",
+   "slug": "ex30",
+   "aliases": [
+    "EX30 Cross Country"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Core",
+      "Plus",
+      "Ultra",
+      "Cross Country"
+     ],
+     "engines": [
+      "51kWh Single Motor 272PS electric",
+      "69kWh Single Motor Extended Range 272PS electric",
+      "69kWh Twin Motor Performance 428PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "XC60",
+   "slug": "xc60",
+   "aliases": [
+    "XC60 Recharge"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2008,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2008–2017)",
+     "from": 2008,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Lux",
+      "ES",
+      "R-Design",
+      "SE Nav",
+      "SE Lux Nav",
+      "R-Design Nav",
+      "R-Design Lux Nav",
+      "Business Edition"
+     ],
+     "engines": [
+      "3.2 238PS petrol",
+      "3.0 T6 285PS petrol",
+      "3.0 T6 304PS petrol",
+      "2.0 T5 240PS petrol",
+      "2.0 T5 245PS petrol",
+      "2.4 DRIVe 175PS diesel",
+      "2.4 D5 185PS diesel",
+      "2.4 D5 205PS diesel",
+      "2.4 D5 215PS diesel",
+      "2.0 D3 163PS diesel",
+      "2.4 D4 163PS diesel",
+      "2.4 D4 181PS diesel",
+      "2.0 D4 181PS diesel",
+      "2.0 D4 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2017–present)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Momentum",
+      "R-Design",
+      "Inscription",
+      "First Edition",
+      "Momentum Pro",
+      "R-Design Pro",
+      "Inscription Pro",
+      "Momentum Plus",
+      "R-Design Plus",
+      "Inscription Plus",
+      "Core",
+      "Plus",
+      "Ultimate",
+      "Ultra",
+      "Polestar Engineered",
+      "Black Edition"
+     ],
+     "engines": [
+      "2.0 D4 190PS diesel",
+      "2.0 D5 235PS diesel",
+      "2.0 B4 197PS mild-hybrid diesel",
+      "2.0 B5 235PS mild-hybrid diesel",
+      "2.0 T5 254PS petrol",
+      "2.0 T6 320PS petrol",
+      "2.0 B5 250PS mild-hybrid petrol",
+      "2.0 B6 300PS mild-hybrid petrol",
+      "2.0 T8 Twin Engine 390PS plug-in-hybrid",
+      "2.0 T8 Polestar Engineered 405PS plug-in-hybrid",
+      "2.0 T6 Recharge 350PS plug-in-hybrid",
+      "2.0 T8 Recharge 455PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "XC90",
+   "slug": "xc90",
+   "aliases": [
+    "XC90 Recharge"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2002,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2002–2014)",
+     "from": 2002,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Lux",
+      "Sport",
+      "Executive",
+      "R-Design",
+      "ES"
+     ],
+     "engines": [
+      "2.5 T 210PS petrol",
+      "2.9 T6 272PS petrol",
+      "3.2 238PS petrol",
+      "4.4 V8 315PS petrol",
+      "2.4 D5 163PS diesel",
+      "2.4 D5 185PS diesel",
+      "2.4 D5 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2015–2024)",
+     "from": 2015,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Momentum",
+      "Inscription",
+      "R-Design",
+      "Excellence",
+      "First Edition",
+      "Momentum Pro",
+      "Inscription Pro",
+      "R-Design Pro",
+      "Momentum Plus",
+      "Inscription Plus",
+      "R-Design Plus",
+      "Core",
+      "Plus",
+      "Ultimate"
+     ],
+     "engines": [
+      "2.0 D4 190PS diesel",
+      "2.0 D5 225PS diesel",
+      "2.0 D5 235PS diesel",
+      "2.0 B5 235PS mild-hybrid diesel",
+      "2.0 T5 254PS petrol",
+      "2.0 T6 320PS petrol",
+      "2.0 B5 250PS mild-hybrid petrol",
+      "2.0 B6 300PS mild-hybrid petrol",
+      "2.0 T8 Twin Engine 390PS plug-in-hybrid",
+      "2.0 T8 Twin Engine 407PS plug-in-hybrid",
+      "2.0 T8 Recharge 455PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 facelift (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Core",
+      "Plus",
+      "Ultra"
+     ],
+     "engines": [
+      "2.0 B5 250PS mild-hybrid petrol",
+      "2.0 T8 455PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EX90",
+   "slug": "ex90",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Plus",
+      "Ultra"
+     ],
+     "engines": [
+      "111kWh Twin Motor 408PS electric",
+      "111kWh Twin Motor Performance 517PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ES90",
+   "slug": "es90",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Plus",
+      "Ultra"
+     ],
+     "engines": [
+      "92kWh Single Motor 333PS electric",
+      "106kWh Twin Motor 449PS electric",
+      "106kWh Twin Motor Performance 680PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1331 @@
+{
+ "make": "Aston Martin",
+ "slug": "aston-martin",
+ "dvlaNames": [
+  "ASTON MARTIN",
+  "ASTON MARTIN LAGONDA",
+  "ASTON-MARTIN"
+ ],
+ "aliases": [
+  "Aston",
+  "AML"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "DB7",
+   "slug": "db7",
+   "aliases": [
+    "DB7 Vantage",
+    "DB7 Volante",
+    "DB7 GT",
+    "DB7 GTA",
+    "DB7 Zagato",
+    "DB AR1"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "DB7 Vantage / GT (1999–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Vantage",
+      "Vantage Volante",
+      "GT",
+      "GTA",
+      "Zagato",
+      "DB AR1"
+     ],
+     "engines": [
+      "5.9 V12 426PS petrol",
+      "5.9 V12 441PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Vantage",
+   "slug": "vantage",
+   "aliases": [
+    "V8 Vantage",
+    "V12 Vantage",
+    "V8 Vantage S",
+    "V12 Vantage S",
+    "Vantage Roadster",
+    "V8 Vantage Roadster",
+    "Vantage AMR",
+    "Vantage S",
+    "N420",
+    "N430",
+    "GT8",
+    "GT12",
+    "Vantage F1 Edition",
+    "V8 Coupe",
+    "V8 Volante"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "V8 Coupe / V8 Vantage, Virage-based (1993–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "V8 Coupe",
+      "V8 Volante",
+      "V8 Vantage V550",
+      "V8 Vantage V600",
+      "V8 Vantage Le Mans"
+     ],
+     "engines": [
+      "5.3 V8 355PS petrol",
+      "5.3 V8 supercharged 558PS petrol",
+      "5.3 V8 supercharged 608PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "V8 / V12 Vantage (2005–2017)",
+     "from": 2005,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "V8 Vantage",
+      "V8 Vantage Roadster",
+      "N400",
+      "N420",
+      "N430",
+      "V8 Vantage S",
+      "V8 Vantage GT",
+      "GT8",
+      "V12 Vantage",
+      "V12 Vantage Roadster",
+      "V12 Vantage S",
+      "GT12"
+     ],
+     "engines": [
+      "4.3 V8 385PS petrol",
+      "4.7 V8 426PS petrol",
+      "4.7 V8 436PS petrol",
+      "4.7 V8 446PS petrol",
+      "6.0 V12 517PS petrol",
+      "6.0 V12 573PS petrol",
+      "6.0 V12 608PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Vantage (2018–2023)",
+     "from": 2018,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Vantage",
+      "Vantage AMR",
+      "Vantage Roadster",
+      "F1 Edition",
+      "V12 Vantage",
+      "V12 Vantage Roadster"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 503PS petrol",
+      "4.0 V8 twin-turbo 535PS petrol",
+      "5.2 V12 twin-turbo 700PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Vantage (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Vantage",
+      "Vantage Roadster",
+      "Vantage S",
+      "Vantage S Roadster"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 665PS petrol",
+      "4.0 V8 twin-turbo 680PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Vanquish",
+   "slug": "vanquish",
+   "aliases": [
+    "V12 Vanquish",
+    "Vanquish S",
+    "Vanquish Volante",
+    "Vanquish S Volante",
+    "Vanquish Zagato"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2001,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "V12 Vanquish (2001–2007)",
+     "from": 2001,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "V12 Vanquish",
+      "Vanquish S",
+      "Ultimate Edition"
+     ],
+     "engines": [
+      "5.9 V12 466PS petrol",
+      "5.9 V12 527PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Vanquish (2012–2018)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Vanquish",
+      "Vanquish Volante",
+      "Vanquish S",
+      "Vanquish S Volante",
+      "Vanquish Zagato"
+     ],
+     "engines": [
+      "6.0 V12 573PS petrol",
+      "6.0 V12 576PS petrol",
+      "6.0 V12 603PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Vanquish (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Vanquish",
+      "Vanquish Volante"
+     ],
+     "engines": [
+      "5.2 V12 twin-turbo 835PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DB9",
+   "slug": "db9",
+   "aliases": [
+    "DB9 Volante",
+    "DB9 GT",
+    "DB9 GT Volante"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2004,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "DB9 (2004–2012)",
+     "from": 2004,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "DB9",
+      "DB9 Volante",
+      "DB9 Sports Pack",
+      "DB9 LM"
+     ],
+     "engines": [
+      "5.9 V12 456PS petrol",
+      "5.9 V12 477PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "DB9 facelift (2012–2016)",
+     "from": 2012,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "DB9",
+      "DB9 Volante",
+      "DB9 Carbon Edition",
+      "DB9 GT",
+      "DB9 GT Volante"
+     ],
+     "engines": [
+      "5.9 V12 517PS petrol",
+      "5.9 V12 547PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DBS",
+   "slug": "dbs",
+   "aliases": [
+    "DBS V12",
+    "DBS Volante",
+    "DBS Superleggera",
+    "DBS Superleggera Volante",
+    "DBS 770 Ultimate"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2007,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "DBS V12 (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "DBS",
+      "DBS Volante",
+      "DBS Carbon Edition",
+      "DBS Ultimate"
+     ],
+     "engines": [
+      "6.0 V12 517PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "DBS Superleggera (2018–2023)",
+     "from": 2018,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "DBS Superleggera",
+      "DBS Superleggera Volante",
+      "DBS 770 Ultimate",
+      "DBS 770 Ultimate Volante"
+     ],
+     "engines": [
+      "5.2 V12 twin-turbo 725PS petrol",
+      "5.2 V12 twin-turbo 770PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Rapide",
+   "slug": "rapide",
+   "aliases": [
+    "Rapide S",
+    "Rapide AMR"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2010,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Rapide (2010–2013)",
+     "from": 2010,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Rapide",
+      "Rapide Luxe"
+     ],
+     "engines": [
+      "5.9 V12 477PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Rapide S / AMR (2013–2020)",
+     "from": 2013,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Rapide S",
+      "Rapide S Shadow Edition",
+      "Rapide AMR"
+     ],
+     "engines": [
+      "6.0 V12 558PS petrol",
+      "6.0 V12 560PS petrol",
+      "6.0 V12 603PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Virage",
+   "slug": "virage",
+   "aliases": [
+    "Virage Volante"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2011,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Virage (2011–2012)",
+     "from": 2011,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Virage",
+      "Virage Volante"
+     ],
+     "engines": [
+      "5.9 V12 497PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DB11",
+   "slug": "db11",
+   "aliases": [
+    "DB11 V8",
+    "DB11 V12",
+    "DB11 AMR",
+    "DB11 Volante"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2016,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "DB11 (2016–2023)",
+     "from": 2016,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "DB11 Launch Edition",
+      "DB11 V12",
+      "DB11 V8",
+      "DB11 AMR",
+      "DB11 Volante"
+     ],
+     "engines": [
+      "5.2 V12 twin-turbo 608PS petrol",
+      "5.2 V12 twin-turbo 639PS petrol",
+      "4.0 V8 twin-turbo 510PS petrol",
+      "4.0 V8 twin-turbo 535PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DB12",
+   "slug": "db12",
+   "aliases": [
+    "DB12 Volante",
+    "DB12 S"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "DB12 (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "DB12",
+      "DB12 Volante",
+      "DB12 S",
+      "DB12 S Volante"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 680PS petrol",
+      "4.0 V8 twin-turbo 700PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DBX",
+   "slug": "dbx",
+   "aliases": [
+    "DBX707",
+    "DBX 707",
+    "DBX S"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "DBX (2020–present)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "DBX",
+      "DBX707",
+      "DBX S"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 550PS petrol",
+      "4.0 V8 twin-turbo 707PS petrol",
+      "4.0 V8 twin-turbo 727PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cygnet",
+   "slug": "cygnet",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2011,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "Cygnet (2011–2013)",
+     "from": 2011,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Cygnet"
+     ],
+     "engines": [
+      "1.33 Dual VVT-i 98PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "One-77",
+   "slug": "one-77",
+   "aliases": [
+    "One 77"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2010,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "One-77 (2010–2012)",
+     "from": 2010,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "One-77"
+     ],
+     "engines": [
+      "7.3 V12 760PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Valkyrie",
+   "slug": "valkyrie",
+   "aliases": [
+    "Valkyrie Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Valkyrie (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Valkyrie",
+      "Valkyrie Spider"
+     ],
+     "engines": [
+      "6.5 V12 1160PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "V12 Speedster",
+   "slug": "v12-speedster",
+   "aliases": [
+    "Speedster"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2021,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "V12 Speedster (2021)",
+     "from": 2021,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "V12 Speedster"
+     ],
+     "engines": [
+      "5.2 V12 twin-turbo 700PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "88-unit limited run; open two-seater without roof or windscreen; 8-speed automatic."
+    }
+   ]
+  },
+  {
+   "name": "DBR22",
+   "slug": "dbr22",
+   "aliases": [
+    "DBR 22"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2024,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "DBR22 (2024–2025)",
+     "from": 2024,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "DBR22"
+     ],
+     "engines": [
+      "5.2 V12 twin-turbo 715PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Limited run (about 22 cars) of the 2022 open two-seat concept; sale years follow UK registrations and are approximate."
+    }
+   ]
+  },
+  {
+   "name": "Valour",
+   "slug": "valour",
+   "aliases": [
+    "Valour V12"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2024,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "Valour (2024–2025)",
+     "from": 2024,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Valour"
+     ],
+     "engines": [
+      "5.2 V12 twin-turbo 715PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "110-unit limited run (110th anniversary); 6-speed manual only."
+    }
+   ]
+  },
+  {
+   "name": "Valiant",
+   "slug": "valiant",
+   "aliases": [
+    "Valiant V12"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2025,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "Valiant (2025)",
+     "from": 2025,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Valiant"
+     ],
+     "engines": [
+      "5.2 V12 twin-turbo 745PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "38-unit track-focused derivative of the Valour; 6-speed manual only; first deliveries from late 2024, UK registrations from 2025."
+    }
+   ]
+  },
+  {
+   "name": "Valhalla",
+   "slug": "valhalla",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Valhalla (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Valhalla"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 1079PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Lagonda Taraf",
+   "slug": "lagonda-taraf",
+   "aliases": [
+    "Taraf",
+    "Lagonda"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2015,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "Taraf (2015–2016)",
+     "from": 2015,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Taraf"
+     ],
+     "engines": [
+      "5.9 V12 548PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

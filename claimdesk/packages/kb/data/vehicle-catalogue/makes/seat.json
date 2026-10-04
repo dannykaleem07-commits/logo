@@ -1,0 +1,1291 @@
+{
+ "make": "SEAT",
+ "slug": "seat",
+ "dvlaNames": [
+  "SEAT"
+ ],
+ "aliases": [
+  "Seat"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Arosa",
+   "slug": "arosa",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "6H facelift (1997–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "1.0 MPI 50PS petrol",
+      "1.4 MPI 60PS petrol",
+      "1.4 16v 100PS petrol",
+      "1.7 SDI 60PS diesel",
+      "1.4 TDI 75PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ibiza",
+   "slug": "ibiza",
+   "aliases": [
+    "Ibiza SC",
+    "Ibiza SportCoupe",
+    "Ibiza ST",
+    "Ibiza FR",
+    "Ibiza Cupra",
+    "Ibiza Cupra R"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 facelift 6K2 (1999–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Chill",
+      "Cupra",
+      "Cupra R"
+     ],
+     "engines": [
+      "1.4 MPI 60PS petrol",
+      "1.4 16v 75PS petrol",
+      "1.4 16v 100PS petrol",
+      "1.6 100PS petrol",
+      "1.8 T 156PS petrol",
+      "1.8 T 180PS petrol",
+      "1.9 SDI 68PS diesel",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 6L (2002–2008)",
+     "from": 2002,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "S",
+      "SE",
+      "SX",
+      "Sport",
+      "Reference",
+      "Reference Sport",
+      "Stylance",
+      "FR",
+      "Formula Sport",
+      "Cupra"
+     ],
+     "engines": [
+      "1.2 12v 64PS petrol",
+      "1.2 12v 70PS petrol",
+      "1.4 16v 75PS petrol",
+      "1.4 16v 85PS petrol",
+      "1.6 16v 105PS petrol",
+      "1.8 T 150PS petrol",
+      "1.8 T 180PS petrol",
+      "1.4 TDI 70PS diesel",
+      "1.4 TDI 80PS diesel",
+      "1.9 SDI 64PS diesel",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 130PS diesel",
+      "1.9 TDI 160PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 6J (2008–2017)",
+     "from": 2008,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "S",
+      "SE",
+      "SE Copa",
+      "Sport",
+      "Toca",
+      "Chill",
+      "Ecomotive",
+      "Connect",
+      "Vista",
+      "SE Technology",
+      "FR",
+      "FR Technology",
+      "Cupra"
+     ],
+     "engines": [
+      "1.0 MPI 75PS petrol",
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.2 12v 70PS petrol",
+      "1.4 16v 85PS petrol",
+      "1.6 16v 105PS petrol",
+      "1.2 TSI 90PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.4 TSI 140PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.4 TSI 180PS petrol",
+      "1.8 TSI 192PS petrol",
+      "1.2 TDI 75PS diesel",
+      "1.4 TDI 75PS diesel",
+      "1.4 TDI 90PS diesel",
+      "1.4 TDI 105PS diesel",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "2.0 TDI 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk5 KJ (2017–present)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Technology",
+      "SE Design",
+      "FR",
+      "FR Sport",
+      "Xcellence",
+      "Xcellence Lux",
+      "Anniversary Limited Edition"
+     ],
+     "engines": [
+      "1.0 MPI 75PS petrol",
+      "1.0 MPI 80PS petrol",
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.5 TSI 150PS petrol",
+      "1.6 TDI 80PS diesel",
+      "1.6 TDI 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Leon",
+   "slug": "leon",
+   "aliases": [
+    "Leon SC",
+    "Leon ST",
+    "Leon Estate",
+    "Leon X-Perience",
+    "Leon FR",
+    "Leon Cupra",
+    "Leon Cupra R",
+    "Leon e-HYBRID"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 1M (1999–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Stella",
+      "FR",
+      "Cupra",
+      "Cupra 4",
+      "Cupra R"
+     ],
+     "engines": [
+      "1.4 16v 75PS petrol",
+      "1.6 100PS petrol",
+      "1.6 16v 105PS petrol",
+      "1.8 20v 125PS petrol",
+      "1.8 T 180PS petrol",
+      "1.8 T 210PS petrol",
+      "1.8 T 225PS petrol",
+      "2.8 V6 204PS petrol",
+      "1.9 SDI 68PS diesel",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 110PS diesel",
+      "1.9 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 1P (2005–2012)",
+     "from": 2005,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Reference",
+      "Reference Sport",
+      "Stylance",
+      "Sport",
+      "Copa",
+      "Ecomotive",
+      "FR",
+      "FR+",
+      "Cupra",
+      "Cupra R"
+     ],
+     "engines": [
+      "1.2 TSI 105PS petrol",
+      "1.4 16v 85PS petrol",
+      "1.4 TSI 125PS petrol",
+      "1.6 102PS petrol",
+      "1.8 TSI 160PS petrol",
+      "2.0 FSI 150PS petrol",
+      "2.0 TFSI 200PS petrol",
+      "2.0 TFSI 211PS petrol",
+      "2.0 TFSI 240PS petrol",
+      "2.0 TFSI 265PS petrol",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "1.9 TDI 105PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 5F (2013–2020)",
+     "from": 2013,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Technology",
+      "SE Dynamic",
+      "SE Dynamic Technology",
+      "Ecomotive",
+      "FR",
+      "FR Technology",
+      "FR Black Edition",
+      "Xcellence",
+      "Xcellence Lux",
+      "X-Perience",
+      "X-Perience Lux",
+      "Cupra",
+      "Cupra 280",
+      "Cupra 290",
+      "Cupra 300",
+      "Cupra R"
+     ],
+     "engines": [
+      "1.0 TSI 115PS petrol",
+      "1.2 TSI 86PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.2 TSI 110PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.4 TSI 125PS petrol",
+      "1.4 TSI 140PS petrol",
+      "1.4 TSI 150PS petrol",
+      "1.5 TSI 130PS petrol",
+      "1.5 TSI 150PS petrol",
+      "1.8 TSI 180PS petrol",
+      "2.0 TSI 265PS petrol",
+      "2.0 TSI 280PS petrol",
+      "2.0 TSI 290PS petrol",
+      "2.0 TSI 300PS petrol",
+      "2.0 TSI 310PS petrol",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "1.6 TDI 110PS diesel",
+      "1.6 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 KL (2020–present)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Dynamic",
+      "FR",
+      "FR Sport",
+      "FR First Edition",
+      "FR Black Edition",
+      "Xcellence",
+      "Xcellence Lux",
+      "Xcellence First Edition"
+     ],
+     "engines": [
+      "1.0 TSI 110PS petrol",
+      "1.0 eTSI 110PS mild-hybrid petrol",
+      "1.5 TSI 115PS petrol",
+      "1.5 TSI 130PS petrol",
+      "1.5 TSI 150PS petrol",
+      "1.5 eTSI 150PS mild-hybrid petrol",
+      "1.4 e-HYBRID 204PS plug-in-hybrid",
+      "1.5 e-HYBRID 204PS plug-in-hybrid",
+      "2.0 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Toledo",
+   "slug": "toledo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "Mk2 1M (1999–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Stella"
+     ],
+     "engines": [
+      "1.6 100PS petrol",
+      "1.8 20v 125PS petrol",
+      "1.8 T 180PS petrol",
+      "2.3 V5 150PS petrol",
+      "2.3 V5 170PS petrol",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 110PS diesel",
+      "1.9 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 5P (2005–2009)",
+     "from": 2005,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Reference",
+      "Stylance",
+      "Sport"
+     ],
+     "engines": [
+      "1.6 102PS petrol",
+      "2.0 FSI 150PS petrol",
+      "1.9 TDI 105PS diesel",
+      "2.0 TDI 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 NH (2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "S",
+      "SE",
+      "Style",
+      "Ecomotive",
+      "SE Dynamic",
+      "Xcellence"
+     ],
+     "engines": [
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.2 MPI 75PS petrol",
+      "1.2 TSI 86PS petrol",
+      "1.2 TSI 105PS petrol",
+      "1.2 TSI 110PS petrol",
+      "1.4 TSI 122PS petrol",
+      "1.4 TSI 125PS petrol",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "1.6 TDI 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cordoba",
+   "slug": "cordoba",
+   "aliases": [
+    "Cordoba Vario"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "Mk1 facelift 6K2 (1999–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "1.4 MPI 60PS petrol",
+      "1.6 75PS petrol",
+      "1.6 100PS petrol",
+      "1.9 SDI 68PS diesel",
+      "1.9 TDI 90PS diesel",
+      "1.9 TDI 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 6L (2003–2006)",
+     "from": 2003,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SX",
+      "Sport",
+      "Reference",
+      "Stylance"
+     ],
+     "engines": [
+      "1.4 16v 75PS petrol",
+      "1.4 16v 85PS petrol",
+      "2.0 115PS petrol",
+      "1.4 TDI 80PS diesel",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Inca",
+   "slug": "inca",
+   "aliases": [
+    "Inca Van"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2000,
+    "to": 2003
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1996–2004)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.4 60PS petrol",
+      "1.9 SDI 64PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "Car-derived van on the Ibiza/Cordoba Mk2 platform, twin of the VW Caddy (9K). UK volumes were small and many Incas on UK roads are later imports (first UK registrations 2011–2022 in the licensing data); UK trim names and the full UK engine list were not recorded."
+    }
+   ]
+  },
+  {
+   "name": "Altea",
+   "slug": "altea",
+   "aliases": [
+    "Altea XL",
+    "Altea Freetrack"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2004,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "5P (2004–2015)",
+     "from": 2004,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Reference",
+      "Reference Sport",
+      "Stylance",
+      "Sport",
+      "FR",
+      "S",
+      "SE",
+      "Ecomotive",
+      "I-Tech",
+      "Freetrack"
+     ],
+     "engines": [
+      "1.2 TSI 105PS petrol",
+      "1.4 16v 85PS petrol",
+      "1.4 TSI 125PS petrol",
+      "1.6 102PS petrol",
+      "1.8 TSI 160PS petrol",
+      "2.0 FSI 150PS petrol",
+      "2.0 TFSI 200PS petrol",
+      "2.0 TFSI 211PS petrol",
+      "1.6 TDI 105PS diesel",
+      "1.9 TDI 105PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Alhambra",
+   "slug": "alhambra",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Mk1 7M (1996–2010)",
+     "from": 2000,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SX",
+      "Sport",
+      "Reference",
+      "Stylance"
+     ],
+     "engines": [
+      "1.8 T 150PS petrol",
+      "2.0 115PS petrol",
+      "2.8 V6 204PS petrol",
+      "1.9 TDI 115PS diesel",
+      "1.9 TDI 130PS diesel",
+      "1.9 TDI 150PS diesel",
+      "2.0 TDI 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 7N (2010–2020)",
+     "from": 2010,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Lux",
+      "Xcellence",
+      "Ecomotive"
+     ],
+     "engines": [
+      "1.4 TSI 150PS petrol",
+      "2.0 TSI 200PS petrol",
+      "2.0 TSI 220PS petrol",
+      "2.0 TDI 115PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.0 TDI 177PS diesel",
+      "2.0 TDI 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Exeo",
+   "slug": "exeo",
+   "aliases": [
+    "Exeo ST"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2009,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "3R (2009–2013)",
+     "from": 2009,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Tech",
+      "Sport",
+      "Sport Tech"
+     ],
+     "engines": [
+      "1.8 TSI 120PS petrol",
+      "1.8 TSI 160PS petrol",
+      "2.0 TSI 200PS petrol",
+      "2.0 TDI 120PS diesel",
+      "2.0 TDI 143PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S6"
+    }
+   ]
+  },
+  {
+   "name": "Mii",
+   "slug": "mii",
+   "aliases": [
+    "Mii electric"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2012,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "KF (2012–2021; Mii electric 2020–2021)",
+     "from": 2012,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Toca",
+      "Sport",
+      "Ecomotive",
+      "Mii by Mango",
+      "Design Mii",
+      "FR Line",
+      "Mii electric"
+     ],
+     "engines": [
+      "1.0 MPI 60PS petrol",
+      "1.0 MPI 75PS petrol",
+      "36.8kWh 83PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ateca",
+   "slug": "ateca",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2016,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "KH (2016–present)",
+     "from": 2016,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Technology",
+      "FR",
+      "FR Sport",
+      "FR Black Edition",
+      "Xcellence",
+      "Xcellence Lux",
+      "Xperience",
+      "Xperience Lux"
+     ],
+     "engines": [
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.4 EcoTSI 150PS petrol",
+      "1.5 TSI 150PS petrol",
+      "2.0 TSI 190PS petrol",
+      "1.6 TDI 115PS diesel",
+      "2.0 TDI 115PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Arona",
+   "slug": "arona",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "KJ7 (2017–present)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Technology",
+      "FR",
+      "FR Sport",
+      "FR Red Edition",
+      "Xcellence",
+      "Xcellence Lux"
+     ],
+     "engines": [
+      "1.0 TSI 95PS petrol",
+      "1.0 TSI 110PS petrol",
+      "1.0 TSI 115PS petrol",
+      "1.5 TSI 150PS petrol",
+      "1.6 TDI 95PS diesel",
+      "1.6 TDI 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tarraco",
+   "slug": "tarraco",
+   "aliases": [
+    "Tarraco e-HYBRID"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2019,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "KN (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Technology",
+      "Xcellence",
+      "Xcellence Lux",
+      "FR",
+      "FR Sport"
+     ],
+     "engines": [
+      "1.5 TSI 150PS petrol",
+      "2.0 TSI 190PS petrol",
+      "2.0 TSI 245PS petrol",
+      "1.4 e-HYBRID 245PS plug-in-hybrid",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.0 TDI 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

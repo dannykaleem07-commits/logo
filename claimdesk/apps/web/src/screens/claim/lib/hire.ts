@@ -7,6 +7,7 @@ import {
   calculateHire,
   recoveryCharge,
   storageCharge,
+  type GtaRate,
   type HireAgreement,
   type HireCalculation,
   type HireEndTrigger,
@@ -56,10 +57,14 @@ export function hireRunning(h: Pick<HireAgreement, 'endAt'>): boolean {
   return !h.endAt;
 }
 
-/** Indicative hire totals for the card; a running hire is costed to `asOf`. Undefined when the domain refuses the input. */
-export function hireTotals(h: HireAgreement, asOf: ISODateTime): HireCalculation | undefined {
+/**
+ * Indicative hire totals for the card; a running hire is costed to `asOf`. `rates` is the merged GTA benchmark table
+ * (knowledge base ⊕ Settings → GTA benchmark rates, from `useGtaRates()`); without it the domain's built-in table is
+ * used. An empty list means no benchmark line. Undefined when the domain refuses the input.
+ */
+export function hireTotals(h: HireAgreement, asOf: ISODateTime, rates?: GtaRate[]): HireCalculation | undefined {
   try {
-    return calculateHire(h, h.endAt ?? asOf);
+    return calculateHire(h, h.endAt ?? asOf, rates ? { rates } : {});
   } catch {
     return undefined;
   }

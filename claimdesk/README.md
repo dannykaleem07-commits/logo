@@ -80,7 +80,7 @@ Everything works without keys. Free keys switch on live look-ups; see `docs/SETU
 
 | Setting | Why |
 |---|---|
-| Registered office, bank name, VAT and ICO numbers (Settings screen) | Printed in every document footer and on invoices |
+| Bank details, VAT and ICO numbers (Settings screen) | Printed on invoices and the payment direction (CCGUK-05). The registered office (44 Syon Lane, Isleworth, London TW7 5NQ), company number 17430389 and the contact details are already filled in |
 | `DVLA_VES_API_KEY` | Free vehicle details |
 | `DVSA_MOT_*` | Free MOT and mileage history |
 | `COMPANIES_HOUSE_API_KEY` | Free supplier monitoring |
@@ -92,7 +92,7 @@ Everything works without keys. Free keys switch on live look-ups; see `docs/SETU
 
 1. **Verify the knowledge base.** This build had no internet access, so nothing in it is marked verified, and every citation shows an amber badge. `docs/RESEARCH-CORRECTIONS.md` lists 19 places where research contradicted the original brief. The most important: Irani v Duchon is not a credit hire case, CPR interim payments moved to rules 25.20–25.26, and ICOBS 8.2 appears to cover domestic third-party claims.
 2. **Check each insurer's third-party line** on the insurer's own site and press "Mark verified today" in the Directory.
-3. **Fill in Settings** so documents stop printing "[registered office]".
+3. **Fill in Settings**: the company details (Courtesy Cars Group UK Ltd, No. 17430389, 44 Syon Lane, Isleworth, London TW7 5NQ, case handler 07425 475922, office 020 7052 5403, claims@courtesycars.net) are built in; add the bank account, VAT and ICO numbers, which were not supplied and are never guessed.
 4. **Change the default password** (Settings → Change password) before real data goes in, and add MFA before anyone but you can reach the system (`docs/KNOWN-ISSUES.md`).
 
 ## Legal boundaries built in

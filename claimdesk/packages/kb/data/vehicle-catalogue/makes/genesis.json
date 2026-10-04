@@ -1,0 +1,345 @@
+{
+ "make": "Genesis",
+ "slug": "genesis",
+ "dvlaNames": [
+  "GENESIS"
+ ],
+ "aliases": [
+  "Genesis Motor",
+  "Genesis Motor UK"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "G70",
+   "slug": "g70",
+   "aliases": [
+    "G70 Shooting Brake"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "IK (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "shooting-brake",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Premium Line",
+      "Luxury Line",
+      "Sport Line"
+     ],
+     "engines": [
+      "2.0 T-GDi 245PS petrol",
+      "2.2 CRDi 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "G80",
+   "slug": "g80",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "RG3 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Premium Line",
+      "Luxury Line",
+      "Sport Line"
+     ],
+     "engines": [
+      "2.5 T-GDi 304PS petrol",
+      "2.2 CRDi 210PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Electrified G80",
+   "slug": "electrified-g80",
+   "aliases": [
+    "G80 Electric",
+    "eG80"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "RG3 EV (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Premium Line",
+      "Luxury Line"
+     ],
+     "engines": [
+      "87.2kWh 370PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GV60",
+   "slug": "gv60",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "JW (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Premium",
+      "Sport",
+      "Sport Plus"
+     ],
+     "engines": [
+      "77.4kWh 229PS electric",
+      "77.4kWh 318PS electric",
+      "77.4kWh 435PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GV70",
+   "slug": "gv70",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "JK1 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Premium Line",
+      "Luxury Line",
+      "Sport Line"
+     ],
+     "engines": [
+      "2.5 T-GDi 304PS petrol",
+      "2.2 CRDi 210PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Electrified GV70",
+   "slug": "electrified-gv70",
+   "aliases": [
+    "GV70 Electric",
+    "eGV70"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "JK1 EV (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Premium Line",
+      "Luxury Line",
+      "Sport Line"
+     ],
+     "engines": [
+      "77.4kWh 435PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GV80",
+   "slug": "gv80",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "JX1 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Premium Line",
+      "Luxury Line"
+     ],
+     "engines": [
+      "2.5 T-GDi 304PS petrol",
+      "3.5 T-GDi V6 380PS petrol",
+      "3.0 CRDi 278PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

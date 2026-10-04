@@ -1,0 +1,117 @@
+{
+ "make": "Ineos",
+ "slug": "ineos",
+ "dvlaNames": [
+  "INEOS",
+  "INEOS AUTOMOTIVE"
+ ],
+ "aliases": [
+  "INEOS Automotive"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Grenadier",
+   "slug": "grenadier",
+   "aliases": [
+    "Grenadier Station Wagon",
+    "Grenadier Utility Wagon",
+    "Station Wagon",
+    "Utility Wagon"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        2,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Station Wagon",
+      "Utility Wagon",
+      "Trialmaster Edition",
+      "Fieldmaster Edition",
+      "Belstaff Edition"
+     ],
+     "engines": [
+      "3.0 BMW B58 286PS petrol",
+      "3.0 BMW B57 249PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Grenadier Quartermaster",
+   "slug": "grenadier-quartermaster",
+   "aliases": [
+    "Quartermaster"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Quartermaster",
+      "Trialmaster Edition",
+      "Fieldmaster Edition"
+     ],
+     "engines": [
+      "3.0 BMW B58 286PS petrol",
+      "3.0 BMW B57 249PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

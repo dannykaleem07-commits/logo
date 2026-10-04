@@ -1,0 +1,210 @@
+{
+ "make": "Jaecoo",
+ "slug": "jaecoo",
+ "dvlaNames": [
+  "JAECOO",
+  "CHERY JAECOO"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "5",
+   "slug": "5",
+   "aliases": [
+    "Jaecoo 5",
+    "J5"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "Luxury"
+     ],
+     "engines": [
+      "1.6 TGDI 147PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "E5",
+   "slug": "e5",
+   "aliases": [
+    "Jaecoo E5",
+    "J5 EV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "Luxury"
+     ],
+     "engines": [
+      "61kWh 211PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "7",
+   "slug": "7",
+   "aliases": [
+    "Jaecoo 7",
+    "J7",
+    "7 SHS",
+    "7 SHS-P",
+    "7 SHS-H"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "Deluxe",
+      "Luxury",
+      "Black Luxury"
+     ],
+     "engines": [
+      "1.6 TGDI 147PS petrol",
+      "1.6 TGDI AWD 147PS petrol",
+      "1.5 TGDI SHS-P 204PS plug-in-hybrid",
+      "1.5 TGDI SHS-H 224PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "plug-in-hybrid",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "8",
+   "slug": "8",
+   "aliases": [
+    "Jaecoo 8",
+    "J8",
+    "8 SHS-P"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Luxury",
+      "Executive"
+     ],
+     "engines": [
+      {
+       "label": "1.5 TGDI SHS-P AWD plug-in-hybrid",
+       "fuel": "plug-in-hybrid"
+      }
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

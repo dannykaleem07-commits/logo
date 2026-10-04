@@ -1,0 +1,207 @@
+{
+ "make": "Dodge",
+ "slug": "dodge",
+ "dvlaNames": [
+  "DODGE"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Dodge was sold officially in the UK c.2006–2011 only; Viper, Challenger, Charger and RAM pickups were LHD/grey imports and are omitted."
+ },
+ "models": [
+  {
+   "name": "Avenger",
+   "slug": "avenger",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2007,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "JS (2007–2010)",
+     "from": 2007,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SXT"
+     ],
+     "engines": [
+      "2.0 156PS petrol",
+      "2.4 170PS petrol",
+      "2.0 CRD 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Caliber",
+   "slug": "caliber",
+   "aliases": [
+    "Caliber SRT4",
+    "Caliber SRT-4"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2006,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "PM (2006–2011)",
+     "from": 2006,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SXT",
+      "SXT Sport",
+      "SRT4"
+     ],
+     "engines": [
+      "1.8 150PS petrol",
+      "2.0 156PS petrol",
+      "2.4 Turbo 285PS petrol",
+      "2.0 CRD 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Journey",
+   "slug": "journey",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2008,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "JC (2008–2011)",
+     "from": 2008,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SXT",
+      "R/T"
+     ],
+     "engines": [
+      "2.4 170PS petrol",
+      "2.7 V6 185PS petrol",
+      "2.0 CRD 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Nitro",
+   "slug": "nitro",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2007,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "KA (2007–2010)",
+     "from": 2007,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SXT",
+      "R/T"
+     ],
+     "engines": [
+      "3.7 V6 205PS petrol",
+      "2.8 CRD 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

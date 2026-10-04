@@ -1,0 +1,871 @@
+{
+ "make": "Chevrolet",
+ "slug": "chevrolet",
+ "dvlaNames": [
+  "CHEVROLET"
+ ],
+ "aliases": [
+  "Chevy",
+  "GM Daewoo"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Chevrolet replaced Daewoo in the UK in 2005 and withdrew at the end of 2015; pre-2005 Matiz/Kalos/Lacetti/Nubira/Tacuma/Evanda are badged Daewoo. Camaro and Corvette C6/C7 were LHD-only in the UK and are omitted."
+ },
+ "models": [
+  {
+   "name": "Aveo",
+   "slug": "aveo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2008,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "T250 (2008–2011)",
+     "from": 2008,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "LS",
+      "LT"
+     ],
+     "engines": [
+      "1.2 84PS petrol",
+      "1.4 101PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T300 (2011–2015)",
+     "from": 2011,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LS",
+      "LT",
+      "LTZ"
+     ],
+     "engines": [
+      "1.2 70PS petrol",
+      "1.2 86PS petrol",
+      "1.4 100PS petrol",
+      "1.6 115PS petrol",
+      "1.3 VCDi 75PS diesel",
+      "1.3 VCDi 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Captiva",
+   "slug": "captiva",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2006,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "C100 (2006–2011)",
+     "from": 2006,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "LS",
+      "LT",
+      "LTX"
+     ],
+     "engines": [
+      "2.4 142PS petrol",
+      "3.2 V6 230PS petrol",
+      "2.0 VCDi 127PS diesel",
+      "2.0 VCDi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C140 (2011–2015)",
+     "from": 2011,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "LS",
+      "LT",
+      "LTZ"
+     ],
+     "engines": [
+      "2.4 167PS petrol",
+      "2.2 VCDi 163PS diesel",
+      "2.2 VCDi 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Corvette",
+   "slug": "corvette",
+   "aliases": [
+    "Corvette Stingray"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "C8 (2022–, first factory RHD Corvette)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Stingray 3LT"
+     ],
+     "engines": [
+      "6.2 V8 482PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cruze",
+   "slug": "cruze",
+   "aliases": [
+    "Cruze SW",
+    "Cruze Station Wagon"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2009,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "J300 (2009–2015)",
+     "from": 2009,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "LS",
+      "LT",
+      "LTZ"
+     ],
+     "engines": [
+      "1.6 113PS petrol",
+      "1.6 124PS petrol",
+      "1.8 141PS petrol",
+      "1.4 Turbo 140PS petrol",
+      "1.7 VCDi 131PS diesel",
+      "2.0 VCDi 125PS diesel",
+      "2.0 VCDi 150PS diesel",
+      "2.0 VCDi 163PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Epica",
+   "slug": "epica",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2006,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "V250 (2006–2011)",
+     "from": 2006,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LS",
+      "LT"
+     ],
+     "engines": [
+      "2.0 144PS petrol",
+      "2.5 156PS petrol",
+      "2.0 VCDi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Evanda",
+   "slug": "evanda",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2005,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "V200 (2005–2006)",
+     "from": 2005,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "CDX"
+     ],
+     "engines": [
+      "2.0 131PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Kalos",
+   "slug": "kalos",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2005,
+    "to": 2008
+   },
+   "generations": [
+    {
+     "name": "T200 (2005–2008)",
+     "from": 2005,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SX"
+     ],
+     "engines": [
+      "1.2 72PS petrol",
+      "1.4 83PS petrol",
+      "1.4 16v 94PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Lacetti",
+   "slug": "lacetti",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2005,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "J200 (2005–2009)",
+     "from": 2005,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SX",
+      "CDX"
+     ],
+     "engines": [
+      "1.4 95PS petrol",
+      "1.6 109PS petrol",
+      "1.8 122PS petrol",
+      "2.0 VCDi 121PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Malibu",
+   "slug": "malibu",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2012,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Mk8 (2012–2015)",
+     "from": 2012,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LT",
+      "LTZ"
+     ],
+     "engines": [
+      "2.4 167PS petrol",
+      "2.0 VCDi 160PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Matiz",
+   "slug": "matiz",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2005,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "M200 (2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE+",
+      "SX"
+     ],
+     "engines": [
+      "0.8 52PS petrol",
+      "1.0 67PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Nubira",
+   "slug": "nubira",
+   "aliases": [
+    "Nubira SW",
+    "Nubira Station Wagon"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2005,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "J200 (2005–2009)",
+     "from": 2005,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "CDX"
+     ],
+     "engines": [
+      "1.6 109PS petrol",
+      "1.8 122PS petrol",
+      "2.0 VCDi 121PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Orlando",
+   "slug": "orlando",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2011,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "J309 (2011–2015)",
+     "from": 2011,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "LS",
+      "LT",
+      "LTZ"
+     ],
+     "engines": [
+      "1.8 141PS petrol",
+      "1.4 Turbo 140PS petrol",
+      "2.0 VCDi 131PS diesel",
+      "2.0 VCDi 163PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Spark",
+   "slug": "spark",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2010,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "M300 (2010–2015, facelift 2013)",
+     "from": 2010,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "+",
+      "LS",
+      "LT"
+     ],
+     "engines": [
+      "1.0 68PS petrol",
+      "1.2 82PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tacuma",
+   "slug": "tacuma",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2005,
+    "to": 2008
+   },
+   "generations": [
+    {
+     "name": "U100 (2005–2008)",
+     "from": 2005,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SX",
+      "CDX"
+     ],
+     "engines": [
+      "1.6 105PS petrol",
+      "2.0 121PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Trax",
+   "slug": "trax",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2013,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2013–2015)",
+     "from": 2013,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LS",
+      "LT",
+      "LTZ"
+     ],
+     "engines": [
+      "1.6 115PS petrol",
+      "1.4 Turbo 140PS petrol",
+      "1.7 VCDi 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Volt",
+   "slug": "volt",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2012,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2012–2014)",
+     "from": 2012,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Volt"
+     ],
+     "engines": [
+      "1.4 150PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

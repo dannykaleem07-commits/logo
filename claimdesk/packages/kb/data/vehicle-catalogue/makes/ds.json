@@ -1,0 +1,629 @@
+{
+ "make": "DS Automobiles",
+ "slug": "ds",
+ "dvlaNames": [
+  "DS",
+  "DS AUTOMOBILES"
+ ],
+ "aliases": [
+  "DS",
+  "DS Automobiles UK",
+  "DS Automobiles"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "DS 3",
+   "slug": "ds-3",
+   "aliases": [
+    "DS3",
+    "DS 3 Cabrio",
+    "DS 3 Crossback",
+    "DS3 Crossback",
+    "DS 3 E-Tense",
+    "DS 3 Crossback E-Tense"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2015,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "DS 3 hatchback (2015–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Chic",
+      "Connected Chic",
+      "Elegance",
+      "Prestige",
+      "Ultra Prestige",
+      "Performance Line",
+      "Performance"
+     ],
+     "engines": [
+      "1.2 PureTech 82PS petrol",
+      "1.2 PureTech 110PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.6 THP 165PS petrol",
+      "1.6 THP 208PS petrol",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "DS 3 Crossback (2019–2022)",
+     "from": 2019,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Chic",
+      "Elegance",
+      "Performance Line",
+      "Performance Line+",
+      "Prestige",
+      "Ultra Prestige",
+      "La Premiere",
+      "Bastille",
+      "Rivoli",
+      "Opera"
+     ],
+     "engines": [
+      "1.2 PureTech 100PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.2 PureTech 155PS petrol",
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "50kWh 136PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "DS 3 (Crossback facelift) (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Bastille",
+      "Performance Line",
+      "Rivoli",
+      "Opera",
+      "Pallas",
+      "Etoile"
+     ],
+     "engines": [
+      "1.2 PureTech 100PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.5 BlueHDi 130PS diesel",
+      "1.2 Hybrid 136PS mild-hybrid petrol",
+      "54kWh 156PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DS 4",
+   "slug": "ds-4",
+   "aliases": [
+    "DS4",
+    "DS 4 Crossback",
+    "DS 4 Cross",
+    "DS 4 E-Tense",
+    "DS N°4",
+    "DS No4",
+    "N°4",
+    "N4",
+    "No 4"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2015,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2015–2018)",
+     "from": 2015,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Prestige",
+      "Performance Line"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.6 THP 165PS petrol",
+      "1.6 THP 210PS petrol",
+      "1.6 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 150PS diesel",
+      "2.0 BlueHDi 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2021–2025)",
+     "from": 2021,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Bastille",
+      "Bastille+",
+      "Trocadero",
+      "Performance Line",
+      "Performance Line+",
+      "Rivoli",
+      "Rivoli+",
+      "Cross",
+      "La Premiere",
+      "Esprit de Voyage",
+      "Pallas",
+      "Etoile"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.6 PureTech 180PS petrol",
+      "1.6 PureTech 225PS petrol",
+      "1.5 BlueHDi 130PS diesel",
+      "1.2 Hybrid 136PS mild-hybrid petrol",
+      "1.6 PureTech 225PS plug-in-hybrid",
+      "58kWh 213PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "N°4 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pallas",
+      "Etoile"
+     ],
+     "engines": [
+      "1.2 Hybrid 145PS mild-hybrid petrol",
+      "1.6 PureTech 225PS plug-in-hybrid",
+      "58kWh 213PS electric"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DS 5",
+   "slug": "ds-5",
+   "aliases": [
+    "DS5"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2015,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "DS 5 (2015–2018)",
+     "from": 2015,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Prestige",
+      "Performance Line"
+     ],
+     "engines": [
+      "1.6 THP 165PS petrol",
+      "1.6 THP 210PS petrol",
+      "1.6 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 150PS diesel",
+      "2.0 BlueHDi 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DS 7",
+   "slug": "ds-7",
+   "aliases": [
+    "DS7",
+    "DS 7 Crossback",
+    "DS7 Crossback",
+    "DS 7 E-Tense"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2018,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "DS 7 Crossback (2018–2022)",
+     "from": 2018,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Performance Line",
+      "Prestige",
+      "Ultra Prestige",
+      "La Premiere",
+      "Bastille",
+      "Rivoli",
+      "Opera"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.6 PureTech 180PS petrol",
+      "1.6 PureTech 225PS petrol",
+      "1.5 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 180PS diesel",
+      "1.6 PureTech 300PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "DS 7 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Bastille",
+      "Performance Line",
+      "Rivoli",
+      "Opera",
+      "La Premiere",
+      "Pallas",
+      "Etoile"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.5 BlueHDi 130PS diesel",
+      "1.6 PureTech 225PS plug-in-hybrid",
+      "1.6 PureTech 300PS plug-in-hybrid",
+      "1.6 PureTech 360PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DS 9",
+   "slug": "ds-9",
+   "aliases": [
+    "DS9",
+    "DS 9 E-Tense",
+    "DS9 E-Tense"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2021,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "DS 9 (2020–2025)",
+     "from": 2021,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      {
+       "name": "Performance Line+",
+       "from": 2021,
+       "to": 2022
+      },
+      {
+       "name": "Rivoli+",
+       "from": 2021
+      },
+      {
+       "name": "Opera",
+       "from": 2023
+      },
+      {
+       "name": "Esprit de Voyage",
+       "from": 2023
+      }
+     ],
+     "engines": [
+      {
+       "label": "1.6 PureTech 225PS petrol",
+       "fuel": "petrol",
+       "powerPs": 225,
+       "transmissions": [
+        "automatic"
+       ],
+       "from": 2021,
+       "to": 2022
+      },
+      {
+       "label": "1.6 E-Tense 225PS plug-in-hybrid",
+       "fuel": "plug-in-hybrid",
+       "powerPs": 225,
+       "transmissions": [
+        "automatic"
+       ],
+       "from": 2021,
+       "to": 2022
+      },
+      {
+       "label": "1.6 E-Tense 250PS plug-in-hybrid",
+       "fuel": "plug-in-hybrid",
+       "powerPs": 250,
+       "transmissions": [
+        "automatic"
+       ],
+       "from": 2022
+      },
+      {
+       "label": "1.6 E-Tense 4x4 360PS plug-in-hybrid",
+       "fuel": "plug-in-hybrid",
+       "powerPs": 360,
+       "transmissions": [
+        "automatic"
+       ],
+       "from": 2022
+      }
+     ],
+     "fuels": [
+      "petrol",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Sold in the UK in small numbers 2021–2025 (built in China). The range went plug-in hybrid only in 2022 (E-Tense 250 and E-Tense 4x4 360 replaced the PureTech 225 and E-Tense 225); Opera and Esprit de Voyage arrived for model year 2023."
+    }
+   ]
+  },
+  {
+   "name": "DS N°8",
+   "slug": "ds-no8",
+   "aliases": [
+    "DS No8",
+    "DS N8",
+    "N°8",
+    "N8",
+    "No 8"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "N°8 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pallas",
+      "Etoile"
+     ],
+     "engines": [
+      "74kWh 230PS electric",
+      "97kWh 245PS electric",
+      "97kWh 350PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

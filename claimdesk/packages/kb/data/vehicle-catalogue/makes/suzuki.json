@@ -1,0 +1,1196 @@
+{
+ "make": "Suzuki",
+ "slug": "suzuki",
+ "dvlaNames": [
+  "SUZUKI"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Alto",
+   "slug": "alto",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2000,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "Mk4 Indian-built (1997–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GL"
+     ],
+     "engines": [
+      "1.0 54PS petrol",
+      "1.1 63PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "HA25 (2009–2014)",
+     "from": 2009,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SZ",
+      "SZ3",
+      "SZ4"
+     ],
+     "engines": [
+      "1.0 68PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S1"
+    }
+   ]
+  },
+  {
+   "name": "Celerio",
+   "slug": "celerio",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2015,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "FE (2015–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SZ2",
+      "SZ3",
+      "SZ4"
+     ],
+     "engines": [
+      "1.0 68PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S1"
+    }
+   ]
+  },
+  {
+   "name": "Wagon R+",
+   "slug": "wagon-r-plus",
+   "aliases": [
+    "Wagon R",
+    "WagonR+"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2000,
+    "to": 2008
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2000–2008)",
+     "from": 2000,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GL",
+      "GA",
+      "GLX"
+     ],
+     "engines": [
+      "1.0 58PS petrol",
+      "1.3 76PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Splash",
+   "slug": "splash",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2008,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "EX (2008–2015)",
+     "from": 2008,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SZ2",
+      "SZ3",
+      "SZ4",
+      "SZ-L"
+     ],
+     "engines": [
+      "1.0 65PS petrol",
+      "1.0 68PS petrol",
+      "1.2 86PS petrol",
+      "1.2 94PS petrol",
+      "1.3 DDiS 75PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ignis",
+   "slug": "ignis",
+   "aliases": [
+    "Ignis Sport"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "FH (2000–2008)",
+     "from": 2000,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GL",
+      "GLX",
+      "Sport"
+     ],
+     "engines": [
+      "1.3 83PS petrol",
+      "1.3 94PS petrol",
+      "1.5 99PS petrol",
+      "1.5 109PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "MF (2017–2024)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SZ3",
+      "SZ-T",
+      "SZ5"
+     ],
+     "engines": [
+      "1.2 Dualjet 90PS petrol",
+      "1.2 Dualjet SHVS 90PS mild-hybrid petrol",
+      "1.2 Dualjet SHVS 83PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Swift",
+   "slug": "swift",
+   "aliases": [
+    "Swift Sport"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2005,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "ZC11/ZC31 (2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GL",
+      "GLX",
+      "GLX VVTS",
+      "Sport",
+      "Attitude"
+     ],
+     "engines": [
+      "1.3 92PS petrol",
+      "1.5 102PS petrol",
+      "1.6 125PS petrol",
+      "1.3 DDiS 75PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "ZC72/ZC32 (2010–2017)",
+     "from": 2010,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SZ2",
+      "SZ3",
+      "SZ4",
+      "SZ-L",
+      "Attitude",
+      "Sport"
+     ],
+     "engines": [
+      "1.2 94PS petrol",
+      "1.6 136PS petrol",
+      "1.3 DDiS 75PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "AZ/ZC33 (2017–2024)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SZ3",
+      "SZ-T",
+      "SZ5",
+      "Attitude",
+      "Sport"
+     ],
+     "engines": [
+      "1.2 Dualjet 90PS petrol",
+      "1.2 Dualjet SHVS 83PS mild-hybrid petrol",
+      "1.0 Boosterjet 111PS petrol",
+      "1.0 Boosterjet SHVS 111PS mild-hybrid petrol",
+      "1.4 Boosterjet 140PS petrol",
+      "1.4 Boosterjet SHVS 129PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk7 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Motion",
+      "Ultra"
+     ],
+     "engines": [
+      "1.2 Dualjet SHVS 83PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Baleno",
+   "slug": "baleno",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "EG (1995–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GL",
+      "GLX"
+     ],
+     "engines": [
+      "1.3 85PS petrol",
+      "1.6 96PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "EW (2016–2019)",
+     "from": 2016,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SZ3",
+      "SZ5"
+     ],
+     "engines": [
+      "1.2 Dualjet 90PS petrol",
+      "1.2 Dualjet SHVS 90PS mild-hybrid petrol",
+      "1.0 Boosterjet 111PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Liana",
+   "slug": "liana",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2001,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "ER (2001–2007)",
+     "from": 2001,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GL",
+      "GLX",
+      "SE"
+     ],
+     "engines": [
+      "1.3 91PS petrol",
+      "1.6 103PS petrol",
+      "1.6 107PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Swace",
+   "slug": "swace",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2020,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2020–2024)",
+     "from": 2020,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SZ-T",
+      "SZ5",
+      "Motion",
+      "Ultra"
+     ],
+     "engines": [
+      "1.8 Hybrid 122PS hybrid",
+      "1.8 Hybrid 140PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Kizashi",
+   "slug": "kizashi",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2010,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "RE (2010–2013)",
+     "from": 2010,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport"
+     ],
+     "engines": [
+      "2.4 178PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "SX4",
+   "slug": "sx4",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2006,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "EY/GY (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GL",
+      "GLX",
+      "SZ3",
+      "SZ4",
+      "SZ5"
+     ],
+     "engines": [
+      "1.6 107PS petrol",
+      "1.6 120PS petrol",
+      "1.9 DDiS 120PS diesel",
+      "2.0 DDiS 135PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "S-Cross",
+   "slug": "s-cross",
+   "aliases": [
+    "SX4 S-Cross",
+    "SX4 S Cross",
+    "S Cross"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2013,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "JY SX4 S-Cross (2013–2021)",
+     "from": 2013,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SZ3",
+      "SZ4",
+      "SZ-T",
+      "SZ5"
+     ],
+     "engines": [
+      "1.6 120PS petrol",
+      "1.6 DDiS 120PS diesel",
+      "1.0 Boosterjet 111PS petrol",
+      "1.4 Boosterjet 140PS petrol",
+      "1.4 Boosterjet SHVS 129PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Motion",
+      "Ultra"
+     ],
+     "engines": [
+      "1.4 Boosterjet SHVS 129PS mild-hybrid petrol",
+      "1.5 Dualjet Full Hybrid 115PS hybrid"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Vitara",
+   "slug": "vitara",
+   "aliases": [
+    "Vitara S",
+    "Vitara Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2015,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "LY (2015–)",
+     "from": 2015,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SZ4",
+      "SZ-T",
+      "SZ5",
+      "S",
+      "Motion",
+      "Ultra"
+     ],
+     "engines": [
+      "1.6 120PS petrol",
+      "1.6 DDiS 120PS diesel",
+      "1.0 Boosterjet 111PS petrol",
+      "1.4 Boosterjet 140PS petrol",
+      "1.4 Boosterjet SHVS 129PS mild-hybrid petrol",
+      "1.5 Dualjet Full Hybrid 115PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "e Vitara",
+   "slug": "e-vitara",
+   "aliases": [
+    "eVitara",
+    "e-Vitara"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Motion",
+      "Ultra"
+     ],
+     "engines": [
+      "49kWh 144PS electric",
+      "61kWh 174PS electric",
+      "61kWh AllGrip-e 184PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Grand Vitara",
+   "slug": "grand-vitara",
+   "aliases": [
+    "Grand Vitara XL-7",
+    "XL-7"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "Mk1 FT/GT (1998–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Grand Vitara"
+     ],
+     "engines": [
+      "1.6 94PS petrol",
+      "2.0 128PS petrol",
+      "2.5 V6 158PS petrol",
+      "2.7 V6 173PS petrol",
+      "2.0 HDi 109PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Mk2 JT (2005–2014)",
+     "from": 2005,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X-EC",
+      "X-EC+",
+      "X-EX",
+      "X-EX+",
+      "SZ3",
+      "SZ4",
+      "SZ5"
+     ],
+     "engines": [
+      "1.6 106PS petrol",
+      "2.0 140PS petrol",
+      "2.4 169PS petrol",
+      "1.9 DDiS 129PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Across",
+   "slug": "across",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2020,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2020–2024)",
+     "from": 2020,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Across"
+     ],
+     "engines": [
+      "2.5 PHEV 306PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Jimny",
+   "slug": "jimny",
+   "aliases": [
+    "Jimny Commercial",
+    "Jimny LCV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2000,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Mk3 FJ (1998–2018)",
+     "from": 2000,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "JLX",
+      "JLX+",
+      "SZ3",
+      "SZ4"
+     ],
+     "engines": [
+      "1.3 80PS petrol",
+      "1.3 85PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 JB74 (2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SZ4",
+      "SZ5",
+      "Commercial"
+     ],
+     "engines": [
+      "1.5 102PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

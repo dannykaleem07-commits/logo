@@ -10,9 +10,12 @@
  * `NEXT_STAGES` below (the API already enforces them).
  */
 import type { Address, ComplianceAlert, FleetUnit, FleetUse, InsurancePolicy, ISODate, PenaltyNotice, Pence, Vehicle } from '@ccguk/domain';
-import type { FleetUnitRow, VehicleInput } from '../../api/client';
+import type { FleetUnitRow, FleetUnitWriteBody } from '../../api/client';
+import type { VehiclePatchBody } from '../../api/vehiclesApi';
 import type { Tone } from '../../lib/status';
 import { daysBetween } from '../../lib/dates';
+import { emptyPickerValue, patchHasChanges, pickerFromVehicle, toVehicleInput, validatePicker, vehiclePatchFrom, type PickerErrors, type VehiclePickerValue } from '../vehicles/vehiclePicker';
+import { emptyGtaPanel, gtaPanelFromUnit, gtaSuggestionInput, validateGtaPanel, type GtaPanelState } from './gtaPanel';
 
 // ---------------------------------------------------------------------------
 // Rows as the screen reads them (the API may denormalise more than the contract promises)
@@ -229,125 +232,139 @@ export const ALERT_CODE_LABEL: Record<ComplianceAlert['code'], string> = {
 };
 
 // ---------------------------------------------------------------------------
-// Unit form
+// Unit form (docs/TEMPLATES-VEHICLES-DESKTOP.md §F.1)
 // ---------------------------------------------------------------------------
 
+/**
+ * The unit dialog's state: the vehicle (VehiclePicker value: catalogue pick, Total Car Check paste or typed), the GTA
+ * panel (group and daily rate pre-filled from the benchmark suggestion until edited) and the unit's own fields.
+ */
 export interface UnitForm {
-  registration: string;
-  make: string;
-  model: string;
-  gtaGroup: string;
+  vehicle: VehiclePickerValue;
+  gta: GtaPanelState;
   declaredUses: FleetUse[];
   policyId: string;
-  dailyRatePence: Pence | null;
   keeperLine1: string;
   keeperLine2: string;
   keeperTown: string;
   keeperPostcode: string;
   keeperAddressCurrent: boolean;
   serviceDueDate: ISODate | '';
-  motExpiryDate: ISODate | '';
-  taxDueDate: ISODate | '';
   status: FleetUnit['status'];
   phvLicensed: boolean;
 }
 
 export function emptyUnitForm(): UnitForm {
   return {
-    registration: '',
-    make: '',
-    model: '',
-    gtaGroup: '',
+    vehicle: emptyPickerValue(),
+    gta: emptyGtaPanel(),
     declaredUses: [],
     policyId: '',
-    dailyRatePence: null,
     keeperLine1: '',
     keeperLine2: '',
     keeperTown: '',
     keeperPostcode: '',
     keeperAddressCurrent: true,
     serviceDueDate: '',
-    motExpiryDate: '',
-    taxDueDate: '',
     status: 'available',
     phvLicensed: false
   };
 }
 
-export function unitToForm(u: FleetUnitView): UnitForm {
+export function unitToForm(u: FleetUnitView, groupsWithRates: readonly string[] = []): UnitForm {
   const k = u.keeperAddressOnV5C;
   return {
-    registration: unitRegistration(u),
-    make: u.vehicle?.make ?? '',
-    model: u.vehicle?.model ?? '',
-    gtaGroup: u.gtaGroup ?? '',
+    vehicle: u.vehicle ? pickerFromVehicle(u.vehicle) : emptyPickerValue(unitRegistration(u)),
+    gta: gtaPanelFromUnit(u, groupsWithRates),
     declaredUses: [...(u.declaredUses ?? [])],
     policyId: u.policyId ?? '',
-    dailyRatePence: u.dailyRatePence ?? null,
     keeperLine1: k?.line1 ?? '',
     keeperLine2: k?.line2 ?? '',
     keeperTown: k?.town ?? '',
     keeperPostcode: k?.postcode ?? '',
     keeperAddressCurrent: u.keeperAddressCurrent ?? true,
     serviceDueDate: u.serviceDueDate ?? '',
-    motExpiryDate: u.vehicle?.motExpiryDate ?? '',
-    taxDueDate: u.vehicle?.taxDueDate ?? '',
     status: u.status ?? 'available',
     phvLicensed: Boolean(u.phvLicensed)
   };
 }
 
-export type UnitFormErrors = Partial<Record<keyof UnitForm, string>>;
+export type UnitFormErrors = Partial<Record<'registration' | 'gtaGroup' | 'dailyRatePence' | 'declaredUses' | 'policyId' | 'keeperPostcode', string>> & {
+  vehicle?: PickerErrors;
+};
 
 const UK_POSTCODE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
 
 export function validateUnitForm(f: UnitForm, isNew: boolean): UnitFormErrors {
   const e: UnitFormErrors = {};
-  if (isNew && !f.registration.trim()) e.registration = 'Registration is required';
-  if (!f.gtaGroup.trim()) e.gtaGroup = 'GTA group is required (e.g. S1, M, M1) — it drives the benchmark rate';
+  if (isNew && !f.vehicle.registration.trim()) e.registration = 'Registration is required';
+  const gta = validateGtaPanel(f.gta);
+  if (gta.group) e.gtaGroup = gta.group;
+  if (gta.ratePence) e.dailyRatePence = gta.ratePence;
   if (f.declaredUses.length === 0) e.declaredUses = 'Declare at least one class of use';
-  if (f.dailyRatePence === null || f.dailyRatePence <= 0) e.dailyRatePence = 'Enter the daily rate in pounds';
   if (f.declaredUses.includes('credit_hire') && f.declaredUses.includes('self_drive') && !f.policyId.trim()) {
     e.policyId = 'Credit hire and self-drive together need a policy that covers both — Collingwood will not (§3.12)';
   }
   if (f.keeperPostcode.trim() && !UK_POSTCODE.test(f.keeperPostcode.trim())) e.keeperPostcode = 'Enter a UK postcode';
   if (f.keeperLine1.trim() && !f.keeperPostcode.trim()) e.keeperPostcode = 'Postcode is required with the address';
+  const vehicle = validatePicker(f.vehicle);
+  if (Object.keys(vehicle).length) e.vehicle = vehicle;
   return e;
 }
 
-export interface FleetUnitBody extends Partial<FleetUnit> {
-  vehicle?: VehicleInput;
-}
+/** POST /fleet body (§F.1 step 5): vehicle (picker fields + spec + source), group, daily rate and the GTA suggestion. */
+export type FleetUnitBody = FleetUnitWriteBody;
 
-/** Form → POST /fleet (new) or PATCH /fleet/:id (edit) body. Pence stay pence; dates stay ISO. */
-export function buildUnitBody(f: UnitForm, isNew: boolean): FleetUnitBody {
-  const keeper: Address | undefined = f.keeperLine1.trim()
+/** PATCH /fleet/:id body: the unit's fields and, when the vehicle changed, the vehicle patch with its source. */
+export type FleetUnitPatchBody = Omit<FleetUnitWriteBody, 'vehicle' | 'gtaSuggestion'> & { vehicle?: VehiclePatchBody };
+
+function keeperAddress(f: UnitForm): Address | undefined {
+  return f.keeperLine1.trim()
     ? { line1: f.keeperLine1.trim(), line2: f.keeperLine2.trim() || undefined, town: f.keeperTown.trim() || undefined, postcode: f.keeperPostcode.trim().toUpperCase() }
     : undefined;
-  const vehicle: VehicleInput | undefined =
-    isNew || f.make.trim() || f.model.trim() || f.motExpiryDate || f.taxDueDate
-      ? {
-          registration: f.registration.replace(/\s+/g, '').toUpperCase(),
-          make: f.make.trim() || undefined,
-          model: f.model.trim() || undefined,
-          motExpiryDate: f.motExpiryDate || undefined,
-          taxDueDate: f.taxDueDate || undefined,
-          ownership: 'fleet',
-          manual: true
-        }
-      : undefined;
-  return {
+}
+
+/** Form → POST /fleet body. Pence stay pence; dates stay ISO; the vehicle is recorded as unverified by the server. */
+export function buildUnitBody(f: UnitForm): FleetUnitBody {
+  const group = f.gta.group.trim().toUpperCase();
+  const vehicle = toVehicleInput({ ...f.vehicle, registration: f.vehicle.registration.replace(/\s+/g, '').toUpperCase() }, { ownership: 'fleet' });
+  const body: FleetUnitBody = {
     vehicle,
     declaredUses: f.declaredUses,
     policyId: f.policyId.trim() || undefined,
-    dailyRatePence: f.dailyRatePence ?? 0,
-    gtaGroup: f.gtaGroup.trim().toUpperCase(),
-    keeperAddressOnV5C: keeper,
+    keeperAddressOnV5C: keeperAddress(f),
     keeperAddressCurrent: f.keeperAddressCurrent,
     serviceDueDate: f.serviceDueDate || undefined,
     status: f.status,
     phvLicensed: f.phvLicensed
   };
+  if (group) body.gtaGroup = group;
+  if (f.gta.ratePence !== null) body.dailyRatePence = f.gta.ratePence;
+  const suggestion = gtaSuggestionInput(f.gta);
+  if (suggestion) body.gtaSuggestion = suggestion;
+  return body;
+}
+
+/**
+ * Form → PATCH /fleet/:id body. The vehicle changes go too (the API applies them to the vehicle record with their
+ * source, §F.2); `initialVehicle` is the picker value the dialog opened with.
+ */
+export function buildUnitPatch(f: UnitForm, initialVehicle: VehiclePickerValue): FleetUnitPatchBody {
+  const group = f.gta.group.trim().toUpperCase();
+  const body: FleetUnitPatchBody = {
+    declaredUses: f.declaredUses,
+    policyId: f.policyId.trim() || undefined,
+    keeperAddressOnV5C: keeperAddress(f),
+    keeperAddressCurrent: f.keeperAddressCurrent,
+    serviceDueDate: f.serviceDueDate || undefined,
+    status: f.status,
+    phvLicensed: f.phvLicensed
+  };
+  if (group) body.gtaGroup = group;
+  if (f.gta.ratePence !== null) body.dailyRatePence = f.gta.ratePence;
+  const vehicle = vehiclePatchFrom(initialVehicle, f.vehicle);
+  if (patchHasChanges(vehicle)) body.vehicle = vehicle;
+  return body;
 }
 
 // ---------------------------------------------------------------------------

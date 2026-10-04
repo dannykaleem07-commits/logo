@@ -1,0 +1,113 @@
+{
+ "make": "Tata",
+ "slug": "tata",
+ "dvlaNames": [
+  "TATA"
+ ],
+ "aliases": [
+  "Tata Motors"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Minimal entry: only models confirmed by the DfT/DVLA licensing reference; engine power not recorded."
+ },
+ "models": [
+  {
+   "name": "Safari",
+   "slug": "safari",
+   "aliases": [
+    "Tata Safari"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1998–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Safari"
+     ],
+     "engines": [
+      {
+       "label": "Turbo-diesel",
+       "fuel": "diesel"
+      }
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "Minimal entry; UK trim names, engine sizes and power not recorded in this draft."
+    }
+   ]
+  },
+  {
+   "name": "TL",
+   "slug": "tl",
+   "aliases": [
+    "Telcoline",
+    "Tata TL",
+    "TL Pick-up"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2003,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "TL pick-up (2003–2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        2,
+        5
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      {
+       "label": "Turbo-diesel",
+       "fuel": "diesel"
+      }
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "Minimal entry; cab styles, engine size and power not recorded in this draft."
+    }
+   ]
+  }
+ ]
+}

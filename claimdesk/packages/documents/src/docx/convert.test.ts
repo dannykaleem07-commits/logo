@@ -396,6 +396,22 @@ describe('browser converter', () => {
     120_000
   );
 
+  it.skipIf(!chromium)(
+    'falls back to Playwright header/footer templates when margin boxes are unavailable',
+    async () => {
+      const bytes = new Uint8Array(readFileSync(new URL('../../assets/docx/CCGUK-05-Payment-Authorisation-and-Settlement-Direction.docx', import.meta.url)));
+      const res = await convertDocxToPdf(bytes, { workDir: join(work, 'browser-fallback'), metadata, converters: [createBrowserConverter({ forceTemplates: true })] });
+      expect(res.converter).toBe('browser');
+      expect(res.pages).toBeGreaterThanOrEqual(3);
+      const pdfPath = join(work, 'browser-fallback-05.pdf');
+      writeFileSync(pdfPath, res.pdf);
+      const r = spawnSync('pdftotext', ['-f', '2', '-l', '2', '-layout', pdfPath, '-'], { encoding: 'utf8' });
+      if (r.error) return;
+      expect(r.stdout).toMatch(/PAGE 2 OF \d/);
+    },
+    120_000
+  );
+
   it('stampPdfMetadata keeps pages and sets Language en-GB', async () => {
     const { pdf, pages } = await stampPdfMetadata(await tinyPdf(3), { title: 'T' });
     expect(pages).toBe(3);

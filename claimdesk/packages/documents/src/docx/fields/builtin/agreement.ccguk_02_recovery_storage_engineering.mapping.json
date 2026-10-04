@@ -1,0 +1,1552 @@
+{
+  "schemaVersion": 1,
+  "templateId": "agreement.ccguk_02_recovery_storage_engineering",
+  "sourceSha256": "ab1518573ccdaeb65be31d28edddbe94e43f471699a538deec336a24b7ea0109",
+  "variants": [
+    {
+      "id": "instruction",
+      "label": "Instruction (cover, A1, A2)",
+      "default": true
+    },
+    {
+      "id": "submission",
+      "label": "Submission (+ C1 service record)"
+    }
+  ],
+  "guards": [
+    "printedRates",
+    "openRecordsNoNow"
+  ],
+  "subjects": [],
+  "style": {
+    "valueRun": {
+      "font": "Calibri",
+      "sizeHalfPoints": 18,
+      "color": "1A1A1A"
+    }
+  },
+  "entries": [
+    {
+      "slot": {
+        "section": "title",
+        "label": "agreement-ref"
+      },
+      "key": "doc.agreementRef",
+      "note": "Agreement reference — the claim reference until a separate series exists."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "claim-ref"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "client"
+      },
+      "key": "claimant.name"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "vehicle-reg"
+      },
+      "key": "vehicle.registration"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "accident-date"
+      },
+      "key": "accident.date"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "liability"
+      },
+      "key": "claim.liability",
+      "note": "Admitted / Disputed / Awaited; a split liability position is left for the handler."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "case-handler"
+      },
+      "key": "handler.caseHandler"
+    },
+    {
+      "slot": {
+        "section": "a1-1-the-services",
+        "label": "instructed",
+        "nth": 1
+      },
+      "key": "recovery.instructedDate",
+      "label": "Recovery — instructed",
+      "onlyIf": {
+        "key": "services.recovery",
+        "equals": true
+      }
+    },
+    {
+      "slot": {
+        "section": "a1-1-the-services",
+        "label": "your-initials",
+        "nth": 1
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "a1-1-the-services",
+        "label": "instructed",
+        "nth": 2
+      },
+      "key": "storage.instructedDate",
+      "label": "Storage — instructed",
+      "onlyIf": {
+        "key": "services.storage",
+        "equals": true
+      }
+    },
+    {
+      "slot": {
+        "section": "a1-1-the-services",
+        "label": "your-initials",
+        "nth": 2
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "a1-1-the-services",
+        "label": "instructed",
+        "nth": 3
+      },
+      "key": "engineer.instructedDate",
+      "label": "Engineering — instructed",
+      "onlyIf": {
+        "key": "services.engineering",
+        "equals": true
+      }
+    },
+    {
+      "slot": {
+        "section": "a1-1-the-services",
+        "label": "your-initials",
+        "nth": 3
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "a1-2-how-this-agreement-was-made",
+        "label": "choice"
+      },
+      "key": "claim.agreementMadeAt",
+      "label": "How this agreement was made",
+      "note": "Premises / away / distance — record what actually happened; never defaulted."
+    },
+    {
+      "slot": {
+        "section": "a1-2-how-this-agreement-was-made",
+        "label": "early-start-i-asked-ccguk-to-begin-these-service"
+      },
+      "policy": "signature",
+      "label": "Early start (Client to tick)",
+      "note": "The client ticks this themselves."
+    },
+    {
+      "slot": {
+        "section": "a1-4-client-signature",
+        "label": "full-name"
+      },
+      "key": "claimant.name"
+    },
+    {
+      "slot": {
+        "section": "a1-4-client-signature",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "a1-4-client-signature",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "a2-1-the-client",
+        "label": "title-and-full-name"
+      },
+      "key": "claimant.name"
+    },
+    {
+      "slot": {
+        "section": "a2-1-the-client",
+        "label": "date-of-birth"
+      },
+      "key": "claimant.dateOfBirth"
+    },
+    {
+      "slot": {
+        "section": "a2-1-the-client",
+        "label": "address-and-postcode"
+      },
+      "key": "claimant.address"
+    },
+    {
+      "slot": {
+        "section": "a2-1-the-client",
+        "label": "mobile"
+      },
+      "key": "claimant.phone"
+    },
+    {
+      "slot": {
+        "section": "a2-1-the-client",
+        "label": "email"
+      },
+      "key": "claimant.email"
+    },
+    {
+      "slot": {
+        "section": "a2-1-the-client",
+        "label": "id-seen"
+      },
+      "key": "claimant.idSeen"
+    },
+    {
+      "slot": {
+        "section": "a2-1-the-client",
+        "label": "licence-no"
+      },
+      "key": "claimant.drivingLicenceNumber"
+    },
+    {
+      "slot": {
+        "section": "a2-2-the-vehicle",
+        "label": "make-and-model"
+      },
+      "key": "vehicle.makeModel"
+    },
+    {
+      "slot": {
+        "section": "a2-2-the-vehicle",
+        "label": "registration"
+      },
+      "key": "vehicle.registration"
+    },
+    {
+      "slot": {
+        "section": "a2-2-the-vehicle",
+        "label": "vin"
+      },
+      "key": "vehicle.vin"
+    },
+    {
+      "slot": {
+        "section": "a2-2-the-vehicle",
+        "label": "colour"
+      },
+      "key": "vehicle.colour"
+    },
+    {
+      "slot": {
+        "section": "a2-2-the-vehicle",
+        "label": "fuel"
+      },
+      "key": "vehicle.fuelType"
+    },
+    {
+      "slot": {
+        "section": "a2-2-the-vehicle",
+        "label": "transmission"
+      },
+      "key": "vehicle.transmission"
+    },
+    {
+      "slot": {
+        "section": "a2-2-the-vehicle",
+        "label": "first-registered"
+      },
+      "key": "vehicle.firstRegistered",
+      "note": "Month and year only; the day box is left as printed."
+    },
+    {
+      "slot": {
+        "section": "a2-2-the-vehicle",
+        "label": "odometer"
+      },
+      "key": "vehicle.mileageAtAccident",
+      "note": "Latest reading on or before the accident; never a later reading."
+    },
+    {
+      "slot": {
+        "section": "a2-2-the-vehicle",
+        "label": "registered-keeper"
+      },
+      "key": "vehicle.registeredKeeper",
+      "optionBlanks": {
+        "other": {
+          "key": "vehicle.keeperNameRelationship"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "a2-2-the-vehicle",
+        "label": "finance"
+      },
+      "key": "vehicle.financeOrLease",
+      "optionBlanks": {
+        "yes": {
+          "key": "vehicle.financeLender"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "date-and-time"
+      },
+      "key": "accident.dateTime"
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "location"
+      },
+      "key": "accident.location"
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "third-party-vehicle"
+      },
+      "key": "tp.vehicleDescription"
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "third-party-insurer"
+      },
+      "key": "tpInsurer.name"
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "third-party-ref"
+      },
+      "key": "tpInsurer.claimRef"
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "police-ref"
+      },
+      "key": "accident.policeReference"
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "own-insurer"
+      },
+      "key": "ownInsurer.name"
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "own-insurer-ref"
+      },
+      "key": "ownInsurer.claimRef",
+      "note": "The own insurer's claim reference (not the policy number)."
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "liability"
+      },
+      "key": "claim.liability"
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "date"
+      },
+      "key": "claim.liabilityDate",
+      "label": "Liability — date",
+      "note": "The date liability was admitted or disputed."
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "vehicle-condition"
+      },
+      "key": "accident.driveable",
+      "note": "Unknown stays unticked unless the handler ticks it."
+    },
+    {
+      "slot": {
+        "section": "a2-3-the-accident-and-claim",
+        "label": "vehicle-now-at"
+      },
+      "key": "storage.currentLocation"
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "outcome"
+      },
+      "key": "recovery.outcome",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "carried-out-by"
+      },
+      "key": "recovery.provider",
+      "optionBlanks": {
+        "other": {
+          "key": "recovery.providerOther"
+        }
+      },
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "from"
+      },
+      "key": "recovery.fromLocation",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "to"
+      },
+      "key": "recovery.toLocation",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "attended"
+      },
+      "key": "recovery.date",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "delivered"
+      },
+      "key": "recovery.deliveredAt",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "loaded-miles"
+      },
+      "key": "recovery.loadedMiles",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "job-ref"
+      },
+      "key": "recovery.jobRef",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "charge",
+        "nth": 1
+      },
+      "key": "recovery.loadedMiles",
+      "label": "Charge — loaded miles",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "charge",
+        "nth": 2
+      },
+      "key": "recovery.mileagePence",
+      "label": "Charge — mileage",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "charge",
+        "nth": 3
+      },
+      "key": "recovery.netPence",
+      "label": "Charge — recovery total (net, no VAT)",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-1-recovery",
+        "label": "not-charged"
+      },
+      "key": "recovery.notCharged",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage",
+        "label": "facility"
+      },
+      "key": "storage.facility",
+      "optionBlanks": {
+        "other": {
+          "key": "storage.facilityOther"
+        }
+      },
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage",
+        "label": "entered-storage"
+      },
+      "key": "storage.enteredAt",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage",
+        "label": "released"
+      },
+      "key": "storage.releasedAt",
+      "note": "Blank while the vehicle is still in storage.",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage",
+        "label": "condition-on-entry"
+      },
+      "key": "storage.conditionOnEntry",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage",
+        "label": "odometer"
+      },
+      "key": "storage.odometerOnEntry",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage",
+        "label": "keys"
+      },
+      "key": "storage.keys",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage",
+        "label": "personal-items"
+      },
+      "key": "storage.personalItems",
+      "optionBlanks": {
+        "listed": {
+          "key": "storage.personalItemsList"
+        }
+      },
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage",
+        "label": "released-to"
+      },
+      "key": "storage.releasedTo",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage",
+        "label": "capacity"
+      },
+      "key": "storage.releaseCapacity",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage",
+        "label": "id-checked"
+      },
+      "key": "storage.releaseIdChecked",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage",
+        "label": "release-authority"
+      },
+      "key": "storage.releaseAuthority",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage-log-why-the-vehicle-remained-in-sto",
+        "label": "table-from-to"
+      },
+      "key": "storage.log",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage-log-why-the-vehicle-remained-in-sto",
+        "qualifier": "days",
+        "label": "total"
+      },
+      "key": "storage.days",
+      "label": "Storage log — total days",
+      "note": "Closed storage only; blank while the vehicle is still in storage.",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage-log-why-the-vehicle-remained-in-sto",
+        "label": "storage-charge",
+        "nth": 1
+      },
+      "key": "storage.startDate",
+      "label": "Storage charge — from",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage-log-why-the-vehicle-remained-in-sto",
+        "label": "storage-charge",
+        "nth": 2
+      },
+      "key": "storage.endDate",
+      "label": "Storage charge — to",
+      "note": "Blank while the vehicle is still in storage.",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage-log-why-the-vehicle-remained-in-sto",
+        "label": "storage-charge",
+        "nth": 3
+      },
+      "key": "storage.days",
+      "label": "Storage charge — days",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-2-storage-log-why-the-vehicle-remained-in-sto",
+        "label": "storage-charge",
+        "nth": 4
+      },
+      "key": "storage.netPence",
+      "label": "Storage charge — total (net, no VAT)",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "outcome"
+      },
+      "key": "engineer.outcome",
+      "optionBlanks": {
+        "not-carried-out": {
+          "key": "engineer.outcomeReason"
+        }
+      },
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "inspected"
+      },
+      "key": "engineer.inspectionAt",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "inspection-type"
+      },
+      "key": "engineer.inspectionBasis",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "location"
+      },
+      "key": "engineer.inspectionPlace",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "assessor"
+      },
+      "key": "engineer.name",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "report-ref"
+      },
+      "key": "engineer.reportRef",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "report-dated"
+      },
+      "key": "engineer.issuedDate",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "roadworthy"
+      },
+      "key": "engineer.roadworthy",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "odometer"
+      },
+      "key": "engineer.odometerMiles",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "repair-cost",
+        "nth": 1
+      },
+      "key": "engineer.repairCostPence",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "repair-cost",
+        "nth": 2
+      },
+      "key": "engineer.repairCostVatBasis",
+      "label": "Repair cost — VAT basis",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "pre-accident-value"
+      },
+      "key": "engineer.pavPence",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "decision"
+      },
+      "key": "engineer.decision",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "salvage-category"
+      },
+      "key": "engineer.salvageCategory",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "salvage-value"
+      },
+      "key": "engineer.salvageValuePence",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "report-sent"
+      },
+      "key": "engineer.reportSentToClientDate",
+      "label": "Report sent — client",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "charge"
+      },
+      "key": "engineer.feeCharged",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-3-engineering",
+        "label": "insurer-sent"
+      },
+      "key": "engineer.reportSentToInsurerDate",
+      "label": "Report sent — insurer",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "carried-out",
+        "label": "recovery"
+      },
+      "key": "recovery.carriedOut",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "basis",
+        "label": "recovery"
+      },
+      "key": "recovery.basisText",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "invoice",
+        "label": "recovery"
+      },
+      "key": "recovery.invoiceRef",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "charge",
+        "label": "recovery"
+      },
+      "key": "recovery.netPence",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "carried-out",
+        "label": "storage"
+      },
+      "key": "storage.carriedOut",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "basis",
+        "label": "storage"
+      },
+      "key": "storage.days",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "invoice",
+        "label": "storage"
+      },
+      "key": "storage.invoiceRef",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "charge",
+        "label": "storage"
+      },
+      "key": "storage.netPence",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "carried-out",
+        "label": "engineering"
+      },
+      "key": "engineer.carriedOut",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "invoice",
+        "label": "engineering"
+      },
+      "key": "engineer.invoiceRef",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "charge",
+        "label": "engineering"
+      },
+      "key": "engineer.feePence",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "carried-out",
+        "label": "additional-clause-5"
+      },
+      "key": "payment.additionalDescription",
+      "label": "Additional (clause 5) — what",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "invoice",
+        "label": "additional-clause-5"
+      },
+      "key": "payment.additionalInvoiceRef",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "charge",
+        "label": "additional-clause-5"
+      },
+      "key": "payment.additionalPence",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "qualifier": "charge",
+        "label": "total"
+      },
+      "key": "payment.totalPence",
+      "note": "Recovery + storage + engineering at the printed rates, no VAT; blank while any service is still open.",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "label": "payable-by"
+      },
+      "key": "tpInsurer.name",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-4-account",
+        "label": "reference"
+      },
+      "key": "vehicle.registration",
+      "label": "Reference — vehicle reg",
+      "note": "The printed line reads \"Vehicle reg:\".",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "held",
+        "label": "this-pack-signed-by-the-client-part-a1"
+      },
+      "key": "evidence.signedPack.held",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "date",
+        "label": "this-pack-signed-by-the-client-part-a1"
+      },
+      "key": "evidence.signedPack.date",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "reference",
+        "label": "this-pack-signed-by-the-client-part-a1"
+      },
+      "key": "evidence.signedPack.ref",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "held",
+        "label": "recovery-job-sheet-tracker-record"
+      },
+      "key": "evidence.recoveryJobSheet.held",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "date",
+        "label": "recovery-job-sheet-tracker-record"
+      },
+      "key": "evidence.recoveryJobSheet.date",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "reference",
+        "label": "recovery-job-sheet-tracker-record"
+      },
+      "key": "evidence.recoveryJobSheet.ref",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "held",
+        "label": "storage-intake-reasons-and-release-log"
+      },
+      "key": "evidence.storageLog.held",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "date",
+        "label": "storage-intake-reasons-and-release-log"
+      },
+      "key": "evidence.storageLog.date",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "reference",
+        "label": "storage-intake-reasons-and-release-log"
+      },
+      "key": "evidence.storageLog.ref",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "held",
+        "label": "photographs-collection-entry-release"
+      },
+      "key": "evidence.photos.held",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "date",
+        "label": "photographs-collection-entry-release"
+      },
+      "key": "evidence.photos.date",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "reference",
+        "label": "photographs-collection-entry-release"
+      },
+      "key": "evidence.photos.ref",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "held",
+        "label": "engineers-report"
+      },
+      "key": "evidence.engineerReport.held",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "date",
+        "label": "engineers-report"
+      },
+      "key": "evidence.engineerReport.date",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "reference",
+        "label": "engineers-report"
+      },
+      "key": "evidence.engineerReport.ref",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "held",
+        "label": "insurer-correspondence-liability-offers-instruct"
+      },
+      "key": "evidence.insurerCorrespondence.held",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "date",
+        "label": "insurer-correspondence-liability-offers-instruct"
+      },
+      "key": "evidence.insurerCorrespondence.date",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "reference",
+        "label": "insurer-correspondence-liability-offers-instruct"
+      },
+      "key": "evidence.insurerCorrespondence.ref",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "held",
+        "label": "invoices-and-final-account"
+      },
+      "key": "evidence.invoices.held",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "date",
+        "label": "invoices-and-final-account"
+      },
+      "key": "evidence.invoices.date",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "reference",
+        "label": "invoices-and-final-account"
+      },
+      "key": "evidence.invoices.ref",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "held",
+        "label": "remittance-settlement-advice"
+      },
+      "key": "evidence.remittance.held",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "date",
+        "label": "remittance-settlement-advice"
+      },
+      "key": "evidence.remittance.date",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-5-evidence-held",
+        "qualifier": "reference",
+        "label": "remittance-settlement-advice"
+      },
+      "key": "evidence.remittance.ref",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-6-ccguk-confirmation",
+        "label": "full-name"
+      },
+      "key": "handler.name",
+      "policy": "auto-if-known",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-6-ccguk-confirmation",
+        "label": "position"
+      },
+      "key": "handler.position",
+      "policy": "auto-if-known",
+      "variants": [
+        "submission"
+      ]
+    },
+    {
+      "slot": {
+        "section": "c1-6-ccguk-confirmation",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "c1-6-ccguk-confirmation",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "not-applicable-a1-2-records-that-this-agreement"
+      },
+      "key": "claim.agreementMadeAt",
+      "when": "premises",
+      "note": "Office use: tick only when A1.2 records an on-premises agreement."
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "form-below-through-and-initial-here"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "the-supply-of-the-following-service"
+      },
+      "policy": "never",
+      "note": "Completed by the client only if they cancel."
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "agreement-reference"
+      },
+      "key": "doc.agreementRef",
+      "policy": "auto-if-known"
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "ordered-on"
+      },
+      "policy": "never",
+      "note": "Completed by the client only if they cancel."
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "name"
+      },
+      "key": "claimant.name",
+      "policy": "auto-if-known"
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "address",
+        "nth": 1
+      },
+      "key": "claimant.address",
+      "label": "Address (first line)"
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "this-form-is-sent-on-paper"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "date"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "for-office-use-received-on"
+      },
+      "policy": "never",
+      "note": "Office receipt — completed only when a cancellation arrives."
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "by"
+      },
+      "policy": "never",
+      "note": "Office receipt — completed only when a cancellation arrives."
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "services-stopped"
+      },
+      "policy": "never",
+      "note": "Office receipt — completed only when a cancellation arrives."
+    },
+    {
+      "slot": {
+        "section": "c2-cancellation-form",
+        "label": "acknowledged-to-the-client-on"
+      },
+      "policy": "never",
+      "note": "Office receipt — completed only when a cancellation arrives."
+    },
+    {
+      "slot": {
+        "section": "header",
+        "label": "ref"
+      },
+      "key": "doc.agreementRef"
+    }
+  ],
+  "ignore": [
+    {
+      "section": "c1-2-storage-log-why-the-vehicle-remained-in-sto",
+      "qualifier": "to",
+      "label": "total"
+    },
+    {
+      "section": "c1-2-storage-log-why-the-vehicle-remained-in-sto",
+      "qualifier": "why-the-vehicle-remained-in-storage",
+      "label": "total"
+    },
+    {
+      "section": "c1-2-storage-log-why-the-vehicle-remained-in-sto",
+      "qualifier": "evidence",
+      "label": "total"
+    },
+    {
+      "section": "c1-4-account",
+      "qualifier": "carried-out",
+      "label": "total"
+    },
+    {
+      "section": "c1-4-account",
+      "qualifier": "basis",
+      "label": "total"
+    },
+    {
+      "section": "c1-4-account",
+      "qualifier": "invoice",
+      "label": "total"
+    },
+    {
+      "section": "c2-cancellation-form",
+      "label": "address",
+      "nth": 2
+    }
+  ]
+}

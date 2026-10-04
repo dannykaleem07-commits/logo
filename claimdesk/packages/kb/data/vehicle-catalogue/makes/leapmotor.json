@@ -1,0 +1,151 @@
+{
+ "make": "Leapmotor",
+ "slug": "leapmotor",
+ "dvlaNames": [
+  "LEAPMOTOR"
+ ],
+ "aliases": [
+  "Leapmotor International"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Sold in the UK through Stellantis (Leapmotor International) from late 2024; UK cars come in a single high-spec trim."
+ },
+ "models": [
+  {
+   "name": "T03",
+   "slug": "t03",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Design"
+     ],
+     "engines": [
+      "37.3kWh 95PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "B10",
+   "slug": "b10",
+   "aliases": [
+    "B10 REEV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Design"
+     ],
+     "engines": [
+      "67.1kWh 218PS electric",
+      {
+       "label": "1.5 range-extender REEV plug-in-hybrid",
+       "fuel": "plug-in-hybrid"
+      }
+     ],
+     "fuels": [
+      "electric",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C10",
+   "slug": "c10",
+   "aliases": [
+    "C10 REEV",
+    "C10 Ultra Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Design"
+     ],
+     "engines": [
+      "69.9kWh 218PS electric",
+      "1.5 range-extender REEV 28.4kWh 215PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "electric",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

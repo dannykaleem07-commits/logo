@@ -1,0 +1,1131 @@
+{
+ "make": "LDV",
+ "slug": "ldv",
+ "dvlaNames": [
+  "LDV",
+  "MAXUS"
+ ],
+ "aliases": [
+  "Leyland DAF Vans",
+  "LDV Group",
+  "SAIC LDV",
+  "Maxus",
+  "SAIC Maxus",
+  "LDV Maxus"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Covers LDV Ltd (Birmingham, to 2009) and SAIC vans sold as LDV by Harris Group (2016–2021) before the Maxus rebrand. Convoy/Pilot engine power figures not confirmed; SAIC-era models had no named trims except the T60."
+ },
+ "models": [
+  {
+   "name": "Cub",
+   "slug": "cub",
+   "aliases": [],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "Nissan Vanette-based (1998–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.3 D 75PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Pilot",
+   "slug": "pilot",
+   "aliases": [
+    "200 Series"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "Pilot (1996–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.9 D 70PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Pilot Minibus",
+   "slug": "pilot-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "Pilot (1996–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        9,
+        12
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.9 D 70PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Convoy",
+   "slug": "convoy",
+   "aliases": [
+    "400 Series"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "Convoy (1996–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      {
+       "label": "2.5 D diesel",
+       "fuel": "diesel"
+      },
+      {
+       "label": "2.5 TD diesel",
+       "fuel": "diesel"
+      },
+      {
+       "label": "2.4 TDi diesel",
+       "fuel": "diesel"
+      }
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Convoy Minibus",
+   "slug": "convoy-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "Convoy (1996–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      {
+       "label": "2.5 D diesel",
+       "fuel": "diesel"
+      },
+      {
+       "label": "2.5 TD diesel",
+       "fuel": "diesel"
+      },
+      {
+       "label": "2.4 TDi diesel",
+       "fuel": "diesel"
+      }
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Maxus",
+   "slug": "maxus",
+   "aliases": [],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2005,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2005–2009)",
+     "from": 2005,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 CRD 95PS diesel",
+      "2.5 CRD 120PS diesel",
+      "2.5 CRD 135PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Maxus Minibus",
+   "slug": "maxus-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2005,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2005–2009)",
+     "from": 2005,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 CRD 95PS diesel",
+      "2.5 CRD 120PS diesel",
+      "2.5 CRD 135PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "V80",
+   "slug": "v80",
+   "aliases": [],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2016,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "SAIC V80 (2016–2021)",
+     "from": 2016,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 CRD 136PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "V80 Minibus",
+   "slug": "v80-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2016,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "SAIC V80 (2016–2021)",
+     "from": 2016,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        12,
+        15,
+        16
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 CRD 136PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EV80",
+   "slug": "ev80",
+   "aliases": [],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2017,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2017–2021)",
+     "from": 2017,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "56kWh 136PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "G10",
+   "slug": "g10",
+   "aliases": [
+    "G10+"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2017,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2017–2021)",
+     "from": 2017,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.0 T-GDI 224PS petrol",
+      "1.9 D20 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "T60",
+   "slug": "t60",
+   "aliases": [
+    "T60 Pro",
+    "T60 Lux",
+    "T60 Luxe",
+    "T60 Max",
+    "T60 Max Plus",
+    "T60 Max Luxe"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2017–2021)",
+     "from": 2017,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pro",
+      "Lux",
+      "Luxe"
+     ],
+     "engines": [
+      "2.8 CTI 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    },
+    {
+     "name": "T60 (2021–2022, carried over from LDV)",
+     "from": 2021,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pro",
+      "Lux",
+      "Luxe"
+     ],
+     "engines": [
+      "2.8 CTI 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    },
+    {
+     "name": "T60 Max (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pro",
+      "Plus",
+      "Luxe"
+     ],
+     "engines": [
+      "2.0 Bi-Turbo 215PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    }
+   ]
+  },
+  {
+   "name": "Deliver 9",
+   "slug": "deliver-9",
+   "aliases": [
+    "Deliver9"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "LDV-badged (2020–2021, then Maxus)",
+     "from": 2020,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.0 D20 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk1 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "Lux"
+     ],
+     "engines": [
+      "2.0 D20 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "Sold as a base version without a grade name and as Lux; the model name alone means the base version."
+    }
+   ]
+  },
+  {
+   "name": "Deliver 9 Minibus",
+   "slug": "deliver-9-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.0 D20 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EV30",
+   "slug": "ev30",
+   "aliases": [
+    "eDeliver 3"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2020,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "LDV-badged (2020–2021, then Maxus eDeliver 3)",
+     "from": 2020,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "35kWh 122PS electric",
+      "52.5kWh 122PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "eDeliver 3",
+   "slug": "edeliver-3",
+   "aliases": [
+    "e Deliver 3",
+    "EV30"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "35kWh 122PS electric",
+      "52.5kWh 122PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "eDeliver 7",
+   "slug": "edeliver-7",
+   "aliases": [
+    "e Deliver 7"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "77kWh 204PS electric",
+      "88kWh 204PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "eDeliver 9",
+   "slug": "edeliver-9",
+   "aliases": [
+    "e Deliver 9",
+    "EV90"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "51.5kWh 204PS electric",
+      "72kWh 204PS electric",
+      "88.5kWh 204PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "eT90",
+   "slug": "et90",
+   "aliases": [
+    "e T90",
+    "T90 EV"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "88.5kWh 177PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "eTerron 9",
+   "slug": "eterron-9",
+   "aliases": [
+    "e Terron 9"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Luxury",
+      "Premium"
+     ],
+     "engines": [
+      {
+       "label": "102kWh dual-motor 442PS electric",
+       "fuel": "electric",
+       "powerPs": 442,
+       "powerKw": 325,
+       "batteryKwh": 102,
+       "transmissions": [
+        "automatic"
+       ]
+      }
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Maxus-badged double-cab electric pickup, dual-motor four-wheel drive (325 kW). DVLA model text reads like \"E TERRON 9 LUX AWD\"."
+    }
+   ]
+  },
+  {
+   "name": "Mifa 9",
+   "slug": "mifa-9",
+   "aliases": [
+    "MIFA 9",
+    "Mifa9"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Mifa 9"
+     ],
+     "engines": [
+      "90kWh 245PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  }
+ ]
+}

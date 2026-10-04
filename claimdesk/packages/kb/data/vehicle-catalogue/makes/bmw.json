@@ -1,0 +1,5545 @@
+{
+ "make": "BMW",
+ "slug": "bmw",
+ "dvlaNames": [
+  "BMW"
+ ],
+ "aliases": [
+  "Bayerische Motoren Werke",
+  "BMW M",
+  "BMW i"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "1 Series",
+   "slug": "1-series",
+   "aliases": [
+    "1-Series",
+    "One Series",
+    "114i",
+    "116i",
+    "118i",
+    "120i",
+    "125i",
+    "130i",
+    "135i",
+    "116d",
+    "118d",
+    "120d",
+    "123d",
+    "125d",
+    "M135i",
+    "M140i",
+    "128ti",
+    "M135",
+    "1M",
+    "1 Series M Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2004,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E87 hatchback / E81 3-door (2004–2011; 3-door from 2007)",
+     "from": 2004,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "ES",
+      "SE",
+      "Sport",
+      "M Sport",
+      "Edition ES",
+      "Edition M Sport"
+     ],
+     "engines": [
+      "1.6 116i 115PS petrol",
+      "2.0 116i 122PS petrol",
+      "2.0 118i 129PS petrol",
+      "2.0 118i 143PS petrol",
+      "2.0 120i 150PS petrol",
+      "2.0 120i 170PS petrol",
+      "3.0 130i 265PS petrol",
+      "2.0 116d 116PS diesel",
+      "2.0 118d 122PS diesel",
+      "2.0 118d 143PS diesel",
+      "2.0 120d 163PS diesel",
+      "2.0 120d 177PS diesel",
+      "2.0 123d 204PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E82 Coupe / E88 Convertible (2007–2013)",
+     "from": 2007,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "M Sport",
+      "1 Series M Coupe"
+     ],
+     "engines": [
+      "2.0 118i 143PS petrol",
+      "2.0 120i 170PS petrol",
+      "3.0 125i 218PS petrol",
+      "3.0 135i 306PS petrol",
+      "2.0 118d 143PS diesel",
+      "2.0 120d 177PS diesel",
+      "2.0 123d 204PS diesel",
+      "3.0 1M 340PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F20 5-door / F21 3-door (2011–2019)",
+     "from": 2011,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "ES",
+      "SE",
+      "Sport",
+      "Urban",
+      "M Sport",
+      "M135i",
+      "M140i",
+      "Sport Shadow Edition",
+      "M Sport Shadow Edition"
+     ],
+     "engines": [
+      "1.6 114i 102PS petrol",
+      "1.6 116i 136PS petrol",
+      "1.5 116i 109PS petrol",
+      "1.6 118i 170PS petrol",
+      "1.5 118i 136PS petrol",
+      "2.0 120i 184PS petrol",
+      "2.0 125i 218PS petrol",
+      "2.0 125i 224PS petrol",
+      "3.0 M135i 320PS petrol",
+      "3.0 M135i 326PS petrol",
+      "3.0 M140i 340PS petrol",
+      "1.6 114d 95PS diesel",
+      "2.0 116d 116PS diesel",
+      "1.5 116d 116PS diesel",
+      "2.0 118d 143PS diesel",
+      "2.0 118d 150PS diesel",
+      "2.0 120d 184PS diesel",
+      "2.0 120d 190PS diesel",
+      "2.0 125d 218PS diesel",
+      "2.0 125d 224PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F40 (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "M Sport",
+      "128ti",
+      "M135i xDrive"
+     ],
+     "engines": [
+      "1.5 118i 140PS petrol",
+      "1.5 118i 136PS petrol",
+      "2.0 128ti 265PS petrol",
+      "2.0 M135i xDrive 306PS petrol",
+      "1.5 116d 116PS diesel",
+      "2.0 118d 150PS diesel",
+      "2.0 120d xDrive 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F70 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport",
+      "M135 xDrive"
+     ],
+     "engines": [
+      "1.5 120 170PS mild-hybrid petrol",
+      "2.0 M135 xDrive 300PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "2 Series",
+   "slug": "2-series",
+   "aliases": [
+    "2-Series",
+    "2 Series Coupe",
+    "2 Series Convertible",
+    "218i",
+    "220i",
+    "228i",
+    "230i",
+    "218d",
+    "220d",
+    "225d",
+    "M235i",
+    "M240i"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2014,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "F22 Coupe / F23 Convertible (2014–2021)",
+     "from": 2014,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Luxury",
+      "M Sport",
+      "M235i",
+      "M240i"
+     ],
+     "engines": [
+      "1.5 218i 136PS petrol",
+      "2.0 220i 184PS petrol",
+      "2.0 228i 245PS petrol",
+      "2.0 230i 252PS petrol",
+      "3.0 M235i 326PS petrol",
+      "3.0 M240i 340PS petrol",
+      "2.0 218d 150PS diesel",
+      "2.0 220d 190PS diesel",
+      "2.0 225d 224PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "G42 Coupe (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "M Sport",
+      "M Sport Pro",
+      "M240i xDrive"
+     ],
+     "engines": [
+      "2.0 220i 184PS petrol",
+      "3.0 M240i xDrive 374PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "2 Series Active Tourer",
+   "slug": "2-series-active-tourer",
+   "aliases": [
+    "2 Series AT",
+    "Active Tourer",
+    "218i Active Tourer",
+    "218d Active Tourer",
+    "225xe",
+    "225e",
+    "230e"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2014,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "F45 (2014–2021)",
+     "from": 2014,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Luxury",
+      "M Sport"
+     ],
+     "engines": [
+      "1.5 218i 136PS petrol",
+      "2.0 220i 192PS petrol",
+      "2.0 225i xDrive 231PS petrol",
+      "1.5 225xe 224PS plug-in-hybrid",
+      "1.5 216d 116PS diesel",
+      "2.0 218d 150PS diesel",
+      "2.0 220d 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "U06 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Luxury",
+      "M Sport"
+     ],
+     "engines": [
+      "1.5 218i 136PS petrol",
+      "1.5 220i 170PS mild-hybrid petrol",
+      "2.0 223i xDrive 218PS mild-hybrid petrol",
+      "2.0 218d 150PS diesel",
+      "1.5 225e xDrive 245PS plug-in-hybrid",
+      "1.5 230e xDrive 326PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "2 Series Gran Tourer",
+   "slug": "2-series-gran-tourer",
+   "aliases": [
+    "2 Series GT",
+    "Gran Tourer",
+    "218d Gran Tourer"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2015,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "F46 (2015–2022)",
+     "from": 2015,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Luxury",
+      "M Sport"
+     ],
+     "engines": [
+      "1.5 218i 136PS petrol",
+      "2.0 220i 192PS petrol",
+      "1.5 216d 116PS diesel",
+      "2.0 218d 150PS diesel",
+      "2.0 220d xDrive 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "2 Series Gran Coupe",
+   "slug": "2-series-gran-coupe",
+   "aliases": [
+    "2 Series GC",
+    "Gran Coupe",
+    "218i Gran Coupe",
+    "M235i Gran Coupe",
+    "M235"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "F44 (2020–2024)",
+     "from": 2020,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport",
+      "M235i xDrive"
+     ],
+     "engines": [
+      "1.5 218i 140PS petrol",
+      "1.5 218i 136PS petrol",
+      "2.0 M235i xDrive 306PS petrol",
+      "2.0 218d 150PS diesel",
+      "2.0 220d 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F74 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport",
+      "M235 xDrive"
+     ],
+     "engines": [
+      "1.5 220 170PS mild-hybrid petrol",
+      "2.0 M235 xDrive 300PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "3 Series",
+   "slug": "3-series",
+   "aliases": [
+    "3-Series",
+    "3 Series Saloon",
+    "3 Series Touring",
+    "3 Series Coupe",
+    "3 Series Convertible",
+    "3 Series Compact",
+    "3 Series Gran Turismo",
+    "3 Series GT",
+    "316i",
+    "318i",
+    "320i",
+    "325i",
+    "328i",
+    "330i",
+    "335i",
+    "340i",
+    "316d",
+    "318d",
+    "320d",
+    "325d",
+    "330d",
+    "335d",
+    "330e",
+    "320e",
+    "M340i",
+    "M340d",
+    "318Ci",
+    "320Ci",
+    "325Ci",
+    "330Ci",
+    "316ti",
+    "318ti",
+    "325ti",
+    "318td",
+    "320td"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E46 saloon / Touring / Coupe / Convertible (1998–2007; Touring to 2005, Convertible to 2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "ES",
+      "SE",
+      "Sport",
+      "M Sport"
+     ],
+     "engines": [
+      "1.9 316i 105PS petrol",
+      "1.8 316i 115PS petrol",
+      "1.9 318i 118PS petrol",
+      "2.0 318i 143PS petrol",
+      "2.0 318Ci 143PS petrol",
+      "2.0 320i 150PS petrol",
+      "2.2 320i 170PS petrol",
+      "2.5 325i 192PS petrol",
+      "3.0 330i 231PS petrol",
+      "2.0 318d 115PS diesel",
+      "2.0 320d 136PS diesel",
+      "2.0 320d 150PS diesel",
+      "3.0 330d 184PS diesel",
+      "3.0 330d 204PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E46/5 Compact (2001–2004)",
+     "from": 2001,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "ES",
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "1.8 316ti 115PS petrol",
+      "2.0 318ti 143PS petrol",
+      "2.5 325ti 192PS petrol",
+      "2.0 318td 115PS diesel",
+      "2.0 320td 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E90 saloon / E91 Touring (2005–2012)",
+     "from": 2005,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "ES",
+      "SE",
+      "Sport",
+      "M Sport",
+      "Business Edition",
+      "Sport Plus Edition",
+      "Exclusive Edition",
+      "EfficientDynamics"
+     ],
+     "engines": [
+      "2.0 318i 129PS petrol",
+      "2.0 318i 143PS petrol",
+      "2.0 320i 150PS petrol",
+      "2.0 320i 170PS petrol",
+      "2.5 325i 218PS petrol",
+      "3.0 330i 258PS petrol",
+      "3.0 330i 272PS petrol",
+      "3.0 335i 306PS petrol",
+      "2.0 316d 116PS diesel",
+      "2.0 318d 122PS diesel",
+      "2.0 318d 143PS diesel",
+      "2.0 320d 163PS diesel",
+      "2.0 320d 177PS diesel",
+      "2.0 320d 184PS diesel",
+      "3.0 325d 197PS diesel",
+      "3.0 325d 204PS diesel",
+      "3.0 330d 231PS diesel",
+      "3.0 330d 245PS diesel",
+      "3.0 335d 286PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E92 Coupe / E93 Convertible (2006–2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "M Sport",
+      "Exclusive Edition",
+      "Sport Plus Edition"
+     ],
+     "engines": [
+      "2.0 320i 170PS petrol",
+      "2.5 325i 218PS petrol",
+      "3.0 330i 272PS petrol",
+      "3.0 335i 306PS petrol",
+      "2.0 318d 143PS diesel",
+      "2.0 320d 177PS diesel",
+      "2.0 320d 184PS diesel",
+      "3.0 325d 204PS diesel",
+      "3.0 330d 245PS diesel",
+      "3.0 335d 286PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F30 saloon / F31 Touring (2012–2019)",
+     "from": 2012,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "ES",
+      "SE",
+      "Sport",
+      "Modern",
+      "Luxury",
+      "M Sport",
+      "EfficientDynamics",
+      "EfficientDynamics Plus",
+      "M Sport Shadow Edition"
+     ],
+     "engines": [
+      "1.6 316i 136PS petrol",
+      "1.5 318i 136PS petrol",
+      "2.0 320i 184PS petrol",
+      "2.0 328i 245PS petrol",
+      "2.0 330i 252PS petrol",
+      "3.0 335i 306PS petrol",
+      "3.0 340i 326PS petrol",
+      "3.0 ActiveHybrid 3 340PS hybrid",
+      "2.0 330e 252PS plug-in-hybrid",
+      "2.0 316d 116PS diesel",
+      "2.0 318d 143PS diesel",
+      "2.0 318d 150PS diesel",
+      "2.0 320d 184PS diesel",
+      "2.0 320d 190PS diesel",
+      "2.0 320d EfficientDynamics 163PS diesel",
+      "2.0 325d 224PS diesel",
+      "3.0 330d 258PS diesel",
+      "3.0 335d xDrive 313PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F34 Gran Turismo (2013–2020)",
+     "from": 2013,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Modern",
+      "Luxury",
+      "M Sport"
+     ],
+     "engines": [
+      "2.0 320i 184PS petrol",
+      "2.0 328i 245PS petrol",
+      "2.0 330i 252PS petrol",
+      "3.0 335i 306PS petrol",
+      "3.0 340i 326PS petrol",
+      "2.0 318d 150PS diesel",
+      "2.0 320d 190PS diesel",
+      "2.0 325d 224PS diesel",
+      "3.0 330d 258PS diesel",
+      "3.0 335d xDrive 313PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "G20 saloon / G21 Touring (2019–present; facelift 2022; manual dropped c.2021)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "M Sport",
+      "M Sport Pro Edition",
+      "M340i xDrive",
+      "M340d xDrive"
+     ],
+     "engines": [
+      "2.0 318i 156PS petrol",
+      "2.0 320i 184PS petrol",
+      "2.0 330i 258PS petrol",
+      "2.0 330i 245PS petrol",
+      "3.0 M340i xDrive 374PS mild-hybrid petrol",
+      "2.0 320e 204PS plug-in-hybrid",
+      "2.0 330e 292PS plug-in-hybrid",
+      "2.0 318d 150PS diesel",
+      "2.0 320d 190PS mild-hybrid diesel",
+      "3.0 M340d xDrive 340PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "4 Series",
+   "slug": "4-series",
+   "aliases": [
+    "4-Series",
+    "4 Series Coupe",
+    "4 Series Convertible",
+    "4 Series Gran Coupe",
+    "418i",
+    "420i",
+    "428i",
+    "430i",
+    "435i",
+    "440i",
+    "418d",
+    "420d",
+    "425d",
+    "430d",
+    "435d",
+    "M440i"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2013,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "F32 Coupe / F33 Convertible / F36 Gran Coupe (2013–2021; Gran Coupe 2014-2021)",
+     "from": 2013,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Luxury",
+      "M Sport"
+     ],
+     "engines": [
+      "1.5 418i 136PS petrol",
+      "2.0 420i 184PS petrol",
+      "2.0 428i 245PS petrol",
+      "2.0 430i 252PS petrol",
+      "3.0 435i 306PS petrol",
+      "3.0 440i 326PS petrol",
+      "2.0 418d 150PS diesel",
+      "2.0 420d 184PS diesel",
+      "2.0 420d 190PS diesel",
+      "2.0 425d 224PS diesel",
+      "3.0 430d 258PS diesel",
+      "3.0 435d xDrive 313PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "G22 Coupe / G23 Convertible / G26 Gran Coupe (2020–present; facelift 2024)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport",
+      "M Sport Pro Edition",
+      "M440i xDrive"
+     ],
+     "engines": [
+      "2.0 420i 184PS petrol",
+      "3.0 M440i xDrive 374PS mild-hybrid petrol",
+      "2.0 420d 190PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "5 Series",
+   "slug": "5-series",
+   "aliases": [
+    "5-Series",
+    "5 Series Saloon",
+    "5 Series Touring",
+    "5 Series Gran Turismo",
+    "5 Series GT",
+    "518d",
+    "520i",
+    "523i",
+    "525i",
+    "528i",
+    "530i",
+    "535i",
+    "540i",
+    "545i",
+    "550i",
+    "520d",
+    "525d",
+    "530d",
+    "535d",
+    "540d",
+    "530e",
+    "545e",
+    "550e",
+    "M550i",
+    "M550d",
+    "ActiveHybrid 5"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E39 saloon / Touring (1996–2004; saloon to 2003)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "M Sport"
+     ],
+     "engines": [
+      "2.0 520i 150PS petrol",
+      "2.2 520i 170PS petrol",
+      "2.5 525i 192PS petrol",
+      "3.0 530i 231PS petrol",
+      "3.5 535i 245PS petrol",
+      "4.4 540i 286PS petrol",
+      "2.0 520d 136PS diesel",
+      "2.5 525d 163PS diesel",
+      "3.0 530d 184PS diesel",
+      "3.0 530d 193PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E60 saloon / E61 Touring (2003–2010)",
+     "from": 2003,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "M Sport",
+      "Business Edition",
+      "Luxury"
+     ],
+     "engines": [
+      "2.2 520i 170PS petrol",
+      "2.0 520i 170PS petrol",
+      "2.5 523i 177PS petrol",
+      "2.5 523i 190PS petrol",
+      "2.5 525i 192PS petrol",
+      "3.0 525i 218PS petrol",
+      "3.0 530i 231PS petrol",
+      "3.0 530i 258PS petrol",
+      "3.0 530i 272PS petrol",
+      "4.0 540i 306PS petrol",
+      "4.4 545i 333PS petrol",
+      "4.8 550i 367PS petrol",
+      "2.0 520d 163PS diesel",
+      "2.0 520d 177PS diesel",
+      "2.5 525d 177PS diesel",
+      "3.0 525d 197PS diesel",
+      "3.0 530d 218PS diesel",
+      "3.0 530d 231PS diesel",
+      "3.0 530d 235PS diesel",
+      "3.0 535d 272PS diesel",
+      "3.0 535d 286PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F07 Gran Turismo (2009–2017)",
+     "from": 2009,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Luxury",
+      "M Sport"
+     ],
+     "engines": [
+      "3.0 535i 306PS petrol",
+      "4.4 550i 407PS petrol",
+      "2.0 520d 184PS diesel",
+      "3.0 530d 245PS diesel",
+      "3.0 530d 258PS diesel",
+      "3.0 535d 299PS diesel",
+      "3.0 535d 313PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "F10 saloon / F11 Touring (2010–2017)",
+     "from": 2010,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Luxury",
+      "M Sport",
+      "Modern",
+      "EfficientDynamics"
+     ],
+     "engines": [
+      "2.0 520i 184PS petrol",
+      "3.0 523i 204PS petrol",
+      "3.0 528i 258PS petrol",
+      "2.0 528i 245PS petrol",
+      "3.0 535i 306PS petrol",
+      "4.4 550i 407PS petrol",
+      "4.4 550i 450PS petrol",
+      "3.0 ActiveHybrid 5 340PS hybrid",
+      "2.0 518d 150PS diesel",
+      "2.0 520d 184PS diesel",
+      "2.0 520d 190PS diesel",
+      "2.0 520d EfficientDynamics 163PS diesel",
+      "3.0 525d 204PS diesel",
+      "2.0 525d 218PS diesel",
+      "3.0 530d 245PS diesel",
+      "3.0 530d 258PS diesel",
+      "3.0 535d 299PS diesel",
+      "3.0 535d 313PS diesel",
+      "3.0 M550d xDrive 381PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "G30 saloon / G31 Touring (2017–2024; saloon to 2023)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "M Sport",
+      "M Sport Edition"
+     ],
+     "engines": [
+      "2.0 520i 184PS petrol",
+      "2.0 530i 252PS petrol",
+      "3.0 540i xDrive 340PS petrol",
+      "4.4 M550i xDrive 462PS petrol",
+      "4.4 M550i xDrive 530PS petrol",
+      "2.0 530e 252PS plug-in-hybrid",
+      "2.0 530e 292PS plug-in-hybrid",
+      "3.0 545e xDrive 394PS plug-in-hybrid",
+      "2.0 520d 190PS diesel",
+      "2.0 520d 190PS mild-hybrid diesel",
+      "3.0 530d 265PS diesel",
+      "3.0 530d 286PS mild-hybrid diesel",
+      "3.0 540d xDrive 340PS mild-hybrid diesel",
+      "3.0 M550d xDrive 400PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "G60 saloon / G61 Touring (2023–present; Touring from 2024)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport",
+      "M Sport Pro"
+     ],
+     "engines": [
+      "2.0 520i 208PS mild-hybrid petrol",
+      "2.0 530e 299PS plug-in-hybrid",
+      "3.0 550e xDrive 489PS plug-in-hybrid",
+      "2.0 520d 197PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "6 Series",
+   "slug": "6-series",
+   "aliases": [
+    "6-Series",
+    "6 Series Coupe",
+    "6 Series Convertible",
+    "6 Series Gran Coupe",
+    "6 Series Gran Turismo",
+    "6 Series GT",
+    "630i",
+    "640i",
+    "645Ci",
+    "650i",
+    "620d",
+    "630d",
+    "635d",
+    "640d"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2004,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "E63 Coupe / E64 Convertible (2004–2010)",
+     "from": 2004,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "3.0 630i 258PS petrol",
+      "3.0 630i 272PS petrol",
+      "4.4 645Ci 333PS petrol",
+      "4.8 650i 367PS petrol",
+      "3.0 635d 286PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F13 Coupe / F12 Convertible / F06 Gran Coupe (2011–2018; Gran Coupe from 2012)",
+     "from": 2011,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "M Sport"
+     ],
+     "engines": [
+      "3.0 640i 320PS petrol",
+      "4.4 650i 407PS petrol",
+      "4.4 650i 450PS petrol",
+      "3.0 640d 313PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "G32 6 Series Gran Turismo (2017–2023)",
+     "from": 2017,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Luxury",
+      "M Sport"
+     ],
+     "engines": [
+      "2.0 630i 258PS petrol",
+      "3.0 640i xDrive 340PS petrol",
+      "2.0 620d 190PS diesel",
+      "3.0 630d 265PS diesel",
+      "3.0 630d 286PS mild-hybrid diesel",
+      "3.0 640d xDrive 320PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "7 Series",
+   "slug": "7-series",
+   "aliases": [
+    "7-Series",
+    "728i",
+    "730i",
+    "735i",
+    "740i",
+    "745i",
+    "750i",
+    "760i",
+    "760Li",
+    "M760Li",
+    "730d",
+    "740d",
+    "745d",
+    "750d",
+    "740e",
+    "745e",
+    "750e",
+    "M760e",
+    "730Ld",
+    "740Ld",
+    "ActiveHybrid 7"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E38 (1994–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "2.8 728i 193PS petrol",
+      "3.5 735i 238PS petrol",
+      "4.4 740i 286PS petrol",
+      "5.4 750i 326PS petrol",
+      "3.0 730d 193PS diesel",
+      "3.9 740d 245PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "E65 / E66 long-wheelbase (2001–2008)",
+     "from": 2001,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "3.0 730i 231PS petrol",
+      "3.0 730i 258PS petrol",
+      "3.6 735i 272PS petrol",
+      "4.0 740i 306PS petrol",
+      "4.4 745i 333PS petrol",
+      "4.8 750i 367PS petrol",
+      "6.0 760Li 445PS petrol",
+      "3.0 730d 218PS diesel",
+      "3.0 730d 231PS diesel",
+      "4.4 745d 300PS diesel",
+      "4.4 745d 330PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "F01 / F02 long-wheelbase (2008–2015)",
+     "from": 2008,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "M Sport",
+      "Exclusive"
+     ],
+     "engines": [
+      "3.0 740i 326PS petrol",
+      "4.4 750i 407PS petrol",
+      "4.4 750i 450PS petrol",
+      "6.0 760Li 544PS petrol",
+      "3.0 ActiveHybrid 7 320PS hybrid",
+      "3.0 730d 245PS diesel",
+      "3.0 730d 258PS diesel",
+      "3.0 740d 306PS diesel",
+      "3.0 740d 313PS diesel",
+      "3.0 750d xDrive 381PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "G11 / G12 long-wheelbase (2015–2022; facelift 2019)",
+     "from": 2015,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "M Sport",
+      "Exclusive"
+     ],
+     "engines": [
+      "3.0 740i 326PS petrol",
+      "3.0 740Li 340PS petrol",
+      "4.4 750i xDrive 450PS petrol",
+      "4.4 750Li xDrive 530PS petrol",
+      "6.6 M760Li xDrive 609PS petrol",
+      "2.0 740e 326PS plug-in-hybrid",
+      "3.0 745e 394PS plug-in-hybrid",
+      "3.0 730d 265PS diesel",
+      "3.0 730d 286PS diesel",
+      "3.0 740d xDrive 320PS diesel",
+      "3.0 740d xDrive 340PS diesel",
+      "3.0 750d xDrive 400PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "G70 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Excellence",
+      "M Sport"
+     ],
+     "engines": [
+      "3.0 750e xDrive 489PS plug-in-hybrid",
+      "4.4 M760e xDrive 571PS plug-in-hybrid",
+      "3.0 740d xDrive 299PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "8 Series",
+   "slug": "8-series",
+   "aliases": [
+    "8-Series",
+    "8 Series Coupe",
+    "8 Series Convertible",
+    "8 Series Gran Coupe",
+    "840i",
+    "840d",
+    "M850i"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2018,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "G15 Coupe / G14 Convertible / G16 Gran Coupe (2018–2025; Convertible/Gran Coupe from 2019; end of production 2025)",
+     "from": 2018,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M Sport",
+      "M850i xDrive"
+     ],
+     "engines": [
+      "3.0 840i 340PS petrol",
+      "3.0 840i 333PS petrol",
+      "4.4 M850i xDrive 530PS petrol",
+      "3.0 840d xDrive 320PS diesel",
+      "3.0 840d xDrive 340PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X1",
+   "slug": "x1",
+   "aliases": [
+    "sDrive18i",
+    "sDrive20i",
+    "sDrive18d",
+    "sDrive20d",
+    "xDrive18d",
+    "xDrive20d",
+    "xDrive23d",
+    "xDrive25e",
+    "xDrive30e",
+    "X1 M35i"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2009,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E84 (2009–2015)",
+     "from": 2009,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "xLine",
+      "M Sport"
+     ],
+     "engines": [
+      "2.0 sDrive18i 150PS petrol",
+      "2.0 sDrive20i 184PS petrol",
+      "2.0 xDrive28i 245PS petrol",
+      "2.0 sDrive16d 116PS diesel",
+      "2.0 sDrive18d 143PS diesel",
+      "2.0 xDrive18d 143PS diesel",
+      "2.0 sDrive20d 177PS diesel",
+      "2.0 xDrive20d 184PS diesel",
+      "2.0 sDrive20d EfficientDynamics 163PS diesel",
+      "2.0 xDrive23d 204PS diesel",
+      "2.0 xDrive25d 218PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F48 (2015–2022)",
+     "from": 2015,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "xLine",
+      "M Sport"
+     ],
+     "engines": [
+      "1.5 sDrive18i 136PS petrol",
+      "1.5 sDrive18i 140PS petrol",
+      "2.0 sDrive20i 192PS petrol",
+      "2.0 xDrive25i 231PS petrol",
+      "1.5 xDrive25e 220PS plug-in-hybrid",
+      "1.5 sDrive16d 116PS diesel",
+      "2.0 sDrive18d 150PS diesel",
+      "2.0 xDrive18d 150PS diesel",
+      "2.0 xDrive20d 190PS diesel",
+      "2.0 xDrive25d 231PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "U11 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "xLine",
+      "M Sport"
+     ],
+     "engines": [
+      "1.5 sDrive18i 136PS petrol",
+      "1.5 sDrive20i 170PS mild-hybrid petrol",
+      "2.0 xDrive23i 218PS mild-hybrid petrol",
+      "2.0 M35i xDrive 300PS petrol",
+      "1.5 xDrive25e 245PS plug-in-hybrid",
+      "1.5 xDrive30e 326PS plug-in-hybrid",
+      "2.0 sDrive18d 150PS diesel",
+      "2.0 xDrive23d 211PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "iX1",
+   "slug": "ix1",
+   "aliases": [
+    "iX1 xDrive30",
+    "iX1 eDrive20",
+    "I X1"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "U11 electric (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "xLine",
+      "M Sport"
+     ],
+     "engines": [
+      "64.7kWh eDrive20 204PS electric",
+      "64.7kWh xDrive30 313PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X2",
+   "slug": "x2",
+   "aliases": [
+    "X2 M35i",
+    "X2 sDrive18i",
+    "X2 sDrive20i",
+    "X2 xDrive20d"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2018,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "F39 (2018–2023)",
+     "from": 2018,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "M Sport",
+      "M Sport X",
+      "M35i"
+     ],
+     "engines": [
+      "1.5 sDrive18i 140PS petrol",
+      "2.0 sDrive20i 192PS petrol",
+      "2.0 M35i xDrive 306PS petrol",
+      "1.5 xDrive25e 220PS plug-in-hybrid",
+      "2.0 sDrive18d 150PS diesel",
+      "2.0 xDrive18d 150PS diesel",
+      "2.0 xDrive20d 190PS diesel",
+      "2.0 xDrive25d 231PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "U10 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M Sport",
+      "M Sport Pro",
+      "M35i xDrive"
+     ],
+     "engines": [
+      "1.5 sDrive20i 170PS mild-hybrid petrol",
+      "2.0 M35i xDrive 300PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "iX2",
+   "slug": "ix2",
+   "aliases": [
+    "iX2 xDrive30",
+    "iX2 eDrive20",
+    "I X2"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "U10 electric (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport"
+     ],
+     "engines": [
+      "64.8kWh eDrive20 204PS electric",
+      "64.8kWh xDrive30 313PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X3",
+   "slug": "x3",
+   "aliases": [
+    "X3 xDrive20d",
+    "X3 xDrive30d",
+    "X3 M40i",
+    "X3 M40d",
+    "X3 M50",
+    "X3 30e",
+    "X3 xDrive30e"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2004,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E83 (2004–2010)",
+     "from": 2004,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "M Sport"
+     ],
+     "engines": [
+      "2.0 2.0i 150PS petrol",
+      "2.5 2.5i 192PS petrol",
+      "2.5 2.5si 218PS petrol",
+      "3.0 3.0i 231PS petrol",
+      "3.0 3.0si 272PS petrol",
+      "2.0 2.0d 150PS diesel",
+      "2.0 2.0d 177PS diesel",
+      "3.0 3.0d 204PS diesel",
+      "3.0 3.0d 218PS diesel",
+      "3.0 3.0sd 286PS diesel",
+      "2.0 xDrive18d 143PS diesel",
+      "2.0 xDrive20d 177PS diesel",
+      "3.0 xDrive30d 245PS diesel",
+      "3.0 xDrive35d 286PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F25 (2011–2017)",
+     "from": 2011,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "xLine",
+      "M Sport"
+     ],
+     "engines": [
+      "2.0 xDrive20i 184PS petrol",
+      "2.0 xDrive28i 245PS petrol",
+      "3.0 xDrive35i 306PS petrol",
+      "2.0 sDrive18d 150PS diesel",
+      "2.0 xDrive20d 184PS diesel",
+      "2.0 xDrive20d 190PS diesel",
+      "3.0 xDrive30d 258PS diesel",
+      "3.0 xDrive35d 313PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "G01 (2017–2024; facelift 2021)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "xLine",
+      "M Sport"
+     ],
+     "engines": [
+      "2.0 xDrive20i 184PS petrol",
+      "2.0 xDrive30i 252PS petrol",
+      "3.0 M40i 360PS petrol",
+      "2.0 xDrive30e 292PS plug-in-hybrid",
+      "2.0 sDrive18d 150PS diesel",
+      "2.0 xDrive20d 190PS diesel",
+      "2.0 xDrive20d 190PS mild-hybrid diesel",
+      "3.0 xDrive30d 265PS diesel",
+      "3.0 xDrive30d 286PS mild-hybrid diesel",
+      "3.0 M40d 326PS diesel",
+      "3.0 M40d 340PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "G45 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M Sport",
+      "M Sport Pro"
+     ],
+     "engines": [
+      "2.0 20 xDrive 208PS mild-hybrid petrol",
+      "2.0 30e xDrive 299PS plug-in-hybrid",
+      "3.0 M50 xDrive 398PS mild-hybrid petrol",
+      "2.0 20d xDrive 197PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "iX3",
+   "slug": "ix3",
+   "aliases": [
+    "I X3",
+    "iX3 M Sport",
+    "iX3 50 xDrive"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "G08 (2021–2024; facelift 2022)",
+     "from": 2021,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Premier Edition",
+      "M Sport",
+      "M Sport Pro"
+     ],
+     "engines": [
+      "80kWh iX3 286PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "NA5 Neue Klasse (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport"
+     ],
+     "engines": [
+      "108.7kWh iX3 50 xDrive 469PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X4",
+   "slug": "x4",
+   "aliases": [
+    "X4 xDrive20d",
+    "X4 xDrive30d",
+    "X4 M40i",
+    "X4 M40d"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2014,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "F26 (2014–2018)",
+     "from": 2014,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "M Sport",
+      "M40i"
+     ],
+     "engines": [
+      "2.0 xDrive20i 184PS petrol",
+      "2.0 xDrive28i 245PS petrol",
+      "3.0 xDrive35i 306PS petrol",
+      "3.0 M40i 360PS petrol",
+      "2.0 xDrive20d 190PS diesel",
+      "3.0 xDrive30d 258PS diesel",
+      "3.0 xDrive35d 313PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "G02 (2018–2025; facelift 2021)",
+     "from": 2018,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport",
+      "M Sport X",
+      "M40i",
+      "M40d"
+     ],
+     "engines": [
+      "2.0 xDrive20i 184PS petrol",
+      "2.0 xDrive30i 252PS petrol",
+      "3.0 M40i 360PS petrol",
+      "2.0 xDrive20d 190PS mild-hybrid diesel",
+      "3.0 xDrive30d 265PS diesel",
+      "3.0 xDrive30d 286PS mild-hybrid diesel",
+      "3.0 M40d 326PS diesel",
+      "3.0 M40d 340PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X5",
+   "slug": "x5",
+   "aliases": [
+    "X5 3.0d",
+    "X5 xDrive30d",
+    "X5 xDrive40d",
+    "X5 M50d",
+    "X5 xDrive45e",
+    "X5 xDrive50e",
+    "X5 M60i"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E53 (2000–2006; UK sales from 2000)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "3.0 3.0i 231PS petrol",
+      "4.4 4.4i 286PS petrol",
+      "4.4 4.4i 320PS petrol",
+      "4.6 4.6is 347PS petrol",
+      "4.8 4.8is 360PS petrol",
+      "3.0 3.0d 184PS diesel",
+      "3.0 3.0d 218PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E70 (2007–2013)",
+     "from": 2007,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "M Sport"
+     ],
+     "engines": [
+      "3.0 3.0si 272PS petrol",
+      "4.8 4.8i 355PS petrol",
+      "3.0 xDrive35i 306PS petrol",
+      "4.4 xDrive50i 407PS petrol",
+      "3.0 3.0d 235PS diesel",
+      "3.0 3.0sd 286PS diesel",
+      "3.0 xDrive30d 245PS diesel",
+      "3.0 xDrive40d 306PS diesel",
+      "3.0 M50d 381PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "F15 (2013–2018)",
+     "from": 2013,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "M Sport"
+     ],
+     "engines": [
+      "4.4 xDrive50i 450PS petrol",
+      "2.0 xDrive40e 313PS plug-in-hybrid",
+      "2.0 sDrive25d 218PS diesel",
+      "2.0 xDrive25d 231PS diesel",
+      "3.0 xDrive30d 258PS diesel",
+      "3.0 xDrive40d 313PS diesel",
+      "3.0 M50d 381PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "G05 (2018–present; facelift 2023)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "xLine",
+      "M Sport",
+      "M Sport Edition"
+     ],
+     "engines": [
+      "3.0 xDrive40i 340PS petrol",
+      "3.0 xDrive40i 381PS mild-hybrid petrol",
+      "4.4 M50i 530PS petrol",
+      "4.4 M60i xDrive 530PS mild-hybrid petrol",
+      "3.0 xDrive45e 394PS plug-in-hybrid",
+      "3.0 xDrive50e 489PS plug-in-hybrid",
+      "3.0 xDrive30d 265PS diesel",
+      "3.0 xDrive30d 298PS mild-hybrid diesel",
+      "3.0 xDrive40d 340PS mild-hybrid diesel",
+      "3.0 xDrive40d 352PS mild-hybrid diesel",
+      "3.0 M50d 400PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X6",
+   "slug": "x6",
+   "aliases": [
+    "X6 xDrive30d",
+    "X6 xDrive40d",
+    "X6 40d",
+    "X6 M50d",
+    "X6 M60i"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2008,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E71 (2008–2014)",
+     "from": 2008,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Standard",
+      "M Sport"
+     ],
+     "engines": [
+      "3.0 xDrive35i 306PS petrol",
+      "4.4 xDrive50i 407PS petrol",
+      "3.0 xDrive30d 235PS diesel",
+      "3.0 xDrive30d 245PS diesel",
+      "3.0 xDrive35d 286PS diesel",
+      "3.0 xDrive40d 306PS diesel",
+      "3.0 M50d 381PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "gtaGroup": "F6"
+    },
+    {
+     "name": "F16 (2014–2019)",
+     "from": 2014,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "M Sport"
+     ],
+     "engines": [
+      "3.0 xDrive35i 306PS petrol",
+      "4.4 xDrive50i 450PS petrol",
+      "3.0 xDrive30d 258PS diesel",
+      "3.0 xDrive40d 313PS diesel",
+      "3.0 M50d 381PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "gtaGroup": "F6"
+    },
+    {
+     "name": "G06 (2019–present; facelift 2023)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M Sport",
+      "M Sport Edition"
+     ],
+     "engines": [
+      "3.0 xDrive40i 340PS petrol",
+      "3.0 xDrive40i 381PS mild-hybrid petrol",
+      "4.4 M50i 530PS petrol",
+      "4.4 M60i xDrive 530PS mild-hybrid petrol",
+      "3.0 xDrive30d 286PS mild-hybrid diesel",
+      "3.0 xDrive30d 298PS mild-hybrid diesel",
+      "3.0 xDrive40d 340PS mild-hybrid diesel",
+      "3.0 xDrive40d 352PS mild-hybrid diesel",
+      "3.0 M50d 400PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "gtaGroup": "F6"
+    }
+   ]
+  },
+  {
+   "name": "X7",
+   "slug": "x7",
+   "aliases": [
+    "X7 xDrive40d",
+    "X7 xDrive40i",
+    "X7 M60i",
+    "X7 M50d"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "G07 (2019–present; facelift 2022)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "M Sport",
+      "Excellence",
+      "Design Pure Excellence",
+      "M60i"
+     ],
+     "engines": [
+      "3.0 xDrive40i 340PS petrol",
+      "3.0 xDrive40i 381PS mild-hybrid petrol",
+      "4.4 M50i 530PS petrol",
+      "4.4 M60i xDrive 530PS mild-hybrid petrol",
+      "3.0 xDrive30d 265PS diesel",
+      "3.0 xDrive30d 298PS mild-hybrid diesel",
+      "3.0 xDrive40d 340PS mild-hybrid diesel",
+      "3.0 xDrive40d 352PS mild-hybrid diesel",
+      "3.0 M50d 400PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "XM",
+   "slug": "xm",
+   "aliases": [
+    "XM Label",
+    "XM Label Red"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "G09 (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "XM",
+      "Label"
+     ],
+     "engines": [
+      "4.4 XM 653PS plug-in-hybrid",
+      "4.4 XM Label 748PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "i3",
+   "slug": "i3",
+   "aliases": [
+    "I3",
+    "i3s",
+    "i3 REx",
+    "i3 94Ah",
+    "i3 120Ah"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2013,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "I01 (2013–2022; REx range-extender versions to 2018)",
+     "from": 2013,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "i3",
+      "i3s",
+      "Loft",
+      "Lodge",
+      "Suite"
+     ],
+     "engines": [
+      "22kWh i3 60Ah 170PS electric",
+      "33kWh i3 94Ah 170PS electric",
+      "42kWh i3 120Ah 170PS electric",
+      "42kWh i3s 120Ah 184PS electric",
+      "i3 REx 0.65 range-extender 170PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "electric",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "i4",
+   "slug": "i4",
+   "aliases": [
+    "I4",
+    "i4 eDrive40",
+    "i4 eDrive35",
+    "i4 M50",
+    "i4 xDrive40"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "G26 electric (2021–present; facelift 2024)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport",
+      "M Sport Pro",
+      "M50"
+     ],
+     "engines": [
+      "70kWh eDrive35 286PS electric",
+      "83.9kWh eDrive40 340PS electric",
+      "83.9kWh xDrive40 401PS electric",
+      "83.9kWh M50 544PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "i5",
+   "slug": "i5",
+   "aliases": [
+    "I5",
+    "i5 eDrive40",
+    "i5 M60",
+    "i5 Touring"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "G60 / G61 Touring electric (2023–present; Touring from 2024)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport",
+      "M Sport Pro",
+      "M60 xDrive"
+     ],
+     "engines": [
+      "81.2kWh eDrive40 340PS electric",
+      "81.2kWh xDrive40 394PS electric",
+      "81.2kWh M60 xDrive 601PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "i7",
+   "slug": "i7",
+   "aliases": [
+    "I7",
+    "i7 xDrive60",
+    "i7 eDrive50",
+    "i7 M70"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "G70 electric (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Excellence",
+      "M Sport",
+      "M70 xDrive"
+     ],
+     "engines": [
+      "101.7kWh eDrive50 455PS electric",
+      "101.7kWh xDrive60 544PS electric",
+      "101.7kWh M70 xDrive 660PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "i8",
+   "slug": "i8",
+   "aliases": [
+    "I8",
+    "i8 Roadster",
+    "i8 Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2014,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "I12 Coupe / I15 Roadster (2014–2020; Roadster from 2018)",
+     "from": 2014,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Coupe",
+      "Roadster"
+     ],
+     "engines": [
+      "1.5 i8 362PS plug-in-hybrid",
+      "1.5 i8 374PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "iX",
+   "slug": "ix",
+   "aliases": [
+    "I X",
+    "iX xDrive40",
+    "iX xDrive50",
+    "iX M60",
+    "iX xDrive45",
+    "iX xDrive60"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "I20 (2021–present; facelift 2025)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport",
+      "M60",
+      "M70"
+     ],
+     "engines": [
+      "76.6kWh xDrive40 326PS electric",
+      "111.5kWh xDrive50 523PS electric",
+      "111.5kWh M60 619PS electric",
+      "94.8kWh xDrive45 408PS electric",
+      "109.1kWh xDrive60 544PS electric",
+      "109.1kWh M70 659PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Z3",
+   "slug": "z3",
+   "aliases": [
+    "Z3 Roadster",
+    "Z3 Coupe",
+    "Z3 M",
+    "M Roadster",
+    "M Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "E36/7 Roadster / E36/8 Coupe (1996–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "1.9",
+      "2.0",
+      "2.2i",
+      "2.8",
+      "3.0i",
+      "M Roadster",
+      "M Coupe"
+     ],
+     "engines": [
+      "1.9 Z3 118PS petrol",
+      "2.0 Z3 150PS petrol",
+      "2.2 Z3 2.2i 170PS petrol",
+      "2.8 Z3 193PS petrol",
+      "3.0 Z3 3.0i 231PS petrol",
+      "3.2 M Roadster 321PS petrol",
+      "3.2 M Roadster 325PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Z4",
+   "slug": "z4",
+   "aliases": [
+    "Z4 Roadster",
+    "Z4 Coupe",
+    "Z4 M",
+    "Z4 sDrive20i",
+    "Z4 M40i"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2003,
+    "to": 2026
+   },
+   "generations": [
+    {
+     "name": "E85 Roadster / E86 Coupe (2003–2009; Coupe 2006-2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Z4 M"
+     ],
+     "engines": [
+      "2.0 2.0i 150PS petrol",
+      "2.2 2.2i 170PS petrol",
+      "2.5 2.5i 177PS petrol",
+      "2.5 2.5i 192PS petrol",
+      "2.5 2.5si 218PS petrol",
+      "3.0 3.0i 231PS petrol",
+      "3.0 3.0si 265PS petrol",
+      "3.2 Z4 M 343PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E89 (2009–2016)",
+     "from": 2009,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Standard",
+      "Sport",
+      "M Sport",
+      "Design Pure Traction",
+      "Design Pure Balance"
+     ],
+     "engines": [
+      "2.0 sDrive18i 156PS petrol",
+      "2.0 sDrive20i 184PS petrol",
+      "2.5 sDrive23i 204PS petrol",
+      "2.0 sDrive28i 245PS petrol",
+      "3.0 sDrive30i 258PS petrol",
+      "3.0 sDrive35i 306PS petrol",
+      "3.0 sDrive35is 340PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "G29 (2019–2026; manual M40i from 2024; production ending 2026)",
+     "from": 2019,
+     "to": 2026,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "M Sport",
+      "M40i",
+      "M40i Pure Impulse"
+     ],
+     "engines": [
+      "2.0 sDrive20i 197PS petrol",
+      "2.0 sDrive30i 258PS petrol",
+      "3.0 M40i 340PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "M2",
+   "slug": "m2",
+   "aliases": [
+    "M2 Competition",
+    "M2 CS"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2016,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "F87 (2016–2021)",
+     "from": 2016,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "M2",
+      "M2 Competition",
+      "M2 CS"
+     ],
+     "engines": [
+      "3.0 M2 370PS petrol",
+      "3.0 M2 Competition 410PS petrol",
+      "3.0 M2 CS 450PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "G87 (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "M2",
+      "M2 CS"
+     ],
+     "engines": [
+      "3.0 M2 460PS petrol",
+      "3.0 M2 480PS petrol",
+      "3.0 M2 CS 530PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "M3",
+   "slug": "m3",
+   "aliases": [
+    "M3 Competition",
+    "M3 CS",
+    "M3 CSL",
+    "M3 Touring"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E46 (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "M3",
+      "M3 CS",
+      "M3 CSL"
+     ],
+     "engines": [
+      "3.2 M3 343PS petrol",
+      "3.2 M3 CSL 360PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E90 / E92 / E93 (2007–2013)",
+     "from": 2007,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "M3",
+      "Competition Pack",
+      "M3 GTS"
+     ],
+     "engines": [
+      "4.0 M3 V8 420PS petrol",
+      "4.4 M3 GTS 450PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F80 (2014–2018)",
+     "from": 2014,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M3",
+      "M3 Competition",
+      "M3 CS"
+     ],
+     "engines": [
+      "3.0 M3 431PS petrol",
+      "3.0 M3 Competition 450PS petrol",
+      "3.0 M3 CS 460PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "G80 saloon / G81 Touring (2021–present; Touring from 2023)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M3 Competition",
+      "M3 Competition xDrive",
+      "M3 CS",
+      "M3 Touring"
+     ],
+     "engines": [
+      "3.0 M3 Competition 510PS petrol",
+      "3.0 M3 Competition xDrive 530PS petrol",
+      "3.0 M3 CS 550PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "M4",
+   "slug": "m4",
+   "aliases": [
+    "M4 Competition",
+    "M4 CS",
+    "M4 CSL",
+    "M4 GTS",
+    "M4 Convertible"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2014,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "F82 Coupe / F83 Convertible (2014–2020)",
+     "from": 2014,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "M4",
+      "M4 Competition",
+      "M4 CS",
+      "M4 GTS"
+     ],
+     "engines": [
+      "3.0 M4 431PS petrol",
+      "3.0 M4 Competition 450PS petrol",
+      "3.0 M4 CS 460PS petrol",
+      "3.0 M4 GTS 500PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "G82 Coupe / G83 Convertible (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "M4 Competition",
+      "M4 Competition xDrive",
+      "M4 CS",
+      "M4 CSL"
+     ],
+     "engines": [
+      "3.0 M4 Competition 510PS petrol",
+      "3.0 M4 Competition xDrive 530PS petrol",
+      "3.0 M4 CS 550PS petrol",
+      "3.0 M4 CSL 550PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "M5",
+   "slug": "m5",
+   "aliases": [
+    "M5 Competition",
+    "M5 Touring",
+    "M5 CS"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E39 (1998–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M5"
+     ],
+     "engines": [
+      "4.9 M5 V8 400PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "E60 saloon / E61 Touring (2005–2010; SMG automated manual; Touring 2007-2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M5"
+     ],
+     "engines": [
+      "5.0 M5 V10 507PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "F10 (2011–2016)",
+     "from": 2011,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M5",
+      "Competition Pack",
+      "30 Jahre"
+     ],
+     "engines": [
+      "4.4 M5 560PS petrol",
+      "4.4 M5 Competition 575PS petrol",
+      "4.4 M5 30 Jahre 600PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "F90 (2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M5",
+      "M5 Competition",
+      "M5 CS"
+     ],
+     "engines": [
+      "4.4 M5 600PS petrol",
+      "4.4 M5 Competition 625PS petrol",
+      "4.4 M5 CS 635PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "G90 saloon / G99 Touring (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M5",
+      "M5 Touring"
+     ],
+     "engines": [
+      "4.4 M5 727PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "M6",
+   "slug": "m6",
+   "aliases": [
+    "M6 Gran Coupe",
+    "M6 Convertible"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2005,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "E63 Coupe / E64 Convertible (2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "M6"
+     ],
+     "engines": [
+      "5.0 M6 V10 507PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "F13 Coupe / F12 Convertible / F06 Gran Coupe (2012–2018)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M6",
+      "Competition Pack"
+     ],
+     "engines": [
+      "4.4 M6 560PS petrol",
+      "4.4 M6 Competition 600PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "M8",
+   "slug": "m8",
+   "aliases": [
+    "M8 Competition",
+    "M8 Gran Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2019,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "F92 Coupe / F91 Convertible / F93 Gran Coupe (2019–2025)",
+     "from": 2019,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "M8 Competition"
+     ],
+     "engines": [
+      "4.4 M8 Competition 625PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X3 M",
+   "slug": "x3-m",
+   "aliases": [
+    "X3M",
+    "X3 M Competition"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2019,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "F97 (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X3 M Competition"
+     ],
+     "engines": [
+      "3.0 X3 M Competition 510PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X4 M",
+   "slug": "x4-m",
+   "aliases": [
+    "X4M",
+    "X4 M Competition"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2019,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "F98 (2019–2025)",
+     "from": 2019,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X4 M Competition"
+     ],
+     "engines": [
+      "3.0 X4 M Competition 510PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X5 M",
+   "slug": "x5-m",
+   "aliases": [
+    "X5M",
+    "X5 M Competition"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2010,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E70 (2010–2013)",
+     "from": 2010,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X5 M"
+     ],
+     "engines": [
+      "4.4 X5 M 555PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "F85 (2015–2018)",
+     "from": 2015,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X5 M"
+     ],
+     "engines": [
+      "4.4 X5 M 575PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "F95 (2020–present; mild-hybrid from 2023 facelift)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X5 M Competition"
+     ],
+     "engines": [
+      "4.4 X5 M Competition 625PS petrol",
+      "4.4 X5 M Competition 625PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X6 M",
+   "slug": "x6-m",
+   "aliases": [
+    "X6M",
+    "X6 M Competition"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2010,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "E71 (2010–2014)",
+     "from": 2010,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X6 M"
+     ],
+     "engines": [
+      "4.4 X6 M 555PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "F86 (2015–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X6 M"
+     ],
+     "engines": [
+      "4.4 X6 M 575PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "F96 (2020–present; mild-hybrid from 2023 facelift)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X6 M Competition"
+     ],
+     "engines": [
+      "4.4 X6 M Competition 625PS petrol",
+      "4.4 X6 M Competition 625PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Alpina",
+   "slug": "alpina",
+   "aliases": [
+    "BMW Alpina",
+    "Alpina B3",
+    "Alpina B4",
+    "Alpina B5",
+    "Alpina B6",
+    "Alpina B7",
+    "Alpina B8",
+    "Alpina B10",
+    "Alpina D3",
+    "Alpina D4",
+    "Alpina D5",
+    "Alpina D10",
+    "Alpina XD3",
+    "Alpina XD4",
+    "Alpina XB7",
+    "Alpina Roadster S"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "B3 3.3 / B3 S (E46, 1999–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "B3 3.3",
+      "B3 S"
+     ],
+     "engines": [
+      "3.3 B3 280PS petrol",
+      "B3 S 305PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "B3 3.3 to 2001, B3 S (about 3.3–3.4 litres; exact cc not recorded) 2002–2006."
+    },
+    {
+     "name": "B10 / D10 Biturbo (E39, 1997–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B10 3.3",
+      "B10 V8",
+      "B10 V8 S",
+      "D10 Biturbo"
+     ],
+     "engines": [
+      "3.3 B10 280PS petrol",
+      {
+       "label": "4.6 B10 V8 petrol",
+       "fuel": "petrol",
+       "transmissions": [
+        "automatic"
+       ]
+      },
+      "4.8 B10 V8 S 375PS petrol",
+      "2.9 D10 Biturbo 245PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "B10 V8 4.6 power not recorded (figures differ by year); B10 V8 S 2002–2004; D10 Biturbo to 2003."
+    },
+    {
+     "name": "Roadster S (E85, 2004–2006)",
+     "from": 2004,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Roadster S"
+     ],
+     "engines": [
+      "Roadster S 300PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "Engine about 3.3–3.4 litres (exact cc not recorded)."
+    },
+    {
+     "name": "B7 (E65/E66, 2004–2008)",
+     "from": 2004,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B7"
+     ],
+     "engines": [
+      "4.4 B7 supercharged 500PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "B5 / B5 S (E60/E61, 2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B5",
+      "B5 S"
+     ],
+     "engines": [
+      "4.4 B5 supercharged 500PS petrol",
+      "4.4 B5 S supercharged 530PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "B6 / B6 S (E63/E64, 2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "B6",
+      "B6 S"
+     ],
+     "engines": [
+      "4.4 B6 supercharged 500PS petrol",
+      "4.4 B6 S supercharged 530PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "D3 / D3 Bi-Turbo (E90/E91, 2005–2013)",
+     "from": 2005,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "D3",
+      "D3 Bi-Turbo"
+     ],
+     "engines": [
+      "2.0 D3 200PS diesel",
+      "2.0 D3 Bi-Turbo 214PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "D3 (2005–2008) six-speed manual; D3 Bi-Turbo from 2008."
+    },
+    {
+     "name": "B3 Biturbo / B3 S Biturbo (E90/E91/E92/E93, 2007–2013)",
+     "from": 2007,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "B3 Biturbo",
+      "B3 S Biturbo"
+     ],
+     "engines": [
+      "3.0 B3 Biturbo 360PS petrol",
+      "3.0 B3 S Biturbo 400PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "B3 S Biturbo from 2010."
+    },
+    {
+     "name": "B7 Biturbo (F01/F02, 2009–2015)",
+     "from": 2009,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B7 Biturbo"
+     ],
+     "engines": [
+      "4.4 B7 Biturbo 507PS petrol",
+      "4.4 B7 Biturbo 540PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "B5 Biturbo / D5 Biturbo (F10/F11, 2010–2017)",
+     "from": 2010,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B5 Biturbo",
+      "D5 Biturbo"
+     ],
+     "engines": [
+      "4.4 B5 Biturbo 507PS petrol",
+      "4.4 B5 Biturbo 540PS petrol",
+      "3.0 D5 Biturbo 350PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "D5 Biturbo from 2012; limited Edition 50 versions not listed."
+    },
+    {
+     "name": "B6 Biturbo (F12/F13/F06, 2011–2018)",
+     "from": 2011,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B6 Biturbo"
+     ],
+     "engines": [
+      "4.4 B6 Biturbo 540PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Gran Coupe (four-door) from 2013; limited Edition 50 versions not listed."
+    },
+    {
+     "name": "B3 / D3 Biturbo (F30/F31, 2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B3 Biturbo",
+      "B3 S Biturbo",
+      "D3 Biturbo"
+     ],
+     "engines": [
+      "3.0 B3 Biturbo 410PS petrol",
+      "3.0 B3 S Biturbo 440PS petrol",
+      "3.0 D3 Biturbo 350PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "B3 S Biturbo from 2017."
+    },
+    {
+     "name": "XD3 (F25, 2013–2017)",
+     "from": 2013,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "XD3"
+     ],
+     "engines": [
+      "3.0 XD3 350PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "B4 / D4 Biturbo (F32/F33, 2014–2020)",
+     "from": 2014,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "B4 Biturbo",
+      "B4 S Biturbo",
+      "D4 Biturbo"
+     ],
+     "engines": [
+      "3.0 B4 Biturbo 410PS petrol",
+      "3.0 B4 S Biturbo 440PS petrol",
+      "3.0 D4 Biturbo 350PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "B4 S Biturbo from 2017."
+    },
+    {
+     "name": "B7 (G11/G12, 2016–2022)",
+     "from": 2016,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B7"
+     ],
+     "engines": [
+      "4.4 B7 608PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "B5 / D5 S (G30/G31, 2017–2024)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B5",
+      "D5 S"
+     ],
+     "engines": [
+      "4.4 B5 Bi-Turbo 608PS petrol",
+      "4.4 B5 621PS petrol",
+      {
+       "label": "3.0 D5 S diesel",
+       "fuel": "diesel"
+      }
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "B5 621PS from the 2020 facelift; D5 S power not recorded; limited B5 GT (2023) not listed."
+    },
+    {
+     "name": "XD3 / XD4 (G01/G02, 2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "XD3",
+      "XD4"
+     ],
+     "engines": [
+      "3.0 XD3 333PS diesel",
+      "3.0 XD3 355PS mild-hybrid diesel",
+      "3.0 XD4 388PS diesel",
+      "3.0 XD4 394PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Mild-hybrid versions from the 2021–2022 facelifts."
+    },
+    {
+     "name": "B3 / D3 S (G20/G21, 2019–2025)",
+     "from": 2019,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B3",
+      "D3 S",
+      "B3 GT"
+     ],
+     "engines": [
+      "3.0 B3 462PS petrol",
+      "3.0 B3 495PS petrol",
+      "3.0 B3 GT 529PS petrol",
+      "3.0 D3 S 355PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "B3 495PS from the 2022 facelift; B3 GT 2024–2025. Alpina-built production ended in 2025; the Alpina brand passed to BMW from 2026."
+    },
+    {
+     "name": "XB7 (G07, 2020–2025)",
+     "from": 2020,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "XB7"
+     ],
+     "engines": [
+      "4.4 XB7 621PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "B8 Gran Coupe (G16, 2021–2025)",
+     "from": 2021,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B8 Gran Coupe"
+     ],
+     "engines": [
+      "4.4 B8 621PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Limited B8 GT (2024) not listed."
+    },
+    {
+     "name": "B4 Gran Coupe (G26, 2022–2025)",
+     "from": 2022,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "B4 Gran Coupe",
+      "B4 GT"
+     ],
+     "engines": [
+      "3.0 B4 495PS petrol",
+      "3.0 B4 GT 529PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "B4 GT 2024–2025."
+    }
+   ]
+  }
+ ]
+}

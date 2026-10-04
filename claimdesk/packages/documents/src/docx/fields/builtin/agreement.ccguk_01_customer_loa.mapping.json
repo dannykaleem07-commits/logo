@@ -1,0 +1,286 @@
+{
+  "schemaVersion": 1,
+  "templateId": "agreement.ccguk_01_customer_loa",
+  "sourceSha256": "17c73097b9aaaa550c4fa68f50090597408626bec1e3a7c219e6680dc69f87c3",
+  "guards": [
+    "printedRates",
+    "signatoryDirector"
+  ],
+  "subjects": [],
+  "entries": [
+    {
+      "slot": {
+        "section": "title",
+        "label": "reference"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date"
+      },
+      "key": "doc.date",
+      "note": "Fill today only when the client signs today."
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "customer-full-name"
+      },
+      "key": "claimant.name"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "date-of-birth"
+      },
+      "key": "claimant.dateOfBirth",
+      "format": "date-boxes"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "address"
+      },
+      "key": "claimant.addressNoPostcode",
+      "note": "Address without the postcode — the postcode has its own box."
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "postcode"
+      },
+      "key": "claimant.postcode"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "date-of-accident"
+      },
+      "key": "accident.date"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "telephone"
+      },
+      "key": "claimant.phone"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "email"
+      },
+      "key": "claimant.email"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "vehicle-make-model"
+      },
+      "key": "vehicle.makeModel"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "registration"
+      },
+      "key": "vehicle.registration"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "vin"
+      },
+      "key": "vehicle.vin"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "mileage"
+      },
+      "key": "vehicle.mileageAtAccident",
+      "note": "Latest reading on or before the accident; never a later reading."
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "accident-location"
+      },
+      "key": "accident.location"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "other-vehicle-reg"
+      },
+      "key": "tp.vehicleRegistration"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "other-driver"
+      },
+      "key": "tp.driverName"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "own-insurer"
+      },
+      "key": "ownInsurer.name"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "own-claim-ref"
+      },
+      "key": "ownInsurer.claimRef",
+      "note": "The own insurer's claim reference (not the policy number)."
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "third-party-insurer"
+      },
+      "key": "tpInsurer.name"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "third-party-claim-ref"
+      },
+      "key": "tpInsurer.claimRef"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "where-this-agreement-is-signed-after-ccguk-began"
+      },
+      "key": "claim.retrospectiveAppointment",
+      "note": "Tick only when the client signs after CCGUK began acting."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "that-i-first-appointed-ccguk-on"
+      },
+      "key": "claim.firstInstructedAt",
+      "onlyIf": {
+        "key": "claim.retrospectiveAppointment",
+        "equals": true
+      }
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "vehicle-recovery-vehicle-recovery-storage-and-en"
+      },
+      "key": "services.recovery"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "secure-vehicle-storage-vehicle-recovery-storage"
+      },
+      "key": "services.storage"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "engineering-accident-damage-assessment-and-writt"
+      },
+      "key": "services.engineering"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "vehicle-diagnostics-roadworthiness-checks-no-cha"
+      },
+      "key": "services.diagnostics"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "repair-estimate-valuation-and-repair-coordinatio"
+      },
+      "key": "services.repairCoordination"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "replacement-vehicle-on-credit-hire-under-a-separ"
+      },
+      "key": "services.creditHire"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "standard-authority-ccguk-may-negotiate-and-prese"
+      },
+      "key": "claim.settlementAuthority",
+      "when": "standard",
+      "note": "The client's choice; never defaulted. If neither box is ticked, Standard Authority applies."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "full-settlement-authority-i-authorise-ccguk-to-n"
+      },
+      "key": "claim.settlementAuthority",
+      "when": "full",
+      "note": "The client's choice; never defaulted. If neither box is ticked, Standard Authority applies."
+    },
+    {
+      "slot": {
+        "section": "12",
+        "label": "i-consent-to-ccguk-sharing-relevant-claim-inform"
+      },
+      "key": "claimant.consentDisputeReferral",
+      "note": "Optional; only when the client agrees."
+    },
+    {
+      "slot": {
+        "section": "13",
+        "qualifier": "client",
+        "label": "full-name"
+      },
+      "key": "claimant.name",
+      "policy": "auto-if-known"
+    },
+    {
+      "slot": {
+        "section": "13",
+        "qualifier": "client",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "13",
+        "qualifier": "client",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "13",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "13",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    }
+  ],
+  "ignore": []
+}

@@ -1,7 +1,8 @@
 {
   "name": "claimdesk",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
+  "author": "Courtesy Cars Group UK Ltd",
   "description": "ClaimDesk — Courtesy Cars Group UK Ltd accident claims, credit hire and accident management platform (England & Wales).",
   "packageManager": "pnpm@10.28.0",
   "engines": { "node": ">=22.12" },

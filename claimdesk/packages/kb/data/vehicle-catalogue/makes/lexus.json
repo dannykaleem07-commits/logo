@@ -1,0 +1,1199 @@
+{
+ "make": "Lexus",
+ "slug": "lexus",
+ "dvlaNames": [
+  "LEXUS"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "IS",
+   "slug": "is",
+   "aliases": [
+    "IS 200",
+    "IS 300",
+    "IS 250",
+    "IS 220d",
+    "IS 200d",
+    "IS 300h",
+    "IS F",
+    "IS 250C",
+    "IS SportCross"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Mk1 XE10 (1999–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "2.0 IS200 155PS petrol",
+      "3.0 IS300 213PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 XE20 (2005–2013)",
+     "from": 2005,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE-I",
+      "SE-L",
+      "SR",
+      "F Sport",
+      "Advance",
+      "Limited Edition"
+     ],
+     "engines": [
+      "2.5 IS250 208PS petrol",
+      "2.2 IS220d 177PS diesel",
+      "2.2 IS200d 150PS diesel",
+      "5.0 IS F 423PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 XE30 (2013–2020)",
+     "from": 2013,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Executive Edition",
+      "Luxury",
+      "Advance",
+      "F Sport",
+      "Premier",
+      "Sport"
+     ],
+     "engines": [
+      "2.5 IS300h 223PS hybrid",
+      "2.5 IS250 208PS petrol",
+      "2.0 IS200t 245PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GS",
+   "slug": "gs",
+   "aliases": [
+    "GS 300",
+    "GS 430",
+    "GS 450h",
+    "GS 300h",
+    "GS 250",
+    "GS F"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Mk2 S160 (1997–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE"
+     ],
+     "engines": [
+      "3.0 GS300 222PS petrol",
+      "4.3 GS430 283PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 S190 (2005–2011)",
+     "from": 2005,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE-L",
+      "SE-I"
+     ],
+     "engines": [
+      "3.0 GS300 249PS petrol",
+      "4.3 GS430 283PS petrol",
+      "4.6 GS460 347PS petrol",
+      "3.5 GS450h 345PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 L10 (2012–2018)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Luxury",
+      "F Sport",
+      "Premier",
+      "Executive Edition"
+     ],
+     "engines": [
+      "2.5 GS250 208PS petrol",
+      "2.5 GS300h 223PS hybrid",
+      "3.5 GS450h 345PS hybrid",
+      "5.0 GS F 477PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "LS",
+   "slug": "ls",
+   "aliases": [
+    "LS 430",
+    "LS 460",
+    "LS 600h",
+    "LS 600h L",
+    "LS 500h"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "LS 430 XF30 (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LS"
+     ],
+     "engines": [
+      "4.3 LS430 282PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "LS 460/600h XF40 (2006–2017)",
+     "from": 2006,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE-L",
+      "F Sport",
+      "Premier",
+      "Luxury"
+     ],
+     "engines": [
+      "4.6 LS460 380PS petrol",
+      "5.0 LS600h 445PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "LS 500h XF50 (2018–2023)",
+     "from": 2018,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Premier",
+      "F Sport",
+      "Takumi"
+     ],
+     "engines": [
+      "3.5 LS500h 359PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ES",
+   "slug": "es",
+   "aliases": [
+    "ES 300h"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "XZ10 (2019–present)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "ES",
+      "F Sport",
+      "Takumi",
+      "Premium Edition"
+     ],
+     "engines": [
+      "2.5 ES300h 218PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CT",
+   "slug": "ct",
+   "aliases": [
+    "CT 200h"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2011,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "CT 200h (2011–2020)",
+     "from": 2011,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE-L",
+      "SE-I",
+      "Advance",
+      "F Sport",
+      "Premier",
+      "Luxury",
+      "Sport",
+      "Executive Edition"
+     ],
+     "engines": [
+      "1.8 CT200h 136PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "RX",
+   "slug": "rx",
+   "aliases": [
+    "RX 300",
+    "RX 400h",
+    "RX 350",
+    "RX 450h",
+    "RX 450h L",
+    "RX 200t",
+    "RX 350h",
+    "RX 450h+",
+    "RX 500h"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 XU10 (1998–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "RX"
+     ],
+     "engines": [
+      "3.0 RX300 201PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Mk2 XU30 (2003–2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE-L",
+      "Limited Edition"
+     ],
+     "engines": [
+      "3.0 RX300 204PS petrol",
+      "3.3 RX400h 272PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 AL10 (2009–2015)",
+     "from": 2009,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE-L",
+      "SE-I",
+      "Advance",
+      "F Sport",
+      "Premier",
+      "Luxury",
+      "Executive Edition"
+     ],
+     "engines": [
+      "3.5 RX450h 299PS hybrid",
+      "3.5 RX350 277PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 AL20 (2015–2022)",
+     "from": 2015,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Luxury",
+      "F Sport",
+      "Premier",
+      "Takumi",
+      "Executive Edition"
+     ],
+     "engines": [
+      "3.5 RX450h 313PS hybrid",
+      "2.0 RX200t 238PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk5 AL30 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "RX",
+      "Premium Pack",
+      "Premium Plus Pack",
+      "Takumi",
+      "F Sport Performance"
+     ],
+     "engines": [
+      "2.5 RX350h 250PS hybrid",
+      "2.5 RX450h+ 309PS plug-in-hybrid",
+      "2.4 RX500h F Sport Performance 371PS hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "NX",
+   "slug": "nx",
+   "aliases": [
+    "NX 300h",
+    "NX 200t",
+    "NX 350h",
+    "NX 450h+"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2014,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 AZ10 (2014–2021)",
+     "from": 2014,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Luxury",
+      "F Sport",
+      "Premier",
+      "Takumi",
+      "Executive Edition"
+     ],
+     "engines": [
+      "2.5 NX300h 197PS hybrid",
+      "2.0 NX200t 238PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 AZ20 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "NX",
+      "Premium Pack",
+      "Premium Plus Pack",
+      "F Sport",
+      "Takumi",
+      "Overtrail"
+     ],
+     "engines": [
+      "2.5 NX350h 244PS hybrid",
+      "2.5 NX450h+ 309PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "UX",
+   "slug": "ux",
+   "aliases": [
+    "UX 250h",
+    "UX 300h",
+    "UX 300e"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "ZA10 (2019–present)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "UX",
+      "F Sport",
+      "Takumi",
+      "Premium Pack",
+      "Premium Plus Pack"
+     ],
+     "engines": [
+      "2.0 UX250h 184PS hybrid",
+      "2.0 UX300h 199PS hybrid",
+      "54kWh UX300e 204PS electric",
+      "73kWh UX300e 204PS electric"
+     ],
+     "fuels": [
+      "hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "LBX",
+   "slug": "lbx",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Urban",
+      "Premium Plus",
+      "Emotion",
+      "Elegant"
+     ],
+     "engines": [
+      "1.5 LBX 136PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "RZ",
+   "slug": "rz",
+   "aliases": [
+    "RZ 450e",
+    "RZ 350e",
+    "RZ 500e",
+    "RZ 550e"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2023–2025)",
+     "from": 2023,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "RZ",
+      "Premium Pack",
+      "Premium Plus Pack",
+      "Takumi"
+     ],
+     "engines": [
+      "71kWh RZ450e 313PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk1 facelift (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Premium",
+      "Premium Plus",
+      "Takumi",
+      "F Sport"
+     ],
+     "engines": [
+      "77kWh RZ350e 224PS electric",
+      "77kWh RZ500e 381PS electric",
+      "77kWh RZ550e F Sport 408PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "SC",
+   "slug": "sc",
+   "aliases": [
+    "SC 430"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2001,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "SC 430 Z40 (2001–2010)",
+     "from": 2001,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SC"
+     ],
+     "engines": [
+      "4.3 SC430 282PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "RC",
+   "slug": "rc",
+   "aliases": [
+    "RC 300h",
+    "RC 200t",
+    "RC F"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2015,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "XC10 (2015–2021)",
+     "from": 2015,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Luxury",
+      "F Sport",
+      "Premier",
+      "Takumi",
+      "Carbon"
+     ],
+     "engines": [
+      "2.5 RC300h 223PS hybrid",
+      "2.0 RC200t 245PS petrol",
+      "5.0 RC F 477PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "LC",
+   "slug": "lc",
+   "aliases": [
+    "LC 500",
+    "LC 500h",
+    "LC 500 Convertible"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Z100 (2017–present)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Sport+",
+      "Ultimate Edition"
+     ],
+     "engines": [
+      "5.0 LC500 477PS petrol",
+      "3.5 LC500h 359PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "LFA",
+   "slug": "lfa",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2011,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "LFA (2010–2012)",
+     "from": 2011,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "LFA"
+     ],
+     "engines": [
+      {
+       "label": "4.8 V10 560PS petrol",
+       "cc": 4805,
+       "fuel": "petrol",
+       "powerPs": 560
+      }
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Limited run of 500 cars built December 2010 – December 2012, first deliveries 2011. One specification, so the model name stands in as the only trim. 6-speed ASG automated sequential gearbox with paddles, recorded as automatic."
+    }
+   ]
+  },
+  {
+   "name": "LM",
+   "slug": "lm",
+   "aliases": [
+    "LM 350h"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Premium",
+      "Takumi"
+     ],
+     "engines": [
+      "2.5 LM350h 250PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

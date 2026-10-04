@@ -1,0 +1,1509 @@
+{
+ "make": "Ferrari",
+ "slug": "ferrari",
+ "dvlaNames": [
+  "FERRARI"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "360",
+   "slug": "360",
+   "aliases": [
+    "360 Modena",
+    "360 Spider",
+    "360 Challenge Stradale",
+    "Challenge Stradale"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "360 (1999–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "360 Modena",
+      "360 Spider",
+      "360 Challenge Stradale"
+     ],
+     "engines": [
+      "3.6 V8 400PS petrol",
+      "3.6 V8 425PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "456M",
+   "slug": "456m",
+   "aliases": [
+    "456",
+    "456M GT",
+    "456M GTA"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2000,
+    "to": 2003
+   },
+   "generations": [
+    {
+     "name": "456M (1998–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "456M GT",
+      "456M GTA"
+     ],
+     "engines": [
+      "5.5 V12 442PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "550",
+   "slug": "550",
+   "aliases": [
+    "550 Maranello",
+    "550 Barchetta"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "550 Maranello / Barchetta (1996–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "550 Maranello",
+      "550 Barchetta Pininfarina"
+     ],
+     "engines": [
+      "5.5 V12 485PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "575M",
+   "slug": "575m",
+   "aliases": [
+    "575M Maranello",
+    "575 Superamerica",
+    "Superamerica"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2002,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "575M Maranello / Superamerica (2002–2006)",
+     "from": 2002,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "575M Maranello",
+      "575M F1",
+      "GTC Handling Pack",
+      "Superamerica"
+     ],
+     "engines": [
+      "5.7 V12 515PS petrol",
+      "5.7 V12 540PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Enzo",
+   "slug": "enzo",
+   "aliases": [
+    "Enzo Ferrari"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2002,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "Enzo (2002–2004)",
+     "from": 2002,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Enzo"
+     ],
+     "engines": [
+      "6.0 V12 660PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "612 Scaglietti",
+   "slug": "612-scaglietti",
+   "aliases": [
+    "612",
+    "Scaglietti"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2004,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "612 Scaglietti (2004–2011)",
+     "from": 2004,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "612 Scaglietti",
+      "One-to-One",
+      "Sessanta"
+     ],
+     "engines": [
+      "5.7 V12 540PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "F430",
+   "slug": "f430",
+   "aliases": [
+    "F430 Spider",
+    "430 Scuderia",
+    "Scuderia Spider 16M",
+    "F430 F1"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2004,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "F430 (2004–2009)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "F430",
+      "F430 Spider",
+      "430 Scuderia",
+      "Scuderia Spider 16M"
+     ],
+     "engines": [
+      "4.3 V8 490PS petrol",
+      "4.3 V8 510PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "599",
+   "slug": "599",
+   "aliases": [
+    "599 GTB Fiorano",
+    "599 GTB",
+    "599 GTO",
+    "599 SA Aperta",
+    "599 HGTE"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2006,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "599 (2006–2012)",
+     "from": 2006,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "599 GTB Fiorano",
+      "HGTE",
+      "599 GTO",
+      "SA Aperta"
+     ],
+     "engines": [
+      "6.0 V12 620PS petrol",
+      "6.0 V12 670PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "California",
+   "slug": "california",
+   "aliases": [
+    "California T",
+    "California 30",
+    "California Handling Speciale"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2009,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "California (2009–2014)",
+     "from": 2009,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "California",
+      "California 30",
+      "Handling Speciale"
+     ],
+     "engines": [
+      "4.3 V8 460PS petrol",
+      "4.3 V8 490PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "California T (2014–2017)",
+     "from": 2014,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "California T",
+      "Handling Speciale"
+     ],
+     "engines": [
+      "3.9 V8 twin-turbo 560PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "458",
+   "slug": "458",
+   "aliases": [
+    "458 Italia",
+    "458 Spider",
+    "458 Speciale",
+    "458 Speciale A"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2010,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "458 (2010–2015)",
+     "from": 2010,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "458 Italia",
+      "458 Spider",
+      "458 Speciale",
+      "458 Speciale A"
+     ],
+     "engines": [
+      "4.5 V8 570PS petrol",
+      "4.5 V8 605PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "FF",
+   "slug": "ff",
+   "aliases": [
+    "Ferrari Four"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2011,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "FF (2011–2016)",
+     "from": 2011,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "shooting-brake",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "FF"
+     ],
+     "engines": [
+      "6.3 V12 660PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "F12",
+   "slug": "f12",
+   "aliases": [
+    "F12berlinetta",
+    "F12 Berlinetta",
+    "F12tdf"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2012,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "F12berlinetta / F12tdf (2012–2017)",
+     "from": 2012,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "F12berlinetta",
+      "F12tdf"
+     ],
+     "engines": [
+      "6.3 V12 740PS petrol",
+      "6.3 V12 780PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "LaFerrari",
+   "slug": "laferrari",
+   "aliases": [
+    "LaFerrari Aperta"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2013,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "LaFerrari / Aperta (2013–2016)",
+     "from": 2013,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "LaFerrari",
+      "LaFerrari Aperta"
+     ],
+     "engines": [
+      "6.3 V12 963PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "488",
+   "slug": "488",
+   "aliases": [
+    "488 GTB",
+    "488 Spider",
+    "488 Pista",
+    "488 Pista Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2015,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "488 (2015–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "488 GTB",
+      "488 Spider",
+      "488 Pista",
+      "488 Pista Spider"
+     ],
+     "engines": [
+      "3.9 V8 twin-turbo 670PS petrol",
+      "3.9 V8 twin-turbo 720PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GTC4Lusso",
+   "slug": "gtc4lusso",
+   "aliases": [
+    "GTC4Lusso T",
+    "GTC4 Lusso"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2016,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "GTC4Lusso (2016–2020)",
+     "from": 2016,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "shooting-brake",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "GTC4Lusso",
+      "GTC4Lusso T"
+     ],
+     "engines": [
+      "6.3 V12 690PS petrol",
+      "3.9 V8 twin-turbo 610PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "812",
+   "slug": "812",
+   "aliases": [
+    "812 Superfast",
+    "812 GTS",
+    "812 Competizione",
+    "812 Competizione A"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2017,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "812 (2017–2023)",
+     "from": 2017,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "812 Superfast",
+      "812 GTS",
+      "812 Competizione",
+      "812 Competizione A"
+     ],
+     "engines": [
+      "6.5 V12 800PS petrol",
+      "6.5 V12 830PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Portofino",
+   "slug": "portofino",
+   "aliases": [
+    "Portofino M"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2018,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "Portofino (2018–2020)",
+     "from": 2018,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Portofino"
+     ],
+     "engines": [
+      "3.9 V8 twin-turbo 600PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Portofino M (2021–2023)",
+     "from": 2021,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Portofino M"
+     ],
+     "engines": [
+      "3.9 V8 twin-turbo 620PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "F8",
+   "slug": "f8",
+   "aliases": [
+    "F8 Tributo",
+    "F8 Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2019,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "F8 Tributo / Spider (2019–2023)",
+     "from": 2019,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "F8 Tributo",
+      "F8 Spider"
+     ],
+     "engines": [
+      "3.9 V8 twin-turbo 720PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Monza",
+   "slug": "monza",
+   "aliases": [
+    "Monza SP1",
+    "Monza SP2"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2019,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Monza SP1 / SP2 (2019–2020)",
+     "from": 2019,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        1,
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Monza SP1",
+      "Monza SP2"
+     ],
+     "engines": [
+      "6.5 V12 810PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "SF90",
+   "slug": "sf90",
+   "aliases": [
+    "SF90 Stradale",
+    "SF90 Spider",
+    "SF90 XX Stradale",
+    "SF90 XX Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2020,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "SF90 (2020–2025)",
+     "from": 2020,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "SF90 Stradale",
+      "SF90 Spider",
+      "Assetto Fiorano",
+      "SF90 XX Stradale",
+      "SF90 XX Spider"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 1000PS plug-in-hybrid",
+      "4.0 V8 twin-turbo 1030PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Roma",
+   "slug": "roma",
+   "aliases": [
+    "Roma Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2020,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "Roma / Roma Spider (2020–2025)",
+     "from": 2020,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Roma",
+      "Roma Spider"
+     ],
+     "engines": [
+      "3.9 V8 twin-turbo 620PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "296",
+   "slug": "296",
+   "aliases": [
+    "296 GTB",
+    "296 GTS",
+    "296 Speciale",
+    "296 Speciale A"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "296 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "296 GTB",
+      "296 GTS",
+      "Assetto Fiorano",
+      "296 Speciale",
+      "296 Speciale A"
+     ],
+     "engines": [
+      "3.0 V6 twin-turbo 830PS plug-in-hybrid",
+      "3.0 V6 twin-turbo 880PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Daytona SP3",
+   "slug": "daytona-sp3",
+   "aliases": [
+    "SP3",
+    "Daytona"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2022,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "Daytona SP3 (2022–2025)",
+     "from": 2022,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Daytona SP3"
+     ],
+     "engines": [
+      "6.5 V12 840PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Purosangue",
+   "slug": "purosangue",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Purosangue (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Purosangue"
+     ],
+     "engines": [
+      "6.5 V12 725PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "12Cilindri",
+   "slug": "12cilindri",
+   "aliases": [
+    "12 Cilindri",
+    "12Cilindri Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "12Cilindri (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "12Cilindri",
+      "12Cilindri Spider"
+     ],
+     "engines": [
+      "6.5 V12 830PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "F80",
+   "slug": "f80",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "F80 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "F80"
+     ],
+     "engines": [
+      "3.0 V6 twin-turbo 1200PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Amalfi",
+   "slug": "amalfi",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Amalfi (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Amalfi"
+     ],
+     "engines": [
+      "3.9 V8 twin-turbo 640PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "849 Testarossa",
+   "slug": "849-testarossa",
+   "aliases": [
+    "Testarossa",
+    "849 Testarossa Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "849 Testarossa (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "849 Testarossa",
+      "849 Testarossa Spider",
+      "Assetto Fiorano"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 1050PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

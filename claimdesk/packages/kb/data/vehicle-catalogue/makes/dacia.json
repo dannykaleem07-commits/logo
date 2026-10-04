@@ -1,0 +1,518 @@
+{
+ "make": "Dacia",
+ "slug": "dacia",
+ "dvlaNames": [
+  "DACIA"
+ ],
+ "aliases": [
+  "Dacia UK"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Sandero",
+   "slug": "sandero",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2013,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2013–2020)",
+     "from": 2013,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Access",
+      "Ambiance",
+      "Laureate",
+      "Essential",
+      "Comfort"
+     ],
+     "engines": [
+      "1.2 16v 75PS petrol",
+      "1.0 SCe 73PS petrol",
+      "0.9 TCe 90PS petrol",
+      "1.5 dCi 75PS diesel",
+      "1.5 dCi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Access",
+      "Essential",
+      "Comfort",
+      "Expression",
+      "Journey"
+     ],
+     "engines": [
+      "1.0 SCe 65PS petrol",
+      "1.0 TCe 90PS petrol",
+      "1.0 TCe bi-fuel 100PS lpg"
+     ],
+     "fuels": [
+      "petrol",
+      "lpg"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sandero Stepway",
+   "slug": "sandero-stepway",
+   "aliases": [
+    "Stepway"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2013,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2013–2020)",
+     "from": 2013,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Ambiance",
+      "Laureate",
+      "Essential",
+      "Comfort",
+      "SE Summit",
+      "Techroad"
+     ],
+     "engines": [
+      "0.9 TCe 90PS petrol",
+      "1.5 dCi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Essential",
+      "Comfort",
+      "Prestige",
+      "Expression",
+      "Extreme",
+      "Journey"
+     ],
+     "engines": [
+      "1.0 TCe 90PS petrol",
+      "1.0 TCe 110PS petrol",
+      "1.0 TCe bi-fuel 100PS lpg"
+     ],
+     "fuels": [
+      "petrol",
+      "lpg"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Logan MCV",
+   "slug": "logan-mcv",
+   "aliases": [
+    "Logan MCV Stepway",
+    "Logan"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2013,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2013–2020)",
+     "from": 2013,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Access",
+      "Ambiance",
+      "Laureate",
+      "Essential",
+      "Comfort"
+     ],
+     "engines": [
+      "1.2 16v 75PS petrol",
+      "0.9 TCe 90PS petrol",
+      "1.5 dCi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Duster",
+   "slug": "duster",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2013,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2013–2017)",
+     "from": 2013,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Access",
+      "Ambiance",
+      "Laureate",
+      "Prestige",
+      "Air"
+     ],
+     "engines": [
+      "1.6 16v 105PS petrol",
+      "1.2 TCe 125PS petrol",
+      "1.5 dCi 90PS diesel",
+      "1.5 dCi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Access",
+      "Essential",
+      "Comfort",
+      "Prestige",
+      "Techroad",
+      "Expression",
+      "Journey",
+      "Extreme"
+     ],
+     "engines": [
+      "1.6 SCe 115PS petrol",
+      "1.0 TCe 90PS petrol",
+      "1.0 TCe 100PS petrol",
+      "1.0 TCe bi-fuel 100PS lpg",
+      "1.2 TCe 125PS petrol",
+      "1.3 TCe 130PS petrol",
+      "1.3 TCe 150PS petrol",
+      "1.5 dCi 110PS diesel",
+      "1.5 Blue dCi 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "lpg"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Essential",
+      "Expression",
+      "Journey",
+      "Extreme"
+     ],
+     "engines": [
+      "1.0 TCe bi-fuel 100PS lpg",
+      "1.2 TCe 130PS mild-hybrid petrol",
+      "1.6 Hybrid 140PS hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "mild-hybrid",
+      "lpg"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Jogger",
+   "slug": "jogger",
+   "aliases": [
+    "Jogger Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Jogger (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Essential",
+      "Expression",
+      "Extreme SE",
+      "Extreme",
+      "Journey"
+     ],
+     "engines": [
+      "1.0 TCe 110PS petrol",
+      "1.0 TCe bi-fuel 100PS lpg",
+      "1.6 Hybrid 140PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid",
+      "lpg"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Spring",
+   "slug": "spring",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Spring (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Extreme"
+     ],
+     "engines": [
+      "26.8kWh 45PS electric",
+      "26.8kWh 65PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Bigster",
+   "slug": "bigster",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Bigster (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Essential",
+      "Expression",
+      "Journey",
+      "Extreme"
+     ],
+     "engines": [
+      "1.2 TCe 140PS mild-hybrid petrol",
+      "1.8 Hybrid 155PS hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

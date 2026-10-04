@@ -1,0 +1,3045 @@
+{
+ "make": "Fiat",
+ "slug": "fiat",
+ "dvlaNames": [
+  "FIAT"
+ ],
+ "aliases": [
+  "Fiat Professional",
+  "FIAT AUTO"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. The barchetta is omitted: left-hand drive only."
+ },
+ "models": [
+  {
+   "name": "500",
+   "slug": "500",
+   "aliases": [
+    "500C",
+    "500 C",
+    "500 Cabrio",
+    "Nuova 500",
+    "500 Hybrid",
+    "500 TwinAir"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2008,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2008–2015)",
+     "from": 2008,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Pop",
+      "Pop Star",
+      "Lounge",
+      "Sport",
+      "Colour Therapy",
+      "by Diesel",
+      "Gucci",
+      "Cult",
+      "S",
+      "Street"
+     ],
+     "engines": [
+      "1.2 FIRE 69PS petrol",
+      "1.4 16v 100PS petrol",
+      "0.9 TwinAir 85PS petrol",
+      "1.3 Multijet 75PS diesel",
+      "1.3 Multijet 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    },
+    {
+     "name": "Facelift (2015–2024)",
+     "from": 2015,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Pop",
+      "Pop Star",
+      "Lounge",
+      "S",
+      "Mirror",
+      "Collezione",
+      "Riva",
+      "Anniversario",
+      "Rockstar",
+      "Star",
+      "Sport",
+      "Connect",
+      "Dolcevita",
+      "Red",
+      "Top",
+      "Launch Edition"
+     ],
+     "engines": [
+      "1.2 FIRE 69PS petrol",
+      "0.9 TwinAir 85PS petrol",
+      "0.9 TwinAir 105PS petrol",
+      "1.3 Multijet 95PS diesel",
+      "1.0 FireFly 70PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    },
+    {
+     "name": "500 Hybrid (2026–, Torino-built)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Torino Launch Edition"
+     ],
+     "engines": [
+      "1.0 FireFly 65PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "500e",
+   "slug": "500e",
+   "aliases": [
+    "500 Electric",
+    "New 500",
+    "500 3+1",
+    "500e Cabrio",
+    "500 La Prima"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Action",
+      "Passion",
+      "Icon",
+      "La Prima",
+      "Red",
+      "Giorgio Armani Collector's Edition"
+     ],
+     "engines": [
+      "24kWh 95PS electric",
+      "42kWh 118PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "500L",
+   "slug": "500l",
+   "aliases": [
+    "500L MPW",
+    "500L Living",
+    "500L Trekking",
+    "500L Cross",
+    "500L Beats Edition"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2013,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2013–2017)",
+     "from": 2013,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Pop",
+      "Pop Star",
+      "Easy",
+      "Lounge",
+      "Trekking",
+      "Beats Edition",
+      "MPW"
+     ],
+     "engines": [
+      "1.4 16v 95PS petrol",
+      "0.9 TwinAir 105PS petrol",
+      "1.3 Multijet 85PS diesel",
+      "1.6 Multijet 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2017–2022)",
+     "from": 2017,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Pop Star",
+      "Lounge",
+      "Urban",
+      "Cross",
+      "City Cross",
+      "Cross Plus",
+      "Sport",
+      "Connect",
+      "Mirror"
+     ],
+     "engines": [
+      "1.4 16v 95PS petrol",
+      "1.3 Multijet 95PS diesel",
+      "1.6 Multijet 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "500X",
+   "slug": "500x",
+   "aliases": [
+    "500X Cross",
+    "500X Dolcevita",
+    "500X Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2015,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2015–2018)",
+     "from": 2015,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pop",
+      "Pop Star",
+      "Lounge",
+      "Cross",
+      "Cross Plus",
+      "Opening Edition"
+     ],
+     "engines": [
+      "1.6 E-torQ 110PS petrol",
+      "1.4 MultiAir 140PS petrol",
+      "1.4 MultiAir 170PS petrol",
+      "1.6 Multijet 120PS diesel",
+      "2.0 Multijet 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Urban",
+      "City Cross",
+      "Cross",
+      "Cross Plus",
+      "Sport",
+      "Connect",
+      "Club",
+      "Dolcevita",
+      "Red"
+     ],
+     "engines": [
+      "1.0 FireFly 120PS petrol",
+      "1.3 FireFly 150PS petrol",
+      "1.6 Multijet 120PS diesel",
+      "1.5 130PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "600",
+   "slug": "600",
+   "aliases": [
+    "600e",
+    "600 Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "RED",
+      "La Prima"
+     ],
+     "engines": [
+      "54kWh 156PS electric",
+      "1.2 100PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "electric",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "124 Spider",
+   "slug": "124-spider",
+   "aliases": [
+    "124"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2016,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2016–2019)",
+     "from": 2016,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Classica",
+      "Lusso",
+      "Lusso Plus",
+      "Europa"
+     ],
+     "engines": [
+      "1.4 MultiAir 140PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Bravo",
+   "slug": "bravo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1995–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SX",
+      "ELX",
+      "HGT"
+     ],
+     "engines": [
+      "1.2 16v 82PS petrol",
+      "1.6 16v 103PS petrol",
+      "1.8 16v 113PS petrol",
+      "2.0 20v 155PS petrol",
+      "1.9 JTD 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 (2007–2011)",
+     "from": 2007,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Dynamic",
+      "Emotion",
+      "Sport",
+      "GP",
+      "MyLife"
+     ],
+     "engines": [
+      "1.4 16v 90PS petrol",
+      "1.4 T-Jet 120PS petrol",
+      "1.4 T-Jet 150PS petrol",
+      "1.6 Multijet 105PS diesel",
+      "1.6 Multijet 120PS diesel",
+      "1.9 Multijet 120PS diesel",
+      "1.9 Multijet 150PS diesel",
+      "2.0 Multijet 165PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Brava",
+   "slug": "brava",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1995–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SX",
+      "ELX"
+     ],
+     "engines": [
+      "1.2 16v 82PS petrol",
+      "1.6 16v 103PS petrol",
+      "1.8 16v 113PS petrol",
+      "1.9 JTD 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Coupe",
+   "slug": "coupe",
+   "aliases": [
+    "Coupe 20v",
+    "Coupe 20v Turbo"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2000
+   },
+   "generations": [
+    {
+     "name": "Type 175 (1994–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "20v",
+      "20v Turbo",
+      "Plus",
+      "Limited Edition"
+     ],
+     "engines": [
+      "1.8 16v 131PS petrol",
+      "2.0 20v 154PS petrol",
+      "2.0 20v Turbo 220PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Croma",
+   "slug": "croma",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2005,
+    "to": 2008
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2005–2008)",
+     "from": 2005,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Dynamic",
+      "Eleganza",
+      "Emotion"
+     ],
+     "engines": [
+      "1.8 16v 140PS petrol",
+      "2.2 16v 147PS petrol",
+      "1.9 Multijet 120PS diesel",
+      "1.9 Multijet 150PS diesel",
+      "2.4 Multijet 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Doblo",
+   "slug": "doblo",
+   "aliases": [
+    "Doblo MPV",
+    "Doblo Combi",
+    "Doblo Malibu"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2001,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2001–2010)",
+     "from": 2001,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "ELX",
+      "Malibu",
+      "Active",
+      "Dynamic",
+      "Eleganza"
+     ],
+     "engines": [
+      "1.2 8v 65PS petrol",
+      "1.4 8v 77PS petrol",
+      "1.6 16v 103PS petrol",
+      "1.9 D 63PS diesel",
+      "1.9 JTD 100PS diesel",
+      "1.9 Multijet 105PS diesel",
+      "1.3 Multijet 85PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 (2010–2016)",
+     "from": 2010,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Dynamic",
+      "MyLife",
+      "Easy",
+      "Trekking"
+     ],
+     "engines": [
+      "1.4 16v 95PS petrol",
+      "1.6 Multijet 105PS diesel",
+      "2.0 Multijet 135PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Doblo Cargo",
+   "slug": "doblo-cargo",
+   "aliases": [
+    "Doblo Van",
+    "E-Doblo",
+    "Doblo Maxi",
+    "Doblo Cargo Maxi",
+    "Doblo Work Up",
+    "Doblo Crew Cab"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2001,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2001–2010)",
+     "from": 2001,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "Maxi"
+     ],
+     "engines": [
+      "1.2 8v 65PS petrol",
+      "1.9 D 63PS diesel",
+      "1.9 JTD 100PS diesel",
+      "1.3 Multijet 85PS diesel",
+      "1.9 Multijet 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 (2010–2022)",
+     "from": 2010,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "Tecnico",
+      "Sportivo",
+      "Maxi",
+      "Work Up",
+      "Crew Cab"
+     ],
+     "engines": [
+      "1.4 16v 95PS petrol",
+      "1.3 Multijet 90PS diesel",
+      "1.3 Multijet 95PS diesel",
+      "1.6 Multijet 105PS diesel",
+      "1.6 Multijet 120PS diesel",
+      "2.0 Multijet 135PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2023–, Stellantis K9)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "50kWh 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ducato",
+   "slug": "ducato",
+   "aliases": [
+    "E-Ducato",
+    "Ducato Maxi",
+    "Ducato Multijet",
+    "Ducato Combi",
+    "Ducato Motorhome"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (1994–2006, facelift 2002)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "camper",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        2,
+        4,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Maxi"
+     ],
+     "engines": [
+      "2.0 JTD 84PS diesel",
+      "2.3 JTD 110PS diesel",
+      "2.8 JTD 128PS diesel",
+      "2.8 JTD 146PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk3 X250 (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        2,
+        3,
+        6,
+        7
+       ]
+      },
+      {
+       "body": "camper",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        2,
+        4,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Maxi",
+      "Tecnico",
+      "Sportivo"
+     ],
+     "engines": [
+      "2.2 Multijet 100PS diesel",
+      "2.3 Multijet 120PS diesel",
+      "2.3 Multijet 130PS diesel",
+      "3.0 Multijet 157PS diesel",
+      "3.0 Multijet 177PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 facelift X290 (2014–2021)",
+     "from": 2014,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        2,
+        3,
+        6,
+        7
+       ]
+      },
+      {
+       "body": "camper",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        2,
+        4,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Maxi",
+      "Tecnico",
+      "Sportivo"
+     ],
+     "engines": [
+      "2.0 Multijet 115PS diesel",
+      "2.3 Multijet 120PS diesel",
+      "2.3 Multijet 130PS diesel",
+      "2.3 Multijet 140PS diesel",
+      "2.3 Multijet 150PS diesel",
+      "2.3 Multijet 160PS diesel",
+      "2.3 Multijet 180PS diesel",
+      "3.0 Multijet 180PS diesel",
+      "47kWh 122PS electric",
+      "79kWh 122PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "2021 update (2021–2024)",
+     "from": 2021,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        2,
+        3,
+        6,
+        7
+       ]
+      },
+      {
+       "body": "camper",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        2,
+        4,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Maxi",
+      "Tecnico",
+      "Sportivo"
+     ],
+     "engines": [
+      "2.2 Multijet 120PS diesel",
+      "2.2 Multijet 140PS diesel",
+      "2.2 Multijet 160PS diesel",
+      "2.2 Multijet 180PS diesel",
+      "47kWh 122PS electric",
+      "79kWh 122PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "2024 facelift (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        2,
+        3,
+        6,
+        7
+       ]
+      },
+      {
+       "body": "camper",
+       "doors": [
+        3,
+        4
+       ],
+       "seats": [
+        2,
+        4,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Maxi"
+     ],
+     "engines": [
+      "2.2 Multijet 120PS diesel",
+      "2.2 Multijet 140PS diesel",
+      "2.2 Multijet 180PS diesel",
+      "110kWh 270PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ducato Minibus",
+   "slug": "ducato-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (1994–2006, facelift 2002)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        9,
+        12,
+        14
+       ]
+      }
+     ],
+     "trims": [
+      "Maxi"
+     ],
+     "engines": [
+      "2.0 JTD 84PS diesel",
+      "2.3 JTD 110PS diesel",
+      "2.8 JTD 128PS diesel",
+      "2.8 JTD 146PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk3 X250 (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        9,
+        14,
+        16,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "Maxi",
+      "Tecnico",
+      "Sportivo"
+     ],
+     "engines": [
+      "2.2 Multijet 100PS diesel",
+      "2.3 Multijet 120PS diesel",
+      "2.3 Multijet 130PS diesel",
+      "3.0 Multijet 157PS diesel",
+      "3.0 Multijet 177PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 facelift X290 (2014–2021)",
+     "from": 2014,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        9,
+        14,
+        16,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "Maxi",
+      "Tecnico",
+      "Sportivo"
+     ],
+     "engines": [
+      "2.0 Multijet 115PS diesel",
+      "2.3 Multijet 120PS diesel",
+      "2.3 Multijet 130PS diesel",
+      "2.3 Multijet 140PS diesel",
+      "2.3 Multijet 150PS diesel",
+      "2.3 Multijet 160PS diesel",
+      "2.3 Multijet 180PS diesel",
+      "3.0 Multijet 180PS diesel",
+      "47kWh 122PS electric",
+      "79kWh 122PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "2021 update (2021–2024)",
+     "from": 2021,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        9,
+        14,
+        16,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "Maxi",
+      "Tecnico",
+      "Sportivo"
+     ],
+     "engines": [
+      "2.2 Multijet 120PS diesel",
+      "2.2 Multijet 140PS diesel",
+      "2.2 Multijet 160PS diesel",
+      "2.2 Multijet 180PS diesel",
+      "47kWh 122PS electric",
+      "79kWh 122PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "2024 facelift (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4
+       ],
+       "seats": [
+        9,
+        14,
+        16,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "Maxi"
+     ],
+     "engines": [
+      "2.2 Multijet 120PS diesel",
+      "2.2 Multijet 140PS diesel",
+      "2.2 Multijet 180PS diesel",
+      "110kWh 270PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Fiorino",
+   "slug": "fiorino",
+   "aliases": [
+    "Fiorino Cargo",
+    "Fiorino Van"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2008,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "Mk3 (2008–2021)",
+     "from": 2008,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "Tecnico",
+      "Adventure"
+     ],
+     "engines": [
+      "1.4 8v 73PS petrol",
+      "1.4 8v 77PS petrol",
+      "1.3 Multijet 75PS diesel",
+      "1.3 Multijet 80PS diesel",
+      "1.3 Multijet 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Freemont",
+   "slug": "freemont",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2011,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2011–2015)",
+     "from": 2011,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Urban",
+      "Lounge",
+      "Black Code",
+      "Cross"
+     ],
+     "engines": [
+      "2.0 Multijet 140PS diesel",
+      "2.0 Multijet 170PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Fullback",
+   "slug": "fullback",
+   "aliases": [
+    "Fullback Cross",
+    "Fullback Double Cab",
+    "Fullback Extended Cab"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2016,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2016–2019)",
+     "from": 2016,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        2,
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "LX",
+      "Cross"
+     ],
+     "engines": [
+      "2.4 Multijet 150PS diesel",
+      "2.4 Multijet 180PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    }
+   ]
+  },
+  {
+   "name": "Grande Panda",
+   "slug": "grande-panda",
+   "aliases": [
+    "Grande Panda Hybrid",
+    "Grande Panda Electric",
+    "Grande Panda Elettrica"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pop",
+      "Icon",
+      "La Prima"
+     ],
+     "engines": [
+      "1.2 110PS mild-hybrid petrol",
+      "44kWh 113PS electric"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Idea",
+   "slug": "idea",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2004,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2004–2007)",
+     "from": 2004,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Dynamic",
+      "Eleganza"
+     ],
+     "engines": [
+      "1.2 16v 80PS petrol",
+      "1.4 8v 77PS petrol",
+      "1.4 16v 95PS petrol",
+      "1.3 Multijet 70PS diesel",
+      "1.9 Multijet 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Marea",
+   "slug": "marea",
+   "aliases": [
+    "Marea Weekend"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1996–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "ELX",
+      "HLX"
+     ],
+     "engines": [
+      "1.6 16v 103PS petrol",
+      "1.8 16v 113PS petrol",
+      "2.0 20v 155PS petrol",
+      "1.9 JTD 105PS diesel",
+      "2.4 JTD 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Multipla",
+   "slug": "multipla",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1999–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "ELX"
+     ],
+     "engines": [
+      "1.6 16v 103PS petrol",
+      "1.9 JTD 105PS diesel",
+      "1.9 JTD 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Facelift (2004–2010)",
+     "from": 2004,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Dynamic",
+      "Eleganza"
+     ],
+     "engines": [
+      "1.6 16v 103PS petrol",
+      "1.9 JTD 115PS diesel",
+      "1.9 Multijet 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Palio Weekend",
+   "slug": "palio-weekend",
+   "aliases": [
+    "Palio"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1997–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Palio Weekend"
+     ],
+     "engines": [
+      "1.2 8v 73PS petrol",
+      "1.6 16v 100PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Panda",
+   "slug": "panda",
+   "aliases": [
+    "Panda 4x4",
+    "Panda Cross",
+    "Panda 100HP",
+    "Panda Trekking",
+    "Panda Van",
+    "Panda Hybrid",
+    "Panda City Cross"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2004,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Mk2 Type 169 (2004–2012)",
+     "from": 2004,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Active Plus",
+      "Active Eco",
+      "Dynamic",
+      "Dynamic Eco",
+      "Eleganza",
+      "Emotion",
+      "4x4",
+      "4x4 Climbing",
+      "Cross",
+      "100HP",
+      "MyLife",
+      "Alessi"
+     ],
+     "engines": [
+      "1.1 FIRE 54PS petrol",
+      "1.2 FIRE 60PS petrol",
+      "1.2 FIRE 69PS petrol",
+      "1.4 16v 100PS petrol",
+      "1.3 Multijet 70PS diesel",
+      "1.3 Multijet 75PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 Type 319 (2012–2024)",
+     "from": 2012,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pop",
+      "Easy",
+      "Lounge",
+      "4x4",
+      "Trekking",
+      "Cross",
+      "City Cross",
+      "City Life",
+      "Life",
+      "Sport",
+      "Waze",
+      "Garmin",
+      "Launch Edition"
+     ],
+     "engines": [
+      "1.2 FIRE 69PS petrol",
+      "0.9 TwinAir 85PS petrol",
+      "0.9 TwinAir 90PS petrol",
+      "1.3 Multijet 75PS diesel",
+      "1.3 Multijet 80PS diesel",
+      "1.0 FireFly 70PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Punto",
+   "slug": "punto",
+   "aliases": [
+    "Grande Punto",
+    "Punto Evo",
+    "Punto Van",
+    "Grande Punto Van",
+    "Punto Sporting"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Mk2 Type 188 (1999–2005, facelift 2003)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SX",
+      "ELX",
+      "HLX",
+      "HGT",
+      "Sporting",
+      "Active",
+      "Active Sport",
+      "Dynamic",
+      "Eleganza",
+      "Go",
+      "Speedgear"
+     ],
+     "engines": [
+      "1.2 8v 60PS petrol",
+      "1.2 16v 80PS petrol",
+      "1.4 16v 95PS petrol",
+      "1.8 16v 130PS petrol",
+      "1.9 D 60PS diesel",
+      "1.9 JTD 80PS diesel",
+      "1.3 Multijet 70PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Grande Punto (2005–2009)",
+     "from": 2005,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Dynamic",
+      "Eleganza",
+      "Sporting"
+     ],
+     "engines": [
+      "1.2 8v 65PS petrol",
+      "1.4 8v 77PS petrol",
+      "1.4 16v 95PS petrol",
+      "1.4 T-Jet 120PS petrol",
+      "1.3 Multijet 75PS diesel",
+      "1.3 Multijet 90PS diesel",
+      "1.9 Multijet 120PS diesel",
+      "1.9 Multijet 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Punto Evo (2009–2012)",
+     "from": 2009,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Dynamic",
+      "MyLife",
+      "GP",
+      "Sporting"
+     ],
+     "engines": [
+      "1.2 8v 65PS petrol",
+      "1.4 8v 77PS petrol",
+      "1.4 MultiAir 105PS petrol",
+      "1.4 MultiAir Turbo 135PS petrol",
+      "1.3 Multijet 75PS diesel",
+      "1.3 Multijet 95PS diesel",
+      "1.6 Multijet 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Punto (2012–2018)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pop",
+      "Pop+",
+      "Easy",
+      "Lounge",
+      "GBT",
+      "Jet Black"
+     ],
+     "engines": [
+      "1.2 8v 69PS petrol",
+      "1.4 8v 77PS petrol",
+      "0.9 TwinAir 85PS petrol",
+      "1.4 MultiAir 105PS petrol",
+      "1.4 MultiAir Turbo 135PS petrol",
+      "1.3 Multijet 75PS diesel",
+      "1.3 Multijet 85PS diesel",
+      "1.3 Multijet 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Qubo",
+   "slug": "qubo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2008,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2008–2019)",
+     "from": 2008,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Dynamic",
+      "MyLife",
+      "Trekking",
+      "Easy",
+      "Lounge"
+     ],
+     "engines": [
+      "1.4 8v 73PS petrol",
+      "1.4 8v 77PS petrol",
+      "1.3 Multijet 75PS diesel",
+      "1.3 Multijet 80PS diesel",
+      "1.3 Multijet 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Scudo",
+   "slug": "scudo",
+   "aliases": [
+    "E-Scudo",
+    "Scudo Combi",
+    "Scudo Panorama"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1996–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.9 D 70PS diesel",
+      "1.9 TD 92PS diesel",
+      "2.0 JTD 94PS diesel",
+      "2.0 JTD 109PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 (2007–2016)",
+     "from": 2007,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      },
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "Comfort",
+      "SX",
+      "Sportivo",
+      "Panorama"
+     ],
+     "engines": [
+      "1.6 Multijet 90PS diesel",
+      "2.0 Multijet 120PS diesel",
+      "2.0 Multijet 130PS diesel",
+      "2.0 Multijet 165PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2022–, Stellantis K0)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.5 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 145PS diesel",
+      "2.0 BlueHDi 180PS diesel",
+      "50kWh 136PS electric",
+      "75kWh 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sedici",
+   "slug": "sedici",
+   "aliases": [
+    "Sedici 4x4"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2006,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2012)",
+     "from": 2006,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Dynamic",
+      "Eleganza",
+      "Emotion"
+     ],
+     "engines": [
+      "1.6 16v 107PS petrol",
+      "1.6 16v 120PS petrol",
+      "1.9 Multijet 120PS diesel",
+      "2.0 Multijet 135PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Seicento",
+   "slug": "seicento",
+   "aliases": [
+    "Seicento Sporting",
+    "Seicento Active"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1998–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SX",
+      "Sporting",
+      "Active",
+      "Sole",
+      "Schumacher"
+     ],
+     "engines": [
+      "1.1 FIRE 55PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Stilo",
+   "slug": "stilo",
+   "aliases": [
+    "Stilo Multi Wagon",
+    "Stilo Abarth"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2001,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2001–2007)",
+     "from": 2001,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Active Sport",
+      "Dynamic",
+      "Eleganza",
+      "Abarth",
+      "Schumacher",
+      "Multi Wagon"
+     ],
+     "engines": [
+      "1.2 16v 80PS petrol",
+      "1.4 16v 95PS petrol",
+      "1.6 16v 103PS petrol",
+      "1.8 16v 133PS petrol",
+      "2.4 20v 170PS petrol",
+      "1.9 JTD 80PS diesel",
+      "1.9 JTD 115PS diesel",
+      "1.9 Multijet 120PS diesel",
+      "1.9 Multijet 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Strada",
+   "slug": "strada",
+   "aliases": [
+    "Strada Adventure",
+    "Strada Trekking"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2007,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Mk1 facelift (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2,
+        3
+       ],
+       "seats": [
+        2,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Trekking",
+      "Adventure"
+     ],
+     "engines": [
+      "1.3 Multijet 85PS diesel",
+      "1.3 Multijet 95PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Talento",
+   "slug": "talento",
+   "aliases": [
+    "Talento Combi"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2016,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2016–2020)",
+     "from": 2016,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "Tecnico"
+     ],
+     "engines": [
+      "1.6 Multijet 95PS diesel",
+      "1.6 Multijet 120PS diesel",
+      "1.6 Multijet 125PS diesel",
+      "1.6 Multijet 145PS diesel",
+      "2.0 Ecojet 120PS diesel",
+      "2.0 Ecojet 145PS diesel",
+      "2.0 Ecojet 170PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tipo",
+   "slug": "tipo",
+   "aliases": [
+    "Tipo Station Wagon",
+    "Tipo Cross",
+    "Tipo Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2016,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2016–2020)",
+     "from": 2016,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Easy",
+      "Easy Plus",
+      "Lounge",
+      "S-Design",
+      "Mirror",
+      "Street"
+     ],
+     "engines": [
+      "1.4 16v 95PS petrol",
+      "1.4 T-Jet 120PS petrol",
+      "1.6 E-torQ 110PS petrol",
+      "1.3 Multijet 95PS diesel",
+      "1.6 Multijet 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2021–2023)",
+     "from": 2021,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "City Life",
+      "Sport",
+      "Cross",
+      "City Cross",
+      "Red"
+     ],
+     "engines": [
+      "1.0 FireFly 100PS petrol",
+      "1.6 Multijet 130PS diesel",
+      "1.5 130PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ulysse",
+   "slug": "ulysse",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1994–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "Ulysse"
+     ],
+     "engines": [
+      "2.0 16v 136PS petrol",
+      "2.0 JTD 109PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Mk2 (2003–2006)",
+     "from": 2003,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "Dynamic",
+      "Emotion"
+     ],
+     "engines": [
+      "2.0 16v 136PS petrol",
+      "3.0 V6 204PS petrol",
+      "2.0 JTD 109PS diesel",
+      "2.0 Multijet 120PS diesel",
+      "2.2 JTD 128PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

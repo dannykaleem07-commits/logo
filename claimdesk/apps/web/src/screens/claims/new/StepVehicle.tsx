@@ -1,50 +1,69 @@
+import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import type { OnFileMatch } from '@ccguk/domain';
 import { formatRegistration, normaliseRegistration, isValidUkRegistration } from '@ccguk/domain';
 import type { StepProps } from './NewClaimPage';
-import type { ManualVehicleForm } from './fnol';
-import { fleetUnitHardStop, lookupLinkedClaims } from './fnol';
+import { fleetUnitHardStop, lookupLinkedClaims, needsHandEntry, vehicleLookupMode, type FnolVehicleState } from './fnol';
 import { useVehicleLookup } from '../../../api/hooks';
 import { isApiError } from '../../../api/client';
+import { useLookupMode } from '../../../api/vehiclesApi';
 import { Button } from '../../../components/Button';
-import { Checkbox, DateInput, Select, TextInput } from '../../../components/Form';
+import { Checkbox, TextInput } from '../../../components/Form';
 import { KeyValue } from '../../../components/KeyValue';
 import { Badge, VerificationBadge, StatusBadge } from '../../../components/Badge';
 import { DateText } from '../../../components/DateText';
+import { VehiclePicker, MANUAL_MODE_NOTICE, type VehiclePickerValue } from '../../vehicles/VehiclePicker';
+import { OnFileMatches } from '../../vehicles/OnFileMatches';
+import { CopyDetailsPanel } from '../../vehicles/CopyDetailsPanel';
+import { applyOnFile, describeVehicle, FUEL_LABEL } from '../../vehicles/vehiclePicker';
+import { LOOKUP_PROVIDER_LABEL } from '../../claim/lib/vehicle';
 
-const FUELS: Array<{ value: NonNullable<ManualVehicleForm['fuelType']> extends '' ? never : Exclude<ManualVehicleForm['fuelType'], ''>; label: string }> = [
-  { value: 'petrol', label: 'Petrol' },
-  { value: 'diesel', label: 'Diesel' },
-  { value: 'hybrid', label: 'Hybrid' },
-  { value: 'plugin_hybrid', label: 'Plug-in hybrid' },
-  { value: 'electric', label: 'Electric' },
-  { value: 'lpg', label: 'LPG' },
-  { value: 'other', label: 'Other' }
-];
-
-/** Step 3 — registration → lookup (DVLA VES + DVSA MOT) or manual entry; cross-file duplicate banner; fleet hard stop. */
+/**
+ * Step 3 — registration → search. Live mode (DVLA/DVSA keys set): the lookup as before, still showing what is on
+ * file. Manual mode (no keys): the button reads "Search", ClaimDesk searches its own records, and the details come from
+ * a vehicle already on file ("Use this vehicle"), a Total Car Check paste or the catalogue cascade — all unverified.
+ * Cross-file duplicate banner and fleet hard stop as before (lessons f, h).
+ */
 export function StepVehicle({ state, update, errors }: StepProps) {
   const lookup = useVehicleLookup();
+  const settingsMode = useLookupMode();
   const v = state.vehicle;
   const reg = normaliseRegistration(v.registration);
   const regValid = reg.length > 0 && isValidUkRegistration(reg);
+  const mode = vehicleLookupMode(v, settingsMode);
+  const manualMode = mode === 'manual';
 
-  const runLookup = async () => {
-    if (!regValid) return;
-    update((s) => ({ ...s, vehicle: { ...s.vehicle, lookupState: 'loading', lookupError: '', lookup: null } }));
+  const setVehicle = useCallback((patch: Partial<FnolVehicleState>) => update((s) => ({ ...s, vehicle: { ...s.vehicle, ...patch } })), [update]);
+  const setPicker = useCallback((next: VehiclePickerValue) => update((s) => ({ ...s, vehicle: { ...s.vehicle, picker: next } })), [update]);
+
+  const runLookup = async (registration: string = reg) => {
+    const r = normaliseRegistration(registration);
+    if (!r || !isValidUkRegistration(r)) return;
+    update((s) => ({ ...s, vehicle: { ...s.vehicle, registration: r === normaliseRegistration(s.vehicle.registration) ? s.vehicle.registration : r, lookupState: 'loading', lookupError: '', lookup: null, onFile: null, picker: { ...s.vehicle.picker, registration: r } } }));
     try {
-      const result = await lookup.mutateAsync(reg);
+      const result = await lookup.mutateAsync(r);
       update((s) => ({ ...s, vehicle: { ...s.vehicle, lookup: result, lookupState: result.status === 'ok' ? 'ok' : 'manual', useManual: result.status !== 'ok' } }));
     } catch (e) {
-      const msg = isApiError(e) && e.isNetwork ? 'API unreachable — enter the vehicle manually.' : (e as Error).message;
+      const msg = isApiError(e) && e.isNetwork ? 'API unreachable — enter the vehicle by hand.' : (e as Error).message;
       update((s) => ({ ...s, vehicle: { ...s.vehicle, lookupState: 'error', lookupError: msg, useManual: true } }));
     }
   };
 
-  const setManual = (k: keyof ManualVehicleForm) => (val: string) => update((s) => ({ ...s, vehicle: { ...s.vehicle, manual: { ...s.vehicle.manual, [k]: val } } }));
+  const pickOnFile = (m: OnFileMatch) => setVehicle({ onFile: m, useManual: false });
+  const changeDetails = () => {
+    const m = v.onFile;
+    if (!m) return;
+    update((s) => ({ ...s, vehicle: { ...s.vehicle, onFile: null, useManual: true, picker: applyOnFile(s.vehicle.picker, m) } }));
+  };
+
   const linked = lookupLinkedClaims(state);
   const hardStop = fleetUnitHardStop(state);
   const ok = v.lookup?.status === 'ok' ? v.lookup : null;
-  const showManual = v.useManual || v.lookupState === 'manual' || v.lookupState === 'error';
+  const searched = v.lookupState !== 'idle' && v.lookupState !== 'loading';
+  const onFile = v.lookup?.onFile ?? [];
+  const showHandEntry = searched && needsHandEntry(v);
+  const pickerErrors: Partial<Record<keyof VehiclePickerValue, string>> = {};
+  for (const [k, msg] of Object.entries(errors)) if (k.startsWith('vehicle.')) (pickerErrors as Record<string, string>)[k.slice('vehicle.'.length)] = msg;
 
   return (
     <div className="stack">
@@ -58,7 +77,10 @@ export function StepVehicle({ state, update, errors }: StepProps) {
             id="reg"
             className="input input-reg"
             value={v.registration}
-            onChange={(e) => update((s) => ({ ...s, vehicle: { ...s.vehicle, registration: e.target.value, lookupState: 'idle', lookup: null, lookupError: '', useManual: false } }))}
+            onChange={(e) => {
+              const text = e.target.value;
+              update((s) => ({ ...s, vehicle: { ...s.vehicle, registration: text, lookupState: 'idle', lookup: null, lookupError: '', useManual: false, onFile: null, picker: { ...s.vehicle.picker, registration: normaliseRegistration(text) } } }));
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 e.preventDefault();
@@ -70,22 +92,28 @@ export function StepVehicle({ state, update, errors }: StepProps) {
             autoComplete="off"
             aria-invalid={errors['vehicle.registration'] ? true : undefined}
           />
-          <Button variant="primary" onClick={runLookup} disabled={!regValid} loading={v.lookupState === 'loading'}>
-            Look up
+          <Button variant="primary" onClick={() => void runLookup()} disabled={!regValid} loading={v.lookupState === 'loading'}>
+            {manualMode ? 'Search' : 'Look up'}
           </Button>
         </div>
         {errors['vehicle.registration'] ? (
           <div className="field-error">{errors['vehicle.registration']}</div>
         ) : errors['vehicle.lookup'] ? (
           <div className="field-error">{errors['vehicle.lookup']}</div>
-        ) : (
-          <div className="field-hint">DVLA Vehicle Enquiry Service and DVSA MOT history. Live when API keys are configured; otherwise manual entry (recorded as unverified).</div>
+        ) : manualMode ? null : (
+          <div className="field-hint">DVLA Vehicle Enquiry Service and DVSA MOT history when API keys are set; otherwise ClaimDesk searches its own records (details entered are recorded as unverified).</div>
         )}
       </div>
 
+      {manualMode && (
+        <div className="notice notice-info" role="status">
+          {MANUAL_MODE_NOTICE}
+        </div>
+      )}
+
       {hardStop && (
         <div className="notice notice-danger" role="alert">
-          <strong>Hard stop — fleet unit.</strong> {formatRegistration(reg)} is a CCGUK fleet vehicle ({v.lookup?.fleetUnit?.id}). A fleet unit cannot be the client vehicle on a claim (lessons f, h). Check the registration with the client.
+          <strong>Hard stop — fleet unit.</strong> {formatRegistration(reg)} is a CCGUK fleet vehicle{v.lookup?.fleetUnit?.id ? ` (${v.lookup.fleetUnit.id})` : ''}. A fleet unit cannot be the client vehicle on a claim (lessons f, h). Check the registration with the client.
         </div>
       )}
 
@@ -108,11 +136,23 @@ export function StepVehicle({ state, update, errors }: StepProps) {
 
       {v.lookupState === 'error' && (
         <div className="notice notice-warn">
-          <strong>Lookup failed.</strong> {v.lookupError}
+          <strong>Search failed.</strong> {v.lookupError}
         </div>
       )}
 
-      {ok && (
+      {v.onFile ? (
+        <OnFileSummary match={v.onFile} onChange={changeDetails} />
+      ) : (
+        searched &&
+        onFile.length > 0 && (
+          <fieldset className="fieldset">
+            <legend>Already on file</legend>
+            <OnFileMatches matches={onFile} onUse={pickOnFile} onSearchRegistration={(r) => void runLookup(r)} blockFleet />
+          </fieldset>
+        )
+      )}
+
+      {!v.onFile && ok && (
         <fieldset className="fieldset">
           <legend>
             Lookup result <Badge tone="green">DVLA / DVSA</Badge>
@@ -147,34 +187,32 @@ export function StepVehicle({ state, update, errors }: StepProps) {
             </ul>
           )}
           <div style={{ marginTop: 12 }}>
-            <Checkbox label="Override with manual entry" checked={v.useManual} onChange={(val) => update((s) => ({ ...s, vehicle: { ...s.vehicle, useManual: val } }))} hint="Only if the client says the record is wrong. Manual values are stored as unverified." />
+            <Checkbox label="Override with details entered by hand" checked={v.useManual} onChange={(val) => setVehicle({ useManual: val })} hint="Only if the client says the record is wrong. Hand-entered values are stored as unverified." />
           </div>
         </fieldset>
       )}
 
-      {v.lookupState === 'manual' && v.lookup?.status === 'manual_required' && (
+      {v.lookupState === 'manual' && v.lookup?.status === 'manual_required' && !v.onFile && !manualMode && (
         <div className="notice notice-info">
-          <strong>Manual entry required.</strong> {v.lookup.reason ?? 'The lookup services are not configured or did not return this registration.'} Enter the details from the V5C, MOT certificate or the client. They are stored as <em>unverified</em> until a document backs them.
+          <strong>Enter the details.</strong> {v.lookup.reason ?? 'The lookup services did not return this registration.'} Use Total Car Check or the V5C, MOT certificate or the client. They are stored as <em>unverified</em> until a document backs them.
         </div>
       )}
 
-      {showManual && (
-        <fieldset className="fieldset">
-          <legend>
-            Manual entry <Badge tone="amber">unverified</Badge>
-          </legend>
+      {showHandEntry && (
+        <>
+          <CopyDetailsPanel registration={reg} value={v.picker} onChange={setPicker} links={v.lookup?.externalLinks} />
+          <VehiclePicker value={v.picker} onChange={setPicker} mode="claim" showRegistration={false} lookupMode={mode ?? 'manual'} onUseOnFile={pickOnFile} errors={pickerErrors} />
           <div className="form-grid">
-            <TextInput label="Make" required value={v.manual.make} onChange={setManual('make')} error={errors['vehicle.make']} />
-            <TextInput label="Model" required value={v.manual.model} onChange={setManual('model')} error={errors['vehicle.model']} />
-            <TextInput label="Colour" value={v.manual.colour} onChange={setManual('colour')} />
-            <TextInput label="Year of manufacture" value={v.manual.yearOfManufacture} onChange={setManual('yearOfManufacture')} inputMode="numeric" placeholder="2019" />
-            <Select label="Fuel" value={v.manual.fuelType} onChange={(val) => setManual('fuelType')(val)} options={FUELS} placeholder="Unknown" />
-            <Select label="Transmission" value={v.manual.transmission} onChange={(val) => setManual('transmission')(val)} options={[{ value: 'manual', label: 'Manual' }, { value: 'automatic', label: 'Automatic' }, { value: 'unknown', label: 'Unknown' }]} placeholder="Unknown" />
-            <TextInput label="VIN" value={v.manual.vin} onChange={setManual('vin')} inputClassName="input-reg" />
-            <DateInput label="MOT expiry" value={v.manual.motExpiryDate} onChange={setManual('motExpiryDate')} />
-            <TextInput label="Odometer (miles)" value={v.manual.odometerMiles} onChange={setManual('odometerMiles')} inputMode="numeric" hint="As stated by the client; a photo of the odometer is captured at handover." />
+            <TextInput
+              label="Odometer (miles)"
+              value={v.odometerMiles}
+              onChange={(t) => setVehicle({ odometerMiles: t })}
+              inputMode="numeric"
+              error={errors['vehicle.odometerMiles']}
+              hint="As stated by the client; a photo of the odometer is captured at handover."
+            />
           </div>
-        </fieldset>
+        </>
       )}
       {errors['vehicle.fleet'] && (
         <div className="field-error" role="alert">
@@ -182,5 +220,33 @@ export function StepVehicle({ state, update, errors }: StepProps) {
         </div>
       )}
     </div>
+  );
+}
+
+/** The on-file vehicle reused by id: read-only, with "Change details" to edit a copy in the picker. */
+function OnFileSummary({ match, onChange }: { match: OnFileMatch; onChange: () => void }) {
+  const latest = match.lookups[0];
+  return (
+    <fieldset className="fieldset">
+      <legend>
+        Using the vehicle on file <Badge tone="blue">existing record</Badge>
+      </legend>
+      <KeyValue
+        items={[
+          { label: 'Registration', value: <span className="reg-plate">{formatRegistration(match.registration)}</span> },
+          { label: 'Vehicle', value: describeVehicle({ make: match.make === 'UNKNOWN' ? '' : match.make, model: match.model === 'UNKNOWN' ? '' : match.model, variant: match.variant ?? '', yearOfManufacture: match.yearOfManufacture, engineCapacityCc: match.engineCapacityCc }) || '—' },
+          { label: 'Colour', value: match.colour ?? '—' },
+          { label: 'Fuel', value: match.fuelType ? FUEL_LABEL[match.fuelType] : '—' },
+          { label: 'Claims on this registration', value: match.claims.length ? match.claims.map((c) => c.reference).join(', ') : 'None' },
+          { label: 'Last details from', value: latest ? `${LOOKUP_PROVIDER_LABEL[latest.provider] ?? latest.provider} (${latest.verification})` : 'No lookup record' }
+        ]}
+      />
+      <div className="row" style={{ marginTop: 12 }}>
+        <Button size="sm" onClick={onChange}>
+          Change details
+        </Button>
+        <span className="xs muted">The claim will reference this vehicle record. Change details to correct or complete it (saved as unverified).</span>
+      </div>
+    </fieldset>
   );
 }

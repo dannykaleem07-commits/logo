@@ -18,9 +18,10 @@
  * TODO wire when @ccguk/domain intake lands: replace DISCLOSURE_TEXT / SCRIPT_GUARD_QUESTION with the
  * exported `intakeScript` and run `validateFnol` on the built body before POST.
  */
-import type { AccidentDetails, InterventionOffer, ISODate, ISODateTime, Party, PartyRole } from '@ccguk/domain';
+import type { AccidentDetails, InterventionOffer, ISODate, ISODateTime, OnFileMatch, Party, PartyRole } from '@ccguk/domain';
 import { normaliseRegistration, isValidUkRegistration, MIN_CIRCUMSTANCES_CHARS } from '@ccguk/domain';
-import type { ClaimVehicleInput, CreateClaimBody, CreateEventBody, FnolOfferInput, OfferPatchBody, PartyInput, PartyRef, VehicleInput, VehicleLookupResult, VehicleRef, WitnessInput } from '../../../api/client';
+import type { ClaimVehicleInput, CreateClaimBody, CreateEventBody, FnolOfferInput, LookupMode, OfferPatchBody, PartyInput, PartyRef, VehicleInput, VehicleLookupResult, VehicleRef, WitnessInput } from '../../../api/client';
+import { emptyPickerValue, toVehicleInput as pickerToVehicleInput, validatePicker, type VehiclePickerValue } from '../../vehicles/vehiclePicker';
 
 export { MIN_CIRCUMSTANCES_CHARS };
 
@@ -82,21 +83,32 @@ export interface PartyForm {
 
 export const emptyParty = (): PartyForm => ({ name: '', phone: '', email: '', dateOfBirth: '', line1: '', line2: '', town: '', postcode: '', drivingLicenceNumber: '' });
 
-export interface ManualVehicleForm {
-  make: string;
-  model: string;
-  colour: string;
-  fuelType: NonNullable<VehicleInput['fuelType']> | '';
-  transmission: NonNullable<VehicleInput['transmission']> | '';
-  yearOfManufacture: string;
-  vin: string;
-  motExpiryDate: string;
+export type LookupState = 'idle' | 'loading' | 'ok' | 'manual' | 'error';
+
+/**
+ * Step 3 state (docs/TEMPLATES-VEHICLES-DESKTOP.md §E.5). The registration is searched with POST /vehicles/lookup:
+ * live (DVLA VES + DVSA MOT) when keys are set, otherwise ClaimDesk's own records plus the Total Car Check link.
+ * The vehicle then comes from one of: an existing vehicle reused by id ("Use this vehicle"), the live lookup, or the
+ * VehiclePicker (catalogue cascade, Total Car Check paste, typed) — saved as unverified.
+ */
+export interface FnolVehicleState {
+  registration: string;
+  lookupState: LookupState;
+  lookup: VehicleLookupResult | null;
+  lookupError: string;
+  /** Hand entry: the VehiclePicker value (used when the lookup did not return the vehicle, or to override it). */
+  picker: VehiclePickerValue;
+  /** Override a live lookup with hand entry. */
+  useManual: boolean;
+  /** Odometer as stated by the client at FNOL (whole miles; recorded as a 'client' reading). */
   odometerMiles: string;
+  /** "Use this vehicle": an on-file vehicle reused by id. */
+  onFile: OnFileMatch | null;
 }
 
-export const emptyManualVehicle = (): ManualVehicleForm => ({ make: '', model: '', colour: '', fuelType: '', transmission: '', yearOfManufacture: '', vin: '', motExpiryDate: '', odometerMiles: '' });
-
-export type LookupState = 'idle' | 'loading' | 'ok' | 'manual' | 'error';
+export function emptyVehicleState(): FnolVehicleState {
+  return { registration: '', lookupState: 'idle', lookup: null, lookupError: '', picker: emptyPickerValue(), useManual: false, odometerMiles: '', onFile: null };
+}
 
 export interface OfferForm {
   /** undefined = the question has not been asked/answered yet */
@@ -161,14 +173,7 @@ export interface FnolState {
   driverSameAsClaimant: boolean;
   driver: PartyForm;
   clientInsurer: { name: string; policyNumber: string };
-  vehicle: {
-    registration: string;
-    lookupState: LookupState;
-    lookup: VehicleLookupResult | null;
-    lookupError: string;
-    manual: ManualVehicleForm;
-    useManual: boolean;
-  };
+  vehicle: FnolVehicleState;
   accident: AccidentForm;
   thirdParty: { registration: string; registrationUnknown: boolean; driverName: string; insurerName: string; insurerPolicyNumber: string; contact: string };
   witnesses: WitnessInput[];
@@ -186,7 +191,7 @@ export function initialFnolState(): FnolState {
     driverSameAsClaimant: true,
     driver: emptyParty(),
     clientInsurer: { name: '', policyNumber: '' },
-    vehicle: { registration: '', lookupState: 'idle', lookup: null, lookupError: '', manual: emptyManualVehicle(), useManual: false },
+    vehicle: emptyVehicleState(),
     accident: {
       occurredAt: '',
       location: '',
@@ -227,7 +232,19 @@ export function lookupLinkedClaims(state: FnolState) {
 
 /** A fleet unit presented as the client vehicle is a hard stop (lessons f, h). */
 export function fleetUnitHardStop(state: FnolState): boolean {
-  return Boolean(state.vehicle.lookup?.fleetUnit);
+  const onFile = state.vehicle.onFile;
+  return Boolean(state.vehicle.lookup?.fleetUnit) || Boolean(onFile && (onFile.ownership === 'fleet' || onFile.fleetUnit));
+}
+
+/** 'live' / 'manual' as the last search reported it, else what Settings says; undefined until known. */
+export function vehicleLookupMode(v: FnolVehicleState, fromSettings?: LookupMode): LookupMode | undefined {
+  return v.lookup?.lookupMode ?? fromSettings;
+}
+
+/** True when the details come from the VehiclePicker (no live result to use, or the handler overrides it). */
+export function needsHandEntry(v: FnolVehicleState): boolean {
+  if (v.onFile) return false;
+  return v.useManual || v.lookupState === 'manual' || v.lookupState === 'error' || (v.lookupState === 'ok' && v.lookup?.status !== 'ok');
 }
 
 export function validateStep(step: Step, state: FnolState, now: Date = new Date()): StepErrors {
@@ -249,11 +266,14 @@ export function validateStep(step: Step, state: FnolState, now: Date = new Date(
       if (!reg) e['vehicle.registration'] = 'Registration is required.';
       else if (!isValidUkRegistration(reg)) e['vehicle.registration'] = 'This does not look like a UK registration mark. Check it with the client.';
       if (reg && isValidUkRegistration(reg)) {
-        if (state.vehicle.lookupState === 'idle' || state.vehicle.lookupState === 'loading') e['vehicle.lookup'] = 'Run the registration lookup (or choose manual entry).';
-        if (state.vehicle.useManual || state.vehicle.lookupState === 'manual' || state.vehicle.lookupState === 'error') {
-          if (!has(state.vehicle.manual.make)) e['vehicle.make'] = 'Make is required for manual entry.';
-          if (!has(state.vehicle.manual.model)) e['vehicle.model'] = 'Model is required for manual entry.';
+        const v = state.vehicle;
+        if (!v.onFile && (v.lookupState === 'idle' || v.lookupState === 'loading')) e['vehicle.lookup'] = 'Search the registration first (a live lookup when keys are set, otherwise ClaimDesk’s own records).';
+        else if (needsHandEntry(v)) {
+          // make + model from any source: the catalogue, a Total Car Check paste or typed by hand
+          const pe = validatePicker(v.picker, { requireMakeModel: true, today: now.toISOString().slice(0, 10) });
+          for (const [k, msg] of Object.entries(pe)) if (msg) e[`vehicle.${k}`] = msg;
         }
+        if (has(v.odometerMiles) && !/^\d{1,7}$/.test(v.odometerMiles.replace(/[,\s]/g, ''))) e['vehicle.odometerMiles'] = 'Whole miles, e.g. 45210.';
       }
       if (fleetUnitHardStop(state)) e['vehicle.fleet'] = 'This registration is a CCGUK fleet unit. A fleet unit cannot be a client vehicle (hard stop).';
       break;
@@ -339,8 +359,12 @@ export function toPartyInput(p: PartyForm, roles: PartyInput['roles']): PartyInp
   return out;
 }
 
-/** Where the vehicle details come from: the DVLA/DVSA lookup, or the handler's manual entry (stored as unverified). */
-export function vehicleSource(v: FnolState['vehicle']): 'lookup' | 'manual' {
+/**
+ * Where the vehicle details come from: a vehicle already on file (reused by id), the DVLA/DVSA lookup, or hand entry
+ * through the VehiclePicker (catalogue, Total Car Check paste or typed — stored as unverified).
+ */
+export function vehicleSource(v: FnolState['vehicle']): 'on_file' | 'lookup' | 'manual' {
+  if (v.onFile) return 'on_file';
   return v.useManual || v.lookupState !== 'ok' || v.lookup?.status !== 'ok' ? 'manual' : 'lookup';
 }
 
@@ -351,13 +375,15 @@ export function toVehicleInput(v: FnolState['vehicle']): VehicleInput {
 }
 
 /**
- * The vehicle for POST /claims. A successful lookup has already upserted the vehicle with its DVLA/DVSA records,
- * so it is referenced by id; otherwise the details are sent (API `vehicleInput`; make/model default to UNKNOWN
- * server-side). A manual odometer reading becomes a 'client' reading dated today.
+ * The vehicle for POST /claims. A vehicle reused from the on-file matches ("Use this vehicle") and a successful lookup
+ * (which already upserted the vehicle with its DVLA/DVSA records) are referenced by id; otherwise the VehiclePicker
+ * details are sent with their spec and source (API `vehicleInput`; the server records an unverified LookupRecord with
+ * that provider). A client-stated odometer reading becomes a 'client' reading dated today.
  */
 export function toVehicleRef(v: FnolState['vehicle'], today: ISODate): VehicleRef {
   const registration = normaliseRegistration(v.registration);
   const source = vehicleSource(v);
+  if (v.onFile) return { id: v.onFile.vehicleId };
   const ok = v.lookup?.status === 'ok' ? v.lookup : undefined;
   if (source === 'lookup' && ok?.vehicle.id) return { id: ok.vehicle.id };
   const out: ClaimVehicleInput = { registration, ownership: 'client' };
@@ -376,19 +402,13 @@ export function toVehicleRef(v: FnolState['vehicle'], today: ISODate): VehicleRe
     if (f.taxDueDate) out.taxDueDate = f.taxDueDate;
     return out;
   }
-  const m = v.manual;
-  if (has(m.make)) out.make = m.make.trim();
-  if (has(m.model)) out.model = m.model.trim();
-  if (has(m.colour)) out.colour = m.colour.trim();
-  if (m.fuelType) out.fuelType = m.fuelType;
-  if (m.transmission) out.transmission = m.transmission;
-  if (has(m.yearOfManufacture) && /^\d{4}$/.test(m.yearOfManufacture.trim())) out.yearOfManufacture = Number(m.yearOfManufacture);
-  if (has(m.vin)) out.vin = m.vin.trim().toUpperCase();
-  if (has(m.motExpiryDate)) out.motExpiryDate = m.motExpiryDate;
-  if (has(m.odometerMiles) && /^\d+$/.test(m.odometerMiles.trim())) {
-    out.odometer = [{ source: 'client', date: today, miles: Number(m.odometerMiles), note: 'Stated by the client at FNOL (unverified)' }];
+  // Hand entry: picker fields + spec + source (catalogue / Total Car Check paste / typed), saved as unverified.
+  const hand: ClaimVehicleInput = { ...pickerToVehicleInput({ ...v.picker, registration }, { ownership: 'client' }), registration, ownership: 'client' };
+  const miles = v.odometerMiles.replace(/[,\s]/g, '');
+  if (/^\d{1,7}$/.test(miles)) {
+    hand.odometer = [{ source: 'client', date: today, miles: Number(miles), note: 'Stated by the client at FNOL (unverified)' }];
   }
-  return out;
+  return hand;
 }
 
 export function toAccidentDetails(a: AccidentForm): AccidentDetails {

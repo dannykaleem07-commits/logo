@@ -1,0 +1,205 @@
+{
+ "make": "Polestar",
+ "slug": "polestar",
+ "dvlaNames": [
+  "POLESTAR"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Polestar 1 omitted: left-hand drive only."
+ },
+ "models": [
+  {
+   "name": "Polestar 2",
+   "slug": "polestar-2",
+   "aliases": [
+    "2",
+    "PS2"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2020–2023)",
+     "from": 2020,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Launch Edition",
+      "Standard Range Single Motor",
+      "Long Range Single Motor",
+      "Long Range Dual Motor",
+      "Plus Pack",
+      "Pilot Pack",
+      "Performance Pack",
+      "BST edition 270"
+     ],
+     "engines": [
+      "78kWh Long Range Dual Motor 408PS electric",
+      "78kWh Long Range Dual Motor Performance 476PS electric",
+      "78kWh Long Range Single Motor 231PS electric",
+      "64kWh Standard Range Single Motor 224PS electric",
+      "69kWh Standard Range Single Motor 231PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "MY24 update (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Standard Range Single Motor",
+      "Long Range Single Motor",
+      "Long Range Dual Motor",
+      "Plus Pack",
+      "Pilot Pack",
+      "Performance Pack",
+      "BST edition 230"
+     ],
+     "engines": [
+      "69kWh Standard Range Single Motor 272PS electric",
+      "82kWh Long Range Single Motor 299PS electric",
+      "82kWh Long Range Dual Motor 421PS electric",
+      "82kWh Long Range Dual Motor Performance 476PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Polestar 3",
+   "slug": "polestar-3",
+   "aliases": [
+    "3",
+    "PS3"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Long Range Dual Motor",
+      "Long Range Single Motor",
+      "Plus Pack",
+      "Pilot Pack",
+      "Performance Pack"
+     ],
+     "engines": [
+      "111kWh Long Range Dual Motor 489PS electric",
+      "111kWh Long Range Dual Motor Performance 517PS electric",
+      "111kWh Long Range Single Motor 299PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Polestar 4",
+   "slug": "polestar-4",
+   "aliases": [
+    "4",
+    "PS4"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Long Range Single Motor",
+      "Long Range Dual Motor",
+      "Plus Pack",
+      "Pro Pack",
+      "Performance Pack"
+     ],
+     "engines": [
+      "100kWh Long Range Single Motor 272PS electric",
+      "100kWh Long Range Dual Motor 544PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,2595 @@
+{
+ "make": "Hyundai",
+ "slug": "hyundai",
+ "dvlaNames": [
+  "HYUNDAI"
+ ],
+ "aliases": [
+  "Hyundai Motor UK"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Atoz",
+   "slug": "atoz",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2000,
+    "to": 2003
+   },
+   "generations": [
+    {
+     "name": "MX (1998–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "Atoz+"
+     ],
+     "engines": [
+      "1.0 Epsilon 55PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Amica",
+   "slug": "amica",
+   "aliases": [
+    "Atos Prime"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2000,
+    "to": 2008
+   },
+   "generations": [
+    {
+     "name": "MX Atos Prime (2000–2008)",
+     "from": 2000,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Si",
+      "GSi",
+      "CDX"
+     ],
+     "engines": [
+      "1.0 Epsilon 55PS petrol",
+      "1.1 Epsilon 63PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Getz",
+   "slug": "getz",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2002,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "TB (2002–2009)",
+     "from": 2002,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "CDX",
+      "CDX+",
+      "Edge"
+     ],
+     "engines": [
+      "1.1 12v 66PS petrol",
+      "1.3 12v 82PS petrol",
+      "1.4 16v 97PS petrol",
+      "1.6 16v 105PS petrol",
+      "1.5 CRDi 82PS diesel",
+      "1.5 CRDi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Accent",
+   "slug": "accent",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "LC (2000–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "CDX"
+     ],
+     "engines": [
+      "1.3 12v 85PS petrol",
+      "1.5 16v 102PS petrol",
+      "1.6 16v 105PS petrol",
+      "1.5 CRDi 82PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "MC (2006–2009)",
+     "from": 2006,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "CDX"
+     ],
+     "engines": [
+      "1.4 16v 97PS petrol",
+      "1.5 CRDi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Lantra",
+   "slug": "lantra",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2000
+   },
+   "generations": [
+    {
+     "name": "J2 (1995–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Si",
+      "CDX"
+     ],
+     "engines": [
+      "1.6 16v 114PS petrol",
+      "1.8 16v 128PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Elantra",
+   "slug": "elantra",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "XD (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "CDX",
+      "SE"
+     ],
+     "engines": [
+      "1.6 16v 107PS petrol",
+      "2.0 16v 143PS petrol",
+      "2.0 CRDi 113PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Coupe",
+   "slug": "coupe",
+   "aliases": [
+    "Tiburon",
+    "S Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "RD (1996–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE"
+     ],
+     "engines": [
+      "1.6 16v 116PS petrol",
+      "2.0 16v 139PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "GK (2002–2009)",
+     "from": 2002,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "V6",
+      "SIII"
+     ],
+     "engines": [
+      "1.6 16v 105PS petrol",
+      "2.0 16v 143PS petrol",
+      "2.7 V6 167PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sonata",
+   "slug": "sonata",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "EF (1998–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "CDX"
+     ],
+     "engines": [
+      "2.0 16v 136PS petrol",
+      "2.7 V6 173PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "NF (2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "CDX",
+      "CDX+"
+     ],
+     "engines": [
+      "2.4 16v 161PS petrol",
+      "3.3 V6 233PS petrol",
+      "2.0 CRDi 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "XG",
+   "slug": "xg",
+   "aliases": [
+    "XG30"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "XG30 (1999–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "XG"
+     ],
+     "engines": [
+      "3.0 V6 188PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Grandeur",
+   "slug": "grandeur",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2005,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "TG (2005–2009)",
+     "from": 2005,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Grandeur"
+     ],
+     "engines": [
+      "3.3 V6 235PS petrol",
+      "2.2 CRDi 155PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Matrix",
+   "slug": "matrix",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2001,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "FC (2001–2010)",
+     "from": 2001,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "CDX",
+      "Style"
+     ],
+     "engines": [
+      "1.6 16v 103PS petrol",
+      "1.8 16v 122PS petrol",
+      "1.5 CRDi 82PS diesel",
+      "1.5 CRDi 102PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Trajet",
+   "slug": "trajet",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2008
+   },
+   "generations": [
+    {
+     "name": "FO (2000–2008)",
+     "from": 2000,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "CDX",
+      "SE"
+     ],
+     "engines": [
+      "2.0 16v 136PS petrol",
+      "2.7 V6 173PS petrol",
+      "2.0 CRDi 113PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Santa Fe",
+   "slug": "santa-fe",
+   "aliases": [
+    "Santa Fe Hybrid",
+    "Santa Fe Plug-in"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2001,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "SM (2001–2006)",
+     "from": 2001,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "CDX",
+      "CDX+"
+     ],
+     "engines": [
+      "2.4 16v 146PS petrol",
+      "2.7 V6 173PS petrol",
+      "2.0 CRDi 113PS diesel",
+      "2.0 CRDi 125PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "CM (2006–2012)",
+     "from": 2006,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "CDX",
+      "CDX+",
+      "Style",
+      "Premium"
+     ],
+     "engines": [
+      "2.7 V6 189PS petrol",
+      "2.2 CRDi 150PS diesel",
+      "2.2 CRDi 197PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "DM (2012–2018)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Style",
+      "Premium",
+      "Premium SE"
+     ],
+     "engines": [
+      "2.2 CRDi 197PS diesel",
+      "2.2 CRDi 200PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "TM (2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Premium",
+      "Premium SE",
+      "Ultimate"
+     ],
+     "engines": [
+      "2.2 CRDi 200PS diesel",
+      "2.2 CRDi 202PS diesel",
+      "1.6 T-GDi 230PS hybrid",
+      "1.6 T-GDi 265PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "diesel",
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "MX5 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Advance",
+      "Premium",
+      "Ultimate"
+     ],
+     "engines": [
+      "1.6 T-GDi 215PS hybrid",
+      "1.6 T-GDi 253PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Terracan",
+   "slug": "terracan",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2001,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "HP (2001–2007)",
+     "from": 2001,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "CDX"
+     ],
+     "engines": [
+      "2.9 CRDi 150PS diesel",
+      "2.9 CRDi 163PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tucson",
+   "slug": "tucson",
+   "aliases": [
+    "Tucson Hybrid",
+    "Tucson Plug-in"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2004,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "JM (2004–2010)",
+     "from": 2004,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GSi",
+      "CDX"
+     ],
+     "engines": [
+      "2.0 CVVT 141PS petrol",
+      "2.7 V6 175PS petrol",
+      "2.0 CRDi 113PS diesel",
+      "2.0 CRDi 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "TL (2015–2020)",
+     "from": 2015,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "S Connect",
+      "SE",
+      "SE Nav",
+      "Premium",
+      "Premium SE",
+      "Sport Edition",
+      "N Line"
+     ],
+     "engines": [
+      "1.6 GDi 132PS petrol",
+      "1.6 T-GDi 177PS petrol",
+      "1.7 CRDi 116PS diesel",
+      "1.7 CRDi 141PS diesel",
+      "2.0 CRDi 136PS diesel",
+      "2.0 CRDi 185PS diesel",
+      "1.6 CRDi 116PS diesel",
+      "1.6 CRDi 136PS diesel",
+      "1.6 CRDi 136PS mild-hybrid diesel",
+      "2.0 CRDi 185PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "NX4 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE Connect",
+      "Advance",
+      "Premium",
+      "N Line",
+      "N Line S",
+      "Ultimate"
+     ],
+     "engines": [
+      "1.6 T-GDi 150PS petrol",
+      "1.6 T-GDi 150PS mild-hybrid petrol",
+      "1.6 T-GDi 180PS mild-hybrid petrol",
+      "1.6 T-GDi 230PS hybrid",
+      "1.6 T-GDi 265PS plug-in-hybrid",
+      "1.6 T-GDi 215PS hybrid",
+      "1.6 T-GDi 253PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ix35",
+   "slug": "ix35",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2010,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "LM (2010–2015)",
+     "from": 2010,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Nav",
+      "Style",
+      "Premium"
+     ],
+     "engines": [
+      "1.6 GDi 135PS petrol",
+      "2.0 CVVT 163PS petrol",
+      "1.7 CRDi 116PS diesel",
+      "2.0 CRDi 136PS diesel",
+      "2.0 CRDi 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ix55",
+   "slug": "ix55",
+   "aliases": [
+    "Veracruz"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2009,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "EN (2009–2011)",
+     "from": 2009,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "ix55"
+     ],
+     "engines": [
+      "3.0 V6 CRDi 240PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Nexo",
+   "slug": "nexo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "FE (2019–)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Premium"
+     ],
+     "engines": [
+      "fuel cell 163PS hydrogen"
+     ],
+     "fuels": [
+      "hydrogen"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "i10",
+   "slug": "i10",
+   "aliases": [
+    "i10 N Line"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2008,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "PA (2008–2013)",
+     "from": 2008,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Style",
+      "Comfort",
+      "Active",
+      "Blue"
+     ],
+     "engines": [
+      "1.1 12v 66PS petrol",
+      "1.1 12v 69PS petrol",
+      "1.2 16v 78PS petrol",
+      "1.2 16v 86PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    },
+    {
+     "name": "IA (2014–2019)",
+     "from": 2014,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "S Air",
+      "SE",
+      "SE Blue",
+      "Premium",
+      "Premium SE",
+      "Go!",
+      "Play"
+     ],
+     "engines": [
+      "1.0 MPi 66PS petrol",
+      "1.2 MPi 87PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    },
+    {
+     "name": "AC3 (2020–)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Connect",
+      "Advance",
+      "Premium",
+      "N Line"
+     ],
+     "engines": [
+      "1.0 MPi 67PS petrol",
+      "1.2 MPi 84PS petrol",
+      "1.2 MPi 79PS petrol",
+      "1.0 T-GDi 100PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    }
+   ]
+  },
+  {
+   "name": "i20",
+   "slug": "i20",
+   "aliases": [
+    "i20 Coupe",
+    "i20 Active",
+    "i20 N Line"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2008,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "PB (2008–2014)",
+     "from": 2008,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Comfort",
+      "Style",
+      "Active",
+      "Blue",
+      "Premium"
+     ],
+     "engines": [
+      "1.2 16v 78PS petrol",
+      "1.2 16v 85PS petrol",
+      "1.4 16v 100PS petrol",
+      "1.1 CRDi 75PS diesel",
+      "1.4 CRDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "GB (2015–2020)",
+     "from": 2015,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "S Connect",
+      "SE",
+      "Premium",
+      "Premium Nav",
+      "Premium SE",
+      "Premium SE Nav",
+      "Play",
+      "Go!",
+      "Active"
+     ],
+     "engines": [
+      "1.25 MPi 75PS petrol",
+      "1.25 MPi 84PS petrol",
+      "1.4 MPi 100PS petrol",
+      "1.0 T-GDi 100PS petrol",
+      "1.0 T-GDi 120PS petrol",
+      "1.1 CRDi 75PS diesel",
+      "1.4 CRDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "BC3 (2020–)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE Connect",
+      "Advance",
+      "Premium",
+      "Ultimate",
+      "N Line",
+      "N Line S"
+     ],
+     "engines": [
+      "1.0 T-GDi 100PS petrol",
+      "1.0 T-GDi 100PS mild-hybrid petrol",
+      "1.2 MPi 84PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "i20 N",
+   "slug": "i20-n",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2021,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "BC3 N (2021–2024)",
+     "from": 2021,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "N"
+     ],
+     "engines": [
+      "1.6 T-GDi 204PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "i30",
+   "slug": "i30",
+   "aliases": [
+    "i30 Tourer",
+    "i30 Estate",
+    "i30 CW",
+    "i30 Fastback",
+    "i30 N Line"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2007,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "FD (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Comfort",
+      "Style",
+      "Premium",
+      "Edition",
+      "Blue"
+     ],
+     "engines": [
+      "1.4 16v 109PS petrol",
+      "1.6 16v 122PS petrol",
+      "2.0 16v 143PS petrol",
+      "1.6 CRDi 90PS diesel",
+      "1.6 CRDi 115PS diesel",
+      "1.6 CRDi 128PS diesel",
+      "2.0 CRDi 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "GD (2012–2017)",
+     "from": 2012,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Classic",
+      "Active",
+      "Style",
+      "Premium",
+      "SE",
+      "SE Nav",
+      "Turbo",
+      "Go!"
+     ],
+     "engines": [
+      "1.4 MPi 100PS petrol",
+      "1.6 GDi 135PS petrol",
+      "1.6 T-GDi 186PS petrol",
+      "1.4 CRDi 90PS diesel",
+      "1.6 CRDi 110PS diesel",
+      "1.6 CRDi 128PS diesel",
+      "1.6 CRDi 136PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "PD (2017–2024)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "fastback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Nav",
+      "SE Connect",
+      "Premium",
+      "Premium SE",
+      "N Line",
+      "N Line+"
+     ],
+     "engines": [
+      "1.0 T-GDi 120PS petrol",
+      "1.0 T-GDi 120PS mild-hybrid petrol",
+      "1.4 T-GDi 140PS petrol",
+      "1.5 T-GDi 160PS mild-hybrid petrol",
+      "1.6 CRDi 110PS diesel",
+      "1.6 CRDi 136PS diesel",
+      "1.6 CRDi 136PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "i30 N",
+   "slug": "i30-n",
+   "aliases": [
+    "i30 Fastback N"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2017,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "PDe (2017–2024)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "fastback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "N",
+      "N Performance"
+     ],
+     "engines": [
+      "2.0 T-GDi 250PS petrol",
+      "2.0 T-GDi 275PS petrol",
+      "2.0 T-GDi 280PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "i40",
+   "slug": "i40",
+   "aliases": [
+    "i40 Tourer"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2011,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "VF (2011–2019)",
+     "from": 2011,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Active",
+      "Style",
+      "Premium",
+      "SE",
+      "SE Nav",
+      "Premium SE"
+     ],
+     "engines": [
+      "1.6 GDi 135PS petrol",
+      "2.0 GDi 177PS petrol",
+      "1.7 CRDi 115PS diesel",
+      "1.7 CRDi 136PS diesel",
+      "1.7 CRDi 141PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ix20",
+   "slug": "ix20",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2010,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "JC (2010–2019)",
+     "from": 2010,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Active",
+      "Style",
+      "Premium",
+      "SE",
+      "Blue Drive"
+     ],
+     "engines": [
+      "1.4 CVVT 90PS petrol",
+      "1.6 CVVT 125PS petrol",
+      "1.4 CRDi 77PS diesel",
+      "1.4 CRDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Veloster",
+   "slug": "veloster",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2012,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "FS (2012–2015)",
+     "from": 2012,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Veloster",
+      "Sport",
+      "Turbo",
+      "Turbo SE"
+     ],
+     "engines": [
+      "1.6 GDi 140PS petrol",
+      "1.6 T-GDi 186PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Genesis",
+   "slug": "genesis",
+   "aliases": [
+    "Hyundai Genesis saloon"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2015,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "DH (2015–2016)",
+     "from": 2015,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Genesis"
+     ],
+     "engines": [
+      "3.8 V6 GDi 315PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "i800",
+   "slug": "i800",
+   "aliases": [
+    "H-1 Travel"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2008,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "TQ (2008–2021)",
+     "from": 2008,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "Style",
+      "SE Nav"
+     ],
+     "engines": [
+      "2.5 CRDi 136PS diesel",
+      "2.5 CRDi 170PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "iLoad",
+   "slug": "iload",
+   "aliases": [
+    "H-1 van"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2008,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "TQ (2008–2021)",
+     "from": 2008,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 CRDi 116PS diesel",
+      "2.5 CRDi 136PS diesel",
+      "2.5 CRDi 170PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "H-1",
+   "slug": "h-1",
+   "aliases": [
+    "H1",
+    "Satellite"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2000,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "A1 (1997–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 TD 100PS diesel",
+      "2.5 CRDi 140PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Kona",
+   "slug": "kona",
+   "aliases": [
+    "Kona Electric",
+    "Kona Hybrid",
+    "Kona N",
+    "Kona N Line"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "OS (2017–2023)",
+     "from": 2017,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Connect",
+      "Premium",
+      "Premium SE",
+      "Premium GT",
+      "N Line",
+      "Ultimate",
+      "N"
+     ],
+     "engines": [
+      "1.0 T-GDi 120PS petrol",
+      "1.0 T-GDi 120PS mild-hybrid petrol",
+      "1.6 T-GDi 177PS petrol",
+      "1.6 T-GDi 198PS petrol",
+      "1.6 CRDi 115PS diesel",
+      "1.6 CRDi 136PS diesel",
+      "1.6 CRDi 136PS mild-hybrid diesel",
+      "1.6 GDi 141PS hybrid",
+      "39.2kWh 136PS electric",
+      "64kWh 204PS electric",
+      "2.0 T-GDi 280PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "SX2 (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Advance",
+      "Premium",
+      "N Line",
+      "N Line S",
+      "Ultimate"
+     ],
+     "engines": [
+      "1.0 T-GDi 120PS petrol",
+      "1.0 T-GDi 120PS mild-hybrid petrol",
+      "1.6 GDi 141PS hybrid",
+      "48.4kWh 156PS electric",
+      "65.4kWh 218PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ioniq",
+   "slug": "ioniq",
+   "aliases": [
+    "Ioniq Hybrid",
+    "Ioniq Plug-in",
+    "Ioniq Electric"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2016,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "AE (2016–2022)",
+     "from": 2016,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Premium",
+      "Premium SE"
+     ],
+     "engines": [
+      "1.6 GDi 141PS hybrid",
+      "1.6 GDi 141PS plug-in-hybrid",
+      "28kWh 120PS electric",
+      "38.3kWh 136PS electric"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ioniq 5",
+   "slug": "ioniq-5",
+   "aliases": [
+    "IONIQ 5"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "NE (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE Connect",
+      "Advance",
+      "Premium",
+      "Ultimate",
+      "Project 45",
+      "N Line",
+      "N Line S"
+     ],
+     "engines": [
+      "58kWh 170PS electric",
+      "72.6kWh 218PS electric",
+      "72.6kWh 305PS electric",
+      "77.4kWh 229PS electric",
+      "77.4kWh 325PS electric",
+      "63kWh 170PS electric",
+      "84kWh 229PS electric",
+      "84kWh 325PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ioniq 5 N",
+   "slug": "ioniq-5-n",
+   "aliases": [
+    "IONIQ 5 N"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "NE N (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "N"
+     ],
+     "engines": [
+      "84kWh 650PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ioniq 6",
+   "slug": "ioniq-6",
+   "aliases": [
+    "IONIQ 6"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "CE (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "First Edition",
+      "Advance",
+      "Premium",
+      "Ultimate",
+      "N Line"
+     ],
+     "engines": [
+      "53kWh 151PS electric",
+      "77.4kWh 229PS electric",
+      "77.4kWh 325PS electric",
+      "84kWh 229PS electric",
+      "84kWh 325PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ioniq 9",
+   "slug": "ioniq-9",
+   "aliases": [
+    "IONIQ 9"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "ME (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Advance",
+      "Premium",
+      "Calligraphy"
+     ],
+     "engines": [
+      "110.3kWh 218PS electric",
+      "110.3kWh 307PS electric",
+      "110.3kWh 428PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Bayon",
+   "slug": "bayon",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "BC3 CUV (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE Connect",
+      "Advance",
+      "Premium",
+      "Ultimate"
+     ],
+     "engines": [
+      "1.0 T-GDi 100PS petrol",
+      "1.0 T-GDi 100PS mild-hybrid petrol",
+      "1.0 T-GDi 120PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Inster",
+   "slug": "inster",
+   "aliases": [
+    "Inster Cross"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "AX1 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "01",
+      "02",
+      "03",
+      "Cross"
+     ],
+     "engines": [
+      "42kWh 97PS electric",
+      "49kWh 115PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

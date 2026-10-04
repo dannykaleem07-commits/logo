@@ -1,0 +1,671 @@
+{
+ "make": "Morgan",
+ "slug": "morgan",
+ "dvlaNames": [
+  "MORGAN"
+ ],
+ "aliases": [
+  "Morgan Motor Company"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "4/4",
+   "slug": "4-4",
+   "aliases": [
+    "4-4",
+    "Four Four",
+    "4/4 Four Seater",
+    "4/4 Runabout"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "4/4 1.8 (2000–2009)",
+     "from": 2000,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "4/4",
+      "4/4 Four Seater",
+      "4/4 Runabout"
+     ],
+     "engines": [
+      "1.8 Ford Zetec 114PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "4/4 1.6 (2009–2018)",
+     "from": 2009,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "4/4",
+      "4/4 Four Seater",
+      "4/4 Sport",
+      "80th Anniversary"
+     ],
+     "engines": [
+      "1.6 Ford Sigma 112PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Plus 4",
+   "slug": "plus-4",
+   "aliases": [
+    "Plus Four",
+    "Plus 4 Four Seater",
+    "Plus 4 Super Sports",
+    "Plus Four LM62"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Plus 4 Rover T16 (1992–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Plus 4",
+      "Plus 4 Four Seater"
+     ],
+     "engines": [
+      "2.0 Rover T16 136PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Plus 4 Ford Duratec (2005–2020)",
+     "from": 2005,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Plus 4",
+      "Plus 4 Four Seater",
+      "Plus 4 Super Sports",
+      "Plus 4 Club"
+     ],
+     "engines": [
+      "2.0 Ford Duratec 147PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Plus Four CX (2020–present)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Plus Four",
+      "Plus Four 70th Anniversary",
+      "Plus Four LM62"
+     ],
+     "engines": [
+      "2.0 BMW B48 turbo 258PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Plus 8",
+   "slug": "plus-8",
+   "aliases": [
+    "Plus Eight",
+    "Plus 8 Speedster"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Plus 8 Rover V8 (1968–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Plus 8"
+     ],
+     "engines": [
+      "3.9 Rover V8 193PS petrol",
+      "4.6 Rover V8 223PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Plus 8 BMW V8 (2012–2018)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Plus 8",
+      "Plus 8 50th Anniversary",
+      "Plus 8 Speedster"
+     ],
+     "engines": [
+      "4.8 BMW V8 367PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Aero 8",
+   "slug": "aero-8",
+   "aliases": [
+    "AeroMax",
+    "Aero SuperSports",
+    "Aero Coupe",
+    "Aero GT",
+    "Aero"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2001,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Aero 8 Series 1–4 / AeroMax (2001–2010)",
+     "from": 2001,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Aero 8",
+      "AeroMax"
+     ],
+     "engines": [
+      "4.4 BMW V8 286PS petrol",
+      "4.8 BMW V8 367PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Aero SuperSports / Aero Coupe (2010–2015)",
+     "from": 2010,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Aero SuperSports",
+      "Aero Coupe"
+     ],
+     "engines": [
+      "4.8 BMW V8 367PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Aero 8 Series 5 / Aero GT (2015–2018)",
+     "from": 2015,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Aero 8",
+      "Aero GT"
+     ],
+     "engines": [
+      "4.8 BMW V8 367PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Roadster",
+   "slug": "roadster",
+   "aliases": [
+    "Roadster V6",
+    "Roadster 3.7",
+    "Roadster 4-Seater"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2004,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "Roadster 3.0 V6 (2004–2011)",
+     "from": 2004,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Roadster",
+      "Roadster Four Seater"
+     ],
+     "engines": [
+      "3.0 Ford Duratec V6 226PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Roadster 3.7 V6 (2011–2019)",
+     "from": 2011,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Roadster",
+      "Roadster Four Seater",
+      "Roadster 100 Edition"
+     ],
+     "engines": [
+      "3.7 Ford Cyclone V6 284PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Plus Six",
+   "slug": "plus-six",
+   "aliases": [
+    "Plus 6",
+    "Plus Six Pinnacle"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2019,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "Plus Six (2019–2025)",
+     "from": 2019,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Plus Six",
+      "Plus Six Pinnacle"
+     ],
+     "engines": [
+      "3.0 BMW B58 turbo 340PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Supersport",
+   "slug": "supersport",
+   "aliases": [
+    "Supersport 400"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Supersport (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Supersport",
+      "Supersport 400"
+     ],
+     "engines": [
+      "3.0 BMW B58 turbo 340PS petrol",
+      "3.0 BMW B58 turbo 400PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "3 Wheeler",
+   "slug": "3-wheeler",
+   "aliases": [
+    "Three Wheeler",
+    "3-Wheeler",
+    "P101"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2011,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "3 Wheeler (2011–2021)",
+     "from": 2011,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "3 Wheeler",
+      "P101"
+     ],
+     "engines": [
+      "2.0 S&S V-twin 83PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "No conventional doors (open two-seater); door count recorded as 2."
+    }
+   ]
+  },
+  {
+   "name": "Super 3",
+   "slug": "super-3",
+   "aliases": [
+    "Super3"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Super 3 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Super 3"
+     ],
+     "engines": [
+      "1.5 Ford Dragon 3-cyl 118PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "No conventional doors (open two-seater); door count recorded as 2."
+    }
+   ]
+  }
+ ]
+}

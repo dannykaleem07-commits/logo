@@ -17,12 +17,14 @@ import { useToast } from '../../../components/Toast';
 import type { ClaimView } from '../claimFile';
 import { GroupedSelect } from '../components/GroupedSelect';
 import { shortHash } from '../lib/evidence';
-import { extraDataBody, extraDataFields, flagCounts, groupTemplates, sortDocuments } from '../lib/documents';
+import { extraDataBody, extraDataFields, flagCounts, groupTemplates, isDocx, sortDocuments } from '../lib/documents';
+import { FillTemplateDialog } from './FillTemplateDialog';
 
 /** Generated documents: draft → consistency check → approve (human) → send. Nothing leaves without a person. */
 export function DocumentsTab({ view }: { view: ClaimView }) {
   const navigate = useNavigate();
   const [creating, setCreating] = useState(false);
+  const [filling, setFilling] = useState(false);
   const docs = useMemo(() => sortDocuments(view.documents), [view.documents]);
   const open = (d: GeneratedDocument) => navigate(`/claims/${view.claim.id}/documents/${d.id}`);
 
@@ -33,7 +35,14 @@ export function DocumentsTab({ view }: { view: ClaimView }) {
       className: 'wrap',
       render: (d) => (
         <div>
-          <div className="strong">{d.title}</div>
+          <div className="row" style={{ gap: 6 }}>
+            <span className="strong">{d.title}</span>
+            {isDocx(d) && (
+              <Badge tone="blue" title="Made from a Word template; the PDF is made when it is approved">
+                Word
+              </Badge>
+            )}
+          </div>
           <div className="xs muted mono">
             {d.templateId} v{d.templateVersion}
             {d.supersedesId ? ' · re-executed' : ''}
@@ -72,15 +81,21 @@ export function DocumentsTab({ view }: { view: ClaimView }) {
         title="Documents"
         flush
         actions={
-          <Button size="sm" variant="primary" onClick={() => setCreating(true)}>
-            New document
-          </Button>
+          <>
+            <Button size="sm" variant="primary" onClick={() => setFilling(true)}>
+              Fill a CCGUK template
+            </Button>
+            <Button size="sm" onClick={() => setCreating(true)}>
+              New document
+            </Button>
+          </>
         }
       >
         <Table columns={columns} rows={docs} rowKey={(d) => d.id} onRowClick={open} caption="Documents" empty={<EmptyState title="No documents yet" action={<Button size="sm" variant="primary" onClick={() => setCreating(true)}>Draft the first document</Button>}>Letters, invoices, forms and reports render from the ledger, events, offers and clocks — never from retyped figures.</EmptyState>} />
         <div className="card-footer xs muted">Draft → consistency check → approved by a person → sent. A block flag stops approval until someone clears it with a reason, and the reason is logged.</div>
       </Card>
       {creating && <NewDocumentDialog view={view} onClose={() => setCreating(false)} />}
+      {filling && <FillTemplateDialog view={view} onClose={() => setFilling(false)} />}
     </div>
   );
 }

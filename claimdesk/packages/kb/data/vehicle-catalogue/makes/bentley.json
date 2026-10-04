@@ -1,0 +1,790 @@
+{
+ "make": "Bentley",
+ "slug": "bentley",
+ "dvlaNames": [
+  "BENTLEY"
+ ],
+ "aliases": [
+  "Bentley Motors"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Arnage",
+   "slug": "arnage",
+   "aliases": [
+    "Arnage R",
+    "Arnage T",
+    "Arnage RL",
+    "Arnage Red Label",
+    "Arnage Green Label"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "Arnage Green / Red Label (1998–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Green Label",
+      "Red Label",
+      "Le Mans Series",
+      "Birkin"
+     ],
+     "engines": [
+      "4.4 V8 twin-turbo 354PS petrol",
+      "6.75 V8 turbo 405PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Arnage R / T / RL (2002–2009)",
+     "from": 2002,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Arnage R",
+      "Arnage T",
+      "Arnage RL",
+      "Final Series"
+     ],
+     "engines": [
+      "6.75 V8 twin-turbo 405PS petrol",
+      "6.75 V8 twin-turbo 457PS petrol",
+      "6.75 V8 twin-turbo 507PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Azure",
+   "slug": "azure",
+   "aliases": [
+    "Azure T"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "Azure Mk1 (1995–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Azure",
+      "Azure Mulliner",
+      "Final Series"
+     ],
+     "engines": [
+      "6.75 V8 turbo 390PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Azure Mk2 (2006–2010)",
+     "from": 2006,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Azure",
+      "Azure T"
+     ],
+     "engines": [
+      "6.75 V8 twin-turbo 457PS petrol",
+      "6.75 V8 twin-turbo 507PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Continental R",
+   "slug": "continental-r",
+   "aliases": [
+    "Continental T",
+    "Continental SC",
+    "Continental R Mulliner"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": 2003
+   },
+   "generations": [
+    {
+     "name": "Continental R / T / SC (1991–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Continental R",
+      "Continental R Mulliner",
+      "Continental T",
+      "Continental SC",
+      "Le Mans"
+     ],
+     "engines": [
+      "6.75 V8 turbo 426PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Brooklands",
+   "slug": "brooklands",
+   "aliases": [
+    "Brooklands Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2008,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Brooklands Coupe (2008–2011)",
+     "from": 2008,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Brooklands"
+     ],
+     "engines": [
+      "6.75 V8 twin-turbo 537PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Continental GT",
+   "slug": "continental-gt",
+   "aliases": [
+    "Continental GTC",
+    "GTC",
+    "Continental GT Speed",
+    "Continental GT V8",
+    "Continental Supersports",
+    "Continental",
+    "GT Speed"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2003,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2003–2011)",
+     "from": 2003,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Continental GT",
+      "Continental GTC",
+      "GT Speed",
+      "GTC Speed",
+      "Diamond Series",
+      "Series 51",
+      "Supersports",
+      "Supersports Convertible"
+     ],
+     "engines": [
+      "6.0 W12 twin-turbo 560PS petrol",
+      "6.0 W12 twin-turbo 610PS petrol",
+      "6.0 W12 twin-turbo 630PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2011–2018)",
+     "from": 2011,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Continental GT W12",
+      "Continental GT V8",
+      "GT V8 S",
+      "GT Speed",
+      "Supersports",
+      "GT3-R",
+      "Black Edition",
+      "Mulliner",
+      "Continental GTC"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 507PS petrol",
+      "4.0 V8 twin-turbo 528PS petrol",
+      "6.0 W12 twin-turbo 575PS petrol",
+      "6.0 W12 twin-turbo 590PS petrol",
+      "6.0 W12 twin-turbo 635PS petrol",
+      "6.0 W12 twin-turbo 710PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "First Edition",
+      "Continental GT",
+      "Continental GT V8",
+      "S",
+      "Azure",
+      "Mulliner",
+      "Speed",
+      "Continental GTC"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 550PS petrol",
+      "6.0 W12 twin-turbo 635PS petrol",
+      "6.0 W12 twin-turbo 659PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Continental GT",
+      "S",
+      "Azure",
+      "Speed",
+      "Mulliner",
+      "Continental GTC"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 680PS plug-in-hybrid",
+      "4.0 V8 twin-turbo 782PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Flying Spur",
+   "slug": "flying-spur",
+   "aliases": [
+    "Continental Flying Spur",
+    "Flying Spur Speed",
+    "Flying Spur Hybrid",
+    "Flying Spur V8",
+    "Flying Spur W12"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2005,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Continental Flying Spur (2005–2013)",
+     "from": 2005,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Continental Flying Spur",
+      "Flying Spur Speed",
+      "Series 51",
+      "Mulliner"
+     ],
+     "engines": [
+      "6.0 W12 twin-turbo 560PS petrol",
+      "6.0 W12 twin-turbo 610PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Flying Spur (2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Flying Spur W12",
+      "Flying Spur V8",
+      "V8 S",
+      "W12 S",
+      "Mulliner",
+      "Black Edition"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 507PS petrol",
+      "4.0 V8 twin-turbo 528PS petrol",
+      "6.0 W12 twin-turbo 625PS petrol",
+      "6.0 W12 twin-turbo 635PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Flying Spur (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Flying Spur W12",
+      "Flying Spur V8",
+      "Flying Spur Hybrid",
+      "S",
+      "Azure",
+      "Mulliner",
+      "Speed"
+     ],
+     "engines": [
+      "2.9 V6 twin-turbo 544PS plug-in-hybrid",
+      "4.0 V8 twin-turbo 550PS petrol",
+      "6.0 W12 twin-turbo 635PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Flying Spur hybrid V8 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Flying Spur",
+      "Azure",
+      "Speed",
+      "Mulliner"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 680PS plug-in-hybrid",
+      "4.0 V8 twin-turbo 782PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mulsanne",
+   "slug": "mulsanne",
+   "aliases": [
+    "Mulsanne Speed",
+    "Mulsanne EWB"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2010,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Mulsanne (2010–2020)",
+     "from": 2010,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Mulsanne",
+      "Mulsanne Speed",
+      "Mulsanne EWB",
+      "Mulliner",
+      "6.75 Edition"
+     ],
+     "engines": [
+      "6.75 V8 twin-turbo 512PS petrol",
+      "6.75 V8 twin-turbo 537PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Bentayga",
+   "slug": "bentayga",
+   "aliases": [
+    "Bentayga V8",
+    "Bentayga W12",
+    "Bentayga Speed",
+    "Bentayga Hybrid",
+    "Bentayga EWB",
+    "Bentayga Diesel"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2016,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2016–2020)",
+     "from": 2016,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "W12",
+      "V8",
+      "Diesel",
+      "Hybrid",
+      "Speed",
+      "Mulliner",
+      "First Edition",
+      "Black Edition",
+      "Design Series"
+     ],
+     "engines": [
+      "6.0 W12 twin-turbo 608PS petrol",
+      "6.0 W12 twin-turbo 635PS petrol",
+      "4.0 V8 twin-turbo 550PS petrol",
+      "4.0 V8 TDI 435PS diesel",
+      "3.0 V6 449PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2020–present)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "V8",
+      "S",
+      "Azure",
+      "Hybrid",
+      "Speed",
+      "Mulliner",
+      "EWB",
+      "EWB Azure",
+      "EWB Mulliner",
+      "Atelier Edition"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 550PS petrol",
+      "4.0 V8 twin-turbo 650PS petrol",
+      "6.0 W12 twin-turbo 635PS petrol",
+      "3.0 V6 462PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

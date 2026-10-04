@@ -1,0 +1,1220 @@
+{
+ "make": "Subaru",
+ "slug": "subaru",
+ "dvlaNames": [
+  "SUBARU"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Justy",
+   "slug": "justy",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2007,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Mk4 M300 (2007–2011)",
+     "from": 2007,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "R",
+      {
+       "name": "Twin Cam",
+       "from": 2009
+      }
+     ],
+     "engines": [
+      {
+       "label": "1.0 69PS petrol",
+       "cc": 998,
+       "fuel": "petrol",
+       "powerPs": 69
+      }
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "Rebadged Daihatsu Sirion (M300): front-wheel drive, 1.0 three-cylinder, 5-speed manual. Twin Cam was a 2009 special edition of 100 cars. The Suzuki Ignis-based G3X Justy (2004–2007) was not sold in right-hand drive; the earlier Suzuki-based Justy (to 2003) is not recorded here."
+    }
+   ]
+  },
+  {
+   "name": "Impreza",
+   "slug": "impreza",
+   "aliases": [
+    "Impreza WRX",
+    "Impreza WRX STI",
+    "Impreza Sports Wagon",
+    "Impreza Turbo"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Mk1 GC/GF (1993–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GL",
+      "GX",
+      "Turbo",
+      "P1"
+     ],
+     "engines": [
+      "1.6 90PS petrol",
+      "2.0 125PS petrol",
+      "2.0 Turbo 218PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 GD/GG (2000–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "TS",
+      "GX",
+      "R",
+      "RX",
+      "WRX",
+      "WRX SL",
+      "WRX STI",
+      "WRX STI Type UK",
+      "RB320",
+      "WR1"
+     ],
+     "engines": [
+      "1.5 105PS petrol",
+      "1.6 95PS petrol",
+      "2.0 125PS petrol",
+      "2.0 160PS petrol",
+      "2.0 Turbo 218PS petrol",
+      "2.0 Turbo 225PS petrol",
+      "2.5 Turbo 230PS petrol",
+      "2.0 Turbo 265PS petrol",
+      "2.5 Turbo 280PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 GE/GH (2008–2012)",
+     "from": 2008,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "R",
+      "RX",
+      "RC",
+      "WRX",
+      "WRX STI",
+      "WRX STI Type UK",
+      "WRX STI 330S"
+     ],
+     "engines": [
+      "1.5 107PS petrol",
+      "2.0 150PS petrol",
+      "2.0D 150PS diesel",
+      "2.5 Turbo 230PS petrol",
+      "2.5 Turbo 300PS petrol",
+      "2.5 Turbo 330PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk5 GT (2018–2020)",
+     "from": 2018,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Premium"
+     ],
+     "engines": [
+      "1.6i 114PS petrol",
+      "2.0i 156PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "WRX STI",
+   "slug": "wrx-sti",
+   "aliases": [
+    "WRX",
+    "STI"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2014,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "VA (2014–2018)",
+     "from": 2014,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Type UK",
+      "Final Edition"
+     ],
+     "engines": [
+      "2.5 Turbo 300PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Legacy",
+   "slug": "legacy",
+   "aliases": [
+    "Legacy Tourer",
+    "Legacy Estate"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "Mk3 BE/BH (1998–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GL",
+      "GX"
+     ],
+     "engines": [
+      "2.0 125PS petrol",
+      "2.5 156PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 BL/BP (2003–2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "R",
+      "RE",
+      "S",
+      "SE",
+      "Sport",
+      "spec.B"
+     ],
+     "engines": [
+      "2.0 138PS petrol",
+      "2.0 150PS petrol",
+      "2.5 165PS petrol",
+      "2.5 173PS petrol",
+      "3.0 H6 245PS petrol",
+      "2.0D 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk5 BM/BR (2009–2014)",
+     "from": 2009,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "R",
+      "RE",
+      "S",
+      "SE",
+      "SE NavPlus"
+     ],
+     "engines": [
+      "2.0 150PS petrol",
+      "2.5 167PS petrol",
+      "2.0D 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Levorg",
+   "slug": "levorg",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2015,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "VM (2015–2020)",
+     "from": 2015,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GT"
+     ],
+     "engines": [
+      "1.6 DIT 170PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Outback",
+   "slug": "outback",
+   "aliases": [
+    "Legacy Outback"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 BH (1998–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Outback"
+     ],
+     "engines": [
+      "2.5 156PS petrol",
+      "3.0 H6 209PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Mk3 BP (2003–2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Outback"
+     ],
+     "engines": [
+      "2.5 165PS petrol",
+      "2.5 173PS petrol",
+      "3.0 H6 245PS petrol",
+      "2.0D 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Mk4 BR (2009–2014)",
+     "from": 2009,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE NavPlus"
+     ],
+     "engines": [
+      "2.5 167PS petrol",
+      "3.6 H6 260PS petrol",
+      "2.0D 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk5 BS (2015–2020)",
+     "from": 2015,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Premium"
+     ],
+     "engines": [
+      "2.5i 175PS petrol",
+      "2.0D 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk6 BT (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Field",
+      "Limited",
+      "Touring",
+      "Touring X"
+     ],
+     "engines": [
+      "2.5i 169PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Forester",
+   "slug": "forester",
+   "aliases": [
+    "Forester e-Boxer",
+    "Forester XT"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 SF (1997–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GL",
+      "GX",
+      "S-Turbo"
+     ],
+     "engines": [
+      "2.0 125PS petrol",
+      "2.0 Turbo 170PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 SG (2002–2008)",
+     "from": 2002,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "XE",
+      "XS",
+      "XT",
+      "XS NavPlus",
+      "XT NavPlus"
+     ],
+     "engines": [
+      "2.0 125PS petrol",
+      "2.0 158PS petrol",
+      "2.5 Turbo 210PS petrol",
+      "2.5 Turbo 230PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 SH (2008–2013)",
+     "from": 2008,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "XC",
+      "XS",
+      "XS NavPlus",
+      "XSi",
+      "XT"
+     ],
+     "engines": [
+      "2.0 150PS petrol",
+      "2.5 Turbo 230PS petrol",
+      "2.0D 147PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 SJ (2013–2018)",
+     "from": 2013,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "XC",
+      "XE",
+      "XE Premium",
+      "XT"
+     ],
+     "engines": [
+      "2.0i 150PS petrol",
+      "2.0 XT Turbo 240PS petrol",
+      "2.0D 147PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk5 SK (2019–2025)",
+     "from": 2019,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "XE",
+      "XE Premium",
+      "Sport"
+     ],
+     "engines": [
+      "2.0 e-Boxer 150PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk6 SL (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Limited",
+      "Field",
+      "Touring"
+     ],
+     "engines": [
+      "2.0 e-Boxer 136PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "XV",
+   "slug": "xv",
+   "aliases": [
+    "XV e-Boxer"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2012,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "Mk1 GP (2012–2017)",
+     "from": 2012,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Lux",
+      "SE Premium",
+      "SE Lux Premium"
+     ],
+     "engines": [
+      "1.6i 114PS petrol",
+      "2.0i 150PS petrol",
+      "2.0D 147PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 GT (2018–2023)",
+     "from": 2018,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Premium"
+     ],
+     "engines": [
+      "1.6i 114PS petrol",
+      "2.0i 156PS petrol",
+      "2.0 e-Boxer 150PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Crosstrek",
+   "slug": "crosstrek",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "GU (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Limited",
+      "Touring"
+     ],
+     "engines": [
+      "2.0 e-Boxer 136PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tribeca",
+   "slug": "tribeca",
+   "aliases": [
+    "B9 Tribeca"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2006,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "WX (2006–2010)",
+     "from": 2006,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Tribeca"
+     ],
+     "engines": [
+      "3.0 H6 245PS petrol",
+      "3.6 H6 258PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "BRZ",
+   "slug": "brz",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2012,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Mk1 ZC6 (2012–2020)",
+     "from": 2012,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Lux"
+     ],
+     "engines": [
+      "2.0 200PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 ZD8 (2022–2024)",
+     "from": 2022,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "BRZ"
+     ],
+     "engines": [
+      "2.4 234PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Solterra",
+   "slug": "solterra",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Limited",
+      "Touring"
+     ],
+     "engines": [
+      "71.4kWh AWD 218PS electric",
+      "74.7kWh AWD 343PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Uncharted",
+   "slug": "uncharted",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Uncharted"
+     ],
+     "engines": [
+      "57.7kWh FWD 167PS electric",
+      "77kWh FWD 224PS electric",
+      "77kWh AWD 343PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  }
+ ]
+}

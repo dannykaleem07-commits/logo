@@ -1,0 +1,423 @@
+{
+ "make": "Tesla",
+ "slug": "tesla",
+ "dvlaNames": [
+  "TESLA",
+  "TESLA MOTORS"
+ ],
+ "aliases": [
+  "Tesla Motors"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Roadster",
+   "slug": "roadster",
+   "aliases": [
+    "Roadster Sport",
+    "Roadster 2.5"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2010,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Roadster 2.0/2.5 (2010–2012)",
+     "from": 2010,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Roadster",
+      "Roadster Sport"
+     ],
+     "engines": [
+      "53kWh 252PS electric",
+      "53kWh Sport 292PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Model S",
+   "slug": "model-s",
+   "aliases": [
+    "S",
+    "Model S 60",
+    "Model S 75D",
+    "Model S 85",
+    "Model S 90D",
+    "Model S 100D",
+    "Model S P85D",
+    "Model S P90D",
+    "Model S P100D",
+    "Model S Long Range",
+    "Model S Performance"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2014,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "Pre-facelift (2014–2016)",
+     "from": 2014,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "60",
+      "70",
+      "70D",
+      "75",
+      "75D",
+      "85",
+      "85D",
+      "P85",
+      "P85+",
+      "P85D",
+      "90D",
+      "P90D"
+     ],
+     "engines": [
+      "60kWh 306PS electric",
+      "70kWh 70D dual-motor 333PS electric",
+      "85kWh 367PS electric",
+      "85kWh P85 421PS electric",
+      "85kWh 85D dual-motor 422PS electric",
+      "90kWh 90D dual-motor 422PS electric",
+      {
+       "label": "85/90kWh P85D/P90D Performance dual-motor electric",
+       "fuel": "electric"
+      }
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2016–2021)",
+     "from": 2016,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "60",
+      "60D",
+      "75",
+      "75D",
+      "90D",
+      "P90D",
+      "100D",
+      "P100D",
+      "Standard Range",
+      "Long Range",
+      "Long Range Plus",
+      "Performance"
+     ],
+     "engines": [
+      "60kWh 306PS electric",
+      "75kWh 75D dual-motor 333PS electric",
+      "90kWh 90D dual-motor 422PS electric",
+      "100kWh 100D/Long Range dual-motor 423PS electric",
+      "100kWh P100D/Performance dual-motor 772PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Model X",
+   "slug": "model-x",
+   "aliases": [
+    "X",
+    "Model X 75D",
+    "Model X 90D",
+    "Model X 100D",
+    "Model X P90D",
+    "Model X P100D",
+    "Model X Long Range",
+    "Model X Performance"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2016,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2016–2021)",
+     "from": 2016,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "75D",
+      "90D",
+      "P90D",
+      "100D",
+      "P100D",
+      "Standard Range",
+      "Long Range",
+      "Long Range Plus",
+      "Performance"
+     ],
+     "engines": [
+      "75kWh 75D dual-motor 333PS electric",
+      "90kWh 90D dual-motor 422PS electric",
+      "100kWh 100D/Long Range dual-motor 423PS electric",
+      "100kWh P100D/Performance dual-motor 772PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Model 3",
+   "slug": "model-3",
+   "aliases": [
+    "3",
+    "Model 3 Highland",
+    "Model 3 Long Range",
+    "Model 3 Performance",
+    "Model 3 Standard Range Plus",
+    "Model 3 RWD"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2019–2023)",
+     "from": 2019,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Standard Range Plus",
+      "Rear-Wheel Drive",
+      "Long Range",
+      "Performance"
+     ],
+     "engines": [
+      {
+       "label": "55kWh Standard Range Plus electric",
+       "fuel": "electric",
+       "batteryKwh": 55
+      },
+      "60kWh Rear-Wheel Drive 283PS electric",
+      "75kWh Long Range dual-motor 440PS electric",
+      "75kWh Performance dual-motor 513PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Highland facelift (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Rear-Wheel Drive",
+      "Long Range",
+      "Long Range RWD",
+      "Performance",
+      "Standard"
+     ],
+     "engines": [
+      "60kWh Rear-Wheel Drive 283PS electric",
+      "79kWh Long Range dual-motor 498PS electric",
+      "79kWh Performance dual-motor 625PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Model Y",
+   "slug": "model-y",
+   "aliases": [
+    "Y",
+    "Model Y Juniper",
+    "Model Y Long Range",
+    "Model Y Performance",
+    "Model Y RWD",
+    "Model Y Standard"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–2025)",
+     "from": 2022,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Rear-Wheel Drive",
+      "Long Range",
+      "Performance"
+     ],
+     "engines": [
+      "60kWh Rear-Wheel Drive 299PS electric",
+      "75kWh Long Range dual-motor 514PS electric",
+      "75kWh Performance dual-motor 534PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Juniper facelift (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Launch Series",
+      "Standard",
+      "Rear-Wheel Drive",
+      "Long Range RWD",
+      "Long Range AWD",
+      "Performance"
+     ],
+     "engines": [
+      "60kWh Rear-Wheel Drive 299PS electric",
+      "79kWh Long Range AWD dual-motor 514PS electric",
+      "79kWh Performance dual-motor 625PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

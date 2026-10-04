@@ -1,0 +1,310 @@
+{
+ "make": "Isuzu",
+ "slug": "isuzu",
+ "dvlaNames": [
+  "ISUZU"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Trooper",
+   "slug": "trooper",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "UBS Mk2 (1992–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Duty",
+      "Citation"
+     ],
+     "engines": [
+      "3.0 TD 159PS diesel",
+      "3.5 V6 215PS petrol"
+     ],
+     "fuels": [
+      "diesel",
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Rodeo",
+   "slug": "rodeo",
+   "aliases": [
+    "TF",
+    "Pick-Up",
+    "Pickup",
+    "Denver",
+    "Denver Max"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2000,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "TF Pick-up (1997–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 TD 100PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "gtaGroup": "CP1"
+    },
+    {
+     "name": "Rodeo (2003–2012)",
+     "from": 2003,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Denver",
+      "Denver Max",
+      "Denver Max LE",
+      "Denver Max Plus",
+      "Titan"
+     ],
+     "engines": [
+      "2.5 TD 100PS diesel",
+      "2.5 TD 136PS diesel",
+      "3.0 TD 130PS diesel",
+      "3.0 TD 163PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    }
+   ]
+  },
+  {
+   "name": "D-Max",
+   "slug": "d-max",
+   "aliases": [
+    "DMax",
+    "D Max",
+    "D-Max EV",
+    "D-Max Arctic Trucks AT35"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2012,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2012–2020)",
+     "from": 2012,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Utility",
+      "Eiger",
+      "Yukon",
+      "Utah",
+      "Utah Vision",
+      "Blade",
+      "Fury",
+      "Huntsman",
+      "Arctic Trucks AT35"
+     ],
+     "engines": [
+      "2.5 TD 163PS diesel",
+      "1.9 TD 164PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    },
+    {
+     "name": "Mk3 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Utility",
+      "DL20",
+      "DL40",
+      "V-Cross",
+      "Arctic Trucks AT35",
+      "eDL40",
+      "eV-Cross"
+     ],
+     "engines": [
+      "1.9 TD 164PS diesel",
+      "66.9kWh 190PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,652 @@
+{
+ "make": "BYD",
+ "slug": "byd",
+ "dvlaNames": [
+  "BYD"
+ ],
+ "aliases": [
+  "Build Your Dreams"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Dolphin Surf",
+   "slug": "dolphin-surf",
+   "aliases": [
+    "Surf",
+    "Seagull"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Boost",
+      "Comfort"
+     ],
+     "engines": [
+      "30kWh 88PS electric",
+      "43.2kWh 88PS electric",
+      "43.2kWh 156PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Dolphin",
+   "slug": "dolphin",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Boost",
+      "Comfort",
+      "Design"
+     ],
+     "engines": [
+      "44.9kWh 95PS electric",
+      "44.9kWh 204PS electric",
+      "60.4kWh 204PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Dolphin G DM-i",
+   "slug": "dolphin-g-dm-i",
+   "aliases": [
+    "Dolphin G",
+    "Dolphin DM-i"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Boost",
+      "Comfort",
+      "Sport"
+     ],
+     "engines": [
+      {
+       "label": "1.5 DM-i plug-in-hybrid",
+       "fuel": "plug-in-hybrid"
+      }
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Atto 2",
+   "slug": "atto-2",
+   "aliases": [
+    "Atto 2 DM-i"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Boost",
+      "Comfort"
+     ],
+     "engines": [
+      "45.1kWh 177PS electric",
+      {
+       "label": "64.8kWh Comfort electric",
+       "fuel": "electric",
+       "batteryKwh": 64.8
+      },
+      "1.5 DM-i 165PS plug-in-hybrid",
+      "1.5 DM-i 212PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "electric",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Atto 3",
+   "slug": "atto-3",
+   "aliases": [
+    "Atto 3 Evo",
+    "Yuan Plus"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2023–2026)",
+     "from": 2023,
+     "to": 2026,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Comfort",
+      "Design"
+     ],
+     "engines": [
+      "49.9kWh 204PS electric",
+      "60.5kWh 204PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Atto 3 Evo (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "Excellence"
+     ],
+     "engines": [
+      "74.8kWh 313PS electric",
+      "74.8kWh dual-motor 449PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Seal",
+   "slug": "seal",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "Excellence"
+     ],
+     "engines": [
+      "82.5kWh 313PS electric",
+      "82.5kWh dual-motor 530PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Seal 6 DM-i",
+   "slug": "seal-6-dm-i",
+   "aliases": [
+    "Seal 6",
+    "Seal 6 DM-i Touring",
+    "Seal 6 Touring",
+    "Seal 6 DM-i Saloon"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Boost",
+      "Comfort"
+     ],
+     "engines": [
+      "1.5 DM-i 184PS plug-in-hybrid",
+      "1.5 DM-i 212PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Seal U",
+   "slug": "seal-u",
+   "aliases": [
+    "Seal U DM-i",
+    "Song Plus"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Comfort",
+      "Design",
+      "Boost"
+     ],
+     "engines": [
+      "71.8kWh 218PS electric",
+      "87kWh 218PS electric",
+      "1.5 DM-i 218PS plug-in-hybrid",
+      "1.5 DM-i AWD 324PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "electric",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sealion 5 DM-i",
+   "slug": "sealion-5-dm-i",
+   "aliases": [
+    "Sealion 5"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Comfort",
+      "Design"
+     ],
+     "engines": [
+      "1.5 DM-i 212PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sealion 7",
+   "slug": "sealion-7",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Comfort",
+      "Design",
+      "Excellence"
+     ],
+     "engines": [
+      "82.5kWh 313PS electric",
+      "82.5kWh dual-motor 530PS electric",
+      "91.3kWh dual-motor 530PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "e6",
+   "slug": "e6",
+   "aliases": [
+    "e6 MPV"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2013,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2013–2014)",
+     "from": 2013,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "e6"
+     ],
+     "engines": [
+      "e6 102PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Right-hand-drive e6 supplied to UK taxi and private-hire fleets from 2013 (fleet trials, about 50 cars; quoted at 101bhp and 186 miles range); not offered to retail buyers. Battery size and UK trim names not recorded; the model name stands in as the only trim. BYD retail sales in the UK began in 2023 (Atto 3)."
+    },
+    {
+     "name": "Mk2 (2021–2022)",
+     "from": 2021,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "e6"
+     ],
+     "engines": [
+      {
+       "label": "e6 71.7kWh electric",
+       "fuel": "electric",
+       "batteryKwh": 71.7
+      }
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Second-generation e6 (Song Max-based MPV) announced for UK private-hire customers in 2021 (71.7kWh, 258 miles WLTP); UK supply dates and volumes not confirmed (DfT licensing data shows 2022-built cars). Power and UK trim names not recorded; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Shark",
+   "slug": "shark",
+   "aliases": [
+    "Shark 6",
+    "Shark 6 DM-o",
+    "Shark DM-o"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Shark"
+     ],
+     "engines": [
+      "1.5 DM-o 32.2kWh 436PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Double-cab plug-in hybrid pickup (1.5 petrol with front and rear electric motors, four-wheel drive; payload about 790kg). UK launch July 2026 in a single trim (UK trim name not recorded; the model name stands in), first deliveries late 2026. Sold elsewhere as the Shark 6; DfT licensing data lists a 2025-built 'SHARK 6' goods vehicle registered before the UK launch."
+    }
+   ]
+  }
+ ]
+}

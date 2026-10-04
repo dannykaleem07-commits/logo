@@ -1,0 +1,63 @@
+{
+ "make": "Great Wall",
+ "slug": "great-wall",
+ "dvlaNames": [
+  "GREAT WALL",
+  "GREAT WALL MOTORS"
+ ],
+ "aliases": [
+  "Great Wall Motors",
+  "GWM Steed"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Imported by IM Group; double-cab 4x2/4x4 only. GWM Ora EVs are in gwm-ora.json (audit addition)."
+ },
+ "models": [
+  {
+   "name": "Steed",
+   "slug": "steed",
+   "aliases": [
+    "Steed 5"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2012,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "Steed 5 (2012–2017)",
+     "from": 2012,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE"
+     ],
+     "engines": [
+      "2.0 143PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "gtaGroup": "CP1"
+    }
+   ]
+  }
+ ]
+}

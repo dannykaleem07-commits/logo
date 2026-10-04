@@ -1,0 +1,765 @@
+{
+ "make": "Chrysler",
+ "slug": "chrysler",
+ "dvlaNames": [
+  "CHRYSLER"
+ ],
+ "aliases": [
+  "DaimlerChrysler"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Chrysler withdrew from the UK c.2016-17; Delta and Ypsilon were rebadged Lancias."
+ },
+ "models": [
+  {
+   "name": "300C",
+   "slug": "300c",
+   "aliases": [
+    "300C Touring",
+    "300C SRT-8",
+    "300C SRT8",
+    "300"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2005,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "LX Mk1 (2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "300C",
+      "CRD",
+      "SRT-Design",
+      "Executive",
+      "SRT-8"
+     ],
+     "engines": [
+      "3.5 V6 249PS petrol",
+      "5.7 V8 HEMI 340PS petrol",
+      "6.1 V8 SRT-8 431PS petrol",
+      "3.0 V6 CRD 218PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "LD Mk2 (2012–2015)",
+     "from": 2012,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Limited",
+      "Executive",
+      "SRT8"
+     ],
+     "engines": [
+      "3.0 V6 CRD 239PS diesel",
+      "6.4 V8 SRT8 470PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "300M",
+   "slug": "300m",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "LH (1999–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "300M"
+     ],
+     "engines": [
+      "3.5 V6 254PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Crossfire",
+   "slug": "crossfire",
+   "aliases": [
+    "Crossfire Roadster",
+    "Crossfire SRT-6"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2004,
+    "to": 2008
+   },
+   "generations": [
+    {
+     "name": "ZH (2004–2008)",
+     "from": 2004,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Crossfire",
+      "Limited",
+      "SRT-6"
+     ],
+     "engines": [
+      "3.2 V6 218PS petrol",
+      "3.2 V6 supercharged 330PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Delta",
+   "slug": "delta",
+   "aliases": [
+    "Lancia Delta"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2011,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "Lancia-built (2011–2014)",
+     "from": 2011,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SR",
+      "Limited",
+      "Platinum"
+     ],
+     "engines": [
+      "1.4 T-Jet 120PS petrol",
+      "1.6 MultiJet 120PS diesel",
+      "2.0 MultiJet 165PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Grand Voyager",
+   "slug": "grand-voyager",
+   "aliases": [
+    "Grand Voyager Stow 'n Go"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "GS (1996–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "LE",
+      "LX"
+     ],
+     "engines": [
+      "3.3 V6 158PS petrol",
+      "2.5 TD 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "RG (2001–2007)",
+     "from": 2001,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "LX",
+      "Limited",
+      "Signature Series"
+     ],
+     "engines": [
+      "3.3 V6 174PS petrol",
+      "2.5 CRD 141PS diesel",
+      "2.8 CRD 150PS diesel",
+      "2.8 CRD 163PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "RT (2008–2015, facelift 2011)",
+     "from": 2008,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "Touring",
+      "Limited",
+      "Executive",
+      "Platinum"
+     ],
+     "engines": [
+      "3.8 V6 197PS petrol",
+      "2.8 CRD 163PS diesel",
+      "2.8 CRD 178PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Neon",
+   "slug": "neon",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "PL Mk2 (2000–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LE",
+      "LX"
+     ],
+     "engines": [
+      "1.6 116PS petrol",
+      "2.0 133PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "PT Cruiser",
+   "slug": "pt-cruiser",
+   "aliases": [
+    "PT Cruiser Cabrio",
+    "PT Cruiser GT"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Touring",
+      "Limited",
+      "GT",
+      "Dream Cruiser"
+     ],
+     "engines": [
+      "1.6 116PS petrol",
+      "2.0 141PS petrol",
+      "2.4 143PS petrol",
+      "2.4 Turbo 223PS petrol",
+      "2.2 CRD 121PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2006–2009)",
+     "from": 2006,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Touring",
+      "Limited",
+      "Pacific Coast Highway",
+      "Sunset Boulevard"
+     ],
+     "engines": [
+      "2.4 143PS petrol",
+      "2.2 CRD 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sebring",
+   "slug": "sebring",
+   "aliases": [
+    "Sebring Convertible"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2007,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "JS (2007–2010)",
+     "from": 2007,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Touring",
+      "Limited"
+     ],
+     "engines": [
+      "2.0 156PS petrol",
+      "2.4 170PS petrol",
+      "2.7 V6 186PS petrol",
+      "2.0 CRD 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Stratus",
+   "slug": "stratus",
+   "aliases": [
+    "Stratus Cabrio",
+    "Stratus Convertible"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "JX Convertible (1996–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "LX"
+     ],
+     "engines": [
+      "2.0 131PS petrol",
+      "2.5 V6 163PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Voyager",
+   "slug": "voyager",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "GS (1996–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "LE"
+     ],
+     "engines": [
+      "2.0 133PS petrol",
+      "2.4 151PS petrol",
+      "3.3 V6 158PS petrol",
+      "2.5 TD 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "RG (2001–2007)",
+     "from": 2001,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "LX",
+      "Limited"
+     ],
+     "engines": [
+      "2.4 147PS petrol",
+      "3.3 V6 174PS petrol",
+      "2.5 CRD 141PS diesel",
+      "2.8 CRD 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ypsilon",
+   "slug": "ypsilon",
+   "aliases": [
+    "Lancia Ypsilon"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2011,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Lancia-built (2011–2015)",
+     "from": 2011,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Limited",
+      "Black and Red"
+     ],
+     "engines": [
+      "1.2 69PS petrol",
+      "0.9 TwinAir 85PS petrol",
+      "1.3 MultiJet 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

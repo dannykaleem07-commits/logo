@@ -1,0 +1,667 @@
+{
+ "make": "Lamborghini",
+ "slug": "lamborghini",
+ "dvlaNames": [
+  "LAMBORGHINI"
+ ],
+ "aliases": [
+  "Automobili Lamborghini"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Very limited series (Reventón, Sesto Elemento, Veneno, Centenario, Sián, Countach LPI 800-4) are not listed."
+ },
+ "models": [
+  {
+   "name": "Diablo",
+   "slug": "diablo",
+   "aliases": [
+    "Diablo VT",
+    "Diablo 6.0",
+    "Diablo VT Roadster"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "Diablo VT / 6.0 (1999–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Diablo VT",
+      "Diablo VT Roadster",
+      "Diablo 6.0",
+      "Diablo 6.0 SE"
+     ],
+     "engines": [
+      "5.7 V12 530PS petrol",
+      "6.0 V12 550PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Murciélago",
+   "slug": "murcielago",
+   "aliases": [
+    "Murcielago",
+    "Murcielago Roadster",
+    "LP640",
+    "LP670-4 SV",
+    "LP650-4 Roadster"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2002,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "Murciélago (2002–2006)",
+     "from": 2002,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Murciélago",
+      "Murciélago Roadster",
+      "40th Anniversary"
+     ],
+     "engines": [
+      "6.2 V12 580PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Murciélago LP640 / LP670-4 SV (2006–2010)",
+     "from": 2006,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "LP640",
+      "LP640 Roadster",
+      "LP650-4 Roadster",
+      "LP670-4 SuperVeloce"
+     ],
+     "engines": [
+      "6.5 V12 640PS petrol",
+      "6.5 V12 650PS petrol",
+      "6.5 V12 670PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Gallardo",
+   "slug": "gallardo",
+   "aliases": [
+    "Gallardo Spyder",
+    "Gallardo Superleggera",
+    "LP560-4",
+    "LP550-2",
+    "LP570-4"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2003,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "Gallardo (2003–2008)",
+     "from": 2003,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Gallardo",
+      "Gallardo SE",
+      "Gallardo Spyder",
+      "Superleggera",
+      "Nera"
+     ],
+     "engines": [
+      "5.0 V10 500PS petrol",
+      "5.0 V10 520PS petrol",
+      "5.0 V10 530PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Gallardo LP560-4 (2008–2013)",
+     "from": 2008,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "LP560-4",
+      "LP560-4 Spyder",
+      "LP550-2",
+      "LP550-2 Spyder",
+      "LP570-4 Superleggera",
+      "LP570-4 Spyder Performante",
+      "LP570-4 Squadra Corse",
+      "LP560-2 50 Anniversario"
+     ],
+     "engines": [
+      "5.2 V10 550PS petrol",
+      "5.2 V10 560PS petrol",
+      "5.2 V10 570PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Aventador",
+   "slug": "aventador",
+   "aliases": [
+    "Aventador S",
+    "Aventador SVJ",
+    "Aventador Roadster",
+    "Aventador Ultimae",
+    "LP700-4",
+    "LP750-4 SV"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2011,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Aventador LP700-4 / SV (2011–2016)",
+     "from": 2011,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "LP700-4",
+      "LP700-4 Roadster",
+      "LP720-4 50 Anniversario",
+      "LP750-4 SuperVeloce",
+      "LP750-4 SV Roadster"
+     ],
+     "engines": [
+      "6.5 V12 700PS petrol",
+      "6.5 V12 720PS petrol",
+      "6.5 V12 750PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Aventador S / SVJ / Ultimae (2017–2022)",
+     "from": 2017,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Aventador S",
+      "Aventador S Roadster",
+      "SVJ",
+      "SVJ Roadster",
+      "LP780-4 Ultimae",
+      "Ultimae Roadster"
+     ],
+     "engines": [
+      "6.5 V12 740PS petrol",
+      "6.5 V12 770PS petrol",
+      "6.5 V12 780PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Huracán",
+   "slug": "huracan",
+   "aliases": [
+    "Huracan",
+    "Huracan Spyder",
+    "Huracan EVO",
+    "Huracan Performante",
+    "Huracan STO",
+    "Huracan Tecnica",
+    "Huracan Sterrato",
+    "LP610-4",
+    "LP580-2"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2014,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Huracán (2014–2019)",
+     "from": 2014,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "LP610-4",
+      "LP610-4 Spyder",
+      "LP580-2",
+      "LP580-2 Spyder",
+      "Performante",
+      "Performante Spyder"
+     ],
+     "engines": [
+      "5.2 V10 580PS petrol",
+      "5.2 V10 610PS petrol",
+      "5.2 V10 640PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Huracán EVO (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "EVO",
+      "EVO Spyder",
+      "EVO RWD",
+      "EVO RWD Spyder",
+      "STO",
+      "Tecnica",
+      "Sterrato"
+     ],
+     "engines": [
+      "5.2 V10 610PS petrol",
+      "5.2 V10 640PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Urus",
+   "slug": "urus",
+   "aliases": [
+    "Urus S",
+    "Urus Performante",
+    "Urus SE"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2018,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Urus / Urus S / Performante (2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Urus",
+      "Pearl Capsule",
+      "Graphite Capsule",
+      "Urus S",
+      "Urus Performante"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 650PS petrol",
+      "4.0 V8 twin-turbo 666PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Urus SE (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Urus SE"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 800PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Revuelto",
+   "slug": "revuelto",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Revuelto (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Revuelto"
+     ],
+     "engines": [
+      "6.5 V12 1015PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Temerario",
+   "slug": "temerario",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Temerario (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Temerario",
+      "Alleggerita"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 920PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

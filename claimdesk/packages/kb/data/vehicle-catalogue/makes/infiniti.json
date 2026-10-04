@@ -1,0 +1,587 @@
+{
+ "make": "Infiniti",
+ "slug": "infiniti",
+ "dvlaNames": [
+  "INFINITI"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026 (Infiniti sold new in the UK c.2008–2019 only); confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Q30",
+   "slug": "q30",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2015,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "H15 (2015–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Premium",
+      "Premium Tech",
+      "Sport",
+      "Sport Tech",
+      "City Black"
+     ],
+     "engines": [
+      "1.6t 122PS petrol",
+      "1.6t 156PS petrol",
+      "2.0t 211PS petrol",
+      "1.5d 109PS diesel",
+      "2.2d 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "QX30",
+   "slug": "qx30",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2016,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "H15 (2016–2019)",
+     "from": 2016,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Premium",
+      "Premium Tech"
+     ],
+     "engines": [
+      "2.0t 211PS petrol",
+      "2.2d 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "G",
+   "slug": "g",
+   "aliases": [
+    "G37",
+    "G25",
+    "G37 Coupe",
+    "G37 Convertible",
+    "G37S"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2008,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "V36 G37/G25 (2008–2013)",
+     "from": 2008,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "GT",
+      "GT Premium",
+      "S",
+      "S Premium"
+     ],
+     "engines": [
+      "2.5 V6 222PS petrol",
+      "3.7 V6 320PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Q50",
+   "slug": "q50",
+   "aliases": [
+    "Q50 Hybrid",
+    "Q50S"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2013,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "V37 (2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Premium",
+      "Premium Tech",
+      "Sport",
+      "Sport Tech",
+      "S Premium"
+     ],
+     "engines": [
+      "2.0t 211PS petrol",
+      "2.2d 170PS diesel",
+      "3.5 V6 Hybrid 364PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Q60",
+   "slug": "q60",
+   "aliases": [
+    "Q60 Coupe",
+    "Q60 Convertible",
+    "Q60 Red Sport"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2014,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "V36 Q60 (2014–2015)",
+     "from": 2014,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "GT Premium",
+      "S",
+      "S Premium"
+     ],
+     "engines": [
+      "3.7 V6 320PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "CV37 (2016–2019)",
+     "from": 2016,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Premium",
+      "Premium Tech",
+      "Sport",
+      "Sport Tech",
+      "Red Sport"
+     ],
+     "engines": [
+      "2.0t 211PS petrol",
+      "3.0t V6 405PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Q70",
+   "slug": "q70",
+   "aliases": [
+    "M",
+    "M30d",
+    "M35h",
+    "M37",
+    "Q70 Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2010,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Y51 M (2010–2013)",
+     "from": 2010,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "GT Premium",
+      "S",
+      "S Premium"
+     ],
+     "engines": [
+      "3.7 V6 320PS petrol",
+      "3.0d V6 238PS diesel",
+      "3.5 V6 Hybrid 364PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Y51 Q70 (2014–2018)",
+     "from": 2014,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Premium",
+      "Premium Tech",
+      "Sport",
+      "Sport Tech",
+      "S Premium"
+     ],
+     "engines": [
+      "2.2d 170PS diesel",
+      "3.0d V6 238PS diesel",
+      "3.7 V6 320PS petrol",
+      "3.5 V6 Hybrid 364PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "QX50",
+   "slug": "qx50",
+   "aliases": [
+    "EX",
+    "EX30d",
+    "EX37"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2009,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "J50 EX (2009–2013)",
+     "from": 2009,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "GT Premium",
+      "S",
+      "S Premium"
+     ],
+     "engines": [
+      "3.0d V6 238PS diesel",
+      "3.7 V6 320PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "J50 QX50 (2014–2016)",
+     "from": 2014,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "GT Premium",
+      "S",
+      "S Premium"
+     ],
+     "engines": [
+      "3.0d V6 238PS diesel",
+      "3.7 V6 320PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "QX70",
+   "slug": "qx70",
+   "aliases": [
+    "FX",
+    "FX30d",
+    "FX37",
+    "FX50"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2009,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "S51 FX (2009–2013)",
+     "from": 2009,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "GT Premium",
+      "S",
+      "S Premium"
+     ],
+     "engines": [
+      "3.0d V6 238PS diesel",
+      "3.7 V6 320PS petrol",
+      "5.0 V8 390PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "S51 QX70 (2014–2017)",
+     "from": 2014,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "GT Premium",
+      "S",
+      "S Premium",
+      "Ultimate"
+     ],
+     "engines": [
+      "3.0d V6 238PS diesel",
+      "3.7 V6 320PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

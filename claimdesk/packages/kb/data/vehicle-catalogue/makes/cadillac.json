@@ -1,0 +1,367 @@
+{
+ "make": "Cadillac",
+ "slug": "cadillac",
+ "dvlaNames": [
+  "CADILLAC"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Cadillac's UK presence was intermittent (c.2004–2012, return in 2025); Escalade and later CTS-V/ATS/XT models were LHD/grey imports and are omitted. RHD availability of CTS/STS/SRX should be confirmed."
+ },
+ "models": [
+  {
+   "name": "BLS",
+   "slug": "bls",
+   "aliases": [
+    "BLS Wagon"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2006,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2010)",
+     "from": 2006,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Sport",
+      "Sport Luxury"
+     ],
+     "engines": [
+      "2.0T 175PS petrol",
+      "2.0T 210PS petrol",
+      "2.8 V6 Turbo 255PS petrol",
+      "1.9 D 150PS diesel",
+      "1.9 D 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CTS",
+   "slug": "cts",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2004,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2004–2007)",
+     "from": 2004,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Sport Luxury"
+     ],
+     "engines": [
+      "2.8 V6 215PS petrol",
+      "3.6 V6 258PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2008–2012)",
+     "from": 2008,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Sport Luxury"
+     ],
+     "engines": [
+      "3.6 V6 315PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Lyriq",
+   "slug": "lyriq",
+   "aliases": [
+    "LYRIQ"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Luxury"
+     ],
+     "engines": [
+      "102kWh 528PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Optiq",
+   "slug": "optiq",
+   "aliases": [
+    "OPTIQ"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Luxury"
+     ],
+     "engines": [
+      "85kWh 300PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Seville",
+   "slug": "seville",
+   "aliases": [
+    "Seville STS",
+    "Seville SLS"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "Mk5 (1998–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SLS",
+      "STS"
+     ],
+     "engines": [
+      "4.6 V8 Northstar 279PS petrol",
+      "4.6 V8 Northstar 305PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "SRX",
+   "slug": "srx",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2004,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2004–2009)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Sport Luxury"
+     ],
+     "engines": [
+      "3.6 V6 258PS petrol",
+      "4.6 V8 Northstar 325PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "STS",
+   "slug": "sts",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2005,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2005–2009)",
+     "from": 2005,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Sport Luxury"
+     ],
+     "engines": [
+      "3.6 V6 258PS petrol",
+      "4.6 V8 Northstar 325PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

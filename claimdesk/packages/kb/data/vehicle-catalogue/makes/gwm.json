@@ -1,0 +1,211 @@
+{
+ "make": "GWM",
+ "slug": "gwm",
+ "dvlaNames": [
+  "GWM",
+  "ORA",
+  "GWM ORA",
+  "GREAT WALL ORA"
+ ],
+ "aliases": [
+  "GWM Ora",
+  "Ora",
+  "Great Wall Ora",
+  "Haval",
+  "GWM Haval"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Ora 07 was announced for the UK but never went on sale; Haval and Great Wall (Steed) models are separate makes and are not in this file."
+ },
+ "models": [
+  {
+   "name": "03",
+   "slug": "03",
+   "aliases": [
+    "Ora 03",
+    "Funky Cat",
+    "Ora Funky Cat",
+    "Good Cat",
+    "03 GT"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2022,
+    "to": 2026
+   },
+   "generations": [
+    {
+     "name": "Funky Cat (2022–2024)",
+     "from": 2022,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "First Edition",
+      "Pure",
+      "Pure+",
+      "Pro+",
+      "GT"
+     ],
+     "engines": [
+      "48kWh 171PS electric",
+      "63kWh 171PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Ora 03 (2024–2026)",
+     "from": 2024,
+     "to": 2026,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "Pure+",
+      "Pro",
+      "Pro+",
+      "GT"
+     ],
+     "engines": [
+      "48kWh 171PS electric",
+      "63kWh 171PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ora 07",
+   "slug": "ora-07",
+   "aliases": [
+    "07",
+    "GWM Ora 07"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "Pro",
+      "GT"
+     ],
+     "engines": [
+      {
+       "label": "FWD electric",
+       "fuel": "electric"
+      },
+      {
+       "label": "GT AWD electric",
+       "fuel": "electric"
+      }
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Minimal entry: trims from the licensing reference (07 PURE, 07 PRO, 07 GT 4X4); battery and power not recorded."
+    }
+   ]
+  },
+  {
+   "name": "Haval Jolion Pro",
+   "slug": "haval-jolion-pro",
+   "aliases": [
+    "Jolion Pro",
+    "Jolion",
+    "GWM Haval Jolion Pro"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Haval Jolion Pro"
+     ],
+     "engines": [
+      {
+       "label": "1.5 turbo petrol",
+       "fuel": "petrol"
+      }
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "Minimal entry: UK trim names, power and transmission options not recorded in this draft."
+    }
+   ]
+  }
+ ]
+}

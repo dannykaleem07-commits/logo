@@ -3,6 +3,8 @@ import { formatRegistration, formatGBP, normaliseRegistration } from '@ccguk/dom
 import type { StepProps } from './NewClaimPage';
 import type { PartyRef } from '../../../api/client';
 import { anyServiceAgreed, buildCreateClaimBody, buildFnolOffer, vehicleSource, type Step } from './fnol';
+import { useCatalogueFeatures, segmentLabel } from '../../../api/vehiclesApi';
+import { describeVehicle, featureLabels, SOURCE_LABEL } from '../../vehicles/vehiclePicker';
 import { Checkbox, TextArea } from '../../../components/Form';
 import { KeyValue } from '../../../components/KeyValue';
 import { Button } from '../../../components/Button';
@@ -20,6 +22,18 @@ export function StepReview({ state, update, onEdit }: StepProps & { onEdit: (s: 
   const claimant = 'id' in body.claimant ? undefined : body.claimant;
   const vehicleDetails = 'id' in body.vehicle ? undefined : body.vehicle;
   const source = vehicleSource(state.vehicle);
+  const vocab = useCatalogueFeatures().data;
+  const spec = vehicleDetails?.spec;
+  const handSource = vehicleDetails?.source;
+  const onFile = state.vehicle.onFile;
+  const sourceBadge =
+    source === 'on_file' ? (
+      <Badge tone="blue">vehicle on file · existing record</Badge>
+    ) : source === 'lookup' ? (
+      <Badge tone="green">DVLA / DVSA lookup{'id' in body.vehicle ? ' · on file' : ''}</Badge>
+    ) : (
+      <Badge tone="amber">{handSource ? SOURCE_LABEL[handSource.provider] : 'manual'} · unverified</Badge>
+    );
   const EditBtn = ({ step }: { step: Step }) => (
     <Button size="sm" variant="ghost" onClick={() => onEdit(step)}>
       Edit
@@ -68,8 +82,32 @@ export function StepReview({ state, update, onEdit }: StepProps & { onEdit: (s: 
             <KeyValue
               items={[
                 { label: 'Registration', value: <span className="reg-plate">{formatRegistration(normaliseRegistration(state.vehicle.registration))}</span> },
-                { label: 'Make / model', value: (vehicleDetails ? [vehicleDetails.make, vehicleDetails.model, vehicleDetails.variant] : state.vehicle.lookup?.status === 'ok' ? [state.vehicle.lookup.vehicle.make, state.vehicle.lookup.vehicle.model, state.vehicle.lookup.vehicle.variant] : []).filter(Boolean).join(' ') || '—' },
-                { label: 'Source', value: source === 'manual' ? <Badge tone="amber">manual · unverified</Badge> : <Badge tone="green">DVLA / DVSA lookup{'id' in body.vehicle ? ' · on file' : ''}</Badge> },
+                {
+                  label: 'Make / model',
+                  value:
+                    (vehicleDetails
+                      ? [vehicleDetails.make, vehicleDetails.model, vehicleDetails.variant]
+                      : onFile
+                        ? [onFile.make, onFile.model, onFile.variant]
+                        : state.vehicle.lookup?.status === 'ok'
+                          ? [state.vehicle.lookup.vehicle.make, state.vehicle.lookup.vehicle.model, state.vehicle.lookup.vehicle.variant]
+                          : []
+                    )
+                      .filter(Boolean)
+                      .join(' ') || '—'
+                },
+                { label: 'Source', value: sourceBadge },
+                { label: 'Year / engine / fuel', value: vehicleDetails ? describeVehicle({ make: '', model: '', variant: '', yearOfManufacture: vehicleDetails.yearOfManufacture, engineCapacityCc: vehicleDetails.engineCapacityCc, fuelType: vehicleDetails.fuelType, transmission: vehicleDetails.transmission }) || '—' : '—', hidden: !vehicleDetails },
+                { label: 'Body', value: [vehicleDetails?.bodyType, spec?.doors ? `${spec.doors} doors` : '', spec?.seats ? `${spec.seats} seats` : ''].filter(Boolean).join(' · ') || '—', hidden: !vehicleDetails },
+                { label: 'Power', value: spec?.powerPs ? `${spec.powerPs} PS` : '—', hidden: !spec?.powerPs },
+                { label: 'Colour / VIN', value: [vehicleDetails?.colour, vehicleDetails?.vin].filter(Boolean).join(' · ') || '—', hidden: !vehicleDetails },
+                { label: 'First registered / MOT / tax', value: [vehicleDetails?.monthOfFirstRegistration, vehicleDetails?.motExpiryDate ? `MOT ${vehicleDetails.motExpiryDate}` : '', vehicleDetails?.taxDueDate ? `tax ${vehicleDetails.taxDueDate}` : ''].filter(Boolean).join(' · ') || '—', hidden: !vehicleDetails },
+                { label: 'Segment', value: segmentLabel(spec?.segment) ?? '—', hidden: !spec?.segment },
+                { label: 'Catalogue match', value: spec?.catalogue ? [spec.catalogue.makeSlug, spec.catalogue.modelSlug, spec.catalogue.generationId ? 'generation' : '', spec.catalogue.trimId ? 'trim' : '', spec.catalogue.engineId ? 'engine' : ''].filter(Boolean).join(' · ') : '—', hidden: !spec?.catalogue },
+                { label: 'Standard features', value: spec?.features.length ? featureLabels(vocab, spec.features).join(', ') : '—', hidden: !spec?.features.length },
+                { label: 'Added extras', value: spec?.extras.length ? featureLabels(vocab, spec.extras).join(', ') : '—', hidden: !spec?.extras.length },
+                { label: 'Copied fields', value: handSource?.appliedFields?.length ? handSource.appliedFields.join(', ') : '—', hidden: handSource?.provider !== 'totalcarcheck_manual' },
+                { label: 'Odometer (client)', value: vehicleDetails?.odometer?.[0] ? `${vehicleDetails.odometer[0].miles.toLocaleString('en-GB')} miles` : '—', hidden: !vehicleDetails?.odometer?.length },
                 { label: 'Linked claims', value: state.vehicle.lookup?.linkedClaims?.length ? <Badge tone="amber">{state.vehicle.lookup.linkedClaims.length} — linked file will be created</Badge> : 'None' }
               ]}
             />

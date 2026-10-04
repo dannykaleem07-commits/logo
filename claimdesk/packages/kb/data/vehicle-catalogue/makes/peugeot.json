@@ -1,0 +1,3001 @@
+{
+ "make": "Peugeot",
+ "slug": "peugeot",
+ "dvlaNames": [
+  "PEUGEOT"
+ ],
+ "aliases": [
+  "Peugeot UK"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "106",
+   "slug": "106",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2003
+   },
+   "generations": [
+    {
+     "name": "Phase 2 (1996–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Independence",
+      "Look",
+      "Zest",
+      "Zest 2",
+      "Quiksilver",
+      "Rallye",
+      "GTi"
+     ],
+     "engines": [
+      "1.1 8v 60PS petrol",
+      "1.4 8v 75PS petrol",
+      "1.6 8v 100PS petrol",
+      "1.6 16v 120PS petrol",
+      "1.5 D 57PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "107",
+   "slug": "107",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2005,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "107 (2005–2014)",
+     "from": 2005,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Urban",
+      "Urban Move",
+      "Sport",
+      "Active",
+      "Allure",
+      "Envy"
+     ],
+     "engines": [
+      "1.0 12v 68PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "108",
+   "slug": "108",
+   "aliases": [
+    "108 TOP!",
+    "108 Top"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2014,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "108 (2014–2021)",
+     "from": 2014,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Access",
+      "Active",
+      "Allure",
+      "Feline",
+      "Collection",
+      "Roland Garros"
+     ],
+     "engines": [
+      "1.0 VTi 68PS petrol",
+      "1.0 VTi 72PS petrol",
+      "1.2 PureTech 82PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "206",
+   "slug": "206",
+   "aliases": [
+    "206 CC",
+    "206 SW",
+    "206 GTi"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "206 (1998–2010)",
+     "from": 2000,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Look",
+      "Style",
+      "LX",
+      "GLX",
+      "S",
+      "XS",
+      "XSi",
+      "XT",
+      "Zest",
+      "Verve",
+      "Sport",
+      "Quiksilver",
+      "Urban",
+      "Allure",
+      "SE",
+      "GTi",
+      "GTi 180"
+     ],
+     "engines": [
+      "1.1 8v 60PS petrol",
+      "1.4 8v 75PS petrol",
+      "1.4 16v 90PS petrol",
+      "1.6 16v 110PS petrol",
+      "2.0 16v 138PS petrol",
+      "2.0 16v 177PS petrol",
+      "1.9 D 70PS diesel",
+      "1.4 HDi 68PS diesel",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel",
+      "2.0 HDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "207",
+   "slug": "207",
+   "aliases": [
+    "207 CC",
+    "207 SW",
+    "207 GTi"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2006,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "207 (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Urban",
+      "S",
+      "Sport",
+      "SE",
+      "M:Play",
+      "Envy",
+      "Active",
+      "Allure",
+      "Sportium",
+      "Outdoor",
+      "Roland Garros",
+      "GT",
+      "GTi"
+     ],
+     "engines": [
+      "1.4 8v 75PS petrol",
+      "1.4 16v 90PS petrol",
+      "1.4 VTi 95PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.6 THP 150PS petrol",
+      "1.6 THP 156PS petrol",
+      "1.6 THP 175PS petrol",
+      "1.4 HDi 68PS diesel",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 92PS diesel",
+      "1.6 HDi 110PS diesel",
+      "1.6 HDi 112PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "208",
+   "slug": "208",
+   "aliases": [
+    "e-208",
+    "208 GTi",
+    "208 Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2012,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "A9 (2012–2019)",
+     "from": 2012,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Access",
+      "Access+",
+      "Active",
+      "Allure",
+      "Feline",
+      "Envy",
+      "Style",
+      "Tech Edition",
+      "Black Edition",
+      "Signature",
+      "XY",
+      "GT Line",
+      "GTi",
+      "GTi by Peugeot Sport"
+     ],
+     "engines": [
+      "1.0 VTi 68PS petrol",
+      "1.2 VTi 82PS petrol",
+      "1.2 PureTech 82PS petrol",
+      "1.2 PureTech 110PS petrol",
+      "1.4 VTi 95PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.6 THP 156PS petrol",
+      "1.6 THP 200PS petrol",
+      "1.6 THP 208PS petrol",
+      "1.4 HDi 68PS diesel",
+      "1.6 e-HDi 92PS diesel",
+      "1.6 e-HDi 115PS diesel",
+      "1.6 BlueHDi 75PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "P21 (2019–)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Active Premium",
+      "Active Premium+",
+      "Allure",
+      "Allure Premium",
+      "Allure Premium+",
+      "GT Line",
+      "GT",
+      "GT Premium"
+     ],
+     "engines": [
+      "1.2 PureTech 75PS petrol",
+      "1.2 PureTech 100PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.5 BlueHDi 100PS diesel",
+      "50kWh 136PS electric",
+      "51kWh 156PS electric",
+      "1.2 Hybrid 100PS mild-hybrid petrol",
+      "1.2 Hybrid 136PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "2008",
+   "slug": "2008",
+   "aliases": [
+    "e-2008",
+    "2008 Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2013,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "A94 (2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Access",
+      "Access+",
+      "Active",
+      "Allure",
+      "Feline",
+      "Crossway",
+      "Black Edition",
+      "Tech Edition",
+      "Signature",
+      "GT Line"
+     ],
+     "engines": [
+      "1.2 PureTech 82PS petrol",
+      "1.2 PureTech 110PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.4 HDi 68PS diesel",
+      "1.6 e-HDi 92PS diesel",
+      "1.6 e-HDi 115PS diesel",
+      "1.6 BlueHDi 75PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "P24 (2019–)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Active Premium",
+      "Active Premium+",
+      "Allure",
+      "Allure Premium",
+      "Allure Premium+",
+      "GT Line",
+      "GT",
+      "GT Premium"
+     ],
+     "engines": [
+      "1.2 PureTech 100PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.2 PureTech 155PS petrol",
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 110PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "50kWh 136PS electric",
+      "54kWh 156PS electric",
+      "1.2 Hybrid 136PS mild-hybrid petrol",
+      "1.2 Hybrid 145PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "306",
+   "slug": "306",
+   "aliases": [
+    "306 Cabriolet",
+    "306 Estate"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "Phase 3 (1997–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Style",
+      "Meridian",
+      "LX",
+      "GLX",
+      "XS",
+      "XSi",
+      "XT",
+      "D-Turbo",
+      "Rapier",
+      "Graduate",
+      "GTi-6"
+     ],
+     "engines": [
+      "1.4 8v 75PS petrol",
+      "1.6 8v 90PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.8 16v 110PS petrol",
+      "2.0 16v 135PS petrol",
+      "2.0 16v 167PS petrol",
+      "1.9 D 70PS diesel",
+      "1.9 TD 90PS diesel",
+      "2.0 HDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "307",
+   "slug": "307",
+   "aliases": [
+    "307 SW",
+    "307 CC",
+    "307 Estate"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2001,
+    "to": 2008
+   },
+   "generations": [
+    {
+     "name": "307 (2001–2008)",
+     "from": 2001,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Style",
+      "LX",
+      "S",
+      "XS",
+      "XSi",
+      "XT",
+      "SE",
+      "D-Turbo",
+      "Rapier",
+      "Sport",
+      "Allure",
+      "Feline"
+     ],
+     "engines": [
+      "1.4 8v 75PS petrol",
+      "1.4 16v 90PS petrol",
+      "1.6 16v 110PS petrol",
+      "2.0 16v 136PS petrol",
+      "2.0 16v 140PS petrol",
+      "2.0 16v 177PS petrol",
+      "1.4 HDi 68PS diesel",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel",
+      "2.0 HDi 90PS diesel",
+      "2.0 HDi 110PS diesel",
+      "2.0 HDi 136PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "308",
+   "slug": "308",
+   "aliases": [
+    "308 SW",
+    "308 CC",
+    "308 GTi",
+    "e-308",
+    "308 Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2007,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "T7 (2007–2014)",
+     "from": 2007,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "SR",
+      "Access",
+      "Active",
+      "Allure",
+      "Envy",
+      "Sportium",
+      "Feline",
+      "GT",
+      "GTi"
+     ],
+     "engines": [
+      "1.4 VTi 95PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.6 THP 150PS petrol",
+      "1.6 THP 156PS petrol",
+      "1.6 THP 200PS petrol",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel",
+      "1.6 e-HDi 112PS diesel",
+      "2.0 HDi 136PS diesel",
+      "2.0 HDi 140PS diesel",
+      "2.0 HDi 163PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "T9 (2013–2021)",
+     "from": 2013,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Access",
+      "Active",
+      "Allure",
+      "Feline",
+      "Style",
+      "Tech Edition",
+      "Black Edition",
+      "Signature",
+      "GT Line",
+      "GT",
+      "GTi",
+      "GTi by Peugeot Sport"
+     ],
+     "engines": [
+      "1.2 PureTech 82PS petrol",
+      "1.2 PureTech 110PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.6 THP 125PS petrol",
+      "1.6 THP 156PS petrol",
+      "1.6 THP 205PS petrol",
+      "1.6 THP 250PS petrol",
+      "1.6 THP 270PS petrol",
+      "1.6 e-HDi 92PS diesel",
+      "1.6 e-HDi 115PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 150PS diesel",
+      "2.0 BlueHDi 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "P5 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active Premium",
+      "Allure",
+      "Allure Premium",
+      "GT",
+      "GT Premium",
+      "First Edition"
+     ],
+     "engines": [
+      "1.2 PureTech 110PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.5 BlueHDi 130PS diesel",
+      "1.6 PureTech 180PS plug-in-hybrid",
+      "1.6 PureTech 225PS plug-in-hybrid",
+      "1.6 PureTech 195PS plug-in-hybrid",
+      "1.2 Hybrid 136PS mild-hybrid petrol",
+      "1.2 Hybrid 145PS mild-hybrid petrol",
+      "54kWh 156PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "3008",
+   "slug": "3008",
+   "aliases": [
+    "3008 Hybrid4",
+    "E-3008"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2009,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "T84 (2009–2016)",
+     "from": 2009,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Sport",
+      "Exclusive",
+      "Access",
+      "Active",
+      "Allure",
+      "Feline"
+     ],
+     "engines": [
+      "1.6 VTi 120PS petrol",
+      "1.6 THP 150PS petrol",
+      "1.6 THP 156PS petrol",
+      "1.6 HDi 110PS diesel",
+      "1.6 HDi 112PS diesel",
+      "1.6 e-HDi 115PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "2.0 HDi 150PS diesel",
+      "2.0 HDi 163PS diesel",
+      "2.0 HDi Hybrid4 diesel 200PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "P84 (2016–2023)",
+     "from": 2016,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Active Premium",
+      "Allure",
+      "Allure Premium",
+      "Black Edition",
+      "GT Line",
+      "GT Line Premium",
+      "GT",
+      "GT Premium"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.6 THP 165PS petrol",
+      "1.6 PureTech 180PS petrol",
+      "1.6 BlueHDi 120PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 150PS diesel",
+      "2.0 BlueHDi 180PS diesel",
+      "1.6 PureTech 225PS plug-in-hybrid",
+      "1.6 PureTech 300PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "P64 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Allure",
+      "GT"
+     ],
+     "engines": [
+      "1.2 Hybrid 136PS mild-hybrid petrol",
+      "1.2 Hybrid 145PS mild-hybrid petrol",
+      "1.6 PureTech 195PS plug-in-hybrid",
+      "73kWh 210PS electric",
+      "97kWh 230PS electric",
+      "73kWh 325PS electric"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "5008",
+   "slug": "5008",
+   "aliases": [
+    "E-5008"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2009,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "T87 (2009–2017)",
+     "from": 2009,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Sport",
+      "Exclusive",
+      "Access",
+      "Active",
+      "Allure",
+      "Feline"
+     ],
+     "engines": [
+      "1.6 VTi 120PS petrol",
+      "1.6 THP 156PS petrol",
+      "1.6 HDi 110PS diesel",
+      "1.6 HDi 112PS diesel",
+      "1.6 e-HDi 115PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "2.0 HDi 150PS diesel",
+      "2.0 HDi 163PS diesel",
+      "2.0 BlueHDi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "P87 (2017–2024)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Allure",
+      "Allure Premium",
+      "GT Line",
+      "GT Line Premium",
+      "GT",
+      "GT Premium"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.6 THP 165PS petrol",
+      "1.6 PureTech 180PS petrol",
+      "1.6 BlueHDi 120PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 150PS diesel",
+      "2.0 BlueHDi 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "P64 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Allure",
+      "GT"
+     ],
+     "engines": [
+      "1.2 Hybrid 136PS mild-hybrid petrol",
+      "1.2 Hybrid 145PS mild-hybrid petrol",
+      "1.6 PureTech 195PS plug-in-hybrid",
+      "73kWh 210PS electric",
+      "97kWh 230PS electric",
+      "73kWh 325PS electric"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "406",
+   "slug": "406",
+   "aliases": [
+    "406 Coupe",
+    "406 Estate"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "406 (1995–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "GLX",
+      "GTX",
+      "S",
+      "SE",
+      "Executive",
+      "Rapier"
+     ],
+     "engines": [
+      "1.8 16v 110PS petrol",
+      "1.8 16v 117PS petrol",
+      "2.0 16v 136PS petrol",
+      "2.2 16v 158PS petrol",
+      "3.0 V6 207PS petrol",
+      "1.9 TD 90PS diesel",
+      "2.0 HDi 90PS diesel",
+      "2.0 HDi 110PS diesel",
+      "2.2 HDi 133PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "407",
+   "slug": "407",
+   "aliases": [
+    "407 SW",
+    "407 Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2004,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "407 (2004–2011)",
+     "from": 2004,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SR",
+      "Sport",
+      "Executive",
+      "Active",
+      "GT"
+     ],
+     "engines": [
+      "1.8 16v 116PS petrol",
+      "1.8 16v 125PS petrol",
+      "2.0 16v 136PS petrol",
+      "2.0 16v 140PS petrol",
+      "2.2 16v 158PS petrol",
+      "2.2 16v 163PS petrol",
+      "3.0 V6 211PS petrol",
+      "1.6 HDi 110PS diesel",
+      "2.0 HDi 136PS diesel",
+      "2.0 HDi 140PS diesel",
+      "2.0 HDi 163PS diesel",
+      "2.2 HDi 170PS diesel",
+      "2.7 V6 HDi 204PS diesel",
+      "3.0 V6 HDi 241PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "408",
+   "slug": "408",
+   "aliases": [
+    "E-408"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "P54 (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "fastback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "First Edition",
+      "Allure",
+      "Allure Premium",
+      "GT",
+      "GT Premium"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.2 Hybrid 136PS mild-hybrid petrol",
+      "1.6 PureTech 180PS plug-in-hybrid",
+      "1.6 PureTech 225PS plug-in-hybrid",
+      "58kWh 210PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "508",
+   "slug": "508",
+   "aliases": [
+    "508 SW",
+    "508 RXH",
+    "508 PSE",
+    "508 Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2011,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "W2 (2011–2018)",
+     "from": 2011,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Access",
+      "Active",
+      "Allure",
+      "SR",
+      "Sport",
+      "Feline",
+      "GT Line",
+      "GT"
+     ],
+     "engines": [
+      "1.6 THP 156PS petrol",
+      "1.6 e-HDi 112PS diesel",
+      "1.6 e-HDi 115PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "2.0 HDi 140PS diesel",
+      "2.0 HDi 163PS diesel",
+      "2.0 BlueHDi 150PS diesel",
+      "2.0 BlueHDi 180PS diesel",
+      "2.2 HDi 204PS diesel",
+      "2.0 HDi Hybrid4 diesel 200PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "R8 (2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "fastback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Allure",
+      "Allure Premium",
+      "GT Line",
+      "GT",
+      "GT Premium",
+      "First Edition",
+      "Peugeot Sport Engineered"
+     ],
+     "engines": [
+      "1.6 PureTech 180PS petrol",
+      "1.6 PureTech 225PS petrol",
+      "1.5 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 160PS diesel",
+      "2.0 BlueHDi 180PS diesel",
+      "1.6 PureTech 225PS plug-in-hybrid",
+      "1.6 PureTech 360PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "607",
+   "slug": "607",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "607 (2000–2010)",
+     "from": 2000,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Executive"
+     ],
+     "engines": [
+      "2.2 16v 158PS petrol",
+      "3.0 V6 207PS petrol",
+      "3.0 V6 211PS petrol",
+      "2.2 HDi 133PS diesel",
+      "2.2 HDi 170PS diesel",
+      "2.7 V6 HDi 204PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "806",
+   "slug": "806",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "806 (1994–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "GLX",
+      "Executive"
+     ],
+     "engines": [
+      "2.0 8v 123PS petrol",
+      "2.0 16v 136PS petrol",
+      "1.9 TD 92PS diesel",
+      "2.0 HDi 109PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "807",
+   "slug": "807",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2002,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "807 (2002–2010)",
+     "from": 2002,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SR",
+      "Executive"
+     ],
+     "engines": [
+      "2.0 16v 136PS petrol",
+      "2.0 16v 140PS petrol",
+      "2.2 16v 158PS petrol",
+      "2.0 HDi 109PS diesel",
+      "2.0 HDi 120PS diesel",
+      "2.0 HDi 136PS diesel",
+      "2.2 HDi 128PS diesel",
+      "2.2 HDi 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "1007",
+   "slug": "1007",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2005,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "1007 (2005–2009)",
+     "from": 2005,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Urban",
+      "Sporty",
+      "Dolce"
+     ],
+     "engines": [
+      "1.4 8v 75PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.4 HDi 68PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "4007",
+   "slug": "4007",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2007,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "4007 (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "GT"
+     ],
+     "engines": [
+      "2.2 HDi 156PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "4008",
+   "slug": "4008",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2012,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "4008 (2012–2016)",
+     "from": 2012,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Access",
+      "Active",
+      "Allure"
+     ],
+     "engines": [
+      "1.6 VTi 115PS petrol",
+      "1.8 HDi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "RCZ",
+   "slug": "rcz",
+   "aliases": [
+    "RCZ R"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2010,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "RCZ (2010–2015)",
+     "from": 2010,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "GT",
+      "GT Line",
+      "Asphalt",
+      "Magnetic",
+      "R"
+     ],
+     "engines": [
+      "1.6 THP 156PS petrol",
+      "1.6 THP 200PS petrol",
+      "1.6 THP 270PS petrol",
+      "2.0 HDi 163PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "iOn",
+   "slug": "ion",
+   "aliases": [
+    "Ion"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2011,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "iOn (2011–2020)",
+     "from": 2011,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "iOn"
+     ],
+     "engines": [
+      "16kWh 67PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Partner",
+   "slug": "partner",
+   "aliases": [
+    "Partner Origin",
+    "Partner Crew Van",
+    "e-Partner",
+    "Partner Electric"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1996–2008)",
+     "from": 2000,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "600",
+      "800",
+      "LX",
+      "Quiksilver"
+     ],
+     "engines": [
+      "1.4 8v 75PS petrol",
+      "1.9 D 70PS diesel",
+      "2.0 HDi 90PS diesel",
+      "1.6 HDi 75PS diesel",
+      "1.6 HDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "B9 (2008–2018)",
+     "from": 2008,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Professional"
+     ],
+     "engines": [
+      "1.6 HDi 75PS diesel",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 92PS diesel",
+      "1.6 HDi 110PS diesel",
+      "1.6 BlueHDi 75PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "22.5kWh 67PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "K9 (2018–)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Professional",
+      "Professional Premium",
+      "Asphalt",
+      "Grip",
+      "Sport"
+     ],
+     "engines": [
+      "1.6 BlueHDi 75PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 75PS diesel",
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "1.2 PureTech 110PS petrol",
+      "50kWh 136PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Partner Tepee",
+   "slug": "partner-tepee",
+   "aliases": [
+    "Partner Combi",
+    "Partner Tepee Electric"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Mk1 Partner Combi (1996–2008)",
+     "from": 2000,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Combi",
+      "Quiksilver",
+      "Escapade"
+     ],
+     "engines": [
+      "1.4 8v 75PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.9 D 70PS diesel",
+      "2.0 HDi 90PS diesel",
+      "1.6 HDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "B9 Tepee (2008–2018)",
+     "from": 2008,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Outdoor",
+      "Active",
+      "Allure"
+     ],
+     "engines": [
+      "1.6 VTi 98PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.6 HDi 75PS diesel",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "22.5kWh 67PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "M"
+    }
+   ]
+  },
+  {
+   "name": "Rifter",
+   "slug": "rifter",
+   "aliases": [
+    "e-Rifter",
+    "Rifter Long"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2018,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "K9 (2018–)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Allure",
+      "GT Line"
+     ],
+     "engines": [
+      "1.2 PureTech 110PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.5 BlueHDi 75PS diesel",
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "50kWh 136PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "M"
+    }
+   ]
+  },
+  {
+   "name": "Bipper",
+   "slug": "bipper",
+   "aliases": [
+    "Bipper Tepee"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2008,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "Bipper (2008–2017)",
+     "from": 2008,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Professional"
+     ],
+     "engines": [
+      "1.4 8v 73PS petrol",
+      "1.4 HDi 68PS diesel",
+      "1.3 HDi 75PS diesel",
+      "1.3 HDi 80PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Expert",
+   "slug": "expert",
+   "aliases": [
+    "e-Expert",
+    "Expert Crew Van",
+    "Expert Combi"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1996–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.9 D 70PS diesel",
+      "2.0 HDi 94PS diesel",
+      "2.0 HDi 109PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 (2007–2016)",
+     "from": 2007,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Professional"
+     ],
+     "engines": [
+      "1.6 HDi 90PS diesel",
+      "2.0 HDi 120PS diesel",
+      "2.0 HDi 128PS diesel",
+      "2.0 HDi 136PS diesel",
+      "2.0 HDi 163PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "K0 (2016–)",
+     "from": 2016,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Professional",
+      "Professional Premium",
+      "Professional Premium+",
+      "Asphalt",
+      "Sport"
+     ],
+     "engines": [
+      "1.6 BlueHDi 95PS diesel",
+      "1.6 BlueHDi 115PS diesel",
+      "2.0 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 150PS diesel",
+      "2.0 BlueHDi 180PS diesel",
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 145PS diesel",
+      "50kWh 136PS electric",
+      "75kWh 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Expert Tepee",
+   "slug": "expert-tepee",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2007,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2007–2016)",
+     "from": 2007,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "Comfort",
+      "Leisure"
+     ],
+     "engines": [
+      "1.6 HDi 90PS diesel",
+      "2.0 HDi 120PS diesel",
+      "2.0 HDi 128PS diesel",
+      "2.0 HDi 136PS diesel",
+      "2.0 HDi 163PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Traveller",
+   "slug": "traveller",
+   "aliases": [
+    "e-Traveller"
+   ],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2016,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "K0 (2016–)",
+     "from": 2016,
+     "to": null,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6,
+        7,
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Allure",
+      "Business",
+      "Business VIP"
+     ],
+     "engines": [
+      "1.6 BlueHDi 115PS diesel",
+      "2.0 BlueHDi 150PS diesel",
+      "2.0 BlueHDi 180PS diesel",
+      "1.5 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 145PS diesel",
+      "50kWh 136PS electric",
+      "75kWh 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Boxer",
+   "slug": "boxer",
+   "aliases": [
+    "e-Boxer",
+    "Boxer Window Bus"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1994–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.0 HDi 84PS diesel",
+      "2.2 HDi 101PS diesel",
+      "2.8 HDi 128PS diesel",
+      "2.8 HDi 146PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Professional"
+     ],
+     "engines": [
+      "2.2 HDi 100PS diesel",
+      "2.2 HDi 120PS diesel",
+      "3.0 HDi 157PS diesel",
+      "2.2 HDi 110PS diesel",
+      "2.2 HDi 130PS diesel",
+      "2.2 HDi 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 facelift (2014–2024)",
+     "from": 2014,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Professional",
+      "Professional Premium",
+      "Professional Premium+",
+      "Asphalt"
+     ],
+     "engines": [
+      "2.2 HDi 110PS diesel",
+      "2.2 HDi 130PS diesel",
+      "2.2 HDi 150PS diesel",
+      "3.0 HDi 180PS diesel",
+      "2.0 BlueHDi 110PS diesel",
+      "2.0 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 160PS diesel",
+      "2.2 BlueHDi 120PS diesel",
+      "2.2 BlueHDi 140PS diesel",
+      "2.2 BlueHDi 165PS diesel",
+      "37kWh 122PS electric",
+      "70kWh 122PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "2024 update (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Professional",
+      "Professional Premium"
+     ],
+     "engines": [
+      "2.2 BlueHDi 120PS diesel",
+      "2.2 BlueHDi 140PS diesel",
+      "2.2 BlueHDi 165PS diesel",
+      "2.2 BlueHDi 180PS diesel",
+      "110kWh 270PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Boxer Minibus",
+   "slug": "boxer-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2006,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Professional"
+     ],
+     "engines": [
+      "2.2 HDi 100PS diesel",
+      "2.2 HDi 120PS diesel",
+      "3.0 HDi 157PS diesel",
+      "2.2 HDi 110PS diesel",
+      "2.2 HDi 130PS diesel",
+      "2.2 HDi 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 facelift (2014–2024)",
+     "from": 2014,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Professional",
+      "Professional Premium",
+      "Professional Premium+",
+      "Asphalt"
+     ],
+     "engines": [
+      "2.2 HDi 110PS diesel",
+      "2.2 HDi 130PS diesel",
+      "2.2 HDi 150PS diesel",
+      "3.0 HDi 180PS diesel",
+      "2.0 BlueHDi 110PS diesel",
+      "2.0 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 160PS diesel",
+      "2.2 BlueHDi 120PS diesel",
+      "2.2 BlueHDi 140PS diesel",
+      "2.2 BlueHDi 165PS diesel",
+      "37kWh 122PS electric",
+      "70kWh 122PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "2024 update (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Professional",
+      "Professional Premium"
+     ],
+     "engines": [
+      "2.2 BlueHDi 120PS diesel",
+      "2.2 BlueHDi 140PS diesel",
+      "2.2 BlueHDi 165PS diesel",
+      "2.2 BlueHDi 180PS diesel",
+      "110kWh 270PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

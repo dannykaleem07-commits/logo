@@ -1,0 +1,582 @@
+{
+ "make": "Rolls-Royce",
+ "slug": "rolls-royce",
+ "dvlaNames": [
+  "ROLLS ROYCE",
+  "ROLLS-ROYCE"
+ ],
+ "aliases": [
+  "Rolls Royce",
+  "RR"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Silver Seraph",
+   "slug": "silver-seraph",
+   "aliases": [
+    "Park Ward",
+    "Seraph"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "Silver Seraph / Park Ward (1998–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Silver Seraph",
+      "Park Ward",
+      "Last of Line"
+     ],
+     "engines": [
+      "5.4 V12 326PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Corniche",
+   "slug": "corniche",
+   "aliases": [
+    "Corniche V"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "Corniche (2000–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Corniche"
+     ],
+     "engines": [
+      "6.75 V8 turbo 330PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Phantom",
+   "slug": "phantom",
+   "aliases": [
+    "Phantom EWB",
+    "Phantom Extended",
+    "Phantom Drophead Coupe",
+    "Phantom Coupe",
+    "Drophead Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2003,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Phantom VII (2003–2012)",
+     "from": 2003,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Phantom",
+      "Phantom EWB",
+      "Drophead Coupé",
+      "Coupé"
+     ],
+     "engines": [
+      "6.75 V12 460PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Phantom VII Series II (2012–2017)",
+     "from": 2012,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Phantom",
+      "Phantom EWB",
+      "Drophead Coupé",
+      "Coupé"
+     ],
+     "engines": [
+      "6.75 V12 460PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Phantom VIII (2018–present)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Phantom",
+      "Phantom Extended",
+      "Series II"
+     ],
+     "engines": [
+      "6.75 V12 twin-turbo 571PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ghost",
+   "slug": "ghost",
+   "aliases": [
+    "Ghost EWB",
+    "Ghost Extended",
+    "Ghost Black Badge",
+    "Ghost Series II"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2010,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Ghost Mk1 (2010–2014)",
+     "from": 2010,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Ghost",
+      "Ghost EWB"
+     ],
+     "engines": [
+      "6.6 V12 twin-turbo 570PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Ghost Mk1 Series II (2014–2020)",
+     "from": 2014,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Ghost",
+      "Ghost EWB",
+      "Black Badge"
+     ],
+     "engines": [
+      "6.6 V12 twin-turbo 570PS petrol",
+      "6.6 V12 twin-turbo 612PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Ghost Mk2 (2020–present)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Ghost",
+      "Ghost Extended",
+      "Black Badge",
+      "Series II"
+     ],
+     "engines": [
+      "6.75 V12 twin-turbo 571PS petrol",
+      "6.75 V12 twin-turbo 600PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Wraith",
+   "slug": "wraith",
+   "aliases": [
+    "Wraith Black Badge"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2013,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "Wraith (2013–2023)",
+     "from": 2013,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Wraith",
+      "Black Badge"
+     ],
+     "engines": [
+      "6.6 V12 twin-turbo 632PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Dawn",
+   "slug": "dawn",
+   "aliases": [
+    "Dawn Black Badge"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2016,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "Dawn (2016–2023)",
+     "from": 2016,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Dawn",
+      "Black Badge"
+     ],
+     "engines": [
+      "6.6 V12 twin-turbo 571PS petrol",
+      "6.6 V12 twin-turbo 601PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cullinan",
+   "slug": "cullinan",
+   "aliases": [
+    "Cullinan Black Badge",
+    "Cullinan Series II"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2018,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Cullinan (2018–2024)",
+     "from": 2018,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Cullinan",
+      "Black Badge"
+     ],
+     "engines": [
+      "6.75 V12 twin-turbo 571PS petrol",
+      "6.75 V12 twin-turbo 600PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Cullinan Series II (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Cullinan",
+      "Black Badge"
+     ],
+     "engines": [
+      "6.75 V12 twin-turbo 571PS petrol",
+      "6.75 V12 twin-turbo 600PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Spectre",
+   "slug": "spectre",
+   "aliases": [
+    "Black Badge Spectre"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Spectre (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Spectre",
+      "Black Badge"
+     ],
+     "engines": [
+      "102kWh dual-motor 585PS electric",
+      "102kWh dual-motor 659PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

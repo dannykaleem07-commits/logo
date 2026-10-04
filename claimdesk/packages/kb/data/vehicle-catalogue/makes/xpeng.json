@@ -1,0 +1,139 @@
+{
+ "make": "Xpeng",
+ "slug": "xpeng",
+ "dvlaNames": [
+  "XPENG",
+  "XPENG MOTORS"
+ ],
+ "aliases": [
+  "XPeng"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Xpeng entered the UK in 2025 (G6); the G9 and P7+ had not gone on UK sale at time of compilation."
+ },
+ "models": [
+  {
+   "name": "G6",
+   "slug": "g6",
+   "aliases": [
+    "G6 Performance Black Edition"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–2026)",
+     "from": 2025,
+     "to": 2026,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Standard Range",
+      "Long Range"
+     ],
+     "engines": [
+      "66kWh Standard Range 258PS electric",
+      "87.5kWh Long Range 286PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Standard Range",
+      "Long Range",
+      "Performance Black Edition"
+     ],
+     "engines": [
+      "Standard Range 252PS electric",
+      "80.8kWh Long Range 296PS electric",
+      "80.8kWh Performance dual-motor 487PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X9",
+   "slug": "x9",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Standard Range",
+      "Long Range",
+      "AWD"
+     ],
+     "engines": [
+      "94.8kWh Standard Range 320PS electric",
+      "110kWh Long Range 320PS electric",
+      "AWD dual-motor 503PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

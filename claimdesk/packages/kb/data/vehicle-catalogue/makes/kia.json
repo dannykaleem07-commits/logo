@@ -1,0 +1,2200 @@
+{
+ "make": "Kia",
+ "slug": "kia",
+ "dvlaNames": [
+  "KIA"
+ ],
+ "aliases": [
+  "Kia Motors",
+  "Kia UK"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Picanto",
+   "slug": "picanto",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2004,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "SA (2004–2011)",
+     "from": 2004,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "LX",
+      "1",
+      "2",
+      "Strike",
+      "Chill"
+     ],
+     "engines": [
+      "1.0 12v 61PS petrol",
+      "1.1 12v 65PS petrol",
+      "1.1 CRDi 75PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "TA (2011–2017)",
+     "from": 2011,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "1 Air",
+      "2",
+      "3",
+      "City",
+      "SR7",
+      "VR7",
+      "Chilli"
+     ],
+     "engines": [
+      "1.0 EcoDynamics 69PS petrol",
+      "1.25 CVVT 85PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "JA (2017–)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "2",
+      "3",
+      "GT-Line",
+      "GT-Line S",
+      "X-Line",
+      "X-Line S"
+     ],
+     "engines": [
+      "1.0 MPi 67PS petrol",
+      "1.25 MPi 84PS petrol",
+      "1.0 T-GDi 100PS petrol",
+      "1.0 DPi 63PS petrol",
+      "1.2 DPi 79PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Rio",
+   "slug": "rio",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "DC (2000–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "LX",
+      "SE"
+     ],
+     "engines": [
+      "1.3 8v 75PS petrol",
+      "1.5 16v 98PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "JB (2005–2011)",
+     "from": 2005,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "LX",
+      "1",
+      "2",
+      "3",
+      "Strike"
+     ],
+     "engines": [
+      "1.4 16v 97PS petrol",
+      "1.6 16v 112PS petrol",
+      "1.5 CRDi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "UB (2011–2017)",
+     "from": 2011,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "1 Air",
+      "2",
+      "3",
+      "4",
+      "SR7",
+      "VR7"
+     ],
+     "engines": [
+      "1.25 CVVT 85PS petrol",
+      "1.4 CVVT 109PS petrol",
+      "1.1 CRDi 75PS diesel",
+      "1.4 CRDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "YB (2017–2023)",
+     "from": 2017,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "First Edition",
+      "GT-Line",
+      "GT-Line S"
+     ],
+     "engines": [
+      "1.25 MPi 84PS petrol",
+      "1.4 MPi 100PS petrol",
+      "1.0 T-GDi 100PS petrol",
+      "1.0 T-GDi 120PS petrol",
+      "1.0 T-GDi 100PS mild-hybrid petrol",
+      "1.0 T-GDi 120PS mild-hybrid petrol",
+      "1.4 CRDi 77PS diesel",
+      "1.4 CRDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Shuma",
+   "slug": "shuma",
+   "aliases": [
+    "Shuma II"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "FB (1997–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SE"
+     ],
+     "engines": [
+      "1.6 16v 101PS petrol",
+      "1.8 16v 110PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mentor",
+   "slug": "mentor",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "FB (1998–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Mentor"
+     ],
+     "engines": [
+      "1.5 16v 88PS petrol",
+      "1.6 16v 101PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Clarus",
+   "slug": "clarus",
+   "aliases": [
+    "Credos"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "GC (1998–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Clarus"
+     ],
+     "engines": [
+      "1.8 16v 116PS petrol",
+      "2.0 16v 133PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Magentis",
+   "slug": "magentis",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2001,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "GD (2001–2006)",
+     "from": 2001,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SE"
+     ],
+     "engines": [
+      "2.0 16v 136PS petrol",
+      "2.5 V6 168PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "MG (2006–2010)",
+     "from": 2006,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "LS",
+      "TR"
+     ],
+     "engines": [
+      "2.0 CVVT 144PS petrol",
+      "2.7 V6 189PS petrol",
+      "2.0 CRDi 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Optima",
+   "slug": "optima",
+   "aliases": [
+    "Optima Sportswagon",
+    "Optima PHEV"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2012,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "TF (2012–2015)",
+     "from": 2012,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "2",
+      "3",
+      "4"
+     ],
+     "engines": [
+      "1.7 CRDi 136PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "JF (2016–2020)",
+     "from": 2016,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "2",
+      "3",
+      "4",
+      "First Edition",
+      "GT-Line",
+      "GT-Line S",
+      "GT"
+     ],
+     "engines": [
+      "1.7 CRDi 141PS diesel",
+      "1.6 CRDi 136PS diesel",
+      "2.0 T-GDi 245PS petrol",
+      "2.0 GDi 205PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cerato",
+   "slug": "cerato",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2004,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "LD (2004–2009)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SE",
+      "GS"
+     ],
+     "engines": [
+      "1.6 16v 105PS petrol",
+      "2.0 16v 143PS petrol",
+      "1.5 CRDi 102PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ceed",
+   "slug": "ceed",
+   "aliases": [
+    "cee'd",
+    "cee'd SW",
+    "Ceed Sportswagon",
+    "pro_cee'd",
+    "ProCeed",
+    "Ceed GT",
+    "ProCeed GT"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2007,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "ED (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "LS",
+      "GS",
+      "1",
+      "2",
+      "3",
+      "4",
+      "Strike"
+     ],
+     "engines": [
+      "1.4 CVVT 105PS petrol",
+      "1.6 CVVT 122PS petrol",
+      "2.0 CVVT 143PS petrol",
+      "1.6 CRDi 90PS diesel",
+      "1.6 CRDi 115PS diesel",
+      "1.6 CRDi 128PS diesel",
+      "2.0 CRDi 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "JD (2012–2018)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "1 Air",
+      "2",
+      "3",
+      "4",
+      "4 Tech",
+      "SR7",
+      "VR7",
+      "GT-Line",
+      "GT"
+     ],
+     "engines": [
+      "1.4 CVVT 100PS petrol",
+      "1.6 GDi 135PS petrol",
+      "1.0 T-GDi 100PS petrol",
+      "1.0 T-GDi 120PS petrol",
+      "1.6 T-GDi 204PS petrol",
+      "1.4 CRDi 90PS diesel",
+      "1.6 CRDi 110PS diesel",
+      "1.6 CRDi 128PS diesel",
+      "1.6 CRDi 136PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "CD (2018–)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "shooting-brake",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "2",
+      "3",
+      "Blue Edition",
+      "First Edition",
+      "GT-Line",
+      "GT-Line S",
+      "GT"
+     ],
+     "engines": [
+      "1.0 T-GDi 120PS petrol",
+      "1.4 T-GDi 140PS petrol",
+      "1.5 T-GDi 160PS petrol",
+      "1.5 T-GDi 160PS mild-hybrid petrol",
+      "1.6 T-GDi 204PS petrol",
+      "1.6 CRDi 115PS diesel",
+      "1.6 CRDi 136PS diesel",
+      "1.6 CRDi 136PS mild-hybrid diesel",
+      "1.6 GDi 141PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "XCeed",
+   "slug": "xceed",
+   "aliases": [
+    "XCeed PHEV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "CD CUV (2019–)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "2",
+      "3",
+      "4",
+      "First Edition",
+      "Edition",
+      "GT-Line",
+      "GT-Line S"
+     ],
+     "engines": [
+      "1.0 T-GDi 120PS petrol",
+      "1.4 T-GDi 140PS petrol",
+      "1.5 T-GDi 160PS mild-hybrid petrol",
+      "1.6 CRDi 115PS diesel",
+      "1.6 CRDi 136PS mild-hybrid diesel",
+      "1.6 GDi 141PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Carens",
+   "slug": "carens",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "RS (1999–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SE"
+     ],
+     "engines": [
+      "1.8 16v 110PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "FJ (2002–2006)",
+     "from": 2002,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SE"
+     ],
+     "engines": [
+      "1.8 16v 126PS petrol",
+      "2.0 CRDi 113PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "UN (2006–2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "LS",
+      "TR",
+      "1",
+      "2",
+      "3"
+     ],
+     "engines": [
+      "2.0 CVVT 144PS petrol",
+      "2.0 CRDi 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "RP (2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "2",
+      "3",
+      "4"
+     ],
+     "engines": [
+      "1.6 GDi 135PS petrol",
+      "1.7 CRDi 115PS diesel",
+      "1.7 CRDi 136PS diesel",
+      "1.7 CRDi 141PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sedona",
+   "slug": "sedona",
+   "aliases": [
+    "Grand Carnival",
+    "Carnival"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "GQ (1999–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SE"
+     ],
+     "engines": [
+      "2.5 V6 165PS petrol",
+      "2.9 TD 126PS diesel",
+      "2.9 CRDi 144PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "VQ (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "LS",
+      "TR",
+      "1",
+      "2",
+      "3"
+     ],
+     "engines": [
+      "2.9 CRDi 185PS diesel",
+      "2.2 CRDi 194PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sorento",
+   "slug": "sorento",
+   "aliases": [
+    "Sorento Hybrid",
+    "Sorento PHEV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2002,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "BL (2002–2009)",
+     "from": 2002,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "XE",
+      "XS",
+      "XT",
+      "Titan"
+     ],
+     "engines": [
+      "3.5 V6 195PS petrol",
+      "2.5 CRDi 140PS diesel",
+      "2.5 CRDi 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "XM (2009–2015)",
+     "from": 2009,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "2",
+      "3",
+      "KX-1",
+      "KX-2",
+      "KX-3"
+     ],
+     "engines": [
+      "2.2 CRDi 197PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "UM (2015–2020)",
+     "from": 2015,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "KX-1",
+      "KX-2",
+      "KX-3",
+      "KX-4",
+      "GT-Line",
+      "GT-Line S"
+     ],
+     "engines": [
+      "2.2 CRDi 200PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "MQ4 (2020–)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "2",
+      "3",
+      "4",
+      "Edition"
+     ],
+     "engines": [
+      "1.6 T-GDi 230PS hybrid",
+      "1.6 T-GDi 265PS plug-in-hybrid",
+      "2.2 CRDi 202PS diesel"
+     ],
+     "fuels": [
+      "diesel",
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sportage",
+   "slug": "sportage",
+   "aliases": [
+    "Sportage Hybrid",
+    "Sportage PHEV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "NB-7 (1994–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SE"
+     ],
+     "engines": [
+      "2.0 8v 95PS petrol",
+      "2.0 16v 128PS petrol",
+      "2.0 TD 83PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "JE (2004–2010)",
+     "from": 2004,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "XE",
+      "XS",
+      "1",
+      "2",
+      "3",
+      "Titan"
+     ],
+     "engines": [
+      "2.0 CVVT 142PS petrol",
+      "2.7 V6 175PS petrol",
+      "2.0 CRDi 113PS diesel",
+      "2.0 CRDi 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "SL (2010–2016)",
+     "from": 2010,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "KX-1",
+      "KX-2",
+      "KX-3",
+      "KX-4"
+     ],
+     "engines": [
+      "1.6 GDi 135PS petrol",
+      "2.0 CVVT 163PS petrol",
+      "1.7 CRDi 116PS diesel",
+      "2.0 CRDi 136PS diesel",
+      "2.0 CRDi 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "QL (2016–2021)",
+     "from": 2016,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "First Edition",
+      "GT-Line",
+      "GT-Line S",
+      "KX-1",
+      "KX-2"
+     ],
+     "engines": [
+      "1.6 GDi 132PS petrol",
+      "1.6 T-GDi 177PS petrol",
+      "1.7 CRDi 115PS diesel",
+      "1.7 CRDi 141PS diesel",
+      "2.0 CRDi 136PS diesel",
+      "2.0 CRDi 185PS diesel",
+      "1.6 CRDi 115PS diesel",
+      "1.6 CRDi 136PS diesel",
+      "1.6 CRDi 136PS mild-hybrid diesel",
+      "2.0 CRDi 185PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "NQ5 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "2",
+      "3",
+      "4",
+      "GT-Line",
+      "GT-Line S",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.6 T-GDi 150PS petrol",
+      "1.6 T-GDi 150PS mild-hybrid petrol",
+      "1.6 T-GDi 180PS mild-hybrid petrol",
+      "1.6 CRDi 136PS mild-hybrid diesel",
+      "1.6 T-GDi 230PS hybrid",
+      "1.6 T-GDi 265PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Soul",
+   "slug": "soul",
+   "aliases": [
+    "Soul EV",
+    "e-Soul"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2009,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "AM (2009–2014)",
+     "from": 2009,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "2",
+      "Burner",
+      "Echo",
+      "Shaker",
+      "Quantum"
+     ],
+     "engines": [
+      "1.6 CVVT 126PS petrol",
+      "1.6 CRDi 128PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "PS (2014–2019)",
+     "from": 2014,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Start",
+      "Connect",
+      "Connect Plus",
+      "Mixx",
+      "Maxx",
+      "Sport",
+      "First Edition"
+     ],
+     "engines": [
+      "1.6 GDi 132PS petrol",
+      "1.6 T-GDi 204PS petrol",
+      "1.6 CRDi 128PS diesel",
+      "1.6 CRDi 136PS diesel",
+      "27kWh 110PS electric",
+      "30kWh 110PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "SK3 (2019–2022)",
+     "from": 2019,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "First Edition",
+      "Maxx"
+     ],
+     "engines": [
+      "64kWh 204PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Venga",
+   "slug": "venga",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2010,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "YN (2010–2019)",
+     "from": 2010,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "1 Air",
+      "2",
+      "3"
+     ],
+     "engines": [
+      "1.4 CVVT 90PS petrol",
+      "1.6 CVVT 125PS petrol",
+      "1.4 CRDi 77PS diesel",
+      "1.4 CRDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Stonic",
+   "slug": "stonic",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "YB CUV (2017–)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "2",
+      "3",
+      "First Edition",
+      "GT-Line",
+      "GT-Line S"
+     ],
+     "engines": [
+      "1.0 T-GDi 100PS petrol",
+      "1.0 T-GDi 120PS petrol",
+      "1.0 T-GDi 100PS mild-hybrid petrol",
+      "1.0 T-GDi 120PS mild-hybrid petrol",
+      "1.25 MPi 84PS petrol",
+      "1.4 MPi 100PS petrol",
+      "1.6 CRDi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Niro",
+   "slug": "niro",
+   "aliases": [
+    "e-Niro",
+    "Niro EV",
+    "Niro Hybrid",
+    "Niro PHEV",
+    "Niro Plug-in"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2016,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "DE (2016–2022)",
+     "from": 2016,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "2",
+      "3",
+      "4",
+      "First Edition"
+     ],
+     "engines": [
+      "1.6 GDi 141PS hybrid",
+      "1.6 GDi 141PS plug-in-hybrid",
+      "39.2kWh 136PS electric",
+      "64kWh 204PS electric"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "SG2 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "2",
+      "3",
+      "4"
+     ],
+     "engines": [
+      "1.6 GDi 141PS hybrid",
+      "1.6 GDi 183PS plug-in-hybrid",
+      "64.8kWh 204PS electric"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Stinger",
+   "slug": "stinger",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2017,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "CK (2017–2023)",
+     "from": 2017,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "fastback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GT-Line",
+      "GT-Line S",
+      "GT S"
+     ],
+     "engines": [
+      "2.0 T-GDi 247PS petrol",
+      "3.3 T-GDi V6 370PS petrol",
+      "2.2 CRDi 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EV6",
+   "slug": "ev6",
+   "aliases": [
+    "EV6 GT"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "CV (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Air",
+      "GT-Line",
+      "GT-Line S",
+      "GT"
+     ],
+     "engines": [
+      "58kWh 170PS electric",
+      "77.4kWh 229PS electric",
+      "77.4kWh 325PS electric",
+      "77.4kWh 585PS electric",
+      "63kWh 170PS electric",
+      "84kWh 229PS electric",
+      "84kWh 325PS electric",
+      "84kWh 650PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EV9",
+   "slug": "ev9",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "MV (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Air",
+      "GT-Line",
+      "GT-Line S"
+     ],
+     "engines": [
+      "99.8kWh 204PS electric",
+      "99.8kWh 385PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EV3",
+   "slug": "ev3",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "SV1 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Air",
+      "GT-Line",
+      "GT-Line S"
+     ],
+     "engines": [
+      "58.3kWh 204PS electric",
+      "81.4kWh 204PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EV4",
+   "slug": "ev4",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "CV1 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Air",
+      "GT-Line",
+      "GT-Line S"
+     ],
+     "engines": [
+      "58.3kWh 204PS electric",
+      "81.4kWh 204PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EV5",
+   "slug": "ev5",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "OV1 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Air",
+      "GT-Line",
+      "GT-Line S"
+     ],
+     "engines": [
+      "81.4kWh 218PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "PV5",
+   "slug": "pv5",
+   "aliases": [
+    "PV5 Cargo",
+    "PV5 Passenger"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "PV5 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "51.5kWh 122PS electric",
+      "71.2kWh 163PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

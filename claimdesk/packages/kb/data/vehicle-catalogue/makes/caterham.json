@@ -1,0 +1,197 @@
+{
+ "make": "Caterham",
+ "slug": "caterham",
+ "dvlaNames": [
+  "CATERHAM",
+  "CATERHAM CARS"
+ ],
+ "aliases": [
+  "Caterham Cars"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Many Sevens were supplied as kits and may be registered with a different make or model description on the V5C."
+ },
+ "models": [
+  {
+   "name": "Seven",
+   "slug": "seven",
+   "aliases": [
+    "7",
+    "Super Seven",
+    "Super 7",
+    "Roadsport",
+    "Superlight",
+    "CSR",
+    "R300",
+    "R400",
+    "R500",
+    "Seven 160",
+    "Seven 170",
+    "Seven 270",
+    "Seven 310",
+    "Seven 360",
+    "Seven 420",
+    "Seven 485",
+    "Seven 620",
+    "620R",
+    "620S"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Rover K-series era (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Roadsport",
+      "Supersport",
+      "Superlight",
+      "Superlight R",
+      "Superlight R300",
+      "Superlight R400",
+      "R500"
+     ],
+     "engines": [
+      "1.4 Rover K-series 105PS petrol",
+      "1.6 Rover K-series 117PS petrol",
+      "1.8 Rover K-series 122PS petrol",
+      "1.8 Rover K-series VVC 152PS petrol",
+      "1.8 Rover K-series 190PS petrol",
+      "1.8 Rover K-series 233PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "No conventional doors (open two-seater); door count recorded as 2."
+    },
+    {
+     "name": "Ford Sigma / Duratec era (2006–2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Roadsport 125",
+      "Roadsport 150",
+      "Roadsport 175",
+      "Supersport",
+      "Supersport R",
+      "Superlight R300",
+      "Superlight R400",
+      "Superlight R500",
+      "CSR 175",
+      "CSR 200",
+      "CSR 260"
+     ],
+     "engines": [
+      "1.6 Ford Sigma 125PS petrol",
+      "1.6 Ford Sigma 150PS petrol",
+      "2.0 Ford Duratec 175PS petrol",
+      "2.0 Ford Duratec 210PS petrol",
+      "2.0 Ford Duratec 263PS petrol",
+      "2.3 Ford Duratec 200PS petrol",
+      "2.3 Ford Duratec 260PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "No conventional doors (open two-seater); door count recorded as 2."
+    },
+    {
+     "name": "Numbered range (2013–present)",
+     "from": 2013,
+     "to": null,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "160",
+      "170",
+      "170S",
+      "170R",
+      "270",
+      "270S",
+      "270R",
+      "310",
+      "310S",
+      "310R",
+      "360",
+      "360S",
+      "360R",
+      "420",
+      "420S",
+      "420R",
+      "420 Cup",
+      "485",
+      "485S",
+      "485R",
+      "620S",
+      "620R",
+      "Sprint",
+      "Super Sprint",
+      "CSR"
+     ],
+     "engines": [
+      "0.66 Suzuki turbo 3-cyl 80PS petrol",
+      "0.66 Suzuki turbo 3-cyl 85PS petrol",
+      "1.6 Ford Sigma 135PS petrol",
+      "1.6 Ford Sigma 152PS petrol",
+      "2.0 Ford Duratec 180PS petrol",
+      "2.0 Ford Duratec 210PS petrol",
+      "2.0 Ford Duratec 240PS petrol",
+      "2.0 Ford Duratec supercharged 310PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "No conventional doors (open two-seater); door count recorded as 2."
+    }
+   ]
+  }
+ ]
+}

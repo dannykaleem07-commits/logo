@@ -2,6 +2,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { parseVehicleCheckText, type OnFileMatch } from '@ccguk/domain';
+import { applyParsed } from '../../vehicles/vehiclePicker';
 import {
   anyServiceAgreed,
   buildCreateClaimBody,
@@ -84,8 +86,7 @@ describe('validateStep', () => {
     s.vehicle.lookupState = 'manual';
     s.vehicle.lookup = { status: 'manual_required', registration: 'AB12CDE' };
     expect(Object.keys(validateStep(3, s, now))).toEqual(expect.arrayContaining(['vehicle.make', 'vehicle.model']));
-    s.vehicle.manual.make = 'Ford';
-    s.vehicle.manual.model = 'Focus';
+    s.vehicle.picker = { ...s.vehicle.picker, make: 'Ford', model: 'Focus' };
     expect(validateStep(3, s, now)).toEqual({});
     s.vehicle.lookupState = 'ok';
     s.vehicle.lookup = { status: 'ok', registration: 'AB12CDE', vehicle: { registration: 'AB12CDE' }, fleetUnit: { id: 'fleet-7', registration: 'AB12CDE' } };
@@ -179,7 +180,7 @@ describe('buildCreateClaimBody (apps/api createClaimBody shape)', () => {
     expect(toVehicleRef(s.vehicle, '2026-10-04')).toEqual({ id: 'veh-1' });
     expect(vehicleSource(s.vehicle)).toBe('lookup');
     s.vehicle.useManual = true;
-    s.vehicle.manual = { ...s.vehicle.manual, make: 'Volkswagen', model: 'Golf GTI' };
+    s.vehicle.picker = { ...s.vehicle.picker, make: 'Volkswagen', model: 'Golf GTI' };
     expect(vehicleSource(s.vehicle)).toBe('manual');
     expect(toVehicleRef(s.vehicle, '2026-10-04')).toMatchObject({ registration: 'AB12CDE', make: 'Volkswagen', model: 'Golf GTI' });
   });
@@ -188,10 +189,72 @@ describe('buildCreateClaimBody (apps/api createClaimBody shape)', () => {
     s.vehicle.lookupState = 'manual';
     s.vehicle.useManual = true;
     s.vehicle.lookup = { status: 'manual_required', registration: 'AB12CDE', reason: 'no keys' };
-    s.vehicle.manual = { ...s.vehicle.manual, make: 'Ford', model: 'Focus', yearOfManufacture: '2018', odometerMiles: '45210', vin: 'wf0abc' };
+    s.vehicle.picker = { ...s.vehicle.picker, make: 'Ford', model: 'Focus', yearOfManufacture: 2018, vin: 'wf0abc' };
+    s.vehicle.odometerMiles = '45,210';
     const body = buildCreateClaimBody(s, { now: iso });
-    expect(body.vehicle).toMatchObject({ registration: 'AB12CDE', make: 'Ford', model: 'Focus', yearOfManufacture: 2018, vin: 'WF0ABC', ownership: 'client' });
+    expect(body.vehicle).toMatchObject({ registration: 'AB12CDE', make: 'Ford', model: 'Focus', yearOfManufacture: 2018, vin: 'WF0ABC', ownership: 'client', source: { provider: 'manual' } });
     expect('id' in body.vehicle ? undefined : body.vehicle.odometer).toEqual([{ source: 'client', date: '2026-10-04', miles: 45210, note: expect.stringMatching(/client/) }]);
+  });
+  it('manual mode: make + model from a Total Car Check paste pass step 3 and go out with the spec and the paste as source', () => {
+    const s = completeState();
+    s.vehicle.lookupState = 'manual';
+    s.vehicle.lookup = { status: 'manual_required', registration: 'AB12CDE', lookupMode: 'manual', onFile: [], externalLinks: [] };
+    s.vehicle.useManual = true;
+    expect(Object.keys(validateStep(3, s, now))).toEqual(expect.arrayContaining(['vehicle.make', 'vehicle.model']));
+    // synthetic paste (not a real Total Car Check page)
+    const parsed = parseVehicleCheckText('Make\tFORD\nModel\tFIESTA ZETEC\nColour\tBLUE\nFuel Type\tPETROL\nEngine Size\t998 cc\nYear of Manufacture\t2019', { expectedRegistration: 'AB12CDE', today: '2026-10-04' });
+    s.vehicle.picker = applyParsed(s.vehicle.picker, parsed, { match: { makeSlug: 'ford', modelSlug: 'fiesta', variantRemainder: 'ZETEC', makeName: 'Ford', modelName: 'Fiesta' }, url: 'https://totalcarcheck.co.uk/FreeCheck?regno=AB12CDE', pastedText: 'Make\tFORD' });
+    s.vehicle.picker.features = ['dab'];
+    expect(validateStep(3, s, now)).toEqual({});
+    const body = buildCreateClaimBody(s, { now: iso });
+    expect(body.vehicle).toMatchObject({
+      registration: 'AB12CDE',
+      make: 'Ford',
+      model: 'Fiesta',
+      variant: 'ZETEC',
+      colour: 'Blue',
+      fuelType: 'petrol',
+      engineCapacityCc: 998,
+      yearOfManufacture: 2019,
+      ownership: 'client',
+      spec: { catalogue: { makeSlug: 'ford', modelSlug: 'fiesta' }, features: ['dab'], extras: [] },
+      source: { provider: 'totalcarcheck_manual', url: 'https://totalcarcheck.co.uk/FreeCheck?regno=AB12CDE', appliedFields: expect.arrayContaining(['make', 'model', 'variant', 'colour']) }
+    });
+    expect(JSON.stringify(body.vehicle)).not.toMatch(/verification|verified/);
+  });
+  it('manual mode: a catalogue pick goes out with source catalogue and the catalogue ids', () => {
+    const s = completeState();
+    s.vehicle.lookupState = 'manual';
+    s.vehicle.lookup = { status: 'manual_required', registration: 'AB12CDE' };
+    s.vehicle.useManual = true;
+    s.vehicle.picker = { ...s.vehicle.picker, make: 'Ford', model: 'Fiesta', catalogue: { makeSlug: 'ford', modelSlug: 'fiesta', generationId: 'ford-fiesta-mk8-2017-2023' }, segment: 'supermini', doors: 5 };
+    const ref = toVehicleRef(s.vehicle, '2026-10-04');
+    expect(ref).toMatchObject({ make: 'Ford', model: 'Fiesta', spec: { catalogue: { makeSlug: 'ford', modelSlug: 'fiesta', generationId: 'ford-fiesta-mk8-2017-2023' }, segment: 'supermini', doors: 5 }, source: { provider: 'catalogue' } });
+  });
+  it('"Use this vehicle" references the on-file vehicle by id and passes step 3 without hand entry', () => {
+    const s = completeState();
+    s.vehicle.lookupState = 'manual';
+    s.vehicle.lookup = { status: 'manual_required', registration: 'AB12CDE', lookupMode: 'manual' };
+    s.vehicle.useManual = true;
+    const match: OnFileMatch = { vehicleId: 'veh-9', registration: 'AB12CDE', match: 'exact', make: 'FORD', model: 'FOCUS', ownership: 'client', claims: [], lookups: [] };
+    s.vehicle.onFile = match;
+    expect(vehicleSource(s.vehicle)).toBe('on_file');
+    expect(validateStep(3, s, now)).toEqual({});
+    expect(buildCreateClaimBody(s, { now: iso }).vehicle).toEqual({ id: 'veh-9' });
+    s.vehicle.onFile = { ...match, ownership: 'fleet', fleetUnit: { id: 'u1', status: 'available', gtaGroup: 'M', dailyRatePence: 5000 } };
+    expect(validateStep(3, s, now)['vehicle.fleet']).toMatch(/hard stop/);
+  });
+  it('step 3 still needs the search first, and checks the hand-entered details', () => {
+    const s = completeState();
+    s.vehicle.lookupState = 'idle';
+    s.vehicle.lookup = null;
+    expect(validateStep(3, s, now)['vehicle.lookup']).toMatch(/Search the registration/);
+    s.vehicle.lookupState = 'error';
+    s.vehicle.picker = { ...s.vehicle.picker, make: 'Ford', model: 'Focus', vin: 'WF0XXX' };
+    expect(validateStep(3, s, now)).toEqual({ 'vehicle.vin': expect.stringMatching(/17 characters/) });
+    s.vehicle.picker.vin = '';
+    s.vehicle.odometerMiles = 'about 40k';
+    expect(validateStep(3, s, now)).toEqual({ 'vehicle.odometerMiles': expect.any(String) });
   });
   it('adds a separate driver, the third-party driver and the injury referral when reported (no PATCH of the claim)', () => {
     const s = completeState();

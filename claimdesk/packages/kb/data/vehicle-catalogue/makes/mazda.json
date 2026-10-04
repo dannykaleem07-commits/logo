@@ -1,0 +1,1868 @@
+{
+ "make": "Mazda",
+ "slug": "mazda",
+ "dvlaNames": [
+  "MAZDA"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Demio",
+   "slug": "demio",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": 2003
+   },
+   "generations": [
+    {
+     "name": "DW (1998–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GXi",
+      "GSi"
+     ],
+     "engines": [
+      "1.3 63PS petrol",
+      "1.5 75PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mazda2",
+   "slug": "mazda2",
+   "aliases": [
+    "2",
+    "Mazda 2"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2003,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "DY (2003–2007)",
+     "from": 2003,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "TS",
+      "TS2",
+      "Sport",
+      "Capella",
+      "Antares"
+     ],
+     "engines": [
+      "1.25 75PS petrol",
+      "1.4 80PS petrol",
+      "1.6 100PS petrol",
+      "1.4 CiTD 68PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "DE (2007–2015)",
+     "from": 2007,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "TS",
+      "TS2",
+      "Sport",
+      "Tamura",
+      "Takuya",
+      "Venture Edition",
+      "Sport Colour Edition"
+     ],
+     "engines": [
+      "1.3 75PS petrol",
+      "1.3 86PS petrol",
+      "1.5 103PS petrol",
+      "1.6 MZ-CD 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "DJ (2015–2025)",
+     "from": 2015,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE-L",
+      "SE-L Nav",
+      "Sport",
+      "Sport Nav",
+      "Sport Black",
+      "GT Sport",
+      "GT Sport Nav",
+      "Sport Nav+",
+      "GT Sport Tech",
+      "Homura",
+      "Centre-Line",
+      "Exclusive-Line"
+     ],
+     "engines": [
+      "1.5 Skyactiv-G 75PS petrol",
+      "1.5 Skyactiv-G 90PS petrol",
+      "1.5 Skyactiv-G 115PS petrol",
+      "1.5 e-Skyactiv G mHEV 90PS mild-hybrid petrol",
+      "1.5 Skyactiv-D 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mazda2 Hybrid",
+   "slug": "mazda2-hybrid",
+   "aliases": [
+    "2 Hybrid",
+    "Mazda 2 Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "Agile",
+      "Select",
+      "Centre-Line",
+      "Exclusive-Line",
+      "Homura",
+      "Homura Plus"
+     ],
+     "engines": [
+      "1.5 Hybrid 116PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "323",
+   "slug": "323",
+   "aliases": [
+    "323F"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2003
+   },
+   "generations": [
+    {
+     "name": "BJ (1998–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GXi",
+      "GSi"
+     ],
+     "engines": [
+      "1.3 73PS petrol",
+      "1.6 98PS petrol",
+      "2.0 DiTD 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mazda3",
+   "slug": "mazda3",
+   "aliases": [
+    "3",
+    "Mazda 3",
+    "Mazda3 MPS",
+    "Mazda3 Fastback"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2004,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "BK (2004–2009)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "TS",
+      "TS2",
+      "Sport",
+      "Takara",
+      "Katano",
+      "Tamura",
+      "MPS"
+     ],
+     "engines": [
+      "1.4 84PS petrol",
+      "1.6 105PS petrol",
+      "2.0 150PS petrol",
+      "2.3 MZR DISI Turbo 260PS petrol",
+      "1.6 MZ-CD 109PS diesel",
+      "2.0 MZR-CD 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "BL (2009–2013)",
+     "from": 2009,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "TS",
+      "TS2",
+      "Sport",
+      "Takuya",
+      "Tamura",
+      "Venture Edition",
+      "MPS"
+     ],
+     "engines": [
+      "1.6 105PS petrol",
+      "2.0 150PS petrol",
+      "2.3 MZR DISI Turbo 260PS petrol",
+      "1.6 MZ-CD 109PS diesel",
+      "2.2 MZR-CD 150PS diesel",
+      "2.2 MZR-CD 185PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "BM/BN (2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE-L",
+      "SE-L Nav",
+      "Sport",
+      "Sport Nav",
+      "Sport Black",
+      "GT Sport",
+      "GT Sport Nav",
+      "Tech Edition"
+     ],
+     "engines": [
+      "1.5 Skyactiv-G 100PS petrol",
+      "2.0 Skyactiv-G 120PS petrol",
+      "2.0 Skyactiv-G 165PS petrol",
+      "1.5 Skyactiv-D 105PS diesel",
+      "2.2 Skyactiv-D 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "BP (2019–)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE-L",
+      "SE-L Lux",
+      "Sport Lux",
+      "GT Sport",
+      "GT Sport Tech",
+      "Prime-Line",
+      "Centre-Line",
+      "Exclusive-Line",
+      "Homura",
+      "Takumi"
+     ],
+     "engines": [
+      "2.0 e-Skyactiv G mHEV 122PS mild-hybrid petrol",
+      "2.0 e-Skyactiv G mHEV 150PS mild-hybrid petrol",
+      "2.0 e-Skyactiv X mHEV 180PS mild-hybrid petrol",
+      "2.0 e-Skyactiv X mHEV 186PS mild-hybrid petrol",
+      "2.5 e-Skyactiv G mHEV 140PS mild-hybrid petrol",
+      "1.8 Skyactiv-D 116PS diesel"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Premacy",
+   "slug": "premacy",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "CP (1999–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "GXi",
+      "GSi"
+     ],
+     "engines": [
+      "1.8 100PS petrol",
+      "2.0 DiTD 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mazda5",
+   "slug": "mazda5",
+   "aliases": [
+    "5",
+    "Mazda 5"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2005,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "CR (2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "TS",
+      "TS2",
+      "Sport",
+      "Takara",
+      "Tamura"
+     ],
+     "engines": [
+      "1.8 116PS petrol",
+      "2.0 145PS petrol",
+      "2.0 MZR-CD 110PS diesel",
+      "2.0 MZR-CD 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "CW (2010–2015)",
+     "from": 2010,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "TS",
+      "TS2",
+      "Sport",
+      "Venture Edition",
+      "Sport Venture"
+     ],
+     "engines": [
+      "1.8 115PS petrol",
+      "2.0 150PS petrol",
+      "1.6 MZ-CD 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "MPV",
+   "slug": "mpv",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "LW (1999–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "GXi",
+      "GSi"
+     ],
+     "engines": [
+      "2.0 123PS petrol",
+      "2.3 141PS petrol",
+      "2.0 MZR-CD 136PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "626",
+   "slug": "626",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "GF/GW (1997–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GXi",
+      "GSi",
+      "Sport"
+     ],
+     "engines": [
+      "1.8 90PS petrol",
+      "2.0 115PS petrol",
+      "2.0 136PS petrol",
+      "2.0 DiTD 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mazda6",
+   "slug": "mazda6",
+   "aliases": [
+    "6",
+    "Mazda 6",
+    "Mazda6 Tourer",
+    "Mazda6 MPS"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2002,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "GG/GY (2002–2007)",
+     "from": 2002,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "TS",
+      "TS2",
+      "Sport",
+      "Katano",
+      "Takara",
+      "MPS"
+     ],
+     "engines": [
+      "1.8 120PS petrol",
+      "2.0 141PS petrol",
+      "2.3 166PS petrol",
+      "2.3 MZR DISI Turbo 260PS petrol",
+      "2.0 MZR-CD 121PS diesel",
+      "2.0 MZR-CD 136PS diesel",
+      "2.0 MZR-CD 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "GH (2008–2012)",
+     "from": 2008,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "TS",
+      "TS2",
+      "Sport",
+      "Takuya",
+      "Business Line"
+     ],
+     "engines": [
+      "1.8 120PS petrol",
+      "2.0 147PS petrol",
+      "2.5 170PS petrol",
+      "2.0 MZR-CD 140PS diesel",
+      "2.2 MZR-CD 125PS diesel",
+      "2.2 MZR-CD 163PS diesel",
+      "2.2 MZR-CD 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "GJ/GL (2013–2023)",
+     "from": 2013,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE-L",
+      "SE-L Nav",
+      "SE-L Lux Nav",
+      "Sport",
+      "Sport Nav",
+      "Sport Nav+",
+      "GT Sport",
+      "GT Sport Nav+",
+      "GT Sport Tech",
+      "Kuro Edition",
+      "Homura"
+     ],
+     "engines": [
+      "2.0 Skyactiv-G 145PS petrol",
+      "2.0 Skyactiv-G 165PS petrol",
+      "2.5 Skyactiv-G 194PS petrol",
+      "2.2 Skyactiv-D 150PS diesel",
+      "2.2 Skyactiv-D 175PS diesel",
+      "2.2 Skyactiv-D 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mazda6e",
+   "slug": "mazda6e",
+   "aliases": [
+    "6e",
+    "Mazda 6e"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Takumi",
+      "Takumi Plus"
+     ],
+     "engines": [
+      "78kWh 258PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "MX-5",
+   "slug": "mx-5",
+   "aliases": [
+    "MX5",
+    "MX-5 RF",
+    "MX-5 Roadster Coupe",
+    "Miata"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "NB (1998–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Sport",
+      "Euphonic",
+      "Icon",
+      "Arizona",
+      "Phoenix"
+     ],
+     "engines": [
+      "1.6 110PS petrol",
+      "1.8 140PS petrol",
+      "1.8 146PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "NC (2005–2015)",
+     "from": 2005,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Sport Tech",
+      "Sport Tech Nav",
+      "Kendo",
+      "Miyako",
+      "Venture Edition",
+      "Sport Graphite"
+     ],
+     "engines": [
+      "1.8 126PS petrol",
+      "2.0 160PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "ND (2015–)",
+     "from": 2015,
+     "to": null,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE-L",
+      "SE-L Nav",
+      "Sport",
+      "Sport Nav",
+      "Sport Nav+",
+      "GT Sport Nav+",
+      "Sport Tech",
+      "Homura",
+      "Kazari",
+      "Prime-Line",
+      "Exclusive-Line"
+     ],
+     "engines": [
+      "1.5 Skyactiv-G 131PS petrol",
+      "1.5 Skyactiv-G 132PS petrol",
+      "2.0 Skyactiv-G 160PS petrol",
+      "2.0 Skyactiv-G 184PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "RX-8",
+   "slug": "rx-8",
+   "aliases": [
+    "RX8"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2003,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "SE3P (2003–2010)",
+     "from": 2003,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "PZ",
+      "Evolve",
+      "Kuro",
+      "R3",
+      "40th Anniversary"
+     ],
+     "engines": [
+      "1.3 Renesis 192PS petrol",
+      "1.3 Renesis 231PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tribute",
+   "slug": "tribute",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2001,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "EP (2001–2004)",
+     "from": 2001,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GXi",
+      "GSi"
+     ],
+     "engines": [
+      "2.0 125PS petrol",
+      "3.0 V6 199PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CX-7",
+   "slug": "cx-7",
+   "aliases": [
+    "CX7"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2007,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "ER (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Sport Tech"
+     ],
+     "engines": [
+      "2.3 MZR DISI Turbo 260PS petrol",
+      "2.2 MZR-CD 173PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CX-3",
+   "slug": "cx-3",
+   "aliases": [
+    "CX3"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2015,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "DK (2015–2021)",
+     "from": 2015,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE-L",
+      "SE-L Nav",
+      "SE-L Nav+",
+      "Sport",
+      "Sport Nav",
+      "Sport Nav+",
+      "GT Sport",
+      "GT Sport Nav",
+      "GT Sport Nav+",
+      "Sport Black",
+      "Red Edition"
+     ],
+     "engines": [
+      "2.0 Skyactiv-G 120PS petrol",
+      "2.0 Skyactiv-G 121PS petrol",
+      "2.0 Skyactiv-G 150PS petrol",
+      "1.5 Skyactiv-D 105PS diesel",
+      "1.8 Skyactiv-D 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CX-30",
+   "slug": "cx-30",
+   "aliases": [
+    "CX30"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "DM (2019–)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE-L",
+      "SE-L Lux",
+      "Sport Lux",
+      "GT Sport",
+      "GT Sport Tech",
+      "Prime-Line",
+      "Centre-Line",
+      "Exclusive-Line",
+      "Homura",
+      "Takumi"
+     ],
+     "engines": [
+      "2.0 e-Skyactiv G mHEV 122PS mild-hybrid petrol",
+      "2.0 e-Skyactiv G mHEV 150PS mild-hybrid petrol",
+      "2.0 e-Skyactiv X mHEV 180PS mild-hybrid petrol",
+      "2.0 e-Skyactiv X mHEV 186PS mild-hybrid petrol",
+      "2.5 e-Skyactiv G mHEV 140PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "MX-30",
+   "slug": "mx-30",
+   "aliases": [
+    "MX30",
+    "MX-30 R-EV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "DR (2020–)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "First Edition",
+      "SE-L Lux",
+      "Sport Lux",
+      "GT Sport Tech",
+      "Prime-Line",
+      "Exclusive-Line",
+      "Makoto",
+      "Edition R"
+     ],
+     "engines": [
+      "35.5kWh 145PS electric",
+      "17.8kWh R-EV 170PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "electric",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CX-5",
+   "slug": "cx-5",
+   "aliases": [
+    "CX5"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2012,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "KE (2012–2017)",
+     "from": 2012,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE-L",
+      "SE-L Nav",
+      "SE-L Lux Nav",
+      "Sport",
+      "Sport Nav",
+      "Sport Black"
+     ],
+     "engines": [
+      "2.0 Skyactiv-G 165PS petrol",
+      "2.2 Skyactiv-D 150PS diesel",
+      "2.2 Skyactiv-D 175PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "KF (2017–2025)",
+     "from": 2017,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE-L Nav+",
+      "SE-L Lux Nav+",
+      "Sport Nav+",
+      "GT Sport",
+      "GT Sport Nav+",
+      "Sport Black",
+      "Kuro Edition",
+      "Newground",
+      "Sport Edition",
+      "Prime-Line",
+      "Centre-Line",
+      "Exclusive-Line",
+      "Homura",
+      "Takumi"
+     ],
+     "engines": [
+      "2.0 Skyactiv-G 165PS petrol",
+      "2.0 e-Skyactiv G mHEV 165PS mild-hybrid petrol",
+      "2.5 Skyactiv-G 194PS petrol",
+      "2.2 Skyactiv-D 150PS diesel",
+      "2.2 Skyactiv-D 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2026–)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Prime-Line",
+      "Centre-Line",
+      "Exclusive-Line",
+      "Homura"
+     ],
+     "engines": [
+      "2.5 e-Skyactiv G mHEV 141PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CX-60",
+   "slug": "cx-60",
+   "aliases": [
+    "CX60",
+    "CX-60 PHEV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "KH (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Exclusive-Line",
+      "Homura",
+      "Takumi",
+      "Homura Plus",
+      "Takumi Plus"
+     ],
+     "engines": [
+      "2.5 e-Skyactiv PHEV 327PS plug-in-hybrid",
+      "3.3 e-Skyactiv D mHEV 200PS mild-hybrid diesel",
+      "3.3 e-Skyactiv D mHEV 254PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "plug-in-hybrid",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CX-80",
+   "slug": "cx-80",
+   "aliases": [
+    "CX80"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "KL (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Exclusive-Line",
+      "Homura",
+      "Takumi",
+      "Homura Plus",
+      "Takumi Plus"
+     ],
+     "engines": [
+      "2.5 e-Skyactiv PHEV 327PS plug-in-hybrid",
+      "3.3 e-Skyactiv D mHEV 254PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "plug-in-hybrid",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CX-6e",
+   "slug": "cx-6e",
+   "aliases": [
+    "CX6e"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Takumi",
+      "Takumi Plus"
+     ],
+     "engines": [
+      "78kWh 258PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "B2500",
+   "slug": "b2500",
+   "aliases": [
+    "B-Series",
+    "B 2500",
+    "B-2500",
+    "Pick-Up"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "UN (1999–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 TD 84PS diesel",
+      "2.5 TD 109PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "BT-50",
+   "slug": "bt-50",
+   "aliases": [
+    "BT50"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2006,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2011)",
+     "from": 2006,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.5 MZR-CD 143PS diesel",
+      "3.0 MZR-CD 156PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    }
+   ]
+  }
+ ]
+}

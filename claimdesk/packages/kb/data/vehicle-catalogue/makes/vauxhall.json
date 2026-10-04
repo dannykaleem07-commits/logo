@@ -1,0 +1,3504 @@
+{
+ "make": "Vauxhall",
+ "slug": "vauxhall",
+ "dvlaNames": [
+  "VAUXHALL"
+ ],
+ "aliases": [
+  "Opel",
+  "Vauxhall Motors"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. The 2007 Opel GT roadster is omitted: left-hand drive only and not in the Vauxhall UK range."
+ },
+ "models": [
+  {
+   "name": "Agila",
+   "slug": "agila",
+   "aliases": [
+    "AGILA"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2000,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "A (2000–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Agila",
+      "Club",
+      "Design",
+      "Expression",
+      "Enjoy"
+     ],
+     "engines": [
+      "1.0 12v 58PS petrol",
+      "1.2 16v 75PS petrol",
+      "1.2 16v 80PS petrol",
+      "1.3 CDTi 70PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B (2008–2014)",
+     "from": 2008,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "S",
+      "Club",
+      "Design",
+      "ecoFLEX"
+     ],
+     "engines": [
+      "1.0 12v 65PS petrol",
+      "1.0 12v 68PS petrol",
+      "1.2 16v 86PS petrol",
+      "1.2 16v 94PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Adam",
+   "slug": "adam",
+   "aliases": [
+    "Adam Rocks",
+    "Adam Grand Slam"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2013,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Jam",
+      "Glam",
+      "Slam",
+      "Rocks",
+      "Rocks Air",
+      "Grand Slam",
+      "Energised",
+      "Unlimited",
+      "Griffin"
+     ],
+     "engines": [
+      "1.2 70PS petrol",
+      "1.4 87PS petrol",
+      "1.4 100PS petrol",
+      "1.0 Turbo 90PS petrol",
+      "1.0 Turbo 115PS petrol",
+      "1.4 Turbo 150PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    }
+   ]
+  },
+  {
+   "name": "Viva",
+   "slug": "viva",
+   "aliases": [
+    "Viva Rocks"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2015,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2015–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE A/C",
+      "SL",
+      "Rocks",
+      "Rocks Air"
+     ],
+     "engines": [
+      "1.0 75PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "gtaGroup": "S2"
+    }
+   ]
+  },
+  {
+   "name": "Corsa",
+   "slug": "corsa",
+   "aliases": [
+    "Corsa-e",
+    "Corsa Electric",
+    "Corsa VXR",
+    "Corsa Hybrid",
+    "Corsa SRi",
+    "Corsa GSi"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "B (1993–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Club",
+      "Envoy",
+      "Merit",
+      "Breeze",
+      "SXi",
+      "Sport",
+      "CDX",
+      "GSi"
+     ],
+     "engines": [
+      "1.0 12v 54PS petrol",
+      "1.2 16v 65PS petrol",
+      "1.4 16v 90PS petrol",
+      "1.6 16v 106PS petrol",
+      "1.7 D 60PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Club",
+      "Comfort",
+      "Elegance",
+      "Design",
+      "Enjoy",
+      "Expression",
+      "Breeze",
+      "Energy",
+      "Active",
+      "SXi",
+      "SXi+",
+      "SRi",
+      "Sport",
+      "GSi"
+     ],
+     "engines": [
+      "1.0 12v 58PS petrol",
+      "1.0 12v 60PS petrol",
+      "1.2 16v 75PS petrol",
+      "1.2 16v 80PS petrol",
+      "1.4 16v 90PS petrol",
+      "1.8 16v 125PS petrol",
+      "1.7 Di 65PS diesel",
+      "1.7 DTi 75PS diesel",
+      "1.3 CDTi 70PS diesel",
+      "1.7 CDTi 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    },
+    {
+     "name": "D (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Expression",
+      "Club",
+      "Breeze",
+      "Design",
+      "Energy",
+      "Active",
+      "Sting",
+      "Exclusiv",
+      "Excite",
+      "SE",
+      "SXi",
+      "SRi",
+      "Limited Edition",
+      "Black Edition",
+      "Red Edition",
+      "VXR",
+      "VXR Nurburgring",
+      "VXR Clubsport"
+     ],
+     "engines": [
+      "1.0 12v 60PS petrol",
+      "1.0 12v 65PS petrol",
+      "1.2 16v 80PS petrol",
+      "1.2 16v 85PS petrol",
+      "1.4 16v 90PS petrol",
+      "1.4 16v 100PS petrol",
+      "1.6 Turbo 150PS petrol",
+      "1.6 Turbo VXR 192PS petrol",
+      "1.6 Turbo VXR 205PS petrol",
+      "1.3 CDTi 75PS diesel",
+      "1.3 CDTi 90PS diesel",
+      "1.3 CDTi 95PS diesel",
+      "1.7 CDTi 125PS diesel",
+      "1.7 CDTi 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    },
+    {
+     "name": "E (2014–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Sting",
+      "Sting R",
+      "Excite",
+      "Design",
+      "Energy",
+      "SE",
+      "SE Nav",
+      "SRi",
+      "SRi Nav",
+      "SRi VX-Line",
+      "SRi VX-Line Nav",
+      "Limited Edition",
+      "Black Edition",
+      "Red Edition",
+      "Griffin",
+      "VXR",
+      "VXR Performance"
+     ],
+     "engines": [
+      "1.2 70PS petrol",
+      "1.4 75PS petrol",
+      "1.4 90PS petrol",
+      "1.0 Turbo 90PS petrol",
+      "1.0 Turbo 115PS petrol",
+      "1.4 Turbo 100PS petrol",
+      "1.4 Turbo 150PS petrol",
+      "1.6 Turbo VXR 205PS petrol",
+      "1.3 CDTi 75PS diesel",
+      "1.3 CDTi 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    },
+    {
+     "name": "F (2019–present; facelift 2023)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Nav",
+      "SE Nav Premium",
+      "SRi",
+      "SRi Nav",
+      "SRi Nav Premium",
+      "Elite",
+      "Elite Nav",
+      "Elite Nav Premium",
+      "Ultimate",
+      "Ultimate Nav",
+      "Griffin",
+      "Design",
+      "GS",
+      "GS Line",
+      "YES Edition"
+     ],
+     "engines": [
+      "1.2 75PS petrol",
+      "1.2 Turbo 100PS petrol",
+      "1.2 Turbo 130PS petrol",
+      "1.2 Turbo Hybrid 100PS mild-hybrid petrol",
+      "1.2 Turbo Hybrid 110PS mild-hybrid petrol",
+      "1.2 Turbo Hybrid 136PS mild-hybrid petrol",
+      "1.5 Turbo D 100PS diesel",
+      "50kWh 136PS electric",
+      "51kWh 156PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S2"
+    }
+   ]
+  },
+  {
+   "name": "Corsavan",
+   "slug": "corsavan",
+   "aliases": [
+    "Corsa Van",
+    "Corsavan Sportive"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2001,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "C (2000–2006)",
+     "from": 2001,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Corsavan"
+     ],
+     "engines": [
+      "1.7 Di 65PS diesel",
+      "1.7 DTi 75PS diesel",
+      "1.3 CDTi 70PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "D (2007–2014)",
+     "from": 2007,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Corsavan",
+      "Sportive"
+     ],
+     "engines": [
+      "1.3 CDTi 75PS diesel",
+      "1.3 CDTi 95PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "E (2015–2018)",
+     "from": 2015,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Corsavan",
+      "Sportive"
+     ],
+     "engines": [
+      "1.3 CDTi 75PS diesel",
+      "1.3 CDTi 95PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tigra",
+   "slug": "tigra",
+   "aliases": [
+    "Tigra TwinTop",
+    "Tigra Twin Top"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2004,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "B TwinTop (2004–2009)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Tigra",
+      "Sport",
+      "Exclusiv"
+     ],
+     "engines": [
+      "1.4 16v 90PS petrol",
+      "1.8 16v 125PS petrol",
+      "1.3 CDTi 70PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "VX220",
+   "slug": "vx220",
+   "aliases": [
+    "VX 220",
+    "Speedster",
+    "VX220 Turbo"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2000–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "VX220",
+      "VX220 Turbo",
+      "VXR220"
+     ],
+     "engines": [
+      "2.2 16v 147PS petrol",
+      "2.0 Turbo 200PS petrol",
+      "2.0 Turbo 220PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Astra",
+   "slug": "astra",
+   "aliases": [
+    "Astra Sports Tourer",
+    "Astra Estate",
+    "Astra VXR",
+    "Astra Coupe",
+    "Astra Convertible",
+    "Astra TwinTop",
+    "Astra Sport Hatch",
+    "Astra Electric",
+    "Astra Hybrid",
+    "Astra GSe"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "G (1998–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Club",
+      "Envoy",
+      "LS",
+      "Life",
+      "Expression",
+      "Enjoy",
+      "Design",
+      "Elegance",
+      "CDX",
+      "SXi",
+      "SRi",
+      "Sport",
+      "Coupe Turbo"
+     ],
+     "engines": [
+      "1.2 16v 75PS petrol",
+      "1.4 16v 90PS petrol",
+      "1.6 8v 84PS petrol",
+      "1.6 16v 101PS petrol",
+      "1.8 16v 116PS petrol",
+      "1.8 16v 125PS petrol",
+      "2.0 16v 136PS petrol",
+      "2.2 16v 147PS petrol",
+      "2.0 Turbo 190PS petrol",
+      "1.7 DTi 75PS diesel",
+      "1.7 CDTi 80PS diesel",
+      "2.0 DTi 82PS diesel",
+      "2.0 DTi 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    },
+    {
+     "name": "H (2004–2010)",
+     "from": 2004,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Club",
+      "Expression",
+      "Breeze",
+      "Design",
+      "Elegance",
+      "Energy",
+      "Active",
+      "SXi",
+      "SRi",
+      "Sport",
+      "Exclusiv",
+      "Elite",
+      "VXR",
+      "VXR Nurburgring"
+     ],
+     "engines": [
+      "1.4 16v 90PS petrol",
+      "1.6 16v 105PS petrol",
+      "1.6 16v 115PS petrol",
+      "1.8 16v 125PS petrol",
+      "1.8 16v 140PS petrol",
+      "2.0 Turbo 170PS petrol",
+      "2.0 Turbo 200PS petrol",
+      "2.0 Turbo VXR 240PS petrol",
+      "1.3 CDTi 90PS diesel",
+      "1.7 CDTi 80PS diesel",
+      "1.7 CDTi 100PS diesel",
+      "1.7 CDTi 110PS diesel",
+      "1.7 CDTi 125PS diesel",
+      "1.9 CDTi 100PS diesel",
+      "1.9 CDTi 120PS diesel",
+      "1.9 CDTi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    },
+    {
+     "name": "J (2009–2015)",
+     "from": 2010,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Exclusiv",
+      "Club",
+      "S",
+      "SE",
+      "SRi",
+      "SRi VX-Line",
+      "Elite",
+      "Tech Line",
+      "Design",
+      "Energy",
+      "Excite",
+      "Sport",
+      "Limited Edition",
+      "ecoFLEX"
+     ],
+     "engines": [
+      "1.4 87PS petrol",
+      "1.4 100PS petrol",
+      "1.4 Turbo 120PS petrol",
+      "1.4 Turbo 140PS petrol",
+      "1.6 115PS petrol",
+      "1.6 Turbo 180PS petrol",
+      "1.3 CDTi 95PS diesel",
+      "1.7 CDTi 110PS diesel",
+      "1.7 CDTi 125PS diesel",
+      "1.7 CDTi 130PS diesel",
+      "1.6 CDTi 110PS diesel",
+      "1.6 CDTi 136PS diesel",
+      "2.0 CDTi 160PS diesel",
+      "2.0 CDTi 165PS diesel",
+      "2.0 BiTurbo CDTi 195PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    },
+    {
+     "name": "K (2015–2021)",
+     "from": 2015,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "Energy",
+      "Tech Line",
+      "Tech Line Nav",
+      "Business Edition Nav",
+      "SE",
+      "SRi",
+      "SRi Nav",
+      "SRi VX-Line",
+      "SRi VX-Line Nav",
+      "Elite",
+      "Elite Nav",
+      "Griffin",
+      "Ultimate Nav"
+     ],
+     "engines": [
+      "1.4 100PS petrol",
+      "1.0 Turbo 105PS petrol",
+      "1.4 Turbo 125PS petrol",
+      "1.4 Turbo 145PS petrol",
+      "1.4 Turbo 150PS petrol",
+      "1.6 Turbo 200PS petrol",
+      "1.2 Turbo 110PS petrol",
+      "1.2 Turbo 130PS petrol",
+      "1.2 Turbo 145PS petrol",
+      "1.6 CDTi 95PS diesel",
+      "1.6 CDTi 110PS diesel",
+      "1.6 CDTi 136PS diesel",
+      "1.6 BiTurbo CDTi 160PS diesel",
+      "1.5 Turbo D 105PS diesel",
+      "1.5 Turbo D 122PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    },
+    {
+     "name": "L (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "GS",
+      "GS Line",
+      "Ultimate",
+      "Griffin"
+     ],
+     "engines": [
+      "1.2 Turbo 110PS petrol",
+      "1.2 Turbo 130PS petrol",
+      "1.2 Turbo Hybrid 136PS mild-hybrid petrol",
+      "1.5 Turbo D 130PS diesel",
+      "1.6 Turbo PHEV 180PS plug-in-hybrid",
+      "1.6 Turbo PHEV 195PS plug-in-hybrid",
+      "1.6 Turbo PHEV 225PS plug-in-hybrid",
+      "54kWh 156PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "S3"
+    }
+   ]
+  },
+  {
+   "name": "Astra GTC",
+   "slug": "astra-gtc",
+   "aliases": [
+    "GTC",
+    "Astra GTC VXR"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2011,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "J GTC (2011–2018)",
+     "from": 2011,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "SRi",
+      "Limited Edition",
+      "SRi VX-Line",
+      "VXR"
+     ],
+     "engines": [
+      "1.4 Turbo 120PS petrol",
+      "1.4 Turbo 140PS petrol",
+      "1.6 Turbo 180PS petrol",
+      "1.6 Turbo 200PS petrol",
+      "2.0 Turbo VXR 280PS petrol",
+      "1.7 CDTi 110PS diesel",
+      "1.7 CDTi 130PS diesel",
+      "2.0 CDTi 165PS diesel",
+      "1.6 CDTi 136PS diesel",
+      "2.0 BiTurbo CDTi 195PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Astravan",
+   "slug": "astravan",
+   "aliases": [
+    "Astra Van",
+    "Astravan Sportive"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2000,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "G (1999–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Astravan",
+      "Envoy",
+      "Club"
+     ],
+     "engines": [
+      "1.7 DTi 75PS diesel",
+      "2.0 DTi 82PS diesel",
+      "1.7 CDTi 80PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "H (2006–2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Astravan",
+      "Club",
+      "Sportive"
+     ],
+     "engines": [
+      "1.3 CDTi 90PS diesel",
+      "1.7 CDTi 100PS diesel",
+      "1.7 CDTi 110PS diesel",
+      "1.7 CDTi 125PS diesel",
+      "1.9 CDTi 120PS diesel",
+      "1.9 CDTi 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Vectra",
+   "slug": "vectra",
+   "aliases": [
+    "Vectra GTS",
+    "Vectra Estate",
+    "Vectra VXR",
+    "Vectra GSi"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2008
+   },
+   "generations": [
+    {
+     "name": "B (1995–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LS",
+      "Envoy",
+      "Club",
+      "GLS",
+      "Design",
+      "Elegance",
+      "SRi",
+      "CDX",
+      "Elite",
+      "GSi"
+     ],
+     "engines": [
+      "1.6 16v 101PS petrol",
+      "1.8 16v 116PS petrol",
+      "1.8 16v 122PS petrol",
+      "2.0 16v 136PS petrol",
+      "2.2 16v 147PS petrol",
+      "2.5 V6 170PS petrol",
+      "2.6 V6 170PS petrol",
+      "2.0 DTi 82PS diesel",
+      "2.0 DTi 101PS diesel",
+      "2.2 DTi 125PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C (2002–2008)",
+     "from": 2002,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Club",
+      "Expression",
+      "Breeze",
+      "Design",
+      "Elegance",
+      "Energy",
+      "Exclusiv",
+      "SXi",
+      "SRi",
+      "Sport",
+      "Elite",
+      "VXR"
+     ],
+     "engines": [
+      "1.8 16v 122PS petrol",
+      "1.8 16v 140PS petrol",
+      "2.2 16v 147PS petrol",
+      "2.2 16v 155PS petrol",
+      "2.0 Turbo 175PS petrol",
+      "3.2 V6 211PS petrol",
+      "2.8 V6 Turbo 230PS petrol",
+      "2.8 V6 Turbo VXR 255PS petrol",
+      "2.8 V6 Turbo VXR 280PS petrol",
+      "2.0 DTi 100PS diesel",
+      "2.2 DTi 125PS diesel",
+      "1.9 CDTi 120PS diesel",
+      "1.9 CDTi 150PS diesel",
+      "3.0 V6 CDTi 177PS diesel",
+      "3.0 V6 CDTi 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Signum",
+   "slug": "signum",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2003,
+    "to": 2008
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2003–2008)",
+     "from": 2003,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Signum",
+      "Design",
+      "Elegance",
+      "Elite",
+      "Exclusiv",
+      "SRi",
+      "Life"
+     ],
+     "engines": [
+      "1.8 16v 122PS petrol",
+      "1.8 16v 140PS petrol",
+      "2.2 16v 155PS petrol",
+      "2.0 Turbo 175PS petrol",
+      "2.8 V6 Turbo 230PS petrol",
+      "2.8 V6 Turbo 250PS petrol",
+      "3.2 V6 211PS petrol",
+      "1.9 CDTi 120PS diesel",
+      "1.9 CDTi 150PS diesel",
+      "3.0 V6 CDTi 177PS diesel",
+      "3.0 V6 CDTi 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Insignia",
+   "slug": "insignia",
+   "aliases": [
+    "Insignia Grand Sport",
+    "Insignia Sports Tourer",
+    "Insignia Country Tourer",
+    "Insignia VXR",
+    "Insignia GSi"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2008,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "A (2008–2017)",
+     "from": 2008,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Exclusiv",
+      "ES",
+      "SE",
+      "SRi",
+      "SRi VX-Line",
+      "Elite",
+      "Elite Nav",
+      "Tech Line",
+      "Design",
+      "Country Tourer",
+      "VXR",
+      "ecoFLEX"
+     ],
+     "engines": [
+      "1.4 Turbo 140PS petrol",
+      "1.6 115PS petrol",
+      "1.6 Turbo 170PS petrol",
+      "1.6 Turbo 180PS petrol",
+      "1.8 140PS petrol",
+      "2.0 Turbo 220PS petrol",
+      "2.0 Turbo 250PS petrol",
+      "2.8 V6 Turbo 260PS petrol",
+      "2.8 V6 Turbo VXR 325PS petrol",
+      "1.6 CDTi 120PS diesel",
+      "1.6 CDTi 136PS diesel",
+      "2.0 CDTi 110PS diesel",
+      "2.0 CDTi 130PS diesel",
+      "2.0 CDTi 140PS diesel",
+      "2.0 CDTi 160PS diesel",
+      "2.0 CDTi 163PS diesel",
+      "2.0 CDTi 170PS diesel",
+      "2.0 BiTurbo CDTi 195PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B (2017–2022)",
+     "from": 2017,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "Design Nav",
+      "Tech Line Nav",
+      "Business Edition Nav",
+      "SE",
+      "SRi",
+      "SRi Nav",
+      "SRi VX-Line Nav",
+      "Elite Nav",
+      "GSi",
+      "Country Tourer",
+      "Griffin",
+      "SRi Nav Premium",
+      "Ultimate Nav"
+     ],
+     "engines": [
+      "1.5 Turbo 140PS petrol",
+      "1.5 Turbo 165PS petrol",
+      "2.0 Turbo 200PS petrol",
+      "2.0 Turbo 260PS petrol",
+      "1.6 Turbo D 110PS diesel",
+      "1.6 Turbo D 136PS diesel",
+      "1.5 Turbo D 122PS diesel",
+      "2.0 Turbo D 170PS diesel",
+      "2.0 Turbo D 174PS diesel",
+      "2.0 Turbo D 210PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Omega",
+   "slug": "omega",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2003
+   },
+   "generations": [
+    {
+     "name": "B (1994–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GLS",
+      "CD",
+      "CDX",
+      "Elite",
+      "Design",
+      "Elegance",
+      "MV6"
+     ],
+     "engines": [
+      "2.2 16v 144PS petrol",
+      "2.6 V6 180PS petrol",
+      "3.2 V6 218PS petrol",
+      "2.2 DTi 120PS diesel",
+      "2.5 DTi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Monaro",
+   "slug": "monaro",
+   "aliases": [
+    "Monaro VXR"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2004,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2004–2005)",
+     "from": 2004,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Monaro",
+      "VXR"
+     ],
+     "engines": [
+      "5.7 V8 333PS petrol",
+      "6.0 V8 VXR 400PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "VXR8",
+   "slug": "vxr8",
+   "aliases": [
+    "VXR8 GTS",
+    "VXR8 Tourer",
+    "VXR8 GTS-R"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2007,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2007–2013)",
+     "from": 2007,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "VXR8",
+      "Bathurst"
+     ],
+     "engines": [
+      "6.0 V8 411PS petrol",
+      "6.2 V8 425PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "GTS (2014–2017)",
+     "from": 2014,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GTS",
+      "GTS-R"
+     ],
+     "engines": [
+      "6.2 V8 Supercharged 585PS petrol",
+      "6.2 V8 Supercharged 595PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cascada",
+   "slug": "cascada",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2013,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2013–2018)",
+     "from": 2013,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Elite",
+      "Elite Nav"
+     ],
+     "engines": [
+      "1.4 Turbo 120PS petrol",
+      "1.4 Turbo 140PS petrol",
+      "1.6 Turbo 170PS petrol",
+      "1.6 Turbo 200PS petrol",
+      "2.0 CDTi 165PS diesel",
+      "2.0 CDTi 170PS diesel",
+      "2.0 BiTurbo CDTi 195PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ampera",
+   "slug": "ampera",
+   "aliases": [
+    "Ampera E-REV"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2012,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2012–2015)",
+     "from": 2012,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Positiv",
+      "Electron"
+     ],
+     "engines": [
+      "1.4 Voltec 150PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Zafira",
+   "slug": "zafira",
+   "aliases": [
+    "Zafira Tourer",
+    "Zafira VXR",
+    "Zafira GSi"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "A (1999–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Club",
+      "Comfort",
+      "Elegance",
+      "Design",
+      "Elite",
+      "Life",
+      "Expression",
+      "Energy",
+      "SRi",
+      "GSi"
+     ],
+     "engines": [
+      "1.6 16v 101PS petrol",
+      "1.8 16v 116PS petrol",
+      "1.8 16v 125PS petrol",
+      "2.2 16v 147PS petrol",
+      "2.0 Turbo GSi 192PS petrol",
+      "2.0 Turbo GSi 200PS petrol",
+      "2.0 DTi 82PS diesel",
+      "2.0 DTi 101PS diesel",
+      "2.2 DTi 125PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B (2005–2014)",
+     "from": 2005,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Club",
+      "Expression",
+      "Breeze",
+      "Design",
+      "Energy",
+      "Active",
+      "Exclusiv",
+      "Excite",
+      "Elite",
+      "SRi",
+      "Tech Line",
+      "VXR"
+     ],
+     "engines": [
+      "1.6 16v 105PS petrol",
+      "1.6 16v 115PS petrol",
+      "1.8 16v 140PS petrol",
+      "2.2 16v 150PS petrol",
+      "2.0 Turbo 200PS petrol",
+      "2.0 Turbo VXR 240PS petrol",
+      "1.7 CDTi 110PS diesel",
+      "1.7 CDTi 125PS diesel",
+      "1.9 CDTi 100PS diesel",
+      "1.9 CDTi 120PS diesel",
+      "1.9 CDTi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C Tourer (2012–2019)",
+     "from": 2012,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Exclusiv",
+      "SE",
+      "SRi",
+      "Elite",
+      "Tech Line",
+      "Design",
+      "Energy",
+      "Design Nav",
+      "SRi Nav",
+      "Elite Nav"
+     ],
+     "engines": [
+      "1.4 Turbo 120PS petrol",
+      "1.4 Turbo 140PS petrol",
+      "1.6 Turbo 170PS petrol",
+      "1.6 Turbo 200PS petrol",
+      "1.8 115PS petrol",
+      "1.8 140PS petrol",
+      "1.6 CDTi 136PS diesel",
+      "2.0 CDTi 110PS diesel",
+      "2.0 CDTi 130PS diesel",
+      "2.0 CDTi 165PS diesel",
+      "2.0 CDTi 170PS diesel",
+      "2.0 BiTurbo CDTi 195PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Zafira Life",
+   "slug": "zafira-life",
+   "aliases": [
+    "Zafira-e Life",
+    "Zafira Electric",
+    "Zafira Life Electric"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2019–present)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "Edition",
+      "Elite"
+     ],
+     "engines": [
+      "2.0 Turbo D 150PS diesel",
+      "2.0 Turbo D 180PS diesel",
+      "50kWh 136PS electric",
+      "75kWh 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Meriva",
+   "slug": "meriva",
+   "aliases": [
+    "Meriva VXR"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2003,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "A (2003–2010)",
+     "from": 2003,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Life",
+      "Club",
+      "Enjoy",
+      "Expression",
+      "Breeze",
+      "Design",
+      "Energy",
+      "Active",
+      "SXi",
+      "VXR"
+     ],
+     "engines": [
+      "1.4 16v 90PS petrol",
+      "1.6 8v 87PS petrol",
+      "1.6 16v 100PS petrol",
+      "1.6 16v 105PS petrol",
+      "1.8 16v 125PS petrol",
+      "1.6 Turbo VXR 180PS petrol",
+      "1.3 CDTi 75PS diesel",
+      "1.7 DTi 75PS diesel",
+      "1.7 CDTi 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B (2010–2017)",
+     "from": 2010,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Exclusiv",
+      "SE",
+      "Tech Line",
+      "Life",
+      "Design",
+      "Energy",
+      "Active"
+     ],
+     "engines": [
+      "1.4 100PS petrol",
+      "1.4 Turbo 120PS petrol",
+      "1.4 Turbo 140PS petrol",
+      "1.3 CDTi 75PS diesel",
+      "1.3 CDTi 95PS diesel",
+      "1.7 CDTi 100PS diesel",
+      "1.7 CDTi 110PS diesel",
+      "1.7 CDTi 130PS diesel",
+      "1.6 CDTi 110PS diesel",
+      "1.6 CDTi 136PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Antara",
+   "slug": "antara",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2007,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2007–2015)",
+     "from": 2007,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "E",
+      "SE",
+      "SE Nav",
+      "Exclusiv",
+      "Diamond"
+     ],
+     "engines": [
+      "2.4 140PS petrol",
+      "2.4 167PS petrol",
+      "3.2 V6 227PS petrol",
+      "2.0 CDTi 127PS diesel",
+      "2.0 CDTi 150PS diesel",
+      "2.2 CDTi 163PS diesel",
+      "2.2 CDTi 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Frontera",
+   "slug": "frontera",
+   "aliases": [
+    "Frontera Electric",
+    "Frontera Hybrid",
+    "Frontera Sport"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "B (1998–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Sport S",
+      "Limited",
+      "Olympus"
+     ],
+     "engines": [
+      "2.2 16v 136PS petrol",
+      "3.2 V6 205PS petrol",
+      "2.2 DTi 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2024–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "GS"
+     ],
+     "engines": [
+      "1.2 Turbo Hybrid 110PS mild-hybrid petrol",
+      "1.2 Turbo Hybrid 136PS mild-hybrid petrol",
+      "44kWh 113PS electric"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Mokka",
+   "slug": "mokka",
+   "aliases": [
+    "Mokka X",
+    "Mokka-e",
+    "Mokka Electric",
+    "Mokka GSE",
+    "Mokka Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2012,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "A (2012–2016)",
+     "from": 2012,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Exclusiv",
+      "SE",
+      "Tech Line",
+      "Limited Edition"
+     ],
+     "engines": [
+      "1.6 115PS petrol",
+      "1.4 Turbo 140PS petrol",
+      "1.7 CDTi 130PS diesel",
+      "1.6 CDTi 110PS diesel",
+      "1.6 CDTi 136PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mokka X (2016–2019)",
+     "from": 2016,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Active",
+      "Active Nav",
+      "Design Nav",
+      "Elite",
+      "Elite Nav",
+      "Griffin"
+     ],
+     "engines": [
+      "1.6 115PS petrol",
+      "1.4 Turbo 140PS petrol",
+      "1.4 Turbo 152PS petrol",
+      "1.6 CDTi 110PS diesel",
+      "1.6 CDTi 136PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Premium",
+      "SRi",
+      "SRi Nav Premium",
+      "Elite Nav Premium",
+      "Launch Edition",
+      "Ultimate",
+      "Griffin",
+      "Design",
+      "GS",
+      "GS Line",
+      "YES Edition",
+      "GSE"
+     ],
+     "engines": [
+      "1.2 Turbo 100PS petrol",
+      "1.2 Turbo 130PS petrol",
+      "1.2 Turbo Hybrid 136PS mild-hybrid petrol",
+      "1.5 Turbo D 110PS diesel",
+      "50kWh 136PS electric",
+      "54kWh 156PS electric",
+      "54kWh 281PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Crossland",
+   "slug": "crossland",
+   "aliases": [
+    "Crossland X"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2017,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2017–2024; Crossland X to 2020)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Nav",
+      "Tech Line Nav",
+      "Sport Nav",
+      "Elite",
+      "Elite Nav",
+      "Griffin",
+      "SRi",
+      "SRi Nav",
+      "Ultimate",
+      "Design",
+      "GS",
+      "GS Line"
+     ],
+     "engines": [
+      "1.2 83PS petrol",
+      "1.2 Turbo 110PS petrol",
+      "1.2 Turbo 130PS petrol",
+      "1.5 Turbo D 102PS diesel",
+      "1.5 Turbo D 110PS diesel",
+      "1.5 Turbo D 120PS diesel",
+      "1.6 Turbo D 99PS diesel",
+      "1.6 Turbo D 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Grandland",
+   "slug": "grandland",
+   "aliases": [
+    "Grandland X",
+    "Grandland Hybrid4",
+    "Grandland Electric",
+    "Grandland PHEV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2017–2024; Grandland X to 2021)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Tech Line Nav",
+      "Sport Nav",
+      "Elite Nav",
+      "Ultimate",
+      "Griffin",
+      "SRi",
+      "SRi Nav",
+      "Business Edition Nav",
+      "Design",
+      "GS",
+      "GS Line"
+     ],
+     "engines": [
+      "1.2 Turbo 130PS petrol",
+      "1.6 Turbo D 120PS diesel",
+      "1.5 Turbo D 130PS diesel",
+      "2.0 Turbo D 177PS diesel",
+      "1.6 Turbo PHEV 225PS plug-in-hybrid",
+      "1.6 Turbo PHEV 300PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "GS",
+      "Ultimate"
+     ],
+     "engines": [
+      "1.2 Turbo Hybrid 136PS mild-hybrid petrol",
+      "1.2 Turbo Hybrid 145PS mild-hybrid petrol",
+      "1.6 Turbo PHEV 195PS plug-in-hybrid",
+      "73kWh 213PS electric"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Combo",
+   "slug": "combo",
+   "aliases": [
+    "Combo Cargo",
+    "Combo Electric",
+    "Combo-e",
+    "Combo Van",
+    "Combo Crew"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "B (1994–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.7 D 60PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "C (2001–2011)",
+     "from": 2001,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Combo 1700",
+      "Combo 2000",
+      "Sportive"
+     ],
+     "engines": [
+      "1.4 16v 90PS petrol",
+      "1.7 Di 65PS diesel",
+      "1.7 DTi 75PS diesel",
+      "1.3 CDTi 70PS diesel",
+      "1.3 CDTi 75PS diesel",
+      "1.7 CDTi 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "D (2012–2018)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Combo 2000",
+      "Combo 2300",
+      "Sportive",
+      "Limited Edition"
+     ],
+     "engines": [
+      "1.4 95PS petrol",
+      "1.3 CDTi 90PS diesel",
+      "1.3 CDTi 95PS diesel",
+      "1.6 CDTi 90PS diesel",
+      "1.6 CDTi 105PS diesel",
+      "2.0 CDTi 135PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "E (2018–present)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Edition",
+      "Sportive",
+      "Limited Edition",
+      "Dynamic",
+      "Pro",
+      "Prime"
+     ],
+     "engines": [
+      "1.2 Turbo 110PS petrol",
+      "1.6 Turbo D 75PS diesel",
+      "1.6 Turbo D 100PS diesel",
+      "1.5 Turbo D 75PS diesel",
+      "1.5 Turbo D 100PS diesel",
+      "1.5 Turbo D 102PS diesel",
+      "1.5 Turbo D 130PS diesel",
+      "50kWh 136PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Combo Tour",
+   "slug": "combo-tour",
+   "aliases": [
+    "Combo Tour SE"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2002,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "C (2002–2011)",
+     "from": 2002,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Combo Tour"
+     ],
+     "engines": [
+      "1.4 16v 90PS petrol",
+      "1.6 16v 100PS petrol",
+      "1.3 CDTi 75PS diesel",
+      "1.7 CDTi 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Combo Life",
+   "slug": "combo-life",
+   "aliases": [
+    "Combo-e Life",
+    "Combo Life Electric"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2018,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "E (2018–2023)",
+     "from": 2018,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Design",
+      "Energy",
+      "Elite",
+      "SE"
+     ],
+     "engines": [
+      "1.2 Turbo 110PS petrol",
+      "1.2 Turbo 130PS petrol",
+      "1.5 Turbo D 100PS diesel",
+      "1.5 Turbo D 130PS diesel",
+      "50kWh 136PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Vivaro",
+   "slug": "vivaro",
+   "aliases": [
+    "Vivaro-e",
+    "Vivaro Electric",
+    "Vivaro L1",
+    "Vivaro L2",
+    "Vivaro LWB",
+    "Vivaro 2900",
+    "Vivaro 3100",
+    "Vivaro Doublecab"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2001,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "A (2001–2014)",
+     "from": 2001,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Vivaro",
+      "Sportive",
+      "Limited Edition"
+     ],
+     "engines": [
+      "2.0 16v 120PS petrol",
+      "1.9 Di 82PS diesel",
+      "1.9 DTi 100PS diesel",
+      "1.9 CDTi 82PS diesel",
+      "1.9 CDTi 100PS diesel",
+      "2.0 CDTi 90PS diesel",
+      "2.0 CDTi 115PS diesel",
+      "2.5 CDTi 135PS diesel",
+      "2.5 CDTi 146PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B (2014–2019)",
+     "from": 2014,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Vivaro",
+      "Sportive",
+      "Limited Edition",
+      "Edition"
+     ],
+     "engines": [
+      "1.6 CDTi 90PS diesel",
+      "1.6 CDTi 115PS diesel",
+      "1.6 BiTurbo CDTi 120PS diesel",
+      "1.6 BiTurbo CDTi 125PS diesel",
+      "1.6 BiTurbo CDTi 145PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "gtaGroup": "PV2"
+    },
+    {
+     "name": "C (2019–present; facelift 2024)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "Edition",
+      "Dynamic",
+      "Sportive",
+      "Elite",
+      "Pro",
+      "Prime"
+     ],
+     "engines": [
+      "1.5 Turbo D 100PS diesel",
+      "1.5 Turbo D 120PS diesel",
+      "2.0 Turbo D 120PS diesel",
+      "2.0 Turbo D 122PS diesel",
+      "2.0 Turbo D 144PS diesel",
+      "2.0 Turbo D 145PS diesel",
+      "2.0 Turbo D 150PS diesel",
+      "2.0 Turbo D 180PS diesel",
+      "50kWh 136PS electric",
+      "75kWh 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "PV2"
+    }
+   ]
+  },
+  {
+   "name": "Vivaro Life",
+   "slug": "vivaro-life",
+   "aliases": [
+    "Vivaro-e Life",
+    "Vivaro Life Electric",
+    "Vivaro Combi",
+    "Vivaro Kombi"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2019,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2019–2023)",
+     "from": 2019,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "Edition",
+      "Elite"
+     ],
+     "engines": [
+      "2.0 Turbo D 120PS diesel",
+      "2.0 Turbo D 150PS diesel",
+      "2.0 Turbo D 180PS diesel",
+      "50kWh 136PS electric",
+      "75kWh 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Movano",
+   "slug": "movano",
+   "aliases": [
+    "Movano-e",
+    "Movano Electric",
+    "Movano 3500",
+    "Movano Luton",
+    "Movano Tipper"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "A (1998–2010)",
+     "from": 2000,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.9 DTi 82PS diesel",
+      "2.2 DTi 90PS diesel",
+      "2.5 D 80PS diesel",
+      "2.8 DTi 115PS diesel",
+      "2.5 CDTi 100PS diesel",
+      "2.5 CDTi 115PS diesel",
+      "2.5 CDTi 120PS diesel",
+      "2.5 CDTi 146PS diesel",
+      "3.0 CDTi 136PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B (2010–2021)",
+     "from": 2010,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Movano",
+      "Edition",
+      "Sportive"
+     ],
+     "engines": [
+      "2.3 CDTi 100PS diesel",
+      "2.3 CDTi 125PS diesel",
+      "2.3 CDTi 146PS diesel",
+      "2.3 BiTurbo CDTi 136PS diesel",
+      "2.3 BiTurbo CDTi 145PS diesel",
+      "2.3 BiTurbo CDTi 165PS diesel",
+      "2.3 BiTurbo CDTi 170PS diesel",
+      "2.3 Turbo D 135PS diesel",
+      "2.3 Turbo D 150PS diesel",
+      "2.3 Turbo D 165PS diesel",
+      "2.3 Turbo D 180PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C (2021–present; facelift 2024)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Edition",
+      "Prime",
+      "Pro"
+     ],
+     "engines": [
+      "2.2 Turbo D 120PS diesel",
+      "2.2 Turbo D 140PS diesel",
+      "2.2 Turbo D 165PS diesel",
+      "2.2 Turbo D 180PS diesel",
+      "37kWh 122PS electric",
+      "70kWh 122PS electric",
+      "110kWh 270PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Movano Minibus",
+   "slug": "movano-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2000,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "A (1998–2010)",
+     "from": 2000,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        15,
+        16
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.9 DTi 82PS diesel",
+      "2.2 DTi 90PS diesel",
+      "2.5 D 80PS diesel",
+      "2.8 DTi 115PS diesel",
+      "2.5 CDTi 100PS diesel",
+      "2.5 CDTi 115PS diesel",
+      "2.5 CDTi 120PS diesel",
+      "2.5 CDTi 146PS diesel",
+      "3.0 CDTi 136PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B (2010–2021)",
+     "from": 2010,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        15,
+        16
+       ]
+      }
+     ],
+     "trims": [
+      "Movano",
+      "Edition",
+      "Sportive"
+     ],
+     "engines": [
+      "2.3 CDTi 100PS diesel",
+      "2.3 CDTi 125PS diesel",
+      "2.3 CDTi 146PS diesel",
+      "2.3 BiTurbo CDTi 136PS diesel",
+      "2.3 BiTurbo CDTi 145PS diesel",
+      "2.3 BiTurbo CDTi 165PS diesel",
+      "2.3 BiTurbo CDTi 170PS diesel",
+      "2.3 Turbo D 135PS diesel",
+      "2.3 Turbo D 150PS diesel",
+      "2.3 Turbo D 165PS diesel",
+      "2.3 Turbo D 180PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

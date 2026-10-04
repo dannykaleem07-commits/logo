@@ -1,0 +1,404 @@
+{
+ "make": "Cupra",
+ "slug": "cupra",
+ "dvlaNames": [
+  "CUPRA"
+ ],
+ "aliases": [
+  "SEAT Cupra"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Ateca",
+   "slug": "ateca",
+   "aliases": [
+    "Cupra Ateca",
+    "SEAT Cupra Ateca"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "KH (2018–present; facelift 2020)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Special Edition",
+      "V1",
+      "V2",
+      "VZ1",
+      "VZ2",
+      "VZ3"
+     ],
+     "engines": [
+      "2.0 TSI 300PS petrol",
+      "1.5 TSI 150PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Leon",
+   "slug": "leon",
+   "aliases": [
+    "Leon Estate",
+    "Leon Sportstourer",
+    "Leon VZ",
+    "Leon e-HYBRID",
+    "Cupra Leon"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "KL (2020–present; facelift 2024)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "V1",
+      "V2",
+      "V3",
+      "VZ1",
+      "VZ2",
+      "VZ3",
+      "VZ First Edition",
+      "VZ Edition"
+     ],
+     "engines": [
+      "1.5 TSI 150PS petrol",
+      "1.5 eTSI 150PS mild-hybrid petrol",
+      "2.0 TSI 245PS petrol",
+      "2.0 TSI 300PS petrol",
+      "2.0 TSI 310PS petrol",
+      "2.0 TSI 333PS petrol",
+      "1.4 e-HYBRID 204PS plug-in-hybrid",
+      "1.4 e-HYBRID 245PS plug-in-hybrid",
+      "1.5 e-HYBRID 204PS plug-in-hybrid",
+      "1.5 e-HYBRID 272PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Formentor",
+   "slug": "formentor",
+   "aliases": [
+    "Formentor VZ",
+    "Formentor VZ5",
+    "Formentor e-HYBRID"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "KM (2020–present; facelift 2024)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "V1",
+      "V2",
+      "V3",
+      "VZ1",
+      "VZ2",
+      "VZ3",
+      "VZN",
+      "VZ First Edition",
+      "VZ Edition",
+      "VZ5"
+     ],
+     "engines": [
+      "1.5 TSI 150PS petrol",
+      "1.5 eTSI 150PS mild-hybrid petrol",
+      "2.0 TSI 190PS petrol",
+      "2.0 TSI 310PS petrol",
+      "2.0 TSI 333PS petrol",
+      "2.5 TSI 390PS petrol",
+      "1.4 e-HYBRID 204PS plug-in-hybrid",
+      "1.4 e-HYBRID 245PS plug-in-hybrid",
+      "1.5 e-HYBRID 204PS plug-in-hybrid",
+      "1.5 e-HYBRID 272PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Born",
+   "slug": "born",
+   "aliases": [
+    "Born e-Boost",
+    "Born VZ"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "K1 (2021–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Launch Edition",
+      "V1",
+      "V2",
+      "V3",
+      "VZ"
+     ],
+     "engines": [
+      "45kWh 150PS electric",
+      "58kWh 204PS electric",
+      "58kWh 231PS electric",
+      "77kWh 231PS electric",
+      "79kWh 326PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tavascan",
+   "slug": "tavascan",
+   "aliases": [
+    "Tavascan Endurance",
+    "Tavascan VZ"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "V2 Endurance",
+      "VZ2"
+     ],
+     "engines": [
+      "77kWh 286PS electric",
+      "77kWh 340PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Terramar",
+   "slug": "terramar",
+   "aliases": [
+    "Terramar e-HYBRID",
+    "Terramar VZ"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "V1",
+      "V2",
+      "VZ1",
+      "VZ2"
+     ],
+     "engines": [
+      "1.5 eTSI 150PS mild-hybrid petrol",
+      "2.0 TSI 204PS petrol",
+      "2.0 TSI 265PS petrol",
+      "1.5 e-HYBRID 204PS plug-in-hybrid",
+      "1.5 e-HYBRID 272PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Raval",
+   "slug": "raval",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Raval"
+     ],
+     "engines": [
+      "37kWh 116PS electric",
+      "37kWh 135PS electric",
+      "52kWh 211PS electric",
+      "52kWh 226PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  }
+ ]
+}

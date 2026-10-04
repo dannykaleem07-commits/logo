@@ -7,6 +7,7 @@ import { qk, useDashboardData, useHealth, useLogout, useMe } from '../api/hooks'
 import type { AuthUser } from '../api/client';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { LOGIN_PATH } from '../lib/auth';
+import { versionLabel } from '../screens/settings/settings';
 
 /**
  * Layout: left nav (drawer on phones), top bar with global search + the two global badges
@@ -125,6 +126,9 @@ function SideNav({ open, ...userProps }: { open: boolean } & UserProps) {
           <span>{apiState === 'ok' ? 'API connected' : apiState === 'down' ? 'API unreachable' : 'Checking API…'}</span>
         </div>
         <div style={{ marginTop: 6 }}>Courtesy Cars Group UK Ltd · 17430389</div>
+        <div className="app-version" title={health.data?.version ? `Version ${health.data.version}` : undefined}>
+          {versionLabel(health.data?.version)}
+        </div>
       </div>
     </nav>
   );

@@ -1,11 +1,12 @@
 import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import './login.css';
-import { useLogin, useLoginDefaults } from '../../api/hooks';
+import { useHealth, useLogin, useLoginDefaults } from '../../api/hooks';
 import { Button } from '../../components/Button';
 import { EyeIcon } from '../../app/Icons';
 import { sanitizeNextPath } from '../../lib/auth';
 import { loginErrorMessage, loginFormError, loginPrefill, type LoginFormValues } from './login';
+import { LEGAL_FOOTER, versionLabel } from '../settings/settings';
 
 /**
  * Full-screen sign-in, outside the app shell. The boxes are pre-filled from GET /api/auth/login-defaults (the
@@ -18,6 +19,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const defaults = useLoginDefaults();
   const login = useLogin();
+  const health = useHealth(); // public route: gives the version before sign-in
   const [values, setValues] = useState<LoginFormValues>(() => loginPrefill(defaults.data));
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -147,8 +149,10 @@ export function LoginPage() {
         </form>
       </main>
       <footer className="login-foot">
-        <span>Courtesy Cars Group UK Ltd · company number 17430389</span>
-        <span>Authorised users only. Sign-ins are recorded.</span>
+        <span>{LEGAL_FOOTER}</span>
+        <span>
+          {versionLabel(health.data?.version)} · Authorised users only. Sign-ins are recorded.
+        </span>
       </footer>
     </div>
   );

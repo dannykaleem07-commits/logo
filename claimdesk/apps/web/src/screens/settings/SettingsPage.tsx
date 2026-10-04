@@ -14,7 +14,7 @@ import { ApiErrorNotice } from '../../components/ApiErrorNotice';
 import { Table, type Column } from '../../components/Table';
 import { useToast } from '../../components/Toast';
 import { ChangePasswordCard } from './ChangePasswordCard';
-import { API_KEYS, apiKeyPresent, buildSettingsPatch, COMPANY_NAME, COMPANY_NUMBER, confirmationOfPayeeCheck, ROLE_LABEL, settingsToForm, usersFrom, validateSettings, type SettingsErrors, type SettingsForm, type UserRow } from './settings';
+import { API_KEYS, apiKeyPresent, buildSettingsPatch, COMPANY_DETAILS, COMPANY_NAME, COMPANY_NUMBER, confirmationOfPayeeCheck, lookupModeLabel, lookupModeOf, MORE_SETTINGS_LINKS, ROLE_LABEL, settingsToForm, usersFrom, validateSettings, type SettingsErrors, type SettingsForm, type UserRow } from './settings';
 
 /** Company details, bank (Confirmation of Payee), rate card, API key presence and the read-only users list. */
 export function SettingsPage() {
@@ -35,6 +35,7 @@ export function SettingsPage() {
     setForm((f) => ({ ...f, [k]: v }));
   };
   const cop = confirmationOfPayeeCheck(form.bankAccountName);
+  const lookupMode = lookupModeOf(settings.data);
 
   const save = async () => {
     const e = validateSettings(form);
@@ -98,8 +99,25 @@ export function SettingsPage() {
             <Card title="Company details">
               <div className="stack">
                 <TextInput label="Registered name" value={COMPANY_NAME} onChange={() => undefined} disabled hint="Fixed. The legacy trading name, company number, address and domain are blocked everywhere (lesson i)." />
-                <TextInput label="Company number" value={COMPANY_NUMBER} onChange={() => undefined} disabled />
-                <TextArea label="Registered office" value={form.registeredOffice} onChange={set('registeredOffice')} rows={3} error={errors.registeredOffice} hint="One part per line, postcode last. Printed in every document footer (Companies Act 2006 Part 6 trading disclosures). Never a legacy address." />
+                <TextInput label="Company number" value={COMPANY_NUMBER} onChange={() => undefined} disabled hint={`Registered in England & Wales. Trading as ${COMPANY_DETAILS.tradingName}.`} />
+                <TextArea label="Registered office" value={form.registeredOffice} onChange={set('registeredOffice')} rows={4} error={errors.registeredOffice} hint={`One part per line, postcode last. Printed in every document footer (Companies Act 2006 Part 6 trading disclosures). Default: ${COMPANY_DETAILS.registeredOffice}. Never a legacy address.`} />
+                <dl className="xs" style={{ display: 'grid', gridTemplateColumns: 'max-content 1fr', gap: '2px 12px', margin: 0 }}>
+                  {(
+                    [
+                      ['Case handler', COMPANY_DETAILS.caseHandlerPhone],
+                      ['Office', COMPANY_DETAILS.officePhone],
+                      ['Email', COMPANY_DETAILS.claimsEmail],
+                      ['Website', COMPANY_DETAILS.website],
+                      ['Director', COMPANY_DETAILS.director]
+                    ] as const
+                  ).map(([label, value]) => (
+                    <div key={label} style={{ display: 'contents' }}>
+                      <dt className="muted">{label}</dt>
+                      <dd style={{ margin: 0 }}>{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <p className="xs muted">These contact details print on every letter and document (letterhead header and footer). Bank, VAT and ICO numbers are not pre-filled: enter them below when you have them.</p>
                 <TextInput label="VAT registration number" value={form.vatNumber} onChange={set('vatNumber')} placeholder="GB123456789 (blank if not registered)" error={errors.vatNumber} />
                 <TextInput label="ICO registration reference" value={form.icoRegistration} onChange={set('icoRegistration')} placeholder="ZA123456" error={errors.icoRegistration} hint="Data protection fee registration — required to hold client and third-party personal data." />
               </div>
@@ -143,6 +161,9 @@ export function SettingsPage() {
             </Card>
 
             <Card title="API keys" flush>
+              <div className={`notice ${lookupMode === 'live' ? 'notice-success' : 'notice-info'}`} role="status" style={{ margin: 'var(--s-3)' }}>
+                {lookupModeLabel(lookupMode)}
+              </div>
               <ul className="key-list">
                 {API_KEYS.map((k) => {
                   const present = apiKeyPresent(settings.data, k.key);
@@ -176,6 +197,17 @@ export function SettingsPage() {
               <div className="card-footer xs muted">Keys live in the API's environment, never in the browser. Without a key the matching lookup returns <code>manual_required</code> and the entry is recorded as unverified.</div>
             </Card>
           </div>
+
+          <Card title="More settings">
+            <ul className="stack-sm" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+              {MORE_SETTINGS_LINKS.map((l) => (
+                <li key={l.to}>
+                  <Link to={l.to}>{l.label}</Link>
+                  <div className="xs muted">{l.description}</div>
+                </li>
+              ))}
+            </ul>
+          </Card>
 
           <Card title="Users and roles" actions={<Badge tone="grey">read-only</Badge>} flush>
             {users.length === 0 ? (

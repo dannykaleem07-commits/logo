@@ -1,0 +1,204 @@
+{
+ "make": "Alpine",
+ "slug": "alpine",
+ "dvlaNames": [
+  "ALPINE",
+  "RENAULT ALPINE"
+ ],
+ "aliases": [
+  "Renault Alpine"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "A110",
+   "slug": "a110",
+   "aliases": [
+    "A110S",
+    "A110 S",
+    "A110 GT",
+    "A110 R",
+    "A110 GTS",
+    "A110 Pure",
+    "A110 Legende"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2018,
+    "to": 2026
+   },
+   "generations": [
+    {
+     "name": "Phase 1 (2018–2021)",
+     "from": 2018,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Première Edition",
+      "Pure",
+      "Légende",
+      "A110S",
+      "Légende GT",
+      "Color Edition"
+     ],
+     "engines": [
+      "1.8 TCe 252PS petrol",
+      "1.8 TCe 292PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Phase 2 (2022–2026)",
+     "from": 2022,
+     "to": 2026,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "A110",
+      "GT",
+      "S",
+      "GTS",
+      "R",
+      "R Turini",
+      "R 70",
+      "San Remo 73"
+     ],
+     "engines": [
+      "1.8 TCe 252PS petrol",
+      "1.8 TCe 300PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "A290",
+   "slug": "a290",
+   "aliases": [
+    "A290 GT",
+    "A290 GTS"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Première Edition",
+      "GT",
+      "GT Premium",
+      "GT Performance",
+      "GTS"
+     ],
+     "engines": [
+      "52kWh 180PS electric",
+      "52kWh 220PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "A390",
+   "slug": "a390",
+   "aliases": [
+    "A390 GT",
+    "A390 GTS"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "Première Edition",
+      "GTS"
+     ],
+     "engines": [
+      "89kWh dual-motor 400PS electric",
+      "89kWh tri-motor 470PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

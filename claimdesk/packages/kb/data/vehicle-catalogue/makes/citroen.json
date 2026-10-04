@@ -1,0 +1,3162 @@
+{
+ "make": "Citroen",
+ "slug": "citroen",
+ "dvlaNames": [
+  "CITROEN"
+ ],
+ "aliases": [
+  "Citroën",
+  "Citroen UK"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Saxo",
+   "slug": "saxo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "Phase 2 (1999–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Desire",
+      "Forte",
+      "Furio",
+      "West Coast",
+      "VTR",
+      "VTS"
+     ],
+     "engines": [
+      "1.1 8v 60PS petrol",
+      "1.4 8v 75PS petrol",
+      "1.6 8v 90PS petrol",
+      "1.6 16v 120PS petrol",
+      "1.5 D 57PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C1",
+   "slug": "c1",
+   "aliases": [
+    "C1 Airscape"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2005,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2005–2014)",
+     "from": 2005,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Vibe",
+      "Rhythm",
+      "Desire",
+      "Code",
+      "Airplay",
+      "Edition",
+      "VTR",
+      "Platinum"
+     ],
+     "engines": [
+      "1.0 12v 68PS petrol",
+      "1.4 HDi 54PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2014–2022)",
+     "from": 2014,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Touch",
+      "Feel",
+      "Flair",
+      "Airscape Feel",
+      "Airscape Flair",
+      "Furio",
+      "Urban Ride",
+      "Shine",
+      "Origins"
+     ],
+     "engines": [
+      "1.0 VTi 68PS petrol",
+      "1.0 VTi 72PS petrol",
+      "1.2 PureTech 82PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C2",
+   "slug": "c2",
+   "aliases": [
+    "C2 Enterprise"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2003,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "C2 (2003–2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "L",
+      "Design",
+      "Desire",
+      "Rhythm",
+      "Furio",
+      "Code",
+      "VTR",
+      "VTS"
+     ],
+     "engines": [
+      "1.1 8v 60PS petrol",
+      "1.4 8v 75PS petrol",
+      "1.4 16v 90PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.6 16v 125PS petrol",
+      "1.4 HDi 68PS diesel",
+      "1.6 HDi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C3",
+   "slug": "c3",
+   "aliases": [
+    "e-C3",
+    "ë-C3",
+    "C3 Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2002,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2002–2009)",
+     "from": 2002,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "L",
+      "LX",
+      "SX",
+      "Desire",
+      "Rhythm",
+      "Code",
+      "Design",
+      "VTR",
+      "Exclusive"
+     ],
+     "engines": [
+      "1.1 8v 60PS petrol",
+      "1.4 8v 75PS petrol",
+      "1.4 16v 90PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.4 HDi 70PS diesel",
+      "1.4 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2009–2016)",
+     "from": 2009,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "VT",
+      "VTR",
+      "VTR+",
+      "Exclusive",
+      "Selection",
+      "Edition",
+      "Platinum",
+      "Airdream"
+     ],
+     "engines": [
+      "1.1 8v 61PS petrol",
+      "1.4 8v 73PS petrol",
+      "1.4 VTi 95PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.0 PureTech 68PS petrol",
+      "1.2 PureTech 82PS petrol",
+      "1.4 HDi 70PS diesel",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel",
+      "1.6 e-HDi 92PS diesel",
+      "1.6 BlueHDi 75PS diesel",
+      "1.6 BlueHDi 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2016–2024)",
+     "from": 2016,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Touch",
+      "Feel",
+      "Flair",
+      "Flair Plus",
+      "Shine",
+      "Shine Plus",
+      "C-Series",
+      "Saint James",
+      "Origins",
+      "You",
+      "Plus",
+      "Max"
+     ],
+     "engines": [
+      "1.2 PureTech 68PS petrol",
+      "1.2 PureTech 82PS petrol",
+      "1.2 PureTech 83PS petrol",
+      "1.2 PureTech 110PS petrol",
+      "1.6 BlueHDi 75PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "You",
+      "Plus",
+      "Max"
+     ],
+     "engines": [
+      "1.2 PureTech 100PS petrol",
+      "1.2 Hybrid 110PS mild-hybrid petrol",
+      "44kWh 113PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C3 Pluriel",
+   "slug": "c3-pluriel",
+   "aliases": [
+    "Pluriel"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2003,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "Pluriel (2003–2010)",
+     "from": 2003,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Pluriel",
+      "Charleston"
+     ],
+     "engines": [
+      "1.4 8v 75PS petrol",
+      "1.6 16v 110PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C3 Picasso",
+   "slug": "c3-picasso",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2009,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "C3 Picasso (2009–2017)",
+     "from": 2009,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "VT",
+      "VTR+",
+      "Exclusive",
+      "Selection",
+      "Platinum",
+      "Edition"
+     ],
+     "engines": [
+      "1.4 VTi 95PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel",
+      "1.6 e-HDi 90PS diesel",
+      "1.6 BlueHDi 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C3 Aircross",
+   "slug": "c3-aircross",
+   "aliases": [
+    "e-C3 Aircross",
+    "ë-C3 Aircross"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2017–2024)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Touch",
+      "Feel",
+      "Feel Plus",
+      "Flair",
+      "Flair Plus",
+      "Shine",
+      "Shine Plus",
+      "C-Series",
+      "Rip Curl",
+      "Origins",
+      "Plus",
+      "Max"
+     ],
+     "engines": [
+      "1.2 PureTech 82PS petrol",
+      "1.2 PureTech 110PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 110PS diesel",
+      "1.5 BlueHDi 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "You",
+      "Plus",
+      "Max"
+     ],
+     "engines": [
+      "1.2 PureTech 100PS petrol",
+      "1.2 Hybrid 136PS mild-hybrid petrol",
+      "44kWh 113PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C4",
+   "slug": "c4",
+   "aliases": [
+    "e-C4",
+    "ë-C4",
+    "C4 Coupe",
+    "C4 Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2004,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2004–2010)",
+     "from": 2004,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "L",
+      "LX",
+      "SX",
+      "Desire",
+      "Code",
+      "VTR",
+      "VTR+",
+      "VTS",
+      "Exclusive"
+     ],
+     "engines": [
+      "1.4 16v 90PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.6 THP 150PS petrol",
+      "2.0 16v 140PS petrol",
+      "2.0 16v 180PS petrol",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel",
+      "2.0 HDi 138PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2010–2018)",
+     "from": 2010,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "VT",
+      "VTR",
+      "VTR+",
+      "Exclusive",
+      "Exclusive+",
+      "Selection",
+      "Edition",
+      "Touch",
+      "Feel",
+      "Flair"
+     ],
+     "engines": [
+      "1.4 VTi 95PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.6 THP 155PS petrol",
+      "1.2 PureTech 110PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel",
+      "1.6 e-HDi 110PS diesel",
+      "1.6 e-HDi 115PS diesel",
+      "2.0 HDi 150PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sense",
+      "Sense Plus",
+      "Shine",
+      "Shine Plus",
+      "You",
+      "Plus",
+      "Max"
+     ],
+     "engines": [
+      "1.2 PureTech 100PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.2 PureTech 155PS petrol",
+      "1.5 BlueHDi 110PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "1.2 Hybrid 136PS mild-hybrid petrol",
+      "50kWh 136PS electric",
+      "54kWh 156PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C4 X",
+   "slug": "c4-x",
+   "aliases": [
+    "e-C4 X",
+    "ë-C4 X"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "C4 X (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Shine",
+      "Shine Plus",
+      "Plus",
+      "Max"
+     ],
+     "engines": [
+      "1.2 PureTech 100PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.2 Hybrid 136PS mild-hybrid petrol",
+      "50kWh 136PS electric",
+      "54kWh 156PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C4 Picasso",
+   "slug": "c4-picasso",
+   "aliases": [
+    "C4 SpaceTourer"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2007,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2007–2013)",
+     "from": 2007,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "VTR+",
+      "Exclusive",
+      "Exclusive+",
+      "Platinum",
+      "Edition",
+      "Selection",
+      "Airdream"
+     ],
+     "engines": [
+      "1.6 16v 110PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.6 THP 156PS petrol",
+      "1.8 16v 125PS petrol",
+      "2.0 16v 143PS petrol",
+      "1.6 HDi 110PS diesel",
+      "1.6 e-HDi 112PS diesel",
+      "2.0 HDi 138PS diesel",
+      "2.0 HDi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2013–2018)",
+     "from": 2013,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "VTR",
+      "VTR+",
+      "Selection",
+      "Exclusive",
+      "Exclusive+",
+      "Feel",
+      "Flair",
+      "Touch Edition",
+      "Platinum"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.6 THP 155PS petrol",
+      "1.6 THP 165PS petrol",
+      "1.6 e-HDi 90PS diesel",
+      "1.6 e-HDi 115PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C4 SpaceTourer (2018–2022)",
+     "from": 2018,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Touch",
+      "Feel",
+      "Feel Plus",
+      "Flair",
+      "Flair Plus",
+      "Shine",
+      "Shine Plus",
+      "C-Series"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.6 BlueHDi 120PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 160PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Grand C4 Picasso",
+   "slug": "grand-c4-picasso",
+   "aliases": [
+    "Grand C4 SpaceTourer",
+    "C4 Grand Picasso"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2006,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "VTR+",
+      "Exclusive",
+      "Exclusive+",
+      "Platinum",
+      "Edition",
+      "Selection"
+     ],
+     "engines": [
+      "1.6 16v 110PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.6 THP 156PS petrol",
+      "1.8 16v 125PS petrol",
+      "2.0 16v 143PS petrol",
+      "1.6 HDi 110PS diesel",
+      "1.6 e-HDi 112PS diesel",
+      "2.0 HDi 138PS diesel",
+      "2.0 HDi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2013–2018)",
+     "from": 2013,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "VTR",
+      "VTR+",
+      "Selection",
+      "Exclusive",
+      "Exclusive+",
+      "Feel",
+      "Flair",
+      "Touch Edition",
+      "Platinum"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.6 THP 155PS petrol",
+      "1.6 THP 165PS petrol",
+      "1.6 e-HDi 90PS diesel",
+      "1.6 e-HDi 115PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Grand C4 SpaceTourer (2018–2022)",
+     "from": 2018,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Touch",
+      "Feel",
+      "Feel Plus",
+      "Flair",
+      "Flair Plus",
+      "Shine",
+      "Shine Plus",
+      "C-Series",
+      "Rip Curl"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.6 BlueHDi 120PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 160PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C4 Aircross",
+   "slug": "c4-aircross",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2012,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "C4 Aircross (2012–2017)",
+     "from": 2012,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "VTR+",
+      "Exclusive",
+      "Selection"
+     ],
+     "engines": [
+      "1.6 16v 117PS petrol",
+      "1.6 HDi 115PS diesel",
+      "1.8 HDi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C4 Cactus",
+   "slug": "c4-cactus",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2014,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "C4 Cactus (2014–2020)",
+     "from": 2014,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Touch",
+      "Feel",
+      "Flair",
+      "Flair Edition",
+      "Rip Curl",
+      "Feel Plus",
+      "Flair Plus",
+      "Shine",
+      "C-Series"
+     ],
+     "engines": [
+      "1.2 PureTech 75PS petrol",
+      "1.2 PureTech 82PS petrol",
+      "1.2 PureTech 110PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.6 e-HDi 92PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C5",
+   "slug": "c5",
+   "aliases": [
+    "C5 Tourer",
+    "C5 CrossTourer"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2001,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2001–2008)",
+     "from": 2001,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SX",
+      "Desire",
+      "Rhythm",
+      "VTR",
+      "VTX",
+      "Exclusive"
+     ],
+     "engines": [
+      "1.8 16v 117PS petrol",
+      "2.0 16v 138PS petrol",
+      "2.0 16v 143PS petrol",
+      "3.0 V6 207PS petrol",
+      "1.6 HDi 110PS diesel",
+      "2.0 HDi 90PS diesel",
+      "2.0 HDi 110PS diesel",
+      "2.0 HDi 138PS diesel",
+      "2.2 HDi 133PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2008–2017)",
+     "from": 2008,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "VTR",
+      "VTR+",
+      "Exclusive",
+      "Selection",
+      "Platinum",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.6 VTi 120PS petrol",
+      "1.6 THP 155PS petrol",
+      "1.8 16v 125PS petrol",
+      "2.0 16v 143PS petrol",
+      "1.6 HDi 110PS diesel",
+      "1.6 e-HDi 115PS diesel",
+      "2.0 HDi 140PS diesel",
+      "2.0 HDi 163PS diesel",
+      "2.2 HDi 173PS diesel",
+      "2.2 HDi 204PS diesel",
+      "2.7 V6 HDi 208PS diesel",
+      "3.0 V6 HDi 240PS diesel",
+      "2.0 BlueHDi 150PS diesel",
+      "2.0 BlueHDi 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C5 Aircross",
+   "slug": "c5-aircross",
+   "aliases": [
+    "C5 Aircross Hybrid",
+    "e-C5 Aircross",
+    "ë-C5 Aircross"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2019–2025)",
+     "from": 2019,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Feel",
+      "Feel Plus",
+      "Flair",
+      "Flair Plus",
+      "C-Series",
+      "Sense",
+      "Sense Plus",
+      "Shine",
+      "Shine Plus",
+      "Plus",
+      "Max"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.6 PureTech 180PS petrol",
+      "1.5 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 180PS diesel",
+      "1.6 PureTech 180PS plug-in-hybrid",
+      "1.6 PureTech 225PS plug-in-hybrid",
+      "1.2 Hybrid 136PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "You",
+      "Plus",
+      "Max"
+     ],
+     "engines": [
+      "1.2 Hybrid 145PS mild-hybrid petrol",
+      "1.6 PureTech 195PS plug-in-hybrid",
+      "73kWh 210PS electric",
+      "97kWh 230PS electric"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C5 X",
+   "slug": "c5-x",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "C5 X (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sense Plus",
+      "Shine",
+      "Shine Plus"
+     ],
+     "engines": [
+      "1.2 PureTech 130PS petrol",
+      "1.6 PureTech 180PS petrol",
+      "1.6 PureTech 225PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C6",
+   "slug": "c6",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2006,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "C6 (2006–2012)",
+     "from": 2006,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Lignage",
+      "Exclusive"
+     ],
+     "engines": [
+      "2.7 V6 HDi 208PS diesel",
+      "3.0 V6 HDi 240PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C8",
+   "slug": "c8",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2002,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "C8 (2002–2010)",
+     "from": 2002,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SX",
+      "VTR",
+      "Exclusive"
+     ],
+     "engines": [
+      "2.0 16v 136PS petrol",
+      "2.0 16v 140PS petrol",
+      "2.2 16v 158PS petrol",
+      "3.0 V6 207PS petrol",
+      "2.0 HDi 109PS diesel",
+      "2.0 HDi 120PS diesel",
+      "2.0 HDi 136PS diesel",
+      "2.2 HDi 128PS diesel",
+      "2.2 HDi 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C-Crosser",
+   "slug": "c-crosser",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2007,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "C-Crosser (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "VTR+",
+      "Exclusive"
+     ],
+     "engines": [
+      "2.2 HDi 156PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C-Zero",
+   "slug": "c-zero",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2010,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "C-Zero (2010–2020)",
+     "from": 2010,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "C-Zero"
+     ],
+     "engines": [
+      "16kWh 67PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Xsara",
+   "slug": "xsara",
+   "aliases": [
+    "Xsara Coupe",
+    "Xsara Estate"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "Xsara (1997–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SX",
+      "Desire",
+      "Forte",
+      "Furio",
+      "Exclusive",
+      "VTR",
+      "VTS"
+     ],
+     "engines": [
+      "1.4 8v 75PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.8 16v 117PS petrol",
+      "2.0 16v 136PS petrol",
+      "2.0 16v 167PS petrol",
+      "1.9 D 70PS diesel",
+      "1.4 HDi 70PS diesel",
+      "1.6 HDi 90PS diesel",
+      "2.0 HDi 90PS diesel",
+      "2.0 HDi 109PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Xsara Picasso",
+   "slug": "xsara-picasso",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "Xsara Picasso (1999–2010)",
+     "from": 2000,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SX",
+      "Desire",
+      "Exclusive",
+      "VTR"
+     ],
+     "engines": [
+      "1.6 8v 95PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.8 16v 115PS petrol",
+      "2.0 16v 136PS petrol",
+      "2.0 HDi 90PS diesel",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Synergie",
+   "slug": "synergie",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "Synergie (1995–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SX",
+      "Exclusive"
+     ],
+     "engines": [
+      "2.0 8v 123PS petrol",
+      "2.0 16v 136PS petrol",
+      "1.9 TD 92PS diesel",
+      "2.0 HDi 109PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Xantia",
+   "slug": "xantia",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "Phase 2 (1997–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "SX",
+      "VSX",
+      "Exclusive",
+      "Activa"
+     ],
+     "engines": [
+      "1.8 16v 112PS petrol",
+      "2.0 16v 132PS petrol",
+      "1.9 TD 90PS diesel",
+      "2.0 HDi 90PS diesel",
+      "2.0 HDi 109PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DS3",
+   "slug": "ds3",
+   "aliases": [
+    "DS3 Cabrio",
+    "DS3 Racing"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2010,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Citroen DS3 (2010–2015)",
+     "from": 2010,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "DSign",
+      "DStyle",
+      "DStyle Plus",
+      "DSport",
+      "DSport Plus",
+      "Elle",
+      "Ultra Prestige",
+      "Racing"
+     ],
+     "engines": [
+      "1.4 VTi 95PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.2 PureTech 82PS petrol",
+      "1.2 PureTech 110PS petrol",
+      "1.6 THP 155PS petrol",
+      "1.6 THP 165PS petrol",
+      "1.6 THP 207PS petrol",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel",
+      "1.6 e-HDi 90PS diesel",
+      "1.6 BlueHDi 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DS4",
+   "slug": "ds4",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2011,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Citroen DS4 (2011–2015)",
+     "from": 2011,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "DSign",
+      "DStyle",
+      "DSport"
+     ],
+     "engines": [
+      "1.6 VTi 120PS petrol",
+      "1.6 THP 155PS petrol",
+      "1.6 THP 200PS petrol",
+      "1.6 HDi 110PS diesel",
+      "1.6 e-HDi 115PS diesel",
+      "2.0 HDi 135PS diesel",
+      "2.0 HDi 160PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "DS5",
+   "slug": "ds5",
+   "aliases": [
+    "DS5 Hybrid4"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2012,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Citroen DS5 (2012–2015)",
+     "from": 2012,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "DSign",
+      "DStyle",
+      "DSport"
+     ],
+     "engines": [
+      "1.6 THP 155PS petrol",
+      "1.6 THP 200PS petrol",
+      "1.6 e-HDi 115PS diesel",
+      "2.0 HDi 160PS diesel",
+      "2.0 HDi Hybrid4 diesel 200PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Ami",
+   "slug": "ami",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Ami (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Ami",
+      "My Ami Pop",
+      "Cargo"
+     ],
+     "engines": [
+      "5.5kWh 8PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Berlingo",
+   "slug": "berlingo",
+   "aliases": [
+    "Berlingo Van",
+    "Berlingo First",
+    "e-Berlingo Van",
+    "ë-Berlingo Van",
+    "Berlingo Crew Van"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1996–2008)",
+     "from": 2000,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "600",
+      "800",
+      "LX",
+      "Enterprise"
+     ],
+     "engines": [
+      "1.4 8v 75PS petrol",
+      "1.9 D 70PS diesel",
+      "2.0 HDi 90PS diesel",
+      "1.6 HDi 75PS diesel",
+      "1.6 HDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 (2008–2018)",
+     "from": 2008,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "LX",
+      "Enterprise",
+      "Driver",
+      "Worker"
+     ],
+     "engines": [
+      "1.6 HDi 75PS diesel",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel",
+      "1.6 BlueHDi 75PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "22.5kWh 67PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2018–)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "Enterprise",
+      "Enterprise Pro",
+      "Driver",
+      "Driver Pro",
+      "Worker"
+     ],
+     "engines": [
+      "1.6 BlueHDi 75PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 75PS diesel",
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "1.2 PureTech 110PS petrol",
+      "50kWh 136PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Berlingo Multispace",
+   "slug": "berlingo-multispace",
+   "aliases": [
+    "Berlingo MPV",
+    "Berlingo XL",
+    "Berlingo XTR",
+    "e-Berlingo",
+    "ë-Berlingo",
+    "E-Berlingo Multispace"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 Multispace (1996–2008)",
+     "from": 2000,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "LX",
+      "Forte",
+      "Desire"
+     ],
+     "engines": [
+      "1.4 8v 75PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.9 D 70PS diesel",
+      "2.0 HDi 90PS diesel",
+      "1.6 HDi 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 Multispace (2008–2018)",
+     "from": 2008,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "VT",
+      "VTR",
+      "XTR",
+      "Touch",
+      "Feel",
+      "Flair"
+     ],
+     "engines": [
+      "1.6 16v 110PS petrol",
+      "1.6 VTi 98PS petrol",
+      "1.6 VTi 120PS petrol",
+      "1.6 HDi 75PS diesel",
+      "1.6 HDi 90PS diesel",
+      "1.6 HDi 110PS diesel",
+      "1.6 e-HDi 90PS diesel",
+      "1.6 BlueHDi 100PS diesel",
+      "1.6 BlueHDi 120PS diesel",
+      "22.5kWh 67PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "M"
+    },
+    {
+     "name": "Mk3 Berlingo MPV (2018–)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Feel",
+      "Flair",
+      "XTR",
+      "Flair XTR",
+      "Plus",
+      "Max"
+     ],
+     "engines": [
+      "1.2 PureTech 110PS petrol",
+      "1.2 PureTech 130PS petrol",
+      "1.5 BlueHDi 75PS diesel",
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 130PS diesel",
+      "50kWh 136PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "M"
+    }
+   ]
+  },
+  {
+   "name": "Nemo",
+   "slug": "nemo",
+   "aliases": [
+    "Nemo Multispace"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2008,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "Nemo (2008–2017)",
+     "from": 2008,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "LX",
+      "Enterprise"
+     ],
+     "engines": [
+      "1.4 8v 73PS petrol",
+      "1.4 HDi 68PS diesel",
+      "1.3 HDi 75PS diesel",
+      "1.3 HDi 80PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C15",
+   "slug": "c15",
+   "aliases": [],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "C15 (1984–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.8 D 60PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Dispatch",
+   "slug": "dispatch",
+   "aliases": [
+    "e-Dispatch",
+    "ë-Dispatch",
+    "Dispatch Combi",
+    "Jumpy"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1996–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.9 D 70PS diesel",
+      "2.0 HDi 94PS diesel",
+      "2.0 HDi 109PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 (2007–2016)",
+     "from": 2007,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "LX",
+      "Enterprise"
+     ],
+     "engines": [
+      "1.6 HDi 90PS diesel",
+      "2.0 HDi 120PS diesel",
+      "2.0 HDi 128PS diesel",
+      "2.0 HDi 136PS diesel",
+      "2.0 HDi 163PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2016–)",
+     "from": 2016,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "Enterprise",
+      "Enterprise Plus",
+      "Driver",
+      "Worker"
+     ],
+     "engines": [
+      "1.6 BlueHDi 95PS diesel",
+      "1.6 BlueHDi 115PS diesel",
+      "2.0 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 150PS diesel",
+      "2.0 BlueHDi 180PS diesel",
+      "1.5 BlueHDi 100PS diesel",
+      "1.5 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 145PS diesel",
+      "50kWh 136PS electric",
+      "75kWh 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "SpaceTourer",
+   "slug": "spacetourer",
+   "aliases": [
+    "e-SpaceTourer",
+    "ë-SpaceTourer"
+   ],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2016,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "SpaceTourer (2016–)",
+     "from": 2016,
+     "to": null,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6,
+        7,
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "Business",
+      "Business Edition",
+      "Business Lounge",
+      "Feel",
+      "Flair"
+     ],
+     "engines": [
+      "1.6 BlueHDi 115PS diesel",
+      "2.0 BlueHDi 150PS diesel",
+      "2.0 BlueHDi 180PS diesel",
+      "1.5 BlueHDi 120PS diesel",
+      "2.0 BlueHDi 145PS diesel",
+      "50kWh 136PS electric",
+      "75kWh 136PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Relay",
+   "slug": "relay",
+   "aliases": [
+    "e-Relay",
+    "ë-Relay",
+    "Jumper"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1994–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "2.0 HDi 84PS diesel",
+      "2.2 HDi 101PS diesel",
+      "2.8 HDi 128PS diesel",
+      "2.8 HDi 146PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "LX",
+      "Enterprise"
+     ],
+     "engines": [
+      "2.2 HDi 100PS diesel",
+      "2.2 HDi 120PS diesel",
+      "3.0 HDi 157PS diesel",
+      "2.2 HDi 110PS diesel",
+      "2.2 HDi 130PS diesel",
+      "2.2 HDi 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 facelift (2014–2024)",
+     "from": 2014,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "LX",
+      "Enterprise",
+      "Enterprise Plus",
+      "Driver",
+      "Worker"
+     ],
+     "engines": [
+      "2.2 HDi 110PS diesel",
+      "2.2 HDi 130PS diesel",
+      "2.2 HDi 150PS diesel",
+      "3.0 HDi 180PS diesel",
+      "2.0 BlueHDi 110PS diesel",
+      "2.0 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 160PS diesel",
+      "2.2 BlueHDi 120PS diesel",
+      "2.2 BlueHDi 140PS diesel",
+      "2.2 BlueHDi 165PS diesel",
+      "37kWh 122PS electric",
+      "70kWh 122PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "2024 update (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "Enterprise",
+      "Driver"
+     ],
+     "engines": [
+      "2.2 BlueHDi 120PS diesel",
+      "2.2 BlueHDi 140PS diesel",
+      "2.2 BlueHDi 165PS diesel",
+      "2.2 BlueHDi 180PS diesel",
+      "110kWh 270PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Relay Minibus",
+   "slug": "relay-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2006,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "LX",
+      "Enterprise"
+     ],
+     "engines": [
+      "2.2 HDi 100PS diesel",
+      "2.2 HDi 120PS diesel",
+      "3.0 HDi 157PS diesel",
+      "2.2 HDi 110PS diesel",
+      "2.2 HDi 130PS diesel",
+      "2.2 HDi 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Mk2 facelift (2014–2024)",
+     "from": 2014,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "LX",
+      "Enterprise",
+      "Enterprise Plus",
+      "Driver",
+      "Worker"
+     ],
+     "engines": [
+      "2.2 HDi 110PS diesel",
+      "2.2 HDi 130PS diesel",
+      "2.2 HDi 150PS diesel",
+      "3.0 HDi 180PS diesel",
+      "2.0 BlueHDi 110PS diesel",
+      "2.0 BlueHDi 130PS diesel",
+      "2.0 BlueHDi 160PS diesel",
+      "2.2 BlueHDi 120PS diesel",
+      "2.2 BlueHDi 140PS diesel",
+      "2.2 BlueHDi 165PS diesel",
+      "37kWh 122PS electric",
+      "70kWh 122PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "2024 update (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "X",
+      "Enterprise",
+      "Driver"
+     ],
+     "engines": [
+      "2.2 BlueHDi 120PS diesel",
+      "2.2 BlueHDi 140PS diesel",
+      "2.2 BlueHDi 165PS diesel",
+      "2.2 BlueHDi 180PS diesel",
+      "110kWh 270PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

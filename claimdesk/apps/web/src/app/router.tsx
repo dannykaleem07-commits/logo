@@ -14,6 +14,9 @@ import { AnalyticsPage } from '../screens/analytics/AnalyticsPage';
 import { SettingsPage } from '../screens/settings/SettingsPage';
 import { CapturePage } from '../screens/capture/CapturePage';
 import { WatchPage } from '../screens/watch/WatchPage';
+import { TemplatesPage } from '../screens/templates/TemplatesPage';
+import { TemplateDetailPage } from '../screens/templates/TemplateDetailPage';
+import { GtaRatesPage } from '../screens/gta/GtaRatesPage';
 
 function RouteError() {
   const error = useRouteError();
@@ -55,6 +58,9 @@ export const routes: RouteObject[] = [
       { path: 'kb', element: <KbPage /> },
       { path: 'analytics', element: <AnalyticsPage /> },
       { path: 'settings', element: <SettingsPage /> },
+      { path: 'settings/templates', element: <TemplatesPage /> },
+      { path: 'settings/templates/:id', element: <TemplateDetailPage /> },
+      { path: 'settings/gta-rates', element: <GtaRatesPage /> },
       { path: 'watch', element: <WatchPage /> },
       { path: 'capture', element: <CapturePage /> },
       { path: 'capture/:claimId', element: <CapturePage /> },

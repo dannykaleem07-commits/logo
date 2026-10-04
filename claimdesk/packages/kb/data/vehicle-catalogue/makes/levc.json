@@ -1,0 +1,253 @@
+{
+ "make": "LEVC",
+ "slug": "levc",
+ "dvlaNames": [
+  "LEVC",
+  "LONDON EV COMPANY",
+  "LONDON TAXIS INT",
+  "LONDON TAXI COMPANY",
+  "LTI",
+  "LONDON TAXIS INTERNATIONAL"
+ ],
+ "aliases": [
+  "London Taxi",
+  "LTI",
+  "London Taxi Company",
+  "London EV Company",
+  "Black cab"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Purpose-built London hackney carriages. V5C make may read LTI / LONDON TAXIS INT for TX1–TX4. TX1/TXII trims and TX4 later engines (VM 2.8 from c.2012) not verified (audit addition)."
+ },
+ "models": [
+  {
+   "name": "TX1",
+   "slug": "tx1",
+   "aliases": [
+    "LTI TX1",
+    "Fairway"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "TX1 (1997–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "TX1"
+     ],
+     "engines": [
+      "2.7 Nissan TD27 85PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "TXII",
+   "slug": "txii",
+   "aliases": [
+    "TX2",
+    "LTI TXII"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2002,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "TXII (2002–2006)",
+     "from": 2002,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Bronze",
+      "Silver",
+      "Gold"
+     ],
+     "engines": [
+      "2.4 Duratorq 100PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "TX4",
+   "slug": "tx4",
+   "aliases": [
+    "LTI TX4",
+    "TX4 Euro 5"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2006,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "TX4 (2006–2017)",
+     "from": 2006,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Bronze",
+      "Silver",
+      "Gold",
+      "Elegance"
+     ],
+     "engines": [
+      "2.5 VM Motori 100PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "TX",
+   "slug": "tx",
+   "aliases": [
+    "TX eCity",
+    "LEVC TX",
+    "TX5"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2018,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "TX (2018–present)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "TX"
+     ],
+     "engines": [
+      "1.5 range-extender 31kWh 150PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "VN5",
+   "slug": "vn5",
+   "aliases": [
+    "LEVC VN5"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2021,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "VN5 (2021–2024)",
+     "from": 2021,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.5 range-extender 31kWh 150PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

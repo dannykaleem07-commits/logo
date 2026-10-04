@@ -1,0 +1,1676 @@
+{
+ "make": "Honda",
+ "slug": "honda",
+ "dvlaNames": [
+  "HONDA"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Logo",
+   "slug": "logo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "GA3 (1999–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Logo"
+     ],
+     "engines": [
+      "1.3 65PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Jazz",
+   "slug": "jazz",
+   "aliases": [
+    "Jazz Crosstar",
+    "Jazz Hybrid",
+    "Jazz e:HEV",
+    "Crosstar"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2002,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 GD (2002–2008)",
+     "from": 2002,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "SE Sport",
+      "Cool"
+     ],
+     "engines": [
+      "1.2 i-DSI 78PS petrol",
+      "1.4 i-DSI 83PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 GE (2008–2015)",
+     "from": 2008,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "ES",
+      "EX",
+      "Si",
+      "ES Plus",
+      "EX Plus",
+      "HE",
+      "HS",
+      "HX"
+     ],
+     "engines": [
+      "1.2 i-VTEC 90PS petrol",
+      "1.4 i-VTEC 100PS petrol",
+      "1.3 IMA 98PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 GK (2015–2020)",
+     "from": 2015,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Navi",
+      "EX",
+      "EX Navi",
+      "Sport",
+      "Sport Navi"
+     ],
+     "engines": [
+      "1.3 i-VTEC 102PS petrol",
+      "1.5 i-VTEC 130PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 GR (2020–)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SR",
+      "EX",
+      "Crosstar EX",
+      "Elegance",
+      "Advance",
+      "Advance Sport",
+      "Crosstar Advance"
+     ],
+     "engines": [
+      "1.5 e:HEV 109PS hybrid",
+      "1.5 e:HEV 122PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Civic",
+   "slug": "civic",
+   "aliases": [
+    "Civic Type R",
+    "Type R",
+    "Civic Type S",
+    "Civic Tourer",
+    "Civic Hybrid",
+    "Civic IMA",
+    "Civic e:HEV"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk6 (1995–2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "VTi"
+     ],
+     "engines": [
+      "1.4i 90PS petrol",
+      "1.5 VTEC-E 114PS petrol",
+      "1.6 VTEC 126PS petrol",
+      "1.8 VTEC 169PS petrol",
+      "2.0 TDi 86PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk7 (2001–2005)",
+     "from": 2001,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Executive",
+      "Sport",
+      "Executive",
+      "Type S",
+      "Type R",
+      "IMA"
+     ],
+     "engines": [
+      "1.4i 90PS petrol",
+      "1.6 VTEC 110PS petrol",
+      "2.0 i-VTEC 160PS petrol",
+      "2.0 i-VTEC 200PS petrol",
+      "1.7 CTDi 100PS diesel",
+      "1.3 IMA 86PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk8 (2006–2011)",
+     "from": 2006,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "ES",
+      "EX",
+      "Si",
+      "Type S",
+      "Type S GT",
+      "Type R",
+      "Type R GT",
+      "Hybrid ES",
+      "Hybrid EX"
+     ],
+     "engines": [
+      "1.4 i-DSI 83PS petrol",
+      "1.4 i-VTEC 100PS petrol",
+      "1.8 i-VTEC 140PS petrol",
+      "2.0 i-VTEC 201PS petrol",
+      "2.2 i-CTDi 140PS diesel",
+      "1.3 IMA 115PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk9 (2012–2017)",
+     "from": 2012,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Plus",
+      "SR",
+      "ES",
+      "EX",
+      "EX Plus",
+      "Sport",
+      "Black Edition",
+      "Type R",
+      "Type R GT"
+     ],
+     "engines": [
+      "1.4 i-VTEC 100PS petrol",
+      "1.8 i-VTEC 142PS petrol",
+      "1.6 i-DTEC 120PS diesel",
+      "2.2 i-DTEC 150PS diesel",
+      "2.0 VTEC Turbo 310PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk10 (2017–2021)",
+     "from": 2017,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SR",
+      "EX",
+      "Sport",
+      "Sport Plus",
+      "Prestige",
+      "Type R",
+      "Type R GT",
+      "Type R Sport Line",
+      "Type R Limited Edition"
+     ],
+     "engines": [
+      "1.0 VTEC Turbo 129PS petrol",
+      "1.5 VTEC Turbo 182PS petrol",
+      "1.6 i-DTEC 120PS diesel",
+      "2.0 VTEC Turbo 320PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk11 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Sport",
+      "Advance",
+      "Type R"
+     ],
+     "engines": [
+      "2.0 e:HEV 184PS hybrid",
+      "2.0 VTEC Turbo 329PS petrol"
+     ],
+     "fuels": [
+      "hybrid",
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Insight",
+   "slug": "insight",
+   "aliases": [
+    "Insight IMA"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "Mk1 ZE1 (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Insight"
+     ],
+     "engines": [
+      "1.0 IMA 76PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Mk2 ZE2 (2009–2014)",
+     "from": 2009,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "ES",
+      "ES-T",
+      "EX"
+     ],
+     "engines": [
+      "1.3 IMA 98PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CR-Z",
+   "slug": "cr-z",
+   "aliases": [
+    "CRZ"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2010,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "ZF1/ZF2 (2010–2016)",
+     "from": 2010,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "Sport",
+      "GT"
+     ],
+     "engines": [
+      "1.5 i-VTEC IMA 124PS hybrid",
+      "1.5 i-VTEC IMA 137PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Accord",
+   "slug": "accord",
+   "aliases": [
+    "Accord Tourer",
+    "Accord Type R",
+    "Accord Type S"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Mk6 (1998–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Executive",
+      "Sport",
+      "Type V",
+      "Type R"
+     ],
+     "engines": [
+      "1.6 116PS petrol",
+      "1.8 VTEC 136PS petrol",
+      "2.0 VTEC 147PS petrol",
+      "2.2 VTEC 212PS petrol",
+      "2.0 TDi 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk7 (2003–2008)",
+     "from": 2003,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Executive",
+      "Type S",
+      "EX"
+     ],
+     "engines": [
+      "2.0 i-VTEC 155PS petrol",
+      "2.4 i-VTEC 190PS petrol",
+      "2.2 i-CTDi 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk8 (2008–2015)",
+     "from": 2008,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "ES",
+      "ES GT",
+      "EX",
+      "EX GT",
+      "Type S",
+      "Type S GT"
+     ],
+     "engines": [
+      "2.0 i-VTEC 156PS petrol",
+      "2.4 i-VTEC 201PS petrol",
+      "2.2 i-DTEC 150PS diesel",
+      "2.2 i-DTEC 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Legend",
+   "slug": "legend",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2006,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "KB1 (2006–2010)",
+     "from": 2006,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Legend"
+     ],
+     "engines": [
+      "3.5 V6 295PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Stream",
+   "slug": "stream",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2001,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "RN (2001–2006)",
+     "from": 2001,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Executive"
+     ],
+     "engines": [
+      "1.7 VTEC 125PS petrol",
+      "2.0 i-VTEC 156PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "FR-V",
+   "slug": "fr-v",
+   "aliases": [
+    "FRV"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2004,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "BE (2004–2009)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Executive",
+      "ES",
+      "EX"
+     ],
+     "engines": [
+      "1.7 VTEC 125PS petrol",
+      "1.8 i-VTEC 140PS petrol",
+      "2.0 i-VTEC 150PS petrol",
+      "2.2 i-CTDi 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "HR-V",
+   "slug": "hr-v",
+   "aliases": [
+    "HRV",
+    "HR-V Hybrid",
+    "HR-V e:HEV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 GH (1999–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "HR-V"
+     ],
+     "engines": [
+      "1.6 105PS petrol",
+      "1.6 VTEC 125PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Mk2 RU (2015–2021)",
+     "from": 2015,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Navi",
+      "EX",
+      "Sport"
+     ],
+     "engines": [
+      "1.5 i-VTEC 130PS petrol",
+      "1.5 VTEC Turbo 182PS petrol",
+      "1.6 i-DTEC 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 RV (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Advance",
+      "Advance Style"
+     ],
+     "engines": [
+      "1.5 e:HEV 131PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CR-V",
+   "slug": "cr-v",
+   "aliases": [
+    "CRV",
+    "CR-V Hybrid",
+    "CR-V e:HEV",
+    "CR-V e:PHEV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 RD1 (1997–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "ES",
+      "SE",
+      "Executive"
+     ],
+     "engines": [
+      "2.0 147PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 RD (2002–2006)",
+     "from": 2002,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Sport",
+      "Executive"
+     ],
+     "engines": [
+      "2.0 i-VTEC 150PS petrol",
+      "2.2 i-CTDi 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 RE (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Plus",
+      "ES",
+      "EX",
+      "ES-T",
+      "EX-T"
+     ],
+     "engines": [
+      "2.0 i-VTEC 150PS petrol",
+      "2.2 i-CTDi 140PS diesel",
+      "2.2 i-DTEC 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 RM (2012–2018)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SE Plus",
+      "SR",
+      "EX",
+      "Black Edition"
+     ],
+     "engines": [
+      "2.0 i-VTEC 155PS petrol",
+      "1.6 i-DTEC 120PS diesel",
+      "1.6 i-DTEC 160PS diesel",
+      "2.2 i-DTEC 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk5 RW (2018–2023)",
+     "from": 2018,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SR",
+      "EX",
+      "Sport Line"
+     ],
+     "engines": [
+      "1.5 VTEC Turbo 173PS petrol",
+      "2.0 i-MMD 184PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk6 RS (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Advance",
+      "Advance Tech"
+     ],
+     "engines": [
+      "2.0 e:HEV 184PS hybrid",
+      "2.0 e:PHEV 184PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ZR-V",
+   "slug": "zr-v",
+   "aliases": [
+    "ZRV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "RZ (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Sport",
+      "Advance"
+     ],
+     "engines": [
+      "2.0 e:HEV 184PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "e:Ny1",
+   "slug": "e-ny1",
+   "aliases": [
+    "eNy1",
+    "e:NY1",
+    "e Ny1"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Advance"
+     ],
+     "engines": [
+      "68.8kWh 204PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "e",
+   "slug": "e",
+   "aliases": [
+    "Honda e",
+    "Honda e Advance"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2020,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "ZC7 (2020–2024)",
+     "from": 2020,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "e",
+      "Advance"
+     ],
+     "engines": [
+      "35.5kWh 136PS electric",
+      "35.5kWh 154PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "S2000",
+   "slug": "s2000",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "AP1/AP2 (1999–2009)",
+     "from": 2000,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "GT Edition 100"
+     ],
+     "engines": [
+      "2.0 VTEC 240PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Integra Type R",
+   "slug": "integra-type-r",
+   "aliases": [
+    "Integra"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "DC2 (1998–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Type R"
+     ],
+     "engines": [
+      "1.8 VTEC 190PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Prelude",
+   "slug": "prelude",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk5 BB (1997–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Prelude"
+     ],
+     "engines": [
+      "2.0 133PS petrol",
+      "2.2 VTEC 200PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "Mk6 e:HEV (2026–)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Advance"
+     ],
+     "engines": [
+      "2.0 e:HEV 184PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "NSX",
+   "slug": "nsx",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2000,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "NA1/NA2 (1990–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "NSX"
+     ],
+     "engines": [
+      "3.0 V6 256PS petrol",
+      "3.2 V6 280PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "NC1 (2016–2022)",
+     "from": 2016,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "NSX"
+     ],
+     "engines": [
+      "3.5 V6 twin-turbo 581PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  }
+ ]
+}

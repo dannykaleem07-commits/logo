@@ -1,0 +1,5315 @@
+{
+ "make": "Mercedes-Benz",
+ "slug": "mercedes-benz",
+ "dvlaNames": [
+  "MERCEDES-BENZ",
+  "MERCEDES",
+  "MERCEDES BENZ",
+  "MERCEDES-AMG"
+ ],
+ "aliases": [
+  "Mercedes",
+  "Merc",
+  "Mercedes-AMG",
+  "Mercedes-Maybach",
+  "MB"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "A-Class",
+   "slug": "a-class",
+   "aliases": [
+    "A Class",
+    "A140",
+    "A150",
+    "A160",
+    "A170",
+    "A180",
+    "A190",
+    "A200",
+    "A210",
+    "A220",
+    "A250",
+    "A250e",
+    "A35",
+    "A35 AMG",
+    "A45",
+    "A45 AMG",
+    "A45 S",
+    "A160 CDI",
+    "A170 CDI",
+    "A180 CDI",
+    "A200 CDI",
+    "A220 CDI",
+    "A180d",
+    "A200d",
+    "A220d",
+    "A-Class Saloon",
+    "Mercedes-AMG A35",
+    "Mercedes-AMG A45",
+    "AMG A 35",
+    "AMG A 45"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W168 (1997–2004; long-wheelbase L from 2001)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Elegance",
+      "Avantgarde"
+     ],
+     "engines": [
+      "1.4 A140 82PS petrol",
+      "1.6 A160 102PS petrol",
+      "1.9 A190 125PS petrol",
+      "2.1 A210 Evolution 140PS petrol",
+      "1.7 A170 CDI 90PS diesel",
+      "1.7 A170 CDI 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W169 (2004–2012)",
+     "from": 2004,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Classic SE",
+      "Elegance",
+      "Elegance SE",
+      "Avantgarde SE",
+      "BlueEFFICIENCY",
+      "Sport"
+     ],
+     "engines": [
+      "1.5 A150 95PS petrol",
+      "1.7 A170 116PS petrol",
+      "2.0 A200 136PS petrol",
+      "2.0 A200 Turbo 193PS petrol",
+      "2.0 A160 CDI 82PS diesel",
+      "2.0 A180 CDI 109PS diesel",
+      "2.0 A200 CDI 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W176 (2012–2018; facelift 2015)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "AMG Sport",
+      "AMG Line",
+      "Engineered by AMG",
+      "Night Edition",
+      "Urban Edition"
+     ],
+     "engines": [
+      "1.6 A180 122PS petrol",
+      "1.6 A200 156PS petrol",
+      "2.0 A250 211PS petrol",
+      "2.0 A250 218PS petrol",
+      "2.0 A45 AMG 360PS petrol",
+      "2.0 A45 AMG 381PS petrol",
+      "1.5 A180 CDI 109PS diesel",
+      "1.5 A180d 109PS diesel",
+      "1.8 A200 CDI 136PS diesel",
+      "2.1 A200d 136PS diesel",
+      "2.1 A220 CDI 170PS diesel",
+      "2.1 A220d 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W177 hatchback / V177 saloon (2018–present; saloon from 2019; facelift 2023 (automatic only))",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "AMG Line Executive",
+      "Exclusive Edition",
+      "Night Edition"
+     ],
+     "engines": [
+      "1.3 A180 136PS petrol",
+      "1.3 A200 163PS petrol",
+      "1.3 A200 163PS mild-hybrid petrol",
+      "2.0 A250 224PS petrol",
+      "1.3 A250e 218PS plug-in-hybrid",
+      "2.0 A35 AMG 306PS petrol",
+      "2.0 A45 S AMG 421PS petrol",
+      "1.5 A180d 116PS diesel",
+      "2.0 A200d 150PS diesel",
+      "2.0 A220d 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Vaneo",
+   "slug": "vaneo",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2002,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "W414 (2002–2005)",
+     "from": 2002,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Vaneo"
+     ],
+     "engines": [
+      "1.6 102PS petrol",
+      "1.9 125PS petrol",
+      "1.7 CDI 75PS diesel",
+      "1.7 CDI 91PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "B-Class",
+   "slug": "b-class",
+   "aliases": [
+    "B Class",
+    "B150",
+    "B170",
+    "B180",
+    "B200",
+    "B250",
+    "B250e",
+    "B180 CDI",
+    "B200 CDI",
+    "B180d",
+    "B200d",
+    "B220d",
+    "B-Class Sports Tourer"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2005,
+    "to": 2026
+   },
+   "generations": [
+    {
+     "name": "W245 (2005–2011)",
+     "from": 2005,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "1.5 B150 95PS petrol",
+      "1.7 B170 116PS petrol",
+      "2.0 B200 136PS petrol",
+      "2.0 B200 Turbo 193PS petrol",
+      "2.0 B180 CDI 109PS diesel",
+      "2.0 B200 CDI 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W246 (2012–2018; facelift 2015)",
+     "from": 2012,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "AMG Line",
+      "Exclusive",
+      "Urban"
+     ],
+     "engines": [
+      "1.6 B180 122PS petrol",
+      "1.6 B200 156PS petrol",
+      "2.0 B250 211PS petrol",
+      "1.8 B180 CDI 109PS diesel",
+      "1.5 B180d 109PS diesel",
+      "1.8 B200 CDI 136PS diesel",
+      "2.1 B200d 136PS diesel",
+      "2.1 B220d 4MATIC 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W247 (2019–2026; facelift 2023; production ending 2026)",
+     "from": 2019,
+     "to": 2026,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "AMG Line Executive"
+     ],
+     "engines": [
+      "1.3 B180 136PS petrol",
+      "1.3 B200 163PS petrol",
+      "1.3 B200 163PS mild-hybrid petrol",
+      "1.3 B250e 218PS plug-in-hybrid",
+      "1.5 B180d 116PS diesel",
+      "2.0 B200d 150PS diesel",
+      "2.0 B220d 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "C-Class",
+   "slug": "c-class",
+   "aliases": [
+    "C Class",
+    "C180",
+    "C200",
+    "C220",
+    "C230",
+    "C240",
+    "C250",
+    "C270",
+    "C280",
+    "C300",
+    "C320",
+    "C350",
+    "C200 CDI",
+    "C220 CDI",
+    "C250 CDI",
+    "C320 CDI",
+    "C350 CDI",
+    "C200d",
+    "C220d",
+    "C250d",
+    "C300d",
+    "C300h",
+    "C350e",
+    "C300e",
+    "C300de",
+    "C32 AMG",
+    "C43 AMG",
+    "C55 AMG",
+    "C63 AMG",
+    "C63 S",
+    "C-Class Estate",
+    "C-Class Coupe",
+    "C-Class Cabriolet",
+    "C-Class Sports Coupe",
+    "Mercedes-AMG C43",
+    "Mercedes-AMG C63",
+    "AMG C 43",
+    "AMG C 63"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W203 saloon / S203 estate / CL203 Sports Coupe (2000–2007; estate from 2001; Sports Coupe 2001-2008)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Classic SE",
+      "Elegance",
+      "Elegance SE",
+      "Avantgarde",
+      "Avantgarde SE",
+      "SE",
+      "Sport",
+      "Sport Edition"
+     ],
+     "engines": [
+      "2.0 C180 129PS petrol",
+      "1.8 C180 Kompressor 143PS petrol",
+      "1.8 C200 Kompressor 163PS petrol",
+      "1.8 C230 Kompressor 192PS petrol",
+      "2.6 C240 170PS petrol",
+      "2.5 C230 204PS petrol",
+      "3.0 C280 231PS petrol",
+      "3.2 C320 218PS petrol",
+      "3.5 C350 272PS petrol",
+      "3.2 C32 AMG 354PS petrol",
+      "5.4 C55 AMG 367PS petrol",
+      "2.1 C200 CDI 122PS diesel",
+      "2.1 C220 CDI 143PS diesel",
+      "2.1 C220 CDI 150PS diesel",
+      "2.7 C270 CDI 170PS diesel",
+      "3.0 C320 CDI 224PS diesel",
+      "2.7 C30 CDI AMG 231PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W204 saloon / S204 estate / C204 coupe (2007–2015; estate from 2008; coupe 2011-2015; facelift 2011)",
+     "from": 2007,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Elegance",
+      "Sport",
+      "Avantgarde",
+      "AMG Sport",
+      "AMG Sport Plus",
+      "Executive SE",
+      "AMG Sport Edition",
+      "AMG Night Edition"
+     ],
+     "engines": [
+      "1.8 C180 Kompressor 156PS petrol",
+      "1.8 C180 BlueEFFICIENCY 156PS petrol",
+      "1.6 C180 156PS petrol",
+      "1.8 C200 Kompressor 184PS petrol",
+      "1.8 C200 CGI 184PS petrol",
+      "1.8 C250 CGI 204PS petrol",
+      "2.5 C230 204PS petrol",
+      "3.0 C280 231PS petrol",
+      "3.5 C350 272PS petrol",
+      "3.5 C350 CGI 306PS petrol",
+      "6.2 C63 AMG 457PS petrol",
+      "6.2 C63 AMG 487PS petrol",
+      "2.1 C200 CDI 136PS diesel",
+      "2.1 C220 CDI 170PS diesel",
+      "2.1 C250 CDI 204PS diesel",
+      "3.0 C320 CDI 224PS diesel",
+      "3.0 C350 CDI 231PS diesel",
+      "3.0 C350 CDI 265PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W205 saloon / S205 estate / C205 coupe / A205 cabriolet (2014–2023; saloon/estate to 2021; coupe/cabriolet 2016-2023; facelift 2018)",
+     "from": 2014,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "AMG Line Edition",
+      "Night Edition",
+      "Sport Edition"
+     ],
+     "engines": [
+      "1.6 C180 156PS petrol",
+      "2.0 C200 184PS petrol",
+      "1.5 C200 184PS mild-hybrid petrol",
+      "2.0 C300 245PS petrol",
+      "2.0 C300 258PS petrol",
+      "3.0 C43 AMG 367PS petrol",
+      "3.0 C43 AMG 390PS petrol",
+      "4.0 C63 AMG 476PS petrol",
+      "4.0 C63 S AMG 510PS petrol",
+      "1.6 C200d 136PS diesel",
+      "2.1 C220d 170PS diesel",
+      "2.0 C220d 194PS diesel",
+      "2.1 C250d 204PS diesel",
+      "2.0 C300d 245PS diesel",
+      "2.1 C300h diesel 231PS hybrid",
+      "2.0 C350e 279PS plug-in-hybrid",
+      "2.0 C300e 320PS plug-in-hybrid",
+      "2.0 C300de diesel 306PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W206 saloon / S206 estate (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Night Edition"
+     ],
+     "engines": [
+      "1.5 C200 204PS mild-hybrid petrol",
+      "2.0 C300 258PS mild-hybrid petrol",
+      "2.0 C220d 200PS mild-hybrid diesel",
+      "2.0 C300d 265PS mild-hybrid diesel",
+      "1.5 C300e 313PS plug-in-hybrid",
+      "2.0 C43 AMG 408PS mild-hybrid petrol",
+      "2.0 C63 S AMG E Performance 680PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CLC-Class",
+   "slug": "clc-class",
+   "aliases": [
+    "CLC",
+    "CLC180",
+    "CLC200",
+    "CLC220",
+    "CLC 220 CDI"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2008,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "CL203 CLC (2008–2011)",
+     "from": 2008,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "1.8 CLC180 Kompressor 143PS petrol",
+      "1.8 CLC200 Kompressor 184PS petrol",
+      "2.1 CLC200 CDI 122PS diesel",
+      "2.1 CLC220 CDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CLE",
+   "slug": "cle",
+   "aliases": [
+    "CLE-Class",
+    "CLE Coupe",
+    "CLE Cabriolet",
+    "CLE200",
+    "CLE220d",
+    "CLE300",
+    "CLE450",
+    "CLE53",
+    "Mercedes-AMG CLE53"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "C236 coupe / A236 cabriolet (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus"
+     ],
+     "engines": [
+      "2.0 CLE200 204PS mild-hybrid petrol",
+      "2.0 CLE300 4MATIC 258PS mild-hybrid petrol",
+      "3.0 CLE450 4MATIC 381PS mild-hybrid petrol",
+      "2.0 CLE220d 197PS mild-hybrid diesel",
+      "3.0 CLE53 AMG 4MATIC+ 449PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CLK-Class",
+   "slug": "clk-class",
+   "aliases": [
+    "CLK",
+    "CLK200",
+    "CLK220",
+    "CLK230",
+    "CLK240",
+    "CLK270",
+    "CLK280",
+    "CLK320",
+    "CLK350",
+    "CLK430",
+    "CLK500",
+    "CLK55 AMG",
+    "CLK63 AMG",
+    "CLK Cabriolet"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "C208 coupe / A208 cabriolet (1997–2003; coupe to 2002)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Avantgarde",
+      "Sport"
+     ],
+     "engines": [
+      "2.0 CLK200 Kompressor 163PS petrol",
+      "2.3 CLK230 Kompressor 197PS petrol",
+      "3.2 CLK320 218PS petrol",
+      "4.3 CLK430 279PS petrol",
+      "5.4 CLK55 AMG 347PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C209 coupe / A209 cabriolet (2002–2010; cabriolet from 2003)",
+     "from": 2002,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Elegance",
+      "Avantgarde",
+      "Sport",
+      "Sport Edition",
+      "Avantgarde SE"
+     ],
+     "engines": [
+      "1.8 CLK200 Kompressor 163PS petrol",
+      "1.8 CLK200 Kompressor 184PS petrol",
+      "2.6 CLK240 170PS petrol",
+      "3.0 CLK280 231PS petrol",
+      "3.2 CLK320 218PS petrol",
+      "3.5 CLK350 272PS petrol",
+      "5.0 CLK500 306PS petrol",
+      "5.5 CLK500 388PS petrol",
+      "5.4 CLK55 AMG 367PS petrol",
+      "6.2 CLK63 AMG 481PS petrol",
+      "2.1 CLK220 CDI 150PS diesel",
+      "2.7 CLK270 CDI 170PS diesel",
+      "3.0 CLK320 CDI 224PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CLA",
+   "slug": "cla",
+   "aliases": [
+    "CLA-Class",
+    "CLA180",
+    "CLA200",
+    "CLA220",
+    "CLA250",
+    "CLA250e",
+    "CLA250+",
+    "CLA350",
+    "CLA35",
+    "CLA45",
+    "CLA35 AMG",
+    "CLA45 AMG",
+    "CLA200d",
+    "CLA220d",
+    "CLA Shooting Brake",
+    "CLA Coupe",
+    "CLA with EQ Technology"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2013,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "C117 coupe / X117 Shooting Brake (2013–2019; Shooting Brake from 2015)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "shooting-brake",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "AMG Sport",
+      "AMG Line",
+      "Engineered by AMG",
+      "Urban Edition"
+     ],
+     "engines": [
+      "1.6 CLA180 122PS petrol",
+      "1.6 CLA200 156PS petrol",
+      "2.0 CLA220 4MATIC 184PS petrol",
+      "2.0 CLA250 211PS petrol",
+      "2.0 CLA250 218PS petrol",
+      "2.0 CLA45 AMG 360PS petrol",
+      "2.0 CLA45 AMG 381PS petrol",
+      "1.5 CLA180d 109PS diesel",
+      "2.1 CLA200 CDI 136PS diesel",
+      "2.1 CLA200d 136PS diesel",
+      "2.1 CLA220 CDI 170PS diesel",
+      "2.1 CLA220d 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C118 coupe / X118 Shooting Brake (2019–2025)",
+     "from": 2019,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "shooting-brake",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "AMG Line Executive"
+     ],
+     "engines": [
+      "1.3 CLA180 136PS petrol",
+      "1.3 CLA200 163PS petrol",
+      "2.0 CLA250 224PS petrol",
+      "1.3 CLA250e 218PS plug-in-hybrid",
+      "2.0 CLA35 AMG 306PS petrol",
+      "2.0 CLA45 S AMG 421PS petrol",
+      "1.5 CLA180d 116PS diesel",
+      "2.0 CLA200d 150PS diesel",
+      "2.0 CLA220d 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C178 (CLA with EQ Technology / hybrid) (2025–present; electric from 2025; 48V hybrid and Shooting Brake from 2026)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "shooting-brake",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Sport Edition",
+      "Sport Executive",
+      "AMG Line Edition",
+      "AMG Line Executive",
+      "AMG Line Premium",
+      "AMG Line Premium Edition",
+      "AMG Line Premium Plus"
+     ],
+     "engines": [
+      "58kWh CLA200 224PS electric",
+      "85kWh CLA250+ 272PS electric",
+      "85kWh CLA350 4MATIC 354PS electric",
+      "1.5 CLA200 Hybrid 163PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CLS-Class",
+   "slug": "cls-class",
+   "aliases": [
+    "CLS",
+    "CLS220",
+    "CLS250",
+    "CLS300d",
+    "CLS320",
+    "CLS350",
+    "CLS400",
+    "CLS450",
+    "CLS500",
+    "CLS53",
+    "CLS55 AMG",
+    "CLS63 AMG",
+    "CLS Shooting Brake",
+    "CLS Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2004,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "C219 (2004–2010)",
+     "from": 2004,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Standard",
+      "Grand Edition"
+     ],
+     "engines": [
+      "3.5 CLS350 272PS petrol",
+      "5.0 CLS500 306PS petrol",
+      "5.5 CLS500 388PS petrol",
+      "5.4 CLS55 AMG 476PS petrol",
+      "6.2 CLS63 AMG 514PS petrol",
+      "3.0 CLS320 CDI 224PS diesel",
+      "3.0 CLS350 CDI 265PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "C218 / X218 Shooting Brake (2011–2017; Shooting Brake from 2012)",
+     "from": 2011,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "shooting-brake",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Sport",
+      "AMG Line",
+      "Night Edition"
+     ],
+     "engines": [
+      "3.5 CLS350 306PS petrol",
+      "3.0 CLS400 333PS petrol",
+      "4.7 CLS500 408PS petrol",
+      "5.5 CLS63 AMG 525PS petrol",
+      "5.5 CLS63 AMG 557PS petrol",
+      "5.5 CLS63 S AMG 585PS petrol",
+      "2.1 CLS220 BlueTEC 170PS diesel",
+      "2.1 CLS220d 177PS diesel",
+      "2.1 CLS250 CDI 204PS diesel",
+      "3.0 CLS350 CDI 265PS diesel",
+      "3.0 CLS350 BlueTEC 258PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "C257 (2018–2023)",
+     "from": 2018,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Edition 1",
+      "Night Edition"
+     ],
+     "engines": [
+      "3.0 CLS450 4MATIC 367PS mild-hybrid petrol",
+      "3.0 CLS53 AMG 4MATIC+ 435PS mild-hybrid petrol",
+      "2.0 CLS220d 194PS diesel",
+      "2.0 CLS300d 245PS diesel",
+      "2.9 CLS350d 4MATIC 286PS diesel",
+      "2.9 CLS400d 4MATIC 340PS diesel"
+     ],
+     "fuels": [
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "E-Class",
+   "slug": "e-class",
+   "aliases": [
+    "E Class",
+    "E200",
+    "E220",
+    "E240",
+    "E250",
+    "E270",
+    "E280",
+    "E300",
+    "E320",
+    "E350",
+    "E400",
+    "E430",
+    "E450",
+    "E500",
+    "E200 CDI",
+    "E220 CDI",
+    "E250 CDI",
+    "E270 CDI",
+    "E280 CDI",
+    "E320 CDI",
+    "E350 CDI",
+    "E220d",
+    "E300d",
+    "E350d",
+    "E400d",
+    "E300de",
+    "E300e",
+    "E350e",
+    "E400e",
+    "E300 BlueTEC Hybrid",
+    "E43 AMG",
+    "E53 AMG",
+    "E55 AMG",
+    "E63 AMG",
+    "E-Class Estate",
+    "E-Class Coupe",
+    "E-Class Cabriolet",
+    "E-Class All-Terrain",
+    "Mercedes-AMG E53",
+    "Mercedes-AMG E63",
+    "AMG E 53",
+    "AMG E 63"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W210 saloon / S210 estate (1995–2003; saloon to 2002)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Elegance",
+      "Avantgarde"
+     ],
+     "engines": [
+      "2.0 E200 Kompressor 163PS petrol",
+      "2.6 E240 170PS petrol",
+      "2.8 E280 204PS petrol",
+      "3.2 E320 224PS petrol",
+      "4.3 E430 279PS petrol",
+      "5.4 E55 AMG 354PS petrol",
+      "2.1 E200 CDI 115PS diesel",
+      "2.1 E220 CDI 143PS diesel",
+      "2.7 E270 CDI 170PS diesel",
+      "3.2 E320 CDI 197PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W211 saloon / S211 estate (2002–2009; estate from 2003; facelift 2006)",
+     "from": 2002,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Elegance",
+      "Avantgarde",
+      "Avantgarde SE",
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "1.8 E200 Kompressor 163PS petrol",
+      "1.8 E200 Kompressor 184PS petrol",
+      "2.6 E240 177PS petrol",
+      "3.0 E280 231PS petrol",
+      "3.2 E320 224PS petrol",
+      "3.5 E350 272PS petrol",
+      "5.0 E500 306PS petrol",
+      "5.5 E500 388PS petrol",
+      "5.4 E55 AMG 476PS petrol",
+      "6.2 E63 AMG 514PS petrol",
+      "2.1 E200 CDI 122PS diesel",
+      "2.1 E200 CDI 136PS diesel",
+      "2.1 E220 CDI 150PS diesel",
+      "2.1 E220 CDI 170PS diesel",
+      "2.7 E270 CDI 177PS diesel",
+      "3.0 E280 CDI 190PS diesel",
+      "3.2 E320 CDI 204PS diesel",
+      "3.0 E320 CDI 224PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W212 saloon / S212 estate / C207 coupe / A207 cabriolet (2009–2017; saloon/estate to 2016; coupe/cabriolet to 2017; facelift 2013)",
+     "from": 2009,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Elegance",
+      "Avantgarde",
+      "AMG Sport",
+      "Executive SE",
+      "Special Equipment",
+      "AMG Line",
+      "AMG Night Edition"
+     ],
+     "engines": [
+      "1.8 E200 CGI 184PS petrol",
+      "1.8 E250 CGI 204PS petrol",
+      "2.0 E200 184PS petrol",
+      "2.0 E250 211PS petrol",
+      "3.5 E350 CGI 292PS petrol",
+      "3.5 E350 306PS petrol",
+      "3.0 E400 333PS petrol",
+      "4.7 E500 408PS petrol",
+      "5.5 E63 AMG 525PS petrol",
+      "5.5 E63 AMG 557PS petrol",
+      "5.5 E63 S AMG 585PS petrol",
+      "2.1 E200 CDI 136PS diesel",
+      "2.1 E220 CDI 170PS diesel",
+      "2.1 E220 BlueTEC 170PS diesel",
+      "2.1 E250 CDI 204PS diesel",
+      "2.1 E300 BlueTEC Hybrid diesel 231PS hybrid",
+      "3.0 E350 CDI 231PS diesel",
+      "3.0 E350 CDI 265PS diesel",
+      "3.0 E350 BlueTEC 252PS diesel",
+      "3.0 E350 BlueTEC 258PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W213 saloon / S213 estate / C238 coupe / A238 cabriolet / All-Terrain (2016–2023; coupe/cabriolet from 2017; facelift 2020)",
+     "from": 2016,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "AMG Line Edition",
+      "AMG Line Night Edition",
+      "Exclusive Edition",
+      "All-Terrain"
+     ],
+     "engines": [
+      "2.0 E200 184PS petrol",
+      "1.5 E200 197PS mild-hybrid petrol",
+      "2.0 E300 245PS petrol",
+      "2.0 E300 258PS petrol",
+      "2.0 E350 299PS mild-hybrid petrol",
+      "3.0 E400 4MATIC 333PS petrol",
+      "3.0 E450 4MATIC 367PS mild-hybrid petrol",
+      "3.0 E43 AMG 401PS petrol",
+      "3.0 E53 AMG 435PS mild-hybrid petrol",
+      "4.0 E63 S AMG 612PS petrol",
+      "2.0 E350e 299PS plug-in-hybrid",
+      "2.0 E300e 320PS plug-in-hybrid",
+      "2.0 E220d 194PS diesel",
+      "2.0 E300d 245PS diesel",
+      "2.0 E300d 265PS mild-hybrid diesel",
+      "3.0 E350d 258PS diesel",
+      "2.9 E350d 286PS diesel",
+      "2.9 E400d 4MATIC 340PS diesel",
+      "2.0 E300de diesel 306PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "W214 saloon / S214 estate / All-Terrain (2023–present; estate and All-Terrain from 2024)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Exclusive Luxury",
+      "All-Terrain"
+     ],
+     "engines": [
+      "2.0 E200 204PS mild-hybrid petrol",
+      "2.0 E300e 313PS plug-in-hybrid",
+      "2.0 E400e 4MATIC 381PS plug-in-hybrid",
+      "3.0 E53 AMG Hybrid 4MATIC+ 612PS plug-in-hybrid",
+      "2.0 E220d 197PS mild-hybrid diesel",
+      "2.0 E220d 4MATIC All-Terrain 197PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "CL-Class",
+   "slug": "cl-class",
+   "aliases": [
+    "CL",
+    "CL500",
+    "CL600",
+    "CL55 AMG",
+    "CL63 AMG",
+    "CL65 AMG"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "C215 (1999–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "CL500",
+      "CL600",
+      "CL55 AMG",
+      "CL65 AMG"
+     ],
+     "engines": [
+      "5.0 CL500 306PS petrol",
+      "5.8 CL600 367PS petrol",
+      "5.5 CL600 500PS petrol",
+      "5.4 CL55 AMG 360PS petrol",
+      "5.4 CL55 AMG 500PS petrol",
+      "6.0 CL65 AMG 612PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "C216 (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "CL500",
+      "CL600",
+      "CL63 AMG",
+      "CL65 AMG",
+      "Grand Edition"
+     ],
+     "engines": [
+      "5.5 CL500 388PS petrol",
+      "4.7 CL500 435PS petrol",
+      "5.5 CL600 517PS petrol",
+      "6.2 CL63 AMG 525PS petrol",
+      "5.5 CL63 AMG 544PS petrol",
+      "6.0 CL65 AMG 612PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "S-Class",
+   "slug": "s-class",
+   "aliases": [
+    "S Class",
+    "S280",
+    "S320",
+    "S350",
+    "S400",
+    "S430",
+    "S500",
+    "S560",
+    "S580",
+    "S600",
+    "S650",
+    "S680",
+    "S300h",
+    "S350d",
+    "S400d",
+    "S500e",
+    "S560e",
+    "S580e",
+    "S320 CDI",
+    "S350 CDI",
+    "S400 CDI",
+    "S55 AMG",
+    "S63 AMG",
+    "S65 AMG",
+    "S-Class Coupe",
+    "S-Class Cabriolet",
+    "Maybach S-Class",
+    "Mercedes-Maybach S-Class",
+    "S500L",
+    "S350L",
+    "S450"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W220 (1998–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Standard wheelbase",
+      "Long wheelbase (L)"
+     ],
+     "engines": [
+      "2.8 S280 204PS petrol",
+      "3.2 S320 224PS petrol",
+      "3.7 S350 245PS petrol",
+      "4.3 S430 279PS petrol",
+      "5.0 S500 306PS petrol",
+      "5.8 S600 367PS petrol",
+      "5.5 S600 500PS petrol",
+      "5.4 S55 AMG 360PS petrol",
+      "5.4 S55 AMG 500PS petrol",
+      "6.0 S65 AMG 612PS petrol",
+      "3.2 S320 CDI 197PS diesel",
+      "3.2 S320 CDI 204PS diesel",
+      "4.0 S400 CDI 250PS diesel",
+      "4.0 S400 CDI 260PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "W221 (2005–2013)",
+     "from": 2005,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Standard wheelbase",
+      "Long wheelbase (L)",
+      "Grand Edition"
+     ],
+     "engines": [
+      "3.5 S350 272PS petrol",
+      "5.5 S500 388PS petrol",
+      "4.7 S500 435PS petrol",
+      "5.5 S600 517PS petrol",
+      "6.2 S63 AMG 525PS petrol",
+      "5.5 S63 AMG 544PS petrol",
+      "6.0 S65 AMG 612PS petrol",
+      "3.5 S400 Hybrid 299PS hybrid",
+      "2.1 S250 CDI 204PS diesel",
+      "3.0 S320 CDI 235PS diesel",
+      "3.0 S350 CDI 235PS diesel",
+      "3.0 S350 BlueTEC 258PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "W222 (2013–2020; facelift 2017)",
+     "from": 2013,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE Line",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "L Grand Edition",
+      "Executive",
+      "Mercedes-Maybach"
+     ],
+     "engines": [
+      "4.7 S500 455PS petrol",
+      "4.0 S560 469PS petrol",
+      "6.0 S600 530PS petrol",
+      "5.5 S63 AMG 585PS petrol",
+      "4.0 S63 AMG 612PS petrol",
+      "6.0 S65 AMG 630PS petrol",
+      "3.0 S500e 442PS plug-in-hybrid",
+      "3.0 S560e 476PS plug-in-hybrid",
+      "2.1 S300h diesel 231PS hybrid",
+      "3.0 S350 BlueTEC 258PS diesel",
+      "3.0 S350d 258PS diesel",
+      "2.9 S350d 286PS diesel",
+      "2.9 S400d 340PS diesel",
+      "4.0 Maybach S560 469PS petrol",
+      "6.0 Maybach S600 530PS petrol",
+      "6.0 Maybach S650 630PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "C217 S-Class Coupe / A217 S-Class Cabriolet (2014–2020; Cabriolet from 2016)",
+     "from": 2014,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus"
+     ],
+     "engines": [
+      "4.7 S500 455PS petrol",
+      "4.0 S560 469PS petrol",
+      "5.5 S63 AMG 585PS petrol",
+      "4.0 S63 AMG 612PS petrol",
+      "6.0 S65 AMG 630PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "W223 (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Executive",
+      "Mercedes-Maybach"
+     ],
+     "engines": [
+      "3.0 S500 4MATIC 435PS mild-hybrid petrol",
+      "3.0 S580e 510PS plug-in-hybrid",
+      "4.0 S63 AMG E Performance 802PS plug-in-hybrid",
+      "2.9 S350d 286PS mild-hybrid diesel",
+      "2.9 S400d 4MATIC 330PS mild-hybrid diesel",
+      "4.0 Maybach S580 4MATIC 503PS mild-hybrid petrol",
+      "6.0 Maybach S680 4MATIC 612PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "R-Class",
+   "slug": "r-class",
+   "aliases": [
+    "R Class",
+    "R280",
+    "R320",
+    "R350",
+    "R500",
+    "R320 CDI",
+    "R350 CDI"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2006,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "W251 (2006–2013; withdrawn from UK 2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "3.5 R350 272PS petrol",
+      "5.0 R500 306PS petrol",
+      "3.0 R280 CDI 190PS diesel",
+      "3.0 R320 CDI 224PS diesel",
+      "3.0 R350 CDI 265PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "SLK-Class",
+   "slug": "slk-class",
+   "aliases": [
+    "SLK",
+    "SLK200",
+    "SLK230",
+    "SLK250",
+    "SLK280",
+    "SLK300",
+    "SLK320",
+    "SLK350",
+    "SLK32 AMG",
+    "SLK55 AMG",
+    "SLK250 CDI"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "R170 (1996–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "SLK200 Kompressor",
+      "SLK230 Kompressor",
+      "SLK320",
+      "SLK32 AMG"
+     ],
+     "engines": [
+      "2.0 SLK200 Kompressor 163PS petrol",
+      "2.3 SLK230 Kompressor 197PS petrol",
+      "3.2 SLK320 218PS petrol",
+      "3.2 SLK32 AMG 354PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "R171 (2004–2011)",
+     "from": 2004,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Standard",
+      "Sport",
+      "2Look Edition",
+      "SLK55 AMG"
+     ],
+     "engines": [
+      "1.8 SLK200 Kompressor 163PS petrol",
+      "1.8 SLK200 Kompressor 184PS petrol",
+      "3.0 SLK280 231PS petrol",
+      "3.0 SLK300 231PS petrol",
+      "3.5 SLK350 272PS petrol",
+      "3.5 SLK350 305PS petrol",
+      "5.4 SLK55 AMG 360PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "R172 (2011–2016)",
+     "from": 2011,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Sport",
+      "SLK55 AMG"
+     ],
+     "engines": [
+      "1.8 SLK200 184PS petrol",
+      "1.8 SLK250 204PS petrol",
+      "3.5 SLK350 306PS petrol",
+      "5.5 SLK55 AMG 421PS petrol",
+      "2.1 SLK250 CDI 204PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "SLC-Class",
+   "slug": "slc-class",
+   "aliases": [
+    "SLC",
+    "SLC180",
+    "SLC200",
+    "SLC250d",
+    "SLC300",
+    "SLC43",
+    "Mercedes-AMG SLC43"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2016,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "R172 SLC (2016–2020)",
+     "from": 2016,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "RedArt Edition",
+      "Final Edition",
+      "SLC43 AMG"
+     ],
+     "engines": [
+      "1.6 SLC180 156PS petrol",
+      "2.0 SLC200 184PS petrol",
+      "2.0 SLC300 245PS petrol",
+      "3.0 SLC43 AMG 367PS petrol",
+      "3.0 SLC43 AMG 390PS petrol",
+      "2.1 SLC250d 204PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "SL",
+   "slug": "sl",
+   "aliases": [
+    "SL-Class",
+    "SL280",
+    "SL320",
+    "SL350",
+    "SL400",
+    "SL500",
+    "SL600",
+    "SL43",
+    "SL55",
+    "SL55 AMG",
+    "SL63",
+    "SL63 AMG",
+    "SL65 AMG",
+    "Mercedes-AMG SL",
+    "AMG SL 43",
+    "AMG SL 63"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "R129 (1989–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SL280",
+      "SL320",
+      "SL500",
+      "SL600"
+     ],
+     "engines": [
+      "2.8 SL280 204PS petrol",
+      "3.2 SL320 224PS petrol",
+      "5.0 SL500 306PS petrol",
+      "6.0 SL600 394PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "R230 (2001–2011)",
+     "from": 2001,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "SL350",
+      "SL500",
+      "SL600",
+      "SL55 AMG",
+      "SL63 AMG",
+      "SL65 AMG"
+     ],
+     "engines": [
+      "3.7 SL350 245PS petrol",
+      "3.5 SL350 272PS petrol",
+      "3.5 SL350 316PS petrol",
+      "5.0 SL500 306PS petrol",
+      "5.5 SL500 388PS petrol",
+      "5.5 SL600 500PS petrol",
+      "5.5 SL600 517PS petrol",
+      "5.4 SL55 AMG 500PS petrol",
+      "5.4 SL55 AMG 517PS petrol",
+      "6.2 SL63 AMG 525PS petrol",
+      "6.0 SL65 AMG 612PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "R231 (2012–2020; facelift 2016)",
+     "from": 2012,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "Grand Edition",
+      "SL63 AMG",
+      "SL65 AMG"
+     ],
+     "engines": [
+      "3.5 SL350 306PS petrol",
+      "3.0 SL400 367PS petrol",
+      "4.7 SL500 435PS petrol",
+      "4.7 SL500 455PS petrol",
+      "5.5 SL63 AMG 537PS petrol",
+      "5.5 SL63 AMG 585PS petrol",
+      "6.0 SL65 AMG 630PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "R232 Mercedes-AMG SL (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SL43",
+      "SL55 4MATIC+",
+      "SL63 4MATIC+",
+      "SL63 S E Performance"
+     ],
+     "engines": [
+      "2.0 SL43 AMG 381PS petrol",
+      "4.0 SL55 AMG 476PS petrol",
+      "4.0 SL63 AMG 585PS petrol",
+      "4.0 SL63 S AMG E Performance 816PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "SLR McLaren",
+   "slug": "slr-mclaren",
+   "aliases": [
+    "SLR",
+    "SLR McLaren Roadster",
+    "SLR 722",
+    "McLaren",
+    "McLaren SLR"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2004,
+    "to": 2009
+   },
+   "generations": [
+    {
+     "name": "C199 coupe / R199 roadster (2004–2009; roadster from 2007)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "SLR McLaren",
+      "722 Edition",
+      "Roadster"
+     ],
+     "engines": [
+      "5.4 SLR McLaren 626PS petrol",
+      "5.4 SLR 722 Edition 650PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "SLS AMG",
+   "slug": "sls-amg",
+   "aliases": [
+    "SLS",
+    "SLS AMG Roadster",
+    "SLS AMG GT",
+    "SLS Black Series"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2010,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "C197 coupe / R197 roadster (2010–2014; roadster from 2011)",
+     "from": 2010,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "SLS AMG",
+      "SLS AMG GT",
+      "SLS AMG Black Series"
+     ],
+     "engines": [
+      "6.2 SLS AMG 571PS petrol",
+      "6.2 SLS AMG GT 591PS petrol",
+      "6.2 SLS AMG Black Series 631PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "AMG GT",
+   "slug": "amg-gt",
+   "aliases": [
+    "Mercedes-AMG GT",
+    "AMG GT S",
+    "AMG GT C",
+    "AMG GT R",
+    "AMG GT Roadster",
+    "AMG GT 43",
+    "AMG GT 55",
+    "AMG GT 63",
+    "GT Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2015,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "C190 coupe / R190 roadster (2015–2021; roadster from 2017)",
+     "from": 2015,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "GT S",
+      "GT C",
+      "GT R",
+      "GT R Pro",
+      "Black Series"
+     ],
+     "engines": [
+      "4.0 AMG GT 462PS petrol",
+      "4.0 AMG GT 476PS petrol",
+      "4.0 AMG GT S 510PS petrol",
+      "4.0 AMG GT S 522PS petrol",
+      "4.0 AMG GT C 557PS petrol",
+      "4.0 AMG GT R 585PS petrol",
+      "4.0 AMG GT Black Series 730PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "C192 coupe (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "GT 43",
+      "GT 55 4MATIC+",
+      "GT 63 4MATIC+",
+      "GT 63 S E Performance"
+     ],
+     "engines": [
+      "2.0 AMG GT 43 421PS mild-hybrid petrol",
+      "4.0 AMG GT 55 4MATIC+ 476PS petrol",
+      "4.0 AMG GT 63 4MATIC+ 585PS petrol",
+      "4.0 AMG GT 63 S E Performance 816PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "AMG GT 4-Door Coupe",
+   "slug": "amg-gt-4-door-coupe",
+   "aliases": [
+    "Mercedes-AMG GT 4-Door",
+    "AMG GT 4 Door",
+    "AMG GT 43 4-Door",
+    "AMG GT 53",
+    "AMG GT 63 S 4-Door"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "X290 (2019–present)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GT 43",
+      "GT 53",
+      "GT 63",
+      "GT 63 S",
+      "GT 63 S E Performance",
+      "Night Edition"
+     ],
+     "engines": [
+      "3.0 AMG GT 43 4MATIC+ 367PS mild-hybrid petrol",
+      "3.0 AMG GT 53 4MATIC+ 435PS mild-hybrid petrol",
+      "4.0 AMG GT 63 4MATIC+ 585PS petrol",
+      "4.0 AMG GT 63 S 4MATIC+ 639PS petrol",
+      "4.0 AMG GT 63 S E Performance 843PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GLA",
+   "slug": "gla",
+   "aliases": [
+    "GLA-Class",
+    "GLA180",
+    "GLA200",
+    "GLA220",
+    "GLA250",
+    "GLA250e",
+    "GLA35",
+    "GLA45",
+    "GLA200d",
+    "GLA220d",
+    "GLA 200 CDI",
+    "Mercedes-AMG GLA35",
+    "Mercedes-AMG GLA45"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2014,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "X156 (2014–2020; facelift 2017)",
+     "from": 2014,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "Engineered by AMG",
+      "Urban Edition"
+     ],
+     "engines": [
+      "1.6 GLA180 122PS petrol",
+      "1.6 GLA200 156PS petrol",
+      "2.0 GLA250 4MATIC 211PS petrol",
+      "2.0 GLA45 AMG 360PS petrol",
+      "2.0 GLA45 AMG 381PS petrol",
+      "1.5 GLA180d 109PS diesel",
+      "2.1 GLA200 CDI 136PS diesel",
+      "2.1 GLA200d 136PS diesel",
+      "2.1 GLA220 CDI 4MATIC 170PS diesel",
+      "2.1 GLA220d 4MATIC 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "H247 (2020–present; facelift 2023)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "AMG Line Executive"
+     ],
+     "engines": [
+      "1.3 GLA180 136PS petrol",
+      "1.3 GLA200 163PS petrol",
+      "1.3 GLA200 163PS mild-hybrid petrol",
+      "2.0 GLA250 4MATIC 224PS petrol",
+      "1.3 GLA250e 218PS plug-in-hybrid",
+      "2.0 GLA35 AMG 306PS petrol",
+      "2.0 GLA45 S AMG 421PS petrol",
+      "2.0 GLA200d 150PS diesel",
+      "2.0 GLA220d 4MATIC 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GLB",
+   "slug": "glb",
+   "aliases": [
+    "GLB-Class",
+    "GLB200",
+    "GLB220d",
+    "GLB250",
+    "GLB35",
+    "GLB250+",
+    "GLB350",
+    "GLB Electric",
+    "Mercedes-AMG GLB35"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "X247 (2020–2025; facelift 2023)",
+     "from": 2020,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "AMG Line Executive"
+     ],
+     "engines": [
+      "1.3 GLB200 163PS petrol",
+      "1.3 GLB200 163PS mild-hybrid petrol",
+      "2.0 GLB250 4MATIC 224PS petrol",
+      "2.0 GLB35 AMG 306PS petrol",
+      "2.0 GLB200d 150PS diesel",
+      "2.0 GLB220d 4MATIC 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "X248 (GLB with EQ Technology) (2026–present; UK sales from 2026; hybrid versions to follow)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Sport Executive",
+      "AMG Line Executive",
+      "AMG Line Premium",
+      "AMG Line Premium Plus"
+     ],
+     "engines": [
+      "85kWh GLB250+ 272PS electric",
+      "85kWh GLB350 4MATIC 354PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GLC",
+   "slug": "glc",
+   "aliases": [
+    "GLC-Class",
+    "GLC Coupe",
+    "GLC220d",
+    "GLC250",
+    "GLC250d",
+    "GLC300",
+    "GLC300d",
+    "GLC300e",
+    "GLC300de",
+    "GLC350e",
+    "GLC400e",
+    "GLC400",
+    "GLC43",
+    "GLC63",
+    "GLC Electric",
+    "Mercedes-AMG GLC43",
+    "Mercedes-AMG GLC63",
+    "AMG GLC 43",
+    "AMG GLC 63"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2015,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "X253 / C253 Coupe (2015–2023; SUV to 2022; Coupe 2016-2023; facelift 2019)",
+     "from": 2015,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "AMG Line Edition",
+      "Night Edition"
+     ],
+     "engines": [
+      "2.0 GLC250 4MATIC 211PS petrol",
+      "2.0 GLC300 4MATIC 258PS petrol",
+      "3.0 GLC43 AMG 367PS petrol",
+      "3.0 GLC43 AMG 390PS petrol",
+      "4.0 GLC63 S AMG 510PS petrol",
+      "2.1 GLC220d 4MATIC 170PS diesel",
+      "2.0 GLC220d 4MATIC 194PS diesel",
+      "2.1 GLC250d 4MATIC 204PS diesel",
+      "2.0 GLC300d 4MATIC 245PS diesel",
+      "2.0 GLC350e 4MATIC 320PS plug-in-hybrid",
+      "2.0 GLC300e 4MATIC 320PS plug-in-hybrid",
+      "2.0 GLC300de 4MATIC diesel 306PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "X254 / C254 Coupe (2022–present; Coupe from 2023)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus"
+     ],
+     "engines": [
+      "2.0 GLC300 4MATIC 258PS mild-hybrid petrol",
+      "2.0 GLC300e 4MATIC 313PS plug-in-hybrid",
+      "2.0 GLC400e 4MATIC 381PS plug-in-hybrid",
+      "2.0 GLC43 AMG 421PS mild-hybrid petrol",
+      "2.0 GLC63 S AMG E Performance 680PS plug-in-hybrid",
+      "2.0 GLC220d 4MATIC 197PS mild-hybrid diesel",
+      "2.0 GLC300de 4MATIC diesel 335PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "GLC with EQ Technology (2026–present; UK deliveries from 2026)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Premier Edition"
+     ],
+     "engines": [
+      "94kWh GLC400 4MATIC 489PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "M-Class",
+   "slug": "m-class",
+   "aliases": [
+    "ML",
+    "M Class",
+    "ML270",
+    "ML280",
+    "ML300",
+    "ML320",
+    "ML350",
+    "ML400",
+    "ML420",
+    "ML430",
+    "ML500",
+    "ML55",
+    "ML63",
+    "ML250",
+    "ML270 CDI",
+    "ML320 CDI",
+    "ML350 CDI",
+    "ML250 BlueTEC",
+    "ML350 BlueTEC"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2000,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "W163 (1998–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Inspiration",
+      "Sport"
+     ],
+     "engines": [
+      "3.2 ML320 218PS petrol",
+      "3.7 ML350 235PS petrol",
+      "4.3 ML430 272PS petrol",
+      "5.0 ML500 292PS petrol",
+      "5.4 ML55 AMG 347PS petrol",
+      "2.7 ML270 CDI 163PS diesel",
+      "4.0 ML400 CDI 250PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W164 (2005–2011)",
+     "from": 2005,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Edition 10",
+      "Grand Edition"
+     ],
+     "engines": [
+      "3.5 ML350 272PS petrol",
+      "5.0 ML500 306PS petrol",
+      "5.5 ML500 388PS petrol",
+      "6.2 ML63 AMG 510PS petrol",
+      "3.0 ML280 CDI 190PS diesel",
+      "3.0 ML300 CDI 204PS diesel",
+      "3.0 ML320 CDI 224PS diesel",
+      "3.0 ML350 CDI 231PS diesel",
+      "4.0 ML420 CDI 306PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "W166 (2011–2015)",
+     "from": 2011,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "AMG Sport",
+      "Special Edition"
+     ],
+     "engines": [
+      "5.5 ML63 AMG 525PS petrol",
+      "2.1 ML250 BlueTEC 204PS diesel",
+      "3.0 ML350 BlueTEC 258PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GLE",
+   "slug": "gle",
+   "aliases": [
+    "GLE-Class",
+    "GLE Coupe",
+    "GLE250d",
+    "GLE300d",
+    "GLE350d",
+    "GLE350de",
+    "GLE400d",
+    "GLE400e",
+    "GLE450",
+    "GLE450d",
+    "GLE500e",
+    "GLE43",
+    "GLE53",
+    "GLE63",
+    "Mercedes-AMG GLE53",
+    "Mercedes-AMG GLE63",
+    "AMG GLE 53",
+    "AMG GLE 63"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2015,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W166 / C292 Coupe (2015–2019)",
+     "from": 2015,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "AMG Night Edition"
+     ],
+     "engines": [
+      "3.0 GLE43 AMG 367PS petrol",
+      "3.0 GLE43 AMG 390PS petrol",
+      "5.5 GLE63 AMG 557PS petrol",
+      "5.5 GLE63 S AMG 585PS petrol",
+      "3.0 GLE500e 4MATIC 442PS plug-in-hybrid",
+      "2.1 GLE250d 4MATIC 204PS diesel",
+      "3.0 GLE350d 4MATIC 258PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "W167 / C167 Coupe (2019–present; Coupe from 2020; facelift 2023)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Night Edition"
+     ],
+     "engines": [
+      "3.0 GLE450 4MATIC 367PS mild-hybrid petrol",
+      "3.0 GLE450 4MATIC 381PS mild-hybrid petrol",
+      "3.0 GLE53 AMG 435PS mild-hybrid petrol",
+      "4.0 GLE63 S AMG 612PS mild-hybrid petrol",
+      "2.0 GLE400e 4MATIC 381PS plug-in-hybrid",
+      "2.0 GLE300d 4MATIC 245PS diesel",
+      "2.0 GLE300d 4MATIC 272PS mild-hybrid diesel",
+      "2.9 GLE400d 4MATIC 330PS diesel",
+      "2.9 GLE450d 4MATIC 367PS mild-hybrid diesel",
+      "2.0 GLE350de 4MATIC diesel 320PS plug-in-hybrid",
+      "2.0 GLE350de 4MATIC diesel 333PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GL-Class",
+   "slug": "gl-class",
+   "aliases": [
+    "GL",
+    "GL320",
+    "GL350",
+    "GL500",
+    "GL63",
+    "GL350 CDI",
+    "GL350 BlueTEC"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2006,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "X164 (2006–2012)",
+     "from": 2006,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Grand Edition"
+     ],
+     "engines": [
+      "5.5 GL500 388PS petrol",
+      "3.0 GL320 CDI 224PS diesel",
+      "3.0 GL350 CDI 224PS diesel",
+      "3.0 GL350 CDI 265PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "X166 (2012–2015)",
+     "from": 2012,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Sport",
+      "GL63 AMG"
+     ],
+     "engines": [
+      "5.5 GL63 AMG 557PS petrol",
+      "3.0 GL350 BlueTEC 258PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GLS",
+   "slug": "gls",
+   "aliases": [
+    "GLS-Class",
+    "GLS350d",
+    "GLS400d",
+    "GLS450d",
+    "GLS580",
+    "GLS63",
+    "Maybach GLS",
+    "Mercedes-Maybach GLS"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2016,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "X166 GLS (2016–2019)",
+     "from": 2016,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "Designo Line",
+      "Grand Edition",
+      "GLS63 AMG"
+     ],
+     "engines": [
+      "5.5 GLS63 AMG 585PS petrol",
+      "3.0 GLS350d 4MATIC 258PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "X167 (2019–present; facelift 2023)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Executive",
+      "Mercedes-Maybach GLS 600"
+     ],
+     "engines": [
+      "4.0 GLS580 4MATIC 489PS mild-hybrid petrol",
+      "4.0 GLS63 AMG 612PS mild-hybrid petrol",
+      "4.0 Maybach GLS600 4MATIC 558PS mild-hybrid petrol",
+      "2.9 GLS400d 4MATIC 330PS diesel",
+      "2.9 GLS450d 4MATIC 367PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "G-Class",
+   "slug": "g-class",
+   "aliases": [
+    "G Class",
+    "G-Wagen",
+    "G Wagon",
+    "G350",
+    "G350d",
+    "G400d",
+    "G450d",
+    "G500",
+    "G580",
+    "G63",
+    "G63 AMG",
+    "Mercedes-AMG G63",
+    "G-Class Electric",
+    "AMG G 63",
+    "G450"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2011,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W463 (UK right-hand drive) (2011–2018; factory RHD reintroduced c.2011)",
+     "from": 2011,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "G350 BlueTEC",
+      "G350d",
+      "G63 AMG"
+     ],
+     "engines": [
+      "3.0 G350 BlueTEC 211PS diesel",
+      "3.0 G350d 245PS diesel",
+      "5.5 G63 AMG 544PS petrol",
+      "5.5 G63 AMG 571PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "W463 second generation / W465 (2018–present; update 2024 incl. electric G580)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Edition 1",
+      "G63 AMG"
+     ],
+     "engines": [
+      "4.0 G500 422PS petrol",
+      "3.0 G500 449PS mild-hybrid petrol",
+      "4.0 G63 AMG 585PS petrol",
+      "4.0 G63 AMG 585PS mild-hybrid petrol",
+      "2.9 G350d 286PS diesel",
+      "2.9 G400d 330PS diesel",
+      "3.0 G450d 367PS mild-hybrid diesel",
+      "116kWh G580 with EQ Technology 587PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EQA",
+   "slug": "eqa",
+   "aliases": [
+    "EQA250",
+    "EQA250+",
+    "EQA300",
+    "EQA350"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "H243 (2021–present; facelift 2024)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "AMG Line Executive"
+     ],
+     "engines": [
+      "66.5kWh EQA250 190PS electric",
+      "70.5kWh EQA250+ 190PS electric",
+      "66.5kWh EQA300 4MATIC 228PS electric",
+      "66.5kWh EQA350 4MATIC 292PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EQB",
+   "slug": "eqb",
+   "aliases": [
+    "EQB250",
+    "EQB250+",
+    "EQB300",
+    "EQB350"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "X243 (2022–present; facelift 2024)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "AMG Line Executive"
+     ],
+     "engines": [
+      "70.5kWh EQB250+ 190PS electric",
+      "66.5kWh EQB300 4MATIC 228PS electric",
+      "66.5kWh EQB350 4MATIC 292PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EQC",
+   "slug": "eqc",
+   "aliases": [
+    "EQC400",
+    "EQC 400 4MATIC"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2019,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "N293 (2019–2023)",
+     "from": 2019,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Edition 1886"
+     ],
+     "engines": [
+      "80kWh EQC400 4MATIC 408PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EQE",
+   "slug": "eqe",
+   "aliases": [
+    "EQE300",
+    "EQE350",
+    "EQE350+",
+    "EQE43",
+    "EQE53",
+    "EQE Saloon",
+    "Mercedes-AMG EQE",
+    "AMG EQE 43",
+    "AMG EQE 53"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "V295 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Exclusive Luxury"
+     ],
+     "engines": [
+      "90.6kWh EQE300 245PS electric",
+      "90.6kWh EQE350+ 292PS electric",
+      "90.6kWh EQE350 4MATIC 292PS electric",
+      "90.6kWh EQE43 AMG 476PS electric",
+      "90.6kWh EQE53 AMG 626PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EQE SUV",
+   "slug": "eqe-suv",
+   "aliases": [
+    "EQE SUV 300",
+    "EQE SUV 350",
+    "EQE SUV 500",
+    "Mercedes-AMG EQE SUV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "X294 (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus"
+     ],
+     "engines": [
+      "90.6kWh EQE300 SUV 245PS electric",
+      "90.6kWh EQE350+ SUV 292PS electric",
+      "90.6kWh EQE350 4MATIC SUV 292PS electric",
+      "90.6kWh EQE500 4MATIC SUV 408PS electric",
+      "90.6kWh EQE53 AMG SUV 626PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EQS",
+   "slug": "eqs",
+   "aliases": [
+    "EQS450",
+    "EQS450+",
+    "EQS580",
+    "EQS53",
+    "EQS Saloon",
+    "Mercedes-AMG EQS"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "V297 (2021–present; facelift 2024)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Exclusive Luxury"
+     ],
+     "engines": [
+      "107.8kWh EQS450+ 333PS electric",
+      "118kWh EQS450+ 360PS electric",
+      "107.8kWh EQS580 4MATIC 523PS electric",
+      "107.8kWh EQS53 AMG 658PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EQS SUV",
+   "slug": "eqs-suv",
+   "aliases": [
+    "EQS SUV 450",
+    "EQS SUV 580",
+    "Maybach EQS SUV",
+    "Mercedes-Maybach EQS SUV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "X296 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "AMG Line",
+      "AMG Line Premium",
+      "AMG Line Premium Plus",
+      "Mercedes-Maybach EQS 680 SUV"
+     ],
+     "engines": [
+      "108.4kWh EQS450 4MATIC SUV 360PS electric",
+      "108.4kWh EQS580 4MATIC SUV 544PS electric",
+      "108.4kWh Maybach EQS680 SUV 658PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "V-Class",
+   "slug": "v-class",
+   "aliases": [
+    "V Class",
+    "V220",
+    "V220 CDI",
+    "V220d",
+    "V250d",
+    "V300d",
+    "V230",
+    "V280",
+    "V300"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W638 V-Class (1996–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "Ambiente",
+      "Trend"
+     ],
+     "engines": [
+      "2.3 V230 143PS petrol",
+      "2.8 V280 174PS petrol",
+      "2.2 V220 CDI 122PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W447 (2015–present; facelifts 2019 and 2024; Long and Extra Long)",
+     "from": 2015,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "AMG Line",
+      "Exclusive",
+      "Premium"
+     ],
+     "engines": [
+      "2.1 V220d 163PS diesel",
+      "2.1 V250d 190PS diesel",
+      "2.0 V220d 163PS diesel",
+      "2.0 V250d 190PS diesel",
+      "2.0 V300d 239PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Viano",
+   "slug": "viano",
+   "aliases": [
+    "Viano CDI",
+    "Viano 2.2 CDI",
+    "Viano 3.0 CDI",
+    "Viano Ambiente",
+    "Viano Trend"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2004,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "W639 (2004–2014; facelift 2010; Compact, Long and Extra Long)",
+     "from": 2004,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "Ambiente",
+      "Trend"
+     ],
+     "engines": [
+      "2.1 CDI 109PS diesel",
+      "2.1 CDI 136PS diesel",
+      "2.1 CDI 150PS diesel",
+      "2.1 CDI 163PS diesel",
+      "3.0 CDI V6 204PS diesel",
+      "3.0 CDI V6 224PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "EQV",
+   "slug": "eqv",
+   "aliases": [
+    "EQV300",
+    "EQV 300"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W447 electric (2020–present)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7,
+        8
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "Sport Premium Plus",
+      "Premium",
+      "Exclusive"
+     ],
+     "engines": [
+      "90kWh EQV300 204PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "T-Class",
+   "slug": "t-class",
+   "aliases": [
+    "T 180",
+    "T 180 d",
+    "T180"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W420 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "T-Class"
+     ],
+     "engines": [
+      "1.3 T 180 131PS petrol",
+      "1.5 T 180 d 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "EQT",
+   "slug": "eqt",
+   "aliases": [
+    "EQT200",
+    "EQT 200"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W420 electric (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Advanced Plus",
+      "Premium",
+      "Premium Plus"
+     ],
+     "engines": [
+      "45kWh EQT200 122PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Marco Polo",
+   "slug": "marco-polo",
+   "aliases": [
+    "V-Class Marco Polo",
+    "Viano Marco Polo",
+    "Marco Polo Horizon",
+    "Marco Polo Activity"
+   ],
+   "vehicleType": "camper",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2004,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Viano Marco Polo (W639) (2004–2014)",
+     "from": 2004,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "camper",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Marco Polo"
+     ],
+     "engines": [
+      "2.1 CDI 150PS diesel",
+      "2.1 CDI 163PS diesel",
+      "3.0 CDI V6 224PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "V-Class Marco Polo (W447) (2015–present; V300d only from 2024)",
+     "from": 2015,
+     "to": null,
+     "bodies": [
+      {
+       "body": "camper",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "AMG Line",
+      "Premium",
+      "Marco Polo Horizon"
+     ],
+     "engines": [
+      "2.1 V220d 163PS diesel",
+      "2.1 V250d 190PS diesel",
+      "2.0 V250d 190PS diesel",
+      "2.0 V300d 239PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Vito Tourer",
+   "slug": "vito-tourer",
+   "aliases": [
+    "Vito Traveliner",
+    "Vito Tourer Pro",
+    "Vito Tourer Select",
+    "eVito Tourer",
+    "Vito Kombi"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2003,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W639 Vito Traveliner (2003–2014)",
+     "from": 2003,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "Traveliner",
+      "Compact",
+      "Long",
+      "Extra Long"
+     ],
+     "engines": [
+      "2.1 111 CDI 109PS diesel",
+      "2.1 113 CDI 136PS diesel",
+      "2.1 115 CDI 150PS diesel",
+      "2.1 116 CDI 163PS diesel",
+      "3.0 120 CDI 204PS diesel",
+      "3.0 122 CDI 224PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W447 Vito Tourer (2014–present; facelifts 2020 and 2024)",
+     "from": 2014,
+     "to": null,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "Pro",
+      "Select",
+      "Premium"
+     ],
+     "engines": [
+      "1.6 111 CDI 114PS diesel",
+      "2.1 114 CDI 136PS diesel",
+      "2.1 116 CDI 163PS diesel",
+      "2.1 119 CDI 190PS diesel",
+      "2.0 114 CDI 136PS diesel",
+      "2.0 116 CDI 163PS diesel",
+      "2.0 119 CDI 190PS diesel",
+      "90kWh eVito Tourer 204PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Vito",
+   "slug": "vito",
+   "aliases": [
+    "Vito Van",
+    "Vito Dualiner",
+    "Vito Crew Cab",
+    "eVito",
+    "109 CDI",
+    "110 CDI",
+    "111 CDI",
+    "113 CDI",
+    "114 CDI",
+    "115 CDI",
+    "116 CDI",
+    "119 CDI"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W638 (1996–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "SWB",
+      "LWB",
+      "Dualiner"
+     ],
+     "engines": [
+      "2.2 108 CDI 82PS diesel",
+      "2.2 110 CDI 102PS diesel",
+      "2.2 112 CDI 122PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W639 (2003–2014; facelift 2010)",
+     "from": 2003,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Compact",
+      "Long",
+      "Extra Long",
+      "Dualiner",
+      "Sport-X"
+     ],
+     "engines": [
+      "2.1 109 CDI 88PS diesel",
+      "2.1 109 CDI 95PS diesel",
+      "2.1 111 CDI 109PS diesel",
+      "2.1 113 CDI 136PS diesel",
+      "2.1 115 CDI 150PS diesel",
+      "2.1 116 CDI 163PS diesel",
+      "3.0 120 CDI 204PS diesel",
+      "3.0 122 CDI 224PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W447 (2014–present; facelifts 2020 and 2024; eVito from 2019)",
+     "from": 2014,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "Progressive",
+      "Premium",
+      "Sport",
+      "Pro",
+      "Select"
+     ],
+     "engines": [
+      "1.6 109 CDI 88PS diesel",
+      "1.6 111 CDI 114PS diesel",
+      "2.1 114 CDI 136PS diesel",
+      "2.1 116 CDI 163PS diesel",
+      "2.1 119 CDI 190PS diesel",
+      "2.0 110 CDI 102PS diesel",
+      "2.0 114 CDI 136PS diesel",
+      "2.0 116 CDI 163PS diesel",
+      "2.0 119 CDI 190PS diesel",
+      "41kWh eVito 116PS electric",
+      "60kWh eVito 116PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sprinter",
+   "slug": "sprinter",
+   "aliases": [
+    "Sprinter Van",
+    "eSprinter",
+    "208 CDI",
+    "211 CDI",
+    "213 CDI",
+    "214 CDI",
+    "216 CDI",
+    "311 CDI",
+    "313 CDI",
+    "314 CDI",
+    "315 CDI",
+    "316 CDI",
+    "317 CDI",
+    "319 CDI",
+    "413 CDI",
+    "416 CDI",
+    "513 CDI",
+    "516 CDI",
+    "519 CDI",
+    "Sprinter Dropside",
+    "Sprinter Tipper",
+    "Sprinter Luton"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "T1N (901-905) (1995–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "SWB",
+      "MWB",
+      "LWB",
+      "High Roof"
+     ],
+     "engines": [
+      "2.1 208 CDI 82PS diesel",
+      "2.1 211 CDI 109PS diesel",
+      "2.1 213 CDI 129PS diesel",
+      "2.7 216 CDI 156PS diesel",
+      "2.1 311 CDI 109PS diesel",
+      "2.1 313 CDI 129PS diesel",
+      "2.7 316 CDI 156PS diesel",
+      "2.1 413 CDI 129PS diesel",
+      "2.7 416 CDI 156PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "NCV3 (906) (2006–2018; facelift 2013)",
+     "from": 2006,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Compact",
+      "Medium",
+      "Long",
+      "Extra Long",
+      "High Roof",
+      "Super High Roof"
+     ],
+     "engines": [
+      "2.1 210 CDI 95PS diesel",
+      "2.1 211 CDI 109PS diesel",
+      "2.1 213 CDI 129PS diesel",
+      "2.1 215 CDI 150PS diesel",
+      "2.1 313 CDI 129PS diesel",
+      "2.1 316 CDI 163PS diesel",
+      "2.1 314 CDI 143PS diesel",
+      "3.0 318 CDI 184PS diesel",
+      "3.0 319 CDI 190PS diesel",
+      "2.1 513 CDI 129PS diesel",
+      "2.1 516 CDI 163PS diesel",
+      "3.0 519 CDI 190PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "VS30 (907/910) (2018–present; 2.0 OM654 diesels from 2023; new eSprinter 2024)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6
+       ]
+      }
+     ],
+     "trims": [
+      "Progressive",
+      "Premium",
+      "Pro",
+      "Select"
+     ],
+     "engines": [
+      "2.1 211 CDI 114PS diesel",
+      "2.1 214 CDI 143PS diesel",
+      "2.1 314 CDI 143PS diesel",
+      "2.1 316 CDI 163PS diesel",
+      "3.0 319 CDI 190PS diesel",
+      "2.0 315 CDI 150PS diesel",
+      "2.0 317 CDI 170PS diesel",
+      "2.0 319 CDI 190PS diesel",
+      "41kWh eSprinter 116PS electric",
+      "81kWh eSprinter 136PS electric",
+      "113kWh eSprinter 204PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Sprinter Minibus",
+   "slug": "sprinter-minibus",
+   "aliases": [
+    "Sprinter Traveliner",
+    "Sprinter Transfer",
+    "Sprinter Tourer",
+    "Sprinter Mobility",
+    "Sprinter City",
+    "Sprinter 17 Seater"
+   ],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "T1N Traveliner (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15
+       ]
+      }
+     ],
+     "trims": [
+      "Traveliner"
+     ],
+     "engines": [
+      "2.1 311 CDI 109PS diesel",
+      "2.1 313 CDI 129PS diesel",
+      "2.7 316 CDI 156PS diesel",
+      "2.7 416 CDI 156PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "NCV3 Traveliner / Transfer (2006–2018)",
+     "from": 2006,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "Traveliner",
+      "Transfer"
+     ],
+     "engines": [
+      "2.1 313 CDI 129PS diesel",
+      "2.1 316 CDI 163PS diesel",
+      "3.0 319 CDI 190PS diesel",
+      "2.1 516 CDI 163PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "VS30 Tourer / Transfer (2018–present)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "Tourer",
+      "Transfer",
+      "Mobility"
+     ],
+     "engines": [
+      "2.1 314 CDI 143PS diesel",
+      "2.1 316 CDI 163PS diesel",
+      "3.0 319 CDI 190PS diesel",
+      "2.0 317 CDI 170PS diesel",
+      "2.0 517 CDI 170PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Citan",
+   "slug": "citan",
+   "aliases": [
+    "Citan Van",
+    "Citan Dualiner",
+    "Citan Traveliner",
+    "eCitan",
+    "108 CDI Citan",
+    "109 CDI Citan",
+    "111 CDI Citan"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2012,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W415 (2012–2021)",
+     "from": 2012,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Compact",
+      "Long",
+      "Extra Long",
+      "Dualiner",
+      "Traveliner"
+     ],
+     "engines": [
+      "1.2 112 114PS petrol",
+      "1.5 108 CDI 75PS diesel",
+      "1.5 109 CDI 90PS diesel",
+      "1.5 109 CDI 95PS diesel",
+      "1.5 111 CDI 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "W420 (2021–present; eCitan from 2022)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Progressive",
+      "Premium",
+      "Pro"
+     ],
+     "engines": [
+      "1.3 113 131PS petrol",
+      "1.3 110 102PS petrol",
+      "1.5 110 CDI 95PS diesel",
+      "1.5 112 CDI 116PS diesel",
+      "45kWh eCitan 122PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "X-Class",
+   "slug": "x-class",
+   "aliases": [
+    "X Class",
+    "X220d",
+    "X250d",
+    "X350d"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2018,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "W470 (2018–2020)",
+     "from": 2018,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "Progressive",
+      "Power"
+     ],
+     "engines": [
+      "2.3 X220d 163PS diesel",
+      "2.3 X250d 190PS diesel",
+      "3.0 X350d 258PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    }
+   ]
+  }
+ ]
+}

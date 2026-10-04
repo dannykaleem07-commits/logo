@@ -1,0 +1,2743 @@
+{
+ "make": "Audi",
+ "slug": "audi",
+ "dvlaNames": [
+  "AUDI"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "A1",
+   "slug": "a1",
+   "aliases": [
+    "A1 Sportback",
+    "S1",
+    "S1 Sportback"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2010,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "8X (2010–2018)",
+     "from": 2010,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "S line",
+      "S line Style Edition",
+      "Black Edition",
+      "Amplified Edition",
+      "S1",
+      "S1 Competition"
+     ],
+     "engines": [
+      "1.0 TFSI 95PS petrol",
+      "1.2 TFSI 86PS petrol",
+      "1.4 TFSI 122PS petrol",
+      "1.4 TFSI CoD 140PS petrol",
+      "1.4 TFSI CoD 150PS petrol",
+      "1.4 TFSI 185PS petrol",
+      "1.8 TFSI 192PS petrol",
+      "2.0 TFSI 231PS petrol",
+      "1.4 TDI 90PS diesel",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "1.6 TDI 116PS diesel",
+      "2.0 TDI 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "GB (2018–present)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Technik",
+      "Sport",
+      "S line",
+      "S line Competition",
+      "Black Edition",
+      "Vorsprung"
+     ],
+     "engines": [
+      "1.0 TFSI 95PS petrol",
+      "1.0 TFSI 110PS petrol",
+      "1.0 TFSI 116PS petrol",
+      "1.5 TFSI 150PS petrol",
+      "2.0 TFSI 200PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "A2",
+   "slug": "a2",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "8Z (2000–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport"
+     ],
+     "engines": [
+      "1.4 75PS petrol",
+      "1.6 FSI 110PS petrol",
+      "1.4 TDI 75PS diesel",
+      "1.4 TDI 90PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "A3",
+   "slug": "a3",
+   "aliases": [
+    "A3 Sportback",
+    "A3 Saloon",
+    "A3 Cabriolet",
+    "A3 allstreet",
+    "A3 e-tron",
+    "A3 TFSI e",
+    "S3",
+    "S3 Sportback",
+    "S3 Saloon",
+    "RS3",
+    "RS3 Sportback",
+    "RS3 Saloon"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "8L (1996–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "S3"
+     ],
+     "engines": [
+      "1.6 102PS petrol",
+      "1.8 20v 125PS petrol",
+      "1.8 T 150PS petrol",
+      "1.8 T 180PS petrol",
+      "1.8 T 210PS petrol",
+      "1.8 T 225PS petrol",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 110PS diesel",
+      "1.9 TDI 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "8P (2003–2013)",
+     "from": 2003,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "S line",
+      "S line Special Edition",
+      "Black Edition",
+      "S3",
+      "RS3"
+     ],
+     "engines": [
+      "1.2 TFSI 105PS petrol",
+      "1.4 TFSI 125PS petrol",
+      "1.6 102PS petrol",
+      "1.6 FSI 115PS petrol",
+      "1.8 TFSI 160PS petrol",
+      "2.0 FSI 150PS petrol",
+      "2.0 TFSI 200PS petrol",
+      "3.2 V6 250PS petrol",
+      "2.0 TFSI 265PS petrol",
+      "2.5 TFSI 340PS petrol",
+      "1.6 TDI 90PS diesel",
+      "1.6 TDI 105PS diesel",
+      "1.9 TDI 105PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "8V (2012–2020)",
+     "from": 2012,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Technik",
+      "Sport",
+      "S line",
+      "Black Edition",
+      "S3",
+      "RS3"
+     ],
+     "engines": [
+      "1.0 TFSI 116PS petrol",
+      "1.2 TFSI 105PS petrol",
+      "1.2 TFSI 110PS petrol",
+      "1.4 TFSI 125PS petrol",
+      "1.4 TFSI CoD 140PS petrol",
+      "1.4 TFSI CoD 150PS petrol",
+      "1.5 TFSI 150PS petrol",
+      "1.8 TFSI 180PS petrol",
+      "2.0 TFSI 190PS petrol",
+      "2.0 TFSI 300PS petrol",
+      "2.0 TFSI 310PS petrol",
+      "2.5 TFSI 367PS petrol",
+      "2.5 TFSI 400PS petrol",
+      "1.4 TFSI e-tron 204PS plug-in-hybrid",
+      "1.6 TDI 105PS diesel",
+      "1.6 TDI 110PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "8Y (2020–present)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Technik",
+      "Sport",
+      "S line",
+      "Edition 1",
+      "Black Edition",
+      "Vorsprung",
+      "Launch Edition",
+      "Carbon Black",
+      "S3",
+      "RS3"
+     ],
+     "engines": [
+      "1.0 TFSI 110PS petrol",
+      "1.5 TFSI 150PS petrol",
+      "1.5 TFSI 150PS mild-hybrid petrol",
+      "2.0 TFSI 190PS petrol",
+      "2.0 TFSI 310PS petrol",
+      "2.0 TFSI 333PS petrol",
+      "2.5 TFSI 400PS petrol",
+      "1.4 TFSI e 204PS plug-in-hybrid",
+      "1.4 TFSI e 245PS plug-in-hybrid",
+      "1.5 TFSI e 204PS plug-in-hybrid",
+      "1.5 TFSI e 272PS plug-in-hybrid",
+      "2.0 TDI 116PS diesel",
+      "2.0 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "A4",
+   "slug": "a4",
+   "aliases": [
+    "A4 Avant",
+    "A4 Saloon",
+    "A4 allroad",
+    "A4 Cabriolet",
+    "S4",
+    "S4 Avant",
+    "RS4",
+    "RS4 Avant"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "B5 (1995–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "S4",
+      "RS4"
+     ],
+     "engines": [
+      "1.6 101PS petrol",
+      "1.8 20v 125PS petrol",
+      "1.8 T 150PS petrol",
+      "2.4 V6 165PS petrol",
+      "2.8 V6 193PS petrol",
+      "2.7 V6 biturbo 265PS petrol",
+      "2.7 V6 biturbo 380PS petrol",
+      "1.9 TDI 110PS diesel",
+      "1.9 TDI 115PS diesel",
+      "2.5 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B6 (2001–2005; Cabriolet 2002–2006)",
+     "from": 2001,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "S line",
+      "S4"
+     ],
+     "engines": [
+      "1.6 102PS petrol",
+      "2.0 130PS petrol",
+      "2.0 FSI 150PS petrol",
+      "1.8 T 150PS petrol",
+      "1.8 T 163PS petrol",
+      "1.8 T 190PS petrol",
+      "2.4 V6 170PS petrol",
+      "3.0 V6 220PS petrol",
+      "4.2 V8 344PS petrol",
+      "1.9 TDI 100PS diesel",
+      "1.9 TDI 130PS diesel",
+      "2.5 TDI 155PS diesel",
+      "2.5 TDI 163PS diesel",
+      "2.5 TDI 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B7 (2004–2008; Cabriolet 2006–2009)",
+     "from": 2005,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "S line",
+      "Special Edition",
+      "DTM Edition",
+      "S4",
+      "RS4"
+     ],
+     "engines": [
+      "1.6 102PS petrol",
+      "2.0 130PS petrol",
+      "1.8 T 163PS petrol",
+      "2.0 TFSI 200PS petrol",
+      "3.2 FSI 255PS petrol",
+      "4.2 V8 344PS petrol",
+      "4.2 FSI 420PS petrol",
+      "1.9 TDI 115PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.7 TDI 180PS diesel",
+      "3.0 TDI 204PS diesel",
+      "3.0 TDI 233PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B8 (2008–2015; allroad to 2016)",
+     "from": 2008,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Technik",
+      "Technik",
+      "Executive SE",
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Ultra",
+      "allroad quattro",
+      "S4",
+      "RS4"
+     ],
+     "engines": [
+      "1.8 TFSI 120PS petrol",
+      "1.8 TFSI 160PS petrol",
+      "1.8 TFSI 170PS petrol",
+      "2.0 TFSI 180PS petrol",
+      "2.0 TFSI 211PS petrol",
+      "2.0 TFSI 225PS petrol",
+      "3.2 FSI 265PS petrol",
+      "3.0 TFSI 333PS petrol",
+      "4.2 FSI 450PS petrol",
+      "2.0 TDI 120PS diesel",
+      "2.0 TDI 136PS diesel",
+      "2.0 TDI 143PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 163PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.0 TDI 177PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.7 TDI 190PS diesel",
+      "3.0 TDI 240PS diesel",
+      "3.0 TDI 245PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B9 (2015–2024)",
+     "from": 2015,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Technik",
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "Edition 1",
+      "allroad quattro",
+      "S4",
+      "RS4",
+      "Carbon Black"
+     ],
+     "engines": [
+      "1.4 TFSI 150PS petrol",
+      "2.0 TFSI 150PS petrol",
+      "2.0 TFSI 190PS petrol",
+      "2.0 TFSI 204PS petrol",
+      "2.0 TFSI 245PS petrol",
+      "2.0 TFSI 252PS petrol",
+      "2.0 TFSI 265PS petrol",
+      "3.0 TFSI 354PS petrol",
+      "2.9 TFSI 450PS petrol",
+      "2.0 TDI 122PS diesel",
+      "2.0 TDI 136PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.0 TDI 163PS mild-hybrid diesel",
+      "2.0 TDI 204PS mild-hybrid diesel",
+      "3.0 TDI 218PS diesel",
+      "3.0 TDI 272PS diesel",
+      "3.0 TDI 286PS mild-hybrid diesel",
+      "3.0 TDI 347PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "A5",
+   "slug": "a5",
+   "aliases": [
+    "A5 Coupe",
+    "A5 Sportback",
+    "A5 Cabriolet",
+    "A5 Saloon",
+    "A5 Avant",
+    "S5",
+    "S5 Sportback",
+    "S5 Avant",
+    "RS5",
+    "RS5 Sportback"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2007,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "8T (2007–2016)",
+     "from": 2007,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Technik",
+      "Sport",
+      "S line",
+      "S line Special Edition",
+      "Black Edition",
+      "Black Edition Plus",
+      "S5",
+      "RS5"
+     ],
+     "engines": [
+      "1.8 TFSI 160PS petrol",
+      "1.8 TFSI 170PS petrol",
+      "1.8 TFSI 177PS petrol",
+      "2.0 TFSI 180PS petrol",
+      "2.0 TFSI 211PS petrol",
+      "2.0 TFSI 225PS petrol",
+      "3.2 FSI 265PS petrol",
+      "4.2 FSI 354PS petrol",
+      "3.0 TFSI 333PS petrol",
+      "4.2 FSI 450PS petrol",
+      "2.0 TDI 143PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.0 TDI 177PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.7 TDI 190PS diesel",
+      "3.0 TDI 240PS diesel",
+      "3.0 TDI 245PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F5 (2016–2024)",
+     "from": 2016,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Technik",
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "Edition 1",
+      "S5",
+      "RS5",
+      "Carbon Black"
+     ],
+     "engines": [
+      "1.4 TFSI 150PS petrol",
+      "2.0 TFSI 150PS petrol",
+      "2.0 TFSI 190PS petrol",
+      "2.0 TFSI 204PS petrol",
+      "2.0 TFSI 245PS petrol",
+      "2.0 TFSI 252PS petrol",
+      "2.0 TFSI 265PS petrol",
+      "3.0 TFSI 354PS petrol",
+      "2.9 TFSI 450PS petrol",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.0 TDI 163PS mild-hybrid diesel",
+      "2.0 TDI 204PS mild-hybrid diesel",
+      "3.0 TDI 218PS diesel",
+      "3.0 TDI 286PS diesel",
+      "3.0 TDI 347PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "B10 (2024–present; replaces A4)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Edition 1",
+      "S5"
+     ],
+     "engines": [
+      "2.0 TFSI 150PS petrol",
+      "2.0 TFSI 204PS petrol",
+      "3.0 TFSI 367PS mild-hybrid petrol",
+      "2.0 TDI 204PS mild-hybrid diesel",
+      "2.0 TFSI e-hybrid 299PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "A6",
+   "slug": "a6",
+   "aliases": [
+    "A6 Saloon",
+    "A6 Avant",
+    "A6 allroad",
+    "allroad",
+    "allroad quattro",
+    "S6",
+    "S6 Avant",
+    "RS6",
+    "RS6 Avant"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "C5 (1997–2004; allroad to 2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "S line",
+      "allroad quattro",
+      "S6",
+      "RS6"
+     ],
+     "engines": [
+      "1.8 T 150PS petrol",
+      "2.0 130PS petrol",
+      "2.4 V6 170PS petrol",
+      "2.7 V6 biturbo 250PS petrol",
+      "2.8 V6 193PS petrol",
+      "3.0 V6 220PS petrol",
+      "4.2 V8 300PS petrol",
+      "4.2 V8 340PS petrol",
+      "4.2 V8 biturbo 450PS petrol",
+      "1.9 TDI 130PS diesel",
+      "2.5 TDI 155PS diesel",
+      "2.5 TDI 163PS diesel",
+      "2.5 TDI 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C6 (2004–2011)",
+     "from": 2004,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "S line",
+      "Le Mans",
+      "Special Edition",
+      "S line Special Edition",
+      "Black Edition",
+      "TDIe",
+      "allroad quattro",
+      "S6",
+      "RS6"
+     ],
+     "engines": [
+      "2.0 TFSI 170PS petrol",
+      "2.4 V6 177PS petrol",
+      "2.8 FSI 210PS petrol",
+      "3.2 FSI 255PS petrol",
+      "3.0 TFSI 290PS petrol",
+      "4.2 V8 335PS petrol",
+      "4.2 FSI 350PS petrol",
+      "5.2 FSI V10 435PS petrol",
+      "5.0 TFSI V10 580PS petrol",
+      "2.0 TDI 136PS diesel",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.7 TDI 180PS diesel",
+      "2.7 TDI 190PS diesel",
+      "3.0 TDI 225PS diesel",
+      "3.0 TDI 233PS diesel",
+      "3.0 TDI 240PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C7 (2011–2018)",
+     "from": 2011,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Executive",
+      "Sport",
+      "S line",
+      "Black Edition",
+      "allroad quattro",
+      "S6",
+      "RS6"
+     ],
+     "engines": [
+      "2.0 TFSI 180PS petrol",
+      "2.0 TFSI 252PS petrol",
+      "2.8 FSI 204PS petrol",
+      "3.0 TFSI 300PS petrol",
+      "3.0 TFSI 333PS petrol",
+      "4.0 TFSI 420PS petrol",
+      "4.0 TFSI 450PS petrol",
+      "4.0 TFSI 560PS petrol",
+      "4.0 TFSI 605PS petrol",
+      "2.0 TFSI hybrid 245PS hybrid",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 177PS diesel",
+      "2.0 TDI 190PS diesel",
+      "3.0 TDI 204PS diesel",
+      "3.0 TDI 218PS diesel",
+      "3.0 TDI 245PS diesel",
+      "3.0 TDI 272PS diesel",
+      "3.0 BiTDI 313PS diesel",
+      "3.0 BiTDI 320PS diesel",
+      "3.0 BiTDI 326PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "C8 (2018–2025)",
+     "from": 2018,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "Launch Edition",
+      "allroad quattro",
+      "S6",
+      "RS6",
+      "Carbon Black"
+     ],
+     "engines": [
+      "2.0 TFSI 204PS mild-hybrid petrol",
+      "2.0 TFSI 245PS mild-hybrid petrol",
+      "2.0 TFSI 265PS mild-hybrid petrol",
+      "3.0 TFSI 340PS mild-hybrid petrol",
+      "4.0 TFSI 600PS mild-hybrid petrol",
+      "4.0 TFSI 630PS mild-hybrid petrol",
+      "2.0 TFSI e 299PS plug-in-hybrid",
+      "2.0 TFSI e 367PS plug-in-hybrid",
+      "2.0 TDI 204PS mild-hybrid diesel",
+      "3.0 TDI 231PS mild-hybrid diesel",
+      "3.0 TDI 286PS mild-hybrid diesel",
+      "3.0 TDI 349PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "C9 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Edition 1"
+     ],
+     "engines": [
+      "2.0 TFSI 204PS mild-hybrid petrol",
+      "3.0 TFSI 367PS mild-hybrid petrol",
+      "2.0 TDI 204PS mild-hybrid diesel",
+      "2.0 TFSI e-hybrid 299PS plug-in-hybrid",
+      "2.0 TFSI e-hybrid 367PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "A6 e-tron",
+   "slug": "a6-e-tron",
+   "aliases": [
+    "A6 Sportback e-tron",
+    "A6 Avant e-tron",
+    "S6 e-tron",
+    "S6 Sportback e-tron",
+    "S6 Avant e-tron"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Edition 1",
+      "S6 e-tron"
+     ],
+     "engines": [
+      "83kWh 286PS electric",
+      "100kWh 367PS electric",
+      "100kWh 428PS electric",
+      "100kWh 503PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "A7",
+   "slug": "a7",
+   "aliases": [
+    "A7 Sportback",
+    "S7",
+    "S7 Sportback",
+    "RS7",
+    "RS7 Sportback"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2010,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "4G (2010–2018)",
+     "from": 2010,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Executive",
+      "S line",
+      "Black Edition",
+      "Competition",
+      "S7",
+      "RS7"
+     ],
+     "engines": [
+      "2.8 FSI 204PS petrol",
+      "3.0 TFSI 300PS petrol",
+      "3.0 TFSI 333PS petrol",
+      "4.0 TFSI 420PS petrol",
+      "4.0 TFSI 450PS petrol",
+      "4.0 TFSI 560PS petrol",
+      "4.0 TFSI 605PS petrol",
+      "3.0 TDI 204PS diesel",
+      "3.0 TDI 218PS diesel",
+      "3.0 TDI 245PS diesel",
+      "3.0 TDI 272PS diesel",
+      "3.0 BiTDI 313PS diesel",
+      "3.0 BiTDI 320PS diesel",
+      "3.0 BiTDI 326PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "4K (2018–2025)",
+     "from": 2018,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "S7",
+      "RS7",
+      "Carbon Black"
+     ],
+     "engines": [
+      "2.0 TFSI 245PS mild-hybrid petrol",
+      "3.0 TFSI 340PS mild-hybrid petrol",
+      "4.0 TFSI 600PS mild-hybrid petrol",
+      "4.0 TFSI 630PS mild-hybrid petrol",
+      "2.0 TFSI e 299PS plug-in-hybrid",
+      "2.0 TFSI e 367PS plug-in-hybrid",
+      "2.0 TDI 204PS mild-hybrid diesel",
+      "3.0 TDI 231PS mild-hybrid diesel",
+      "3.0 TDI 286PS mild-hybrid diesel",
+      "3.0 TDI 349PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "A8",
+   "slug": "a8",
+   "aliases": [
+    "A8 L",
+    "A8 LWB",
+    "S8"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "D2 (1994–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "L",
+      "S8"
+     ],
+     "engines": [
+      "2.8 V6 193PS petrol",
+      "3.7 V8 230PS petrol",
+      "4.2 V8 310PS petrol",
+      "4.2 V8 360PS petrol",
+      "6.0 W12 420PS petrol",
+      "2.5 TDI 180PS diesel",
+      "3.3 TDI 225PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "D3 (2003–2010)",
+     "from": 2003,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "Executive",
+      "L",
+      "S8"
+     ],
+     "engines": [
+      "3.0 V6 220PS petrol",
+      "3.2 FSI 260PS petrol",
+      "3.7 V8 280PS petrol",
+      "4.2 V8 335PS petrol",
+      "4.2 FSI 350PS petrol",
+      "6.0 W12 450PS petrol",
+      "5.2 FSI V10 450PS petrol",
+      "3.0 TDI 233PS diesel",
+      "4.0 TDI 275PS diesel",
+      "4.2 TDI 326PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "D4 (2010–2017)",
+     "from": 2010,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Executive",
+      "Sport",
+      "Sport Executive",
+      "Black Edition",
+      "L",
+      "S8",
+      "S8 plus"
+     ],
+     "engines": [
+      "3.0 TFSI 290PS petrol",
+      "3.0 TFSI 310PS petrol",
+      "4.2 FSI 372PS petrol",
+      "4.0 TFSI 435PS petrol",
+      "6.3 W12 500PS petrol",
+      "4.0 TFSI 520PS petrol",
+      "4.0 TFSI 605PS petrol",
+      "2.0 TFSI hybrid 245PS hybrid",
+      "3.0 TDI 250PS diesel",
+      "3.0 TDI 258PS diesel",
+      "4.2 TDI 350PS diesel",
+      "4.2 TDI 385PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "D5 (2018–present)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "L",
+      "S8"
+     ],
+     "engines": [
+      "3.0 TFSI 340PS mild-hybrid petrol",
+      "4.0 TFSI 460PS mild-hybrid petrol",
+      "4.0 TFSI 571PS mild-hybrid petrol",
+      "3.0 TFSI e 449PS plug-in-hybrid",
+      "3.0 TDI 286PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Q2",
+   "slug": "q2",
+   "aliases": [
+    "SQ2"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2016,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "GA (2016–present)",
+     "from": 2016,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Technik",
+      "Sport",
+      "S line",
+      "Edition #1",
+      "Black Edition",
+      "Vorsprung",
+      "SQ2"
+     ],
+     "engines": [
+      "1.0 TFSI 110PS petrol",
+      "1.0 TFSI 116PS petrol",
+      "1.4 TFSI CoD 150PS petrol",
+      "1.5 TFSI 150PS petrol",
+      "2.0 TFSI 190PS petrol",
+      "2.0 TFSI 300PS petrol",
+      "1.6 TDI 116PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Q3",
+   "slug": "q3",
+   "aliases": [
+    "Q3 Sportback",
+    "RS Q3",
+    "RS Q3 Sportback"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2011,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "8U (2011–2018)",
+     "from": 2011,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "S line",
+      "S line Plus",
+      "Black Edition",
+      "RS Q3",
+      "RS Q3 performance"
+     ],
+     "engines": [
+      "1.4 TFSI 150PS petrol",
+      "2.0 TFSI 170PS petrol",
+      "2.0 TFSI 180PS petrol",
+      "2.0 TFSI 220PS petrol",
+      "2.5 TFSI 310PS petrol",
+      "2.5 TFSI 340PS petrol",
+      "2.5 TFSI 367PS petrol",
+      "2.0 TDI 140PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 177PS diesel",
+      "2.0 TDI 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F3 (2018–2025)",
+     "from": 2018,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Technik",
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "Edition 1",
+      "RS Q3"
+     ],
+     "engines": [
+      "1.5 TFSI 150PS petrol",
+      "1.5 TFSI 150PS mild-hybrid petrol",
+      "2.0 TFSI 190PS petrol",
+      "2.0 TFSI 230PS petrol",
+      "2.0 TFSI 245PS petrol",
+      "2.5 TFSI 400PS petrol",
+      "1.4 TFSI e 245PS plug-in-hybrid",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.0 TDI 200PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Edition 1"
+     ],
+     "engines": [
+      "1.5 TFSI 150PS mild-hybrid petrol",
+      "2.0 TFSI 265PS petrol",
+      "1.5 TFSI e-hybrid 272PS plug-in-hybrid",
+      "2.0 TDI 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Q4 e-tron",
+   "slug": "q4-e-tron",
+   "aliases": [
+    "Q4 Sportback e-tron",
+    "Q4 e-tron Sportback"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "F4 (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Edition 1",
+      "Black Edition",
+      "Vorsprung"
+     ],
+     "engines": [
+      "55kWh 170PS electric",
+      "82kWh 204PS electric",
+      "82kWh 299PS electric",
+      "82kWh 286PS electric",
+      "82kWh 285PS electric",
+      "82kWh 340PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Q5",
+   "slug": "q5",
+   "aliases": [
+    "Q5 Sportback",
+    "Q5 TFSI e",
+    "SQ5",
+    "SQ5 Sportback"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2008,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "8R (2008–2016)",
+     "from": 2008,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE Technik",
+      "S line",
+      "S line Plus",
+      "Black Edition",
+      "SQ5",
+      "SQ5 plus"
+     ],
+     "engines": [
+      "2.0 TFSI 180PS petrol",
+      "2.0 TFSI 211PS petrol",
+      "2.0 TFSI 225PS petrol",
+      "3.2 FSI 270PS petrol",
+      "2.0 TFSI hybrid 245PS hybrid",
+      "2.0 TDI 143PS diesel",
+      "2.0 TDI 150PS diesel",
+      "2.0 TDI 170PS diesel",
+      "2.0 TDI 177PS diesel",
+      "2.0 TDI 190PS diesel",
+      "3.0 TDI 240PS diesel",
+      "3.0 TDI 245PS diesel",
+      "3.0 TDI 258PS diesel",
+      "3.0 BiTDI 313PS diesel",
+      "3.0 BiTDI 326PS diesel",
+      "3.0 BiTDI 340PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "FY (2017–2024)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Technik",
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "Edition 1",
+      "SQ5"
+     ],
+     "engines": [
+      "2.0 TFSI 252PS petrol",
+      "2.0 TFSI 204PS mild-hybrid petrol",
+      "2.0 TFSI 245PS mild-hybrid petrol",
+      "2.0 TFSI 265PS mild-hybrid petrol",
+      "3.0 TFSI 354PS petrol",
+      "2.0 TFSI e 299PS plug-in-hybrid",
+      "2.0 TFSI e 367PS plug-in-hybrid",
+      "2.0 TDI 163PS diesel",
+      "2.0 TDI 190PS diesel",
+      "2.0 TDI 204PS mild-hybrid diesel",
+      "3.0 TDI 286PS diesel",
+      "3.0 TDI 341PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Edition 1",
+      "Black Edition",
+      "SQ5"
+     ],
+     "engines": [
+      "2.0 TFSI 204PS mild-hybrid petrol",
+      "3.0 TFSI 367PS mild-hybrid petrol",
+      "2.0 TFSI e-hybrid 299PS plug-in-hybrid",
+      "2.0 TFSI e-hybrid 367PS plug-in-hybrid",
+      "2.0 TDI 204PS mild-hybrid diesel"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Q6 e-tron",
+   "slug": "q6-e-tron",
+   "aliases": [
+    "Q6 Sportback e-tron",
+    "SQ6 e-tron",
+    "SQ6 Sportback e-tron"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Edition 1",
+      "Black Edition",
+      "SQ6"
+     ],
+     "engines": [
+      "83kWh 252PS electric",
+      "100kWh 306PS electric",
+      "100kWh 387PS electric",
+      "100kWh 517PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Q7",
+   "slug": "q7",
+   "aliases": [
+    "SQ7",
+    "Q7 e-tron",
+    "Q7 TFSI e"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2006,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "4L (2006–2015)",
+     "from": 2006,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "S line",
+      "S line Plus",
+      "Black Edition"
+     ],
+     "engines": [
+      "3.6 FSI 280PS petrol",
+      "4.2 FSI 350PS petrol",
+      "3.0 TDI 233PS diesel",
+      "3.0 TDI 240PS diesel",
+      "3.0 TDI 245PS diesel",
+      "4.2 TDI 326PS diesel",
+      "4.2 TDI 340PS diesel",
+      "6.0 V12 TDI 500PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "4M (2015–present)",
+     "from": 2015,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "SQ7"
+     ],
+     "engines": [
+      "3.0 TFSI 340PS mild-hybrid petrol",
+      "4.0 TFSI 507PS mild-hybrid petrol",
+      "3.0 TFSI e 381PS plug-in-hybrid",
+      "3.0 TDI e-tron diesel 373PS plug-in-hybrid",
+      "3.0 TDI 218PS diesel",
+      "3.0 TDI 272PS diesel",
+      "3.0 TDI 231PS mild-hybrid diesel",
+      "3.0 TDI 286PS mild-hybrid diesel",
+      "4.0 TDI 435PS diesel"
+     ],
+     "fuels": [
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Q8",
+   "slug": "q8",
+   "aliases": [
+    "SQ8",
+    "RS Q8",
+    "Q8 TFSI e"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2018,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "4M (2018–present)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "Launch Edition",
+      "SQ8",
+      "RS Q8",
+      "Carbon Black"
+     ],
+     "engines": [
+      "3.0 TFSI 340PS mild-hybrid petrol",
+      "4.0 TFSI 507PS mild-hybrid petrol",
+      "4.0 TFSI 600PS mild-hybrid petrol",
+      "4.0 TFSI 640PS mild-hybrid petrol",
+      "3.0 TFSI e 381PS plug-in-hybrid",
+      "3.0 TFSI e 462PS plug-in-hybrid",
+      "3.0 TDI 286PS mild-hybrid diesel",
+      "4.0 TDI 435PS diesel"
+     ],
+     "fuels": [
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "e-tron",
+   "slug": "e-tron",
+   "aliases": [
+    "e-tron Sportback",
+    "e-tron S",
+    "e-tron S Sportback",
+    "e-tron 50 quattro",
+    "e-tron 55 quattro"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2019,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "GE (2019–2022)",
+     "from": 2019,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Technik",
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "Launch Edition",
+      "Edition 1",
+      "e-tron S"
+     ],
+     "engines": [
+      "71kWh 313PS electric",
+      "95kWh 408PS electric",
+      "95kWh 503PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Q8 e-tron",
+   "slug": "q8-e-tron",
+   "aliases": [
+    "Q8 Sportback e-tron",
+    "SQ8 e-tron",
+    "SQ8 Sportback e-tron"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2023,
+    "to": 2025
+   },
+   "generations": [
+    {
+     "name": "GE facelift (2023–2025)",
+     "from": 2023,
+     "to": 2025,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "SQ8 e-tron"
+     ],
+     "engines": [
+      "95kWh 340PS electric",
+      "114kWh 408PS electric",
+      "114kWh 503PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "e-tron GT",
+   "slug": "e-tron-gt",
+   "aliases": [
+    "RS e-tron GT",
+    "S e-tron GT",
+    "RS e-tron GT performance"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "F8 (2021–present)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "e-tron GT quattro",
+      "Vorsprung",
+      "Carbon Black",
+      "S e-tron GT",
+      "RS e-tron GT",
+      "RS e-tron GT performance"
+     ],
+     "engines": [
+      "93kWh 476PS electric",
+      "93kWh 598PS electric",
+      "105kWh 680PS electric",
+      "105kWh 856PS electric",
+      "105kWh 925PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "R8",
+   "slug": "r8",
+   "aliases": [
+    "R8 Coupe",
+    "R8 Spyder"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2007,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Type 42 (2007–2015)",
+     "from": 2007,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "V8",
+      "V10",
+      "V10 plus",
+      "GT",
+      "LMX"
+     ],
+     "engines": [
+      "4.2 FSI V8 420PS petrol",
+      "4.2 FSI V8 430PS petrol",
+      "5.2 FSI V10 525PS petrol",
+      "5.2 FSI V10 550PS petrol",
+      "5.2 FSI V10 560PS petrol",
+      "5.2 FSI V10 570PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Type 4S (2015–2024)",
+     "from": 2015,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "V10",
+      "V10 plus",
+      "V10 performance",
+      "RWS",
+      "V10 RWD",
+      "V10 performance RWD",
+      "Decennium",
+      "GT",
+      "Carbon Black"
+     ],
+     "engines": [
+      "5.2 FSI V10 540PS petrol",
+      "5.2 FSI V10 570PS petrol",
+      "5.2 FSI V10 610PS petrol",
+      "5.2 FSI V10 620PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "TT",
+   "slug": "tt",
+   "aliases": [
+    "TT Coupe",
+    "TT Roadster",
+    "TTS",
+    "TTS Coupe",
+    "TTS Roadster",
+    "TT RS",
+    "TT RS Coupe",
+    "TT RS Roadster"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "8N (1998–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "180",
+      "225 quattro",
+      "3.2 V6 quattro",
+      "quattro Sport",
+      "Celebration"
+     ],
+     "engines": [
+      "1.8 T 150PS petrol",
+      "1.8 T 180PS petrol",
+      "1.8 T 190PS petrol",
+      "1.8 T 225PS petrol",
+      "1.8 T 240PS petrol",
+      "3.2 V6 250PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "8J (2006–2014)",
+     "from": 2006,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Black Edition",
+      "TTS",
+      "TT RS",
+      "TT RS plus"
+     ],
+     "engines": [
+      "1.8 TFSI 160PS petrol",
+      "2.0 TFSI 200PS petrol",
+      "2.0 TFSI 211PS petrol",
+      "3.2 V6 250PS petrol",
+      "2.0 TFSI 272PS petrol",
+      "2.5 TFSI 340PS petrol",
+      "2.5 TFSI 360PS petrol",
+      "2.0 TDI 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "8S (2014–2023)",
+     "from": 2014,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Sport",
+      "S line",
+      "Black Edition",
+      "Vorsprung",
+      "Final Edition",
+      "TTS",
+      "TT RS"
+     ],
+     "engines": [
+      "1.8 TFSI 180PS petrol",
+      "2.0 TFSI 197PS petrol",
+      "2.0 TFSI 230PS petrol",
+      "2.0 TFSI 245PS petrol",
+      "2.0 TFSI 310PS petrol",
+      "2.0 TFSI 320PS petrol",
+      "2.5 TFSI 400PS petrol",
+      "2.0 TDI 184PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

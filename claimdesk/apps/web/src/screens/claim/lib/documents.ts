@@ -4,6 +4,8 @@
  */
 import type { ConsistencyFlag, ConsistencyReport, GeneratedDocument } from '@ccguk/domain';
 import type { SupersedeDocumentBody, TemplateMeta } from '../../../api/client';
+import type { DocumentFormatFields, PdfConverterId } from '../../../api/client';
+import type { DocxSnapshot } from '../../../api/templatesApi';
 
 export const TEMPLATE_KIND_ORDER = ['letter', 'invoice', 'form', 'agreement', 'statement', 'report', 'schedule', 'pack', 'bundle', 'notice', 'certificate'] as const;
 
@@ -242,4 +244,108 @@ export function supersedeBodyFrom(form: SupersedeForm, today: string): { ok: tru
   if (form.reExecutedOn && form.reExecutedOn > today) errors.reExecutedOn = 'The re-execution date cannot be in the future';
   if (Object.keys(errors).length) return { ok: false, errors };
   return { ok: true, body: { reason: form.reason.trim(), reExecutedOn: form.reExecutedOn || today } };
+}
+
+// ---------------------------------------------------------------------------
+// Word (.docx) documents (docs/TEMPLATES-VEHICLES-DESKTOP.md §C.9)
+// ---------------------------------------------------------------------------
+
+/** A document made from a Word template: the .docx is the draft artefact, the PDF is made on approval. */
+export function isDocx(doc: object | null | undefined): boolean {
+  return (doc as DocumentFormatFields | null | undefined)?.format === 'docx';
+}
+
+/** HTML letters can also be downloaded recomposed on the CCGUK letterhead (Word). */
+export function isHtmlLetter(doc: Pick<GeneratedDocument, 'templateId'>): boolean {
+  return !isDocx(doc) && doc.templateId.startsWith('letter.');
+}
+
+const KIND_SINGULAR: Record<string, string> = {
+  letter: 'Letter',
+  invoice: 'Invoice',
+  form: 'Form',
+  agreement: 'Agreement',
+  statement: 'Statement',
+  report: 'Report',
+  schedule: 'Schedule',
+  pack: 'Pack',
+  bundle: 'Bundle',
+  notice: 'Notice',
+  certificate: 'Certificate'
+};
+
+/** "Agreement (Word)", "Letter", … from the template id prefix and the format. */
+export function documentKindLabel(doc: Pick<GeneratedDocument, 'templateId'>): string {
+  const prefix = doc.templateId.split('.')[0] ?? '';
+  const kind = KIND_SINGULAR[prefix] ?? (prefix ? `${prefix.charAt(0).toUpperCase()}${prefix.slice(1)}` : 'Document');
+  return isDocx(doc) ? `${kind} (Word)` : kind;
+}
+
+/** The PDF exists once a person has approved the document. */
+export function hasApprovedPdf(doc: Pick<GeneratedDocument, 'status'>): boolean {
+  return doc.status === 'approved' || doc.status === 'sent' || doc.status === 'signed';
+}
+
+export const PDF_CONVERTER_LABEL: Record<PdfConverterId, string> = {
+  word: 'Microsoft Word',
+  libreoffice: 'LibreOffice',
+  browser: 'the built-in browser',
+  'chromium-html': 'the built-in browser'
+};
+
+export function pdfConverterLabel(converter: string | undefined): string | undefined {
+  if (!converter) return undefined;
+  return (PDF_CONVERTER_LABEL as Record<string, string>)[converter] ?? converter;
+}
+
+/** "PDF made with Microsoft Word" — only for an approved Word document whose converter is recorded. */
+export function pdfConverterNote(doc: Pick<GeneratedDocument, 'status'> & DocumentFormatFields): string | undefined {
+  if (!isDocx(doc) || !hasApprovedPdf(doc)) return undefined;
+  const label = pdfConverterLabel(doc.pdfConverter);
+  return label ? `PDF made with ${label}` : undefined;
+}
+
+/** `dataSnapshot._docx` when present and well-formed enough to read. */
+export function docxSnapshot(doc: Pick<GeneratedDocument, 'dataSnapshot'> | undefined): DocxSnapshot | undefined {
+  const raw = (doc?.dataSnapshot as Record<string, unknown> | undefined)?._docx;
+  if (!raw || typeof raw !== 'object') return undefined;
+  return raw as DocxSnapshot;
+}
+
+export interface ValueUsed {
+  slotId: string;
+  label: string;
+  key?: string;
+  display: string;
+  origin: string;
+  verification?: string;
+}
+
+/** The "Values used" list from the snapshot (what was printed and where it came from). */
+export function docxValuesUsed(doc: Pick<GeneratedDocument, 'dataSnapshot'> | undefined): ValueUsed[] {
+  const values = docxSnapshot(doc)?.values;
+  if (!Array.isArray(values)) return [];
+  return values
+    .filter((v) => v && typeof v === 'object' && typeof v.slotId === 'string')
+    .map((v) => ({ slotId: v.slotId, label: slotLabelFromId(v.slotId), key: v.key, display: typeof v.display === 'string' ? v.display : '', origin: String(v.origin ?? 'none'), verification: v.verification }));
+}
+
+function sentenceCase(slug: string): string {
+  const s = slug.replace(/-/g, ' ').trim();
+  return s ? `${s.charAt(0).toUpperCase()}${s.slice(1)}` : s;
+}
+
+/**
+ * A readable label from a slot id (§A.6 grammar `section/[@qualifier/]label[#n][:sub]`):
+ * `13-client-authorisation/@client/full-name` → "Full name (client)", `title/date` → "Date".
+ */
+export function slotLabelFromId(slotId: string): string {
+  const parts = slotId.split('/');
+  const last = parts[parts.length - 1] ?? slotId;
+  const m = /^([^#:]+)(?:#(\d+))?(?::(.+))?$/.exec(last);
+  const label = sentenceCase(m?.[1] ?? last);
+  const qualifier = parts.length >= 2 && parts[parts.length - 2]!.startsWith('@') ? parts[parts.length - 2]!.slice(1).replace(/-/g, ' ') : undefined;
+  const nth = m?.[2] ? ` ${m[2]}` : '';
+  const sub = m?.[3] ? ` (${m[3]})` : '';
+  return `${label}${nth}${qualifier ? ` (${qualifier})` : ''}${sub}`;
 }

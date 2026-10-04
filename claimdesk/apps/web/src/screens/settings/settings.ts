@@ -10,6 +10,61 @@ import { findLegacyDetails, type LegacyHit } from '../../lib/legacy';
 export const COMPANY_NAME = 'Courtesy Cars Group UK Ltd';
 export const COMPANY_NUMBER = '17430389';
 
+/**
+ * The company's real details (design doc §H; mirror of @ccguk/documents brand.company, which the web does not import).
+ * Bank, VAT and ICO were not supplied: they stay Settings inputs and are never invented.
+ */
+export const COMPANY_DETAILS = {
+  registeredName: COMPANY_NAME,
+  tradingName: 'Courtesy Cars UK',
+  companyNumber: COMPANY_NUMBER,
+  registeredOffice: '44 Syon Lane, Isleworth, London TW7 5NQ',
+  caseHandlerPhone: '07425 475922',
+  officePhone: '020 7052 5403',
+  claimsEmail: 'claims@courtesycars.net',
+  website: 'www.courtesycars.net',
+  director: 'Shahzaib Ahmed Bari'
+} as const;
+
+/** The registered office as the API defaults it (packages/db DEFAULT_REGISTERED_OFFICE). */
+export const DEFAULT_REGISTERED_OFFICE: Address = { line1: '44 Syon Lane', line2: 'Isleworth', town: 'London', postcode: 'TW7 5NQ' };
+
+/** Footer line for the sign-in screen. */
+export const LEGAL_FOOTER = `${COMPANY_NAME} · Registered in England & Wales No. ${COMPANY_NUMBER} · ${COMPANY_DETAILS.registeredOffice}`;
+
+/** "ClaimDesk 0.2.57" from GET /api/health `version`; just "ClaimDesk" until it is known. */
+export function versionLabel(version: string | undefined | null): string {
+  const v = (version ?? '').trim();
+  return v ? `ClaimDesk ${v}` : 'ClaimDesk';
+}
+
+// ---------------------------------------------------------------------------
+// Vehicle lookup mode (design doc §E)
+// ---------------------------------------------------------------------------
+
+export type LookupMode = 'live' | 'manual';
+
+/** GET /settings `lookupMode`; older APIs without it: live when a DVLA or DVSA key is present. */
+export function lookupModeOf(settings: Settings | undefined): LookupMode | undefined {
+  const m = settings?.lookupMode;
+  if (m === 'live' || m === 'manual') return m;
+  const keys = settings?.apiKeys;
+  if (!keys) return undefined;
+  return keys.dvlaVes || keys.dvsaMot ? 'live' : 'manual';
+}
+
+export function lookupModeLabel(mode: LookupMode | undefined): string {
+  if (mode === 'live') return 'Vehicle lookups: Live (DVLA / DVSA keys configured)';
+  if (mode === 'manual') return 'Vehicle lookups: Manual (no DVLA/DVSA keys) — searches use ClaimDesk records and Total Car Check';
+  return 'Vehicle lookups: checking…';
+}
+
+/** "More settings" card: pages built by the templates-web and vehicles-web slices. */
+export const MORE_SETTINGS_LINKS: ReadonlyArray<{ to: string; label: string; description: string }> = [
+  { to: '/settings/templates', label: 'Document templates', description: 'The CCGUK Word templates and your uploaded templates: fields, mappings and test fills.' },
+  { to: '/settings/gta-rates', label: 'GTA benchmark rates', description: 'Daily rates by GTA group with their verification status (an industry benchmark only; CCGUK is not a subscriber).' }
+];
+
 export interface CopCheck {
   match: boolean;
   /** Plain-English line for the warning banner (undefined when it matches). */
@@ -94,7 +149,8 @@ export function rateCardAdmin(rc: RateCardView | undefined): Pence | null {
 export function settingsToForm(s: Settings | undefined): SettingsForm {
   const rc = s?.rateCard;
   return {
-    registeredOffice: addressToLines(s?.registeredOffice),
+    // the real registered office until the API holds a different one
+    registeredOffice: addressToLines(s?.registeredOffice) || addressToLines(DEFAULT_REGISTERED_OFFICE),
     vatNumber: s?.vatNumber ?? '',
     icoRegistration: s?.icoRegistration ?? '',
     bankAccountName: s?.bank?.accountName ?? '',

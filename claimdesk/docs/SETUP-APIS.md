@@ -14,6 +14,20 @@ ClaimDesk works with no keys at all: every lookup falls back to **manual entry**
 | Metropolitan Police collision report | £215.10 (Form 518); third-party details £49.00 (Form 519) | Collision report / third-party details | https://www.met.police.uk/ | manual |
 | LLM drafting assistant (optional) | Per token | Retrieval-based drafting over the knowledge base; every output carries citations and is held for human approval | https://console.anthropic.com/ | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
 
+## Manual mode (no DVLA/DVSA keys)
+
+Without a DVLA VES or DVSA MOT key ClaimDesk runs in **manual mode**: Settings → API keys shows "Vehicle lookups: Manual (no DVLA/DVSA keys) — searches use ClaimDesk records and Total Car Check", `GET /api/settings` returns `lookupMode: "manual"` and `GET /api/health` returns `lookups.mode: "manual"`. Adding either key (and restarting) switches it to `live`.
+
+What still works in manual mode:
+
+- **Search a registration** (New claim, the Vehicle tab, Fleet): ClaimDesk shows every vehicle it already holds with that registration (or a partial match of 4+ characters), the claims and fleet unit it is on, and its lookup history. Pick one to reuse its details. Nothing is written by a search.
+- **Total Car Check.** "Open on Total Car Check" opens the free check in your browser (`https://totalcarcheck.co.uk/FreeCheck?regno=<REG>`). Copy the results page and paste it into ClaimDesk: make, model, colour, fuel, engine size, year, first registration, tax and MOT dates are read from the text and saved as **unverified** (provider "Total Car Check (copied by hand)"). ClaimDesk never fetches the site itself. If the site changes its address, set `TOTALCARCHECK_URL_TEMPLATE` (with `{REG}`) in `claimdesk.env`.
+- **GOV.UK checks**: links to the MOT history (https://www.check-mot.service.gov.uk/) and vehicle enquiry (https://vehicleenquiry.service.gov.uk/) services, for the handler to read and key in.
+- **Vehicle catalogue**: make → model → generation → engine → trim pick lists with standard features, and the GTA benchmark group suggestion for fleet vehicles.
+- **Manual entry**: anything typed by hand is recorded with its source and stays `unverified` until a document (V5C, MOT certificate, a paid check) backs it.
+
+What needs a key: live tax/MOT status and the MOT odometer history that feeds the mileage-conflict check.
+
 ## Things never to do
 
 - **Do not scrape advert sites** (Auto Trader etc.) for comparables. It breaches their terms and risks database-right infringement (Copyright and Rights in Databases Regulations 1997 reg 16). Capture adverts manually: the handler saves the advert as PDF/screenshot with its URL and time; ClaimDesk stores the file, its SHA-256 and the keyed figures.

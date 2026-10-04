@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addressToLines, apiKeyPresent, buildSettingsPatch, COMPANY_NAME, confirmationOfPayeeCheck, DEFAULT_RATE_CARD, linesToAddress, parsePct, settingsToForm, usersFrom, validateSettings } from './settings';
+import { addressToLines, apiKeyPresent, buildSettingsPatch, COMPANY_DETAILS, COMPANY_NAME, confirmationOfPayeeCheck, DEFAULT_RATE_CARD, DEFAULT_REGISTERED_OFFICE, LEGAL_FOOTER, linesToAddress, lookupModeLabel, lookupModeOf, MORE_SETTINGS_LINKS, parsePct, settingsToForm, usersFrom, validateSettings, versionLabel } from './settings';
 
 describe('confirmationOfPayeeCheck', () => {
   it('passes only the exact registered name', () => {
@@ -14,13 +14,13 @@ describe('confirmationOfPayeeCheck', () => {
 
 describe('settings form', () => {
   it('round-trips the API shape with VAT as a percentage and the office as an address', () => {
-    const f = settingsToForm({ registeredOffice: { line1: '1 Example Way', town: 'London', postcode: 'N1 1AA' }, bank: { accountName: COMPANY_NAME, sortCode: '123456', accountNumber: '12345678' }, rateCard: { ...DEFAULT_RATE_CARD } });
+    const f = settingsToForm({ registeredOffice: { line1: '44 Syon Lane', line2: 'Isleworth', town: 'London', postcode: 'TW7 5NQ' }, bank: { accountName: COMPANY_NAME, sortCode: '123456', accountNumber: '12345678' }, rateCard: { ...DEFAULT_RATE_CARD } });
     expect(f.vatRatePct).toBe('20');
     expect(f.storageDailyPence).toBe(4500);
-    expect(f.registeredOffice).toBe('1 Example Way\nLondon\nN1 1AA');
+    expect(f.registeredOffice).toBe('44 Syon Lane\nIsleworth\nLondon\nTW7 5NQ');
     const patch = buildSettingsPatch(f);
     expect(patch.rateCard).toEqual({ ...DEFAULT_RATE_CARD });
-    expect(patch.registeredOffice).toEqual({ line1: '1 Example Way', town: 'London', postcode: 'N1 1AA' });
+    expect(patch.registeredOffice).toEqual({ line1: '44 Syon Lane', line2: 'Isleworth', town: 'London', postcode: 'TW7 5NQ' });
     expect(patch.bank).toEqual({ accountName: COMPANY_NAME, sortCode: '123456', accountNumber: '12345678', bankName: undefined });
     expect(patch.companyNumber).toBe('17430389');
   });
@@ -82,5 +82,36 @@ describe('settings form', () => {
     expect(apiKeyPresent({ apiKeys: { dvlaVes: true, dvsaMot: false, companiesHouse: false, gateway: false } }, 'anthropic')).toBeUndefined();
     expect(usersFrom({ users: [{ id: 'u1', name: 'Danny', email: 'd@example.com', role: 'admin' }, 'junk'] })).toHaveLength(1);
     expect(usersFrom({})).toEqual([]);
+  });
+});
+
+describe('company details, lookup mode and version (design doc §H.4)', () => {
+  it('shows the real registered office by default; bank, VAT and ICO stay empty inputs', () => {
+    const f = settingsToForm(undefined);
+    expect(f.registeredOffice).toBe('44 Syon Lane\nIsleworth\nLondon\nTW7 5NQ');
+    expect(linesToAddress(f.registeredOffice)).toEqual(DEFAULT_REGISTERED_OFFICE);
+    expect(f.bankAccountName).toBe('');
+    expect(f.vatNumber).toBe('');
+    expect(f.icoRegistration).toBe('');
+    expect(validateSettings(f)).toEqual({});
+    expect(COMPANY_DETAILS).toMatchObject({ caseHandlerPhone: '07425 475922', officePhone: '020 7052 5403', claimsEmail: 'claims@courtesycars.net', website: 'www.courtesycars.net' });
+    expect(LEGAL_FOOTER).toBe('Courtesy Cars Group UK Ltd · Registered in England & Wales No. 17430389 · 44 Syon Lane, Isleworth, London TW7 5NQ');
+  });
+  it('reads the lookup mode from the API, or from the key flags of an older API', () => {
+    expect(lookupModeOf({ lookupMode: 'manual' })).toBe('manual');
+    expect(lookupModeOf({ lookupMode: 'live' })).toBe('live');
+    expect(lookupModeOf({ apiKeys: { dvlaVes: false, dvsaMot: true, companiesHouse: false, gateway: false } })).toBe('live');
+    expect(lookupModeOf({ apiKeys: { dvlaVes: false, dvsaMot: false, companiesHouse: true, gateway: false } })).toBe('manual');
+    expect(lookupModeOf(undefined)).toBeUndefined();
+    expect(lookupModeLabel('manual')).toBe('Vehicle lookups: Manual (no DVLA/DVSA keys) — searches use ClaimDesk records and Total Car Check');
+    expect(lookupModeLabel('live')).toMatch(/^Vehicle lookups: Live/);
+  });
+  it('links the More settings pages and labels the version', () => {
+    expect(MORE_SETTINGS_LINKS.map((l) => [l.to, l.label])).toEqual([
+      ['/settings/templates', 'Document templates'],
+      ['/settings/gta-rates', 'GTA benchmark rates']
+    ]);
+    expect(versionLabel('0.2.57')).toBe('ClaimDesk 0.2.57');
+    expect(versionLabel(undefined)).toBe('ClaimDesk');
   });
 });

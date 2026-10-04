@@ -1,7 +1,7 @@
 {
   "name": "ClaimDesk",
   "short_name": "ClaimDesk",
-  "description": "Courtesy Cars Group UK Ltd — accident claims, credit hire, recovery and storage case management.",
+  "description": "ClaimDesk by Courtesy Cars Group UK Ltd (trading as Courtesy Cars UK) — accident claims, credit hire, recovery and storage case management.",
   "id": "/",
   "start_url": "/",
   "scope": "/",

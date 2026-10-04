@@ -1,0 +1,549 @@
+{
+ "make": "Daewoo",
+ "slug": "daewoo",
+ "dvlaNames": [
+  "DAEWOO"
+ ],
+ "aliases": [
+  "Daewoo Motor UK"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Daewoo was rebadged Chevrolet in the UK during 2005; see chevrolet.json for 2005+ Matiz/Kalos/Lacetti/Nubira/Tacuma/Evanda. Trim lists and outputs are approximate (audit addition). Musso and Korando (1999–2002) are SsangYong products sold under the Daewoo badge."
+ },
+ "models": [
+  {
+   "name": "Matiz",
+   "slug": "matiz",
+   "aliases": [
+    "Matiz SE",
+    "Matiz SE+"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "M100 / M150 (1998–2005; facelift 2001)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SE+"
+     ],
+     "engines": [
+      "0.8 51PS petrol",
+      "1.0 64PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "gtaGroup": "S1"
+    }
+   ]
+  },
+  {
+   "name": "Lanos",
+   "slug": "lanos",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2003
+   },
+   "generations": [
+    {
+     "name": "T100 (1997–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SX"
+     ],
+     "engines": [
+      "1.4 75PS petrol",
+      "1.6 16v 106PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Kalos",
+   "slug": "kalos",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2003,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "T200 (2003–2005; Chevrolet from 2005)",
+     "from": 2003,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "SX"
+     ],
+     "engines": [
+      "1.2 72PS petrol",
+      "1.4 83PS petrol",
+      "1.4 16v 94PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Nubira",
+   "slug": "nubira",
+   "aliases": [
+    "Nubira SW",
+    "Nubira Estate"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "J100 / J150 (1997–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SX",
+      "CDX"
+     ],
+     "engines": [
+      "1.6 16v 106PS petrol",
+      "2.0 16v 133PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "J200 (2004–2005; Chevrolet from 2005)",
+     "from": 2004,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "CDX"
+     ],
+     "engines": [
+      "1.6 109PS petrol",
+      "1.8 122PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Lacetti",
+   "slug": "lacetti",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2004,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "J200 (2004–2005; Chevrolet from 2005)",
+     "from": 2004,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SX",
+      "CDX"
+     ],
+     "engines": [
+      "1.4 95PS petrol",
+      "1.6 109PS petrol",
+      "1.8 122PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Leganza",
+   "slug": "leganza",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "V100 (1997–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SX",
+      "CDX"
+     ],
+     "engines": [
+      "2.0 16v 133PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Evanda",
+   "slug": "evanda",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2003,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "V200 (2003–2005; Chevrolet from 2005)",
+     "from": 2003,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "CDX"
+     ],
+     "engines": [
+      "2.0 131PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tacuma",
+   "slug": "tacuma",
+   "aliases": [
+    "Rezzo"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "U100 (2000–2005; Chevrolet from 2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "SX",
+      "CDX"
+     ],
+     "engines": [
+      "1.6 105PS petrol",
+      "2.0 121PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Musso",
+   "slug": "musso",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "FJ, Daewoo badge (1999–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Musso"
+     ],
+     "engines": [
+      "2.3 16v 150PS petrol",
+      "2.9 TD 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "SsangYong-built Musso sold through Daewoo dealers while Daewoo owned SsangYong; UK sales ended 2002. Same vehicle as the SsangYong Musso (see ssangyong.json). UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Korando",
+   "slug": "korando",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": 2002
+   },
+   "generations": [
+    {
+     "name": "KJ, Daewoo badge (1999–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Korando"
+     ],
+     "engines": [
+      "2.3 16v 150PS petrol",
+      "2.9 TD 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "SsangYong-built Korando sold through Daewoo dealers while Daewoo owned SsangYong; UK stocks ran out late 2002. Same vehicle as the SsangYong Korando (see ssangyong.json). UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  }
+ ]
+}

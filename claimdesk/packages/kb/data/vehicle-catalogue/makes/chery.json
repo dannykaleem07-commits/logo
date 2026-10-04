@@ -1,0 +1,200 @@
+{
+ "make": "Chery",
+ "slug": "chery",
+ "dvlaNames": [
+  "CHERY"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Chery launched in the UK in September 2025."
+ },
+ "models": [
+  {
+   "name": "Tiggo 4",
+   "slug": "tiggo-4",
+   "aliases": [
+    "Tiggo 4 CSH",
+    "Tiggo 4 Super Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2026,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2026–present)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Aspire",
+      "Summit"
+     ],
+     "engines": [
+      "1.5 TGDI CSH 204PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tiggo 7",
+   "slug": "tiggo-7",
+   "aliases": [
+    "Tiggo 7 CSH",
+    "Tiggo 7 Super Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Aspire",
+      "Summit"
+     ],
+     "engines": [
+      "1.6 TGDI 147PS petrol",
+      "1.5 TGDI CSH 204PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tiggo 8",
+   "slug": "tiggo-8",
+   "aliases": [
+    "Tiggo 8 CSH",
+    "Tiggo 8 Super Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Aspire",
+      "Summit"
+     ],
+     "engines": [
+      "1.6 TGDI 147PS petrol",
+      "1.5 TGDI CSH 204PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tiggo 9",
+   "slug": "tiggo-9",
+   "aliases": [
+    "Tiggo 9 CSH",
+    "Tiggo 9 Super Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Summit"
+     ],
+     "engines": [
+      {
+       "label": "1.5 TGDI CSH AWD plug-in-hybrid",
+       "fuel": "plug-in-hybrid"
+      }
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

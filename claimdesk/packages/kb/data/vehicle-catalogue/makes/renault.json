@@ -1,0 +1,3064 @@
+{
+ "make": "Renault",
+ "slug": "renault",
+ "dvlaNames": [
+  "RENAULT"
+ ],
+ "aliases": [
+  "Renault UK"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Clio",
+   "slug": "clio",
+   "aliases": [
+    "Clio Sport Tourer",
+    "Clio Renaultsport",
+    "Clio RS",
+    "Clio V6",
+    "Clio Campus",
+    "Clio E-Tech"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (1998–2009)",
+     "from": 2000,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "RT",
+      "RXE",
+      "RXi",
+      "Alize",
+      "Sport",
+      "Authentique",
+      "Expression",
+      "Dynamique",
+      "Privilege",
+      "Initiale",
+      "Extreme",
+      "Campus",
+      "Renaultsport 172",
+      "Renaultsport 182",
+      "Renaultsport V6"
+     ],
+     "engines": [
+      "1.2 8v 60PS petrol",
+      "1.2 16v 75PS petrol",
+      "1.4 8v 75PS petrol",
+      "1.4 16v 98PS petrol",
+      "1.6 16v 110PS petrol",
+      "2.0 16v 172PS petrol",
+      "2.0 16v 182PS petrol",
+      "3.0 V6 230PS petrol",
+      "3.0 V6 255PS petrol",
+      "1.9 D 65PS diesel",
+      "1.5 dCi 65PS diesel",
+      "1.5 dCi 82PS diesel",
+      "1.5 dCi 100PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2005–2012)",
+     "from": 2005,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Extreme",
+      "Expression",
+      "Freeway",
+      "I-Music",
+      "Dynamique",
+      "Dynamique S",
+      "Dynamique TomTom",
+      "Privilege",
+      "Initiale",
+      "GT Line",
+      "Renaultsport 197",
+      "Renaultsport 200"
+     ],
+     "engines": [
+      "1.2 16v 75PS petrol",
+      "1.2 TCe 100PS petrol",
+      "1.4 16v 98PS petrol",
+      "1.6 16v 111PS petrol",
+      "1.6 16v 128PS petrol",
+      "2.0 16v 197PS petrol",
+      "2.0 16v 200PS petrol",
+      "1.5 dCi 68PS diesel",
+      "1.5 dCi 86PS diesel",
+      "1.5 dCi 88PS diesel",
+      "1.5 dCi 106PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 (2012–2019)",
+     "from": 2012,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Expression+",
+      "Play",
+      "Dynamique",
+      "Dynamique MediaNav",
+      "Dynamique Nav",
+      "Dynamique S Nav",
+      "Limited",
+      "Iconic",
+      "GT Line",
+      "Signature Nav",
+      "Signature S Nav",
+      "Renaultsport 200 Turbo",
+      "Renaultsport 220 Trophy"
+     ],
+     "engines": [
+      "1.2 16v 75PS petrol",
+      "0.9 TCe 90PS petrol",
+      "1.2 TCe 120PS petrol",
+      "1.6 Turbo 200PS petrol",
+      "1.6 Turbo 220PS petrol",
+      "1.5 dCi 75PS diesel",
+      "1.5 dCi 90PS diesel",
+      "1.5 dCi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk5 (2019–)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Play",
+      "Iconic",
+      "S Edition",
+      "RS Line",
+      "Launch Edition",
+      "Evolution",
+      "Techno",
+      "Esprit Alpine",
+      "Engineered"
+     ],
+     "engines": [
+      "1.0 SCe 65PS petrol",
+      "1.0 SCe 75PS petrol",
+      "1.0 TCe 90PS petrol",
+      "1.0 TCe 100PS petrol",
+      "1.3 TCe 130PS petrol",
+      "1.6 E-Tech 140PS hybrid",
+      "1.6 E-Tech 145PS hybrid",
+      "1.5 Blue dCi 85PS diesel",
+      "1.5 Blue dCi 100PS diesel",
+      "1.5 Blue dCi 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk6 (2026–)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Evolution",
+      "Techno",
+      "Esprit Alpine"
+     ],
+     "engines": [
+      "1.2 TCe 115PS petrol",
+      "1.8 E-Tech 160PS hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Twingo",
+   "slug": "twingo",
+   "aliases": [
+    "Twingo Renaultsport",
+    "Twingo Gordini"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2007,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2007–2014)",
+     "from": 2007,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Extreme",
+      "Expression",
+      "Freeway",
+      "I-Music",
+      "Dynamique",
+      "Dynamique S",
+      "GT",
+      "Renaultsport 133",
+      "Gordini"
+     ],
+     "engines": [
+      "1.2 8v 60PS petrol",
+      "1.2 16v 75PS petrol",
+      "1.2 TCe 100PS petrol",
+      "1.6 16v 133PS petrol",
+      "1.5 dCi 65PS diesel",
+      "1.5 dCi 85PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2014–2019)",
+     "from": 2014,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Play",
+      "Dynamique",
+      "Iconic",
+      "Signature",
+      "GT"
+     ],
+     "engines": [
+      "1.0 SCe 70PS petrol",
+      "1.0 SCe 75PS petrol",
+      "0.9 TCe 90PS petrol",
+      "0.9 TCe 110PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Megane",
+   "slug": "megane",
+   "aliases": [
+    "Megane Sport Tourer",
+    "Megane Coupe",
+    "Megane Coupe-Cabriolet",
+    "Megane CC",
+    "Megane Renaultsport",
+    "Megane RS",
+    "Megane R.S.",
+    "Megane E-Tech Plug-in"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1996–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Alize",
+      "RT",
+      "RXE",
+      "Sport",
+      "Expression",
+      "Dynamique",
+      "Privilege"
+     ],
+     "engines": [
+      "1.4 16v 95PS petrol",
+      "1.6 16v 107PS petrol",
+      "2.0 16v 140PS petrol",
+      "1.9 D 65PS diesel",
+      "1.9 dTi 100PS diesel",
+      "1.9 dCi 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2002–2008)",
+     "from": 2002,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Authentique",
+      "Expression",
+      "Extreme",
+      "Dynamique",
+      "Dynamique S",
+      "Privilege",
+      "Sport",
+      "Renaultsport 225",
+      "Renaultsport 230 F1 Team R26",
+      "R26.R"
+     ],
+     "engines": [
+      "1.4 16v 80PS petrol",
+      "1.4 16v 98PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.6 16v 113PS petrol",
+      "2.0 16v 135PS petrol",
+      "2.0 T 165PS petrol",
+      "2.0 T 225PS petrol",
+      "2.0 T 230PS petrol",
+      "1.5 dCi 80PS diesel",
+      "1.5 dCi 86PS diesel",
+      "1.5 dCi 106PS diesel",
+      "1.9 dCi 120PS diesel",
+      "1.9 dCi 130PS diesel",
+      "2.0 dCi 150PS diesel",
+      "2.0 dCi 175PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2008–2016)",
+     "from": 2008,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Expression+",
+      "Dynamique",
+      "Dynamique TomTom",
+      "Dynamique MediaNav",
+      "Dynamique Nav",
+      "Dynamique S Nav",
+      "Privilege",
+      "I-Music",
+      "Limited",
+      "Bose",
+      "GT Line",
+      "Knight Edition",
+      "Renaultsport 250",
+      "Renaultsport 265",
+      "Renaultsport 275 Trophy"
+     ],
+     "engines": [
+      "1.6 16v 100PS petrol",
+      "1.6 16v 110PS petrol",
+      "1.4 TCe 130PS petrol",
+      "1.2 TCe 115PS petrol",
+      "1.2 TCe 130PS petrol",
+      "2.0 16v 140PS petrol",
+      "2.0 T 250PS petrol",
+      "2.0 T 265PS petrol",
+      "2.0 T 275PS petrol",
+      "1.5 dCi 86PS diesel",
+      "1.5 dCi 90PS diesel",
+      "1.5 dCi 106PS diesel",
+      "1.5 dCi 110PS diesel",
+      "1.9 dCi 130PS diesel",
+      "1.6 dCi 130PS diesel",
+      "2.0 dCi 160PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 (2016–2023)",
+     "from": 2016,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Expression+",
+      "Play",
+      "Dynamique Nav",
+      "Dynamique S Nav",
+      "Signature Nav",
+      "GT Line Nav",
+      "GT Nav",
+      "Iconic",
+      "S Edition",
+      "R.S. Line",
+      "R.S. 280",
+      "R.S. 300 Trophy"
+     ],
+     "engines": [
+      "1.2 TCe 100PS petrol",
+      "1.2 TCe 130PS petrol",
+      "1.3 TCe 115PS petrol",
+      "1.3 TCe 140PS petrol",
+      "1.3 TCe 160PS petrol",
+      "1.6 TCe 205PS petrol",
+      "1.8 TCe 280PS petrol",
+      "1.8 TCe 300PS petrol",
+      "1.5 dCi 110PS diesel",
+      "1.5 Blue dCi 115PS diesel",
+      "1.6 dCi 130PS diesel",
+      "1.6 dCi 165PS diesel",
+      "1.6 E-Tech 160PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Megane E-Tech",
+   "slug": "megane-e-tech",
+   "aliases": [
+    "Megane E-Tech Electric",
+    "Megane E-Tech 100% Electric"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Megane E-Tech Electric (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Equilibre",
+      "Techno",
+      "Iconic",
+      "Launch Edition",
+      "Evolution",
+      "Esprit Alpine"
+     ],
+     "engines": [
+      "40kWh 130PS electric",
+      "60kWh 220PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Scenic",
+   "slug": "scenic",
+   "aliases": [
+    "Megane Scenic",
+    "Scenic RX4",
+    "Scenic XMOD",
+    "Scenic Conquest",
+    "Scenic E-Tech"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1996–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Alize",
+      "RT",
+      "RXE",
+      "RXi",
+      "Expression",
+      "Dynamique",
+      "Privilege"
+     ],
+     "engines": [
+      "1.4 16v 95PS petrol",
+      "1.6 16v 107PS petrol",
+      "2.0 16v 140PS petrol",
+      "1.9 dTi 100PS diesel",
+      "1.9 dCi 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2003–2009)",
+     "from": 2003,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Authentique",
+      "Expression",
+      "Dynamique",
+      "Dynamique S",
+      "Privilege",
+      "Conquest"
+     ],
+     "engines": [
+      "1.4 16v 98PS petrol",
+      "1.6 16v 113PS petrol",
+      "2.0 16v 135PS petrol",
+      "1.5 dCi 86PS diesel",
+      "1.5 dCi 106PS diesel",
+      "1.9 dCi 120PS diesel",
+      "1.9 dCi 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2009–2016)",
+     "from": 2009,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Expression+",
+      "Dynamique",
+      "Dynamique TomTom",
+      "Dynamique MediaNav",
+      "Dynamique Nav",
+      "Dynamique S Nav",
+      "Privilege",
+      "Bose",
+      "Limited",
+      "XMOD"
+     ],
+     "engines": [
+      "1.6 16v 110PS petrol",
+      "1.4 TCe 130PS petrol",
+      "1.2 TCe 115PS petrol",
+      "1.2 TCe 130PS petrol",
+      "2.0 16v 140PS petrol",
+      "1.5 dCi 106PS diesel",
+      "1.5 dCi 110PS diesel",
+      "1.6 dCi 130PS diesel",
+      "1.9 dCi 130PS diesel",
+      "2.0 dCi 150PS diesel",
+      "2.0 dCi 160PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 (2016–2022)",
+     "from": 2016,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Expression+",
+      "Play",
+      "Dynamique Nav",
+      "Dynamique S Nav",
+      "Signature Nav",
+      "Signature",
+      "Iconic",
+      "GT Line",
+      "S Edition"
+     ],
+     "engines": [
+      "1.2 TCe 115PS petrol",
+      "1.2 TCe 130PS petrol",
+      "1.3 TCe 115PS petrol",
+      "1.3 TCe 140PS petrol",
+      "1.3 TCe 160PS petrol",
+      "1.5 dCi 110PS diesel",
+      "1.6 dCi 130PS diesel",
+      "1.6 dCi 160PS diesel",
+      "1.7 Blue dCi 120PS diesel",
+      "1.7 Blue dCi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Scenic E-Tech Electric (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Evolution",
+      "Techno",
+      "Esprit Alpine"
+     ],
+     "engines": [
+      "60kWh 170PS electric",
+      "87kWh 220PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Grand Scenic",
+   "slug": "grand-scenic",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2004,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2004–2009)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Authentique",
+      "Expression",
+      "Dynamique",
+      "Dynamique S",
+      "Privilege"
+     ],
+     "engines": [
+      "1.4 16v 98PS petrol",
+      "1.6 16v 113PS petrol",
+      "2.0 16v 135PS petrol",
+      "1.5 dCi 86PS diesel",
+      "1.5 dCi 106PS diesel",
+      "1.9 dCi 120PS diesel",
+      "1.9 dCi 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2009–2016)",
+     "from": 2009,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Expression+",
+      "Dynamique",
+      "Dynamique TomTom",
+      "Dynamique MediaNav",
+      "Dynamique Nav",
+      "Dynamique S Nav",
+      "Privilege",
+      "Bose",
+      "Limited",
+      "XMOD"
+     ],
+     "engines": [
+      "1.6 16v 110PS petrol",
+      "1.4 TCe 130PS petrol",
+      "1.2 TCe 115PS petrol",
+      "1.2 TCe 130PS petrol",
+      "2.0 16v 140PS petrol",
+      "1.5 dCi 106PS diesel",
+      "1.5 dCi 110PS diesel",
+      "1.6 dCi 130PS diesel",
+      "1.9 dCi 130PS diesel",
+      "2.0 dCi 150PS diesel",
+      "2.0 dCi 160PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 (2016–2022)",
+     "from": 2016,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Expression+",
+      "Play",
+      "Dynamique Nav",
+      "Dynamique S Nav",
+      "Signature Nav",
+      "Signature",
+      "Iconic",
+      "GT Line",
+      "S Edition"
+     ],
+     "engines": [
+      "1.2 TCe 115PS petrol",
+      "1.2 TCe 130PS petrol",
+      "1.3 TCe 115PS petrol",
+      "1.3 TCe 140PS petrol",
+      "1.3 TCe 160PS petrol",
+      "1.5 dCi 110PS diesel",
+      "1.6 dCi 130PS diesel",
+      "1.6 dCi 160PS diesel",
+      "1.7 Blue dCi 120PS diesel",
+      "1.7 Blue dCi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Laguna",
+   "slug": "laguna",
+   "aliases": [
+    "Laguna Sport Tourer",
+    "Laguna Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1994–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "RT",
+      "RXE",
+      "RXi",
+      "Alize"
+     ],
+     "engines": [
+      "1.6 16v 110PS petrol",
+      "1.8 16v 120PS petrol",
+      "2.0 16v 140PS petrol",
+      "1.9 dTi 100PS diesel",
+      "2.2 dT 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2001–2007)",
+     "from": 2001,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Authentique",
+      "Expression",
+      "Dynamique",
+      "Privilege",
+      "Initiale",
+      "Extreme"
+     ],
+     "engines": [
+      "1.6 16v 110PS petrol",
+      "1.8 16v 120PS petrol",
+      "2.0 16v 140PS petrol",
+      "2.0 T 170PS petrol",
+      "3.0 V6 210PS petrol",
+      "1.9 dCi 107PS diesel",
+      "1.9 dCi 120PS diesel",
+      "1.9 dCi 130PS diesel",
+      "2.2 dCi 140PS diesel",
+      "2.2 dCi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2007–2015)",
+     "from": 2007,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Dynamique",
+      "Dynamique TomTom",
+      "Dynamique S",
+      "Privilege",
+      "Initiale",
+      "Bose",
+      "GT",
+      "GT 4Control",
+      "Monaco GP"
+     ],
+     "engines": [
+      "2.0 16v 140PS petrol",
+      "2.0 T 170PS petrol",
+      "2.0 T 205PS petrol",
+      "3.5 V6 240PS petrol",
+      "1.5 dCi 110PS diesel",
+      "2.0 dCi 130PS diesel",
+      "2.0 dCi 150PS diesel",
+      "2.0 dCi 175PS diesel",
+      "3.0 V6 dCi 240PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Espace",
+   "slug": "espace",
+   "aliases": [
+    "Grand Espace"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "Mk3 (1997–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "RT",
+      "RXE",
+      "Alize",
+      "Privilege",
+      "Initiale"
+     ],
+     "engines": [
+      "2.0 16v 140PS petrol",
+      "3.0 V6 190PS petrol",
+      "1.9 dTi 100PS diesel",
+      "2.2 dT 115PS diesel",
+      "2.2 dCi 130PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 (2002–2014)",
+     "from": 2002,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Authentique",
+      "Expression",
+      "Dynamique",
+      "Privilege",
+      "Initiale"
+     ],
+     "engines": [
+      "2.0 16v 140PS petrol",
+      "2.0 T 165PS petrol",
+      "2.0 T 170PS petrol",
+      "3.5 V6 241PS petrol",
+      "1.9 dCi 120PS diesel",
+      "2.2 dCi 150PS diesel",
+      "3.0 V6 dCi 177PS diesel",
+      "2.0 dCi 150PS diesel",
+      "2.0 dCi 175PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Vel Satis",
+   "slug": "vel-satis",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2002,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "Vel Satis (2002–2006)",
+     "from": 2002,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Dynamique",
+      "Privilege",
+      "Initiale"
+     ],
+     "engines": [
+      "2.0 T 165PS petrol",
+      "3.5 V6 241PS petrol",
+      "2.2 dCi 150PS diesel",
+      "3.0 V6 dCi 177PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Avantime",
+   "slug": "avantime",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2001,
+    "to": 2003
+   },
+   "generations": [
+    {
+     "name": "Avantime (2001–2003)",
+     "from": 2001,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Dynamique",
+      "Privilege"
+     ],
+     "engines": [
+      "2.0 T 165PS petrol",
+      "3.0 V6 210PS petrol",
+      "2.2 dCi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Modus",
+   "slug": "modus",
+   "aliases": [
+    "Grand Modus"
+   ],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2004,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Modus / Grand Modus (2004–2012)",
+     "from": 2004,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Authentique",
+      "Expression",
+      "Extreme",
+      "Freeway",
+      "Dynamique",
+      "Dynamique TomTom",
+      "Privilege"
+     ],
+     "engines": [
+      "1.2 16v 75PS petrol",
+      "1.2 TCe 100PS petrol",
+      "1.4 16v 98PS petrol",
+      "1.6 16v 111PS petrol",
+      "1.5 dCi 68PS diesel",
+      "1.5 dCi 86PS diesel",
+      "1.5 dCi 106PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Wind",
+   "slug": "wind",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2010,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Wind (2010–2012)",
+     "from": 2010,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Dynamique",
+      "Dynamique S",
+      "GT Line",
+      "Collection"
+     ],
+     "engines": [
+      "1.2 TCe 100PS petrol",
+      "1.6 16v 133PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Koleos",
+   "slug": "koleos",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2008,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2008–2010)",
+     "from": 2008,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Dynamique",
+      "Dynamique S",
+      "Privilege"
+     ],
+     "engines": [
+      "2.5 16v 171PS petrol",
+      "2.0 dCi 150PS diesel",
+      "2.0 dCi 173PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2017–2020)",
+     "from": 2017,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Dynamique S Nav",
+      "Signature Nav",
+      "Iconic",
+      "GT Line"
+     ],
+     "engines": [
+      "1.6 dCi 130PS diesel",
+      "2.0 dCi 175PS diesel",
+      "2.0 Blue dCi 190PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Captur",
+   "slug": "captur",
+   "aliases": [
+    "Captur E-Tech"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2013,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Expression+",
+      "Play",
+      "Dynamique MediaNav",
+      "Dynamique Nav",
+      "Dynamique S Nav",
+      "Signature Nav",
+      "Signature X Nav",
+      "Iconic",
+      "GT Line",
+      "S Edition"
+     ],
+     "engines": [
+      "0.9 TCe 90PS petrol",
+      "1.2 TCe 120PS petrol",
+      "1.3 TCe 130PS petrol",
+      "1.3 TCe 150PS petrol",
+      "1.5 dCi 90PS diesel",
+      "1.5 dCi 110PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2020–)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Play",
+      "Iconic",
+      "S Edition",
+      "RS Line",
+      "Launch Edition",
+      "Evolution",
+      "Techno",
+      "Esprit Alpine",
+      "Engineered"
+     ],
+     "engines": [
+      "1.0 TCe 90PS petrol",
+      "1.0 TCe 100PS petrol",
+      "1.3 TCe 130PS petrol",
+      "1.3 TCe 140PS mild-hybrid petrol",
+      "1.3 TCe 155PS petrol",
+      "1.3 TCe 160PS mild-hybrid petrol",
+      "1.6 E-Tech 145PS hybrid",
+      "1.6 E-Tech 160PS plug-in-hybrid",
+      "1.5 Blue dCi 95PS diesel",
+      "1.5 Blue dCi 115PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Kadjar",
+   "slug": "kadjar",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2015,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "Kadjar (2015–2022)",
+     "from": 2015,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Expression+",
+      "Play",
+      "Dynamique Nav",
+      "Dynamique S Nav",
+      "Signature Nav",
+      "Signature S Nav",
+      "Iconic",
+      "S Edition",
+      "GT Line"
+     ],
+     "engines": [
+      "1.2 TCe 130PS petrol",
+      "1.3 TCe 140PS petrol",
+      "1.3 TCe 160PS petrol",
+      "1.5 dCi 110PS diesel",
+      "1.5 Blue dCi 115PS diesel",
+      "1.6 dCi 130PS diesel",
+      "1.7 Blue dCi 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Arkana",
+   "slug": "arkana",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2021,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Arkana (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S Edition",
+      "R.S. Line",
+      "Iconic",
+      "Engineered",
+      "Evolution",
+      "Techno",
+      "Esprit Alpine"
+     ],
+     "engines": [
+      "1.3 TCe 140PS mild-hybrid petrol",
+      "1.3 TCe 160PS mild-hybrid petrol",
+      "1.6 E-Tech 145PS hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Austral",
+   "slug": "austral",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Austral (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Evolution",
+      "Techno",
+      "Techno Esprit Alpine",
+      "Iconic Esprit Alpine"
+     ],
+     "engines": [
+      "1.3 TCe 140PS mild-hybrid petrol",
+      "1.3 TCe 160PS mild-hybrid petrol",
+      "1.2 E-Tech 200PS hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Rafale",
+   "slug": "rafale",
+   "aliases": [
+    "Rafale E-Tech"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Techno",
+      "Techno Esprit Alpine",
+      "Iconic Esprit Alpine",
+      "Atelier Alpine"
+     ],
+     "engines": [
+      "1.2 E-Tech full hybrid 200PS hybrid",
+      "1.2 E-Tech 4x4 300PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Symbioz",
+   "slug": "symbioz",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Symbioz (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Evolution",
+      "Techno",
+      "Esprit Alpine"
+     ],
+     "engines": [
+      "1.6 E-Tech 145PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Zoe",
+   "slug": "zoe",
+   "aliases": [
+    "ZOE",
+    "Zoe E-Tech"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2013,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "Phase 1 (2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Expression Nav",
+      "Dynamique Nav",
+      "Dynamique Intens",
+      "Signature Nav",
+      "i Dynamique Nav",
+      "i Signature Nav",
+      "Play",
+      "Iconic",
+      "GT Line"
+     ],
+     "engines": [
+      "22kWh 88PS electric",
+      "41kWh 92PS electric",
+      "41kWh 108PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Phase 2 (2020–2024)",
+     "from": 2020,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Play",
+      "Iconic",
+      "GT Line",
+      "Techno",
+      "Evolution"
+     ],
+     "engines": [
+      "52kWh 108PS electric",
+      "52kWh 135PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Fluence Z.E.",
+   "slug": "fluence-z-e",
+   "aliases": [
+    "Fluence"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2012,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "Fluence Z.E. (2012–2014)",
+     "from": 2012,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Dynamique"
+     ],
+     "engines": [
+      "22kWh 95PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Twizy",
+   "slug": "twizy",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2012,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "Twizy (2012–2021)",
+     "from": 2012,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Expression",
+      "Urban",
+      "Technic",
+      "Cargo"
+     ],
+     "engines": [
+      "6.1kWh 17PS electric",
+      "6.1kWh 5PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "5 E-Tech",
+   "slug": "5-e-tech",
+   "aliases": [
+    "Renault 5",
+    "R5",
+    "5 E-Tech Electric",
+    "5"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Renault 5 E-Tech Electric (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Evolution",
+      "Techno",
+      "Iconic Five",
+      "Roland Garros"
+     ],
+     "engines": [
+      "40kWh 120PS electric",
+      "52kWh 150PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "4 E-Tech",
+   "slug": "4-e-tech",
+   "aliases": [
+    "Renault 4",
+    "R4",
+    "4 E-Tech Electric",
+    "4"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Renault 4 E-Tech Electric (2025–)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Evolution",
+      "Techno",
+      "Iconic"
+     ],
+     "engines": [
+      "40kWh 120PS electric",
+      "52kWh 150PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Kangoo",
+   "slug": "kangoo",
+   "aliases": [
+    "Kangoo Express",
+    "Kangoo Maxi",
+    "Kangoo Z.E.",
+    "Kangoo E-Tech",
+    "Kangoo Crew"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1998–2009)",
+     "from": 2000,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Authentique",
+      "Expression",
+      "Alize",
+      "Trekka"
+     ],
+     "engines": [
+      "1.2 8v 60PS petrol",
+      "1.2 16v 75PS petrol",
+      "1.4 8v 75PS petrol",
+      "1.6 16v 95PS petrol",
+      "1.9 D 55PS diesel",
+      "1.9 D 65PS diesel",
+      "1.9 dTi 80PS diesel",
+      "1.5 dCi 57PS diesel",
+      "1.5 dCi 65PS diesel",
+      "1.5 dCi 70PS diesel",
+      "1.5 dCi 85PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2008–2021)",
+     "from": 2008,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "ML19",
+      "ML20",
+      "LL21",
+      "Core",
+      "Business",
+      "Business+",
+      "Sport",
+      "Extreme",
+      "Expression",
+      "Dynamique"
+     ],
+     "engines": [
+      "1.6 16v 105PS petrol",
+      "1.2 TCe 115PS petrol",
+      "1.5 dCi 70PS diesel",
+      "1.5 dCi 75PS diesel",
+      "1.5 dCi 90PS diesel",
+      "1.5 dCi 110PS diesel",
+      "1.5 Blue dCi 80PS diesel",
+      "1.5 Blue dCi 95PS diesel",
+      "22kWh 60PS electric",
+      "33kWh 60PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "Start",
+      "Advance",
+      "Extra"
+     ],
+     "engines": [
+      "1.3 TCe 100PS petrol",
+      "1.3 TCe 130PS petrol",
+      "1.5 Blue dCi 75PS diesel",
+      "1.5 Blue dCi 95PS diesel",
+      "1.5 Blue dCi 115PS diesel",
+      "45kWh 122PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Trafic",
+   "slug": "trafic",
+   "aliases": [
+    "Trafic Passenger",
+    "Trafic Crew Van",
+    "Trafic E-Tech"
+   ],
+   "vehicleType": "van",
+   "segment": "van-medium",
+   "years": {
+    "from": 2001,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (2001–2014)",
+     "from": 2001,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "SL27",
+      "SL29",
+      "LL29",
+      "Sport",
+      "Black Edition"
+     ],
+     "engines": [
+      "2.0 16v 120PS petrol",
+      "1.9 dCi 82PS diesel",
+      "1.9 dCi 100PS diesel",
+      "2.0 dCi 90PS diesel",
+      "2.0 dCi 115PS diesel",
+      "2.5 dCi 135PS diesel",
+      "2.5 dCi 146PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2014–2021)",
+     "from": 2014,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "Business",
+      "Business+",
+      "Sport",
+      "Sport Nav",
+      "Formula Edition",
+      "Black Edition"
+     ],
+     "engines": [
+      "1.6 dCi 90PS diesel",
+      "1.6 dCi 95PS diesel",
+      "1.6 dCi 115PS diesel",
+      "1.6 dCi 120PS diesel",
+      "1.6 dCi 125PS diesel",
+      "1.6 dCi 140PS diesel",
+      "1.6 dCi 145PS diesel",
+      "2.0 dCi 120PS diesel",
+      "2.0 dCi 145PS diesel",
+      "2.0 dCi 170PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 facelift (2021–)",
+     "from": 2021,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6
+       ]
+      },
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        8,
+        9
+       ]
+      }
+     ],
+     "trims": [
+      "Start",
+      "Advance",
+      "Extra",
+      "Black Edition"
+     ],
+     "engines": [
+      "2.0 Blue dCi 110PS diesel",
+      "2.0 Blue dCi 130PS diesel",
+      "2.0 Blue dCi 150PS diesel",
+      "2.0 Blue dCi 170PS diesel",
+      "52kWh 122PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Master",
+   "slug": "master",
+   "aliases": [
+    "Master Z.E.",
+    "Master E-Tech"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (1998–2010)",
+     "from": 2000,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.9 dCi 82PS diesel",
+      "2.2 dCi 90PS diesel",
+      "2.5 dCi 100PS diesel",
+      "2.5 dCi 120PS diesel",
+      "2.5 dCi 150PS diesel",
+      "2.8 dTi 115PS diesel",
+      "3.0 dCi 136PS diesel",
+      "3.0 dCi 140PS diesel",
+      "3.0 dCi 160PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2010–2024)",
+     "from": 2010,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Business",
+      "Business+",
+      "Start",
+      "Advance",
+      "Extra"
+     ],
+     "engines": [
+      "2.3 dCi 100PS diesel",
+      "2.3 dCi 110PS diesel",
+      "2.3 dCi 125PS diesel",
+      "2.3 dCi 135PS diesel",
+      "2.3 dCi 150PS diesel",
+      "2.3 dCi 165PS diesel",
+      "2.3 Blue dCi 135PS diesel",
+      "2.3 Blue dCi 150PS diesel",
+      "2.3 Blue dCi 180PS diesel",
+      "33kWh 76PS electric",
+      "52kWh 76PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "crew-van",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        6,
+        7
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2,
+        4
+       ],
+       "seats": [
+        3,
+        6,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Start",
+      "Advance",
+      "Extra"
+     ],
+     "engines": [
+      "2.0 Blue dCi 105PS diesel",
+      "2.0 Blue dCi 130PS diesel",
+      "2.0 Blue dCi 150PS diesel",
+      "2.0 Blue dCi 170PS diesel",
+      "40kWh 130PS electric",
+      "87kWh 143PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Master Minibus",
+   "slug": "master-minibus",
+   "aliases": [],
+   "vehicleType": "minibus",
+   "segment": "minibus",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk2 (1998–2010)",
+     "from": 2000,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "1.9 dCi 82PS diesel",
+      "2.2 dCi 90PS diesel",
+      "2.5 dCi 100PS diesel",
+      "2.5 dCi 120PS diesel",
+      "2.5 dCi 150PS diesel",
+      "2.8 dTi 115PS diesel",
+      "3.0 dCi 136PS diesel",
+      "3.0 dCi 140PS diesel",
+      "3.0 dCi 160PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk3 (2010–2024)",
+     "from": 2010,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "Business",
+      "Business+",
+      "Start",
+      "Advance",
+      "Extra"
+     ],
+     "engines": [
+      "2.3 dCi 100PS diesel",
+      "2.3 dCi 110PS diesel",
+      "2.3 dCi 125PS diesel",
+      "2.3 dCi 135PS diesel",
+      "2.3 dCi 150PS diesel",
+      "2.3 dCi 165PS diesel",
+      "2.3 Blue dCi 135PS diesel",
+      "2.3 Blue dCi 150PS diesel",
+      "2.3 Blue dCi 180PS diesel",
+      "33kWh 76PS electric",
+      "52kWh 76PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "minibus",
+       "doors": [
+        4,
+        5
+       ],
+       "seats": [
+        9,
+        12,
+        15,
+        17
+       ]
+      }
+     ],
+     "trims": [
+      "Start",
+      "Advance",
+      "Extra"
+     ],
+     "engines": [
+      "2.0 Blue dCi 105PS diesel",
+      "2.0 Blue dCi 130PS diesel",
+      "2.0 Blue dCi 150PS diesel",
+      "2.0 Blue dCi 170PS diesel",
+      "40kWh 130PS electric",
+      "87kWh 143PS electric"
+     ],
+     "fuels": [
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

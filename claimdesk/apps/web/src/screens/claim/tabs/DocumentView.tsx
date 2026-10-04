@@ -18,7 +18,10 @@ import { todayISO } from '../../../lib/dates';
 import type { ClaimView } from '../claimFile';
 import { ReasonDialog } from '../components/ReasonDialog';
 import { shortHash } from '../lib/evidence';
-import { approvalBlocker, canSend, canSign, consistencyCodeLabel, flagCounts, isBlocked, SEND_VIA_OPTIONS, supersedeBodyFrom } from '../lib/documents';
+import { approvalBlocker, canSend, canSign, consistencyCodeLabel, docxValuesUsed, flagCounts, hasApprovedPdf, isBlocked, isDocx, isHtmlLetter, pdfConverterNote, SEND_VIA_OPTIONS, supersedeBodyFrom } from '../lib/documents';
+import { templatesApi } from '../../../api/templatesApi';
+import { DocxPreview } from '../components/DocxPreview';
+import { GTA_BENCHMARK_CAVEAT, originLabel } from '../lib/fillValues';
 
 type Dialog = 'send' | 'sign' | 'supersede' | null;
 
@@ -51,6 +54,8 @@ export function DocumentView({ view }: { view: ClaimView }) {
   const counts = flagCounts(doc.consistency);
   const supersededBy = view.documents.find((d) => d.supersedesId === doc.id);
   const certificateDoc = doc.signature ? view.documents.find((d) => d.id === doc.signature?.certificateId) : undefined;
+  const docx = isDocx(doc);
+  const converterNote = pdfConverterNote(doc);
 
   return (
     <div className="stack">
@@ -63,6 +68,8 @@ export function DocumentView({ view }: { view: ClaimView }) {
             <h2 style={{ fontSize: 'var(--fs-lg)' }}>{doc.title}</h2>
             <DocumentStatusBadge status={doc.status} />
             {doc.reExecutedOn && <Badge tone="amber">re-executed {doc.reExecutedOn}</Badge>}
+            {docx && <Badge tone="blue">Word</Badge>}
+            {converterNote && <Badge tone="green">{converterNote}</Badge>}
           </div>
           <div className="xs muted" style={{ marginTop: 4 }}>
             <span className="mono">
@@ -81,9 +88,29 @@ export function DocumentView({ view }: { view: ClaimView }) {
           </div>
         </div>
         <div className="row">
-          <a className="btn btn-secondary btn-sm" href={api.documentPdfUrl(doc.id)} target="_blank" rel="noreferrer">
-            PDF
-          </a>
+          {docx ? (
+            <>
+              <a className="btn btn-secondary btn-sm" href={templatesApi.documentDocxUrl(doc.id)} download>
+                Download Word (.docx)
+              </a>
+              {hasApprovedPdf(doc) ? (
+                <a className="btn btn-secondary btn-sm" href={api.documentPdfUrl(doc.id)} target="_blank" rel="noreferrer">
+                  Download PDF
+                </a>
+              ) : (
+                <span className="xs muted">The PDF is made when the document is approved</span>
+              )}
+            </>
+          ) : (
+            <a className="btn btn-secondary btn-sm" href={api.documentPdfUrl(doc.id)} target="_blank" rel="noreferrer">
+              PDF
+            </a>
+          )}
+          {isHtmlLetter(doc) && (
+            <a className="btn btn-secondary btn-sm" href={templatesApi.documentLetterheadDocxUrl(doc.id)} download title="The same letter recomposed on the CCGUK letterhead as a Word file">
+              Download on letterhead (Word)
+            </a>
+          )}
           <Button
             size="sm"
             variant="primary"
@@ -129,8 +156,10 @@ export function DocumentView({ view }: { view: ClaimView }) {
       <ApiErrorNotice error={docQ.error} what="refresh the document" />
 
       <div className="doc-layout">
-        <Card title="Preview" flush actions={<span className="xs muted">rendered HTML · letterhead palette · PDF is the hashed artefact</span>}>
-          {doc.html ? (
+        <Card title="Preview" flush actions={<span className="xs muted">{docx ? 'Word document · the PDF is made on approval and is then the hashed artefact' : 'rendered HTML · letterhead palette · PDF is the hashed artefact'}</span>}>
+          {docx ? (
+            <DocxPreview docId={doc.id} title={doc.title} fallbackHtml={doc.html} />
+          ) : doc.html ? (
             <iframe className="doc-frame" title={`${doc.title} preview`} srcDoc={doc.html} sandbox="" />
           ) : (
             <EmptyState title="No HTML in this response">Open the PDF, or reload: the bundle omits document bodies.</EmptyState>
@@ -193,6 +222,8 @@ export function DocumentView({ view }: { view: ClaimView }) {
               </>
             )}
           </Card>
+
+          {docx && <ValuesUsedCard doc={doc} />}
 
           <Card title="Record">
             <KeyValue
@@ -279,6 +310,49 @@ export function DocumentView({ view }: { view: ClaimView }) {
       {dialog === 'sign' && <SignDialog doc={doc} view={view} onClose={() => setDialog(null)} />}
       {dialog === 'supersede' && <SupersedeDialog doc={doc} view={view} onClose={() => setDialog(null)} />}
     </div>
+  );
+}
+
+/** What the Word document printed in each blank and where each value came from (`dataSnapshot._docx.values`). */
+function ValuesUsedCard({ doc }: { doc: GeneratedDocument }) {
+  const values = docxValuesUsed(doc);
+  const printed = values.filter((v) => v.display);
+  const gta = values.some((v) => /gta/i.test(v.key ?? '') && v.display);
+  return (
+    <Card title="Values used" flush actions={<span className="xs muted">{printed.length} of {values.length} blanks filled</span>}>
+      {values.length === 0 ? (
+        <EmptyState title="No values recorded">This document carries no record of the values it was filled with.</EmptyState>
+      ) : (
+        <details open={values.length <= 40}>
+          <summary className="xs muted" style={{ cursor: 'pointer', padding: '8px 16px' }}>
+            Show every blank
+          </summary>
+          <div style={{ maxHeight: 420, overflow: 'auto' }}>
+            {values.map((v) => (
+              <div key={v.slotId} className="consistency-flag">
+                <div className="row-between">
+                  <strong className="small">{v.label}</strong>
+                  <span className="row" style={{ gap: 4 }}>
+                    <Badge tone={v.origin === 'none' ? 'grey' : v.origin === 'handler' ? 'blue' : 'green'}>{originLabel(v.origin)}</Badge>
+                    {v.verification && <Badge tone={v.verification === 'verified' ? 'green' : 'amber'}>{v.verification}</Badge>}
+                  </span>
+                </div>
+                <div className="mono xs" style={{ marginTop: 2, whiteSpace: 'pre-wrap' }}>{v.display || <span className="muted">left blank</span>}</div>
+                <div className="xs muted mono" title={v.key}>
+                  {v.slotId}
+                  {v.key ? ` · ${v.key}` : ''}
+                </div>
+              </div>
+            ))}
+          </div>
+        </details>
+      )}
+      {gta && (
+        <div className="xs muted" style={{ padding: '8px 16px', borderTop: '1px solid var(--line)' }}>
+          {GTA_BENCHMARK_CAVEAT}
+        </div>
+      )}
+    </Card>
   );
 }
 

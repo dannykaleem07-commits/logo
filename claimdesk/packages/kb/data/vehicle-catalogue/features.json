@@ -1,0 +1,1891 @@
+{
+ "schemaVersion": 1,
+ "categories": [
+  {
+   "id": "safety",
+   "label": "Safety",
+   "items": [
+    {
+     "id": "aeb",
+     "label": "Autonomous emergency braking",
+     "aliases": [
+      "AEB",
+      "Autonomous braking",
+      "City safety"
+     ],
+     "kind": "feature"
+    },
+    {
+     "id": "aeb_city",
+     "label": "Autonomous emergency braking (city / low speed)",
+     "kind": "feature"
+    },
+    {
+     "id": "aeb_pedestrian_cyclist",
+     "label": "Autonomous emergency braking with pedestrian / cyclist detection",
+     "kind": "feature"
+    },
+    {
+     "id": "forward_collision_warning",
+     "label": "Forward collision warning",
+     "kind": "feature"
+    },
+    {
+     "id": "exit_warning",
+     "label": "Safe exit warning",
+     "kind": "feature"
+    },
+    {
+     "id": "evasive_steering_assist",
+     "label": "Evasive steering assist",
+     "kind": "feature"
+    },
+    {
+     "id": "isofix",
+     "label": "ISOFIX child-seat mounting points",
+     "kind": "feature"
+    },
+    {
+     "id": "isofix_front",
+     "label": "Front passenger ISOFIX / airbag deactivation",
+     "kind": "feature"
+    },
+    {
+     "id": "extra_airbags",
+     "label": "Additional airbags (rear side / knee / centre)",
+     "kind": "feature"
+    },
+    {
+     "id": "ecall",
+     "label": "Emergency call (eCall)",
+     "kind": "feature"
+    }
+   ]
+  },
+  {
+   "id": "driver_assistance",
+   "label": "Driver assistance",
+   "items": [
+    {
+     "id": "cruise_control",
+     "label": "Cruise control (standard, non-adaptive)",
+     "kind": "feature"
+    },
+    {
+     "id": "speed_limiter_car",
+     "label": "Driver-set speed limiter",
+     "kind": "feature"
+    },
+    {
+     "id": "head_up_display",
+     "label": "Head-up display",
+     "aliases": [
+      "HUD"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "ar_head_up_display",
+     "label": "Augmented-reality head-up display / navigation",
+     "kind": "both"
+    },
+    {
+     "id": "digital_rear_mirror",
+     "label": "Digital (camera) rear-view mirror",
+     "kind": "both"
+    },
+    {
+     "id": "camera_door_mirrors",
+     "label": "Virtual / camera door mirrors",
+     "kind": "feature"
+    },
+    {
+     "id": "lane_departure_warning",
+     "label": "Lane departure warning",
+     "kind": "feature"
+    },
+    {
+     "id": "lane_keep_assist",
+     "label": "Lane keep assist",
+     "aliases": [
+      "Lane assist",
+      "LKA"
+     ],
+     "kind": "feature"
+    },
+    {
+     "id": "lane_centring",
+     "label": "Lane centring / active steering assist",
+     "kind": "feature"
+    },
+    {
+     "id": "blind_spot",
+     "label": "Blind spot monitoring",
+     "aliases": [
+      "Blind spot monitor",
+      "Blind spot warning",
+      "BLIS"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "rear_cross_traffic_alert",
+     "label": "Rear cross-traffic alert",
+     "kind": "both"
+    },
+    {
+     "id": "adaptive_cruise",
+     "label": "Adaptive cruise control",
+     "aliases": [
+      "ACC",
+      "Radar cruise control"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "adaptive_cruise_stop_go",
+     "label": "Adaptive cruise control with stop & go",
+     "kind": "both"
+    },
+    {
+     "id": "traffic_jam_assist",
+     "label": "Traffic jam assist",
+     "kind": "feature"
+    },
+    {
+     "id": "hands_off_highway_assist",
+     "label": "Hands-off motorway assist (e.g. BlueCruise)",
+     "kind": "feature"
+    },
+    {
+     "id": "traffic_sign_recognition",
+     "label": "Traffic sign recognition",
+     "kind": "feature"
+    },
+    {
+     "id": "intelligent_speed_assist",
+     "label": "Intelligent speed assistance",
+     "kind": "feature"
+    },
+    {
+     "id": "driver_attention_monitor",
+     "label": "Driver attention / drowsiness monitor",
+     "kind": "feature"
+    },
+    {
+     "id": "night_vision",
+     "label": "Night vision assist",
+     "kind": "both"
+    },
+    {
+     "id": "hill_descent_control",
+     "label": "Hill descent control",
+     "kind": "feature"
+    }
+   ]
+  },
+  {
+   "id": "parking",
+   "label": "Parking",
+   "items": [
+    {
+     "id": "rear_camera",
+     "label": "Reversing camera",
+     "aliases": [
+      "Reversing camera",
+      "Rear view camera"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "360_camera",
+     "label": "360-degree / surround-view camera",
+     "aliases": [
+      "Surround view camera",
+      "Bird’s-eye view camera"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "parking_sensors_rear",
+     "label": "Rear parking sensors",
+     "aliases": [
+      "Rear parking aid",
+      "Reversing sensors"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "parking_sensors_front",
+     "label": "Front parking sensors",
+     "aliases": [
+      "Front parking aid"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "park_assist",
+     "label": "Park assist (automated parking)",
+     "kind": "both"
+    },
+    {
+     "id": "remote_park_assist",
+     "label": "Remote / key-controlled parking",
+     "kind": "both"
+    },
+    {
+     "id": "aftermarket_parking_sensors",
+     "label": "Aftermarket parking sensors / camera",
+     "kind": "extra"
+    }
+   ]
+  },
+  {
+   "id": "lighting",
+   "label": "Lighting",
+   "items": [
+    {
+     "id": "ambient_lighting",
+     "label": "Ambient interior lighting (multi-colour)",
+     "kind": "feature"
+    },
+    {
+     "id": "auto_lights_wipers",
+     "label": "Automatic headlights and rain-sensing wipers",
+     "kind": "feature"
+    },
+    {
+     "id": "halogen_headlights",
+     "label": "Halogen headlights",
+     "kind": "feature"
+    },
+    {
+     "id": "xenon_headlights",
+     "label": "Xenon / bi-xenon headlights",
+     "kind": "feature"
+    },
+    {
+     "id": "led_headlights",
+     "label": "LED headlights",
+     "aliases": [
+      "LED lights"
+     ],
+     "kind": "feature"
+    },
+    {
+     "id": "matrix_led",
+     "label": "Matrix / pixel LED adaptive headlights",
+     "aliases": [
+      "Matrix LED",
+      "Pixel LED"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "laser_headlights",
+     "label": "Laser headlights",
+     "kind": "both"
+    },
+    {
+     "id": "adaptive_cornering_lights",
+     "label": "Adaptive / cornering lights",
+     "kind": "feature"
+    },
+    {
+     "id": "auto_high_beam",
+     "label": "Automatic high-beam assist",
+     "kind": "feature"
+    },
+    {
+     "id": "dynamic_indicators",
+     "label": "Sequential / dynamic LED indicators",
+     "kind": "feature"
+    },
+    {
+     "id": "aftermarket_lighting",
+     "label": "Aftermarket LED / HID lighting conversion",
+     "kind": "extra"
+    }
+   ]
+  },
+  {
+   "id": "climate",
+   "label": "Climate and heating",
+   "items": [
+    {
+     "id": "air_con_manual",
+     "label": "Air conditioning (manual)",
+     "kind": "feature"
+    },
+    {
+     "id": "climate_single_zone",
+     "label": "Climate control (single zone)",
+     "kind": "feature"
+    },
+    {
+     "id": "climate_control_dual",
+     "label": "Climate control (dual zone)",
+     "aliases": [
+      "Dual-zone climate control"
+     ],
+     "kind": "feature"
+    },
+    {
+     "id": "climate_three_zone",
+     "label": "Climate control (three zone)",
+     "kind": "feature"
+    },
+    {
+     "id": "climate_four_zone",
+     "label": "Climate control (four zone)",
+     "kind": "feature"
+    },
+    {
+     "id": "heated_steering_wheel",
+     "label": "Heated steering wheel",
+     "kind": "both"
+    },
+    {
+     "id": "heated_windscreen",
+     "label": "Heated front windscreen",
+     "kind": "both"
+    },
+    {
+     "id": "parking_heater",
+     "label": "Auxiliary parking heater / remote pre-conditioning (e.g. Webasto)",
+     "kind": "both"
+    },
+    {
+     "id": "cooled_glovebox",
+     "label": "Cooled glovebox / fridge compartment",
+     "kind": "feature"
+    }
+   ]
+  },
+  {
+   "id": "seats_interior",
+   "label": "Seats and interior",
+   "items": [
+    {
+     "id": "heated_seats_front",
+     "label": "Heated front seats",
+     "aliases": [
+      "Heated seats"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "heated_seats_rear",
+     "label": "Heated rear seats",
+     "kind": "both"
+    },
+    {
+     "id": "ventilated_seats",
+     "label": "Ventilated / cooled seats",
+     "kind": "both"
+    },
+    {
+     "id": "massage_seats",
+     "label": "Massage seats",
+     "kind": "both"
+    },
+    {
+     "id": "cloth_upholstery",
+     "label": "Cloth upholstery",
+     "kind": "feature"
+    },
+    {
+     "id": "part_leather",
+     "label": "Part leather / leather-cloth upholstery",
+     "kind": "feature"
+    },
+    {
+     "id": "leather",
+     "label": "Full leather upholstery",
+     "aliases": [
+      "Leather seats",
+      "Leather interior"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "nappa_leather",
+     "label": "Nappa / extended premium leather",
+     "kind": "both"
+    },
+    {
+     "id": "alcantara",
+     "label": "Alcantara / suede-effect upholstery or trim",
+     "kind": "feature"
+    },
+    {
+     "id": "vegan_leather",
+     "label": "Leatherette / vegan leather upholstery",
+     "kind": "feature"
+    },
+    {
+     "id": "sports_seats",
+     "label": "Sports / bucket front seats",
+     "kind": "feature"
+    },
+    {
+     "id": "electric_seats",
+     "label": "Electrically adjustable front seats",
+     "aliases": [
+      "Electric seats",
+      "Power seats"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "memory_seats",
+     "label": "Memory seats (driver / passenger)",
+     "kind": "both"
+    },
+    {
+     "id": "electric_lumbar",
+     "label": "Electric lumbar support",
+     "kind": "feature"
+    },
+    {
+     "id": "electric_rear_seats",
+     "label": "Electrically adjustable / reclining rear seats",
+     "kind": "feature"
+    },
+    {
+     "id": "executive_rear_seats",
+     "label": "Executive rear seating package (individual rear seats)",
+     "kind": "feature"
+    },
+    {
+     "id": "electric_steering_column",
+     "label": "Electrically adjustable steering column",
+     "kind": "feature"
+    },
+    {
+     "id": "auto_dimming_mirror",
+     "label": "Auto-dimming rear-view mirror",
+     "kind": "feature"
+    },
+    {
+     "id": "rear_sunblinds",
+     "label": "Rear / side window sunblinds",
+     "kind": "both"
+    },
+    {
+     "id": "rear_armrest",
+     "label": "Rear centre armrest with storage / cupholders",
+     "kind": "feature"
+    },
+    {
+     "id": "seven_seats",
+     "label": "Seven seats (third-row seating)",
+     "kind": "both"
+    },
+    {
+     "id": "eight_plus_seats",
+     "label": "Eight or more seats",
+     "kind": "feature"
+    },
+    {
+     "id": "captains_chairs",
+     "label": "Second-row captain's chairs",
+     "kind": "both"
+    },
+    {
+     "id": "power_folding_rear_seats",
+     "label": "Power-folding rear / third-row seats",
+     "kind": "feature"
+    },
+    {
+     "id": "split_folding_rear_seats",
+     "label": "Split-folding rear seats (60/40 or 40/20/40)",
+     "kind": "feature"
+    },
+    {
+     "id": "sliding_rear_seats",
+     "label": "Sliding rear bench / seats",
+     "kind": "feature"
+    }
+   ]
+  },
+  {
+   "id": "infotainment",
+   "label": "Infotainment and connectivity",
+   "items": [
+    {
+     "id": "sat_nav",
+     "label": "Factory satellite navigation",
+     "aliases": [
+      "Satnav",
+      "Sat-nav",
+      "Navigation"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "dab",
+     "label": "DAB digital radio",
+     "aliases": [
+      "DAB radio",
+      "Digital radio"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "bluetooth",
+     "label": "Bluetooth phone / audio streaming",
+     "aliases": [
+      "Bluetooth hands-free"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "apple_carplay",
+     "label": "Apple CarPlay (wired)",
+     "aliases": [
+      "CarPlay"
+     ],
+     "kind": "feature"
+    },
+    {
+     "id": "apple_carplay_wireless",
+     "label": "Apple CarPlay (wireless)",
+     "kind": "both"
+    },
+    {
+     "id": "android_auto",
+     "label": "Android Auto (wired)",
+     "aliases": [
+      "Android Auto smartphone mirroring"
+     ],
+     "kind": "feature"
+    },
+    {
+     "id": "android_auto_wireless",
+     "label": "Android Auto (wireless)",
+     "kind": "both"
+    },
+    {
+     "id": "touchscreen_large",
+     "label": "Large central touchscreen (10in or larger)",
+     "kind": "both"
+    },
+    {
+     "id": "wireless_charging",
+     "label": "Wireless phone charging pad",
+     "kind": "both"
+    },
+    {
+     "id": "digital_cockpit",
+     "label": "Digital instrument cluster / virtual cockpit",
+     "kind": "both"
+    },
+    {
+     "id": "connected_services",
+     "label": "Connected services / manufacturer app (remote lock, locate, climate)",
+     "kind": "feature"
+    },
+    {
+     "id": "wifi_hotspot",
+     "label": "In-car Wi-Fi hotspot",
+     "kind": "both"
+    },
+    {
+     "id": "voice_control",
+     "label": "Natural voice control",
+     "kind": "feature"
+    },
+    {
+     "id": "gesture_control",
+     "label": "Gesture control",
+     "kind": "feature"
+    },
+    {
+     "id": "ota_updates",
+     "label": "Over-the-air software updates",
+     "kind": "feature"
+    },
+    {
+     "id": "usb_c_ports",
+     "label": "USB-C ports (front / rear)",
+     "kind": "feature"
+    },
+    {
+     "id": "power_socket_230v",
+     "label": "230V household power socket",
+     "kind": "feature"
+    },
+    {
+     "id": "rear_entertainment",
+     "label": "Rear-seat entertainment screens",
+     "kind": "both"
+    },
+    {
+     "id": "rear_climate_touchscreen",
+     "label": "Rear-seat control tablet / touchscreen",
+     "kind": "feature"
+    },
+    {
+     "id": "premium_audio_generic",
+     "label": "Upgraded / premium audio system (unbranded)",
+     "kind": "both"
+    },
+    {
+     "id": "audio_bang_olufsen",
+     "label": "Bang & Olufsen audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_bowers_wilkins",
+     "label": "Bowers & Wilkins audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_burmester",
+     "label": "Burmester audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_meridian",
+     "label": "Meridian audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_harman_kardon",
+     "label": "Harman Kardon audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_bose",
+     "label": "Bose audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_jbl",
+     "label": "JBL audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_sony",
+     "label": "Sony audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_beats",
+     "label": "Beats audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_fender",
+     "label": "Fender audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_infinity",
+     "label": "Infinity / Krell audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_mark_levinson",
+     "label": "Mark Levinson audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_focal",
+     "label": "Focal audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_dynaudio",
+     "label": "Dynaudio audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_naim",
+     "label": "Naim audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_sonus_faber",
+     "label": "Sonus faber audio",
+     "kind": "both"
+    },
+    {
+     "id": "audio_alpine",
+     "label": "Alpine audio (factory)",
+     "kind": "both"
+    },
+    {
+     "id": "audio_rockford_fosgate",
+     "label": "Rockford Fosgate audio",
+     "kind": "both"
+    },
+    {
+     "id": "aftermarket_audio",
+     "label": "Aftermarket audio / subwoofer / amplifier",
+     "kind": "extra"
+    },
+    {
+     "id": "aftermarket_head_unit",
+     "label": "Aftermarket head unit (CarPlay / Android Auto retrofit)",
+     "kind": "extra"
+    }
+   ]
+  },
+  {
+   "id": "exterior",
+   "label": "Exterior",
+   "items": [
+    {
+     "id": "sunroof",
+     "label": "Sunroof (electric tilt / slide)",
+     "kind": "both"
+    },
+    {
+     "id": "soft_close_doors",
+     "label": "Soft-close doors",
+     "kind": "feature"
+    },
+    {
+     "id": "acoustic_glazing",
+     "label": "Acoustic / laminated side glazing",
+     "kind": "feature"
+    },
+    {
+     "id": "privacy_glass",
+     "label": "Privacy glass (tinted rear windows)",
+     "aliases": [
+      "Tinted windows",
+      "Sunset glass"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "body_kit_factory",
+     "label": "Manufacturer sport styling / trim pack (e.g. M Sport, AMG Line, S line, R-Line, ST-Line)",
+     "kind": "both"
+    },
+    {
+     "id": "black_pack",
+     "label": "Black / night styling pack",
+     "kind": "both"
+    },
+    {
+     "id": "chrome_pack",
+     "label": "Chrome exterior pack",
+     "kind": "both"
+    },
+    {
+     "id": "carbon_exterior",
+     "label": "Carbon-fibre exterior trim (mirrors, splitter, spoiler)",
+     "kind": "both"
+    },
+    {
+     "id": "rear_spoiler_factory",
+     "label": "Factory rear spoiler / wing",
+     "kind": "feature"
+    },
+    {
+     "id": "solid_paint",
+     "label": "Solid (non-metallic) paint",
+     "kind": "feature"
+    },
+    {
+     "id": "metallic_paint",
+     "label": "Metallic paint",
+     "kind": "both"
+    },
+    {
+     "id": "pearlescent_paint",
+     "label": "Pearlescent / mica paint",
+     "kind": "both"
+    },
+    {
+     "id": "special_paint",
+     "label": "Special / matt / individual-programme paint",
+     "kind": "both"
+    },
+    {
+     "id": "two_tone_paint",
+     "label": "Two-tone paint / contrast roof",
+     "kind": "both"
+    },
+    {
+     "id": "panoramic_roof",
+     "label": "Panoramic glass roof",
+     "aliases": [
+      "Pan roof",
+      "Panoramic sunroof",
+      "Glass roof"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "panoramic_roof_fixed",
+     "label": "Panoramic glass roof (fixed)",
+     "kind": "both"
+    },
+    {
+     "id": "panoramic_roof_opening",
+     "label": "Panoramic glass roof (opening / sliding)",
+     "kind": "both"
+    },
+    {
+     "id": "electrochromic_roof",
+     "label": "Electrochromic / switchable-tint glass roof",
+     "kind": "both"
+    },
+    {
+     "id": "convertible_soft_top",
+     "label": "Convertible soft top (electric)",
+     "kind": "feature"
+    },
+    {
+     "id": "convertible_hard_top",
+     "label": "Folding hard top / retractable roof",
+     "kind": "feature"
+    },
+    {
+     "id": "wind_deflector",
+     "label": "Convertible wind deflector",
+     "kind": "feature"
+    },
+    {
+     "id": "power_tailgate",
+     "label": "Power tailgate",
+     "kind": "both"
+    },
+    {
+     "id": "hands_free_tailgate",
+     "label": "Hands-free (kick-sensor) tailgate",
+     "kind": "both"
+    },
+    {
+     "id": "power_folding_mirrors",
+     "label": "Power-folding door mirrors",
+     "kind": "feature"
+    },
+    {
+     "id": "heated_mirrors",
+     "label": "Heated door mirrors",
+     "kind": "feature"
+    },
+    {
+     "id": "side_steps",
+     "label": "Side steps / running boards",
+     "kind": "both"
+    },
+    {
+     "id": "underbody_protection",
+     "label": "Underbody / skid plate protection",
+     "kind": "both"
+    },
+    {
+     "id": "mud_flaps",
+     "label": "Mud flaps",
+     "kind": "both"
+    },
+    {
+     "id": "aftermarket_body_kit",
+     "label": "Aftermarket body kit / spoilers",
+     "kind": "extra"
+    },
+    {
+     "id": "vinyl_wrap",
+     "label": "Vinyl wrap (full or partial)",
+     "kind": "extra"
+    },
+    {
+     "id": "paint_protection_film",
+     "label": "Paint protection film (PPF)",
+     "kind": "extra"
+    },
+    {
+     "id": "ceramic_coating",
+     "label": "Ceramic coating",
+     "kind": "extra"
+    },
+    {
+     "id": "window_tint_film",
+     "label": "Aftermarket window tint film",
+     "kind": "extra"
+    }
+   ]
+  },
+  {
+   "id": "wheels_tyres",
+   "label": "Wheels and tyres",
+   "items": [
+    {
+     "id": "tyre_pressure_monitoring",
+     "label": "Tyre pressure monitoring system",
+     "kind": "feature"
+    },
+    {
+     "id": "steel_wheels",
+     "label": "Steel wheels with trims",
+     "kind": "feature"
+    },
+    {
+     "id": "alloy_wheels_15",
+     "label": "15in alloy wheels",
+     "kind": "feature"
+    },
+    {
+     "id": "alloy_wheels_16",
+     "label": "16in alloy wheels",
+     "kind": "feature"
+    },
+    {
+     "id": "alloy_wheels_17",
+     "label": "17in alloy wheels",
+     "kind": "both"
+    },
+    {
+     "id": "alloy_wheels_18",
+     "label": "18in alloy wheels",
+     "kind": "both"
+    },
+    {
+     "id": "alloy_wheels_19",
+     "label": "19in alloy wheels",
+     "kind": "both"
+    },
+    {
+     "id": "alloy_wheels_20",
+     "label": "20in alloy wheels",
+     "kind": "both"
+    },
+    {
+     "id": "alloy_wheels_21",
+     "label": "21in alloy wheels",
+     "kind": "both"
+    },
+    {
+     "id": "alloy_wheels_22",
+     "label": "22in alloy wheels",
+     "kind": "both"
+    },
+    {
+     "id": "alloy_wheels_23",
+     "label": "23in alloy wheels",
+     "kind": "both"
+    },
+    {
+     "id": "forged_wheels",
+     "label": "Forged / lightweight wheels",
+     "kind": "both"
+    },
+    {
+     "id": "run_flat_tyres",
+     "label": "Run-flat tyres",
+     "aliases": [
+      "Run-flats"
+     ],
+     "kind": "feature"
+    },
+    {
+     "id": "spare_wheel",
+     "label": "Full-size spare wheel",
+     "aliases": [
+      "Full-size spare"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "spare_space_saver",
+     "label": "Space-saver spare wheel",
+     "kind": "both"
+    },
+    {
+     "id": "tyre_repair_kit",
+     "label": "Tyre repair kit only (no spare)",
+     "kind": "feature"
+    },
+    {
+     "id": "aftermarket_wheels",
+     "label": "Aftermarket alloy wheels",
+     "kind": "extra"
+    },
+    {
+     "id": "wheel_spacers",
+     "label": "Wheel spacers",
+     "kind": "extra"
+    }
+   ]
+  },
+  {
+   "id": "security",
+   "label": "Security",
+   "items": [
+    {
+     "id": "keyless_entry",
+     "label": "Keyless entry",
+     "aliases": [
+      "Keyless go",
+      "Comfort access"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "keyless_start",
+     "label": "Keyless start (push-button start)",
+     "kind": "feature"
+    },
+    {
+     "id": "digital_key",
+     "label": "Digital key / phone-as-key",
+     "kind": "feature"
+    },
+    {
+     "id": "factory_dashcam",
+     "label": "Factory-integrated dashcam / drive recorder",
+     "kind": "both"
+    },
+    {
+     "id": "alarm",
+     "label": "Factory alarm / immobiliser (Thatcham-rated)",
+     "aliases": [
+      "Thatcham alarm",
+      "Factory alarm"
+     ],
+     "kind": "feature"
+    },
+    {
+     "id": "locking_wheel_nuts",
+     "label": "Locking wheel nuts",
+     "kind": "feature"
+    },
+    {
+     "id": "dash_cam",
+     "label": "Dash cam (front)",
+     "aliases": [
+      "Dashcam",
+      "Dash camera"
+     ],
+     "kind": "extra"
+    },
+    {
+     "id": "dash_cam_front_rear",
+     "label": "Dash cam (front and rear)",
+     "kind": "extra"
+    },
+    {
+     "id": "tracker",
+     "label": "Stolen vehicle tracker (Thatcham-approved)",
+     "aliases": [
+      "Thatcham tracker",
+      "Stolen vehicle tracking"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "aftermarket_alarm",
+     "label": "Aftermarket alarm / immobiliser (e.g. Ghost)",
+     "kind": "extra"
+    },
+    {
+     "id": "steering_lock_device",
+     "label": "Physical steering wheel lock",
+     "kind": "extra"
+    }
+   ]
+  },
+  {
+   "id": "towing_load",
+   "label": "Towing and load carrying",
+   "items": [
+    {
+     "id": "trailer_assist",
+     "label": "Trailer manoeuvring assist",
+     "kind": "both"
+    },
+    {
+     "id": "roof_rails",
+     "label": "Roof rails",
+     "kind": "both"
+    },
+    {
+     "id": "roof_bars",
+     "label": "Roof cross bars",
+     "kind": "extra"
+    },
+    {
+     "id": "tow_bar",
+     "label": "Tow bar",
+     "aliases": [
+      "Towbar",
+      "Tow hitch",
+      "Tow pack"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "tow_bar_fixed",
+     "label": "Tow bar (fixed / swan-neck)",
+     "kind": "both"
+    },
+    {
+     "id": "tow_bar_detachable",
+     "label": "Tow bar (detachable)",
+     "kind": "both"
+    },
+    {
+     "id": "tow_bar_electric",
+     "label": "Tow bar (electrically deployable)",
+     "kind": "both"
+    },
+    {
+     "id": "tow_electrics_13pin",
+     "label": "13-pin towing electrics",
+     "kind": "both"
+    },
+    {
+     "id": "aftermarket_towbar",
+     "label": "Aftermarket tow bar",
+     "kind": "extra"
+    },
+    {
+     "id": "roof_box",
+     "label": "Roof box",
+     "kind": "extra"
+    },
+    {
+     "id": "bike_rack",
+     "label": "Bike rack / carrier",
+     "kind": "extra"
+    }
+   ]
+  },
+  {
+   "id": "ev_charging",
+   "label": "EV, hybrid and charging",
+   "items": [
+    {
+     "id": "heat_pump",
+     "label": "Heat pump",
+     "aliases": [
+      "EV heat pump"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "battery_preconditioning",
+     "label": "Battery pre-conditioning (for rapid charging)",
+     "kind": "both"
+    },
+    {
+     "id": "type2_cable",
+     "label": "Type 2 public charging cable (Mode 3)",
+     "aliases": [
+      "Type 2 cable",
+      "Mode 3 cable"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "cable_type1",
+     "label": "Type 1 charging cable",
+     "kind": "feature"
+    },
+    {
+     "id": "three_pin_cable",
+     "label": "3-pin domestic 'granny' cable (Mode 2)",
+     "aliases": [
+      "Granny cable",
+      "3-pin cable"
+     ],
+     "kind": "both"
+    },
+    {
+     "id": "cable_portable_evse_commando",
+     "label": "Portable EVSE / 16A or 32A commando charger",
+     "kind": "extra"
+    },
+    {
+     "id": "rapid_charge_ccs",
+     "label": "Rapid DC charging (CCS)",
+     "kind": "feature"
+    },
+    {
+     "id": "rapid_charge_chademo",
+     "label": "Rapid DC charging (CHAdeMO)",
+     "kind": "feature"
+    },
+    {
+     "id": "ultra_rapid_800v",
+     "label": "Ultra-rapid charging (800V / 150kW+)",
+     "kind": "feature"
+    },
+    {
+     "id": "onboard_ac_7kw",
+     "label": "7kW single-phase on-board AC charger",
+     "kind": "feature"
+    },
+    {
+     "id": "onboard_ac_11kw",
+     "label": "11kW three-phase on-board AC charger",
+     "kind": "both"
+    },
+    {
+     "id": "onboard_ac_22kw",
+     "label": "22kW three-phase on-board AC charger",
+     "kind": "both"
+    },
+    {
+     "id": "battery_under_40kwh",
+     "label": "Battery under 40 kWh (usable)",
+     "kind": "feature"
+    },
+    {
+     "id": "battery_40_60kwh",
+     "label": "Battery 40-60 kWh (usable)",
+     "kind": "feature"
+    },
+    {
+     "id": "battery_60_80kwh",
+     "label": "Battery 60-80 kWh (usable)",
+     "kind": "feature"
+    },
+    {
+     "id": "battery_80_100kwh",
+     "label": "Battery 80-100 kWh (usable)",
+     "kind": "feature"
+    },
+    {
+     "id": "battery_over_100kwh",
+     "label": "Battery over 100 kWh (usable)",
+     "kind": "feature"
+    },
+    {
+     "id": "long_range_battery",
+     "label": "Long-range / extended-range battery option",
+     "kind": "both"
+    },
+    {
+     "id": "battery_owned",
+     "label": "Battery owned outright (included in purchase)",
+     "kind": "feature"
+    },
+    {
+     "id": "battery_leased",
+     "label": "Battery leased / rented separately (e.g. early Renault ZOE)",
+     "kind": "feature"
+    },
+    {
+     "id": "range_extender",
+     "label": "Range-extender engine (e.g. BMW i3 REx)",
+     "kind": "feature"
+    },
+    {
+     "id": "phev_electric_range_50mi",
+     "label": "Plug-in hybrid with 50+ mile electric range",
+     "kind": "feature"
+    },
+    {
+     "id": "vehicle_to_load",
+     "label": "Vehicle-to-load (V2L) power outlet / adaptor",
+     "kind": "both"
+    },
+    {
+     "id": "vehicle_to_grid",
+     "label": "Bidirectional charging (V2G / V2H)",
+     "kind": "feature"
+    },
+    {
+     "id": "one_pedal_regen",
+     "label": "Adjustable regenerative braking / one-pedal driving",
+     "kind": "feature"
+    },
+    {
+     "id": "solar_roof",
+     "label": "Solar roof panel",
+     "kind": "feature"
+    },
+    {
+     "id": "battery_health_certificate",
+     "label": "Battery state-of-health certificate",
+     "kind": "feature"
+    },
+    {
+     "id": "home_wallbox",
+     "label": "Home wallbox charger (supplied with vehicle)",
+     "kind": "extra"
+    }
+   ]
+  },
+  {
+   "id": "accessibility",
+   "label": "Accessibility and mobility",
+   "items": [
+    {
+     "id": "wheelchair_access",
+     "label": "Wheelchair-accessible vehicle (WAV) conversion",
+     "aliases": [
+      "WAV",
+      "Wheelchair accessible"
+     ],
+     "kind": "extra"
+    },
+    {
+     "id": "wav_ramp_manual",
+     "label": "Wheelchair-accessible vehicle (WAV) ramp - manual",
+     "kind": "extra"
+    },
+    {
+     "id": "wav_ramp_powered",
+     "label": "Wheelchair-accessible vehicle (WAV) ramp - powered",
+     "kind": "extra"
+    },
+    {
+     "id": "wav_platform_lift",
+     "label": "Wheelchair platform lift",
+     "kind": "extra"
+    },
+    {
+     "id": "lowered_floor_conversion",
+     "label": "Lowered-floor WAV conversion",
+     "kind": "extra"
+    },
+    {
+     "id": "wheelchair_restraints",
+     "label": "Wheelchair tie-down / occupant restraint system",
+     "kind": "extra"
+    },
+    {
+     "id": "drive_from_wheelchair",
+     "label": "Drive-from-wheelchair conversion",
+     "kind": "extra"
+    },
+    {
+     "id": "hand_controls",
+     "label": "Hand controls (driving adaptation)",
+     "aliases": [
+      "Driving hand controls"
+     ],
+     "kind": "extra"
+    },
+    {
+     "id": "hand_controls_push_pull",
+     "label": "Hand controls (push-pull / push-rock)",
+     "kind": "extra"
+    },
+    {
+     "id": "hand_controls_electronic",
+     "label": "Electronic accelerator ring / trigger controls",
+     "kind": "extra"
+    },
+    {
+     "id": "steering_ball",
+     "label": "Steering ball / spinner knob",
+     "kind": "extra"
+    },
+    {
+     "id": "left_foot_accelerator",
+     "label": "Left-foot accelerator",
+     "kind": "extra"
+    },
+    {
+     "id": "pedal_extensions",
+     "label": "Pedal extensions",
+     "kind": "extra"
+    },
+    {
+     "id": "swivel_seat",
+     "label": "Swivel seat",
+     "aliases": [
+      "Turning seat"
+     ],
+     "kind": "extra"
+    },
+    {
+     "id": "swivel_seat_manual",
+     "label": "Swivel seat (manual)",
+     "kind": "extra"
+    },
+    {
+     "id": "swivel_seat_powered",
+     "label": "Swivel seat (powered / turning seat)",
+     "kind": "extra"
+    },
+    {
+     "id": "transfer_plate",
+     "label": "Transfer plate / board",
+     "kind": "extra"
+    },
+    {
+     "id": "boot_hoist",
+     "label": "Wheelchair / scooter boot hoist",
+     "kind": "extra"
+    },
+    {
+     "id": "roof_stowage",
+     "label": "Rooftop wheelchair stowage (e.g. Chairtopper)",
+     "kind": "extra"
+    },
+    {
+     "id": "infrared_secondary_controls",
+     "label": "Infrared / remote secondary controls",
+     "kind": "extra"
+    },
+    {
+     "id": "motability_adapted",
+     "label": "Motability-adapted vehicle",
+     "kind": "extra"
+    }
+   ]
+  },
+  {
+   "id": "performance",
+   "label": "Performance and drivetrain",
+   "items": [
+    {
+     "id": "automatic_gearbox",
+     "label": "Automatic gearbox (torque converter / CVT)",
+     "kind": "both"
+    },
+    {
+     "id": "dual_clutch_gearbox",
+     "label": "Dual-clutch automatic gearbox (e.g. DSG, S tronic, PDK)",
+     "kind": "both"
+    },
+    {
+     "id": "paddle_shifters",
+     "label": "Steering-wheel paddle shifters",
+     "kind": "both"
+    },
+    {
+     "id": "awd_4x4",
+     "label": "Four-wheel drive / all-wheel drive (permanent or on-demand)",
+     "kind": "both"
+    },
+    {
+     "id": "selectable_4wd_low_range",
+     "label": "Selectable 4WD with low-range transfer box",
+     "kind": "feature"
+    },
+    {
+     "id": "locking_differential",
+     "label": "Locking differential (off-road)",
+     "kind": "feature"
+    },
+    {
+     "id": "terrain_modes",
+     "label": "Terrain / off-road drive modes",
+     "kind": "feature"
+    },
+    {
+     "id": "drive_mode_select",
+     "label": "Drive mode selector (Eco / Comfort / Sport)",
+     "kind": "feature"
+    },
+    {
+     "id": "sports_suspension",
+     "label": "Sports suspension (lowered / firmer, factory)",
+     "kind": "both"
+    },
+    {
+     "id": "adaptive_dampers",
+     "label": "Adaptive dampers / adaptive suspension",
+     "kind": "both"
+    },
+    {
+     "id": "air_suspension",
+     "label": "Air suspension",
+     "kind": "both"
+    },
+    {
+     "id": "active_anti_roll",
+     "label": "Active anti-roll / body control",
+     "kind": "feature"
+    },
+    {
+     "id": "rear_wheel_steering",
+     "label": "Rear-wheel / all-wheel steering",
+     "kind": "feature"
+    },
+    {
+     "id": "limited_slip_diff",
+     "label": "Limited-slip differential (mechanical or electronic)",
+     "kind": "both"
+    },
+    {
+     "id": "torque_vectoring",
+     "label": "Torque-vectoring differential",
+     "kind": "feature"
+    },
+    {
+     "id": "sports_exhaust",
+     "label": "Sports / valved exhaust (factory)",
+     "kind": "both"
+    },
+    {
+     "id": "performance_pack",
+     "label": "Manufacturer performance pack (e.g. Competition, Performance, Track pack)",
+     "kind": "both"
+    },
+    {
+     "id": "uprated_brakes",
+     "label": "Uprated / larger brakes (factory)",
+     "kind": "both"
+    },
+    {
+     "id": "carbon_ceramic_brakes",
+     "label": "Carbon-ceramic brakes",
+     "kind": "both"
+    },
+    {
+     "id": "launch_control",
+     "label": "Launch control",
+     "kind": "feature"
+    },
+    {
+     "id": "raised_speed_limiter",
+     "label": "Raised top-speed limiter (factory option)",
+     "kind": "feature"
+    },
+    {
+     "id": "performance_variant",
+     "label": "Performance-badged variant (e.g. GTI, RS, AMG, M, ST, N, Type R)",
+     "kind": "feature"
+    },
+    {
+     "id": "remap",
+     "label": "ECU remap (stage 1)",
+     "kind": "extra"
+    },
+    {
+     "id": "remap_stage2",
+     "label": "Stage 2+ tune (hardware and remap)",
+     "kind": "extra"
+    },
+    {
+     "id": "lowered_suspension",
+     "label": "Lowered suspension (springs)",
+     "kind": "extra"
+    },
+    {
+     "id": "coilovers",
+     "label": "Coilover suspension",
+     "kind": "extra"
+    },
+    {
+     "id": "lpg_conversion",
+     "label": "LPG conversion",
+     "kind": "extra"
+    },
+    {
+     "id": "aftermarket_exhaust",
+     "label": "Aftermarket exhaust / cat-back",
+     "kind": "extra"
+    },
+    {
+     "id": "induction_kit",
+     "label": "Induction kit / cold-air intake",
+     "kind": "extra"
+    },
+    {
+     "id": "intercooler_upgrade",
+     "label": "Uprated intercooler",
+     "kind": "extra"
+    },
+    {
+     "id": "turbo_upgrade",
+     "label": "Hybrid / larger turbo upgrade",
+     "kind": "extra"
+    },
+    {
+     "id": "big_brake_kit",
+     "label": "Aftermarket big brake kit",
+     "kind": "extra"
+    },
+    {
+     "id": "dpf_egr_delete",
+     "label": "DPF / EGR / AdBlue removal (not road legal - flag)",
+     "kind": "extra"
+    }
+   ]
+  },
+  {
+   "id": "commercial",
+   "label": "Commercial vehicle",
+   "items": [
+    {
+     "id": "van_racking",
+     "label": "Van racking / shelving system",
+     "aliases": [
+      "Racking",
+      "Shelving"
+     ],
+     "kind": "extra"
+    },
+    {
+     "id": "ply_lining",
+     "label": "Ply lining (floor / sides)",
+     "aliases": [
+      "Ply-lined",
+      "Ply lined"
+     ],
+     "kind": "extra"
+    },
+    {
+     "id": "load_floor_anti_slip",
+     "label": "Anti-slip / composite load floor",
+     "kind": "extra"
+    },
+    {
+     "id": "bulkhead_full",
+     "label": "Full steel bulkhead",
+     "kind": "both"
+    },
+    {
+     "id": "bulkhead_window",
+     "label": "Bulkhead with window",
+     "kind": "both"
+    },
+    {
+     "id": "bulkhead_load_through",
+     "label": "Load-through bulkhead (folding passenger seat hatch)",
+     "kind": "both"
+    },
+    {
+     "id": "side_loading_door_single",
+     "label": "Side loading door (single)",
+     "kind": "feature"
+    },
+    {
+     "id": "side_loading_door_twin",
+     "label": "Side loading doors (twin / both sides)",
+     "kind": "both"
+    },
+    {
+     "id": "twin_rear_doors",
+     "label": "Twin rear doors (barn doors)",
+     "kind": "feature"
+    },
+    {
+     "id": "rear_doors_270",
+     "label": "Twin rear doors opening to 270 degrees",
+     "kind": "both"
+    },
+    {
+     "id": "tailgate_van",
+     "label": "Rear tailgate (in place of twin doors)",
+     "kind": "feature"
+    },
+    {
+     "id": "tail_lift",
+     "label": "Tail lift",
+     "aliases": [
+      "Tail-lift"
+     ],
+     "kind": "feature"
+    },
+    {
+     "id": "roof_rack",
+     "label": "Roof rack / roof platform",
+     "aliases": [
+      "Roof platform"
+     ],
+     "kind": "extra"
+    },
+    {
+     "id": "ladder_rack",
+     "label": "Ladder rack / ladder clamp system",
+     "kind": "extra"
+    },
+    {
+     "id": "rear_step",
+     "label": "Rear step / tow-bar step",
+     "kind": "extra"
+    },
+    {
+     "id": "load_area_lighting",
+     "label": "LED load-area lighting",
+     "kind": "both"
+    },
+    {
+     "id": "tachograph",
+     "label": "Tachograph fitted",
+     "kind": "extra"
+    },
+    {
+     "id": "speed_limiter",
+     "label": "Speed limiter (road speed limiter fitted)",
+     "kind": "both"
+    },
+    {
+     "id": "crew_cab",
+     "label": "Crew cab / double cab / kombi (second row seating)",
+     "kind": "both"
+    },
+    {
+     "id": "three_front_seats",
+     "label": "Three-seat front row (double passenger seat)",
+     "kind": "both"
+    },
+    {
+     "id": "high_roof",
+     "label": "High roof (H2 / H3)",
+     "kind": "both"
+    },
+    {
+     "id": "long_wheelbase",
+     "label": "Long / extra-long wheelbase",
+     "kind": "feature"
+    },
+    {
+     "id": "gvw_uprate",
+     "label": "Payload / GVW uprate (re-plated)",
+     "kind": "extra"
+    },
+    {
+     "id": "refrigeration_chiller",
+     "label": "Refrigeration unit (chiller)",
+     "kind": "extra"
+    },
+    {
+     "id": "refrigeration_freezer",
+     "label": "Refrigeration unit (freezer / dual-temperature)",
+     "kind": "extra"
+    },
+    {
+     "id": "insulated_body",
+     "label": "Insulated load body",
+     "kind": "extra"
+    },
+    {
+     "id": "tipper_body",
+     "label": "Tipper body",
+     "kind": "extra"
+    },
+    {
+     "id": "dropside_body",
+     "label": "Dropside body",
+     "kind": "extra"
+    },
+    {
+     "id": "luton_body",
+     "label": "Luton body",
+     "kind": "extra"
+    },
+    {
+     "id": "box_body",
+     "label": "Box body",
+     "kind": "extra"
+    },
+    {
+     "id": "curtain_side_body",
+     "label": "Curtain-side body",
+     "kind": "extra"
+    },
+    {
+     "id": "chassis_cab_conversion_other",
+     "label": "Other chassis-cab conversion (recovery, cage tipper, etc.)",
+     "kind": "extra"
+    },
+    {
+     "id": "recovery_body",
+     "label": "Recovery body / beavertail with winch",
+     "kind": "extra"
+    },
+    {
+     "id": "workshop_conversion",
+     "label": "Mobile workshop conversion",
+     "kind": "extra"
+    },
+    {
+     "id": "camper_conversion",
+     "label": "Camper / motorhome conversion",
+     "kind": "extra"
+    },
+    {
+     "id": "welfare_unit",
+     "label": "Welfare unit conversion (toilet / mess)",
+     "kind": "extra"
+    },
+    {
+     "id": "power_inverter",
+     "label": "Power inverter / auxiliary battery system",
+     "kind": "extra"
+    },
+    {
+     "id": "power_take_off",
+     "label": "Power take-off (PTO)",
+     "kind": "both"
+    },
+    {
+     "id": "beacons_light_bar",
+     "label": "Amber beacons / light bar",
+     "kind": "extra"
+    },
+    {
+     "id": "signwriting_livery",
+     "label": "Signwriting / company livery",
+     "kind": "extra"
+    },
+    {
+     "id": "pickup_hardtop",
+     "label": "Pickup hardtop / canopy",
+     "kind": "extra"
+    },
+    {
+     "id": "pickup_roller_cover",
+     "label": "Pickup roller shutter / tonneau cover",
+     "kind": "extra"
+    },
+    {
+     "id": "pickup_bed_liner",
+     "label": "Pickup load-bed liner",
+     "kind": "extra"
+    },
+    {
+     "id": "pickup_sports_bar",
+     "label": "Pickup sports / styling bar",
+     "kind": "extra"
+    },
+    {
+     "id": "winch",
+     "label": "Winch",
+     "kind": "extra"
+    },
+    {
+     "id": "minibus_seating",
+     "label": "Minibus seating (9+ seats)",
+     "kind": "feature"
+    },
+    {
+     "id": "taxi_hackney_licence",
+     "label": "Hackney carriage (taxi) licensed vehicle",
+     "kind": "extra"
+    },
+    {
+     "id": "taxi_phv_licence",
+     "label": "Private hire vehicle (PHV) licensed",
+     "kind": "extra"
+    },
+    {
+     "id": "taxi_meter",
+     "label": "Taxi meter",
+     "kind": "extra"
+    },
+    {
+     "id": "taxi_partition",
+     "label": "Driver partition / safety screen",
+     "kind": "extra"
+    },
+    {
+     "id": "taxi_roof_sign",
+     "label": "Taxi roof sign / for-hire light",
+     "kind": "extra"
+    },
+    {
+     "id": "taxi_cctv",
+     "label": "Taxi CCTV system",
+     "kind": "extra"
+    }
+   ]
+  }
+ ]
+}

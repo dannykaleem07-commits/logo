@@ -1,0 +1,1331 @@
+{
+ "make": "Land Rover",
+ "slug": "land-rover",
+ "dvlaNames": [
+  "LAND ROVER"
+ ],
+ "aliases": [
+  "Range Rover",
+  "Landrover",
+  "LR"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Defender",
+   "slug": "defender",
+   "aliases": [
+    "Defender 90",
+    "Defender 110",
+    "Defender 130",
+    "Defender Hard Top",
+    "Defender Octa",
+    "90",
+    "110",
+    "130"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Td5 (1998–2007)",
+     "from": 2000,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4,
+        6,
+        7
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        9
+       ]
+      },
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Standard",
+      "County",
+      "XS"
+     ],
+     "engines": [
+      "2.5 Td5 122PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Puma 2.4 TDCi (2007–2011)",
+     "from": 2007,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4,
+        6,
+        7
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        9
+       ]
+      },
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Standard",
+      "County",
+      "XS",
+      "SVX"
+     ],
+     "engines": [
+      "2.4 TDCi 122PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Puma 2.2 TDCi (2012–2016)",
+     "from": 2012,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4,
+        6,
+        7
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7,
+        9
+       ]
+      },
+      {
+       "body": "panel-van",
+       "doors": [
+        3
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Standard",
+      "County",
+      "XS",
+      "Adventure",
+      "Heritage",
+      "Autobiography"
+     ],
+     "engines": [
+      "2.2 TDCi 122PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "L663 (2020–present)",
+     "from": 2020,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5,
+        6
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        6,
+        7,
+        8
+       ]
+      },
+      {
+       "body": "panel-van",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        2,
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "Defender",
+      "S",
+      "SE",
+      "HSE",
+      "X-Dynamic S",
+      "X-Dynamic SE",
+      "X-Dynamic HSE",
+      "X",
+      "First Edition",
+      "XS Edition",
+      "V8",
+      "V8 Carpathian Edition",
+      "Octa"
+     ],
+     "engines": [
+      "2.0 D200 200PS diesel",
+      "2.0 D240 240PS diesel",
+      "3.0 D200 MHEV 200PS mild-hybrid diesel",
+      "3.0 D250 MHEV 249PS mild-hybrid diesel",
+      "3.0 D300 MHEV 300PS mild-hybrid diesel",
+      "3.0 D350 MHEV 350PS mild-hybrid diesel",
+      "2.0 P300 300PS petrol",
+      "3.0 P400 MHEV 400PS mild-hybrid petrol",
+      "2.0 P400e 404PS plug-in-hybrid",
+      "5.0 P500 V8 500PS petrol",
+      "5.0 P525 V8 525PS petrol",
+      "4.4 Octa V8 MHEV 635PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Freelander",
+   "slug": "freelander",
+   "aliases": [
+    "Freelander 2",
+    "Freelander Td4"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2000,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "L314 Freelander 1 (1997–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "E",
+      "S",
+      "GS",
+      "XEi",
+      "ES",
+      "SE",
+      "HSE",
+      "Sport",
+      "Adventurer"
+     ],
+     "engines": [
+      "1.8 K-Series 120PS petrol",
+      "2.5 KV6 177PS petrol",
+      "2.0 Di 98PS diesel",
+      "2.0 Td4 112PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "L359 Freelander 2 (2006–2015)",
+     "from": 2006,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "GS",
+      "XS",
+      "SE",
+      "HSE",
+      "HSE Luxury",
+      "Metropolis",
+      "Dynamic"
+     ],
+     "engines": [
+      "2.2 TD4 150PS diesel",
+      "2.2 TD4 160PS diesel",
+      "2.2 eD4 150PS diesel",
+      "2.2 SD4 190PS diesel",
+      "3.2 i6 233PS petrol",
+      "2.0 Si4 240PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Discovery",
+   "slug": "discovery",
+   "aliases": [
+    "Discovery 3",
+    "Discovery 4",
+    "Discovery 5",
+    "Discovery Commercial",
+    "Discovery Td5",
+    "Discovry"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Series II (1998–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      },
+      {
+       "body": "panel-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "GS",
+      "XS",
+      "ES",
+      "Landmark",
+      "Adventure"
+     ],
+     "engines": [
+      "2.5 Td5 138PS diesel",
+      "4.0 V8 185PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Discovery 3 L319 (2004–2009)",
+     "from": 2004,
+     "to": 2009,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      },
+      {
+       "body": "panel-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "TDV6",
+      "S",
+      "GS",
+      "XS",
+      "SE",
+      "HSE"
+     ],
+     "engines": [
+      "2.7 TDV6 190PS diesel",
+      "4.4 V8 299PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Discovery 4 L319 (2009–2016)",
+     "from": 2009,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      },
+      {
+       "body": "panel-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "GS",
+      "XS",
+      "SE",
+      "HSE",
+      "HSE Luxury",
+      "Landmark",
+      "Graphite"
+     ],
+     "engines": [
+      "3.0 TDV6 211PS diesel",
+      "3.0 SDV6 245PS diesel",
+      "3.0 SDV6 256PS diesel",
+      "5.0 V8 375PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Discovery 5 L462 (2017–present)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      },
+      {
+       "body": "panel-van",
+       "doors": [
+        5
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "HSE",
+      "HSE Luxury",
+      "First Edition",
+      "Landmark",
+      "R-Dynamic S",
+      "R-Dynamic SE",
+      "R-Dynamic HSE",
+      "Metropolitan Edition",
+      "Dynamic SE",
+      "Dynamic HSE",
+      "Tempest"
+     ],
+     "engines": [
+      "2.0 Td4 180PS diesel",
+      "2.0 Sd4 240PS diesel",
+      "3.0 Td6 258PS diesel",
+      "3.0 SDV6 306PS diesel",
+      "3.0 D250 MHEV 249PS mild-hybrid diesel",
+      "3.0 D300 MHEV 300PS mild-hybrid diesel",
+      "2.0 Si4 300PS petrol",
+      "3.0 Si6 340PS petrol",
+      "2.0 P300 300PS petrol",
+      "3.0 P360 MHEV 360PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Discovery Sport",
+   "slug": "discovery-sport",
+   "aliases": [
+    "Discovry Sport"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2014,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "L550 (2015–2019)",
+     "from": 2014,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "SE",
+      "SE Tech",
+      "HSE",
+      "HSE Luxury",
+      "HSE Black",
+      "Landmark"
+     ],
+     "engines": [
+      "2.2 TD4 150PS diesel",
+      "2.2 SD4 190PS diesel",
+      "2.0 eD4 150PS diesel",
+      "2.0 TD4 150PS diesel",
+      "2.0 TD4 180PS diesel",
+      "2.0 SD4 240PS diesel",
+      "2.0 Si4 240PS petrol",
+      "2.0 Si4 290PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "L550 facelift (2019–present)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Discovery Sport",
+      "S",
+      "SE",
+      "HSE",
+      "R-Dynamic S",
+      "R-Dynamic SE",
+      "R-Dynamic HSE",
+      "Black",
+      "Urban Edition",
+      "Dynamic SE",
+      "Dynamic HSE",
+      "Landmark"
+     ],
+     "engines": [
+      "2.0 D150 150PS diesel",
+      "2.0 D165 MHEV 163PS mild-hybrid diesel",
+      "2.0 D180 MHEV 180PS mild-hybrid diesel",
+      "2.0 D200 MHEV 204PS mild-hybrid diesel",
+      "2.0 D240 MHEV 240PS mild-hybrid diesel",
+      "2.0 P200 MHEV 200PS mild-hybrid petrol",
+      "2.0 P250 MHEV 249PS mild-hybrid petrol",
+      "2.0 P290 MHEV 290PS mild-hybrid petrol",
+      "1.5 P300e 309PS plug-in-hybrid",
+      "1.5 P270e 269PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Range Rover",
+   "slug": "range-rover",
+   "aliases": [
+    "Range Rover Vogue",
+    "Range Rover Autobiography",
+    "Range Rover LWB",
+    "Range Rover SV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "P38A (1994–2002)",
+     "from": 2000,
+     "to": 2002,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "DT",
+      "DSE",
+      "SE",
+      "HSE",
+      "Vogue"
+     ],
+     "engines": [
+      "4.0 V8 185PS petrol",
+      "4.6 V8 218PS petrol",
+      "2.5 DT 136PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "L322 (2002–2012)",
+     "from": 2002,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "HSE",
+      "Vogue",
+      "Vogue SE",
+      "Autobiography",
+      "Westminster",
+      "Autobiography Black"
+     ],
+     "engines": [
+      "3.0 Td6 177PS diesel",
+      "3.6 TDV8 272PS diesel",
+      "4.4 TDV8 313PS diesel",
+      "4.4 V8 286PS petrol",
+      "4.2 V8 Supercharged 396PS petrol",
+      "5.0 V8 375PS petrol",
+      "5.0 V8 Supercharged 510PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "L405 (2013–2021)",
+     "from": 2012,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Vogue",
+      "Vogue SE",
+      "Autobiography",
+      "SVAutobiography",
+      "SVAutobiography Dynamic",
+      "Westminster",
+      "Westminster Black",
+      "Fifty"
+     ],
+     "engines": [
+      "3.0 TDV6 258PS diesel",
+      "3.0 SDV6 306PS diesel",
+      "3.0 SDV6 Hybrid diesel 340PS hybrid",
+      "4.4 SDV8 339PS diesel",
+      "3.0 D300 MHEV 300PS mild-hybrid diesel",
+      "3.0 D350 MHEV 350PS mild-hybrid diesel",
+      "3.0 P400 MHEV 400PS mild-hybrid petrol",
+      "2.0 P400e 404PS plug-in-hybrid",
+      "5.0 V8 Supercharged 510PS petrol",
+      "5.0 V8 Supercharged 525PS petrol",
+      "5.0 V8 Supercharged 565PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "L460 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "HSE",
+      "Autobiography",
+      "First Edition",
+      "SV",
+      "Atelier Edition"
+     ],
+     "engines": [
+      "3.0 D300 MHEV 300PS mild-hybrid diesel",
+      "3.0 D350 MHEV 350PS mild-hybrid diesel",
+      "3.0 P400 MHEV 400PS mild-hybrid petrol",
+      "3.0 P440e 440PS plug-in-hybrid",
+      "3.0 P510e 510PS plug-in-hybrid",
+      "3.0 P460e 460PS plug-in-hybrid",
+      "3.0 P550e 550PS plug-in-hybrid",
+      "4.4 P530 V8 530PS petrol",
+      "4.4 P615 V8 615PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Range Rover Sport",
+   "slug": "range-rover-sport",
+   "aliases": [
+    "RR Sport",
+    "Range Rover Sport SVR"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2005,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "L320 (2005–2013)",
+     "from": 2005,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "HSE",
+      "HST",
+      "Supercharged",
+      "Autobiography Sport"
+     ],
+     "engines": [
+      "2.7 TDV6 190PS diesel",
+      "3.0 TDV6 211PS diesel",
+      "3.0 SDV6 256PS diesel",
+      "3.6 TDV8 272PS diesel",
+      "4.4 V8 300PS petrol",
+      "4.2 V8 Supercharged 390PS petrol",
+      "5.0 V8 Supercharged 510PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "L494 (2013–2022)",
+     "from": 2013,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "HSE",
+      "HSE Dynamic",
+      "Autobiography Dynamic",
+      "HST",
+      "SVR",
+      "Launch Edition"
+     ],
+     "engines": [
+      "2.0 SD4 240PS diesel",
+      "3.0 TDV6 258PS diesel",
+      "3.0 SDV6 292PS diesel",
+      "3.0 SDV6 306PS diesel",
+      "3.0 SDV6 Hybrid diesel 340PS hybrid",
+      "4.4 SDV8 339PS diesel",
+      "3.0 D250 MHEV 249PS mild-hybrid diesel",
+      "3.0 D300 MHEV 300PS mild-hybrid diesel",
+      "3.0 D350 MHEV 350PS mild-hybrid diesel",
+      "2.0 Si4 300PS petrol",
+      "3.0 V6 Supercharged 340PS petrol",
+      "3.0 V6 Supercharged 380PS petrol",
+      "3.0 P400 MHEV 400PS mild-hybrid petrol",
+      "2.0 P400e 404PS plug-in-hybrid",
+      "5.0 V8 Supercharged 510PS petrol",
+      "5.0 V8 Supercharged 525PS petrol",
+      "5.0 V8 Supercharged 550PS petrol",
+      "5.0 V8 Supercharged 575PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "L461 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "SE",
+      "HSE",
+      "Autobiography",
+      "First Edition",
+      "Dynamic SE",
+      "Dynamic HSE",
+      "SV Edition One",
+      "SV"
+     ],
+     "engines": [
+      "3.0 D250 MHEV 249PS mild-hybrid diesel",
+      "3.0 D300 MHEV 300PS mild-hybrid diesel",
+      "3.0 D350 MHEV 350PS mild-hybrid diesel",
+      "3.0 P400 MHEV 400PS mild-hybrid petrol",
+      "3.0 P440e 440PS plug-in-hybrid",
+      "3.0 P510e 510PS plug-in-hybrid",
+      "3.0 P460e 460PS plug-in-hybrid",
+      "3.0 P550e 550PS plug-in-hybrid",
+      "4.4 P530 V8 530PS petrol",
+      "4.4 SV V8 MHEV 635PS mild-hybrid petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Range Rover Evoque",
+   "slug": "range-rover-evoque",
+   "aliases": [
+    "Evoque",
+    "Evoque Coupe",
+    "Evoque Convertible"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2011,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "L538 (2011–2018)",
+     "from": 2011,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Pure",
+      "Pure Tech",
+      "Prestige",
+      "Dynamic",
+      "SE",
+      "SE Tech",
+      "HSE",
+      "HSE Dynamic",
+      "HSE Dynamic Lux",
+      "Autobiography",
+      "Landmark",
+      "Victoria Beckham Edition"
+     ],
+     "engines": [
+      "2.2 eD4 150PS diesel",
+      "2.2 TD4 150PS diesel",
+      "2.2 SD4 190PS diesel",
+      "2.0 eD4 150PS diesel",
+      "2.0 TD4 150PS diesel",
+      "2.0 TD4 180PS diesel",
+      "2.0 Si4 240PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "L551 (2019–present)",
+     "from": 2019,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Evoque",
+      "S",
+      "SE",
+      "HSE",
+      "R-Dynamic S",
+      "R-Dynamic SE",
+      "R-Dynamic HSE",
+      "First Edition",
+      "Autobiography",
+      "Dynamic SE",
+      "Dynamic HSE",
+      "Bronze Collection"
+     ],
+     "engines": [
+      "2.0 D150 150PS diesel",
+      "2.0 D165 MHEV 163PS mild-hybrid diesel",
+      "2.0 D180 MHEV 180PS mild-hybrid diesel",
+      "2.0 D200 MHEV 204PS mild-hybrid diesel",
+      "2.0 D240 MHEV 240PS mild-hybrid diesel",
+      "1.5 P160 160PS petrol",
+      "2.0 P200 MHEV 200PS mild-hybrid petrol",
+      "2.0 P250 MHEV 249PS mild-hybrid petrol",
+      "2.0 P300 MHEV 300PS mild-hybrid petrol",
+      "1.5 P300e 309PS plug-in-hybrid",
+      "1.5 P270e 269PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Range Rover Velar",
+   "slug": "range-rover-velar",
+   "aliases": [
+    "Velar"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "L560 (2017–present)",
+     "from": 2017,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Velar",
+      "S",
+      "SE",
+      "HSE",
+      "R-Dynamic S",
+      "R-Dynamic SE",
+      "R-Dynamic HSE",
+      "First Edition",
+      "SVAutobiography Dynamic Edition",
+      "Dynamic SE",
+      "Dynamic HSE",
+      "Edition",
+      "Autobiography"
+     ],
+     "engines": [
+      "2.0 D180 180PS diesel",
+      "2.0 D240 240PS diesel",
+      "3.0 D275 275PS diesel",
+      "3.0 D300 300PS diesel",
+      "2.0 D200 MHEV 204PS mild-hybrid diesel",
+      "3.0 D300 MHEV 300PS mild-hybrid diesel",
+      "2.0 P250 250PS petrol",
+      "2.0 P300 300PS petrol",
+      "3.0 P380 380PS petrol",
+      "3.0 P340 MHEV 340PS mild-hybrid petrol",
+      "3.0 P400 MHEV 400PS mild-hybrid petrol",
+      "2.0 P400e 404PS plug-in-hybrid",
+      "5.0 V8 Supercharged 550PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

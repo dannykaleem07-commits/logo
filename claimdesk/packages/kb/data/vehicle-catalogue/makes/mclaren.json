@@ -1,0 +1,915 @@
+{
+ "make": "McLaren",
+ "slug": "mclaren",
+ "dvlaNames": [
+  "MCLAREN",
+  "MCLAREN AUTOMOTIVE"
+ ],
+ "aliases": [
+  "McLaren Automotive"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. The Mercedes-Benz SLR McLaren (2003–2009) is registered under Mercedes-Benz."
+ },
+ "models": [
+  {
+   "name": "12C",
+   "slug": "12c",
+   "aliases": [
+    "MP4-12C",
+    "MP4 12C",
+    "12C Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2011,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "MP4-12C / 12C (2011–2014)",
+     "from": 2011,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "MP4-12C",
+      "12C",
+      "12C Spider"
+     ],
+     "engines": [
+      "3.8 V8 twin-turbo 600PS petrol",
+      "3.8 V8 twin-turbo 625PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "P1",
+   "slug": "p1",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2013,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "P1 (2013–2015)",
+     "from": 2013,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "P1"
+     ],
+     "engines": [
+      "3.8 V8 twin-turbo 916PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "650S",
+   "slug": "650s",
+   "aliases": [
+    "650S Spider",
+    "650S Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2014,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "650S (2014–2017)",
+     "from": 2014,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "650S Coupe",
+      "650S Spider",
+      "Le Mans"
+     ],
+     "engines": [
+      "3.8 V8 twin-turbo 650PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "675LT",
+   "slug": "675lt",
+   "aliases": [
+    "675LT Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2015,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "675LT (2015–2017)",
+     "from": 2015,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "675LT",
+      "675LT Spider"
+     ],
+     "engines": [
+      "3.8 V8 twin-turbo 675PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "540C",
+   "slug": "540c",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2015,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "540C (2015–2020)",
+     "from": 2015,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "540C"
+     ],
+     "engines": [
+      "3.8 V8 twin-turbo 540PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "570S",
+   "slug": "570s",
+   "aliases": [
+    "570S Spider",
+    "570S Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2015,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "570S (2015–2021)",
+     "from": 2015,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "570S Coupe",
+      "570S Spider",
+      "Track Pack"
+     ],
+     "engines": [
+      "3.8 V8 twin-turbo 570PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "570GT",
+   "slug": "570gt",
+   "aliases": [
+    "570 GT"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2016,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "570GT (2016–2021)",
+     "from": 2016,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "570GT"
+     ],
+     "engines": [
+      "3.8 V8 twin-turbo 570PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "600LT",
+   "slug": "600lt",
+   "aliases": [
+    "600LT Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2018,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "600LT (2018–2020)",
+     "from": 2018,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "600LT",
+      "600LT Spider"
+     ],
+     "engines": [
+      "3.8 V8 twin-turbo 600PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "620R",
+   "slug": "620r",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2020,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "620R (2020)",
+     "from": 2020,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "620R"
+     ],
+     "engines": [
+      "3.8 V8 twin-turbo 620PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "720S",
+   "slug": "720s",
+   "aliases": [
+    "720S Spider",
+    "720S Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2017,
+    "to": 2023
+   },
+   "generations": [
+    {
+     "name": "720S (2017–2023)",
+     "from": 2017,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "720S",
+      "Luxury",
+      "Performance",
+      "720S Spider"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 720PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "765LT",
+   "slug": "765lt",
+   "aliases": [
+    "765LT Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2020,
+    "to": 2022
+   },
+   "generations": [
+    {
+     "name": "765LT (2020–2022)",
+     "from": 2020,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "765LT",
+      "765LT Spider"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 765PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Senna",
+   "slug": "senna",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2018,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "Senna (2018–2019)",
+     "from": 2018,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Senna"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 800PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Speedtail",
+   "slug": "speedtail",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2020,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "Speedtail (2020–2021)",
+     "from": 2020,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      }
+     ],
+     "trims": [
+      "Speedtail"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 1070PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Elva",
+   "slug": "elva",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2020,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "Elva (2020–2021)",
+     "from": 2020,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Elva"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 815PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GT",
+   "slug": "gt",
+   "aliases": [
+    "McLaren GT",
+    "GTS",
+    "McLaren GTS"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2019,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "GT (2019–2023)",
+     "from": 2019,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "GT",
+      "Pioneer",
+      "Luxe"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 620PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "GTS (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "GTS"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 635PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Artura",
+   "slug": "artura",
+   "aliases": [
+    "Artura Spider"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Artura (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Artura",
+      "Performance",
+      "TechLux",
+      "Vision",
+      "Artura Spider"
+     ],
+     "engines": [
+      "3.0 V6 twin-turbo 680PS plug-in-hybrid",
+      "3.0 V6 twin-turbo 700PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "750S",
+   "slug": "750s",
+   "aliases": [
+    "750S Spider",
+    "750S Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "750S (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "750S",
+      "750S Spider"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 750PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "W1",
+   "slug": "w1",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2025,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "W1 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "W1"
+     ],
+     "engines": [
+      "4.0 V8 twin-turbo 1275PS hybrid"
+     ],
+     "fuels": [
+      "hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

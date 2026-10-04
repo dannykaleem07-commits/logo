@@ -54,7 +54,11 @@ import type {
   TotalLossPredictionInput,
   UserRole,
   Vehicle,
-  Verification
+  Verification,
+  VehicleSpec,
+  VehicleSourceInput,
+  OnFileMatch,
+  ExternalVehicleLink
 } from '@ccguk/domain';
 
 // ---------------------------------------------------------------------------
@@ -337,6 +341,18 @@ export interface VehicleInput {
   lookupId?: Id;
   /** true when keyed by hand (lookup unavailable or manual_required). Stored as an unverified LookupRecord. */
   manual?: boolean;
+  // --- docs/TEMPLATES-VEHICLES-DESKTOP.md §D.10, §E.4 (vehicles-web) ---
+  bodyType?: string;
+  monthOfFirstRegistration?: string;
+  co2Gkm?: number;
+  euroStatus?: string;
+  taxStatus?: string;
+  motStatus?: string;
+  gtaGroup?: string;
+  /** Catalogue pick, segment, doors/seats, power, features and extras (unverified reference data). */
+  spec?: VehicleSpec;
+  /** Who/what supplied the values; the server records an unverified LookupRecord with this provider. */
+  source?: VehicleSourceInput;
 }
 
 export interface WitnessInput {
@@ -538,9 +554,21 @@ export interface LinkedClaimRef {
   relation?: 'same_registration' | 'fleet_unit' | 'connected_party' | string;
 }
 
+/** 'live' when a DVLA VES or DVSA MOT key is set, else 'manual' (docs/TEMPLATES-VEHICLES-DESKTOP.md §E). */
+export type LookupMode = 'live' | 'manual';
+
+/** Fields both lookup branches carry since §E.1 (absent on older API builds). */
+export interface LookupSearchFields {
+  /** What ClaimDesk already holds for the registration (exact first, then partial matches). */
+  onFile?: OnFileMatch[];
+  /** Links the handler opens in their own browser (Total Car Check, GOV.UK); ClaimDesk never requests them. */
+  externalLinks?: ExternalVehicleLink[];
+  lookupMode?: LookupMode;
+}
+
 /** POST /vehicles/lookup. `status:'manual_required'` when no keys are configured or the services failed. */
 export type VehicleLookupResult =
-  | {
+  | ({
       status: 'ok';
       registration: string;
       vehicle: Partial<Vehicle> & { registration: string };
@@ -550,8 +578,8 @@ export type VehicleLookupResult =
       linkedClaims?: LinkedClaimRef[];
       fleetUnit?: { id: Id; registration: string; status?: FleetUnit['status'] } | null;
       warnings?: string[];
-    }
-  | {
+    } & LookupSearchFields)
+  | ({
       status: 'manual_required';
       registration: string;
       reason?: string;
@@ -559,12 +587,21 @@ export type VehicleLookupResult =
       linkedClaims?: LinkedClaimRef[];
       fleetUnit?: { id: Id; registration: string; status?: FleetUnit['status'] } | null;
       warnings?: string[];
-    };
+    } & LookupSearchFields);
 
 /** The API's own reply shape (apps/api services/lookup.ts `VehicleLookupResponse`). */
 export type ApiLookupResponse =
-  | { status: 'manual_required'; registration: string; fields?: readonly string[]; providers?: Record<string, string>; vehicle?: Vehicle; reason?: string }
-  | { status: 'ok' | 'partial'; registration: string; vehicle: Vehicle; providers?: Record<string, string>; lookupIds?: Id[] };
+  | ({ status: 'manual_required'; registration: string; fields?: readonly string[]; providers?: Record<string, string>; vehicle?: Vehicle; reason?: string } & LookupSearchFields)
+  | ({ status: 'ok' | 'partial'; registration: string; vehicle: Vehicle; providers?: Record<string, string>; lookupIds?: Id[] } & LookupSearchFields);
+
+/** The §E.1 search fields of an API reply, only those present (so older replies normalise exactly as before). */
+function searchFieldsOf(r: LookupSearchFields): LookupSearchFields {
+  const out: LookupSearchFields = {};
+  if (Array.isArray(r.onFile)) out.onFile = r.onFile;
+  if (Array.isArray(r.externalLinks)) out.externalLinks = r.externalLinks;
+  if (r.lookupMode === 'live' || r.lookupMode === 'manual') out.lookupMode = r.lookupMode;
+  return out;
+}
 
 const PROVIDER_LABEL: Record<string, string> = { dvla_ves: 'DVLA VES', dvsa_mot: 'DVSA MOT history' };
 const FAILURE_LABEL: Record<string, string> = { no_key: 'no API key configured', network: 'network error', rate_limited: 'rate limited', invalid_payload: 'unexpected payload' };
@@ -589,9 +626,10 @@ export function normaliseLookupResult(raw: ApiLookupResponse | VehicleLookupResu
   const vehicle = r.vehicle;
   const fleetUnit = vehicle && vehicle.ownership === 'fleet' ? { id: vehicle.id, registration: vehicle.registration } : null;
   const warnings = describeProviders(r.providers);
+  const search = searchFieldsOf(r);
   if (r.status === 'manual_required') {
     const reason = (r as { reason?: string }).reason ?? (warnings.length ? warnings.join('; ') : 'The lookup services did not return this registration.');
-    return { status: 'manual_required', registration: r.registration || registration, reason, partial: vehicle, linkedClaims, fleetUnit, warnings };
+    return { status: 'manual_required', registration: r.registration || registration, reason, partial: vehicle, linkedClaims, fleetUnit, warnings, ...search };
   }
   const lookups = vehicle?.lookups ?? [];
   const latest = (provider: string) => [...lookups].filter((l) => l.provider === provider).sort((a, b) => b.requestedAt.localeCompare(a.requestedAt))[0];
@@ -604,7 +642,8 @@ export function normaliseLookupResult(raw: ApiLookupResponse | VehicleLookupResu
     motHistory: vehicle?.motHistory,
     linkedClaims,
     fleetUnit,
-    warnings: r.status === 'partial' ? ['Partial lookup — one provider did not answer.', ...warnings] : warnings
+    warnings: r.status === 'partial' ? ['Partial lookup — one provider did not answer.', ...warnings] : warnings,
+    ...search
   };
 }
 
@@ -623,6 +662,19 @@ export interface CreateDocumentBody {
   data?: Record<string, unknown>;
   recipientPartyId?: Id;
 }
+
+/** Which program made a document's PDF (docs/TEMPLATES-VEHICLES-DESKTOP.md §C.3). */
+export type PdfConverterId = 'word' | 'libreoffice' | 'browser' | 'chromium-html';
+
+/** Document fields added for Word (.docx) documents (§C.3); absent on older API responses (= 'html'). */
+export interface DocumentFormatFields {
+  format?: 'html' | 'docx';
+  docxSha256?: string;
+  pdfConverter?: PdfConverterId;
+}
+
+/** A generated document as the web reads it: the domain record plus the DOCX format fields. */
+export type ClaimDocument = GeneratedDocument & DocumentFormatFields;
 
 export interface SignStartBody {
   signerPartyId: Id;
@@ -661,6 +713,25 @@ export interface FleetUnitRow extends FleetUnit {
   registration?: string;
   alerts?: ComplianceAlert[];
 }
+
+/** What the fleet GTA panel suggested (§F.1); the API keeps it in the LookupRecord raw for provenance. */
+export interface FleetGtaSuggestionInput {
+  group: string | null;
+  basis: string;
+  rateGroup?: string | null;
+  ratePeriod?: string | null;
+}
+
+/**
+ * POST /fleet (and PATCH /fleet/:id) body as the web sends it (§F.1, §F.2). `gtaGroup` and `dailyRatePence` are
+ * optional: when omitted the API uses its GTA suggestion (or answers 422 GTA_SUGGESTION_UNAVAILABLE).
+ */
+export type FleetUnitWriteBody = Omit<Partial<FleetUnit>, 'gtaGroup' | 'dailyRatePence'> & {
+  vehicle?: VehicleInput;
+  gtaGroup?: string;
+  dailyRatePence?: Pence;
+  gtaSuggestion?: FleetGtaSuggestionInput;
+};
 
 export interface AllocateCheckResult {
   allowed: boolean;
@@ -967,7 +1038,7 @@ export const api = {
 
   // fleet
   getFleet: async (signal?: AbortSignal) => asList<FleetUnitRow>(await get<unknown>('/fleet', undefined, signal)),
-  createFleetUnit: (body: Partial<FleetUnit> & { vehicle?: VehicleInput }) => post<FleetUnitRow>('/fleet', body),
+  createFleetUnit: (body: FleetUnitWriteBody) => post<FleetUnitRow>('/fleet', body),
   getFleetAlerts: async (signal?: AbortSignal) => asList<ComplianceAlert>(await get<unknown>('/fleet/alerts', undefined, signal)),
   allocateCheck: (unitId: Id, body: { use: FleetUse; claimId?: Id }) => post<AllocateCheckResult>(`/fleet/${seg(unitId)}/allocate-check`, body),
   getPenalties: async (signal?: AbortSignal) => asList<PenaltyNotice>(await get<unknown>('/fleet/penalties', undefined, signal)),

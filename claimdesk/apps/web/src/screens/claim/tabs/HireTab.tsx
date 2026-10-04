@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import type { FleetUse, HireAgreement, HireEndTrigger, Pence, RecoveryRecord, StorageRecord } from '@ccguk/domain';
-import { formatGBP, HIRE_DAY_CONVENTION } from '@ccguk/domain';
+import { formatGBP, HIRE_DAY_CONVENTION, londonDate } from '@ccguk/domain';
 import { api } from '../../../api/client';
-import { useEndHire, useEndStorage, useFleet, useHire, usePostHire, usePostRecovery, usePostStorage, useRecovery, useStorage } from '../../../api/hooks';
+import { useEndHire, useEndStorage, useFleet, useGtaRates, useHire, usePostHire, usePostRecovery, usePostStorage, useRecovery, useStorage } from '../../../api/hooks';
 import { Card } from '../../../components/Card';
 import { Badge, VerificationBadge } from '../../../components/Badge';
 import { Button } from '../../../components/Button';
@@ -154,9 +154,20 @@ export function HireTab({ view }: { view: ClaimView }) {
 // Cards
 // ---------------------------------------------------------------------------
 
+/** London date the hire started (the benchmark rate is the one in force then); undefined for an unreadable start. */
+function hireStartDate(startAt: string): string | undefined {
+  try {
+    return londonDate(startAt);
+  } catch {
+    return undefined;
+  }
+}
+
 function HireCard({ h, view, nowIso, onEnd }: { h: HireAgreement; view: ClaimView; nowIso: string; onEnd: () => void }) {
   const running = hireRunning(h);
-  const totals = hireTotals(h, nowIso);
+  // Benchmark rates in force when the hire started (knowledge base ⊕ your Settings rates); built-in table until loaded.
+  const ratesQ = useGtaRates(hireStartDate(h.startAt));
+  const totals = hireTotals(h, nowIso, ratesQ.data);
   const items = enforceabilityChecklist(h);
   const score = enforceabilityScore(h);
   const trigger = HIRE_TRIGGERS.find((t) => t.value === h.endTrigger);

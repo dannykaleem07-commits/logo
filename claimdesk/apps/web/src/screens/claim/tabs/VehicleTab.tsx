@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import type { MotTest, OdometerReading, OdometerSource } from '@ccguk/domain';
+import type { MotTest, OdometerReading, OdometerSource, Vehicle } from '@ccguk/domain';
 import { formatRegistration } from '@ccguk/domain';
-import { api, type VehicleLookupResult } from '../../../api/client';
+import { api, isApiError, type VehicleLookupResult } from '../../../api/client';
 import { useAddOdometer, useInvalidateClaim, useMileageConflicts, useVehicleLookup } from '../../../api/hooks';
+import { useCatalogueFeatures, useLookupMode, usePatchVehicle } from '../../../api/vehiclesApi';
+import { Modal } from '../../../components/Modal';
+import { VehiclePicker } from '../../vehicles/VehiclePicker';
+import { CopyDetailsPanel } from '../../vehicles/CopyDetailsPanel';
+import { patchHasChanges, pickerFromVehicle, validatePicker, vehiclePatchFrom, type VehiclePickerValue } from '../../vehicles/vehiclePicker';
 import { Card } from '../../../components/Card';
 import { Table, type Column } from '../../../components/Table';
 import { Badge, VerificationBadge } from '../../../components/Badge';
@@ -25,16 +30,24 @@ export function VehicleTab({ view }: { view: ClaimView }) {
   const invalidate = useInvalidateClaim();
   const toast = useToast();
   const [result, setResult] = useState<VehicleLookupResult | null>(null);
+  const [editing, setEditing] = useState(false);
+  const lookupMode = useLookupMode();
+  const vocabulary = useCatalogueFeatures().data;
   const conflictsQ = useMileageConflicts(v.id);
   const conflicts = conflictsFrom(conflictsQ.data);
   const linked = view.linkedClaims ?? view.claim.linkedClaimIds.map((id) => ({ id, reference: id, status: '' }));
 
   const runLookup = () => {
+    // No DVLA/DVSA keys: the lookup cannot fetch anything, so open the details form (Total Car Check + catalogue).
+    if (lookupMode === 'manual') {
+      setEditing(true);
+      return;
+    }
     lookup.mutate(v.registration, {
       onSuccess: (r) => {
         setResult(r);
         if (r.status === 'ok') toast.success('Lookup complete — DVLA VES / DVSA MOT records stored on the vehicle');
-        else toast.warn(`Lookup unavailable: ${r.reason ?? 'manual entry required'}`);
+        else setEditing(true);
         invalidate(view.claim.id);
       }
     });
@@ -107,12 +120,17 @@ export function VehicleTab({ view }: { view: ClaimView }) {
             </span>
           }
           actions={
-            <Button size="sm" variant="primary" loading={lookup.isPending} onClick={runLookup}>
-              {v.lookups.some((l) => l.provider !== 'manual') ? 'Re-lookup' : 'Lookup (DVLA VES + MOT)'}
-            </Button>
+            <>
+              <Button size="sm" onClick={() => setEditing(true)}>
+                Edit details
+              </Button>
+              <Button size="sm" variant="primary" loading={lookup.isPending} onClick={runLookup} title={lookupMode === 'manual' ? 'No DVLA/DVSA keys are set up: opens the details form with Total Car Check and the catalogue' : undefined}>
+                {lookupMode === 'manual' ? 'Lookup' : v.lookups.some((l) => l.provider === 'dvla_ves' || l.provider === 'dvsa_mot') ? 'Re-lookup' : 'Lookup (DVLA VES + MOT)'}
+              </Button>
+            </>
           }
         >
-          <KeyValue items={identificationRows(v).map((r) => ({ label: r.label, value: r.value ?? <span className="muted">—</span> }))} />
+          <KeyValue items={identificationRows(v, vocabulary).map((r) => ({ label: r.label, value: r.value ?? <span className="muted">—</span> }))} />
           <ApiErrorNotice error={lookup.error} what="look up the vehicle" />
           {result && (
             <div className={`notice ${result.status === 'ok' ? 'notice-success' : 'notice-warn'} small`} style={{ marginTop: 12 }}>
@@ -194,7 +212,78 @@ export function VehicleTab({ view }: { view: ClaimView }) {
       <Card title="MOT history" flush actions={<span className="small muted">DVSA MOT history API</span>}>
         <Table columns={motColumns} rows={motRows(v)} rowKey={(t) => `${t.completedDate}-${t.testNumber ?? ''}`} caption="MOT history" empty={<EmptyState title="No MOT history on file">Run the lookup to pull the DVSA history (free API; key required).</EmptyState>} />
       </Card>
+
+      <EditVehicleDialog open={editing} vehicle={v} lookupMode={lookupMode ?? 'manual'} links={result?.externalLinks} onClose={() => setEditing(false)} onSaved={() => invalidate(view.claim.id)} />
     </div>
+  );
+}
+
+/**
+ * "Edit details" (§E.5): the VehiclePicker in edit mode (registration fixed) with the Total Car Check button and the
+ * paste panel → PATCH /vehicles/:id. Values that differ from a verified DVLA/DVSA lookup are saved (handler intent) and
+ * reported; the verified lookups themselves are never changed.
+ */
+function EditVehicleDialog({ open, vehicle, lookupMode, links, onClose, onSaved }: { open: boolean; vehicle: Vehicle; lookupMode: 'live' | 'manual'; links?: VehicleLookupResult['externalLinks']; onClose: () => void; onSaved: () => void }) {
+  const toast = useToast();
+  const patch = usePatchVehicle();
+  const [initial, setInitial] = useState<VehiclePickerValue>(() => pickerFromVehicle(vehicle));
+  const [value, setValue] = useState<VehiclePickerValue>(initial);
+  const [errors, setErrors] = useState<Partial<Record<keyof VehiclePickerValue, string>>>({});
+  useEffect(() => {
+    if (!open) return;
+    const start = pickerFromVehicle(vehicle);
+    setInitial(start);
+    setValue(start);
+    setErrors({});
+    // reset only when the dialog opens
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  const save = () => {
+    const e = validatePicker(value, { requireMakeModel: false });
+    setErrors(e);
+    if (Object.keys(e).length) return;
+    const body = vehiclePatchFrom(initial, value);
+    if (!patchHasChanges(body)) {
+      toast.push('Nothing has changed.');
+      onClose();
+      return;
+    }
+    patch.mutate(
+      { id: vehicle.id, body },
+      {
+        onSuccess: (res) => {
+          onSaved();
+          if (res.warnings.length) toast.warn(`Saved. ${res.warnings.length === 1 ? 'One value differs' : `${res.warnings.length} values differ`} from the verified DVLA/DVSA record (${res.warnings.map((w) => w.field).join(', ')}) — the verified record is unchanged.`);
+          else toast.success('Vehicle details saved (unverified until a document backs them).');
+          onClose();
+        }
+      }
+    );
+  };
+
+  return (
+    <Modal
+      open={open}
+      onClose={onClose}
+      size="lg"
+      title={`Vehicle details — ${formatRegistration(vehicle.registration)}`}
+      footer={
+        <>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button variant="primary" onClick={save} loading={patch.isPending}>
+            Save details
+          </Button>
+        </>
+      }
+    >
+      <div className="stack">
+        {lookupMode === 'manual' && <div className="notice notice-info small">No DVLA/DVSA keys are set up. Read the details on Total Car Check and copy them in, or pick the vehicle from the catalogue. Everything saved here is unverified until the V5C or MOT certificate backs it.</div>}
+        {patch.error ? <div className="notice notice-danger small" role="alert">{isApiError(patch.error) ? `${patch.error.code}: ${patch.error.message}` : (patch.error as Error).message}</div> : null}
+        <CopyDetailsPanel registration={vehicle.registration} value={value} onChange={setValue} links={links} />
+        <VehiclePicker value={value} onChange={setValue} mode="edit" showRegistration={false} lookupMode={lookupMode} errors={errors} />
+      </div>
+    </Modal>
   );
 }
 

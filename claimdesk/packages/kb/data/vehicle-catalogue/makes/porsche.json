@@ -1,0 +1,1305 @@
+{
+ "make": "Porsche",
+ "slug": "porsche",
+ "dvlaNames": [
+  "PORSCHE"
+ ],
+ "aliases": [
+  "Porsche AG",
+  "Dr. Ing. h.c. F. Porsche"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Carrera GT and 918 Spyder omitted: left-hand drive only (UK cars were LHD)."
+ },
+ "models": [
+  {
+   "name": "911",
+   "slug": "911",
+   "aliases": [
+    "911 Carrera",
+    "Carrera",
+    "Carrera S",
+    "Carrera 4",
+    "Carrera 4S",
+    "Carrera GTS",
+    "Carrera T",
+    "911 Targa",
+    "911 Turbo",
+    "911 Turbo S",
+    "911 GT3",
+    "911 GT3 RS",
+    "911 GT2 RS",
+    "911 Cabriolet",
+    "911 Dakar",
+    "911 S/T",
+    "996",
+    "997",
+    "991",
+    "992"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "996 (1997–2005; 3.6 facelift 2002)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Carrera",
+      "Carrera 4",
+      "Carrera 4S",
+      "Targa",
+      "Turbo",
+      "Turbo S",
+      "GT2",
+      "GT3",
+      "GT3 RS"
+     ],
+     "engines": [
+      "3.4 Carrera 300PS petrol",
+      "3.6 Carrera 320PS petrol",
+      "3.6 Carrera 4S 320PS petrol",
+      "3.6 Turbo 420PS petrol",
+      "3.6 Turbo S 450PS petrol",
+      "3.6 GT2 462PS petrol",
+      "3.6 GT2 483PS petrol",
+      "3.6 GT3 360PS petrol",
+      "3.6 GT3 381PS petrol",
+      "3.6 GT3 RS 381PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "997 (2004–2012; 997.2 facelift 2008 with PDK)",
+     "from": 2004,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Carrera",
+      "Carrera S",
+      "Carrera 4",
+      "Carrera 4S",
+      "Targa 4",
+      "Targa 4S",
+      "GTS",
+      "Turbo",
+      "Turbo S",
+      "GT3",
+      "GT3 RS",
+      "GT2",
+      "GT2 RS",
+      "Speedster",
+      "Sport Classic",
+      "Black Edition"
+     ],
+     "engines": [
+      "3.6 Carrera 325PS petrol",
+      "3.6 Carrera 345PS petrol",
+      "3.8 Carrera S 355PS petrol",
+      "3.8 Carrera S 385PS petrol",
+      "3.8 Carrera GTS 408PS petrol",
+      "3.6 Turbo 480PS petrol",
+      "3.8 Turbo 500PS petrol",
+      "3.8 Turbo S 530PS petrol",
+      "3.6 GT3 415PS petrol",
+      "3.8 GT3 435PS petrol",
+      "3.6 GT3 RS 415PS petrol",
+      "3.8 GT3 RS 450PS petrol",
+      "4.0 GT3 RS 500PS petrol",
+      "3.6 GT2 530PS petrol",
+      "3.6 GT2 RS 620PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "991 (2011–2019; 991.2 turbocharged Carrera from 2016)",
+     "from": 2011,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Carrera",
+      "Carrera S",
+      "Carrera 4",
+      "Carrera 4S",
+      "Carrera T",
+      "GTS",
+      "Targa 4",
+      "Targa 4S",
+      "Targa 4 GTS",
+      "Turbo",
+      "Turbo S",
+      "GT3",
+      "GT3 RS",
+      "GT3 Touring",
+      "GT2 RS",
+      "R",
+      "Speedster"
+     ],
+     "engines": [
+      "3.4 Carrera 350PS petrol",
+      "3.8 Carrera S 400PS petrol",
+      "3.8 Carrera GTS 430PS petrol",
+      "3.0 Carrera 370PS petrol",
+      "3.0 Carrera T 370PS petrol",
+      "3.0 Carrera S 420PS petrol",
+      "3.0 Carrera GTS 450PS petrol",
+      "3.8 Turbo 520PS petrol",
+      "3.8 Turbo 540PS petrol",
+      "3.8 Turbo S 560PS petrol",
+      "3.8 Turbo S 580PS petrol",
+      "3.8 GT3 475PS petrol",
+      "4.0 GT3 500PS petrol",
+      "4.0 GT3 RS 500PS petrol",
+      "4.0 GT3 RS 520PS petrol",
+      "3.8 GT2 RS 700PS petrol",
+      "4.0 911 R 500PS petrol",
+      "4.0 Speedster 510PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "992.1 (2019–2024)",
+     "from": 2019,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Carrera",
+      "Carrera S",
+      "Carrera 4",
+      "Carrera 4S",
+      "Carrera T",
+      "GTS",
+      "Targa 4",
+      "Targa 4S",
+      "Targa 4 GTS",
+      "Turbo",
+      "Turbo S",
+      "GT3",
+      "GT3 Touring",
+      "GT3 RS",
+      "S/T",
+      "Dakar",
+      "Sport Classic"
+     ],
+     "engines": [
+      "3.0 Carrera 385PS petrol",
+      "3.0 Carrera T 385PS petrol",
+      "3.0 Carrera S 450PS petrol",
+      "3.0 Carrera GTS 480PS petrol",
+      "3.7 Turbo 580PS petrol",
+      "3.7 Turbo S 650PS petrol",
+      "3.7 Sport Classic 550PS petrol",
+      "4.0 GT3 510PS petrol",
+      "4.0 GT3 RS 525PS petrol",
+      "4.0 S/T 525PS petrol",
+      "3.0 Dakar 480PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "992.2 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Carrera",
+      "Carrera T",
+      "Carrera S",
+      "Carrera 4S",
+      "Carrera GTS T-Hybrid",
+      "Carrera 4 GTS T-Hybrid",
+      "Targa 4 GTS",
+      "Turbo S",
+      "GT3",
+      "GT3 Touring"
+     ],
+     "engines": [
+      "3.0 Carrera 394PS petrol",
+      "3.0 Carrera T 394PS petrol",
+      "3.0 Carrera S 480PS petrol",
+      "3.6 Carrera GTS T-Hybrid 541PS hybrid",
+      "3.6 Turbo S T-Hybrid 711PS hybrid",
+      "4.0 GT3 510PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Boxster",
+   "slug": "boxster",
+   "aliases": [
+    "718 Boxster",
+    "Boxster S",
+    "Boxster GTS",
+    "Boxster Spyder",
+    "718 Spyder",
+    "718 Spyder RS"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2026
+   },
+   "generations": [
+    {
+     "name": "986 (1996–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Boxster",
+      "Boxster S",
+      "550 Spyder 50th Anniversary"
+     ],
+     "engines": [
+      "2.7 Boxster 220PS petrol",
+      "2.7 Boxster 228PS petrol",
+      "3.2 Boxster S 252PS petrol",
+      "3.2 Boxster S 260PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "987 (2004–2012; 987.2 facelift 2009 with PDK)",
+     "from": 2004,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Boxster",
+      "Boxster S",
+      "Boxster Spyder",
+      "Black Edition",
+      "RS 60 Spyder",
+      "Design Edition"
+     ],
+     "engines": [
+      "2.7 Boxster 240PS petrol",
+      "2.7 Boxster 245PS petrol",
+      "2.9 Boxster 255PS petrol",
+      "3.2 Boxster S 280PS petrol",
+      "3.4 Boxster S 295PS petrol",
+      "3.4 Boxster S 310PS petrol",
+      "3.4 Boxster Spyder 320PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "981 (2012–2016)",
+     "from": 2012,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Boxster",
+      "Boxster S",
+      "Boxster GTS",
+      "Boxster Spyder",
+      "Black Edition"
+     ],
+     "engines": [
+      "2.7 Boxster 265PS petrol",
+      "3.4 Boxster S 315PS petrol",
+      "3.4 Boxster GTS 330PS petrol",
+      "3.8 Boxster Spyder 375PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "982 718 Boxster (2016–2026; UK orders closed 2025; final deliveries 2026)",
+     "from": 2016,
+     "to": 2026,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "718 Boxster",
+      "718 Boxster T",
+      "718 Boxster S",
+      "718 Boxster GTS",
+      "718 Boxster GTS 4.0",
+      "718 Spyder",
+      "718 Spyder RS",
+      "25 Years",
+      "Style Edition"
+     ],
+     "engines": [
+      "2.0 718 Boxster 300PS petrol",
+      "2.0 718 Boxster T 300PS petrol",
+      "2.5 718 Boxster S 350PS petrol",
+      "2.5 718 Boxster GTS 365PS petrol",
+      "4.0 718 Boxster GTS 400PS petrol",
+      "4.0 718 Spyder 420PS petrol",
+      "4.0 718 Spyder RS 500PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cayman",
+   "slug": "cayman",
+   "aliases": [
+    "718 Cayman",
+    "Cayman S",
+    "Cayman GTS",
+    "Cayman GT4",
+    "Cayman GT4 RS",
+    "Cayman R"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2005,
+    "to": 2026
+   },
+   "generations": [
+    {
+     "name": "987c (2005–2012)",
+     "from": 2005,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Cayman",
+      "Cayman S",
+      "Cayman R",
+      "Black Edition"
+     ],
+     "engines": [
+      "2.7 Cayman 245PS petrol",
+      "2.9 Cayman 265PS petrol",
+      "3.4 Cayman S 295PS petrol",
+      "3.4 Cayman S 320PS petrol",
+      "3.4 Cayman R 330PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "981c (2013–2016)",
+     "from": 2013,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Cayman",
+      "Cayman S",
+      "Cayman GTS",
+      "Cayman GT4",
+      "Black Edition"
+     ],
+     "engines": [
+      "2.7 Cayman 275PS petrol",
+      "3.4 Cayman S 325PS petrol",
+      "3.4 Cayman GTS 340PS petrol",
+      "3.8 Cayman GT4 385PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "982c 718 Cayman (2016–2026; UK orders closed 2025; final deliveries 2026)",
+     "from": 2016,
+     "to": 2026,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "718 Cayman",
+      "718 Cayman T",
+      "718 Cayman S",
+      "718 Cayman GTS",
+      "718 Cayman GTS 4.0",
+      "718 Cayman GT4",
+      "718 Cayman GT4 RS",
+      "Style Edition"
+     ],
+     "engines": [
+      "2.0 718 Cayman 300PS petrol",
+      "2.0 718 Cayman T 300PS petrol",
+      "2.5 718 Cayman S 350PS petrol",
+      "2.5 718 Cayman GTS 365PS petrol",
+      "4.0 718 Cayman GTS 400PS petrol",
+      "4.0 718 Cayman GT4 420PS petrol",
+      "4.0 718 Cayman GT4 RS 500PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Cayenne",
+   "slug": "cayenne",
+   "aliases": [
+    "Cayenne S",
+    "Cayenne GTS",
+    "Cayenne Turbo",
+    "Cayenne Diesel",
+    "Cayenne E-Hybrid",
+    "Cayenne Coupe",
+    "Cayenne Turbo GT",
+    "Cayenne Electric",
+    "Cayenne Turbo Electric"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2002,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "9PA (955/957) (2002–2010; 957 facelift 2007; Diesel from 2009)",
+     "from": 2002,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Cayenne",
+      "Cayenne S",
+      "Cayenne GTS",
+      "Cayenne Turbo",
+      "Cayenne Turbo S",
+      "Cayenne Diesel"
+     ],
+     "engines": [
+      "3.2 Cayenne 250PS petrol",
+      "3.6 Cayenne 290PS petrol",
+      "4.5 Cayenne S 340PS petrol",
+      "4.8 Cayenne S 385PS petrol",
+      "4.8 Cayenne GTS 405PS petrol",
+      "4.5 Cayenne Turbo 450PS petrol",
+      "4.8 Cayenne Turbo 500PS petrol",
+      "4.5 Cayenne Turbo S 521PS petrol",
+      "4.8 Cayenne Turbo S 550PS petrol",
+      "3.0 Cayenne Diesel 240PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "92A (958) (2010–2017; facelift 2014)",
+     "from": 2010,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Cayenne",
+      "Cayenne Diesel",
+      "Cayenne S",
+      "Cayenne S Diesel",
+      "Cayenne S Hybrid",
+      "Cayenne S E-Hybrid",
+      "Cayenne GTS",
+      "Cayenne Turbo",
+      "Cayenne Turbo S",
+      "Platinum Edition"
+     ],
+     "engines": [
+      "3.6 Cayenne 300PS petrol",
+      "4.8 Cayenne S 400PS petrol",
+      "3.6 Cayenne S 420PS petrol",
+      "4.8 Cayenne GTS 420PS petrol",
+      "3.6 Cayenne GTS 440PS petrol",
+      "4.8 Cayenne Turbo 500PS petrol",
+      "4.8 Cayenne Turbo 520PS petrol",
+      "4.8 Cayenne Turbo S 550PS petrol",
+      "4.8 Cayenne Turbo S 570PS petrol",
+      "3.0 Cayenne S Hybrid 380PS hybrid",
+      "3.0 Cayenne S E-Hybrid 416PS plug-in-hybrid",
+      "3.0 Cayenne Diesel 245PS diesel",
+      "3.0 Cayenne Diesel 262PS diesel",
+      "4.1 Cayenne S Diesel 385PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "9YA / 9YB Coupe (2018–present; Coupe from 2019; 9YB facelift 2023)",
+     "from": 2018,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Cayenne",
+      "Cayenne S",
+      "Cayenne GTS",
+      "Cayenne Turbo",
+      "Cayenne Turbo GT",
+      "Cayenne E-Hybrid",
+      "Cayenne S E-Hybrid",
+      "Cayenne Turbo E-Hybrid",
+      "Cayenne Turbo S E-Hybrid",
+      "Platinum Edition",
+      "Black Edition",
+      "Coupe"
+     ],
+     "engines": [
+      "3.0 Cayenne 340PS petrol",
+      "3.0 Cayenne 353PS petrol",
+      "2.9 Cayenne S 440PS petrol",
+      "4.0 Cayenne S 474PS petrol",
+      "4.0 Cayenne GTS 460PS petrol",
+      "4.0 Cayenne GTS 500PS petrol",
+      "4.0 Cayenne Turbo 550PS petrol",
+      "4.0 Cayenne Turbo GT 640PS petrol",
+      "4.0 Cayenne Turbo GT 659PS petrol",
+      "3.0 Cayenne E-Hybrid 462PS plug-in-hybrid",
+      "3.0 Cayenne E-Hybrid 470PS plug-in-hybrid",
+      "3.0 Cayenne S E-Hybrid 519PS plug-in-hybrid",
+      "4.0 Cayenne Turbo S E-Hybrid 680PS plug-in-hybrid",
+      "4.0 Cayenne Turbo E-Hybrid 739PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Cayenne Electric (2026–present; UK deliveries from 2026; outputs are launch-control maxima)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Cayenne Electric",
+      "Cayenne S Electric",
+      "Cayenne Turbo Electric"
+     ],
+     "engines": [
+      "113kWh Cayenne Electric 442PS electric",
+      "113kWh Cayenne S Electric 666PS electric",
+      "113kWh Cayenne Turbo Electric 1156PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Macan",
+   "slug": "macan",
+   "aliases": [
+    "Macan S",
+    "Macan GTS",
+    "Macan Turbo",
+    "Macan T",
+    "Macan 4",
+    "Macan 4S",
+    "Macan Electric",
+    "Macan S Diesel"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2014,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "95B (2014–2024; facelifts 2019 and 2021)",
+     "from": 2014,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Macan",
+      "Macan T",
+      "Macan S",
+      "Macan S Diesel",
+      "Macan GTS",
+      "Macan Turbo",
+      "Macan Turbo Performance"
+     ],
+     "engines": [
+      "2.0 Macan 252PS petrol",
+      "2.0 Macan 245PS petrol",
+      "2.0 Macan 265PS petrol",
+      "2.0 Macan T 265PS petrol",
+      "3.0 Macan S 340PS petrol",
+      "2.9 Macan S 354PS petrol",
+      "2.9 Macan S 380PS petrol",
+      "3.0 Macan GTS 360PS petrol",
+      "2.9 Macan GTS 380PS petrol",
+      "2.9 Macan GTS 440PS petrol",
+      "3.6 Macan Turbo 400PS petrol",
+      "3.6 Macan Turbo Performance 440PS petrol",
+      "2.9 Macan Turbo 440PS petrol",
+      "3.0 Macan S Diesel 258PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Macan Electric (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Macan",
+      "Macan 4",
+      "Macan 4S",
+      "Macan GTS",
+      "Macan Turbo"
+     ],
+     "engines": [
+      "100kWh Macan 360PS electric",
+      "100kWh Macan 4 408PS electric",
+      "100kWh Macan 4S 516PS electric",
+      "100kWh Macan GTS 571PS electric",
+      "100kWh Macan Turbo 639PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Panamera",
+   "slug": "panamera",
+   "aliases": [
+    "Panamera 4",
+    "Panamera S",
+    "Panamera 4S",
+    "Panamera GTS",
+    "Panamera Turbo",
+    "Panamera E-Hybrid",
+    "Panamera Sport Turismo",
+    "Panamera Executive",
+    "Panamera Diesel"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2009,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "970 (2009–2016; facelift 2013)",
+     "from": 2009,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Panamera",
+      "Panamera 4",
+      "Panamera S",
+      "Panamera 4S",
+      "Panamera GTS",
+      "Panamera Turbo",
+      "Panamera Turbo S",
+      "Panamera Diesel",
+      "Panamera S Hybrid",
+      "Panamera S E-Hybrid",
+      "Executive",
+      "Platinum Edition"
+     ],
+     "engines": [
+      "3.6 Panamera 300PS petrol",
+      "3.6 Panamera 310PS petrol",
+      "4.8 Panamera S 400PS petrol",
+      "3.0 Panamera S 420PS petrol",
+      "4.8 Panamera GTS 430PS petrol",
+      "4.8 Panamera GTS 440PS petrol",
+      "4.8 Panamera Turbo 500PS petrol",
+      "4.8 Panamera Turbo 520PS petrol",
+      "4.8 Panamera Turbo S 550PS petrol",
+      "4.8 Panamera Turbo S 570PS petrol",
+      "3.0 Panamera S Hybrid 380PS hybrid",
+      "3.0 Panamera S E-Hybrid 416PS plug-in-hybrid",
+      "3.0 Panamera Diesel 250PS diesel",
+      "3.0 Panamera Diesel 300PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "971 (2016–2024; Sport Turismo 2017-2024; facelift 2020)",
+     "from": 2016,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Panamera",
+      "Panamera 4",
+      "Panamera 4S",
+      "Panamera GTS",
+      "Panamera Turbo",
+      "Panamera Turbo S",
+      "Panamera 4 E-Hybrid",
+      "Panamera 4S E-Hybrid",
+      "Panamera Turbo S E-Hybrid",
+      "Panamera 4S Diesel",
+      "Executive",
+      "Sport Turismo",
+      "Platinum Edition",
+      "10 Years Edition"
+     ],
+     "engines": [
+      "2.9 Panamera 330PS petrol",
+      "2.9 Panamera 4 330PS petrol",
+      "2.9 Panamera 4S 440PS petrol",
+      "4.0 Panamera GTS 460PS petrol",
+      "4.0 Panamera GTS 480PS petrol",
+      "4.0 Panamera Turbo 550PS petrol",
+      "4.0 Panamera Turbo S 630PS petrol",
+      "2.9 Panamera 4 E-Hybrid 462PS plug-in-hybrid",
+      "2.9 Panamera 4S E-Hybrid 560PS plug-in-hybrid",
+      "4.0 Panamera Turbo S E-Hybrid 680PS plug-in-hybrid",
+      "4.0 Panamera Turbo S E-Hybrid 700PS plug-in-hybrid",
+      "4.0 Panamera 4S Diesel 422PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "976 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Panamera",
+      "Panamera 4",
+      "Panamera 4 E-Hybrid",
+      "Panamera 4S E-Hybrid",
+      "Panamera GTS",
+      "Panamera Turbo E-Hybrid",
+      "Panamera Turbo S E-Hybrid",
+      "Executive"
+     ],
+     "engines": [
+      "2.9 Panamera 353PS petrol",
+      "2.9 Panamera 4 353PS petrol",
+      "4.0 Panamera GTS 500PS petrol",
+      "2.9 Panamera 4 E-Hybrid 470PS plug-in-hybrid",
+      "2.9 Panamera 4S E-Hybrid 544PS plug-in-hybrid",
+      "4.0 Panamera Turbo E-Hybrid 680PS plug-in-hybrid",
+      "4.0 Panamera Turbo S E-Hybrid 782PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Taycan",
+   "slug": "taycan",
+   "aliases": [
+    "Taycan 4S",
+    "Taycan GTS",
+    "Taycan Turbo",
+    "Taycan Turbo S",
+    "Taycan Cross Turismo",
+    "Taycan Sport Turismo",
+    "Taycan Turbo GT"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2020,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "J1 (2020–2024; Cross Turismo from 2021; Sport Turismo from 2022)",
+     "from": 2020,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Taycan",
+      "Taycan 4",
+      "Taycan 4S",
+      "Taycan GTS",
+      "Taycan Turbo",
+      "Taycan Turbo S",
+      "Cross Turismo",
+      "Sport Turismo"
+     ],
+     "engines": [
+      "79.2kWh Taycan 408PS electric",
+      "93.4kWh Taycan 476PS electric",
+      "93.4kWh Taycan 4 Cross Turismo 476PS electric",
+      "79.2kWh Taycan 4S 530PS electric",
+      "93.4kWh Taycan 4S 571PS electric",
+      "93.4kWh Taycan GTS 598PS electric",
+      "93.4kWh Taycan Turbo 680PS electric",
+      "93.4kWh Taycan Turbo S 761PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "J1 facelift (2024–present; outputs are launch-control maxima)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Taycan",
+      "Taycan 4",
+      "Taycan 4S",
+      "Taycan GTS",
+      "Taycan Turbo",
+      "Taycan Turbo S",
+      "Taycan Turbo GT",
+      "Cross Turismo",
+      "Sport Turismo"
+     ],
+     "engines": [
+      "89kWh Taycan 408PS electric",
+      "105kWh Taycan 435PS electric",
+      "89kWh Taycan 4 408PS electric",
+      "105kWh Taycan 4S 598PS electric",
+      "105kWh Taycan GTS 700PS electric",
+      "105kWh Taycan Turbo 884PS electric",
+      "105kWh Taycan Turbo S 952PS electric",
+      "105kWh Taycan Turbo GT 1034PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

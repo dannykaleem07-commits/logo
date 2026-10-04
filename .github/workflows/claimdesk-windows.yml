@@ -1,7 +1,9 @@
 name: ClaimDesk Windows build
 
-# Builds ClaimDesk.exe on Windows, starts it, signs in, checks the example claims and renders a PDF with Edge.
-# A commit whose message contains [windows-release] (or a manual run) also publishes the zip as a GitHub release.
+# Builds ClaimDesk.exe and the installer (ClaimDesk-Setup-<ver>.exe) on Windows, smoke-tests the portable folder
+# (sign in, example claims, HTML and Word-template PDFs, vehicle catalogue, manual vehicle search), then installs,
+# upgrades and uninstalls the installer the way a user would (design doc docs/TEMPLATES-VEHICLES-DESKTOP.md §G.7).
+# A commit whose message contains [windows-release] (or a manual run) also publishes both files as a GitHub release.
 on:
   push:
     branches: [claude/busy-franklin-nzq139]
@@ -18,13 +20,26 @@ concurrency:
 jobs:
   windows:
     runs-on: windows-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     defaults:
       run:
         working-directory: claimdesk
         shell: pwsh
     steps:
       - uses: actions/checkout@v4
+
+      - name: Version
+        # <major>.<minor from package.json>.<run number>, e.g. 0.2.57; every later step reads VER / CLAIMDESK_VERSION.
+        run: |
+          $pkg = Get-Content package.json -Raw | ConvertFrom-Json
+          $parts = "$($pkg.version)".Split('.')
+          $run = [int]'${{ github.run_number }}'
+          if ($parts.Count -lt 2) { throw "package.json version '$($pkg.version)' is not <major>.<minor>.<patch>" }
+          if ($run -gt 65535) { throw "run number $run does not fit a Windows file version part (max 65535): bump the minor version" }
+          $ver = "$($parts[0]).$($parts[1]).$run"
+          "VER=$ver" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "CLAIMDESK_VERSION=$ver" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          Write-Host "ClaimDesk $ver"
 
       - uses: pnpm/action-setup@v4
         with:
@@ -34,7 +49,7 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install (flat node_modules so the folder can be zipped as plain files)
+      - name: Install (flat node_modules so the folder can be shipped as plain files)
         run: pnpm install --frozen-lockfile --config.node-linker=hoisted
 
       - name: Build the web app
@@ -46,65 +61,300 @@ jobs:
       - name: Build ClaimDesk.exe and the portable folder
         run: node packaging/build-package.mjs
 
-      - name: Smoke test — start, sign in, list claims, render a PDF with Edge
+      - name: Smoke test (portable) — sign in, example claims, PDFs from HTML and Word templates, catalogue, manual search
         env:
           CLAIMDESK_HOME: ${{ runner.temp }}\claimdesk-home
           CLAIMDESK_NO_BROWSER: '1'
         run: |
+          $base = 'http://127.0.0.1:4001'   # --demo serves the example claims on port 4001
+          $jar = "$env:RUNNER_TEMP\cookies.txt"
+          function Api([string]$method, [string]$path, $body = $null, [string]$out = '') {
+            $a = @('-s', '-b', $jar, '-c', $jar, '-X', $method)
+            if ($null -ne $body) {
+              $f = Join-Path $env:RUNNER_TEMP 'body.json'
+              Set-Content -Path $f -Value ($body | ConvertTo-Json -Depth 30 -Compress) -NoNewline -Encoding utf8NoBOM
+              $a += @('-H', 'content-type: application/json', '--data-binary', "@$f")
+            }
+            if ($out) {
+              $code = & curl.exe @a -o $out -w '%{http_code}' "$base$path"
+              return [pscustomobject]@{ Status = [int]$code; Body = $null }
+            }
+            $f2 = Join-Path $env:RUNNER_TEMP 'resp.json'
+            $code = & curl.exe @a -o $f2 -w '%{http_code}' "$base$path"
+            $text = if (Test-Path $f2) { Get-Content $f2 -Raw } else { '' }
+            $json = $null
+            if ($text) { try { $json = $text | ConvertFrom-Json -Depth 50 } catch { $json = $null } }
+            return [pscustomobject]@{ Status = [int]$code; Body = $json; Text = $text }
+          }
+          function Head5([string]$file) { [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes($file)[0..4]) }
+
           $exe = Resolve-Path packaging\dist\ClaimDesk\ClaimDesk.exe
           $proc = Start-Process -FilePath $exe -ArgumentList '--demo','--no-browser' -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\cd-out.log" -RedirectStandardError "$env:RUNNER_TEMP\cd-err.log"
-          $ok = $false
+          $h = $null
           for ($i = 0; $i -lt 90; $i++) {
-            try { $h = Invoke-RestMethod http://127.0.0.1:4000/api/health -TimeoutSec 5; if ($h.ok) { $ok = $true; break } } catch { }
+            try { $h = Invoke-RestMethod "$base/api/health" -TimeoutSec 5; if ($h.ok) { break } } catch { }
             Start-Sleep -Seconds 2
           }
           Get-Content "$env:RUNNER_TEMP\cd-out.log" -Tail 40
           Get-Content "$env:RUNNER_TEMP\cd-err.log" -Tail 40
-          if (-not $ok) { throw 'ClaimDesk did not start' }
-          $jar = "$env:RUNNER_TEMP\cookies.txt"
-          $code = curl.exe -s -o NUL -w "%{http_code}" http://127.0.0.1:4000/api/claims
+          if (-not $h -or -not $h.ok) { throw 'ClaimDesk did not start' }
+          Write-Host "health: version=$($h.version) dataset=$($h.dataset) pid=$($h.pid) lookups=$($h.lookups.mode)"
+          if ($h.version -ne $env:VER) { throw "health version '$($h.version)' is not $env:VER" }
+          if ($h.dataset -ne 'demo') { throw "expected the demo dataset on port 4001, got '$($h.dataset)'" }
+          if ($h.lookups.mode -ne 'manual') { throw "expected manual lookups without keys, got '$($h.lookups.mode)'" }
+
+          # --- sign in
+          $code = curl.exe -s -o NUL -w "%{http_code}" "$base/api/claims"
           if ($code -ne '401') { throw "expected 401 before sign-in, got $code" }
-          $defaults = curl.exe -s http://127.0.0.1:4000/api/auth/login-defaults | ConvertFrom-Json
+          $defaults = curl.exe -s "$base/api/auth/login-defaults" | ConvertFrom-Json
           if ($defaults.username -ne 'courtesycars' -or $defaults.password -ne 'CourtesyCars123!') { throw 'login defaults are not pre-filled' }
-          Set-Content -Path "$env:RUNNER_TEMP\login.json" -Value '{"username":"courtesycars","password":"CourtesyCars123!"}' -NoNewline
-          $code = curl.exe -s -o NUL -w "%{http_code}" -c $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\login.json" http://127.0.0.1:4000/api/auth/login
-          if ($code -ne '200') { throw "sign-in failed: $code" }
-          $claims = curl.exe -s -b $jar http://127.0.0.1:4000/api/claims | ConvertFrom-Json
+          $r = Api 'POST' '/api/auth/login' @{ username = 'courtesycars'; password = 'CourtesyCars123!' }
+          if ($r.Status -ne 200) { throw "sign-in failed: $($r.Status) $($r.Text)" }
+
+          # --- example claims and an HTML letter rendered to PDF with Edge
+          $claims = (Api 'GET' '/api/claims').Body
           Write-Host "claims: $($claims.total)"
           if ($claims.total -lt 4) { throw 'example claims missing' }
           $file1 = ($claims.items | Where-Object { $_.reference -eq 'CCG-2026-00001' }).id
-          Set-Content -Path "$env:RUNNER_TEMP\doc.json" -Value '{"templateId":"letter.chaser_7"}' -NoNewline
-          $doc = curl.exe -s -b $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\doc.json" "http://127.0.0.1:4000/api/claims/$file1/documents" | ConvertFrom-Json
+          if (-not $file1) { $file1 = $claims.items[0].id }
+          $doc = (Api 'POST' "/api/claims/$file1/documents" @{ templateId = 'letter.chaser_7' }).Body
           Write-Host "document: $($doc.id) $($doc.status)"
-          Set-Content -Path "$env:RUNNER_TEMP\empty.json" -Value '{}' -NoNewline
-          $appr = curl.exe -s -b $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\empty.json" "http://127.0.0.1:4000/api/documents/$($doc.id)/approve" | ConvertFrom-Json
+          $appr = (Api 'POST' "/api/documents/$($doc.id)/approve" @{}).Body
           Write-Host "approved: $($appr.status)"
-          curl.exe -s -b $jar -o "$env:RUNNER_TEMP\letter.pdf" "http://127.0.0.1:4000/api/documents/$($doc.id)/pdf"
-          $head = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes("$env:RUNNER_TEMP\letter.pdf")[0..4])
-          Write-Host "pdf header: $head  size: $((Get-Item "$env:RUNNER_TEMP\letter.pdf").Length)"
-          if ($head -ne '%PDF-') { throw 'PDF was not rendered' }
-          $page = curl.exe -s http://127.0.0.1:4000/
+          $r = Api 'GET' "/api/documents/$($doc.id)/pdf" $null "$env:RUNNER_TEMP\letter.pdf"
+          $head = Head5 "$env:RUNNER_TEMP\letter.pdf"
+          Write-Host "letter pdf: $($r.Status) $head $((Get-Item "$env:RUNNER_TEMP\letter.pdf").Length) bytes"
+          if ($head -ne '%PDF-') { throw 'HTML letter PDF was not rendered' }
+
+          # --- Word templates (design doc §C.5): list, values, acknowledge, generate, .docx, approve → PDF via the browser converter
+          $tpl = Api 'GET' '/api/docx-templates'
+          if ($tpl.Status -ne 200) { throw "GET /api/docx-templates: $($tpl.Status) $($tpl.Text)" }
+          Write-Host "docx templates: $($tpl.Body.items.Count)"
+          if ($tpl.Body.items.Count -lt 10) { throw 'expected at least 10 Word templates' }
+          $tid = 'agreement.ccguk_01_customer_loa'
+          $ack = Api 'POST' "/api/docx-templates/$tid/acknowledge" @{}
+          if ($ack.Status -ne 200) { throw "acknowledge: $($ack.Status) $($ack.Text)" }
+          $vals = Api 'GET' "/api/claims/$file1/docx-templates/$tid/values"
+          if ($vals.Status -ne 200) { throw "values: $($vals.Status) $($vals.Text)" }
+          $rows = @($vals.Body.groups | ForEach-Object { $_.rows })
+          Write-Host "values: $($rows.Count) rows; summary $($vals.Body.summary | ConvertTo-Json -Compress)"
+          $confirm = @($rows | Where-Object { $_.needsConfirmation -and -not $_.confirmed } | ForEach-Object { $_.slotId })
+          $values = @{}
+          foreach ($row in $rows | Where-Object { $_.required -and $_.missing -and $_.editable }) {
+            switch ($row.inputType) {
+              'date' { $values[$row.slotId] = '2026-10-01' }
+              'datetime' { $values[$row.slotId] = '2026-10-01T09:00:00.000Z' }
+              'time' { $values[$row.slotId] = '09:00' }
+              'money' { $values[$row.slotId] = 0 }
+              'int' { $values[$row.slotId] = 1 }
+              'checkbox' { $values[$row.slotId] = $false }
+              'choice' { $values[$row.slotId] = $row.options[0].value }
+              default { $values[$row.slotId] = 'CI smoke test' }
+            }
+          }
+          $gen = Api 'POST' "/api/claims/$file1/docx-documents" @{ templateId = $tid; confirm = $confirm; values = $values }
+          Write-Host "generate: $($gen.Status) $($gen.Body.id) $($gen.Body.status) format=$($gen.Body.format)"
+          if ($gen.Status -ne 201) { throw "generate failed: $($gen.Text)" }
+          $docxId = $gen.Body.id
+          $r = Api 'GET' "/api/documents/$docxId/docx" $null "$env:RUNNER_TEMP\filled.docx"
+          $pk = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes("$env:RUNNER_TEMP\filled.docx")[0..1])
+          Write-Host "docx: $($r.Status) $pk $((Get-Item "$env:RUNNER_TEMP\filled.docx").Length) bytes"
+          if ($r.Status -ne 200 -or $pk -ne 'PK') { throw 'the filled .docx was not returned' }
+          $appr = Api 'POST' "/api/documents/$docxId/approve" @{}
+          Write-Host "approve: $($appr.Status) $($appr.Body.status) converter=$($appr.Body.pdfConverter)"
+          if ($appr.Status -ne 200) { throw "approve failed: $($appr.Text)" }
+          $r = Api 'GET' "/api/documents/$docxId/pdf" $null "$env:RUNNER_TEMP\loa.pdf"
+          $head = Head5 "$env:RUNNER_TEMP\loa.pdf"
+          Write-Host "docx pdf: $($r.Status) $head $((Get-Item "$env:RUNNER_TEMP\loa.pdf").Length) bytes"
+          if ($head -ne '%PDF-') { throw 'the Word template PDF was not rendered' }
+          $one = (Api 'GET' "/api/documents/$docxId").Body
+          if ($one.pdfConverter -ne 'browser') { throw "expected pdfConverter 'browser' (no Word or LibreOffice on the runner), got '$($one.pdfConverter)'" }
+
+          # --- vehicle catalogue and manual-mode search (design doc §D.8, §E.1)
+          $makes = Api 'GET' '/api/catalogue/makes'
+          Write-Host "catalogue makes: $($makes.Body.items.Count)"
+          if ($makes.Status -ne 200 -or $makes.Body.items.Count -lt 60) { throw 'expected at least 60 catalogue makes' }
+          $look = Api 'POST' '/api/vehicles/lookup' @{ registration = 'ZZ99ZZZ' }
+          $tcc = @($look.Body.externalLinks | Where-Object { $_.id -eq 'totalcarcheck' })
+          Write-Host "lookup: $($look.Status) $($look.Body.status) mode=$($look.Body.lookupMode) tcc=$($tcc[0].url)"
+          if ($look.Body.status -ne 'manual_required') { throw 'an unknown registration without keys must return manual_required' }
+          if ($tcc.Count -lt 1 -or $tcc[0].url -notmatch 'totalcarcheck\.co\.uk') { throw 'no Total Car Check link in the lookup response' }
+
+          # --- web app and localhost
+          $page = curl.exe -s "$base/"
           if (-not ($page -match 'ClaimDesk')) { throw 'web app not served' }
-          # the browser opens http://localhost:4000, which Windows tries on ::1 first: it must answer at once
-          $code = curl.exe -s -m 5 -o NUL -w "%{http_code}" 'http://[::1]:4000/api/health'
+          # the app window opens http://localhost:4001, which Windows tries on ::1 first: it must answer at once
+          $code = curl.exe -s -m 5 -o NUL -w "%{http_code}" 'http://[::1]:4001/api/health'
           Write-Host "[::1] -> $code"
           $sw = [System.Diagnostics.Stopwatch]::StartNew()
-          $h = Invoke-RestMethod http://localhost:4000/api/health -TimeoutSec 2
+          $h = Invoke-RestMethod http://localhost:4001/api/health -TimeoutSec 2
           Write-Host "localhost -> ok=$($h.ok) in $($sw.ElapsedMilliseconds) ms"
-          if (-not $h.ok) { throw 'http://localhost:4000 did not answer' }
-          Stop-Process -Id $proc.Id -Force
+          if (-not $h.ok) { throw 'http://localhost:4001 did not answer' }
+
+          # --- the "Stop ClaimDesk" path (--stop reads the pid from /api/health)
+          & $exe --stop --demo
+          Start-Sleep -Seconds 3
+          $still = $true
+          try { Invoke-RestMethod "$base/api/health" -TimeoutSec 2 | Out-Null } catch { $still = $false }
+          if ($still) { Stop-Process -Id $proc.Id -Force; throw 'ClaimDesk.exe --stop --demo did not stop the server' }
           Write-Host 'Smoke test passed'
 
-      - name: Zip
+      # Code signing (design doc §G.8) — disabled until a certificate exists. Sign ClaimDesk.exe before the installer is
+      # compiled; the installer itself is signed after it (see the next disabled step).
+      - name: Sign ClaimDesk.exe (disabled — no certificate yet)
+        if: false
+        env:
+          CODESIGN_PFX_BASE64: ${{ secrets.CODESIGN_PFX_BASE64 }}
+          CODESIGN_PASSWORD: ${{ secrets.CODESIGN_PASSWORD }}
         run: |
-          $ver = "0.1.${{ github.run_number }}"
-          7z a -tzip -mx=5 "ClaimDesk-Windows-x64-$ver.zip" .\packaging\dist\ClaimDesk | Select-Object -Last 3
-          "ZIP=ClaimDesk-Windows-x64-$ver.zip" | Out-File -FilePath $env:GITHUB_ENV -Append
-          "VER=$ver" | Out-File -FilePath $env:GITHUB_ENV -Append
+          $pfx = "$env:RUNNER_TEMP\codesign.pfx"
+          [System.IO.File]::WriteAllBytes($pfx, [System.Convert]::FromBase64String($env:CODESIGN_PFX_BASE64))
+          $signtool = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin\*\x64\signtool.exe' | Sort-Object FullName | Select-Object -Last 1 -ExpandProperty FullName
+          & $signtool sign /f $pfx /p $env:CODESIGN_PASSWORD /fd sha256 /tr http://timestamp.digicert.com /td sha256 packaging\dist\ClaimDesk\ClaimDesk.exe
+          Remove-Item $pfx -Force
+
+      - name: Build the installer (Inno Setup)
+        run: |
+          function Find-Iscc {
+            $c = Get-Command iscc -ErrorAction SilentlyContinue
+            if ($c) { return $c.Source }
+            $f = Get-ChildItem 'C:\Program Files (x86)\Inno Setup *\ISCC.exe', 'C:\Program Files\Inno Setup *\ISCC.exe' -ErrorAction SilentlyContinue | Sort-Object FullName | Select-Object -Last 1
+            if ($f) { return $f.FullName }
+            return $null
+          }
+          $iscc = Find-Iscc
+          if (-not $iscc) {
+            choco install innosetup -y --no-progress | Select-Object -Last 3
+            $iscc = Find-Iscc
+          }
+          if (-not $iscc) { throw 'ISCC.exe (Inno Setup) not found' }
+          Write-Host "ISCC: $iscc"
+          $isccArgs = @('/Qp', "/DAppVersion=$env:VER", "/DSourceDir=$PWD\packaging\dist\ClaimDesk", "/O$PWD\packaging\dist", 'packaging\installer\ClaimDesk.iss')
+          & $iscc @isccArgs
+          if ($LASTEXITCODE -ne 0) {
+            # ISCC refuses some icons with PNG-compressed small entries: rebuild packaging\icon.ico with BMP entries and retry.
+            Write-Host 'ISCC failed; rebuilding packaging\icon.ico with ImageMagick (BMP entries) and retrying'
+            $magick = (Get-Command magick -ErrorAction SilentlyContinue).Source
+            if (-not $magick) {
+              choco install imagemagick -y --no-progress | Select-Object -Last 3
+              $magick = Get-ChildItem 'C:\Program Files\ImageMagick-*\magick.exe' -ErrorAction SilentlyContinue | Select-Object -Last 1 -ExpandProperty FullName
+            }
+            if (-not $magick) { throw 'ImageMagick not available to rebuild the icon' }
+            & $magick convert 'apps\web\public\icons\icon-512.png' -background none -define icon:auto-resize=48,32,24,16 'packaging\icon.ico'
+            if ($LASTEXITCODE -ne 0) { throw 'ImageMagick could not rebuild the icon' }
+            & $iscc @isccArgs
+            if ($LASTEXITCODE -ne 0) { throw "ISCC failed with exit code $LASTEXITCODE" }
+          }
+          $setup = "packaging\dist\ClaimDesk-Setup-$env:VER.exe"
+          if (-not (Test-Path $setup)) { throw "$setup was not produced" }
+          Write-Host "$setup  $([math]::Round((Get-Item $setup).Length / 1MB, 1)) MB"
+
+      - name: Sign the installer (disabled — no certificate yet)
+        if: false
+        env:
+          CODESIGN_PFX_BASE64: ${{ secrets.CODESIGN_PFX_BASE64 }}
+          CODESIGN_PASSWORD: ${{ secrets.CODESIGN_PASSWORD }}
+        run: |
+          $pfx = "$env:RUNNER_TEMP\codesign.pfx"
+          [System.IO.File]::WriteAllBytes($pfx, [System.Convert]::FromBase64String($env:CODESIGN_PFX_BASE64))
+          $signtool = Get-ChildItem 'C:\Program Files (x86)\Windows Kits\10\bin\*\x64\signtool.exe' | Sort-Object FullName | Select-Object -Last 1 -ExpandProperty FullName
+          & $signtool sign /f $pfx /p $env:CODESIGN_PASSWORD /fd sha256 /tr http://timestamp.digicert.com /td sha256 "packaging\dist\ClaimDesk-Setup-$env:VER.exe"
+          Remove-Item $pfx -Force
+
+      - name: Installed-app smoke test — install, publisher and version, start, upgrade keeps data, silent uninstall keeps data
+        run: |
+          $setup = Resolve-Path "packaging\dist\ClaimDesk-Setup-$env:VER.exe"
+          $installDir = Join-Path $env:LOCALAPPDATA 'Programs\ClaimDesk'
+          $exe = Join-Path $installDir 'ClaimDesk.exe'
+          $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{322DAE75-FC0F-4786-B2BB-62E4A6A3D59B}_is1'
+          $startMenu = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'
+          $env:CLAIMDESK_HOME = "$env:RUNNER_TEMP\installed-home"
+          $env:CLAIMDESK_NO_BROWSER = '1'
+          function Install([string]$log) {
+            $p = Start-Process -FilePath $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CURRENTUSER', "/LOG=`"$log`"" -PassThru -Wait
+            if ($p.ExitCode -ne 0) { Get-Content $log -Tail 60; throw "setup exited with $($p.ExitCode)" }
+          }
+          function Wait-Health([int]$port) {
+            for ($i = 0; $i -lt 90; $i++) {
+              try { $h = Invoke-RestMethod "http://127.0.0.1:$port/api/health" -TimeoutSec 5; if ($h.ok) { return $h } } catch { }
+              Start-Sleep -Seconds 2
+            }
+            throw "ClaimDesk did not answer on port $port"
+          }
+          function Start-Installed([string]$tag) {
+            return Start-Process -FilePath $exe -ArgumentList '--no-browser' -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\inst-$tag-out.log" -RedirectStandardError "$env:RUNNER_TEMP\inst-$tag-err.log"
+          }
+
+          # --- install
+          Install "$env:RUNNER_TEMP\setup-1.log"
+          if (-not (Test-Path $exe)) { throw "$exe was not installed" }
+          $reg = Get-ItemProperty -Path $key
+          Write-Host "registry: Publisher=$($reg.Publisher) DisplayVersion=$($reg.DisplayVersion) DisplayName=$($reg.DisplayName)"
+          if ($reg.Publisher -ne 'Courtesy Cars Group UK Ltd') { throw "Publisher is '$($reg.Publisher)'" }
+          if ($reg.DisplayVersion -ne $env:VER) { throw "DisplayVersion is '$($reg.DisplayVersion)', expected $env:VER" }
+          foreach ($lnk in 'ClaimDesk.lnk', 'ClaimDesk (example claims).lnk', 'Stop ClaimDesk.lnk') {
+            if (-not (Test-Path (Join-Path $startMenu $lnk))) { throw "Start Menu shortcut missing: $lnk" }
+          }
+          $vi = (Get-Item $exe).VersionInfo
+          Write-Host "exe: CompanyName=$($vi.CompanyName) ProductName=$($vi.ProductName) FileDescription=$($vi.FileDescription) LegalCopyright=$($vi.LegalCopyright) FileVersion=$($vi.FileVersion) ProductVersion=$($vi.ProductVersion)"
+          if ($vi.CompanyName -ne 'Courtesy Cars Group UK Ltd') { throw 'exe CompanyName' }
+          if ($vi.ProductName -ne 'ClaimDesk') { throw 'exe ProductName' }
+          if ($vi.FileDescription -ne 'ClaimDesk - Courtesy Cars Group UK Ltd') { throw 'exe FileDescription' }
+          if ($vi.LegalCopyright -ne 'Copyright © 2026 Courtesy Cars Group UK Ltd') { throw 'exe LegalCopyright' }
+          if ($vi.FileVersion -ne "$env:VER.0") { throw "exe FileVersion '$($vi.FileVersion)', expected $env:VER.0" }
+
+          # --- the installed exe starts with live data on port 4000
+          $proc = Start-Installed 'a'
+          $h = Wait-Health 4000
+          Write-Host "installed health: version=$($h.version) dataset=$($h.dataset)"
+          if ($h.dataset -ne 'live') { throw "expected the live dataset, got '$($h.dataset)'" }
+          if ($h.version -ne $env:VER) { throw "installed version '$($h.version)' is not $env:VER" }
+          Set-Content -Path (Join-Path $env:CLAIMDESK_HOME 'marker.txt') -Value 'kept across upgrade and uninstall'
+          New-Item -ItemType Directory -Force -Path (Join-Path $env:LOCALAPPDATA 'ClaimDesk') | Out-Null
+          Set-Content -Path (Join-Path $env:LOCALAPPDATA 'ClaimDesk\marker.txt') -Value 'default data folder'
+
+          # --- upgrade in place (setup stops the running ClaimDesk first)
+          Install "$env:RUNNER_TEMP\setup-2.log"
+          if (-not (Test-Path (Join-Path $env:CLAIMDESK_HOME 'marker.txt'))) { throw 'the upgrade removed data' }
+          if (-not (Test-Path (Join-Path $env:CLAIMDESK_HOME 'data\claimdesk.sqlite'))) { throw 'the upgrade removed the database' }
+          $proc = Start-Installed 'b'
+          $h = Wait-Health 4000
+          Write-Host "after upgrade: version=$($h.version) dataset=$($h.dataset)"
+          & $exe --stop
+          Start-Sleep -Seconds 3
+          $still = $true
+          try { Invoke-RestMethod 'http://127.0.0.1:4000/api/health' -TimeoutSec 2 | Out-Null } catch { $still = $false }
+          if ($still) { Stop-Process -Id $proc.Id -Force; throw 'ClaimDesk.exe --stop did not stop the installed app' }
+
+          # --- silent uninstall: program folder gone, data kept
+          $unins = Join-Path $installDir 'unins000.exe'
+          Start-Process -FilePath $unins -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART' -Wait
+          # the uninstaller re-launches itself from %TEMP%: wait for the files to go
+          for ($i = 0; $i -lt 60 -and (Test-Path $exe); $i++) { Start-Sleep -Seconds 2 }
+          for ($i = 0; $i -lt 15 -and (Test-Path $installDir); $i++) { Start-Sleep -Seconds 2 }
+          if (Test-Path $exe) { throw 'uninstall left ClaimDesk.exe behind' }
+          if (Test-Path $installDir) { Get-ChildItem $installDir -Recurse | Select-Object -First 20 | Format-Table FullName; throw 'uninstall left the program folder behind' }
+          if (Test-Path $key) { throw 'uninstall left the registry entry behind' }
+          if (-not (Test-Path (Join-Path $env:CLAIMDESK_HOME 'marker.txt'))) { throw 'uninstall deleted the data folder' }
+          if (-not (Test-Path (Join-Path $env:LOCALAPPDATA 'ClaimDesk\marker.txt'))) { throw 'a silent uninstall deleted %LOCALAPPDATA%\ClaimDesk' }
+          Write-Host 'Installed-app smoke test passed'
+
+      - name: Zip the portable folder
+        run: |
+          $zip = "ClaimDesk-Windows-x64-$env:VER.zip"
+          7z a -tzip -mx=5 $zip .\packaging\dist\ClaimDesk | Select-Object -Last 3
+          "ZIP=$zip" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "SETUP=ClaimDesk-Setup-$env:VER.exe" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ClaimDesk-Windows-x64
+          name: ClaimDesk-Setup-${{ env.VER }}
+          path: claimdesk/packaging/dist/${{ env.SETUP }}
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ClaimDesk-Windows-x64-${{ env.VER }}
           path: claimdesk/${{ env.ZIP }}
           retention-days: 30
 
@@ -116,14 +366,15 @@ jobs:
           name: ClaimDesk ${{ env.VER }} for Windows
           target_commitish: ${{ github.sha }}
           prerelease: true
-          files: claimdesk/${{ env.ZIP }}
+          files: |
+            claimdesk/packaging/dist/${{ env.SETUP }}
+            claimdesk/${{ env.ZIP }}
           body: |
-            **ClaimDesk for Windows 10/11 (64-bit).** Download the zip, right-click → Extract All, open the folder and double-click **ClaimDesk.exe**.
+            Download **ClaimDesk-Setup-${{ env.VER }}.exe**, run it (no administrator rights needed). Publisher: Courtesy Cars Group UK Ltd. Windows may show 'Unknown publisher' until the installer is code-signed.
 
-            - A black window opens (keep it open) and your browser opens ClaimDesk.
+            - The Start menu gets **ClaimDesk**, **ClaimDesk (example claims)** and **Stop ClaimDesk**. ClaimDesk opens in its own window; closing the window stops it.
             - Sign in: username `courtesycars`, password `CourtesyCars123!` (filled in for you). Change it in Settings before real data goes in — this repository is public.
-            - Want to look around first? Double-click **Start with example claims.cmd** (example data is kept separately).
-            - Windows may say "Windows protected your PC" because the program is not code-signed: click **More info → Run anyway**.
-            - Your data lives in `%LOCALAPPDATA%\ClaimDesk`. PDFs are made with Microsoft Edge, which Windows already has.
+            - Installing a newer version updates ClaimDesk in place. Your data stays in `%LOCALAPPDATA%\ClaimDesk`; uninstalling keeps it unless you choose to delete it.
+            - No installer wanted? `ClaimDesk-Windows-x64-${{ env.VER }}.zip` is the same program: unzip, double-click **ClaimDesk.exe**.
 
-            Built and smoke-tested on Windows by GitHub Actions: started the program, signed in, listed the example claims and rendered a PDF.
+            Built and tested on Windows by GitHub Actions: example claims, an HTML letter and a Word-template agreement rendered to PDF, the vehicle catalogue and manual vehicle search; then installed, upgraded and uninstalled silently with the data kept.

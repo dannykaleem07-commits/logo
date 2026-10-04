@@ -4,6 +4,8 @@
  */
 import type { ISODate, LookupRecord, MotTest, OdometerReading, OdometerSource, Vehicle } from '@ccguk/domain';
 import type { FormResult } from './chronology';
+import { segmentLabel, type FeatureVocabulary } from '../../../api/vehiclesApi';
+import { featureLabels } from '../../vehicles/vehiclePicker';
 
 export const ODOMETER_SOURCE_LABEL: Record<OdometerSource, string> = {
   mot: 'MOT test',
@@ -107,13 +109,23 @@ export function sortLookups(lookups: LookupRecord[]): LookupRecord[] {
   return [...lookups].sort((a, b) => b.requestedAt.localeCompare(a.requestedAt));
 }
 
-export function identificationRows(v: Vehicle): Array<{ label: string; value: string | number | undefined }> {
+/**
+ * Identification card rows. The specification (§D.10: doors, seats, power, segment, features, extras) is catalogue /
+ * hand-entered reference data — unverified like any manual entry. `vocabulary` turns feature ids into labels.
+ */
+export function identificationRows(v: Vehicle, vocabulary?: FeatureVocabulary): Array<{ label: string; value: string | number | undefined }> {
+  const spec = v.spec;
+  const list = (ids: string[] | undefined) => (ids && ids.length ? featureLabels(vocabulary, ids).join(', ') : undefined);
   return [
     { label: 'Registration', value: v.registration },
     { label: 'VIN', value: v.vin },
     { label: 'Make / model', value: `${v.make} ${v.model}`.trim() },
     { label: 'Variant', value: v.variant },
     { label: 'Body', value: v.bodyType },
+    { label: 'Doors', value: spec?.doors },
+    { label: 'Seats', value: spec?.seats },
+    { label: 'Power', value: spec?.powerPs ? `${spec.powerPs} PS` : undefined },
+    { label: 'Segment', value: segmentLabel(spec?.segment) },
     { label: 'Year / first registered', value: [v.yearOfManufacture, v.monthOfFirstRegistration].filter(Boolean).join(' · ') || undefined },
     { label: 'Fuel / transmission', value: [v.fuelType, v.transmission].filter(Boolean).join(' · ') || undefined },
     { label: 'Colour', value: v.colour },
@@ -126,6 +138,8 @@ export function identificationRows(v: Vehicle): Array<{ label: string; value: st
     { label: 'GTA group', value: v.gtaGroup },
     { label: 'Previous write-off', value: v.previousWriteOffCategory ? `Cat ${v.previousWriteOffCategory}` : undefined },
     { label: 'Ownership', value: v.ownership },
-    { label: 'Marked for export', value: v.markedForExport === undefined ? undefined : v.markedForExport ? 'Yes' : 'No' }
+    { label: 'Marked for export', value: v.markedForExport === undefined ? undefined : v.markedForExport ? 'Yes' : 'No' },
+    { label: 'Features', value: list(spec?.features) },
+    { label: 'Extras', value: list(spec?.extras) }
   ];
 }

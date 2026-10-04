@@ -1,0 +1,1332 @@
+{
+ "make": "Alfa Romeo",
+ "slug": "alfa-romeo",
+ "dvlaNames": [
+  "ALFA ROMEO",
+  "ALFA"
+ ],
+ "aliases": [
+  "Alfa"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. 8C Competizione and 8C Spider omitted: left-hand drive only (UK cars were LHD)."
+ },
+ "models": [
+  {
+   "name": "145",
+   "slug": "145",
+   "aliases": [
+    "145 Cloverleaf"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "Type 930 (1994–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Lusso",
+      "Cloverleaf"
+     ],
+     "engines": [
+      "1.4 Twin Spark 103PS petrol",
+      "1.6 Twin Spark 120PS petrol",
+      "1.8 Twin Spark 144PS petrol",
+      "2.0 Twin Spark 155PS petrol",
+      "1.9 JTD 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "146",
+   "slug": "146",
+   "aliases": [
+    "146 ti"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2000,
+    "to": 2001
+   },
+   "generations": [
+    {
+     "name": "Type 930 (1995–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Lusso",
+      "ti"
+     ],
+     "engines": [
+      "1.4 Twin Spark 103PS petrol",
+      "1.6 Twin Spark 120PS petrol",
+      "1.8 Twin Spark 144PS petrol",
+      "2.0 Twin Spark 155PS petrol",
+      "1.9 JTD 105PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "147",
+   "slug": "147",
+   "aliases": [
+    "147 GTA",
+    "147 Q2"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2001,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2001–2004)",
+     "from": 2001,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Turismo",
+      "Lusso",
+      "Sport",
+      "Selespeed",
+      "GTA"
+     ],
+     "engines": [
+      "1.6 Twin Spark 105PS petrol",
+      "1.6 Twin Spark 120PS petrol",
+      "2.0 Twin Spark 150PS petrol",
+      "3.2 V6 250PS petrol",
+      "1.9 JTD 115PS diesel",
+      "1.9 JTD 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2004–2010)",
+     "from": 2004,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Turismo",
+      "Lusso",
+      "Collezione",
+      "Veloce",
+      "Ti",
+      "Q2",
+      "Black Line",
+      "GTA"
+     ],
+     "engines": [
+      "1.6 Twin Spark 105PS petrol",
+      "1.6 Twin Spark 120PS petrol",
+      "2.0 Twin Spark 150PS petrol",
+      "3.2 V6 250PS petrol",
+      "1.9 JTDM 120PS diesel",
+      "1.9 JTDM 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "156",
+   "slug": "156",
+   "aliases": [
+    "156 Sportwagon",
+    "156 GTA",
+    "156 Crosswagon",
+    "Crosswagon Q4"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1997–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Turismo",
+      "Lusso",
+      "Veloce",
+      "Sport",
+      "Selespeed",
+      "GTA"
+     ],
+     "engines": [
+      "1.6 Twin Spark 120PS petrol",
+      "1.8 Twin Spark 144PS petrol",
+      "2.0 Twin Spark 155PS petrol",
+      "2.0 JTS 165PS petrol",
+      "2.5 V6 190PS petrol",
+      "3.2 V6 250PS petrol",
+      "1.9 JTD 115PS diesel",
+      "2.4 JTD 140PS diesel",
+      "2.4 JTD 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2003–2006)",
+     "from": 2003,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Turismo",
+      "Lusso",
+      "Veloce",
+      "Sport",
+      "Q-System",
+      "GTA",
+      "Crosswagon Q4"
+     ],
+     "engines": [
+      "1.8 Twin Spark 140PS petrol",
+      "2.0 JTS 165PS petrol",
+      "2.5 V6 192PS petrol",
+      "3.2 V6 250PS petrol",
+      "1.9 JTD 115PS diesel",
+      "1.9 JTDM 140PS diesel",
+      "1.9 JTDM 150PS diesel",
+      "2.4 JTDM 175PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "159",
+   "slug": "159",
+   "aliases": [
+    "159 Sportwagon",
+    "159 Ti"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2006,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2011)",
+     "from": 2006,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Turismo",
+      "Turismo Sport",
+      "Lusso",
+      "Ti",
+      "Q4"
+     ],
+     "engines": [
+      "1.8 MPI 140PS petrol",
+      "1.75 TBi 200PS petrol",
+      "1.9 JTS 160PS petrol",
+      "2.2 JTS 185PS petrol",
+      "3.2 JTS V6 260PS petrol",
+      "1.9 JTDM 120PS diesel",
+      "1.9 JTDM 150PS diesel",
+      "2.0 JTDM 136PS diesel",
+      "2.0 JTDM 170PS diesel",
+      "2.4 JTDM 200PS diesel",
+      "2.4 JTDM 210PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "166",
+   "slug": "166",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2007
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1998–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Lusso",
+      "Super",
+      "Sportronic"
+     ],
+     "engines": [
+      "2.0 Twin Spark 155PS petrol",
+      "2.5 V6 190PS petrol",
+      "3.0 V6 226PS petrol",
+      "2.4 JTD 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2003–2007)",
+     "from": 2003,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Lusso",
+      "Super",
+      "Sportronic"
+     ],
+     "engines": [
+      "2.0 Twin Spark 150PS petrol",
+      "2.5 V6 188PS petrol",
+      "3.2 V6 240PS petrol",
+      "2.4 JTDM 175PS diesel",
+      "2.4 JTDM 185PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GT",
+   "slug": "gt",
+   "aliases": [
+    "GT Q2",
+    "GT Cloverleaf"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2004,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2004–2010)",
+     "from": 2004,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Lusso",
+      "Collezione",
+      "Cloverleaf",
+      "Black Line",
+      "Q2"
+     ],
+     "engines": [
+      "1.8 Twin Spark 140PS petrol",
+      "2.0 JTS 165PS petrol",
+      "3.2 V6 240PS petrol",
+      "1.9 JTDM 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "GTV",
+   "slug": "gtv",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "Type 916 (1995–2005, facelift 2003)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Lusso"
+     ],
+     "engines": [
+      "2.0 Twin Spark 150PS petrol",
+      "2.0 JTS 165PS petrol",
+      "3.0 V6 220PS petrol",
+      "3.2 V6 240PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Spider",
+   "slug": "spider",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "Type 916 (1995–2005, facelift 2003)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Lusso"
+     ],
+     "engines": [
+      "2.0 Twin Spark 150PS petrol",
+      "2.0 JTS 165PS petrol",
+      "3.0 V6 220PS petrol",
+      "3.2 V6 240PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Type 939 (2006–2010)",
+     "from": 2006,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Lusso",
+      "Exclusive",
+      "Limited Edition"
+     ],
+     "engines": [
+      "1.75 TBi 200PS petrol",
+      "2.2 JTS 185PS petrol",
+      "3.2 JTS V6 260PS petrol",
+      "2.0 JTDM 170PS diesel",
+      "2.4 JTDM 200PS diesel",
+      "2.4 JTDM 210PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Brera",
+   "slug": "brera",
+   "aliases": [
+    "Brera S"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2006,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2006–2010)",
+     "from": 2006,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "SV",
+      "S",
+      "TI"
+     ],
+     "engines": [
+      "1.75 TBi 200PS petrol",
+      "2.2 JTS 185PS petrol",
+      "3.2 JTS V6 260PS petrol",
+      "2.0 JTDM 170PS diesel",
+      "2.4 JTDM 200PS diesel",
+      "2.4 JTDM 210PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "MiTo",
+   "slug": "mito",
+   "aliases": [
+    "Mito",
+    "MiTo Cloverleaf",
+    "MiTo Quadrifoglio Verde"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2008,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2008–2013)",
+     "from": 2008,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Turismo",
+      "Lusso",
+      "Veloce",
+      "Sprint",
+      "Junior",
+      "Distinctive",
+      "Progression",
+      "Collezione",
+      "Cloverleaf",
+      "Quadrifoglio Verde"
+     ],
+     "engines": [
+      "1.4 8v 78PS petrol",
+      "1.4 TB 120PS petrol",
+      "1.4 TB 155PS petrol",
+      "1.4 MultiAir 105PS petrol",
+      "1.4 MultiAir 135PS petrol",
+      "1.4 MultiAir 170PS petrol",
+      "0.9 TwinAir 85PS petrol",
+      "1.3 JTDM 90PS diesel",
+      "1.3 JTDM 95PS diesel",
+      "1.6 JTDM 120PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2014–2018)",
+     "from": 2014,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Progression",
+      "Distinctive",
+      "Junior",
+      "Sportiva",
+      "Super",
+      "Speciale",
+      "Veloce",
+      "Quadrifoglio Verde"
+     ],
+     "engines": [
+      "1.4 8v 78PS petrol",
+      "0.9 TwinAir 105PS petrol",
+      "1.4 MultiAir 135PS petrol",
+      "1.4 MultiAir 170PS petrol",
+      "1.3 JTDM 85PS diesel",
+      "1.3 JTDM 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Giulietta",
+   "slug": "giulietta",
+   "aliases": [
+    "Giulietta Cloverleaf",
+    "Giulietta Quadrifoglio Verde",
+    "Giulietta Veloce"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2010,
+    "to": 2020
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2010–2016)",
+     "from": 2010,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Turismo",
+      "Lusso",
+      "Veloce",
+      "Sprint",
+      "Distinctive",
+      "Progression",
+      "Collezione",
+      "Business Edition",
+      "Sportiva",
+      "Cloverleaf",
+      "Quadrifoglio Verde"
+     ],
+     "engines": [
+      "1.4 TB 120PS petrol",
+      "1.4 MultiAir 150PS petrol",
+      "1.4 MultiAir 170PS petrol",
+      "1.75 TBi 235PS petrol",
+      "1.75 TBi 240PS petrol",
+      "1.6 JTDM 105PS diesel",
+      "2.0 JTDM 140PS diesel",
+      "2.0 JTDM 150PS diesel",
+      "2.0 JTDM 170PS diesel",
+      "2.0 JTDM 175PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2016–2020)",
+     "from": 2016,
+     "to": 2020,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Super",
+      "Speciale",
+      "Tecnica",
+      "Veloce",
+      "Sprint",
+      "Nero Edizione",
+      "Lusso"
+     ],
+     "engines": [
+      "1.4 TB 120PS petrol",
+      "1.4 MultiAir 150PS petrol",
+      "1.4 MultiAir 170PS petrol",
+      "1.75 TBi 240PS petrol",
+      "1.6 JTDM 120PS diesel",
+      "2.0 JTDM 150PS diesel",
+      "2.0 JTDM 170PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "4C",
+   "slug": "4c",
+   "aliases": [
+    "4C Coupe",
+    "4C Spider",
+    "4C Launch Edition"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2014,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2013–2020)",
+     "from": 2014,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      {
+       "name": "Launch Edition",
+       "from": 2014,
+       "bodies": [
+        "coupe"
+       ]
+      },
+      {
+       "name": "Coupe",
+       "bodies": [
+        "coupe"
+       ]
+      },
+      {
+       "name": "Spider",
+       "from": 2015,
+       "bodies": [
+        "roadster"
+       ]
+      }
+     ],
+     "engines": [
+      {
+       "label": "1.75 TBi 240PS petrol",
+       "cc": 1742,
+       "fuel": "petrol",
+       "powerPs": 240,
+       "transmissions": [
+        "automatic"
+       ]
+      }
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK right-hand-drive cars from 2014 (Launch Edition first, then the Coupe); Spider from 2015; TCT twin-clutch gearbox only; production ended in 2020."
+    }
+   ]
+  },
+  {
+   "name": "Giulia",
+   "slug": "giulia",
+   "aliases": [
+    "Giulia Quadrifoglio",
+    "Giulia Veloce",
+    "Giulia GTA",
+    "Giulia GTAm"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2016,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Type 952 (2016–2022)",
+     "from": 2016,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Giulia",
+      "Super",
+      "Speciale",
+      "Tecnica",
+      "Lusso Ti",
+      "Veloce",
+      "Veloce Ti",
+      "Nero Edizione",
+      "Sprint",
+      "Ti",
+      "Quadrifoglio",
+      {
+       "name": "GTA",
+       "from": 2021,
+       "engines": [
+        "2.9 V6 Bi-Turbo 540PS petrol"
+       ]
+      },
+      {
+       "name": "GTAm",
+       "from": 2021,
+       "engines": [
+        "2.9 V6 Bi-Turbo 540PS petrol"
+       ]
+      }
+     ],
+     "engines": [
+      "2.0 Turbo 200PS petrol",
+      "2.0 Turbo 280PS petrol",
+      "2.2 JTD 150PS diesel",
+      "2.2 JTD 160PS diesel",
+      "2.2 JTD 180PS diesel",
+      "2.2 JTD 190PS diesel",
+      "2.2 JTD 210PS diesel",
+      "2.9 V6 Bi-Turbo 510PS petrol",
+      "2.9 V6 Bi-Turbo 540PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "GTA and GTAm (2021; 500 built worldwide, a small UK right-hand-drive allocation) use a 540PS version of the Quadrifoglio V6; the GTAm is a two-seater."
+    },
+    {
+     "name": "Facelift (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sprint",
+      "Veloce",
+      "Competizione",
+      "Intensa",
+      "Quadrifoglio"
+     ],
+     "engines": [
+      "2.0 Turbo 280PS petrol",
+      "2.9 V6 Bi-Turbo 520PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Stelvio",
+   "slug": "stelvio",
+   "aliases": [
+    "Stelvio Quadrifoglio",
+    "Stelvio Veloce"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2017,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Type 949 (2017–2022)",
+     "from": 2017,
+     "to": 2022,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Super",
+      "Speciale",
+      "Milano Edizione",
+      "First Edition",
+      "Lusso Ti",
+      "Veloce",
+      "Veloce Ti",
+      "Nero Edizione",
+      "Sprint",
+      "Ti",
+      "Quadrifoglio"
+     ],
+     "engines": [
+      "2.0 Turbo 200PS petrol",
+      "2.0 Turbo 280PS petrol",
+      "2.2 JTD 160PS diesel",
+      "2.2 JTD 180PS diesel",
+      "2.2 JTD 190PS diesel",
+      "2.2 JTD 210PS diesel",
+      "2.9 V6 Bi-Turbo 510PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    },
+    {
+     "name": "Facelift (2023–)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Sprint",
+      "Ti",
+      "Veloce",
+      "Competizione",
+      "Intensa",
+      "Quadrifoglio"
+     ],
+     "engines": [
+      "2.0 Turbo 280PS petrol",
+      "2.2 JTD 210PS diesel",
+      "2.9 V6 Bi-Turbo 520PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Tonale",
+   "slug": "tonale",
+   "aliases": [
+    "Tonale Plug-in Hybrid Q4",
+    "Tonale Hybrid"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Ti",
+      "Sprint",
+      "Veloce",
+      "Speciale",
+      "Edizione Speciale",
+      "Tributo Italiano",
+      "Intensa"
+     ],
+     "engines": [
+      "1.5 Hybrid 130PS mild-hybrid petrol",
+      "1.5 Hybrid 160PS mild-hybrid petrol",
+      "1.3 Plug-in Hybrid Q4 280PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Junior",
+   "slug": "junior",
+   "aliases": [
+    "Junior Ibrida",
+    "Junior Elettrica",
+    "Milano"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Speciale",
+      "Edizione Speciale",
+      "Veloce"
+     ],
+     "engines": [
+      "1.2 Ibrida 136PS mild-hybrid petrol",
+      "1.2 Ibrida Q4 145PS mild-hybrid petrol",
+      "54kWh 156PS electric",
+      "54kWh 280PS electric"
+     ],
+     "fuels": [
+      "mild-hybrid",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

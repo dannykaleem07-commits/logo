@@ -1,0 +1,1011 @@
+{
+ "make": "MINI",
+ "slug": "mini",
+ "dvlaNames": [
+  "MINI"
+ ],
+ "aliases": [
+  "Mini",
+  "BMW Mini",
+  "MINI Cooper"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Hatch",
+   "slug": "hatch",
+   "aliases": [
+    "Hatchback",
+    "Mini Hatch",
+    "One",
+    "Cooper",
+    "Cooper S",
+    "Cooper D",
+    "Cooper SD",
+    "One D",
+    "Cooper C",
+    "Cooper E",
+    "Cooper SE",
+    "Mini Electric",
+    "John Cooper Works",
+    "JCW",
+    "Cooper 3 Door",
+    "Cooper 5 Door",
+    "3 Door",
+    "5 Door",
+    "Cooper Works",
+    "One First",
+    "First",
+    "Paddy Hopkirk Edition",
+    "Inspired by Goodwood"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2001,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "R50 / R53 Cooper S (2001–2006; One D from 2003; R53 Cooper S 2002-2006)",
+     "from": 2001,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "One",
+      "Cooper",
+      "Cooper S",
+      "One D",
+      "John Cooper Works",
+      "Salt",
+      "Pepper",
+      "Chili",
+      "Seven",
+      "Park Lane",
+      "Checkmate"
+     ],
+     "engines": [
+      "1.6 One 90PS petrol",
+      "1.6 Cooper 115PS petrol",
+      "1.6 Cooper S supercharged 163PS petrol",
+      "1.6 Cooper S supercharged 170PS petrol",
+      "1.6 John Cooper Works 200PS petrol",
+      "1.6 John Cooper Works GP 218PS petrol",
+      "1.4 One D 75PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "R56 (2006–2013)",
+     "from": 2006,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "First",
+      "One",
+      "Cooper",
+      "Cooper S",
+      "Cooper D",
+      "Cooper SD",
+      "One D",
+      "John Cooper Works",
+      "Pepper",
+      "Salt",
+      "Chili",
+      "Graphite",
+      "Baker Street",
+      "Bayswater",
+      "Ray",
+      "Mayfair"
+     ],
+     "engines": [
+      "1.4 First 75PS petrol",
+      "1.4 One 95PS petrol",
+      "1.6 One 98PS petrol",
+      "1.6 Cooper 120PS petrol",
+      "1.6 Cooper 122PS petrol",
+      "1.6 Cooper S 175PS petrol",
+      "1.6 Cooper S 184PS petrol",
+      "1.6 John Cooper Works 211PS petrol",
+      "1.6 John Cooper Works GP 218PS petrol",
+      "1.6 One D 90PS diesel",
+      "1.6 Cooper D 110PS diesel",
+      "1.6 Cooper D 112PS diesel",
+      "2.0 Cooper SD 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F56 3-door / F55 5-door (2014–2024; 5-door F55 from 2014; Cooper SE electric 2020-2024; facelifts 2018 and 2021)",
+     "from": 2014,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "One",
+      "Cooper",
+      "Cooper S",
+      "Cooper D",
+      "Cooper SD",
+      "John Cooper Works",
+      "John Cooper Works GP",
+      "Cooper SE",
+      "Electric",
+      "Pepper",
+      "Chili",
+      "Classic",
+      "Sport",
+      "Exclusive",
+      "Shadow Edition",
+      "Resolute Edition"
+     ],
+     "engines": [
+      "1.2 One 102PS petrol",
+      "1.5 One 102PS petrol",
+      "1.2 One First 75PS petrol",
+      "1.5 Cooper 136PS petrol",
+      "2.0 Cooper S 192PS petrol",
+      "2.0 Cooper S 178PS petrol",
+      "2.0 John Cooper Works 231PS petrol",
+      "2.0 John Cooper Works GP 306PS petrol",
+      "1.5 One D 95PS diesel",
+      "1.5 Cooper D 116PS diesel",
+      "2.0 Cooper SD 170PS diesel",
+      "32.6kWh Cooper SE 184PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "electric"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F66 3-door / F65 5-door petrol and J01 Cooper Electric (2024–present; J01 Cooper Electric 3-door; F65 5-door petrol)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Exclusive",
+      "Sport",
+      "John Cooper Works",
+      "Level 1",
+      "Level 2",
+      "Level 3"
+     ],
+     "engines": [
+      "1.5 Cooper C 156PS petrol",
+      "2.0 Cooper S 204PS petrol",
+      "2.0 John Cooper Works 231PS petrol",
+      "40.7kWh Cooper E 184PS electric",
+      "54.2kWh Cooper SE 218PS electric",
+      "54.2kWh John Cooper Works Electric 258PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Convertible",
+   "slug": "convertible",
+   "aliases": [
+    "Mini Convertible",
+    "Cabrio",
+    "Cooper Convertible",
+    "Cooper S Convertible",
+    "One Convertible",
+    "John Cooper Works Convertible"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2004,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "R52 (2004–2008)",
+     "from": 2004,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "One",
+      "Cooper",
+      "Cooper S",
+      "John Cooper Works",
+      "Sidewalk",
+      "Pepper",
+      "Chili"
+     ],
+     "engines": [
+      "1.6 One 90PS petrol",
+      "1.6 Cooper 115PS petrol",
+      "1.6 Cooper S supercharged 170PS petrol",
+      "1.6 John Cooper Works 210PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "R57 (2009–2015)",
+     "from": 2009,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "One",
+      "Cooper",
+      "Cooper S",
+      "Cooper D",
+      "Cooper SD",
+      "John Cooper Works",
+      "Pepper",
+      "Chili",
+      "Highgate"
+     ],
+     "engines": [
+      "1.6 One 98PS petrol",
+      "1.6 Cooper 122PS petrol",
+      "1.6 Cooper S 184PS petrol",
+      "1.6 John Cooper Works 211PS petrol",
+      "1.6 Cooper D 112PS diesel",
+      "2.0 Cooper SD 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F57 (2016–2024)",
+     "from": 2016,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "One",
+      "Cooper",
+      "Cooper S",
+      "Cooper D",
+      "John Cooper Works",
+      "Pepper",
+      "Chili",
+      "Classic",
+      "Sport",
+      "Exclusive",
+      "Resolute Edition",
+      "Sidewalk Edition",
+      "Seaside Edition"
+     ],
+     "engines": [
+      "1.2 One 102PS petrol",
+      "1.5 One 102PS petrol",
+      "1.5 Cooper 136PS petrol",
+      "2.0 Cooper S 192PS petrol",
+      "2.0 Cooper S 178PS petrol",
+      "2.0 John Cooper Works 231PS petrol",
+      "1.5 Cooper D 116PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F67 (2025–present)",
+     "from": 2025,
+     "to": null,
+     "bodies": [
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Exclusive",
+      "Sport",
+      "John Cooper Works"
+     ],
+     "engines": [
+      "1.5 Cooper C 156PS petrol",
+      "2.0 Cooper S 204PS petrol",
+      "2.0 John Cooper Works 231PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Clubman",
+   "slug": "clubman",
+   "aliases": [
+    "Mini Clubman",
+    "Cooper Clubman",
+    "Cooper S Clubman",
+    "Cooper D Clubman",
+    "One Clubman",
+    "John Cooper Works Clubman"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2007,
+    "to": 2024
+   },
+   "generations": [
+    {
+     "name": "R55 (2007–2014)",
+     "from": 2007,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        4
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "One",
+      "Cooper",
+      "Cooper S",
+      "Cooper D",
+      "Cooper SD",
+      "One D",
+      "John Cooper Works",
+      "Pepper",
+      "Chili",
+      "Hampton",
+      "Bond Street"
+     ],
+     "engines": [
+      "1.4 One 95PS petrol",
+      "1.6 One 98PS petrol",
+      "1.6 Cooper 120PS petrol",
+      "1.6 Cooper 122PS petrol",
+      "1.6 Cooper S 175PS petrol",
+      "1.6 Cooper S 184PS petrol",
+      "1.6 John Cooper Works 211PS petrol",
+      "1.6 One D 90PS diesel",
+      "1.6 Cooper D 110PS diesel",
+      "1.6 Cooper D 112PS diesel",
+      "2.0 Cooper SD 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F54 (2015–2024; facelift 2019)",
+     "from": 2015,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "One",
+      "Cooper",
+      "Cooper S",
+      "One D",
+      "Cooper D",
+      "Cooper SD",
+      "John Cooper Works",
+      "Pepper",
+      "Chili",
+      "Classic",
+      "Sport",
+      "Exclusive",
+      "Shadow Edition",
+      "Final Edition"
+     ],
+     "engines": [
+      "1.5 One 102PS petrol",
+      "1.5 Cooper 136PS petrol",
+      "2.0 Cooper S 192PS petrol",
+      "2.0 Cooper S 178PS petrol",
+      "2.0 John Cooper Works ALL4 231PS petrol",
+      "2.0 John Cooper Works ALL4 306PS petrol",
+      "1.5 One D 116PS diesel",
+      "2.0 Cooper D 150PS diesel",
+      "2.0 Cooper SD 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "Four side doors plus split rear doors (sometimes described as six doors); recorded as 5."
+    }
+   ]
+  },
+  {
+   "name": "Clubvan",
+   "slug": "clubvan",
+   "aliases": [
+    "Mini Clubvan",
+    "Cooper Clubvan",
+    "Cooper D Clubvan"
+   ],
+   "vehicleType": "van",
+   "segment": "van-small",
+   "years": {
+    "from": 2013,
+    "to": 2014
+   },
+   "generations": [
+    {
+     "name": "R55 Clubvan (2013–2014)",
+     "from": 2013,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "panel-van",
+       "doors": [
+        4
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "One",
+      "Cooper",
+      "Cooper D"
+     ],
+     "engines": [
+      "1.6 One 98PS petrol",
+      "1.6 Cooper 122PS petrol",
+      "1.6 Cooper D 112PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Countryman",
+   "slug": "countryman",
+   "aliases": [
+    "Mini Countryman",
+    "Cooper Countryman",
+    "Cooper S Countryman",
+    "Cooper D Countryman",
+    "Cooper SD Countryman",
+    "One Countryman",
+    "Countryman ALL4",
+    "Countryman Electric",
+    "Cooper S E Countryman ALL4",
+    "John Cooper Works Countryman"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2010,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "R60 (2010–2016)",
+     "from": 2010,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "One",
+      "Cooper",
+      "Cooper S",
+      "One D",
+      "Cooper D",
+      "Cooper SD",
+      "John Cooper Works",
+      "ALL4",
+      "Pepper",
+      "Chili",
+      "Business",
+      "Park Lane"
+     ],
+     "engines": [
+      "1.6 One 98PS petrol",
+      "1.6 Cooper 122PS petrol",
+      "1.6 Cooper S 184PS petrol",
+      "1.6 John Cooper Works ALL4 218PS petrol",
+      "1.6 One D 90PS diesel",
+      "1.6 Cooper D 112PS diesel",
+      "2.0 Cooper D 112PS diesel",
+      "2.0 Cooper SD 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "F60 (2017–2024; facelift 2020)",
+     "from": 2017,
+     "to": 2024,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "One",
+      "Cooper",
+      "Cooper S",
+      "Cooper D",
+      "Cooper SD",
+      "Cooper S E ALL4",
+      "John Cooper Works",
+      "Pepper",
+      "Chili",
+      "Classic",
+      "Sport",
+      "Exclusive",
+      "Shadow Edition"
+     ],
+     "engines": [
+      "1.5 One 102PS petrol",
+      "1.5 Cooper 136PS petrol",
+      "2.0 Cooper S 192PS petrol",
+      "2.0 Cooper S 178PS petrol",
+      "2.0 John Cooper Works ALL4 231PS petrol",
+      "2.0 John Cooper Works ALL4 306PS petrol",
+      "1.5 Cooper S E ALL4 224PS plug-in-hybrid",
+      "1.5 One D 116PS diesel",
+      "2.0 Cooper D 150PS diesel",
+      "2.0 Cooper SD 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "U25 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Exclusive",
+      "Sport",
+      "John Cooper Works",
+      "Level 1",
+      "Level 2",
+      "Level 3"
+     ],
+     "engines": [
+      "1.5 Countryman C 170PS petrol",
+      "2.0 Countryman S ALL4 218PS petrol",
+      "2.0 John Cooper Works ALL4 300PS petrol",
+      "66.5kWh Countryman E 204PS electric",
+      "66.5kWh Countryman SE ALL4 313PS electric"
+     ],
+     "fuels": [
+      "petrol",
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Paceman",
+   "slug": "paceman",
+   "aliases": [
+    "Mini Paceman",
+    "Cooper Paceman",
+    "Cooper S Paceman",
+    "Cooper D Paceman"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2013,
+    "to": 2016
+   },
+   "generations": [
+    {
+     "name": "R61 (2013–2016)",
+     "from": 2013,
+     "to": 2016,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Cooper",
+      "Cooper S",
+      "Cooper D",
+      "Cooper SD",
+      "John Cooper Works",
+      "ALL4"
+     ],
+     "engines": [
+      "1.6 Cooper 122PS petrol",
+      "1.6 Cooper S 184PS petrol",
+      "1.6 John Cooper Works ALL4 218PS petrol",
+      "1.6 Cooper D 112PS diesel",
+      "2.0 Cooper SD 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Coupe",
+   "slug": "coupe",
+   "aliases": [
+    "Mini Coupe",
+    "Cooper Coupe",
+    "Cooper S Coupe",
+    "John Cooper Works Coupe"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2011,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "R58 (2011–2015)",
+     "from": 2011,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Cooper",
+      "Cooper S",
+      "Cooper SD",
+      "John Cooper Works"
+     ],
+     "engines": [
+      "1.6 Cooper 122PS petrol",
+      "1.6 Cooper S 184PS petrol",
+      "1.6 John Cooper Works 211PS petrol",
+      "2.0 Cooper SD 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Roadster",
+   "slug": "roadster",
+   "aliases": [
+    "Mini Roadster",
+    "Cooper Roadster",
+    "Cooper S Roadster",
+    "John Cooper Works Roadster"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2012,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "R59 (2012–2015)",
+     "from": 2012,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Cooper",
+      "Cooper S",
+      "Cooper SD",
+      "John Cooper Works"
+     ],
+     "engines": [
+      "1.6 Cooper 122PS petrol",
+      "1.6 Cooper S 184PS petrol",
+      "1.6 John Cooper Works 211PS petrol",
+      "2.0 Cooper SD 143PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Aceman",
+   "slug": "aceman",
+   "aliases": [
+    "Mini Aceman",
+    "Aceman E",
+    "Aceman SE",
+    "John Cooper Works Aceman"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "J05 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Exclusive",
+      "Sport",
+      "John Cooper Works",
+      "Level 1",
+      "Level 2",
+      "Level 3"
+     ],
+     "engines": [
+      "42.5kWh Aceman E 184PS electric",
+      "54.2kWh Aceman SE 218PS electric",
+      "54.2kWh John Cooper Works Aceman 258PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

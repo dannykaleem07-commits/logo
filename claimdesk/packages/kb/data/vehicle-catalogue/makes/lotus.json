@@ -1,0 +1,774 @@
+{
+ "make": "Lotus",
+ "slug": "lotus",
+ "dvlaNames": [
+  "LOTUS"
+ ],
+ "aliases": [
+  "Lotus Cars"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Elise",
+   "slug": "elise",
+   "aliases": [
+    "Elise S",
+    "Elise SC",
+    "Elise R",
+    "111S",
+    "111R",
+    "Elise Cup 250",
+    "Elise Sport 220",
+    "Club Racer"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "Series 1 (1996–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Elise",
+      "111S",
+      "Sport 160"
+     ],
+     "engines": [
+      "1.8 Rover K-series 120PS petrol",
+      "1.8 Rover K-series VVC 145PS petrol",
+      "1.8 Rover K-series VVC 162PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Series 2 (2001–2011)",
+     "from": 2001,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Elise",
+      "111S",
+      "Sport 135",
+      "Sport 190",
+      "Elise S",
+      "Elise R",
+      "111R",
+      "SC",
+      "Club Racer"
+     ],
+     "engines": [
+      "1.8 Rover K-series 122PS petrol",
+      "1.8 Rover K-series VVC 158PS petrol",
+      "1.8 Toyota 1ZZ 122PS petrol",
+      "1.8 Toyota 1ZZ 136PS petrol",
+      "1.8 Toyota 2ZZ 192PS petrol",
+      "1.8 Toyota 2ZZ supercharged 221PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Series 3 (2011–2021)",
+     "from": 2011,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Elise",
+      "Elise S",
+      "Club Racer",
+      "Elise Sport",
+      "Sport 220",
+      "Sport 220 II",
+      "Cup 250",
+      "Cup 260",
+      "Sport 240 Final Edition",
+      "Cup 250 Final Edition"
+     ],
+     "engines": [
+      "1.6 Toyota 1ZR 136PS petrol",
+      "1.8 Toyota 2ZR supercharged 220PS petrol",
+      "1.8 Toyota 2ZR supercharged 246PS petrol",
+      "1.8 Toyota 2ZR supercharged 264PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "340R",
+   "slug": "340r",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2000
+   },
+   "generations": [
+    {
+     "name": "340R (2000)",
+     "from": 2000,
+     "to": 2000,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "340R"
+     ],
+     "engines": [
+      "1.8 Rover K-series VHPD 179PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "No conventional doors (open two-seater); door count recorded as 2."
+    }
+   ]
+  },
+  {
+   "name": "Exige",
+   "slug": "exige",
+   "aliases": [
+    "Exige S",
+    "Exige Sport 350",
+    "Exige Sport 380",
+    "Exige Sport 410",
+    "Exige Cup 380",
+    "Exige Cup 430",
+    "Exige S Roadster",
+    "Exige V6"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "Series 1 (2000–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Exige"
+     ],
+     "engines": [
+      "1.8 Rover K-series VHPD 179PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Series 2 (2004–2011)",
+     "from": 2004,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Exige",
+      "Exige S",
+      "Exige S 240",
+      "Cup 255",
+      "Cup 260"
+     ],
+     "engines": [
+      "1.8 Toyota 2ZZ 192PS petrol",
+      "1.8 Toyota 2ZZ supercharged 221PS petrol",
+      "1.8 Toyota 2ZZ supercharged 243PS petrol",
+      "1.8 Toyota 2ZZ supercharged 260PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Series 3 V6 (2012–2021)",
+     "from": 2012,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Exige S",
+      "Exige S Roadster",
+      "Sport 350",
+      "Sport 380",
+      "Cup 380",
+      "Sport 410",
+      "Cup 430",
+      "Sport 390 Final Edition",
+      "Sport 420 Final Edition",
+      "Cup 430 Final Edition"
+     ],
+     "engines": [
+      "3.5 V6 supercharged 350PS petrol",
+      "3.5 V6 supercharged 380PS petrol",
+      "3.5 V6 supercharged 416PS petrol",
+      "3.5 V6 supercharged 436PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Esprit",
+   "slug": "esprit",
+   "aliases": [
+    "Esprit V8",
+    "Esprit V8 GT",
+    "Esprit V8 SE",
+    "Esprit Sport 350"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "V8 (1996–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "V8",
+      "V8 GT",
+      "V8 SE",
+      "Sport 350"
+     ],
+     "engines": [
+      "3.5 V8 twin-turbo 355PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Europa",
+   "slug": "europa",
+   "aliases": [
+    "Europa S",
+    "Europa SE"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2006,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "Europa S/SE (2006–2010)",
+     "from": 2006,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "Europa S",
+      "Europa SE"
+     ],
+     "engines": [
+      "2.0 turbo 200PS petrol",
+      "2.0 turbo 225PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "2-Eleven",
+   "slug": "2-eleven",
+   "aliases": [
+    "2 Eleven",
+    "Two-Eleven"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2007,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "2-Eleven (2007–2011)",
+     "from": 2007,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        1,
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "2-Eleven"
+     ],
+     "engines": [
+      "1.8 Toyota 2ZZ supercharged 255PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ],
+     "note": "No conventional doors (open two-seater); door count recorded as 2."
+    }
+   ]
+  },
+  {
+   "name": "Evora",
+   "slug": "evora",
+   "aliases": [
+    "Evora S",
+    "Evora 400",
+    "Evora Sport 410",
+    "Evora GT410",
+    "Evora GT410 Sport",
+    "Evora GT430",
+    "Evora IPS"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2009,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "Evora / Evora S (2009–2014)",
+     "from": 2009,
+     "to": 2014,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Evora",
+      "Evora S",
+      "Evora IPS",
+      "Evora S IPS",
+      "Sports Racer"
+     ],
+     "engines": [
+      "3.5 V6 280PS petrol",
+      "3.5 V6 supercharged 350PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Evora 400 / GT410 / GT430 (2015–2021)",
+     "from": 2015,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Evora 400",
+      "Sport 410",
+      "GT410",
+      "GT410 Sport",
+      "GT430",
+      "GT430 Sport",
+      "Final Edition"
+     ],
+     "engines": [
+      "3.5 V6 supercharged 406PS petrol",
+      "3.5 V6 supercharged 416PS petrol",
+      "3.5 V6 supercharged 436PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "3-Eleven",
+   "slug": "3-eleven",
+   "aliases": [
+    "3 Eleven",
+    "Three-Eleven"
+   ],
+   "vehicleType": "car",
+   "segment": "supercar",
+   "years": {
+    "from": 2016,
+    "to": 2017
+   },
+   "generations": [
+    {
+     "name": "3-Eleven (2016–2017)",
+     "from": 2016,
+     "to": 2017,
+     "bodies": [
+      {
+       "body": "roadster",
+       "doors": [
+        2
+       ],
+       "seats": [
+        1
+       ]
+      }
+     ],
+     "trims": [
+      "Road",
+      "Race"
+     ],
+     "engines": [
+      "3.5 V6 supercharged 416PS petrol",
+      "3.5 V6 supercharged 466PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "No conventional doors (open two-seater); door count recorded as 2."
+    }
+   ]
+  },
+  {
+   "name": "Emira",
+   "slug": "emira",
+   "aliases": [
+    "Emira V6",
+    "Emira Turbo",
+    "Emira Turbo SE",
+    "Emira V6 SE",
+    "Emira First Edition",
+    "Emira i4"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2022,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2022–present)",
+     "from": 2022,
+     "to": null,
+     "bodies": [
+      {
+       "body": "coupe",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      }
+     ],
+     "trims": [
+      "V6 First Edition",
+      "i4 First Edition",
+      "Turbo",
+      "Turbo SE",
+      "V6 SE"
+     ],
+     "engines": [
+      "3.5 V6 supercharged 405PS petrol",
+      "2.0 AMG i4 turbo 365PS petrol",
+      "2.0 AMG i4 turbo 406PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Eletre",
+   "slug": "eletre",
+   "aliases": [
+    "Eletre S",
+    "Eletre R",
+    "Eletre 600",
+    "Eletre 900",
+    "Eletre Carbon"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-luxury",
+   "years": {
+    "from": 2023,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2023–present)",
+     "from": 2023,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Eletre",
+      "Eletre S",
+      "Eletre R",
+      "600",
+      "600 Sport",
+      "900 Sport",
+      "Carbon"
+     ],
+     "engines": [
+      "112kWh dual-motor 612PS electric",
+      "112kWh dual-motor 918PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Emeya",
+   "slug": "emeya",
+   "aliases": [
+    "Emeya S",
+    "Emeya R",
+    "Emeya 600",
+    "Emeya 900"
+   ],
+   "vehicleType": "car",
+   "segment": "luxury",
+   "years": {
+    "from": 2024,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2024–present)",
+     "from": 2024,
+     "to": null,
+     "bodies": [
+      {
+       "body": "liftback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4,
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Emeya",
+      "Emeya S",
+      "Emeya R",
+      "600",
+      "600 Sport",
+      "900 Sport"
+     ],
+     "engines": [
+      "102kWh dual-motor 612PS electric",
+      "102kWh dual-motor 918PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

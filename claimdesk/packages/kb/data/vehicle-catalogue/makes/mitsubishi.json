@@ -1,0 +1,1467 @@
+{
+ "make": "Mitsubishi",
+ "slug": "mitsubishi",
+ "dvlaNames": [
+  "MITSUBISHI",
+  "MITSUBISHI FUSO"
+ ],
+ "aliases": [
+  "Mitsubishi Motors"
+ ],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026 (no new Mitsubishi cars sold in the UK c.2021–2025; brand relaunched 2026 with Outlander PHEV and L200); confirm against the V5C, DVLA record or Total Car Check."
+ },
+ "models": [
+  {
+   "name": "Mirage",
+   "slug": "mirage",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2013,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "A03A (2013–2019)",
+     "from": 2013,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "1",
+      "2",
+      "3",
+      "Juro",
+      "Design Edition"
+     ],
+     "engines": [
+      "1.0 71PS petrol",
+      "1.2 80PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "i-MiEV",
+   "slug": "i-miev",
+   "aliases": [
+    "iMiEV",
+    "i MiEV"
+   ],
+   "vehicleType": "car",
+   "segment": "city",
+   "years": {
+    "from": 2011,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "HA3 (2011–2015)",
+     "from": 2011,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "i-MiEV"
+     ],
+     "engines": [
+      "16kWh 67PS electric"
+     ],
+     "fuels": [
+      "electric"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Colt",
+   "slug": "colt",
+   "aliases": [
+    "Colt CZC",
+    "Colt CZT",
+    "Colt Ralliart"
+   ],
+   "vehicleType": "car",
+   "segment": "supermini",
+   "years": {
+    "from": 2000,
+    "to": 2013
+   },
+   "generations": [
+    {
+     "name": "CJ (1996–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GL",
+      "GLX"
+     ],
+     "engines": [
+      "1.3 75PS petrol",
+      "1.6 90PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Z30 (2004–2013)",
+     "from": 2004,
+     "to": 2013,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Equippe",
+      "Elegance",
+      "Sport",
+      "CZ1",
+      "CZ2",
+      "CZ3",
+      "CZT",
+      "CZC",
+      "Ralliart",
+      "Juro"
+     ],
+     "engines": [
+      "1.1 75PS petrol",
+      "1.3 95PS petrol",
+      "1.5 109PS petrol",
+      "1.5 Turbo 150PS petrol",
+      "1.5 DI-D 95PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Space Star",
+   "slug": "space-star",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-small",
+   "years": {
+    "from": 2000,
+    "to": 2005
+   },
+   "generations": [
+    {
+     "name": "DG0 (1998–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Equippe",
+      "Elegance"
+     ],
+     "engines": [
+      "1.3 86PS petrol",
+      "1.6 98PS petrol",
+      "1.8 GDI 122PS petrol",
+      "1.9 DI-D 102PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Space Wagon",
+   "slug": "space-wagon",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "N80 (1998–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Space Wagon"
+     ],
+     "engines": [
+      "2.4 GDI 150PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    }
+   ]
+  },
+  {
+   "name": "Grandis",
+   "slug": "grandis",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "mpv-large",
+   "years": {
+    "from": 2004,
+    "to": 2010
+   },
+   "generations": [
+    {
+     "name": "NA (2004–2010)",
+     "from": 2004,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "mpv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Equippe",
+      "Elegance"
+     ],
+     "engines": [
+      "2.4 165PS petrol",
+      "2.0 DI-D 136PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Carisma",
+   "slug": "carisma",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2004
+   },
+   "generations": [
+    {
+     "name": "DA (1995–2004)",
+     "from": 2000,
+     "to": 2004,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Equippe",
+      "Elegance"
+     ],
+     "engines": [
+      "1.6 103PS petrol",
+      "1.8 GDI 125PS petrol",
+      "1.9 TD 90PS diesel",
+      "1.9 DI-D 102PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Galant",
+   "slug": "galant",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2003
+   },
+   "generations": [
+    {
+     "name": "EA (1996–2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GLS",
+      "Elegance"
+     ],
+     "engines": [
+      "2.0 136PS petrol",
+      "2.4 GDI 150PS petrol",
+      "2.5 V6 163PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Lancer",
+   "slug": "lancer",
+   "aliases": [
+    "Lancer Sportback",
+    "Lancer Ralliart"
+   ],
+   "vehicleType": "car",
+   "segment": "small-family",
+   "years": {
+    "from": 2003,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "CS (2003–2008)",
+     "from": 2003,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Equippe",
+      "Elegance",
+      "Sport"
+     ],
+     "engines": [
+      "1.6 98PS petrol",
+      "2.0 135PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "CY/CZ (2008–2011)",
+     "from": 2008,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GS1",
+      "GS2",
+      "GS3",
+      "GS4",
+      "Ralliart"
+     ],
+     "engines": [
+      "1.5 110PS petrol",
+      "1.8 144PS petrol",
+      "2.0 Turbo 240PS petrol",
+      "2.0 DI-D 140PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Lancer Evolution",
+   "slug": "lancer-evolution",
+   "aliases": [
+    "Evo",
+    "Lancer Evo",
+    "Evo VIII",
+    "Evo IX",
+    "Evo X",
+    "Evolution"
+   ],
+   "vehicleType": "car",
+   "segment": "sports",
+   "years": {
+    "from": 2003,
+    "to": 2015
+   },
+   "generations": [
+    {
+     "name": "Evo VIII (2003–2005)",
+     "from": 2003,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "FQ-260",
+      "FQ-300",
+      "FQ-330",
+      "FQ-340",
+      "FQ-400",
+      "MR FQ-300",
+      "MR FQ-320",
+      "MR FQ-340",
+      "MR FQ-400"
+     ],
+     "engines": [
+      "2.0 Turbo 264PS petrol",
+      "2.0 Turbo 309PS petrol",
+      "2.0 Turbo 335PS petrol",
+      "2.0 Turbo 350PS petrol",
+      "2.0 Turbo 411PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Evo IX (2005–2008)",
+     "from": 2005,
+     "to": 2008,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "FQ-300",
+      "FQ-320",
+      "FQ-340",
+      "FQ-360",
+      "MR FQ-300",
+      "MR FQ-320",
+      "MR FQ-340",
+      "MR FQ-360"
+     ],
+     "engines": [
+      "2.0 Turbo 309PS petrol",
+      "2.0 Turbo 330PS petrol",
+      "2.0 Turbo 350PS petrol",
+      "2.0 Turbo 371PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual"
+     ]
+    },
+    {
+     "name": "Evo X (2008–2015)",
+     "from": 2008,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "GSR",
+      "FQ-300",
+      "FQ-330",
+      "FQ-360",
+      "FQ-400",
+      "FQ-440 MR",
+      "SST"
+     ],
+     "engines": [
+      "2.0 Turbo 299PS petrol",
+      "2.0 Turbo 334PS petrol",
+      "2.0 Turbo 359PS petrol",
+      "2.0 Turbo 409PS petrol",
+      "2.0 Turbo 446PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "ASX",
+   "slug": "asx",
+   "aliases": [],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2010,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "GA (2010–2021)",
+     "from": 2010,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "2",
+      "3",
+      "4",
+      "5",
+      "ZC",
+      "ZC-M",
+      "ZC-H",
+      "Juro",
+      "Dynamic",
+      "Exceed"
+     ],
+     "engines": [
+      "1.6 117PS petrol",
+      "2.0 150PS petrol",
+      "1.6 DI-D 114PS diesel",
+      "1.8 DI-D 116PS diesel",
+      "1.8 DI-D 150PS diesel",
+      "2.2 DI-D 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Eclipse Cross",
+   "slug": "eclipse-cross",
+   "aliases": [
+    "Eclipse Cross PHEV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-medium",
+   "years": {
+    "from": 2018,
+    "to": 2021
+   },
+   "generations": [
+    {
+     "name": "GK (2018–2021)",
+     "from": 2018,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "crossover",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "2",
+      "3",
+      "4",
+      "First Edition",
+      "Dynamic",
+      "Exceed",
+      "Design"
+     ],
+     "engines": [
+      "1.5 Turbo 163PS petrol",
+      "2.2 DI-D 150PS diesel",
+      "2.4 PHEV 188PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Outlander",
+   "slug": "outlander",
+   "aliases": [
+    "Outlander PHEV"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2003,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "CU (2003–2006)",
+     "from": 2003,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Equippe",
+      "Elegance"
+     ],
+     "engines": [
+      "2.0 136PS petrol",
+      "2.4 160PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "CW (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Equippe",
+      "Elegance",
+      "Warrior",
+      "GS2",
+      "GS3",
+      "GS4",
+      "GX3",
+      "GX4"
+     ],
+     "engines": [
+      "2.0 DI-D 140PS diesel",
+      "2.2 DI-D 156PS diesel",
+      "2.2 DI-D 177PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "GF (2012–2021)",
+     "from": 2012,
+     "to": 2021,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "GX2",
+      "GX3",
+      "GX4",
+      "GX3h",
+      "GX4h",
+      "GX4hs",
+      "GX5h",
+      "Juro",
+      "Design",
+      "Dynamic",
+      "Exceed",
+      "Commercial"
+     ],
+     "engines": [
+      "2.2 DI-D 150PS diesel",
+      "2.0 PHEV 203PS plug-in-hybrid",
+      "2.4 PHEV 224PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "diesel",
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "GN PHEV (2026–)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5,
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Nativa",
+      "Diamond"
+     ],
+     "engines": [
+      "2.4 PHEV 306PS plug-in-hybrid"
+     ],
+     "fuels": [
+      "plug-in-hybrid"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Shogun Pinin",
+   "slug": "shogun-pinin",
+   "aliases": [
+    "Pinin"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-small",
+   "years": {
+    "from": 2000,
+    "to": 2006
+   },
+   "generations": [
+    {
+     "name": "H60 (1999–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Equippe",
+      "Elegance"
+     ],
+     "engines": [
+      "1.8 GDI 120PS petrol",
+      "2.0 GDI 129PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Shogun Sport",
+   "slug": "shogun-sport",
+   "aliases": [
+    "Challenger"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": 2019
+   },
+   "generations": [
+    {
+     "name": "K90 (1998–2005)",
+     "from": 2000,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Shogun Sport"
+     ],
+     "engines": [
+      "2.5 TD 115PS diesel",
+      "3.0 V6 177PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "note": "UK trim names not recorded in this draft; the model name stands in as the only trim."
+    },
+    {
+     "name": "QE (2018–2019)",
+     "from": 2018,
+     "to": 2019,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "3",
+      "4"
+     ],
+     "engines": [
+      "2.4 DI-D 181PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "Shogun",
+   "slug": "shogun",
+   "aliases": [
+    "Pajero",
+    "Shogun LWB",
+    "Shogun SWB"
+   ],
+   "vehicleType": "car",
+   "segment": "suv-large",
+   "years": {
+    "from": 2000,
+    "to": 2018
+   },
+   "generations": [
+    {
+     "name": "Mk3 V60 (2000–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Classic",
+      "Equippe",
+      "Elegance",
+      "Warrior"
+     ],
+     "engines": [
+      "3.2 DI-D 160PS diesel",
+      "3.2 DI-D 165PS diesel",
+      "3.5 V6 GDI 202PS petrol"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk4 V80 (2007–2018)",
+     "from": 2007,
+     "to": 2018,
+     "bodies": [
+      {
+       "body": "suv",
+       "doors": [
+        3
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "suv",
+       "doors": [
+        5
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [
+      "Equippe",
+      "Elegance",
+      "Warrior",
+      "Diamond",
+      "SG2",
+      "SG3",
+      "SG4",
+      "SG5"
+     ],
+     "engines": [
+      "3.2 DI-D 170PS diesel",
+      "3.2 DI-D 200PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "L200",
+   "slug": "l200",
+   "aliases": [
+    "L 200",
+    "Warrior",
+    "Animal",
+    "Barbarian",
+    "Triton"
+   ],
+   "vehicleType": "pickup",
+   "segment": "pickup",
+   "years": {
+    "from": 2000,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "Mk3 K74 (1996–2006)",
+     "from": 2000,
+     "to": 2006,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2,
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "4Work",
+      "4Life",
+      "Warrior",
+      "Animal"
+     ],
+     "engines": [
+      "2.5 TD 100PS diesel",
+      "2.5 TD 115PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    },
+    {
+     "name": "Mk4 KB4 (2006–2015)",
+     "from": 2006,
+     "to": 2015,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "4Work",
+      "4Life",
+      "Warrior",
+      "Animal",
+      "Barbarian",
+      "Trojan",
+      "Raging Bull"
+     ],
+     "engines": [
+      "2.5 DI-D 136PS diesel",
+      "2.5 DI-D 178PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    },
+    {
+     "name": "Mk5 KK/KL (2015–2023)",
+     "from": 2015,
+     "to": 2023,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        2
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "4Work",
+      "4Life",
+      "Titan",
+      "Warrior",
+      "Barbarian",
+      "Barbarian X",
+      "Barbarian SVP",
+      "Raging Bull",
+      "Desert Warrior"
+     ],
+     "engines": [
+      "2.4 DI-D 154PS diesel",
+      "2.4 DI-D 181PS diesel",
+      "2.2 DI-D 150PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    },
+    {
+     "name": "Mk6 (2026–)",
+     "from": 2026,
+     "to": null,
+     "bodies": [
+      {
+       "body": "pickup",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Titan",
+      "Barbarian"
+     ],
+     "engines": [
+      "2.4 Bi-Turbo DI-D 204PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "automatic"
+     ],
+     "gtaGroup": "CP1"
+    }
+   ]
+  },
+  {
+   "name": "Canter",
+   "slug": "canter",
+   "aliases": [
+    "Fuso Canter"
+   ],
+   "vehicleType": "van",
+   "segment": "van-large",
+   "years": {
+    "from": 2010,
+    "to": null
+   },
+   "generations": [
+    {
+     "name": "FE/FB 3C13/3S13 (2010–)",
+     "from": 2010,
+     "to": null,
+     "bodies": [
+      {
+       "body": "chassis-cab",
+       "doors": [
+        2
+       ],
+       "seats": [
+        3
+       ]
+      },
+      {
+       "body": "chassis-cab",
+       "doors": [
+        4
+       ],
+       "seats": [
+        7
+       ]
+      }
+     ],
+     "trims": [],
+     "engines": [
+      "3.0 130PS diesel",
+      "3.0 150PS diesel",
+      "3.0 175PS diesel"
+     ],
+     "fuels": [
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

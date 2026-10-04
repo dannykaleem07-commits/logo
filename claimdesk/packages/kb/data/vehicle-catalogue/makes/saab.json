@@ -1,0 +1,463 @@
+{
+ "make": "Saab",
+ "slug": "saab",
+ "dvlaNames": [
+  "SAAB"
+ ],
+ "aliases": [],
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "Compiled from general knowledge of the UK market 2000–2026; confirm against the V5C, DVLA record or Total Car Check. Saab ceased production in 2011; the 9-4X and 9-7X were not sold in the UK. Very few Mk2 9-5 SportWagons were delivered."
+ },
+ "models": [
+  {
+   "name": "9-3",
+   "slug": "9-3",
+   "aliases": [
+    "93",
+    "9-3 Sport Saloon",
+    "9-3 Sport Hatch",
+    "9-3 Convertible",
+    "9-3 SportWagon",
+    "9-3 Sport Estate",
+    "9-3 Aero",
+    "9-3 Viggen",
+    "9-3 Turbo X"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2000,
+    "to": 2012
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1998–2002, convertible to 2003)",
+     "from": 2000,
+     "to": 2003,
+     "bodies": [
+      {
+       "body": "hatchback",
+       "doors": [
+        3,
+        5
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Aero",
+      "Viggen"
+     ],
+     "engines": [
+      "2.0i 130PS petrol",
+      "2.0t 150PS petrol",
+      "2.0 Turbo 185PS petrol",
+      "2.0 Turbo 205PS petrol",
+      "2.3 Turbo 230PS petrol",
+      "2.2 TiD 116PS diesel",
+      "2.2 TiD 125PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2002–2007)",
+     "from": 2002,
+     "to": 2007,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Linear",
+      "Linear Sport",
+      "Linear SE",
+      "Arc",
+      "Vector",
+      "Vector Sport",
+      "Aero",
+      "Airflow"
+     ],
+     "engines": [
+      "1.8i 122PS petrol",
+      "1.8t 150PS petrol",
+      "2.0t 175PS petrol",
+      "2.0T 210PS petrol",
+      "2.8 V6 Turbo 250PS petrol",
+      "1.9 TiD 120PS diesel",
+      "1.9 TiD 150PS diesel",
+      "2.2 TiD 125PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 facelift (2007–2012)",
+     "from": 2007,
+     "to": 2012,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "convertible",
+       "doors": [
+        2
+       ],
+       "seats": [
+        4
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Linear",
+      "Linear SE",
+      "Vector",
+      "Vector Sport",
+      "Aero",
+      "Aero XWD",
+      "Turbo X",
+      "Turbo Edition",
+      "Airflow",
+      "Griffin"
+     ],
+     "engines": [
+      "1.8i 122PS petrol",
+      "1.8t 150PS petrol",
+      "1.8t BioPower 175PS petrol",
+      "2.0t 175PS petrol",
+      "2.0T 210PS petrol",
+      "2.0t BioPower 200PS petrol",
+      "2.8 V6 Turbo 255PS petrol",
+      "2.8 V6 Turbo 280PS petrol",
+      "1.9 TiD 120PS diesel",
+      "1.9 TiD 150PS diesel",
+      "1.9 TTiD 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "9-3X",
+   "slug": "9-3x",
+   "aliases": [
+    "9-3 X"
+   ],
+   "vehicleType": "car",
+   "segment": "large-family",
+   "years": {
+    "from": 2009,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Mk1 (2009–2011)",
+     "from": 2009,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "9-3X"
+     ],
+     "engines": [
+      "2.0T XWD 210PS petrol",
+      "1.9 TTiD 180PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  },
+  {
+   "name": "9-5",
+   "slug": "9-5",
+   "aliases": [
+    "95",
+    "9-5 Estate",
+    "9-5 SportWagon",
+    "9-5 Aero"
+   ],
+   "vehicleType": "car",
+   "segment": "executive",
+   "years": {
+    "from": 2000,
+    "to": 2011
+   },
+   "generations": [
+    {
+     "name": "Mk1 (1997–2001)",
+     "from": 2000,
+     "to": 2001,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "S",
+      "SE",
+      "Aero"
+     ],
+     "engines": [
+      "2.0t 150PS petrol",
+      "2.3t 170PS petrol",
+      "2.3 Turbo 230PS petrol",
+      "3.0 V6t 200PS petrol"
+     ],
+     "fuels": [
+      "petrol"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk1 facelift (2001–2005)",
+     "from": 2001,
+     "to": 2005,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Linear",
+      "Arc",
+      "Vector",
+      "Aero"
+     ],
+     "engines": [
+      "2.0t 150PS petrol",
+      "2.3t 185PS petrol",
+      "2.3 Turbo 250PS petrol",
+      "3.0 V6t 200PS petrol",
+      "2.2 TiD 120PS diesel",
+      "3.0 TiD 176PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk1 second facelift (2005–2010)",
+     "from": 2005,
+     "to": 2010,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Linear",
+      "Vector",
+      "Vector Sport",
+      "Aero",
+      "Airflow",
+      "Griffin",
+      "Turbo Edition"
+     ],
+     "engines": [
+      "2.0t 150PS petrol",
+      "2.0t BioPower 180PS petrol",
+      "2.3t 185PS petrol",
+      "2.3t BioPower 210PS petrol",
+      "2.3 Turbo 260PS petrol",
+      "1.9 TiD 150PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    },
+    {
+     "name": "Mk2 (2010–2011)",
+     "from": 2010,
+     "to": 2011,
+     "bodies": [
+      {
+       "body": "saloon",
+       "doors": [
+        4
+       ],
+       "seats": [
+        5
+       ]
+      },
+      {
+       "body": "estate",
+       "doors": [
+        5
+       ],
+       "seats": [
+        5
+       ]
+      }
+     ],
+     "trims": [
+      "Vector SE",
+      "Aero"
+     ],
+     "engines": [
+      "1.6T 180PS petrol",
+      "2.0T 220PS petrol",
+      "2.8 V6 Turbo XWD 300PS petrol",
+      "2.0 TiD 160PS diesel",
+      "2.0 TTiD 190PS diesel"
+     ],
+     "fuels": [
+      "petrol",
+      "diesel"
+     ],
+     "transmissions": [
+      "manual",
+      "automatic"
+     ]
+    }
+   ]
+  }
+ ]
+}

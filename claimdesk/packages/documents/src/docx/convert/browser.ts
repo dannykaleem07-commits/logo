@@ -79,7 +79,8 @@ export function browserPrintCss(g: PrintGeometry, hf: HeaderFooterText, opts: { 
       lines.push('}');
     }
   } else {
-    lines.push(`@page { size: ${pageSize(g)}; margin: 0 }`);
+    // Playwright header/footer templates print inside these margins (no first-page distinction).
+    lines.push(`@page { size: ${pageSize(g)}; margin: ${m.top}mm 0 ${m.bottom}mm 0 }`);
   }
   lines.push('html, body { margin: 0; padding: 0; background: #fff }');
   lines.push('.docx-wrapper { background: none !important; padding: 0 !important; display: block !important }');
@@ -180,6 +181,8 @@ function templateText(s: string, size: string): string {
 export interface BrowserConverterOptions {
   getBrowser?: () => Promise<Browser>;
   resolveChromium?: () => string | undefined;
+  /** Force the Playwright header/footer template fallback (tests; old Chromium). */
+  forceTemplates?: boolean;
 }
 
 export function createBrowserConverter(opts: BrowserConverterOptions = {}): DocxPdfConverter {
@@ -206,7 +209,7 @@ export function createBrowserConverter(opts: BrowserConverterOptions = {}): Docx
       const details = headerFooterDetails(pkg);
       const hf: HeaderFooterText = header ?? details;
       const firstFooterHasPageFields = hf.titlePage && details.pageFields.firstFooter;
-      const marginBoxes = await marginBoxesSupported(getBrowser);
+      const marginBoxes = opts.forceTemplates ? false : await marginBoxesSupported(getBrowser);
       const css = browserPrintCss(geom, hf, { marginBoxes, firstFooterHasPageFields });
       const scripts = browserScriptPaths();
       const browser = await getBrowser();
@@ -229,12 +232,9 @@ export function createBrowserConverter(opts: BrowserConverterOptions = {}): Docx
         if (!marginBoxes) {
           const m = geom.marginMm;
           Object.assign(pdfOpts!, {
-            preferCSSPageSize: false,
-            format: 'A4',
             displayHeaderFooter: true,
             headerTemplate: `<div style="width:100%; display:flex; justify-content:space-between; padding:0 ${m.right}mm 0 ${m.left}mm">${templateText(hf.header ?? '', '7.5pt')}<span style="font-size:7.5pt; font-family:Arial">PAGE <span class="pageNumber"></span> OF <span class="totalPages"></span></span></div>`,
-            footerTemplate: `<div style="width:100%; text-align:center">${templateText(hf.footer ?? '', '6.5pt')}</div>`,
-            margin: { top: `${m.top}mm`, bottom: `${m.bottom}mm`, left: '0mm', right: '0mm' }
+            footerTemplate: `<div style="width:100%; text-align:center">${templateText(hf.footer ?? '', '6.5pt')}</div>`
           });
         }
         const pdf = await page.pdf(pdfOpts);
