@@ -335,7 +335,7 @@ describe('letter.vendor_verification_pack', () => {
     expect(text).toContain('Director identity document');
     expect(text).toContain('INV-0044 — Hire, 24 days at £49.80 per day Dated 3 September 2026 £1,195.20');
     expect(text).toContain('Total awaiting payment £1,796.20');
-    expect(text).toContain('The date on which payment of £1,796.20 will clear to the account above');
+    expect(text).toContain('The date on which the £1,796.20 now outstanding will clear to the account above');
     expect(text).toContain('Please reply by 5pm on Friday 25 September 2026');
   });
 

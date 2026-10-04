@@ -30,6 +30,15 @@ Everything below is either a deliberate limit of this first build or a residual 
 - **Total-loss predictor and PAV fallbacks** (per-mile 5p/7.5p/10p, weights, 21 days to payment, 10% borderline band) are CCGUK assumptions, flagged `calibrated: false` until 100 outcomes exist.
 - **Registration format check** is a hint, not proof of a real plate.
 
+## Document builders
+
+- **Part 36 relevant period** is counted from the draft date. If the claimant serves it later, the stated end date is early; the text also says "from the date this offer is served".
+- **DSAR one month** is counted from the letter date, not receipt, so a posted request states a date a day or two early.
+- **Complaint chronology** prints event summaries as typed on the file. Write chronology entries as you would want the insurer to read them.
+- **Warn-only misreads remain** on some fixed wording ("Your references", VAT-inclusive totals in a letter of claim against net figures in an earlier pack). They need clearing with a reason.
+- **Letter before claim** gives a business claimant 30 days and an individual 14. A longer period does no harm.
+- **Bundle index and witness statement** need a logged "proceedings issued" event for the court and claim number; until then the API asks for the court name.
+
 ## Product gaps
 
 - Hire agreement needs the hirer's date of birth and licence number on the party record; the API names any missing field.

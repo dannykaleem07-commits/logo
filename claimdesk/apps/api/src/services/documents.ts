@@ -156,7 +156,11 @@ export function createClaimDocument(ctx: AppContext, input: CreateClaimDocumentI
   recomputeClocks(ctx, input.claimId);
   const bundle = loadBundle(ctx, input.claimId, true);
   const role = (meta!.recipientRole as RecipientRole | undefined) ?? defaultRecipientRole(input.templateId);
-  const assembled = assembleTemplateData(ctx, bundle, input.templateId, role, input.user, { extra: input.extra, recipientPartyId: input.recipientPartyId });
+  // A letter addressed to the client's own insurer is checked as such (the FOS is open to the client there; DISP 2.7).
+  const ownInsurer = Boolean(input.recipientPartyId && bundle.claim.clientInsurerId && input.recipientPartyId === bundle.claim.clientInsurerId);
+  const assembled = assembleTemplateData(ctx, bundle, input.templateId, role, input.user, { extra: input.extra, recipientPartyId: input.recipientPartyId, ...(ownInsurer ? { recipientRole: 'own_insurer' as RecipientRole } : {}) });
+  // Keep the handler's own fields with the snapshot so a re-issue (supersede) can carry them forward unchanged.
+  if (input.extra && Object.keys(input.extra).length) assembled.data._handlerExtra = input.extra;
   const now = ctx.now();
   if (input.supersedes) {
     const line = reExecutionLine(input.supersedes, input.reExecutedOn ?? now.slice(0, 10));
@@ -468,7 +472,10 @@ export function supersedeDocument(ctx: AppContext, id: Id, input: { extra?: Reco
 
 /** The free-text fields a previous snapshot carried (everything not derivable is kept; derived blocks are rebuilt). */
 function pickExtra(snapshot: Record<string, unknown>): Record<string, unknown> {
-  const keep = ['insurerPosition', 'liabilitySummary', 'damageSummary', 'termsExplained', 'collectionContact', 'workDone', 'purpose', 'notes', 'coveringText', 'additionalText'];
+  const stored = snapshot._handlerExtra;
+  if (stored && typeof stored === 'object' && !Array.isArray(stored)) return { ...(stored as Record<string, unknown>) };
+  // Documents created before _handlerExtra was stored: the known handler-owned fields.
+  const keep = ['complaintSummary', 'liabilityBasis', 'offerPence', 'relevantPeriodDays', 'allegationQuoted', 'allegationKind', 'allegationEventId', 'paragraphs', 'exhibits', 'knowledgeStatement', 'authorityDate', 'offerId', 'insurerPosition', 'liabilitySummary', 'damageSummary', 'termsExplained', 'collectionContact', 'workDone', 'purpose', 'notes', 'coveringText', 'additionalText'];
   const out: Record<string, unknown> = {};
   for (const k of keep) if (snapshot[k] !== undefined) out[k] = snapshot[k];
   return out;

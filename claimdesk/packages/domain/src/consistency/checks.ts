@@ -523,7 +523,7 @@ const PAYEE_TEMPLATES = (templateId: string) => templateId.startsWith('invoice.'
  * table-cell break, or "payable to <name>". Prose such as "the account name is our exact registered name" or
  * "Confirmation of Payee returns a full match" is not a payee field and is never read as one.
  */
-const PAYEE_RE = /\b(?:(?:payee|account\s+name|beneficiary(?:\s+name)?)\s*(?:[:\-–—]|\n)|(?:cheques?\s+)?payable\s+to\b)[ \t]*\n?[ \t]*([^\n,;<·•|]{3,80}?)\s*(?=\n|,|;|·|•|\||\.\s|\.$|$|\bsort\s+code\b|\baccount\s+(?:no|number)\b|\biban\b)/gi;
+const PAYEE_RE = /\b(?:(?:(?<!confirmation\s+of\s+)payee|account\s+name|beneficiary(?:\s+name)?)\s*(?:[:\-–—]|\n)|(?:cheques?\s+)?payable\s+to\b)[ \t]*\n?[ \t]*([^\n,;<·•|]{3,80}?)\s*(?=\n|,|;|·|•|\||\.\s|\.$|$|\bsort\s+code\b|\baccount\s+(?:no|number)\b|\biban\b)/gi;
 
 function normaliseName(s: string): string {
   return s.toLowerCase().replace(/[.,;:]/g, '').replace(/\s+/g, ' ').trim();

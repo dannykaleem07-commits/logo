@@ -1340,7 +1340,7 @@ ${numberedList(enclosureItems)}
 ${numberedList([
   `Confirmation that the vendor record for ${brand.company.registeredName} is set up, with your vendor number.`,
   'Confirmation that the bank details above have passed your validation.',
-  `The date on which payment of ${formatGBP(d.outstandingPence)} will clear to the account above.`,
+  `The date on which the ${formatGBP(d.outstandingPence)} now outstanding will clear to the account above.`,
   'If any further document is required, say which and why, by the same date.'
 ])}
 ${callout(
