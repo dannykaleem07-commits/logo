@@ -1,4 +1,4 @@
-import { and, desc, eq, type SQL } from 'drizzle-orm';
+import { and, desc, eq, sql, type SQL } from 'drizzle-orm';
 import type { Id, ISODateTime } from '@ccguk/domain';
 import type { Db } from '../client.js';
 import { AuditImmutableError } from '../errors.js';
@@ -70,7 +70,7 @@ export function listAudit(db: Db, filter: ListAuditFilter = {}): AuditEntry[] {
     .select()
     .from(auditLog)
     .where(where.length ? and(...where) : undefined)
-    .orderBy(desc(auditLog.at))
+    .orderBy(desc(auditLog.at), desc(sql`rowid`))
     .limit(filter.limit ?? 200)
     .offset(filter.offset ?? 0)
     .all();

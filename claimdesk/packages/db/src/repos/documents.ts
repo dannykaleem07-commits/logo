@@ -138,8 +138,9 @@ export function approveDocument(db: Db, id: Id, actor: Actor, at?: ISODateTime):
     }
     if (doc.status !== 'draft') throw new DocumentStateError(id, doc.status, `only a draft can be approved (status is ${doc.status})`);
     const when = at ?? nowIso();
-    tx.update(documents).set({ status: 'approved', approvedAt: when, approvedBy: actor.userId, updatedAt: when }).where(eq(documents.id, id)).run();
-    appendAudit(tx, { actor, action: 'document.approve', entity: 'documents', entityId: id, before: { status: doc.status }, after: { status: 'approved', sha256: doc.sha256 }, at: when });
+    tx.update(documents).set({ status: 'approved', approvedAt: when, approvedBy: actor.userId, updatedAt: nowIso() }).where(eq(documents.id, id)).run();
+    // audit `at` is always the recording time; `approvedAt` may be a supplied business timestamp
+    appendAudit(tx, { actor, action: 'document.approve', entity: 'documents', entityId: id, before: { status: doc.status }, after: { status: 'approved', approvedAt: when, sha256: doc.sha256 } });
     return requireDocument(tx, id);
   });
 }
@@ -152,8 +153,8 @@ export function markDocumentSent(db: Db, id: Id, actor: Actor, input: { sentVia:
       throw new DocumentStateError(id, doc.status, `only an approved or signed document can be sent (status is ${doc.status})`);
     }
     const when = input.sentAt ?? nowIso();
-    tx.update(documents).set({ status: 'sent', sentAt: when, sentVia: input.sentVia, updatedAt: when }).where(eq(documents.id, id)).run();
-    appendAudit(tx, { actor, action: 'document.send', entity: 'documents', entityId: id, before: { status: doc.status }, after: { status: 'sent', sentVia: input.sentVia, sentAt: when }, at: when });
+    tx.update(documents).set({ status: 'sent', sentAt: when, sentVia: input.sentVia, updatedAt: nowIso() }).where(eq(documents.id, id)).run();
+    appendAudit(tx, { actor, action: 'document.send', entity: 'documents', entityId: id, before: { status: doc.status }, after: { status: 'sent', sentVia: input.sentVia, sentAt: when } });
     return requireDocument(tx, id);
   });
 }

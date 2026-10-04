@@ -1,0 +1,23 @@
+{
+  "name": "ClaimDesk",
+  "short_name": "ClaimDesk",
+  "description": "Courtesy Cars Group UK Ltd — accident claims, credit hire, recovery and storage case management.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "lang": "en-GB",
+  "background_color": "#FFFFFF",
+  "theme_color": "#072647",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/logo.png", "sizes": "2000x396", "type": "image/png", "purpose": "any" }
+  ],
+  "shortcuts": [
+    { "name": "New claim", "url": "/claims/new", "description": "Start a first notification of loss" },
+    { "name": "Claims", "url": "/claims", "description": "Open the claims list" }
+  ]
+}

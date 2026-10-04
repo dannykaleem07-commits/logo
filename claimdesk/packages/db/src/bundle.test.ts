@@ -40,7 +40,9 @@ describe('loadClaimBundle — File 1 archetype round trip', () => {
     const types = b.events.map((e) => e.type);
     expect(types[0]).toBe('fnol');
     expect(types.at(-1)).toBe('payment_received');
-    expect(types.indexOf('ncaf_sent')).toBeLessThan(types.indexOf('intervention_offer'));
+    expect(types.indexOf('services_agreed')).toBeLessThan(types.indexOf('ncaf_sent'));
+    expect(types.indexOf('intervention_offer')).toBeLessThan(types.indexOf('intervention_reply_sent'));
+    expect(types.indexOf('report_issued')).toBeLessThan(types.indexOf('storage_ended'));
     expect(types.indexOf('payment_pack_sent')).toBeLessThan(types.indexOf('payment_received'));
     for (let i = 1; i < b.events.length; i++) expect(b.events[i]!.at >= b.events[i - 1]!.at).toBe(true);
     expect(b.events.find((e) => e.type === 'ncaf_sent')?.at).toBe(FILE_ONE.ncafSentAt);

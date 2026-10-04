@@ -4,13 +4,15 @@
  */
 import type { Address, BankDetails } from '../types.js';
 
-/** Strip to digits; '+44'/'0044' → leading 0. '+44 7700 900123' → '07700900123'. */
+/** Strip to digits; '+44'/'0044'/'44' → leading 0, dropping a bracketed trunk zero: '+44 (0)7700 900123' → '07700900123'. */
 export function normalisePhone(raw: string | undefined): string | undefined {
   if (!raw) return undefined;
   let digits = raw.replace(/[^\d+]/g, '');
-  if (digits.startsWith('+44')) digits = `0${digits.slice(3)}`;
-  else if (digits.startsWith('0044')) digits = `0${digits.slice(4)}`;
-  else if (digits.startsWith('44') && digits.length >= 12) digits = `0${digits.slice(2)}`;
+  let national: string | undefined;
+  if (digits.startsWith('+44')) national = digits.slice(3);
+  else if (digits.startsWith('0044')) national = digits.slice(4);
+  else if (digits.startsWith('44') && digits.length >= 12) national = digits.slice(2);
+  if (national !== undefined) digits = `0${national.replace(/^0+/, '')}`;
   digits = digits.replace(/\D/g, '');
   if (digits.length < 7) return undefined; // too short to be a usable number
   return digits;
@@ -29,13 +31,21 @@ export function normalisePostcode(raw: string | undefined): string | undefined {
   return p.length >= 5 ? p : undefined;
 }
 
-/** Postcode (uppercase, no space) + first token of line 1 (house number or name). */
+const DWELLING_WORDS = new Set(['flat', 'apartment', 'apt', 'unit', 'room', 'suite', 'no', 'number', 'the']);
+
+/**
+ * Postcode (uppercase, no space) + the numbered tokens of line 1 (flat and house numbers, e.g. "2" and "14") + the
+ * first alphabetic token that is not a dwelling word. Two flats in one block share a postcode and "Flat" but not
+ * the number, so "Flat 2, Rose Court" ≠ "Flat 7, Rose Court", while "14 Elm Road" = "14 Elm Rd".
+ */
 export function normaliseAddressKey(addr: Address | undefined): string | undefined {
   if (!addr) return undefined;
   const line1 = (addr.line1 ?? '').trim().toLowerCase().replace(/[^\w\s]/g, '');
-  const firstToken = line1.split(/\s+/).filter(Boolean)[0] ?? '';
+  const tokens = line1.split(/\s+/).filter(Boolean);
+  const numbered = tokens.filter((t) => /\d/.test(t));
+  const word = tokens.find((t) => !/\d/.test(t) && !DWELLING_WORDS.has(t)) ?? '';
   const postcode = normalisePostcode(addr.postcode);
-  if (postcode) return `${postcode}|${firstToken}`;
+  if (postcode) return `${postcode}|${numbered.join('/')}|${word}`;
   const town = (addr.town ?? '').trim().toLowerCase();
   if (!line1) return undefined;
   return `${line1.replace(/\s+/g, ' ')}|${town}`;

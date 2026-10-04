@@ -1,0 +1,213 @@
+[
+  {
+    "id": "admiral",
+    "name": "Admiral",
+    "brands": ["Admiral", "Diamond", "Elephant", "Bell", "Veygo", "Admiral MultiCar"],
+    "group": "Admiral Group plc (Cardiff). Policies underwritten by Admiral Insurance (Gibraltar) Limited / Admiral Insurance Company Limited and administered by EUI Limited; all brands share one Cardiff claims operation (from research-agent knowledge, unverified).",
+    "thirdPartyClaimsPhone": "0333 220 2047",
+    "policyholderClaimsPhone": "0333 220 2033",
+    "postalAddress": "Admiral, Ty Admiral, David Street, Cardiff CF10 2EH (registered/head office from research-agent knowledge, unverified; not confirmed as the claims correspondence address)",
+    "notes": "Third-party line 0333 220 2047 and policyholder claims line 0333 220 2033 are carried from BLUEPRINT s8 (earlier research against the admiral.com motor claims page, dated 2026-10-04). They could NOT be re-checked this session (admiral.com, elephant.co.uk, diamond.co.uk and bell.co.uk all blocked by the egress proxy; WebSearch budget exhausted), so the entry is downgraded from the blueprint's 'verified' to 'unverified' until a human opens the admiral.com 'not an Admiral customer / third party' claims page. IVR menu path not published on a page seen by this agent: capture on the first live call. Diamond, Elephant and Bell are Admiral Group brands administered by EUI Limited, so a third-party claim against any of them goes through the same Admiral claims operation (from research-agent knowledge). COPYCAT WARNING (BLUEPRINT s8): lookalike 'admiral claims' claims-management sites advertise 0333 006 44xx numbers; no specific domain was captured this session, so the blacklist arrays are empty - add any domain/number encountered. Expect a third-party intervention (replacement vehicle) approach: log it in the intervention register and reply in writing within 1 working day. Company number of EUI Limited believed to be 02686904 (from memory - confirm on Companies House before adding to the watch list).",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.admiral.com/claims/car-insurance-claims",
+      "sourceNote": "Attempted fetch 2026-10-04: www.admiral.com blocked by session egress proxy (EGRESS_BLOCKED / CONNECT 403); elephant.co.uk, diamond.co.uk, bell.co.uk, archive.org also blocked; WebSearch budget exhausted (200/200). Numbers taken from BLUEPRINT s8 table ('Third-party line 0333 220 2047 (policyholder claims 0333 220 2033) - admiral.com motor claims page; verified' by earlier research). Not seen by this agent, so recorded as unverified.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "id": "aviva",
+    "name": "Aviva",
+    "brands": ["Aviva", "Quote Me Happy", "General Accident", "Aviva Zero"],
+    "group": "Aviva plc. UK personal motor underwritten by Aviva Insurance Limited (registered in Scotland, Pitheavlis, Perth). Quote Me Happy and General Accident are Aviva-owned online-only brands whose claims are handled by Aviva (from research-agent knowledge, unverified). Since 1 July 2025 Aviva plc also owns Direct Line Group (see separate 'direct-line-group' entry).",
+    "policyholderClaimsPhone": "0345 030 6925",
+    "postalAddress": "Aviva Insurance Limited, Pitheavlis, Perth PH2 0NH (registered office from research-agent knowledge, unverified; not confirmed as the motor claims correspondence address)",
+    "openingHours": "24 hours (motor claims line, per BLUEPRINT s8 - unverified)",
+    "notes": "BLUEPRINT s8 (aviva.co.uk claims page, earlier research): motor claims 0345 030 6925 (24h); 'no separate third-party line published'. A third party claiming against an Aviva, Quote Me Happy or General Accident policyholder should therefore use the main motor claims line and state they are not an Aviva customer; a dedicated third-party route and IVR path must be confirmed on the first live call and recorded here. Could not be re-checked this session: aviva.co.uk, quotemehappy.com, generalaccident.com and aviva.com blocked by the egress proxy. Email, third-party email, complaints email and online third-party notification portal: not found (no page could be opened) - left undefined. Company number of Aviva Insurance Limited believed to be SC002116 (from memory - confirm on Companies House). From 2 July 2026 some former Direct Line Group (UKIL) business is being written by Aviva Insurance Limited (BLUEPRINT s8) - if askMID shows 'Aviva Insurance Limited' for a Direct Line / Churchill / Privilege vehicle, ask which claims team handles it.",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.aviva.co.uk/insurance/motor/car-insurance/claims/",
+      "sourceNote": "Attempted fetch 2026-10-04: www.aviva.co.uk blocked by session egress proxy (EGRESS_BLOCKED); quotemehappy.com, generalaccident.com, aviva.com also blocked; WebSearch budget exhausted. Number 0345 030 6925 (24h) taken from BLUEPRINT s8 ('aviva.co.uk claims page; third-party line UNVERIFIED'). Not seen by this agent.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "id": "direct-line-group",
+    "name": "Direct Line Group (U K Insurance Limited)",
+    "brands": ["Direct Line", "Churchill", "Privilege", "Darwin", "By Miles", "Direct Line for Business"],
+    "group": "Aviva plc since 1 July 2025 (acquisition of Direct Line Insurance Group plc). Policies historically underwritten by U K Insurance Limited (UKIL), Churchill Court, Bromley; Aviva is moving UKIL business onto Aviva Insurance Limited during 2026 (BLUEPRINT s8; underwriter transition dates from research-agent knowledge, unverified).",
+    "postalAddress": "U K Insurance Limited, Churchill Court, Westmoreland Road, Bromley BR1 1DP (registered office from research-agent knowledge, unverified; not confirmed as the claims correspondence address)",
+    "notes": "2026 TRANSITION: BLUEPRINT s8 (source directlineforbusiness.co.uk, earlier research 2026-10-04) records that Aviva is moving UKIL business to Aviva Insurance Limited and that Direct Line for Business van claims contacts are split by policy purchase date (before, or on/after, 2 July 2026). The car third-party line was NOT captured in the blueprint and could not be fetched this session (directline.com, churchill.com, privilege.com all blocked by the egress proxy; WebSearch budget exhausted), so no phone number is recorded - do not guess. Practical routing: run the askMID Other Vehicle Look-up; if the insurer shows as 'U K Insurance Limited' use the Direct Line / Churchill / Privilege third-party claims route on the brand's own site ('involved in an accident with one of our customers'); if it shows 'Aviva Insurance Limited' confirm with Aviva which team handles the file. Record the number and IVR path here after the first live call. Brands (from research-agent knowledge): Direct Line, Churchill, Privilege, Darwin (digital), By Miles (pay-per-mile, DLG-owned since 2023), Green Flag (breakdown only - not a motor liability insurer). UKIL company number believed to be 01179980 (from memory - confirm on Companies House before adding to the watch list).",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.directline.com/car-cover/claims",
+      "sourceNote": "Attempted fetch 2026-10-04: www.directline.com, www.churchill.com, www.privilege.com blocked by session egress proxy (EGRESS_BLOCKED); WebSearch budget exhausted. Only the BLUEPRINT s8 row ('Aviva is moving UKIL business to Aviva Insurance Ltd; contacts split for van policies bought before or on/after 2 July 2026 - directlineforbusiness.co.uk; car third-party line UNVERIFIED') is available. No phone number recorded.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "id": "esure",
+    "name": "esure",
+    "brands": ["esure", "Sheilas' Wheels", "First Alternative"],
+    "group": "esure Group; underwriter esure Insurance Limited, The Observatory, Reigate. Ageas (UK) agreed to acquire esure Group from Bain Capital in July 2025 (research-agent knowledge - completion and current group ownership must be confirmed; see 'ageas-uk').",
+    "policyholderClaimsPhone": "0345 603 7872",
+    "postalAddress": "esure Insurance Limited, The Observatory, Castlefield Road, Reigate, Surrey RH2 0SG (registered office from research-agent knowledge, unverified; not confirmed as the claims correspondence address)",
+    "notes": "BLUEPRINT s8: claims 0345 603 7872 (from an esure policy booklet, earlier research); 'option 3 for third parties' was reported on a forum only, so the IVR path is NOT recorded here (the task rule is that only the insurer's own site counts) - capture and confirm it on the first live call. Could not be re-checked this session: esure.com and sheilaswheels.com blocked by the egress proxy; WebSearch budget exhausted. Sheilas' Wheels and First Alternative are esure Insurance Limited brands, so third-party claims against their policyholders go through the esure claims operation (from research-agent knowledge). No published third-party line was seen; use the main claims line and state you are a third party until a dedicated route is confirmed. Emails/portal: not found - left undefined. esure Insurance Limited company number believed to be 02494086 (from memory - confirm on Companies House). Group ownership: Ageas UK's acquisition of esure Group was announced July 2025 - confirm completion status before relying on it for correspondence routing.",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.esure.com/claims",
+      "sourceNote": "Attempted fetch 2026-10-04: www.esure.com and www.sheilaswheels.com blocked by session egress proxy (EGRESS_BLOCKED); WebSearch budget exhausted. Number 0345 603 7872 carried from BLUEPRINT s8 ('Claims 0345 603 7872 (policy booklet); option 3 for third parties from a forum only - UNVERIFIED menu path'). Not seen by this agent; IVR path deliberately omitted.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "id": "hastings-direct",
+    "name": "Hastings Direct",
+    "brands": ["Hastings Direct", "Hastings Premier", "Hastings Essential", "Hastings Direct SmartMiles", "Hastings Direct YouDrive", "People's Choice"],
+    "group": "Hastings Group (owned by Sampo plc). Broker/administrator Hastings Insurance Services Limited, Bexhill-on-Sea; principal underwriter Advantage Insurance Company Limited (Gibraltar) - so the blueprint's separate 'Advantage' entry is the same claims operation (from research-agent knowledge, unverified).",
+    "policyholderClaimsPhone": "0333 321 9800",
+    "claimsEmail": "motorclaims@hastingsdirect.com",
+    "postalAddress": "Hastings Insurance Services Limited, Conquest House, Collington Avenue, Bexhill-on-Sea, East Sussex TN39 3LW (head/registered office from research-agent knowledge, unverified; not confirmed as the claims correspondence address)",
+    "notes": "BLUEPRINT s8 (Hastings policy document, earlier research): policyholder claims 0333 321 9800; motorclaims@hastingsdirect.com; 'third party route UNVERIFIED. Beware copycat sites.' Could not be re-checked this session: hastingsdirect.com blocked by the egress proxy; WebSearch budget exhausted. No dedicated third-party line seen - call the main claims line, state you are a third party, and record the number/IVR path given. Whether the claims team accepts credit hire payment packs by email to motorclaims@ has not been confirmed - ask on the first call. COPYCAT WARNING: Hastings publishes fraud/lookalike-site warnings (BLUEPRINT s8); only use numbers and emails ending in hastingsdirect.com; record any lookalike domain/number encountered in the blacklist arrays. Hastings Insurance Services Limited company number believed to be 03116518 (from memory - confirm on Companies House).",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.hastingsdirect.com/claims/",
+      "sourceNote": "Attempted fetch 2026-10-04: www.hastingsdirect.com blocked by session egress proxy (EGRESS_BLOCKED); WebSearch budget exhausted. Phone 0333 321 9800 and motorclaims@hastingsdirect.com carried from BLUEPRINT s8 ('Policy document; third-party route UNVERIFIED. Beware copycat sites.'). Not seen by this agent.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "id": "lv",
+    "name": "LV= (Liverpool Victoria Insurance Company Limited)",
+    "brands": ["LV=", "LV= General Insurance", "Highway Insurance", "Allianz (UK personal lines)"],
+    "group": "Allianz Holdings plc (Allianz completed its purchase of LV= General Insurance on 31 December 2019; Allianz UK's personal lines are run under the LV= brand while Allianz UK handles commercial lines). Highway Insurance Company Limited is the LV=-owned broker-channel motor brand - the blueprint's separate 'Highway' entry is the same group (from research-agent knowledge, unverified).",
+    "postalAddress": "Liverpool Victoria Insurance Company Limited, County Gates, Bournemouth BH1 2NF (registered office from research-agent knowledge, unverified; not confirmed as the claims correspondence address)",
+    "notes": "No figure recorded: lv.com and allianz.co.uk were blocked by the egress proxy and the WebSearch budget was exhausted, and the BLUEPRINT s8 row for 'LV=/Allianz' is 'Not verified'. LV= is believed (research-agent knowledge) to publish a dedicated 'been in an accident with an LV= customer' third-party claims page on lv.com - a human must open lv.com/car-insurance/claims, take the third-party number from there, and capture the IVR path on the first live call. For an Allianz-branded private motor policy, route through LV= General Insurance; for an Allianz commercial/fleet policy (Allianz Insurance plc, Guildford) use the Allianz commercial motor claims route - confirm with askMID which underwriter is shown. Emails/portal: not found - left undefined. Liverpool Victoria Insurance Company Limited company number believed to be 03232514 (from memory - confirm on Companies House).",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.lv.com/car-insurance/claims",
+      "sourceNote": "Attempted fetch 2026-10-04: www.lv.com and www.allianz.co.uk blocked by session egress proxy (EGRESS_BLOCKED); WebSearch budget exhausted; BLUEPRINT s8 lists LV=/Allianz as 'Not verified' with no number. Nothing seen by this agent; no phone or email recorded.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "id": "axa-uk",
+    "name": "AXA UK",
+    "brands": ["AXA", "Swiftcover", "AXA Business Insurance"],
+    "group": "AXA Group; UK general insurer AXA Insurance UK plc, 20 Gracechurch Street, London. Swiftcover (swiftcover.com) is an AXA Insurance UK plc online brand whose claims are handled by AXA (from research-agent knowledge, unverified).",
+    "postalAddress": "AXA Insurance UK plc, 20 Gracechurch Street, London EC3V 0BG (registered office from research-agent knowledge, unverified; not confirmed as the motor claims correspondence address)",
+    "notes": "No figure recorded: axa.co.uk and swiftcover.com were blocked by the egress proxy and the WebSearch budget was exhausted; BLUEPRINT s8 lists AXA as 'Not verified'. AXA is believed (research-agent knowledge) to publish a 'been involved in an accident with an AXA customer' third-party claims page on axa.co.uk/car-insurance/claims/ - a human must take the third-party number from there and capture the IVR path on the first live call. Swiftcover policyholders: route through AXA's claims operation, confirm on the call. Emails/portal: not found - left undefined. AXA Insurance UK plc company number believed to be 00078950 (from memory - confirm on Companies House).",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.axa.co.uk/car-insurance/claims/",
+      "sourceNote": "Attempted fetch 2026-10-04: www.axa.co.uk and www.swiftcover.com blocked by session egress proxy (EGRESS_BLOCKED); WebSearch budget exhausted; BLUEPRINT s8 'Not verified'. Nothing seen by this agent; no phone or email recorded.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "id": "ageas-uk",
+    "name": "Ageas UK",
+    "brands": ["Ageas", "RIAS", "Ageas Direct"],
+    "group": "Ageas SA/NV (Brussels); UK underwriter Ageas Insurance Limited, Eastleigh; direct distributor Ageas Retail Limited (RIAS). Ageas agreed in July 2025 to acquire esure Group (esure, Sheilas' Wheels, First Alternative) - if completed, those brands now sit in Ageas UK but are expected to keep the esure Reigate claims operation for now (from research-agent knowledge, unverified; see 'esure').",
+    "postalAddress": "Ageas Insurance Limited, Ageas House, Hampshire Corporate Park, Templars Way, Eastleigh, Hampshire SO53 3YA (registered office from research-agent knowledge, unverified; not confirmed as the claims correspondence address)",
+    "notes": "No figure recorded: ageas.co.uk and ageas.com were blocked by the egress proxy and the WebSearch budget was exhausted; BLUEPRINT s8 lists Ageas as 'Not verified'. Ageas is believed (research-agent knowledge) to publish a third-party claims page ('involved in an accident with an Ageas customer') under ageas.co.uk/make-a-claim/ - a human must take the number from there and capture the IVR path on the first live call. Many Ageas motor policies are sold through brokers under the broker's brand; askMID will show 'Ageas Insurance Limited' as the insurer. Emails/portal: not found - left undefined. Ageas Insurance Limited company number believed to be 00354568 (from memory - confirm on Companies House).",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.ageas.co.uk/make-a-claim/",
+      "sourceNote": "Attempted fetch 2026-10-04: www.ageas.co.uk and www.ageas.com blocked by session egress proxy (EGRESS_BLOCKED); WebSearch budget exhausted; BLUEPRINT s8 'Not verified'. Nothing seen by this agent; no phone or email recorded.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "id": "zurich-uk",
+    "name": "Zurich UK",
+    "brands": ["Zurich"],
+    "group": "Zurich Insurance Group; UK general insurance written through the UK branches of Zurich Insurance Company Ltd / Zurich Insurance plc (Zurich Insurance Europe AG from 2024 for some business), head office The Zurich Centre, Whiteley, Fareham (from research-agent knowledge, unverified).",
+    "postalAddress": "Zurich Insurance, The Zurich Centre, 3000 Parkway, Whiteley, Fareham, Hampshire PO15 7JZ (UK head office from research-agent knowledge, unverified; not confirmed as the motor claims correspondence address)",
+    "notes": "No figure recorded: zurich.co.uk and zurich.com were blocked by the egress proxy and the WebSearch budget was exhausted; BLUEPRINT s8 lists Zurich as 'Not verified'. Zurich UK's motor book is largely commercial/fleet plus direct personal motor, so third-party claims are often against company vehicles; Zurich is believed (research-agent knowledge) to have a 'had an accident with a Zurich customer' third-party claims route under zurich.co.uk/claims - a human must take the number from there and capture the IVR path on the first live call. Emails/portal: not found - left undefined. The legal entity shown on askMID (Zurich Insurance plc vs Zurich Insurance Company Ltd vs Zurich Insurance Europe AG) should be recorded on the file for any later proceedings.",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.zurich.co.uk/claims",
+      "sourceNote": "Attempted fetch 2026-10-04: www.zurich.co.uk and www.zurich.com blocked by session egress proxy (EGRESS_BLOCKED); WebSearch budget exhausted; BLUEPRINT s8 'Not verified'. Nothing seen by this agent; no phone or email recorded.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "id": "covea-insurance",
+    "name": "Covéa Insurance",
+    "brands": ["Covéa Insurance", "Provident Insurance"],
+    "group": "Covéa (French mutual group: MAAF / MMA / GMF); UK underwriter Covéa Insurance plc, Norman Place, Reading, with a motor claims centre in Halifax inherited from Provident Insurance (acquired 2011). Swinton is NOT a Covéa Insurance brand: the Swinton broker was sold by the Covéa group to Ardonagh (Atlanta Group) in 2018 (from research-agent knowledge, unverified) - correction to the blueprint's 'Swinton?'.",
+    "postalAddress": "Covéa Insurance plc, Norman Place, Reading, Berkshire RG1 8DA (registered office from research-agent knowledge, unverified; motor claims are believed to be handled from Halifax - not confirmed as the claims correspondence address)",
+    "notes": "No figure recorded: coveainsurance.co.uk, providentinsurance.co.uk and covea.com were blocked by the egress proxy and the WebSearch budget was exhausted; BLUEPRINT s8 lists Covéa as 'Not verified'. A human must open coveainsurance.co.uk (claims section) and take the motor third-party number from there; capture the IVR path on the first live call. Covéa writes most UK motor through brokers (including non-standard motor under the Provident Insurance brand), so the policyholder's documents may carry a broker's name while askMID shows 'Covea Insurance plc'. For a Swinton-branded policy, identify the actual underwriter via askMID - Swinton is an Ardonagh broker, not Covéa. Emails/portal: not found - left undefined. Covéa Insurance plc company number believed to be 00613259 (from memory - confirm on Companies House).",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.coveainsurance.co.uk/claims/",
+      "sourceNote": "Attempted fetch 2026-10-04: www.coveainsurance.co.uk, www.providentinsurance.co.uk and www.covea.com blocked by session egress proxy (EGRESS_BLOCKED); WebSearch budget exhausted; BLUEPRINT s8 'Not verified'. Nothing seen by this agent; no phone or email recorded. Swinton correction is from research-agent knowledge (2018 sale to Ardonagh), not from a fetched source.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "id": "nfu-mutual",
+    "name": "NFU Mutual",
+    "brands": ["NFU Mutual"],
+    "group": "The National Farmers Union Mutual Insurance Society Limited (a mutual; no parent group), Stratford-upon-Avon. Policies are sold and often serviced through local NFU Mutual agency offices (from research-agent knowledge, unverified).",
+    "postalAddress": "NFU Mutual, Tiddington Road, Stratford-upon-Avon, Warwickshire CV37 7BJ (registered/head office from research-agent knowledge, unverified; not confirmed as the claims correspondence address)",
+    "notes": "No figure recorded: nfumutual.co.uk was blocked by the egress proxy and the WebSearch budget was exhausted; BLUEPRINT s8 lists NFU Mutual as 'Not verified'. A human must open nfumutual.co.uk/claims/ and take the motor claims / third-party number from there; capture the IVR path on the first live call. Because NFU Mutual policies are agency-based, a third-party claim may be referred to the policyholder's local agency or a regional claims centre - record the handling office and reference given (GTA 4.2 handling-centre request). Many NFU Mutual motor policyholders are rural/agricultural or commercial vehicle users. Emails/portal: not found - left undefined. NFU Mutual company number believed to be 00111982 (from memory - confirm on Companies House).",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.nfumutual.co.uk/claims/",
+      "sourceNote": "Attempted fetch 2026-10-04: www.nfumutual.co.uk blocked by session egress proxy (EGRESS_BLOCKED); WebSearch budget exhausted; BLUEPRINT s8 'Not verified'. Nothing seen by this agent; no phone or email recorded.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "id": "1st-central",
+    "name": "1st Central (First Central)",
+    "brands": ["1st CENTRAL"],
+    "group": "First Central Group (Guernsey). UK intermediary/claims handler First Central Insurance Management Limited, Haywards Heath; underwriter Skyfire Insurance Company Limited (Gibraltar) (from research-agent knowledge, unverified).",
+    "postalAddress": "First Central Insurance Management Limited, Capital House, 1-5 Perrymount Road, Haywards Heath, West Sussex RH16 3SY (registered office from research-agent knowledge, unverified; not confirmed as the claims correspondence address)",
+    "notes": "No figure recorded: 1stcentralinsurance.com was blocked by the egress proxy and the WebSearch budget was exhausted; BLUEPRINT s8 lists 1st Central as 'Not verified'. 1st Central is believed (research-agent knowledge) to publish a 'not a 1st CENTRAL customer? third party claims' page under 1stcentralinsurance.com/claims - a human must take the number from there and capture the IVR path on the first live call. askMID will typically show 'Skyfire Insurance Company Limited' as the insurer for a 1st Central policy. Emails/portal: not found - left undefined. First Central Insurance Management Limited company number believed to be 06489797 (from memory - confirm on Companies House).",
+    "copycatDomains": [],
+    "copycatNumbers": [],
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.1stcentralinsurance.com/claims",
+      "sourceNote": "Attempted fetch 2026-10-04: www.1stcentralinsurance.com blocked by session egress proxy (EGRESS_BLOCKED); WebSearch budget exhausted; BLUEPRINT s8 'Not verified'. Nothing seen by this agent; no phone or email recorded.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  }
+]

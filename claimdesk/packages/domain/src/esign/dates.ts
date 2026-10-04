@@ -5,29 +5,48 @@
  *  - re-executed documents carry the actual signing date and a "re-executed on [date], supersedes version [n]" line.
  */
 import type { ConsistencyFlag, GeneratedDocument, ISODate, ISODateTime } from '../types.js';
+import { londonDate, londonParts } from '../calendar/index.js';
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 export function formatLongDate(iso: ISODate | ISODateTime): string {
-  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  const d = datePart(iso);
+  const m = d.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!m) return iso;
-  const y = Number(m[1]);
-  const mo = Number(m[2]);
-  const d = Number(m[3]);
-  return `${d} ${MONTHS[mo - 1] ?? ''} ${y}`;
+  return `${Number(m[3])} ${MONTHS[Number(m[2]) - 1] ?? ''} ${Number(m[1])}`;
 }
 
+/**
+ * London wall-clock time with its zone label and the UTC instant alongside, e.g. "21 September 2026 11:30 BST
+ * (10:30 UTC)". A certificate read in the UK must show the time the signer saw on their own clock; the UTC instant
+ * stays on the page so the record is unambiguous.
+ */
 export function formatLongDateTime(iso: ISODateTime): string {
+  let p: ReturnType<typeof londonParts>;
+  try {
+    p = londonParts(iso);
+  } catch {
+    return iso;
+  }
   const t = Date.parse(iso);
   if (Number.isNaN(t)) return iso;
-  const d = new Date(t);
-  const hh = String(d.getUTCHours()).padStart(2, '0');
-  const mm = String(d.getUTCMinutes()).padStart(2, '0');
-  return `${formatLongDate(d.toISOString())} ${hh}:${mm} UTC`;
+  const hh = String(p.hour).padStart(2, '0');
+  const mm = String(p.minute).padStart(2, '0');
+  const zone = p.offsetMinutes === 60 ? 'BST' : 'GMT';
+  const u = new Date(t);
+  const uh = String(u.getUTCHours()).padStart(2, '0');
+  const um = String(u.getUTCMinutes()).padStart(2, '0');
+  return `${p.day} ${MONTHS[p.month - 1] ?? ''} ${p.year} ${hh}:${mm} ${zone} (${uh}:${um} UTC)`;
 }
 
+/** London calendar date of an ISO date or instant (a bare date is returned unchanged). */
 export function datePart(iso: ISODateTime | ISODate): ISODate {
-  return iso.slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso;
+  try {
+    return londonDate(iso);
+  } catch {
+    return iso.slice(0, 10);
+  }
 }
 
 /** Agreement-type templates: duplicate signature dates among these are suspicious. */
@@ -47,12 +66,18 @@ export function signatureDateChecks(documents: GeneratedDocument[], claimId: str
   for (const d of onFile) {
     const signedAt = d.signature?.signedAt;
     if (!signedAt) continue;
-    if (Date.parse(signedAt) < Date.parse(d.createdAt)) {
+    const created = Date.parse(d.createdAt);
+    const otpAt = d.signature?.otpVerifiedAt;
+    const otpEarly = !!otpAt && Date.parse(otpAt) < created;
+    if (Date.parse(signedAt) < created || otpEarly) {
+      const what = Date.parse(signedAt) < created
+        ? `signed on ${formatLongDateTime(signedAt)}`
+        : `OTP-verified on ${formatLongDateTime(otpAt!)}`;
       flags.push({
         code: 'DATE_BEFORE_CREATION',
         severity: 'block',
-        message: `${d.title} (${d.id}) is recorded as signed on ${formatLongDateTime(signedAt)} but was created on ${formatLongDateTime(d.createdAt)}. A document cannot be signed before it exists.`,
-        draftValue: signedAt,
+        message: `${d.title} (${d.id}) is recorded as ${what} but was created on ${formatLongDateTime(d.createdAt)}. A document cannot be signed before it exists.`,
+        draftValue: Date.parse(signedAt) < created ? signedAt : otpAt!,
         ledgerValue: d.createdAt,
         excerpt: d.id
       });

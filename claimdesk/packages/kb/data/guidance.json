@@ -58,33 +58,6 @@
     "licence": "OGL"
   },
   {
-    "id": "lsa-2007-s12-sch2",
-    "type": "statute",
-    "citation": "Legal Services Act 2007 s.12 and Sch 2",
-    "title": "Reserved legal activities: rights of audience and the conduct of litigation (issuing, prosecuting, defending, ancillary steps)",
-    "principle": "Section 12 lists the reserved legal activities: exercise of a right of audience, conduct of litigation, reserved instrument activities, probate, notarial activities and administration of oaths. Schedule 2 defines the conduct of litigation as issuing proceedings before any court in England and Wales, the commencement, prosecution and defence of such proceedings, and ancillary functions (such as entering appearances). Carrying on a reserved activity without entitlement is an offence (s.14). Pre-action correspondence is not reserved; once a claim is issued the claimant acts as litigant in person and CCGUK prepares drafts for the claimant or an instructed solicitor to sign — never filing or signing on the record.",
-    "text": "The \"conduct of litigation\" means— (a) the issuing of proceedings before any court in England and Wales, (b) the commencement, prosecution and defence of such proceedings, and (c) the performance of any ancillary functions in relation to such proceedings (such as entering appearances to actions).",
-    "tags": [
-      "Legal Services Act",
-      "reserved legal activity",
-      "conduct of litigation",
-      "perimeter"
-    ],
-    "topics": [
-      "enforceability",
-      "costs"
-    ],
-    "url": "https://www.legislation.gov.uk/ukpga/2007/29/section/12",
-    "verification": {
-      "status": "unverified",
-      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2007/29/section/12",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets returned s.12(1)(a)–(f) and the Sch 2 para 4 definition of conduct of litigation as quoted.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
-    },
-    "licence": "OGL"
-  },
-  {
     "id": "ico-data-protection-fee",
     "type": "fee",
     "citation": "ICO data protection fee — Data Protection (Charges and Information) Regulations 2018 as amended 2025",
@@ -268,33 +241,6 @@
       "verifiedBy": "research-agent"
     },
     "licence": "link_only"
-  },
-  {
-    "id": "duaa-2025-commencement-2026",
-    "type": "statute",
-    "citation": "Data (Use and Access) Act 2025 (Commencement No. 6 and Transitional and Saving Provisions) Regulations 2026, SI 2026/82",
-    "title": "DUAA 2025 commencement: core data protection reforms 5 February 2026; data subject complaints duty (s.103, Sch 10 — new DPA 2018 s.164A) 19 June 2026",
-    "principle": "SI 2026/82 brought the main Part 5 data protection provisions of the Data (Use and Access) Act 2025 into force on 5 February 2026 and section 103 with Schedule 10 (complaints by data subjects) into force on 19 June 2026. Under new DPA 2018 s.164A a data subject may complain directly to the controller about an alleged UK GDPR infringement; the controller must facilitate complaints, acknowledge within 30 days and respond without undue delay, informing the complainant of the outcome; the duty applies to complaints received on or after 19 June 2026. CCGUK must publish a data protection complaints process and log acknowledgement dates; the ICO expects a complaint to the controller before it will act.",
-    "tags": [
-      "DUAA 2025",
-      "commencement",
-      "data subject complaints",
-      "s.164A",
-      "30 days"
-    ],
-    "topics": [
-      "dsar",
-      "complaints"
-    ],
-    "url": "https://www.legislation.gov.uk/uksi/2026/82/made",
-    "verification": {
-      "status": "unverified",
-      "sourceUrl": "https://www.legislation.gov.uk/uksi/2026/82/made",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of SI 2026/82 and the gov.uk commencement plan: provisions in force 5 February 2026; s.103 and Sch 10 in force 19 June 2026; new s.164A duty to acknowledge within 30 days and respond; transitional rule for complaints made on or after commencement. Matches blueprint.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
-    },
-    "licence": "OGL"
   },
   {
     "id": "highway-code-rule-126",

@@ -6,7 +6,7 @@
  *  - 6.8.6: late-payment additions of 10% (days 31–60) and 20% (day 61 on), hires from 16 March 2026.
  */
 import type { ClaimBundle, GeneratedDocument, ISODate, ISODateTime, Pence } from '../types.js';
-import { addCalendarDays, calendarDaysBetween, compareIso, londonDate } from '../calendar/index.js';
+import { addCalendarDays, calendarDaysBetween, compareIso, londonDate, startOfDay } from '../calendar/index.js';
 
 export const GTA_LATE_PAYMENT_BASIS = 'GTA 6.8.6 — benchmark only, CCGUK is not a subscriber';
 export const GTA_LATE_PAYMENT_HIRES_FROM: ISODate = '2026-03-16';
@@ -25,18 +25,27 @@ export interface LatePaymentUplift {
   /** False when the hire pre-dates 16 March 2026 (additions not available even as a benchmark). */
   applicable: boolean;
   reason?: string;
+  /** 00:00 London on day 31 — the first instant at which the 10% tier applies. */
   day31At: ISODateTime;
+  /** 00:00 London on day 61 — the first instant at which the 20% tier applies. */
   day61At: ISODateTime;
+}
+
+/** 00:00 London on the day `days` calendar days after the pack date. Exported for the clocks engine so both agree. */
+export function latePaymentTierStart(cleanPackSentAt: ISODateTime, days: number): ISODateTime {
+  return startOfDay(addCalendarDays(cleanPackSentAt, days));
 }
 
 /**
  * Late-payment addition on an unpaid amount: 0% to day 30, 10% from day 31, 20% from day 61.
- * Day numbering: the day the clean pack was sent is day 0 (London calendar dates).
+ * Day numbering: the day the clean pack was sent is day 0 (London calendar dates), so the 10% tier
+ * starts at 00:00 London on day 31 and `day31At`/`day61At` are those midnights — `pct` and the two
+ * instants can never disagree about which tier `now` is in.
  */
 export function latePaymentUplift(amountPence: Pence, cleanPackSentAt: ISODateTime, now: ISODateTime, hireStartedAt: ISODateTime): LatePaymentUplift {
   const days = calendarDaysBetween(cleanPackSentAt, now);
-  const day31At = addCalendarDays(cleanPackSentAt, 31);
-  const day61At = addCalendarDays(cleanPackSentAt, 61);
+  const day31At = latePaymentTierStart(cleanPackSentAt, 31);
+  const day61At = latePaymentTierStart(cleanPackSentAt, 61);
   const base = { basis: GTA_LATE_PAYMENT_BASIS, benchmarkOnly: true as const, daysSincePack: days, day31At, day61At };
 
   if (londonDate(hireStartedAt) < GTA_LATE_PAYMENT_HIRES_FROM) {

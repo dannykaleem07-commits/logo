@@ -103,11 +103,15 @@ export function londonOffsetMinutesAt(utcMs: number): number {
 
 /** Convert a London wall-clock value (encoded as if it were UTC) to the true UTC instant. */
 export function londonWallToUtc(wallMs: number): number {
-  // Two-step probe handles both transitions; the non-existent hour in March resolves to GMT,
-  // the ambiguous hour in October resolves to its first (BST) occurrence.
+  // Two-step probe handles both transitions. The ambiguous hour in October resolves to its
+  // first (BST) occurrence. A wall time in the skipped hour on the March change (01:00–01:59)
+  // does not exist: it is shifted forward (01:30 → 02:30 BST, the same instant as 01:30 GMT),
+  // never backwards, so a deadline can only move later, not earlier.
   const o1 = londonOffsetMinutesAt(wallMs - MS_PER_HOUR);
   const o2 = londonOffsetMinutesAt(wallMs - o1 * MS_PER_MINUTE);
-  return wallMs - o2 * MS_PER_MINUTE;
+  const utc = wallMs - o2 * MS_PER_MINUTE;
+  if (utcToLondonWall(utc) !== wallMs) return wallMs - o1 * MS_PER_MINUTE; // skipped hour
+  return utc;
 }
 
 /** Convert a true UTC instant to London wall-clock (encoded as if it were UTC). */

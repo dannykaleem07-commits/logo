@@ -45,10 +45,11 @@ export function mapVesFuelType(raw: string | undefined): FuelType | undefined {
   return 'other';
 }
 
+/** Accepts ISO ("2026-03-01T10:15:00.000Z", "2026-03-01") and the legacy MOT trade-API shape ("2026.03.01 10:15:00"). */
 function isoDateOrUndefined(v: unknown): ISODate | undefined {
   if (typeof v !== 'string') return undefined;
-  const m = v.match(/^(\d{4}-\d{2}-\d{2})/);
-  return m ? m[1] : undefined;
+  const m = v.trim().match(/^(\d{4})[-.\/](\d{2})[-.\/](\d{2})/);
+  return m ? `${m[1]}-${m[2]}-${m[3]}` : undefined;
 }
 
 /** DVLA VES → Partial<Vehicle>. VES does not return the model; the caller fills it from MOT history or a spec decode. */

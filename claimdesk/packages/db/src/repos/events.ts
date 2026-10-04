@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray, type SQL } from 'drizzle-orm';
+import { and, asc, desc, eq, inArray, sql, type SQL } from 'drizzle-orm';
 import type { ClaimEvent, EventType, Id, ISODateTime } from '@ccguk/domain';
 import type { Db } from '../client.js';
 import { EventImmutableError, NotFoundError, ValidationError } from '../errors.js';
@@ -52,7 +52,7 @@ export function listEvents(db: Db, claimId: Id, filter: ListEventsFilter = {}): 
     .select()
     .from(claimEvents)
     .where(and(...where))
-    .orderBy(asc(claimEvents.at), asc(claimEvents.recordedAt))
+    .orderBy(asc(claimEvents.at), asc(claimEvents.recordedAt), asc(sql`rowid`))
     .all();
   return rows.filter((r) => (!filter.from || r.at >= filter.from) && (!filter.to || r.at <= filter.to)).map(toEvent);
 }

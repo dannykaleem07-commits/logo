@@ -6,6 +6,7 @@
  * `missing` is written as what to collect, in plain English.
  */
 import type { ClaimBundle, Evidence, EvidenceGate, GateResult, GeneratedDocument, HireAgreement, ISODateTime } from '../types.js';
+import { formatGBP } from '../money.js';
 
 export const EVIDENCE_GATES: EvidenceGate[] = ['need', 'use', 'period', 'rate', 'impecuniosity', 'mitigation', 'enforceability', 'liability'];
 
@@ -173,7 +174,7 @@ function rateItems(bundle: ClaimBundle): Item[] {
   for (const h of bundle.hire) {
     const p = hireLabel(h, many);
     items.push({
-      label: `${p}Agreement daily rate recorded (${h.dailyRatePence > 0 ? `£${(h.dailyRatePence / 100).toFixed(2)}/day ex VAT` : '—'})`,
+      label: `${p}Agreement daily rate recorded (${h.dailyRatePence > 0 ? `${formatGBP(h.dailyRatePence)}/day ex VAT` : '—'})`,
       present: h.dailyRatePence > 0,
       collect: `${p}Record the agreed daily rate (ex VAT) on the hire agreement`
     });
@@ -197,7 +198,8 @@ const INCOME_PATTERN = /payslip|income|sa302|tax return|accounts|universal credi
 function impecuniosityItems(bundle: ClaimBundle): Item[] {
   const statement = docOnFile(bundle, 'form.statement_of_means');
   const bankStatements = bundle.evidence.filter((e) => e.kind === 'bank_statement');
-  const income = bundle.evidence.filter((e) => e.kind === 'payslip' || INCOME_PATTERN.test(e.description ?? ''));
+  // a bank statement is not income evidence however it is described ("accounts", "benefit" credits)
+  const income = bundle.evidence.filter((e) => e.kind === 'payslip' || (e.kind !== 'bank_statement' && INCOME_PATTERN.test(e.description ?? '')));
   return [
     {
       label: 'Signed statement of means (form.statement_of_means)',

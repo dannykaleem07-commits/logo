@@ -91,7 +91,10 @@
       "ICOBS",
       "three months",
       "reasoned offer",
-      "reasoned reply"
+      "reasoned reply",
+      "three-month clock",
+      "insurer time limit",
+      "pay"
     ],
     "topics": [
       "interest",
@@ -170,7 +173,9 @@
     "tags": [
       "ICOBS",
       "interest",
-      "base rate plus 4"
+      "base rate plus 4",
+      "late payment interest",
+      "base rate plus 4%"
     ],
     "topics": [
       "interest",
@@ -307,9 +312,8 @@
       "FSMA s.22(1B)"
     ],
     "topics": [
-      "credit_hire",
-      "complaints",
-      "enforceability"
+      "perimeter",
+      "injury"
     ],
     "url": "https://www.handbook.fca.org.uk/handbook/PERG/2/7.html",
     "verification": {
@@ -320,34 +324,5 @@
       "verifiedBy": "research-agent"
     },
     "licence": "quote_only"
-  },
-  {
-    "id": "rao-2001-art-89g-89m",
-    "type": "statute",
-    "citation": "FSMA 2000 (Regulated Activities) Order 2001, SI 2001/544, arts 89G–89M (inserted by SI 2018/1253)",
-    "title": "Specified claims management activities and the kinds of claim they cover",
-    "principle": "Art 89G: seeking out, referrals and identification of claims or potential claims (seeking out persons who may have a claim; referring details of a claim/claimant to another person; identifying a claim or claimant) when carried on in relation to a personal injury, financial services or financial product, housing disrepair, specified benefit, criminal injury or employment-related claim. Arts 89H–89M: advising a claimant, investigating a claim or representing a claimant in relation to each of those six kinds respectively (89H personal injury; 89I financial services/product; 89J housing disrepair; 89K specified benefit; 89L criminal injury; 89M employment-related). \"Personal injury claim\" takes the CPR meaning (damages for or arising from personal injuries). Exclusions follow in arts 89N–89W (e.g. legal professionals, charities, persons with insurance-distribution permissions acting in relation to a contract of insurance).",
-    "tags": [
-      "RAO",
-      "claims management",
-      "perimeter",
-      "89G",
-      "89H",
-      "89I"
-    ],
-    "topics": [
-      "credit_hire",
-      "complaints",
-      "enforceability"
-    ],
-    "url": "https://www.legislation.gov.uk/uksi/2001/544/contents",
-    "verification": {
-      "status": "unverified",
-      "sourceUrl": "https://www.legislation.gov.uk/uksi/2001/544/contents",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets returned the structure of arts 89F–89M, the (a) advising (b) investigating (c) representing formula for 89I, 89J, 89L, the CPR-based personal injury definition, the employment-related definition and the insurance-permission exclusion. The art 89I definition of \"financial services or financial product claim\" was not returned beyond \"includes a claim under CCA 1974 s.75\".",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
-    },
-    "licence": "OGL"
   }
 ]

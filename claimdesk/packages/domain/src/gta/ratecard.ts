@@ -4,7 +4,7 @@
  */
 import type { ISODateTime, Pence, RecoveryRecord, StorageRecord } from '../types.js';
 import { vatOn } from '../money.js';
-import { MS_PER_DAY, calendarDaysBetween, isoToMs } from '../calendar/index.js';
+import { MS_PER_DAY, calendarDaysBetween, isoToLondonWallMs } from '../calendar/index.js';
 
 export const defaultRateCard = {
   recoveryCalloutPence: 9000 as Pence,
@@ -69,12 +69,13 @@ export type StorageDayConvention = 'periods_24h' | 'calendar_days';
 
 /**
  * Storage days between two instants.
- *  - 'periods_24h' (default): the number of 24-hour periods started (any part of a period counts).
+ *  - 'periods_24h' (default): the number of 24-hour periods started on the London wall clock (any
+ *    part of a period counts; a clock change inside the period neither adds nor removes a day).
  *  - 'calendar_days': every London calendar date touched, inclusive of start and end dates.
  */
 export function storageDays(startAt: ISODateTime, endAt: ISODateTime, convention: StorageDayConvention = 'periods_24h'): number {
   if (convention === 'calendar_days') return Math.max(0, calendarDaysBetween(startAt, endAt) + 1);
-  const ms = isoToMs(endAt) - isoToMs(startAt);
+  const ms = isoToLondonWallMs(endAt) - isoToLondonWallMs(startAt);
   return Math.max(0, Math.ceil(ms / MS_PER_DAY));
 }
 

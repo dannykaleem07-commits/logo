@@ -1,0 +1,16 @@
+{
+  "sha256": "4ed755ece5569be01ae86e229c0c011c0cd18ce723d3b42a7b7860e87e066b1c",
+  "bytes": 284,
+  "filename": "file3-dashcam-still.png",
+  "mime": "image/png",
+  "claimId": "859a9986-d340-48e0-b471-ce31acbc328d",
+  "kind": "dashcam",
+  "uploadedAt": "2026-10-05T09:00:00.000Z",
+  "uploadedBy": "system",
+  "capturedAt": "2026-09-14T17:55:10.000Z",
+  "exif": {
+    "widthPx": 64,
+    "heightPx": 48
+  },
+  "writeOnce": true
+}

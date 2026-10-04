@@ -74,6 +74,17 @@ describe('conversions', () => {
     expect(isoToMs('2026-10-25T01:30:00')).toBe(Date.UTC(2026, 9, 25, 0, 30));
     expect(isoToMs('2026-10-25T02:30:00')).toBe(Date.UTC(2026, 9, 25, 2, 30));
   });
+  it('ADVERSARIAL: a wall time in the skipped hour on 29 Mar is shifted forward, never backwards (was 00:30 GMT)', () => {
+    // 01:30 does not exist on 29 Mar 2026; it is read as 02:30 BST = 01:30 UTC.
+    expect(isoToMs('2026-03-29T01:30:00')).toBe(Date.UTC(2026, 2, 29, 1, 30));
+    expect(toLondonIso('2026-03-29T01:30:00')).toBe('2026-03-29T02:30:00+01:00');
+    expect(londonDateTime('2026-03-29', 1, 0)).toBe('2026-03-29T02:00:00+01:00');
+    // The instants either side are untouched.
+    expect(toLondonIso('2026-03-29T00:59:00')).toBe('2026-03-29T00:59:00+00:00');
+    expect(toLondonIso('2026-03-29T02:00:00')).toBe('2026-03-29T02:00:00+01:00');
+    // A London wall time never resolves to an instant earlier than the same wall time read as UTC−1h.
+    expect(isoToMs('2026-03-29T01:30:00')).toBeGreaterThanOrEqual(Date.UTC(2026, 2, 29, 0, 30));
+  });
   it('londonDate uses the London calendar date, not the UTC one', () => {
     expect(londonDate('2026-07-03T23:30:00Z')).toBe('2026-07-04');
     expect(londonDate('2026-12-03T23:30:00Z')).toBe('2026-12-03');

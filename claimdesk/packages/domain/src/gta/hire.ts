@@ -2,25 +2,33 @@
  * Hire charge calculation and off-hire triggers.
  *
  * HIRE DAY CONVENTION: a hire day is each 24-hour period STARTED, measured from `startAt` to the
- * end instant. 10:00 Monday → 10:00 Thursday is exactly 3 periods = 3 days; 10:00 Monday → 10:01
- * Thursday has started a fourth period = 4 days. A hire that ends at the instant it starts is 0
- * days. This matches the way hire agreements and GTA payment packs count "days on hire".
+ * end instant ON THE LONDON WALL CLOCK. 10:00 Monday → 10:00 Thursday is exactly 3 periods = 3
+ * days; 10:00 Monday → 10:01 Thursday has started a fourth period = 4 days. A hire that ends at
+ * the instant it starts is 0 days. A clock change inside the hire neither adds nor removes a day:
+ * 10:00 on 20 October (BST) → 10:00 on 30 October (GMT) is 10 days, not 11, even though 241 real
+ * hours elapsed. This matches the way hire agreements and GTA payment packs count "days on hire"
+ * and is what an insurer's handler will check against the agreement.
  *
  * ADDITIONAL DRIVERS (GTA 5.4, benchmark): £5.50 per day for each qualifying non-standard-risk
  * additional driver, capped at £110 per driver. Standard-risk additional drivers attract no charge.
  */
 import type { GtaRate, HireAgreement, HireEndTrigger, ISODateTime, Pence, Verification } from '../types.js';
-import { vatOn } from '../money.js';
-import { MS_PER_DAY, MS_PER_HOUR, addWorkingDays, isoToMs, londonDate, msToLondonIso, toLondonIso } from '../calendar/index.js';
+import { formatGBP, vatOn } from '../money.js';
+import { MS_PER_DAY, MS_PER_HOUR, addWorkingDays, isoToLondonWallMs, isoToMs, londonDate, msToLondonIso, toLondonIso } from '../calendar/index.js';
 import { GTA_NON_SUBSCRIBER_NOTE, defaultGtaRates, gtaRate } from './rates.js';
 
 export const GTA_ADDITIONAL_DRIVER_DAILY_PENCE: Pence = 550;
 export const GTA_ADDITIONAL_DRIVER_CAP_PENCE: Pence = 11000;
-export const HIRE_DAY_CONVENTION = 'Each 24-hour period started from the hire start instant counts as one day.';
+export const HIRE_DAY_CONVENTION =
+  'Each 24-hour period started from the hire start, measured on the London wall clock (a clock change neither adds nor removes a day), counts as one day.';
 
-/** Number of 24-hour periods started between two instants (0 when end ≤ start). */
+/**
+ * Number of 24-hour periods started between two instants on the London wall clock (0 when end ≤
+ * start). Wall-clock, not elapsed, so a hire spanning the October or March clock change is counted
+ * the way the agreement reads: same time of day N days later = N days.
+ */
 export function hireDays(startAt: ISODateTime, endAt: ISODateTime): number {
-  const ms = isoToMs(endAt) - isoToMs(startAt);
+  const ms = isoToLondonWallMs(endAt) - isoToLondonWallMs(startAt);
   return Math.max(0, Math.ceil(ms / MS_PER_DAY));
 }
 
@@ -158,9 +166,9 @@ export function calculateHire(agreement: HireAgreement, endAt?: ISODateTime, opt
   return result;
 }
 
+/** Shared formatter (ARCHITECTURE: amounts rendered via the shared formatters only). */
 function pounds(pence: Pence): string {
-  const abs = Math.abs(pence);
-  return `${pence < 0 ? '-' : ''}£${Math.floor(abs / 100)}.${String(abs % 100).padStart(2, '0')}`;
+  return formatGBP(pence);
 }
 
 export interface OffHireDeadline {

@@ -3,7 +3,7 @@
  *
  * Formats recognised:
  *  - current (September 2001 onwards):  AB12 CDE   — 2 letters area code, 2 digit age identifier, 3 random letters
- *  - prefix  (August 1983 – August 2001): A123 BCD  — 1 letter year, 1–3 digits, 3 letters
+ *  - prefix  (August 1983 – August 2001): A123 BCD  — 1 letter year, 1–3 digits, 3 letters (Q123 ABC: Q plates)
  *  - suffix  (1963 – July 1983):          ABC 123D  — 3 letters, 1–3 digits, 1 letter year
  *  - dateless (pre-1963 and cherished):   ABC 1234 / 1234 ABC / A 1 — 1–3 letters and 1–4 digits
  *  - Northern Ireland:                    AIZ 1234  — 3 letters with I or Z in positions 2–3, 1–4 digits
@@ -20,8 +20,8 @@ export function normaliseRegistration(input: string): string {
 
 // Letters I and Q are never used in current-format area codes; Z only appears in the random letters.
 const CURRENT = /^[A-HJ-PR-Y]{2}\d{2}[A-HJ-PR-Z]{3}$/;
-// Prefix year letters ran A–Y skipping I, O, Q, U, Z.
-const PREFIX = /^[A-HJ-NPR-TV-Y]\d{1,3}[A-Z]{3}$/;
+// Prefix year letters ran A–Y skipping I, O, Q, U, Z. Q is accepted as the prefix for vehicles of indeterminate age (Q plates).
+const PREFIX = /^[A-HJ-NP-TV-Y]\d{1,3}[A-Z]{3}$/;
 // Suffix year letters ran A–Y skipping I, O, Q, U, Z.
 const SUFFIX = /^[A-Z]{3}\d{1,3}[A-HJ-NPR-TV-Y]$/;
 // Northern Ireland: 3 letters, the second or third of which is I or Z, then 1–4 digits.

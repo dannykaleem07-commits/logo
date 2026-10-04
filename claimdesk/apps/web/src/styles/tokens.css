@@ -1,0 +1,83 @@
+/* ClaimDesk design tokens.
+ * Shell palette = logo colours (navy #072647, blue #1466D2, grey #A9A9A9).
+ * Document previews use the letterhead palette from packages/documents/src/brand.ts (--doc-*).
+ * Status colours: green / amber / red for verification, gates, clocks and document state.
+ */
+:root {
+  /* brand */
+  --navy: #072647;
+  --navy-700: #0b3561;
+  --navy-900: #041a33;
+  --blue: #1466d2;
+  --blue-600: #1158b5;
+  --blue-100: #e3edfa;
+  --blue-50: #f2f7fd;
+  --grey: #a9a9a9;
+
+  /* document palette (brand.ts) — previews only */
+  --doc-navy: #0d1c50;
+  --doc-accent: #04347f;
+  --doc-gold: #b8901f;
+  --doc-silver: #8a8f9b;
+  --doc-tint: #f4f6fa;
+  --doc-ink: #111111;
+  --doc-rule: #d9dce3;
+
+  /* neutrals */
+  --bg: #f4f6f9;
+  --surface: #ffffff;
+  --surface-2: #f8fafc;
+  --ink: #111827;
+  --ink-2: #374151;
+  --muted: #6b7280;
+  --muted-2: #9ca3af;
+  --line: #e5e7eb;
+  --line-2: #d1d5db;
+
+  /* status (green / amber / red + info) */
+  --green: #15803d;
+  --green-bg: #dcfce7;
+  --amber: #b45309;
+  --amber-bg: #fef3c7;
+  --red: #b91c1c;
+  --red-bg: #fee2e2;
+  --info: #1d4ed8;
+  --info-bg: #dbeafe;
+  --neutral: #4b5563;
+  --neutral-bg: #f3f4f6;
+
+  /* type */
+  --font: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.8125rem;
+  --fs-md: 0.9375rem;
+  --fs-lg: 1.0625rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.75rem;
+
+  /* spacing */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 20px;
+  --s-6: 24px;
+  --s-8: 32px;
+  --s-10: 40px;
+
+  /* radii, shadows */
+  --r-sm: 4px;
+  --r-md: 8px;
+  --r-lg: 12px;
+  --r-pill: 999px;
+  --shadow-sm: 0 1px 2px rgba(7, 38, 71, 0.06);
+  --shadow-md: 0 4px 12px rgba(7, 38, 71, 0.1);
+  --shadow-lg: 0 12px 32px rgba(7, 38, 71, 0.18);
+
+  /* layout */
+  --nav-w: 232px;
+  --topbar-h: 56px;
+  --content-max: 1280px;
+  --focus: 0 0 0 3px rgba(20, 102, 210, 0.35);
+}

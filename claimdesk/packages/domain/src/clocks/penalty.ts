@@ -67,7 +67,7 @@ export function derivePenaltyClocks(notice: PenaltyNotice, now: ISODateTime, fac
     });
   };
 
-  const paidAt = facts.paidAt ?? (notice.stage === 'paid' ? undefined : undefined);
+  const paidAt = facts.paidAt;
   const cancelled = notice.stage === 'cancelled';
 
   if (notice.kind === 'nip_s172') {
@@ -151,14 +151,15 @@ export function derivePenaltyClocks(notice: PenaltyNotice, now: ISODateTime, fac
     const start = toLondonIso(facts.rejectionReceivedAt);
     const appealDue = endOfDay(addCalendarDays(start, 27));
     const appealAt = facts.appealLodgedAt;
-    let appealStatus = status(now, appealDue, appealAt, cancelled ? now : paidAt);
+    const appealStop = cancelled ? now : paidAt;
+    let appealStatus = status(now, appealDue, appealAt, appealStop);
     if (!appealAt && notice.stage === 'appeal') appealStatus = 'met';
     push('pcn_appeal_28_days', {
       startsAt: start,
       dueAt: appealDue,
       status: appealStatus,
       ...(appealAt ? { metAt: appealAt } : {}),
-      ...(appealStatus === 'stopped' ? { stoppedAt: cancelled ? now : paidAt!, stoppedReason: cancelled ? 'notice cancelled' : 'penalty paid' } : {}),
+      ...(appealStop && appealStatus === 'stopped' ? { stoppedAt: appealStop, stoppedReason: cancelled ? 'notice cancelled' : 'penalty paid' } : {}),
       sourceEventId: notice.id,
       ...(isPrivate ? { basis: 'Private parking charge — POPLA (BPA) or IAS (IPC) appeal within 28 days of the operator’s rejection' } : {}),
     });

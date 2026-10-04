@@ -29,6 +29,13 @@ describe('mapGtaGroup (heuristic)', () => {
     expect(mapGtaGroup(v('Nissan', 'Qashqai', { engineCapacityCc: 1332, bodyType: 'SUV' }))).toMatchObject({ group: 'M', confidence: 'low' });
     expect(mapGtaGroup(v('Mitsubishi', 'Outlander', { engineCapacityCc: 2360, bodyType: 'SUV' }))).toMatchObject({ group: 'M1', confidence: 'low' });
   });
+  it('ADVERSARIAL: a BMW 2 Series is not a Mazda2 — bare "2" is small only for Mazda', () => {
+    const bmw = mapGtaGroup(v('BMW', '2 Series', { engineCapacityCc: 1995, bodyType: 'Coupe' }));
+    expect(bmw.group).not.toBe('S1');
+    expect(bmw).toMatchObject({ group: 'P1', confidence: 'low' });
+    expect(mapGtaGroup(v('Mazda', '2', { engineCapacityCc: 1496 }))).toMatchObject({ group: 'S1' });
+    expect(mapGtaGroup(v('Mazda', 'Mazda2', { engineCapacityCc: 1496 }))).toMatchObject({ group: 'S1' });
+  });
   it('defaults to M with low confidence when nothing is known', () => {
     const m = mapGtaGroup(v('Unknown', 'Thing'));
     expect(m).toMatchObject({ group: 'M', confidence: 'low', heuristic: true });

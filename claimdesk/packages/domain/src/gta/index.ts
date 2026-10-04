@@ -35,6 +35,7 @@ export {
   paymentPackItemLabels,
   paymentPackTemplatePrefixes,
   latePaymentUplift,
+  latePaymentTierStart,
   validatePaymentPack,
   ledgerPaidInFull,
   paidInFullAt,

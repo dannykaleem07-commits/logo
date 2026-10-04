@@ -1,0 +1,47 @@
+import { useState } from 'react';
+import { NavLink, Navigate, Route, Routes } from 'react-router-dom';
+import '../../styles/screens.css';
+import { useFleet, useFleetAlerts, usePenalties } from '../../api/hooks';
+import { PageHeader } from '../../components/PageHeader';
+import { Badge } from '../../components/Badge';
+import { isTerminalStage, type FleetUnitView } from './fleet';
+import { UnitsTab } from './UnitsTab';
+import { PenaltiesTab } from './PenaltiesTab';
+import { PenaltyDialog } from './PenaltyDialog';
+
+/**
+ * Fleet (BLUEPRINT §3.12, lesson l): /fleet → units + alerts; /fleet/penalties → PCN / NIP workflow.
+ * The "Log notice" dialog is shared by both tabs so a unit row can open it pre-filled.
+ */
+export function FleetPage() {
+  const fleet = useFleet();
+  const alerts = useFleetAlerts();
+  const penalties = usePenalties();
+  const [notice, setNotice] = useState<{ unitId?: string } | null>(null);
+  const units = (fleet.data ?? []) as FleetUnitView[];
+  const openPenalties = (penalties.data ?? []).filter((p) => !isTerminalStage(p.stage)).length;
+  const blocking = (alerts.data ?? []).filter((a) => a.severity === 'block').length;
+
+  return (
+    <div className="page">
+      <PageHeader
+        title="Fleet"
+        subtitle={fleet.data ? `${units.length} unit${units.length === 1 ? '' : 's'} · ${units.filter((u) => u.status === 'on_hire').length} on hire · declared use and policy cover checked before every allocation` : 'Units, compliance alerts and the PCN / NIP workflow'}
+      />
+      <nav className="subnav" aria-label="Fleet sections">
+        <NavLink to="/fleet" end className={({ isActive }) => (isActive ? 'active' : '')}>
+          Units & alerts {blocking > 0 && <Badge tone="red">{blocking}</Badge>}
+        </NavLink>
+        <NavLink to="/fleet/penalties" className={({ isActive }) => (isActive ? 'active' : '')}>
+          Penalties {openPenalties > 0 && <Badge tone="amber">{openPenalties}</Badge>}
+        </NavLink>
+      </nav>
+      <Routes>
+        <Route index element={<UnitsTab onLogNotice={(unitId) => setNotice({ unitId })} />} />
+        <Route path="penalties" element={<PenaltiesTab onLogNotice={() => setNotice({})} />} />
+        <Route path="*" element={<Navigate to="/fleet" replace />} />
+      </Routes>
+      <PenaltyDialog open={notice !== null} units={units} initialUnitId={notice?.unitId} onClose={() => setNotice(null)} />
+    </div>
+  );
+}

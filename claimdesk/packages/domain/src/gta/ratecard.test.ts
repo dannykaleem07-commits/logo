@@ -36,6 +36,12 @@ describe('storageCharge (£45/day plus VAT)', () => {
     expect(s.netPence).toBe(54000);
     expect(s.grossPence).toBe(64800);
   });
+  it('ADVERSARIAL: storage across the October clock change is counted on the wall clock (10 days, £450.00 net, not 11 days)', () => {
+    expect(storageDays('2026-10-20T10:00:00+01:00', '2026-10-30T10:00:00+00:00')).toBe(10);
+    expect(storageCharge(mkStorage({ startAt: '2026-10-20T10:00:00+01:00' }), '2026-10-30T10:00:00+00:00').netPence).toBe(45000);
+    // calendar_days: 20..30 Oct inclusive = 11 dates
+    expect(storageDays('2026-10-20T10:00:00+01:00', '2026-10-30T10:00:00+00:00', 'calendar_days')).toBe(11);
+  });
   it('uses the record end when no override is given and throws when there is none', () => {
     expect(storageCharge(mkStorage({ startAt: '2026-07-01T09:00:00+01:00', endAt: '2026-07-03T09:00:00+01:00' })).days).toBe(2);
     expect(() => storageCharge(mkStorage())).toThrow(/no end date/);

@@ -1,0 +1,1029 @@
+[
+  {
+    "id": "cca-1974-regulated-agreements",
+    "type": "statute",
+    "citation": "Consumer Credit Act 1974, ss.8, 61, 65, 127",
+    "title": "Consumer Credit Act 1974: regulated agreements and improperly-executed agreements",
+    "principle": "A credit hire agreement that provides credit to an individual is a regulated consumer credit agreement unless exempt; a regulated agreement that is not properly executed (s.61 form, prescribed terms, signature) is enforceable against the hirer only on an order of the court (s.65), and for agreements made before 6 April 2007 a missing prescribed term made it irredeemably unenforceable (old s.127(3), the Dimond v Lovell outcome). CCGUK avoids regulated status altogether by drafting the hire agreement to meet the RAO art 60F exemption.",
+    "text": "s.65(1): \"An improperly-executed regulated agreement is enforceable against the debtor or hirer on an order of the court only.\"",
+    "tags": ["consumer credit", "regulated agreement", "improperly executed", "enforcement order", "Dimond v Lovell", "prescribed terms"],
+    "topics": ["enforceability", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/ukpga/1974/39/section/65",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1974/39/section/65",
+      "sourceNote": "legislation.gov.uk is blocked by the session egress proxy (CONNECT 403), so the page was not fetched. The s.65(1) wording was shown verbatim in a search-engine snippet of the legislation.gov.uk page 'Section 65 - Consumer Credit Act 1974' (described as current to September 2025). ss.8, 61 and 127 summarised from working knowledge.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "rao-2001-art-60f",
+    "type": "statute",
+    "citation": "Financial Services and Markets Act 2000 (Regulated Activities) Order 2001 (SI 2001/544), art 60F",
+    "title": "RAO 2001 art 60F: exempt agreements relating to the number of repayments",
+    "principle": "A borrower-lender-supplier agreement for fixed-sum credit is an exempt (unregulated) credit agreement if the number of payments to be made by the borrower is not more than twelve, those payments are required within twelve months or less beginning with the date of the agreement, and the credit is provided without interest or other charges (art 60F(2)). CCGUK's credit hire agreement must therefore defer the hire charge for no more than 12 months, in no more than 12 payments, with no interest, fees or charges, so that the Consumer Credit Act regime (and the Dimond risk) does not apply.",
+    "text": "art 60F(2) (per snippet): a borrower-lender-supplier agreement for fixed-sum credit; the number of payments to be made by the borrower is not more than twelve; the payments are required within a period of 12 months or less beginning on the date of the agreement; and the credit is secured on land or \"provided without interest or other charges\".",
+    "tags": ["exempt agreement", "art 60F", "12 payments", "12 months", "no interest or charges", "credit hire drafting"],
+    "topics": ["enforceability", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/uksi/2001/544/article/60F",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2001/544/article/60F",
+      "sourceNote": "Not fetched (egress proxy). A search-engine result for the legislation.gov.uk article 60F page summarised 60F(2): borrower-lender-supplier agreement for fixed-sum credit; not more than twelve payments; within 12 months beginning on the date of the agreement; credit secured on land or 'provided without interest or other charges' (60F(2)(d)(ii)). Paragraph lettering and any later amendments must be checked on the page.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "ccr-2013-reg-28-1-h",
+    "type": "statute",
+    "citation": "Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013 (SI 2013/3134), reg 28(1)(h)",
+    "title": "CCRs 2013 reg 28(1)(h): vehicle rental exclusion from the right to cancel",
+    "principle": "The right to cancel does not apply to contracts for vehicle rental services if the contract provides for a specific date or period of performance. An open-ended credit hire 'until repair or settlement' does not provide for a specific date or period, so CCGUK treats its hires as NOT excluded and provides the Schedule 2 information, the Schedule 3 form and an express request to start.",
+    "text": "reg 28(1)(h): \"the supply of accommodation, transport of goods, vehicle rental services, catering or services related to leisure activities, if the contract provides for a specific date or period of performance\".",
+    "tags": ["consumer contracts regulations", "vehicle rental", "exclusion", "specific date or period", "open-ended hire", "off-premises"],
+    "topics": ["enforceability", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/uksi/2013/3134/regulation/28",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2013/3134/regulation/28",
+      "sourceNote": "Not fetched (egress proxy). The quoted words were shown in a search-engine snippet of the legislation.gov.uk regulation 28 page.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "ccr-2013-reg-29-30",
+    "type": "statute",
+    "citation": "Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013, regs 29 and 30",
+    "title": "CCRs 2013 regs 29-30: right to cancel and the normal 14-day cancellation period",
+    "principle": "A consumer may cancel a distance or off-premises contract at any time in the cancellation period without giving a reason and without liability except as provided by the Regulations (reg 29); for a service contract the normal cancellation period ends 14 days after the day the contract is entered into (reg 30). The credit hire agreement is an off-premises service contract when signed at the client's home or roadside, so the 14-day clock starts on signature.",
+    "text": "reg 30(1)-(2) (per snippet): for a service contract the cancellation period ends at the end of 14 days after the day on which the contract is entered into.",
+    "tags": ["consumer contracts regulations", "right to cancel", "14 days", "cancellation period", "service contract", "off-premises"],
+    "topics": ["enforceability", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/uksi/2013/3134/regulation/29",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2013/3134",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk SI page confirmed reg 29 (cancel at any time in the cancellation period without giving any reason) and reg 30 (service contract: 14 days after the day on which the contract is entered into).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "ccr-2013-reg-31",
+    "type": "statute",
+    "citation": "Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013, reg 31",
+    "title": "CCRs 2013 reg 31: cancellation period extended for breach of the information requirement",
+    "principle": "If the trader fails to give the consumer the information on the right to cancel required by Schedule 2 paragraph (l), the cancellation period is extended by up to 12 months after the day it would otherwise have ended; if the information is given late within that 12 months, the period ends 14 days after the consumer receives it. For CCGUK this is the W v Veolia risk in modern form: a missing cancellation notice keeps the hire cancellable for over a year.",
+    "text": "reg 31 (per snippet): where the trader does not provide the information on the right to cancel required by paragraph (l) of Schedule 2, the cancellation period ends 12 months after the day it would have ended under regulation 30; if the information is provided within that 12 months, it ends 14 days after the consumer receives it.",
+    "tags": ["consumer contracts regulations", "extended cancellation period", "12 months", "Schedule 2 paragraph (l)", "information failure"],
+    "topics": ["enforceability", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/uksi/2013/3134/regulation/31",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2013/3134",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk SI confirmed the 12-month extension and the 14-days-after-late-information rule.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "ccr-2013-reg-32-34",
+    "type": "statute",
+    "citation": "Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013, regs 32-35",
+    "title": "CCRs 2013 regs 32-35: exercising the right to cancel, effect and reimbursement",
+    "principle": "The consumer cancels by any clear statement (the Schedule 3 Part B model form may be used); cancellation ends the obligations of both parties to perform, and the trader must reimburse payments without undue delay and within 14 days. CCGUK's cancellation workflow must accept any clear statement, not insist on the form, and must log the date received because it stops the proportionate charge under reg 36.",
+    "tags": ["consumer contracts regulations", "exercise of right to cancel", "clear statement", "reimbursement 14 days", "effect of cancellation"],
+    "topics": ["enforceability", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/uksi/2013/3134/regulation/32",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2013/3134",
+      "sourceNote": "Not fetched (egress proxy). Reg 32 'any other clear statement setting out the decision to cancel' confirmed from the Schedule 3 search snippet; regs 33-35 summarised from working knowledge.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "ccr-2013-reg-36",
+    "type": "statute",
+    "citation": "Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013, reg 36",
+    "title": "CCRs 2013 reg 36: supply of a service during the cancellation period and the express request",
+    "principle": "A trader must not start supplying the service before the end of the cancellation period unless the consumer has made an express request, which for an off-premises contract must be on a durable medium (reg 36(1)); if the consumer then cancels, they pay a proportionate amount for the service supplied up to cancellation (reg 36(4)); but the consumer bears no cost at all for the service supplied in the cancellation period if the trader failed to give the Schedule 2 paragraph (l) cancellation information or the information about that cost (reg 36(6)). This is why CCGUK's hire cannot start without a signed express request and the cancellation information: without them the whole hire charge for the first fortnight (or longer, under reg 31) is irrecoverable.",
+    "text": "reg 36(6) (per snippet): the consumer bears no cost for supply of the service, in full or in part, in the cancellation period, if the trader has failed to provide the consumer with the information on the right to cancel required by paragraph (l) of Schedule 2, or the information on payment of that cost.",
+    "tags": ["consumer contracts regulations", "express request", "durable medium", "supply during cancellation period", "no cost", "reg 36(6)", "form.express_request_to_start"],
+    "topics": ["enforceability", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/uksi/2013/3134/regulation/36",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2013/3134/regulation/36",
+      "sourceNote": "Not fetched (egress proxy). A search-engine summary of the legislation.gov.uk regulation 36 page confirmed 36(1) (no supply before end of cancellation period without an express request; off-premises request on a durable medium), the proportionate-payment rule and the 'bears no cost' rule where paragraph (l) information or cost information was not given.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "ccr-2013-sch-2",
+    "type": "statute",
+    "citation": "Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013, Schedule 2",
+    "title": "CCRs 2013 Schedule 2: information to be given before an off-premises or distance contract",
+    "principle": "Schedule 2 lists the pre-contract information for distance and off-premises contracts, including the main characteristics and price of the service, the trader's identity and address, and, where a right to cancel exists, the conditions, time limit and procedures for cancelling (para (l)), the fact that a consumer who asks for the service to start during the cancellation period must pay a proportionate cost (para (m)), and when the right to cancel is lost (para (n)); paras (l)-(n) may be given using the Schedule 3 Part A model instructions. CCGUK's agreement.credit_hire template must carry all of this, on a durable medium, before the client is bound.",
+    "tags": ["consumer contracts regulations", "pre-contract information", "Schedule 2", "paragraph (l)", "cancellation information", "durable medium"],
+    "topics": ["enforceability", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/uksi/2013/3134/schedule/2",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2013/3134/schedule/2",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk Schedule 2 page confirmed the cancellation-related items (right to cancel, conditions and time limits, liability for costs after requesting early supply, loss of the right) and that paras (l), (m) and (n) may be given via Schedule 3 Part A.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "ccr-2013-sch-3",
+    "type": "statute",
+    "citation": "Consumer Contracts (Information, Cancellation and Additional Charges) Regulations 2013, Schedule 3",
+    "title": "CCRs 2013 Schedule 3: model instructions on cancellation (Part A) and model cancellation form (Part B)",
+    "principle": "Part A gives model instructions on cancellation that satisfy Schedule 2 paras (l)-(n); Part B is the model cancellation form that a trader must give the consumer before an off-premises contract is made where a right to cancel exists, and which the consumer may (but need not) use to cancel. CCGUK's form.cancellation_sch3 template reproduces Part B and is issued with every hire agreement.",
+    "tags": ["consumer contracts regulations", "Schedule 3", "model cancellation form", "model instructions", "form.cancellation_sch3"],
+    "topics": ["enforceability", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/uksi/2013/3134/schedule/3",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2013/3134/schedule/3",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary confirmed Part A (model instructions) and Part B (cancellation form traders must provide before an off-premises contract where a right to cancel exists; consumer may use it or any other clear statement).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "county-courts-act-1984-s69",
+    "type": "statute",
+    "citation": "County Courts Act 1984, s.69",
+    "title": "County Courts Act 1984 s.69: power to award interest on debts and damages",
+    "principle": "In county court proceedings for a debt or damages the court may include simple interest, at such rate as it thinks fit or as may be prescribed, on all or part of the sum for all or part of the period between the cause of action arising and judgment (or earlier payment); interest may run at different rates for different periods and is not awarded where interest already runs on the debt. CCGUK's schedule of loss claims s.69 interest on hire, storage and recovery charges from the date each fell due; the rate is for the court (commonly a few per cent above base for commercial-type losses), and this is distinct from the ICOBS base + 4% benchmark.",
+    "text": "s.69(1) (per snippet): in proceedings before the county court for the recovery of a debt or damages there may be included in any sum for which judgment is given simple interest, at such rate as the court thinks fit or as may be prescribed, on all or any part of the debt or damages.",
+    "tags": ["interest", "county court", "simple interest", "s.69", "schedule of loss", "rate as court thinks fit", "interest on late payment"],
+    "topics": ["interest"],
+    "url": "https://www.legislation.gov.uk/ukpga/1984/28/section/69",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1984/28/section/69",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk s.69 page confirmed the operative wording (simple interest, rate as the court thinks fit or as prescribed, different rates for different periods, no double interest, mandatory for PI damages over £200).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "senior-courts-act-1981-s35a",
+    "type": "statute",
+    "citation": "Senior Courts Act 1981, s.35A",
+    "title": "Senior Courts Act 1981 s.35A: power of the High Court to award interest on debts and damages",
+    "principle": "The High Court equivalent of County Courts Act 1984 s.69 (inserted by the Administration of Justice Act 1982): simple interest at such rate as the court thinks fit or as rules provide, on all or part of a debt or damages, for all or part of the period to judgment or earlier payment; mandatory for personal injury damages over £200 unless there are special reasons; not where interest already runs. Relevant to CCGUK only if a claim is issued in or transferred to the High Court.",
+    "tags": ["interest", "High Court", "simple interest", "s.35A", "Administration of Justice Act 1982"],
+    "topics": ["interest"],
+    "url": "https://www.legislation.gov.uk/ukpga/1981/54/section/35A",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1981/54/section/35A",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk s.35A page confirmed the operative wording and that the section was inserted by the Administration of Justice Act 1982.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "late-payment-act-1998",
+    "type": "statute",
+    "citation": "Late Payment of Commercial Debts (Interest) Act 1998, ss.1-6 and 5A; Late Payment of Commercial Debts (Rate of Interest) (No. 3) Order 2002 (SI 2002/1675)",
+    "title": "Late Payment of Commercial Debts (Interest) Act 1998: statutory interest on business-to-business debts",
+    "principle": "It is an implied term of a contract for the supply of goods or services between businesses that any qualifying debt carries simple statutory interest, currently 8% over the Bank of England base rate, from the day after the relevant day, plus a fixed-sum compensation of £40, £70 or £100 per debt depending on its size (s.5A). It applies to B2B debts only: CCGUK can use it for unpaid supplier-style invoices to fleet or business customers, but not against an at-fault insurer paying damages to a consumer claimant.",
+    "text": "s.1(1) (per snippet): \"It is an implied term in a contract to which this Act applies that any qualifying debt created by the contract carries simple interest subject to and in accordance with this Part.\"",
+    "tags": ["interest", "late payment", "statutory interest", "8% over base", "B2B only", "fixed sum compensation", "fleet invoices"],
+    "topics": ["interest"],
+    "url": "https://www.legislation.gov.uk/ukpga/1998/20",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1998/20",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk Act page confirmed s.1 implied term, the 'qualifying debt' definition and that the prescribed rate is 8 per cent over the official dealing rate (the snippet cited the 1998 Rate of Interest Order; the currently operative order is understood to be the (No. 3) Order 2002, SI 2002/1675). s.5A fixed sums from working knowledge.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "rta-1988-s38-7",
+    "type": "statute",
+    "citation": "Road Traffic Act 1988, s.38(7)",
+    "title": "Road Traffic Act 1988 s.38(7): evidential status of the Highway Code",
+    "principle": "Failure to observe the Highway Code is not itself an offence, but any such failure may be relied on in civil or criminal proceedings as tending to establish or negative liability. CCGUK's liability scoring cites the specific Highway Code rule breached (lane discipline, merging, following distance) through s.38(7) in letters before claim and particulars.",
+    "text": "s.38(7): \"A failure on the part of a person to observe a provision of the Highway Code shall not of itself render that person liable to criminal proceedings of any kind but any such failure may in any proceedings (whether civil or criminal...) be relied upon by any party... as tending to establish or negative any liability...\"",
+    "tags": ["Highway Code", "liability", "evidence", "s.38(7)", "civil proceedings"],
+    "topics": ["liability"],
+    "url": "https://www.legislation.gov.uk/ukpga/1988/52/section/38",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1988/52/section/38",
+      "sourceNote": "Not fetched (egress proxy). The full subsection text was reproduced in a search-engine snippet of the legislation.gov.uk s.38 page (the bracketed list of Acts is abbreviated here).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "rta-1988-s143",
+    "type": "statute",
+    "citation": "Road Traffic Act 1988, s.143",
+    "title": "Road Traffic Act 1988 s.143: users of motor vehicles to be insured against third-party risks",
+    "principle": "A person must not use, or cause or permit another to use, a motor vehicle on a road unless a policy of insurance (or security) covering third-party risks is in force for that use; contravention is an offence, with a defence for an employee driving in the course of employment who neither knew nor had reason to believe there was no cover. For CCGUK's fleet this is the class-of-use guard: a fleet unit must only go out under a policy that covers the actual use (credit hire, self-drive hire, PHV), and clients driving hire cars must be named or covered.",
+    "text": "s.143(1)(a) (per snippet): a person must not use a motor vehicle on a road unless there is in force in relation to the use of the vehicle by that person such a policy of insurance or such a security in respect of third party risks as complies with the requirements of this Part of this Act.",
+    "tags": ["compulsory insurance", "third-party risks", "use cause or permit", "fleet", "class of use", "s.143"],
+    "topics": ["fleet", "need", "liability"],
+    "url": "https://www.legislation.gov.uk/ukpga/1988/52/section/143",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1988/52/section/143",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk s.143 page reproduced the (1)(a)-(b) requirement, the offence in (2) and the employee defence in (3).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "rta-1988-s151",
+    "type": "statute",
+    "citation": "Road Traffic Act 1988, s.151",
+    "title": "Road Traffic Act 1988 s.151: duty of insurers to satisfy judgments against persons insured or not insured by the policy",
+    "principle": "Once a policy has been issued, the insurer must pay the person entitled to the benefit of a judgment for a liability that was required to be covered under s.145, even if the insurer would be entitled to avoid or cancel the policy and even where the driver was not insured under it (subject to exclusions and the property-damage cap in s.151(6)); the insurer can then recover from the insured or the person who caused or permitted the use. CCGUK uses s.151 to maintain leverage against an insurer that purports to void a policy: the third-party claimant's judgment must still be satisfied.",
+    "text": "s.151(5) (per snippet): notwithstanding that the insurer may be entitled to avoid or cancel the policy, the insurer must pay to the persons entitled to the benefit of the judgment... as regards liability in respect of damage to property, any sum required to be paid under subsection (6)... and any amount payable in respect of costs.",
+    "tags": ["RTA insurer", "satisfy judgment", "avoidance", "voided policy", "property damage cap", "s.151", "direct rights"],
+    "topics": ["enforceability", "credit_hire", "liability"],
+    "url": "https://www.legislation.gov.uk/ukpga/1988/52/section/151",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1988/52/section/151",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk s.151 page confirmed the structure (judgment for s.145 liability; pay notwithstanding entitlement to avoid or cancel; property damage per s.151(6); recovery from insured) and that references to persons giving security were removed by 2019 amendments.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "rta-1988-s154",
+    "type": "statute",
+    "citation": "Road Traffic Act 1988, s.154",
+    "title": "Road Traffic Act 1988 s.154: duty to give information as to insurance where a claim is made",
+    "principle": "A person against whom a claim is made for a liability required to be insured under s.145 must, on demand by or on behalf of the claimant, state whether he was insured (or would have been but for avoidance or cancellation) and give the particulars in the certificate, or the vehicle registration, policy number, insurer's name and period of cover; failing without reasonable excuse, or wilfully giving a false statement, is an offence. CCGUK's handling_ref_request and NCAF letters cite s.154 when a third-party driver or their insurer will not disclose cover.",
+    "tags": ["insurance details", "s.154", "demand", "third party driver", "offence", "letter.handling_ref_request"],
+    "topics": ["liability", "intake"],
+    "url": "https://www.legislation.gov.uk/ukpga/1988/52/section/154",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1988/52/section/154",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk s.154 page confirmed the duty (state whether insured; give particulars or registration mark, policy number, insurer and period of cover) and the offence of failing without reasonable excuse or wilfully making a false statement.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "rta-1988-s165",
+    "type": "statute",
+    "citation": "Road Traffic Act 1988, s.165",
+    "title": "Road Traffic Act 1988 s.165: power of constables to obtain names, addresses and evidence of insurance",
+    "principle": "A constable or vehicle examiner may require a driver, a person reasonably believed to have been driving when an accident occurred, or a person reasonably believed to have committed a motoring offence, to give his name and address and the owner's, and to produce the certificate of insurance (electronic access or a printed copy suffices); failure is an offence. For CCGUK's fleet it is why every unit must carry or be able to produce proof of the correct cover and why drivers must be identifiable.",
+    "tags": ["police powers", "name and address", "certificate of insurance", "s.165", "fleet compliance"],
+    "topics": ["fleet", "nip"],
+    "url": "https://www.legislation.gov.uk/ukpga/1988/52/section/165",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1988/52/section/165",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk s.165 page confirmed the persons covered, the documents (including electronically transmitted certificates) and the offence.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "rta-1988-s170",
+    "type": "statute",
+    "citation": "Road Traffic Act 1988, s.170",
+    "title": "Road Traffic Act 1988 s.170: duty of driver to stop, report an accident and give information",
+    "principle": "After an accident involving injury to another or damage to another vehicle, animal or property, the driver must stop and, if required by anyone with reasonable grounds, give his name and address, the owner's name and address and the vehicle's identification marks; if he does not give them he must report the accident at a police station or to a constable as soon as reasonably practicable and in any case within 24 hours, with insurance evidence producible within five days. CCGUK's FNOL script records whether details were exchanged or the accident reported, which also feeds liability and credibility scoring.",
+    "text": "s.170(6) (per snippet): the driver must report at a police station or to a constable as soon as is reasonably practicable and, in any case, within twenty-four hours of the occurrence of the accident.",
+    "tags": ["duty to stop", "report accident", "24 hours", "exchange details", "s.170", "FNOL"],
+    "topics": ["liability", "intake"],
+    "url": "https://www.legislation.gov.uk/ukpga/1988/52/section/170",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1988/52/section/170",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk s.170 page confirmed the stop/give-details duty, the report-within-24-hours rule and the five-day insurance production provision.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "rta-1988-s172",
+    "type": "statute",
+    "citation": "Road Traffic Act 1988, s.172 (including s.172(4))",
+    "title": "Road Traffic Act 1988 s.172: duty to give information as to the identity of the driver, and the reasonable-diligence defence",
+    "principle": "Where a driver is alleged to have committed a relevant offence, the keeper must give such information as to the identity of the driver as the police may require, and any other person must give information in his power to give; failure is an offence (6 points) unless the keeper shows he did not know and could not with reasonable diligence have ascertained who the driver was (s.172(4)). For CCGUK's fleet the lawful routes are: nominate the actual driver from the allocation records, or run the s.172(4) defence on genuine, documented diligence; nominating someone who was not driving is perverting the course of justice.",
+    "text": "s.172(4): a person shall not be guilty of an offence by virtue of paragraph (a) of subsection (2) if he shows that he \"did not know and could not with reasonable diligence have ascertained who the driver of the vehicle was\".",
+    "tags": ["driver identity", "s.172", "s.172(4) defence", "reasonable diligence", "keeper", "fleet", "NIP", "notice.s172_response"],
+    "topics": ["nip", "fleet"],
+    "url": "https://www.legislation.gov.uk/ukpga/1988/52/section/172",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1988/52/section/172",
+      "sourceNote": "Not fetched (egress proxy). The s.172(4) words 'did not know and could not with reasonable diligence have ascertained who the driver of the vehicle... was' were shown in a search-engine snippet of the legislation.gov.uk s.172 page; the rest is summarised from working knowledge.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "rtoa-1988-s1",
+    "type": "statute",
+    "citation": "Road Traffic Offenders Act 1988, s.1",
+    "title": "Road Traffic Offenders Act 1988 s.1: notice of intended prosecution within 14 days",
+    "principle": "For specified offences (speeding, careless driving, traffic-light offences and others in Schedule 1) a person cannot be convicted unless warned at the time, or a summons or a notice of intended prosecution specifying the offence, time and place was served within 14 days of the offence; service by registered post or recorded delivery to the last known address is deemed effective even if returned, and compliance is presumed unless the contrary is proved. CCGUK's NIP clock checks the offence date against the date of service (not the letter date) and the keeper address on the V5C.",
+    "text": "s.1(1) (per snippet): a person shall not be convicted unless he was warned at the time that prosecution would be considered, or within fourteen days of the offence a summons was served, or within fourteen days a notice of intended prosecution specifying the nature of the alleged offence and the time and place was served.",
+    "tags": ["notice of intended prosecution", "NIP", "14 days", "service", "deemed service", "fleet", "s.1 RTOA"],
+    "topics": ["nip", "fleet"],
+    "url": "https://www.legislation.gov.uk/ukpga/1988/53/section/1",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1988/53/section/1",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk s.1 page confirmed the three routes (warned at the time; summons within 14 days; NIP within 14 days), the service methods, deemed service by registered/recorded post, and the presumption of compliance.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "owner-liability-regs-2000-sch-2",
+    "type": "statute",
+    "citation": "Road Traffic (Owner Liability) Regulations 2000 (SI 2000/2546), Schedule 2",
+    "title": "Road Traffic (Owner Liability) Regulations 2000 Sch 2: particulars a hire agreement must contain to transfer liability to the hirer",
+    "principle": "Schedule 2 prescribes the particulars a vehicle hiring agreement must contain for the hirer, rather than the hire firm, to be treated as the owner for fixed-penalty and (by cross-reference in the civil enforcement regulations) PCN purposes: the hirer's full name, date of birth and permanent address, driving-licence country, number and expiry, the vehicle's registration mark, make and model, the start and expected end of the hire and any authorised extensions, together with a signed statement of liability. CCGUK's hire agreement captures every Schedule 2 field at sign-up so that fleet PCNs and NIPs can be transferred with the notice.pcn_liability_transfer pack.",
+    "tags": ["owner liability", "hire agreement particulars", "statement of liability", "PCN transfer", "fixed penalty", "s.66 RTOA", "fleet", "notice.pcn_liability_transfer", "transfer liability", "hire car", "PCN", "NIP"],
+    "topics": ["pcn", "nip", "fleet"],
+    "url": "https://www.legislation.gov.uk/uksi/2000/2546/schedule/2/made",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2000/2546/schedule/2/made",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk Schedule 2 page: 'Schedule 2 prescribes the particulars which must be contained in vehicle hiring agreements in order to attract the provisions of section 66 of the Road Traffic Offenders Act 1988 (hired vehicles)'; items listed include the signer's full name, date of birth and permanent address, licence country/number/expiry, vehicle registration mark, make and model, and the hire start and expected expiry plus extensions.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "tma-2004-part-6",
+    "type": "statute",
+    "citation": "Traffic Management Act 2004, Part 6 (ss.72-93) and Schedule 7",
+    "title": "Traffic Management Act 2004 Part 6: civil enforcement of parking and traffic contraventions",
+    "principle": "Part 6 lets regulations impose civil penalty charges for the contraventions listed in Schedule 7 (parking, bus lanes, moving traffic) in civil enforcement areas, specify who pays (the owner, the driver or another appropriate person) and how penalty charge notices are served, with representations and appeals to adjudicators. It is the statutory root of every council PCN CCGUK handles for its fleet and clients; the detail lives in the 2022 England regulations.",
+    "tags": ["Traffic Management Act", "civil enforcement", "penalty charge notice", "PCN", "Schedule 7", "s.72", "s.78", "fleet"],
+    "topics": ["pcn", "fleet"],
+    "url": "https://www.legislation.gov.uk/ukpga/2004/18/part/6",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2004/18/part/6",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk Part 6 page and explanatory notes confirmed s.72 (regulations for penalty charges; who pays may be owner, driver or other appropriate person), s.78 (notification of penalty charges) and Schedule 7 (contraventions subject to civil enforcement).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "ce-rtc-general-provisions-regs-2022",
+    "type": "statute",
+    "citation": "Civil Enforcement of Road Traffic Contraventions (Approved Devices, Charging Guidelines and General Provisions) (England) Regulations 2022 (SI 2022/71)",
+    "title": "Civil Enforcement of Road Traffic Contraventions (General Provisions) (England) Regulations 2022",
+    "principle": "From 31 May 2022 these regulations (with SI 2022/576) replaced the 2007 parking enforcement regulations in England: they approve camera devices, set penalty charge levels and the discount/surcharge structure, and contain the general provisions on service of PCNs, notices to owner, charge certificates and recovery, including the treatment of hire vehicles. CCGUK's PCN clocks (28 days to pay or represent, notice to owner, charge certificate +50%) are derived from these regulations. NOTE: the brief's shorthand 'the 2022 England General Regulations' refers to this SI; the hire-firm representation ground is in SI 2022/576.",
+    "tags": ["PCN", "civil enforcement", "England 2022", "approved devices", "charging guidelines", "general provisions", "SI 2022/71", "fleet"],
+    "topics": ["pcn", "fleet"],
+    "url": "https://www.legislation.gov.uk/uksi/2022/71",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2022/71/part/2",
+      "sourceNote": "Not fetched (egress proxy). The SI title and number were confirmed from search-engine listings of legislation.gov.uk ('The Civil Enforcement of Road Traffic Contraventions (Approved Devices, Charging Guidelines and General Provisions) (England) Regulations 2022', uksi/2022/71). Commencement date and content summarised from working knowledge; confirm the specific hire-vehicle and timing provisions on the page.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "ce-rtc-representations-appeals-regs-2022",
+    "type": "statute",
+    "citation": "Civil Enforcement of Road Traffic Contraventions (Representations and Appeals) (England) Regulations 2022 (SI 2022/576), reg 5",
+    "title": "Civil Enforcement (Representations and Appeals) (England) Regulations 2022: the vehicle-hire-firm ground of representation",
+    "principle": "A recipient of a notice to owner may make representations that the vehicle was hired from a vehicle-hire firm under a hiring agreement and the hirer had signed a statement of liability acknowledging liability for any PCN during the hire; the representations must give the hirer's name and address, after which the penalty charge is payable by the hirer. CCGUK's notice.pcn_liability_transfer pack sends the hire agreement (with the Owner Liability Regs Sch 2 particulars) and the signed statement of liability within the representation window.",
+    "tags": ["PCN", "representations", "vehicle-hire firm", "statement of liability", "hirer name and address", "SI 2022/576", "fleet", "notice.pcn_liability_transfer"],
+    "topics": ["pcn", "fleet"],
+    "url": "https://www.legislation.gov.uk/uksi/2022/576/regulation/5/made",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2022/576/regulation/5/made",
+      "sourceNote": "Not fetched (egress proxy). A search-engine listing of legislation.gov.uk uksi/2022/576/regulation/5 ('Representations and Appeals (England) Regulations 2022') surfaced with a summary: representations may be made on the ground that the vehicle was hired under a hiring agreement and the hirer signed a statement of liability acknowledging liability for any PCN during the currency of the agreement, and must state the hirer's name and address. Regulation numbering should be confirmed on the page.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "pofa-2012-sch-4-para-13-14",
+    "type": "statute",
+    "citation": "Protection of Freedoms Act 2012, Schedule 4, paras 13 and 14",
+    "title": "Protection of Freedoms Act 2012 Sch 4 paras 13-14: private parking charges and hire vehicles",
+    "principle": "Where a private parking charge is incurred by a vehicle on hire, the keeper (hire firm) escapes keeper liability if, within the relevant period after the notice to keeper, it gives the creditor a signed statement that the vehicle was hired to a named person, a copy of the hire agreement and a copy of the hirer's signed statement of liability (which must acknowledge responsibility for parking charges and give an address for service) (para 13); the creditor may then pursue the hirer only by serving a compliant notice to hirer with those documents and allowing 21 days (para 14). CCGUK's hire agreement includes the statement of liability and a service address so that private parking charges on fleet cars can be passed to the hirer.",
+    "tags": ["private parking", "POFA", "Schedule 4", "keeper liability", "hire vehicles", "statement of liability", "notice to hirer", "21 days", "fleet", "PCN", "parking charge notice", "transfer liability to hirer", "hire car"],
+    "topics": ["pcn", "fleet"],
+    "url": "https://www.legislation.gov.uk/ukpga/2012/9/schedule/4/paragraph/13",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2012/9/schedule/4/crossheading/hire-vehicles",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk Schedule 4 'Hire vehicles' pages confirmed para 13 (statement, copy hire agreement, copy statement of liability acknowledging responsibility for parking charges and giving an address) and para 14 (notice to hirer with the para 13(2) documents and the notice to keeper; 21-day period; vehicle not stolen).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "limitation-act-1980-s2-s5-s11",
+    "type": "statute",
+    "citation": "Limitation Act 1980, ss.2, 5 and 11",
+    "title": "Limitation Act 1980: six years for tort and contract, three years for personal injury",
+    "principle": "An action founded on tort (s.2) or simple contract (s.5) must be brought within six years of the cause of action accruing; an action for damages for personal injuries must be brought within three years of the injury or the claimant's date of knowledge (s.11). CCGUK's limitation clock runs six years from the accident for vehicle damage, hire, storage and recovery claims and six years from breach for contractual claims against clients or suppliers; any injury element (three years) is referred out and not handled in-house.",
+    "text": "s.2: \"An action founded on tort shall not be brought after the expiration of six years from the date on which the cause of action accrued.\" s.5: \"An action founded on simple contract shall not be brought after the expiration of six years from the date on which the cause of action accrued.\"",
+    "tags": ["limitation", "six years", "three years", "tort", "contract", "personal injury", "date of knowledge", "clock"],
+    "topics": ["limitation", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/ukpga/1980/58/section/2",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/1980/58",
+      "sourceNote": "Not fetched (egress proxy). The s.2 and s.5 wording and the s.11 three-year rule (date of injury or date of knowledge) were shown in a search-engine summary of the legislation.gov.uk Act page.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "compensation-act-2006-s2",
+    "type": "statute",
+    "citation": "Compensation Act 2006, s.2",
+    "title": "Compensation Act 2006 s.2: apologies and offers of redress are not admissions",
+    "principle": "An apology, an offer of treatment or other redress does not of itself amount to an admission of negligence or breach of statutory duty. CCGUK uses it two ways: a third party's roadside apology is evidence of the circumstances but not a formal admission, so the file still needs liability evidence; and CCGUK's own complaint-handling can apologise to a client without conceding legal liability (perimeter Part 3).",
+    "text": "s.2: \"An apology, an offer of treatment or other redress, shall not of itself amount to an admission of negligence or breach of statutory duty.\"",
+    "tags": ["apology", "admission", "liability", "complaints", "s.2 Compensation Act"],
+    "topics": ["liability", "complaints"],
+    "url": "https://www.legislation.gov.uk/ukpga/2006/29/section/2",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2006/29/section/2",
+      "sourceNote": "Not fetched (egress proxy). The full section text was reproduced in a search-engine snippet of the legislation.gov.uk s.2 page and its explanatory notes.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "third-parties-rights-against-insurers-act-2010",
+    "type": "statute",
+    "citation": "Third Parties (Rights against Insurers) Act 2010, s.1",
+    "title": "Third Parties (Rights against Insurers) Act 2010: direct rights against the insurer of an insolvent wrongdoer",
+    "principle": "Where a person who has incurred an insured liability becomes insolvent (a 'relevant person' under ss.4-7), his rights against the insurer in respect of that liability transfer to the third party, who may sue the insurer directly and need not first establish the insured's liability in separate proceedings, though liability must be established before the rights are enforced. CCGUK uses it where an at-fault business (haulier, taxi operator, hire company) has entered insolvency: the claim goes against its insurer.",
+    "tags": ["insolvent insured", "direct action", "transfer of rights", "insurer", "s.1", "Third Parties Act 2010"],
+    "topics": ["enforceability", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/ukpga/2010/10/section/1",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2010/10/section/1",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk s.1 page confirmed the transfer of rights to the third party and that the third party may bring proceedings without having established the relevant person's liability but may not enforce the rights without establishing it.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "ec-rights-against-insurers-regs-2002",
+    "type": "statute",
+    "citation": "European Communities (Rights against Insurers) Regulations 2002 (SI 2002/3061), reg 3 (as amended by SI 2020/945)",
+    "title": "European Communities (Rights against Insurers) Regulations 2002: direct action against the motor insurer",
+    "principle": "An entitled party (a UK resident with a cause of action in tort arising out of a road accident) may issue proceedings directly against the insurer of the vehicle, which is directly liable to the extent that it is liable to the insured, without prejudice to the right to sue the insured driver. Status: made under the European Communities Act 1972 and amended by the EU Exit Regulations 2020, these are EU-derived domestic legislation and continue in force as assimilated law after 31 December 2023; CCGUK's letter_before_claim and particulars name the insurer as defendant under reg 3 where that is tactically preferable.",
+    "text": "reg 3(2) (per snippet): the entitled party may, without prejudice to his right to issue proceedings against the insured person, issue proceedings against the insurer which issued the policy of insurance relating to the insured vehicle, and that insurer shall be directly liable to the entitled party to the extent that he is liable to the insured person.",
+    "tags": ["direct action", "insurer as defendant", "reg 3", "assimilated law", "retained EU law", "EU Exit 2020/945", "letter.letter_before_claim"],
+    "topics": ["enforceability", "credit_hire"],
+    "url": "https://www.legislation.gov.uk/uksi/2002/3061",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2002/3061/regulation/3/made",
+      "sourceNote": "Not fetched (egress proxy). The reg 3 wording was shown in a search-engine summary of the legislation.gov.uk 'made' version; a listing for 'The Motor Vehicles (Compulsory Insurance and Rights Against Insurers) (Amendment) (EU Exit) Regulations 2020' (SI 2020/945) confirmed post-Brexit amendment. The 'assimilated law' characterisation is reasoned from the Retained EU Law (Revocation and Reform) Act 2023 and was not checked on the page's status notes; confirm the current revised text and any 2024-2026 amendments.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "insurance-act-2015-fair-presentation",
+    "type": "statute",
+    "citation": "Insurance Act 2015, ss.3-5, 8 and Schedule 1",
+    "title": "Insurance Act 2015: duty of fair presentation and insurer remedies (non-consumer insurance)",
+    "principle": "Before a non-consumer contract of insurance (such as CCGUK's fleet, hire and PHV policies) is entered into, the insured must make a fair presentation of the risk: disclose every material circumstance it knows or ought to know, or enough to put a prudent insurer on enquiry, in a reasonably clear and accessible manner (ss.3-5). The insurer has a remedy only if it shows that but for the breach it would not have written the risk or would have done so on different terms (s.8); Schedule 1 allows avoidance and retention of premium for a deliberate or reckless breach, otherwise a proportionate remedy (e.g. a claim reduced in proportion to the premium that would have been charged). CCGUK must disclose the true uses of each fleet unit (credit hire, self-drive, PHV) and its claims history, or risk a voided fleet policy.",
+    "tags": ["fair presentation", "non-consumer insurance", "fleet policy", "material circumstance", "proportionate remedy", "deliberate or reckless", "Schedule 1", "s.8"],
+    "topics": ["fleet"],
+    "url": "https://www.legislation.gov.uk/ukpga/2015/4",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2015/4/section/8",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summaries of the legislation.gov.uk Act and explanatory notes confirmed s.3 (fair presentation of the risk), s.8 (but-for inducement test; remedies in Schedule 1) and Schedule 1 (deliberate or reckless: avoid, refuse claims, keep premium; otherwise proportionate reduction, para 6 formula).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "cidra-2012",
+    "type": "statute",
+    "citation": "Consumer Insurance (Disclosure and Representations) Act 2012, ss.2-5 and Schedule 1",
+    "title": "Consumer Insurance (Disclosure and Representations) Act 2012: consumer misrepresentation and insurer remedies",
+    "principle": "A consumer's pre-contract duty is to take reasonable care not to make a misrepresentation to the insurer (s.2); the insurer has a remedy only for a 'qualifying misrepresentation' made in breach of that duty (s.4), and the remedy depends on the consumer's state of mind (s.5, Sch 1): deliberate or reckless misrepresentation allows avoidance, refusal of all claims and retention of premium (unless unfair), whereas a careless misrepresentation gives only a proportionate remedy based on what the insurer would have done had it known the truth. CCGUK uses it when a client's own insurer avoids or voids a policy: challenge the characterisation of carelessness as deliberate, and push for cancellation rather than avoidance ab initio.",
+    "tags": ["consumer insurance", "misrepresentation", "reasonable care", "deliberate or reckless", "careless", "avoidance", "proportionate remedy", "Schedule 1"],
+    "topics": ["complaints"],
+    "url": "https://www.legislation.gov.uk/ukpga/2012/6",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2012/6/section/2",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summaries of the legislation.gov.uk Act pages confirmed s.2 (duty to take reasonable care not to make a misrepresentation; failure to confirm or amend particulars can be a misrepresentation), s.4 (qualifying misrepresentation) and Schedule 1 (deliberate/reckless: avoid and keep premium except where unfair; careless: paras 4-8 proportionate remedies).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "laspo-2012-s56-60",
+    "type": "statute",
+    "citation": "Legal Aid, Sentencing and Punishment of Offenders Act 2012, ss.56-60",
+    "title": "LASPO 2012 ss.56-60: ban on referral fees in personal injury claims",
+    "principle": "Regulated persons (solicitors, barristers, claims management companies and, by regulations, insurers) may not pay or receive referral fees for personal injury or death claims (s.56), and the ban cannot be avoided by dressing the payment up as a fee for referring a connected claim such as credit hire or vehicle damage arising from the same accident; regulators must monitor and enforce the ban (ss.57-59) and s.60 defines regulated persons. CCGUK therefore refers injury elements out without any fee in either direction and keeps credit hire referrals free of any payment linked to an injury claim.",
+    "tags": ["referral fees", "personal injury", "ban", "connected claim", "credit hire referral", "LASPO", "injury referral out"],
+    "topics": ["perimeter", "injury"],
+    "url": "https://www.legislation.gov.uk/ukpga/2012/10/section/56",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2012/10/notes/division/5/2/3",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk explanatory notes confirmed s.56 prohibits payment and receipt of referral fees for personal injury claims by regulated persons and 'prevents the prohibition... being avoided by presenting the referral fee as a payment for the referral of a connected claim (for example, in a road traffic accident, a credit hire claim or a claim for damage to other property)'; ss.57-60 roles as summarised. The LASPO (Referral Fees) Regulations 2013 (SI 2013/1635) extend the ban to insurers.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "legal-services-act-2007-s12-sch2",
+    "type": "statute",
+    "citation": "Legal Services Act 2007, s.12 and Schedule 2",
+    "title": "Legal Services Act 2007 s.12 and Sch 2: reserved legal activities (rights of audience and conduct of litigation)",
+    "principle": "Reserved legal activities are the exercise of a right of audience, the conduct of litigation, reserved instrument activities, probate activities, notarial activities and the administration of oaths (s.12(1)); Schedule 2 defines the conduct of litigation as issuing proceedings, their commencement, prosecution and defence, and ancillary functions, and a right of audience as the right to appear before and address a court including calling and examining witnesses. Carrying on a reserved activity without authorisation is an offence (s.14). CCGUK is not authorised, so litigation documents are prepared as drafts for the claimant as litigant in person or an instructed solicitor to sign and file; pre-action correspondence is not reserved, and lay representation in small claims is separately permitted.",
+    "text": "Sch 2 para 4(1) (per snippet): the \"conduct of litigation\" means (a) the issuing of proceedings before any court in England and Wales, (b) the commencement, prosecution and defence of such proceedings, and (c) the performance of any ancillary functions in relation to such proceedings (such as entering appearances to actions).",
+    "tags": ["reserved legal activity", "conduct of litigation", "right of audience", "unregulated", "perimeter", "litigant in person", "REGULATED_STATUS_IMPLIED"],
+    "topics": ["perimeter", "costs"],
+    "url": "https://www.legislation.gov.uk/ukpga/2007/29/section/12",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2007/29/section/12",
+      "sourceNote": "Not fetched (egress proxy). Search-engine summary of the legislation.gov.uk s.12 and Schedule 2 pages reproduced the s.12(1) list and the Schedule 2 definitions of right of audience and conduct of litigation quoted above. s.14 offence from working knowledge.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "fsma-2000-s19",
+    "type": "statute",
+    "citation": "Financial Services and Markets Act 2000, s.19 (with ss.23 and 26-27)",
+    "title": "FSMA 2000 s.19: the general prohibition on carrying on regulated activities without authorisation",
+    "principle": "No person may carry on, or purport to carry on, a regulated activity in the United Kingdom unless authorised or exempt; breach is a criminal offence (s.23) and agreements made in the course of an unauthorised regulated activity are unenforceable against the other party (ss.26-27). Regulated claims management activity (RAO arts 89G onwards) covers personal injury and financial-product claims; vehicle-damage and credit hire recovery is generally understood to fall outside it, but CCGUK must stop and check the perimeter (PERG 2.7) whenever injury or a complaint against an FCA-regulated firm about a financial product is involved.",
+    "text": "s.19(1): \"No person may carry on a regulated activity in the United Kingdom, or purport to do so, unless he is (a) an authorised person; or (b) an exempt person.\" s.19(2): \"The prohibition is referred to in this Act as the general prohibition.\"",
+    "tags": ["general prohibition", "regulated activity", "claims management", "authorisation", "unenforceable agreements", "perimeter", "FCA"],
+    "topics": ["perimeter", "enforceability"],
+    "url": "https://www.legislation.gov.uk/ukpga/2000/8/section/19",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: the session's web-search budget was exhausted before this item and legislation.gov.uk cannot be fetched (egress proxy). Wording and section numbers are from working knowledge; the URL follows the standard legislation.gov.uk pattern. Verify before quoting in any document.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "fraud-act-2006-s1-4",
+    "type": "statute",
+    "citation": "Fraud Act 2006, ss.1-4",
+    "title": "Fraud Act 2006 ss.1-4: fraud by false representation, failing to disclose and abuse of position",
+    "principle": "Fraud (s.1) is committed by dishonestly making a false representation (s.2), dishonestly failing to disclose information one is under a legal duty to disclose (s.3), or dishonestly abusing a position of trust (s.4), in each case intending to make a gain or cause loss or expose another to a risk of loss; no actual gain or loss is required. For CCGUK this is the criminal perimeter around every claim: inflated heads, invented hire days, adopted or constructed accounts and false statements in forms are s.2 fraud for the client and for anyone who constructs the account.",
+    "text": "s.2(1): \"A person is in breach of this section if he (a) dishonestly makes a false representation, and (b) intends, by making the representation (i) to make a gain for himself or another, or (ii) to cause loss to another or to expose another to a risk of loss.\"",
+    "tags": ["fraud", "false representation", "dishonesty", "failing to disclose", "abuse of position", "criminal perimeter", "inflated claim"],
+    "topics": ["dishonesty"],
+    "url": "https://www.legislation.gov.uk/ukpga/2006/35/section/2",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted before this item and legislation.gov.uk is fetch-blocked. Wording from working knowledge; URL follows the standard pattern. Verify before quoting.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "cjca-2015-s57",
+    "type": "statute",
+    "citation": "Criminal Justice and Courts Act 2015, s.57",
+    "title": "Criminal Justice and Courts Act 2015 s.57: dismissal of personal injury claims for fundamental dishonesty",
+    "principle": "Where a claimant would otherwise be entitled to damages for personal injury but the court finds on the balance of probabilities, on the defendant's application, that the claimant has been fundamentally dishonest in relation to the primary claim or a related claim, the court must dismiss the whole claim including the honest parts, unless the claimant would suffer substantial injustice; a 'related claim' includes a credit hire or vehicle damage claim brought in the same proceedings. Although CCGUK refers injury out, a dishonest hire claim run alongside a client's injury claim can sink the injury claim and expose CCGUK to non-party costs (Kindertons v Murtagh).",
+    "text": "s.57(2): \"The court must dismiss the primary claim, unless it is satisfied that the claimant would suffer substantial injustice if the claim were dismissed.\"",
+    "tags": ["fundamental dishonesty", "personal injury", "dismiss entire claim", "related claim", "substantial injustice", "QOCS", "costs exposure"],
+    "topics": ["dishonesty", "costs"],
+    "url": "https://www.legislation.gov.uk/ukpga/2015/2/section/57",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted before this item and legislation.gov.uk is fetch-blocked. Wording from working knowledge; URL follows the standard pattern. Verify before quoting.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "perjury-act-1911-s5",
+    "type": "statute",
+    "citation": "Perjury Act 1911, s.5",
+    "title": "Perjury Act 1911 s.5: false statutory declarations and other false statements without oath",
+    "principle": "Knowingly and wilfully making a statement that is false in a material particular in a statutory declaration, or in a document or oral declaration one is required or authorised to make by a public general Act, is an offence punishable by up to two years' imprisonment. This is the criminal consequence of a false TE7/TE9 or PE2/PE3 statutory declaration to the Traffic Enforcement Centre saying a notice was not received when it was; CCGUK only files such declarations on true facts (perimeter: closed route).",
+    "tags": ["false statutory declaration", "TE9", "PE3", "Traffic Enforcement Centre", "perjury", "criminal perimeter"],
+    "topics": ["dishonesty"],
+    "url": "https://www.legislation.gov.uk/ukpga/Geo5/1-2/6/section/5",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted before this item and legislation.gov.uk is fetch-blocked. Summary and URL (regnal-year form Geo5/1-2/6) from working knowledge. Verify before quoting.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-5",
+    "type": "statute",
+    "citation": "UK GDPR (Regulation (EU) 2016/679 as retained), Article 5",
+    "title": "UK GDPR Art 5: principles relating to processing of personal data",
+    "principle": "Personal data must be processed lawfully, fairly and transparently; collected for specified, explicit and legitimate purposes; adequate, relevant and limited to what is necessary; accurate and kept up to date, with inaccurate data erased or rectified without delay (Art 5(1)(d)); kept no longer than necessary; and processed securely; the controller is accountable for demonstrating compliance (Art 5(2)). CCGUK's DSAR and credit-file work leans on Art 5(1)(d) accuracy, and its own file hygiene (minimisation, retention schedule, hashes) is the Art 5 compliance story.",
+    "tags": ["data protection", "principles", "accuracy", "Art 5(1)(d)", "purpose limitation", "data minimisation", "accountability"],
+    "topics": ["dsar", "data_protection"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/5",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted before this item and legislation.gov.uk is fetch-blocked. Content from working knowledge; URL follows the legislation.gov.uk 'eur/2016/679/article/N' pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-6",
+    "type": "statute",
+    "citation": "UK GDPR, Article 6",
+    "title": "UK GDPR Art 6: lawfulness of processing",
+    "principle": "Processing is lawful only on one of the Art 6(1) bases: consent, performance of a contract with the data subject, compliance with a legal obligation, vital interests, public task, or the controller's legitimate interests where not overridden by the data subject's interests and rights. CCGUK processes client data under contract (6(1)(b)) and third-party driver, witness and insurer data under legitimate interests (6(1)(f)) for pursuing claims, recorded in its privacy notice and legitimate-interests assessment.",
+    "tags": ["data protection", "lawful basis", "contract", "legitimate interests", "Art 6(1)(f)", "third-party data"],
+    "topics": ["dsar", "data_protection"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/6",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-9",
+    "type": "statute",
+    "citation": "UK GDPR, Article 9",
+    "title": "UK GDPR Art 9: processing of special categories of personal data",
+    "principle": "Processing of special category data (including health data) is prohibited unless an Art 9(2) condition applies, such as explicit consent or processing necessary for the establishment, exercise or defence of legal claims (Art 9(2)(f)), supplemented by DPA 2018 s.10 and Schedule 1. Injury details mentioned at FNOL are health data: CCGUK records only what is needed to route the injury element out, relying on Art 9(2)(f) and the legal-claims condition.",
+    "tags": ["data protection", "special category", "health data", "injury", "legal claims condition", "Art 9(2)(f)"],
+    "topics": ["data_protection", "injury"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/9",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-10",
+    "type": "statute",
+    "citation": "UK GDPR, Article 10",
+    "title": "UK GDPR Art 10: processing of personal data relating to criminal convictions and offences",
+    "principle": "Personal data about criminal convictions and offences (which includes alleged offences, penalty points, NIPs and s.172 requests) may be processed only under the control of official authority or where authorised by domestic law providing appropriate safeguards, which in the UK means meeting a condition in DPA 2018 Schedule 1 (via s.10(5)). CCGUK's fleet penalty module and driver-conviction records must rest on a Schedule 1 condition (for example the legal-claims or insurance conditions) and the retention and policy safeguards that go with it.",
+    "tags": ["data protection", "criminal offence data", "convictions", "penalty points", "NIP", "DPA 2018 s.10", "Schedule 1"],
+    "topics": ["data_protection", "nip", "fleet"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/10",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-13-14",
+    "type": "statute",
+    "citation": "UK GDPR, Articles 13 and 14",
+    "title": "UK GDPR Arts 13-14: information to be provided to data subjects (privacy notice)",
+    "principle": "When personal data are collected from the data subject (Art 13) or obtained from another source (Art 14) the controller must give the identity and contact details of the controller, the purposes and lawful basis, legitimate interests relied on, recipients, retention periods, the data subject's rights and the right to complain to the ICO, at the time of collection or (Art 14) within a reasonable period and at most one month. CCGUK's FNOL call-recording disclosure and client privacy notice satisfy Art 13; third-party drivers and witnesses whose data CCGUK obtains need an Art 14 notice unless an exemption applies.",
+    "tags": ["data protection", "privacy notice", "transparency", "Art 13", "Art 14", "call recording disclosure", "third-party data"],
+    "topics": ["data_protection", "intake"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/13",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern (Art 14 at /article/14).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-15",
+    "type": "statute",
+    "citation": "UK GDPR, Article 15 (with Article 12(3))",
+    "title": "UK GDPR Art 15: right of access by the data subject (DSAR)",
+    "principle": "A data subject is entitled to confirmation whether their personal data are being processed, access to the data and information about purposes, recipients, retention, source and rights, with a free copy; the controller must respond without undue delay and within one month, extendable by two further months for complex or numerous requests (Art 12(3)). CCGUK's letter.dsar template uses Art 15 to obtain call recordings, claim notes, engineer reports and fraud-investigation files from insurers, and its DSAR clock runs one month from receipt.",
+    "tags": ["data protection", "subject access", "DSAR", "one month", "call recordings", "letter.dsar", "Art 15"],
+    "topics": ["dsar", "data_protection"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/15",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-16",
+    "type": "statute",
+    "citation": "UK GDPR, Article 16",
+    "title": "UK GDPR Art 16: right to rectification",
+    "principle": "A data subject may require a controller to rectify inaccurate personal data without undue delay and to complete incomplete data. CCGUK uses Art 16 (with Art 5(1)(d)) to challenge inaccurate insurer, CUE/MIAFTR, credit-reference or fraud-database records about a client, and to correct wrong keeper addresses or vehicle details that cause PCNs to go astray.",
+    "tags": ["data protection", "rectification", "inaccurate data", "CIFAS", "credit file", "Art 16"],
+    "topics": ["dsar", "data_protection"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/16",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-17",
+    "type": "statute",
+    "citation": "UK GDPR, Article 17",
+    "title": "UK GDPR Art 17: right to erasure",
+    "principle": "A data subject may require erasure where the data are no longer necessary, consent is withdrawn, the data subject objects and there are no overriding legitimate grounds, or the processing is unlawful, subject to exceptions including processing necessary for legal claims (Art 17(3)(e)). CCGUK invokes Art 17 against unjustified fraud markers and stale adverse records, and relies on the legal-claims exception to retain its own claim files for the limitation period.",
+    "tags": ["data protection", "erasure", "right to be forgotten", "legal claims exception", "retention", "Art 17"],
+    "topics": ["dsar", "data_protection"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/17",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-21",
+    "type": "statute",
+    "citation": "UK GDPR, Article 21",
+    "title": "UK GDPR Art 21: right to object",
+    "principle": "A data subject may object at any time to processing based on legitimate interests or public task, after which the controller must stop unless it demonstrates compelling legitimate grounds that override the data subject's interests or the processing is for legal claims; objection to direct marketing is absolute. CCGUK uses Art 21 to force a member or insurer to justify continued processing of a disputed fraud marker, and must itself honour objections to any marketing.",
+    "tags": ["data protection", "objection", "legitimate interests", "compelling grounds", "fraud marker", "Art 21"],
+    "topics": ["dsar", "data_protection"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/21",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-28",
+    "type": "statute",
+    "citation": "UK GDPR, Article 28",
+    "title": "UK GDPR Art 28: processors and processor contracts",
+    "principle": "A controller may use only processors giving sufficient guarantees, under a binding written contract setting out the subject matter, duration, nature and purpose of processing, the controller's documented instructions, confidentiality, security, sub-processor controls, assistance with rights requests and breaches, deletion or return at the end, and audit rights (Art 28(3)). CCGUK's engineers, storage yards, e-signature and cloud providers, lookup gateways and any AI service that touches claim data need Art 28 terms before data flows to them.",
+    "tags": ["data protection", "processor", "data processing agreement", "Art 28(3)", "suppliers", "cloud", "engineer", "storage yard"],
+    "topics": ["data_protection"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/28",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-32",
+    "type": "statute",
+    "citation": "UK GDPR, Article 32",
+    "title": "UK GDPR Art 32: security of processing",
+    "principle": "Controllers and processors must implement technical and organisational measures appropriate to the risk, including pseudonymisation and encryption, confidentiality, integrity, availability and resilience, restoration after incidents and regular testing. CCGUK's evidence store (write-once files, SHA-256 hashes, access logging, encrypted backups, OTP-based e-signature) is its Art 32 implementation, and a personal data breach must be assessed within 72 hours for ICO notification (Art 33).",
+    "tags": ["data protection", "security", "encryption", "integrity", "evidence store", "breach 72 hours", "Art 32"],
+    "topics": ["data_protection"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/32",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "uk-gdpr-art-82",
+    "type": "statute",
+    "citation": "UK GDPR, Article 82 (with DPA 2018 ss.168-169)",
+    "title": "UK GDPR Art 82: right to compensation for material or non-material damage",
+    "principle": "Any person who has suffered material or non-material damage (including distress) because of an infringement of the UK GDPR has the right to compensation from the controller or processor, which escapes liability only by proving it is not in any way responsible; the claim is brought in court, not through the ICO. CCGUK keeps the ICO complaint and the Art 82 damages claim as distinct routes for a client harmed by an inaccurate fraud marker or an unlawful disclosure, and is itself exposed under Art 82 if it mishandles client data.",
+    "tags": ["data protection", "compensation", "distress", "non-material damage", "court claim", "Art 82"],
+    "topics": ["dsar", "data_protection"],
+    "url": "https://www.legislation.gov.uk/eur/2016/679/article/82",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "dpa-2018-s170",
+    "type": "statute",
+    "citation": "Data Protection Act 2018, s.170",
+    "title": "Data Protection Act 2018 s.170: unlawful obtaining of personal data",
+    "principle": "It is an offence knowingly or recklessly to obtain or disclose personal data without the controller's consent, to procure such a disclosure, or to retain data obtained without the consent of the controller, subject to defences including that the act was necessary for legal proceedings or justified in the public interest. This is the criminal line around 'blagging' insurer, DVLA or police information: CCGUK obtains third-party data only through lawful routes (DSAR by the data subject, s.154 RTA demands, DVLA V888, court disclosure) and never through pretext calls.",
+    "text": "s.170(1): \"It is an offence for a person knowingly or recklessly (a) to obtain or disclose personal data without the consent of the controller, (b) to procure the disclosure of personal data to another person without the consent of the controller, or (c) after obtaining personal data, to retain it without the consent of the person who was the controller...\"",
+    "tags": ["data protection", "unlawful obtaining", "blagging", "s.170", "criminal perimeter", "DVLA", "pretext"],
+    "topics": ["dishonesty", "data_protection"],
+    "url": "https://www.legislation.gov.uk/ukpga/2018/12/section/170",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. Wording from working knowledge; URL follows the standard pattern. Verify before quoting.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "dpa-2018-sch-1",
+    "type": "statute",
+    "citation": "Data Protection Act 2018, s.10 and Schedule 1 (Parts 2-4)",
+    "title": "Data Protection Act 2018 Sch 1: conditions for special category and criminal-offence data, and the appropriate policy document",
+    "principle": "Schedule 1 supplies the domestic conditions required by UK GDPR Arts 9 and 10: Part 2 substantial-public-interest conditions (for example preventing fraud, para 14, and insurance, para 20), Part 3 additional conditions for criminal convictions data (including consent and processing necessary for legal claims, para 33), and Part 4 the requirement for an appropriate policy document and additional safeguards that attaches to most Part 1 and Part 2 conditions. Driving convictions, penalty points and NIPs are criminal offence data: CCGUK should identify the specific condition it relies on for each processing (legal claims, para 33, for client and third-party driver data; an insurance or fraud-prevention condition where applicable) and, because the brief and ICO guidance call for it, keep an appropriate policy document and retention schedule in any event, even where the particular Part 3 condition may not strictly require one.",
+    "tags": ["data protection", "Schedule 1", "criminal offence data", "appropriate policy document", "legal claims condition", "driving convictions", "fleet"],
+    "topics": ["data_protection", "nip", "fleet"],
+    "url": "https://www.legislation.gov.uk/ukpga/2018/12/schedule/1",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. Paragraph numbers and the scope of the appropriate-policy-document requirement are from working knowledge and should be checked on the page; the blueprint's blanket statement that an APD 'is needed' for driving-conviction data is conservative and is kept as a practice rule.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "duaa-2025",
+    "type": "statute",
+    "citation": "Data (Use and Access) Act 2025 (c. 18), including s.103 and Schedule 10 (data subject complaints)",
+    "title": "Data (Use and Access) Act 2025: reforms to UK GDPR and DPA 2018, including the duty to handle data subject complaints",
+    "principle": "The 2025 Act amends the UK GDPR and DPA 2018 (recognised legitimate interests, DSAR 'reasonable and proportionate' search and clock-stopping, automated decision-making, ICO restructuring and more) and, through s.103 and Schedule 10, requires controllers to facilitate complaints from data subjects, acknowledge them within 30 days and respond without undue delay, with the ICO able to expect that the controller's process has been used before it takes up a complaint. Per the blueprint, the core Part 5 reforms commenced on 5 February 2026 (SI 2026/82) and the complaints provisions on 19 June 2026; CCGUK must have a documented data-protection complaints process and should expect insurers to insist on their own process before an ICO complaint.",
+    "tags": ["data protection", "DUAA 2025", "complaints process", "s.103", "Schedule 10", "commencement 2026", "DSAR reforms", "ICO"],
+    "topics": ["dsar", "data_protection"],
+    "url": "https://www.legislation.gov.uk/ukpga/2025/18",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted before this item; legislation.gov.uk fetch-blocked. The chapter number (c. 18), s.103/Schedule 10 attribution and the 2026 commencement dates are taken from the project BLUEPRINT and working knowledge and must be confirmed against the Act and its commencement regulations (the blueprint cites SI 2026/82).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "databases-regs-1997-reg-16",
+    "type": "statute",
+    "citation": "Copyright and Rights in Databases Regulations 1997 (SI 1997/3032), reg 16",
+    "title": "Copyright and Rights in Databases Regulations 1997 reg 16: acts infringing database right",
+    "principle": "A person infringes database right by extracting or re-utilising all or a substantial part of the contents of a protected database without the owner's consent, and repeated and systematic extraction or re-utilisation of insubstantial parts can amount to taking a substantial part. This is why ClaimDesk does not scrape valuation guides, advert sites, Audatex/Solera data or legal databases: comparables and rate evidence are captured manually one at a time with provenance, and Find Case Law bulk use needs the computational-analysis licence.",
+    "text": "reg 16(1): \"a person infringes database right in a database if, without the consent of the owner of the right, he extracts or re-utilises all or a substantial part of the contents of the database.\"",
+    "tags": ["database right", "extraction", "re-utilisation", "scraping", "substantial part", "no scraping", "Find Case Law licence"],
+    "topics": ["pav", "bhr"],
+    "url": "https://www.legislation.gov.uk/uksi/1997/3032/regulation/16",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. Wording from working knowledge; URL follows the standard pattern. Verify before quoting.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "phv-london-act-1998",
+    "type": "statute",
+    "citation": "Private Hire Vehicles (London) Act 1998, ss.2, 6, 7 and 12",
+    "title": "Private Hire Vehicles (London) Act 1998: operator, vehicle and driver licensing in London",
+    "principle": "In London no one may accept or make provision for private hire bookings without a PHV operator's licence (s.2); no vehicle may be used as a private hire vehicle on a road without a PHV licence for that vehicle (s.6), which TfL grants only if the vehicle is suitable, safe, comfortable, in good condition and properly insured, subject to conditions (s.7); and no one may drive a PHV without a PHV driver's licence (s.12). For CCGUK's fleet this means a car may be supplied to a PHV driver as a replacement only if it holds a current TfL vehicle licence (and TfL's zero-emission-capable requirement for newly licensed vehicles applies), and the class-of-use guard must block PHV allocation of unlicensed units.",
+    "tags": ["private hire", "London", "TfL", "operator licence", "vehicle licence", "driver licence", "fleet", "PHV_NOT_ELIGIBLE"],
+    "topics": ["fleet"],
+    "url": "https://www.legislation.gov.uk/ukpga/1998/34",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. Section summaries from working knowledge; URL follows the standard pattern (sections at /section/2, /section/6, /section/7, /section/12). TfL's ZEC requirement is policy under s.7 conditions, not in the Act itself.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "companies-act-2006-part-6-trading-disclosures",
+    "type": "statute",
+    "citation": "Companies Act 2006, Part 6 (ss.82-85); Company, Limited Liability Partnership and Business (Names and Trading Disclosures) Regulations 2015 (SI 2015/17), regs 24-26",
+    "title": "Companies Act 2006 Part 6 and the 2015 Regulations: trading disclosures on letters, invoices, emails and websites",
+    "principle": "A company must disclose its registered name on its business letters, notices, invoices and other demands for payment, order forms, cheques and all other business correspondence and documentation (reg 24), and must state on its business letters, order forms and websites the part of the UK in which it is registered, its registered number and its registered office address (reg 25); breach is a criminal offence (s.84) and can prevent the company enforcing a contract where the other party shows it was prejudiced (s.83). ClaimDesk's document footer therefore carries 'Courtesy Cars Group UK Ltd, registered in England and Wales, company number [settings], registered office [settings]' on every letter, invoice and email, and the legacy checker blocks the old Car Flex / 17360033 / 66 Paul Street details.",
+    "tags": ["trading disclosures", "registered name", "company number", "registered office", "business letters", "invoices", "website", "footer", "LEGACY_DETAIL"],
+    "topics": ["vendor_verification", "payment_pack"],
+    "url": "https://www.legislation.gov.uk/uksi/2015/17/regulation/25",
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. Regulation numbers (24 registered name on documents; 25 particulars on letters, order forms and websites; 26 share capital) and ss.82-85 from working knowledge; URLs follow the standard pattern (Part 6 at ukpga/2006/46/part/6). Verify before relying on exact wording.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "rao-2001-art-89g-89m",
+    "type": "statute",
+    "citation": "FSMA 2000 (Regulated Activities) Order 2001, SI 2001/544, arts 89G–89M (inserted by SI 2018/1253)",
+    "title": "Specified claims management activities and the kinds of claim they cover",
+    "principle": "Art 89G: seeking out, referrals and identification of claims or potential claims (seeking out persons who may have a claim; referring details of a claim/claimant to another person; identifying a claim or claimant) when carried on in relation to a personal injury, financial services or financial product, housing disrepair, specified benefit, criminal injury or employment-related claim. Arts 89H–89M: advising a claimant, investigating a claim or representing a claimant in relation to each of those six kinds respectively (89H personal injury; 89I financial services/product; 89J housing disrepair; 89K specified benefit; 89L criminal injury; 89M employment-related). \"Personal injury claim\" takes the CPR meaning (damages for or arising from personal injuries). Exclusions follow in arts 89N–89W (e.g. legal professionals, charities, persons with insurance-distribution permissions acting in relation to a contract of insurance).",
+    "tags": ["RAO", "claims management", "perimeter", "89G", "89H", "89I"],
+    "topics": ["perimeter", "injury"],
+    "url": "https://www.legislation.gov.uk/uksi/2001/544/contents",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2001/544/contents",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets returned the structure of arts 89F–89M, the (a) advising (b) investigating (c) representing formula for 89I, 89J, 89L, the CPR-based personal injury definition, the employment-related definition and the insurance-permission exclusion. The art 89I definition of \"financial services or financial product claim\" was not returned beyond \"includes a claim under CCA 1974 s.75\".",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "duaa-2025-commencement-2026",
+    "type": "statute",
+    "citation": "Data (Use and Access) Act 2025 (Commencement No. 6 and Transitional and Saving Provisions) Regulations 2026, SI 2026/82",
+    "title": "DUAA 2025 commencement: core data protection reforms 5 February 2026; data subject complaints duty (s.103, Sch 10 — new DPA 2018 s.164A) 19 June 2026",
+    "principle": "SI 2026/82 brought the main Part 5 data protection provisions of the Data (Use and Access) Act 2025 into force on 5 February 2026 and section 103 with Schedule 10 (complaints by data subjects) into force on 19 June 2026. Under new DPA 2018 s.164A a data subject may complain directly to the controller about an alleged UK GDPR infringement; the controller must facilitate complaints, acknowledge within 30 days and respond without undue delay, informing the complainant of the outcome; the duty applies to complaints received on or after 19 June 2026. CCGUK must publish a data protection complaints process and log acknowledgement dates; the ICO expects a complaint to the controller before it will act.",
+    "tags": ["DUAA 2025", "commencement", "data subject complaints", "s.164A", "30 days"],
+    "topics": ["dsar", "complaints"],
+    "url": "https://www.legislation.gov.uk/uksi/2026/82/made",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2026/82/made",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of SI 2026/82 and the gov.uk commencement plan: provisions in force 5 February 2026; s.103 and Sch 10 in force 19 June 2026; new s.164A duty to acknowledge within 30 days and respond; transitional rule for complaints made on or after commencement. Matches blueprint.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  }
+]

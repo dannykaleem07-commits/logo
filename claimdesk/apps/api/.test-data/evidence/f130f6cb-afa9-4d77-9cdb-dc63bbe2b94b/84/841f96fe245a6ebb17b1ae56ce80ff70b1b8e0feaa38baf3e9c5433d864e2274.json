@@ -1,0 +1,16 @@
+{
+  "sha256": "841f96fe245a6ebb17b1ae56ce80ff70b1b8e0feaa38baf3e9c5433d864e2274",
+  "bytes": 281,
+  "filename": "file1-odometer.png",
+  "mime": "image/png",
+  "claimId": "f130f6cb-afa9-4d77-9cdb-dc63bbe2b94b",
+  "kind": "photo",
+  "uploadedAt": "2026-10-05T09:00:00.000Z",
+  "uploadedBy": "system",
+  "capturedAt": "2026-08-10T11:22:00.000Z",
+  "exif": {
+    "widthPx": 64,
+    "heightPx": 48
+  },
+  "writeOnce": true
+}

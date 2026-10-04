@@ -1,7 +1,12 @@
 /**
  * Text and date utilities for the consistency engine. Internal to the module (not re-exported from the barrel).
+ *
+ * Every date comparison in the engine is made on the ENGLAND & WALES (Europe/London) calendar date, because that is
+ * the date a letter prints. A storage record ending at 2026-06-30T23:30:00Z ended on 1 July 2026 in London, and a
+ * letter saying so is right. Wall-clock arithmetic comes from the calendar module (one BST rule for the platform).
  */
 import type { ISODate, ISODateTime } from '../types.js';
+import { MS_PER_DAY, isoToLondonWallMs, londonDate } from '../calendar/index.js';
 
 export const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -29,30 +34,54 @@ export function toIsoDate(y: number, m: number, d: number): ISODate {
   return `${String(y).padStart(4, '0')}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 }
 
+/**
+ * The London calendar date of an ISO date or date-time. A bare date is returned as is; an instant with Z or an
+ * offset is converted to Europe/London; a date-time with no zone is treated as London wall-clock time (the
+ * calendar module's convention). Unparseable input falls back to its first ten characters.
+ */
 export function datePart(iso: ISODateTime | ISODate): ISODate {
-  return iso.slice(0, 10);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) return iso;
+  try {
+    return londonDate(iso);
+  } catch {
+    return iso.slice(0, 10);
+  }
+}
+
+/** London wall-clock instant (ms, UTC-shaped) for an ISO value; NaN when unparseable. */
+export function wallMs(iso: ISODateTime | ISODate): number {
+  try {
+    return isoToLondonWallMs(iso);
+  } catch {
+    const t = Date.parse(iso);
+    return Number.isNaN(t) ? Number.NaN : t;
+  }
 }
 
 export function formatLongDate(iso: ISODate | ISODateTime): string {
-  const m = iso.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  const d = datePart(iso);
+  const m = d.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!m) return iso;
   return `${Number(m[3])} ${MONTH_NAMES[Number(m[2]) - 1] ?? ''} ${Number(m[1])}`;
 }
 
-const MS_PER_DAY = 86_400_000;
-
+/** Whole days since the epoch of the London calendar date. */
 export function dayNumber(iso: ISODate | ISODateTime): number {
   return Math.floor(Date.parse(`${datePart(iso)}T00:00:00Z`) / MS_PER_DAY);
 }
 
-/** Calendar days from a to b by date part (b − a). */
+/** Calendar days from a to b by London date (b − a). */
 export function calendarDaysBetween(a: ISODate | ISODateTime, b: ISODate | ISODateTime): number {
   return dayNumber(b) - dayNumber(a);
 }
 
-/** Whole or part days between two timestamps, minimum 1 (storage/hire "chargeable day" convention). */
+/**
+ * 24-hour periods started between two instants on the London wall clock, minimum 1 — the hire/storage "chargeable
+ * day" convention used by the gta module. Measured on the wall clock so a clock change neither adds nor removes a
+ * day: 09:00 on 20 October (BST) → 10:00 on 30 October (GMT) is 10 days, not 11.
+ */
 export function chargeableDays(startAt: ISODateTime, endAt: ISODateTime): number {
-  const ms = Date.parse(endAt) - Date.parse(startAt);
+  const ms = wallMs(endAt) - wallMs(startAt);
   if (!Number.isFinite(ms) || ms <= 0) return 1;
   return Math.max(1, Math.ceil(ms / MS_PER_DAY));
 }
@@ -62,6 +91,7 @@ export function addCalendarDays(iso: ISODate, n: number): ISODate {
   return new Date(t).toISOString().slice(0, 10);
 }
 
+/** Calendar-month arithmetic clamped to the month end (31 Oct + 1 month = 30 Nov). */
 export function addCalendarMonthsSimple(iso: ISODate, n: number): ISODate {
   const [y, m, d] = datePart(iso).split('-').map(Number) as [number, number, number];
   const total = (m - 1) + n;
@@ -71,7 +101,10 @@ export function addCalendarMonthsSimple(iso: ISODate, n: number): ISODate {
   return toIsoDate(ny, nm, Math.min(d, dim));
 }
 
-/** Monday–Friday working days with no bank-holiday table (fallback when the calendar module is not injected). */
+/**
+ * Monday–Friday working days with no bank-holiday table. Kept for callers that explicitly want a weekday count;
+ * the engine itself defaults to the calendar module (England & Wales bank holidays).
+ */
 export function addWorkingDaysSimple(iso: ISODate, n: number): ISODate {
   let t = Date.parse(`${datePart(iso)}T00:00:00Z`);
   let remaining = n;

@@ -2,7 +2,10 @@
  * Repair monitoring diary (BLUEPRINT §3.3; GTA 4.10–4.11, benchmark only).
  *
  *  - Authorisation check 3 working days after the estimate (GTA 4.10).
- *  - Progress checks every 5 working days from repair start until completion (GTA 4.11).
+ *  - Progress checks every 5 working days from repair start until completion (GTA 4.11). The
+ *    cadence is anchored to the last monitoring touch: each contact with the repairer starts the
+ *    next 5-WD period, so the open check is always "5 WD after we last spoke to them". A check met
+ *    after its due instant is `done` with `late: true`; the gap is visible in the chronology.
  *  - Delay notice where a delay is ≥ 2 working days or > 20% of the estimated repair duration.
  *
  * Every insurer-caused day is recorded here because the dated chronology wins period arguments.
@@ -29,6 +32,8 @@ export interface MonitoringCheck {
   sourceEventId: string;
   /** The event that satisfied the check, when done. */
   satisfiedByEventId?: string;
+  /** True when the satisfying touch came after the due instant (done, but late). */
+  late?: boolean;
 }
 
 export type DelayNoticeKind = 'authorisation_delay' | 'repair_overrun' | 'logged_delay';
@@ -114,19 +119,23 @@ export function monitoringDiary(events: ClaimEvent[], estimateWorkingDays: numbe
   const completed = started ? evs.find((e) => e.type === 'repair_completed' && compareIso(e.at, started.at) >= 0) : undefined;
   let expectedCompletionAt: ISODateTime | undefined;
   if (started) {
-    const touches = evs.filter((e) => isMonitoringTouch(e) && compareIso(e.at, started.at) > 0);
-    const horizon = completed?.at ?? now;
-    let prevDue: ISODateTime = started.at;
-    for (let k = 1; k <= 200; k += 1) {
-      const dueAt = addWorkingDays(started.at, PROGRESS_CHECK_WD * k);
-      if (completed && compareIso(dueAt, completed.at) > 0) break; // repair finished: no further checks
-      const touch = touches.find((t) => compareIso(t.at, prevDue) > 0 && compareIso(t.at, dueAt) <= 0);
-      const status: MonitoringCheckStatus = touch ? 'done' : compareIso(now, dueAt) > 0 ? 'overdue' : 'upcoming';
-      const check: MonitoringCheck = { kind: 'progress_check', dueAt, sequence: k, status, basis: `GTA 4.11 — progress check every ${PROGRESS_CHECK_WD} working days during repair (benchmark only)`, sourceEventId: started.id };
-      if (touch) check.satisfiedByEventId = touch.id;
+    const touches = evs.filter((e) => isMonitoringTouch(e) && compareIso(e.at, started.at) > 0 && (!completed || compareIso(e.at, completed.at) <= 0));
+    const basis = `GTA 4.11 — progress check every ${PROGRESS_CHECK_WD} working days during repair (benchmark only)`;
+    let anchor: ISODateTime = started.at;
+    let k = 0;
+    // One check per contact: due 5 WD after the previous contact (or the repair start).
+    for (const touch of touches) {
+      k += 1;
+      const dueAt = addWorkingDays(anchor, PROGRESS_CHECK_WD);
+      const check: MonitoringCheck = { kind: 'progress_check', dueAt, sequence: k, status: 'done', basis, sourceEventId: started.id, satisfiedByEventId: touch.id };
+      if (compareIso(touch.at, dueAt) > 0) check.late = true;
       checks.push(check);
-      if (compareIso(dueAt, horizon) > 0) break; // emitted the next upcoming check; stop
-      prevDue = dueAt;
+      anchor = touch.at;
+    }
+    // The open check after the last contact — unless the repair finished first.
+    const nextDue = addWorkingDays(anchor, PROGRESS_CHECK_WD);
+    if (!(completed && compareIso(completed.at, nextDue) < 0)) {
+      checks.push({ kind: 'progress_check', dueAt: nextDue, sequence: k + 1, status: compareIso(now, nextDue) > 0 ? 'overdue' : 'upcoming', basis, sourceEventId: started.id });
     }
 
     // --- Repair over-run against the estimate ---------------------------------------------

@@ -16,7 +16,24 @@ export const LEGACY_ALLOWED_EXACT_CASE: readonly string[] = ['CARFLEX LTD'];
 export const BANNED_PHRASES: readonly string[] = ['ignore any offer of a courtesy car', 'do not accept a vehicle from the insurer'];
 
 /** Wording that implies regulated status (Legal Services Act 2007 s.12 perimeter; SRA). */
-export const REGULATED_STATUS_PHRASES: readonly string[] = ['our solicitors', 'we act as your solicitors', 'regulated by the SRA', 'legal advice from our lawyers', 'our lawyers', 'our legal team'];
+export const REGULATED_STATUS_PHRASES: readonly string[] = [
+  'our solicitors',
+  'our solicitor',
+  'we act as your solicitors',
+  'we act as your solicitor',
+  'regulated by the SRA',
+  'regulated by the Solicitors Regulation Authority',
+  'legal advice from our lawyers',
+  'our lawyers',
+  'our lawyer',
+  'our legal team'
+];
+
+/** Wording that reads like a solicitor–client retainer: warn with the perimeter-safe alternative (perimeter.md Part 2). */
+export const REGULATED_STATUS_WARN_PHRASES: ReadonlyArray<{ phrase: RegExp; suggestion: string }> = [
+  { phrase: /\bour\s+clients?\b(?:['’]s?)?/gi, suggestion: 'the claimant / our customer' },
+  { phrase: /\bwe\s+act\s+for\b/gi, suggestion: 'we are instructed to correspond on behalf of' }
+];
 
 /** Mirror of packages/documents brand.legacy — same order, same strings. */
 export const legacy = {
@@ -97,32 +114,44 @@ export function bannedPhraseCheck(text: string): ConsistencyFlag[] {
       });
     }
   }
+  const statusMatches: Array<{ index: number; length: number; text: string }> = [];
   for (const phrase of REGULATED_STATUS_PHRASES) {
     const re = phraseRegex(phrase);
     let m: RegExpExecArray | null;
     while ((m = re.exec(text)) !== null) {
       const before = text.slice(Math.max(0, m.index - 24), m.index);
       if (NEGATION_BEFORE.test(before)) continue; // "is not regulated by the SRA"
+      statusMatches.push({ index: m.index, length: m[0].length, text: m[0] });
+    }
+  }
+  statusMatches.sort((a, b) => a.index - b.index || b.length - a.length);
+  let coveredTo = -1;
+  for (const m of statusMatches) {
+    if (m.index < coveredTo) continue; // nested phrase ("our lawyers" inside "legal advice from our lawyers")
+    coveredTo = m.index + m.length;
+    flags.push({
+      code: 'REGULATED_STATUS_IMPLIED',
+      severity: 'block',
+      message: `"${m.text}" implies regulated legal status. CCGUK is not a firm of solicitors and is not regulated by the SRA (Legal Services Act 2007 s.12). Use "we assist", "we are instructed to correspond on behalf of" or "paralegal/accident management services".`,
+      draftValue: m.text,
+      excerpt: excerptAround(text, m.index, m.length)
+    });
+  }
+  for (const { phrase, suggestion } of REGULATED_STATUS_WARN_PHRASES) {
+    const re = new RegExp(phrase.source, 'gi');
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(text)) !== null) {
+      const before = text.slice(Math.max(0, m.index - 24), m.index);
+      if (NEGATION_BEFORE.test(before)) continue; // "we do not act for"
       flags.push({
         code: 'REGULATED_STATUS_IMPLIED',
-        severity: 'block',
-        message: `"${m[0]}" implies regulated legal status. CCGUK is not a firm of solicitors and is not regulated by the SRA (Legal Services Act 2007 s.12). Use "we assist", "we are instructed to correspond on behalf of" or "paralegal/accident management services".`,
+        severity: 'warn',
+        message: `"${m[0]}" reads like a solicitor–client relationship. Prefer "${suggestion}" (Legal Services Act 2007 s.12 perimeter).`,
         draftValue: m[0],
+        ledgerValue: suggestion,
         excerpt: excerptAround(text, m.index, m[0].length)
       });
     }
-  }
-  const ourClient = /\bour\s+clients?\b(?:['’]s?)?/gi;
-  let m: RegExpExecArray | null;
-  while ((m = ourClient.exec(text)) !== null) {
-    flags.push({
-      code: 'REGULATED_STATUS_IMPLIED',
-      severity: 'warn',
-      message: `"${m[0]}" reads like a solicitor–client relationship. Prefer "the claimant" or "our customer" (Legal Services Act 2007 s.12 perimeter).`,
-      draftValue: m[0],
-      ledgerValue: 'the claimant / our customer',
-      excerpt: excerptAround(text, m.index, m[0].length)
-    });
   }
   return flags;
 }

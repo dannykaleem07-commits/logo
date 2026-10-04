@@ -26,8 +26,10 @@ type VehicleLike = Pick<Vehicle, 'make' | 'model' | 'bodyType' | 'engineCapacity
 const SMALL_MODELS = [
   'fiesta', 'ka', 'corsa', 'adam', 'polo', 'up', 'i10', 'i20', 'yaris', 'aygo', 'fabia', 'citigo', 'ibiza', 'mii', 'picanto', 'rio',
   'micra', 'clio', 'twingo', 'zoe', '108', '208', 'c1', 'c3', 'ds3', 'jazz', 'swift', 'ignis', 'mini', 'mito', 'panda', '500', 'punto',
-  'sandero', 'spark', 'aveo', 'leaf', 'e-208', 'e-up', 'corsa-e', 'honda e', 'mx-30', 'mazda2', '2',
+  'sandero', 'spark', 'aveo', 'leaf', 'e-208', 'e-up', 'corsa-e', 'honda e', 'mx-30', 'mazda2',
 ];
+/** Bare numeric model names that are small cars only for one make (a "2 Series" is not a Mazda2). */
+const SMALL_MODELS_BY_MAKE: ReadonlyArray<readonly [make: string, model: string]> = [['mazda', '2']];
 
 const VAN_MODELS = [
   'transit', 'transit custom', 'transit connect', 'transit courier', 'sprinter', 'vito', 'citan', 'vivaro', 'movano', 'combo', 'trafic',
@@ -88,7 +90,8 @@ export function mapGtaGroup(vehicle: VehicleLike, rates: GtaRate[] = defaultGtaR
     return result('CP1', 'medium', `commercial vehicle (${body || model}${cc ? `, ${cc}cc` : ''}) — small van group`);
   }
 
-  if (modelMatches(model, variant, SMALL_MODELS)) {
+  const smallByMake = SMALL_MODELS_BY_MAKE.some(([mk, md]) => make.startsWith(mk) && model.split(/\s+/)[0] === md);
+  if (smallByMake || modelMatches(model, variant, SMALL_MODELS)) {
     const strong = cc === undefined ? electric : cc <= 1250;
     return result('S1', strong ? 'high' : 'medium', `small car (${vehicle.make} ${vehicle.model}${cc ? `, ${cc}cc` : ''})`);
   }

@@ -13,10 +13,22 @@ describe('hireDays (24-hour periods started)', () => {
     expect(hireDays('2026-07-06T10:00:00+01:00', '2026-07-06T12:00:00+01:00')).toBe(1);
     expect(hireDays('2026-07-06T10:00:00+01:00', '2026-07-06T10:00:00+01:00')).toBe(0);
   });
-  it('measures real elapsed time across the October clock change', () => {
-    // 24 Oct 10:00 BST → 25 Oct 10:00 GMT is 25 real hours → 2 periods started
-    expect(hireDays('2026-10-24T10:00:00+01:00', '2026-10-25T10:00:00+00:00')).toBe(2);
+  it('counts on the London wall clock: a clock change inside the hire neither adds nor removes a day', () => {
+    // ADVERSARIAL (was 2): 24 Oct 10:00 BST → 25 Oct 10:00 GMT is 25 real hours but ONE day on the
+    // agreement — nobody bills a customer two days for Saturday 10:00 to Sunday 10:00.
+    expect(hireDays('2026-10-24T10:00:00+01:00', '2026-10-25T10:00:00+00:00')).toBe(1);
     expect(hireDays('2026-10-24T10:00:00+01:00', '2026-10-25T09:00:00+00:00')).toBe(1);
+    expect(hireDays('2026-10-24T10:00:00+01:00', '2026-10-25T10:01:00+00:00')).toBe(2);
+    // 20 Oct 10:00 BST → 30 Oct 10:00 GMT: 241 real hours, 10 days on the agreement (was billed as 11).
+    expect(hireDays('2026-10-20T10:00:00+01:00', '2026-10-30T10:00:00+00:00')).toBe(10);
+    // March: 27 Mar 10:00 GMT → 30 Mar 10:00 BST is 71 real hours, 3 days.
+    expect(hireDays('2026-03-27T10:00:00+00:00', '2026-03-30T10:00:00+01:00')).toBe(3);
+  });
+  it('a 10-day hire spanning the October change at £49.80 bills £498.00 net, not £547.80', () => {
+    const r = calculateHire(mkHire({ startAt: '2026-10-20T10:00:00+01:00' }), '2026-10-30T10:00:00+00:00');
+    expect(r.days).toBe(10);
+    expect(r.hirePence).toBe(49800);
+    expect(r.grossPence).toBe(59760);
   });
 });
 

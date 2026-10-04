@@ -60,7 +60,7 @@ export function listLedger(db: Db, claimId: Id, filter: ListLedgerFilter = {}): 
     .select()
     .from(ledgerEntries)
     .where(and(...where))
-    .orderBy(asc(ledgerEntries.date), asc(ledgerEntries.createdAt))
+    .orderBy(asc(ledgerEntries.date), asc(ledgerEntries.createdAt), asc(sql`rowid`))
     .all();
   return rows.map(toEntry);
 }

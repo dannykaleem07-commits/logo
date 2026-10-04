@@ -260,7 +260,7 @@
     "title": "Insurers settle within one calendar month of dispatch of a clean Payment Pack to the correct handling centre",
     "principle": "Insurers settle the CHO's claim within one calendar month from the date a clean Payment Pack is dispatched to the correct handling centre. The clock runs from dispatch, not receipt, but only if the pack is clean and goes to the right centre (hence 4.2). For a non-subscriber this is the industry-benchmark payment period to quote in chasers, not a contractual right.",
     "text": "Insurers will settle Credit Hire Organisations' (CHOs') claims within one calendar month from the date of dispatch of a clean Payment Pack to the correct handling centre.",
-    "tags": ["gta", "6.7", "payment", "one calendar month", "clean pack", "handling centre", "clock", "debtor days"],
+    "tags": ["gta", "6.7", "payment", "one calendar month", "clean pack", "handling centre", "clock", "debtor days", "how long to pay", "settlement period", "pay within one month", "payment pack"],
     "topics": ["gta", "credit_hire", "interest"],
     "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
     "verification": {
@@ -279,7 +279,7 @@
     "title": "Late payment additions for hires from 16 March 2026: 0% to day 30, 10% days 31-60, 20% from day 61",
     "principle": "For hires starting on or after 16 March 2026, failure to settle within the 6.7 period and subsequent one-month periods attracts late-payment additions to the total invoice: nil up to 30 days, 10% between 31 and 60 days, and 20% from day 61 onwards, counted from submission of a clean Payment Pack (as defined in 6.17). Subscriber-only entitlement; CCGUK may cite the figures only as an industry benchmark (see 2.7(j)) and must not present them as a legal right.",
     "text": "For hires which start on or after 16 March 2026, failure to settle within the period specified in paragraph 6.7 and subsequent one month periods will result in late payment additions to the total invoice.",
-    "tags": ["gta", "6.8.6", "late payment", "10%", "20%", "day 31", "day 61", "16 March 2026", "benchmark"],
+    "tags": ["gta", "6.8.6", "late payment", "10%", "20%", "day 31", "day 61", "16 March 2026", "benchmark", "payment pack", "late payment additions", "pay", "settlement period"],
     "topics": ["gta", "credit_hire", "interest"],
     "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
     "verification": {

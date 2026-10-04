@@ -1,0 +1,608 @@
+[
+  {
+    "id": "giles-v-thompson-1994",
+    "type": "case",
+    "citation": "Giles v Thompson [1994] 1 AC 142 (HL)",
+    "title": "Giles v Thompson; Devlin v Baslington",
+    "principle": "The House of Lords (Lord Mustill) held that credit hire arrangements, under which a hire company supplies a replacement car on credit and pursues the charges against the at-fault driver, are not champertous or contrary to public policy, and that the hire charges are recoverable as damages for loss of use. CCGUK relies on it as the foundation of recoverability whenever an insurer attacks the credit hire arrangement itself rather than need, period or rate.",
+    "tags": ["credit hire", "champerty", "maintenance", "public policy", "recoverability", "House of Lords", "Lord Mustill"],
+    "topics": ["credit_hire", "enforceability", "loss_of_use"],
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "Not fetched: bailii.org, caselaw.nationalarchives.gov.uk and legislation.gov.uk are all blocked by the session egress proxy (CONNECT 403). Report citation [1994] 1 AC 142 and the champerty holding were confirmed from search-engine snippets of later BAILII judgments quoting it (e.g. Clark v Tull [2002] EWCA Civ 510; Tescher [2025] EWCA Civ 733: 'the validity of the scheme was upheld'). No BAILII URL for the 1993 HL judgment surfaced, so none is recorded; a human should locate it on BAILII (UKHL 1993) before citing a link.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "dimond-v-lovell-2000",
+    "type": "case",
+    "citation": "Dimond v Lovell [2000] UKHL 27; [2002] 1 AC 384",
+    "title": "Dimond v Lovell",
+    "principle": "A credit hire agreement that is a regulated consumer credit agreement but is improperly executed (missing prescribed terms) is unenforceable against the hirer under the Consumer Credit Act 1974, so the hirer has suffered no loss and recovers nothing; the hire company has no unjust enrichment claim either. The House also held that a claimant who could have hired without credit recovers only the basic (spot) hire rate, not the extra benefits bundled into credit hire. CCGUK uses it as the reason the hire agreement must be exempt (RAO art 60F) or fully compliant, and as the baseline that the full rate depends on impecuniosity.",
+    "tags": ["credit hire", "Consumer Credit Act 1974", "improperly executed", "unenforceable", "basic hire rate", "spot rate", "no loss", "House of Lords"],
+    "topics": ["credit_hire", "enforceability", "bhr"],
+    "url": "https://www.bailii.org/uk/cases/UKHL/2000/27.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/uk/cases/UKHL/2000/27.html",
+      "sourceNote": "Not fetched (egress proxy blocks bailii.org). Search-engine listing of the BAILII page titled 'Dimond v. Lovell [2000] UKHL 27; [2000] 2 All ER 897; [2000] 2 WLR 1121 (11th May, 2000)' confirmed the neutral citation; snippet: the agreement 'did not contain the particulars that the Act required... unenforceable' and 'since Mrs Dimond had had the use of a car at no cost to herself she had suffered no loss'. [2002] 1 AC 384 report cite from the blueprint, not seen.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "burdis-v-livsey-clark-v-ardington-2002",
+    "type": "case",
+    "citation": "Clark v Tull (t/a Ardington Electrical Services); Burdis v Livsey; Lagden v O'Connor and others [2002] EWCA Civ 510; [2003] QB 36",
+    "title": "Burdis v Livsey (conjoined with Clark v Ardington Electrical Services)",
+    "principle": "Conjoined Court of Appeal test cases on credit hire and credit repair after Dimond: agreements drafted to fall within the Consumer Credit Act exemption were held enforceable, the reasonable cost of repair is recoverable as the measure of the diminution in value whoever actually funded the repair, and an impecunious claimant may recover the credit hire rate (later affirmed in Lagden v O'Connor). CCGUK uses it for credit-repair recoverability and exemption drafting; 'Clark v Ardington' and 'Burdis v Livsey' are the same judgment.",
+    "tags": ["credit hire", "credit repair", "Consumer Credit Act exemption", "diminution in value", "cost of repair", "impecuniosity", "Clark v Ardington", "test cases"],
+    "topics": ["credit_hire", "repair", "enforceability", "impecuniosity"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2002/510.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2002/510.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of the BAILII page 'Clark v Tull (t/a Ardington Electrical Services) [2002] EWCA Civ 510 (1st May, 2002)' confirmed the citation and that it was 'multiple consolidated appeals, including one between Wendy Burdis (Claimant/Appellant) and Eric Livsey'. The holdings summarised above are from working knowledge and should be checked against the judgment.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "lagden-v-oconnor-2003",
+    "type": "case",
+    "citation": "Lagden v O'Connor [2003] UKHL 64; [2004] 1 AC 1067",
+    "title": "Lagden v O'Connor",
+    "principle": "An impecunious claimant, meaning one who cannot pay spot-rate hire charges without making sacrifices he could not reasonably be expected to make, recovers the full credit hire charges because credit hire was his only realistic way of mitigating the loss of use caused by the defendant. This is the gateway to full-rate recovery; CCGUK must evidence impecuniosity (statement of means, bank statements, available credit) from sign-up rather than assert it.",
+    "tags": ["credit hire", "impecuniosity", "full credit hire rate", "mitigation", "Helphire", "House of Lords"],
+    "topics": ["credit_hire", "impecuniosity", "bhr", "mitigation"],
+    "url": "https://www.bailii.org/uk/cases/UKHL/2003/64.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/uk/cases/UKHL/2003/64.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of the BAILII page 'Lagden v. O'Connor [2003] UKHL 64 (04 December 2003)' confirmed the citation; snippet: impecuniosity 'signifies inability to pay car hire charges without making sacrifices the plaintiff could not reasonably be expected to make' and the damages 'should include the reasonable costs of a credit hire company'.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "bee-v-jenson-2007",
+    "type": "case",
+    "citation": "Bee v Jenson [2007] EWCA Civ 923; [2007] 4 All ER 791 (first instance [2006] EWHC 3359 (Comm))",
+    "title": "Bee v Jenson",
+    "principle": "A claimant whose replacement car was supplied under his own motor/legal-expenses insurance arrangements (DAS/Helphire) still recovers the reasonable cost of hire from the tortfeasor; a claimant's insurance arrangements are irrelevant to the defendant's liability (Bradburn principle). CCGUK uses it to answer the 'claimant paid nothing / car was insurer-provided' defence; recovery is of the reasonable hire cost, so rate evidence still matters.",
+    "tags": ["credit hire", "insurance arrangements irrelevant", "Bradburn", "res inter alios acta", "legal expenses insurance", "Helphire", "DAS"],
+    "topics": ["credit_hire", "bhr", "loss_of_use"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2007/923.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2007/923.html",
+      "sourceNote": "Not fetched (egress proxy). Search snippets (BAILII index and later judgments) confirmed the facts (hire 21 days 12 Mar-1 Apr 2004 at £25.74 + VAT via DAS/Helphire; RSA insurer) and Longmore LJ's statement that 'a claimant's insurance arrangements are irrelevant and cannot be prayed in aid to reduce their liabilities'. First-instance listing 'Bee v Jenson [2006] EWHC 3359 (Comm) (21 December 2006)' seen. The CA URL follows the BAILII pattern and was not itself displayed in results.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "copley-v-lawn-2009",
+    "type": "case",
+    "citation": "Copley v Lawn; Maden v Haller [2009] EWCA Civ 580; [2010] 1 All ER (Comm) 890",
+    "title": "Copley v Lawn (with Maden v Haller)",
+    "principle": "A claimant who declines or ignores the at-fault insurer's offer of a 'free' replacement car is not automatically in breach of the duty to mitigate: the offer must make its terms and cost clear enough for the claimant to evaluate it, and even where refusal is unreasonable the claimant still recovers what the car would have cost the insurer, not nil. CCGUK must log every intervention offer, reply in writing with reasons within one working day, and expect the insurer to argue that damages are capped at its own cost.",
+    "tags": ["credit hire", "intervention", "offer of replacement vehicle", "mitigation", "KGM", "Helphire", "cap at insurer cost"],
+    "topics": ["credit_hire", "intervention", "mitigation"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2009/580.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2009/580.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of the BAILII page 'Copley v Lawn & Ors [2009] EWCA Civ 580 (17 June 2009)' confirmed the citation; snippet confirmed the two cases (Copley: Helphire £39.90/day, KGM offer same day; Maden: KGM offer within 24 hours ignored, Helphire £156.80/day) and the court's scepticism that a claimant must take further mitigation steps beyond not hiring above market rate.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "beechwood-birmingham-v-hoyer-2010",
+    "type": "case",
+    "citation": "Beechwood Birmingham Ltd v Hoyer Group UK Ltd [2010] EWCA Civ 647; [2011] QB 357",
+    "title": "Beechwood Birmingham Ltd v Hoyer Group UK Ltd",
+    "principle": "Where a business with a pool of vehicles loses the use of one that was not revenue-earning and had spare capacity, loss of use is compensated by general damages measured by interest on the capital tied up and depreciation over the repair period, not by a notional hire rate; Lord Scott's hire-rate dictum in Lagden is confined to private motorists who actually hire. CCGUK uses it for fleet and business loss-of-use claims: hire is only recoverable if the business genuinely had no spare vehicle, otherwise claim interest-and-depreciation damages.",
+    "tags": ["loss of use", "business claimant", "fleet", "spare vehicle", "general damages", "interest on capital", "depreciation", "Sir Mark Potter P"],
+    "topics": ["loss_of_use", "need", "credit_hire"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2010/647.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2010/647.html",
+      "sourceNote": "Not fetched (egress proxy). Search snippets from BAILII indices and later judgments (Armstead [2024] UKSC 6; West Midlands Travel v Aviva [2013] EWCA Civ 887) confirmed the citation, that the claimant was 'a substantial car dealer', and that 'reasonable compensation was limited to an award on the interest and capital employed and any depreciation during the period of repair'. Blueprint gloss ('a business with a spare fleet still recovers loss-of-use damages') is consistent. URL follows the BAILII pattern; not displayed in results.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "w-v-veolia-2011",
+    "type": "case",
+    "citation": "W v Veolia Environmental Services (UK) plc [2011] EWHC 2020 (QB); [2012] 1 All ER (Comm) 667",
+    "title": "W v Veolia Environmental Services (UK) plc",
+    "principle": "A credit hire agreement signed at the claimant's home when the car was delivered, without the written notice of cancellation rights required by the Cancellation of Contracts made in a Consumer's Home or Place of Work etc. Regulations 2008 (reg 7), was unenforceable against the hirer, so the hire charges were not a recoverable loss. The 2008 Regulations have been replaced by the Consumer Contracts Regulations 2013, whose mechanism differs (extended cancellation period and no liability for services supplied without the required information or an express request), but the commercial lesson is identical: CCGUK must give the Schedule 2 information, the Schedule 3 form and obtain an express request to start.",
+    "tags": ["credit hire", "cancellation regulations 2008", "doorstep", "unenforceable", "Accident Exchange", "enforceability", "W v Veolia risk"],
+    "topics": ["credit_hire", "enforceability"],
+    "url": "https://www.bailii.org/ew/cases/EWHC/QB/2011/2020.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWHC/QB/2011/2020.html",
+      "sourceNote": "Not fetched (egress proxy). No BAILII listing for this case surfaced in search; the facts (Accident Exchange agreement signed at home on delivery; defendant argued the agreement was unenforceable for want of the reg 7(2) notice) were confirmed from the snippet of Salat v Barutis [2013] EWCA Civ 1499 which discusses it. The URL follows the BAILII pattern and is unconfirmed; the outcome summarised is from the blueprint and working knowledge.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "pattni-v-first-leicester-buses-bent-2011",
+    "type": "case",
+    "citation": "Pattni v First Leicester Buses Ltd; Bent v Highways and Utilities Construction Ltd [2011] EWCA Civ 1384; [2012] RTR 17; [2012] Lloyd's Rep IR 577",
+    "title": "Pattni v First Leicester Buses Ltd; Bent v Highways and Utilities Construction Ltd (No 2)",
+    "principle": "In one conjoined judgment (Aikens LJ, 24 November 2011) the Court of Appeal set out how a judge should find the basic hire rate: identify what the claimant would reasonably have paid to hire a comparable vehicle in the locality for the period actually needed, using the best available evidence of mainstream rates, and make a reasoned assessment rather than reject imperfect evidence; the credit element is stripped out and the rate should reflect the actual length of hire. Paragraph 73 also addresses loss-of-use claims. CCGUK uses it to structure its own contemporaneous rate evidence (vehicle class, locality, date, period) and to attack insurers' spot-rate exhibits built from unrepresentative quotes.",
+    "tags": ["credit hire", "basic hire rate", "BHR evidence", "comparable vehicle", "locality", "Aikens LJ", "Bent No 2", "judicial assessment", "loss of use para 73"],
+    "topics": ["credit_hire", "bhr", "loss_of_use"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2011/1384.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2011/1384.html",
+      "sourceNote": "Not fetched (egress proxy). Search snippets from BAILII indices and later judgments (Conlon v RSA [2015] EWCA Civ 92; Ali v HSF [2024] EWCA Civ 1479) confirmed 'Pattni v First Leicester Buses Ltd [2011] EWCA Civ 1384, [2012] RTR 17', judgment date 24 November 2011, and Aikens LJ's loss-of-use guidance at [73]. That Bent is conjoined is confirmed by the blueprint via Stevens v Equity [2015] EWCA Civ 93 at [2]; the [2012] Lloyd's Rep IR 577 cite is from the blueprint, not seen. URL follows the BAILII pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "sayce-v-tnt-2011",
+    "type": "case",
+    "citation": "Sayce v TNT (UK) Ltd [2011] EWCA Civ 1583; [2012] 1 WLR 1261",
+    "title": "Sayce v TNT (UK) Ltd",
+    "principle": "Where a claimant unreasonably refused the defendant's offer of a free replacement car and instead hired on credit, the Court of Appeal held itself bound by Copley v Lawn: damages are the cost the defendant would have incurred in providing the car (agreed at £14 a day, £868 in total), not nil; the court declined TNT's invitation to depart from Copley. CCGUK uses it with Copley on intervention offers. CORRECTION: the blueprint's gloss ('unenforceable hire agreement means no recoverable hire loss') describes a different line of authority (Dimond, W v Veolia, Salat v Barutis); Sayce is a mitigation/intervention-offer case.",
+    "tags": ["credit hire", "intervention", "offer of replacement vehicle", "mitigation", "Copley v Lawn followed", "blueprint correction"],
+    "topics": ["credit_hire", "intervention", "mitigation"],
+    "url": "https://caselaw.nationalarchives.gov.uk/ewca/civ/2011/1583",
+    "verification": {
+      "status": "failed",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2011/1583.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'Sayce v TNT (UK) Ltd [2011] EWCA Civ 1583 (19 December 2011)' and a Find Case Law listing confirmed the citation. Snippet: 'Miss Sayce did not accept TNT's offer of a free replacement car... Judge Harris accepted that even if Miss Sayce had acted unreasonably in failing to accept TNT's offer, she was entitled to recover damages equal to the cost TNT would have incurred... £14 a day, or £868 in total.' This contradicts the blueprint's principle (unenforceable agreement / no loss), so the entry is marked failed and the principle corrected.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "opoku-v-tintas-2013",
+    "type": "case",
+    "citation": "Opoku v Tintas [2013] EWCA Civ 1299",
+    "title": "Opoku v Tintas",
+    "principle": "An impecunious claimant must still mitigate: the Court of Appeal upheld a finding that, after a reasonable time, Mr Opoku (hire of some £130,000 and £19,600 recovery and storage after a rear-end shunt) should have funded the repair himself by saving modest sums and using his credit-card facility, so hire and storage were cut off at that point; a claimant's available credit facilities are relevant to what he can reasonably be expected to fund. CCGUK uses it on period: impecuniosity justifies the rate but not an open-ended hire where the client could have got the car repaired sooner. CORRECTION: the blueprint attributed to this case the principle that failing to respond to an insurer's offer is a failure to mitigate; that is Copley v Lawn / Sayce v TNT, not Opoku.",
+    "tags": ["credit hire", "period", "mitigation", "impecuniosity", "credit card facility", "storage", "repair funding", "blueprint correction", "storage period", "storage cut off"],
+    "topics": ["credit_hire", "period", "mitigation", "impecuniosity"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2013/1299.html",
+    "verification": {
+      "status": "failed",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2013/1299.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'Opoku v Tintas [2013] EWCA Civ 1299 (05 July 2013)' confirmed the citation; snippet: 'Mr Opoku failed to mitigate his loss by not having his car repaired sooner... could have obtained the means to have the car repaired by saving small sums regularly and/or using his credit card facility... total cost of car hire... some £130,000... £19,600 for recovery and storage'. The blueprint's stated principle (insurer offer) is contradicted, hence failed; principle corrected.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "coles-v-hetherton-2013",
+    "type": "case",
+    "citation": "Coles v Hetherton [2013] EWCA Civ 1704; [2015] 1 WLR 160",
+    "title": "Coles and others v Hetherton and others",
+    "principle": "Physical damage to a vehicle is itself the loss; the measure is the diminution in value, which is normally represented by the reasonable cost of repair assessed objectively, and the claimant can recover that reasonable cost even where his own insurer arranged and paid for the repairs under its own commercial arrangements. CCGUK uses it as the basis for engineer-approved repair estimates and to resist insurers' attempts to limit repair recovery to what a subrogated insurer actually paid.",
+    "tags": ["repair", "measure of loss", "diminution in value", "reasonable cost of repair", "subrogated insurer", "RSA", "engineer estimate"],
+    "topics": ["repair", "pav"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2013/1704.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2013/1704.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'Coles & Ors v Hetherton & Ors [2013] EWCA Civ 1704 (20 December 2013)' confirmed the citation; snippet (via Hill v Generali [2021] EWHC 3381 (QB)): 'the damage to a car is the loss and the owner is entitled to sue for the diminution in value of the car'. Report cite from working knowledge.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "stevens-v-equity-syndicate-2015",
+    "type": "case",
+    "citation": "Stevens v Equity Syndicate Management Ltd [2015] EWCA Civ 93; [2015] 4 WLR 24",
+    "title": "Stevens v Equity Syndicate Management Ltd",
+    "principle": "Kitchin LJ held that the basic hire rate is the lowest reasonable rate quoted by a mainstream supplier (or, if none, a local reputable supplier) for the kind of vehicle actually hired, in the claimant's locality at the time; the judge should identify that rate rather than average the quotes, and the difference from the credit hire charge represents the irrecoverable benefits that are stripped out. CCGUK should price its files on the assumption that a non-impecunious client recovers only the lowest reasonable mainstream rate, and should collect its own dated local quotes.",
+    "tags": ["credit hire", "basic hire rate", "lowest reasonable rate", "mainstream supplier", "locality", "Kitchin LJ", "strip out benefits"],
+    "topics": ["credit_hire", "bhr"],
+    "url": "https://caselaw.nationalarchives.gov.uk/ewca/civ/2015/93",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://caselaw.nationalarchives.gov.uk/ewca/civ/2015/93",
+      "sourceNote": "Not fetched (egress proxy). A search-engine listing of the Find Case Law page 'Stevens v Equity Syndicate Management Ltd' at ewca/civ/2015/93 confirmed the citation; the first-instance judgment is listed at caselaw.nationalarchives.gov.uk/ewhc/qb/2014/689. A Brodies summary snippet confirmed 'the basic hire rate is the lowest reasonable rate... from a mainstream supplier or if none is available, then hire rates from a local reputable supplier'. Conlon v RSA [2015] EWCA Civ 92 (26 Feb 2015) was heard with it.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "Open Justice Licence"
+  },
+  {
+    "id": "mcbride-v-uk-insurance-clayton-v-eui-2017",
+    "type": "case",
+    "citation": "McBride v UK Insurance Ltd; Clayton v EUI Ltd [2017] EWCA Civ 144; [2017] RTR 27",
+    "title": "McBride v UK Insurance Ltd (with Clayton v EUI Ltd)",
+    "principle": "Conjoined appeals refining Stevens: where the comparable basic hire rate quotes carry an excess, the court may add the reasonable cost of a stand-alone excess-elimination product to arrive at the recoverable rate for a nil-excess credit hire, and where only 7-day rates are available for a longer hire the judge may reasonably use them as the best evidence. CCGUK should treat the nil-excess element as a separate, evidenced head (cost of excess cover) and obtain rate evidence matched to the actual hire length.",
+    "tags": ["credit hire", "basic hire rate", "nil excess", "excess waiver", "7-day rates", "Clayton v EUI", "Flaux LJ"],
+    "topics": ["credit_hire", "bhr"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2017/144.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2017/144.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'McBride v UK Insurance Ltd (Rev 1) [2017] EWCA Civ 144 (15 March 2017)' confirmed the citation and date. That Clayton v EUI Ltd is the conjoined appeal, and the nil-excess / 7-day-rate holdings, are from working knowledge and the blueprint; check against the judgment.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "irving-v-morgan-sindall-2018",
+    "type": "case",
+    "citation": "Irving v Morgan Sindall plc [2018] EWHC 1147 (QB)",
+    "title": "Irving v Morgan Sindall plc",
+    "principle": "Turner J (15 May 2018) decided two questions: a claimant who remains contractually liable for credit hire charges suffers a real loss even if assured she will never have to pay out of her own pocket, so the 'no loss' defence fails; and impecuniosity does not require destitution: the test is whether the claimant could reasonably have afforded spot-rate hire without unreasonable sacrifice (here a Ford Ka written off, hire of over four months and £20,109.60 while awaiting the insurer's cheque). CCGUK uses it against 'she will never pay' arguments and to frame the impecuniosity threshold. CORRECTION: the blueprint's gloss ('BHR assessed on a common-sense basis from imperfect evidence') better describes Bunting v Zurich; Irving is about the no-loss defence and the impecuniosity threshold.",
+    "tags": ["credit hire", "impecuniosity", "no loss defence", "assurance never to pay", "Turner J", "total loss hire period", "blueprint correction"],
+    "topics": ["credit_hire", "impecuniosity", "period"],
+    "url": "https://caselaw.nationalarchives.gov.uk/ewhc/qb/2018/1147",
+    "verification": {
+      "status": "failed",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWHC/QB/2018/1147.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listings of BAILII 'Irving v Morgan Sindall Plc [2018] EWHC 1147 (QB) (15 May 2018)' and the Find Case Law page confirmed the citation. Snippet: 'two main questions: whether a claimant can recover credit hire charges when assured she will never have to pay outstanding sums out of her own pocket, and how badly off a claimant has to be to satisfy the test of impecuniosity'; Ford Ka written off, hire over four months, £20,109.60. This does not match the blueprint's stated principle, so marked failed and corrected.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "hussain-v-eui-2019",
+    "type": "case",
+    "citation": "Hussain v EUI Ltd [2019] EWHC 2647 (QB)",
+    "title": "Hussain v EUI Ltd",
+    "principle": "Pepperall J (10 October 2019) gave guidance on credit hire claims by self-employed taxi and private hire drivers: the ordinary measure of loss while the plated vehicle is off the road is the lost profit, and where the cost of hiring a replacement plated vehicle is about the same as the avoided lost profit the court will not count the pennies, but where hire significantly exceeds the lost profit damages are ordinarily limited to the lost profit unless the claimant proves a reasonable need for the vehicle for other purposes (such as private or family use). CCGUK must gather profit evidence and non-business need evidence for every PHV client before hiring a plated replacement. CORRECTION: the blueprint described this case as 'comparators for BHR evidence'; its real significance is the lost-profit measure for taxi drivers.",
+    "tags": ["credit hire", "taxi", "private hire", "plated vehicle", "loss of profit", "need", "Pepperall J", "blueprint correction"],
+    "topics": ["credit_hire", "need", "loss_of_use", "bhr"],
+    "url": "https://www.bailii.org/ew/cases/EWHC/QB/2019/2647.html",
+    "verification": {
+      "status": "failed",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWHC/QB/2019/2647.html",
+      "sourceNote": "Not fetched (egress proxy; the approved judgment PDF hosted at credithirebarrister.com was also blocked). Secondary snippets (Park Square Barristers, Parklane Plowden, casemine, vLex) agree: Pepperall J, 10 Oct 2019; taxi driver; 18 days' hire of a Mercedes E220 at £6,596.50 after repairs of £1,527.74; judge limited recovery to £423 lost profit; guidance that where hire 'significantly exceeds the avoided loss of profit, the court will ordinarily limit damages to the lost profit'. The blueprint's principle is materially mis-described, so the entry is marked failed and corrected. BAILII URL follows the standard pattern; not displayed in results.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "irani-v-duchon-2019",
+    "type": "case",
+    "citation": "Irani v Duchon [2019] EWCA Civ 1846",
+    "title": "Irani v Duchon",
+    "principle": "NOT A CREDIT HIRE AUTHORITY. This is a personal injury appeal (judgment 6 November 2019) about future loss of earnings: the Court of Appeal considered when a trial judge may make a lump-sum Blamire award and a Smith v Manchester award instead of a multiplier/multiplicand calculation, after a 2013 road accident in which liability was not in issue and damages of £406,688 were awarded. It says nothing about basic hire rates or comparator vehicle classes and must not be cited for them; CCGUK refers injury claims out in any event.",
+    "tags": ["personal injury", "Blamire award", "Smith v Manchester", "loss of earnings", "not credit hire", "do not cite for BHR", "blueprint correction"],
+    "topics": ["injury"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2019/1846.html",
+    "verification": {
+      "status": "failed",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2019/1846.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'Irani v Duchon [2019] EWCA Civ 1846 (06 November 2019)' and judiciary.uk live-hearing page 'Irani (Claimant) v Duchon (Defendant)' confirmed the citation and parties; snippet: 'claim for damages for personal injury arising out of a road traffic accident on 23 July 2013... £150,000 of the award of damages was a Blamire Award in respect of the Claimant's future loss of earnings'. The blueprint's principle ('BHR comparators and the vehicle class') is contradicted: the case is not about credit hire. The intended authority may have been Pattni/Bent or Stevens v Equity.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "diriye-v-bojaj-2020",
+    "type": "case",
+    "citation": "Diriye v Bojaj [2020] EWCA Civ 1400; [2021] 1 WLR 1277",
+    "title": "Diriye v Bojaj and another",
+    "principle": "A claimant who relies on impecuniosity to justify credit hire rates must plead it properly and prove it with disclosure (wage slips, bank and credit-card statements); a bare assertion in the particulars is not enough, and failure to comply with an unless order to particularise and disclose can debar the claimant from relying on impecuniosity at all (relief from sanctions was refused). The appeal also settled that CPR 6.26 deemed service applies to documents other than the claim form. CCGUK collects the statement of means and three months of statements at sign-up so the impecuniosity case is ready before any defence is served.",
+    "tags": ["credit hire", "impecuniosity", "plead and prove", "unless order", "relief from sanctions", "disclosure", "deemed service CPR 6.26"],
+    "topics": ["credit_hire", "impecuniosity"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2020/1400.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2020/1400.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'Diriye v Bojaj & Anor [2020] EWCA Civ 1400 (Hearing 15 October 2020)' confirmed the citation; snippet: credit hire of £12,048.29; 'a claimant who needs to rely on impecuniousness in order to justify the amount of his claim should plead and prove it'; unless order for a Reply with wage slips, bank statements and credit card statements; relief from sanctions refused and claimant debarred. Report cite from working knowledge.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "mattocks-v-mann-1993",
+    "type": "case",
+    "citation": "Mattocks v Mann [1993] RTR 13 (CA)",
+    "title": "Mattocks v Mann",
+    "principle": "The Court of Appeal held that the reasonable hire period was not cut short because repairs were delayed while the claimant waited for her insurers to pay the repairer: in modern conditions substantial repair bills are expected to be funded by insurers, and absent a supervening event or a specific failure to mitigate by the claimant (or someone for whom she is responsible) the delay remains the tortfeasor's responsibility. CCGUK uses it on period disputes: keep a dated chronology and require the insurer to identify a specific failure to mitigate rather than merely pointing at the length of hire.",
+    "tags": ["credit hire", "period", "delay in repair", "insurer payment", "mitigation", "burden on defendant", "chronology", "repair delay", "insurer delay"],
+    "topics": ["credit_hire", "period", "mitigation"],
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "Pre-neutral-citation Court of Appeal decision (1992), reported at [1993] RTR 13; no BAILII or Find Case Law page surfaced and none could be fetched (egress proxy). Principle confirmed only from secondary summaries (Guildhall Chambers credit hire workshop 2010; The Barrister Group 'Credit Hire and Period of Hire'; Pump Court Chambers guide) quoting 'the source of payment of that cost will be the insurers'. No URL recorded.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "darbishire-v-warran-1963",
+    "type": "case",
+    "citation": "Darbishire v Warran [1963] 1 WLR 1067; [1963] EWCA Civ 2 (CA)",
+    "title": "Darbishire v Warran",
+    "principle": "Where the cost of repairing a damaged vehicle greatly exceeds its market value, a claimant who repairs it anyway fails to mitigate and recovers only the pre-accident market value (credit being given for sums received) plus reasonable hire while a replacement is sourced; the 1951 Lea-Francis was repaired for £192 against a market value of about £85. This is the uneconomic-repair rule that underpins CCGUK's total-loss assessment and PAV engine: the ceiling on a repair claim is the cost of an equivalent replacement.",
+    "tags": ["total loss", "uneconomic repair", "market value", "mitigation", "measure of damages", "pre-accident value"],
+    "topics": ["pav", "repair", "mitigation", "salvage"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/1963/2.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.casemine.com/judgement/uk/5a8ff87960d03e7f57ec108b",
+      "sourceNote": "Not fetched (egress proxy blocks bailii.org, casemine and vLex). Search snippets from casemine ('Darbishire v Warran, [1963] EWCA Civ 2', 30 July 1963) and swarb confirmed the report cite and facts (£192 repair vs ~£85 value; damages limited to market value). The BAILII URL is inferred from the [1963] EWCA Civ 2 neutral citation and was not displayed in results.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "zurich-insurance-v-umerji-2014",
+    "type": "case",
+    "citation": "Zurich Insurance plc v Umerji [2014] EWCA Civ 357",
+    "title": "Zurich Insurance plc v Umerji",
+    "principle": "Underhill LJ (25 March 2014) held that reasonableness of hire is assessed by need, rate and duration, and that a claimant who relies on impecuniosity must plead and prove it (para 37); a claimant debarred from relying on impecuniosity after failing to give disclosure must be treated as able to fund a replacement for his written-off car, so a 591-day hire costing about £95,130 was cut to a reasonable period after he knew it was a write-off. On rate, because the insurer adduced no basic hire rate evidence the credit hire rate was recoverable for the allowed period. CCGUK uses it both ways: prove impecuniosity properly, and hold insurers to their burden of producing BHR evidence.",
+    "tags": ["credit hire", "impecuniosity", "plead and prove", "debarring order", "period", "total loss", "591 days", "BHR evidence burden", "Underhill LJ"],
+    "topics": ["credit_hire", "impecuniosity", "period", "bhr"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2014/357.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2014/357.html",
+      "sourceNote": "Not fetched (egress proxy). Search snippets from BAILII indices and from Diriye v Bojaj [2020] EWCA Civ 1400 confirmed the citation, date (25 March 2014), the 'need, rate and duration' framework and Underhill LJ's para 37 ('clearly right that a claimant who needs to rely on his impecuniousness... should plead and prove it'). The 591-day/£95,130 figures are from the blueprint and the BHR-burden point from working knowledge. URL follows the BAILII pattern; not displayed in results.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "kindertons-v-murtagh-2024",
+    "type": "case",
+    "citation": "Kindertons Ltd v Murtagh and esure Services Ltd [2024] EWHC 471 (KB)",
+    "title": "Kindertons Ltd v Murtagh and another",
+    "principle": "Turner J (5 March 2024) upheld a non-party costs order against a credit hire company after the claimant's personal injury and hire claim failed for fundamental dishonesty and she disappeared leaving the costs order unpaid: the company had funded the hire on deferred terms, exercised control over the litigation and stood to benefit from it, so it was just to make it pay the insurer's costs notwithstanding QOCS. CCGUK treats this as a direct costs exposure: weak or dishonest-risk files should not run on credit hire, and acceptance scoring must be strict.",
+    "tags": ["credit hire", "non-party costs order", "NPCO", "QOCS", "fundamental dishonesty", "control of litigation", "esure", "Turner J"],
+    "topics": ["costs", "non_party_costs", "credit_hire", "dishonesty"],
+    "url": "https://www.bailii.org/ew/cases/EWHC/KB/2024/471.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWHC/KB/2024/471.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'Kindertons Ltd v Murtagh & Anor [2024] EWHC 471 (KB) (05 March 2024)' confirmed the citation and date; Law Gazette, Parklane Plowden and Civil Litigation Brief snippets agree Turner J upheld the NPCO after a finding of fundamental dishonesty where the claimant 'disappeared leaving the costs order unpaid'. Upgrades the blueprint's 'checked via secondary source' only to the extent of confirming the citation exists on BAILII.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "tescher-v-daml-axa-v-spectra-2025",
+    "type": "case",
+    "citation": "Tescher v Direct Accident Management Ltd; AXA Insurance UK plc v Spectra Drive Ltd [2025] EWCA Civ 733",
+    "title": "Tescher v Direct Accident Management Ltd (with AXA Insurance UK plc v Spectra Drive Ltd)",
+    "principle": "Birss LJ (with Nicola Davies and Coulson LJJ, 13 June 2025) allowed both insurers' appeals and set out a two-stage approach to non-party costs orders against credit hire companies when a QOCS-protected claim fails: first, is the jurisdiction engaged because, as a matter of practical and economic reality, the credit hire company was the real party or real beneficiary of the litigation (where hire charges dwarf the other heads, the litigation is for all practical purposes the hire company's); second, what order is just, including how costs are attributed between heads. A 100% order was made against DAML and a 65% order against Spectra was reinstated. CCGUK's acceptance engine measures the hire-to-other-heads ratio as a costs-exposure signal. CAUTION: a further appeal to the UK Supreme Court appears to have been lodged (UKSC 2025/0116); check its status before relying on the Court of Appeal's test.",
+    "tags": ["credit hire", "non-party costs order", "NPCO", "QOCS", "two-stage test", "real party", "real beneficiary", "for all practical purposes", "Birss LJ", "Supreme Court pending"],
+    "topics": ["costs", "non_party_costs", "credit_hire"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2025/733.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2025/733.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'Tescher v Direct Accident Management Ltd [2025] EWCA Civ 733 (13 June 2025)' confirmed the citation and date; Park Square, DWF, casemine commentary and Halcyon Chambers snippets agree on Birss LJ's two-stage test, the 'real beneficiary' reasoning, both appeals allowed, 100% order against DAML and 65% against Spectra reinstated. A supremecourt.uk listing 'Tescher (Respondent) v Direct Accident Management Limited (Appellant) - UKSC 2025/0116' surfaced, indicating a pending or decided Supreme Court appeal whose outcome could not be checked.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "mib-v-houston-2025",
+    "type": "case",
+    "citation": "Motor Insurers' Bureau v Houston [2025] EWHC 3178 (KB)",
+    "title": "Motor Insurers' Bureau v Houston",
+    "principle": "Cavanagh J, on appeal from Recorder Brown in the County Court at Birmingham, dismissed the MIB's appeal: a case-management order that debarred the claimant from relying on impecuniosity 'for the purpose of the rate of hire' did not stop him relying on his limited means to justify the length of hire (197 days of a Mercedes GLA from Easidrive at £224.29 a day) or the storage charges, so the full period was recoverable. The scope of a debarring order turns on its precise wording, in contrast to Zurich v Umerji where the claimant was treated as pecunious for all purposes. CCGUK must read every debarring or unless order literally and comply with impecuniosity disclosure in full.",
+    "tags": ["credit hire", "debarring order", "impecuniosity", "rate versus period", "197 days", "storage", "Easidrive", "Cavanagh J", "MIB"],
+    "topics": ["credit_hire", "impecuniosity", "period"],
+    "verification": {
+      "status": "unverified",
+      "sourceNote": "Not fetched (egress proxy). No BAILII or Find Case Law listing surfaced in search results; the citation, judge, facts (197 days, £224.29/day, £1,570.03/week, 15 June-28 Dec 2019) and holding were confirmed only from secondary summaries (LexisNexis UK, 5 Pump Court, Insurance Business UK, Solicitors Journal) which agree with the blueprint. No URL recorded; a human should locate the judgment on Find Case Law (ewhc/kb/2025/3178) and record it.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "summers-v-fairclough-homes-2012",
+    "type": "case",
+    "citation": "Fairclough Homes Ltd v Summers [2012] UKSC 26; [2012] 1 WLR 2004",
+    "title": "Summers v Fairclough Homes Ltd",
+    "principle": "The Supreme Court held that a court has power (CPR 3.4(2)(b) and its inherent jurisdiction) to strike out a grossly and dishonestly exaggerated claim as an abuse of process even after trial, but that doing so where the claimant has a genuine entitlement will very rarely be proportionate; the usual response is costs, interest and contempt or criminal sanctions. Parliament later added the fundamental dishonesty dismissal power for personal injury claims (CJCA 2015 s.57). CCGUK uses it to explain to clients why any inflated head endangers the whole file and to justify the file-exit rule when an account is shown to be false.",
+    "tags": ["dishonesty", "exaggerated claim", "strike out", "abuse of process", "CPR 3.4", "Supreme Court", "fundamental dishonesty precursor"],
+    "topics": ["dishonesty", "costs"],
+    "url": "https://www.bailii.org/uk/cases/UKSC/2012/26.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/uk/cases/UKSC/2012/26.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listings of BAILII 'Fairclough Homes Ltd v Summers [2012] UKSC 26 (27 June 2012)' and supremecourt.uk (UKSC 2010/0212, on appeal from [2010] EWCA Civ 1300) confirmed the citation; snippet: CPR 3.4(2)(b) gives power to strike out as abuse, but 'it is very difficult to think of circumstances in which such a conclusion would be proportionate'.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "singh-v-yaqubi-2013",
+    "type": "case",
+    "citation": "Singh v Yaqubi [2013] EWCA Civ 23; [2013] RTR 24",
+    "title": "Singh v Yaqubi",
+    "principle": "The Court of Appeal (29 January 2013) dismissed a claim for some £92,000 of credit hire of a replacement Rolls-Royce because the business partnership that owned the damaged car had not proved a genuine need for a replacement of that kind, stressing that credit hire claims must be carefully controlled through the doctrine of mitigation and that need is a matter of evidence, especially for a business with access to other vehicles. CCGUK's need gate requires a statement of need describing actual journeys and any other vehicles available before a prestige or any replacement is supplied.",
+    "tags": ["credit hire", "need", "business claimant", "prestige vehicle", "Rolls-Royce", "mitigation", "evidence of need"],
+    "topics": ["credit_hire", "need", "mitigation"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2013/23.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2013/23.html",
+      "sourceNote": "Not fetched (egress proxy). BAILII index snippets confirmed 'Singh v Yaqubi [2013] EWCA Civ 23', judgment 29 January 2013, cited 'for emphasizing the need for careful and proper control of claims by the application of the doctrine of mitigation'. The Rolls-Royce facts and the approximate hire figure are from working knowledge and need checking. URL follows the BAILII pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "salat-v-barutis-2013",
+    "type": "case",
+    "citation": "Salat v Barutis [2013] EWCA Civ 1499; [2014] RTR 10",
+    "title": "Salat v Barutis",
+    "principle": "A credit hire agreement for a replacement motorcycle signed at the claimant's home (BLD, 9 May 2009) without the cancellation notice required by the Cancellation of Contracts made in a Consumer's Home or Place of Work etc. Regulations 2008 was unenforceable against the hirer; the defendant tortfeasor was entitled to take the point, and the court had no discretion to enforce the agreement regardless, so the hire charges were not recoverable (following W v Veolia). Under the current Consumer Contracts Regulations 2013 the consequence is different in form (extended cancellation period and no liability for services supplied without the required information or express request) but the lesson for CCGUK is the same: paperwork failures at the doorstep destroy the hire claim.",
+    "tags": ["credit hire", "cancellation regulations 2008", "doorstep", "unenforceable", "motorcycle", "enforceability", "W v Veolia followed"],
+    "topics": ["credit_hire", "enforceability"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2013/1499.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2013/1499.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'Salat v Barutis [2013] EWCA Civ 1499 (20 November 2013)' confirmed the citation; snippet: District Judge dismissed the claim because 'BLD's failure to comply with the Regulations rendered the credit hire agreement unenforceable against Mr. Salat, who had therefore suffered no loss'; 'the defendant was entitled to look at whether cancellation notices were provided... There is no power in the court to order enforcement nonetheless as a matter of discretion.' The Court of Appeal's disposal should be checked against the judgment.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "sobrany-v-uab-transtira-2016",
+    "type": "case",
+    "citation": "Sobrany v UAB Transtira [2016] EWCA Civ 28; [2016] Lloyd's Rep IR 266",
+    "title": "Sobrany v UAB Transtira",
+    "principle": "The claimant's credit hire charges remained recoverable although he held legal-expenses/after-the-event insurance that would ultimately indemnify him; the Court of Appeal (28 January 2016) treated the insurance as irrelevant between claimant and tortfeasor and held that, where his liability for hire and legal costs exceeded the limit under each of two policies but not their combined limit, he was indemnified under both, so he was not left without a recoverable loss. CCGUK cites it alongside Bee v Jenson when an insurer argues that a client's own insurance or ATE arrangements mean no loss.",
+    "tags": ["credit hire", "legal expenses insurance", "ATE", "indemnity limit", "no loss defence", "res inter alios acta"],
+    "topics": ["credit_hire", "enforceability", "loss_of_use"],
+    "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2016/28.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2016/28.html",
+      "sourceNote": "Not fetched (egress proxy). BAILII index snippets confirmed 'Sobrany v UAB Transtira [2016] EWCA Civ 28 (28 January 2016)' and a later judgment's summary: 'the insured's total liability for hire charges and legal costs exceeded the limit of indemnity under each of the two policies... (but not the combined limit) and it was held that he was entitled to be indemnified in respect of the whole of his loss under the two policies'. The wider no-loss reasoning is from working knowledge. URL follows the BAILII pattern.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "bunting-v-zurich-2020",
+    "type": "case",
+    "citation": "Bunting v Zurich Insurance plc [2020] EWHC 1807 (QB)",
+    "title": "Bunting v Zurich Insurance plc",
+    "principle": "The High Court dismissed a claimant's appeal against an award at the lowest basic hire rate for a prestige replacement (credit hire of £28,551.84 after a June 2015 accident): the claimant was not impecunious, he was entitled to a comparable prestige car but only at the BHR, and his 'nit-picking' attacks on the insurer's rate evidence (a 30-day maximum hire term, no evidence of deposits, no specific availability evidence) failed because courts take a common-sense, broad-brush approach to imperfect rates evidence. CCGUK should expect insurers' BHR evidence to be accepted unless there is a substantive flaw, and should rely on impecuniosity, not evidential quibbles, for full-rate recovery.",
+    "tags": ["credit hire", "basic hire rate", "prestige vehicle", "rates evidence", "common sense approach", "nit-picking", "not impecunious"],
+    "topics": ["credit_hire", "bhr", "impecuniosity"],
+    "url": "https://www.bailii.org/ew/cases/EWHC/QB/2020/1807.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.casemine.com/judgement/uk/5f28ec552c94e03986856f92",
+      "sourceNote": "Not fetched (egress proxy blocks casemine, vLex, Weightmans, 12KBW and The Barrister Group). Secondary snippets agree on the citation, the £28,551.84 figure, that the claimant was not impecunious and that the appeal against the low BHR award was dismissed with the challenges described as 'nit-picking'. No BAILII listing surfaced; the BAILII URL is inferred from the neutral citation.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "holt-v-allianz-2023",
+    "type": "case",
+    "citation": "Holt v Allianz Insurance plc [2023] EWHC 790 (KB)",
+    "title": "Holt v Allianz Insurance plc",
+    "principle": "Andrew Baker J (4 April 2023) allowed the claimant's appeal against an order for pre-action disclosure of bank, credit-card and savings statements and wage slips sought by the at-fault insurer to test impecuniosity in a hire-only claim (RTA 16 July 2020, hire by Auxillis): the application failed under CPR 31.16(3)(b) because the insurer itself was unlikely to be a party to the eventual proceedings, which would be brought against the driver. The judgment nonetheless signals that such financial disclosure is otherwise within reach and that refusing to engage on impecuniosity pre-action carries risk. CCGUK should have the impecuniosity pack ready and decide deliberately whether to disclose it pre-action.",
+    "tags": ["credit hire", "pre-action disclosure", "CPR 31.16", "impecuniosity documents", "Auxillis", "Andrew Baker J"],
+    "topics": ["credit_hire", "impecuniosity", "costs"],
+    "url": "https://www.bailii.org/ew/cases/EWHC/KB/2023/790.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.lexology.com/library/detail.aspx?g=815489d4-61fb-4bc4-a84e-5ba15016f9d7",
+      "sourceNote": "Not fetched (egress proxy). Secondary snippets (12KBW, Lexology, Clyde & Co, LPC Law, PI Brief Update, Box Legal) agree: appeal heard 22 March 2023, judgment 4 April 2023, Andrew Baker J (not Ritchie J as initially assumed); HHJ Harrison's PAD order reversed because the insurer was unlikely to be a party (CPR 31.16(3)(b)); hire provider Auxillis; RTA 16 July 2020. No BAILII listing surfaced; URL inferred from the neutral citation.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "dickinson-v-tesco-2013",
+    "type": "case",
+    "citation": "Dickinson v Tesco plc [2013] EWCA Civ 36; [2013] RTR 27",
+    "title": "Dickinson v Tesco plc (and three other test cases)",
+    "principle": "Four test cases decided together (4 February 2013) after the Autofocus rates-evidence scandal: it is for the defendant to prove that the credit hire charge exceeds the basic hire rate, that is to prove the credit element that is to be stripped out under Dimond; where the only BHR evidence was tainted and withdrawn, the credit hire rate stood. CCGUK uses it to hold insurers to their burden on rate and to scrutinise the provenance of any rates report served against it.",
+    "tags": ["credit hire", "basic hire rate", "burden of proof", "Autofocus", "rates surveyors", "stripping out credit element", "test cases"],
+    "topics": ["credit_hire", "bhr", "dishonesty"],
+    "url": "https://caselaw.nationalarchives.gov.uk/ewca/civ/2013/36",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://caselaw.nationalarchives.gov.uk/ewca/civ/2013/36",
+      "sourceNote": "Not fetched (egress proxy). A Find Case Law listing at ewca/civ/2013/36 surfaced, and snippets from Accident Exchange v Broom [2017] EWHC 1096 (Admin) and Accident Exchange v McLean [2018] EWHC 23 (Comm) confirmed 'one of four test cases... judgment delivered on 4 February 2013' and that the credit element is 'to be stripped out from what is recoverable under Dickinson v Tesco Plc, [2013] EWCA Civ 36'. Burden-of-proof framing from working knowledge.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "Open Justice Licence"
+  },
+  {
+    "id": "ali-v-hsf-logistics-polska-2024",
+    "type": "case",
+    "citation": "Ali v HSF Logistics Polska Sp. z o.o. [2024] EWCA Civ 1479",
+    "title": "Majid Ali v HSF Logistics Polska Sp. z o.o.",
+    "principle": "Stuart-Smith LJ (4 December 2024) held that the absence of a valid MOT certificate (expired four and a half months before the accident) neither broke the chain of causation nor justified refusing recovery on illegality grounds: the defendant's tort deprived the claimant of the use of his car, driving without an MOT is a low-level offence, and denying the claim would be disproportionate, so credit hire of £21,588.72 for 36 days was recoverable, reversing the High Court. CCGUK checks MOT, tax and insurance at intake because they affect need and credibility, but a lapsed MOT is not fatal to a hire claim.",
+    "tags": ["credit hire", "MOT", "illegality", "causation", "ex turpi causa", "Stuart-Smith LJ", "loss of use"],
+    "topics": ["credit_hire", "loss_of_use", "need"],
+    "url": "https://caselaw.nationalarchives.gov.uk/ewca/civ/2024/1479",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://caselaw.nationalarchives.gov.uk/ewca/civ/2024/1479",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listings of both BAILII 'Ali v HSF Logistics Polska SP ZOO [2024] EWCA Civ 1479 (04 December 2024)' and the Find Case Law page 'Majid Ali v HSF Logistics Polska SP Zoo' confirmed the citation; Lexology, Atlantic Chambers, 25 Canada Square and FOIL snippets agree on the facts (£21,588.72, 36 days, MOT expired 4.5 months earlier) and the causation/illegality reasoning.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "Open Justice Licence"
+  },
+  {
+    "id": "armstead-v-rsa-2024",
+    "type": "case",
+    "citation": "Armstead v Royal & Sun Alliance Insurance Co Ltd [2024] UKSC 6; [2024] 2 WLR 632",
+    "title": "Armstead v Royal & Sun Alliance Insurance Company Ltd",
+    "principle": "The Supreme Court (14 February 2024) held that a credit-hire customer who had possessory title to the hire car when it was damaged by the defendant's insured could recover the sum she was contractually liable to pay the hire company for its loss of use (clause 16: the daily rate up to 30 days, £1,560), because a contractual liability to a third party consequent on physical damage to property in the claimant's possession is not pure economic loss and is recoverable unless the defendant proves it was too remote or an unreasonable pre-estimate. CCGUK's own hire agreement should contain a reasonable, evidenced loss-of-use clause so that damage to a fleet car by a third party is recoverable in the same way.",
+    "tags": ["credit hire", "hire car damaged", "loss of use clause", "clause 16", "possessory title", "pure economic loss", "remoteness", "burden of proof", "Supreme Court"],
+    "topics": ["loss_of_use", "credit_hire", "repair"],
+    "url": "https://www.bailii.org/uk/cases/UKSC/2024/6.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/uk/cases/UKSC/2024/6.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listings of BAILII 'Armstead v Royal & Sun Alliance Insurance Company Ltd [2024] UKSC 6 (14 February 2024)' and the supremecourt.uk press summary (UKSC 2022/0100) confirmed the citation; snippets confirm clause 16 (daily rate up to 30 days; £1,560 = 12 days x £130) and that the liability was recoverable as consequential on physical damage with the burden on the insurer to prove an unreasonable pre-estimate. Report cite from working knowledge.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "accident-exchange-v-broom-2017",
+    "type": "case",
+    "citation": "Accident Exchange Ltd v Broom and others [2017] EWHC 1096 (Admin)",
+    "title": "Accident Exchange Ltd v Broom and others (Autofocus contempt)",
+    "principle": "The Divisional Court (24 May 2017) found former Autofocus rates surveyors in contempt of court for giving false basic-hire-rate evidence in credit hire cases, confirming that fabricated or untraceable comparables are not merely weak evidence but criminal. CCGUK's rate evidence must therefore be captured manually with URL, screenshot, timestamp and hash, and any rates report served by an insurer should be tested for provenance.",
+    "tags": ["credit hire", "Autofocus", "contempt of court", "false rates evidence", "basic hire rate", "evidence integrity"],
+    "topics": ["bhr", "dishonesty", "credit_hire"],
+    "url": "https://www.bailii.org/ew/cases/EWHC/Admin/2017/1096.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.bailii.org/ew/cases/EWHC/Admin/2017/1096.html",
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'Accident Exchange Ltd v Broom & Ors [2017] EWHC 1096 (Admin) (24 May 2017)' confirmed the citation; snippet described Autofocus as employing 'rates surveyors' producing BHR reports. Contempt findings are from working knowledge; the related civil claim is Accident Exchange v McLean [2018] EWHC 23 (Comm).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  }
+]

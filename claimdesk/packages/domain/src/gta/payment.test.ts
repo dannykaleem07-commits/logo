@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { LedgerEntry } from '../types.js';
 import { latePaymentUplift, validatePaymentPack, ledgerPaidInFull, paidInFullAt } from './payment.js';
+import { compareIso } from '../calendar/index.js';
 import { mkBundle, mkDoc, mkEvent, mkEvidence, mkHire, mkRecovery, mkStorage, CLAIM_ID } from './fixtures.js';
 
 const PACK = '2026-07-10T12:00:00+01:00';
@@ -27,11 +28,22 @@ describe('latePaymentUplift (GTA 6.8.6, benchmark only)', () => {
     expect(r.reason).toMatch(/before 2026-03-16/);
     expect(latePaymentUplift(100000, PACK, '2026-09-09T12:00:00+01:00', '2026-03-16T10:00:00+00:00').applicable).toBe(true);
   });
-  it('reports the day-31 and day-61 instants and rounds the uplift to the penny', () => {
+  it('reports the day-31 and day-61 instants (00:00 London on those days) and rounds the uplift to the penny', () => {
     const r = latePaymentUplift(12345, PACK, '2026-08-10T12:00:00+01:00', HIRE);
-    expect(r.day31At).toBe('2026-08-10T12:00:00+01:00');
-    expect(r.day61At).toBe('2026-09-09T12:00:00+01:00');
+    expect(r.day31At).toBe('2026-08-10T00:00:00+01:00');
+    expect(r.day61At).toBe('2026-09-09T00:00:00+01:00');
     expect(r.upliftPence).toBe(1235); // 1234.5 → 1235
+  });
+  it('ADVERSARIAL: pct and day31At can never disagree — 08:00 on day 31 is 10% and is after day31At; 23:00 on day 30 is 0% and before it', () => {
+    const early = latePaymentUplift(100000, PACK, '2026-08-10T08:00:00+01:00', HIRE);
+    expect(early.pct).toBe(10);
+    expect(compareIso('2026-08-10T08:00:00+01:00', early.day31At)).toBeGreaterThanOrEqual(0);
+    const late30 = latePaymentUplift(100000, PACK, '2026-08-09T23:00:00+01:00', HIRE);
+    expect(late30.pct).toBe(0);
+    expect(compareIso('2026-08-09T23:00:00+01:00', late30.day31At)).toBeLessThan(0);
+    // Pack sent 23:30 UTC on 10 Jul = 00:30 BST on 11 Jul: the pack DAY is 11 Jul, so day 31 is 11 Aug.
+    expect(latePaymentUplift(100000, '2026-07-10T23:30:00Z', '2026-08-10T12:00:00+01:00', HIRE).pct).toBe(0);
+    expect(latePaymentUplift(100000, '2026-07-10T23:30:00Z', '2026-08-11T00:00:00+01:00', HIRE)).toMatchObject({ pct: 10, day31At: '2026-08-11T00:00:00+01:00' });
   });
 });
 
