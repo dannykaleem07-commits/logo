@@ -1,0 +1,25 @@
+# Legal caveats and open verification items
+
+ClaimDesk encodes the rules in `docs/BLUEPRINT.md`. The items below are the ones the brief marks as **verify before relying on them**. Each is carried as data with a `Verification` status; the app shows an amber/red badge and the consistency engine flags unverified citations in drafts. Do not clear these by editing code — clear them by recording a source URL and date on the record.
+
+| # | Item | Why it matters | Where it lives | Status |
+|---|---|---|---|---|
+| 1 | ICOBS 8.2.1R territorial scope | Templates cite the three-month duty (8.2.6R) and base + 4% interest (8.2.9R–8.2.11R). Confirm it applies to purely domestic third-party motor claims before asserting it "as of right" | `packages/kb/data/fca.json`; clocks `icobs_8_2_6_three_months`; quantum `interest({basis:'icobs_8_2'})` | see data |
+| 2 | GTA 2026–27 rates for every group | Only S1 £42.32, M £56.66, M1 £65.49 were confirmed. CP1/CP2 figures seen were labelled 2025–26 | `packages/kb/data/gta-rates.json` | see data |
+| 3 | GTA is a benchmark, not law, for CCGUK | CCGUK is not a subscriber (audit £1,890 + VAT, 40 qualifying files). GTA 2.7(j): terms "have no relevance in law" outside the GTA. Letters say "industry benchmark"; the consistency engine blocks `GTA_CITED_AS_LAW` | `claim.gtaSubscriber=false`; consistency engine | enforced |
+| 4 | Court fees (EX50) | Issue and hearing fee bands came from secondary sources | `packages/kb/data/court-fees.json`; quantum `courtFee` | see data |
+| 5 | Mediation after 21 May 2026 | PD 51ZE pilot end and the OCMC road-traffic mediation pilot status | `packages/kb/data/cpr.json` | see data |
+| 6 | Case citations | Irani v Duchon and Hussain v EUI in particular; Kindertons, Tescher and MIB v Houston were checked via secondary sources | `packages/kb/data/cases.json` | see data |
+| 7 | Insurer directory | Most third-party lines, IVR paths and emails are unverified until checked on the insurer's own site; records age amber at 90 days and red at 180 | `packages/kb/data/insurer-directory.json` + `directory_overrides` table | see data |
+| 8 | Third-party claimant and the FOS | A third-party claimant is generally not an eligible complainant against the at-fault insurer (DISP 2.7). Never threaten FOS to the at-fault insurer; complaint goes to the insurer's complaints function under DISP 1, then pre-action and court | consistency `FORUM_NOT_OPEN`; `letter.complaint_disp` | enforced |
+| 9 | Hire agreement enforceability | Consumer Contracts Regulations 2013: open-ended hire is not excluded by reg 28(1)(h); provide Sch 2 information, Sch 3 form and obtain the express request to start (regs 29–36) or the W v Veolia risk applies. RAO art 60F: ≤12 payments within 12 months, no interest or charges | `hire.enforceability`; gate `enforceability`; `agreement.credit_hire`, `form.cancellation_sch3`, `form.express_request_to_start` | enforced |
+| 10 | Impecuniosity from day one | Diriye v Bojaj: plead and prove. Collect the Statement of Means and 3 months of bank statements at sign-up | gate `impecuniosity`; `form.statement_of_means` | enforced |
+| 11 | Non-party costs exposure | Tescher / AXA v Spectra Drive [2025] EWCA Civ 733; Kindertons v Murtagh [2024] EWHC 471 (KB). Weak-liability files should not run on hire without strong evidence | `acceptance.assessAcceptance` costsExposure | enforced |
+| 12 | Personal injury | Refer out, no referral fee (LASPO 2012 ss.56–60); FCA claims-management perimeter. ClaimDesk continues the damage-only claim | `intake.routeInjury`; acceptance perimeter flags | enforced |
+| 13 | Reserved legal activities | Legal Services Act 2007 s.12: no conduct of litigation. Litigation documents are drafts for the claimant (litigant in person) or an instructed solicitor to sign. Lay representation in small claims is permitted where the party attends | consistency `REGULATED_STATUS_IMPLIED`; litigation templates | enforced |
+| 14 | Supplier risk: CARFLEX LTD (12640635) | Suspended strike-off, dormant/overdue accounts. Expect invoice challenges; qualify a second engineer and storage yard | watch list, flag `SUPPLIER_HIGH_RISK` | enforced |
+| 15 | Fleet cover | Collingwood will not cover credit hire and self-drive together; policy per use. Neither current unit is TfL ZEC-eligible for a new London PHV licence | `fleet.canAllocate`, `PHV_NOT_ELIGIBLE` | enforced |
+| 16 | Bank account name | Must be exactly "Courtesy Cars Group UK Ltd" for Confirmation of Payee; never send legacy details (Car Flex / 17360033 / 66 Paul Street / EC2A 4PX / courtesycarsuk.co.uk) | settings warning; consistency `LEGACY_DETAIL`, `PAYEE_MISMATCH` | enforced |
+| 17 | Data protection | ICO fee tier 1 £52; appropriate policy document for driving-conviction data (DPA 2018 Sch 1); complaints process before an ICO complaint (DUAA 2025 s.103 from 19 June 2026) | settings; docs | manual |
+
+"see data" means the status is whatever the research agents could verify online on 4 October 2026 and is recorded per entry. "enforced" means the rule is code, with tests.
