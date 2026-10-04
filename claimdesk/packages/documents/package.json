@@ -1,0 +1,22 @@
+{
+  "name": "@ccguk/documents",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build": "tsc -p tsconfig.json --noEmit",
+    "samples": "tsx src/samples.ts"
+  },
+  "dependencies": {
+    "@ccguk/domain": "workspace:*",
+    "@ccguk/kb": "workspace:*",
+    "playwright-core": "1.56.1",
+    "pdf-lib": "^1.17.1"
+  },
+  "devDependencies": { "vitest": "^3.2.7", "typescript": "^5.9.3", "tsx": "^4.23.0", "@types/node": "^22.19.0" }
+}

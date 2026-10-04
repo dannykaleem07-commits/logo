@@ -1,0 +1,27 @@
+{
+  "name": "claimdesk",
+  "private": true,
+  "version": "0.1.0",
+  "description": "ClaimDesk — Courtesy Cars Group UK Ltd accident claims, credit hire and accident management platform (England & Wales).",
+  "packageManager": "pnpm@10.28.0",
+  "engines": { "node": ">=22.12" },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter ./apps/* dev",
+    "dev:api": "pnpm --filter @ccguk/api dev",
+    "dev:web": "pnpm --filter @ccguk/web dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r --no-bail test",
+    "typecheck": "pnpm -r typecheck",
+    "seed": "pnpm --filter @ccguk/api seed",
+    "pdf:samples": "pnpm --filter @ccguk/documents samples"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["better-sqlite3", "esbuild"]
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.7",
+    "tsx": "^4.23.0",
+    "@types/node": "^22.19.0"
+  }
+}
