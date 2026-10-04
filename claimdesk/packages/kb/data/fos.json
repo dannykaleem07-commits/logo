@@ -1,0 +1,188 @@
+[
+  {
+    "id": "fos-eligibility",
+    "type": "fos",
+    "citation": "FOS \"Who we can help\" / DISP 2.7",
+    "title": "Who can bring a complaint to the Financial Ombudsman Service — and why a third-party RTA claimant cannot complain about the at-fault insurer",
+    "principle": "FOS can consider complaints from consumers, micro-enterprises (fewer than 10 staff and turnover or balance sheet not over €2m), small businesses (turnover under £6.5m and either balance sheet under £5m or fewer than 50 staff, for events after 1 April 2019), charities with income under £6.5m, trusts with net assets under £5m and personal guarantors — against FCA-regulated firms with which they have a DISP 2.7.6R relationship. A third-party claimant has no such relationship with the at-fault driver's insurer (the Rights against Insurers Regulations 2002 route is expressly carved out), so FOS is not open to them; the forum is the court. The claimant can complain to FOS about their own insurer or broker; CCGUK can complain about its own providers.",
+    "tags": [
+      "FOS",
+      "eligibility",
+      "micro-enterprise",
+      "small business",
+      "forum not open"
+    ],
+    "topics": [
+      "complaints"
+    ],
+    "url": "https://www.financial-ombudsman.org.uk/consumers/expect/who-we-can-help",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.financial-ombudsman.org.uk/consumers/expect/who-we-can-help",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of FOS \"Who we can help\" pages returned the micro-enterprise, small business, charity, trust and guarantor thresholds; the third-party point rests on the DISP 2.7.6R snippet (see fca.json).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "fos-time-limits",
+    "type": "fos",
+    "citation": "FOS \"Time limits\" (DISP 1.6 and DISP 2.8)",
+    "title": "Complaint clocks: 8 weeks for the firm; 6 months to refer; 6 years from the event or 3 years from awareness",
+    "principle": "A business has 8 weeks to issue a final response. The complainant then has 6 months from the date of the final response to refer to FOS; a complaint must also be made within 6 years of the event or, if later, 3 years from when the complainant knew or ought to have known of cause for complaint. FOS may extend the 6-month limit only for exceptional circumstances (e.g. serious illness), where no valid final response was sent, or where the business consents. Diarise the 6-month date on the day the final response arrives.",
+    "tags": [
+      "FOS",
+      "time limits",
+      "8 weeks",
+      "6 months",
+      "6 years",
+      "3 years"
+    ],
+    "topics": [
+      "complaints",
+      "limitation"
+    ],
+    "url": "https://www.financial-ombudsman.org.uk/consumers/complaints-can-help/expect/time-limits",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.financial-ombudsman.org.uk/consumers/complaints-can-help/expect/time-limits",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the 8-week, 6-month, 6-year and 3-year limits and the exceptions list.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "fos-award-limit-2026",
+    "type": "fos",
+    "citation": "FOS \"Compensation\" — award limits from 1 April 2026",
+    "title": "Maximum FOS award: £455,000 for complaints referred on or after 1 April 2026 (acts on or after 1 April 2019); £205,000 for earlier acts",
+    "principle": "For complaints referred to FOS on or after 1 April 2026 about acts or omissions on or after 1 April 2019 the award limit is £455,000 (£445,000 for referrals in 2025/26; £430,000 in 2024/25). For acts or omissions before 1 April 2019 the limit is £205,000. FOS can recommend, but not bind the firm to, sums above the limit. All CCGUK-related complaints (valuation, courtesy car, service) sit far below the limit; the figure matters for templates that describe the FOS route to clients.",
+    "tags": [
+      "FOS",
+      "award limit",
+      "£455,000",
+      "2026"
+    ],
+    "topics": [
+      "complaints"
+    ],
+    "url": "https://www.financial-ombudsman.org.uk/consumers/expect/compensation",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.financial-ombudsman.org.uk/consumers/expect/compensation",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the FOS compensation page and award-limit news items returned £455,000 (from 1 April 2026), £445,000 (2025), £430,000 (2024) and £205,000 (pre-April 2019 acts).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "fos-motor-valuations",
+    "type": "fos",
+    "citation": "FOS \"Motor valuations and write-offs\" and published decisions (e.g. DRN-3375231, DRN-4580925)",
+    "title": "FOS approach to total-loss valuations: guides are the starting point; pay the highest guide figure unless the insurer evidences a lower one is fair; adverts now count",
+    "principle": "FOS decides whether a valuation is fair and reasonable by reference to the specialist motor valuation guides and any other evidence. Where the guides agree and the insurer is in line, FOS will usually agree; where they diverge, FOS expects the insurer to pay the highest guide valuation unless it can show with persuasive evidence (adverts, independent reports) that a lower figure is fair — averaging the guides is not treated as fair, and picking the lowest is wrong. FOS now routinely considers advertised prices because the guides report cars selling at or close to advertised prices, and expects correct inputs (mileage, specification, condition, options). This is stronger than the playbook's \"not a ceiling\" wording: for a policyholder's own-insurer complaint, the highest guide is the default.",
+    "tags": [
+      "FOS",
+      "valuation",
+      "total loss",
+      "trade guides",
+      "adverts",
+      "PAV"
+    ],
+    "topics": [
+      "pav",
+      "complaints"
+    ],
+    "url": "https://www.financial-ombudsman.org.uk/consumers/complaints-can-help/insurance/motor-insurance/vehicle-valuations-write-offs",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.financial-ombudsman.org.uk/consumers/complaints-can-help/insurance/motor-insurance/vehicle-valuations-write-offs",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of the FOS valuation page (\"starting point ... guides ... adverts ... now typically consider adverts\") and of published ombudsman decisions (\"starting point for any settlement should be the highest valuation returned by the trade guides ... insurer wants to pay less ... will have to evidence why that is fair ... average ... not a fair way\"). Decision reasoning is FOS's own position on a fair-and-reasonable basis; it does not bind a court in a third-party tort claim.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "fos-credit-hire-referral",
+    "type": "fos",
+    "citation": "FOS \"Credit hire and credit repair services following a no-fault accident\" and case studies",
+    "title": "FOS approach to credit hire complaints by policyholders: it examines the insurer/broker referral and warnings, not the accident management company's service",
+    "principle": "FOS can consider whether an insurer or broker met its obligations and acted fairly when it referred its customer to credit hire or credit repair instead of handling the claim under the policy — in particular whether it explained that the customer would not be claiming on their own policy, that the hire/repair contract is with an independent company with no FOS recourse, and that if the third-party insurer disputes liability the customer may have to cooperate in recovery or become liable for the charges. It will not usually consider complaints about the AMC's own service under the credit hire agreement (the AMC is not a regulated respondent). For CCGUK the lesson is documentary: the client's signed acknowledgement of these risks at sign-up protects the referral chain and the enforceability of the agreement.",
+    "tags": [
+      "FOS",
+      "credit hire",
+      "referral",
+      "warnings",
+      "accident management"
+    ],
+    "topics": [
+      "credit_hire",
+      "enforceability",
+      "complaints"
+    ],
+    "url": "https://www.financial-ombudsman.org.uk/consumers/complaints-can-help/insurance/motor-insurance/credit-hire-credit-repair-services-following-no-fault-accident",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.financial-ombudsman.org.uk/consumers/complaints-can-help/insurance/motor-insurance/credit-hire-credit-repair-services-following-no-fault-accident",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned: FOS looks at whether the insurer/broker acted fairly in referring; it \"can't usually consider complaints about an Accident Management Company\"; expects warnings about contracting outside the policy, lack of ADR recourse and potential liability for costs if liability is disputed.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "fos-courtesy-car-repairs",
+    "type": "fos",
+    "citation": "FOS \"Vehicle repairs\" (motor insurance)",
+    "title": "FOS approach to courtesy car and repair complaints by policyholders",
+    "principle": "FOS considers complaints about delays in repair, quality of repair and the absence of a courtesy car under the policy. Where the policy provides a courtesy car, FOS expects it to be offered (subject to the policy terms, which commonly limit it to a small car and to approved-repairer repairs); where an insurer-caused delay leaves the customer without a vehicle, FOS may require the insurer to meet the cost of a replacement vehicle for the period of its delay. This is the policyholder's route against their own insurer; it is not a route for a third-party claimant and does not set the measure of damages in a tort claim.",
+    "tags": [
+      "FOS",
+      "courtesy car",
+      "repairs",
+      "delay"
+    ],
+    "topics": [
+      "credit_hire",
+      "complaints"
+    ],
+    "url": "https://www.financial-ombudsman.org.uk/businesses/complaints-deal/insurance/motor-insurance/vehicle-repairs",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.financial-ombudsman.org.uk/businesses/complaints-deal/insurance/motor-insurance/vehicle-repairs",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet: FOS \"looks at complaints about lack of a courtesy vehicle and whether insurers offered customers a courtesy car, and if there's been a delay the insurer is responsible for, they may tell the insurer to cover the costs of a replacement vehicle\".",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "fos-fair-and-reasonable",
+    "type": "fos",
+    "citation": "DISP 3.6.1R (FOS determination standard)",
+    "title": "FOS decides what is fair and reasonable in all the circumstances, taking account of law, rules, guidance and good industry practice",
+    "principle": "The Ombudsman determines a complaint by reference to what is, in its opinion, fair and reasonable in all the circumstances of the case, taking into account relevant law and regulations, regulators' rules, guidance and standards, codes of practice and what it considers to have been good industry practice at the time. This is why FOS outcomes on valuations and service can be more generous than strict law, and why FOS reasoning is leverage in correspondence but not authority in court.",
+    "tags": [
+      "FOS",
+      "fair and reasonable",
+      "DISP 3.6"
+    ],
+    "topics": [
+      "complaints",
+      "pav"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/DISP/3/6.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/DISP/3/6.html",
+      "sourceNote": "From the agent's memory of DISP 3.6.1R and 3.6.4R; not searched or fetched on 2026-10-04 (egress blocked). Confirm wording on the page.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  }
+]

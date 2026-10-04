@@ -1,0 +1,255 @@
+[
+  {
+    "kind": "issue",
+    "fromPence": 0,
+    "toPence": 30000,
+    "feePence": 3500,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed \"up to £300: £35\". Matches blueprint §5.2.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 1.1 money claim (paper N1, MCOL and OCMC alike — the online discount was removed in 2021; snippet of gov.uk \"Make a court claim for money: court fees\" confirms one fee table): up to £300."
+  },
+  {
+    "kind": "issue",
+    "fromPence": 30001,
+    "toPence": 50000,
+    "feePence": 5000,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed \"£300.01 to £500: £50\". Matches blueprint §5.2.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 1.1 money claim (paper N1, MCOL and OCMC alike — the online discount was removed in 2021; snippet of gov.uk \"Make a court claim for money: court fees\" confirms one fee table): £300.01 to £500."
+  },
+  {
+    "kind": "issue",
+    "fromPence": 50001,
+    "toPence": 100000,
+    "feePence": 7000,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed \"£500.01 to £1,000: £70\". Matches blueprint §5.2.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 1.1 money claim (paper N1, MCOL and OCMC alike — the online discount was removed in 2021; snippet of gov.uk \"Make a court claim for money: court fees\" confirms one fee table): £500.01 to £1,000."
+  },
+  {
+    "kind": "issue",
+    "fromPence": 100001,
+    "toPence": 150000,
+    "feePence": 8000,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed \"£1,000.01 to £1,500: £80\". Matches blueprint §5.2.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 1.1 money claim (paper N1, MCOL and OCMC alike — the online discount was removed in 2021; snippet of gov.uk \"Make a court claim for money: court fees\" confirms one fee table): £1,000.01 to £1,500."
+  },
+  {
+    "kind": "issue",
+    "fromPence": 150001,
+    "toPence": 300000,
+    "feePence": 11500,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed \"£1,500.01 to £3,000: £115\". Matches blueprint §5.2.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 1.1 money claim (paper N1, MCOL and OCMC alike — the online discount was removed in 2021; snippet of gov.uk \"Make a court claim for money: court fees\" confirms one fee table): £1,500.01 to £3,000."
+  },
+  {
+    "kind": "issue",
+    "fromPence": 300001,
+    "toPence": 500000,
+    "feePence": 20500,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed \"£3,000.01 to £5,000: £205\". Matches blueprint §5.2.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 1.1 money claim (paper N1, MCOL and OCMC alike — the online discount was removed in 2021; snippet of gov.uk \"Make a court claim for money: court fees\" confirms one fee table): £3,000.01 to £5,000."
+  },
+  {
+    "kind": "issue",
+    "fromPence": 500001,
+    "toPence": 1000000,
+    "feePence": 45500,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed \"£5,000.01 to £10,000: £455\". Matches blueprint §5.2.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 1.1 money claim (paper N1, MCOL and OCMC alike — the online discount was removed in 2021; snippet of gov.uk \"Make a court claim for money: court fees\" confirms one fee table): £5,000.01 to £10,000."
+  },
+  {
+    "kind": "issue",
+    "fromPence": 1000001,
+    "toPence": 20000000,
+    "pct": 5,
+    "capPence": 1000000,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet: \"More than £10,000 but no more than £200,000: 5% of the value of the claim\". Matches blueprint.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 1.1 money claim £10,000.01 to £200,000: 5% of the claim value (ceiling £10,000 at £200,000). MCOL only accepts claims up to £99,999.99."
+  },
+  {
+    "kind": "issue",
+    "fromPence": 20000001,
+    "toPence": null,
+    "feePence": 1000000,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gov.uk/government/publications/fees-in-the-civil-and-family-courts-main-fees-ex50/civil-court-fees-ex50",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet of gov.uk \"Make a court claim for money: court fees\": \"More than £200,000: £10,000\".",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 1.1 money claim over £200,000 or unlimited: £10,000 (paper only)."
+  },
+  {
+    "kind": "hearing_small_claims",
+    "fromPence": 0,
+    "toPence": 30000,
+    "feePence": 2700,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed small claims hearing fee \"up to £300: £27\". Blueprint only gave the end-points £27 and £346 (both match).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 2.1(a) small claims track hearing fee, up to £300; payable by the claimant (defendant if the case continues on the counterclaim alone)."
+  },
+  {
+    "kind": "hearing_small_claims",
+    "fromPence": 30001,
+    "toPence": 50000,
+    "feePence": 5900,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed small claims hearing fee \"£300.01 to £500: £59\". Blueprint only gave the end-points £27 and £346 (both match).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 2.1(a) small claims track hearing fee, £300.01 to £500; payable by the claimant (defendant if the case continues on the counterclaim alone)."
+  },
+  {
+    "kind": "hearing_small_claims",
+    "fromPence": 50001,
+    "toPence": 100000,
+    "feePence": 8500,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed small claims hearing fee \"£500.01 to £1,000: £85\". Blueprint only gave the end-points £27 and £346 (both match).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 2.1(a) small claims track hearing fee, £500.01 to £1,000; payable by the claimant (defendant if the case continues on the counterclaim alone)."
+  },
+  {
+    "kind": "hearing_small_claims",
+    "fromPence": 100001,
+    "toPence": 150000,
+    "feePence": 12300,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed small claims hearing fee \"£1,000.01 to £1,500: £123\". Blueprint only gave the end-points £27 and £346 (both match).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 2.1(a) small claims track hearing fee, £1,000.01 to £1,500; payable by the claimant (defendant if the case continues on the counterclaim alone)."
+  },
+  {
+    "kind": "hearing_small_claims",
+    "fromPence": 150001,
+    "toPence": 300000,
+    "feePence": 18100,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed small claims hearing fee \"£1,500.01 to £3,000: £181\". Blueprint only gave the end-points £27 and £346 (both match).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 2.1(a) small claims track hearing fee, £1,500.01 to £3,000; payable by the claimant (defendant if the case continues on the counterclaim alone)."
+  },
+  {
+    "kind": "hearing_small_claims",
+    "fromPence": 300001,
+    "toPence": null,
+    "feePence": 34600,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet listed small claims hearing fee \"more than £3,000: £346\". Blueprint only gave the end-points £27 and £346 (both match).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 2.1(a) small claims track hearing fee for claims over £3,000 (small claims track normally runs to £10,000, CPR 26.9)."
+  },
+  {
+    "kind": "hearing_fast",
+    "fromPence": 0,
+    "toPence": null,
+    "feePence": 61900,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet: \"Fast track claims: £619\" (intermediate track or multi-track: £1,334 — no FeeBand kind exists for that, recorded here in the note).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "Fee 2.1(b) hearing fee, fast track: £619. Intermediate/multi-track hearing fee £1,334 (same source)."
+  },
+  {
+    "kind": "application",
+    "fromPence": 0,
+    "toPence": null,
+    "feePence": 32100,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet: \"Application on notice where no other fee is specified: £321\".",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "General application on notice (e.g. interim payment under CPR 25.20–25.26, set-aside under CPR 13)."
+  },
+  {
+    "kind": "application",
+    "fromPence": 0,
+    "toPence": null,
+    "feePence": 12600,
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://assets.publishing.service.gov.uk/media/6a4d0bf2d200ca05e289e6da/EX50A-civil-and-family-court-fees_July_2026.pdf",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of EX50A (July 2026) / \"Civil court fees (EX50)\" page: fees as updated 13 July 2026 (Court and Tribunal Fees (Miscellaneous Amendments) Order 2026, SI 2026/642, commencement moved to 13 July 2026 by SI 2026/665). Snippet: \"Application by consent or without notice where no other fee is specified: £126\"; no fee for a consent adjournment received 14+ days before the hearing.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "note": "General application by consent or without notice. If refused and ordered on notice, the balance to £321 is payable."
+  }
+]

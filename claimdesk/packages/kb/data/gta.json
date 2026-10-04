@@ -1,0 +1,349 @@
+[
+  {
+    "id": "gta-2-7-j",
+    "type": "gta",
+    "citation": "GTA para 2.7(j) (16 March 2026)",
+    "title": "GTA terms have no relevance in law outside the GTA and cannot be cited in proceedings",
+    "principle": "Subscribers accept that the GTA's terms, including its dispute-resolution arrangements, have no relevance in law to any claim taken outside the GTA (under paras 6.14/6.15) and cannot be cited in legal proceedings. For a non-subscriber such as CCGUK, GTA rates and timescales are therefore a commercial industry benchmark only, not a legal entitlement and not evidence of the basic hire rate.",
+    "text": "accepted by subscribers as having no relevance in law in relation to any claim(s) that are taken outside the scope of the GTA in accordance with paragraph 6.14/6.15 and cannot be cited in any legal proceedings",
+    "tags": ["gta", "2.7(j)", "not law", "benchmark", "non-subscriber", "dispute resolution", "fall out day 61"],
+    "topics": ["gta", "credit_hire", "bhr"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "The 16 March 2026 PDF (file name v11.1, 10 Feb 2026) could not be fetched: www.gtacredithire.com is blocked by the session egress proxy. Quoted words come from a search-engine snippet of the GTA wording (2025/2026 versions) and match the BLUEPRINT's reading of 2.7(j). Snippet also indicates that for hires from 1 May 2016 cases fall out of the GTA automatically at day 61 unless both parties agree otherwise. Verify wording and paragraph letter against the PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-3-6",
+    "type": "gta",
+    "citation": "GTA para 3.6 (16 March 2026)",
+    "title": "Insurer claiming it was first to offer a replacement vehicle must say so within 5 working days",
+    "principle": "If the at-fault insurer believes it was first to offer the customer a suitable free replacement vehicle that ought to have been accepted, it must tell the CHO within 5 working days of receiving the New Claim Advice Form / claim notification. Under the GTA an insurer that misses that window loses the right to refuse payment or seek intervention-level rates on that ground. Benchmark only for a non-subscriber: log the date the NCAF was sent and start a 5-WD clock.",
+    "tags": ["gta", "3.6", "intervention", "first to the customer", "5 working days", "advice form", "clock"],
+    "topics": ["gta", "credit_hire", "mitigation"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet of the 2026 wording: 'If the insurer believes they were first to offer a suitable free replacement vehicle which ought to have been accepted, they must tell the CHO within 5 working days of receipt of the Advice Form/claim notification.' Overriding principle: whoever is first to the customer and obtains their agreement provides the service. Paragraph number 3.6 taken from the BLUEPRINT; confirm against the PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-4-1",
+    "type": "gta",
+    "citation": "GTA para 4.1 (16 March 2026)",
+    "title": "New Claim Advice Form to the at-fault insurer within 1 working day",
+    "principle": "The CHO must advise the at-fault driver's insurer of a potential claim within one working day of agreeing services with the customer, using a New Claim Advice Form (Appendix A) or similar. This is the day-one action in the get-paid-faster playbook; its date starts the insurer's 5-WD windows under 3.6 and 4.2.",
+    "tags": ["gta", "4.1", "NCAF", "new claim advice form", "1 working day", "appendix A", "clock"],
+    "topics": ["gta", "credit_hire"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet across GTA versions 2001-2026: 'The CHO must advise the at fault driver's insurer of a potential claim within one working day of the CHO agreeing services with the customer (using a New Claim Advice Form, Appendix A, or similar)'. Consistent with BLUEPRINT. Confirm against the 2026 PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-4-2",
+    "type": "gta",
+    "citation": "GTA para 4.2 (16 March 2026)",
+    "title": "Insurer to confirm handling centre and claim reference within 5 working days",
+    "principle": "The insurer must respond to the CHO's New Claim Advice Form within 5 working days of receipt, confirming the correct handling centre and, where known, the claim reference number. Sending the payment pack to the wrong handling centre stops the 6.7 payment clock, so chase this reference at day 5.",
+    "tags": ["gta", "4.2", "handling centre", "claim reference", "5 working days", "clock"],
+    "topics": ["gta", "credit_hire"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet: 'Insurers must respond to the CHO's New Claim Advice Form within 5 working days of receipt confirming the correct handling centre and, where known, the claims reference number.' Consistent with BLUEPRINT. Confirm against the 2026 PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-4-7",
+    "type": "gta",
+    "citation": "GTA para 4.7 (16 March 2026)",
+    "title": "Cash in lieu of repairs: hire stops on receipt of payment",
+    "principle": "Where the insurer pays cash in lieu of repairs, the hire is treated as ending immediately after the payment is received. A further hire (subject to need) or loss-of-use payment can be claimed under the GTA if the vehicle is then put in for repair within 3 months of receipt of the cash-in-lieu payment, save in exceptional circumstances. Off-hire trigger for the clocks engine.",
+    "tags": ["gta", "4.7", "cash in lieu", "off-hire", "end trigger", "3 months"],
+    "topics": ["gta", "credit_hire"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet (GTA wording, 2018-2024 versions): 'Where cash in lieu of repair is provided, the hire is deemed to stop immediately after payment is received. A further hire (subject to need etc) or a loss of use payment can be claimed ... if the vehicle is subsequently put in for repair within 3 months of the date of receipt of the cash in lieu cheque unless there are exceptional circumstances.' Confirm the 2026 wording and paragraph number.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-4-8",
+    "type": "gta",
+    "citation": "GTA para 4.8 (16 March 2026)",
+    "title": "Hire ends no later than 24 hours after repairs are completed",
+    "principle": "The hire period ends when the customer's vehicle is repaired and ready for collection and, in any event, not later than 24 hours after repairs are completed and the vehicle is ready for its intended use. The 2026 wording added the 'ready for collection' and 'ready for its intended use' qualifiers. Off-hire trigger: repair-complete notification + 24h.",
+    "text": "The hire period ends when the customer's vehicle is repaired and ready for collection and in any event not later than 24 hours after repairs to the customer's vehicle have been completed and the vehicle is ready for its intended use.",
+    "tags": ["gta", "4.8", "repair complete", "24 hours", "off-hire", "end trigger"],
+    "topics": ["gta", "credit_hire"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). The quoted sentence was returned by a search-engine snippet attributed to the 16 March 2026 version; the 17 March 2025 version read 'The hire period ends not later than 24 hours after repairs to the customer's vehicle have been completed.' Confirm the 2026 wording against the PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-4-9",
+    "type": "gta",
+    "citation": "GTA para 4.9 (16 March 2026)",
+    "title": "Insurer terminating a hire must give at least 1 working day's notice",
+    "principle": "An insurer wishing to terminate a hire period must give the CHO at least one working day's notice (working days being Monday to Friday excluding bank holidays). Log the notice date/time and channel; the off-hire deadline is the end of the next working day.",
+    "tags": ["gta", "4.9", "termination", "notice", "1 working day", "off-hire", "clock"],
+    "topics": ["gta", "credit_hire"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet (GTA wording): 'Insurers wishing to terminate a hire period must give the CHO notice of at least 1 working day (working days are defined as Monday to Friday, excluding bank holidays).' Consistent with BLUEPRINT. Confirm against the 2026 PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-4-10",
+    "type": "gta",
+    "citation": "GTA para 4.10 (16 March 2026)",
+    "title": "Repair monitoring: check authorisation within 3 working days, then before hire should end",
+    "principle": "The CHO must check with the repairer that the repair has been authorised within 3 working days of the vehicle going in, make a further check after the lesser of 5 working days or 3 working days before the hire should have ended, and check again 3 working days before the hire should have ended. These checks are the monitoring diary entries that defend the hire period.",
+    "tags": ["gta", "4.10", "repair authorisation", "3 working days", "monitoring", "diary"],
+    "topics": ["gta", "credit_hire"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet of the 17 March 2025 version: 'CHOs will check with a garage that a repair has been authorised within 3 working days of the vehicle going in. CHOs will make a further check with the garage after the lesser of 5 working days or 3 working days before the hire should have ended ...'; the snippet states 4.10 is unchanged in the 2026 version. Confirm against the PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-4-11",
+    "type": "gta",
+    "citation": "GTA para 4.11 (16 March 2026)",
+    "title": "Unreasonable repair delay (2+ working days or >20%) must be notified; checks every 5 working days",
+    "principle": "A delay is 'unreasonable' if it is at least two working days longer than expected or more than 20% over the estimated hire period notified to the CHO. The CHO must notify the at-fault insurer of every unreasonable delay and of any further delays, and where the repair runs past the original period must check with the repairer every 5 working days. Generates the letter.delay_notice_gta_4_10 template trigger.",
+    "tags": ["gta", "4.11", "delay", "2 working days", "20%", "delay notice", "monitoring", "5 working days"],
+    "topics": ["gta", "credit_hire"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet (GTA wording/FAQ): \"'unreasonable' delays as delays that are at least two working days longer than expected or over 20% more than the estimated hire period notified to the CHO ... CHOs should inform the at fault driver's insurer in all instances ... checks every 5 working days after the original hire period should have ended.\" Consistent with BLUEPRINT. Confirm against the 2026 PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-4-14",
+    "type": "gta",
+    "citation": "GTA para 4.14 (16 March 2026)",
+    "title": "Total loss: off-hire table (hire ends 5 working days after total-loss payment where CHO dealing, vehicle unroadworthy)",
+    "principle": "Para 4.14 governs total losses. Per the project brief, the current wording contains an off-hire table: where the CHO is dealing and the vehicle is unroadworthy, hire ends 5 working days after the total-loss payment is received; the insurer must tell the CHO as soon as possible the date its total-loss payment was issued, with the CHO reference. Where the customer says the vehicle is unusable/unroadworthy but an engineer says it is usable, hire is paid until the disagreement is resolved. Earlier GTA versions allowed 7 calendar days after receipt of the final payment, so the 5-WD figure must be confirmed against the 2026 text before use.",
+    "tags": ["gta", "4.14", "total loss", "off-hire", "5 working days", "7 days", "unroadworthy", "CHO dealing", "end trigger"],
+    "topics": ["gta", "credit_hire", "pav"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippets of the 2026 PDF mention 4.14 total losses, 'roadworthy'/'unroadworthy', 'CHO dealing' and a 5 working day response, and that the insurer 'will advise the CHO as soon as possible of the date on which their total loss payment is issued with the correct CHO reference'. Snippets of older versions (2007/2013 FAQ) give 7 calendar days after receipt of the final total loss payment. The 5-WD table row is from the BLUEPRINT and was NOT seen in any snippet; treat with care.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-5-4",
+    "type": "gta",
+    "citation": "GTA para 5.4 (16 March 2026)",
+    "title": "Non-standard risk driver: additional insurance £5.50 per day, capped at £110 per hire (£148.50 for bikes)",
+    "principle": "For a non-standard risk driver (under 25 or over 70, under 12 months' driving experience, certain occupations, or convictions giving an unspent ban or 7+ points in the last 4 years) the CHO may charge an additional insurance premium of £5.50 per day, capped at £110 for an individual hire claim (cap £148.50 for motorcycle hires). The additional-driver evidence must be on file to claim it.",
+    "tags": ["gta", "5.4", "non-standard driver", "additional driver", "£5.50", "£110", "£148.50", "insurance"],
+    "topics": ["gta", "credit_hire"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet of the 2021/2025 GTA wording: 'the additional insurance premium per hire claim is set at £5.50 per day capped at £110 for all individual hire claims other than for bike hires where the cap is £148.50', with the non-standard risk definition. Consistent with BLUEPRINT (£5.50/day, cap £110). Confirm the 2026 figures.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-6-1",
+    "type": "gta",
+    "citation": "GTA para 6.1 (16 March 2026)",
+    "title": "Single clean Payment Pack submitted as soon as full documentation is available",
+    "principle": "The CHO submits one clean Payment Pack in support of a single payment request to the at-fault insurer as soon as full documentation is available, with all charges, documents and supporting evidence under an agreed covering letter giving payment details. Splitting heads or sending an incomplete pack restarts the 6.7 clock, so validate the pack before dispatch.",
+    "tags": ["gta", "6.1", "payment pack", "clean pack", "covering letter", "single payment request"],
+    "topics": ["gta", "credit_hire"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet (GTA wording 2021-2026): 'The CHO will submit a clean Payment Pack in support of a single payment request to the at fault driver's insurer as soon as full documentation is available, with all charges, documentation and supporting evidence under an agreed covering letter providing payment details.' Confirm against the 2026 PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-6-2",
+    "type": "gta",
+    "citation": "GTA para 6.2 (16 March 2026)",
+    "title": "Payment Pack core contents: covering letter, Mitigation Questionnaire/Statement of Truth, Advice Form, Hire Period Validation Form",
+    "principle": "The Payment Pack consists of a covering letter detailing the payment(s) required and the documents submitted (Appendix D), the Mitigation Questionnaire/Statement of Truth signed by the hirer (Appendix C), the New Claim Advice Form (Appendix A) and, where necessary, the Hire Period Validation Form (Appendix B). These are the mandatory items in the payment-pack validator.",
+    "tags": ["gta", "6.2", "payment pack", "mitigation questionnaire", "statement of truth", "advice form", "hire period validation form", "appendix A", "appendix B", "appendix C", "appendix D"],
+    "topics": ["gta", "credit_hire", "mitigation"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippets (GTA wording 2024-2026): Payment Pack 'will consist of: (i) Covering letter detailing cheque(s) required and documents submitted (Appendix D); (ii) Mitigation Questionnaire/Statement of Truth signed by hirer (Appendix C); ... New Claims Advice Form (Appendix A); (iv) Hire Period Validation Form (Appendix B) if necessary'. Sub-item numbering not fully visible. Confirm against the 2026 PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-6-3",
+    "type": "gta",
+    "citation": "GTA para 6.3 (16 March 2026)",
+    "title": "Payment Pack supporting documents: engineer's report, approved repair account, storage and recovery accounts",
+    "principle": "As appropriate, the Payment Pack should also include the independent engineer's inspection report, the repair account approved by the independent engineer or the credit organisation, and the storage and recovery accounts. Storage and recovery invoices without the engineer's report are a common reason packs are treated as not clean.",
+    "tags": ["gta", "6.3", "payment pack", "engineer report", "repair account", "storage", "recovery"],
+    "topics": ["gta", "credit_hire"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet (GTA wording 2021-2026): 'The following should be included as appropriate: (i) Independent Engineer's inspection report; (ii) Repair account approved by Independent Engineer or credit organisation; (iii) Storage and recovery accounts.' Consistent with BLUEPRINT. Confirm against the 2026 PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-6-7",
+    "type": "gta",
+    "citation": "GTA para 6.7 (16 March 2026)",
+    "title": "Insurers settle within one calendar month of dispatch of a clean Payment Pack to the correct handling centre",
+    "principle": "Insurers settle the CHO's claim within one calendar month from the date a clean Payment Pack is dispatched to the correct handling centre. The clock runs from dispatch, not receipt, but only if the pack is clean and goes to the right centre (hence 4.2). For a non-subscriber this is the industry-benchmark payment period to quote in chasers, not a contractual right.",
+    "text": "Insurers will settle Credit Hire Organisations' (CHOs') claims within one calendar month from the date of dispatch of a clean Payment Pack to the correct handling centre.",
+    "tags": ["gta", "6.7", "payment", "one calendar month", "clean pack", "handling centre", "clock", "debtor days"],
+    "topics": ["gta", "credit_hire", "interest"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). The quoted sentence was returned verbatim by a search-engine snippet of the GTA wording (2025/2026 versions). Consistent with BLUEPRINT. Confirm against the 2026 PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-6-8-6",
+    "type": "gta",
+    "citation": "GTA para 6.8.6 (16 March 2026)",
+    "title": "Late payment additions for hires from 16 March 2026: 0% to day 30, 10% days 31-60, 20% from day 61",
+    "principle": "For hires starting on or after 16 March 2026, failure to settle within the 6.7 period and subsequent one-month periods attracts late-payment additions to the total invoice: nil up to 30 days, 10% between 31 and 60 days, and 20% from day 61 onwards, counted from submission of a clean Payment Pack (as defined in 6.17). Subscriber-only entitlement; CCGUK may cite the figures only as an industry benchmark (see 2.7(j)) and must not present them as a legal right.",
+    "text": "For hires which start on or after 16 March 2026, failure to settle within the period specified in paragraph 6.7 and subsequent one month periods will result in late payment additions to the total invoice.",
+    "tags": ["gta", "6.8.6", "late payment", "10%", "20%", "day 31", "day 61", "16 March 2026", "benchmark"],
+    "topics": ["gta", "credit_hire", "interest"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippets of the 16 March 2026 PDF returned the quoted lead sentence and the table 'Up to 30 days: 0%; Between 31 and 60 days: 10%; Day 61 onwards: 20%', applying from submission of a clean Payment Pack as defined under 6.17. Matches BLUEPRINT. Earlier sub-paragraphs 6.8.2/6.8.3 carry the equivalent provisions for earlier hire-start dates. Confirm against the PDF.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-appendix-c",
+    "type": "gta",
+    "citation": "GTA Appendix C, Mitigation Questionnaire / Statement of Truth (16 March 2026)",
+    "title": "Mitigation Questionnaire and Statement of Truth signed by the hirer",
+    "principle": "Appendix C is the customer's Mitigation Questionnaire/Statement of Truth, a mandatory Payment Pack item. It records whether the at-fault insurer offered a replacement vehicle before the CHO's services were accepted and, if an offer was received, why it was not acceptable; the CHO must advise the customer of the duty to mitigate. For hires from 30 September 2020 the statement reads 'I believe that the facts stated in this mitigation statement are true' with a contempt-of-court warning. CCGUK's form.mitigation_questionnaire mirrors it and is signed through the e-sign flow; every intervention offer logged in the register must be reflected in it.",
+    "text": "I believe that the facts stated in this mitigation statement are true",
+    "tags": ["gta", "appendix C", "mitigation questionnaire", "statement of truth", "intervention", "duty to mitigate", "contempt of court"],
+    "topics": ["gta", "credit_hire", "mitigation"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippets of the 2024/2026 GTA wording and thecho.co.uk 'Mitigation Statement of Truth' page: Appendix C is the Mitigation Questionnaire/Statement of Truth Form; the mitigation statement confirms whether an insurer offer was received before accepting the CHO and, if so, why it was not acceptable; statement-of-truth wording for hires from 30 Sept 2020 as quoted, followed by contempt-of-court language. Confirm the 2026 form text.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-subscription-audit",
+    "type": "gta",
+    "citation": "GTA Technical Committee, How To Join / Applicant Audit (gtacredithire.com)",
+    "title": "Joining the GTA: applicant audit £1,890 + VAT and a minimum of 40 qualifying files",
+    "principle": "A CHO applying for GTA subscriber status must complete the current application form and pass an independent Applicant Audit arranged by the GTA Technical Committee. The audit fee is £1,890 plus VAT, payable before the audit date is confirmed, and the applicant must have at least 40 qualifying claims files (progressed beyond Payment Pack or final-invoice stage with all documentation sent to insurers); the auditor samples from the 40 most recent. CCGUK is not a subscriber, so GTA terms are a benchmark only until this is done.",
+    "tags": ["gta", "subscription", "applicant audit", "£1,890", "40 files", "how to join", "non-subscriber"],
+    "topics": ["gta", "credit_hire"],
+    "url": "https://www.gtacredithire.com/how-to-join/",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/how-to-join/",
+      "sourceNote": "Page not fetchable (egress proxy policy denial). Search-engine snippet of gtacredithire.com How To Join: 'The full audit fee is £1,890 plus VAT' and 'Applicants should have a minimum of 40 qualifying claims files available for the auditor ... the auditor will select claims files from the 40 most recent qualifying claims files'. Matches BLUEPRINT. Older indexed material gives superseded figures (£1,685 + VAT full re-audit; £1,000 + VAT half-day subscriber audit in the 2013 FAQ); confirm the current fee on the page.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "gta-rates-2026-27",
+    "type": "gta",
+    "citation": "GTA maximum daily rates 2026-27 (new hires 1 July 2026 to 30 June 2027)",
+    "title": "GTA 2026-27 maximum daily rates: scope and status",
+    "principle": "The GTA Technical Committee publishes maximum daily settlement rates (ex VAT) by vehicle group for new hires from 1 July 2026 to 30 June 2027, following an independent rate review said to draw on about 16 million vehicle-group pricing data points over 12 months, approved on 25 June 2026. Tables exist for cars (S, P, F, M groups), commercial vehicles (CP pick-ups, PV panel vans and others), private hire/taxi and motorcycles (B1-B6), with a downloadable spreadsheet and legacy rates. CHOs may set rates up to the maximum. For a non-subscriber these are a benchmark, not BHR evidence (2.7(j)). See gta-rates.json for the figures captured.",
+    "tags": ["gta", "rates", "2026-27", "1 July 2026", "rate review", "maximum daily rate", "benchmark"],
+    "topics": ["gta", "credit_hire", "bhr"],
+    "url": "https://www.gtacredithire.com/rates/",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/",
+      "sourceNote": "gtacredithire.com (rates, car-hire, commercial, private-hire-taxi, motorcycle pages and the 2025 Rate Review Communication PDF) and trade press (iloveclaims.com, postonline.co.uk, insurancetimes.co.uk, thecho.co.uk) were all blocked by the session egress proxy on 2026-10-04. Statements come from search-engine snippets: 'Maximum daily settlement rates applicable for new hires starting between 1st July 2026 and 30th June 2027'; 'revised rates approved on 25th June 2026'; 'analysis of 16 million vehicle group pricing data points'. The 2026-27 percentage changes by category were not surfaced (2025-26 changes were: Standard +12%, Prestige +3%, 4x4 -3%, MPV +1%, Sports -2%, Motorcycles +12%).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  }
+]

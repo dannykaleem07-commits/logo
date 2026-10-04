@@ -1,0 +1,212 @@
+[
+  {
+    "group": "S1",
+    "description": "Standard group S1 (smallest standard cars, e.g. city cars). 2026-27 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 4232,
+    "period": "2026-27",
+    "effectiveFrom": "2026-07-01",
+    "effectiveTo": "2027-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
+      "sourceNote": "Figure £42.32 confirmed in the project BLUEPRINT (earlier research against the gtacredithire.com Car Hire Rates 2026-27 page). Not re-fetched on 2026-10-04: www.gtacredithire.com is blocked by the session egress proxy (CONNECT 403) and search-engine snippets did not surface the S1 row. Treat as benchmark pending a human check of the page or the downloadable rates spreadsheet.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "S2",
+    "description": "Standard group S2 (e.g. Fiat 500 Pop, Hyundai i10 1.2 Active). 2026-27 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 4799,
+    "period": "2026-27",
+    "effectiveFrom": "2026-07-01",
+    "effectiveTo": "2027-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
+      "sourceNote": "Search-engine snippet of the gtacredithire.com 'Car Hire Rates 2026-27' page: 'Fiat 500 Pop in Group S2, the GTA Rate is £47.99'. Page could not be fetched directly (egress proxy policy denial). Confirm against the page/spreadsheet before relying on it.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "S3",
+    "description": "Standard group S3 (e.g. Toyota Corolla). 2026-27 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 5118,
+    "period": "2026-27",
+    "effectiveFrom": "2026-07-01",
+    "effectiveTo": "2027-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
+      "sourceNote": "Search-engine snippet of the gtacredithire.com page titled 'Car Hire Rates 2026': 'Group S3 vehicles like the Toyota Corolla, the GTA Rate is £51.18'. Period inferred from the page title (2026-27 table); page not fetched directly (egress proxy policy denial). Confirm period and figure.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "S6",
+    "description": "Standard group S6 (e.g. Seat Exeo 2.0). 2026-27 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 6186,
+    "period": "2026-27",
+    "effectiveFrom": "2026-07-01",
+    "effectiveTo": "2027-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
+      "sourceNote": "Search-engine snippet of the gtacredithire.com 'Car Hire Rates 2026-27' page (new hires 1 July 2026 to 30 June 2027): 'Group S6 includes the Seat Exeo 2.0ltr with a GTA Rate of £61.86'. Page not fetched directly (egress proxy policy denial).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "M",
+    "description": "MPV/crossover group M (e.g. Citroen Berlingo Multispace X 1.4). 2026-27 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 5666,
+    "period": "2026-27",
+    "effectiveFrom": "2026-07-01",
+    "effectiveTo": "2027-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
+      "sourceNote": "£56.66 confirmed in the project BLUEPRINT and repeated in a search-engine snippet of the gtacredithire.com 2026-27 rates page ('new hires starting between 1st July 2026 and 30th June 2027 ... Group M such as the Citroen Berlingo Multispace X 1.4 have a GTA rate of £56.66'). Page not fetched directly on 2026-10-04 (egress proxy policy denial). Note: a 2025-26 snippet shows M at £61.59, implying a year-on-year decrease; check which period each figure belongs to.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "M1",
+    "description": "MPV/crossover group M1. 2026-27 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 6549,
+    "period": "2026-27",
+    "effectiveFrom": "2026-07-01",
+    "effectiveTo": "2027-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
+      "sourceNote": "£65.49 confirmed in the project BLUEPRINT and repeated in a search-engine snippet of gtacredithire.com ('M1 vehicles are rated at £65.49 as the daily rate for the 2026-2027 period'). Page not fetched directly on 2026-10-04 (egress proxy policy denial). A 2025-26 snippet shows M1 at £71.18; the M1/M ratio is identical in both years, consistent with a uniform group-level adjustment.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "M2",
+    "description": "MPV/crossover group M2 (e.g. Nissan Qashqai Tekna 2WD 1997cc). 2026-27 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 7468,
+    "period": "2026-27",
+    "effectiveFrom": "2026-07-01",
+    "effectiveTo": "2027-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
+      "sourceNote": "Search-engine snippets of the gtacredithire.com 2026-27 rates page: 'M2 at £74.68' and 'Nissan Qashqai Tekna 2WD (1997 cc) with a GTA Rate of £74.68'. Page not fetched directly (egress proxy policy denial).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "M3",
+    "description": "MPV/crossover group M3. 2026-27 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 8777,
+    "period": "2026-27",
+    "effectiveFrom": "2026-07-01",
+    "effectiveTo": "2027-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
+      "sourceNote": "Search-engine snippet of the gtacredithire.com 2026-27 rates page: 'M3 at £87.77'. Page not fetched directly (egress proxy policy denial).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "F6",
+    "description": "4x4 group F6 (e.g. Jaguar F-Pace 3.0 Petrol 380PS; BMW X6 xDrive40d 3.0 Step Auto). 2026-27 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 22347,
+    "period": "2026-27",
+    "effectiveFrom": "2026-07-01",
+    "effectiveTo": "2027-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
+      "sourceNote": "Search-engine snippets of the gtacredithire.com 2026-27 rates page (new hires 1 July 2026 to 30 June 2027): 'Jaguar F Pace 3.0 Petrol 380PS in GTA Group F6 has a rate of £223.47' and 'BMW X6 xDrive40D 5DR Step Auto 3.0 ... F6 ... £223.47'. Page not fetched directly (egress proxy policy denial).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "CP1",
+    "description": "Commercial pick-up group CP1 (e.g. Ford Ranger 2.5, Mitsubishi L200 2.5 Single Cab, Toyota Hilux 2.5 Single Cab). 2025-26 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 6464,
+    "period": "2025-26",
+    "effectiveFrom": "2025-07-01",
+    "effectiveTo": "2026-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/commercial/",
+      "sourceNote": "BLUEPRINT recorded CP1 £64.64 on a gtacredithire.com page labelled 2025-26. Search-engine snippet on 2026-10-04 agrees: 'new hires starting between 1st July 2025 and 30th June 2026 ... CP1 group vehicles (Ford Ranger 2.5, Mitsubishi L200 2.5 Single Cab, Toyota Hilux 2.5 Single Cab) are rated at £64.64'. The 2026-27 CP1 figure was not surfaced; the commercial page could not be fetched (egress proxy policy denial).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "CP2",
+    "description": "Commercial pick-up group CP2. 2025-26 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 7334,
+    "period": "2025-26",
+    "effectiveFrom": "2025-07-01",
+    "effectiveTo": "2026-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/commercial/",
+      "sourceNote": "BLUEPRINT recorded CP2 £73.34 on a gtacredithire.com page labelled 2025-26. Not found in any search-engine snippet on 2026-10-04 and the page could not be fetched (egress proxy policy denial). 2026-27 CP2 figure unknown.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "PV2",
+    "description": "Commercial panel-van group PV2 (e.g. Vauxhall Vivaro LWB 2.0). Maximum daily settlement rate, ex VAT. Period uncertain (see note).",
+    "dailyRatePence": 5513,
+    "period": "2025-26",
+    "effectiveFrom": "2025-07-01",
+    "effectiveTo": "2026-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/commercial/",
+      "sourceNote": "Search-engine snippet of the gtacredithire.com commercial rates page: 'Vauxhall Vivaro LWB (2.0) has a GTA Rate of £55.13 ... listed under the PV2 GTA Group'. The snippet appeared alongside 2025-26 CP1 data and the search summary judged it 2025-26, but the page is titled 'Commercial Rates 2026-27'; period therefore uncertain. Page not fetched directly (egress proxy policy denial). A Ford Transit XLWB 2.4 Luton at £74.12 was also seen without a group code and is not recorded.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "M",
+    "description": "MPV/crossover group M. 2025-26 maximum daily settlement rate, ex VAT (see note on year-on-year movement).",
+    "dailyRatePence": 6159,
+    "period": "2025-26",
+    "effectiveFrom": "2025-07-01",
+    "effectiveTo": "2026-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/account/",
+      "sourceNote": "Search-engine snippet of a gtacredithire.com page titled 'Car Hire Rates 2025' (new hires 1 July 2025 to 30 June 2026): 'M group vehicles are rated at £61.59, and M1 group vehicles are rated at £71.18'. This is higher than the 2026-27 M figure (£56.66), implying an ~8% decrease; the M1/M ratio is identical in both years, so the pairing is internally consistent, but the period attribution needs a human check against the legacy rates download. Page not fetched directly (egress proxy policy denial).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  },
+  {
+    "group": "M1",
+    "description": "MPV/crossover group M1. 2025-26 maximum daily settlement rate, ex VAT (see note on year-on-year movement).",
+    "dailyRatePence": 7118,
+    "period": "2025-26",
+    "effectiveFrom": "2025-07-01",
+    "effectiveTo": "2026-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/account/",
+      "sourceNote": "Search-engine snippet of a gtacredithire.com page titled 'Car Hire Rates 2025' (new hires 1 July 2025 to 30 June 2026): 'M1 group vehicles are rated at £71.18'. Higher than the 2026-27 M1 figure (£65.49). Period attribution needs a human check against the legacy rates download. Page not fetched directly (egress proxy policy denial).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    }
+  }
+]

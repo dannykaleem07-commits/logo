@@ -1,0 +1,552 @@
+[
+  {
+    "id": "abi-salvage-code-2025",
+    "type": "code_of_practice",
+    "citation": "ABI Code of Practice for the Categorisation of Motorised Vehicle Salvage (28 May 2025)",
+    "title": "Salvage categories A/B/S/N, the Appropriately Qualified Person, MIAFTR and the EV/high-voltage battery rules",
+    "principle": "The May 2025 Code keeps four categories — A (scrap/recycle, must be crushed), B (break for parts, body shell crushed), S (repairable, structural damage) and N (repairable, non-structural damage) — and requires every categorisation to be made by an Appropriately Qualified Person who takes responsibility for the final decision in a dispute, with DVLA notification and MIAFTR recording for each category. The 2025 revision brings electric and hybrid vehicles within scope with specific guidance for high-voltage (over 60V) batteries including structural battery designs where the battery forms part of the chassis, and addresses megacasting and reusable parts. CCGUK records the category, the AQP and the source; it does not write to MIAFTR. A Cat S/N marker depresses PAV and must be disclosed in comparables.",
+    "tags": [
+      "ABI",
+      "salvage",
+      "Cat A",
+      "Cat B",
+      "Cat S",
+      "Cat N",
+      "AQP",
+      "MIAFTR",
+      "EV battery"
+    ],
+    "topics": [
+      "salvage",
+      "pav"
+    ],
+    "url": "https://www.abi.org.uk/globalassets/files/publications/public/motor/2025/codepracticecategorisationmotorisedvehiclesalvagemay2025.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.abi.org.uk/news/news-articles/2025/5/abi-continues-focus-on-road-safety-with-updates-to-its-salvage-code-of-practice/",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of the ABI news article (dated 28/05/2025) and the Code PDF returned: categories A, B, S, N; AQP responsibility; DVLA/MIAFTR steps per category; EV/hybrid in scope; HV battery (>60V) and structural battery guidance; megacasting. Matches blueprint (28 May 2025).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "lay-representatives-order-1999",
+    "type": "statute",
+    "citation": "Lay Representatives (Rights of Audience) Order 1999, SI 1999/1225, art 2",
+    "title": "Any person may address the court in a small claims hearing — but not if the client does not attend, after judgment, or on appeal",
+    "principle": "In proceedings dealt with as a small claim any person may exercise rights of audience in accordance with rules of court, except that a lay representative may not do so where the client does not attend the hearing, at any stage after judgment, or on an appeal against the district judge's decision. CPR 27.14(3) applies the small claims costs caps to any fee charged by a lay representative. This is CCGUK's only lawful route to speak in court: the claimant must be present, and CCGUK must not conduct the litigation (Legal Services Act 2007 s.12).",
+    "text": "A lay representative may not exercise any right of audience— (a) where his client does not attend the hearing; (b) at any stage after judgment; or (c) on any appeal brought against any decision made by the district judge in the proceedings.",
+    "tags": [
+      "lay representative",
+      "rights of audience",
+      "small claims",
+      "perimeter"
+    ],
+    "topics": [
+      "costs",
+      "enforceability"
+    ],
+    "url": "https://www.legislation.gov.uk/uksi/1999/1225/made",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/1999/1225/made",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets returned art 2(1) (\"any person may exercise rights of audience in proceedings dealt with as a small claim in accordance with rules of court\") and art 2(2)(a)–(c) as quoted.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "lsa-2007-s12-sch2",
+    "type": "statute",
+    "citation": "Legal Services Act 2007 s.12 and Sch 2",
+    "title": "Reserved legal activities: rights of audience and the conduct of litigation (issuing, prosecuting, defending, ancillary steps)",
+    "principle": "Section 12 lists the reserved legal activities: exercise of a right of audience, conduct of litigation, reserved instrument activities, probate, notarial activities and administration of oaths. Schedule 2 defines the conduct of litigation as issuing proceedings before any court in England and Wales, the commencement, prosecution and defence of such proceedings, and ancillary functions (such as entering appearances). Carrying on a reserved activity without entitlement is an offence (s.14). Pre-action correspondence is not reserved; once a claim is issued the claimant acts as litigant in person and CCGUK prepares drafts for the claimant or an instructed solicitor to sign — never filing or signing on the record.",
+    "text": "The \"conduct of litigation\" means— (a) the issuing of proceedings before any court in England and Wales, (b) the commencement, prosecution and defence of such proceedings, and (c) the performance of any ancillary functions in relation to such proceedings (such as entering appearances to actions).",
+    "tags": [
+      "Legal Services Act",
+      "reserved legal activity",
+      "conduct of litigation",
+      "perimeter"
+    ],
+    "topics": [
+      "enforceability",
+      "costs"
+    ],
+    "url": "https://www.legislation.gov.uk/ukpga/2007/29/section/12",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2007/29/section/12",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets returned s.12(1)(a)–(f) and the Sch 2 para 4 definition of conduct of litigation as quoted.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "ico-data-protection-fee",
+    "type": "fee",
+    "citation": "ICO data protection fee — Data Protection (Charges and Information) Regulations 2018 as amended 2025",
+    "title": "ICO fee: tier 1 £52 (turnover up to £632,000 or no more than 10 staff); tier 2 £78; tier 3 £3,763; £5 Direct Debit discount",
+    "principle": "Every controller must pay the annual data protection fee unless exempt. Tier 1 (micro organisations: turnover up to £632,000 or 10 or fewer staff) is £52; tier 2 (turnover up to £36m or 250 or fewer staff) is £78; otherwise tier 3 at £3,763; paying by Direct Debit deducts £5. CCGUK is tier 1. Settings must hold the ICO registration number and renewal date; failure to pay attracts a fixed penalty.",
+    "tags": [
+      "ICO",
+      "data protection fee",
+      "tier 1",
+      "£52"
+    ],
+    "topics": [
+      "dsar",
+      "complaints"
+    ],
+    "url": "https://ico.org.uk/for-organisations/data-protection-fee/data-protection-fee/",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://ico.org.uk/for-organisations/data-protection-fee/data-protection-fee/",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of the ICO fee guide, FAQs and self-assessment (\"You need to pay £52\") returned tier 1 £52 (£632,000 / 10 staff), tier 2 £78, tier 3 £3,763 and the £5 Direct Debit saving. Matches blueprint.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "dvla-v888-fee",
+    "type": "fee",
+    "citation": "DVLA form V888 — request by an individual for information about a vehicle",
+    "title": "DVLA keeper enquiry: £2.50 for the registered keeper at the date of an event (reasonable cause); £5 for further information",
+    "principle": "A person with reasonable cause (including finding out who was responsible for an accident, tracing the keeper of an abandoned or illegally parked vehicle, or suspected insurance fraud) may apply on form V888 for the name and address of the registered keeper at a specific date for £2.50; further information such as a copy document or additional keeper history costs £5 per vehicle. Companies use V888/2 or V888X2A. Record the reasonable-cause statement on the claim file before applying.",
+    "tags": [
+      "DVLA",
+      "V888",
+      "keeper enquiry",
+      "£2.50",
+      "reasonable cause"
+    ],
+    "topics": [
+      "fleet",
+      "pcn"
+    ],
+    "url": "https://www.gov.uk/government/publications/v888-request-by-an-individual-for-information-about-a-vehicle",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gov.uk/government/publications/v888-request-by-an-individual-for-information-about-a-vehicle",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the gov.uk V888 publication and \"Request information about another vehicle or its registered keeper\" pages: £2.50 for keeper at date of event under reasonable cause; £5 for further information. Matches blueprint.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "askmid-one-off-search-fee",
+    "type": "fee",
+    "citation": "MIB askMID \"Other Vehicle Look-up\" (to be rebranded \"Check Their Vehicle\")",
+    "title": "askMID one-off search for the other vehicle's insurer: £10.00, non-refundable; annual subscription for claims handlers",
+    "principle": "A party involved in an accident can run a one-off askMID search on the other vehicle's registration and accident date for £10.00 (non-refundable); if found, the insurer name, policy number and claims contact details are returned on screen. Organisations such as solicitors and claims handling companies can take an annual subscription. MIB has said askMID is being replatformed and rebranded \"Check Their Vehicle\" — watch the URL. Misuse (searching vehicles not involved in an accident with the enquirer) is prohibited.",
+    "tags": [
+      "askMID",
+      "MIB",
+      "insurer lookup",
+      "£10"
+    ],
+    "topics": [
+      "credit_hire"
+    ],
+    "url": "https://www.askmid.com/",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.askmid.com/",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of askmid.com and mib.org.uk: \"This enquiry will be charged at £10 which is non-refundable\"; subscription available for solicitors and claims handling companies; rebrand to Check Their Vehicle. Matches blueprint (£10.00; the £4.50 figure is out of date).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "met-police-collision-report-fees-2026",
+    "type": "fee",
+    "citation": "Metropolitan Police General Fees and Charges 2026 — Forms 518 and 519",
+    "title": "Met Police: collision report copy £215.10 (Form 518); third-party details £49.00 (Form 519); allow 21+ days from payment",
+    "principle": "A copy of the police collision report costs £215.10 (Form 518) and a request for third-party details £49.00 (Form 519) under the Met's 2026 General Fees and Charges; payment is by BACS and third-party details take a minimum of 21 days from the date payment is banked. Only request the full report when liability is genuinely in dispute; the third-party details form is usually enough to identify an insurer. Other forces have their own fee schedules.",
+    "tags": [
+      "Met Police",
+      "collision report",
+      "Form 518",
+      "Form 519",
+      "£215.10",
+      "£49"
+    ],
+    "topics": [
+      "liability",
+      "credit_hire"
+    ],
+    "url": "https://www.met.police.uk/rqo/request/cr/v1/request-collision-report/",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.met.police.uk/rqo/request/cr/v1/request-collision-report/",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the Met \"Request a collision report\" page and the 2026 General Fees and Charges PDF: £215.10 (form 518) and £49.00 (form 519); minimum 21 days. Some older forms show £41.50 for third-party details — superseded. Matches blueprint.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "tfl-phv-zec-rule",
+    "type": "guidance",
+    "citation": "TfL private hire vehicle licensing — zero emission capable requirement (from 1 January 2023)",
+    "title": "Every vehicle licensed as a London PHV for the first time must be zero emission capable and Euro 6",
+    "principle": "Since 1 January 2023 all private hire vehicles licensed by TfL for the first time, whatever their age, must be zero emission capable and meet Euro 6; TfL's PHV definition requires CO2 of no more than 75g/km with a zero-emission range of at least 20 miles (the stricter 50g/km alternative in the blueprint was not returned by TfL pages and should be checked), and vehicles must be no older than 10 years at re-licensing. Neither current CCGUK unit qualifies for first licensing, so the PCO plan needs a ZEC vehicle; the fleet module should block \"PCO\" class-of-use allocation for non-ZEC units.",
+    "tags": [
+      "TfL",
+      "PHV",
+      "zero emission capable",
+      "Euro 6",
+      "PCO"
+    ],
+    "topics": [
+      "fleet"
+    ],
+    "url": "https://tfl.gov.uk/info-for/taxis-and-private-hire/licensing/private-hire-vehicle-licence",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://tfl.gov.uk/info-for/taxis-and-private-hire/licensing/private-hire-vehicle-licence",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of TfL licensing pages, the 2022 press release and the 2025 action plan: \"Since 1 January 2023 all PHVs licensed for the first time must be zero emission capable (ZEC) and meet the Euro 6 emissions standard\"; \"emit no more than 75g/km of CO2 and have a minimum zero emission capable range of 20 miles\"; 10-year age limit at re-licensing. The blueprint's \"50g/km with 10 miles\" alternative limb was not seen.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "mib-uninsured-drivers-agreement-2015",
+    "type": "guidance",
+    "citation": "MIB Uninsured Drivers Agreement 2015 (England, Scotland and Wales) and MIB claims guidance",
+    "title": "Uninsured driver claims: limitation-based time limits (3 years personal injury; 6 years property damage), claim via the MIB portal",
+    "principle": "Where the at-fault driver is identified but uninsured, the claim is made to MIB under the 2015 Agreement (new claims via the online portal). MIB states a personal injury claim must be received within three years of the accident and a property damage claim within six years (England and Wales), mirroring the Limitation Act. The Agreement contains conditions precedent (notice of proceedings, cooperation, assignment of judgment) that must be checked against the Agreement text before issuing against an uninsured driver; MIB reports an average claim window of around nine months. Injury elements are referred out.",
+    "tags": [
+      "MIB",
+      "uninsured driver",
+      "2015 Agreement",
+      "time limits"
+    ],
+    "topics": [
+      "limitation",
+      "credit_hire"
+    ],
+    "url": "https://www.mib.org.uk/media/166917/2015-uninsured-drivers-agreement-england-scotland-wales.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.mib.org.uk/make-a-claim/can-i-claim-with-mib/",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of MIB \"Check your eligibility\" / \"How the claims process works\": PI \"must be received within three years of the date of the accident\"; property damage \"up to six years after the accident\"; average claims window around nine months. The Agreement clauses themselves (notice conditions, exclusions) were not read.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "mib-untraced-drivers-agreement-2017",
+    "type": "guidance",
+    "citation": "MIB Untraced Drivers Agreement 2017 and MIB claims guidance",
+    "title": "Hit-and-run (untraced driver) claims: report to the police within 14 days; 3 years personal injury / 6 years property damage",
+    "principle": "Where the driver cannot be traced, compensation is sought from MIB under the 2017 Agreement. MIB's guidance requires the incident to have been reported to the police within 14 days (even if the claim is submitted later) and the claim to be made within three years for personal injury and six years for property damage; MIB investigates and decides the application itself (no court claim against a defendant). Check the Agreement text for the property-damage conditions and any excess before advising a client; the police reference and report date are mandatory evidence fields.",
+    "tags": [
+      "MIB",
+      "untraced driver",
+      "hit and run",
+      "2017 Agreement",
+      "14 days"
+    ],
+    "topics": [
+      "limitation",
+      "credit_hire"
+    ],
+    "url": "https://www.mib.org.uk/make-a-claim/can-i-claim-with-mib/",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.mib.org.uk/make-a-claim/can-i-claim-with-mib/",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of MIB eligibility guidance: \"You must report any accident involving a hit-and-run driver to the police within 14 days of the incident, even if you submit your claim later\"; 3-year PI and 6-year property damage limits. The 2017 Agreement clause wording (including whether \"as soon as reasonably practicable\" qualifies the 14 days) was not read.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "link_only"
+  },
+  {
+    "id": "duaa-2025-commencement-2026",
+    "type": "statute",
+    "citation": "Data (Use and Access) Act 2025 (Commencement No. 6 and Transitional and Saving Provisions) Regulations 2026, SI 2026/82",
+    "title": "DUAA 2025 commencement: core data protection reforms 5 February 2026; data subject complaints duty (s.103, Sch 10 — new DPA 2018 s.164A) 19 June 2026",
+    "principle": "SI 2026/82 brought the main Part 5 data protection provisions of the Data (Use and Access) Act 2025 into force on 5 February 2026 and section 103 with Schedule 10 (complaints by data subjects) into force on 19 June 2026. Under new DPA 2018 s.164A a data subject may complain directly to the controller about an alleged UK GDPR infringement; the controller must facilitate complaints, acknowledge within 30 days and respond without undue delay, informing the complainant of the outcome; the duty applies to complaints received on or after 19 June 2026. CCGUK must publish a data protection complaints process and log acknowledgement dates; the ICO expects a complaint to the controller before it will act.",
+    "tags": [
+      "DUAA 2025",
+      "commencement",
+      "data subject complaints",
+      "s.164A",
+      "30 days"
+    ],
+    "topics": [
+      "dsar",
+      "complaints"
+    ],
+    "url": "https://www.legislation.gov.uk/uksi/2026/82/made",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2026/82/made",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of SI 2026/82 and the gov.uk commencement plan: provisions in force 5 February 2026; s.103 and Sch 10 in force 19 June 2026; new s.164A duty to acknowledge within 30 days and respond; transitional rule for complaints made on or after commencement. Matches blueprint.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "highway-code-rule-126",
+    "type": "guidance",
+    "citation": "The Highway Code, rule 126",
+    "title": "Stopping distances and following gap — the rear-end collision rule",
+    "principle": "A driver must drive at a speed that allows stopping well within the distance seen to be clear, leave enough space to pull up safely if the vehicle in front slows or stops, never get closer than the overall stopping distance, and allow at least a two-second gap (doubled on wet roads, up to ten times on ice). In a rear-end shunt the following driver is presumptively at fault; the lead driver's sudden stop rarely displaces this.",
+    "text": "Drive at a speed that will allow you to stop well within the distance you can see to be clear. ... Leave enough space between you and the vehicle in front so that you can pull up safely if it suddenly slows down or stops. The safe rule is never to get closer than the overall stopping distance.",
+    "tags": [
+      "Highway Code",
+      "rule 126",
+      "liability",
+      "rear-end",
+      "stopping distance"
+    ],
+    "topics": [
+      "liability",
+      "credit_hire"
+    ],
+    "url": "https://www.gov.uk/guidance/the-highway-code/general-rules-techniques-and-advice-for-all-drivers-and-riders-103-to-158",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gov.uk/guidance/the-highway-code/general-rules-techniques-and-advice-for-all-drivers-and-riders-103-to-158",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the gov.uk Highway Code page returned the rule 126 wording as quoted. Breach is evidence of negligence, not conclusive (RTA 1988 s.38(7)).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "highway-code-rule-146",
+    "type": "guidance",
+    "citation": "The Highway Code, rule 146",
+    "title": "Adapt driving to the road and conditions",
+    "principle": "Drivers must adapt their driving to the type and condition of the road: not treating speed limits as targets, taking the road and traffic conditions into account, being prepared for unexpected or difficult situations, and being ready to slow down or stop. Cited where excessive speed for conditions contributed to a collision even within the limit.",
+    "text": "Adapt your driving to the appropriate type and condition of road you are on.",
+    "tags": [
+      "Highway Code",
+      "rule 146",
+      "liability",
+      "speed",
+      "conditions"
+    ],
+    "topics": [
+      "liability",
+      "credit_hire"
+    ],
+    "url": "https://www.gov.uk/guidance/the-highway-code/general-rules-techniques-and-advice-for-all-drivers-and-riders-103-to-158",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gov.uk/guidance/the-highway-code/general-rules-techniques-and-advice-for-all-drivers-and-riders-103-to-158",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the gov.uk Highway Code page returned the rule 146 wording as quoted. Breach is evidence of negligence, not conclusive (RTA 1988 s.38(7)).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "highway-code-rule-159",
+    "type": "guidance",
+    "citation": "The Highway Code, rule 159",
+    "title": "Before moving off: mirrors, blind spots, signal, do not pull out into the path of others",
+    "principle": "Before moving off a driver must use all mirrors, look round to check blind spots, signal if necessary and look round for a final check, and move off only when safe. Cited where a parked or stationary vehicle pulls out into a passing vehicle — the mover is usually at fault.",
+    "text": "Before moving off you should use all mirrors to check the road is clear; look round to check the blind spots (the areas you are unable to see in the mirrors); signal if necessary before moving out; look round for a final check.",
+    "tags": [
+      "Highway Code",
+      "rule 159",
+      "liability",
+      "moving off",
+      "parked vehicle"
+    ],
+    "topics": [
+      "liability",
+      "credit_hire"
+    ],
+    "url": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the gov.uk Highway Code page returned the rule 159 wording as quoted. Breach is evidence of negligence, not conclusive (RTA 1988 s.38(7)).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "highway-code-rule-163",
+    "type": "guidance",
+    "citation": "The Highway Code, rule 163",
+    "title": "Overtaking: only when safe and legal, with plenty of room",
+    "principle": "Overtake only when safe and legal; do not get too close to the vehicle being overtaken, use mirrors and signal, move quickly past, allow plenty of room, and take extra care at night. Cited in overtaking and lane-change collisions, including the \"undertaking\" variants on multi-lane roads.",
+    "text": "Overtake only when it is safe and legal to do so. You should not get too close to the vehicle you intend to overtake; use your mirrors, signal when it is safe to do so ... move quickly past the vehicle you are overtaking ... give way to oncoming vehicles before passing parked vehicles.",
+    "tags": [
+      "Highway Code",
+      "rule 163",
+      "liability",
+      "overtaking",
+      "lane change"
+    ],
+    "topics": [
+      "liability",
+      "credit_hire"
+    ],
+    "url": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the gov.uk Highway Code page returned the rule 163 wording as quoted. Breach is evidence of negligence, not conclusive (RTA 1988 s.38(7)).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "highway-code-rule-167",
+    "type": "guidance",
+    "citation": "The Highway Code, rule 167",
+    "title": "Do not overtake where you might come into conflict: junctions, narrowing roads, forcing others to swerve",
+    "principle": "Drivers must not overtake where they might come into conflict with other road users — approaching or at a junction, where the road narrows, approaching crossings, where another road user would be forced to swerve or slow down, or when a vehicle ahead is indicating or slowing to turn. The core rule in lane-merge and junction overtaking disputes (File 3 type).",
+    "text": "DO NOT overtake where you might come into conflict with other road users. For example: approaching or at a road junction on either side of the road; where the road narrows; ... where you would force another road user to swerve or slow down.",
+    "tags": [
+      "Highway Code",
+      "rule 167",
+      "liability",
+      "overtaking",
+      "junction",
+      "merge"
+    ],
+    "topics": [
+      "liability",
+      "credit_hire"
+    ],
+    "url": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the gov.uk Highway Code page returned the rule 167 wording as quoted. Breach is evidence of negligence, not conclusive (RTA 1988 s.38(7)).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "highway-code-rule-170",
+    "type": "guidance",
+    "citation": "The Highway Code, rule 170",
+    "title": "Road junctions: look all round before emerging; emerge only into a safe gap",
+    "principle": "At a junction a driver must look all around before emerging, not cross or join a road until there is a gap large enough to do so safely, watch for cyclists, motorcyclists and pedestrians, and give way to pedestrians crossing or waiting to cross the road being turned into. The emerging driver is usually at fault in a junction collision with a vehicle on the major road.",
+    "text": "look all around before emerging. Do not cross or join a road until there is a gap large enough for you to do so safely ... watch out for cyclists, motorcyclists, powered wheelchairs/mobility scooters and pedestrians as they are not always easy to see.",
+    "tags": [
+      "Highway Code",
+      "rule 170",
+      "liability",
+      "junction",
+      "emerging"
+    ],
+    "topics": [
+      "liability",
+      "credit_hire"
+    ],
+    "url": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the gov.uk Highway Code page returned the rule 170 wording as quoted. Breach is evidence of negligence, not conclusive (RTA 1988 s.38(7)).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "highway-code-rule-179",
+    "type": "guidance",
+    "citation": "The Highway Code, rule 179",
+    "title": "Turning right: mirrors, signal, position just left of the middle of the road",
+    "principle": "Well before turning right a driver should use mirrors to know the position and movement of traffic behind, give a right-turn signal, and take up position just left of the middle of the road or in the marked right-turn space. Cited where a right-turning vehicle is struck by an overtaking vehicle, and where a vehicle turns right across oncoming traffic.",
+    "text": "Well before you turn right you should use your mirrors to make sure you know the position and movement of traffic behind you; give a right-turn signal; take up a position just left of the middle of the road or in the space marked for traffic turning right.",
+    "tags": [
+      "Highway Code",
+      "rule 179",
+      "liability",
+      "turning right"
+    ],
+    "topics": [
+      "liability",
+      "credit_hire"
+    ],
+    "url": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the gov.uk Highway Code page returned the rule 179 wording as quoted. Breach is evidence of negligence, not conclusive (RTA 1988 s.38(7)).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "highway-code-rule-185",
+    "type": "guidance",
+    "citation": "The Highway Code, rule 185",
+    "title": "Roundabouts: give priority to traffic approaching from the right",
+    "principle": "On reaching a roundabout a driver must give priority to traffic approaching from the right unless signs, markings or lights direct otherwise, check whether markings allow entry without giving way, watch for traffic already on the roundabout (especially those intending to leave by the next exit), and look right before joining. The entering driver who fails to give way is usually at fault.",
+    "text": "When reaching the roundabout you should give priority to traffic approaching from your right, unless directed otherwise by signs, road markings or traffic lights ... look forward before moving off to make sure traffic in front has moved off.",
+    "tags": [
+      "Highway Code",
+      "rule 185",
+      "liability",
+      "roundabout",
+      "priority"
+    ],
+    "topics": [
+      "liability",
+      "credit_hire"
+    ],
+    "url": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the gov.uk Highway Code page returned the rule 185 wording as quoted. Breach is evidence of negligence, not conclusive (RTA 1988 s.38(7)).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "highway-code-rule-186",
+    "type": "guidance",
+    "citation": "The Highway Code, rule 186",
+    "title": "Roundabouts: signals and lane position for left, straight ahead and right exits",
+    "principle": "Taking the first exit: signal left and approach in the left-hand lane, keep left and keep signalling. Taking a right exit or going full circle: select the appropriate lane on approach, normally no signal on approach, stay in lane until needing to alter course, signal left after passing the exit before the one wanted. Intermediate exits: select the appropriate lane, normally no signal on approach, signal left after passing the exit before the one wanted. Lane-discipline and exit-signal failures on roundabouts are apportioned using this rule.",
+    "text": "When taking the first exit to the left, unless signs or markings indicate otherwise signal left and approach in the left-hand lane; keep to the left on the roundabout and continue signalling left to leave ... signal left after you have passed the exit before the one you want.",
+    "tags": [
+      "Highway Code",
+      "rule 186",
+      "liability",
+      "roundabout",
+      "lane discipline",
+      "signals"
+    ],
+    "topics": [
+      "liability",
+      "credit_hire"
+    ],
+    "url": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gov.uk/guidance/the-highway-code/using-the-road-159-to-203",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the gov.uk Highway Code page returned the rule 186 wording as quoted. Breach is evidence of negligence, not conclusive (RTA 1988 s.38(7)).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  }
+]

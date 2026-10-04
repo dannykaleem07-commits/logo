@@ -1,5 +1,21 @@
+/**
+ * @ccguk/documents — branded HTML templates → PDF for ClaimDesk.
+ *
+ *   import { renderTemplate, renderPdf, listTemplates } from '@ccguk/documents';
+ *   const { html, templateVersion, title } = renderTemplate('letter.ncaf', data);
+ *   const { pdf, sha256, pages } = await renderPdf(html, { reference: data.claim.ourReference });
+ *
+ * See src/README.md for the template contract.
+ */
 export * from './brand.js';
-// Renderer, templates and registry are added by the documents build agents:
-//   ./render.ts     — HTML → PDF via playwright-core (A4, brand margins, page X of Y, SHA-256)
-//   ./registry.ts   — template registry: id, version, title, dataSchema, render(data) → html
-//   ./templates/*   — one file per template
+export * from './format.js';
+export * from './common.js';
+export * from './logo.js';
+export * from './layout.js';
+export * from './registry.js';
+export * from './render.js';
+export * from './guards.js';
+export * from './hash.js';
+
+// Side effect: every template module registers itself.
+import './templates/index.js';

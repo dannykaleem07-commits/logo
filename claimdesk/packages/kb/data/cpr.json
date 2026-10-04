@@ -1,0 +1,665 @@
+[
+  {
+    "id": "cpr-7-4-7-5",
+    "type": "cpr",
+    "citation": "CPR 7.4 and 7.5",
+    "title": "Particulars of claim within 14 days of the claim form; claim form served within four months of issue",
+    "principle": "Particulars must be contained in, served with, or served within 14 days after service of the claim form (and never later than the last date for serving the claim form). The step required for service of a claim form within the jurisdiction must be completed by midnight on the calendar day four months after issue.",
+    "text": "Particulars of claim must ... be served on the defendant by the claimant within 14 days after service of the claim form ... the claimant must complete the step required ... before 12.00 midnight on the calendar day four months after the date of issue of the claim form.",
+    "tags": [
+      "claim form",
+      "particulars",
+      "service",
+      "four months"
+    ],
+    "topics": [
+      "limitation",
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part07",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part07",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the 14-day particulars rule (7.4) and the four-month service rule (7.5).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-12-3",
+    "type": "cpr",
+    "citation": "CPR 12.3",
+    "title": "Default judgment: conditions (no acknowledgment or defence and time expired)",
+    "principle": "Default judgment may be entered only if, at the date of entry, the defendant has filed no acknowledgment of service or defence and the time for doing so has expired: 14 days after service of the particulars (CPR 10.3 / 15.4), or 28 days where an acknowledgment was filed. The system's \"default judgment 14 days\" clock runs from deemed service of the particulars; check the court file before requesting judgment or it will be set aside under CPR 13.2.",
+    "text": "The claimant may obtain judgment in default of an acknowledgment of service only if at the date on which judgment is entered (a) the defendant has not filed an acknowledgment of service or a defence to the claim (or any part of the claim); and (b) the relevant time for doing so has expired.",
+    "tags": [
+      "default judgment",
+      "14 days",
+      "acknowledgment of service"
+    ],
+    "topics": [
+      "costs",
+      "interest"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part12",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part12",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the 12.3(1) conditions verbatim.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-13-2-13-3",
+    "type": "cpr",
+    "citation": "CPR 13.2 and 13.3",
+    "title": "Setting aside default judgment: mandatory where wrongly entered; otherwise real prospect or other good reason, promptness",
+    "principle": "The court must set aside a default judgment that was wrongly entered (conditions in 12.3 not met, or claim satisfied before judgment). Otherwise it may set aside or vary if the defendant shows a real prospect of successfully defending or there is some other good reason, having regard to whether the application was made promptly. Insurers routinely apply late; oppose on promptness and merits with the chronology.",
+    "text": "the court may set aside or vary a judgment if (a) the defendant has a real prospect of successfully defending the claim; or (b) it appears to the court that there is some other good reason ... the court must have regard to whether the person seeking to set aside the judgment made an application to do so promptly.",
+    "tags": [
+      "set aside",
+      "default judgment",
+      "promptly"
+    ],
+    "topics": [
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part13",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part13",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 13.2 (mandatory grounds) and 13.3 (discretionary grounds and promptness).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-14",
+    "type": "cpr",
+    "citation": "CPR Part 14 (admissions), esp. 14.2 and 14.4",
+    "title": "Admissions and judgment on admission",
+    "principle": "A party may admit the whole or part of a claim by written notice. For money claims the defendant may admit the whole or part for a specified amount, or liability for an unspecified amount; the claimant may then request judgment on the admission and continue for the balance. Use this to bank undisputed heads (PAV, recovery, storage) while hire is fought — it is the litigation equivalent of the split-heads playbook step.",
+    "text": "Where a defendant admits liability to pay the whole of or part of a claim for a specified sum of money ... the claimant may file a request for judgment ... Where a party applies for judgment on an admission, the court shall give such judgment as it considers the applicant is entitled to.",
+    "tags": [
+      "admissions",
+      "judgment on admission",
+      "split heads"
+    ],
+    "topics": [
+      "costs",
+      "pav"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part14",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part14",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the money-claim admission options (14.2) and the judgment-on-admission wording (labelled 14.4). Part 14 was rewritten with effect from 1 October 2023 — confirm current rule numbers on the page.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-15-4-15-5",
+    "type": "cpr",
+    "citation": "CPR 15.4 and 15.5",
+    "title": "Time for filing a defence: 14 days, or 28 days after acknowledgment; extension by agreement up to 28 more days",
+    "principle": "The defence is due 14 days after service of the particulars, or 28 days if an acknowledgment of service was filed. The parties may agree an extension of up to 28 days, and the defendant must notify the court in writing. Record any agreed extension as an event so the default-judgment clock is recalculated.",
+    "text": "the period for filing a defence is (a) 14 days after service of the particulars of claim; or (b) if the defendant files an acknowledgment of service under Part 10, 28 days after service of the particulars of claim ... may agree that the period for filing a defence ... shall be extended by up to 28 days.",
+    "tags": [
+      "defence",
+      "14 days",
+      "28 days",
+      "extension"
+    ],
+    "topics": [
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part15",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part15",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 15.4(1) and 15.5(1)–(2).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-16-4",
+    "type": "cpr",
+    "citation": "CPR 16.4",
+    "title": "Contents of particulars of claim, including how interest must be pleaded",
+    "principle": "Particulars must contain a concise statement of the facts relied on and, if interest is claimed, say whether it is claimed under contract, an enactment (and which — s.69 County Courts Act 1984 for county court claims) or another basis; for a specified sum, state the rate, the start date, the date to which it is calculated (not later than issue), the total to that date and the daily rate thereafter. The schedule of loss template must emit exactly these fields.",
+    "text": "state the percentage rate at which interest is claimed; the date from which it is claimed; the date to which it is calculated, which must not be later than the date on which the claim form is issued; the total amount of interest claimed to the date of calculation; and the daily rate at which interest accrues after that date.",
+    "tags": [
+      "particulars of claim",
+      "interest",
+      "pleading"
+    ],
+    "topics": [
+      "interest",
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part16",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part16",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 16.4(1) and (2) including the interest particulars.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-18-1",
+    "type": "cpr",
+    "citation": "CPR 18.1",
+    "title": "Further information: court may order a party to clarify or give additional information",
+    "principle": "The court may at any time order a party to clarify any matter in dispute or give additional information about it, whether or not it appears in a statement of case. A Part 18 request is the formal route to force an insurer to particularise a bare \"rate/period/need\" denial or an intervention-offer assertion before trial (PD 18 governs the request procedure).",
+    "text": "The court may at any time order a party to (a) clarify any matter which is in dispute in the proceedings; or (b) give additional information in relation to any such matter, whether or not the matter is contained or referred to in a statement of case.",
+    "tags": [
+      "further information",
+      "particularisation",
+      "Part 18"
+    ],
+    "topics": [
+      "credit_hire",
+      "bhr",
+      "mitigation"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part18",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part18",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 18.1(1) verbatim.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-22-pd-22",
+    "type": "cpr",
+    "citation": "CPR Part 22 and PD 22 para 2.1",
+    "title": "Statement of truth: prescribed wording and contempt warning",
+    "principle": "Statements of case, witness statements and other listed documents must be verified by a statement of truth in the prescribed form, which since April 2020 includes the contempt warning. The claimant (litigant in person) signs; CCGUK must not sign statements of case as if on the record (Legal Services Act 2007). Templates must reproduce the wording exactly.",
+    "text": "I believe that the facts stated in this [document] are true. I understand that proceedings for contempt of court may be brought against anyone who makes, or causes to be made, a false statement in a document verified by a statement of truth without an honest belief in its truth.",
+    "tags": [
+      "statement of truth",
+      "contempt",
+      "witness statement"
+    ],
+    "topics": [
+      "costs",
+      "enforceability"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part22/pd_part22",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part22/pd_part22",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the prescribed wording and the list of documents requiring verification.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-25-interim-payments",
+    "type": "cpr",
+    "citation": "CPR 25.20–25.26 (Part 25 Section V, interim payment orders) — formerly 25.6–25.9",
+    "title": "Interim payments: application timing, conditions and the \"reasonable proportion\" cap",
+    "principle": "Part 25 was entirely rewritten by the Civil Procedure (Amendment) Rules 2025 (SI 2025/106) from 6 April 2025; interim payments now sit in Section V (rr.25.20–25.26). An application may not be made before the end of the acknowledgment-of-service period; the court may order an interim payment where the defendant has admitted liability, judgment has been obtained for damages to be assessed, or the court is satisfied the claimant would obtain judgment for a substantial sum; and it must not order more than a reasonable proportion of the likely final judgment. The BLUEPRINT and playbook references to \"CPR 25.7\" are out of date.",
+    "text": "it is satisfied that, if the claim went to trial, the claimant would obtain judgment for a substantial amount of money (other than costs) against the defendant ... must not order an interim payment of more than a reasonable proportion of the likely amount of the final judgment.",
+    "tags": [
+      "interim payment",
+      "Part 25",
+      "renumbered 2025",
+      "split heads"
+    ],
+    "topics": [
+      "costs",
+      "pav",
+      "credit_hire"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part25",
+    "verification": {
+      "status": "failed",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part25",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. BLUEPRINT CONTRADICTED: blueprint cites rr.25.6–25.9 / 25.7; snippets of the current Part 25 and of SI 2025/106 show the interim payment rules at 25.20 (court's powers), 25.21 (application timing) and 25.23 (conditions), in force 6 April 2025. Exact rule-to-content mapping to be confirmed on the page.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-26-9",
+    "type": "cpr",
+    "citation": "CPR 26.9",
+    "title": "Scope of each track: small claims £10,000; fast track £25,000; intermediate track £100,000",
+    "principle": "The small claims track is the normal track for claims of not more than £10,000; the fast track for claims of not more than £25,000 with a trial of no more than one day and limited expert evidence; the intermediate track for claims of not more than £100,000 brought by one or two claimants against one or two defendants that are unsuitable for the lower tracks; otherwise the multi-track. Credit hire claims are valued on the amount claimed, so most CCGUK files are small claims (fixed costs, lay representation possible).",
+    "text": "The small claims track is the normal track for ... a claim with a value of not more than £10,000 ... the fast track is the normal track for any claim ... with a value of not more than £25,000 ... the intermediate track is the normal track where ... monetary relief with a value of not more than £100,000.",
+    "tags": [
+      "track allocation",
+      "small claims",
+      "fast track",
+      "intermediate track"
+    ],
+    "topics": [
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part26",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part26",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the 26.9 limits for all four tracks (post-1 October 2023 numbering). Matches blueprint.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-27-2",
+    "type": "cpr",
+    "citation": "CPR 27.2",
+    "title": "Small claims: which Parts do not apply (Part 25 except injunctions, 31, 32 except 32.1, 33, 35 except 35.1/35.3/35.7/35.8)",
+    "principle": "On the small claims track Part 25 (except interim injunctions), Part 31 disclosure, Part 32 evidence (except 32.1), Part 33 and most of Part 35 do not apply. Consequences for CCGUK files: no interim payment application on the small claims track, no standard disclosure (rely on directions and Part 18-style requests via the judge), and expert evidence only with permission (27.5).",
+    "text": "The following Parts of these Rules do not apply to small claims — (a) Part 25 (interim remedies) except as it relates to interim injunctions; (b) Part 31 (disclosure and inspection); (c) Part 32 (evidence) except rule 32.1 ...; (d) Part 33 ...; (e) Part 35 (experts and assessors) except rules 35.1, 35.3, 35.7 and 35.8.",
+    "tags": [
+      "small claims",
+      "disclosure",
+      "evidence"
+    ],
+    "topics": [
+      "costs",
+      "pav"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part27",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part27",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 27.2(1)(a)–(e) as summarised.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-27-5",
+    "type": "cpr",
+    "citation": "CPR 27.5",
+    "title": "Small claims: no expert evidence without the court's permission",
+    "principle": "No expert may give written or oral evidence at a small claims hearing without permission. Ask for permission for the engineer's report at allocation (directions questionnaire) and keep the fee within the PD 27A £750 cap so it is recoverable.",
+    "text": "No expert may give evidence, whether written or oral, at a hearing without the permission of the court.",
+    "tags": [
+      "small claims",
+      "expert",
+      "engineer report"
+    ],
+    "topics": [
+      "pav",
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part27",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part27",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 27.5 verbatim.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-27-14",
+    "type": "cpr",
+    "citation": "CPR 27.14",
+    "title": "Small claims costs: fixed issue costs, court fees, travel, loss of earnings, expert fees and unreasonable-behaviour costs only",
+    "principle": "On the small claims track the court may not order a party to pay the other side's costs except: fixed costs attributable to issuing, court fees, reasonable travel and accommodation, loss of earnings or leave (capped by PD 27A), experts' fees (capped), and further costs summarily assessed against a party who has behaved unreasonably. This is why the small claims track neutralises insurer lawyers and why a lay representative's fee is also caught by the caps.",
+    "text": "The court may not order a party to pay a sum to another party in respect of that other party's costs, fees and expenses, including those relating to an appeal, except ... (g) such further costs as the court may assess by the summary procedure and order to be paid by a party who has behaved unreasonably.",
+    "tags": [
+      "small claims",
+      "costs",
+      "unreasonable behaviour",
+      "lay representative"
+    ],
+    "topics": [
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part27",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part27",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the 27.14(2) list and the unreasonable-behaviour limb.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "pd-27a-7-3",
+    "type": "practice_direction",
+    "citation": "PD 27A para 7.3",
+    "title": "Small claims caps: £95 per day loss of earnings/leave; £750 per expert",
+    "principle": "Under CPR 27.14(2)(e) and (f) the court may award up to £95 per day per person for loss of earnings or leave in attending a hearing, and up to £750 for each expert's fees. Engineer fee invoices on small claims files should be set with the £750 recoverability ceiling in mind (the unrecovered balance is a cost of the claim, not of the defendant).",
+    "text": "The amounts which a party may be ordered to pay under rule 27.14(2)(e) and (f) are: (1) for the loss of earnings or loss of leave of each party or witness due to attending a hearing ... a sum not exceeding £95 per day for each person, and (2) for experts' fees, a sum not exceeding £750 for each expert.",
+    "tags": [
+      "small claims",
+      "expert fee cap",
+      "£750",
+      "£95"
+    ],
+    "topics": [
+      "costs",
+      "pav"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part27/pd_part27",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part27/pd_part27",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned both figures (£95 per day; £750 per expert). Matches blueprint.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-28-pd-28",
+    "type": "cpr",
+    "citation": "CPR Part 28 and PD 28",
+    "title": "Fast track and intermediate track: directions, complexity bands and the 30-week timetable",
+    "principle": "The court gives directions and a timetable to trial (28.2); dates for CMCs, pre-trial reviews, check lists and trial may be varied only by application (28.3). Fast track trials are listed not later than 30 weeks from directions; the standard timetable is disclosure 4 weeks, witness statements 10, experts 14, pre-trial check list 20–22, trial 30. Both tracks use complexity bands 1–4 which drive fixed costs under Part 45.",
+    "text": "the standard period between the giving of directions and the trial will be not more than 30 weeks ... there will be four complexity bands (1 to 4 in ascending order of complexity).",
+    "tags": [
+      "fast track",
+      "intermediate track",
+      "directions",
+      "complexity band"
+    ],
+    "topics": [
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part28",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part28",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 28.2/28.3 content, the 30-week standard and the four complexity bands.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-31-16",
+    "type": "cpr",
+    "citation": "CPR 31.16",
+    "title": "Pre-action disclosure: likely parties, standard-disclosure documents, desirable to dispose fairly / avoid proceedings / save costs",
+    "principle": "The court may order disclosure before proceedings where applicant and respondent are both likely to be parties, the documents would fall within the respondent's standard disclosure, and early disclosure is desirable to dispose fairly of the anticipated proceedings, resolve the dispute without proceedings or save costs. Useful against an insurer that asserts an intervention offer or an inspection it will not evidence; the DSAR route is cheaper for call recordings where the client is the data subject.",
+    "text": "(a) the respondent is likely to be a party to subsequent proceedings; (b) the applicant is also likely to be a party to those proceedings; (c) if proceedings had started, the respondent's duty by way of standard disclosure ... would extend to the documents ...; and (d) disclosure before proceedings have started is desirable ...",
+    "tags": [
+      "pre-action disclosure",
+      "intervention offer",
+      "evidence"
+    ],
+    "topics": [
+      "mitigation",
+      "dsar",
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part31",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part31",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the four 31.16(3) conditions.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-32-14",
+    "type": "cpr",
+    "citation": "CPR 32.14",
+    "title": "False statements verified by a statement of truth: contempt of court",
+    "principle": "Proceedings for contempt may be brought against a person who makes, or causes to be made, a false statement in a document verified by a statement of truth without an honest belief in its truth. This is the client-facing warning for mitigation questionnaires, statements of need and means and witness statements; CCGUK never drafts an account for a client to adopt.",
+    "text": "Proceedings for contempt of court may be brought against a person who makes or causes to be made a false statement in a document, prepared in anticipation of or during proceedings and verified by a statement of truth, without an honest belief in its truth.",
+    "tags": [
+      "false statement",
+      "contempt",
+      "statement of truth",
+      "fraud"
+    ],
+    "topics": [
+      "enforceability",
+      "impecuniosity"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part32",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part32",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 32.14(1) verbatim.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-35-pd-35",
+    "type": "cpr",
+    "citation": "CPR 35.1, 35.3, 35.4 and PD 35 para 3.2–3.3",
+    "title": "Expert evidence: restricted to what is reasonably required; overriding duty to the court; permission; mandatory report contents",
+    "principle": "Expert evidence is restricted to what is reasonably required (35.1); the expert's duty to the court overrides any duty to the instructing or paying party (35.3); no expert report may be relied on without permission, and the application must identify the field, issues and cost estimate (35.4). PD 35 para 3.2 lists the mandatory contents of a report (qualifications, literature, material facts and instructions, own-knowledge facts, who did tests, range of opinion, summary of conclusions, qualifications on opinion, statement of compliance with the duty) and 3.3 prescribes the expert's statement of truth. The engineer-report template must satisfy every limb and name the instructing party honestly.",
+    "text": "Expert evidence shall be restricted to that which is reasonably required to resolve the proceedings ... It is the duty of experts to help the court on matters within their expertise. This duty overrides any obligation to the person from whom experts have received instructions or by whom they are paid.",
+    "tags": [
+      "expert",
+      "engineer report",
+      "PD 35",
+      "single joint expert"
+    ],
+    "topics": [
+      "pav",
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part35/pd_part35",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part35/pd_part35",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets returned 35.1, 35.3, 35.4 and the PD 35 para 3.2 contents list (3.3 statement of truth wording was truncated).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-36",
+    "type": "cpr",
+    "citation": "CPR 36.3(g), 36.5(1)(c) and 36.17",
+    "title": "Part 36 offers: relevant period of not less than 21 days; enhanced consequences where the claimant beats its own offer",
+    "principle": "A claimant's Part 36 offer must specify a relevant period of at least 21 days (if made 21+ days before trial). If the claimant obtains judgment at least as advantageous as its offer, the court must (unless unjust) award interest at up to 10% above base on the sum for some or all of the period from expiry of the relevant period, indemnity costs from that date, interest on costs at up to 10% above base, and an additional amount of 10% of damages up to £500,000 (capped at £75,000). Note Part 36 costs consequences are modified on the small claims track (27.14 caps apply unless unreasonable behaviour) and in fixed-costs cases (Part 45 uplifts).",
+    "text": "specify a period of not less than 21 days within which the defendant will be liable for the claimant's costs in accordance with rule 36.13 or 36.23 if the offer is accepted ... an additional amount, which shall not exceed £75,000, calculated by applying the prescribed percentage ...",
+    "tags": [
+      "Part 36",
+      "21 days",
+      "indemnity costs",
+      "additional amount"
+    ],
+    "topics": [
+      "costs",
+      "interest"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part36",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part36",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the 36.3(g) definition of relevant period, the 36.5(1)(c) 21-day minimum and the 36.17(4) consequences including the £75,000 cap. Matches blueprint (21 days).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-44-16",
+    "type": "cpr",
+    "citation": "CPR 44.16 (with 44.13–44.14)",
+    "title": "QOCS exceptions: fundamental dishonesty; claims for the financial benefit of another",
+    "principle": "Qualified one-way costs shifting (personal injury claims only) is lost, with the court's permission, where the claim is found on the balance of probabilities to be fundamentally dishonest, and may be enforced to the extent just where the proceedings include a claim made for the financial benefit of someone other than the claimant (the classic example being credit hire or subrogated vehicle damage pleaded in a PI claim). Credit hire claims without PI have no QOCS protection at all — the claimant is exposed to adverse costs on the fast/intermediate track, which is why weak-liability files should not run.",
+    "text": "Orders for costs made against the claimant may be enforced to the full extent of such orders with the permission of the court where the claim is found on the balance of probabilities to be fundamentally dishonest.",
+    "tags": [
+      "QOCS",
+      "fundamental dishonesty",
+      "costs exposure",
+      "non-party"
+    ],
+    "topics": [
+      "costs",
+      "credit_hire"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part-44-general-rules-about-costs",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part-44-general-rules-about-costs",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 44.16(1) and (2)(a) and the 44.14 aggregate cap; PD 44 directs fundamental-dishonesty issues normally to be determined at trial.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-45-frc",
+    "type": "cpr",
+    "citation": "CPR Part 45 Sections VI–VII (rr.45.44, 45.50; PD 45 Tables 12 and 14)",
+    "title": "Fixed recoverable costs across the fast track and the new intermediate track from 1 October 2023",
+    "principle": "For claims issued from 1 October 2023 the only costs allowed on the fast track are the fixed costs in Table 12 (by complexity band and stage) plus Section IX disbursements (45.44); on the intermediate track Table 14 applies for as long as the claim is not allocated to the multi-track (45.50). Small claims are governed by 27.14 instead. The costs an insurer can recover against a losing credit hire claimant on the fast track are therefore predictable — model them in the acceptance (run/do not run) decision.",
+    "text": "the only costs allowed are (a) the fixed costs in Table 12; and (b) the disbursements set out in Section IX ... the only costs allowed in any claim which would normally be or is allocated to the intermediate track are (a) the fixed costs in Table 14; and (b) the disbursements set out in Section IX.",
+    "tags": [
+      "fixed recoverable costs",
+      "FRC",
+      "Table 12",
+      "Table 14",
+      "1 October 2023"
+    ],
+    "topics": [
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part45-fixed-costs",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part45-fixed-costs",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 45.44 (Table 12, fast track) and 45.50 (Table 14, intermediate) and the 1 October 2023 commencement. Matches blueprint.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-46-5-pd-46-3-4",
+    "type": "cpr",
+    "citation": "CPR 46.5 and PD 46 para 3.4",
+    "title": "Litigant in person costs: two-thirds cap; £24 per hour where no financial loss is proved (was £19 until 30 September 2025)",
+    "principle": "A litigant in person may recover costs for work reasonably done, capped (other than disbursements) at two-thirds of what a legal representative would have been allowed; where financial loss is proved, the amount lost, otherwise the PD 46 hourly rate — £24 per hour from 1 October 2025 (186th PD Update), replacing the long-standing £19. The claimant (not CCGUK) is the litigant in person; CCGUK's assistance fee is not a recoverable LIP cost.",
+    "text": "The amount, which may be allowed to a self represented litigant under rule 46.5(4)(b), is £24 per hour.",
+    "tags": [
+      "litigant in person",
+      "costs",
+      "£24 per hour",
+      "PD 46"
+    ],
+    "topics": [
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part-46-costs-special-cases/practice-direction-46-costs-special-cases",
+    "verification": {
+      "status": "failed",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part-46-costs-special-cases/practice-direction-46-costs-special-cases",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. BLUEPRINT CONTRADICTED: blueprint queried £19/hr; snippet of PD 46 para 3.4 states £24 per hour, amended from £19 by the 186th Practice Direction Update in force 1 October 2025. The two-thirds cap (46.5(2)) was also returned.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "pd-pre-action-conduct",
+    "type": "practice_direction",
+    "citation": "Practice Direction – Pre-Action Conduct and Protocols, paras 6, 13–16",
+    "title": "Letter of claim, reasonable time to respond (14 days simple / up to 3 months complex) and sanctions for non-compliance",
+    "principle": "Before issuing, the claimant should send a concise letter of claim with the basis of claim, a summary of facts, what is wanted and how it is calculated, and key documents; the defendant should respond within a reasonable time — 14 days in a straightforward case, no more than 3 months in a very complex one. The court expects substantive compliance and may stay proceedings or impose sanctions: costs (including indemnity costs), depriving a claimant of interest, or awarding a claimant interest at up to 10% above base against a non-compliant defendant. Chaser letters should cite para 6 and warn of para 16 consequences.",
+    "text": "the defendant responding within a reasonable time – 14 days in a straight forward case and no more than 3 months in a very complex one ... an order awarding interest on that sum for a specified period at a higher rate, (not exceeding 10% above base rate), than the rate which would otherwise have been awarded.",
+    "tags": [
+      "pre-action",
+      "letter of claim",
+      "sanctions",
+      "ADR"
+    ],
+    "topics": [
+      "costs",
+      "interest"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/pd_pre-action_conduct",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/pd_pre-action_conduct",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned para 6 response times and paras 13–16 (compliance, failures, orders, sanctions including the 10% above base interest).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "pd-51ze-mediation",
+    "type": "practice_direction",
+    "citation": "PD 51ZE – Small Claims Track Automatic Referral to Mediation Pilot Scheme (as amended by the 193rd and 196th PD Updates)",
+    "title": "Automatic referral to free mediation for defended small claims: extended to 6 April 2027 and, from 1 October 2026, including non-injury road traffic (\"bent metal\") claims",
+    "principle": "PD 51ZE automatically refers defended small money claims (under £10,000) to a free one-hour HMCTS telephone mediation before the case progresses. The pilot began 22 May 2024 and originally ran to 21 May 2026 excluding road traffic accident and personal injury claims; the 193rd PD Update extended it to 6 April 2027 (aligned with the OCMC pilot PD 51R) and the 196th PD Update, in force 1 October 2026, brings non-personal-injury RTA claims into the mandatory scheme. From 1 October 2026 CCGUK should therefore expect every defended small claims credit hire/vehicle damage file to be referred to mediation; attend, prepared, with one clear number.",
+    "tags": [
+      "mediation",
+      "small claims",
+      "PD 51ZE",
+      "road traffic",
+      "196th update"
+    ],
+    "topics": [
+      "costs",
+      "credit_hire"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part51/practice-direction-51ze-small-claims-track-automatic-referral-to-mediation-pilot-scheme",
+    "verification": {
+      "status": "failed",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part51/practice-direction-51ze-small-claims-track-automatic-referral-to-mediation-pilot-scheme",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. BLUEPRINT OUTDATED: blueprint said the pilot \"ran to 21 May 2026\". Snippets of PD 51ZE and the 193rd/196th PD Update documents: extended to 6 April 2027; 196th Update (in force 1 October 2026 \"or as set out in the instrument\") amends PD 51ZE \"to include non-personal injury RTA Bent Metal claims in the mandatory mediation scheme, aligning it with the pilot under PD 51R\". Confirm the commencement wording for RTA claims (issue date trigger) on the PD text.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "pd-51r-ocmc-rta",
+    "type": "practice_direction",
+    "citation": "PD 51R – Online Civil Money Claims Pilot (RTA provisions; 187th, 190th and 193rd PD Updates)",
+    "title": "OCMC pilot: road traffic accident claims and mediation within the online process",
+    "principle": "The 187th PD Update (in force 28 July 2025) removed the \"not a road traffic accident claim\" exclusions from the headings above PD 51R paras 6.2 and 6.3, opening those OCMC steps to RTA money claims; the OCMC pilot itself was extended to 1 October 2026 (190th Update) and then to April 2027 (193rd Update). From 5 November 2024 defended OCMC claims are automatically opted in to mediation. The HMCTS \"RTA mediation pilot\" referred to in the blueprint is best read as this PD 51R change plus the 196th Update to PD 51ZE; confirm scope on the PD text before relying on it in a client letter.",
+    "tags": [
+      "OCMC",
+      "PD 51R",
+      "mediation",
+      "road traffic",
+      "online claims"
+    ],
+    "topics": [
+      "costs",
+      "credit_hire"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/practice-direction-51r-online-court-pilot",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/practice-direction-51r-online-court-pilot",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of the 187th PD Update (\"omitting 'and not a road traffic accident claim' from the heading above paragraph 6.2 ... in force 28th July 2025\"), 190th Update (pilot to 1 October 2026) and 193rd Update (aligned end date April 2027). The blueprint's \"July 2025 HMCTS pilot\" is consistent with the 187th Update but was not independently confirmed.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  }
+]

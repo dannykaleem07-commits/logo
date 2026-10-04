@@ -1,0 +1,353 @@
+[
+  {
+    "id": "fca-icobs-8-1-1r",
+    "type": "fca_handbook",
+    "citation": "ICOBS 8.1.1R",
+    "title": "Insurers: general claims handling duty (prompt and fair)",
+    "principle": "An insurer must handle claims promptly and fairly, give the policyholder reasonable guidance and progress information, not unreasonably reject a claim (including by avoiding or terminating the policy) and settle promptly once terms are agreed. The duty is framed around the policyholder; a third-party claimant can cite it as leverage in a DISP complaint but it does not open the FOS to them (see DISP 2.7).",
+    "text": "An insurer must: (1) handle claims promptly and fairly; (2) provide reasonable guidance to help a policyholder make a claim and appropriate information on its progress; (3) not unreasonably reject a claim (including by terminating or avoiding a policy); and (4) settle claims promptly once settlement terms are agreed.",
+    "tags": [
+      "ICOBS",
+      "claims handling",
+      "insurer duty"
+    ],
+    "topics": [
+      "complaints",
+      "credit_hire",
+      "pav"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/1.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/1.html",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the four limbs verbatim, in force from 06/01/2008.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-icobs-8-2-1r",
+    "type": "fca_handbook",
+    "citation": "ICOBS 8.2.1R",
+    "title": "Motor vehicle liability insurers: application of ICOBS 8.2 (answers BLUEPRINT §10 open question)",
+    "principle": "On the text as returned, ICOBS 8.2 applies to every motor vehicle liability insurer (a firm with permission for motor vehicle liability insurance business). Only the rules about appointing claims representatives are confined to UK events/risks covered by a firm operating from an EEA establishment. The three-month reasoned offer/reply rule (8.2.6R) and the interest rules (8.2.9R–8.2.11R) carry no territorial limitation, and the Glossary \"injured party\" is any UK or EEA resident entitled to compensation for loss or injury caused by vehicles. So a purely domestic third-party claim against a UK-authorised insurer appears to be inside 8.2. Templates may rely on this only after a human has read the rule on the page.",
+    "text": "(1) This section applies to a motor vehicle liability insurer. (2) The rules in this section relating to the appointment of claims representatives apply in relation to claims arising out of events occurring, and risks situated, in the United Kingdom, and covered by a firm operating from an establishment in the European Economic Area.",
+    "tags": [
+      "ICOBS",
+      "territorial scope",
+      "third party",
+      "claims representative"
+    ],
+    "topics": [
+      "interest",
+      "credit_hire",
+      "complaints"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/2.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/2.html",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Two separate snippets returned the same two-limb application wording. Treat the inference about domestic claims as unverified analysis until the page is read.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-glossary-injured-party",
+    "type": "fca_handbook",
+    "citation": "FCA Handbook Glossary: \"injured party\" (G552)",
+    "title": "Glossary definition of \"injured party\" used in ICOBS 8.2",
+    "principle": "A UK-resident third-party claimant in a UK accident is an \"injured party\" for ICOBS 8.2 purposes. An older (COB 6.8) definition limited to accidents outside the claimant's state of residence was returned for a 2005 date and is superseded.",
+    "text": "(in ICOBS) a resident of the United Kingdom or the EEA entitled to compensation in respect of any loss or injury caused by vehicles.",
+    "tags": [
+      "ICOBS",
+      "glossary",
+      "injured party"
+    ],
+    "topics": [
+      "interest",
+      "credit_hire"
+    ],
+    "url": "https://www.handbook.fca.org.uk/glossary/G552",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/glossary/G552",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the current glossary entry gave the UK/EEA-resident wording (based on art 1(2) Directive 72/166/EC).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-icobs-8-2-6r",
+    "type": "fca_handbook",
+    "citation": "ICOBS 8.2.6R",
+    "title": "Reasoned offer or reasoned reply within three months of the claim",
+    "principle": "Within three months of the injured party presenting a claim the at-fault driver's insurer must make a reasoned offer (liability not contested and damages quantified) or a reasoned reply to the points made (liability denied/unclear or damages not fully quantified). This is the ICOBS clock the system starts at NCAF; it is an FCA rule, not a GTA term, so it applies to non-subscribers.",
+    "text": "Within three months of the injured party presenting a claim for compensation, the firm of the person who caused the accident (or its claims representative) must make a reasoned offer of compensation where liability is not contested and damages are quantified, or a reasoned reply where liability is denied or unclear or damages are not fully quantified.",
+    "tags": [
+      "ICOBS",
+      "three months",
+      "reasoned offer",
+      "reasoned reply"
+    ],
+    "topics": [
+      "interest",
+      "credit_hire",
+      "complaints"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/2.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/2.html",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. One snippet labelled this wording 8.2.6R, another labelled it 8.2.5R — confirm the paragraph number on the page before citing. Wording above is the snippet rendering, not a verbatim copy.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-icobs-8-2-7r",
+    "type": "fca_handbook",
+    "citation": "ICOBS 8.2.7R",
+    "title": "Offer within three months of a later admission of liability",
+    "principle": "Where liability was first denied or not admitted, the insurer must make a reasoned offer within three months of any later admission, provided the claim is by then fully quantified. Log the admission date as a fresh three-month clock.",
+    "text": "If liability is initially denied, or not admitted, within three months of any subsequent admission of liability, the firm must (directly, or through a claims representative) make a reasoned offer of settlement, if, by that time, the relevant claim for damages has been fully quantified.",
+    "tags": [
+      "ICOBS",
+      "admission",
+      "three months"
+    ],
+    "topics": [
+      "interest",
+      "credit_hire"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/2.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/2.html",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned this wording labelled 8.2.7R.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-icobs-8-2-8r",
+    "type": "fca_handbook",
+    "citation": "ICOBS 8.2.8R",
+    "title": "When a claim is \"fully quantified\"",
+    "principle": "The three-month offer duty bites only once the claim is fully quantified, which happens when the injured party supplies written evidence substantiating the amounts. Operationally: the payment pack (hire invoice, storage/recovery accounts, engineer's report, mitigation and need evidence) is what starts the quantified clock — send it early and record the date.",
+    "text": "A claim for damages will be fully quantified for the purpose of this section when the injured party provides written evidence which substantiates or supports the amounts claimed.",
+    "tags": [
+      "ICOBS",
+      "fully quantified",
+      "payment pack"
+    ],
+    "topics": [
+      "interest",
+      "credit_hire"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/2.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/2.html",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned this wording labelled 8.2.8R.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-icobs-8-2-9r-11r",
+    "type": "fca_handbook",
+    "citation": "ICOBS 8.2.9R–8.2.11R",
+    "title": "Interest where no offer is made in time: Bank of England base rate + 4%",
+    "principle": "If the insurer (or its claims representative) fails to make the required offer, it must pay simple interest on the compensation it later offers or the court awards, from the date the offer should have been made until payment, at Bank of England base rate plus 4%, unless a tribunal awards interest. Templates may claim this only as against a UK-authorised motor insurer and only once the three-month clock has run from a fully quantified claim.",
+    "text": "If the firm, or its claims representative, does not make an offer as required by this section, the firm must pay simple interest on the amount of compensation offered by it or awarded by the court to the injured party ... The interest rate is the Bank of England's base rate (from time to time), plus 4%.",
+    "tags": [
+      "ICOBS",
+      "interest",
+      "base rate plus 4"
+    ],
+    "topics": [
+      "interest",
+      "credit_hire"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/2.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/ICOBS/8/2.html",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned: obligation to pay simple interest unless awarded by a tribunal; period begins when the offer should have been made and ends when compensation is paid to the injured party or authorised representative; rate = BoE base + 4%. Which of 8.2.9R/8.2.10R/8.2.11R carries which limb was not shown — confirm on the page.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-disp-1-6-2r",
+    "type": "fca_handbook",
+    "citation": "DISP 1.6.2R",
+    "title": "Final response within eight weeks of receiving a complaint",
+    "principle": "A respondent must, by the end of eight weeks from receipt of a complaint, send a final response (accept and offer redress, offer redress without accepting, or reject with reasons) or a holding response explaining the delay and telling the complainant they may now go to the FOS. The complainant then has six months from the final response to refer. The eight-week clock in the system starts on the date the complaint is received by the firm.",
+    "text": "By the end of eight weeks after its receipt of a complaint, the respondent must send the complainant a final response, or a written response explaining why it is not in a position to make a final response and when it expects to, informing the complainant that they may now refer the complaint to the Financial Ombudsman Service.",
+    "tags": [
+      "DISP",
+      "eight weeks",
+      "final response",
+      "complaints"
+    ],
+    "topics": [
+      "complaints",
+      "dsar"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/DISP/1/6.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/DISP/1/6.html",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the eight-week final-response and holding-response limbs and the FOS leaflet/website requirement. Wording above is the snippet rendering.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-disp-2-7-3r",
+    "type": "fca_handbook",
+    "citation": "DISP 2.7.3R",
+    "title": "Who is an eligible complainant (categories)",
+    "principle": "Eligible complainants are consumers, micro-enterprises, charities with annual income under £6.5m, trustees of trusts with net assets under £5m, small businesses (turnover under £6.5m and either balance sheet under £5m or fewer than 50 staff) and guarantors. CCGUK itself (a micro-enterprise) is eligible against its own insurer or bank; eligibility still requires the DISP 2.7.6R relationship.",
+    "text": "An eligible complainant must be a person that is: (1) a consumer; (2) a micro-enterprise ...; (3) a charity which has an annual income of less than £6.5 million ...; (4) a trustee of a trust which has a net asset value of less than £5 million ...; (5) a small business ...; or (6) a guarantor.",
+    "tags": [
+      "DISP",
+      "eligible complainant",
+      "micro-enterprise"
+    ],
+    "topics": [
+      "complaints"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/DISP/2/7.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/DISP/2/7.html",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the six categories and the \"treat as eligible if in doubt\" guidance.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-disp-2-7-6r",
+    "type": "fca_handbook",
+    "citation": "DISP 2.7.6R (esp. (6) and (7))",
+    "title": "Relationship with the respondent — third-party motor claimants are generally NOT eligible against the at-fault insurer",
+    "principle": "A complainant must have one of the listed relationships with the respondent: customer/potential customer, or for insurance a person for whose benefit the policy was taken out, or a person on whom the right to benefit from a claim under the policy has devolved by contract, assignment, subrogation or legislation — but expressly NOT via the European Communities (Rights against Insurers) Regulations 2002. That carve-out is the third-party RTA claimant's only route, so a claimant cannot take the at-fault insurer to the FOS (FORUM_NOT_OPEN). The claimant can complain about their own insurer/broker (own policy, courtesy car, referral to credit hire) and CCGUK can complain as a customer of its own providers.",
+    "text": "the complainant is a person on whom the legal right to benefit from a claim against the respondent under a contract of insurance has been devolved by contract, assignment, subrogation or legislation (save the European Community (Rights against Insurers) Regulations 2002)",
+    "tags": [
+      "DISP",
+      "eligible complainant",
+      "third party",
+      "forum not open",
+      "Rights against Insurers Regulations 2002"
+    ],
+    "topics": [
+      "complaints",
+      "credit_hire"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/DISP/2/7.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/DISP/2/7.html",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned limbs (1), (2), the \"for whose benefit\" limb and the devolved-right limb with the 2002 Regulations carve-out. Sub-paragraph numbers (6)/(7) are from memory — confirm on the page.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-disp-2-8-2r",
+    "type": "fca_handbook",
+    "citation": "DISP 2.8.2R",
+    "title": "Time limits for referring a complaint to the FOS (6 months / 6 years / 3 years)",
+    "principle": "The Ombudsman cannot consider a complaint referred more than six months after the firm's final response (or summary resolution communication), or more than six years after the event, or if later three years from when the complainant knew or ought reasonably to have known of cause for complaint, unless the delay was due to exceptional circumstances or the firm consents. Diarise the six-month date the day the final response lands.",
+    "text": "more than six months after the date on which the respondent sent the complainant its final response ... or more than six years after the event complained of or (if later) three years from the date on which the complainant became aware (or ought reasonably to have become aware) that he had cause for complaint.",
+    "tags": [
+      "DISP",
+      "FOS",
+      "time limits"
+    ],
+    "topics": [
+      "complaints",
+      "limitation"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/DISP/2/8.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/DISP/2/8.html",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the three limbs and the exceptional-circumstances exception (DISP 2.8.2R / 2.8.7R).",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-perg-2-7-20m-n",
+    "type": "fca_handbook",
+    "citation": "PERG 2.7.20M–2.7.20N (regulated claims management activity)",
+    "title": "Claims management perimeter: the six kinds of claim — is motor damage / credit hire recovery inside?",
+    "principle": "Regulated claims management activity (FSMA s.22(1B); RAO arts 89G–89M) is seeking out/referring/identifying claims, or advising, investigating or representing a claimant, by way of business in Great Britain, in relation to six kinds of claim only: personal injury; financial services or financial product; housing disrepair; specified benefit; criminal injury; employment-related — subject to the exclusions in arts 89N–89W. A tort claim for vehicle damage, hire, storage and recovery against the at-fault driver (met by that driver's insurer) is not one of the listed kinds on the face of the list, which is why motor damage/credit hire recovery is generally understood to sit OUTSIDE the perimeter. Two traps: (a) any personal-injury element brings referral and advice inside arts 89G/89H (refer out, no fee — LASPO ss.56–60); (b) a claim or complaint by a policyholder against THEIR OWN insurer under their own policy is a claim in relation to a regulated activity (effecting/carrying out contracts of insurance) and so a \"financial services or financial product claim\" — advising on or representing a client in a FOS complaint against their own insurer for a fee is likely inside art 89I. Take regulatory advice before offering that service; do not assume an exclusion.",
+    "tags": [
+      "PERG",
+      "claims management",
+      "perimeter",
+      "RAO 89G",
+      "RAO 89I",
+      "FSMA s.22(1B)"
+    ],
+    "topics": [
+      "credit_hire",
+      "complaints",
+      "enforceability"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/PERG/2/7.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/PERG/2/7.html",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets returned PERG 2.7.20M (s.22(1B); arts 89G–89M; exclusions 89N–89W) and 2.7.20N (the six kinds of claim). The Glossary/RAO definition of \"financial services or financial product claim\" was NOT retrieved (only that it includes CCA 1974 s.75 claims); the analysis of own-insurer complaints is the agent's reasoning, not a sourced statement.",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "rao-2001-art-89g-89m",
+    "type": "statute",
+    "citation": "FSMA 2000 (Regulated Activities) Order 2001, SI 2001/544, arts 89G–89M (inserted by SI 2018/1253)",
+    "title": "Specified claims management activities and the kinds of claim they cover",
+    "principle": "Art 89G: seeking out, referrals and identification of claims or potential claims (seeking out persons who may have a claim; referring details of a claim/claimant to another person; identifying a claim or claimant) when carried on in relation to a personal injury, financial services or financial product, housing disrepair, specified benefit, criminal injury or employment-related claim. Arts 89H–89M: advising a claimant, investigating a claim or representing a claimant in relation to each of those six kinds respectively (89H personal injury; 89I financial services/product; 89J housing disrepair; 89K specified benefit; 89L criminal injury; 89M employment-related). \"Personal injury claim\" takes the CPR meaning (damages for or arising from personal injuries). Exclusions follow in arts 89N–89W (e.g. legal professionals, charities, persons with insurance-distribution permissions acting in relation to a contract of insurance).",
+    "tags": [
+      "RAO",
+      "claims management",
+      "perimeter",
+      "89G",
+      "89H",
+      "89I"
+    ],
+    "topics": [
+      "credit_hire",
+      "complaints",
+      "enforceability"
+    ],
+    "url": "https://www.legislation.gov.uk/uksi/2001/544/contents",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2001/544/contents",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets returned the structure of arts 89F–89M, the (a) advising (b) investigating (c) representing formula for 89I, 89J, 89L, the CPR-based personal injury definition, the employment-related definition and the insurance-permission exclusion. The art 89I definition of \"financial services or financial product claim\" was not returned beyond \"includes a claim under CCA 1974 s.75\".",
+      "verifiedAt": "2026-10-04",
+      "verifiedBy": "research-agent"
+    },
+    "licence": "OGL"
+  }
+]

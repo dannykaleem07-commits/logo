@@ -1,0 +1,8 @@
+/**
+ * Notices — notice.pcn_liability_transfer, notice.s172_response
+ *
+ * Placeholder: a template build agent fills this file. Follow src/README.md and copy the pattern in
+ * src/templates/_example.ts — one `registerTemplate({...})` call per template, named exports only, no clock,
+ * no retyped figures. This file is imported for its side effects by src/templates/index.ts.
+ */
+export {};
