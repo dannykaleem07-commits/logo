@@ -32,6 +32,7 @@ Environment (`.env` in `apps/api/` or the repo root; every variable is optional)
 | `JOBS_ENABLED` | unset | `true` starts the schedulers (nightly watch poll, hourly clocks refresh); never in tests |
 | `DEFAULT_USER_ID` | `handler` | user assumed when `X-User-Id` is absent (dev/test only) |
 | `LOOKUP_TIMEOUT_MS` | `10000` | outbound lookup timeout |
+| `CORS_ORIGINS` | localhost only | browser origins allowed by CORS (credentials on). Unset → `http(s)://localhost`, `127.0.0.1`, `[::1]` on any port; a comma list replaces that; `*` reflects any origin (explicit opt-in only) |
 
 Keys never leave the process: only presence flags are exposed (`/api/health`, `Settings.apiKeys`).
 
@@ -53,7 +54,7 @@ Every response carries `x-request-id` (honours an inbound `X-Request-Id`).
 | `NotFoundError` | `404 NOT_FOUND` |
 | `ImmutableError` (`LedgerImmutableError`, `EventImmutableError`, `EvidenceImmutableError`, …) | `409 IMMUTABLE` |
 | `DocumentStateError` / `VerificationError` | `409` |
-| `HttpError` (`src/errors.ts`) | as given (`HARD_STOP`, `ALLOCATION_REFUSED`, `WRONG_CLAIM`, `DOCUMENT_BLOCKED`, `EXTRA_OVERRIDES_LEDGER`, `S172_REFUSAL`, `HASH_MISMATCH`, …) |
+| `HttpError` (`src/errors.ts`) | as given (`HARD_STOP`, `ALLOCATION_REFUSED`, `WRONG_CLAIM`, `DOCUMENT_BLOCKED`, `EXTRA_OVERRIDES_LEDGER`, `S172_REFUSAL`, `HASH_MISMATCH`, `EVIDENCE_TAMPERED`, `DOCUMENT_PDF_TAMPERED`, `DOCUMENT_PDF_MISSING`, `STORE_PATH_INVALID`, …) |
 | anything else | `500 INTERNAL` (logged with the request id) |
 
 ## Layout
@@ -62,7 +63,7 @@ Every response carries `x-request-id` (honours an inbound `X-Request-Id`).
 src/
   config.ts            loadConfig()/testConfig() — env, data dirs, key presence
   context.ts           AppContext { config, handle, db, repos, settings(), kb, now(), engines(), logger, close() }
-  app.ts               buildApp(ctx): cors, multipart (25 MB), static web + SPA fallback, error handler, auth placeholder
+  app.ts               buildApp(ctx): cors (localhost origins unless CORS_ORIGINS), multipart (25 MB), static web + SPA fallback (never for /api), error handler, auth placeholder
   server.ts            start(): migrations on boot, data dirs, listen
   seed.ts, seed/       dev seed (archetypes.ts: the four live files; png.ts: programmatic PNG evidence)
   engines.ts           typed adapters to the @ccguk/domain engines (see "Engines")
@@ -152,9 +153,12 @@ offer capture into the intervention register. Response: the `Claim` (top level, 
   `EVIDENCE_DIR/<claimId>/<sha256[0..2]>/<sha256>.<ext>` chmod `0444` with a sidecar `.json` manifest written `wx`
   (never overwritten: `409 EVIDENCE_WRITE_ONCE`). The same bytes on the same claim return the existing row (`200`,
   `deduped: true`; `alsoOnClaims` lists other claims holding the hash). `201` otherwise.
-- `GET /claims/:id/evidence?kind=`, `GET /evidence/:id` (immutable row), `GET /evidence/:id/file` (streams with
-  `content-disposition`, `?download=1` for attachment, `x-sha256`), `POST|GET /evidence/:id/verify` → `{status:
-  'intact'|'tampered'|'missing', manifest: 'ok'|…}` by re-hashing the stored file. `PATCH`/`DELETE` → `409 IMMUTABLE`.
+- `GET /claims/:id/evidence?kind=`, `GET /evidence/:id` (immutable row), `GET /evidence/:id/file` (`content-disposition`,
+  `?download=1` for attachment, `x-sha256`; **the bytes are re-hashed on every read** — a file that no longer hashes to the
+  row is refused with `409 EVIDENCE_TAMPERED` and the attempt is audited as `evidence.read.tampered`), `POST|GET
+  /evidence/:id/verify` → `{status: 'intact'|'tampered'|'missing', manifest: 'ok'|…}` by re-hashing the stored file.
+  `PATCH`/`DELETE` → `409 IMMUTABLE`. Store paths come only from our own rows and are resolved inside `EVIDENCE_DIR`
+  (`409 STORE_PATH_INVALID` otherwise).
 
 ### Documents (`routes/documents.ts`, `services/documents.ts`, `services/documentData.ts`)
 
@@ -175,10 +179,16 @@ offer capture into the intervention register. Response: the `Claim` (top level, 
 - `POST /documents/:id/clear-flag {code, excerpt?|index?, reason}` → `clearFlag` (audited). `POST /documents/:id/approve
   {note?}` → `409 DOCUMENT_BLOCKED` while blocked; sets `approvedBy/At`, renders the PDF (`renderPdf` with the claim
   reference header and status footer) under `DOCUMENTS_DIR/<claimId>/<docId>.pdf` with its sha256; `pack.gta_payment`
-  also `mergePdfs` the component documents. `GET /documents/:id` (`?html=false`), `GET /documents/:id/pdf`.
+  also `mergePdfs` the component documents. `GET /documents/:id` (`?html=false`), `GET /documents/:id/pdf` (the stored
+  PDF is re-hashed on every read and refused with `409 DOCUMENT_PDF_TAMPERED` when it no longer matches the sha256
+  recorded at approval), `GET /documents/:id/certificate` (the e-signature certificate PDF of a signed document,
+  `x-certificate-id`). PDF paths are resolved inside `DOCUMENTS_DIR` only (`409 STORE_PATH_INVALID`).
 - `POST /documents/:id/send {via, to?, note?}` — approved or signed only; records `sentAt`/`sentVia`, writes an
   `email_out`/`letter_out` event plus the semantic event (`ncaf_sent`, `payment_pack_sent`, `chaser_sent`, …) and
-  returns the document with `send.{events, pdfUrl, note}` and `pdfBase64`. **Nothing is transmitted.**
+  returns the document with `send.{events, pdfUrl, note}` and `pdfBase64`. **Nothing is transmitted** (the audit row
+  carries `transmitted: false`). An approved document whose PDF was never rendered is rendered now (audited
+  `document.pdf`); a tampered PDF is refused (`409 DOCUMENT_PDF_TAMPERED`) and a signed document whose PDF has gone is
+  never re-rendered (`409 DOCUMENT_PDF_MISSING` — supersede and re-execute), so the signature's hash chain holds.
 - `POST /documents/:id/supersede {data?, reason?, reExecutedOn?}` → `201` new draft carrying the re-execution line;
   the old document becomes `superseded`.
 - Signatures: `POST /documents/:id/sign/start {signerPartyId, signerName?, contact, channel}` → `esign.generateOtp`
@@ -314,5 +324,7 @@ blocked until cleared, approve → PDF (Chromium), send (recorded only) and the 
 supersede; web-client FNOL body with witness linkage and `INTAKE_INCOMPLETE`, hard stops (plate, short account, not
 taken cold); estimate totals / reconcile / labour library / total-loss predict + assess; s.172 refusal and fleet alerts;
 directory ageing and verification, KB search/advise/GTA rates/ladder; watch poll without a key; analytics on File 1 and
-on the full seed; settings Confirmation-of-Payee warning and legacy refusal. Lookup mappers and clients are unit-tested
-with fixture payloads and a fake `fetch` (no network).
+on the full seed; settings Confirmation-of-Payee warning and legacy refusal. `hardening.test.ts`: CORS default (localhost
+only, lookalike hosts refused), `/api` 404s never fall through to the SPA shell, zod on `force` and list filters, store
+path containment, evidence and PDF reads re-hashed (tampered bytes → 409 + audit), certificate route, and a signed PDF
+is never re-rendered. Lookup mappers and clients are unit-tested with fixture payloads and a fake `fetch` (no network).

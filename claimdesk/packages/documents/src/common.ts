@@ -23,6 +23,12 @@ export type TemplateKind =
 
 export type RecipientRole = 'at_fault_insurer' | 'client' | 'own_insurer' | 'court' | 'supplier' | 'other';
 
+/**
+ * Printed in the same paragraph wherever a GTA paragraph is cited, so the benchmark status is never left to inference
+ * (perimeter.md: the GTA is an industry benchmark for a non-subscriber, never an entitlement).
+ */
+export const GTA_BENCHMARK_SENTENCE = 'We are not a GTA subscriber and refer to the GTA as an industry benchmark only.';
+
 /** Company-level settings held in the API settings table (never hard-coded in templates). */
 export interface CompanySettings {
   /** Registered office as it should print. Placeholder "[registered office]" until set. */

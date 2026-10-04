@@ -20,7 +20,7 @@
  */
 import type { HireEndTrigger, ISODate, ISODateTime, Pence } from '@ccguk/domain';
 import { brand } from '../brand.js';
-import { type BaseDocumentData, type Signatory, sampleBaseData, sampleRecipient } from '../common.js';
+import { type BaseDocumentData, GTA_BENCHMARK_SENTENCE, type Signatory, sampleBaseData, sampleRecipient } from '../common.js';
 import {
   daysInclusive,
   escapeHtml,
@@ -46,8 +46,6 @@ type DateLike = ISODate | ISODateTime;
 // ---------------------------------------------------------------------------
 // Shared pieces
 // ---------------------------------------------------------------------------
-
-export const GTA_BENCHMARK_SENTENCE = 'We are not a GTA subscriber and refer to the GTA as an industry benchmark only.';
 
 /**
  * Thrown when a pack's figures or dates do not reconcile with each other. A document that could print two different

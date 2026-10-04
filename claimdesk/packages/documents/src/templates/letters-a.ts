@@ -20,7 +20,7 @@
  */
 import type { ISODate, ISODateTime, Pence } from '@ccguk/domain';
 import { brand } from '../brand.js';
-import { type BaseDocumentData, type FigureRow, type Signatory, sampleBaseData, sampleClaim, sampleRecipient } from '../common.js';
+import { type BaseDocumentData, type FigureRow, GTA_BENCHMARK_SENTENCE, type Signatory, sampleBaseData, sampleClaim, sampleRecipient } from '../common.js';
 import {
   bulletList,
   escapeHtml,
@@ -56,9 +56,6 @@ type DateLike = ISODate | ISODateTime;
 // ---------------------------------------------------------------------------
 
 const SALUTATION = '<p>Dear Sirs,</p>';
-
-/** Printed wherever a GTA paragraph is mentioned, so the benchmark status is never left to inference. */
-export const GTA_BENCHMARK_SENTENCE = 'We are not a GTA subscriber and refer to the GTA as an industry benchmark only.';
 
 const BASE_REQUIRED = [
   'settings.registeredOffice',

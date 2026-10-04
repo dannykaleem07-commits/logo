@@ -16,9 +16,10 @@ src/
   render.ts         renderPdf(html, opts) → {pdf, sha256, pages}; mergePdfs; resolveChromium; closeBrowser
   guards.ts         findBlockedStrings / findBannedPhrases (legacy details, banned disclaimer phrases)
   hash.ts           sha256Hex, htmlSha256
-  samples.ts        `pnpm --filter @ccguk/documents samples` → out/<id>.html + .pdf for every template
+  samples.ts        `pnpm --filter @ccguk/documents samples` → out/<id>.html + .pdf for every production template, table of id/version/pages/sha256/bytes
+  all-templates.test.ts  whole-registry checks: ARCHITECTURE.md coverage, perimeter wording, FOS rule, purity of template sources
   templates/
-    index.ts        imports every template file (side effects register them)
+    index.ts        re-exports every template file (evaluating them registers the set; names must be unique across files)
     _example.ts     THE PATTERN TO COPY (letter.example — not imported by index.ts)
     letters-a.ts    letters-b.ts  invoices.ts  reports.ts  agreements-forms.ts  packs-bundles.ts  notices.ts  certificate.ts
 ```
@@ -83,7 +84,8 @@ on PATH. Running as root (containers) or `CHROMIUM_NO_SANDBOX=1` adds `--no-sand
    template — import `../registry.js`, `../layout.js`, `../format.js`, `../common.js` directly.
 8. Run `pnpm --filter @ccguk/documents typecheck && pnpm --filter @ccguk/documents test`. `registry.test.ts`
    automatically renders **every** registered template's sample and fails on legacy strings, banned phrases,
-   `Invalid Date`, `NaN` or `undefined` in the output. `pnpm --filter @ccguk/documents samples` writes HTML and PDF
+   `Invalid Date`, `NaN` or `undefined` in the output; `all-templates.test.ts` adds the ARCHITECTURE.md coverage check (add a
+   new id there or to its `KNOWN_EXTRA_TEMPLATE_IDS`), the perimeter wording rules and the no-FOS-to-the-at-fault-insurer rule. `pnpm --filter @ccguk/documents samples` writes HTML and PDF
    for each template to `out/` for eyeballing.
 
 ## Partials (layout.ts)
