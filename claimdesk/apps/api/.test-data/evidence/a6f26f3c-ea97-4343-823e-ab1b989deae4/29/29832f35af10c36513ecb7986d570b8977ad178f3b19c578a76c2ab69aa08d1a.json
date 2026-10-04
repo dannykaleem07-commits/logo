@@ -1,0 +1,16 @@
+{
+  "sha256": "29832f35af10c36513ecb7986d570b8977ad178f3b19c578a76c2ab69aa08d1a",
+  "bytes": 281,
+  "filename": "file1-front-left.png",
+  "mime": "image/png",
+  "claimId": "a6f26f3c-ea97-4343-823e-ab1b989deae4",
+  "kind": "photo",
+  "uploadedAt": "2026-10-05T09:00:00.000Z",
+  "uploadedBy": "system",
+  "capturedAt": "2026-08-10T11:20:00.000Z",
+  "exif": {
+    "widthPx": 64,
+    "heightPx": 48
+  },
+  "writeOnce": true
+}

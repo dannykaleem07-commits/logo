@@ -1,0 +1,16 @@
+{
+  "sha256": "f5cb739030f13ff7d1f95b989b7334ca4c4bc5195584b5ab7590aa0bfb9c59ee",
+  "bytes": 281,
+  "filename": "file2-damage-close.png",
+  "mime": "image/png",
+  "claimId": "88d088d3-f7ae-4e46-b639-9e7198e26403",
+  "kind": "photo",
+  "uploadedAt": "2026-10-05T09:00:00.000Z",
+  "uploadedBy": "system",
+  "capturedAt": "2026-08-10T16:31:00.000Z",
+  "exif": {
+    "widthPx": 64,
+    "heightPx": 48
+  },
+  "writeOnce": true
+}
