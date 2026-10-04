@@ -44,7 +44,11 @@ apps/web/
                                   debtor days, fleet alerts — all from the API with loading + empty states
       claims/ClaimsListPage.tsx   filters (status / handler / insurer / ?q=), columns per the brief; claimsFilter.ts is pure
       claims/new/                 FNOL wizard: fnol.ts (pure model, validation, body builders) + NewClaimPage + Step*.tsx
-      claim/ClaimFilePage.tsx     claim-file shell: header, linked-file banner, tab strip, nested routes (tabs are stubs)
+      claim/ClaimFilePage.tsx     claim-file shell: header, linked-file banner, tab strip, nested routes
+      claim/tabs/                 Overview, Chronology, Ledger, Clocks, Evidence gates, Hire · Storage · Recovery, Intervention register,
+                                  Evidence, Documents (+ document view with consistency panel, approve, send, sign), Engineering
+                                  (estimate, PAV, total loss, engineer report), Vehicle, Next actions, Flags
+      claim/components, claim/lib shared claim widgets and pure helpers (tested)
       placeholders/               PlaceholderPage for Fleet / Directory / KB / Analytics / Settings / Capture; NotFoundPage
     shims/node-crypto.ts          browser stand-in so the domain package bundles (throws if actually called)
     styles/

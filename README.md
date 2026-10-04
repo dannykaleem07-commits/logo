@@ -1,4 +1,12 @@
-# Courtesy Cars UK – print-ready logo
+# Courtesy Cars UK
+
+## ClaimDesk claims platform
+
+The accident claims, credit hire and accident management system lives in [`claimdesk/`](claimdesk/README.md). Start there.
+
+---
+
+## Print-ready logo
 
 Vector rebuild of the Courtesy Cars UK logo for shop signage and print.
 

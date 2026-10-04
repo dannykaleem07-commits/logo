@@ -16,6 +16,7 @@ claimdesk/
 ```
 
 Node 22+, pnpm 10, TypeScript 5.9 (strict, NodeNext, `.js` suffix on relative imports), vitest 3.
+The API listens on `127.0.0.1:4000` by default (the web dev server proxies `/api` there).
 Packages are consumed from source (`main: ./src/index.ts`) — no build step is required to run.
 
 ## Non-negotiable conventions
@@ -39,7 +40,7 @@ Packages are consumed from source (`main: ./src/index.ts`) — no build step is 
 | Module | Responsibility (BLUEPRINT §) | Key exports (names are the contract) |
 |---|---|---|
 | `calendar` | E&W working days, bank holidays 2024–2030, `addWorkingDays`, `addCalendarMonths`, `workingDaysBetween`, `isWorkingDay`, `endOfWorkingDay` | |
-| `clocks` | §3.3, §3.4, §3.6, §7: derive every `Clock` from a claim's events (`deriveClocks(claim, events, now)`), GTA 4.1/4.2/3.6/4.8/4.9/4.14/4.10/4.11/6.7/6.8, intervention reply 1 WD, storage report+48h, ICOBS 8.2.6 3 months, chasers 7/14/21/28, DISP 8 weeks, FOS 6 months, DSAR 1 month, NIP 14 days, s.172 28 days, PCN stages, limitation, Part 36 21 days, default judgment 14 days | `deriveClocks`, `clockDefinitions` |
+| `clocks` | §3.3, §3.4, §3.6, §7: derive every `Clock` from a claim bundle (`deriveClocks(bundle, now)`), GTA 4.1/4.2/3.6/4.8/4.9/4.14/4.10/4.11/6.7/6.8, intervention reply 1 WD, storage report+48h, ICOBS 8.2.6 3 months, chasers 7/14/21/28, DISP 8 weeks, FOS 6 months, DSAR 1 month, NIP 14 days, s.172 28 days, PCN stages, limitation, Part 36 21 days, default judgment 14 days | `deriveClocks`, `clockDefinitions` |
 | `gta` | §2 finding 2, §3.3, §7: rates lookup (`gtaRate(group, date)`), group mapping from vehicle, hire charge calculation with additional-driver £5.50/day cap £110 (5.4), off-hire triggers, monitoring diary (4.10–4.11 delay ≥2 WD or >20%), late-payment uplift 10%/20% (6.8.6, benchmark only), payment-pack validator (6.1–6.3: covering letter, mitigation questionnaire, advice form, hire period validation form, engineer's report, storage and recovery accounts) | `gtaRate`, `mapGtaGroup`, `calculateHire`, `offHireDeadline`, `monitoringDiary`, `latePaymentUplift`, `validatePaymentPack` |
 | `consistency` | §3.7, §3.8, §3.10: `checkDraft(draftHtmlOrText, context) → ConsistencyReport`; extract amounts/dates/deadlines/assertions; compare to ledger, offers register, storage/hire records, prior outgoing letters; legacy and banned phrases; regulated-status wording; forum-not-open; GTA-as-law; date-before-creation; duplicate signature dates | `checkDraft`, `extractAmounts`, `extractDates`, `legacyCheck`, `bannedPhraseCheck` |
 | `vehicle` | §3.2: `normaliseRegistration`, UK plate format validation, `mileageConflicts(readings, tolerance)`, `projectOdometer(motHistory, atDate)`, `crossFileRegistrationCheck`, DVLA VES/DVSA MOT payload → `Vehicle` mappers (pure) | |
@@ -78,7 +79,9 @@ A "claim bundle" is the plain object `{ claim, claimant, vehicle, events, ledger
 
 ## API (`apps/api`) — route contract
 
-Base `/api`. JSON bodies validated with zod. Errors `{error:{code,message,details?}}`.
+Base `/api`. JSON bodies validated with zod. Errors `{error:{code,message,details?,requestId}}`.
+
+Response envelopes (as built): list endpoints return `{items, total}` (claims also `byStatus`); claim sub-resources return a named key (`{clocks}`, `{gates}`, `{actions}`, `{offers, replyClocks}`); `POST /claims` returns `201 {…claim, claim, intake}`; `GET /claims/:id` returns the ClaimBundle plus `gates`, `actions`, `acceptance`, `position`, `linkedClaims`. Also `GET /users` (read-only staff list). `apps/api/README.md` is the authoritative per-route reference.
 
 - `GET /health`
 - Claims: `GET/POST /claims`, `GET /claims/:id` (full bundle), `PATCH /claims/:id`, `POST /claims/:id/status`, `GET /claims/:id/clocks`, `GET /claims/:id/gates`, `GET /claims/:id/actions` (playbook), `GET /claims/:id/acceptance`

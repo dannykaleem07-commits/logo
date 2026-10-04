@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { ClaimBundle, ConsistencyFlag, GeneratedDocument } from '../types.js';
+import { formatGBP } from '../money.js';
 import { checkDraft, clearFlag, legacyCheck, bannedPhraseCheck, legacy, LEGACY_BLOCKED_STRINGS, LEGACY_ALLOWED_EXACT_CASE, type DraftContext } from './index.js';
 import { greenBundle, fixtureClock, fixtureDocument, fixtureOffer, fixtureStorage, fixtureHire } from '../evidence/bundle.fixture.js';
 
@@ -631,5 +632,35 @@ describe('PAYEE_MISMATCH — prose and HTML entities are not payee fields (live 
     const b = greenBundle();
     expect(of(checkDraft('Cheques payable to Courtesy Cars Ltd.', ctx(b, { templateId: 'invoice.hire' })).flags, 'PAYEE_MISMATCH')[0]!.draftValue).toBe('Courtesy Cars Ltd');
     expect(of(checkDraft('You agreed to pay to the claimant the sum due.', ctx(b, { templateId: 'invoice.hire' })).flags, 'PAYEE_MISMATCH')).toEqual([]);
+  });
+});
+
+describe('ledger totals do not double-count an invoice of a claimed head', () => {
+  it('a claimed hire figure plus its invoice is one figure, so the true outstanding balance raises no warning', () => {
+    const b = greenBundle();
+    const hireClaimed = b.ledger.filter((e) => e.head === 'hire' && e.kind === 'claimed');
+    if (hireClaimed.length === 0) return; // fixture without a hire claim: nothing to check
+    const inv = { ...hireClaimed[0]!, id: 'inv-dup', kind: 'invoiced' as const, description: 'Hire invoice' };
+    const withInvoice = { ...b, ledger: [...b.ledger, inv] };
+    const claimedTotal = withInvoice.ledger.filter((e) => e.kind === 'claimed').reduce((a, e) => a + e.amountPence, 0);
+    const text = `The total claimed is ${formatGBP(claimedTotal)}.`;
+    const flags = checkDraft(text, ctx(withInvoice, { templateId: 'letter.chaser_7' })).flags.filter((f) => f.code === 'AMOUNT_CLAIMED_MISMATCH');
+    expect(flags).toEqual([]);
+  });
+});
+
+describe('CONTRADICTS_PRIOR_LETTER ignores unit figures and nil columns', () => {
+  it('does not compare "× £45", "at £49.80", "£90 call-out" or £0.00 with a prior letter\'s head totals', () => {
+    const b = greenBundle();
+    const prior = fixtureDocument('prior-pack', 'pack.gta_payment', { claimId: b.claim.id, status: 'sent', html: '<p>Storage £450.00. Hire £1,145.40. Recovery £151.00.</p>', sentAt: '2026-09-05T10:00:00Z', dataSnapshot: {} });
+    const text = 'Storage 10 days × £45 · 10 days at £45.00 per day. Hire 23 days × £49.80. Recovery: £90 call-out + 12 loaded miles × £3 + £25 admin. Claimed £6,500.00 £0.00 £6,500.00.';
+    const flags = checkDraft(text, ctx(b, { templateId: 'schedule.loss', priorOutgoing: [prior] })).flags.filter((f) => f.code === 'CONTRADICTS_PRIOR_LETTER');
+    expect(flags.map((f) => f.draftValue)).not.toContain('£45.00');
+    expect(flags.map((f) => f.draftValue)).not.toContain('£49.80');
+    expect(flags.map((f) => f.draftValue)).not.toContain('£90.00');
+    expect(flags.map((f) => f.draftValue)).not.toContain('£0.00');
+    // control: a genuinely different storage total IS still flagged against the prior letter
+    const changed = checkDraft('Storage £520.00 is now claimed.', ctx(b, { templateId: 'schedule.loss', priorOutgoing: [prior] })).flags.filter((f) => f.code === 'CONTRADICTS_PRIOR_LETTER');
+    expect(changed.map((f) => f.draftValue)).toContain('£520.00');
   });
 });

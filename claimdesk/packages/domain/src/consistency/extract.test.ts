@@ -161,3 +161,16 @@ describe('adversarial: deadline and amount extraction', () => {
     expect(calendarDaysBetween('2026-06-30T23:30:00Z', '2026-07-01T08:00:00Z')).toBe(0); // both 1 July in London
   });
 });
+
+describe('relative periods that describe a rule are not deadlines from this letter', () => {
+  it('skips GTA/ICOBS rule descriptions and periods anchored to another event, keeps real demands', () => {
+    const text = [
+      'Industry practice is that a clean pack is settled within one calendar month (GTA 6.7); that month ended on 5 October 2026.',
+      'We understand that ICOBS 8.2.6R requires a motor vehicle liability insurer, within three months of receiving a claim for compensation, to make a reasoned offer.',
+      'Please pay within 14 days of the date of this letter.',
+      'Settlement is due within one month.',
+    ].join('\n');
+    const d = extractDeadlines(text, { baseDate: '2026-10-04' });
+    expect(d.filter((x) => x.kind === 'relative').map((x) => x.iso)).toEqual(['2026-10-18', '2026-11-04']);
+  });
+});

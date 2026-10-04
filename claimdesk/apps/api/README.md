@@ -19,7 +19,7 @@ Environment (`.env` in `apps/api/` or the repo root; every variable is optional)
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `PORT`, `HOST` | `3000`, `0.0.0.0` | listen address |
+| `PORT`, `HOST` | `4000`, `127.0.0.1` | listen address. Loopback by default because the auth layer is a placeholder; set `HOST=0.0.0.0` only behind real authentication |
 | `DATA_DIR` | `apps/api/data` | parent of the defaults below |
 | `DATABASE_PATH` | `$DATA_DIR/claimdesk.sqlite` | SQLite file (`:memory:` in tests) |
 | `EVIDENCE_DIR`, `DOCUMENTS_DIR` | `$DATA_DIR/evidence`, `$DATA_DIR/documents` | write-once evidence store, rendered PDFs |

@@ -163,5 +163,43 @@ export function reconcileSystemFigures(input: ReconcileInput): ReconcileOutcome 
     report = clearFlag(report, f.code, f.excerpt, 'system', reason, input.now);
     cleared.push({ code: f.code, draftValue: f.draftValue, paths: matching.map((l) => l.path), reason });
   }
+
+  // Warn-level: a claimed figure or a deadline the API itself computed (from the ledger, the clocks or the calendar)
+  // and printed is not a handler inconsistency. Same narrow test: it must arise on the ledger-only render and equal a
+  // derived leaf. CONTRADICTS_PRIOR_LETTER is never cleared here — a change since the last letter is worth a look.
+  const dateLeaves = derivedDateLeaves(input.snapshot, input.derivedKeys);
+  for (const f of report.flags) {
+    if (f.clearedAt || f.severity !== 'warn' || !f.draftValue) continue;
+    if (f.code !== 'AMOUNT_CLAIMED_MISMATCH' && f.code !== 'DEADLINE_MISMATCH') continue;
+    if (!arisesOnLedgerOnly(f, input.ledgerOnly)) continue;
+    let paths: string[] = [];
+    if (f.code === 'AMOUNT_CLAIMED_MISMATCH') {
+      const pence = parseGBP(f.draftValue);
+      if (pence === null) continue;
+      paths = leaves.filter((l) => l.value === pence).map((l) => l.path);
+    } else {
+      const day = f.draftValue.slice(0, 10);
+      paths = dateLeaves.filter((l) => l.value.slice(0, 10) === day).map((l) => l.path);
+    }
+    if (!paths.length) continue;
+    const reason = `System: ${f.draftValue} is a figure the API computed and printed at ${paths.join(', ')} (ledger, clocks or calendar); no handler text contributed.`;
+    report = clearFlag(report, f.code, f.excerpt, 'system', reason, input.now);
+    cleared.push({ code: f.code, draftValue: f.draftValue, paths, reason });
+  }
   return { report, cleared };
+}
+
+const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}(T|$)/;
+
+/** Every ISO date / date-time string leaf under the derived paths of the snapshot. */
+export function derivedDateLeaves(snapshot: Record<string, unknown>, derivedKeys: string[]): Array<{ path: string; value: string }> {
+  const out: Array<{ path: string; value: string }> = [];
+  const walk = (v: unknown, p: string): void => {
+    if (typeof v === 'string') {
+      if (ISO_DATE_RE.test(v)) out.push({ path: p, value: v });
+    } else if (Array.isArray(v)) v.forEach((x, i) => walk(x, `${p}[${i}]`));
+    else if (isPlainObject(v)) for (const [k, x] of Object.entries(v)) walk(x, `${p}.${k}`);
+  };
+  for (const root of [...new Set(derivedKeys.map((k) => k.split('.')[0]!))]) walk(getPath(snapshot, root), root);
+  return out;
 }

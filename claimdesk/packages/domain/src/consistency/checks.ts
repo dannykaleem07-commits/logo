@@ -144,7 +144,11 @@ function signOf(e: LedgerEntry): 1 | -1 {
 
 function ledgerSets(ledger: LedgerEntry[]): LedgerSets {
   const paidEntries = ledger.filter((e) => PAID_KINDS.has(e.kind));
-  const claimedEntries = ledger.filter((e) => CLAIMED_KINDS.has(e.kind));
+  // An invoice restates a claimed figure: per head, 'claimed' entries are the position and 'invoiced' is used only
+  // when nothing was claimed on that head. Summing both double-counts (hire claimed £1,145.40 + invoiced £1,145.40).
+  const headsWithClaimed = new Set(ledger.filter((e) => e.kind === 'claimed').map((e) => e.head));
+  const claimedEntries = ledger.filter((e) => CLAIMED_KINDS.has(e.kind) && (e.kind === 'claimed' || !headsWithClaimed.has(e.head)));
+  const invoicedEntries = ledger.filter((e) => e.kind === 'invoiced' && headsWithClaimed.has(e.head));
   const paidSet = new Set<Pence>();
   const claimedSet = new Set<Pence>();
   const vat = (e: LedgerEntry): Pence => e.vatPence ?? 0;
@@ -172,11 +176,22 @@ function ledgerSets(ledger: LedgerEntry[]): LedgerSets {
   };
   addAll(paidEntries, paidSet);
   addAll(claimedEntries, claimedSet);
+  for (const e of invoicedEntries) {
+    claimedSet.add(e.amountPence);
+    claimedSet.add(gross(e));
+    if (e.vatPence) claimedSet.add(e.vatPence);
+  }
   const paidTotalNet = sum(paidEntries, signedNet);
   const paidTotalGross = sum(paidEntries, signedGross);
   const claimedTotalNet = sum(claimedEntries, signedNet);
   const claimedTotalGross = sum(claimedEntries, signedGross);
-  // outstanding balances
+  // outstanding balances, in total and per head (a letter states "£33.40 outstanding on hire")
+  for (const h of new Set(claimedEntries.map((e) => e.head))) {
+    const c = claimedEntries.filter((e) => e.head === h);
+    const p = paidEntries.filter((e) => e.head === h);
+    claimedSet.add(sum(c, (e) => e.amountPence) - sum(p, (e) => e.amountPence));
+    claimedSet.add(sum(c, gross) - sum(p, gross));
+  }
   claimedSet.add(claimedTotalNet - paidTotalNet);
   claimedSet.add(claimedTotalGross - paidTotalGross);
   claimedSet.add(claimedTotalGross - paidTotalNet);
@@ -200,6 +215,10 @@ function headNear(text: string, index: number, length: number): HeadOfLoss | und
     }
     g.lastIndex = 0;
     while ((m = g.exec(after)) !== null) {
+      // A head label AFTER the figure belongs to it only when joined by a connector ("£450.00 for storage",
+      // "£285.00 (engineer's fee)"). In a table the next row's label follows the figure directly, and the
+      // figure belongs to the label before it ("Storage … £450.00 | Hire, 23 days …").
+      if (!/^\s*(?:for|on|towards|in\s+respect\s+of|re:?|being|of|\()\s*(?:the\s+|your\s+|our\s+)?$/i.test(after.slice(0, m.index))) continue;
       const distance = m.index + 1;
       if (!best || distance < best.distance) best = { head, distance };
     }
@@ -598,6 +617,11 @@ export function priorLetterChecks(text: string, amounts: ExtractedAmount[], ctx:
   const seenHeads = new Set<HeadOfLoss>();
   for (const a of amounts) {
     if (a.perUnit || a.context === 'offered' || a.context === 'paid') continue;
+    // Components of a head are not the head's figure: "× £45", "at £49.80", "£90 call-out", and a nil column.
+    if (a.pence === 0) continue;
+    const lead = text.slice(Math.max(0, a.index - 4), a.index);
+    const tail = text.slice(a.index, a.index + 40).replace(/^£[\d,]+(?:\.\d{1,2})?/, '');
+    if (/(?:×|\bx|@|\bat)\s*$/i.test(lead) || /^\s*(?:call[-\s]?out|per\b|\/|a\s+(?:day|mile|hour)|each|admin)/i.test(tail)) continue;
     const head = headNear(text, a.index, 0);
     if (!head) continue;
     for (const prior of priors) {

@@ -35,6 +35,8 @@ import { gtaRatesFor } from './kb.js';
 import { absoluteEvidencePath } from './evidence.js';
 import { existsSync, readFileSync } from 'node:fs';
 import type { Evidence } from '@ccguk/domain';
+import { litigationBuilders } from './builders/litigation.js';
+import { correspondenceBuilders } from './builders/correspondence.js';
 
 export type RecipientRole = 'at_fault_insurer' | 'client' | 'own_insurer' | 'court' | 'supplier' | 'other';
 
@@ -387,13 +389,13 @@ export function offerDetails(offer: InterventionOffer, insurerName: string | und
   };
 }
 
-function runningClockDue(bundle: ClaimBundle, kinds: string[]): ISODate | undefined {
+export function runningClockDue(bundle: ClaimBundle, kinds: string[]): ISODate | undefined {
   const c = bundle.clocks.filter((k) => k.status === 'running' && kinds.includes(k.kind)).sort((a, b) => a.dueAt.localeCompare(b.dueAt))[0];
   return c ? datePart(c.dueAt) : undefined;
 }
 
 /** A deadline we may state: never earlier than the governing running clock. */
-function deadline(bundle: ClaimBundle, today: ISODate, days: number, clockKinds: string[], working = false): ISODate {
+export function deadline(bundle: ClaimBundle, today: ISODate, days: number, clockKinds: string[], working = false): ISODate {
   const base = working ? datePart(addWorkingDays(today, days)) : datePart(addCalendarDays(today, days));
   const clock = runningClockDue(bundle, clockKinds);
   return clock && clock > base ? clock : base;
@@ -411,7 +413,7 @@ export function evidenceDataUrl(ctx: AppContext, e: Evidence): string | undefine
 // Builders
 // ---------------------------------------------------------------------------
 
-type Builder = (b: BuildInput, base: Record<string, unknown>) => Record<string, unknown>;
+export type Builder = (b: BuildInput, base: Record<string, unknown>) => Record<string, unknown>;
 
 function hireLabel(h: NonNullable<ReturnType<typeof hireBlock>>, head: HeadSummary): string {
   return `Hire, ${h.days} day${h.days === 1 ? '' : 's'} at ${formatGBP(h.dailyRatePence)} per day${head.invoiceReference ? ` (invoice ${head.invoiceReference})` : ''}`;
@@ -852,7 +854,7 @@ const builders: Record<string, Builder> = {
 };
 
 /** Generic blocks every other template can read (free-text fields come from the handler). */
-function genericBuilder(b: BuildInput, base: Record<string, unknown>): Record<string, unknown> {
+export function genericBuilder(b: BuildInput, base: Record<string, unknown>): Record<string, unknown> {
   const { bundle, ctx, now } = b;
   const heads = headSummaries(bundle);
   const pack = packBlock(bundle);
@@ -950,7 +952,7 @@ export function assembleTemplateData(ctx: AppContext, bundle: ClaimBundle, templ
     claimId: bundle.claim.id,
     templateId,
   };
-  const builder = builders[templateId] ?? genericBuilder;
+  const builder = builders[templateId] ?? litigationBuilders[templateId] ?? correspondenceBuilders[templateId] ?? genericBuilder;
   const derived = stripUndefined(builder({ ctx, bundle, templateId, recipientRole, recipientPartyId: opts.recipientPartyId, user, now, extra: opts.extra }, base));
   const conflicts: string[] = [];
   const merged = mergeExtra(stripUndefined(opts.extra ?? {}), derived, '', conflicts);

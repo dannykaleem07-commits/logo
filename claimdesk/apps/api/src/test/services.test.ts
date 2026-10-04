@@ -149,7 +149,11 @@ describe('documents: draft → consistency → approve → PDF → send → sign
     // Every block the engine raised on the ledger-written table was reconciled by the system, with a reason; none is open.
     expect(clean.body.consistency?.flags.filter((f) => f.severity === 'block' && !f.clearedAt)).toEqual([]);
     const systemCleared = clean.body.consistency?.flags.filter((f) => f.clearedBy === 'system') ?? [];
-    expect(systemCleared.every((f) => f.code === 'AMOUNT_PAID_MISMATCH' && /ledger/i.test(f.clearedReason ?? ''))).toBe(true);
+    // Blocks the system clears are only payment misreads of ledger figures; warnings it clears are figures/dates it computed itself.
+    expect(systemCleared.filter((f) => f.severity === 'block').every((f) => f.code === 'AMOUNT_PAID_MISMATCH' && /ledger/i.test(f.clearedReason ?? ''))).toBe(true);
+    expect(systemCleared.filter((f) => f.severity === 'warn').every((f) => ['AMOUNT_CLAIMED_MISMATCH', 'DEADLINE_MISMATCH'].includes(f.code) && /API computed/.test(f.clearedReason ?? ''))).toBe(true);
+    // A change since the previous letter is never cleared by the system.
+    expect(systemCleared.some((f) => f.code === 'CONTRADICTS_PRIOR_LETTER')).toBe(false);
     const snap = clean.body.dataSnapshot as { totals: { receivedPence: number; claimedPence: number }; hire: { days: number; dailyRatePence: number }; pack: { sentAt: string } };
     expect(snap.totals.receivedPence).toBe(111200);
     expect(snap.hire.days).toBe(23);

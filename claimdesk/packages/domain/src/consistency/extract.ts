@@ -210,6 +210,8 @@ const PASSIVE_BEFORE_RE = /\b(?:was|were|(?:has|have|had)\s+been)\s+(?:collected
 /** What may sit between "by" and the date: a time ("5pm", "5:00 pm", "17:00 hrs", "noon", "close of business"), "on", a weekday, "the". */
 const DEADLINE_GAP_RE = /^\s*(?:(?:\d{1,2}(?:[:.]\d{2})?\s*(?:am|pm|hrs|hours|noon|o['’]clock)?|noon|midday|midnight|close\s+of\s+(?:business|play)|end\s+of\s+(?:the\s+)?(?:day|business))\s*,?\s*)?(?:on\s+)?(?:(?:Mon|Tues?|Wednes|Thurs?|Fri|Satur|Sun)day,?\s+)?(?:the\s+)?$/i;
 const NUMBER_WORD = '\\d{1,3}|one|two|three|four|five|six|seven|eight|nine|ten|twelve|fourteen|fifteen|twenty[-\\s]one|twenty[-\\s]eight|twenty|thirty|sixty|ninety';
+/** Words that frame a period as a description of a rule, practice or someone's duty rather than a demand on the reader. */
+const RULE_FRAMING_RE = /\b(?:practice|industry|benchmark|GTA|ICOBS|DISP|CPR|regulation|rules?\b|guidance|duty|requires?\s+(?:a|an|the|every)\s+(?:motor|insurer|firm|claimant)|provides?\s+for|is\s+that)\b/i;
 const RELATIVE_RE = new RegExp(`\\bwithin\\s+(${NUMBER_WORD})\\s+(working\\s+|business\\s+|calendar\\s+|clear\\s+)?(days?|weeks?|months?)\\b`, 'gi');
 
 const RELATIVE_FROM_LETTER_RE = new RegExp(`\\b(${NUMBER_WORD})\\s+(working\\s+|business\\s+|calendar\\s+|clear\\s+)?(days?|weeks?|months?)\\s+(?:from|of|after)\\s+(?:the\\s+)?date\\s+of\\s+this\\s+(?:letter|notice|email)\\b`, 'gi');
@@ -263,6 +265,16 @@ export function extractDeadlines(text: string, opts: DeadlineOptions = {}): Extr
         if (covered.some(([s, e]) => mStart < e && mEnd > s)) continue;
         const before = text.slice(Math.max(0, m.index - 80), m.index);
         if (!DEMAND_CUE_RE.test(before) && !DEMAND_CUE_RE.test(text.slice(m.index + m[0].length, m.index + m[0].length + 40))) continue;
+        // A period that describes a rule or another party's duty is not a deadline counted from this letter:
+        // "a clean pack is settled within one calendar month (GTA 6.7)", "ICOBS 8.2.6R requires an insurer, within
+        // three months of receiving a claim, to …". Skip when the same sentence frames it as practice/rule, or the
+        // period runs from some other event ("of receiving", "from dispatch") rather than this letter.
+        const sentenceBefore = before.slice(Math.max(before.lastIndexOf('. '), before.lastIndexOf('\n')) + 1);
+        const afterText = text.slice(mEnd, mEnd + 50);
+        if (re === RELATIVE_RE) {
+          if (RULE_FRAMING_RE.test(sentenceBefore)) continue;
+          if (/^\s*(?:of|from|after)\b/i.test(afterText) && !/^\s*(?:of|from|after)\s+(?:the\s+)?(?:date\s+of\s+)?(?:this|receipt\s+of\s+this)\s+(?:letter|notice|email)\b/i.test(afterText)) continue;
+        }
         const nRaw = (m[1] ?? '').toLowerCase().replace(/\s+/g, ' ');
         const n = /^\d+$/.test(nRaw) ? Number(nRaw) : WORDS[nRaw];
         if (!n) continue;

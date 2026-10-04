@@ -99,8 +99,9 @@ export function loadConfig(overrides: Partial<AppConfig> = {}): AppConfig {
   };
   const cfg: AppConfig = {
     env: envName === 'test' || envName === 'production' ? envName : 'development',
-    port: int('PORT', 3000),
-    host: str('HOST', '0.0.0.0')!,
+    port: int('PORT', 4000),
+    // Loopback by default: the auth layer is a placeholder, so never expose claimant data on the LAN unless HOST is set deliberately.
+    host: str('HOST', '127.0.0.1')!,
     databasePath: str('DATABASE_PATH', path.join(dataDir, 'claimdesk.sqlite'))!,
     evidenceDir: str('EVIDENCE_DIR', path.join(dataDir, 'evidence'))!,
     documentsDir: str('DOCUMENTS_DIR', path.join(dataDir, 'documents'))!,
