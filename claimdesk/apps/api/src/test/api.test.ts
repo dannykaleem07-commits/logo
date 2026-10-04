@@ -20,6 +20,24 @@ describe('health and auth placeholder', () => {
     expect(res.json()).toMatchObject({ ok: true, database: 'ok' });
   });
 
+  it('reports the version, dataset, pid and lookup mode for the desktop launcher (design doc §G.1, §E)', async () => {
+    const body = (await t.app.inject({ method: 'GET', url: '/api/health' })).json() as { version: string; dataset: string; pid: number; lookups: { mode: string } };
+    expect(body.version).toMatch(/^\d+\.\d+\.\d+/);
+    expect(body.dataset).toBe(process.env.CLAIMDESK_DATASET === 'demo' ? 'demo' : 'live');
+    expect(body.pid).toBe(process.pid);
+    expect(body.lookups.mode).toBe('manual'); // no DVLA / DVSA keys in tests
+  });
+
+  it('GET /settings shows the real registered office, the lookup mode and the bank warning that names the payment direction', async () => {
+    const res = await t.api<{ registeredOffice: unknown; lookupMode: string; warnings: Array<{ code: string; message: string }> }>('GET', '/settings');
+    expect(res.status).toBe(200);
+    expect(res.body.registeredOffice).toEqual({ line1: '44 Syon Lane', line2: 'Isleworth', town: 'London', postcode: 'TW7 5NQ' });
+    expect(res.body.lookupMode).toBe('manual');
+    const codes = res.body.warnings.map((w) => w.code);
+    expect(codes).not.toContain('REGISTERED_OFFICE_MISSING');
+    if (codes.includes('BANK_NOT_SET')) expect(res.body.warnings.find((w) => w.code === 'BANK_NOT_SET')?.message).toMatch(/payment direction \(CCGUK-05\)/);
+  });
+
   it('rejects an unknown X-User-Id and accepts the default handler', async () => {
     const bad = await t.api('GET', '/claims', undefined, { 'x-user-id': 'nobody' });
     expect(bad.status).toBe(401);

@@ -44,3 +44,9 @@ export type { LatePaymentTier, LatePaymentUplift, PaymentPackItem, PaymentPackIt
 
 export { defaultRateCard, recoveryCharge, storageDays, storageCharge } from './ratecard.js';
 export type { ChargeLine, RecoveryCharge, StorageDayConvention, StorageCharge } from './ratecard.js';
+
+export { GTA_SUGGESTION_NOTE, noBenchmarkRateReason, suggestGtaGroup } from './suggest.js';
+export type { GtaSuggestionBasis, GtaSuggestInput, GtaSuggestion } from './suggest.js';
+
+export { gtaRateKey, mergeGtaRates } from './merge.js';
+export type { ManualGtaRateRow, MergedGtaRate } from './merge.js';

@@ -31,7 +31,7 @@ export const GTA_BENCHMARK_SENTENCE = 'We are not a GTA subscriber and refer to 
 
 /** Company-level settings held in the API settings table (never hard-coded in templates). */
 export interface CompanySettings {
-  /** Registered office as it should print. Placeholder "[registered office]" until set. */
+  /** Registered office as it should print (formatRegisteredOffice); '' prints the brand default (44 Syon Lane…). */
   registeredOffice: string;
   vatNumber?: string;
   bank: {
@@ -97,12 +97,13 @@ export interface FigureRow {
 }
 
 // ---------------------------------------------------------------------------
-// Fixtures — placeholder values only; nothing here is a real client or a legacy detail
+// Fixtures — sample values only; nothing here is a real client or a legacy detail. The registered office is the
+// company's real one; bank details are visibly sample values (the real ones were not supplied).
 // ---------------------------------------------------------------------------
 
 export function sampleSettings(overrides: Partial<CompanySettings> = {}): CompanySettings {
   return {
-    registeredOffice: '[registered office]',
+    registeredOffice: '44 Syon Lane, Isleworth, London TW7 5NQ',
     bank: {
       accountName: 'Courtesy Cars Group UK Ltd',
       sortCode: '00-00-00',

@@ -12,7 +12,7 @@ import { deleteEvidence, findEvidenceBySha256, insertEvidence, updateEvidence } 
 import { activeHireForFleetUnit, createHire, endHire } from './hire.js';
 import { createFleetUnit, createPenalty, createPolicy, deleteFleetUnit, listPenalties, setPenaltyStage, updateFleetUnit } from './fleet.js';
 import { addLabourEntry, labourStats, listLabourEntries } from './labourLibrary.js';
-import { DEFAULT_RATE_CARD, getSettings, patchSettings } from './settings.js';
+import { DEFAULT_RATE_CARD, DEFAULT_SETTINGS, getSettings, patchSettings } from './settings.js';
 import { upsertVehicle } from './vehicles.js';
 import { getCompanyWatch, listCompanyWatch, recordCompanyPoll, upsertCompanyWatch } from './watch.js';
 
@@ -51,6 +51,19 @@ describe('settings', () => {
     expect(getSettings(h.db).bank?.accountName).toBe('Courtesy Cars Group UK Ltd');
     expect(() => patchSettings(h.db, { rateCard: { adminPence: 25.5 } }, { userId: 'admin' })).toThrow(ValidationError);
     expect(listAudit(h.db, { entity: 'settings' })).toHaveLength(1);
+  });
+
+  it('falls back to the real registered office when none is saved; bank, VAT and ICO stay unset (design doc §H.2)', () => {
+    expect(DEFAULT_SETTINGS.registeredOffice).toEqual({ line1: '44 Syon Lane', line2: 'Isleworth', town: 'London', postcode: 'TW7 5NQ' });
+    expect(DEFAULT_SETTINGS.bank).toBeUndefined();
+    expect(DEFAULT_SETTINGS.vatNumber).toBeUndefined();
+    expect(DEFAULT_SETTINGS.icoRegistration).toBeUndefined();
+    expect(getSettings(h.db).registeredOffice).toEqual(DEFAULT_SETTINGS.registeredOffice);
+    patchSettings(h.db, { vatNumber: 'GB123456789' }, { userId: 'admin' });
+    h.sqlite.prepare('update settings set registered_office = null').run(); // a row saved by an older build
+    expect(getSettings(h.db).registeredOffice).toEqual(DEFAULT_SETTINGS.registeredOffice);
+    const moved = patchSettings(h.db, { registeredOffice: { line1: '1 Example Way', town: 'Leeds', postcode: 'LS1 1AA' } }, { userId: 'admin' });
+    expect(moved.registeredOffice).toEqual({ line1: '1 Example Way', town: 'Leeds', postcode: 'LS1 1AA' });
   });
 });
 

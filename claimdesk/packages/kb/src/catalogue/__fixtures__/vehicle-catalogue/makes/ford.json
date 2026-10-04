@@ -1,0 +1,79 @@
+{
+  "make": "Ford",
+  "slug": "ford",
+  "dvlaNames": ["FORD"],
+  "aliases": [],
+  "verification": { "status": "unverified", "sourceNote": "Test fixture (synthetic)." },
+  "models": [
+    {
+      "name": "Fiesta",
+      "slug": "fiesta",
+      "aliases": ["Fiesta ST"],
+      "vehicleType": "car",
+      "segment": "supermini",
+      "years": { "from": 2008, "to": 2023 },
+      "generations": [
+        {
+          "name": "Mk7 (2008–2017)",
+          "from": 2008,
+          "to": 2017,
+          "bodies": [{ "body": "hatchback", "doors": [3, 5], "seats": [5] }],
+          "trims": ["Studio", "Style", "Zetec", "Titanium", "ST"],
+          "engines": ["1.25 82PS petrol", "1.0 EcoBoost 100PS petrol", "1.6 TDCi 95PS diesel"],
+          "fuels": ["petrol", "diesel"],
+          "transmissions": ["manual", "automatic"]
+        },
+        {
+          "name": "Mk8 (2017–2023)",
+          "from": 2017,
+          "to": 2023,
+          "bodies": [{ "body": "hatchback", "doors": [3, 5], "seats": [5] }],
+          "trims": ["Trend", "Zetec", "Titanium", { "name": "ST-3", "from": 2018, "gtaGroup": "S3" }],
+          "engines": ["1.0 EcoBoost 100PS petrol", "1.0 EcoBoost 125PS mild-hybrid petrol", "1.5 TDCi 85PS diesel"],
+          "fuels": ["petrol", "mild-hybrid", "diesel"],
+          "transmissions": ["manual", "automatic"]
+        }
+      ]
+    },
+    {
+      "name": "Transit Custom",
+      "slug": "transit-custom",
+      "aliases": [],
+      "vehicleType": "van",
+      "segment": "van-medium",
+      "years": { "from": 2013, "to": null },
+      "generations": [
+        {
+          "name": "Mk1 (2013–2023)",
+          "from": 2013,
+          "to": 2023,
+          "bodies": [{ "body": "panel-van", "doors": [4], "seats": [3] }, { "body": "crew-van", "doors": [4], "seats": [6] }],
+          "trims": ["Base", "Trend", "Limited"],
+          "engines": ["2.0 EcoBlue 130PS diesel", "2.0 EcoBlue 170PS diesel"],
+          "fuels": ["diesel"],
+          "transmissions": ["manual", "automatic"]
+        }
+      ]
+    },
+    {
+      "name": "Transit",
+      "slug": "transit",
+      "aliases": [],
+      "vehicleType": "van",
+      "segment": "van-large",
+      "years": { "from": 2000, "to": null },
+      "generations": [
+        {
+          "name": "Mk8 (2014–)",
+          "from": 2014,
+          "to": null,
+          "bodies": [{ "body": "panel-van", "doors": [4], "seats": [3] }],
+          "trims": ["Leader", "Trend"],
+          "engines": ["2.0 EcoBlue 130PS diesel"],
+          "fuels": ["diesel"],
+          "transmissions": ["manual"]
+        }
+      ]
+    }
+  ]
+}

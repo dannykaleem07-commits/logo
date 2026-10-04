@@ -14,7 +14,7 @@ import type { VehicleRef } from '../schemas/vehicles.js';
 import { acceptanceFor, actionsFor, buildClaimView, gatesFor, loadBundle, recomputeClocks } from '../services/claimView.js';
 import { routeInjuryFor, scoreLiabilityFor, validateFnolInput, type FnolValidation, type LiabilityScore } from '../engines.js';
 import { FNOL_DEFAULT_ROLES, isIndependentRelationship, normaliseFnol, toFnolInput, type NormalisedFnol, type ResolvedRefs } from '../services/intake.js';
-import { manualLookupRecord } from '../services/lookup.js';
+import { manualLookupRecord, sourceLookupRecord } from '../services/lookup.js';
 import { assertNoHardStop, params, requireClaim } from './helpers.js';
 
 const STATUS_RANK: Record<ClaimStatus, number> = {
@@ -36,9 +36,15 @@ function resolveRefsForValidation(ctx: AppContext, n: NormalisedFnol): ResolvedR
 
 function resolveVehicle(ctx: AppContext, tx: Db, ref: VehicleRef, ownership: Vehicle['ownership'], actor: Actor, now: string): Vehicle {
   if ('id' in ref) return ctx.repos.requireVehicle(tx, ref.id);
-  const { odometer, ...fields } = ref;
+  const { odometer, source, ...fields } = ref;
   const existing = ctx.repos.findByRegistration(tx, ref.registration);
-  const lookups = existing?.lookups.some((l) => l.provider !== 'manual') ? [] : [{ ...manualLookupRecord(fields, ref.registration, { requestedAt: now, requestedBy: actor.userId }), id: ctx.repos.newId() }];
+  const meta = { requestedAt: now, requestedBy: actor.userId };
+  // A source (catalogue pick / Total Car Check paste) is always recorded; a plain manual entry only when no live lookup exists.
+  const lookups = source
+    ? [{ ...sourceLookupRecord(source, ref.registration, meta), id: ctx.repos.newId() }]
+    : existing?.lookups.some((l) => l.provider === 'dvla_ves' || l.provider === 'dvsa_mot' || l.provider === 'gateway')
+      ? []
+      : [{ ...manualLookupRecord(fields, ref.registration, meta), id: ctx.repos.newId() }];
   return ctx.repos.upsertVehicle(tx, {
     ...fields,
     make: fields.make || existing?.make || 'UNKNOWN',

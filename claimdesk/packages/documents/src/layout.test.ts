@@ -1,16 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { brand } from './brand.js';
+import { brand, formatRegisteredOffice } from './brand.js';
 import { sampleBaseData, sampleClaim, sampleRecipient, sampleSettings } from './common.js';
 import { findBannedPhrases, findBlockedStrings, findProhibitedContent, htmlToText } from './guards.js';
 import {
   baseLayout,
+  ccList,
   chronologyTable,
+  contactStrip,
+  enclosuresList,
   figuresTable,
   footerTemplate,
   headerTemplate,
   letterBlock,
   partnerMarkSlot,
   readDocumentMeta,
+  replyByLine,
+  reLine,
   scheduleTable,
   signatureBlock,
   standardOpener,
@@ -68,7 +73,8 @@ describe('baseLayout', () => {
     expect(html).toContain('AB12 CDE');
     expect(html).toContain('9 August 2026');
     expect(html).toContain(brand.company.statusLine);
-    expect(html).toContain(brand.tradingDisclosure('[registered office]'));
+    expect(html).toContain(brand.tradingDisclosure('44 Syon Lane, Isleworth, London TW7 5NQ'));
+    expect(html).not.toContain('[registered office]');
     expect(html).toContain(brand.typography.fontStack);
     expect(html).toContain('Yours faithfully');
     expect(html).toContain('for and on behalf of Courtesy Cars Group UK Ltd');
@@ -88,16 +94,17 @@ describe('baseLayout', () => {
       bodyHtml: '<p>x</p>'
     });
     expect(invoice).toContain('class="company-block"');
-    expect(invoice).toContain('Company number 17430389');
+    expect(invoice).toContain('Company no. 17430389');
     expect(invoice).toContain('VAT number GB000000000');
-    expect(invoice).toContain('Registered office: [registered office]');
+    expect(invoice).toContain('44 Syon Lane, Isleworth, London TW7 5NQ');
+    expect(invoice).not.toContain('[registered office]');
     expect(invoice).toContain('<h1>Invoice</h1>');
     expect(invoice).toContain('Due date</th><td>18 October 2026');
     expect(invoice).not.toContain('Yours faithfully');
   });
 
   it('embeds meta the renderer can read back', () => {
-    expect(readDocumentMeta(html)).toEqual({ kind: 'letter', reference: 'CCG-2026-00012', date: '2026-10-04', registeredOffice: '[registered office]' });
+    expect(readDocumentMeta(html)).toEqual({ kind: 'letter', reference: 'CCG-2026-00012', date: '2026-10-04', registeredOffice: '44 Syon Lane, Isleworth, London TW7 5NQ' });
   });
 
   it('contains no legacy strings or banned phrases', () => {
@@ -130,6 +137,78 @@ describe('header and footer templates', () => {
     expect(f).toContain('not a firm of solicitors');
     expect(f).toContain('Registered office: 1 Example Street, Example Town, EX1 1AA');
     expect(f).toContain('company number 17430389');
+  });
+
+  it('mirror the letterhead: registered name and our ref left, PAGE n OF N right; contact line in the footer', () => {
+    const text = htmlToText(headerTemplate('CCG-2026-00012'));
+    expect(text).toMatch(/COURTESY CARS GROUP UK LTD \| Our ref CCG-2026-00012/);
+    expect(text).toMatch(/PAGE\s+OF/);
+    const f = htmlToText(footerTemplate());
+    expect(f).toContain('Registered in England and Wales, company number 17430389');
+    expect(f).toContain('Registered office: 44 Syon Lane, Isleworth, London TW7 5NQ');
+    expect(f).toContain('Case handler 07425 475922 · Office 020 7052 5403 · claims@courtesycars.net · www.courtesycars.net');
+    expect(footerTemplate() + headerTemplate('X')).not.toMatch(/accreditation|<img/i);
+  });
+});
+
+describe('company details (design doc §H)', () => {
+  it('formatRegisteredOffice joins the parts and falls back to the brand default', () => {
+    expect(formatRegisteredOffice()).toBe('44 Syon Lane, Isleworth, London TW7 5NQ');
+    expect(formatRegisteredOffice(brand.company.registeredOfficeAddress)).toBe('44 Syon Lane, Isleworth, London TW7 5NQ');
+    expect(formatRegisteredOffice({ line1: '1 Example Way', town: 'Leeds', county: 'West Yorkshire', postcode: 'LS1 1AA' })).toBe('1 Example Way, Leeds, West Yorkshire LS1 1AA');
+    expect(formatRegisteredOffice({ line1: '', postcode: '' })).toBe('44 Syon Lane, Isleworth, London TW7 5NQ');
+    expect(brand.company.registeredOffice).toBe(formatRegisteredOffice());
+    expect(brand.company.accidentLine24h).toBe(brand.company.officePhone);
+  });
+
+  it('the masthead prints the letterhead first-page block', () => {
+    const text = htmlToText(contactStrip());
+    for (const line of ['COURTESY CARS GROUP UK LTD', '44 Syon Lane, Isleworth, London TW7 5NQ', 'Case handler 07425 475922 · Office 020 7052 5403', 'claims@courtesycars.net · www.courtesycars.net', 'Company no. 17430389']) {
+      expect(text).toContain(line);
+    }
+    expect(htmlToText(contactStrip({ registeredOffice: '1 Example Way, Leeds LS1 1AA' }))).toContain('1 Example Way, Leeds LS1 1AA');
+  });
+});
+
+describe('letter parts (data-letter-part, design doc §H.3)', () => {
+  const html = baseLayout({
+    title: 'Parts',
+    kind: 'letter',
+    reference: 'CCG-2026-00012',
+    theirReference: 'EXI/TP/4471920',
+    date: '2026-10-04',
+    recipient: sampleRecipient(),
+    settings: sampleSettings(),
+    signatory: { name: 'D. Kaleem', role: 'Claims Manager' },
+    meta: [{ label: 'Claim number', value: 'CL-99' }],
+    enclosures: ['Invoice INV-0042'],
+    cc: ['Ms Jane Example'],
+    bodyHtml: `${subjectBlock(sampleClaim())}${reLine('Credit hire charges')}<p>Dear Sirs,</p><p>Body text.</p>${replyByLine('Please reply by 5pm on 18 October 2026.')}`
+  });
+  const part = (name: string): string | undefined => new RegExp(`<[a-z]+[^>]*data-letter-part="${name}"[^>]*>([\\s\\S]*?)</`).exec(html)?.[1];
+
+  it('marks every part the letterhead composer reads', () => {
+    for (const name of ['recipient', 'ref-our', 'ref-your', 'ref-claim', 'ref-client', 'ref-vehicle', 'ref-accident', 'ref-date', 'subject', 'salutation', 'body', 'reply-by', 'valediction', 'signatory-name', 'enclosures', 'cc']) {
+      expect(html, name).toContain(`data-letter-part="${name}"`);
+    }
+    expect(part('salutation')).toBe('Dear Sirs,');
+    expect(part('valediction')).toBe('Yours faithfully');
+    expect(html).toContain('<tr data-letter-part="ref-claim"><th>Claim number</th><td>CL-99</td></tr>');
+    expect(html).toContain('<tr data-letter-part="ref-our"><th>Our ref</th><td>CCG-2026-00012</td></tr>');
+    expect(html).toContain('<p class="re" data-letter-part="subject">Credit hire charges</p>');
+    expect(html).toMatch(/<address class="recipient" data-letter-part="recipient" data-email="thirdpartyclaims@example-insurer.test"/);
+    expect(html).toContain('<div class="name" data-line="name">Example Insurance plc</div>');
+    expect(html).toContain('<div data-line="attention">Third Party Claims Team</div>');
+    expect(html).toContain('<div data-line="address">PO Box 100</div>');
+    expect(html).toContain('<main class="body" data-letter-part="body">');
+    expect(html).toContain('data-letter-part="signatory-name"><strong>D. Kaleem</strong>');
+  });
+
+  it('only marks the first salutation and leaves non-letters alone', () => {
+    const notice = baseLayout({ title: 'N', kind: 'notice', reference: 'R', date: '2026-10-04', bodyHtml: '<p>Dear Sirs,</p>' });
+    expect(notice).not.toContain('data-letter-part="salutation"');
+    expect(enclosuresList([])).toBe('');
+    expect(ccList(['  '])).toBe('');
   });
 });
 

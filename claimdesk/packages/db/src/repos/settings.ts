@@ -42,17 +42,29 @@ export const DEFAULT_API_KEYS_PRESENT: ApiKeysPresent = { dvlaVes: false, dvsaMo
  * Defaults used until the admin saves settings. The bank account name must equal the exact registered name so
  * Confirmation of Payee returns a full match (BLUEPRINT §7 point 7). Never any legacy detail (ARCHITECTURE 9).
  */
+/** The registered office (Companies House record for 17430389). Used until the admin saves a different one. */
+export const DEFAULT_REGISTERED_OFFICE: Address = { line1: '44 Syon Lane', line2: 'Isleworth', town: 'London', postcode: 'TW7 5NQ' };
+
 export const DEFAULT_SETTINGS: Settings = {
   id: SETTINGS_ID,
   companyName: 'Courtesy Cars Group UK Ltd',
   companyNumber: '17430389',
+  registeredOffice: DEFAULT_REGISTERED_OFFICE,
+  // bank, VAT and ICO were not supplied: they stay unset until entered in Settings (never invented)
   rateCard: DEFAULT_RATE_CARD,
   apiKeysPresent: DEFAULT_API_KEYS_PRESENT,
   updatedAt: '1970-01-01T00:00:00.000Z',
 };
 
 function toSettings(row: SettingsRow): Settings {
-  return { ...denull(row), id: SETTINGS_ID, rateCard: { ...DEFAULT_RATE_CARD, ...row.rateCard }, apiKeysPresent: { ...DEFAULT_API_KEYS_PRESENT, ...row.apiKeysPresent } };
+  return {
+    ...denull(row),
+    id: SETTINGS_ID,
+    companyNumber: row.companyNumber ?? DEFAULT_SETTINGS.companyNumber,
+    registeredOffice: row.registeredOffice ?? DEFAULT_REGISTERED_OFFICE,
+    rateCard: { ...DEFAULT_RATE_CARD, ...row.rateCard },
+    apiKeysPresent: { ...DEFAULT_API_KEYS_PRESENT, ...row.apiKeysPresent },
+  };
 }
 
 export function getSettings(db: Db): Settings {

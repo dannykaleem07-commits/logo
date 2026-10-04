@@ -23,7 +23,9 @@ export const LOOKUP_PROVIDER_LABEL: Record<LookupRecord['provider'], string> = {
   dvsa_mot: 'DVSA MOT history',
   companies_house: 'Companies House',
   gateway: 'Commercial gateway',
-  manual: 'Manual entry'
+  manual: 'Manual entry',
+  totalcarcheck_manual: 'Total Car Check (copied by hand)',
+  catalogue: 'Vehicle catalogue (ClaimDesk)'
 };
 
 export function motRows(vehicle: Pick<Vehicle, 'motHistory'>): MotTest[] {

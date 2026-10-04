@@ -573,16 +573,16 @@ describe('letters-a: arithmetic and ledger fidelity', () => {
       expect(t).not.toContain('letter of  has');
       expect(t).not.toContain('because our');
       expect(t).toContain(rung === 14 ? 'addressed to the team leader. It states' : 'addressed to the claims manager. It sets out');
-      expect(html).toContain(`<div>${attention}</div>`);
+      expect(html).toContain(`<div data-line="attention">${attention}</div>`);
       // one previous letter: singular
       const one = htmlToText(renderTemplate(id, { ...base, previousLetters: ['2026-10-12'] }).html);
       expect(one).toContain('because our letter of 12 October 2026 has not been answered');
     }
     // the API's own attention line wins
     const custom = chaserSample(14);
-    expect(renderTemplate('letter.chaser_14', custom).html).toContain('<div>Team Leader, Third Party Claims</div>');
+    expect(renderTemplate('letter.chaser_14', custom).html).toContain('<div data-line="attention">Team Leader, Third Party Claims</div>');
     const named = { ...custom, recipient: { ...custom.recipient!, attention: 'Ms A. Handler, Team Leader' } };
-    expect(renderTemplate('letter.chaser_14', named).html).toContain('<div>Ms A. Handler, Team Leader</div>');
+    expect(renderTemplate('letter.chaser_14', named).html).toContain('<div data-line="attention">Ms A. Handler, Team Leader</div>');
   });
 
   it('chaser day count reads grammatically for a single day', () => {

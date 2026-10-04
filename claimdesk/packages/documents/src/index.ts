@@ -31,3 +31,4 @@ export * from './hash.js';
 
 // Side effect as well as exports: evaluating the template modules registers every production template.
 export * from './templates/index.js';
+export * from './docx/index.js';

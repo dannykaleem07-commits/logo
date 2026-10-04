@@ -15,6 +15,8 @@ import { PDFDocument } from 'pdf-lib';
 import { brand } from './brand.js';
 import { footerTemplate, headerTemplate, readDocumentMeta } from './layout.js';
 import { htmlSha256, sha256Hex } from './hash.js';
+import { stampPdfMetadata } from './docx/pdfmeta.js';
+import { DOCX_APPLICATION_NAME, DOCX_PDF_PRODUCER, type PdfMetadata } from './docx/types.js';
 
 export { htmlSha256, sha256Hex };
 
@@ -30,6 +32,11 @@ export interface RenderPdfOptions {
   landscape?: boolean;
   /** Navigation / print timeout in ms. Default 30 000. */
   timeoutMs?: number;
+  /**
+   * PDF document information (§A.12). Stamped after printing and before hashing; defaults: Title = the HTML <title>,
+   * Author = registered name, Creator 'ClaimDesk', Producer 'ClaimDesk — Courtesy Cars Group UK Ltd', Language en-GB.
+   */
+  metadata?: PdfMetadata;
 }
 
 export interface RenderPdfResult {
@@ -242,11 +249,31 @@ export async function renderPdf(html: string, opts: RenderPdfOptions): Promise<R
       },
       preferCSSPageSize: false
     });
-    const buffer = Buffer.isBuffer(pdf) ? pdf : Buffer.from(pdf);
-    return { pdf: buffer, sha256: sha256Hex(buffer), pages: await pdfPageCount(buffer) };
+    const printed = Buffer.isBuffer(pdf) ? pdf : Buffer.from(pdf);
+    const meta: PdfMetadata = { ...(opts.metadata ?? { title: '' }) };
+    if (!meta.title) meta.title = htmlTitle(html) ?? opts.reference;
+    if (!meta.author) meta.author = brand.company.registeredName;
+    // Stamp BEFORE hashing: the sha256 covers the bytes that are stored and sent.
+    const stamped = await stampPdfMetadata(printed, meta);
+    return { pdf: stamped.pdf, sha256: sha256Hex(stamped.pdf), pages: stamped.pages };
   } finally {
     await context.close();
   }
+}
+
+/** Text of the HTML <title>, entity-decoded. */
+export function htmlTitle(html: string): string | undefined {
+  const mm = /<title[^>]*>([\s\S]*?)<\/title>/i.exec(html);
+  if (!mm) return undefined;
+  const t = (mm[1] ?? '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+  return t || undefined;
 }
 
 export async function pdfPageCount(pdf: Buffer | Uint8Array): Promise<number> {
@@ -256,13 +283,18 @@ export async function pdfPageCount(pdf: Buffer | Uint8Array): Promise<number> {
 
 /** Concatenate PDFs in order (packs and bundles). */
 export async function mergePdfs(buffers: ReadonlyArray<Buffer | Uint8Array>): Promise<Buffer> {
-  const out = await PDFDocument.create();
+  const out = await PDFDocument.create({ updateMetadata: false });
+  let firstTitle: string | undefined;
   for (const buf of buffers) {
     const src = await PDFDocument.load(buf, { updateMetadata: false });
+    firstTitle ??= src.getTitle();
     const pages = await out.copyPages(src, src.getPageIndices());
     for (const p of pages) out.addPage(p);
   }
-  out.setProducer(brand.company.registeredName);
-  out.setCreator('ClaimDesk');
+  if (firstTitle) out.setTitle(firstTitle, { showInWindowTitleBar: true });
+  out.setAuthor(brand.company.registeredName);
+  out.setProducer(DOCX_PDF_PRODUCER);
+  out.setCreator(DOCX_APPLICATION_NAME);
+  out.setLanguage('en-GB');
   return Buffer.from(await out.save({ useObjectStreams: false }));
 }

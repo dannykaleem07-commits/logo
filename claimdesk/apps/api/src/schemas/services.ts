@@ -4,6 +4,7 @@
  */
 import { z } from 'zod';
 import { addressSchema, bankDetailsSchema, id, isoDate, isoDateTime, pence, vatRate } from './common.js';
+import { vehiclePatchFields, vehicleSourceSchema, vehicleSpecSchema } from './vehicles.js';
 
 // ---------------------------------------------------------------------------
 // Evidence
@@ -230,7 +231,10 @@ export const fleetVehicleInput = z.object({
   make: z.string().trim().min(1).default('UNKNOWN'),
   model: z.string().trim().min(1).default('UNKNOWN'),
   variant: z.string().optional(),
+  bodyType: z.string().optional(),
+  engineCapacityCc: z.number().int().min(1).max(20_000).optional(),
   yearOfManufacture: z.number().int().optional(),
+  monthOfFirstRegistration: z.string().regex(/^\d{4}-\d{2}$/).optional(),
   fuelType: fuelType.optional(),
   transmission: transmission.optional(),
   colour: z.string().optional(),
@@ -238,6 +242,15 @@ export const fleetVehicleInput = z.object({
   motExpiryDate: isoDate.optional(),
   taxDueDate: isoDate.optional(),
   gtaGroup: z.string().optional(),
+  spec: vehicleSpecSchema.optional(),
+  source: vehicleSourceSchema.optional(),
+});
+/** What the GTA panel suggested (stored in the LookupRecord raw for provenance, §F.1). */
+export const gtaSuggestionInput = z.object({
+  group: z.string().max(8).nullable(),
+  basis: z.string().max(40),
+  rateGroup: z.string().max(8).nullable().optional(),
+  ratePeriod: z.string().max(16).nullable().optional(),
 });
 export const fleetUnitBody = z
   .object({
@@ -245,8 +258,11 @@ export const fleetUnitBody = z
     vehicle: fleetVehicleInput.optional(),
     declaredUses: z.array(fleetUse).min(1),
     policyId: id.optional(),
-    dailyRatePence: pence,
-    gtaGroup: z.string().trim().min(1),
+    /** Optional: when omitted the server uses the GTA suggestion's benchmark rate (or 422 GTA_SUGGESTION_UNAVAILABLE). */
+    dailyRatePence: pence.optional(),
+    /** Optional: when omitted the server uses the GTA suggestion's group. */
+    gtaGroup: z.string().trim().min(1).optional(),
+    gtaSuggestion: gtaSuggestionInput.optional(),
     keeperAddressOnV5C: addressSchema.optional(),
     keeperAddressCurrent: z.boolean().optional(),
     serviceDueDate: isoDate.optional(),
@@ -254,7 +270,10 @@ export const fleetUnitBody = z
     phvLicensed: z.boolean().optional(),
   })
   .refine((b) => Boolean(b.vehicleId) || Boolean(b.vehicle), { message: 'vehicleId or vehicle is required' });
+/** Vehicle changes on PATCH /fleet/:id (§F.2): the PATCH /vehicles/:id fields, source optional (default manual). */
+export const fleetVehiclePatch = vehiclePatchFields.extend({ source: vehicleSourceSchema.optional() });
 export const fleetUnitPatchBody = z.object({
+  vehicle: fleetVehiclePatch.optional(),
   declaredUses: z.array(fleetUse).min(1).optional(),
   policyId: id.nullable().optional(),
   dailyRatePence: pence.optional(),

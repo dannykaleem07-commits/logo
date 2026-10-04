@@ -6,6 +6,7 @@ import { config as loadDotenv } from 'dotenv';
 import { randomUUID } from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
+import { TOTAL_CAR_CHECK_URL_TEMPLATE } from '@ccguk/domain';
 
 export interface ApiKeys {
   dvlaVesApiKey?: string;
@@ -82,6 +83,11 @@ export interface AppConfig {
    * spoof its address with the header.
    */
   trustProxy: boolean | string;
+  /**
+   * Total Car Check free-check URL with `{REG}` for the registration (TOTALCARCHECK_URL_TEMPLATE). The API never requests
+   * it; it is handed to the browser as a link (TEMPLATES-VEHICLES-DESKTOP §E.2), so a wrong format can be fixed here.
+   */
+  totalCarCheckUrlTemplate: string;
 }
 
 export const LOCALHOST_ORIGINS: readonly RegExp[] = [/^https?:\/\/localhost(:\d+)?$/i, /^https?:\/\/127\.0\.0\.1(:\d+)?$/, /^https?:\/\/\[::1\](:\d+)?$/];
@@ -133,6 +139,13 @@ export function parseTrustProxy(raw: string | undefined): boolean | string {
   if (v.toLowerCase() === 'true') return true;
   if (v.toLowerCase() === 'false') return false;
   return v;
+}
+
+/** TOTALCARCHECK_URL_TEMPLATE: an https URL containing {REG}; anything else falls back to the built-in template. */
+export function parseTotalCarCheckTemplate(raw: string | undefined): string {
+  const v = raw?.trim();
+  if (v && /^https:\/\/\S+$/i.test(v) && v.includes('{REG}')) return v;
+  return TOTAL_CAR_CHECK_URL_TEMPLATE;
 }
 
 function int(name: string, fallback: number): number {
@@ -190,6 +203,7 @@ export function loadConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     cookieSecure: bool('COOKIE_SECURE', envName === 'production'),
     esignDelivery: str('ESIGN_DELIVERY')?.trim().toLowerCase() === 'handler' ? 'handler' : 'external',
     trustProxy: parseTrustProxy(str('TRUST_PROXY')),
+    totalCarCheckUrlTemplate: parseTotalCarCheckTemplate(str('TOTALCARCHECK_URL_TEMPLATE')),
     ...overrides,
   };
   if (cfg.authMode === 'header' && cfg.env === 'production') throw new Error('AUTH_MODE=header is not allowed in production: X-User-Id is not authentication');
@@ -226,6 +240,7 @@ export function testConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     sessionTtlHours: 12,
     esignDelivery: 'external',
     trustProxy: 'loopback',
+    totalCarCheckUrlTemplate: TOTAL_CAR_CHECK_URL_TEMPLATE,
     ...overrides,
     // Mirror loadConfig: production defaults to Secure cookies unless the override says otherwise.
     cookieSecure: overrides.cookieSecure ?? overrides.env === 'production',

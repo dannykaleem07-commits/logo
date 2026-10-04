@@ -8,9 +8,17 @@
  *
  * All partials return HTML strings and escape the data they are given. Partials that print money or dates use
  * the shared formatters only.
+ *
+ * Letter parts (design doc §C.7/§H.3): the elements a letter is made of carry `data-letter-part` attributes so the
+ * HTML can be re-composed on the CCGUK Word letterhead exactly (extractLetterContent, templates-api slice):
+ *   recipient (address; children carry data-line="name|attention|address", the address element data-email),
+ *   ref-our, ref-your, ref-claim, ref-client, ref-vehicle, ref-accident, ref-date (ref table and subject table rows),
+ *   subject (p.re and table.subject), salutation (the first "Dear …" paragraph of a letter body), body (main.body),
+ *   reply-by (replyByLine partial), valediction (closing), signatory-name (p.sig-name), enclosures, cc.
+ * Templates stay pure: the attributes come from the partials and baseLayout only.
  */
 import type { ISODate, ISODateTime, Pence } from '@ccguk/domain';
-import { brand } from './brand.js';
+import { brand, formatRegisteredOffice } from './brand.js';
 import type { ClaimHeader, CompanySettings, FigureRow, RecipientBlock, Signatory, TemplateKind } from './common.js';
 import {
   escapeHtml,
@@ -54,6 +62,10 @@ export interface LayoutOptions {
   landscape?: boolean;
   /** Additional CSS appended after the base stylesheet. */
   extraCss?: string;
+  /** Enclosures listed after the signature (data-letter-part="enclosures"). */
+  enclosures?: string[];
+  /** Copy recipients listed after the signature (data-letter-part="cc"). */
+  cc?: string[];
   /** Document language for the html element. Default en-GB. */
   lang?: string;
 }
@@ -99,8 +111,12 @@ hr{border:0;border-top:1px solid var(--rule);margin:5mm 0;}
 .logo-lockup{flex:0 0 auto;}
 .logo-lockup svg{display:block;width:100%;height:auto;}
 .masthead-right{text-align:right;font-size:${t.smallPt}pt;line-height:1.45;color:var(--navy);}
-.company-block .name{font-weight:700;font-size:${t.bodyPt}pt;}
+[data-block="letterhead"] .name{font-weight:700;font-size:${t.bodyPt}pt;letter-spacing:.04em;text-transform:uppercase;}
+[data-block="letterhead"] .company-no{color:var(--silver);}
 .company-block .tagline,.contact-strip .services{color:var(--gold);text-transform:uppercase;letter-spacing:.08em;font-size:7.5pt;font-weight:700;margin-bottom:.8mm;}
+.letter-extras{margin-top:5mm;font-size:9.5pt;break-inside:avoid;page-break-inside:avoid;}
+.letter-extras .extras-label{font-weight:700;color:var(--navy);margin:0 0 1mm;}
+.letter-extras ul{list-style:none;padding-left:0;margin:0 0 2mm;}
 .partner-mark{display:none;}
 
 /* title and reference block */
@@ -167,27 +183,46 @@ table.kv th{width:38%;background:transparent;text-transform:none;letter-spacing:
 // Masthead pieces
 // ---------------------------------------------------------------------------
 
-/** Registered name, tagline, registered office, company number (+ VAT), contact lines. Sits alongside the logo on invoices. */
-export function companyBlock(settings?: LayoutOptions['settings']): string {
-  const office = settings?.registeredOffice?.trim() || '[registered office]';
-  const vat = settings?.vatNumber?.trim();
-  const ico = settings?.icoRegistration?.trim();
-  return `<div class="company-block">
-  <div class="name">${escapeHtml(brand.company.registeredName)}</div>
-  <div class="tagline">${escapeHtml(brand.company.tagline)}</div>
-  <div>Registered office: ${escapeHtml(office)}</div>
-  <div>Company number ${escapeHtml(brand.company.companyNumber)}${vat ? ` &middot; VAT number ${escapeHtml(vat)}` : ''}${ico ? ` &middot; ICO ${escapeHtml(ico)}` : ''}</div>
-  <div>${escapeHtml(brand.company.claimsEmail)} &middot; 24-hour accident line ${escapeHtml(brand.company.accidentLine24h)}</div>
+/** The registered office to print: the settings value when set, otherwise the brand default (never a placeholder). */
+export function effectiveRegisteredOffice(settings?: { registeredOffice?: string }): string {
+  return settings?.registeredOffice?.trim() || formatRegisteredOffice();
+}
+
+/** "Case handler 07425 475922 · Office 020 7052 5403" — the letterhead's telephone line (plain text). */
+export function letterheadPhoneLine(): string {
+  return `Case handler ${brand.company.caseHandlerPhone} \u00b7 Office ${brand.company.officePhone}`;
+}
+
+/** "claims@courtesycars.net · www.courtesycars.net" (plain text). */
+export function letterheadWebLine(): string {
+  return `${brand.company.claimsEmail} \u00b7 ${brand.company.website}`;
+}
+
+/** Letterhead first-page header lines: name, office, telephones, email/web, company number (+ VAT, ICO when set). */
+function letterheadLines(cls: string, settings?: LayoutOptions['settings'], withTaxIds = false): string {
+  const office = effectiveRegisteredOffice(settings);
+  const vat = withTaxIds ? settings?.vatNumber?.trim() : undefined;
+  const ico = withTaxIds ? settings?.icoRegistration?.trim() : undefined;
+  return `<div class="${cls}" data-block="letterhead">
+  <div class="name">${escapeHtml(brand.company.registeredName.toUpperCase())}</div>
+  <div class="office">${escapeHtml(office)}</div>
+  <div class="phones">${escapeHtml(letterheadPhoneLine())}</div>
+  <div class="web">${escapeHtml(letterheadWebLine())}</div>
+  <div class="company-no">Company no. ${escapeHtml(brand.company.companyNumber)}${vat ? ` &middot; VAT number ${escapeHtml(vat)}` : ''}${ico ? ` &middot; ICO ${escapeHtml(ico)}` : ''}</div>
 </div>`;
 }
 
-/** Compact contact details for letters and notices. */
-export function contactStrip(): string {
-  return `<div class="contact-strip">
-  <div class="services">${brand.company.services.map(escapeHtml).join(' &middot; ')}</div>
-  <div>${escapeHtml(brand.company.claimsEmail)}</div>
-  <div>24-hour accident line ${escapeHtml(brand.company.accidentLine24h)}</div>
-</div>`;
+/**
+ * Full company details alongside the logo (invoices): the letterhead block plus VAT and ICO numbers when Settings
+ * hold them. The registered office falls back to the brand default.
+ */
+export function companyBlock(settings?: LayoutOptions['settings']): string {
+  return letterheadLines('company-block', settings, true);
+}
+
+/** Letterhead block for letters, notices and forms (same lines as the CCGUK letterhead's first-page header). */
+export function contactStrip(settings?: LayoutOptions['settings']): string {
+  return letterheadLines('contact-strip', settings, false);
 }
 
 /** Renders nothing while brand.partnerMarkEnabled is false (no signed partnership record uploaded). */
@@ -208,14 +243,37 @@ export interface LetterBlockOptions {
   meta?: Array<{ label: string; value: string }>;
 }
 
+export type LetterRefPart = 'ref-our' | 'ref-your' | 'ref-claim' | 'ref-client' | 'ref-vehicle' | 'ref-accident' | 'ref-date';
+
+/** Letter part for a reference / subject row, inferred from its label ("Claim number" → ref-claim). */
+export function refPartForLabel(label: string): LetterRefPart | undefined {
+  const l = label.trim().toLowerCase();
+  if (/^our ref/.test(l)) return 'ref-our';
+  if (/^your ref/.test(l)) return 'ref-your';
+  if (/claim (no|number|ref)/.test(l)) return 'ref-claim';
+  if (/accident/.test(l)) return 'ref-accident';
+  if (/^(our client|client|claimant)\b/.test(l)) return 'ref-client';
+  if (/^(vehicle|registration)\b/.test(l)) return 'ref-vehicle';
+  if (l === 'date') return 'ref-date';
+  return undefined;
+}
+
+function partAttr(part: string | undefined): string {
+  return part ? ` data-letter-part="${part}"` : '';
+}
+
 /** Recipient (left) and Our ref / Your ref / Date table (right). */
 export function letterBlock(opts: LetterBlockOptions): string {
-  const rows: Array<{ label: string; value: string }> = [{ label: 'Our ref', value: opts.reference }];
-  if (opts.theirReference && opts.theirReference.trim() !== '') rows.push({ label: 'Your ref', value: opts.theirReference });
-  rows.push({ label: 'Date', value: formatDateLong(opts.date) });
-  for (const extra of opts.meta ?? []) rows.push(extra);
+  const rows: Array<{ label: string; value: string; part?: LetterRefPart }> = [{ label: 'Our ref', value: opts.reference, part: 'ref-our' }];
+  if (opts.theirReference && opts.theirReference.trim() !== '') rows.push({ label: 'Your ref', value: opts.theirReference, part: 'ref-your' });
+  rows.push({ label: 'Date', value: formatDateLong(opts.date), part: 'ref-date' });
+  for (const extra of opts.meta ?? []) {
+    const part = refPartForLabel(extra.label);
+    // a part is claimed once: a meta row never shadows Our ref / Your ref / Date
+    rows.push({ ...extra, part: part && !rows.some((r) => r.part === part) ? part : undefined });
+  }
   const refTable = `<table class="ref-table">${rows
-    .map((r) => `<tr><th>${escapeHtml(r.label)}</th><td>${escapeHtml(r.value)}</td></tr>`)
+    .map((r) => `<tr${partAttr(r.part)}><th>${escapeHtml(r.label)}</th><td>${escapeHtml(r.value)}</td></tr>`)
     .join('')}</table>`;
   return `<section class="letter-block">
   ${opts.recipient ? recipientBlock(opts.recipient) : '<div class="recipient"></div>'}
@@ -223,18 +281,58 @@ export function letterBlock(opts: LetterBlockOptions): string {
 </section>`;
 }
 
+/**
+ * Addressee block. `data-letter-part="recipient"`; each printed line carries `data-line` ("name", "attention",
+ * "address"); the email (when the letter goes by email) is on the address element as `data-email`.
+ */
 export function recipientBlock(r: RecipientBlock): string {
   const lines: string[] = [];
   if (r.email) lines.push(`<div class="delivery">By email: ${escapeHtml(r.email)}</div>`);
-  lines.push(`<div class="name">${escapeHtml(r.name)}</div>`);
-  if (r.attention) lines.push(`<div>${escapeHtml(r.attention)}</div>`);
-  for (const l of r.addressLines) if (l && l.trim() !== '') lines.push(`<div>${escapeHtml(l)}</div>`);
-  return `<address class="recipient" style="font-style:normal">${lines.join('')}</address>`;
+  lines.push(`<div class="name" data-line="name">${escapeHtml(r.name)}</div>`);
+  if (r.attention) lines.push(`<div data-line="attention">${escapeHtml(r.attention)}</div>`);
+  for (const l of r.addressLines) if (l && l.trim() !== '') lines.push(`<div data-line="address">${escapeHtml(l)}</div>`);
+  const email = r.email ? ` data-email="${escapeHtml(r.email)}"` : '';
+  return `<address class="recipient" data-letter-part="recipient"${email} style="font-style:normal">${lines.join('')}</address>`;
 }
 
-/** Bold "Re:" line for letters. */
+/** Bold "Re:" line for letters (data-letter-part="subject"). */
 export function reLine(text: string): string {
-  return `<p class="re">${escapeHtml(text)}</p>`;
+  return `<p class="re" data-letter-part="subject">${escapeHtml(text)}</p>`;
+}
+
+/** Salutation paragraph ("Dear Sirs,") — data-letter-part="salutation". */
+export function salutationLine(text: string): string {
+  return `<p data-letter-part="salutation">${escapeHtml(text)}</p>`;
+}
+
+/** A reply-by sentence (data-letter-part="reply-by"). `html` is not escaped: build it with escaped parts. */
+export function replyByLine(html: string): string {
+  return `<p data-letter-part="reply-by">${html}</p>`;
+}
+
+/** Enclosures list for a letter (data-letter-part="enclosures"). Empty list → ''. */
+export function enclosuresList(items: ReadonlyArray<string>, heading = 'Enclosures'): string {
+  const list = items.filter((i) => i && i.trim() !== '');
+  if (list.length === 0) return '';
+  return `<div class="letter-extras" data-letter-part="enclosures"><p class="extras-label">${escapeHtml(heading)}</p><ul>${list
+    .map((i) => `<li>${escapeHtml(i)}</li>`)
+    .join('')}</ul></div>`;
+}
+
+/** Copy recipients for a letter (data-letter-part="cc"). Empty list → ''. */
+export function ccList(items: ReadonlyArray<string>): string {
+  const list = items.filter((i) => i && i.trim() !== '');
+  if (list.length === 0) return '';
+  return `<div class="letter-extras" data-letter-part="cc"><p class="extras-label">Copy to</p><ul>${list.map((i) => `<li>${escapeHtml(i)}</li>`).join('')}</ul></div>`;
+}
+
+/**
+ * Marks the first "Dear …," paragraph of a letter body as the salutation, so letters whose templates write the
+ * salutation inline are still extractable. Only a plain `<p>` whose whole text starts with "Dear " is marked.
+ */
+export function markSalutation(bodyHtml: string): string {
+  if (bodyHtml.includes('data-letter-part="salutation"')) return bodyHtml;
+  return bodyHtml.replace(/<p>(\s*Dear [^<]{1,200})<\/p>/, '<p data-letter-part="salutation">$1</p>');
 }
 
 export interface SubjectBlockOptions {
@@ -260,7 +358,14 @@ export function subjectBlock(claim: ClaimHeader, opts: SubjectBlockOptions = {})
   }
   if (claim.policyNumber) rows.push(['Policy number', claim.policyNumber]);
   if (claim.theirReference) rows.push(['Your reference', claim.theirReference]);
-  return `<table class="subject">${rows.map(([k, v]) => `<tr><th>${escapeHtml(k)}</th><td>${escapeHtml(v)}</td></tr>`).join('')}</table>`;
+  const parts: Record<number, LetterRefPart | undefined> = {};
+  rows.forEach(([k], i) => {
+    // the first row is the claimant whatever its label ("Our client", "Claimant", a custom label)
+    parts[i] = i === 0 ? 'ref-client' : k === 'Your insured' || k === 'Policy number' ? undefined : refPartForLabel(k);
+  });
+  return `<table class="subject" data-letter-part="subject">${rows
+    .map(([k, v], i) => `<tr${partAttr(parts[i])}><th>${escapeHtml(k)}</th><td>${escapeHtml(v)}</td></tr>`)
+    .join('')}</table>`;
 }
 
 /**
@@ -434,11 +539,11 @@ export interface SignatureBlockOptions {
 export function signatureBlock(signatory: Signatory, date?: ISODate | ISODateTime, opts: SignatureBlockOptions = {}): string {
   const onBehalf = opts.onBehalfOf === undefined ? `for and on behalf of ${brand.company.registeredName}` : opts.onBehalfOf;
   const parts: string[] = ['<div class="signature">'];
-  if (opts.closing) parts.push(`<p class="closing">${escapeHtml(opts.closing)}</p>`);
+  if (opts.closing) parts.push(`<p class="closing" data-letter-part="valediction">${escapeHtml(opts.closing)}</p>`);
   if (opts.signatureSpace !== false) parts.push('<div class="sig-space"></div>');
   parts.push('<div class="sig-line"></div>');
   parts.push(
-    `<p class="sig-name"><strong>${escapeHtml(signatory.name)}</strong><br>${escapeHtml(signatory.role)}${onBehalf ? `<br>${escapeHtml(onBehalf)}` : ''}</p>`
+    `<p class="sig-name" data-letter-part="signatory-name"><strong>${escapeHtml(signatory.name)}</strong><br>${escapeHtml(signatory.role)}${onBehalf ? `<br>${escapeHtml(onBehalf)}` : ''}</p>`
   );
   if (opts.signedAt) parts.push(`<p class="sig-date small">Signed electronically ${escapeHtml(formatDateTime(opts.signedAt))}</p>`);
   else if (date) parts.push(`<p class="sig-date">Date: ${escapeHtml(formatDateLong(date))}</p>`);
@@ -510,19 +615,28 @@ export function pageBreak(): string {
 
 const hfFont = `font-family:${t.fontStack.replace(/"/g, "'")};`;
 
-/** Running header: registered name left; our reference and "Page X of Y" right. */
+/** Running header, as the letterhead's continuation pages: "COURTESY CARS GROUP UK LTD | Our ref <ref>" left, "PAGE n OF N" right. */
 export function headerTemplate(reference: string): string {
-  return `<div style="width:100%;box-sizing:border-box;padding:6mm ${m.right}mm 0 ${m.left}mm;${hfFont}font-size:7.5pt;line-height:1.3;color:${c.silver};display:flex;justify-content:space-between;align-items:baseline;">
-  <span>${escapeHtml(brand.company.registeredName)}</span>
-  <span>Our ref: <span style="color:${c.navy};font-weight:600;">${escapeHtml(reference)}</span>&nbsp;&nbsp;&middot;&nbsp;&nbsp;Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+  return `<div style="width:100%;box-sizing:border-box;padding:6mm ${m.right}mm 0 ${m.left}mm;${hfFont}font-size:7.5pt;line-height:1.3;color:${c.silver};display:flex;justify-content:space-between;align-items:baseline;letter-spacing:.04em;">
+  <span><span style="color:${c.navy};font-weight:700;">${escapeHtml(brand.company.registeredName.toUpperCase())}</span> | Our ref <span style="color:${c.navy};font-weight:600;">${escapeHtml(reference)}</span></span>
+  <span>PAGE <span class="pageNumber"></span> OF <span class="totalPages"></span></span>
 </div>`;
 }
 
-/** Footer: status line and Part 6 trading disclosure, centred, on every page. */
-export function footerTemplate(statusLine: string = brand.company.statusLine, tradingDisclosure: string = brand.tradingDisclosure('')): string {
+/** The letterhead contact line printed in every footer (plain text). */
+export function footerContactLine(): string {
+  return `${letterheadPhoneLine()} \u00b7 ${letterheadWebLine()}`;
+}
+
+/** Footer: status line, Part 6 trading disclosure and the letterhead contact line, centred, on every page. */
+export function footerTemplate(
+  statusLine: string = brand.company.statusLine,
+  tradingDisclosure: string = brand.tradingDisclosure(''),
+  contactLine: string = footerContactLine()
+): string {
   return `<div style="width:100%;box-sizing:border-box;padding:0 ${m.right}mm 5mm ${m.left}mm;${hfFont}font-size:7pt;line-height:1.35;color:${c.silver};text-align:center;">
   <div style="text-wrap:balance;">${escapeHtml(statusLine)}</div>
-  <div style="text-wrap:balance;">${escapeHtml(tradingDisclosure)}</div>
+  <div style="text-wrap:balance;">${escapeHtml(tradingDisclosure)}</div>${contactLine ? `\n  <div style="text-wrap:balance;">${escapeHtml(contactLine)}</div>` : ''}
 </div>`;
 }
 
@@ -535,7 +649,7 @@ export function baseLayout(opts: LayoutOptions): string {
   const isLetter = opts.kind === 'letter';
   const showCompany = opts.showCompanyBlock ?? opts.kind === 'invoice';
   const showTitle = opts.showTitle ?? !isLetter;
-  const registeredOffice = opts.settings?.registeredOffice?.trim() || '';
+  const registeredOffice = effectiveRegisteredOffice(opts.settings);
   const tradingDisclosure = brand.tradingDisclosure(registeredOffice);
   const closing = opts.closing ?? (isLetter ? 'Yours faithfully' : '');
 
@@ -544,6 +658,8 @@ export function baseLayout(opts: LayoutOptions): string {
     : '';
 
   const signature = opts.signatory ? signatureBlock(opts.signatory, undefined, { closing: closing || undefined }) : '';
+  const extras = `${enclosuresList(opts.enclosures ?? [])}${ccList(opts.cc ?? [])}`;
+  const bodyHtml = isLetter ? markSalutation(opts.bodyHtml) : opts.bodyHtml;
 
   return `<!DOCTYPE html>
 <html lang="${escapeHtml(opts.lang ?? 'en-GB')}">
@@ -561,18 +677,19 @@ export function baseLayout(opts: LayoutOptions): string {
 <div class="page${opts.landscape ? ' landscape' : ''}">
 <header class="masthead">
   ${logoLockup()}
-  <div class="masthead-right">${showCompany ? companyBlock(opts.settings) : contactStrip()}</div>
+  <div class="masthead-right">${showCompany ? companyBlock(opts.settings) : contactStrip(opts.settings)}</div>
 </header>
 ${partnerMarkSlot()}
 ${titleBlock}
 ${letterBlock({ reference: opts.reference, theirReference: opts.theirReference, date: opts.date, recipient: opts.recipient, meta: opts.meta })}
-<main class="body">
-${opts.bodyHtml}
+<main class="body" data-letter-part="body">
+${bodyHtml}
 </main>
-${signature}
+${signature}${extras ? `\n${extras}` : ''}
 <footer class="screen-footer screen-only">
   <div>${escapeHtml(brand.company.statusLine)}</div>
   <div>${escapeHtml(tradingDisclosure)}</div>
+  <div>${escapeHtml(footerContactLine())}</div>
 </footer>
 </div>
 </body>

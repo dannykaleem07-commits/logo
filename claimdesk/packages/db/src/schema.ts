@@ -60,6 +60,7 @@ import type {
   Transmission,
   UserRole,
   Vehicle,
+  VehicleSpec,
   Verification,
 } from '@ccguk/domain';
 
@@ -197,6 +198,8 @@ export const vehicles = sqliteTable(
     lookups: text('lookups', { mode: 'json' }).$type<LookupRecord[]>().notNull(),
     createdAt: text('created_at').notNull(),
     updatedAt: text('updated_at').notNull(),
+    /** Catalogue pick, segment, features and extras (TEMPLATES-VEHICLES-DESKTOP §D.10). Migration 0003. */
+    spec: text('spec', { mode: 'json' }).$type<VehicleSpec>(),
   },
   (t) => [uniqueIndex('vehicles_registration_uq').on(t.registration), index('vehicles_vin_idx').on(t.vin)],
 );
@@ -807,3 +810,75 @@ type _Checks = [
   _AssertAssignable<Required<Evidence>['kind'], EvidenceRow['kind']>,
   _AssertAssignable<Required<Claim>['status'], ClaimRow['status']>,
 ];
+
+// ---------------------------------------------------------------------------
+// Vehicle catalogue additions and GTA benchmark rates (migration 0003, TEMPLATES-VEHICLES-DESKTOP §D.7, §F.3)
+// ---------------------------------------------------------------------------
+
+/**
+ * Manual GTA benchmark rates layered over the KB file: a row replaces the KB row with the same (group, period), or hides
+ * it (`suppressed`, daily rate NULL). GTA rates are an industry benchmark only — CCGUK is not a GTA subscriber.
+ */
+export const gtaRates = sqliteTable(
+  'gta_rates',
+  {
+    id: text('id').primaryKey(),
+    groupCode: text('group_code').notNull(),
+    description: text('description'),
+    /** NULL only for a suppress row. */
+    dailyRatePence: integer('daily_rate_pence'),
+    /** 'YYYY-YY'. */
+    period: text('period').notNull(),
+    effectiveFrom: text('effective_from').notNull(),
+    effectiveTo: text('effective_to').notNull(),
+    verification: text('verification', { mode: 'json' }).$type<Verification>().notNull(),
+    suppressed: integer('suppressed', { mode: 'boolean' }).notNull().default(false),
+    note: text('note'),
+    createdAt: text('created_at').notNull(),
+    createdBy: text('created_by').notNull(),
+    updatedAt: text('updated_at').notNull(),
+    updatedBy: text('updated_by').notNull(),
+  },
+  (t) => [uniqueIndex('gta_rates_group_period_uq').on(t.groupCode, t.period)],
+);
+
+/** Segment → GTA group overrides of packages/kb/data/gta-segment-defaults.json. */
+export const gtaSegmentDefaults = sqliteTable('gta_segment_defaults', {
+  segment: text('segment').primaryKey(),
+  groupCode: text('group_code').notNull(),
+  updatedAt: text('updated_at').notNull(),
+  updatedBy: text('updated_by').notNull(),
+});
+
+/** User additions to the shipped vehicle catalogue (soft-deleted). */
+export const vehicleCatalogueCustom = sqliteTable(
+  'vehicle_catalogue_custom',
+  {
+    id: text('id').primaryKey(),
+    level: text('level').$type<'make' | 'model' | 'generation' | 'trim' | 'engine'>().notNull(),
+    make: text('make').notNull(),
+    makeSlug: text('make_slug').notNull(),
+    model: text('model'),
+    modelSlug: text('model_slug'),
+    generationId: text('generation_id'),
+    /** The new entry's display name / engine label. */
+    name: text('name').notNull(),
+    /** Partial CatalogueModel | CatalogueGeneration | CatalogueTrim | CatalogueEngine. */
+    data: text('data', { mode: 'json' }).$type<Record<string, unknown>>().notNull(),
+    segment: text('segment'),
+    gtaGroup: text('gta_group'),
+    /** true = adjusts segment/gta_group of a shipped model/generation/trim (no new entry). */
+    overridesBuiltin: integer('overrides_builtin', { mode: 'boolean' }).notNull().default(false),
+    createdAt: text('created_at').notNull(),
+    createdBy: text('created_by').notNull(),
+    deletedAt: text('deleted_at'),
+    deletedBy: text('deleted_by'),
+  },
+  (t) => [index('vehicle_catalogue_custom_make_idx').on(t.makeSlug, t.modelSlug)],
+);
+
+export type GtaRateRow = typeof gtaRates.$inferSelect;
+export type GtaRateInsert = typeof gtaRates.$inferInsert;
+export type GtaSegmentDefaultRow = typeof gtaSegmentDefaults.$inferSelect;
+export type VehicleCatalogueCustomRow = typeof vehicleCatalogueCustom.$inferSelect;
+export type VehicleCatalogueCustomInsert = typeof vehicleCatalogueCustom.$inferInsert;

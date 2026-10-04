@@ -10,10 +10,27 @@
  * (per provider) and a hard timeout guard the outbound calls. Live responses are stored as LookupRecords with
  * verification 'verified' (the provider is the source); manual entries are 'unverified' until a document backs them.
  */
-import { dvlaVesExtras, mapDvlaVes, mapDvsaMotHistory, normaliseRegistration, type DvlaVesPayload, type DvsaMotVehicle, type Id, type ISODateTime, type LookupRecord, type OdometerReading, type Vehicle } from '@ccguk/domain';
+import {
+  dvlaVesExtras,
+  externalVehicleLinks,
+  mapDvlaVes,
+  mapDvsaMotHistory,
+  normaliseRegistration,
+  type DvlaVesPayload,
+  type DvsaMotVehicle,
+  type ExternalVehicleLink,
+  type Id,
+  type ISODateTime,
+  type LookupRecord,
+  type OdometerReading,
+  type OnFileMatch,
+  type Vehicle,
+  type VehicleSourceInput,
+} from '@ccguk/domain';
 import type { Actor } from '@ccguk/db';
 import type { ApiKeys } from '../config.js';
 import type { AppContext } from '../context.js';
+import { onFileMatches } from './vehicleSearch.js';
 
 export type LookupFailure = 'no_key' | `http_${number}` | 'network' | 'rate_limited' | 'invalid_payload';
 export type LookupResult<T> = { ok: true; data: T; status: number } | { ok: false; reason: LookupFailure; message?: string };
@@ -236,12 +253,114 @@ export function manualLookupRecord(raw: unknown, registration: string, meta: { r
 }
 
 // ---------------------------------------------------------------------------
+// Hand-entered details with provenance (TEMPLATES-VEHICLES-DESKTOP §E.4)
+// ---------------------------------------------------------------------------
+
+export const PASTED_TEXT_LIMIT = 20_000;
+export const TOTAL_CAR_CHECK_SOURCE_NOTE = 'Copied by hand from Total Car Check (free check). Not verified — back it with the V5C or MOT certificate.';
+export const CATALOGUE_SOURCE_NOTE = 'Chosen from the ClaimDesk vehicle catalogue (unverified reference data).';
+export const MANUAL_SOURCE_NOTE = 'Keyed in manually; back it with the V5C / MOT certificate before relying on it';
+
+/**
+ * The LookupRecord for values a person supplied (typed, picked from the catalogue or pasted from Total Car Check).
+ * Always `unverified`; the client never sends a verification.
+ */
+export function sourceLookupRecord(source: VehicleSourceInput, registration: string, meta: { requestedAt: ISODateTime; requestedBy: Id }): Omit<LookupRecord, 'id'> {
+  const raw: Record<string, unknown> = { source: source.provider === 'totalcarcheck_manual' ? 'totalcarcheck_paste' : source.provider };
+  if (source.url) raw.url = source.url;
+  if (source.pastedText) raw.pastedText = source.pastedText.slice(0, PASTED_TEXT_LIMIT);
+  if (source.parsed) raw.parsed = source.parsed;
+  if (source.appliedFields) raw.appliedFields = source.appliedFields;
+  const sourceNote = source.provider === 'totalcarcheck_manual' ? TOTAL_CAR_CHECK_SOURCE_NOTE : source.provider === 'catalogue' ? CATALOGUE_SOURCE_NOTE : MANUAL_SOURCE_NOTE;
+  const verification: LookupRecord['verification'] = { status: 'unverified', sourceNote };
+  if (source.url) verification.sourceUrl = source.url;
+  return {
+    provider: source.provider,
+    kind: source.provider === 'catalogue' ? 'spec' : 'vehicle',
+    requestedAt: meta.requestedAt,
+    requestedBy: meta.requestedBy,
+    registration: normaliseRegistration(registration),
+    raw,
+    verification,
+  };
+}
+
+/** Fields compared with the latest verified DVLA/DVSA lookup (§E.4 DIFFERS_FROM_VERIFIED). */
+const VERIFIED_COMPARE_FIELDS = ['make', 'model', 'colour', 'fuelType', 'yearOfManufacture', 'monthOfFirstRegistration', 'engineCapacityCc', 'co2Gkm', 'euroStatus', 'taxStatus', 'taxDueDate', 'motStatus', 'motExpiryDate'] as const;
+type VerifiedField = (typeof VERIFIED_COMPARE_FIELDS)[number];
+
+/** Values from the vehicle's verified live lookups (latest per provider; DVLA wins over DVSA for shared fields). */
+export function verifiedLookupValues(vehicle: Pick<Vehicle, 'lookups'>): Partial<Record<VerifiedField, string | number>> {
+  const latest = (provider: LookupRecord['provider']) =>
+    vehicle.lookups.filter((l) => l.provider === provider && l.verification.status === 'verified').sort((a, b) => b.requestedAt.localeCompare(a.requestedAt))[0];
+  const out: Partial<Record<VerifiedField, string | number>> = {};
+  const take = (fields: Partial<Vehicle>) => {
+    for (const f of VERIFIED_COMPARE_FIELDS) {
+      const v = fields[f];
+      if ((typeof v === 'string' && v.trim()) || typeof v === 'number') if (out[f] === undefined) out[f] = v as string | number;
+    }
+  };
+  const ves = latest('dvla_ves');
+  if (ves) {
+    try {
+      take(mapDvlaVes(ves.raw as DvlaVesPayload));
+    } catch {
+      /* unreadable payload: nothing to compare */
+    }
+  }
+  const mot = latest('dvsa_mot');
+  if (mot) {
+    try {
+      const m = mapDvsaMotHistory(mot.raw as DvsaMotVehicle | DvsaMotVehicle[]);
+      take({ make: m.make, model: m.model });
+    } catch {
+      /* unreadable payload */
+    }
+  }
+  return out;
+}
+
+export interface DiffersFromVerifiedWarning {
+  code: 'DIFFERS_FROM_VERIFIED';
+  field: string;
+  verifiedValue: string | number;
+}
+
+const sameValue = (a: unknown, b: unknown): boolean =>
+  typeof a === 'string' && typeof b === 'string' ? a.trim().toLowerCase() === b.trim().toLowerCase() : a === b;
+
+/** Hand-entered values that differ from a verified DVLA/DVSA value (saved anyway — handler intent — and reported). */
+export function differsFromVerified(vehicle: Pick<Vehicle, 'lookups'>, values: Record<string, unknown>): DiffersFromVerifiedWarning[] {
+  const verified = verifiedLookupValues(vehicle);
+  const out: DiffersFromVerifiedWarning[] = [];
+  for (const f of VERIFIED_COMPARE_FIELDS) {
+    const mine = values[f];
+    const theirs = verified[f];
+    if (mine === undefined || mine === null || theirs === undefined) continue;
+    if (!sameValue(mine, theirs)) out.push({ code: 'DIFFERS_FROM_VERIFIED', field: f, verifiedValue: theirs });
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
 // Orchestration (route-facing)
 // ---------------------------------------------------------------------------
 
+export type LookupMode = 'live' | 'manual';
+
+/**
+ * Both branches carry `lookupMode`, the on-file matches and the external links (§E.1). `lookupMode` on
+ * `manual_required` is 'manual' when no DVLA/DVSA key is configured; it reads 'live' when keys exist but both calls
+ * failed (the providers map says why).
+ */
 export type VehicleLookupResponse =
-  | { status: 'manual_required'; registration: string; fields: readonly string[]; providers: Record<string, LookupFailure>; vehicle?: Vehicle }
-  | { status: 'ok' | 'partial'; registration: string; vehicle: Vehicle; providers: Record<string, 'ok' | LookupFailure>; lookupIds: Id[] };
+  | { status: 'manual_required'; lookupMode: LookupMode; registration: string; fields: readonly string[]; providers: Record<string, LookupFailure>; vehicle?: Vehicle; onFile: OnFileMatch[]; externalLinks: ExternalVehicleLink[] }
+  | { status: 'ok' | 'partial'; lookupMode: 'live'; registration: string; vehicle: Vehicle; providers: Record<string, 'ok' | LookupFailure>; lookupIds: Id[]; onFile: OnFileMatch[]; externalLinks: ExternalVehicleLink[] };
+
+/** 'live' when a DVLA VES or DVSA MOT key is configured, else 'manual'. */
+export function lookupModeFor(ctx: AppContext): LookupMode {
+  return ctx.config.keysPresent.dvlaVes || ctx.config.keysPresent.dvsaMot ? 'live' : 'manual';
+}
 
 export async function lookupVehicle(
   ctx: AppContext,
@@ -258,9 +377,11 @@ export async function lookupVehicle(
     wanted.has('dvsa_mot') ? clients.dvsaMot(reg) : Promise.resolve<LookupResult<DvsaMotVehicle | DvsaMotVehicle[]>>({ ok: false, reason: 'no_key' }),
   ]);
   const providers: Record<string, 'ok' | LookupFailure> = { dvla_ves: ves.ok ? 'ok' : ves.reason, dvsa_mot: mot.ok ? 'ok' : mot.reason };
+  const externalLinks = externalVehicleLinks(reg, { totalCarCheckTemplate: ctx.config.totalCarCheckUrlTemplate });
   if (!ves.ok && !mot.ok) {
     ctx.logger.info('vehicle lookup: manual entry required', { registration: reg, providers });
-    return { status: 'manual_required', registration: reg, fields: MANUAL_FIELDS, providers: providers as Record<string, LookupFailure>, vehicle: existing };
+    // Read-only: nothing is written when no provider answered (no LookupRecord, no audit row).
+    return { status: 'manual_required', lookupMode: lookupModeFor(ctx), registration: reg, fields: MANUAL_FIELDS, providers: providers as Record<string, LookupFailure>, vehicle: existing, onFile: onFileMatches(ctx, reg, 10), externalLinks };
   }
   const mapped = mapLookupsToVehicle(reg, { ves: ves.ok ? ves.data : undefined, mot: mot.ok ? mot.data : undefined }, { requestedAt, requestedBy: actor.userId });
   const vehicle = ctx.db.transaction((tx) => {
@@ -285,5 +406,5 @@ export async function lookupVehicle(
     return v;
   });
   const lookupIds = vehicle.lookups.filter((l) => l.requestedAt === requestedAt).map((l) => l.id);
-  return { status: ves.ok && mot.ok ? 'ok' : 'partial', registration: reg, vehicle, providers, lookupIds };
+  return { status: ves.ok && mot.ok ? 'ok' : 'partial', lookupMode: 'live', registration: reg, vehicle, providers, lookupIds, onFile: onFileMatches(ctx, reg, 10), externalLinks };
 }

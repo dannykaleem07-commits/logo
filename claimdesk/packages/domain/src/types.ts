@@ -127,7 +127,7 @@ export interface MotTest {
   defects: Array<{ type: 'ADVISORY' | 'MINOR' | 'MAJOR' | 'DANGEROUS' | 'FAIL' | 'PRS' | 'USER ENTERED' | string; text: string; dangerous?: boolean }>;
 }
 
-export type LookupProvider = 'dvla_ves' | 'dvsa_mot' | 'companies_house' | 'gateway' | 'manual';
+export type LookupProvider = 'dvla_ves' | 'dvsa_mot' | 'companies_house' | 'gateway' | 'manual' | 'totalcarcheck_manual' | 'catalogue';
 
 export interface LookupRecord<T = unknown> {
   id: Id;
@@ -170,6 +170,69 @@ export interface Vehicle {
   ownership: 'client' | 'third_party' | 'fleet' | 'other';
   lookups: LookupRecord[];
   createdAt: ISODateTime;
+  /** Catalogue pick, segment, doors/seats, features and extras (TEMPLATES-VEHICLES-DESKTOP §D.10). Unverified reference data. */
+  spec?: VehicleSpec;
+}
+
+/** Vehicle catalogue market segment (TEMPLATES-VEHICLES-DESKTOP §D.2). */
+export type VehicleSegment =
+  | 'city' | 'supermini' | 'small-family' | 'large-family' | 'executive' | 'luxury' | 'sports' | 'supercar'
+  | 'mpv-small' | 'mpv-large' | 'suv-small' | 'suv-medium' | 'suv-large' | 'suv-luxury'
+  | 'pickup' | 'van-small' | 'van-medium' | 'van-large' | 'minibus';
+
+/** What the handler picked from the catalogue plus equipment (§D.10). `make`, `model`, `variant` etc. stay on Vehicle. */
+export interface VehicleSpec {
+  catalogue?: { makeSlug: string; modelSlug: string; generationId?: string; trimId?: string; engineId?: string; custom?: boolean };
+  segment?: string;
+  doors?: number;
+  seats?: number;
+  powerPs?: number;
+  drivetrain?: 'fwd' | 'rwd' | 'awd' | '4wd';
+  /** Feature ids (catalogue features.json). */
+  features: string[];
+  /** Feature ids fitted as extras. */
+  extras: string[];
+  notes?: string;
+}
+
+/** A link the user opens in their own browser; ClaimDesk never requests it (§E.2). */
+export interface ExternalVehicleLink {
+  id: 'totalcarcheck' | 'gov_mot_history' | 'gov_vehicle_enquiry';
+  label: string;
+  url: string;
+  note: string;
+  verified: false;
+}
+
+/** A vehicle already on file that matches a searched registration (§E.1). */
+export interface OnFileMatch {
+  vehicleId: string;
+  registration: string;
+  match: 'exact' | 'partial';
+  make: string;
+  model: string;
+  variant?: string;
+  colour?: string;
+  yearOfManufacture?: number;
+  fuelType?: FuelType;
+  transmission?: Transmission;
+  engineCapacityCc?: number;
+  bodyType?: string;
+  spec?: VehicleSpec;
+  ownership: Vehicle['ownership'];
+  claims: Array<{ id: string; reference: string; openedAt: string }>;
+  fleetUnit?: { id: string; status: FleetUnit['status']; gtaGroup: string; dailyRatePence: number };
+  lookups: Array<{ provider: LookupProvider; kind: LookupRecord['kind']; requestedAt: string; verification: Verification['status'] }>;
+  updatedAt?: string;
+}
+
+/** Who or what supplied hand-entered vehicle values (§E.4). The server sets the verification; the client never does. */
+export interface VehicleSourceInput {
+  provider: 'manual' | 'catalogue' | 'totalcarcheck_manual';
+  url?: string;
+  pastedText?: string;
+  parsed?: Record<string, unknown>;
+  appliedFields?: string[];
 }
 
 export type FleetUse = 'credit_hire' | 'self_drive' | 'pco';

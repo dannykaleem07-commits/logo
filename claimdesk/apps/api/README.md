@@ -311,6 +311,33 @@ offer capture into the intervention register. Response: the `Claim` (top level, 
 (File 1: "bank details could not be validated"), missing office / bank / ICO / VAT. Legacy details are refused
 (`400 LEGACY_DETAIL`); `companyName` must be the registered name.
 
+### Vehicles in manual mode, catalogue and GTA benchmark rates (`routes/vehicles.ts`, `routes/catalogue.ts`, `routes/gtaRates.ts`)
+
+Design: `docs/TEMPLATES-VEHICLES-DESKTOP.md` §D–§F. ClaimDesk never requests a third-party site; everything typed,
+picked or pasted is saved `unverified`. GTA rates are an industry benchmark only (CCGUK is not a GTA subscriber).
+
+- `POST /vehicles/lookup` — both branches add `lookupMode` (`live`/`manual`), `onFile` (vehicles already held for the
+  registration) and `externalLinks` (Total Car Check free check — template `TOTALCARCHECK_URL_TEMPLATE`, default
+  `https://totalcarcheck.co.uk/FreeCheck?regno={REG}` — GOV.UK MOT history, GOV.UK vehicle enquiry). Without keys:
+  `manual_required` and nothing is written.
+- `GET /vehicles/on-file?registration=&limit=10` — exact registration, then partial matches (≥ 4 characters), with
+  claims, fleet unit and lookup history. Read-only.
+- `PATCH /vehicles/:id` — `{ …fields (null clears), spec?, source: { provider: manual | catalogue | totalcarcheck_manual,
+  url?, pastedText?, parsed?, appliedFields? } }` → the vehicle plus `vehicle`, `lookupId`, `warnings`
+  (`DIFFERS_FROM_VERIFIED` against verified DVLA/DVSA values). Appends an unverified LookupRecord; audit `vehicle.update`.
+  `POST /vehicles` and FNOL vehicle input accept the same `spec` and `source`.
+- `GET /catalogue/makes`, `/catalogue/makes/:make/models?year&vehicleType`, `/catalogue/makes/:make/models/:model`,
+  `/catalogue/match?make&model`, `/catalogue/search?q&limit`, `/catalogue/features` (all `cache-control: private,
+  max-age=3600`; add `?v=` after a custom change), `GET|POST /catalogue/custom`, `DELETE /catalogue/custom/:id` (soft;
+  audit `catalogue.custom.*`), `GET /gta/suggest?make&model&generationId&trimId&segment&bodyType&engineCapacityCc&fuelType&recordedGroup&date`.
+  The catalogue directory is `packages/kb/data/vehicle-catalogue/` (env `CATALOGUE_DATA_DIR` overrides it).
+- `GET|POST /settings/gta-rates`, `PUT|DELETE /settings/gta-rates/:id`, `POST /settings/gta-rates/suppress`,
+  `GET /settings/gta-segments`, `PUT|DELETE /settings/gta-segments/:segment`. `verified` needs an https source URL;
+  the server stamps `verifiedBy`/`verifiedAt`. `gtaRatesFor(ctx)` (KB ⊕ these rows) feeds `/kb/gta-rates`, hire
+  calculations, the engineering benchmark, documents and the suggestion.
+- Fleet: `POST /fleet` may omit `gtaGroup`/`dailyRatePence` (filled from the suggestion, else `422
+  GTA_SUGGESTION_UNAVAILABLE`) and records a catalogue/manual LookupRecord; `PATCH /fleet/:id` accepts `vehicle` changes.
+
 ## Engines
 
 `src/engines.ts` imports the `@ccguk/domain` engines directly and adapts their signatures to the API's shapes, so a

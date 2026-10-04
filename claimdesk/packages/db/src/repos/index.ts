@@ -19,3 +19,5 @@ export * from './watch.js';
 export * from './directoryOverrides.js';
 export * from './settings.js';
 export * from './labourLibrary.js';
+export * from './gtaRates.js';
+export * from './catalogueCustom.js';

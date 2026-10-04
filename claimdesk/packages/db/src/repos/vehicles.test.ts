@@ -5,7 +5,7 @@ import { seedFileOne } from '../fixtures/fileOne.js';
 import { createTestDatabase } from '../testing.js';
 import { createClaim } from './claims.js';
 import { findFleetUnitsByRegistration } from './fleet.js';
-import { addLookup, addOdometer, findByRegistration, listClaimsForRegistration, searchVehicles, upsertVehicle } from './vehicles.js';
+import { addLookup, addOdometer, findByRegistration, findVehiclesByPartialRegistration, getVehicle, listClaimsForRegistration, searchVehicles, updateVehicle, upsertVehicle, vehicleUpdatedAt } from './vehicles.js';
 
 let h: DatabaseHandle;
 beforeEach(() => {
@@ -48,5 +48,32 @@ describe('vehicles', () => {
     // a fleet unit's plate used as a client vehicle is detectable
     expect(findFleetUnitsByRegistration(h.db, 'fl33 eet').map((u) => u.id)).toEqual([ids.fleetUnitId]);
     expect(searchVehicles(h.db, 'golf').length).toBe(2);
+  });
+
+  it('stores, merges and clears the vehicle spec (migration 0003)', () => {
+    const spec = { catalogue: { makeSlug: 'ford', modelSlug: 'fiesta', generationId: 'ford-fiesta-mk8-2017-2023', trimId: 'zetec' }, segment: 'supermini', doors: 5, features: ['sat_nav'], extras: ['tow_bar'] };
+    const v = upsertVehicle(h.db, { registration: 'AB12CDE', make: 'Ford', model: 'Fiesta', ownership: 'client', spec });
+    expect(getVehicle(h.db, v.id)?.spec).toEqual(spec);
+    // an upsert without spec keeps it
+    expect(upsertVehicle(h.db, { registration: 'AB12CDE', make: 'Ford', model: 'Fiesta', ownership: 'client', colour: 'Blue' }).spec).toEqual(spec);
+    // a patch replaces it, null clears it and other optional fields
+    const next = { ...spec, features: [], extras: [] };
+    expect(updateVehicle(h.db, v.id, { spec: next, variant: 'Zetec' }).spec).toEqual(next);
+    const cleared = updateVehicle(h.db, v.id, { spec: null, variant: null, colour: null });
+    expect(cleared.spec).toBeUndefined();
+    expect(cleared.variant).toBeUndefined();
+    expect(cleared.colour).toBeUndefined();
+    expect(cleared.make).toBe('Ford');
+    expect(vehicleUpdatedAt(h.db, v.id)).toBeTruthy();
+  });
+
+  it('finds vehicles by a partial registration (4+ characters, exact excluded)', () => {
+    upsertVehicle(h.db, { registration: 'AB12CDE', make: 'Ford', model: 'Fiesta', ownership: 'client' });
+    upsertVehicle(h.db, { registration: 'AB12CDF', make: 'Ford', model: 'Focus', ownership: 'client' });
+    upsertVehicle(h.db, { registration: 'ZZ99ZZZ', make: 'VW', model: 'Golf', ownership: 'client' });
+    expect(findVehiclesByPartialRegistration(h.db, 'ab12').map((v) => v.registration)).toEqual(['AB12CDE', 'AB12CDF']);
+    expect(findVehiclesByPartialRegistration(h.db, 'AB12 CDE').map((v) => v.registration)).toEqual([]);
+    expect(findVehiclesByPartialRegistration(h.db, '12CD', 1)).toHaveLength(1);
+    expect(findVehiclesByPartialRegistration(h.db, 'AB1')).toEqual([]);
   });
 });

@@ -402,7 +402,7 @@ const clientUpdate: Builder = (b, base) => {
             { label: 'Amount outstanding', valuePence: outstanding, emphasis: true },
           ]
         : undefined,
-    handler: { name: settings.signatoryName, role: settings.signatoryRole, phone: brand.company.accidentLine24h, email: brand.company.claimsEmail },
+    handler: { name: settings.signatoryName, role: settings.signatoryRole, phone: brand.company.caseHandlerPhone, email: brand.company.claimsEmail },
   };
 };
 

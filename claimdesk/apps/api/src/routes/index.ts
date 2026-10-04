@@ -25,6 +25,8 @@ import { registerDirectoryRoutes } from './directory.js';
 import { registerWatchRoutes } from './watch.js';
 import { registerAnalyticsRoutes } from './analytics.js';
 import { registerSettingsRoutes } from './settings.js';
+import { registerCatalogueRoutes } from './catalogue.js';
+import { registerGtaRatesRoutes } from './gtaRates.js';
 import { registerJobsModule } from '../jobs.js';
 
 export const routeModules: RouteModule[] = [
@@ -48,6 +50,8 @@ export const routeModules: RouteModule[] = [
   registerWatchRoutes,
   registerAnalyticsRoutes,
   registerSettingsRoutes,
+  registerCatalogueRoutes,
+  registerGtaRatesRoutes,
   registerJobsModule,
 ];
 

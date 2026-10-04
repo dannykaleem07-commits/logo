@@ -1,0 +1,8 @@
+{
+  "schemaVersion": 1,
+  "categories": [
+    { "id": "safety", "label": "Safety", "items": [{ "id": "aeb", "label": "Autonomous emergency braking", "kind": "feature" }] },
+    { "id": "infotainment", "label": "Infotainment", "items": [{ "id": "sat_nav", "label": "Satellite navigation", "aliases": ["Sat nav"], "kind": "both" }, { "id": "dab", "label": "DAB radio", "kind": "feature" }] },
+    { "id": "towing_load", "label": "Towing and load", "items": [{ "id": "tow_bar", "label": "Tow bar", "kind": "extra" }] }
+  ]
+}

@@ -1,0 +1,5 @@
+{ "schemaVersion": 1,
+  "verification": { "status": "unverified", "sourceNote": "ClaimDesk starting suggestions from GTA group descriptions in gta-rates.json; not the GTA vehicle list. Confirm or change in Settings." },
+  "defaults": { "city": "S1", "supermini": "S2", "small-family": "S3", "large-family": "S4", "executive": "S5", "luxury": "S6",
+    "sports": "S6", "supercar": "S6", "mpv-small": "M", "mpv-large": "M2", "suv-small": "M1", "suv-medium": "M2",
+    "suv-large": "M3", "suv-luxury": "F6", "pickup": "CP1", "van-small": "PV1", "van-medium": "PV2", "van-large": "PV3", "minibus": "PV3" } }

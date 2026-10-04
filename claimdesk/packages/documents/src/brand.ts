@@ -1,7 +1,33 @@
 /**
  * Brand tokens for every generated document (BLUEPRINT §9) and the web app.
  * Document palette comes from the live letterhead; the logo keeps its own colours (print/README.md).
+ *
+ * Company details are the real ones (design doc §H.1). Bank, VAT and ICO details were not supplied: they stay
+ * Settings inputs and are never invented here.
  */
+import type { Address } from '@ccguk/domain';
+
+/** The registered office as an address (Companies House record for company 17430389). */
+const REGISTERED_OFFICE_ADDRESS = { line1: '44 Syon Lane', line2: 'Isleworth', town: 'London', postcode: 'TW7 5NQ', country: 'GB' } as const;
+const REGISTERED_OFFICE = '44 Syon Lane, Isleworth, London TW7 5NQ';
+
+/**
+ * One-line registered office: `line1, line2, town[, county]` joined with ", " and " <postcode>" appended to the last
+ * part ("44 Syon Lane, Isleworth, London TW7 5NQ"). `undefined` (or an address with no usable parts) → the brand
+ * default.
+ */
+export function formatRegisteredOffice(addr?: Address): string {
+  if (!addr) return REGISTERED_OFFICE;
+  const parts = [addr.line1, addr.line2, addr.town, addr.county].map((p) => (p ?? '').trim()).filter((p) => p !== '');
+  const postcode = (addr.postcode ?? '').trim();
+  if (parts.length === 0 && postcode === '') return REGISTERED_OFFICE;
+  if (postcode !== '') {
+    if (parts.length === 0) parts.push(postcode);
+    else parts[parts.length - 1] = `${parts[parts.length - 1]} ${postcode}`;
+  }
+  return parts.join(', ');
+}
+
 export const brand = {
   company: {
     registeredName: 'Courtesy Cars Group UK Ltd',
@@ -10,16 +36,24 @@ export const brand = {
     tagline: 'Accident Management Specialists',
     services: ['Accident Claims', 'Credit Hire', 'Recovery', 'Storage'],
     claimsEmail: 'claims@courtesycars.net',
+    website: 'www.courtesycars.net',
+    /** Case handler's direct line (letterhead first-page header). */
+    caseHandlerPhone: '07425 475922',
+    officePhone: '020 7052 5403',
+    /** @deprecated alias of officePhone, kept for templates written before the letterhead details were supplied. */
     accidentLine24h: '020 7052 5403',
-    registeredOffice: '', // set from settings; never a legacy address
-    vatNumber: '', // set from settings when registered
-    icoRegistration: '', // set from settings
+    /** Default registered office; Settings may override it (formatRegisteredOffice(settings.registeredOffice)). */
+    registeredOffice: REGISTERED_OFFICE,
+    registeredOfficeAddress: REGISTERED_OFFICE_ADDRESS,
+    director: { name: 'Shahzaib Ahmed Bari', role: 'Director' },
+    vatNumber: '', // set from settings when registered — never invented
+    icoRegistration: '', // set from settings — never invented
     statusLine:
       'Courtesy Cars Group UK Ltd provides accident management, credit hire, recovery and storage services. It is not a firm of solicitors and is not regulated by the SRA.'
   },
   /** Part 6 Companies Act 2006 trading disclosures — rendered in every document footer. */
   tradingDisclosure(registeredOffice: string): string {
-    return `Courtesy Cars Group UK Ltd. Registered in England and Wales, company number 17430389. Registered office: ${registeredOffice || '[registered office]'}.`;
+    return `Courtesy Cars Group UK Ltd. Registered in England and Wales, company number 17430389. Registered office: ${registeredOffice.trim() || REGISTERED_OFFICE}.`;
   },
   colours: {
     navy: '#0D1C50',

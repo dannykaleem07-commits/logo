@@ -276,7 +276,8 @@ describe('form.cancellation_sch3', () => {
 
   it('reproduces the Schedule 3 Part B model form pre-filled with our details and the hire', () => {
     expect(text).toContain('Schedule 3, Part B');
-    expect(text).toContain('To: Courtesy Cars Group UK Ltd, [registered office]. Email: claims@courtesycars.net.');
+    expect(text).toContain('To: Courtesy Cars Group UK Ltd, 44 Syon Lane, Isleworth, London TW7 5NQ. Email: claims@courtesycars.net.');
+    expect(text).not.toContain('[registered office]');
     expect(text).toContain('I hereby give notice that I cancel my contract for the supply of the following service:');
     expect(text).toContain('Credit hire of a replacement vehicle, Volkswagen Golf 1.5 TSI Life, registration LK26 CCG, under agreement CHA-2026-00012');
     expect(text).toContain('Ordered on: 10 August 2026');

@@ -44,7 +44,6 @@ Everything below is either a deliberate limit of this first build or a residual 
 
 - Hire agreement needs the hirer's date of birth and licence number on the party record; the API names any missing field.
 - PCN liability transfer needs the licence expiry date, which the party record does not hold; it is supplied per request.
-- Fleet unit edits do not update the underlying vehicle record (make, MOT, tax).
 - The analytics screen shows all-time figures; date ranges are not implemented.
 - Insurer de-duplication at intake is by exact name.
 - The web bundle is one 800 kB file; route-level code splitting is a simple follow-up.

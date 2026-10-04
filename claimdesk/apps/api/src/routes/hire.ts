@@ -6,6 +6,7 @@ import { parse } from '../schemas/common.js';
 import { createHireBody, endHireBody } from '../schemas/hire.js';
 import { recomputeClocks } from '../services/claimView.js';
 import { canAllocateFor } from '../engines.js';
+import { gtaRatesFor } from '../services/kb.js';
 import { assertNoHardStop, params, requireClaim } from './helpers.js';
 
 export function enforceabilityGaps(h: HireAgreement): string[] {
@@ -24,7 +25,8 @@ export function registerHireRoutes(app: FastifyInstance, ctx: AppContext): void 
     const { id } = params<{ id: string }>(request);
     requireClaim(ctx, id);
     const hire = ctx.repos.listHire(ctx.db, id);
-    return { hire: hire.map((h) => ({ ...h, calculation: calculateHire(h, h.endAt ?? ctx.now()), enforceabilityGaps: enforceabilityGaps(h) })) };
+    const rates = gtaRatesFor(ctx);
+    return { hire: hire.map((h) => ({ ...h, calculation: calculateHire(h, h.endAt ?? ctx.now(), { rates }), enforceabilityGaps: enforceabilityGaps(h) })) };
   });
 
   app.post('/claims/:id/hire', async (request, reply) => {
@@ -95,11 +97,12 @@ export function registerHireRoutes(app: FastifyInstance, ctx: AppContext): void 
     const current = ctx.repos.requireHire(ctx.db, hireId);
     if (current.claimId !== id) throw conflict('WRONG_CLAIM', `Hire ${hireId} belongs to another claim`);
     const now = ctx.now();
+    const rates = gtaRatesFor(ctx);
     const hire = ctx.db.transaction((tx) => {
       const h = ctx.repos.endHire(tx, hireId, { endAt: body.endAt, endTrigger: body.endTrigger, collectedAt: body.collectedAt, odometerIn: body.odometerIn });
       ctx.repos.updateFleetUnit(tx, h.fleetUnitId, { status: 'available' });
       const deadline = offHireDeadline(body.endTrigger, body.endAt);
-      const calc = calculateHire(h, h.endAt);
+      const calc = calculateHire(h, h.endAt, { rates });
       ctx.repos.appendEvent(tx, {
         claimId: id,
         type: 'hire_ended',
@@ -118,6 +121,6 @@ export function registerHireRoutes(app: FastifyInstance, ctx: AppContext): void 
       return h;
     });
     const clocks = recomputeClocks(ctx, id);
-    return { hire, calculation: calculateHire(hire, hire.endAt), clocks };
+    return { hire, calculation: calculateHire(hire, hire.endAt, { rates }), clocks };
   });
 }

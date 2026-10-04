@@ -48,10 +48,12 @@ export async function seedArchetypes(ctx: AppContext): Promise<SeedSummary> {
   }
 
   // ----- Settings (rate card £90 / £3 / £25, £45/day, £285; bank name = registered name) ----
+  // Real registered office; the bank details are visibly demo values (the real ones are entered in Settings).
   repos.patchSettings(
     db,
     {
-      bank: { accountName: 'Courtesy Cars Group UK Ltd', sortCode: '00-00-00', accountNumber: '00000000', bankName: '[bank name — set in Settings]' },
+      registeredOffice: { line1: '44 Syon Lane', line2: 'Isleworth', town: 'London', postcode: 'TW7 5NQ' },
+      bank: { accountName: 'Courtesy Cars Group UK Ltd', sortCode: '00-00-00', accountNumber: '00000000', bankName: '[demo bank — set in Settings]' },
       rateCard: { recoveryCalloutPence: 9000, perMilePence: 300, adminPence: 2500, storageDailyPence: 4500, engineerFeePence: 28500, vatRate: VAT },
     },
     system,

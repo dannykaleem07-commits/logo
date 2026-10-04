@@ -29,6 +29,7 @@ import {
   type Pence,
 } from '@ccguk/domain';
 import type { Settings } from '@ccguk/db';
+import { formatRegisteredOffice } from '@ccguk/documents';
 import type { AppContext } from '../context.js';
 import { badRequest, conflict, notFound } from '../errors.js';
 import { gtaRatesFor } from './kb.js';
@@ -134,8 +135,8 @@ export function addressLines(p: Party | undefined, fallback = '[address to be co
 }
 
 export function companySettings(settings: Settings, user: BuildInput['user']): CompanySettingsData {
-  const ro = settings.registeredOffice;
-  const registeredOffice = ro ? [ro.line1, ro.line2, ro.town, ro.county, ro.postcode].filter(Boolean).join(', ') : '[registered office]';
+  // Settings fall back to the real registered office (44 Syon Lane…); never a placeholder.
+  const registeredOffice = formatRegisteredOffice(settings.registeredOffice);
   return {
     registeredOffice,
     companyName: settings.companyName,

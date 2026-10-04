@@ -19,6 +19,7 @@ import {
   VERIFICATION_STATUSES,
 } from './types.js';
 import type { CourtFeeBand, PlaybookRule } from './types.js';
+import { CATALOGUE_SEGMENTS, type CatalogueSegment, type GtaSegmentDefaultsFile } from './catalogue/types.js';
 
 export class KbValidationError extends Error {
   constructor(
@@ -42,6 +43,7 @@ export const DATA_FILES = {
   courtFees: 'court-fees.json',
   directory: 'insurer-directory.json',
   playbookRules: 'playbook-rules.json',
+  gtaSegmentDefaults: 'gta-segment-defaults.json',
 } as const;
 
 export type KbDataFile = (typeof DATA_FILES)[keyof typeof DATA_FILES];
@@ -616,4 +618,38 @@ export function countVerification(items: readonly { verification: Verification }
   const c: VerificationCounts = { total: items.length, verified: 0, unverified: 0, failed: 0, stale: 0 };
   for (const i of items) c[i.verification.status] += 1;
   return c;
+}
+
+// ---------------------------------------------------------------------------
+// GTA segment defaults (gta-segment-defaults.json, TEMPLATES-VEHICLES-DESKTOP §D.6)
+// ---------------------------------------------------------------------------
+
+const SEGMENT_DEFAULT_KEYS = ['schemaVersion', 'verification', 'defaults'] as const;
+
+/** Segment → GTA group starting suggestions. Every segment must be present; groups match /^[A-Z]{1,3}\d{0,2}$/; always unverified. */
+export function validateGtaSegmentDefaults(v: unknown, path = 'gtaSegmentDefaults'): GtaSegmentDefaultsFile {
+  const rec = requireRecord(v, path);
+  rejectUnknownKeys(rec, path, SEGMENT_DEFAULT_KEYS);
+  if (rec.schemaVersion !== 1) fail(`${path}.schemaVersion`, `expected 1, got ${JSON.stringify(rec.schemaVersion)}`);
+  const ver = requireRecord(rec.verification, `${path}.verification`);
+  if (ver.status !== 'unverified') fail(`${path}.verification.status`, `segment defaults are starting suggestions and stay 'unverified' (got ${JSON.stringify(ver.status)})`);
+  const sourceNote = requireString(ver.sourceNote, `${path}.verification.sourceNote`);
+  const defs = requireRecord(rec.defaults, `${path}.defaults`);
+  rejectUnknownKeys(defs, `${path}.defaults`, CATALOGUE_SEGMENTS);
+  const defaults = {} as Record<CatalogueSegment, string>;
+  for (const seg of CATALOGUE_SEGMENTS) {
+    const g = requireString(defs[seg], `${path}.defaults.${seg}`);
+    if (!GTA_GROUP.test(g)) fail(`${path}.defaults.${seg}`, `expected a GTA group code like M1, got ${JSON.stringify(g)}`);
+    defaults[seg] = g;
+  }
+  return { schemaVersion: 1, verification: { status: 'unverified', sourceNote }, defaults };
+}
+
+export function loadGtaSegmentDefaultsFile(): GtaSegmentDefaultsFile {
+  const key = DATA_FILES.gtaSegmentDefaults;
+  const cached = typedCache.get(key) as GtaSegmentDefaultsFile | undefined;
+  if (cached) return cached;
+  const out = validateGtaSegmentDefaults(readDataFile(key), key);
+  typedCache.set(key, out);
+  return out;
 }

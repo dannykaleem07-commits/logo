@@ -13,7 +13,14 @@ export type UpsertVehicleInput = Omit<Vehicle, 'id' | 'createdAt' | 'odometer' |
   lookups?: LookupRecord[];
 };
 
-export type VehiclePatch = Partial<Omit<Vehicle, 'id' | 'createdAt' | 'registration'>>;
+/** Optional vehicle fields a patch may clear by sending `null` (PATCH /vehicles/:id). */
+export type NullableVehicleField =
+  | 'vin' | 'variant' | 'bodyType' | 'yearOfManufacture' | 'monthOfFirstRegistration' | 'fuelType' | 'transmission' | 'colour'
+  | 'engineCapacityCc' | 'co2Gkm' | 'euroStatus' | 'taxStatus' | 'taxDueDate' | 'motStatus' | 'motExpiryDate' | 'markedForExport'
+  | 'dateOfLastV5CIssued' | 'motHistory' | 'gtaGroup' | 'previousWriteOffCategory' | 'spec';
+
+/** Fields to change. `undefined` = leave alone; `null` = clear (only the optional fields). */
+export type VehiclePatch = Partial<Omit<Vehicle, 'id' | 'createdAt' | 'registration' | NullableVehicleField>> & { [K in NullableVehicleField]?: Vehicle[K] | null };
 
 function toVehicle(row: VehicleRow): Vehicle {
   const { updatedAt: _u, ...rest } = row;
@@ -177,4 +184,28 @@ export function listClaimsForRegistration(db: Db, registration: string): Claim[]
     .orderBy(claims.openedAt)
     .all();
   return rows.map(toClaim);
+}
+
+/**
+ * Vehicles whose normalised registration CONTAINS `fragment` (≥ 4 characters after normalisation), excluding the exact
+ * registration. Feeds the on-file search (TEMPLATES-VEHICLES-DESKTOP §E.1). Read-only.
+ */
+export function findVehiclesByPartialRegistration(db: Db, fragment: string, limit = 10): Vehicle[] {
+  const reg = normaliseRegistration(fragment ?? '');
+  if (reg.length < 4) return [];
+  return db
+    .select()
+    .from(vehicles)
+    .where(like(vehicles.registration, `%${reg}%`))
+    .orderBy(vehicles.registration)
+    .limit(Math.max(1, limit) + 1)
+    .all()
+    .filter((r) => r.registration !== reg)
+    .slice(0, Math.max(1, limit))
+    .map(toVehicle);
+}
+
+/** When the vehicle row was last changed (not part of the domain Vehicle). */
+export function vehicleUpdatedAt(db: Db, id: Id): ISODateTime | undefined {
+  return db.select({ updatedAt: vehicles.updatedAt }).from(vehicles).where(eq(vehicles.id, id)).get()?.updatedAt;
 }

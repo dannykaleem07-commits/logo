@@ -79,6 +79,8 @@ export {
   loadDirectory,
   loadPlaybookRules,
   countVerification,
+  validateGtaSegmentDefaults,
+  loadGtaSegmentDefaultsFile,
 } from './load.js';
 export type { KbDataFile, VerificationCounts } from './load.js';
 
@@ -143,3 +145,6 @@ export {
   periodFor,
   compareGroups,
 } from './gtaRates.js';
+
+// Vehicle catalogue (TEMPLATES-VEHICLES-DESKTOP §D)
+export * from './catalogue/index.js';

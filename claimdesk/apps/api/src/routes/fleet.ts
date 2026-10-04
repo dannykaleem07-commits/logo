@@ -3,15 +3,39 @@
  * penalties CRUD + stage transitions, PCN liability-transfer / s.172 response documents.
  */
 import type { FastifyInstance } from 'fastify';
-import type { FleetUnit, HireAgreement, Party, PenaltyNotice, Vehicle } from '@ccguk/domain';
+import { gtaRate, londonDate, type Address, type FleetUnit, type GtaSuggestion, type HireAgreement, type Party, type PenaltyNotice, type Vehicle, type VehicleSourceInput } from '@ccguk/domain';
+import type { Settings } from '@ccguk/db';
 import type { AppContext } from '../context.js';
-import { badRequest, conflict } from '../errors.js';
+import { badRequest, conflict, unprocessable } from '../errors.js';
 import { parse } from '../schemas/common.js';
 import { allocateCheckBody, fleetUnitBody, fleetUnitPatchBody, penaltyBody, penaltyDocumentBody, penaltyListQuery, penaltyPatchBody, penaltyTransitionBody, policyBody } from '../schemas/services.js';
+import { gtaSuggestionFor } from '../services/catalogue.js';
 import { createStandaloneDocument } from '../services/documents.js';
+import { gtaRatesFor } from '../services/kb.js';
+import { differsFromVerified, sourceLookupRecord } from '../services/lookup.js';
 import { canAllocateFor } from '../engines.js';
 import { allowedStages, complianceAlerts, liabilityTransferParticulars, penaltyTransition, s172ResponseData, S172RefusalError } from '../services/fleetFallbacks.js';
 import { params } from './helpers.js';
+
+/** Courtesy Cars Group UK Ltd registered office, used only when Settings has none (§H defaults set it). */
+export const CCGUK_REGISTERED_OFFICE_LINES = ['44 Syon Lane', 'Isleworth', 'London', 'TW7 5NQ'] as const;
+
+function addressLines(a: Address): string[] {
+  return [a.line1, a.line2, a.town, a.county, a.postcode].filter((x): x is string => Boolean(x && x.trim()));
+}
+
+/** Keeper address lines for PCN/s.172 letters when the V5C keeper address is not recorded: the registered office. */
+export function registeredOfficeLines(settings: Pick<Settings, 'registeredOffice'>): string[] {
+  const ro = settings.registeredOffice;
+  const lines = ro ? addressLines(ro) : [];
+  return lines.length ? lines : [...CCGUK_REGISTERED_OFFICE_LINES];
+}
+
+/** The provenance of fleet vehicle details: the explicit source, else 'catalogue' when catalogue ids are present, else 'manual'. */
+function fleetSource(source: VehicleSourceInput | undefined, spec: Vehicle['spec'] | undefined): VehicleSourceInput {
+  if (source) return source;
+  return { provider: spec?.catalogue ? 'catalogue' : 'manual' };
+}
 
 export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void {
   const unitRow = (u: FleetUnit, alerts?: ReturnType<typeof complianceAlerts>) => {
@@ -109,7 +133,7 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
     const hirer = match.hirer;
     const settings = ctx.settings();
     const ro = settings.registeredOffice;
-    const keeperAddressLines = unit.keeperAddressOnV5C ? [unit.keeperAddressOnV5C.line1, unit.keeperAddressOnV5C.line2, unit.keeperAddressOnV5C.town, unit.keeperAddressOnV5C.postcode].filter((x): x is string => Boolean(x)) : ro ? [ro.line1, ro.line2, ro.town, ro.postcode].filter((x): x is string => Boolean(x)) : ['[registered office]'];
+    const keeperAddressLines = unit.keeperAddressOnV5C ? addressLines(unit.keeperAddressOnV5C) : registeredOfficeLines({ registeredOffice: ro });
     const extra = body.data ?? {};
     const x = (k: string): unknown => extra[k];
     const str = (k: string): string | undefined => (typeof x(k) === 'string' && (x(k) as string).trim() ? (x(k) as string) : undefined);
@@ -181,14 +205,62 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
     return { ...unitRow(u, allAlerts()), hires: ctx.repos.listHireForFleetUnit(ctx.db, id), penalties: ctx.repos.listPenalties(ctx.db, { fleetUnitId: id }) };
   });
 
+  /**
+   * Add a fleet unit (§F.2). `gtaGroup` and `dailyRatePence` are optional: when omitted the server uses the GTA
+   * suggestion (recorded group → catalogue → segment default → heuristic) and its benchmark rate, or answers 422
+   * GTA_SUGGESTION_UNAVAILABLE. The vehicle details are recorded with an unverified LookupRecord (catalogue/manual/TCC).
+   */
   app.post('/fleet', async (request, reply) => {
     const body = parse(fleetUnitBody, request.body);
     const now = ctx.now();
+    const date = londonDate(now);
+    const known: Vehicle | undefined = body.vehicleId ? ctx.repos.requireVehicle(ctx.db, body.vehicleId) : body.vehicle ? ctx.repos.findByRegistration(ctx.db, body.vehicle.registration) : undefined;
+    let gtaGroup = body.gtaGroup?.trim().toUpperCase();
+    let dailyRatePence = body.dailyRatePence;
+    let suggestion: GtaSuggestion | undefined;
+    if (!gtaGroup || dailyRatePence === undefined) {
+      const v = body.vehicle;
+      const spec = v?.spec ?? known?.spec;
+      suggestion = gtaSuggestionFor(ctx, {
+        make: spec?.catalogue?.makeSlug ?? v?.make ?? known?.make,
+        model: spec?.catalogue?.modelSlug ?? v?.model ?? known?.model,
+        generationId: spec?.catalogue?.generationId,
+        trimId: spec?.catalogue?.trimId,
+        segment: spec?.segment,
+        bodyType: v?.bodyType ?? known?.bodyType,
+        engineCapacityCc: v?.engineCapacityCc ?? known?.engineCapacityCc,
+        fuelType: v?.fuelType ?? known?.fuelType,
+        variant: v?.variant ?? known?.variant,
+        recordedGroup: gtaGroup ?? v?.gtaGroup ?? known?.gtaGroup,
+        date,
+      });
+      gtaGroup = gtaGroup ?? suggestion.group ?? undefined;
+      if (dailyRatePence === undefined && gtaGroup) {
+        dailyRatePence = suggestion.group === gtaGroup && suggestion.rate ? suggestion.rate.dailyRatePence : gtaRate(gtaGroup, date, gtaRatesFor(ctx))?.dailyRatePence;
+      }
+      if (!gtaGroup || dailyRatePence === undefined) {
+        throw unprocessable('GTA_SUGGESTION_UNAVAILABLE', 'Choose a GTA group and daily rate', { suggestion });
+      }
+    }
+    const group = gtaGroup;
+    const rate = dailyRatePence;
     const unit = ctx.db.transaction((tx) => {
       let vehicleId = body.vehicleId;
       if (!vehicleId && body.vehicle) {
-        const existing = ctx.repos.findByRegistration(tx, body.vehicle.registration);
-        const v = ctx.repos.upsertVehicle(tx, { ...body.vehicle, make: body.vehicle.make || existing?.make || 'UNKNOWN', model: body.vehicle.model || existing?.model || 'UNKNOWN', gtaGroup: body.vehicle.gtaGroup ?? body.gtaGroup, ownership: 'fleet', odometer: [], lookups: [] });
+        const { source, ...fields } = body.vehicle;
+        const existing = ctx.repos.findByRegistration(tx, fields.registration);
+        const provenance = sourceLookupRecord(fleetSource(source, fields.spec), fields.registration, { requestedAt: now, requestedBy: request.user.id });
+        const gtaSuggestion = body.gtaSuggestion ?? (suggestion ? { group: suggestion.group, basis: suggestion.basis, rateGroup: suggestion.rate?.group ?? null, ratePeriod: suggestion.rate?.period ?? null } : undefined);
+        const raw = { ...(provenance.raw as Record<string, unknown>), ...(gtaSuggestion ? { gtaSuggestion } : {}) };
+        const v = ctx.repos.upsertVehicle(tx, {
+          ...fields,
+          make: fields.make || existing?.make || 'UNKNOWN',
+          model: fields.model || existing?.model || 'UNKNOWN',
+          gtaGroup: fields.gtaGroup ?? group,
+          ownership: 'fleet',
+          odometer: [],
+          lookups: [{ ...provenance, raw, id: ctx.repos.newId() }],
+        });
         vehicleId = v.id;
       }
       if (!vehicleId) throw badRequest('vehicleId or vehicle is required');
@@ -197,13 +269,20 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
         throw conflict('REGISTRATION_ON_CLAIM', `${vehicle.registration} is a client vehicle on an open claim — a fleet unit cannot also be a client vehicle (lessons f, h)`);
       }
       if (body.policyId) ctx.repos.requirePolicy(tx, body.policyId);
-      const { vehicle: _v, ...rest } = body;
-      const u = ctx.repos.createFleetUnit(tx, { ...rest, vehicleId, keeperAddressCurrent: body.keeperAddressCurrent ?? true });
+      const { vehicle: _v, gtaSuggestion: _g, ...rest } = body;
+      const u = ctx.repos.createFleetUnit(tx, { ...rest, gtaGroup: group, dailyRatePence: rate, vehicleId, keeperAddressCurrent: body.keeperAddressCurrent ?? true });
       if (vehicle.ownership !== 'fleet') ctx.repos.updateVehicle(tx, vehicleId, { ownership: 'fleet' });
-      ctx.repos.appendAudit(tx, { actor: request.actor, action: 'fleet_unit.create', entity: 'fleet_units', entityId: u.id, after: { vehicleId, registration: vehicle.registration, declaredUses: u.declaredUses, policyId: u.policyId }, at: now });
+      ctx.repos.appendAudit(tx, {
+        actor: request.actor,
+        action: 'fleet_unit.create',
+        entity: 'fleet_units',
+        entityId: u.id,
+        after: { vehicleId, registration: vehicle.registration, declaredUses: u.declaredUses, policyId: u.policyId, gtaGroup: group, dailyRatePence: rate, gtaSuggestion: suggestion ? { group: suggestion.group, basis: suggestion.basis, rate: suggestion.rate?.dailyRatePence ?? null } : undefined },
+        at: now,
+      });
       return u;
     });
-    return reply.status(201).send(unitRow(unit, allAlerts()));
+    return reply.status(201).send({ ...unitRow(unit, allAlerts()), ...(suggestion ? { gtaSuggestion: suggestion } : {}) });
   });
 
   app.patch('/fleet/:id', async (request) => {
@@ -212,13 +291,32 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
     const before = ctx.repos.requireFleetUnit(ctx.db, id);
     if (body.policyId) ctx.repos.requirePolicy(ctx.db, body.policyId);
     const now = ctx.now();
+    const { vehicle: vehiclePatch, ...unitPatch } = body;
+    const vehicleBefore = vehiclePatch ? ctx.repos.requireVehicle(ctx.db, before.vehicleId) : undefined;
+    const warnings = vehiclePatch && vehicleBefore ? differsFromVerified(vehicleBefore, vehiclePatch) : [];
     const unit = ctx.db.transaction((tx) => {
-      const patch = { ...body, policyId: body.policyId === null ? undefined : body.policyId };
+      const patch = { ...unitPatch, policyId: unitPatch.policyId === null ? undefined : unitPatch.policyId };
       const u = ctx.repos.updateFleetUnit(tx, id, patch);
-      ctx.repos.appendAudit(tx, { actor: request.actor, action: 'fleet_unit.update', entity: 'fleet_units', entityId: id, before: { declaredUses: before.declaredUses, policyId: before.policyId, status: before.status }, after: body, at: now });
+      ctx.repos.appendAudit(tx, { actor: request.actor, action: 'fleet_unit.update', entity: 'fleet_units', entityId: id, before: { declaredUses: before.declaredUses, policyId: before.policyId, status: before.status }, after: unitPatch, at: now });
+      // Vehicle changes (make, MOT, tax, spec …) go to the vehicle record with their provenance (§F.2).
+      if (vehiclePatch && vehicleBefore) {
+        const { source, ...fields } = vehiclePatch;
+        ctx.repos.updateVehicle(tx, vehicleBefore.id, fields);
+        const lookup = ctx.repos.addLookup(tx, vehicleBefore.id, { ...sourceLookupRecord(fleetSource(source, fields.spec ?? undefined), vehicleBefore.registration, { requestedAt: now, requestedBy: request.user.id }), id: ctx.repos.newId() });
+        const changed = Object.keys(fields).filter((k) => (fields as Record<string, unknown>)[k] !== undefined);
+        ctx.repos.appendAudit(tx, {
+          actor: request.actor,
+          action: 'vehicle.update',
+          entity: 'vehicles',
+          entityId: vehicleBefore.id,
+          before: Object.fromEntries(changed.map((k) => [k, (vehicleBefore as unknown as Record<string, unknown>)[k] ?? null])),
+          after: { ...fields, source: source?.provider ?? (fields.spec?.catalogue ? 'catalogue' : 'manual'), lookupId: lookup.id, fleetUnitId: id, warnings: warnings.length ? warnings : undefined },
+          at: now,
+        });
+      }
       return u;
     });
-    return unitRow(unit, allAlerts());
+    return { ...unitRow(unit, allAlerts()), ...(vehiclePatch ? { warnings } : {}) };
   });
 
   app.delete('/fleet/:id', async (request, reply) => {

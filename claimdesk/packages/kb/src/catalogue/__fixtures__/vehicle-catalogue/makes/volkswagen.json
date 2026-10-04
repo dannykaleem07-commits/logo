@@ -1,0 +1,91 @@
+{
+  "make": "Volkswagen",
+  "slug": "volkswagen",
+  "dvlaNames": ["VOLKSWAGEN"],
+  "aliases": ["VW"],
+  "verification": { "status": "unverified", "sourceNote": "Test fixture (synthetic)." },
+  "models": [
+    {
+      "name": "Golf",
+      "slug": "golf",
+      "aliases": ["Golf GTI", "e-Golf"],
+      "vehicleType": "car",
+      "segment": "small-family",
+      "years": { "from": 2012, "to": null },
+      "generations": [
+        {
+          "name": "Mk7 (2012–2020)",
+          "from": 2012,
+          "to": 2020,
+          "bodies": [{ "body": "hatchback", "doors": [3, 5], "seats": [5] }, { "body": "estate", "doors": [5], "seats": [5] }],
+          "trims": ["S", "SE", "Match", "GT", { "name": "GTI", "gtaGroup": "M1", "features": ["sat_nav"] }],
+          "engines": ["1.0 TSI 110PS petrol", "1.5 TSI EVO 150PS petrol", "2.0 TDI 150PS diesel", "e-Golf 136PS electric"],
+          "fuels": ["petrol", "diesel", "electric"],
+          "transmissions": ["manual", "automatic"]
+        },
+        {
+          "name": "Mk8 (2020–)",
+          "from": 2020,
+          "to": null,
+          "gtaGroup": "M",
+          "bodies": [{ "body": "hatchback", "doors": [5], "seats": [5] }],
+          "trims": ["Life", "Style", "R-Line", "GTI"],
+          "engines": ["1.5 eTSI 150PS mild-hybrid petrol", "2.0 TDI 150PS diesel", "1.4 TSI eHybrid 204PS plug-in-hybrid"],
+          "fuels": ["petrol", "mild-hybrid", "diesel", "plug-in-hybrid"],
+          "transmissions": ["manual", "automatic"]
+        }
+      ]
+    },
+    {
+      "name": "Polo",
+      "slug": "polo",
+      "aliases": [],
+      "vehicleType": "car",
+      "segment": "supermini",
+      "years": { "from": 2009, "to": null },
+      "gtaGroup": "S1",
+      "generations": [
+        {
+          "name": "Mk6 (2017–)",
+          "from": 2017,
+          "to": null,
+          "bodies": [{ "body": "hatchback", "doors": [5], "seats": [5] }],
+          "trims": ["Life", "Match", "Style"],
+          "engines": ["1.0 80PS petrol", "1.0 TSI 95PS petrol"],
+          "fuels": ["petrol"],
+          "transmissions": ["manual", "automatic"]
+        },
+        {
+          "name": "Mk5 (2009–2017)",
+          "from": 2009,
+          "to": 2017,
+          "bodies": [{ "body": "hatchback", "doors": [3, 5], "seats": [5] }],
+          "trims": ["S", "SE", "Match"],
+          "engines": ["1.2 60PS petrol"],
+          "fuels": ["petrol"],
+          "transmissions": ["manual"]
+        }
+      ]
+    },
+    {
+      "name": "up!",
+      "slug": "up",
+      "aliases": ["e-up!"],
+      "vehicleType": "car",
+      "segment": "city",
+      "years": { "from": 2012, "to": 2023 },
+      "generations": [
+        {
+          "name": "Mk1 (2012–2023)",
+          "from": 2012,
+          "to": 2023,
+          "bodies": [{ "body": "hatchback", "doors": [3, 5], "seats": [4] }],
+          "trims": ["Take up!", "Move up!", "High up!"],
+          "engines": ["1.0 60PS petrol", "e-up! 83PS electric"],
+          "fuels": ["petrol", "electric"],
+          "transmissions": ["manual", "automatic"]
+        }
+      ]
+    }
+  ]
+}

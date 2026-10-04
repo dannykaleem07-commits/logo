@@ -1,0 +1,71 @@
+// Vehicle catalogue (TEMPLATES-VEHICLES-DESKTOP §D). Named exports only.
+export {
+  CATALOGUE_VEHICLE_TYPES,
+  CATALOGUE_SEGMENTS,
+  CATALOGUE_BODIES,
+  CATALOGUE_FUELS,
+  CATALOGUE_TRANSMISSIONS,
+} from './types.js';
+export type {
+  CatalogueVehicleType,
+  CatalogueSegment,
+  CatalogueBody,
+  CatalogueFuel,
+  CatalogueTransmission,
+  CatalogueMakeFile,
+  CatalogueModel,
+  CatalogueGeneration,
+  CatalogueTrim,
+  CatalogueEngine,
+  FeatureVocabulary,
+  CatalogueMakeSummary,
+  NormalisedEngine,
+  NormalisedTrim,
+  NormalisedGeneration,
+  NormalisedModel,
+  NormalisedMake,
+  CatalogueModelSummary,
+  CatalogueSearchHit,
+  CatalogueMatch,
+  GtaSegmentDefaultsFile,
+} from './types.js';
+export {
+  slugify,
+  CATALOGUE_SLUG,
+  GTA_GROUP_CODE,
+  DEFAULT_CATALOGUE_SOURCE_NOTE,
+  catalogueFuelToDomain,
+  parseEngineLabel,
+  validateCatalogueMake,
+  normaliseCatalogueMake,
+  normaliseModel,
+  normaliseGeneration,
+  normaliseTrim,
+  normaliseEngine,
+  bodiesOf,
+} from './normalise.js';
+export type { ValidateCatalogueOptions } from './normalise.js';
+export {
+  setCatalogueDataDir,
+  catalogueDataDir,
+  catalogueMakeFiles,
+  catalogueLoadIssues,
+  listCatalogueMakes,
+  getCatalogueMake,
+  loadAllCatalogueMakes,
+  summariseMake,
+  loadFeatureVocabulary,
+  loadGtaSegmentDefaults,
+  resetCatalogueCache,
+} from './load.js';
+export type { CatalogueLoadIssue } from './load.js';
+export {
+  catalogueKey,
+  modelSummary,
+  generationsForYear,
+  listCatalogueModels,
+  getCatalogueModel,
+  findCatalogueMake,
+  matchCatalogue,
+  searchCatalogue,
+} from './query.js';

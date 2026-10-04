@@ -8,9 +8,9 @@
  */
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
-import { defaultGtaRates, GTA_NON_SUBSCRIBER_NOTE, gtaGroupsOn, gtaRate, type GtaRate, type InsurerDirectoryEntry, type ISODate, type KbEntry, type Verification } from '@ccguk/domain';
+import { defaultGtaRates, GTA_NON_SUBSCRIBER_NOTE, gtaGroupsOn, gtaRate, mergeGtaRates, type GtaRate, type InsurerDirectoryEntry, type ISODate, type KbEntry, type MergedGtaRate, type Verification } from '@ccguk/domain';
 import type { DirectoryOverride } from '@ccguk/db';
-import { advise as kbAdvise, citedEntries, search as kbSearch } from '@ccguk/kb';
+import { advise as kbAdvise, citedEntries, CATALOGUE_SEGMENTS, loadGtaSegmentDefaults, search as kbSearch, type CatalogueSegment } from '@ccguk/kb';
 import type { AppContext } from '../context.js';
 
 export interface CourtFee {
@@ -94,10 +94,60 @@ export function kbCitations(ctx: AppContext): Array<{ citation: string; verified
   return out;
 }
 
-export function gtaRatesFor(ctx: AppContext): GtaRate[] {
+/** The read-only knowledge-base rate table (packages/kb/data/gta-rates.json; the domain defaults if it is missing). */
+export function kbGtaRates(ctx: AppContext): GtaRate[] {
   const fromKb = ctx.kb.gtaRates();
   return fromKb.length ? fromKb : defaultGtaRates;
 }
+
+/**
+ * THE rate table every caller uses (TEMPLATES-VEHICLES-DESKTOP §F.3): KB rows, replaced or hidden per (group, period) by
+ * the manual rows in Settings → GTA benchmark rates, plus manual-only rows. Benchmark only — CCGUK is not a subscriber.
+ */
+export function gtaRatesFor(ctx: AppContext): MergedGtaRate[] {
+  return mergeGtaRates(kbGtaRates(ctx), ctx.repos.listGtaRates(ctx.db));
+}
+
+/** KB segment → group defaults (gta-segment-defaults.json), {} when the file cannot be read. */
+export function kbSegmentDefaults(ctx: AppContext): Partial<Record<CatalogueSegment, string>> {
+  try {
+    return loadGtaSegmentDefaults();
+  } catch (err) {
+    ctx.logger.warn('kb: gta-segment-defaults.json could not be loaded', { error: String(err) });
+    return {};
+  }
+}
+
+/** Segment → GTA group starting suggestions: Settings overrides (DB) over the KB file. */
+export function segmentDefaultsFor(ctx: AppContext): Record<string, string> {
+  const out: Record<string, string> = { ...kbSegmentDefaults(ctx) };
+  for (const row of ctx.repos.listGtaSegmentDefaults(ctx.db)) out[row.segment] = row.group;
+  return out;
+}
+
+export const SEGMENT_LABELS: Record<CatalogueSegment, string> = {
+  city: 'City car',
+  supermini: 'Supermini',
+  'small-family': 'Small family car',
+  'large-family': 'Large family car',
+  executive: 'Executive car',
+  luxury: 'Luxury car',
+  sports: 'Sports car',
+  supercar: 'Supercar',
+  'mpv-small': 'Small MPV',
+  'mpv-large': 'Large MPV',
+  'suv-small': 'Small SUV',
+  'suv-medium': 'Medium SUV',
+  'suv-large': 'Large SUV',
+  'suv-luxury': 'Luxury SUV',
+  pickup: 'Pick-up',
+  'van-small': 'Small van',
+  'van-medium': 'Medium van',
+  'van-large': 'Large van',
+  minibus: 'Minibus',
+};
+
+export { CATALOGUE_SEGMENTS };
 
 export function gtaRatesOn(ctx: AppContext, date: ISODate, group?: string): { date: ISODate; items: GtaRate[]; groups: string[]; note: string } {
   const rates = gtaRatesFor(ctx);

@@ -21,7 +21,7 @@
  */
 import type { ISODate, ISODateTime, Pence } from '@ccguk/domain';
 import { addCalendarDays, addCalendarMonths } from '@ccguk/domain';
-import { brand } from '../brand.js';
+import { brand, formatRegisteredOffice } from '../brand.js';
 import { type BaseDocumentData, type RecipientBlock, type Signatory, sampleBaseData, sampleClaim } from '../common.js';
 import {
   dateParts,
@@ -363,7 +363,7 @@ export const creditHireAgreementTemplate: Template<CreditHireAgreementData> = {
     }
 
     const company = brand.company;
-    const office = d.settings.registeredOffice.trim() || '[registered office]';
+    const office = d.settings.registeredOffice.trim() || formatRegisteredOffice();
     const ccgukSignatory = d.signatures?.ccgukSignatory ?? d.signatory ?? { name: d.settings.signatoryName, role: d.settings.signatoryRole };
     const rate = formatRate(d.charges.dailyRatePence, 'day');
     const vat = formatPercent(d.charges.vatRate);
@@ -373,7 +373,7 @@ export const creditHireAgreementTemplate: Template<CreditHireAgreementData> = {
 
     const partyRows = [
       { label: 'Hire company ("we", "us")', value: `${company.registeredName}, company number ${company.companyNumber}, registered office ${office}` },
-      { label: 'Contact', value: `${company.claimsEmail} · 24-hour accident line ${company.accidentLine24h}` },
+      { label: 'Contact', value: `${company.claimsEmail} · case handler ${company.caseHandlerPhone} · office ${company.officePhone}` },
       { label: 'Hirer ("you")', value: d.hirer.name },
       { label: 'Permanent address', value: d.hirer.addressLines.filter((l) => l.trim() !== '').join(', ') }
     ];
@@ -633,7 +633,7 @@ export const cancellationSch3Template: Template<CancellationFormData> = {
   }),
   render: (d) => {
     const company = brand.company;
-    const office = d.settings.registeredOffice.trim() || '[registered office]';
+    const office = d.settings.registeredOffice.trim() || formatRegisteredOffice();
     const body = `
 <p>Complete and return this form only if you wish to cancel the contract. You may also cancel by any other clear statement, for example an email to ${escapeHtml(
       company.claimsEmail

@@ -199,6 +199,21 @@ describe('every template renders its sample within the perimeter', () => {
         for (const artefact of RENDER_ARTEFACTS) expect(html, `rendered "${artefact}"`).not.toContain(artefact);
       });
 
+      it('prints the real company details, never a placeholder office (design doc §H)', () => {
+        expect(html).not.toContain('[registered office]');
+        expect(htmlToText(html)).toContain('44 Syon Lane, Isleworth, London TW7 5NQ');
+        expect(htmlToText(html)).toContain('claims@courtesycars.net');
+      });
+
+      if (meta.kind === 'letter') {
+        it('marks the letter parts the letterhead composer reads (data-letter-part)', () => {
+          expect(html).toContain('data-letter-part="body"');
+          expect(html).toContain('data-letter-part="ref-our"');
+          expect(html).toContain('data-letter-part="ref-date"');
+          if (data && typeof data === 'object' && (data as { recipient?: unknown }).recipient) expect(html).toContain('data-letter-part="recipient"');
+        });
+      }
+
       it('contains no legacy strings or banned phrases', () => {
         expect(findBlockedStrings(html)).toEqual([]);
         expect(findBannedPhrases(html)).toEqual([]);

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { DvlaVesPayload, DvsaMotVehicle } from '@ccguk/domain';
-import { createLookupClients, DVLA_VES_URL, DVSA_MOT_URL, mapLookupsToVehicle, manualLookupRecord, TokenBucket, type FetchLike } from './lookup.js';
+import { createLookupClients, differsFromVerified, DVLA_VES_URL, DVSA_MOT_URL, mapLookupsToVehicle, manualLookupRecord, sourceLookupRecord, TokenBucket, verifiedLookupValues, type FetchLike } from './lookup.js';
 
 const VES_FIXTURE: DvlaVesPayload = {
   registrationNumber: 'KX21ABC',
@@ -163,5 +163,23 @@ describe('lookup clients (fake fetch)', () => {
         }),
     });
     expect(await slow.dvlaVes('KX21ABC')).toMatchObject({ ok: false, reason: 'network' });
+  });
+});
+
+describe('hand-entered provenance (§E.4)', () => {
+  it('builds unverified LookupRecords per source', () => {
+    const tcc = sourceLookupRecord({ provider: 'totalcarcheck_manual', url: 'https://totalcarcheck.co.uk/FreeCheck?regno=KX21ABC', pastedText: 'x'.repeat(25_000), appliedFields: ['make'] }, 'kx21 abc', META);
+    expect(tcc).toMatchObject({ provider: 'totalcarcheck_manual', kind: 'vehicle', registration: 'KX21ABC', raw: { source: 'totalcarcheck_paste', url: 'https://totalcarcheck.co.uk/FreeCheck?regno=KX21ABC', appliedFields: ['make'] }, verification: { status: 'unverified', sourceUrl: 'https://totalcarcheck.co.uk/FreeCheck?regno=KX21ABC' } });
+    expect((tcc.raw as { pastedText: string }).pastedText).toHaveLength(20_000);
+    expect(sourceLookupRecord({ provider: 'catalogue' }, 'KX21ABC', META)).toMatchObject({ provider: 'catalogue', kind: 'spec', raw: { source: 'catalogue' }, verification: { status: 'unverified', sourceNote: 'Chosen from the ClaimDesk vehicle catalogue (unverified reference data).' } });
+    expect(sourceLookupRecord({ provider: 'manual' }, 'KX21ABC', META).verification.sourceUrl).toBeUndefined();
+  });
+
+  it('compares hand-entered values with verified DVLA/DVSA values only', () => {
+    const lookups = mapLookupsToVehicle('KX21ABC', { ves: VES_FIXTURE, mot: MOT_FIXTURE }, META).lookups.map((l, i) => ({ ...l, id: `l${i}` }));
+    expect(verifiedLookupValues({ lookups })).toMatchObject({ make: 'TOYOTA', model: 'YARIS', colour: 'RED', engineCapacityCc: 1490, fuelType: 'hybrid' });
+    expect(differsFromVerified({ lookups }, { make: 'Toyota', colour: 'Blue', engineCapacityCc: null, variant: 'Icon' })).toEqual([{ code: 'DIFFERS_FROM_VERIFIED', field: 'colour', verifiedValue: 'RED' }]);
+    const unverified = lookups.map((l) => ({ ...l, verification: { status: 'unverified' as const } }));
+    expect(differsFromVerified({ lookups: unverified }, { colour: 'Blue' })).toEqual([]);
   });
 });
