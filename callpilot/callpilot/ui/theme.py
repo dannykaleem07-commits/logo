@@ -25,10 +25,9 @@ LIGHT = {
 
 
 def use_app_style(app) -> None:
-    """One widget style on every platform. The stylesheet draws the whole look, but Qt still takes padding, arrow
-    and minimum sizes from the base style, and Windows 11's native style is far roomier than Fusion: the same bar
-    that fits a 1366 px screen with Fusion needs about 1,400 px with it. Fusion keeps the layout the same on every
-    Windows version and the same as it is tested."""
+    """One widget style on every platform. The stylesheet draws the whole look, but Qt still takes some padding,
+    arrow and minimum sizes from the base style, and the native styles differ between Windows 10 and 11. Fusion keeps
+    those the same on every Windows version and the same as the layout tests measure them."""
     try:
         app.setStyle("Fusion")
     except Exception:  # noqa: BLE001 - never stop the app starting over a style

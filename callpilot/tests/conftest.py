@@ -20,6 +20,11 @@ def isolated_home(tmp_path, monkeypatch):
 
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+# Qt's offscreen platform on Windows finds no fonts unless told where they are (it then measures every character
+# with an empty fallback: 'Courtesy Cars UK' came out 240 px instead of ~120 px). Point it at the Windows fonts, so
+# the layout tests measure Segoe UI – the font the app really draws with on Windows.
+if sys.platform == "win32" and os.environ["QT_QPA_PLATFORM"].startswith("offscreen") and not os.environ.get("QT_QPA_FONTDIR"):
+    os.environ["QT_QPA_FONTDIR"] = os.path.join(os.environ.get("WINDIR", r"C:\Windows"), "Fonts")
 
 
 def pytest_configure(config):
