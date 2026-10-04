@@ -517,6 +517,8 @@ export interface SignStartResult {
   contactMasked: string;
   /** Development/test only: the code is echoed because no mail/SMS provider is wired. Never present in production. */
   devCode?: string;
+  /** Present when ESIGN_DELIVERY=handler: the code for the handler to pass to the signer. */
+  handlerCode?: string;
   debugCode?: string;
 }
 
@@ -541,7 +543,10 @@ export function startSignature(ctx: AppContext, id: Id, input: { signerPartyId: 
   challenges.set(challenge.challengeId, challenge);
   ctx.repos.appendAudit(ctx.db, { actor, action: 'document.sign.start', entity: 'documents', entityId: id, after: { challengeId: challenge.challengeId, signerPartyId: signer.id, channel: input.channel, contact: maskContact(input.contact), expiresAt: otp.expiresAt, tokenSha256: sha256Hex(otp.token) }, at: now });
   const dev = ctx.config.env !== 'production' ? otp.code : undefined;
-  return { challengeId: challenge.challengeId, channel: input.channel, expiresAt: otp.expiresAt, contactMasked: maskContact(input.contact), devCode: dev, debugCode: dev };
+  // No email/SMS sender configured (packaged desktop app): the handler passes the code to the signer and the audit says so.
+  const handlerCode = ctx.config.esignDelivery === 'handler' ? otp.code : undefined;
+  if (handlerCode) ctx.repos.appendAudit(ctx.db, { actor, action: 'document.sign.code_shown_to_handler', entity: 'documents', entityId: id, after: { challengeId: challenge.challengeId, signerPartyId: signer.id, contact: maskContact(input.contact) }, at: now });
+  return { challengeId: challenge.challengeId, channel: input.channel, expiresAt: otp.expiresAt, contactMasked: maskContact(input.contact), devCode: dev, debugCode: dev, handlerCode };
 }
 
 export interface SignVerifyInput {

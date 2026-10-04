@@ -22,19 +22,24 @@ apps/web/
     manifest.webmanifest          name ClaimDesk, theme #072647
     sw.js                         service worker: caches the app shell only; /api is never cached
   src/
-    main.tsx                      entry: ErrorBoundary › QueryClientProvider › ToastProvider › RouterProvider; SW registered in PROD
+    main.tsx                      entry: ErrorBoundary › QueryClientProvider › ToastProvider › RouterProvider; SW registered in PROD;
+                                  installs the 401 → /login?next= redirect (app/session.ts)
     api/
       client.ts                   typed fetch client for EVERY route in docs/ARCHITECTURE.md; ApiError; request shapes
       hooks.ts                    React Query hooks (one per route), key factory `qk`, invalidation, useDashboardData
     app/
-      router.tsx                  createBrowserRouter route map
-      AppShell.tsx                left nav (drawer < 900px), top bar: global search + "blocked documents" / "clocks" badges
+      router.tsx                  createBrowserRouter route map: /login (public, no shell) + everything else inside <AuthGate>
+      AuthGate.tsx                GET /api/auth/me → spinner while loading, 401 → /login?next=<path>, API down → retry notice
+      session.ts                  any non-auth API 401 → forget the user, navigate to /login?next=<current path>
+      AppShell.tsx                left nav (drawer < 900px), top bar: global search + "blocked documents" / "clocks" badges,
+                                  signed-in name + "Sign out" (top bar on desktop, nav drawer on phones)
       nav.ts, Icons.tsx           nav entries and inline SVG icons
     components/                   Button, Card, Badge(+StatusBadge, DocumentStatusBadge, VerificationBadge, GateBadge …),
                                   Table, Tabs, Modal, Form (TextInput, TextArea, Select, MoneyInput, DateInput,
                                   DateTimeInput, Checkbox, YesNo), Toast, EmptyState, Spinner/Loading, ErrorBoundary,
                                   PageHeader, KeyValue, ClockPill, Money, DateText, ApiErrorNotice — exported from index.ts
     lib/
+      auth.ts                     sanitizeNextPath (same-origin "/path" only — never "//", "/\", a full URL or /login), loginPath
       money.ts                    pounds-text ⇄ pence for inputs (display uses formatGBP from @ccguk/domain)
       dates.ts                    en-GB formatting, datetime-local ⇄ ISO, describeDue
       status.ts                   status → badge tone/label maps (green / amber / red / blue / grey)
@@ -49,6 +54,9 @@ apps/web/
                                   Evidence, Documents (+ document view with consistency panel, approve, send, sign), Engineering
                                   (estimate, PAV, total loss, engineer report), Vehicle, Next actions, Flags
       claim/components, claim/lib shared claim widgets and pure helpers (tested)
+      login/                      LoginPage (full-screen sign-in; pre-filled from GET /auth/login-defaults, fallback username
+                                  "courtesycars"), login.ts (pure: prefill, error lines), login.css
+      settings/ChangePasswordCard  POST /auth/change-password; password.ts holds the pure validation (≥ 10 chars, ≠ current, confirm)
       placeholders/               PlaceholderPage for Fleet / Directory / KB / Analytics / Settings / Capture; NotFoundPage
     shims/node-crypto.ts          browser stand-in so the domain package bundles (throws if actually called)
     styles/
@@ -83,6 +91,22 @@ apps/web/
 12. **Loading / empty / error** states on every query: `<Loading/>`, `<EmptyState/>`, `<ApiErrorNotice error={…}/>`.
 13. **Tests are pure logic** (vitest, node). Put testable logic in `lib/` or a sibling `*.ts` beside the screen
     (`claimsFilter.ts`, `fnol.ts`) and keep components thin.
+
+## Sign-in (cookie session)
+
+- The API sets an HttpOnly `claimdesk_session` cookie on `POST /api/auth/login`; the browser never sees the token and
+  `request()` sends it with `credentials: 'same-origin'`. Nothing auth-related is kept in localStorage.
+- `GET /auth/login-defaults` → `{username, password?, prefill}`. The sign-in screen fills both boxes while `password` is
+  present (only while LOGIN_PREFILL is on and the default account still has its default password), fills only the
+  username when it is absent, leaves both empty when `prefill` is false, and falls back to the username `courtesycars`
+  if the call fails.
+- A 401 from any route except `/auth/login`, `/auth/logout`, `/auth/me` and `/auth/login-defaults` calls the handler
+  registered with `setUnauthorizedHandler` (main.tsx → `app/session.ts`), which sets `useMe` to null and navigates to
+  `/login?next=<current path>` (not when already on /login). `POST /auth/change-password` needs a session, so its 401
+  redirects too. `?next` is always passed through `sanitizeNextPath` (no open redirects).
+- Sign out: `POST /auth/logout`, navigate to /login (flushSync, so the gate is gone first), then drop every cached query.
+  Signing in drops every non-auth query too, so nothing from a previous session is shown.
+- `router.smoke.test.tsx` seeds `qk.me` with the default account; pass `{ me: null }` / `{}` to render signed out / loading.
 
 ## Domain package in the browser
 

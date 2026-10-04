@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
 import { createAppRouter } from './app/router';
+import { installSessionExpiryRedirect } from './app/session';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ToastProvider } from './components/Toast';
 import { isApiError } from './api/client';
@@ -27,6 +28,9 @@ const queryClient = new QueryClient({
 });
 
 const router = createAppRouter();
+
+// Any API 401 (session missing or expired) outside the sign-in screen → /login?next=<current page>.
+installSessionExpiryRedirect((to) => router.navigate(to, { replace: true }), queryClient);
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

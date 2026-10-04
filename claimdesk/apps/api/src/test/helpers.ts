@@ -1,8 +1,8 @@
 import { rmSync } from 'node:fs';
-import type { FastifyInstance, InjectOptions } from 'fastify';
+import type { FastifyInstance, FastifyServerOptions, InjectOptions } from 'fastify';
 import { buildApp } from '../app.js';
-import { scratchRoot, testConfig } from '../config.js';
-import { buildContext, silentLogger, type AppContext } from '../context.js';
+import { scratchRoot, testConfig, type AppConfig } from '../config.js';
+import { buildContext, silentLogger, type AppContext, type Logger } from '../context.js';
 
 export interface TestApp {
   app: FastifyInstance;
@@ -13,10 +13,19 @@ export interface TestApp {
   close(): Promise<void>;
 }
 
-export async function createTestApp(now = '2026-10-05T09:00:00.000Z'): Promise<TestApp> {
+export interface TestAppOptions {
+  /** Config overrides on top of testConfig() (e.g. `{ authMode: 'session' }`). */
+  config?: Partial<AppConfig>;
+  /** AppContext logger (default silent). */
+  logger?: Logger;
+  /** Fastify logger (default off in test). */
+  appLogger?: FastifyServerOptions['logger'];
+}
+
+export async function createTestApp(now = '2026-10-05T09:00:00.000Z', options: TestAppOptions = {}): Promise<TestApp> {
   let current = now;
-  const ctx = buildContext({ config: testConfig(), now: () => current, logger: silentLogger });
-  const app = await buildApp(ctx);
+  const ctx = buildContext({ config: testConfig(options.config), now: () => current, logger: options.logger ?? silentLogger });
+  const app = await buildApp(ctx, { logger: options.appLogger });
   await app.ready();
   return {
     app,

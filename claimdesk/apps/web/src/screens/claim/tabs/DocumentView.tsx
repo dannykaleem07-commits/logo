@@ -448,7 +448,15 @@ function SignDialog({ doc, view, onClose }: { doc: GeneratedDocument; view: Clai
             }}
           >
             <div className="notice notice-info small">
-              Code sent by {challenge.channel}; expires <DateText value={challenge.expiresAt} time />.{challenge.debugCode ? <span className="mono"> Dev code: {challenge.debugCode}</span> : null}
+              {challenge.handlerCode ? (
+                <>
+                  Signing code <strong className="mono">{challenge.handlerCode}</strong>: give it to the signer by phone, text or in person, then enter it below when they confirm it. Expires <DateText value={challenge.expiresAt} time />.
+                </>
+              ) : (
+                <>
+                  Code sent by {challenge.channel}; expires <DateText value={challenge.expiresAt} time />.{challenge.debugCode ? <span className="mono"> Dev code: {challenge.debugCode}</span> : null}
+                </>
+              )}
             </div>
             <TextInput label="One-time code" required value={code} onChange={setCode} inputMode="numeric" autoFocus autoComplete="one-time-code" />
             <ApiErrorNotice error={verify.error} what="verify the code" />

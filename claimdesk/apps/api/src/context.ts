@@ -134,7 +134,7 @@ export function buildKbLoaders(logger: Logger): KbLoaders {
   };
 }
 
-/** Fixed id of the development handler so X-User-Id can be omitted while the auth placeholder is in place. */
+/** Fixed id of the development handler: the user assumed in header auth mode (tests) when X-User-Id is omitted. Has no password, so it cannot sign in. */
 export const DEFAULT_HANDLER = { id: 'handler', name: 'Default handler (dev)', email: 'handler@ccguk.local', role: 'handler' as const };
 
 export function ensureDefaultUser(database: Db, id: string): void {

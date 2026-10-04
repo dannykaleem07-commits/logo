@@ -229,6 +229,124 @@
   display: none;
 }
 
+/* Signed-in user + "Sign out": in the top bar on desktop, in the nav drawer on phones (one of the two shows). */
+.topbar-user,
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-width: 0;
+}
+.topbar-user {
+  flex-shrink: 0;
+  padding-left: var(--s-3);
+  border-left: 1px solid var(--line);
+}
+.nav-user {
+  display: none;
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+.user-avatar {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--navy);
+  color: #fff;
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.nav-user .user-avatar {
+  background: var(--blue);
+}
+.user-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+}
+.user-name {
+  font-size: var(--fs-sm);
+  font-weight: 650;
+  color: var(--navy);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+.nav-user .user-name {
+  color: #fff;
+  max-width: none;
+}
+.user-role {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.nav-user .user-role {
+  color: rgba(255, 255, 255, 0.6);
+}
+.signout-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: var(--s-1);
+  padding: 6px 10px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--navy);
+  font-size: var(--fs-xs);
+  font-weight: 650;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.signout-btn:not(:disabled):hover {
+  background: var(--surface-2);
+  border-color: var(--blue);
+}
+.signout-btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.signout-btn svg {
+  width: 14px;
+  height: 14px;
+}
+.nav-user .signout-btn {
+  margin-left: auto;
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+}
+.nav-user .signout-btn:not(:disabled):hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: #fff;
+}
+
+/* Auth gate: session check / API unreachable, before the shell renders */
+.auth-gate {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-4);
+  background: var(--bg);
+}
+.auth-gate-box {
+  width: 100%;
+  max-width: 520px;
+}
+
 .main {
   grid-area: main;
   min-width: 0;
@@ -292,6 +410,12 @@
   }
   .topbar-badge .label-short {
     display: inline;
+  }
+  .topbar-user {
+    display: none;
+  }
+  .nav-user {
+    display: flex;
   }
 }
 @media (max-width: 480px) {

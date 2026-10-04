@@ -13,6 +13,7 @@ import { Loading } from '../../components/Spinner';
 import { ApiErrorNotice } from '../../components/ApiErrorNotice';
 import { Table, type Column } from '../../components/Table';
 import { useToast } from '../../components/Toast';
+import { ChangePasswordCard } from './ChangePasswordCard';
 import { API_KEYS, apiKeyPresent, buildSettingsPatch, COMPANY_NAME, COMPANY_NUMBER, confirmationOfPayeeCheck, ROLE_LABEL, settingsToForm, usersFrom, validateSettings, type SettingsErrors, type SettingsForm, type UserRow } from './settings';
 
 /** Company details, bank (Confirmation of Payee), rate card, API key presence and the read-only users list. */
@@ -178,7 +179,7 @@ export function SettingsPage() {
 
           <Card title="Users and roles" actions={<Badge tone="grey">read-only</Badge>} flush>
             {users.length === 0 ? (
-              <EmptyState title="User management arrives with authentication">
+              <EmptyState title="No user list from the API yet">
                 Roles: handler (runs files), approver (clears consistency flags and approves documents), engineer (estimates, PAV, reports), admin (settings). MFA is required for every role (BLUEPRINT §9).
               </EmptyState>
             ) : (
@@ -193,6 +194,10 @@ export function SettingsPage() {
           </div>
         </form>
       )}
+      {/* Outside the settings <form> (forms cannot nest) and shown even when settings fail to load. */}
+      <div className="grid-2" style={{ marginTop: 'var(--s-4)' }}>
+        <ChangePasswordCard />
+      </div>
     </div>
   );
 }

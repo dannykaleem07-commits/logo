@@ -7,6 +7,7 @@ import type { FastifyInstance } from 'fastify';
 import type { AppContext } from '../context.js';
 import type { RouteModule } from './helpers.js';
 import { registerHealthRoutes } from './health.js';
+import { registerAuthRoutes } from './auth.js';
 import { registerClaimsRoutes } from './claims.js';
 import { registerPartiesRoutes } from './parties.js';
 import { registerVehiclesRoutes } from './vehicles.js';
@@ -28,6 +29,7 @@ import { registerJobsModule } from '../jobs.js';
 
 export const routeModules: RouteModule[] = [
   registerHealthRoutes,
+  registerAuthRoutes,
   registerClaimsRoutes,
   registerPartiesRoutes,
   registerVehiclesRoutes,

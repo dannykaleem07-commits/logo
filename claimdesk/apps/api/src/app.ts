@@ -1,35 +1,64 @@
 /**
  * buildApp(ctx) → Fastify instance. Plugins: CORS, multipart (25 MB files), static web app (SPA fallback) when
  * apps/web/dist exists. Error handler maps zod → 400 VALIDATION, NotFound → 404, Immutable → 409. A request id is
- * attached to every reply; the header-token auth placeholder sets `request.user` for audit rows.
+ * attached to every reply; the auth hook sets `request.user` / `request.actor` (every audit row records the real user):
+ *  - authMode 'session' (development, production): the HttpOnly `claimdesk_session` cookie. Every /api route needs a
+ *    valid session except PUBLIC_API_ROUTES; everything outside /api (the built SPA) is public.
+ *  - authMode 'header' (tests only): the legacy X-User-Id header, falling back to config.defaultUserId.
  */
 import { existsSync } from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
-import Fastify, { type FastifyError, type FastifyInstance, type FastifyReply, type FastifyRequest } from 'fastify';
+import Fastify, { type FastifyError, type FastifyInstance, type FastifyReply, type FastifyRequest, type FastifyServerOptions } from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import fastifyStatic from '@fastify/static';
 import { ZodError } from 'zod';
 import { DbError, DocumentStateError, ImmutableError, NotFoundError, ValidationError, VerificationError, type Actor } from '@ccguk/db';
+import type { UserRecord } from '@ccguk/db';
 import type { User } from '@ccguk/domain';
 import type { AppContext } from './context.js';
 import { HttpError } from './errors.js';
 import { registerAllRoutes } from './routes/index.js';
+import { readSessionToken, resolveSession } from './services/auth.js';
 
 export const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
 
 export interface RequestUser extends User {
-  /** True when the user came from the dev default rather than a header. */
+  username?: string;
+  /** True when the user came from the dev/test default (header mode) rather than a header or a session. */
   assumed: boolean;
 }
 
 declare module 'fastify' {
   interface FastifyRequest {
+    /** The signed-in user. Always set on protected routes; undefined on a public route called without a session. */
     user: RequestUser;
     requestId: string;
     actor: Actor;
+    /** sessions.id (sha256 of the cookie token) when the request carries a valid session. */
+    sessionId: string | undefined;
   }
+}
+
+/** /api routes reachable without a session (matched against the route pattern, not the raw URL). */
+export const PUBLIC_API_ROUTES: ReadonlySet<string> = new Set(['/api/health', '/api/auth/login', '/api/auth/logout', '/api/auth/me', '/api/auth/login-defaults']);
+
+/** Anything under /api (including the bare prefix and a query string). */
+export const isApiUrl = (url: string): boolean => url === '/api' || url.startsWith('/api/') || url.startsWith('/api?');
+
+/** Actor recorded for an unauthenticated caller (e.g. a failed sign-in). */
+export const ANONYMOUS = 'anonymous';
+
+function toRequestUser(u: UserRecord, assumed: boolean): RequestUser {
+  const out: RequestUser = { id: u.id, name: u.name, email: u.email, role: u.role, mfaEnabled: u.mfaEnabled, assumed };
+  if (u.username !== undefined) out.username = u.username;
+  return out;
+}
+
+export interface BuildAppOptions {
+  /** Override Fastify's logger (tests pass `{ level, stream }` to capture output). */
+  logger?: FastifyServerOptions['logger'];
 }
 
 export interface ErrorBody {
@@ -62,40 +91,65 @@ export function mapError(err: unknown): { status: number; body: ErrorBody['error
   return { status: 500, body: { code: 'INTERNAL', message: 'Internal server error' } };
 }
 
-export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
+export async function buildApp(ctx: AppContext, options: BuildAppOptions = {}): Promise<FastifyInstance> {
+  if (ctx.config.authMode === 'header' && ctx.config.env === 'production') throw new Error('authMode "header" is not allowed in production: X-User-Id is not authentication');
   const app = Fastify({
-    logger: ctx.config.env === 'test' ? false : { level: ctx.config.env === 'production' ? 'info' : 'debug' },
+    logger: options.logger ?? (ctx.config.env === 'test' ? false : { level: ctx.config.env === 'production' ? 'info' : 'debug' }),
     genReqId: (req) => (typeof req.headers['x-request-id'] === 'string' && req.headers['x-request-id'].length <= 128 ? req.headers['x-request-id'] : randomUUID()),
     bodyLimit: 2 * 1024 * 1024,
-    trustProxy: true,
+    // Who may set X-Forwarded-For (decides request.ip for the login rate limiter and audit rows). Default 'loopback'.
+    trustProxy: ctx.config.trustProxy,
   });
 
   app.decorateRequest('user', undefined as unknown as RequestUser);
   app.decorateRequest('requestId', '');
   app.decorateRequest('actor', undefined as unknown as Actor);
+  app.decorateRequest('sessionId', undefined);
 
   // CORS: localhost origins only unless CORS_ORIGINS lists others (config.ts). Credentials are allowed, so the origin
   // list is never a wildcard by default.
   await app.register(cors, { origin: ctx.config.corsOrigins, credentials: true, exposedHeaders: ['x-request-id', 'x-sha256', 'x-certificate-id'] });
   await app.register(multipart, { limits: { fileSize: MAX_UPLOAD_BYTES, files: 10, fields: 50 } });
 
-  // Request id + auth placeholder. A real identity layer replaces this hook; everything downstream reads request.user/actor.
+  // Request id + identity. Everything downstream reads request.user / request.actor.
   app.addHook('onRequest', async (request, reply) => {
     request.requestId = String(request.id);
     reply.header('x-request-id', request.requestId);
-    const header = request.headers['x-user-id'];
-    const headerId = Array.isArray(header) ? header[0] : header;
-    if (headerId) {
-      const u = ctx.repos.getUser(ctx.db, headerId);
-      if (!u) throw new HttpError(401, 'UNAUTHENTICATED', `Unknown user ${headerId} (X-User-Id)`);
-      request.user = { id: u.id, name: u.name, email: u.email, role: u.role, mfaEnabled: u.mfaEnabled, assumed: false };
-    } else {
-      if (ctx.config.env === 'production') throw new HttpError(401, 'UNAUTHENTICATED', 'X-User-Id header is required');
-      const u = ctx.repos.getUser(ctx.db, ctx.config.defaultUserId);
-      if (!u) throw new HttpError(401, 'UNAUTHENTICATED', 'No default user is seeded');
-      request.user = { id: u.id, name: u.name, email: u.email, role: u.role, mfaEnabled: u.mfaEnabled, assumed: true };
+
+    if (ctx.config.authMode === 'header') {
+      // Test-only identity (config refuses header mode in production): X-User-Id, else the default user.
+      const header = request.headers['x-user-id'];
+      const headerId = Array.isArray(header) ? header[0] : header;
+      if (headerId) {
+        const u = ctx.repos.getUser(ctx.db, headerId);
+        if (!u) throw new HttpError(401, 'UNAUTHENTICATED', `Unknown user ${headerId} (X-User-Id)`);
+        request.user = toRequestUser(u, false);
+      } else {
+        if (ctx.config.env === 'production') throw new HttpError(401, 'UNAUTHENTICATED', 'X-User-Id header is required');
+        const u = ctx.repos.getUser(ctx.db, ctx.config.defaultUserId);
+        if (!u) throw new HttpError(401, 'UNAUTHENTICATED', 'No default user is seeded');
+        request.user = toRequestUser(u, true);
+      }
+      request.actor = { userId: request.user.id, ip: request.ip };
+      return;
     }
-    request.actor = { userId: request.user.id, ip: request.ip };
+
+    // Session mode. Decide "is this the API?" from the matched route pattern (immune to URL-encoding tricks); fall
+    // back to the raw URL for unmatched requests so an unknown /api path is 401, not a hint that it does not exist.
+    const routeUrl = request.routeOptions.url;
+    const api = routeUrl !== undefined ? isApiUrl(routeUrl) : isApiUrl(request.url);
+    request.actor = { userId: ANONYMOUS, ip: request.ip };
+    if (!api) return; // the built web app and its assets are public; its screens call /api/auth/me
+    const token = readSessionToken(request.headers.cookie);
+    const resolved = token ? resolveSession(ctx, token) : undefined;
+    if (resolved) {
+      request.user = toRequestUser(resolved.user, false);
+      request.sessionId = resolved.session.id;
+      request.actor = { userId: resolved.user.id, ip: request.ip };
+      return;
+    }
+    if (routeUrl !== undefined && PUBLIC_API_ROUTES.has(routeUrl)) return;
+    throw new HttpError(401, 'UNAUTHENTICATED', 'Sign in required');
   });
 
   app.setErrorHandler((err: unknown, request: FastifyRequest, reply: FastifyReply) => {
@@ -118,7 +172,6 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
     await app.register(fastifyStatic, { root: ctx.config.webDistDir, prefix: '/', wildcard: false, index: ['index.html'] });
   }
   // Anything under /api (including the bare prefix and a query string) is the API's 404 — the SPA shell never answers for it.
-  const isApiUrl = (url: string) => url === '/api' || url.startsWith('/api/') || url.startsWith('/api?');
   app.setNotFoundHandler((request, reply) => {
     if (isApiUrl(request.url)) {
       return reply.status(404).send({ error: { code: 'NOT_FOUND', message: `Route ${request.method} ${request.url} not found`, requestId: request.requestId } });

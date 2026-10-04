@@ -13,7 +13,10 @@ export default defineConfig({
   },
   server: {
     port: 5173,
-    proxy: { '/api': { target: 'http://localhost:4000', changeOrigin: true } }
+    // xfwd appends the real client address to X-Forwarded-For. The API trusts only loopback proxies, so it reads that
+    // appended address; without xfwd a browser-supplied X-Forwarded-For would pass through untouched and let a client
+    // pick its own IP for the sign-in rate limiter.
+    proxy: { '/api': { target: 'http://localhost:4000', changeOrigin: true, xfwd: true } }
   },
   build: { outDir: 'dist', sourcemap: true }
 });

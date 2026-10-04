@@ -1,0 +1,122 @@
+name: ClaimDesk Windows build
+
+# Builds ClaimDesk.exe on Windows, starts it, signs in, checks the example claims and renders a PDF with Edge.
+# A commit whose message contains [windows-release] (or a manual run) also publishes the zip as a GitHub release.
+on:
+  push:
+    branches: [claude/busy-franklin-nzq139]
+    paths: ['claimdesk/**', '.github/workflows/claimdesk-windows.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: claimdesk-windows-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: claimdesk
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.28.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install (flat node_modules so the folder can be zipped as plain files)
+        run: pnpm install --frozen-lockfile --config.node-linker=hoisted
+
+      - name: Build the web app
+        run: pnpm --filter @ccguk/web build
+
+      - name: Remove development-only packages
+        run: pnpm install --prod --frozen-lockfile --config.node-linker=hoisted
+
+      - name: Build ClaimDesk.exe and the portable folder
+        run: node packaging/build-package.mjs
+
+      - name: Smoke test — start, sign in, list claims, render a PDF with Edge
+        env:
+          CLAIMDESK_HOME: ${{ runner.temp }}\claimdesk-home
+          CLAIMDESK_NO_BROWSER: '1'
+        run: |
+          $exe = Resolve-Path packaging\dist\ClaimDesk\ClaimDesk.exe
+          $proc = Start-Process -FilePath $exe -ArgumentList '--demo','--no-browser' -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\cd-out.log" -RedirectStandardError "$env:RUNNER_TEMP\cd-err.log"
+          $ok = $false
+          for ($i = 0; $i -lt 90; $i++) {
+            try { $h = Invoke-RestMethod http://localhost:4000/api/health -TimeoutSec 2; if ($h.ok) { $ok = $true; break } } catch { }
+            Start-Sleep -Seconds 2
+          }
+          Get-Content "$env:RUNNER_TEMP\cd-out.log" -Tail 40
+          Get-Content "$env:RUNNER_TEMP\cd-err.log" -Tail 40
+          if (-not $ok) { throw 'ClaimDesk did not start' }
+          $jar = "$env:RUNNER_TEMP\cookies.txt"
+          $code = curl.exe -s -o NUL -w "%{http_code}" http://localhost:4000/api/claims
+          if ($code -ne '401') { throw "expected 401 before sign-in, got $code" }
+          $defaults = curl.exe -s http://localhost:4000/api/auth/login-defaults | ConvertFrom-Json
+          if ($defaults.username -ne 'courtesycars' -or $defaults.password -ne 'CourtesyCars123!') { throw 'login defaults are not pre-filled' }
+          Set-Content -Path "$env:RUNNER_TEMP\login.json" -Value '{"username":"courtesycars","password":"CourtesyCars123!"}' -NoNewline
+          $code = curl.exe -s -o NUL -w "%{http_code}" -c $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\login.json" http://localhost:4000/api/auth/login
+          if ($code -ne '200') { throw "sign-in failed: $code" }
+          $claims = curl.exe -s -b $jar http://localhost:4000/api/claims | ConvertFrom-Json
+          Write-Host "claims: $($claims.total)"
+          if ($claims.total -lt 4) { throw 'example claims missing' }
+          $file1 = ($claims.items | Where-Object { $_.reference -eq 'CCG-2026-00001' }).id
+          Set-Content -Path "$env:RUNNER_TEMP\doc.json" -Value '{"templateId":"letter.chaser_7"}' -NoNewline
+          $doc = curl.exe -s -b $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\doc.json" "http://localhost:4000/api/claims/$file1/documents" | ConvertFrom-Json
+          Write-Host "document: $($doc.id) $($doc.status)"
+          Set-Content -Path "$env:RUNNER_TEMP\empty.json" -Value '{}' -NoNewline
+          $appr = curl.exe -s -b $jar -H "content-type: application/json" --data-binary "@$env:RUNNER_TEMP\empty.json" "http://localhost:4000/api/documents/$($doc.id)/approve" | ConvertFrom-Json
+          Write-Host "approved: $($appr.status)"
+          curl.exe -s -b $jar -o "$env:RUNNER_TEMP\letter.pdf" "http://localhost:4000/api/documents/$($doc.id)/pdf"
+          $head = [System.Text.Encoding]::ASCII.GetString([System.IO.File]::ReadAllBytes("$env:RUNNER_TEMP\letter.pdf")[0..4])
+          Write-Host "pdf header: $head  size: $((Get-Item "$env:RUNNER_TEMP\letter.pdf").Length)"
+          if ($head -ne '%PDF-') { throw 'PDF was not rendered' }
+          $page = curl.exe -s http://localhost:4000/
+          if (-not ($page -match 'ClaimDesk')) { throw 'web app not served' }
+          Stop-Process -Id $proc.Id -Force
+          Write-Host 'Smoke test passed'
+
+      - name: Zip
+        run: |
+          $ver = "0.1.${{ github.run_number }}"
+          7z a -tzip -mx=5 "ClaimDesk-Windows-x64-$ver.zip" .\packaging\dist\ClaimDesk | Select-Object -Last 3
+          "ZIP=ClaimDesk-Windows-x64-$ver.zip" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "VER=$ver" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ClaimDesk-Windows-x64
+          path: claimdesk/${{ env.ZIP }}
+          retention-days: 30
+
+      - name: Publish release
+        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[windows-release]')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: claimdesk-v${{ env.VER }}
+          name: ClaimDesk ${{ env.VER }} for Windows
+          target_commitish: ${{ github.sha }}
+          prerelease: true
+          files: claimdesk/${{ env.ZIP }}
+          body: |
+            **ClaimDesk for Windows 10/11 (64-bit).** Download the zip, right-click → Extract All, open the folder and double-click **ClaimDesk.exe**.
+
+            - A black window opens (keep it open) and your browser opens ClaimDesk.
+            - Sign in: username `courtesycars`, password `CourtesyCars123!` (filled in for you). Change it in Settings before real data goes in — this repository is public.
+            - Want to look around first? Double-click **Start with example claims.cmd** (example data is kept separately).
+            - Windows may say "Windows protected your PC" because the program is not code-signed: click **More info → Run anyway**.
+            - Your data lives in `%LOCALAPPDATA%\ClaimDesk`. PDFs are made with Microsoft Edge, which Windows already has.
+
+            Built and smoke-tested on Windows by GitHub Actions: started the program, signed in, listed the example claims and rendered a PDF.

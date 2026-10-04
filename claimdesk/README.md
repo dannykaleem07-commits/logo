@@ -17,7 +17,16 @@ pnpm seed        # creates a database with four example claims, a fleet and a wa
 pnpm dev         # starts the API on 127.0.0.1:4000 and the app on http://localhost:5173
 ```
 
-Open http://localhost:5173. There is no login yet; you are the development handler. Copy `.env.example` to `.env` to add API keys and settings (see below).
+Open http://localhost:5173 and sign in. The sign-in screen fills in the default account for you:
+
+- Username: `courtesycars`
+- Password: `CourtesyCars123!`
+
+Press **Sign in**. You stay signed in for 12 hours, and **Sign out** is in the top bar (in the menu on a phone).
+
+> **Change this password in Settings before real data goes in; the repository is public.** Anyone who reads this README knows the default password, and the sign-in screen offers it to anyone who can open the app until you change it. Go to **Settings → Change password**. After that the screen fills in only the username. Set `LOGIN_PREFILL=false` to stop that too.
+
+Copy `.env.example` to `.env` to add API keys and settings (see below).
 
 To produce every document type as a sample PDF:
 
@@ -76,13 +85,15 @@ Everything works without keys. Free keys switch on live look-ups; see `docs/SETU
 | `DVSA_MOT_*` | Free MOT and mileage history |
 | `COMPANIES_HOUSE_API_KEY` | Free supplier monitoring |
 | `ESIGN_SECRET` | Required for e-signature in production |
+| `DEFAULT_LOGIN_USERNAME`, `DEFAULT_LOGIN_PASSWORD` | The account created on first start (default `courtesycars` / `CourtesyCars123!`). Only used when no user has that username yet |
+| `LOGIN_PREFILL` | `true` by default: the sign-in screen fills in the default account until its password is changed. Set `false` to fill in nothing |
 
 ## What to do first
 
 1. **Verify the knowledge base.** This build had no internet access, so nothing in it is marked verified, and every citation shows an amber badge. `docs/RESEARCH-CORRECTIONS.md` lists 19 places where research contradicted the original brief. The most important: Irani v Duchon is not a credit hire case, CPR interim payments moved to rules 25.20–25.26, and ICOBS 8.2 appears to cover domestic third-party claims.
 2. **Check each insurer's third-party line** on the insurer's own site and press "Mark verified today" in the Directory.
 3. **Fill in Settings** so documents stop printing "[registered office]".
-4. **Add real logins** before anyone but you can reach the system (`docs/KNOWN-ISSUES.md`).
+4. **Change the default password** (Settings → Change password) before real data goes in, and add MFA before anyone but you can reach the system (`docs/KNOWN-ISSUES.md`).
 
 ## Legal boundaries built in
 

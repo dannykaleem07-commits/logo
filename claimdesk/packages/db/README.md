@@ -18,13 +18,15 @@ const bundle = loadClaimBundle(db, claim.id); // → ClaimBundle for the domain 
 - Documents: `draft → (blocked) → approved → sent`; `approveDocument` refuses blocked drafts and `system` actors; flag clearances, approvals, sends, supersessions and signatures are audited.
 - Verification is data: `upsertDirectoryOverride` refuses `status: 'verified'` unless a human supplies a `sourceUrl` (`verifyDirectoryEntry`).
 - The cross-file registration rule is a **flag** (`addClaimFlag`), not a constraint; `listClaimsForRegistration` and `findFleetUnitsByRegistration` feed the domain check.
+- **Credentials**: `users.password_hash` only ever holds a self-describing hash (`scrypt$N$r$p$salt$hash`, made by the API with `node:crypto`); `createUser`/`setPassword` refuse anything else. User records returned by the repos never carry the hash — `getPasswordHash(userId)` is the one read path, for sign-in. `users.username` is stored trimmed and lower-cased (case-insensitive unique; null for staff who cannot sign in).
+- **Sessions** (`sessions`, migration `0002`): the id is the sha256 hex digest of the session token — the token itself never reaches the database (`createSession` refuses anything that is not 64 hex characters). Rows carry an absolute `expires_at` and are deleted on logout, password change and expiry, so `sessions` is deliberately **not** append-only; it cascades with its user.
 
 ## Layout
 
 | Path | Contents |
 |---|---|
-| `src/schema.ts` | 26 tables + `$inferSelect`/`$inferInsert` types (`ClaimRow`, `ClaimInsert`, …), `RateCard`, `ApiKeysPresent` |
-| `drizzle/` | `0000_init.sql` (drizzle-kit generated), `0001_append_only_triggers.sql` (hand-written custom migration), `meta/` journal + snapshot |
+| `src/schema.ts` | 27 tables + `$inferSelect`/`$inferInsert` types (`ClaimRow`, `ClaimInsert`, …), `RateCard`, `ApiKeysPresent` |
+| `drizzle/` | `0000_init.sql` (drizzle-kit generated), `0001_append_only_triggers.sql` (hand-written custom migration), `0002_auth_sessions.sql` (drizzle-kit generated: `users.username`/`password_hash`/`password_changed_at`, `sessions`), `meta/` journal + snapshots |
 | `drizzle.config.ts` | `pnpm --filter @ccguk/db exec drizzle-kit generate` regenerates after a schema change |
 | `src/client.ts` | `createDatabase({ path, busyTimeoutMs?, readonly? })` → `{ sqlite, db, path }` (WAL, `foreign_keys=ON`, busy timeout); `closeDatabase()`; `Db` (repo parameter type: works for connections and transactions), `DbClient` |
 | `src/migrate.ts` | `runMigrations(db)` — folder resolved from `import.meta.url`; `migrationsFolder` |
@@ -57,7 +59,8 @@ const bundle = loadClaimBundle(db, claim.id); // → ClaimBundle for the domain 
 | `settings` | `getSettings` (defaults: Courtesy Cars Group UK Ltd, rate card £90/£3/£25, £45/day, £285), `patchSettings` (audited), `DEFAULT_RATE_CARD`, `DEFAULT_SETTINGS` |
 | `audit` | `appendAudit({actor, action, entity, entityId, before, after})`, `listAudit({entity, entityId, userId, action})`; `Actor = { userId, ip? }`, `SYSTEM_ACTOR` |
 | `labourLibrary` | `addLabourEntry`, `listLabourEntries`, `labourStats` (medians per make/model/panel/operation), `countLabourEntries` |
-| `users` | `createUser`, `getUser`, `getUserByEmail`, `listUsers`, `updateUser` |
+| `users` | `createUser` (optional `username`, `passwordHash`), `getUser`, `requireUser`, `getUserByEmail`, `getUserByUsername` (case-insensitive), `getPasswordHash`, `setPassword(userId, hash, at?)` (stamps `passwordChangedAt`), `listUsers`, `updateUser`, `normaliseUsername`, `assertPasswordHash` |
+| `sessions` | `createSession({tokenHash, userId, expiresAt, createdAt?, ip?, userAgent?})`, `getSessionByTokenHash`, `touchSession`, `deleteSession`, `deleteUserSessions(userId, exceptId?)`, `deleteExpiredSessions(now)`, `listUserSessions` |
 
 All mutating functions can run inside `db.transaction((tx) => …)` by passing `tx` as the `db` argument.
 

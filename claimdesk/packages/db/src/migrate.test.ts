@@ -1,6 +1,9 @@
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import { afterEach, describe, expect, it } from 'vitest';
 import { closeDatabase, createDatabase, type DatabaseHandle } from './client.js';
-import { runMigrations } from './migrate.js';
+import { migrationsFolder, runMigrations } from './migrate.js';
 
 const handles: DatabaseHandle[] = [];
 afterEach(() => {
@@ -34,6 +37,7 @@ const EXPECTED_TABLES = [
   'settings',
   'audit_log',
   'labour_library',
+  'sessions',
 ];
 
 describe('migrations', () => {
@@ -59,6 +63,9 @@ describe('migrations', () => {
     );
     const indexes = h.sqlite.prepare("select name from sqlite_master where type = 'index'").all().map((r) => (r as { name: string }).name);
     expect(indexes).toEqual(expect.arrayContaining(['vehicles_registration_uq', 'claims_reference_uq', 'ledger_entries_claim_idx', 'claim_events_claim_idx', 'evidence_claim_idx', 'documents_claim_idx']));
+    expect(indexes).toEqual(expect.arrayContaining(['users_username_uq', 'sessions_user_idx', 'sessions_expires_idx']));
+    // Sessions are deleted on logout / expiry: no append-only triggers on them.
+    expect(triggers.some((n) => n.startsWith('sessions_'))).toBe(false);
     // The cross-file registration rule is a flag, not a constraint.
     expect(indexes.some((n) => n.includes('occurred'))).toBe(false);
   });
@@ -69,7 +76,36 @@ describe('migrations', () => {
     runMigrations(h.db);
     expect(() => runMigrations(h.db)).not.toThrow();
     const n = h.sqlite.prepare('select count(*) as n from __drizzle_migrations').get() as { n: number };
-    expect(n.n).toBe(2);
+    expect(n.n).toBe(3);
+  });
+
+  it('0002 upgrades a database created by 0000–0001 without losing existing users', () => {
+    // A folder holding only the first two migrations, as an existing install would have applied them.
+    const dir = mkdtempSync(path.join(os.tmpdir(), 'claimdesk-mig-'));
+    try {
+      mkdirSync(path.join(dir, 'meta'));
+      const journal = JSON.parse(readFileSync(path.join(migrationsFolder, 'meta', '_journal.json'), 'utf8')) as { entries: Array<{ tag: string }> };
+      const firstTwo = journal.entries.slice(0, 2);
+      expect(firstTwo.map((e) => e.tag)).toEqual(['0000_init', '0001_append_only_triggers']);
+      writeFileSync(path.join(dir, 'meta', '_journal.json'), JSON.stringify({ ...journal, entries: firstTwo }));
+      for (const e of firstTwo) copyFileSync(path.join(migrationsFolder, `${e.tag}.sql`), path.join(dir, `${e.tag}.sql`));
+
+      const h = createDatabase({ path: ':memory:' });
+      handles.push(h);
+      runMigrations(h.db, { migrationsFolder: dir });
+      h.sqlite.prepare("insert into users (id, name, email, role, mfa_enabled, created_at) values ('handler', 'Handler', 'handler@ccguk.local', 'handler', 0, '2026-01-01T00:00:00.000Z')").run();
+
+      runMigrations(h.db);
+      const row = h.sqlite.prepare("select id, name, username, password_hash, password_changed_at from users where id = 'handler'").get();
+      expect(row).toEqual({ id: 'handler', name: 'Handler', username: null, password_hash: null, password_changed_at: null });
+      const n = h.sqlite.prepare('select count(*) as n from __drizzle_migrations').get() as { n: number };
+      expect(n.n).toBe(3);
+      // The 0001 append-only triggers are untouched by 0002.
+      expect(() => h.sqlite.prepare("insert into audit_log (id, at, user_id, action, entity, entity_id) values ('a1', '2026-01-01T00:00:00.000Z', 'system', 'x', 'y', 'z')").run()).not.toThrow();
+      expect(() => h.sqlite.prepare("delete from audit_log where id = 'a1'").run()).toThrow(/append-only/);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   it('set the connection pragmas', () => {

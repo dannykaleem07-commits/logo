@@ -22,7 +22,12 @@
     "@fastify/static": "^8",
     "zod": "^3.25.76",
     "exifr": "^7.1.3",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "tsx": "^4.23.0"
   },
-  "devDependencies": { "vitest": "^3.2.7", "typescript": "^5.9.3", "tsx": "^4.23.0", "@types/node": "^22.19.0" }
+  "devDependencies": {
+    "vitest": "^3.2.7",
+    "typescript": "^5.9.3",
+    "@types/node": "^22.19.0"
+  }
 }

@@ -11,7 +11,10 @@ import { useMutation, useQueries, useQuery, useQueryClient, type UseQueryOptions
 import type { Clock, ComplianceAlert, Id, ISODate, KbEntryType, PlaybookAction } from '@ccguk/domain';
 import {
   api,
+  isApiError,
   type AnalyticsOverview,
+  type AuthUser,
+  type ChangePasswordBody,
   type ClaimListFilters,
   type ClaimSummary,
   type CreateClaimBody,
@@ -24,6 +27,7 @@ import {
   type DebtorDaysSummary,
   type EvidenceUploadFields,
   type InterventionOfferInput,
+  type LoginBody,
   type PartyInput,
   type PenaltyTransitionBody,
   type Settings,
@@ -40,6 +44,8 @@ import { dueState } from '../lib/clocks';
 
 export const qk = {
   health: ['health'] as const,
+  me: ['auth', 'me'] as const,
+  loginDefaults: ['auth', 'login-defaults'] as const,
   claims: (filters: ClaimListFilters = {}) => ['claims', filters] as const,
   claim: (id: Id) => ['claim', id] as const,
   clocks: (id: Id) => ['claim', id, 'clocks'] as const,
@@ -84,6 +90,61 @@ type QueryOpts<T> = Omit<UseQueryOptions<T, Error>, 'queryKey' | 'queryFn'>;
 
 export function useHealth() {
   return useQuery({ queryKey: qk.health, queryFn: ({ signal }) => api.health(signal), staleTime: 30_000, refetchInterval: 60_000, retry: 0 });
+}
+
+// ---------------------------------------------------------------------------
+// Auth (cookie session; the gate in app/AuthGate.tsx reads useMe)
+// ---------------------------------------------------------------------------
+
+/** `GET /auth/me` body → the user (accepts `{user}` or a bare user object); anything else is "not signed in". */
+export function userFromMe(res: unknown): AuthUser | null {
+  if (!res || typeof res !== 'object') return null;
+  const r = res as { user?: unknown };
+  const candidate = r.user && typeof r.user === 'object' ? r.user : res;
+  return typeof (candidate as AuthUser).id === 'string' && (candidate as AuthUser).id ? (candidate as AuthUser) : null;
+}
+
+/** The signed-in user, or null when there is no session (401). Network/5xx failures stay errors. */
+export async function fetchCurrentUser(signal?: AbortSignal): Promise<AuthUser | null> {
+  try {
+    return userFromMe(await api.me(signal));
+  } catch (e) {
+    if (isApiError(e) && e.status === 401) return null;
+    throw e;
+  }
+}
+
+export function useMe() {
+  return useQuery({ queryKey: qk.me, queryFn: ({ signal }) => fetchCurrentUser(signal), staleTime: 60_000, retry: (n, e) => !(isApiError(e) && e.status >= 400 && e.status < 500) && n < 1 });
+}
+
+/** What the sign-in screen pre-fills. Always re-read when the screen opens (the password stops once it is changed). */
+export function useLoginDefaults() {
+  return useQuery({ queryKey: qk.loginDefaults, queryFn: ({ signal }) => api.loginDefaults(signal), staleTime: 0, gcTime: 60_000, retry: 0, refetchOnWindowFocus: false });
+}
+
+/** POST /auth/login. On success drops every cached query from before (another user's data) and primes useMe. */
+export function useLogin() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: LoginBody) => api.login(body),
+    onSuccess: (res) => {
+      qc.removeQueries({ predicate: (q) => q.queryKey[0] !== 'auth' });
+      const user = userFromMe(res);
+      if (user) qc.setQueryData(qk.me, user);
+      else void qc.invalidateQueries({ queryKey: qk.me });
+    }
+  });
+}
+
+/** POST /auth/logout. The caller navigates to /login and then clears the cache (see AppShell). */
+export function useLogout() {
+  return useMutation({ mutationFn: () => api.logout() });
+}
+
+/** POST /auth/change-password → 204; the API signs out every other session of this user. */
+export function useChangePassword() {
+  return useMutation({ mutationFn: (body: ChangePasswordBody) => api.changePassword(body) });
 }
 
 // ---------------------------------------------------------------------------

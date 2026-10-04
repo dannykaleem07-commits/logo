@@ -1,5 +1,6 @@
 export * from './audit.js';
 export * from './users.js';
+export * from './sessions.js';
 export * from './parties.js';
 export * from './vehicles.js';
 export * from './claims.js';

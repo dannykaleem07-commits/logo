@@ -103,11 +103,35 @@ function findOnPath(names: string[]): string | undefined {
   return undefined;
 }
 
+/**
+ * Installed browsers by platform. Every Windows 10/11 PC has Microsoft Edge (Chromium), so a packaged ClaimDesk
+ * renders PDFs with nothing extra installed; Chrome is the fallback.
+ */
+export function installedBrowserCandidates(platform: NodeJS.Platform = process.platform, env: NodeJS.ProcessEnv = process.env): string[] {
+  if (platform === 'win32') {
+    const roots = [env['PROGRAMFILES(X86)'], env['PROGRAMFILES'], env['LOCALAPPDATA'], 'C:\\Program Files (x86)', 'C:\\Program Files'].filter((r): r is string => Boolean(r));
+    const rels = ['Microsoft\\Edge\\Application\\msedge.exe', 'Google\\Chrome\\Application\\chrome.exe'];
+    const out: string[] = [];
+    for (const rel of rels) for (const root of roots) out.push(join(root, rel));
+    return [...new Set(out)];
+  }
+  if (platform === 'darwin') {
+    return ['/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge', '/Applications/Chromium.app/Contents/MacOS/Chromium'];
+  }
+  return [];
+}
+
+function findInstalledBrowser(): string | undefined {
+  for (const candidate of installedBrowserCandidates()) if (isExecutable(candidate)) return candidate;
+  return undefined;
+}
+
 let resolvedChromium: string | undefined | null = null; // null = not yet resolved
 
 /**
  * Executable path for Chromium, or undefined to let playwright-core use its own default.
- * Order: CHROMIUM_PATH → PLAYWRIGHT_BROWSERS_PATH (default ~/.cache/ms-playwright) → chromium/google-chrome on PATH.
+ * Order: CHROMIUM_PATH → PLAYWRIGHT_BROWSERS_PATH (default ~/.cache/ms-playwright) → chromium/google-chrome on PATH
+ * → an installed Edge or Chrome (Windows, macOS).
  */
 export function resolveChromium(): string | undefined {
   if (resolvedChromium !== null) return resolvedChromium;
@@ -117,7 +141,7 @@ export function resolveChromium(): string | undefined {
     return explicit;
   }
   const browsersDir = process.env['PLAYWRIGHT_BROWSERS_PATH']?.trim() || join(homedir(), '.cache', 'ms-playwright');
-  resolvedChromium = scanPlaywrightBrowsers(browsersDir) ?? findOnPath(PATH_CANDIDATES);
+  resolvedChromium = scanPlaywrightBrowsers(browsersDir) ?? findOnPath(PATH_CANDIDATES) ?? findInstalledBrowser();
   return resolvedChromium;
 }
 

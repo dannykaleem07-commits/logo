@@ -15,6 +15,13 @@
       "when": 1791075148766,
       "tag": "0001_append_only_triggers",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1791141862768,
+      "tag": "0002_auth_sessions",
+      "breakpoints": true
     }
   ]
 }

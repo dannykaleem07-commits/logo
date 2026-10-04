@@ -48,6 +48,40 @@ export interface AppConfig {
    * origin (never the default — credentials are sent).
    */
   corsOrigins: Array<string | RegExp> | true;
+  /**
+   * How a request is identified. 'session' (default in development and production): the HttpOnly `claimdesk_session`
+   * cookie set by POST /api/auth/login; every /api route except health and auth/{login,logout,me,login-defaults} needs
+   * one. 'header' (default ONLY in test): the legacy `X-User-Id` header / `defaultUserId` fallback. Never 'header' in
+   * production (loadConfig refuses it).
+   */
+  authMode: 'session' | 'header';
+  /** The owner's default sign-in account, created on boot when no user has this username. */
+  defaultLoginUsername: string;
+  defaultLoginPassword: string;
+  /**
+   * Pre-fill the login form. GET /api/auth/login-defaults returns the default password only while this is true AND the
+   * default account still has the default password (it stops by itself once the owner changes it).
+   */
+  loginPrefill: boolean;
+  /** Absolute session lifetime. */
+  sessionTtlHours: number;
+  /**
+   * Mark the session cookie Secure (HTTPS only). Default: true in production. The packaged desktop app runs on
+   * plain http://localhost and sets COOKIE_SECURE=false.
+   */
+  cookieSecure: boolean;
+  /**
+   * How the e-signature one-time code reaches the signer. 'external' (default): a separate email/SMS sender delivers
+   * it and the API never returns it in production. 'handler': no sender is configured, so the code is returned to the
+   * signed-in handler to pass on (phone, text, in person); the audit row records this.
+   */
+  esignDelivery: 'external' | 'handler';
+  /**
+   * Fastify `trustProxy`: which hops may set X-Forwarded-For (it decides `request.ip`, used by the login rate limiter
+   * and recorded on audit rows). Default 'loopback' — only a reverse proxy on the same host — so a client cannot
+   * spoof its address with the header.
+   */
+  trustProxy: boolean | string;
 }
 
 export const LOCALHOST_ORIGINS: readonly RegExp[] = [/^https?:\/\/localhost(:\d+)?$/i, /^https?:\/\/127\.0\.0\.1(:\d+)?$/, /^https?:\/\/\[::1\](:\d+)?$/];
@@ -63,6 +97,42 @@ export function parseCorsOrigins(raw: string | undefined): Array<string | RegExp
 function str(name: string, fallback?: string): string | undefined {
   const v = process.env[name];
   return v === undefined || v === '' ? fallback : v;
+}
+
+function bool(name: string, fallback: boolean): boolean {
+  const v = process.env[name]?.trim().toLowerCase();
+  if (v === undefined || v === '') return fallback;
+  if (['1', 'true', 'yes', 'on'].includes(v)) return true;
+  if (['0', 'false', 'no', 'off'].includes(v)) return false;
+  return fallback;
+}
+
+/** The owner's default sign-in account (requested by the owner; pre-filled on the login screen until its password is changed). */
+export const DEFAULT_LOGIN = {
+  username: 'courtesycars',
+  password: 'CourtesyCars123!',
+  id: 'courtesycars',
+  name: 'Courtesy Cars',
+  email: 'claims@courtesycars.net',
+  role: 'admin' as const,
+};
+
+/** AUTH_MODE: unset → 'header' in test, 'session' otherwise. 'header' is refused in production. */
+export function resolveAuthMode(env: AppConfig['env'], raw: string | undefined): AppConfig['authMode'] {
+  const mode = raw?.trim().toLowerCase();
+  if (mode !== undefined && mode !== '' && mode !== 'session' && mode !== 'header') throw new Error(`AUTH_MODE must be "session" or "header" (got "${raw}")`);
+  const resolved = mode === 'session' || mode === 'header' ? mode : env === 'test' ? 'header' : 'session';
+  if (resolved === 'header' && env === 'production') throw new Error('AUTH_MODE=header is not allowed in production: X-User-Id is not authentication');
+  return resolved;
+}
+
+/** TRUST_PROXY: unset → 'loopback'; 'true'/'false'; otherwise a comma list of addresses/CIDRs/keywords for proxy-addr. */
+export function parseTrustProxy(raw: string | undefined): boolean | string {
+  const v = raw?.trim();
+  if (!v) return 'loopback';
+  if (v.toLowerCase() === 'true') return true;
+  if (v.toLowerCase() === 'false') return false;
+  return v;
 }
 
 function int(name: string, fallback: number): number {
@@ -100,7 +170,7 @@ export function loadConfig(overrides: Partial<AppConfig> = {}): AppConfig {
   const cfg: AppConfig = {
     env: envName === 'test' || envName === 'production' ? envName : 'development',
     port: int('PORT', 4000),
-    // Loopback by default: the auth layer is a placeholder, so never expose claimant data on the LAN unless HOST is set deliberately.
+    // Loopback by default: never expose claimant data on the LAN unless HOST is set deliberately (and the login pre-fill is off).
     host: str('HOST', '127.0.0.1')!,
     databasePath: str('DATABASE_PATH', path.join(dataDir, 'claimdesk.sqlite'))!,
     evidenceDir: str('EVIDENCE_DIR', path.join(dataDir, 'evidence'))!,
@@ -112,8 +182,18 @@ export function loadConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     defaultUserId: str('DEFAULT_USER_ID', 'handler')!,
     lookupTimeoutMs: int('LOOKUP_TIMEOUT_MS', 10_000),
     corsOrigins: parseCorsOrigins(str('CORS_ORIGINS')),
+    authMode: resolveAuthMode(envName === 'test' || envName === 'production' ? envName : 'development', str('AUTH_MODE')),
+    defaultLoginUsername: str('DEFAULT_LOGIN_USERNAME', DEFAULT_LOGIN.username)!,
+    defaultLoginPassword: str('DEFAULT_LOGIN_PASSWORD', DEFAULT_LOGIN.password)!,
+    loginPrefill: bool('LOGIN_PREFILL', true),
+    sessionTtlHours: int('SESSION_TTL_HOURS', 12),
+    cookieSecure: bool('COOKIE_SECURE', envName === 'production'),
+    esignDelivery: str('ESIGN_DELIVERY')?.trim().toLowerCase() === 'handler' ? 'handler' : 'external',
+    trustProxy: parseTrustProxy(str('TRUST_PROXY')),
     ...overrides,
   };
+  if (cfg.authMode === 'header' && cfg.env === 'production') throw new Error('AUTH_MODE=header is not allowed in production: X-User-Id is not authentication');
+  if (!(cfg.sessionTtlHours > 0)) throw new Error('SESSION_TTL_HOURS must be a positive number');
   if (cfg.chromiumPath) process.env.CHROMIUM_PATH = cfg.chromiumPath;
   return cfg;
 }
@@ -138,7 +218,17 @@ export function testConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     defaultUserId: 'handler',
     lookupTimeoutMs: 2_000,
     corsOrigins: [...LOCALHOST_ORIGINS],
+    // Header mode keeps the existing X-User-Id / default-user tests working; auth tests override with 'session'.
+    authMode: 'header',
+    defaultLoginUsername: DEFAULT_LOGIN.username,
+    defaultLoginPassword: DEFAULT_LOGIN.password,
+    loginPrefill: true,
+    sessionTtlHours: 12,
+    esignDelivery: 'external',
+    trustProxy: 'loopback',
     ...overrides,
+    // Mirror loadConfig: production defaults to Secure cookies unless the override says otherwise.
+    cookieSecure: overrides.cookieSecure ?? overrides.env === 'production',
   };
 }
 

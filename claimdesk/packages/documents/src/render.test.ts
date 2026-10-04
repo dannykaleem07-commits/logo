@@ -60,3 +60,17 @@ describe('renderPdf', () => {
     expect(merged.subarray(0, 5).toString('latin1')).toBe('%PDF-');
   }, 60_000);
 });
+
+describe('installed browser candidates', () => {
+  it('lists Edge before Chrome on Windows using the Program Files variables', async () => {
+    const { installedBrowserCandidates } = await import('./render.js');
+    const list = installedBrowserCandidates('win32', { 'PROGRAMFILES(X86)': 'C:\\Program Files (x86)', PROGRAMFILES: 'C:\\Program Files' } as NodeJS.ProcessEnv);
+    expect(list[0]).toMatch(/Microsoft[\\/]Edge[\\/]Application[\\/]msedge\.exe$/);
+    expect(list.some((p) => /chrome\.exe$/.test(p))).toBe(true);
+    expect(list.findIndex((p) => /msedge/.test(p))).toBeLessThan(list.findIndex((p) => /chrome\.exe/.test(p)));
+  });
+  it('returns nothing extra on Linux (PATH and Playwright cover it)', async () => {
+    const { installedBrowserCandidates } = await import('./render.js');
+    expect(installedBrowserCandidates('linux', {} as NodeJS.ProcessEnv)).toEqual([]);
+  });
+});

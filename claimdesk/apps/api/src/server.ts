@@ -1,15 +1,20 @@
 /**
- * ClaimDesk API entry point: load config, create data directories, open the database (migrations run on boot),
- * build the Fastify app and listen. `pnpm --filter @ccguk/api dev` (tsx watch) or `start`.
+ * ClaimDesk API entry point: load config, create data directories, open the database (migrations run on boot), make
+ * sure the owner's sign-in account exists (ensureDefaultLogin), build the Fastify app and listen.
+ * `pnpm --filter @ccguk/api dev` (tsx watch) or `start`.
  */
 import { loadConfig } from './config.js';
 import { buildContext, ensureDataDirs } from './context.js';
 import { buildApp } from './app.js';
+import { ensureDefaultLogin, prefillExposureWarning } from './services/auth.js';
 
 export async function start(): Promise<void> {
   const config = loadConfig();
   ensureDataDirs(config);
   const ctx = buildContext({ config });
+  const login = await ensureDefaultLogin(ctx);
+  const exposure = prefillExposureWarning(ctx);
+  if (exposure) ctx.logger.warn(exposure, { host: config.host, env: config.env });
   const app = await buildApp(ctx);
   const shutdown = async (signal: string) => {
     ctx.logger.info('shutting down', { signal });
@@ -26,6 +31,8 @@ export async function start(): Promise<void> {
     documentsDir: config.documentsDir,
     kbData: ctx.kb.dataDir ?? 'not found',
     lookups: config.keysPresent,
+    auth: config.authMode,
+    signIn: { username: login.username, created: login.created, prefill: config.loginPrefill },
   });
 }
 

@@ -1,5 +1,7 @@
 import { createBrowserRouter, isRouteErrorResponse, Link, useRouteError, type RouteObject } from 'react-router-dom';
 import { AppShell } from './AppShell';
+import { AuthGate } from './AuthGate';
+import { LoginPage } from '../screens/login/LoginPage';
 import { DashboardPage } from '../screens/dashboard/DashboardPage';
 import { ClaimsListPage } from '../screens/claims/ClaimsListPage';
 import { NewClaimPage } from '../screens/claims/new/NewClaimPage';
@@ -28,14 +30,20 @@ function RouteError() {
 }
 
 /**
- * Route map. Claim-file tabs are nested under /claims/:id/* so the next stage can add
+ * Route map. /login sits outside the app shell and is public; every other route is behind <AuthGate>, which sends
+ * a signed-out user to /login?next=<path>. Claim-file tabs are nested under /claims/:id/* so the next stage can add
  * `overview | chronology | ledger | clocks | gates | documents | offers | vehicle | engineering | actions | flags`
  * as child routes inside ClaimFilePage without touching this file's shape.
  */
 export const routes: RouteObject[] = [
+  { path: '/login', element: <LoginPage />, errorElement: <RouteError /> },
   {
     path: '/',
-    element: <AppShell />,
+    element: (
+      <AuthGate>
+        <AppShell />
+      </AuthGate>
+    ),
     errorElement: <RouteError />,
     children: [
       { index: true, element: <DashboardPage /> },

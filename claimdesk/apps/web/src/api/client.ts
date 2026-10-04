@@ -52,6 +52,7 @@ import type {
   TotalLossAssessment,
   TotalLossPrediction,
   TotalLossPredictionInput,
+  UserRole,
   Vehicle,
   Verification
 } from '@ccguk/domain';
@@ -153,6 +154,37 @@ async function parseError(res: Response, url: string): Promise<ApiError> {
   return new ApiError(res.status, `HTTP_${res.status}`, message, url, body);
 }
 
+// ---------------------------------------------------------------------------
+// Session expiry (401)
+// ---------------------------------------------------------------------------
+
+/**
+ * The public auth routes. A 401 from one of these is an answer ("wrong password", "not signed in"), not an
+ * expired session, so it never triggers the sign-in redirect. POST /auth/change-password needs a session, so a
+ * 401 from it does redirect like any other route.
+ */
+export const PUBLIC_AUTH_PATHS = ['/auth/login', '/auth/logout', '/auth/me', '/auth/login-defaults'] as const;
+
+/** True when a 401 from `path` (API path without the /api base, query ignored) should send the user to /login. */
+export function redirectsOn401(path: string): boolean {
+  const clean = (path.startsWith('/') ? path : `/${path}`).split(/[?#]/)[0]!.replace(/\/+$/, '');
+  return !(PUBLIC_AUTH_PATHS as readonly string[]).includes(clean);
+}
+
+type UnauthorizedHandler = (error: ApiError) => void;
+let unauthorizedHandler: UnauthorizedHandler | null = null;
+
+/**
+ * Register what the app does when any non-auth request comes back 401 (main.tsx sends the user to
+ * /login?next=<current path>). The error is still thrown to the caller. Returns a function that unregisters.
+ */
+export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): () => void {
+  unauthorizedHandler = handler;
+  return () => {
+    if (unauthorizedHandler === handler) unauthorizedHandler = null;
+  };
+}
+
 export async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
   const url = buildUrl(path, opts.query);
   const headers: Record<string, string> = { Accept: 'application/json', ...(opts.headers ?? {}) };
@@ -170,7 +202,17 @@ export async function request<T>(path: string, opts: RequestOptions = {}): Promi
     if (e instanceof DOMException && e.name === 'AbortError') throw e;
     throw new ApiError(0, 'NETWORK', `Cannot reach the ClaimDesk API (${(e as Error).message})`, url);
   }
-  if (!res.ok) throw await parseError(res, url);
+  if (!res.ok) {
+    const error = await parseError(res, url);
+    if (error.status === 401 && redirectsOn401(path) && unauthorizedHandler) {
+      try {
+        unauthorizedHandler(error);
+      } catch (e) {
+        console.warn('[ClaimDesk] unauthorized handler failed', e);
+      }
+    }
+    throw error;
+  }
   if (res.status === 204) return undefined as T;
   const ct = res.headers.get('content-type') ?? '';
   if (ct.includes('application/json')) return (await res.json()) as T;
@@ -184,6 +226,50 @@ const patch = <T>(path: string, body: unknown) => request<T>(path, { method: 'PA
 // ---------------------------------------------------------------------------
 // Shapes the contract leaves open (documented in apps/web/README.md)
 // ---------------------------------------------------------------------------
+
+// ---------------------------------------------------------------------------
+// Authentication (docs/ARCHITECTURE.md auth contract; cookie session, HttpOnly — the browser never sees the token)
+// ---------------------------------------------------------------------------
+
+/** The signed-in user as `GET /auth/me` and `POST /auth/login` return it. */
+export interface AuthUser {
+  id: Id;
+  name: string;
+  username: string;
+  email: string;
+  role: UserRole;
+}
+
+/** `GET /auth/me` → 200 `{user}` (401 `UNAUTHENTICATED` without a session). */
+export interface MeResponse {
+  user: AuthUser;
+}
+
+/**
+ * `GET /auth/login-defaults` → what the sign-in screen pre-fills. `password` is present only while LOGIN_PREFILL is
+ * on and the default account still has its default password (the pre-fill stops once the owner changes it).
+ */
+export interface LoginDefaults {
+  username: string;
+  password?: string;
+  prefill: boolean;
+}
+
+export interface LoginBody {
+  username: string;
+  password: string;
+}
+
+/** `POST /auth/login` → 200 `{user}` and the `claimdesk_session` cookie. */
+export interface LoginResult {
+  user: AuthUser;
+}
+
+/** `POST /auth/change-password` → 204; every other session of the user is signed out. */
+export interface ChangePasswordBody {
+  currentPassword: string;
+  newPassword: string;
+}
 
 export interface Health {
   ok: boolean;
@@ -551,6 +637,8 @@ export interface SignStartResult {
   expiresAt: ISODateTime;
   /** Dev/test only: the API may echo the code when no mail/SMS provider is configured. */
   debugCode?: string;
+  /** The packaged desktop app has no email/SMS sender: the code to pass to the signer. */
+  handlerCode?: string;
 }
 
 export interface SignVerifyBody {
@@ -737,6 +825,13 @@ export interface IssueReportResult {
 export const api = {
   // health
   health: (signal?: AbortSignal) => get<Health>('/health', undefined, signal),
+
+  // auth (public: login-defaults, login, logout, me; change-password needs a session)
+  loginDefaults: (signal?: AbortSignal) => get<LoginDefaults>('/auth/login-defaults', undefined, signal),
+  login: (body: LoginBody) => post<LoginResult>('/auth/login', body),
+  logout: () => post<void>('/auth/logout', {}),
+  me: (signal?: AbortSignal) => get<MeResponse>('/auth/me', undefined, signal),
+  changePassword: (body: ChangePasswordBody) => post<void>('/auth/change-password', body),
 
   // claims
   getClaims: async (filters: ClaimListFilters = {}, signal?: AbortSignal) => {

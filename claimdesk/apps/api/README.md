@@ -11,7 +11,7 @@ automatically** — a `send` records `sentAt`/`sentVia` and hands the PDF back f
 ```bash
 pnpm --filter @ccguk/api dev        # tsx watch src/server.ts  (migrations run on boot; data dirs are created)
 pnpm --filter @ccguk/api start
-pnpm --filter @ccguk/api seed       # users, settings, the four live-file archetypes, fleet, watch list (idempotent)
+pnpm --filter @ccguk/api seed       # sign-in account, users, settings, the four live-file archetypes, fleet, watch list (idempotent)
 pnpm --filter @ccguk/api typecheck && pnpm --filter @ccguk/api test
 ```
 
@@ -19,7 +19,7 @@ Environment (`.env` in `apps/api/` or the repo root; every variable is optional)
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `PORT`, `HOST` | `4000`, `127.0.0.1` | listen address. Loopback by default because the auth layer is a placeholder; set `HOST=0.0.0.0` only behind real authentication |
+| `PORT`, `HOST` | `4000`, `127.0.0.1` | listen address. Loopback by default; before setting `HOST=0.0.0.0` change the default password (or set `LOGIN_PREFILL=false`) — see "Authentication" |
 | `DATA_DIR` | `apps/api/data` | parent of the defaults below |
 | `DATABASE_PATH` | `$DATA_DIR/claimdesk.sqlite` | SQLite file (`:memory:` in tests) |
 | `EVIDENCE_DIR`, `DOCUMENTS_DIR` | `$DATA_DIR/evidence`, `$DATA_DIR/documents` | write-once evidence store, rendered PDFs |
@@ -30,18 +30,57 @@ Environment (`.env` in `apps/api/` or the repo root; every variable is optional)
 | `COMPANIES_HOUSE_API_KEY` | — | Companies House (watch list). Without it the poll marks rows `unverified` and skips |
 | `ESIGN_SECRET` (alias `SIGNING_SECRET`) | dev-only fallback; required in production | HMAC secret for the e-signature OTP |
 | `JOBS_ENABLED` | unset | `true` starts the schedulers (nightly watch poll, hourly clocks refresh); never in tests |
-| `DEFAULT_USER_ID` | `handler` | user assumed when `X-User-Id` is absent (dev/test only) |
+| `AUTH_MODE` | `session` (`header` when `NODE_ENV=test`) | `session`: the `claimdesk_session` cookie. `header`: legacy `X-User-Id` (tests); refused in production |
+| `DEFAULT_LOGIN_USERNAME`, `DEFAULT_LOGIN_PASSWORD` | `courtesycars`, `CourtesyCars123!` | the owner's account, created on boot / seed when no user has that username (never overwrites an existing password) |
+| `LOGIN_PREFILL` | `true` | the login screen pre-fills the default username + password (password only while it is still the default) |
+| `SESSION_TTL_HOURS` | `12` | absolute session lifetime (cookie `Max-Age`) |
+| `TRUST_PROXY` | `loopback` | Fastify `trustProxy`: which hops may set `X-Forwarded-For` (decides the IP used by the login rate limiter and recorded on audit rows). `true` trusts any client's header (spoofable); a comma list of proxy addresses/CIDRs for a remote reverse proxy |
+| `DEFAULT_USER_ID` | `handler` | header mode only: user assumed when `X-User-Id` is absent (never in production) |
 | `LOOKUP_TIMEOUT_MS` | `10000` | outbound lookup timeout |
 | `CORS_ORIGINS` | localhost only | browser origins allowed by CORS (credentials on). Unset → `http(s)://localhost`, `127.0.0.1`, `[::1]` on any port; a comma list replaces that; `*` reflects any origin (explicit opt-in only) |
 
 Keys never leave the process: only presence flags are exposed (`/api/health`, `Settings.apiKeys`).
 
-## Auth placeholder
+## Authentication
 
-`X-User-Id: <users.id>` identifies the caller; the hook loads the user and sets `request.user` and `request.actor`
-(`{ userId, ip }`) which every audited mutation records. Without the header, development and test fall back to the
-seeded `handler` user (`DEFAULT_USER_ID`); production returns `401 UNAUTHENTICATED`. Unknown ids are 401. Replace the
-`onRequest` hook in `src/app.ts` with the real identity layer — nothing downstream changes.
+Username + password sign-in with a server-side session (no new dependencies: `node:crypto`, Cookie header parsed and set
+by hand). Code: `src/services/auth.ts`, `src/routes/auth.ts`, the `onRequest` hook in `src/app.ts`.
+
+**Default account.** On boot (`src/server.ts`) and in `pnpm seed`, `ensureDefaultLogin` creates the owner's account when
+no user has the username `DEFAULT_LOGIN_USERNAME`: username `courtesycars`, password `CourtesyCars123!`, id
+`courtesycars`, name "Courtesy Cars", email `claims@courtesycars.net`, role `admin` (audited
+`auth.default_login_created`). It never touches an existing account's password. The login screen pre-fills both boxes
+while `LOGIN_PREFILL` is on **and** the password is still the default; once it is changed (Settings → Change password)
+the password is no longer offered. Anyone who can reach the login page can read the default password until then — keep
+`HOST` on loopback, or change the password / set `LOGIN_PREFILL=false`, before exposing the server.
+
+**Passwords** are stored only as `scrypt$16384$8$1$<salt b64>$<hash b64>` (scrypt N=16384, r=8, p=1, 16-byte random
+salt, 64-byte key) and checked with `crypto.timingSafeEqual`. They are never logged or audited.
+
+**Sessions.** A successful login creates a 32-byte random token (base64url) and sets
+`claimdesk_session=<token>; HttpOnly; SameSite=Lax; Path=/; Max-Age=43200` (`; Secure` when `NODE_ENV=production` —
+production therefore needs HTTPS). The `sessions` table stores only `sha256(token)` with `user_id`, `created_at`,
+`expires_at` (absolute, 12 h; activity does not extend it), `last_seen_at`, `ip`, `user_agent`. Expired rows are
+rejected and deleted. A new login discards the browser's previous session.
+
+**The hook.** In `session` mode every `/api/*` route needs a valid session except `GET /api/health` and
+`/api/auth/{login,logout,me,login-defaults}`; the check uses the matched route pattern, and unknown `/api` paths are
+`401` too. Requests outside `/api` (the built web app) are public — the app's screens call `/api/auth/me` and send the
+user to `/login`. The session's user becomes `request.user` and `request.actor` (`{ userId, ip }`), so every existing
+audit row records who did it. `X-User-Id` is ignored. In `header` mode (the default only when `NODE_ENV=test`, so the
+existing integration tests keep using `X-User-Id` / the seeded `handler`), the old behaviour is unchanged.
+
+| Endpoint | Auth | Request → response |
+|---|---|---|
+| `GET /auth/login-defaults` | public | `200 { username, password?, prefill }` — `password` only while `LOGIN_PREFILL` is on and the default account still has the default password (checked once per stored hash, then cached). With `LOGIN_PREFILL=false`: `{ username: "", prefill: false }` |
+| `POST /auth/login` | public | `{ username, password }` → `200 { user: { id, name, username, email, role } }` + `Set-Cookie`. Usernames compare case-insensitively after trim. Unknown user and wrong password both `401 INVALID_CREDENTIALS` "Username or password is incorrect" (an unknown user is verified against a dummy hash, so the timing matches). 10 failures for the same username + IP within 15 minutes → `429 LOGIN_RATE_LIMITED` (+ `Retry-After`) until the oldest failure leaves the window (in memory, per process). Each attempt is counted before the password check, so a parallel burst gets at most 10 checks; a correct password clears the count. When the table is full, unlocked keys are evicted before locked ones |
+| `POST /auth/logout` | public | `204`; deletes the session row and expires the cookie (`Max-Age=0`). A no-op without a session |
+| `GET /auth/me` | public | `200 { user }` or `401 UNAUTHENTICATED` (a stale cookie is expired) |
+| `POST /auth/change-password` | session | `{ currentPassword, newPassword }` → `204`. Wrong current → `400 INVALID_CREDENTIALS`; `newPassword` shorter than 10 characters, equal to the current one, or equal to the default password → `400 VALIDATION`. Signs out every other session of the user |
+
+All auth responses carry `Cache-Control: no-store`. Audit (append-only `audit_log`): `auth.login`,
+`auth.login_failed` (actor `anonymous`; the username tried and the reason, never the password), `auth.logout`,
+`auth.password_changed`, `auth.password_change_failed`. `GET /users` lists each user's `username` — never a hash.
 
 Every response carries `x-request-id` (honours an inbound `X-Request-Id`).
 
@@ -63,14 +102,15 @@ Every response carries `x-request-id` (honours an inbound `X-Request-Id`).
 src/
   config.ts            loadConfig()/testConfig() — env, data dirs, key presence
   context.ts           AppContext { config, handle, db, repos, settings(), kb, now(), engines(), logger, close() }
-  app.ts               buildApp(ctx): cors (localhost origins unless CORS_ORIGINS), multipart (25 MB), static web + SPA fallback (never for /api), error handler, auth placeholder
-  server.ts            start(): migrations on boot, data dirs, listen
+  app.ts               buildApp(ctx, { logger? }): cors (localhost origins unless CORS_ORIGINS), multipart (25 MB), static web + SPA fallback (never for /api), error handler, auth hook (session / header mode)
+  server.ts            start(): migrations on boot, data dirs, ensureDefaultLogin, listen
   seed.ts, seed/       dev seed (archetypes.ts: the four live files; png.ts: programmatic PNG evidence)
   engines.ts           typed adapters to the @ccguk/domain engines (see "Engines")
   jobs.ts              JOBS_ENABLED schedulers + POST /jobs/run
   errors.ts            HttpError helpers
   schemas/             zod schemas mirroring packages/domain/src/types.ts (services.ts: the services half)
   services/
+    auth.ts            scrypt hashPassword/verifyPassword, session token + cookie helpers, resolveSession, LoginRateLimiter, ensureDefaultLogin
     intake.ts          FNOL normalisation (API ⇄ web-client body) → domain FnolInput
     claimView.ts       bundle + clocks/gates/actions/acceptance, insurerPaidBefore
     sideEffects.ts     event → side effects (off-hire clocks, storage report+48h, offers)
@@ -117,7 +157,8 @@ and return the PDF — the handler sends it.
 
 ### Core
 
-- `GET /health` — db, key presence, kb data, and which domain export each engine is wired to.
+- `GET /health` — db, key presence, kb data, and which domain export each engine is wired to. Public.
+- Auth: `GET /auth/login-defaults`, `POST /auth/login`, `POST /auth/logout`, `GET /auth/me`, `POST /auth/change-password` — see "Authentication".
 - Claims: `GET /claims` (`status` (comma list), `handlerId`, `atFaultInsurerId`, `claimantId`, `search`/`q`, `flagged`, `limit`, `offset` → `{items, total, byStatus}`),
   `POST /claims` (FNOL, see below), `GET /claims/:id` (ClaimBundle + `gates`, `actions`, `acceptance`, `position`, `linkedClaims`; clocks recomputed and cached),
   `PATCH /claims/:id` (incl. `injuryReferral`), `POST /claims/:id/status` (409 `HARD_STOP` while a block flag is uncleared), `POST /claims/:id/flags/:code/clear`,
@@ -303,7 +344,8 @@ Paths and bodies match the client. Notes: list endpoints return `{items, …}` (
 
 ## Seed (`pnpm --filter @ccguk/api seed`)
 
-Users `handler` / `approver` / `admin` / `engineer`; settings with the rate card (£90 / £3 per loaded mile / £25,
+The owner's sign-in account (`ensureDefaultLogin`; runs even when the database already has claims); users
+`handler` / `approver` / `admin` / `engineer` (no passwords — they cannot sign in until given one); settings with the rate card (£90 / £3 per loaded mile / £25,
 £45/day storage, £285 engineer) and the registered name on the bank account; the four live-file archetypes with full
 chronologies, ledgers, offers, hire/storage/recovery and PNG evidence generated in code (`seed/png.ts`): File 1 "£1,287
 stated vs £1,112 received" (`@ccguk/db` fixture), File 2 storage capped at report + 48 h / engineer fee refused / CARFLEX
@@ -327,4 +369,13 @@ directory ageing and verification, KB search/advise/GTA rates/ladder; watch poll
 on the full seed; settings Confirmation-of-Payee warning and legacy refusal. `hardening.test.ts`: CORS default (localhost
 only, lookalike hosts refused), `/api` 404s never fall through to the SPA shell, zod on `force` and list filters, store
 path containment, evidence and PDF reads re-hashed (tampered bytes → 409 + audit), certificate route, and a signed PDF
-is never re-rendered. Lookup mappers and clients are unit-tested with fixture payloads and a fake `fetch` (no network).
+is never re-rendered. `auth.test.ts` (built with `authMode: 'session'`): scrypt format and verification, cookie parsing,
+the default account, login → HttpOnly cookie → `/auth/me`, wrong password and unknown user both `401
+INVALID_CREDENTIALS`, protected routes `401` without a cookie (and with only `X-User-Id`), the `claim.create` audit row
+records `courtesycars`, logout, the `429` rate limit (and that a spoofed `X-Forwarded-For` does not reset it),
+login-defaults before/after change-password, change-password validation and signing out other sessions, 12-hour expiry,
+the `Secure` flag in production, and that no password or token reaches `audit_log`, any table, or the captured logger
+output. `auth-security.test.ts` walks `app.printRoutes()` and asserts `401 UNAUTHENTICATED` for every non-public `/api`
+route and method with no cookie, a forged cookie and `X-User-Id`; checks that a parallel burst of 40 wrong passwords
+gets exactly 10 password checks (the rest `429`), the same for change-password, that a flood of junk usernames cannot
+evict a locked key, and that CORS grants credentials to localhost origins only. Lookup mappers and clients are unit-tested with fixture payloads and a fake `fetch` (no network).

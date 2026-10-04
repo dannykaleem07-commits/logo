@@ -2,7 +2,7 @@
  * @ccguk/db — Drizzle (sqlite-core) schema.
  *
  * One table per entity in `@ccguk/domain` types.ts plus a few persistence-only tables
- * (claim_sequences, clocks cache, settings, audit_log, labour_library, directory_overrides).
+ * (claim_sequences, clocks cache, settings, audit_log, labour_library, directory_overrides, sessions).
  *
  * Conventions:
  *  - text primary keys (crypto.randomUUID()), ISO text for dates, integer pence for money
@@ -97,8 +97,34 @@ export const users = sqliteTable(
     role: text('role').$type<UserRole>().notNull(),
     mfaEnabled: integer('mfa_enabled', { mode: 'boolean' }).notNull().default(false),
     createdAt: text('created_at').notNull(),
+    /** Sign-in name, stored trimmed and lower-cased (case-insensitive unique). Null for staff who cannot sign in. */
+    username: text('username'),
+    /** "scrypt$N$r$p$saltB64$hashB64" — never a plain-text password (repos refuse anything else). */
+    passwordHash: text('password_hash'),
+    passwordChangedAt: text('password_changed_at'),
   },
-  (t) => [uniqueIndex('users_email_uq').on(t.email)],
+  (t) => [uniqueIndex('users_email_uq').on(t.email), uniqueIndex('users_username_uq').on(t.username)],
+);
+
+/**
+ * Signed-in sessions. `id` is the sha256 hex digest of the session token — the token itself is only ever held by the
+ * browser (HttpOnly cookie). Rows expire (absolute `expires_at`) and are deleted on logout / password change, so this
+ * table is NOT append-only.
+ */
+export const sessions = sqliteTable(
+  'sessions',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: text('created_at').notNull(),
+    expiresAt: text('expires_at').notNull(),
+    lastSeenAt: text('last_seen_at').notNull(),
+    ip: text('ip'),
+    userAgent: text('user_agent'),
+  },
+  (t) => [index('sessions_user_idx').on(t.userId), index('sessions_expires_idx').on(t.expiresAt)],
 );
 
 export const parties = sqliteTable(
@@ -722,6 +748,8 @@ export const labourLibrary = sqliteTable(
 
 export type UserRow = typeof users.$inferSelect;
 export type UserInsert = typeof users.$inferInsert;
+export type SessionRow = typeof sessions.$inferSelect;
+export type SessionInsert = typeof sessions.$inferInsert;
 export type PartyRow = typeof parties.$inferSelect;
 export type PartyInsert = typeof parties.$inferInsert;
 export type VehicleRow = typeof vehicles.$inferSelect;
