@@ -20,3 +20,12 @@ def isolated_home(tmp_path, monkeypatch):
 
 
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+
+def pytest_configure(config):
+    """The tests measure layouts, so they run under the same widget style as the app (Fusion), on every OS."""
+    from PySide6.QtWidgets import QApplication
+
+    from callpilot.ui.theme import use_app_style
+
+    use_app_style(QApplication.instance() or QApplication([]))

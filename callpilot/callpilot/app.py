@@ -68,6 +68,9 @@ def main() -> int:
     winutil.set_app_user_model_id()
     QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     app = QApplication(sys.argv)
+    from callpilot.ui.theme import use_app_style
+
+    use_app_style(app)
     app.setApplicationName(__app_name__)
     app.setApplicationVersion(__version__)
     app.setQuitOnLastWindowClosed(False)
