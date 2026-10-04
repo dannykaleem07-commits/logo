@@ -4,7 +4,7 @@ ClaimDesk encodes the rules in `docs/BLUEPRINT.md`. The items below are the ones
 
 | # | Item | Why it matters | Where it lives | Status |
 |---|---|---|---|---|
-| 1 | ICOBS 8.2.1R territorial scope | Templates cite the three-month duty (8.2.6R) and base + 4% interest (8.2.9R–8.2.11R). Confirm it applies to purely domestic third-party motor claims before asserting it "as of right" | `packages/kb/data/fca.json`; clocks `icobs_8_2_6_three_months`; quantum `interest({basis:'icobs_8_2'})` | see data |
+| 1 | ICOBS 8.2.1R territorial scope (research: 8.2.1R(1) appears to apply to any motor liability insurer; see RESEARCH-CORRECTIONS #10) | Templates cite the three-month duty (8.2.6R) and base + 4% interest (8.2.9R–8.2.11R). Confirm it applies to purely domestic third-party motor claims before asserting it "as of right" | `packages/kb/data/fca.json`; clocks `icobs_8_2_6_three_months`; quantum `interest({basis:'icobs_8_2'})` | see data |
 | 2 | GTA 2026–27 rates for every group | Only S1 £42.32, M £56.66, M1 £65.49 were confirmed. CP1/CP2 figures seen were labelled 2025–26 | `packages/kb/data/gta-rates.json` | see data |
 | 3 | GTA is a benchmark, not law, for CCGUK | CCGUK is not a subscriber (audit £1,890 + VAT, 40 qualifying files). GTA 2.7(j): terms "have no relevance in law" outside the GTA. Letters say "industry benchmark"; the consistency engine blocks `GTA_CITED_AS_LAW` | `claim.gtaSubscriber=false`; consistency engine | enforced |
 | 4 | Court fees (EX50) | Issue and hearing fee bands came from secondary sources | `packages/kb/data/court-fees.json`; quantum `courtFee` | see data |
@@ -22,4 +22,4 @@ ClaimDesk encodes the rules in `docs/BLUEPRINT.md`. The items below are the ones
 | 16 | Bank account name | Must be exactly "Courtesy Cars Group UK Ltd" for Confirmation of Payee; never send legacy details (Car Flex / 17360033 / 66 Paul Street / EC2A 4PX / courtesycarsuk.co.uk) | settings warning; consistency `LEGACY_DETAIL`, `PAYEE_MISMATCH` | enforced |
 | 17 | Data protection | ICO fee tier 1 £52; appropriate policy document for driving-conviction data (DPA 2018 Sch 1); complaints process before an ICO complaint (DUAA 2025 s.103 from 19 June 2026) | settings; docs | manual |
 
-"see data" means the status is whatever the research agents could verify online on 4 October 2026 and is recorded per entry. "enforced" means the rule is code, with tests.
+"see data" means the status recorded per entry. On 4 October 2026 the build environment blocked all external hosts, so every entry is currently `unverified` with its source URL recorded; see `RESEARCH-CORRECTIONS.md` for the items where search snippets contradicted the blueprint. "enforced" means the rule is code, with tests.
