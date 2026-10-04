@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QFormLayout, QHBoxLayo
 
 from callpilot.core.business import Business, BusinessStore, Script
 from callpilot.hubs.model import Hub, HubStore
-from callpilot.ui.widgets import fit_to_screen
+from callpilot.ui.widgets import DialogKeys, fit_to_screen
 
 
 def _lines(text: str) -> list[str]:
@@ -117,6 +117,7 @@ class BusinessEditor(QDialog):
         bb.accepted.connect(self._save)
         bb.rejected.connect(self.reject)
         root.addWidget(bb)
+        self._keys = DialogKeys(self, {self.hubs: self._edit_hub})   # Enter on a hub opens it; on a script, edits it
 
     def _add_script(self, s: Script):
         r = self.scripts.rowCount()

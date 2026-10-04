@@ -7,10 +7,11 @@ import html
 import re
 from collections import OrderedDict
 
-from PySide6.QtCore import QRectF, QSize, Qt, QTimer, Signal
+from PySide6.QtCore import QEvent, QObject, QRectF, QSize, Qt, QTimer, Signal
 from PySide6.QtGui import QColor, QPainter, QPen, QTextCursor
-from PySide6.QtWidgets import (QApplication, QCheckBox, QFrame, QGridLayout, QHBoxLayout, QLabel, QLineEdit,
-                               QPushButton, QScrollArea, QSizePolicy, QTextBrowser, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QCheckBox, QFrame, QGridLayout, QHBoxLayout, QLabel,
+                               QLineEdit, QPushButton, QScrollArea, QSizePolicy, QTableView, QTextBrowser, QVBoxLayout,
+                               QWidget)
 
 from callpilot.core.models import AGENT, ASK, SAY, WATCH, Card, Segment
 from callpilot.ui.theme import palette
@@ -44,10 +45,51 @@ def scrollable(page: QWidget) -> QScrollArea:
     sa = QScrollArea()
     sa.setWidgetResizable(True)
     sa.setFrameShape(QFrame.NoFrame)
+    sa.setFocusPolicy(Qt.NoFocus)   # not a Tab stop of its own: Tab goes straight to the fields inside
     sa.setWidget(page)
     page.setAutoFillBackground(False)            # after setWidget, which turns it on
     sa.viewport().setAutoFillBackground(False)   # otherwise a grey slab shows in the dark theme
     return sa
+
+
+class DialogKeys(QObject):
+    """Enter in a dialog does what the focused control says, never a hidden default button:
+    a focused push button is pressed; in a list Enter runs that list's action (open the section, edit the hub, open
+    the file), in a table it edits the cell, and otherwise it does nothing rather than Save and close the dialog.
+    In a text field Enter keeps the dialog's normal behaviour."""
+
+    def __init__(self, dialog, handlers: dict | None = None):
+        super().__init__(dialog)
+        self._dlg = dialog
+        self._handlers = handlers or {}
+        dialog.installEventFilter(self)
+
+    def eventFilter(self, obj, ev):
+        if (obj is not self._dlg or ev.type() != QEvent.KeyPress or ev.key() not in (Qt.Key_Return, Qt.Key_Enter)
+                or ev.modifiers() & (Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier)):
+            return False
+        fw = self._dlg.focusWidget()
+        if isinstance(fw, QPushButton):
+            if fw.isEnabled():
+                fw.click()
+            return True
+        if isinstance(fw, QAbstractItemView):
+            action = self._handlers.get(fw)
+            if action is not None:
+                action()
+            elif (isinstance(fw, QTableView) and fw.currentIndex().isValid()
+                  and fw.editTriggers() != QAbstractItemView.NoEditTriggers):
+                fw.edit(fw.currentIndex())
+            return True
+        return False
+
+
+def focus_first_field(page: QWidget) -> None:
+    """Move keyboard focus to the first control on a page (used when Enter opens a Settings section)."""
+    for c in page.findChildren(QWidget):
+        if c.isVisible() and c.isEnabled() and (c.focusPolicy() & Qt.TabFocus) and not isinstance(c, QScrollArea):
+            c.setFocus(Qt.TabFocusReason)
+            return
 
 
 class ElidedLabel(QLabel):

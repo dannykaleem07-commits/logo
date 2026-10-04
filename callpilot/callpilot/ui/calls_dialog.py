@@ -17,7 +17,7 @@ from PySide6.QtWidgets import (QDialog, QFileDialog, QHBoxLayout, QLineEdit, QLi
 
 from callpilot.core.export import default_export_dir, export_call
 from callpilot.core.sessions import SessionStore, export_text
-from callpilot.ui.widgets import fit_to_screen
+from callpilot.ui.widgets import DialogKeys, fit_to_screen
 
 
 def open_folder(path: Path) -> None:
@@ -105,6 +105,7 @@ class CallsDialog(QDialog):
         # No default button: Enter in the search box must never open a folder, export or delete.
         for b in self.findChildren(QPushButton):
             b.setAutoDefault(False)
+        self._keys = DialogKeys(self)   # …but Enter on a button you Tabbed to still presses it
         files = self.store.list()
         if len(files) <= 40:
             self._load()
@@ -155,8 +156,8 @@ class CallsDialog(QDialog):
                 self.list.setCurrentRow(0)
 
     def _load(self):
-        if self._warming:
-            return
+        if self._warming or self._closed:
+            return   # closed: never decrypt the rest on the GUI thread for a dialog nobody sees
         text = self.search.text().strip()
         q = text.lower()
         self.list.clear()
@@ -224,6 +225,8 @@ class CallsDialog(QDialog):
     def done(self, r):
         self._closed = True
         self._debounce.stop()
+        self._cache.clear()        # decrypted calls do not outlive the dialog
+        self.current = None
         super().done(r)
 
     def closeEvent(self, e):

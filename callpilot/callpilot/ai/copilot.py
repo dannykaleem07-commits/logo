@@ -215,7 +215,13 @@ class CallSession:
 
     # ================================================================= operator actions
     def mark_card(self, card_type: str | None, action: str) -> Card | None:
-        c = self.deck.mark(card_type, action)
+        return self._feedback(self.deck.mark(card_type, action), action)
+
+    def mark_this(self, card: Card, action: str) -> Card:
+        """Mark the card the handler acted on (the one on screen), never whatever now holds its slot."""
+        return self._feedback(self.deck.mark_card(card, action), action)
+
+    def _feedback(self, c: Card | None, action: str) -> Card | None:
         if c is not None and c.type == SAY and self.memory is not None and action in ("used", "dismissed"):
             q = next((s.text for s in self.segments if s.id == c.segment_id), "")
             if q:

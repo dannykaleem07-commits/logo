@@ -14,7 +14,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QCheckBox, QDialog, QDialogBut
                                QTabWidget, QVBoxLayout, QWidget)
 
 from callpilot.hubs.model import CaptureField, Hub, parse_qa_csv, read_document
-from callpilot.ui.widgets import fit_to_screen, scrollable
+from callpilot.ui.widgets import DialogKeys, fit_to_screen, scrollable
 
 QA_GEN_SYSTEM = """You build call-centre answer banks. From the company knowledge provided, write the
 questions callers most often ask and an approved, compliant, spoken answer for each (2-3 short sentences,
@@ -190,6 +190,7 @@ class HubEditor(QDialog):
         bb.accepted.connect(self._save)
         bb.rejected.connect(self.reject)
         root.addWidget(bb)
+        self._keys = DialogKeys(self)   # Enter in the Q&A / field tables edits the cell instead of saving and closing
         self._qa_ready.connect(self._on_qa_ready)
 
     # ------------------------------------------------------------- Q&A helpers

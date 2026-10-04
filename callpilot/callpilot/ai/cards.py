@@ -176,6 +176,17 @@ class CardDeck:
         self.on_change()
         return c
 
+    def mark_card(self, card: Card, action: str) -> Card:
+        """Mark this exact card. Its slot is cleared only if the card still holds it: when a newer answer has
+        already taken the slot (it is waiting behind 'Next answer ready'), that answer is left untouched."""
+        card.action = action
+        if action in ("used", "dismissed"):
+            card.pinned_top = False
+            if self.slots.get(card.type) is card:
+                self.slots[card.type] = None
+        self.on_change()
+        return card
+
     def expire(self) -> None:
         now = time.time()
         changed = False

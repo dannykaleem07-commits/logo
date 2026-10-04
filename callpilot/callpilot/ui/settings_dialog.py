@@ -15,7 +15,7 @@ from callpilot.ai.translator import LANGUAGES
 from callpilot.core import secrets
 from callpilot.core.config import Settings
 from callpilot.core.crypto import BadPassphrase, Vault
-from callpilot.ui.widgets import fit_to_screen, scrollable
+from callpilot.ui.widgets import DialogKeys, fit_to_screen, focus_first_field, scrollable
 
 CLAUDE_LIVE = ["claude-haiku-4-5-20251001", "claude-sonnet-5-5", "claude-opus-5-5"]
 CLAUDE_WRAP = ["claude-sonnet-5-5", "claude-opus-5-5", "claude-haiku-4-5-20251001", "claude-fable-5-1"]
@@ -42,7 +42,8 @@ def _device_combo(names, current) -> QComboBox:
 _KEY_NAMES = {"ctrl": "Ctrl", "shift": "Shift", "alt": "Alt", "cmd": "Win", "space": "Space", "tab": "Tab",
               "esc": "Esc", "enter": "Enter", "backspace": "Backspace", "delete": "Delete", "insert": "Insert",
               "home": "Home", "end": "End", "page_up": "PageUp", "page_down": "PageDown", "up": "Up", "down": "Down",
-              "left": "Left", "right": "Right"}
+              "left": "Left", "right": "Right", "pause": "Pause", "menu": "Menu", "print_screen": "PrintScreen",
+              "scroll_lock": "ScrollLock", "num_lock": "NumLock", "caps_lock": "CapsLock"}
 _KEY_CODES = {v.lower(): k for k, v in _KEY_NAMES.items()} | {"control": "ctrl", "windows": "cmd", "escape": "esc",
                                                               "return": "enter", "del": "delete", "pgup": "page_up",
                                                               "pgdn": "page_down"}
@@ -68,10 +69,7 @@ def pynput_hotkey(text: str) -> str:
     for tok in (t.strip() for t in (text or "").split("+") if t.strip()):
         name = (tok[1:-1] if tok.startswith("<") and tok.endswith(">") else tok).lower()
         code = _KEY_CODES.get(name, name)
-        if code in _KEY_NAMES or (len(code) > 1 and code[0] == "f" and code[1:].isdigit()):
-            out.append(f"<{code}>")
-        else:
-            out.append(code)
+        out.append(f"<{code}>" if len(code) > 1 else code)   # named keys in brackets, single characters bare
     return "+".join(out)
 
 
@@ -129,6 +127,8 @@ class SettingsDialog(QDialog):
         self.nav.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.tabs = QTabWidget()
         self.tabs.tabBar().hide()
+        self.tabs.tabBar().setFocusPolicy(Qt.NoFocus)   # hidden: never a Tab stop (it was a keyboard trap)
+        self.tabs.setFocusPolicy(Qt.NoFocus)
         body.addWidget(self.nav)
         body.addWidget(self.tabs, 1)
         root.addLayout(body, 1)
@@ -149,6 +149,7 @@ class SettingsDialog(QDialog):
         self.nav.ensurePolished()
         self.nav.setFixedWidth(self.nav.sizeHintForColumn(0) + 40)   # + room for the bold selected row and the focus ring
         self.nav.currentRowChanged.connect(self.tabs.setCurrentIndex)
+        self._keys = DialogKeys(self, {self.nav: lambda: focus_first_field(self.tabs.currentWidget())})
         self.tabs.currentChanged.connect(self.nav.setCurrentRow)
         self.tabs.setCurrentIndex(start_tab)
         self.nav.setCurrentRow(start_tab)

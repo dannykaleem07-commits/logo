@@ -230,4 +230,12 @@ QProgressBar {{ background: {c['panel2']}; border: none; border-radius: 4px; hei
 QProgressBar::chunk {{ background: {c['good']}; border-radius: 4px; }}
 QLineEdit, QTextEdit, QPlainTextEdit {{ placeholder-text-color: {c['muted']}; }}
 QListWidget {{ outline: 0; }}
+QListWidget::item:focus:!selected {{ border: 2px solid {c['accent']}; }}
+QMenu {{ background: {c['panel']}; color: {c['text']}; border: 1px solid {c['border']}; padding: 4px; }}
+QMenu::item {{ padding: 6px 18px; border-radius: 6px; }}
+QMenu::item:selected {{ background: {c['primary']}; color: white; }}
+QMenu::item:disabled {{ color: {c['muted']}; }}
+QMenu::separator {{ height: 1px; background: {c['border']}; margin: 4px 8px; }}
+QScrollBar:horizontal {{ background: transparent; height: 10px; }}
+QScrollBar::handle:horizontal {{ background: {c['field_border']}; border-radius: 5px; min-width: 30px; }}
 """ + _arrow_rules(c)

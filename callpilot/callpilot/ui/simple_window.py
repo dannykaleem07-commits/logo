@@ -17,8 +17,8 @@ import time
 from PySide6.QtCore import QRect, QSize, Qt, QTimer, Signal
 from PySide6.QtGui import QAction, QColor, QFont, QFontMetrics, QKeySequence, QShortcut
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout, QLabel, QListView, QListWidget,
-                               QListWidgetItem, QMenu, QPushButton, QSizePolicy, QSplitter, QStatusBar, QStyle,
-                               QStyledItemDelegate, QStyleOptionViewItem, QVBoxLayout, QWidget)
+                               QListWidgetItem, QMenu, QPushButton, QScrollArea, QSizePolicy, QSplitter, QStatusBar,
+                               QStyle, QStyledItemDelegate, QStyleOptionViewItem, QVBoxLayout, QWidget)
 
 from callpilot import __app_name__
 from callpilot.ai import tts
@@ -36,7 +36,7 @@ READ_LOCK_S = 6.0        # a fresh answer is not replaced for this long unless y
 QUEUE_PROMOTE_S = 9.0    # a queued answer takes over after this long anyway
 TRANSCRIPT_TIP = "Download this call's transcript (.txt or .docx)"
 SCRIPTS_AUTOHIDE_W = 1240   # below this window width the scripts rail hides itself (125-150 % scaling)
-ANSWER_ROOM = 300           # the answer area keeps at least this much height before 'Earlier answers' is shown
+TIGHT_W = 1000              # below this width (150 % scaling) the top bar uses its short labels
 
 
 def _clip(t: str, n: int) -> str:
@@ -210,18 +210,24 @@ class SayPanel(QFrame):
         the room: 'Earlier answers' tucks away and comes back when the pane is tall enough again. It depends on the
         pane's height only, never on the answer's length, so Said it / Show it never shift while an answer grows."""
         has = self.recent.count() > 0
-        recent_h = 0
-        if has:
-            recent_h = min(110, 2 * self.recent.sizeHintForRow(0) + 2 * self.recent.spacing() + 8)   # two rows; more scroll
-            self.recent.setFixedHeight(recent_h)
+        # a constant height (two rows from the font), so nothing moves when the first earlier answer arrives
+        recent_h = min(110, 2 * (self.recent.fontMetrics().lineSpacing() + 14) + 2 * self.recent.spacing() + 8)
+        self.recent.setFixedHeight(recent_h)
         m = self._lay.contentsMargins()
         sp = self._lay.spacing()
         fixed = m.top() + m.bottom() + self.title.sizeHint().height() + sp + self.btn_used.sizeHint().height() + sp
         fixed += self.btn_next_now.sizeHint().height() + 16 + sp   # room for the Next bar, counted whether or not it shows
         recent_block = self.recent_title.sizeHint().height() + recent_h + 2 * sp
-        show = has and self.height() - fixed - recent_block >= ANSWER_ROOM
-        self.recent_title.setVisible(show)
-        self.recent.setVisible(show)
+        room = self._answer_min_height() + 96
+        fits = self.height() - fixed - recent_block >= room
+        # Decided on the pane's height only. While it fits, the block keeps its space even before the first earlier
+        # answer exists, so Said it / Show it never jump up mid-read; when it doesn't fit, it gives the answer the room.
+        for w in (self.recent_title, self.recent):
+            pol = w.sizePolicy()
+            if pol.retainSizeWhenHidden() != fits:
+                pol.setRetainSizeWhenHidden(fits)
+                w.setSizePolicy(pol)
+            w.setVisible(fits and has)
 
     def _label_width(self, b: QPushButton, text: str) -> int:
         b.ensurePolished()
@@ -438,11 +444,16 @@ class SayPanel(QFrame):
         self._fit_height()
 
     def _answer_min_height(self) -> int:
-        """The risk row plus two lines of the answer: the answer is never squeezed to the tops of its letters."""
+        """The risk row, the opener ("That's a good question.") and two lines of the answer: the answer is never
+        squeezed to the tops of its letters."""
         f = QFont(self.font())
         f.setPointSize(self.font_pt + 13)
         f.setBold(True)
-        return 40 + 8 + 2 * QFontMetrics(f).lineSpacing() + 16   # +16: the risk row's padding/border and the frame
+        filler = QFont(self.font())
+        filler.setPointSize(self.font_pt + 2)
+        filler.setItalic(True)
+        # risk row (40 + its padding/border 16) + gap, opener line + gap, two answer lines, the frame's 2 px border
+        return 40 + 16 + 8 + QFontMetrics(filler).lineSpacing() + 8 + 2 * QFontMetrics(f).lineSpacing() + 4
 
     def _base_styles(self):
         pt = self.font_pt
@@ -482,6 +493,45 @@ class SayPanel(QFrame):
         self.set_need([])
         self.current = None
         self.show_cards([], force=True)
+
+
+class _HScroll(QScrollArea):
+    """A toolbar that scrolls sideways when the window is narrower than it, instead of forcing the whole
+    window wider than the screen. Its height is the toolbar's, plus the thin scrollbar only when it shows."""
+
+    BAR = 10
+
+    def __init__(self, w: QWidget):
+        super().__init__()
+        self.setWidget(w)
+        self.setWidgetResizable(True)
+        self.setFrameShape(QFrame.NoFrame)
+        self.setFocusPolicy(Qt.NoFocus)
+        self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
+        w.setAutoFillBackground(False)
+        self.viewport().setAutoFillBackground(False)
+        self._bar = 0
+
+    def _need_bar(self) -> int:
+        w = self.widget()
+        return self.BAR if w is not None and w.minimumSizeHint().width() > self.width() else 0
+
+    def minimumSizeHint(self):
+        w = self.widget()
+        return QSize(0, (w.minimumSizeHint().height() if w is not None else 0) + self._need_bar())
+
+    def sizeHint(self):
+        w = self.widget()
+        return QSize(w.sizeHint().width() if w is not None else 0, self.minimumSizeHint().height())
+
+    def resizeEvent(self, e):
+        super().resizeEvent(e)
+        bar = self._need_bar()
+        if bar != self._bar:
+            self._bar = bar
+            self.updateGeometry()
 
 
 class Banner(QFrame):
@@ -700,7 +750,7 @@ class SimpleWindow(MainWindow):
         self.preset_combo.setCurrentIndex(max(0, self.preset_combo.findData(preset_for(self.s.ai) or self.s.ai.preset)))
         self.preset_combo.currentIndexChanged.connect(self._preset_changed)
         self.preset_combo.setToolTip("Which AI writes your answers")
-        row2.addWidget(self.preset_combo)
+        row2.addWidget(self.preset_combo, 1)
         for cb in (self.business_combo, self.hub_combo, self.preset_combo):
             cb.setMinimumWidth(0)   # the hub combo inherits a 260 px minimum from the cockpit header
             cb.setSizeAdjustPolicy(QComboBox.AdjustToMinimumContentsLengthWithIcon)
@@ -820,12 +870,12 @@ class SimpleWindow(MainWindow):
         # ---- advanced drawer
         self.drawer = QWidget()
         dl = QVBoxLayout(self.drawer)
-        dl.setContentsMargins(16, 0, 16, 8)
-        dl.setSpacing(8)
+        dl.setContentsMargins(16, 0, 16, 0)
+        dl.setSpacing(4)
         for strip in (self._header, self._bottom):
             strip.setObjectName("toolbar")
             strip.layout().setContentsMargins(16, 8, 16, 8)
-        dl.addWidget(self._header)
+        dl.addWidget(_HScroll(self._header))
         # these duplicate the top bar, the ⚙ menu or the File pane
         for wdg in (self._title, self.btn_settings, self.btn_history, self.caller_lbl, self.latency_badge):
             wdg.hide()
@@ -838,13 +888,13 @@ class SimpleWindow(MainWindow):
         # stay in view. Opening Advanced never pushes the window past a laptop screen and never squeezes the answer
         # above it below two readable lines.
         self.drawer_scroll = scrollable(adv_split)
-        self.drawer_scroll.setMinimumHeight(64)
+        self.drawer_scroll.setMinimumHeight(24)   # it scrolls; on a short screen the answer and both toolbars come first
         dl.addWidget(self.drawer_scroll, 1)
-        dl.addWidget(self._bottom)
+        dl.addWidget(_HScroll(self._bottom))
         self.drawer.hide()
         self.vsplit = QSplitter(Qt.Vertical)
         self.vsplit.setChildrenCollapsible(False)
-        self.vsplit.setHandleWidth(8)
+        self.vsplit.setHandleWidth(4)
         self.vsplit.addWidget(body)
         self.vsplit.addWidget(self.drawer)
         self.vsplit.setStretchFactor(0, 3)
@@ -975,24 +1025,30 @@ class SimpleWindow(MainWindow):
         self._refresh_setup_banner()
 
     def _set_state(self, live: bool, notice: bool, paused: bool = False, ai: str = ""):
+        self._state_args = (live, notice, paused, ai)
+        tight = self.width() < TIGHT_W       # 150 % scaling: short words, full meaning in the tooltip
         if not live:
             txt, obj = "Idle", "pill_idle"
         elif ai:
-            txt, obj = f"🤖 {ai}", "pill_live"
+            txt, obj = ("🤖 AI" if tight else f"🤖 {ai}"), "pill_live"
         elif paused:
             txt, obj = "❚❚ Paused", "pill_idle"
         elif notice:
-            txt, obj = "● Recording", "pill_live"
+            txt, obj = ("● Rec" if tight else "● Recording"), "pill_live"
         else:
-            txt, obj = "⚠ Notice not given", "pill_amber"
+            txt, obj = ("⚠ Notice" if tight else "⚠ Notice not given"), "pill_amber"
         tips = {"pill_amber": "Recording, but the recording notice hasn't been said yet – read it from Scripts → Recording notice.",
                 "pill_live": "This call is being recorded and transcribed." if not ai else "The AI employee is on the call.",
                 "pill_idle": "No call in progress." if not live else "Recording is paused."}
         self.state_pill.setToolTip(tips[obj])
         self.state_pill.setAccessibleName(txt.lstrip("●⚠❚ ") + ". " + tips[obj])
+        changed = txt != self.state_pill.text()
+        fitted = self._on_screen()
         self.state_pill.setText(txt)
         self.state_pill.setObjectName(obj)
         self.state_pill.setStyle(self.state_pill.style())
+        if changed and fitted:
+            QTimer.singleShot(0, self, self._fit_screen)   # a wider pill may have pushed the window past the screen
 
     def _update_rec_dot(self):
         super()._update_rec_dot()
@@ -1010,9 +1066,11 @@ class SimpleWindow(MainWindow):
             if self.controller is None and self._prep_session is None:
                 return
             cards = payload if self.chk_auto.isChecked() else [c for c in payload if c.type == WATCH]
-            if not self.ai_mode:
+            if self.ai_mode:
+                self.overlay.show_cards(cards)   # the pane shows the AI's words; suggestions and Ask answers go here
+            else:
                 self.say_panel.show_cards(cards)
-            self._sync_overlay()   # the teleprompter mirrors the pane (read lock included), never the raw deck
+                self._sync_overlay()   # the teleprompter mirrors the pane (read lock included), never the raw deck
         elif kind == "sentiment":
             mood = self.sentiment.text().removeprefix("Mood: ")          # 'calm 🙂'
             word, _, face = mood.partition(" ")
@@ -1084,8 +1142,10 @@ class SimpleWindow(MainWindow):
         if self.ai_mode:
             return None   # the AI is on the call; Space/Esc must not mark the handler's deck
         cur = self.say_panel.current
-        if card_obj is None and cur is not None and cur.origin not in ("script", "ai"):
-            card_obj = cur   # act on the answer on screen, never on the risk line above it
+        if card_obj is None:
+            if cur is None or cur.origin in ("script", "ai"):
+                return None   # Said it / Not this are off: nothing to mark, and a pinned script stays pinned
+            card_obj = cur    # the answer on screen – never the risk line, never an answer still waiting to be read
         marked = super()._card_action(card_obj, action)
         self.say_panel.acted()
         if marked is not None and marked.type == SAY:
@@ -1148,6 +1208,11 @@ class SimpleWindow(MainWindow):
             self._ai_label = ""
             self.handoff_banner.hide()
             self._set_state(bool(self.controller and self.controller.running), self._notice_flag, self._rec_paused)
+            cur = self.say_panel.current
+            if cur is None or cur.origin == "ai":   # the AI's last line goes; the live suggestions come back
+                sess = self._session()
+                self.say_panel.show_cards(sess.deck.visible() if sess else [], force=True)
+                self._sync_overlay()
 
     def _take_over(self):
         self.btn_ai.setChecked(False)
@@ -1192,6 +1257,12 @@ class SimpleWindow(MainWindow):
     def resizeEvent(self, e):
         super().resizeEvent(e)
         self._fit_width()
+        tight = self.width() < TIGHT_W
+        if tight != getattr(self, "_tight", None):
+            self._tight = tight
+            self.btn_new.setText("+ New" if tight else "+ New call")
+            if hasattr(self, "_state_args"):
+                self._set_state(*self._state_args)
 
     def _restore_geometry(self):
         super()._restore_geometry()
@@ -1236,12 +1307,22 @@ class SimpleWindow(MainWindow):
         finally:
             self._scripts_auto = False
 
+    def _on_screen(self) -> bool:
+        """The window is shown and fits inside its screen (so it should be kept there when its minimum grows).
+        A window the handler spread across two monitors is left alone."""
+        scr = self.screen()
+        return bool(self.isVisible() and scr is not None and scr.availableGeometry().contains(self.frameGeometry()))
+
     def _toggle_advanced(self, on: bool):
+        if on:
+            self._fit_before_drawer = self._on_screen()
         self.drawer.setVisible(on)
         self.btn_advanced.setText("Advanced ▴" if on else "Advanced ▾")
         if on:
             h = max(1, self.vsplit.height())
             self.vsplit.setSizes([int(h * 0.6), h - int(h * 0.6)])   # the answer keeps the larger share
+        if getattr(self, "_fit_before_drawer", False):
+            QTimer.singleShot(0, self, self._fit_screen)   # never past the screen; back to size once it closes
 
     def _update_memory_badge(self):
         hub = self.current_hub()

@@ -70,21 +70,32 @@ class _EnterPressesButton(QObject):
         super().__init__(window)
         self._win = window
         self._kb_focus = None   # the widget focused by Tab / Shift+Tab, if focus is still there
+        self._tab_armed = False  # a Tab / Shift+Tab key was just pressed in the window
 
     def _defers(self, w, key: int) -> bool:
+        """Only keys the control really uses; otherwise the window hotkey still works."""
         if key == Qt.Key_Space:
-            return isinstance(w, (QAbstractButton, QComboBox, QAbstractItemView, QTabBar))
+            return isinstance(w, (QAbstractButton, QComboBox, QAbstractItemView))
         if key in (Qt.Key_A, Qt.Key_P, Qt.Key_T, Qt.Key_W):
             return isinstance(w, (QComboBox, QAbstractItemView))
         if key in (Qt.Key_Left, Qt.Key_Right):
-            return isinstance(w, (QAbstractItemView, QTabBar, QComboBox))
+            return isinstance(w, (QAbstractItemView, QTabBar))
         return False
 
     def eventFilter(self, obj, ev):
         t = ev.type()
-        if t == QEvent.FocusIn:
+        if t == QEvent.KeyPress and ev.key() in (Qt.Key_Tab, Qt.Key_Backtab):
             if isinstance(obj, QWidget) and obj.window() is self._win:
-                self._kb_focus = obj if ev.reason() in (Qt.TabFocusReason, Qt.BacktabFocusReason) else None
+                self._tab_armed = True
+        elif t == QEvent.FocusIn:
+            if isinstance(obj, QWidget) and obj.window() is self._win:
+                if obj is self._kb_focus and ev.reason() in (Qt.PopupFocusReason, Qt.ActiveWindowFocusReason):
+                    return False   # back from the control's own popup or another window: still keyboard focus
+                # Qt also reports TabFocusReason when it moves focus off a button that was just disabled or hidden;
+                # only a real Tab key press counts as the handler moving there by keyboard
+                tabbed = self._tab_armed and ev.reason() in (Qt.TabFocusReason, Qt.BacktabFocusReason)
+                self._kb_focus = obj if tabbed else None
+                self._tab_armed = False
         elif t == QEvent.ShortcutOverride:
             if (obj is self._kb_focus and obj.hasFocus() and not (ev.modifiers() & self._MODS)
                     and self._defers(obj, ev.key())):
@@ -587,16 +598,7 @@ class MainWindow(QMainWindow):
             except Exception as e:  # noqa: BLE001
                 log.exception("start failed")
                 self.bridge.event.emit("start_failed", str(e))
-                return
-            # scan for the AI's output device here, once, so toggling AI mode never blocks the window
-            dev = self.s.voice_agent.output_device
-            try:
-                present = (not dev) or tts.find_output_device(dev) is not None
-            except Exception:  # noqa: BLE001
-                present = True   # cannot enumerate; speak() reports if it is missing
-            self._ai_dev_check = (dev, present)
 
-        self._ai_dev_check = ("", True)
         threading.Thread(target=run, daemon=True).start()
 
     def _show_script(self, text: str, label: str, more: str = ""):
@@ -699,7 +701,10 @@ class MainWindow(QMainWindow):
             except Exception as e:  # noqa: BLE001
                 emit("error", f"Could not save the call to disk: {e}")
 
-        threading.Thread(target=run, daemon=True, name="callpilot-export").start()
+        if getattr(self, "_closing", False):
+            run()          # quitting: finish it here
+        else:
+            threading.Thread(target=run, daemon=True, name="callpilot-export").start()
 
     def _toggle_ai_mode(self, on: bool):
         if not self.controller or not self.controller.running:
@@ -714,10 +719,12 @@ class MainWindow(QMainWindow):
                                       "⚙ → Rehearse with the AI.")
                 on = False
             else:
-                # scanned off the GUI thread when the call started (see _start_call)
-                scanned, present = getattr(self, "_ai_dev_check", ("", True))
-                if scanned != dev:
-                    present = True   # device changed since the scan; speak() will report if it is absent
+                # checked now, not at call start: the cable may have been unplugged or changed since. During a call
+                # the audio system is already running, so this is a quick lookup.
+                try:
+                    present = tts.find_output_device(dev) is not None
+                except Exception:  # noqa: BLE001
+                    present = True   # cannot enumerate; speak() reports if it is missing
                 if not present:
                     self._ai_mode_blocked(f"'{dev}' isn't connected, so AI mode would talk into the room instead of "
                                           "the call. Plug it in or choose another device in Settings → AI mode.")
@@ -752,7 +759,9 @@ class MainWindow(QMainWindow):
     def _open_calls(self):
         from callpilot.ui.calls_dialog import CallsDialog
 
-        CallsDialog(self.store, self.s, self, audit=self.audit).exec()
+        dlg = CallsDialog(self.store, self.s, self, audit=self.audit)
+        dlg.exec()
+        dlg.deleteLater()   # it caches decrypted calls; never keep it alive after it closes
 
     def _download_transcript(self):
         from callpilot.core.sessions import export_text
@@ -800,6 +809,12 @@ class MainWindow(QMainWindow):
         d = QFileDialog.getExistingDirectory(self, "Save call to…", str(default_export_dir()))
         if not d:
             return
+        t = self._save_thread
+        if t is not None and t.is_alive():
+            self.status_lbl.setText("Finishing the save…")
+            t.join()                                 # the recording moves to its encrypted file in that save
+        QApplication.sendPostedEvents()               # deliver 'saved', which updates last_record
+        rec = self.last_record or rec
         self.status_lbl.setText("Saving call…")
         redact, vault, emit = self.s.privacy.redact_saved_pii, self.store.vault, self.bridge.event.emit
 
@@ -1013,8 +1028,9 @@ class MainWindow(QMainWindow):
         sess = self._session()
         if not sess:
             return None
-        typ = card_obj.type if card_obj is not None else None
-        c = sess.mark_card(typ, action)
+        # a specific card (the one on screen, or a cockpit card's own button) is marked itself; Space / Esc in the
+        # cockpit, with no card given, act on the top card as before
+        c = sess.mark_this(card_obj, action) if card_obj is not None else sess.mark_card(None, action)
         if c:
             self.audit.record("card_" + action, card=c.id, type=c.type)
         return c
@@ -1139,7 +1155,9 @@ class MainWindow(QMainWindow):
                 self.status_lbl.setText("Settings saved – some changes apply from the next call.")
 
     def _open_history(self):
-        HistoryDialog(self.store, self, audit=self.audit).exec()
+        dlg = HistoryDialog(self.store, self, audit=self.audit)
+        dlg.exec()
+        dlg.deleteLater()
 
     # ================================================================ hotkeys / tray
     def _setup_hotkeys(self):
@@ -1203,12 +1221,16 @@ class MainWindow(QMainWindow):
         if (t is not None and t.is_alive()) or unsaved:
             self.status_lbl.setText("Saving the call…")
             QApplication.processEvents()
+        self._closing = True   # exports now run in place: a daemon thread would die with the app
         if t is not None and t.is_alive():
             t.join()   # never quit with a half-written session or a half-zeroed recording
+        QApplication.sendPostedEvents()   # deliver its 'saved' event: audit entry + export to the Calls folder
         if unsaved:
             self._saved_sessions.add(id(ctl.session))
             try:
-                self.store.save(self._encrypt_recording(ctl.session.to_record()))
+                rec = self._encrypt_recording(ctl.session.to_record())
+                self.store.save(rec)
+                self._auto_export_in_background(rec)
             except Exception:  # noqa: BLE001
                 log.exception("saving call on close")
         self.s.ui.window_geometry = bytes(self.saveGeometry().toBase64()).decode()

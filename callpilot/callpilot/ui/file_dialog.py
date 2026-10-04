@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (QComboBox, QDialog, QDialogButtonBox, QFormLayout
                                QSplitter, QTableWidget, QTableWidgetItem, QTabWidget, QVBoxLayout, QWidget)
 
 from callpilot.core.files import ROLES, STAGES, CaseFile, Contact, Deadline, FileStore
-from callpilot.ui.widgets import fit_to_screen, scrollable
+from callpilot.ui.widgets import DialogKeys, fit_to_screen, scrollable
 
 
 class FilePicker(QDialog):
@@ -48,6 +48,7 @@ class FilePicker(QDialog):
         bb.accepted.connect(self._accept)
         bb.rejected.connect(self.reject)
         root.addWidget(bb)
+        self._keys = DialogKeys(self, {self.list: self._accept})   # Enter on a file attaches it
         self.files: list[CaseFile] = []
         self._refresh()
 
@@ -187,6 +188,7 @@ class FileEditor(QDialog):
         bb.accepted.connect(self._save)
         bb.rejected.connect(self.reject)
         root.addWidget(bb)
+        self._keys = DialogKeys(self)   # Enter in the contacts / deadlines tables edits the cell
 
     def _add_contact(self, ct: Contact):
         r = self.contacts.rowCount()

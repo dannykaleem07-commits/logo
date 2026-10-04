@@ -136,7 +136,7 @@ def test_said_it_marks_the_answer_not_the_risk_line(monkeypatch):
     w = _window(monkeypatch)
     try:
         deck = CardDeck(lambda: None)
-        w.controller = SimpleNamespace(running=True, session=SimpleNamespace(mark_card=deck.mark, deck=deck),
+        w.controller = SimpleNamespace(running=True, session=SimpleNamespace(mark_card=deck.mark, mark_this=deck.mark_card, deck=deck),
                                        hub=w.current_hub())
         for action, status in (("used", "Marked as said"), ("dismissed", "Marked as not this")):
             say, watch = _say("There's no upfront cost to you"), Card(WATCH, "Never promise a delivery time", [])

@@ -11,7 +11,7 @@ from PySide6.QtWidgets import (QDialog, QFileDialog, QHBoxLayout, QListWidget, Q
                                QPushButton, QSplitter, QTextBrowser, QVBoxLayout)
 
 from callpilot.core.sessions import SessionStore, export_srt, export_text, secure_delete
-from callpilot.ui.widgets import fit_to_screen
+from callpilot.ui.widgets import DialogKeys, fit_to_screen
 
 
 class HistoryDialog(QDialog):
@@ -53,8 +53,13 @@ class HistoryDialog(QDialog):
         # No default button: Enter in the search box runs the search only, never an export.
         for b in self.findChildren(QPushButton):
             b.setAutoDefault(False)
+        self._keys = DialogKeys(self)   # …but Enter on a button you Tabbed to still presses it
         self.list.currentRowChanged.connect(self._show)
         self._load()
+
+    def done(self, r):
+        self._cache.clear()   # decrypted calls do not outlive the dialog
+        super().done(r)
 
     def _record(self, f: Path) -> dict | None:
         """The decoded call, decrypted once per file version."""
