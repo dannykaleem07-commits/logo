@@ -7,7 +7,7 @@ import type { Actor } from '@ccguk/db';
 import type { Claim, CompanyWatch, Id, Party } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
 import { parse } from '../schemas/common.js';
-import { watchBody } from '../schemas/services.js';
+import { watchBody, watchListQuery } from '../schemas/services.js';
 import { assessCompanyRisk, createCompaniesHouseClient, type CompaniesHouseClient } from '../services/companiesHouse.js';
 import { params } from './helpers.js';
 
@@ -100,7 +100,7 @@ export async function pollWatchList(ctx: AppContext, actor: Actor, client?: Comp
 
 export function registerWatchRoutes(app: FastifyInstance, ctx: AppContext): void {
   app.get('/watch', async (request) => {
-    const q = request.query as { riskLevel?: CompanyWatch['riskLevel'] };
+    const q = parse(watchListQuery, request.query);
     return { items: ctx.repos.listCompanyWatch(ctx.db, { riskLevel: q.riskLevel }), companiesHouse: ctx.config.keysPresent.companiesHouse ? 'live' : 'no key (unverified)' };
   });
 

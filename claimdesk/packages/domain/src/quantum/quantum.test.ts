@@ -14,6 +14,7 @@ import {
   type FeeBand,
 } from './index.js';
 import { file1Bundle, ledger } from '../playbook/fixture.js';
+import { formatGBP } from '../money.js';
 
 describe('interest', () => {
   it('1 year on £10,000 at the 8% s.69 convention = £800.00 (365 days)', () => {
@@ -290,5 +291,68 @@ describe('scheduleOfLoss', () => {
     expect(s.totals).toEqual({ claimed: 0, offered: 0, paid: 0, outstanding: 0 });
     expect(s.interest).toBeUndefined();
     expect(SCHEDULE_HEAD_ORDER).toHaveLength(17);
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+// Adversarial verification — hand-computed figures, BST/GMT edges, money formatting in notes.
+// ---------------------------------------------------------------------------------------------
+describe('adversarial: quantum', () => {
+  it('interest counts London calendar days, not UTC days (00:30 BST on 1 Jul is 23:30 UTC on 30 Jun)', () => {
+    // London: 1 Jul → 31 Jul = 30 days. UTC would make it 30 Jun → 31 Jul = 31 days.
+    const r = interest({ principalPence: 100_000, from: '2026-07-01T00:30:00+01:00', to: '2026-07-31T12:00:00+01:00', basis: 'cca_s69' });
+    expect(r.days).toBe(30);
+    expect(r.interestPence).toBe(658); // 100,000 × 8% × 30 / 365 = 657.53p → 658p
+    expect(r.dailyPence).toBe(22); // 100,000 × 8% / 365 = 21.92p
+  });
+
+  it('ICOBS interest from the three-month expiry: NCAF 21 Sep 2026 → expiry 21 Dec 2026 → 30 days to 20 Jan 2027 on £232.60 at 4% + 4% = £1.53', () => {
+    // 23,260 × 8% × 30 / 365 = 152.94p → 153p (matches the playbook ICOBS_INTEREST_CLAIM estimate)
+    const r = interest({ principalPence: 23_260, from: '2026-12-21T16:00:00+00:00', to: '2027-01-20T12:00:00+00:00', basis: 'icobs_8_2', baseRatePct: 4 });
+    expect(r.days).toBe(30);
+    expect(r.interestPence).toBe(153);
+    expect(r.note).toContain('ICOBS 8.2.1R');
+  });
+
+  it('court fee notes format money with formatGBP (thousands separators), never bare floats', () => {
+    const r = courtFee(450_000);
+    expect(r.note).toContain('Issue fee for a claim of £4,500.00');
+    expect(r.note).toContain('£3,000.01–£5,000.00');
+    expect(r.note).not.toMatch(/£\d{4}/);
+    expect(courtFee(1_500_000).note).toContain('£15,000.00');
+    expect(courtFee(350_000, defaultCourtFees, { kind: 'hearing_small_claims' }).note).toContain('£3,000.01–no upper limit');
+  });
+
+  it('Part 36 across the March clock change: served 20 Mar 2026 (GMT) expires 10 Apr 2026 at 23:59:59 BST, and the additional amount is stated correctly', () => {
+    const r = part36({ offerPence: 500_000, madeAt: '2026-03-20T10:00:00+00:00' });
+    expect(r.expiresAt).toBe('2026-04-10T23:59:59+01:00'); // 20 Mar + 21 days = 10 Apr; BST from 29 Mar 2026
+    expect(r.note).toContain('10% of the first £500,000');
+    expect(r.note).toContain('capped at £75,000');
+    expect(r.note).not.toContain('10% of the sum awarded');
+  });
+
+  it('File 1 schedule says £1,112.00 received — never £1,287 — and every figure is integer pence', () => {
+    const s = scheduleOfLoss(file1Bundle(), '2026-10-20T12:00:00+01:00');
+    expect(s.totals.paid).toBe(111_200);
+    expect(s.totals.paid).not.toBe(128_700);
+    expect(formatGBP(s.totals.paid)).toBe('£1,112.00');
+    expect(formatGBP(s.totals.outstanding)).toBe('£232.60');
+    expect(s.totals.claimed - s.totals.paid).toBe(s.totals.outstanding);
+    for (const l of s.lines) {
+      expect(Number.isInteger(l.claimedPence)).toBe(true);
+      expect(Number.isInteger(l.outstandingPence)).toBe(true);
+      expect(l.claimedPence).toBe(l.netPence + l.vatPence);
+    }
+    // the schedule as at the London date of a BST instant just after midnight still excludes the 5 Oct remittance
+    expect(scheduleOfLoss(file1Bundle(), '2026-10-05T00:30:00+01:00').totals.paid).toBe(111_200); // 5 Oct London → remittance dated 5 Oct counts
+    expect(scheduleOfLoss(file1Bundle(), '2026-10-04T23:30:00+01:00').totals.paid).toBe(0); // 4 Oct London → not yet
+  });
+
+  it('track boundaries in pence: £10,000.00 small claims, £10,000.01 fast; NaN is refused', () => {
+    expect(allocateTrack(1_000_000)).toBe('small_claims');
+    expect(allocateTrack(1_000_001)).toBe('fast');
+    expect(allocateTrack(2_500_000)).toBe('fast');
+    expect(allocateTrack(2_500_001)).toBe('intermediate');
+    expect(() => allocateTrack(Number.NaN)).toThrow();
   });
 });

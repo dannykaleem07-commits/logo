@@ -5,6 +5,7 @@ import { DocumentDataError, getTemplate, hasTemplate, listTemplates, missingRequ
 import {
   SignatureDateError,
   agreementsFormsTemplates,
+  art60fFinalPaymentLimit,
   assertNotBeforeCreation,
   cancellationSch3Template,
   creditHireAgreementTemplate,
@@ -45,21 +46,21 @@ function textOf(id: string): string {
 }
 
 describe('agreements-forms: registration', () => {
-  it('registers the seven templates with the right ids, kinds and version 1.0.0', () => {
-    const expected: Array<[string, string]> = [
-      ['agreement.credit_hire', 'agreement'],
-      ['form.cancellation_sch3', 'form'],
-      ['form.express_request_to_start', 'form'],
-      ['form.mitigation_questionnaire', 'form'],
-      ['form.statement_of_means', 'form'],
-      ['form.statement_of_need', 'form'],
-      ['statement.witness', 'statement']
+  it('registers the seven templates with the right ids, kinds and versions', () => {
+    const expected: Array<[string, string, string]> = [
+      ['agreement.credit_hire', 'agreement', '1.1.0'],
+      ['form.cancellation_sch3', 'form', '1.0.0'],
+      ['form.express_request_to_start', 'form', '1.0.0'],
+      ['form.mitigation_questionnaire', 'form', '1.0.0'],
+      ['form.statement_of_means', 'form', '1.0.0'],
+      ['form.statement_of_need', 'form', '1.0.0'],
+      ['statement.witness', 'statement', '1.0.0']
     ];
     expect(agreementsFormsTemplates.map((t) => t.id)).toEqual(expected.map(([id]) => id));
-    for (const [id, kind] of expected) {
+    for (const [id, kind, version] of expected) {
       expect(hasTemplate(id)).toBe(true);
       const meta = listTemplates().find((m) => m.id === id);
-      expect(meta).toMatchObject({ id, kind, version: '1.0.0' });
+      expect(meta).toMatchObject({ id, kind, version });
       expect(meta?.requiredData).toContain('claim.ourReference');
       expect(meta?.requiredData).toContain('date');
     }
@@ -134,8 +135,68 @@ describe('agreement.credit_hire', () => {
     expect(text).toContain('£49.80 per day excluding VAT');
     expect(text).toContain('VAT 20%');
     expect(text).toContain('£750.00 per incident');
-    expect(text).toContain('£12.00 per day excluding VAT; reduces your excess to nil');
+    expect(text).toContain('Excess waiver (offered, not taken) £12.00 per day excluding VAT; not charged; your excess applies in full');
+    expect(text).toContain('You have not taken the excess waiver offered at £12.00 per day excluding VAT, so the excess above applies in full.');
     expect(text).toContain('£5.50 per day excluding VAT, capped at £110.00 for the hire (GTA 5.4, industry benchmark)');
+  });
+
+  it('states what is owed for the excess waiver in each of the three states (taken, not taken, not yet chosen)', () => {
+    const data = creditHireAgreementTemplate.sample();
+    const taken = htmlToText(renderTemplate('agreement.credit_hire', { ...data, charges: { ...data.charges, excessWaiverSelected: true } }).html);
+    expect(taken).toContain('Excess waiver (taken) £12.00 per day excluding VAT; charged for each day of hire; your excess is nil');
+    expect(taken).toContain('You have taken the excess waiver at £12.00 per day excluding VAT, charged for each day of hire, so your excess is nil.');
+    const undecided = htmlToText(renderTemplate('agreement.credit_hire', { ...data, charges: { ...data.charges, excessWaiverSelected: undefined } }).html);
+    expect(undecided).toContain('Excess waiver (optional) £12.00 per day excluding VAT; if taken, reduces your excess to nil');
+    expect(undecided).toContain('If you take the excess waiver at £12.00 per day excluding VAT, your excess is reduced to nil.');
+    const none = htmlToText(renderTemplate('agreement.credit_hire', { ...data, charges: { ...data.charges, excessWaiverDailyPence: undefined, excessWaiverSelected: undefined } }).html);
+    expect(none).toContain('No excess waiver is included in this agreement.');
+    expect(none).not.toContain('Excess waiver (');
+  });
+
+  it('refuses a final payment date outside twelve months beginning with the agreement date (art 60F(2)(c))', () => {
+    const data = creditHireAgreementTemplate.sample();
+    expect(art60fFinalPaymentLimit('2026-08-10')).toBe('2027-08-09');
+    expect(art60fFinalPaymentLimit('2026-01-31')).toBe('2027-01-30');
+    expect(art60fFinalPaymentLimit('2026-08-10T09:05:00+01:00')).toBe('2027-08-09');
+    expect(() => renderTemplate('agreement.credit_hire', { ...data, credit: { ...data.credit, finalPaymentDueBy: '2027-08-10' } })).toThrow(/60F\(2\)\(c\)/);
+    expect(() => renderTemplate('agreement.credit_hire', { ...data, credit: { ...data.credit, finalPaymentDueBy: '2026-08-09' } })).toThrow(/60F\(2\)\(c\)/);
+    expect(() => renderTemplate('agreement.credit_hire', { ...data, credit: { ...data.credit, finalPaymentDueBy: '2027-08-09' } })).not.toThrow();
+    expect(() => renderTemplate('agreement.credit_hire', { ...data, credit: { ...data.credit, finalPaymentDueBy: '2026-12-31' } })).not.toThrow();
+    expect(() => renderTemplate('agreement.credit_hire', { ...data, credit: { ...data.credit, maxInstalments: 1.5 } })).toThrow(/60F\(2\)\(b\)/);
+    expect(() => renderTemplate('agreement.credit_hire', { ...data, credit: { ...data.credit, maxInstalments: 0 } })).toThrow(/60F\(2\)\(b\)/);
+  });
+
+  it('requires the Schedule 2 particulars (date of birth and licence) before it will render', () => {
+    const data = creditHireAgreementTemplate.sample();
+    const { dateOfBirth: _dob, licence: _lic, ...hirer } = data.hirer;
+    let err: unknown;
+    try {
+      renderTemplate('agreement.credit_hire', { ...data, hirer });
+    } catch (e) {
+      err = e;
+    }
+    expect(err).toBeInstanceOf(DocumentDataError);
+    expect((err as DocumentDataError).missing).toEqual(['hirer.dateOfBirth', 'hirer.licence.number', 'hirer.licence.countryOfIssue']);
+  });
+
+  it('says plainly when the licence expiry date is not on record instead of asserting the particulars are complete', () => {
+    expect(text).toContain('This agreement contains the particulars required by Schedule 2 to the Road Traffic (Owner Liability) Regulations 2000');
+    const data = creditHireAgreementTemplate.sample();
+    const noExpiry = { ...data, hirer: { ...data.hirer, licence: { number: 'EXAMP805148JE9AB', countryOfIssue: 'United Kingdom' } } };
+    const t = htmlToText(renderTemplate('agreement.credit_hire', noExpiry).html);
+    expect(t).toContain('EXAMP805148JE9AB (United Kingdom; expiry date not recorded)');
+    expect(t).toContain('except your driving licence expiry date, which was not recorded when this agreement was generated. You must give it to us before the vehicle is delivered');
+    expect(t).not.toContain('This agreement contains the particulars required by Schedule 2');
+  });
+
+  it('prints its own registered version in the integrity line (no literal that a bump would leave behind)', () => {
+    const html = renderTemplate('agreement.credit_hire', creditHireAgreementTemplate.sample()).html;
+    expect(html).toContain(`Template agreement.credit_hire version ${creditHireAgreementTemplate.version}.`);
+    expect(html).not.toContain('Template agreement.credit_hire version 1.0.0');
+    for (const t of agreementsFormsTemplates) {
+      const h = renderTemplate(t.id, t.sample()).html;
+      if (h.includes(`Template ${t.id} version`)) expect(h).toContain(`Template ${t.id} version ${t.version}.`);
+    }
   });
 
   it('states the RAO art 60F credit terms plainly', () => {

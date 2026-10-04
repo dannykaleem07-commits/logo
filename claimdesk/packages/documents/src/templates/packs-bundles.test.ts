@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { brand } from '../brand.js';
 import { findProhibitedContent, htmlToText } from '../guards.js';
 import { DocumentDataError, getTemplate, hasTemplate, listTemplates, missingRequiredData, renderTemplate } from '../registry.js';
-import { PACK_COMPONENTS, endTriggerLabel, gtaPaymentPackTemplate, litigationBundleIndexTemplate, packsBundlesTemplates } from './packs-bundles.js';
+import { PACK_COMPONENTS, PackDataError, endTriggerLabel, gtaPaymentPackTemplate, litigationBundleIndexTemplate, packsBundlesTemplates } from './packs-bundles.js';
 
 const BANNED = [
   'FOS',
@@ -27,11 +27,11 @@ function textOf(id: string): string {
 }
 
 describe('packs-bundles: registration', () => {
-  it('registers pack.gta_payment and bundle.litigation_index at 1.0.0', () => {
+  it('registers pack.gta_payment (1.1.0) and bundle.litigation_index (1.0.0)', () => {
     expect(packsBundlesTemplates.map((t) => t.id)).toEqual(['pack.gta_payment', 'bundle.litigation_index']);
     expect(hasTemplate('pack.gta_payment')).toBe(true);
     expect(hasTemplate('bundle.litigation_index')).toBe(true);
-    expect(listTemplates().find((m) => m.id === 'pack.gta_payment')).toMatchObject({ kind: 'pack', version: '1.0.0', recipientRole: 'at_fault_insurer' });
+    expect(listTemplates().find((m) => m.id === 'pack.gta_payment')).toMatchObject({ kind: 'pack', version: '1.1.0', recipientRole: 'at_fault_insurer' });
     expect(listTemplates().find((m) => m.id === 'bundle.litigation_index')).toMatchObject({ kind: 'bundle', version: '1.0.0', recipientRole: 'court' });
   });
 
@@ -122,6 +122,36 @@ describe('pack.gta_payment', () => {
     expect(endTriggerLabel('client_returned')).toBe('Vehicle returned by the claimant');
   });
 
+  it('says the pack is complete only when it is, and otherwise says what follows', () => {
+    expect(text).toContain('The hire has ended. We enclose the payment pack for hire charges, recovery, storage and independent engineer’s fee; the items marked below as not enclosed will follow under separate cover, quoting our reference.');
+    expect(text).not.toContain('the documentation is complete');
+    const data = gtaPaymentPackTemplate.sample();
+    const complete = htmlToText(renderTemplate('pack.gta_payment', { ...data, present: [...data.present, 'photographs'] }).html);
+    expect(complete).toContain('The hire has ended and the documentation is complete. We enclose the payment pack for hire charges, recovery, storage and independent engineer’s fee.');
+    expect(complete).not.toContain('Not enclosed');
+  });
+
+  it('always marks the covering letter and the Hire Period Validation Form as enclosed, because this document is them', () => {
+    const data = gtaPaymentPackTemplate.sample();
+    const t = htmlToText(renderTemplate('pack.gta_payment', { ...data, present: ['hire_invoice'], notApplicable: ['covering_letter', 'hire_period_validation', 'repair_account'] }).html);
+    expect(t).toContain('Covering letter detailing the payments required and the documents submitted GTA 6.2 (Appendix D) ✓ Enclosed');
+    expect(t).toContain('Hire Period Validation Form GTA 6.2 (Appendix B) ✓ Enclosed');
+    expect(t).toContain('Hire account (invoice) GTA 6.1 ✓ Enclosed');
+    expect(t).toContain('Repair account approved by the engineer GTA 6.3 — Not applicable');
+    expect(t).toContain('Mitigation Questionnaire and Statement of Truth signed by the hirer GTA 6.2 (Appendix C) ✗ Not enclosed');
+  });
+
+  it('refuses to render when the heads do not reconcile with the totals, a head’s gross is wrong, or the day count disagrees with the period', () => {
+    const data = gtaPaymentPackTemplate.sample();
+    expect(() => renderTemplate('pack.gta_payment', { ...data, totals: { ...data.totals, grossPence: data.totals.grossPence + 1 } })).toThrow(PackDataError);
+    expect(() => renderTemplate('pack.gta_payment', { ...data, totals: { ...data.totals, netPence: 128700 } })).toThrow(/heads sum to £1,886\.20 \/ £377\.24 \/ £2,263\.44 but totals say £1,287\.00/);
+    const badHead = data.heads.map((h, i) => (i === 0 ? { ...h, grossPence: h.grossPence - 100 } : h));
+    expect(() => renderTemplate('pack.gta_payment', { ...data, heads: badHead })).toThrow(/does not equal gross/);
+    expect(() => renderTemplate('pack.gta_payment', { ...data, hire: { ...data.hire, days: 23 } })).toThrow(/inclusive day count/);
+    expect(() => renderTemplate('pack.gta_payment', { ...data, heads: [], totals: { netPence: 0, vatPence: 0, grossPence: 0 } })).toThrow(/no heads of claim/);
+    expect(() => renderTemplate('pack.gta_payment', data)).not.toThrow();
+  });
+
   it('refuses to render without the ledger totals or the settlement date', () => {
     const data = gtaPaymentPackTemplate.sample();
     let err: unknown;
@@ -164,6 +194,17 @@ describe('bundle.litigation_index', () => {
     expect(text).toContain('6 Engineer’s report 68–79');
     expect(text).toContain('7 Correspondence (chronological) 80–95');
     expect(text).toContain('8 Part 36 offers 96–97');
+  });
+
+  it('refuses page references that run backwards, overlap, or fall outside the bundle', () => {
+    const data = litigationBundleIndexTemplate.sample();
+    expect(() => renderTemplate('bundle.litigation_index', { ...data, totalPages: 96 })).toThrow(RangeError);
+    expect(() => renderTemplate('bundle.litigation_index', { ...data, totalPages: 0 })).toThrow(/totalPages/);
+    const overlapping = data.sections.map((s, i) => (i === 1 ? { ...s, documents: [{ ...s.documents[0]!, startPage: 10 }] } : s));
+    expect(() => renderTemplate('bundle.litigation_index', { ...data, sections: overlapping })).toThrow(/out of sequence/);
+    const inverted = data.sections.map((s, i) => (i === 1 ? { ...s, documents: [{ ...s.documents[0]!, startPage: 12, endPage: 11 }] } : s));
+    expect(() => renderTemplate('bundle.litigation_index', { ...data, sections: inverted })).toThrow(RangeError);
+    expect(() => renderTemplate('bundle.litigation_index', { ...data, totalPages: 120 })).not.toThrow(); // blank pages at the end are allowed
   });
 
   it('names the instructed solicitor instead when the claimant is represented', () => {

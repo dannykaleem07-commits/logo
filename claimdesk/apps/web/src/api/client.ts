@@ -313,10 +313,19 @@ export interface CreateClaimBody {
   /** Call-recording disclosure (BLUEPRINT §3.1) read and acknowledged before any detail was taken. */
   callRecordingDisclosed?: boolean;
   notes?: string;
-  // --- descriptive web fields (ignored by the API today; documented in apps/web/README.md) ---
+  // --- intake questions (@ccguk/domain validateFnol, run by the API) ---
+  /** The handler confirms the account was taken cold (open questions, verbatim). Never sent as `false`. */
+  takenCold?: true;
+  /** "Has anyone offered you a vehicle?" — the script-guard question, always answered. */
+  offerDisclosed?: boolean;
+  offerDetails?: { what?: string; byWhom?: string; when?: string };
+  // --- descriptive web fields the API folds in (apps/api services/intake.ts normaliseFnol) ---
   channel?: 'phone' | 'whatsapp' | 'web_form' | 'in_person' | 'email';
   disclosure?: { callRecordingReadAt: ISODateTime; acknowledged: true; acknowledgedBy?: string };
+  /** `[]` = the witnesses question was asked and there were none. The API creates the witness parties (role `witness`). */
   witnesses?: WitnessInput[];
+  /** Only `registrationUnknown` is sent here (the other third-party facts go in the native fields, or they would be duplicated). */
+  thirdParty?: { registrationUnknown?: boolean };
   services?: { hire: boolean; recovery: boolean; storage: boolean; engineer: boolean; notes?: string };
 }
 
@@ -337,13 +346,27 @@ export interface ClaimPatchBody {
 }
 
 /** What the API learned at intake (apps/api routes/claims.ts `IntakeReport`); every field optional for older builds. */
+export interface FnolIssueView {
+  field: string;
+  message: string;
+}
 export interface IntakeReport {
-  validation?: { ok: boolean; missing: string[]; warnings?: string[] };
+  validation?: { ok: boolean; missing: string[]; errors?: FnolIssueView[]; incomplete?: FnolIssueView[]; warnings?: string[] };
   crossFile?: { severity?: string; message?: string; duplicateClaimIds?: Id[]; isFleetUnit?: boolean };
-  liability?: { score: number; reasons: string[] };
+  liability?: { score: number; reasons: string[]; band?: string };
   injury?: { referredTo: string; message: string; feeTaken: false };
   offer?: { id: Id; replyDueBy: string };
+  witnesses?: Array<{ partyId: Id; name: string; independent: boolean; reasons: string[] }>;
   flags?: ClaimFlag[];
+}
+
+/** Lines for a 400 from POST /claims: the API answers `{ missing, errors, incomplete, warnings }` in `details`. */
+export function fnolErrorLines(e: unknown): string[] {
+  if (!isApiError(e) || !e.details || typeof e.details !== 'object') return [];
+  const d = e.details as { errors?: FnolIssueView[]; missing?: string[] };
+  if (Array.isArray(d.errors) && d.errors.length) return d.errors.map((i) => `${i.field}: ${i.message}`);
+  if (Array.isArray(d.missing) && d.missing.length) return d.missing;
+  return [];
 }
 
 export interface CreateClaimResult {

@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify';
 import type { AppContext } from '../context.js';
+import { engineStatus } from '../engines.js';
 
 export function registerHealthRoutes(app: FastifyInstance, ctx: AppContext): void {
   app.get('/health', async () => {
@@ -17,7 +18,7 @@ export function registerHealthRoutes(app: FastifyInstance, ctx: AppContext): voi
       database: dbOk ? 'ok' : 'error',
       lookups: ctx.config.keysPresent,
       kbData: Boolean(ctx.kb.dataDir),
-      engines: Object.fromEntries(Object.entries(ctx.engines()).map(([k, v]) => [k, Boolean(v)])),
+      engines: engineStatus(),
     };
   });
 }

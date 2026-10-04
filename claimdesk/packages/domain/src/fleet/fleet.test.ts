@@ -303,3 +303,70 @@ describe('s172ResponseData', () => {
     expect(r.route).toBe('driver_identified'); // the service point is raised alongside the response, not instead of it
   });
 });
+
+// ---------------------------------------------------------------------------------------------
+// Adversarial verification — London dates in compliance and notice wording, no false statements.
+// ---------------------------------------------------------------------------------------------
+describe('adversarial: fleet', () => {
+  const nip = (extra: Parameters<typeof penalty>[0] = {}) =>
+    penalty({ kind: 'nip_s172', issuer: 'Metropolitan Police', noticeNumber: 'MET/NIP/5566', contraventionAt: '2026-09-25T14:12:00+01:00', receivedAt: '2026-10-01T09:00:00+01:00', responseDeadline: '2026-10-28', ...extra });
+
+  it('compliance uses the London date of now: 00:30 BST on 5 Oct is 5 Oct, so an MOT expiring 4 Oct is expired (UTC would still be 4 Oct)', () => {
+    const now = '2026-10-05T00:30:00+01:00';
+    const a = complianceAlerts([{ unit: fleetUnit(), vehicle: fleetVehicle({ motExpiryDate: '2026-10-04' }), policy: policy() }], now);
+    expect(a[0]).toMatchObject({ code: 'MOT_EXPIRED', severity: 'block', dueDate: '2026-10-04' });
+    expect(canAllocate(fleetUnit(), 'credit_hire', policy(), now, fleetVehicle({ motExpiryDate: '2026-10-04' })).reasons).toEqual(['MOT expired 2026-10-04.']);
+    // and the warn horizon is exactly warnDays: 30 days from 5 Oct is 4 Nov (inclusive), 5 Nov is outside
+    expect(complianceAlerts([{ unit: fleetUnit(), vehicle: fleetVehicle({ motExpiryDate: '2026-11-04' }), policy: policy() }], now)[0]).toMatchObject({ code: 'MOT_DUE', severity: 'warn' });
+    expect(complianceAlerts([{ unit: fleetUnit(), vehicle: fleetVehicle({ motExpiryDate: '2026-11-05' }), policy: policy() }], now)).toEqual([]);
+  });
+
+  it('s.172 statements never assert the response was in time, and print London-local dates rather than raw ISO stamps', () => {
+    const r = s172ResponseData(nip(), hire(), hirer());
+    expect(r.statement).not.toContain('within the 28-day period');
+    expect(r.statement).not.toMatch(/\d{4}-\d{2}-\d{2}T/);
+    expect(r.statement).toContain('14:12 on 25 September 2026');
+    expect(r.statement).toContain('10:00 on 22 September 2026 to 10:00 on 2 October 2026');
+    expect(s172ResponseData(nip()).statement).not.toContain('within the 28-day period');
+    expect(r.deadline).toBe('2026-10-28'); // the deadline stays data, for the clock and the UI
+  });
+
+  it('the statement of liability prints the hire period and contravention as London-local dates', () => {
+    const r = liabilityTransferParticulars(penalty(), hire(), hirer(), fleetUnit(), fleetVehicle());
+    expect(r.statementOfLiability).toContain('in my possession at 14:12 on 25 September 2026');
+    expect(r.statementOfLiability).toContain('for the period 10:00 on 22 September 2026 to 10:00 on 2 October 2026');
+    expect(r.statementOfLiability).not.toMatch(/\d{4}-\d{2}-\d{2}T/);
+    expect(r.particulars.contraventionAt).toBe('2026-09-25T14:12:00+01:00'); // the data keeps the ISO instant
+    expect(r.basis.join(' ')).toContain('Representations and Appeals) (England) Regulations 2022');
+  });
+
+  it('a NIP received exactly 14 days after the offence is within time; 15 days is not (s.1 RTOA 1988, offence day excluded)', () => {
+    expect(s172ResponseData(nip({ receivedAt: '2026-10-09T09:00:00+01:00' }), hire(), hirer()).nipServedWithin14Days).toBe(true);
+    expect(s172ResponseData(nip({ receivedAt: '2026-10-09T09:00:00+01:00' }), hire(), hirer()).nipServiceDays).toBe(14);
+    expect(s172ResponseData(nip({ receivedAt: '2026-10-10T09:00:00+01:00' }), hire(), hirer()).nipServedWithin14Days).toBe(false);
+  });
+
+  it('a stranger is never nominated even when the hirer is the sole permitted driver — and the statement does not pretend the agreement has several drivers', () => {
+    const r = s172ResponseData(nip(), hire(), hirer(), { driver: party('p-x', 'Someone Else') });
+    expect(r.route).toBe('hirer_identified');
+    expect(r.driver).toBeUndefined();
+    expect(r.statement).not.toContain('Someone Else');
+    expect(r.statement).not.toContain('permits more than one driver');
+    expect(r.statement).toContain('not named on the agreement');
+    expect(r.statement).toContain('s.172(2)(b)');
+    expect(r.missing[0]).toContain('do not nominate');
+    // the several-drivers wording is reserved for agreements that actually have several drivers
+    const several = s172ResponseData(nip(), hire({ additionalDrivers: [{ partyId: 'p-add', evidenceIds: [] }] }), hirer());
+    expect(several.statement).toContain('permits more than one driver');
+  });
+
+  it('a penalty transition after the response deadline on the London date warns: 00:30 BST on 15 Oct is after a 14 Oct deadline, 23:30 BST on 14 Oct is not', () => {
+    const late = penaltyTransition(penalty({ responseDeadline: '2026-10-14' }), 'represent', { now: '2026-10-15T00:30:00+01:00' });
+    expect(late.allowed).toBe(true);
+    expect(late.warnings[0]).toContain('2026-10-14 has passed');
+    expect(penaltyTransition(penalty({ responseDeadline: '2026-10-14' }), 'represent', { now: '2026-10-14T23:30:00+01:00' }).warnings).toEqual([]);
+    // after the clocks go back (25 Oct 2026) a "+01:00" stamp is not London time: 00:30+01:00 on 29 Oct is 23:30 GMT on 28 Oct
+    expect(penaltyTransition(penalty({ responseDeadline: '2026-10-28' }), 'represent', { now: '2026-10-29T00:30:00+01:00' }).warnings).toEqual([]);
+    expect(penaltyTransition(penalty({ responseDeadline: '2026-10-28' }), 'represent', { now: '2026-10-29T00:30:00+00:00' }).warnings[0]).toContain('2026-10-28 has passed');
+  });
+});

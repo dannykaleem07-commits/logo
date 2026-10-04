@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import type { ConsistencyFlag, GeneratedDocument } from '@ccguk/domain';
 import { api, type SignStartResult } from '../../../api/client';
-import { useApproveDocument, useClearFlag, useCreateDocument, useDocument, useSendDocument, useStartSign, useSupersedeDocument, useVerifySign } from '../../../api/hooks';
+import { useApproveDocument, useClearFlag, useDocument, useSendDocument, useStartSign, useSupersedeDocument, useVerifySign } from '../../../api/hooks';
 import { Card } from '../../../components/Card';
 import { Badge, DocumentStatusBadge, SeverityBadge } from '../../../components/Badge';
 import { Button } from '../../../components/Button';

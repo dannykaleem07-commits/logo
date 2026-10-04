@@ -111,11 +111,19 @@ export function relativeStoragePath(claimId: Id | undefined, sha256: string, ext
   return path.posix.join(claimId ?? '_unassigned', sha256.slice(0, 2), `${sha256}.${ext}`);
 }
 
+/** Resolve `candidate` and refuse anything that escapes `root` (defence in depth: store paths come from our own rows, never from a request). */
+export function assertInsideStore(root: string, candidate: string, what: string): string {
+  const r = path.resolve(root);
+  const c = path.resolve(candidate);
+  if (c !== r && !c.startsWith(r + path.sep)) throw conflict('STORE_PATH_INVALID', `${what} resolves outside its store and is refused`, { path: candidate });
+  return c;
+}
+
 export function absoluteEvidencePath(ctx: AppContext, storagePath: string): string {
-  if (path.isAbsolute(storagePath)) return storagePath;
   // Legacy rows (db fixtures) use "evidence/<claim>/<file>"; both resolve under EVIDENCE_DIR.
   const rel = storagePath.startsWith('evidence/') ? storagePath.slice('evidence/'.length) : storagePath;
-  return path.join(ctx.config.evidenceDir, rel);
+  const abs = path.isAbsolute(rel) ? rel : path.join(ctx.config.evidenceDir, rel);
+  return assertInsideStore(ctx.config.evidenceDir, abs, 'evidence storagePath');
 }
 
 export function manifestPath(absolutePath: string): string {
@@ -349,4 +357,20 @@ export function openEvidenceStream(ctx: AppContext, evidence: Evidence) {
   const abs = absoluteEvidencePath(ctx, evidence.storagePath);
   if (!existsSync(abs)) return undefined;
   return createReadStream(abs);
+}
+
+export interface VerifiedEvidenceRead {
+  buffer: Buffer;
+  computedSha256: string;
+  /** True when the bytes on disk hash to the recorded sha256 and have the recorded length. */
+  intact: boolean;
+}
+
+/** Read the stored bytes and re-hash them against the row — the file route never serves bytes that no longer match the record. */
+export function readEvidenceVerified(ctx: AppContext, evidence: Evidence): VerifiedEvidenceRead | undefined {
+  const abs = absoluteEvidencePath(ctx, evidence.storagePath);
+  if (!existsSync(abs)) return undefined;
+  const buffer = readFileSync(abs);
+  const computedSha256 = createHash('sha256').update(buffer).digest('hex');
+  return { buffer, computedSha256, intact: computedSha256 === evidence.sha256.toLowerCase() && buffer.length === evidence.bytes };
 }

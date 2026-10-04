@@ -2,8 +2,8 @@
  * Settings screen model (pure; unit-tested). BLUEPRINT §7.7 (vendor onboarding and bank validation), §3.4 (rate
  * card), §4.1 (lookups and where to register for keys). Pence over the wire; pounds only inside MoneyInput.
  */
-import type { Pence } from '@ccguk/domain';
-import type { Settings } from '../../api/client';
+import type { Address, Pence } from '@ccguk/domain';
+import type { RateCardView, Settings } from '../../api/client';
 import { findLegacyDetails, type LegacyHit } from '../../lib/legacy';
 
 /** The exact registered name. Confirmation of Payee returns a full match only when the account name equals it. */
@@ -49,10 +49,52 @@ export interface SettingsForm {
 /** Rate card defaults from BLUEPRINT §3.4 / ARCHITECTURE convention 11 (£90 + £3/mile + £25; £45/day; £285). */
 export const DEFAULT_RATE_CARD = { recoveryCalloutPence: 9000, recoveryPerLoadedMilePence: 300, recoveryAdminPence: 2500, storageDailyPence: 4500, engineerFeePence: 28500, vatRate: 0.2 } as const;
 
+/** The API holds the registered office as an `Address`; the form edits it as one line per part (older builds sent a string). */
+export function addressToLines(a: Address | string | undefined): string {
+  if (!a) return '';
+  if (typeof a === 'string') return a;
+  return [a.line1, a.line2, a.town, a.county, a.postcode].map((x) => (x ?? '').trim()).filter(Boolean).join('\n');
+}
+
+const UK_POSTCODE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
+
+/**
+ * Textarea → `Address` (API `addressSchema`: line1 and postcode required). Parts are split on new lines or commas;
+ * the last part must be a postcode, the first is line 1, the part before the postcode is the town, anything
+ * between is line 2. Returns undefined when there is no usable address (the field is then left out of the patch).
+ */
+export function linesToAddress(text: string): Address | undefined {
+  const parts = text
+    .split(/\n|,/)
+    .map((p) => p.trim())
+    .filter(Boolean);
+  if (parts.length < 2) return undefined;
+  // "London N1 1AA" on one line: split the trailing postcode off the town.
+  const last = parts[parts.length - 1]!;
+  const m = /^(.*?)\s*([A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2})$/i.exec(last);
+  if (!m) return undefined;
+  const postcode = m[2]!.toUpperCase().replace(/\s+/g, ' ');
+  if (!UK_POSTCODE.test(postcode)) return undefined;
+  const line1 = parts[0]!;
+  const middle = [...parts.slice(1, -1), ...(m[1]!.trim() ? [m[1]!.trim()] : [])];
+  const out: Address = { line1, postcode };
+  if (middle.length >= 1) out.town = middle[middle.length - 1];
+  if (middle.length >= 2) out.line2 = middle.slice(0, -1).join(', ');
+  return out;
+}
+
+/** Rate card as the API returns it (`perMilePence` / `adminPence`) or as the web spells it; either is read. */
+export function rateCardPerMile(rc: RateCardView | undefined): Pence | null {
+  return rc?.perMilePence ?? rc?.recoveryPerLoadedMilePence ?? null;
+}
+export function rateCardAdmin(rc: RateCardView | undefined): Pence | null {
+  return rc?.adminPence ?? rc?.recoveryAdminPence ?? null;
+}
+
 export function settingsToForm(s: Settings | undefined): SettingsForm {
   const rc = s?.rateCard;
   return {
-    registeredOffice: s?.registeredOffice ?? '',
+    registeredOffice: addressToLines(s?.registeredOffice),
     vatNumber: s?.vatNumber ?? '',
     icoRegistration: s?.icoRegistration ?? '',
     bankAccountName: s?.bank?.accountName ?? '',
@@ -60,8 +102,8 @@ export function settingsToForm(s: Settings | undefined): SettingsForm {
     bankAccountNumber: s?.bank?.accountNumber ?? '',
     bankName: s?.bank?.bankName ?? '',
     recoveryCalloutPence: rc?.recoveryCalloutPence ?? null,
-    recoveryPerLoadedMilePence: rc?.recoveryPerLoadedMilePence ?? null,
-    recoveryAdminPence: rc?.recoveryAdminPence ?? null,
+    recoveryPerLoadedMilePence: rateCardPerMile(rc),
+    recoveryAdminPence: rateCardAdmin(rc),
     storageDailyPence: rc?.storageDailyPence ?? null,
     engineerFeePence: rc?.engineerFeePence ?? null,
     vatRatePct: rc ? String(Math.round(rc.vatRate * 10000) / 100) : ''
@@ -85,6 +127,7 @@ export function validateSettings(f: SettingsForm): SettingsErrors {
     const hits = legacy(f[k]);
     if (hits.length) e[k] = `Legacy detail blocked (lesson i): ${hits.map((h) => `"${h.found}"`).join(', ')}`;
   }
+  if (f.registeredOffice.trim() && !e.registeredOffice && !linesToAddress(f.registeredOffice)) e.registeredOffice = 'One part per line, ending with the postcode (e.g. "1 Example Way", "London", "N1 1AA")';
   if (f.bankSortCode && !/^\d{2}-?\d{2}-?\d{2}$/.test(f.bankSortCode.trim())) e.bankSortCode = 'Sort code is six digits (e.g. 12-34-56)';
   if (f.bankAccountNumber && !/^\d{8}$/.test(f.bankAccountNumber.trim())) e.bankAccountNumber = 'Account number is eight digits';
   if (f.vatNumber && !/^(GB)?\s?\d{9}(\d{3})?$/i.test(f.vatNumber.replace(/\s+/g, ''))) e.vatNumber = 'UK VAT number: GB followed by 9 digits (leave blank if not registered)';
@@ -97,16 +140,22 @@ export function validateSettings(f: SettingsForm): SettingsErrors {
   return e;
 }
 
-/** Form → PATCH /settings body. Only the sections the form owns; pence stay pence; VAT as a fraction. */
+/**
+ * Form → PATCH /settings body (apps/api `settingsPatchBody`). Only the sections the form owns; pence stay pence;
+ * VAT as a fraction; the registered office as an `Address`; the bank block only when an account name is given
+ * (the API requires name, sort code and account number together).
+ */
 export function buildSettingsPatch(f: SettingsForm): Partial<Settings> {
   const rc = DEFAULT_RATE_CARD;
   const vat = parsePct(f.vatRatePct);
+  const registeredOffice = linesToAddress(f.registeredOffice);
+  const accountName = f.bankAccountName.replace(/\s+/g, ' ').trim();
   return {
-    registeredOffice: f.registeredOffice.trim(),
+    ...(registeredOffice ? { registeredOffice } : {}),
     companyNumber: COMPANY_NUMBER,
     vatNumber: f.vatNumber.replace(/\s+/g, '').toUpperCase() || undefined,
     icoRegistration: f.icoRegistration.replace(/\s+/g, '').toUpperCase() || undefined,
-    bank: { accountName: f.bankAccountName.replace(/\s+/g, ' ').trim(), sortCode: f.bankSortCode.replace(/\D/g, ''), accountNumber: f.bankAccountNumber.trim(), bankName: f.bankName.trim() || undefined },
+    ...(accountName ? { bank: { accountName, sortCode: f.bankSortCode.replace(/\D/g, ''), accountNumber: f.bankAccountNumber.trim(), bankName: f.bankName.trim() || undefined } } : {}),
     rateCard: {
       recoveryCalloutPence: f.recoveryCalloutPence ?? rc.recoveryCalloutPence,
       recoveryPerLoadedMilePence: f.recoveryPerLoadedMilePence ?? rc.recoveryPerLoadedMilePence,

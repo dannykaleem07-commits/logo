@@ -94,19 +94,46 @@ Vitest runs in node (real `node:crypto`), so tests may import anything from the 
 - `GET /claims` → `ClaimSummary[]` (a `Claim` plus optional denormalised `claimantName`, `registration`, `insurerName`,
   `handlerName`, `outstandingPence`, `oldestOverdueClock`, `nextDueClock`, `blockedDocuments`, `openFlags`).
   The client sends both `q`/`search` and `insurerId`/`atFaultInsurerId`; the list page re-applies the filters client-side.
-- `POST /claims` ← `CreateClaimBody` (channel, disclosure, claimant, driver?, vehicle, accident, thirdParty?, witnesses,
-  clientInsurer?, injury?, services, handlerId?, gtaSubscriber:false). The wizard then posts a `services_agreed` event
-  (when any service is agreed), the intervention offer (when the script-guard answer is "yes"), a `note` event and
-  `PATCH /claims/:id { injuryReferral }` when injuries were reported (no fee).
-- `POST /vehicles/lookup` → `VehicleLookupResult`: `{status:'ok', vehicle, ves?, mot?, motHistory?, linkedClaims?, fleetUnit?}`
-  or `{status:'manual_required', reason?, partial?, linkedClaims?, fleetUnit?}`. An `ApiError` whose code contains
-  `manual_required` is normalised to the latter. `linkedClaims` → duplicate banner; `fleetUnit` → hard stop.
+- `POST /claims` ← `CreateClaimBody`, which mirrors the API's zod schema (`apps/api/src/schemas/claims.ts`
+  `createClaimBody`): `claimant`/`driver`/`atFaultInsurer`/`clientInsurer` as party refs (`{id}` or details with
+  `roles`), `vehicle`/`thirdPartyVehicle` as vehicle refs, `thirdParties`, `accident`, `liability`, `handlerId`,
+  `injuryReferralTo` (the API routes the referral when `accident.injuries` is true — no fee), `interventionOffer`
+  (inline, `clientToldToIgnore:false`), `servicesAgreedAt` (the API appends `services_agreed` → GTA 4.1 clock),
+  `fnolAt`, `callRecordingDisclosed`, `notes`. The descriptive web fields `channel`, `disclosure`, `witnesses` and
+  `services` ride along (zod strips unknown keys). The reply is `{ claim, intake }` (201); `normaliseCreateClaimResult`
+  also accepts `{ ...claim, intake }` and a bare `Claim`. The API creates the witness parties itself (role `witness`)
+  and runs the connected-party check (`intake.witnesses`, `NON_INDEPENDENT_WITNESS`). The intake answers the domain
+  validator checks ride in the body too: `takenCold` (only ever `true`), `offerDisclosed` + `offerDetails`
+  (what / by whom / when), `witnesses` with a relationship each (`[]` = asked, none), `thirdParty.registrationUnknown`;
+  a hard validation failure is a 400 whose `details.errors` the wizard shows line by line, and open soft questions
+  (client insurer / policy, third-party registration) become an `INTAKE_INCOMPLETE` flag on the new claim. The wizard
+  then appends a services-detail `note` and records a decision already given on the offer with
+  `PATCH /claims/:id/offers/:oid` (`intake.offer.id`). Insurers already on file (`GET /parties?q=&role=insurer`)
+  are referenced by id so no duplicate insurer party is created per claim. `PATCH /claims/:id` is strict
+  (`ClaimPatchBody`) and is not used by the wizard.
+- `POST /vehicles/lookup` → the API replies `{status:'ok'|'partial'|'manual_required', vehicle, providers, lookupIds}`;
+  `normaliseLookupResult` turns that into the web's `VehicleLookupResult` (`{status:'ok', vehicle, ves?, mot?,
+  motHistory?, linkedClaims?, fleetUnit?, warnings}` or `{status:'manual_required', reason, partial?, …}`), with
+  `partial` treated as `ok` plus a warning per failed provider. `linkedClaims` come from `GET /vehicles/:id` (`claims`);
+  `fleetUnit` is set when `vehicle.ownership === 'fleet'` → hard stop (lessons f, h). An `ApiError` whose code
+  contains `manual_required` is normalised too.
+- Write replies that come wrapped (`{event, effects, clocks}`, `{offer, replyClock}`, `{hire, …}`, `{storage, …}`,
+  `{recovery, ledgerEntry, charge}`, `{vehicle, conflicts}`, `{estimate, reconciliation}`) are unwrapped by `unwrap`.
+- Documents are re-executed with `POST /documents/:id/supersede {reason, reExecutedOn}`; PAV approval goes through
+  `POST /claims/:id/pav/:pid/approve` (an override is first re-assessed with `override:{pavPence, reason}`); the
+  engineer's report is edited with `PATCH /claims/:id/engineer-report/:rid` while unissued and issued with
+  `POST …/engineer-report/:rid/issue`, which also drafts `report.engineer`; labour suggestions come from
+  `GET /engineering/labour-library/suggest`. `PATCH /fleet/:id` is used as-is (no POST fallback: a 404 is an unknown
+  unit, and re-posting would duplicate it).
+- `GET/PATCH /settings`: `registeredOffice` is an `Address` (the form edits it one part per line, postcode last);
+  the rate card is read in the API spelling (`perMilePence`, `adminPence`) and written in either spelling.
 - `GET /analytics/overview` → `AnalyticsOverview`; every aggregate (`clocks`, `blockedDocuments`, `nextActions`,
   `debtorDays`, `fleetAlerts`) is optional. When missing, `useDashboardData` walks the open claims (≤30) with
   `GET /claims/:id/clocks` and `/actions`, and reads `blockedDocuments` counts from the list rows.
 - Lists may come back as `[...]` or `{items:[...]}`; `asList` normalises.
 
-`TODO wire when @ccguk/api lands`: align these with the API's zod schemas and drop the fallbacks that are no longer needed.
+The `asList` / `unwrap` / `normalise*` helpers are kept so the screens also work against an API that returns the bare
+entities; they cost nothing when the API returns the documented shapes.
 `TODO wire when @ccguk/domain intake lands`: replace the script text constants in `fnol.ts` with `intakeScript` and run
 `validateFnol` before submit.
 

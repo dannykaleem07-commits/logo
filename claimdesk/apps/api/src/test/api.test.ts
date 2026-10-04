@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { Claim, Clock, GateResult, PlaybookAction, CaseAcceptance, LedgerEntry } from '@ccguk/domain';
+import { PERIMETER_FLAG_INJURY, type Claim, type Clock, type GateResult, type PlaybookAction, type CaseAcceptance, type LedgerEntry } from '@ccguk/domain';
 import { createTestApp, FNOL, type TestApp } from './helpers.js';
 
 type Created = { claim: Claim; intake: { validation: { ok: boolean }; crossFile: { severity: string; duplicateClaimIds: string[] }; liability: { score: number }; injury?: { feeTaken: false; referredTo: string }; offer?: { id: string; replyDueBy: string }; flags: Array<{ code: string; severity: string }> } };
@@ -166,7 +166,7 @@ describe('injury routing and script-guard offer capture', () => {
     expect(events2.body.events.some((e) => e.type === 'intervention_reply_sent')).toBe(true);
 
     const acceptance = await t.api<CaseAcceptance>('GET', `/claims/${claim.id}/acceptance`);
-    expect(acceptance.body.perimeterFlags).toContain('INJURY_REFER_OUT');
+    expect(acceptance.body.perimeterFlags).toContain(PERIMETER_FLAG_INJURY);
   });
 
   it('refuses the script-guard violation (client told to ignore an offer)', async () => {

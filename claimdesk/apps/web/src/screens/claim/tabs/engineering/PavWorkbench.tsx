@@ -204,7 +204,7 @@ export function PavWorkbench({ view }: { view: ClaimView }) {
                 <TextInput label="Override reason" value={overrideReason} onChange={setOverrideReason} disabled={pavOverride === null || pavOverride === result.medianPence} />
                 <TextInput label="Approved by (engineer)" value={approver} onChange={setApprover} placeholder="Name / initials" />
                 <div className="field" style={{ justifyContent: 'flex-end' }}>
-                  <Button variant="primary" loading={postPav.isPending} onClick={approve} disabled={approver.trim().length < 2 || !enough} title={enough ? undefined : `Need ${PAV_MIN_COMPARABLES} usable comparables`}>
+                  <Button variant="primary" loading={assess.isPending || approvePav.isPending} onClick={approve} disabled={approver.trim().length < 2 || !enough} title={enough ? undefined : `Need ${PAV_MIN_COMPARABLES} usable comparables`}>
                     Approve PAV
                   </Button>
                 </div>
@@ -218,6 +218,7 @@ export function PavWorkbench({ view }: { view: ClaimView }) {
             </div>
           )}
           <ApiErrorNotice error={assess.error} what="assess the PAV" />
+          <ApiErrorNotice error={approvePav.error} what="approve the PAV" />
         </Card>
       </div>
 

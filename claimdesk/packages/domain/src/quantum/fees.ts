@@ -7,6 +7,7 @@
  * the status — a human with the EX50 URL does.
  */
 import type { Pence, Verification } from '../types.js';
+import { formatGBP } from '../money.js';
 
 export type FeeKind = 'issue' | 'hearing_small_claims';
 
@@ -95,8 +96,8 @@ export function courtFee(claimPence: Pence, fees: FeeBand[] = defaultCourtFees, 
   } else throw new Error('courtFee: fee band has neither feePence nor pct');
   const label = kind === 'issue' ? 'Issue fee' : 'Small claims hearing fee';
   const note =
-    `${label} for a claim of £${(claimPence / 100).toFixed(2)}: ` +
-    (band.pct !== undefined ? `${band.pct}% of the claim value` : `fixed band £${(band.fromPence / 100).toFixed(2)}–${band.toPence === OPEN ? 'no upper limit' : `£${(band.toPence / 100).toFixed(2)}`}`) +
+    `${label} for a claim of ${formatGBP(claimPence)}: ` +
+    (band.pct !== undefined ? `${band.pct}% of the claim value` : `fixed band ${formatGBP(band.fromPence)}–${band.toPence === OPEN ? 'no upper limit' : formatGBP(band.toPence)}`) +
     `. Verification: ${band.verification.status}${band.verification.sourceNote ? ` — ${band.verification.sourceNote}` : ''}. ` +
     'Court fees are recoverable as a disbursement if the claim succeeds (CPR 27.14(2)(c) on the small claims track).';
   return { kind, claimPence, feePence, band, verification: band.verification, note };

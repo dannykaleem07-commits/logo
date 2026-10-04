@@ -28,7 +28,7 @@ export function registerPartiesRoutes(app: FastifyInstance, ctx: AppContext): vo
   app.post('/parties', async (request, reply) => {
     const body = parse(partyInput, request.body);
     const party = ctx.db.transaction((tx) => {
-      const p = ctx.repos.createParty(tx, { ...body, createdAt: ctx.now() });
+      const p = ctx.repos.createParty(tx, { ...body, roles: body.roles?.length ? body.roles : ['other'], createdAt: ctx.now() });
       ctx.repos.appendAudit(tx, { actor: request.actor, action: 'party.create', entity: 'parties', entityId: p.id, after: { name: p.name, roles: p.roles }, at: ctx.now() });
       return p;
     });

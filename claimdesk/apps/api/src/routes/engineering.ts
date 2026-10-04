@@ -9,7 +9,7 @@ import type { Actor } from '@ccguk/db';
 import type { AppContext } from '../context.js';
 import { badRequest, conflict, HttpError } from '../errors.js';
 import { parse } from '../schemas/common.js';
-import { comparableBody, engineerReportBody, estimateBody, estimateImportBody, estimatePatchBody, labourAddBody, labourSuggestQuery, pavBody, reconcileBody, totalLossAssessBody, totalLossPredictBody, type EstimateLineInput } from '../schemas/services.js';
+import { comparableBody, engineerReportBody, estimateBody, estimateImportBody, estimatePatchBody, issueReportBody, labourAddBody, labourSuggestQuery, pavBody, reconcileBody, totalLossAssessBody, totalLossPredictBody, type EstimateLineInput } from '../schemas/services.js';
 import { loadBundle, recomputeClocks } from '../services/claimView.js';
 import { createClaimDocument } from '../services/documents.js';
 import { assessTotalLoss, engineerReportChecklist, extractLinesProvider, predictTotalLoss } from '../services/engineeringFallbacks.js';
@@ -358,7 +358,7 @@ export function registerEngineeringRoutes(app: FastifyInstance, ctx: AppContext)
     if (report.issuedAt) throw conflict('REPORT_ISSUED', `Report already issued at ${report.issuedAt}`);
     const bundle = loadBundle(ctx, id);
     const checklist = engineerReportChecklist(report, bundle, bundle.estimate);
-    const force = (request.body as { force?: boolean } | undefined)?.force === true;
+    const force = (parse(issueReportBody, request.body ?? {}) ?? {}).force === true;
     if (!checklist.complete && !force) throw conflict('CHECKLIST_INCOMPLETE', `The report checklist is incomplete: ${checklist.missing.join(', ')}`, { missing: checklist.missing, items: checklist.items });
     const now = ctx.now();
     const { issued, event, effects } = ctx.db.transaction((tx) => {
@@ -372,7 +372,10 @@ export function registerEngineeringRoutes(app: FastifyInstance, ctx: AppContext)
     let documentNote: string | undefined;
     try {
       const doc = createClaimDocument(ctx, { claimId: id, templateId: 'report.engineer', user: request.user, actor: request.actor });
-      ctx.repos.updateEngineerReport(ctx.db, rid, { documentId: doc.id });
+      ctx.db.transaction((tx) => {
+        ctx.repos.updateEngineerReport(tx, rid, { documentId: doc.id });
+        ctx.repos.appendAudit(tx, { actor: request.actor, action: 'engineer_report.document', entity: 'engineer_reports', entityId: rid, after: { documentId: doc.id, templateId: 'report.engineer' }, at: ctx.now() });
+      });
       document = doc;
     } catch (err) {
       if (err instanceof HttpError && (err.code === 'TEMPLATE_NOT_FOUND' || err.statusCode === 400)) documentNote = `report.engineer document not generated: ${err.message}`;

@@ -1,9 +1,8 @@
 import type { StepProps } from './NewClaimPage';
-import { DISCLOSURE_TEXT, DISCLOSURE_TITLE } from './fnol';
+import { DISCLOSURE_TEXT, DISCLOSURE_TITLE, type FnolChannel } from './fnol';
 import { Checkbox, Select, TextInput } from '../../../components/Form';
-import type { CreateClaimBody } from '../../../api/client';
 
-const CHANNELS: Array<{ value: CreateClaimBody['channel']; label: string }> = [
+const CHANNELS: Array<{ value: FnolChannel; label: string }> = [
   { value: 'phone', label: 'Phone (accident line)' },
   { value: 'whatsapp', label: 'WhatsApp' },
   { value: 'web_form', label: 'Web form' },

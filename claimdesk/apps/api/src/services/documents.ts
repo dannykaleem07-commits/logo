@@ -35,7 +35,9 @@ import type { AppContext } from '../context.js';
 import { badRequest, conflict, HttpError, notFound } from '../errors.js';
 import { assembleTemplateData, companySettings, defaultRecipientRole, type RecipientRole } from './documentData.js';
 import { kbCitations } from './kb.js';
+import { reconcileSystemFigures, type ReconciledFlag } from './consistencyReconcile.js';
 import { loadBundle, recomputeClocks } from './claimView.js';
+import { assertInsideStore } from './evidence.js';
 
 export interface DocUser {
   id: Id;
@@ -70,14 +72,44 @@ export function documentPdfPath(ctx: AppContext, doc: Pick<GeneratedDocument, 'i
   return { relative, absolute: path.join(ctx.config.documentsDir, relative) };
 }
 
+/** Resolve a stored PDF path under DOCUMENTS_DIR; anything that escapes the store is refused (409 STORE_PATH_INVALID). */
 export function resolvePdfPath(ctx: AppContext, pdfPath: string): string {
-  return path.isAbsolute(pdfPath) ? pdfPath : path.join(ctx.config.documentsDir, pdfPath);
+  const abs = path.isAbsolute(pdfPath) ? pdfPath : path.join(ctx.config.documentsDir, pdfPath);
+  return assertInsideStore(ctx.config.documentsDir, abs, 'document pdfPath');
 }
 
-export function readDocumentPdf(ctx: AppContext, doc: GeneratedDocument): Buffer | undefined {
+export interface VerifiedPdfRead {
+  pdf: Buffer;
+  computedSha256: string;
+  /** True when the stored bytes hash to the document's recorded sha256 (set at approval). */
+  intact: boolean;
+}
+
+export function readDocumentPdfVerified(ctx: AppContext, doc: GeneratedDocument): VerifiedPdfRead | undefined {
   if (!doc.pdfPath) return undefined;
   const abs = resolvePdfPath(ctx, doc.pdfPath);
-  return existsSync(abs) ? readFileSync(abs) : undefined;
+  if (!existsSync(abs)) return undefined;
+  const pdf = readFileSync(abs);
+  const computedSha256 = sha256Hex(pdf);
+  return { pdf, computedSha256, intact: computedSha256 === doc.sha256.toLowerCase() };
+}
+
+/** The approved PDF — refused (409 DOCUMENT_PDF_TAMPERED) when the bytes on disk no longer hash to the recorded sha256. */
+export function readDocumentPdf(ctx: AppContext, doc: GeneratedDocument): Buffer | undefined {
+  const read = readDocumentPdfVerified(ctx, doc);
+  if (!read) return undefined;
+  if (!read.intact) throw conflict('DOCUMENT_PDF_TAMPERED', `The stored PDF for document ${doc.id} does not hash to its recorded sha256 — it is not served`, { recordedSha256: doc.sha256, computedSha256: read.computedSha256 });
+  return read.pdf;
+}
+
+/** The signature certificate PDF rendered at sign/verify (path from the signature record, contained in DOCUMENTS_DIR). */
+export function readCertificatePdf(ctx: AppContext, doc: GeneratedDocument): { pdf: Buffer; sha256: string; certificateId: Id } | undefined {
+  const rel = doc.signature?.certificatePdfPath;
+  if (!rel || !doc.signature) return undefined;
+  const abs = resolvePdfPath(ctx, rel);
+  if (!existsSync(abs)) return undefined;
+  const pdf = readFileSync(abs);
+  return { pdf, sha256: sha256Hex(pdf), certificateId: doc.signature.certificateId };
 }
 
 function toDraftRole(role: RecipientRole | undefined): 'at_fault_insurer' | 'client' | 'own_insurer' | 'court' | 'other' | undefined {
@@ -138,7 +170,8 @@ export function createClaimDocument(ctx: AppContext, input: CreateClaimDocumentI
   if (input.supersedes && typeof assembled.data.reExecutionLine === 'string' && !html.includes(assembled.data.reExecutionLine)) {
     html = html.replace(/<\/body>/i, `<p class="small muted re-execution">${assembled.data.reExecutionLine}</p></body>`);
   }
-  const report = runConsistency(ctx, html, bundle, input.templateId, assembled.recipientRole, now);
+  const checked = runConsistency(ctx, html, bundle, input.templateId, assembled.recipientRole, now);
+  const { report, cleared } = reconcileLedgerFigures(ctx, bundle, input, assembled, checked, now);
   return ctx.db.transaction((tx) => {
     const draftInput = {
       claimId: input.claimId,
@@ -154,17 +187,37 @@ export function createClaimDocument(ctx: AppContext, input: CreateClaimDocumentI
       reExecutedOn: input.supersedes ? (input.reExecutedOn ?? now.slice(0, 10)) : undefined,
     };
     const doc = input.supersedes ? ctx.repos.supersedeDocument(tx, input.supersedes.id, input.actor, draftInput, { reExecutedOn: draftInput.reExecutedOn }) : ctx.repos.createDraft(tx, draftInput);
-    const checked = ctx.repos.setConsistency(tx, doc.id, report);
+    const stored = ctx.repos.setConsistency(tx, doc.id, report);
     ctx.repos.appendAudit(tx, {
       actor: input.actor,
       action: 'document.create',
       entity: 'documents',
       entityId: doc.id,
-      after: { claimId: input.claimId, templateId: doc.templateId, templateVersion: doc.templateVersion, status: checked.status, blocked: report.blocked, flags: report.flags.map((f) => f.code), supersedes: input.supersedes?.id },
+      after: { claimId: input.claimId, templateId: doc.templateId, templateVersion: doc.templateVersion, status: stored.status, blocked: report.blocked, flags: report.flags.map((f) => f.code), systemCleared: cleared.length ? cleared : undefined, supersedes: input.supersedes?.id },
       at: now,
     });
-    return checked;
+    return stored;
   });
+}
+
+/**
+ * Engine flags on figures the API wrote from the ledger (table-layout misreads) are cleared by the system with a
+ * reason — see services/consistencyReconcile.ts. Requires the ledger-only render (the template without the handler's
+ * extra text); when that render is impossible (a required free-text field) nothing is cleared.
+ */
+function reconcileLedgerFigures(ctx: AppContext, bundle: ClaimBundle, input: CreateClaimDocumentInput, assembled: ReturnType<typeof assembleTemplateData>, report: ConsistencyReport, now: ISODateTime): { report: ConsistencyReport; cleared: ReconciledFlag[] } {
+  const hasExtra = Boolean(input.extra && Object.keys(input.extra).length);
+  let ledgerOnly: ConsistencyReport | undefined = hasExtra ? undefined : report;
+  if (hasExtra) {
+    try {
+      const plain = assembleTemplateData(ctx, bundle, input.templateId, assembled.recipientRole, input.user, { recipientPartyId: input.recipientPartyId, recipientRole: assembled.recipientRole });
+      const rendered = renderTemplate(input.templateId, plain.data);
+      ledgerOnly = runConsistency(ctx, rendered.html, bundle, input.templateId, assembled.recipientRole, now);
+    } catch {
+      ledgerOnly = undefined; // a template that needs the handler's text cannot be rendered ledger-only: leave every flag for a human
+    }
+  }
+  return reconcileSystemFigures({ report, ledgerOnly, snapshot: assembled.data, derivedKeys: assembled.derivedKeys, ledger: bundle.ledger, now });
 }
 
 export interface CreateStandaloneDocumentInput {
@@ -217,10 +270,16 @@ export function createStandaloneDocument(ctx: AppContext, input: CreateStandalon
 // Flags, approval, PDF
 // ---------------------------------------------------------------------------
 
-export function clearDocumentFlag(ctx: AppContext, id: Id, input: { code: string; excerpt?: string; reason: string }, actor: Actor): GeneratedDocument {
+/** Clear one flag with a reason. `excerpt` pins the occurrence; the web client may send `index` (nth open flag with that code) instead. */
+export function clearDocumentFlag(ctx: AppContext, id: Id, input: { code: string; excerpt?: string; reason: string; index?: number }, actor: Actor): GeneratedDocument {
   const doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: false });
   if (!doc.consistency) throw conflict('DOCUMENT_STATE', 'Document has no consistency report');
   if (doc.status !== 'draft' && doc.status !== 'blocked') throw conflict('DOCUMENT_STATE', `Flags can only be cleared on a draft (status is ${doc.status})`);
+  if (input.excerpt === undefined && input.index !== undefined) {
+    const nth = doc.consistency.flags.filter((f) => f.code === input.code && !f.clearedAt)[input.index];
+    if (!nth) throw notFound('consistency flag', `${id}/${input.code}[${input.index}]`);
+    input = { ...input, excerpt: nth.excerpt };
+  }
   const open = doc.consistency.flags.filter((f) => f.code === input.code && !f.clearedAt && (input.excerpt === undefined || f.excerpt === input.excerpt));
   if (!open.length) throw notFound('consistency flag', `${id}/${input.code}`);
   const now = ctx.now();
@@ -326,15 +385,26 @@ export interface SendResult {
 export async function sendDocument(ctx: AppContext, id: Id, input: { via: NonNullable<GeneratedDocument['sentVia']>; to?: string; note?: string }, actor: Actor): Promise<SendResult> {
   const doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: false });
   if (doc.status !== 'approved' && doc.status !== 'signed') throw conflict('DOCUMENT_STATE', `Only an approved (or signed) document can be sent (status is ${doc.status})`);
-  if (!doc.pdfPath || !existsSync(resolvePdfPath(ctx, doc.pdfPath))) {
+  const stored = readDocumentPdfVerified(ctx, doc);
+  if (stored && !stored.intact) {
+    throw conflict('DOCUMENT_PDF_TAMPERED', `The stored PDF for document ${id} does not hash to its approved sha256 — it cannot be sent; supersede and re-approve`, { recordedSha256: doc.sha256, computedSha256: stored.computedSha256 });
+  }
+  if (!stored) {
+    // An approved document whose PDF was never rendered (or has gone) is rendered now; a signed one is not — re-rendering would break the signature's hash chain.
+    if (doc.status === 'signed') throw conflict('DOCUMENT_PDF_MISSING', `The signed PDF for document ${id} is missing from the store and cannot be re-rendered without breaking the signature — supersede and re-execute`);
     const full = ctx.repos.requireDocument(ctx.db, id, { includeHtml: true });
     const pdf = await renderDocumentPdf(ctx, full);
-    ctx.repos.setDocumentPdf(ctx.db, id, { pdfPath: pdf.relativePath, sha256: pdf.sha256 });
+    const at = ctx.now();
+    ctx.db.transaction((tx) => {
+      ctx.repos.setDocumentPdf(tx, id, { pdfPath: pdf.relativePath, sha256: pdf.sha256 });
+      ctx.repos.appendAudit(tx, { actor, action: 'document.pdf', entity: 'documents', entityId: id, after: { pdfPath: pdf.relativePath, sha256: pdf.sha256, pages: pdf.pages, reason: 'rendered at send — no stored PDF' }, at });
+    });
   }
   const now = ctx.now();
   const result = ctx.db.transaction((tx) => {
     const sent = ctx.repos.markDocumentSent(tx, id, actor, { sentVia: input.via, sentAt: now });
     const events: Array<{ id: Id; type: string }> = [];
+    let offerReplyRecorded: Id | undefined;
     if (sent.claimId) {
       const outType = input.via === 'post' || input.via === 'hand' ? 'letter_out' : 'email_out';
       const e1 = ctx.repos.appendEvent(tx, { claimId: sent.claimId, type: outType, at: now, summary: `${sent.title} sent by ${input.via}${input.to ? ` to ${input.to}` : ''}`, data: { documentId: id, templateId: sent.templateId, via: input.via, to: input.to, note: input.note }, attributableTo: 'ccguk', documentId: id, createdBy: actor.userId, recordedAt: now });
@@ -346,11 +416,14 @@ export async function sendDocument(ctx: AppContext, id: Id, input: { via: NonNul
         const offerId = sent.dataSnapshot?.offer && typeof (sent.dataSnapshot.offer as { offerId?: unknown }).offerId === 'string' ? (sent.dataSnapshot.offer as { offerId: string }).offerId : undefined;
         if (semantic === 'intervention_reply_sent' && offerId) {
           const offer = ctx.repos.getOffer(tx, offerId);
-          if (offer && !offer.replySentAt) ctx.repos.recordOfferReply(tx, offerId, { replySentAt: now, replyDocumentId: id });
+          if (offer && !offer.replySentAt) {
+            ctx.repos.recordOfferReply(tx, offerId, { replySentAt: now, replyDocumentId: id });
+            offerReplyRecorded = offerId;
+          }
         }
       }
     }
-    ctx.repos.appendAudit(tx, { actor, action: 'document.send.record', entity: 'documents', entityId: id, after: { via: input.via, to: input.to, sentAt: now, events }, at: now });
+    ctx.repos.appendAudit(tx, { actor, action: 'document.send.record', entity: 'documents', entityId: id, after: { via: input.via, to: input.to, sentAt: now, events, offerReplyRecorded, transmitted: false }, at: now });
     return { document: sent, events };
   });
   if (result.document.claimId) recomputeClocks(ctx, result.document.claimId);

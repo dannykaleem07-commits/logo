@@ -44,16 +44,50 @@ export const LIABILITY_WEAK_THRESHOLD = 55;
 export const LIABILITY_DECLINE_THRESHOLD = 40;
 
 const REAR_END = /\brear[- ]?end|\bshunt|\bfrom behind\b|\binto the (back|rear) of\b|\bstationary\b[^.]*\b(hit|struck)\b[^.]*\bbehind\b/i;
-const ADMISSION = /\badmit(s|ted)?\b(?!\s+(no|nothing))|\baccept(s|ed)?\s+(full\s+|all\s+)?(fault|liability|responsibility|blame)\b|\b(my|his|her|their)\s+fault\b|\b(was|am|is)\s+(to blame|at fault)\b|\btook\s+(full\s+)?responsibility\b/i;
+/**
+ * The client's own account describes the client running into the vehicle in front — the inverse of a rear-end
+ * shunt by the third party. First person only, so "the van behind didn't stop in time" is not caught.
+ */
+const CLIENT_REAR_ENDED =
+  /\bI\s+(ran|drove|went|crashed|slid|skidded|rolled|bumped)\s+into\s+the\s+(back|rear)\b|\bI\s+(rear[- ]?ended|shunted)\b|\bI\s+(hit|struck)\s+the\s+(back|rear)\s+of\b|\bI\s+(hit|struck)\s+(the\s+)?(car|vehicle|van|lorry|bus|truck|motorbike|cyclist)\s+in\s+front\b|\bI\s+(couldn['’]t|could not|didn['’]t|did not)\s+(stop|brake)\s+in\s+time\b/i;
+/** Negations that turn "admits" / "accepts fault" / "disputes" into their opposite. */
+const NOT_BEFORE = String.raw`(?<!\b(?:not|never|didn['’]t|did not|doesn['’]t|does not|won['’]t|wouldn['’]t|refus\w* to|declin\w* to)\s)`;
+const ADMISSION = new RegExp(
+  [
+    NOT_BEFORE + String.raw`\badmit(s|ted)?\b(?!\s+(no|nothing|only))`,
+    NOT_BEFORE + String.raw`\baccept(s|ed)?\s+(full\s+|all\s+)?(fault|liability|responsibility|blame)\b`,
+    String.raw`(?<!\b(?:not|never|wasn['’]t|isn['’]t)\s)\b(my|his|her|their)\s+fault\b`,
+    String.raw`\b(he|she|they|I|the (other )?driver|third party|tp)\s+(was|am|is|were)\s+(to blame|at fault)\b`,
+    String.raw`\btook\s+(full\s+)?responsibility\b`,
+  ].join('|'),
+  'i',
+);
 const APOLOGY = /\bapolog|\bsorry\b/i;
-const CONTRADICTION = /\bden(y|ies|ied)\b|\bdisput|\bnot\s+(my|his|her|their)\s+fault\b|\b(client|claimant|our driver|he|she)\s+(moved|pulled|cut|swerved|drifted|changed|came|undertook|reversed|was speeding|jumped)\b|\bblames?\b|\bsays?\s+(that\s+)?(the\s+)?(client|claimant)\b/i;
+const CONTRADICTION = new RegExp(
+  [
+    NOT_BEFORE + String.raw`\bden(y|ies|ied|ying)\b`,
+    NOT_BEFORE + String.raw`\bdisput(e|es|ed|ing)\b`,
+    String.raw`\b(not|wasn['’]t|isn['’]t)\s+(my|his|her|their)\s+fault\b`,
+    String.raw`\bblames?\b`,
+    String.raw`\bsays?\s+(that\s+)?(the\s+)?(client|claimant)\b`,
+    String.raw`\b(client|claimant|our driver)\s+(was|is)\s+(to blame|at fault)\b`,
+  ].join('|'),
+  'i',
+);
+/** "He pulled out" in the third party's account is a contradiction only when it is not part of an admission. */
+const CONTRADICTION_MANOEUVRE = /\b(client|claimant|our driver|he|she|they)\s+(moved|pulled|cut|swerved|drifted|changed|came|undertook|reversed|was speeding|jumped)\b/i;
 const DISPUTE_SCENARIO = /\bmerg(e|ed|es|ing)\b|\bslip[- ]?road\b|\broundabout\b|\bcar[- ]?park\b|\bparking\s+(bay|space|area)\b|\bmulti[- ]?storey\b|\bboth\s+(changing|changed|moving|moved)\s+lanes?\b|\bsimultaneous(ly)?\s+lane\b/i;
+
+/** True when the client's own account says the client ran into the vehicle in front. */
+export function detectClientRearEnd(accident: AccidentDetails): boolean {
+  return CLIENT_REAR_ENDED.test(accident.circumstances ?? '');
+}
 
 export function detectRearEndOrClearBreach(accident: AccidentDetails, extra: LiabilityExtras): string | undefined {
   if (extra.highwayCodeRulesAgainstThirdParty && extra.highwayCodeRulesAgainstThirdParty.length > 0) {
     return `Highway Code rule${extra.highwayCodeRulesAgainstThirdParty.length > 1 ? 's' : ''} ${extra.highwayCodeRulesAgainstThirdParty.join(', ')} against the third party (RTA 1988 s.38(7))`;
   }
-  if (REAR_END.test(accident.circumstances ?? '')) return 'rear-end shunt on the client’s account (Highway Code rule 126: safe stopping distance)';
+  if (!detectClientRearEnd(accident) && REAR_END.test(accident.circumstances ?? '')) return 'rear-end shunt on the client’s account (Highway Code rule 126: safe stopping distance)';
   if (accident.highwayCodeRules && accident.highwayCodeRules.length > 0) {
     return `Highway Code rule${accident.highwayCodeRules.length > 1 ? 's' : ''} ${accident.highwayCodeRules.join(', ')} cited on the file (RTA 1988 s.38(7)) — confirm they run against the third party`;
   }
@@ -69,7 +103,10 @@ export function detectDisputeScenario(accident: AccidentDetails): string | undef
 export function detectContradiction(accident: AccidentDetails, extra: LiabilityExtras): boolean {
   if (typeof extra.thirdPartyAccountContradicts === 'boolean') return extra.thirdPartyAccountContradicts;
   const tp = (accident.thirdPartyAccount ?? '').trim();
-  return tp.length > 0 && CONTRADICTION.test(tp);
+  if (tp.length === 0) return false;
+  if (CONTRADICTION.test(tp)) return true;
+  // "He admitted he pulled out" is an admission, not a contradiction; "he pulled out in front of me" without one is.
+  return CONTRADICTION_MANOEUVRE.test(tp) && detectAdmission(accident, extra) !== 'admitted';
 }
 
 export function detectAdmission(accident: AccidentDetails, extra: LiabilityExtras): 'admitted' | 'apology_only' | 'none' {
@@ -92,6 +129,13 @@ export function scoreLiability(accident: AccidentDetails, extra: LiabilityExtras
 
   const breach = detectRearEndOrClearBreach(accident, extra);
   if (breach) factors.push({ factor: 'clear_breach_by_third_party', delta: 25, note: `Clear Highway Code breach by the third party: ${breach}.` });
+  else if (detectClientRearEnd(accident)) {
+    factors.push({
+      factor: 'client_account_rear_end_by_client',
+      delta: -25,
+      note: 'The client’s own account describes the client running into the vehicle in front (Highway Code rule 126 runs against the client). No hire on this file without independent evidence that puts fault elsewhere; never reshape the account (perimeter.md Part 1).',
+    });
+  }
 
   const admission = detectAdmission(accident, extra);
   if (admission === 'admitted') factors.push({ factor: 'third_party_admission', delta: 20, note: 'Third party admitted fault. Get it in writing or on a recorded line; an admission at the scene is often withdrawn once the insurer is involved.' });

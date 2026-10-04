@@ -14,7 +14,16 @@
  * Never a nomination of someone who was not driving.
  */
 import type { Address, FleetUnit, HireAgreement, ISODate, ISODateTime, Party, PenaltyNotice, Vehicle } from '../types.js';
-import { calendarDaysBetween, compareIso } from '../calendar/index.js';
+import { calendarDaysBetween, compareIso, londonParts } from '../calendar/index.js';
+
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const pad2 = (n: number): string => String(n).padStart(2, '0');
+
+/** "14:12 on 25 September 2026" — London wall-clock, for wording that goes into a notice (never a raw ISO stamp). */
+export function formatLondonDateTime(iso: ISODateTime): string {
+  const p = londonParts(iso);
+  return `${pad2(p.hour)}:${pad2(p.minute)} on ${p.day} ${MONTHS[p.month - 1]} ${p.year}`;
+}
 
 export const HIRE_FIRM_NAME = 'Courtesy Cars Group UK Ltd';
 export const HIRE_FIRM_COMPANY_NUMBER = '17430389';
@@ -22,6 +31,7 @@ export const HIRE_FIRM_COMPANY_NUMBER = '17430389';
 export const OWNER_LIABILITY_BASIS = [
   'Road Traffic (Owner Liability) Regulations 2000, Sch 2 — particulars to be given by a vehicle-hire firm, with the hirer’s signed statement of liability',
   'Road Traffic Offenders Act 1988 s.66 / Traffic Management Act 2004 — hirer liable in place of the owner where the particulars and statement are given',
+  'Civil Enforcement of Road Traffic Contraventions (Representations and Appeals) (England) Regulations 2022 — ground of representation: the vehicle was hired under a hiring agreement and the hirer signed a statement of liability (BLUEPRINT §5.2 "the 2022 England ... Regulations"; confirm the exact regulation before it is cited in a letter)',
   'Protection of Freedoms Act 2012 Sch 4 paras 13–14 — private parking: hire agreement and statement of liability passed to the creditor',
   'London councils require a signed hire agreement showing the hirer’s full name, permanent address, date of birth and driving licence details (company hirers excepted) — BLUEPRINT §5.2',
 ];
@@ -112,10 +122,10 @@ export function liabilityTransferParticulars(notice: PenaltyNotice, hire: HireAg
 
   const name = particulars.hirerFullName ?? '[hirer name]';
   const reg = particulars.vehicleRegistration ?? '[registration]';
-  const period = `${particulars.hireStartAt ?? '[start]'} to ${particulars.hireEndAt ?? 'continuing'}`;
+  const period = `${particulars.hireStartAt ? formatLondonDateTime(particulars.hireStartAt) : '[start]'} to ${particulars.hireEndAt ? formatLondonDateTime(particulars.hireEndAt) : 'continuing'}`;
   const statementOfLiability =
     `I, ${name}, of ${particulars.hirerPermanentAddress ?? '[permanent address]'}, confirm that I hired vehicle ${reg} from ${HIRE_FIRM_NAME} (company ${HIRE_FIRM_COMPANY_NUMBER}) under hire agreement ${particulars.agreementNumber ?? '[agreement number]'} for the period ${period}, ` +
-    `that the vehicle was in my possession at ${notice.contraventionAt}, and that I accept liability for ${notice.kind === 'pcn_private' ? 'parking charge' : 'penalty charge'} notice ${notice.noticeNumber} issued by ${notice.issuer} in respect of that vehicle during the period of hire, ` +
+    `that the vehicle was in my possession at ${formatLondonDateTime(notice.contraventionAt)}, and that I accept liability for ${notice.kind === 'pcn_private' ? 'parking charge' : 'penalty charge'} notice ${notice.noticeNumber} issued by ${notice.issuer} in respect of that vehicle during the period of hire, ` +
     'in accordance with the Road Traffic (Owner Liability) Regulations 2000. I understand that the notice may be re-served on me at the address above. ' +
     `Signed: ______________________  Date: ____________  ${companyHirer ? `(for and on behalf of ${name}${particulars.hirerCompanyNumber ? `, company ${particulars.hirerCompanyNumber}` : ''})` : `Date of birth: ${particulars.hirerDateOfBirth ?? '[dob]'}  Driving licence no: ${particulars.hirerDrivingLicenceNumber ?? '[licence]'}`}`;
 
@@ -221,8 +231,8 @@ export function s172ResponseData(notice: PenaltyNotice, hire?: HireAgreement, hi
       diligenceChecklist: S172_DILIGENCE_CHECKLIST,
       missing,
       statement:
-        `${HIRE_FIRM_NAME} (company ${HIRE_FIRM_COMPANY_NUMBER}), registered keeper, responds within the 28-day period to notice ${notice.noticeNumber}. ` +
-        `Having checked ${checked.length > 0 ? checked.join(', ') : 'the records listed below'}, the keeper did not know and has not been able, with reasonable diligence, to ascertain who was driving at ${notice.contraventionAt} (RTA 1988 s.172(4)). ` +
+        `${HIRE_FIRM_NAME} (company ${HIRE_FIRM_COMPANY_NUMBER}), registered keeper, responds to notice ${notice.noticeNumber} issued by ${notice.issuer}. ` +
+        `Having checked ${checked.length > 0 ? checked.join(', ') : 'the records listed below'}, the keeper did not know and has not been able, with reasonable diligence, to ascertain who was driving at ${formatLondonDateTime(notice.contraventionAt)} (RTA 1988 s.172(4)). ` +
         'The records held, the enquiries made and their results are set out honestly below, including the limits of those records. ' +
         'This response does not name any person as driver because no record establishes it.',
     };
@@ -241,7 +251,7 @@ export function s172ResponseData(notice: PenaltyNotice, hire?: HireAgreement, hi
         hireAgreement,
         basisOfKnowledge: `Hire agreement ${hire.agreementNumber}: ${hirer.name} was the hirer in possession of the vehicle; the proposed driver is not on the agreement.`,
         missing,
-        statement: hirerStatement(notice, hire, hirer),
+        statement: hirerStatement(notice, hire, hirer, 'unlisted_driver'),
       };
     }
     const d = person(opts.driver);
@@ -285,24 +295,33 @@ export function s172ResponseData(notice: PenaltyNotice, hire?: HireAgreement, hi
     hireAgreement,
     basisOfKnowledge: `Hire agreement ${hire.agreementNumber}: ${hirer.name} was the hirer in possession; ${permitted.length - 1} additional driver${permitted.length - 1 === 1 ? '' : 's'} were permitted, so the keeper names the hirer as the person able to identify the driver (s.172(2)(b)).`,
     missing,
-    statement: hirerStatement(notice, hire, hirer),
+    statement: hirerStatement(notice, hire, hirer, 'several_drivers'),
   };
+}
+
+function hirePeriodText(hire: HireAgreement): string {
+  const end = hire.collectedAt ?? hire.endAt;
+  return `${formatLondonDateTime(hire.startAt)} to ${end ? formatLondonDateTime(end) : 'continuing'}`;
 }
 
 function driverStatement(notice: PenaltyNotice, hire: HireAgreement, driver: Party, hirer: Party): string {
   return (
-    `${HIRE_FIRM_NAME} (company ${HIRE_FIRM_COMPANY_NUMBER}), registered keeper of the vehicle, responds within the 28-day period to notice ${notice.noticeNumber} issued by ${notice.issuer}. ` +
-    `At ${notice.contraventionAt} the vehicle was on hire under agreement ${hire.agreementNumber} (${hire.startAt} to ${hire.collectedAt ?? hire.endAt ?? 'continuing'}) to ${hirer.name}. ` +
+    `${HIRE_FIRM_NAME} (company ${HIRE_FIRM_COMPANY_NUMBER}), registered keeper of the vehicle, responds to notice ${notice.noticeNumber} issued by ${notice.issuer}. ` +
+    `At ${formatLondonDateTime(notice.contraventionAt)} the vehicle was on hire under agreement ${hire.agreementNumber} (${hirePeriodText(hire)}) to ${hirer.name}. ` +
     `The hire records identify the driver as ${driver.name}${formatAddress(driver.address) ? ` of ${formatAddress(driver.address)}` : ''}${driver.dateOfBirth ? `, date of birth ${driver.dateOfBirth}` : ''}${driver.drivingLicenceNumber ? `, driving licence ${driver.drivingLicenceNumber}` : ''}. ` +
     'This identification is made from the hire agreement and driver records held by the keeper, copies of which are enclosed (RTA 1988 s.172(2)(a)).'
   );
 }
 
-function hirerStatement(notice: PenaltyNotice, hire: HireAgreement, hirer: Party): string {
+function hirerStatement(notice: PenaltyNotice, hire: HireAgreement, hirer: Party, reason: 'several_drivers' | 'unlisted_driver'): string {
+  const why =
+    reason === 'several_drivers'
+      ? 'The agreement permits more than one driver and the keeper’s records do not establish which of them was driving; the hirer is the person able to identify the driver and should be served under s.172(2)(b). '
+      : 'The keeper has been told that a person not named on the agreement may have been driving. Its records cannot confirm that and it does not name anyone they do not identify; the hirer, as the person in possession, is the person able to identify the driver and should be served under s.172(2)(b). ';
   return (
-    `${HIRE_FIRM_NAME} (company ${HIRE_FIRM_COMPANY_NUMBER}), registered keeper of the vehicle, responds within the 28-day period to notice ${notice.noticeNumber} issued by ${notice.issuer}. ` +
-    `At ${notice.contraventionAt} the vehicle was on hire under agreement ${hire.agreementNumber} (${hire.startAt} to ${hire.collectedAt ?? hire.endAt ?? 'continuing'}) to ${hirer.name}${formatAddress(hirer.address) ? ` of ${formatAddress(hirer.address)}` : ''}, who was in possession of it. ` +
-    'The agreement permits more than one driver and the keeper’s records do not establish which of them was driving; the hirer is the person able to identify the driver and should be served under s.172(2)(b). ' +
+    `${HIRE_FIRM_NAME} (company ${HIRE_FIRM_COMPANY_NUMBER}), registered keeper of the vehicle, responds to notice ${notice.noticeNumber} issued by ${notice.issuer}. ` +
+    `At ${formatLondonDateTime(notice.contraventionAt)} the vehicle was on hire under agreement ${hire.agreementNumber} (${hirePeriodText(hire)}) to ${hirer.name}${formatAddress(hirer.address) ? ` of ${formatAddress(hirer.address)}` : ''}, who was in possession of it. ` +
+    why +
     'The keeper does not name a driver it cannot identify from its records (RTA 1988 s.172(2)(a), s.172(4)).'
   );
 }

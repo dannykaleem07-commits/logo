@@ -2,7 +2,7 @@
  * Analytics over the ledger and chronology: overview, debtor days by insurer, reductions by head, cycle times,
  * intervention statistics. Everything is derived — nothing is stored.
  */
-import { addWorkingDays, type Claim, type ClaimStatus, type HeadOfLoss, type ISODateTime, type Pence } from '@ccguk/domain';
+import { addWorkingDays, type Claim, type ClaimStatus, type HeadOfLoss, type ISODateTime, type LedgerEntry, type Pence } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
 import { acceptanceFor, actionsFor, gatesFor, loadBundle } from './claimView.js';
 import { complianceAlerts } from './fleetFallbacks.js';
@@ -93,40 +93,63 @@ export function debtorDays(ctx: AppContext): DebtorDays {
 // ---------------------------------------------------------------------------
 
 export interface Reductions {
-  byHead: Array<{ head: HeadOfLoss; label: string; claimedPence: Pence; paidPence: Pence; reducedPence: Pence; reductionPct: number; claims: number }>;
-  byInsurer: Array<{ insurerName: string; claimedPence: Pence; paidPence: Pence; reducedPence: Pence; reductionPct: number }>;
-  totals: { claimedPence: Pence; paidPence: Pence; reducedPence: Pence; reductionPct: number };
+  byHead: Array<{ head: HeadOfLoss; label: string; claimedPence: Pence; paidPence: Pence; reducedPence: Pence; outstandingPence: Pence; reductionPct: number; claims: number }>;
+  byInsurer: Array<{ insurerName: string; claimedPence: Pence; paidPence: Pence; reducedPence: Pence; outstandingPence: Pence; reductionPct: number }>;
+  totals: { claimedPence: Pence; paidPence: Pence; reducedPence: Pence; outstandingPence: Pence; reductionPct: number };
 }
 
-/** Claimed (invoiced where an invoice exists, else our claimed position) vs paid, by head and by insurer. */
+/**
+ * Claimed (invoiced where an invoice exists, else our claimed position) vs paid, by head and by insurer.
+ *
+ * A *reduction* is what the insurer has actually taken off: explicit `reduced` ledger entries, plus a short payment
+ * (claimed − paid) on a head the insurer has paid something against. A head nothing has been paid against is simply
+ * *outstanding* — File 1's unpaid engineer's fee is a debtor-days problem, not an insurer reduction.
+ */
 export function reductions(ctx: AppContext): Reductions {
-  const heads = new Map<HeadOfLoss, { claimed: Pence; paid: Pence; claims: Set<string> }>();
-  const insurers = new Map<string, { claimed: Pence; paid: Pence }>();
+  type Acc = { claimed: Pence; paid: Pence; reduced: Pence; outstanding: Pence; claims: Set<string> };
+  const empty = (): Acc => ({ claimed: 0, paid: 0, reduced: 0, outstanding: 0, claims: new Set<string>() });
+  const heads = new Map<HeadOfLoss, Acc>();
+  const insurers = new Map<string, Acc>();
   for (const claim of allClaims(ctx)) {
     const ledger = ctx.repos.listLedger(ctx.db, claim.id);
     const ins = insurerName(ctx, claim).name;
-    const ib = insurers.get(ins) ?? { claimed: 0, paid: 0 };
+    const ib = insurers.get(ins) ?? empty();
     for (const head of new Set(ledger.map((e) => e.head))) {
       const rows = ledger.filter((e) => e.head === head);
-      const invoiced = rows.filter((e) => e.kind === 'invoiced').reduce((s, e) => s + e.amountPence, 0);
-      const claimed = invoiced || rows.filter((e) => e.kind === 'claimed').reduce((s, e) => s + e.amountPence, 0);
-      const paid = rows.filter((e) => e.kind === 'paid' || e.kind === 'interim_paid').reduce((s, e) => s + e.amountPence, 0);
+      const sum = (kinds: LedgerEntry['kind'][]) => rows.filter((e) => kinds.includes(e.kind)).reduce((s, e) => s + e.amountPence, 0);
+      const invoiced = sum(['invoiced']);
+      const claimed = invoiced || sum(['claimed']);
       if (!claimed) continue;
-      const hb = heads.get(head) ?? { claimed: 0, paid: 0, claims: new Set<string>() };
-      hb.claimed += claimed;
-      hb.paid += Math.min(paid, claimed);
-      hb.claims.add(claim.id);
-      heads.set(head, hb);
-      ib.claimed += claimed;
-      ib.paid += Math.min(paid, claimed);
+      const paid = Math.min(sum(['paid', 'interim_paid']), claimed);
+      const explicit = Math.min(sum(['reduced']), claimed - paid);
+      const shortfall = paid > 0 ? Math.max(0, claimed - paid - explicit) : 0;
+      const reduced = explicit + shortfall;
+      const outstanding = Math.max(0, claimed - paid - reduced);
+      for (const acc of [heads.get(head) ?? empty(), ib]) {
+        acc.claimed += claimed;
+        acc.paid += paid;
+        acc.reduced += reduced;
+        acc.outstanding += outstanding;
+        acc.claims.add(claim.id);
+        if (acc !== ib) heads.set(head, acc);
+      }
     }
     insurers.set(ins, ib);
   }
-  const pct = (c: number, p: number) => (c ? Math.round(((c - p) / c) * 1000) / 10 : 0);
-  const byHead = [...heads.entries()].map(([head, h]) => ({ head, label: HEAD_LABELS[head], claimedPence: h.claimed, paidPence: h.paid, reducedPence: h.claimed - h.paid, reductionPct: pct(h.claimed, h.paid), claims: h.claims.size })).sort((a, b) => b.reducedPence - a.reducedPence);
-  const totals = byHead.reduce((t, h) => ({ claimedPence: t.claimedPence + h.claimedPence, paidPence: t.paidPence + h.paidPence, reducedPence: t.reducedPence + h.reducedPence, reductionPct: 0 }), { claimedPence: 0, paidPence: 0, reducedPence: 0, reductionPct: 0 });
-  totals.reductionPct = pct(totals.claimedPence, totals.paidPence);
-  return { byHead, byInsurer: [...insurers.entries()].map(([insurerName, i]) => ({ insurerName, claimedPence: i.claimed, paidPence: i.paid, reducedPence: i.claimed - i.paid, reductionPct: pct(i.claimed, i.paid) })), totals };
+  const pct = (c: number, r: number) => (c ? Math.round((r / c) * 1000) / 10 : 0);
+  const byHead = [...heads.entries()]
+    .map(([head, h]) => ({ head, label: HEAD_LABELS[head], claimedPence: h.claimed, paidPence: h.paid, reducedPence: h.reduced, outstandingPence: h.outstanding, reductionPct: pct(h.claimed, h.reduced), claims: h.claims.size }))
+    .sort((a, b) => b.reducedPence - a.reducedPence);
+  const totals = byHead.reduce(
+    (t, h) => ({ claimedPence: t.claimedPence + h.claimedPence, paidPence: t.paidPence + h.paidPence, reducedPence: t.reducedPence + h.reducedPence, outstandingPence: t.outstandingPence + h.outstandingPence, reductionPct: 0 }),
+    { claimedPence: 0, paidPence: 0, reducedPence: 0, outstandingPence: 0, reductionPct: 0 },
+  );
+  totals.reductionPct = pct(totals.claimedPence, totals.reducedPence);
+  return {
+    byHead,
+    byInsurer: [...insurers.entries()].map(([insurerName, i]) => ({ insurerName, claimedPence: i.claimed, paidPence: i.paid, reducedPence: i.reduced, outstandingPence: i.outstanding, reductionPct: pct(i.claimed, i.reduced) })),
+    totals,
+  };
 }
 
 // ---------------------------------------------------------------------------

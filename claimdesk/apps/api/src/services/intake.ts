@@ -53,6 +53,11 @@ export interface NormalisedFnol {
 
 const INDEPENDENT_RE = /^(none|no|independent|stranger|n\/a|unknown to (the )?client)$/i;
 
+/** True when the recorded relationship means the witness is unconnected to the client. */
+export function isIndependentRelationship(relationship: string): boolean {
+  return INDEPENDENT_RE.test(relationship.trim());
+}
+
 function clean(s: string | undefined): string | undefined {
   const t = s?.trim();
   return t ? t : undefined;

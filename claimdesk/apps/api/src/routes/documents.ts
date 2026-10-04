@@ -8,8 +8,8 @@ import type { DocumentStatus } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
 import { notFound } from '../errors.js';
 import { parse } from '../schemas/common.js';
-import { approveDocumentBody, clearDocumentFlagBody, createDocumentBody, documentListQuery, sendDocumentBody, signStartBody, signVerifyBody, supersedeDocumentBody } from '../schemas/services.js';
-import { approveDocument, clearDocumentFlag, createClaimDocument, readDocumentPdf, sendDocument, startSignature, supersedeDocument, verifySignature } from '../services/documents.js';
+import { approveDocumentBody, clearDocumentFlagBody, createDocumentBody, documentGetQuery, documentListQuery, sendDocumentBody, signStartBody, signVerifyBody, supersedeDocumentBody } from '../schemas/services.js';
+import { approveDocument, clearDocumentFlag, createClaimDocument, readCertificatePdf, readDocumentPdf, sendDocument, startSignature, supersedeDocument, verifySignature } from '../services/documents.js';
 import { params, requireClaim } from './helpers.js';
 
 export function registerDocumentsRoutes(app: FastifyInstance, ctx: AppContext): void {
@@ -35,10 +35,11 @@ export function registerDocumentsRoutes(app: FastifyInstance, ctx: AppContext): 
 
   app.get('/documents/:id', async (request) => {
     const { id } = params<{ id: string }>(request);
-    const includeHtml = (request.query as { html?: string }).html !== 'false';
-    return ctx.repos.requireDocument(ctx.db, id, { includeHtml });
+    const q = parse(documentGetQuery, request.query);
+    return ctx.repos.requireDocument(ctx.db, id, { includeHtml: q.html !== 'false' });
   });
 
+  /** The approved PDF, re-hashed on every read (409 DOCUMENT_PDF_TAMPERED when the bytes no longer match the record). */
   app.get('/documents/:id/pdf', async (request, reply) => {
     const { id } = params<{ id: string }>(request);
     const doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: false });
@@ -46,6 +47,16 @@ export function registerDocumentsRoutes(app: FastifyInstance, ctx: AppContext): 
     if (!pdf) throw notFound('document PDF (approve the document first)', id);
     const name = `${doc.title.replace(/[^\w.\- ]/g, '_').slice(0, 80)}.pdf`;
     return reply.header('content-type', 'application/pdf').header('content-disposition', `inline; filename="${name}"`).header('x-sha256', doc.sha256).send(pdf);
+  });
+
+  /** The e-signature certificate PDF (rendered at sign/verify) for a signed document. */
+  app.get('/documents/:id/certificate', async (request, reply) => {
+    const { id } = params<{ id: string }>(request);
+    const doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: false });
+    const cert = readCertificatePdf(ctx, doc);
+    if (!cert) throw notFound('signature certificate (the document is not signed, or the certificate PDF was not rendered)', id);
+    const name = `${cert.certificateId.replace(/[^\w.\-]/g, '_').slice(0, 80)}.pdf`;
+    return reply.header('content-type', 'application/pdf').header('content-disposition', `inline; filename="${name}"`).header('x-sha256', cert.sha256).header('x-certificate-id', cert.certificateId).send(cert.pdf);
   });
 
   app.post('/documents/:id/clear-flag', async (request) => {

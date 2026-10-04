@@ -28,8 +28,8 @@ export function StepParties({ state, update, errors }: StepProps) {
       <fieldset className="fieldset">
         <legend>Client's own insurer</legend>
         <div className="form-grid">
-          <TextInput label="Insurer" value={state.clientInsurer.name} onChange={(v) => update({ clientInsurer: { ...state.clientInsurer, name: v } })} />
-          <TextInput label="Policy number" value={state.clientInsurer.policyNumber} onChange={(v) => update({ clientInsurer: { ...state.clientInsurer, policyNumber: v } })} />
+          <TextInput label="Insurer" value={state.clientInsurer.name} onChange={(v) => update({ clientInsurer: { ...state.clientInsurer, name: v } })} hint="Mandatory intake question (BLUEPRINT §3.1); if the client does not know it now the claim opens with an INTAKE_INCOMPLETE flag." />
+          <TextInput label="Policy number" value={state.clientInsurer.policyNumber} onChange={(v) => update({ clientInsurer: { ...state.clientInsurer, policyNumber: v } })} hint="From the certificate or schedule; the same flag applies until it is recorded." />
         </div>
       </fieldset>
       <h2>Driver</h2>

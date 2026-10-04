@@ -2,10 +2,10 @@
  * Claim view assembly: ClaimBundle (from @ccguk/db) + derived clocks, evidence gates, playbook actions and the
  * acceptance assessment. Clocks are recomputed and cached (`replaceClocks`) whenever the chronology changes.
  */
-import { evaluateGates, type CaseAcceptance, type ClaimBundle, type Clock, type GateResult, type Id, type PlaybookAction } from '@ccguk/domain';
-import { callDeriveClocks } from '../engines.js';
+import { evaluateGates, type CaseAcceptance, type Claim, type ClaimBundle, type Clock, type GateResult, type Id, type PlaybookAction, type PlaybookRule } from '@ccguk/domain';
+import { assessAcceptanceFor, deriveClocksFor as domainClocks, nextActionsFor } from '../engines.js';
 import type { AppContext } from '../context.js';
-import { assessAcceptanceFallback, deriveClocksFallback, nextActionsFallback } from './fallbacks.js';
+import { deriveClocksFallback } from './fallbacks.js';
 
 export interface ClaimView extends ClaimBundle {
   gates: GateResult[];
@@ -19,11 +19,10 @@ export function loadBundle(ctx: AppContext, claimId: Id, includeHtml = false): C
   return ctx.repos.loadClaimBundle(ctx.db, claimId, { includeHtml });
 }
 
-/** Derive clocks for the bundle: domain engine when present, supplemented by the API-side kinds it does not emit. */
+/** Derive clocks for the bundle: the domain engine, supplemented by the API-side kinds it does not emit (off-hire triggers from the hire record). */
 export function deriveClocksFor(ctx: AppContext, bundle: ClaimBundle): Array<Omit<Clock, 'id' | 'claimId'> & { id?: string }> {
   const now = ctx.now();
-  const engine = ctx.engines().deriveClocks;
-  const fromDomain = engine ? callDeriveClocks(engine, bundle, now).map(({ claimId: _c, ...rest }) => rest) : [];
+  const fromDomain = domainClocks(bundle, now).map(({ claimId: _c, ...rest }) => rest);
   const kinds = new Set(fromDomain.map((c) => c.kind));
   const supplement = deriveClocksFallback(bundle, now).filter((c) => !kinds.has(c.kind));
   return [...fromDomain, ...supplement];
@@ -40,18 +39,32 @@ export function gatesFor(bundle: ClaimBundle): GateResult[] {
   return evaluateGates(bundle);
 }
 
+function playbookRules(ctx: AppContext): PlaybookRule[] {
+  return (ctx.kb.playbookRules() as unknown[]).filter((r): r is PlaybookRule => {
+    const o = r as Partial<PlaybookRule> | null;
+    return Boolean(o && typeof o.code === 'string' && typeof o.title === 'string' && Array.isArray(o.basis));
+  });
+}
+
+/**
+ * Has this at-fault insurer ever paid CCGUK? Drives the vendor-verification pack action (BLUEPRINT §7). Undefined when
+ * there is no other file with the insurer (unknown), false when there are files but no payment, true on any payment.
+ */
+export function insurerPaidBefore(ctx: AppContext, claim: Claim): boolean | undefined {
+  if (!claim.atFaultInsurerId) return undefined;
+  const others = ctx.repos.listClaims(ctx.db, { atFaultInsurerId: claim.atFaultInsurerId, limit: 10_000 }).filter((c) => c.id !== claim.id);
+  if (!others.length) return undefined;
+  return others.some((c) => ctx.repos.listLedger(ctx.db, c.id).some((e) => e.kind === 'paid' || e.kind === 'interim_paid'));
+}
+
 export function actionsFor(ctx: AppContext, bundle: ClaimBundle, gates: GateResult[]): PlaybookAction[] {
-  const engine = ctx.engines().nextActions;
-  if (engine) {
-    const rules = ctx.kb.playbookRules();
-    return engine(bundle, ctx.now(), rules.length ? rules : undefined);
-  }
-  return nextActionsFallback(bundle, gates, ctx.now());
+  const rules = playbookRules(ctx);
+  const paidBefore = insurerPaidBefore(ctx, bundle.claim);
+  return nextActionsFor(bundle, { now: ctx.now(), gates, ...(rules.length ? { rules } : {}), ...(paidBefore !== undefined ? { insurerPaidBefore: paidBefore } : {}) });
 }
 
 export function acceptanceFor(ctx: AppContext, bundle: ClaimBundle, gates: GateResult[]): CaseAcceptance {
-  const engine = ctx.engines().assessAcceptance;
-  return engine ? engine(bundle, ctx.now()) : assessAcceptanceFallback(bundle, gates);
+  return assessAcceptanceFor(bundle, gates, ctx.now());
 }
 
 export function buildClaimView(ctx: AppContext, claimId: Id): ClaimView {

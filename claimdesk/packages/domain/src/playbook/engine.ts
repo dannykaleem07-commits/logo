@@ -131,10 +131,10 @@ export function nextActions(bundle: ClaimBundle, ctxIn: PlaybookContext): Playbo
       title: fields.titleSuffix ? `${r.title} — ${fields.titleSuffix}` : r.title,
       why: fields.why,
       basis: [...r.basis, ...(fields.extraBasis ?? [])],
-      priority: fields.priority ?? priorityFor(fields.dueAt, now, r.defaultPriority),
+      priority: fields.priority ?? priorityFor(fields.dueAt, now, r.defaultPriority ?? r.priority),
     };
     if (fields.dueAt) action.dueAt = fields.dueAt;
-    const templateId = fields.templateId === undefined ? r.templateId : fields.templateId === null ? undefined : fields.templateId;
+    const templateId = fields.templateId === undefined ? (r.templateId ?? undefined) : fields.templateId === null ? undefined : fields.templateId;
     if (templateId) action.templateId = templateId;
     if (fields.blockedBy && fields.blockedBy.length > 0) action.blockedBy = fields.blockedBy;
     if (fields.valuePence !== undefined && fields.valuePence > 0) action.valuePence = fields.valuePence;
@@ -186,9 +186,17 @@ export function nextActions(bundle: ClaimBundle, ctxIn: PlaybookContext): Playbo
       const clock = clocksOf('cctv_preservation')[0];
       const dueAt = clock?.dueAt ?? addCalendarDays(acc.occurredAt, 7);
       const what = [acc.cctvAvailable && 'CCTV', acc.dashcamAvailable && 'dashcam', !acc.cctvAvailable && locationTrigger && 'council / TfL / premises CCTV at a junction, roundabout or high street'].filter(Boolean).join(', ');
+      const windowClosed = le(dueAt, now);
+      const lead = dashcamOnly
+        ? windowClosed
+          ? `The 7-day window for the dashcam original closed on ${londonDate(dueAt)} — obtain the original file (hashed) immediately`
+          : 'Obtain the dashcam original file (hashed) within 7 days'
+        : windowClosed
+          ? `The 7-day window from the accident on ${londonDate(acc.occurredAt)} closed on ${londonDate(dueAt)} — send the preservation request for ${what} immediately; footage may still exist`
+          : `Send the preservation request for ${what} within 7 days of the accident on ${londonDate(acc.occurredAt)}`;
       add(
         make('REQUEST_CCTV', {
-          why: `${dashcamOnly ? 'Obtain the dashcam original file (hashed) within 7 days' : `Send the preservation request for ${what} within 7 days of the accident on ${londonDate(acc.occurredAt)}`}: footage is overwritten within weeks and it is the single highest-value action on a disputed-liability file.`,
+          why: `${lead}: footage is overwritten within weeks and it is the single highest-value action on a disputed-liability file.`,
           dueAt,
           valuePence: hireValue,
           ...(dashcamOnly ? { templateId: null } : {}),
@@ -308,10 +316,17 @@ export function nextActions(bundle: ClaimBundle, ctxIn: PlaybookContext): Playbo
   const pack = last('payment_pack_sent');
   if (hireEnded && !pack && !settled) {
     const hireEnd = bundle.hire.map((h) => h.endAt!).sort(compareIso)[bundle.hire.length - 1]!;
-    const blocked = nonGreenGates();
+    // No gate results at all means the gates have not been evaluated — unknown is not green (ARCHITECTURE rule 5).
+    const blocked = ctx.gates.length === 0 ? ['gates_not_evaluated'] : nonGreenGates();
+    const blockedText =
+      ctx.gates.length === 0
+        ? ', but the evidence gates have not been evaluated — run the gate check before the pack goes'
+        : blocked.length > 0
+          ? `, but ${blocked.length} gate${blocked.length === 1 ? ' is' : 's are'} not green (${blocked.join(', ')}) and a pack sent before they are is the pack that gets reduced`
+          : '';
     add(
       make('SEND_PAYMENT_PACK', {
-        why: `Hire ended ${londonDate(hireEnd)}: a clean payment pack (covering letter, mitigation questionnaire, advice form, hire period validation form, engineer’s report, storage and recovery accounts) starts the one-month settlement benchmark${blocked.length > 0 ? `, but ${blocked.length} gate${blocked.length === 1 ? ' is' : 's are'} not green (${blocked.join(', ')}) and a pack sent before they are is the pack that gets reduced` : ''}.`,
+        why: `Hire ended ${londonDate(hireEnd)}: a clean payment pack (covering letter, mitigation questionnaire, advice form, hire period validation form, engineer’s report, storage and recovery accounts) starts the one-month settlement benchmark${blockedText}.`,
         dueAt: addWorkingDays(hireEnd, 1),
         blockedBy: blocked,
         valuePence: outstanding > 0 ? outstanding : hireValue,

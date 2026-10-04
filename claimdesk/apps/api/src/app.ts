@@ -74,7 +74,9 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   app.decorateRequest('requestId', '');
   app.decorateRequest('actor', undefined as unknown as Actor);
 
-  await app.register(cors, { origin: true, credentials: true, exposedHeaders: ['x-request-id'] });
+  // CORS: localhost origins only unless CORS_ORIGINS lists others (config.ts). Credentials are allowed, so the origin
+  // list is never a wildcard by default.
+  await app.register(cors, { origin: ctx.config.corsOrigins, credentials: true, exposedHeaders: ['x-request-id', 'x-sha256', 'x-certificate-id'] });
   await app.register(multipart, { limits: { fileSize: MAX_UPLOAD_BYTES, files: 10, fields: 50 } });
 
   // Request id + auth placeholder. A real identity layer replaces this hook; everything downstream reads request.user/actor.
@@ -115,8 +117,10 @@ export async function buildApp(ctx: AppContext): Promise<FastifyInstance> {
   if (hasWeb) {
     await app.register(fastifyStatic, { root: ctx.config.webDistDir, prefix: '/', wildcard: false, index: ['index.html'] });
   }
+  // Anything under /api (including the bare prefix and a query string) is the API's 404 — the SPA shell never answers for it.
+  const isApiUrl = (url: string) => url === '/api' || url.startsWith('/api/') || url.startsWith('/api?');
   app.setNotFoundHandler((request, reply) => {
-    if (request.url.startsWith('/api/')) {
+    if (isApiUrl(request.url)) {
       return reply.status(404).send({ error: { code: 'NOT_FOUND', message: `Route ${request.method} ${request.url} not found`, requestId: request.requestId } });
     }
     if (hasWeb && request.method === 'GET') return reply.sendFile('index.html');

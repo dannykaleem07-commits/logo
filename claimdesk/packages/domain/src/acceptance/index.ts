@@ -6,6 +6,7 @@ export {
   detectDisputeScenario,
   detectContradiction,
   detectAdmission,
+  detectClientRearEnd,
   LIABILITY_BASELINE,
   LIABILITY_WEAK_THRESHOLD,
   LIABILITY_DECLINE_THRESHOLD,

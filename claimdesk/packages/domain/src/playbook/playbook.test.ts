@@ -350,3 +350,56 @@ describe('helpers', () => {
     expect(outstandingBalance(file1Bundle(), NOW, new Set(['storage']))).toBe(0);
   });
 });
+
+// ---------------------------------------------------------------------------------------------
+// Adversarial verification — unknown gates are not green, KB-shaped rules inject, London dates.
+// ---------------------------------------------------------------------------------------------
+describe('adversarial: playbook', () => {
+  it('the payment pack is blocked when no gate results are supplied (gates unknown ≠ gates green)', () => {
+    const a = byCode(nextActions(file1Bundle(), { now: NOW, clocks: [], gates: [] }), 'SEND_PAYMENT_PACK')!;
+    expect(a.blockedBy).toEqual(['gates_not_evaluated']);
+    expect(a.why).toContain('not been evaluated');
+    // with all eight gates green it is unblocked
+    expect(byCode(nextActions(file1Bundle(), { now: NOW, clocks: [], gates: greenGates() }), 'SEND_PAYMENT_PACK')!.blockedBy).toBeUndefined();
+  });
+
+  it('a KB-shaped rule (templateId null, priority instead of defaultPriority) injects cleanly', () => {
+    const rules = [{ code: 'REFER_INJURY', title: 'Refer PI out', basis: ['laspo-56-60'], templateId: null, priority: 'now' as const, trigger: 'kb' }];
+    const b = day0Bundle({ claim: claim({ status: 'fnol', accident: { ...FILE1_ACCIDENT, injuries: true } }) });
+    const refer = byCode(nextActions(b, { now: T0, clocks: [], gates: [], rules }), 'REFER_INJURY')!;
+    expect(refer.templateId).toBeUndefined();
+    expect(refer.priority).toBe('now');
+    expect(refer.basis).toEqual(['laspo-56-60']);
+    expect(refer.title).toBe('Refer PI out');
+  });
+
+  it('REQUEST_CCTV after the 7-day window says the window closed and goes to now, instead of claiming time remains', () => {
+    const cctv = day0Bundle({ claim: claim({ status: 'fnol', accident: { ...FILE1_ACCIDENT, cctvAvailable: true } }) });
+    const a = byCode(nextActions(cctv, { now: '2026-10-01T09:00:00+01:00', clocks: [], gates: [] }), 'REQUEST_CCTV')!;
+    expect(a.priority).toBe('now');
+    expect(a.dueAt).toBe('2026-09-28T09:00:00+01:00');
+    expect(a.why).toContain('closed on 2026-09-28');
+    expect(a.why).not.toContain('within 7 days of the accident');
+  });
+
+  it('NCAF fallback: 1 working day from a BST Friday lands on the GMT Monday at the same wall-clock time (same convention as the clocks module)', () => {
+    const fri = '2026-10-23T16:00:00+01:00'; // Friday in BST; Monday 26 Oct 2026 is the first GMT day
+    const b = day0Bundle({ claim: claim({ status: 'fnol', openedAt: fri }), events: [event('fnol', fri)] });
+    expect(byCode(nextActions(b, { now: fri, clocks: [], gates: [] }), 'SEND_NCAF')!.dueAt).toBe('2026-10-26T16:00:00+00:00');
+  });
+
+  it('chaser day counts use London dates: a pack logged at 00:30 BST on 5 Oct is 9 days before 14 Oct, not 10', () => {
+    const packAt = '2026-10-05T00:30:00+01:00'; // 23:30 UTC on 4 Oct
+    const b = file1Bundle({ events: [...file1Bundle().events, event('payment_pack_sent', packAt)] });
+    const clocks = [clock('chaser_day_7', packAt, '2026-10-12T00:30:00+01:00', { sourceEventId: 'pack' })];
+    const a = byCode(nextActions(b, { now: '2026-10-14T10:00:00+01:00', clocks, gates: greenGates() }), 'CHASER_7')!;
+    expect(a.why).toContain('9 days after the payment pack of 2026-10-05');
+    expect(a.priority).toBe('now');
+  });
+
+  it('the hire-ended test is by London instant, not by date: a hire ending later today is still open', () => {
+    const b = file1Bundle({ hire: [hire({ endAt: '2026-10-20T17:00:00+01:00' })] });
+    expect(byCode(nextActions(b, { now: '2026-10-20T12:00:00+01:00', clocks: [], gates: greenGates() }), 'SEND_PAYMENT_PACK')).toBeUndefined();
+    expect(byCode(nextActions(b, { now: '2026-10-20T17:00:00+01:00', clocks: [], gates: greenGates() }), 'SEND_PAYMENT_PACK')).toBeDefined();
+  });
+});

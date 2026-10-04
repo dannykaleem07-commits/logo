@@ -1,6 +1,8 @@
-import { formatRegistration, formatGBP } from '@ccguk/domain';
+import { useMemo } from 'react';
+import { formatRegistration, formatGBP, normaliseRegistration } from '@ccguk/domain';
 import type { StepProps } from './NewClaimPage';
-import { anyServiceAgreed, buildCreateClaimBody, buildOfferInput, type Step } from './fnol';
+import type { PartyRef } from '../../../api/client';
+import { anyServiceAgreed, buildCreateClaimBody, buildFnolOffer, vehicleSource, type Step } from './fnol';
 import { Checkbox, TextArea } from '../../../components/Form';
 import { KeyValue } from '../../../components/KeyValue';
 import { Button } from '../../../components/Button';
@@ -11,8 +13,13 @@ import { formatDateTime } from '../../../lib/dates';
 export function StepReview({ state, update, onEdit }: StepProps & { onEdit: (s: Step) => void }) {
   const svc = state.services;
   const setSvc = (k: keyof typeof svc) => (v: boolean | string) => update((s) => ({ ...s, services: { ...s.services, [k]: v } }));
-  const body = buildCreateClaimBody(state);
-  const offer = buildOfferInput(state);
+  const now = useMemo(() => new Date().toISOString(), []);
+  const body = buildCreateClaimBody(state, { now });
+  const offer = buildFnolOffer(state);
+  const refName = (ref: PartyRef | undefined): string => (!ref ? '—' : 'id' in ref ? `existing party ${ref.id}` : ref.name);
+  const claimant = 'id' in body.claimant ? undefined : body.claimant;
+  const vehicleDetails = 'id' in body.vehicle ? undefined : body.vehicle;
+  const source = vehicleSource(state.vehicle);
   const EditBtn = ({ step }: { step: Step }) => (
     <Button size="sm" variant="ghost" onClick={() => onEdit(step)}>
       Edit
@@ -44,10 +51,10 @@ export function StepReview({ state, update, onEdit }: StepProps & { onEdit: (s: 
               items={[
                 { label: 'Disclosure read', value: formatDateTime(state.disclosure.readAt) },
                 { label: 'Channel', value: state.channel },
-                { label: 'Claimant', value: body.claimant.name },
-                { label: 'Contact', value: [body.claimant.phone, body.claimant.email].filter(Boolean).join(' · ') || '—' },
-                { label: 'Driver', value: body.driver ? body.driver.name : 'Claimant was driving' },
-                { label: 'Own insurer', value: body.clientInsurer ? [body.clientInsurer.name, body.clientInsurer.policyNumber].filter(Boolean).join(' · ') : '—' }
+                { label: 'Claimant', value: refName(body.claimant) },
+                { label: 'Contact', value: [claimant?.phone, claimant?.email].filter(Boolean).join(' · ') || '—' },
+                { label: 'Driver', value: body.driver ? refName(body.driver) : 'Claimant was driving' },
+                { label: 'Own insurer', value: body.clientInsurer || body.clientPolicyNumber ? [body.clientInsurer ? refName(body.clientInsurer) : undefined, body.clientPolicyNumber].filter(Boolean).join(' · ') : '—' }
               ]}
             />
           </div>
@@ -60,9 +67,9 @@ export function StepReview({ state, update, onEdit }: StepProps & { onEdit: (s: 
           <div className="card-body">
             <KeyValue
               items={[
-                { label: 'Registration', value: <span className="reg-plate">{formatRegistration(body.vehicle.registration)}</span> },
-                { label: 'Make / model', value: [body.vehicle.make, body.vehicle.model, body.vehicle.variant].filter(Boolean).join(' ') || '—' },
-                { label: 'Source', value: body.vehicle.manual ? <Badge tone="amber">manual · unverified</Badge> : <Badge tone="green">DVLA / DVSA lookup</Badge> },
+                { label: 'Registration', value: <span className="reg-plate">{formatRegistration(normaliseRegistration(state.vehicle.registration))}</span> },
+                { label: 'Make / model', value: (vehicleDetails ? [vehicleDetails.make, vehicleDetails.model, vehicleDetails.variant] : state.vehicle.lookup?.status === 'ok' ? [state.vehicle.lookup.vehicle.make, state.vehicle.lookup.vehicle.model, state.vehicle.lookup.vehicle.variant] : []).filter(Boolean).join(' ') || '—' },
+                { label: 'Source', value: source === 'manual' ? <Badge tone="amber">manual · unverified</Badge> : <Badge tone="green">DVLA / DVSA lookup{'id' in body.vehicle ? ' · on file' : ''}</Badge> },
                 { label: 'Linked claims', value: state.vehicle.lookup?.linkedClaims?.length ? <Badge tone="amber">{state.vehicle.lookup.linkedClaims.length} — linked file will be created</Badge> : 'None' }
               ]}
             />
@@ -78,8 +85,9 @@ export function StepReview({ state, update, onEdit }: StepProps & { onEdit: (s: 
               items={[
                 { label: 'When', value: formatDateTime(body.accident.occurredAt) },
                 { label: 'Where', value: body.accident.location },
-                { label: 'Third party', value: body.thirdParty ? [body.thirdParty.registration && formatRegistration(body.thirdParty.registration), body.thirdParty.driverName, body.thirdParty.insurerName].filter(Boolean).join(' · ') : '—' },
-                { label: 'Witnesses', value: body.witnesses.length ? body.witnesses.map((w) => w.name).join(', ') : 'None' },
+                { label: 'Third party', value: [state.thirdParty.registrationUnknown ? 'registration unknown (failed to stop)' : state.thirdParty.registration.trim() && formatRegistration(normaliseRegistration(state.thirdParty.registration)), state.thirdParty.driverName.trim(), body.atFaultInsurer ? refName(body.atFaultInsurer) : ''].filter(Boolean).join(' · ') || '—' },
+                { label: 'Witnesses', value: body.witnesses?.length ? `${body.witnesses.map((w) => w.name).join(', ')} (the API records them as witness parties and runs the connected-party check)` : 'None — the question was asked' },
+                { label: 'Account taken cold', value: body.takenCold ? 'Confirmed' : <Badge tone="amber">not confirmed</Badge> },
                 { label: 'Injuries', value: body.accident.injuries ? <Badge tone="amber">Yes — referral out, no fee</Badge> : 'No' },
                 { label: 'Roadworthy / driveable / airbags', value: `${body.accident.roadworthyAfter ? 'yes' : 'no'} / ${body.accident.driveable ? 'yes' : 'no'} / ${body.accident.airbagsDeployed ? 'deployed' : 'not deployed'}` }
               ]}
@@ -100,10 +108,10 @@ export function StepReview({ state, update, onEdit }: StepProps & { onEdit: (s: 
               <KeyValue
                 items={[
                   { label: 'Offered by', value: offer.offerorName },
-                  { label: 'When / how', value: `${formatDateTime(offer.receivedAt)} · ${offer.channel}` },
-                  { label: 'What', value: [offer.vehicleClassOffered, offer.terms.otherTerms].filter(Boolean).join(' — ') },
+                  { label: 'When / how', value: `${offer.receivedAt ? formatDateTime(offer.receivedAt) : 'time not given'} · ${offer.channel}` },
+                  { label: 'What', value: [offer.vehicleClassOffered, offer.terms?.otherTerms].filter(Boolean).join(' — ') || 'as described by the client' },
                   { label: 'Rate', value: offer.dailyRatePence !== undefined ? `${formatGBP(offer.dailyRatePence)}/day ${offer.rateIncludesVat ? 'inc VAT' : 'ex VAT'}` : 'none stated' },
-                  { label: "Client's decision", value: offer.clientDecision },
+                  { label: "Client's decision", value: state.offer.clientDecision },
                   { label: 'Reply due', value: <Badge tone="amber">within 1 working day</Badge> }
                 ]}
               />
@@ -114,7 +122,7 @@ export function StepReview({ state, update, onEdit }: StepProps & { onEdit: (s: 
         </div>
       </div>
       <div className="notice">
-        <strong>On submit:</strong> POST /claims{anyServiceAgreed(svc) ? ' → services_agreed event' : ''}{offer ? ' → intervention offer' : ''}{body.injury ? ' → injury referral task (no fee)' : ''}. Nothing is sent to any insurer. The first document (New Claim Advice Form) is drafted, checked and approved on the claim file.
+        <strong>On submit:</strong> one POST /claims (claimant, vehicle, accident{body.atFaultInsurer ? ', at-fault insurer' : ''}{anyServiceAgreed(svc) ? ', services agreed → GTA 4.1 clock' : ''}{offer ? ', intervention offer → 1 WD reply clock' : ''}{body.injuryReferralTo ? ', injury referral task (no fee)' : ''}){state.offer.clientDecision !== 'pending' && offer ? " → client's decision on the register" : ''}. Nothing is sent to any insurer. The first document (New Claim Advice Form) is drafted, checked and approved on the claim file.
       </div>
     </div>
   );

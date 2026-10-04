@@ -47,6 +47,8 @@ export const supersedeDocumentBody = z.object({ data: z.record(z.unknown()).opti
 export const signStartBody = z.object({ signerPartyId: id, signerName: z.string().optional(), contact: z.string().trim().min(3), channel: z.enum(['email', 'sms']) });
 export const signVerifyBody = z.object({ challengeId: id.optional(), code: z.string().trim().min(4).max(8) });
 export const documentListQuery = z.object({ status: z.string().optional(), templateId: z.string().optional(), limit: z.coerce.number().int().min(1).max(500).optional() });
+export const documentGetQuery = z.object({ html: z.enum(['true', 'false']).optional() });
+export const evidenceFileQuery = z.object({ download: z.string().optional() });
 
 // ---------------------------------------------------------------------------
 // Engineering
@@ -191,6 +193,9 @@ export const engineerReportBody = z.object({
   feePence: pence.optional(),
 });
 
+/** `force: true` issues a report whose checklist is incomplete (recorded on the event). */
+export const issueReportBody = z.object({ force: z.boolean().optional() }).optional();
+
 export const totalLossAssessBody = z.object({
   salvagePence: pence.optional(),
   salvageSource: z.enum(['bid', 'offer', 'estimate']).optional(),
@@ -286,6 +291,7 @@ export const penaltyBody = z.object({
   notes: z.string().optional(),
 });
 export const penaltyPatchBody = penaltyBody.omit({ fleetUnitId: true }).partial();
+export const penaltyListQuery = z.object({ open: z.enum(['true', 'false']).optional(), stage: penaltyStage.optional(), fleetUnitId: id.optional() });
 export const penaltyTransitionBody = z.object({ stage: penaltyStage, note: z.string().optional(), hireAgreementId: id.optional(), documentId: id.optional() });
 export const penaltyDocumentBody = z.object({ templateId: z.enum(['notice.pcn_liability_transfer', 'notice.s172_response']), data: z.record(z.unknown()).optional() });
 
@@ -304,6 +310,7 @@ export const gtaRatesQuery = z.object({ date: isoDate.optional(), group: z.strin
 // Watch, settings, jobs
 // ---------------------------------------------------------------------------
 
+export const watchListQuery = z.object({ riskLevel: z.enum(['low', 'medium', 'high']).optional() });
 export const watchBody = z.object({
   companyNumber: z.string().trim().min(1).max(10),
   name: z.string().trim().min(1).optional(),

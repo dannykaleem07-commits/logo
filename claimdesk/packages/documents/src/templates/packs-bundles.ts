@@ -22,6 +22,7 @@ import type { HireEndTrigger, ISODate, ISODateTime, Pence } from '@ccguk/domain'
 import { brand } from '../brand.js';
 import { type BaseDocumentData, type Signatory, sampleBaseData, sampleRecipient } from '../common.js';
 import {
+  daysInclusive,
   escapeHtml,
   formatDateLong,
   formatDateTime,
@@ -34,7 +35,8 @@ import {
   joinAnd,
   nl2p,
   numberedList,
-  plural
+  plural,
+  sumPence
 } from '../format.js';
 import { baseLayout, callout, keyValueTable, pageBreak, scheduleTable, type ScheduleLine, signatureBlock, standardOpener, subjectBlock } from '../layout.js';
 import { type AnyTemplate, registerTemplate, type Template } from '../registry.js';
@@ -46,6 +48,20 @@ type DateLike = ISODate | ISODateTime;
 // ---------------------------------------------------------------------------
 
 export const GTA_BENCHMARK_SENTENCE = 'We are not a GTA subscriber and refer to the GTA as an industry benchmark only.';
+
+/**
+ * Thrown when a pack's figures or dates do not reconcile with each other. A document that could print two different
+ * numbers for the same fact (live-file lesson a) is refused rather than rendered.
+ */
+export class PackDataError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'PackDataError';
+  }
+}
+
+/** Components this template renders itself, so they are always enclosed whatever `present[]` says. */
+export const SELF_RENDERED_COMPONENTS: ReadonlyArray<PackComponentId> = ['covering_letter', 'hire_period_validation'];
 
 const BASE_REQUIRED = [
   'settings.registeredOffice',
@@ -212,7 +228,7 @@ export function endTriggerLabel(trigger: HireEndTrigger): string {
 
 export const gtaPaymentPackTemplate: Template<GtaPaymentPackData> = {
   id: 'pack.gta_payment',
-  version: '1.0.0',
+  version: '1.1.0',
   kind: 'pack',
   title: 'Payment pack',
   recipientRole: 'at_fault_insurer',
@@ -307,8 +323,28 @@ export const gtaPaymentPackTemplate: Template<GtaPaymentPackData> = {
     }
   }),
   render: (d) => {
-    const present = new Set(d.present);
-    const notApplicable = new Set(d.notApplicable ?? []);
+    // The figures must reconcile before anything is printed (lesson a: never two numbers for one fact).
+    if (d.heads.length === 0) throw new PackDataError('pack.gta_payment: no heads of claim — a payment pack must claim at least one head');
+    for (const h of d.heads) {
+      if (h.netPence + h.vatPence !== h.grossPence) {
+        throw new PackDataError(`pack.gta_payment: head "${h.label}" (${h.invoiceNumber}) net ${formatGBP(h.netPence)} + VAT ${formatGBP(h.vatPence)} does not equal gross ${formatGBP(h.grossPence)}`);
+      }
+    }
+    const sumNet = sumPence(d.heads.map((h) => h.netPence));
+    const sumVat = sumPence(d.heads.map((h) => h.vatPence));
+    const sumGross = sumPence(d.heads.map((h) => h.grossPence));
+    if (sumNet !== d.totals.netPence || sumVat !== d.totals.vatPence || sumGross !== d.totals.grossPence) {
+      throw new PackDataError(
+        `pack.gta_payment: heads sum to ${formatGBP(sumNet)} / ${formatGBP(sumVat)} / ${formatGBP(sumGross)} but totals say ${formatGBP(d.totals.netPence)} / ${formatGBP(d.totals.vatPence)} / ${formatGBP(d.totals.grossPence)}`
+      );
+    }
+    const inclusiveDays = daysInclusive(d.hire.startAt, d.hire.endAt);
+    if (d.hire.days !== inclusiveDays) {
+      throw new PackDataError(`pack.gta_payment: hire.days (${d.hire.days}) does not match the inclusive day count of the hire period, ${formatPeriod(d.hire.startAt, d.hire.endAt)}`);
+    }
+
+    const present = new Set<PackComponentId>([...SELF_RENDERED_COMPONENTS, ...d.present]);
+    const notApplicable = new Set((d.notApplicable ?? []).filter((c) => !present.has(c)));
     const contentsRows = PACK_COMPONENTS.map((c) => {
       let status: string;
       if (present.has(c.id)) status = '<span class="tick">✓</span> Enclosed';
@@ -333,13 +369,14 @@ export const gtaPaymentPackTemplate: Template<GtaPaymentPackData> = {
 ${subjectBlock(d.claim, { claimantLabel: 'Claimant' })}
 <p>Dear Sirs,</p>
 ${standardOpener(d.claim)}
-<p>The hire has ended and the documentation is complete. We enclose the payment pack for ${escapeHtml(headLabels)}. The contents follow GTA paragraphs 6.1 to 6.3, which set the industry standard for a clean payment pack. ${escapeHtml(
-      GTA_BENCHMARK_SENTENCE
-    )}</p>
+<p>${
+      anyMissing
+        ? `The hire has ended. We enclose the payment pack for ${escapeHtml(headLabels)}; the items marked below as not enclosed will follow under separate cover, quoting our reference.`
+        : `The hire has ended and the documentation is complete. We enclose the payment pack for ${escapeHtml(headLabels)}.`
+    } The contents follow GTA paragraphs 6.1 to 6.3, which set the industry standard for a clean payment pack. ${escapeHtml(GTA_BENCHMARK_SENTENCE)}</p>
 
 <h2>Contents of this pack</h2>
 ${dataTable(['Document', 'Basis', 'Status'], contentsRows, { html: true })}
-${anyMissing ? '<p class="small muted">Items marked as not enclosed will follow under separate cover with a reference to this pack.</p>' : ''}
 
 <h2>Payment required</h2>
 ${scheduleTable(lines, { caption: 'Heads of claim', totals: d.totals, totalLabel: 'Total payable' })}
@@ -561,6 +598,19 @@ export const litigationBundleIndexTemplate: Template<LitigationBundleIndexData> 
     servedOn: ['The Court', 'The Defendant’s solicitors']
   }),
   render: (d) => {
+    // Page references come from the merged PDF: they must run in sequence, not overlap, and stay inside the bundle.
+    if (!Number.isInteger(d.totalPages) || d.totalPages < 1) throw new RangeError(`bundle.litigation_index: totalPages must be a positive whole number; received ${d.totalPages}`);
+    let lastPage = 0;
+    for (const s of d.sections) {
+      for (const doc of s.documents) {
+        const end = doc.endPage ?? doc.startPage;
+        if (!Number.isInteger(doc.startPage) || !Number.isInteger(end) || doc.startPage < 1 || end < doc.startPage || end > d.totalPages || doc.startPage <= lastPage) {
+          throw new RangeError(`bundle.litigation_index: "${doc.description}" at pages ${doc.startPage}–${end} is out of sequence or outside the bundle (1–${d.totalPages})`);
+        }
+        lastPage = end;
+      }
+    }
+
     const partyRows = [`<div class="party"><span>${escapeHtml(d.parties.claimant)}</span><span>Claimant</span></div>`, '<div class="center">and</div>', `<div class="party"><span>${escapeHtml(d.parties.defendant)}</span><span>${d.parties.secondDefendant ? 'First Defendant' : 'Defendant'}</span></div>`];
     if (d.parties.secondDefendant) partyRows.push('<div class="center">and</div>', `<div class="party"><span>${escapeHtml(d.parties.secondDefendant)}</span><span>Second Defendant</span></div>`);
 

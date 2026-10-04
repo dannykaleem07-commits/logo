@@ -116,12 +116,16 @@ export function intakeScript(): ScriptStep[] {
 /** Instructions to the client about an insurer's offer that must never appear in a script, note or letter. */
 export const BANNED_SCRIPT_PATTERNS: ReadonlyArray<{ id: string; re: RegExp }> = [
   { id: 'ignore_offer', re: /\bignore\b[^.]{0,40}\b(offer|courtesy car|replacement (vehicle|car)|hire car|vehicle they|car they)\b/i },
-  { id: 'ignore_insurer', re: /\bignore\b[^.]{0,30}\b(insurer|insurance company|their calls?|the calls?|them)\b/i },
-  { id: 'do_not_accept', re: /\b(do not|don['’]?t|never|mustn['’]?t|shouldn['’]?t)\s+(accept|take|take up|agree to|respond to|reply to|engage with|speak to|talk to|call back|ring back)\b[^.]{0,40}\b(offer|courtesy|replacement|insurer|insurance|them|their)\b/i },
+  { id: 'ignore_insurer', re: /\bignore\b[^.]{0,30}\b(insurer|insurance company|their calls?|the calls?|their letters?|the letters?|them)\b/i },
+  {
+    id: 'do_not_accept',
+    re: /\b(do not|don['’]?t|never|mustn['’]?t|shouldn['’]?t|no need to|needn['’]?t)\s+(?:(?:need|have|bother)\s+to\s+)?(accept|take|take up|agree to|respond to|reply to|answer|engage with|speak to|talk to|deal with|call back|ring back|worry about|bother with|bother about)\b[^.]{0,40}\b(offer|courtesy|replacement|insurer|insurance|them|their)\b/i,
+  },
+  { id: 'leave_unanswered', re: /\b(leave|left)\b[^.]{0,30}\b(offer|letter|call|message)s?\b[^.]{0,20}\b(unanswered|unopened|unread)\b/i },
   { id: 'decline_offer', re: /\b(decline|refuse|reject|turn down|say no to)\b\s+(the|their|any|that|this|it|any)\b[^.]{0,30}\b(offer|courtesy car|replacement (vehicle|car)|vehicle|car)\b/i },
-  { id: 'instruct_decline', re: /\b(you (should|must|need to|have to|ought to)|just|simply)\s+(decline|refuse|reject|ignore|turn down)\b/i },
-  { id: 'tell_them_no', re: /\btell them (you (don['’]?t|do not) (want|need)|no|to go away)\b/i },
-  { id: 'hang_up', re: /\bhang up\b/i },
+  { id: 'instruct_decline', re: /\b(you (should|must|need to|have to|ought to)|just|simply)\s+(decline|refuse|reject|ignore|turn down|disregard)\b|\byou (can|may|could)\s+(ignore|disregard)\b/i },
+  { id: 'tell_them_no', re: /\btell them (you (don['’]?t|do not) (want|need)|no|to go away|you (already )?have (a|one|another)|you['’]?ve (already )?got|you(?: are|['’]re) (already )?sorted)\b/i },
+  { id: 'hang_up', re: /\bhang up\b|\bput the phone down\b/i },
 ];
 
 export interface ScriptGuardViolation {

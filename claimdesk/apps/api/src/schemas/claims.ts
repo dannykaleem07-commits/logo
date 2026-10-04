@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { id, isoDateTime } from './common.js';
-import { partyRef } from './parties.js';
+import { addressSchema, id, isoDateTime } from './common.js';
+import { partyInput, partyRef } from './parties.js';
 import { vehicleRef } from './vehicles.js';
 
 export const claimStatus = z.enum([
@@ -150,6 +150,8 @@ export const claimPatchBody = z
     clientPolicyNumber: z.string().nullable(),
     handlerId: id.nullable(),
     track: track.nullable(),
+    /** Referral of the injury element (web client); the fee is never taken. */
+    injuryReferral: z.object({ referredTo: z.string().trim().min(1), referredAt: isoDateTime, feeTaken: z.literal(false) }).nullable(),
   })
   .partial()
   .strict();

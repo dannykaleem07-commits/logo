@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { apiKeyPresent, buildSettingsPatch, COMPANY_NAME, confirmationOfPayeeCheck, DEFAULT_RATE_CARD, parsePct, settingsToForm, usersFrom, validateSettings } from './settings';
+import { addressToLines, apiKeyPresent, buildSettingsPatch, COMPANY_NAME, confirmationOfPayeeCheck, DEFAULT_RATE_CARD, linesToAddress, parsePct, settingsToForm, usersFrom, validateSettings } from './settings';
 
 describe('confirmationOfPayeeCheck', () => {
   it('passes only the exact registered name', () => {
@@ -13,14 +13,36 @@ describe('confirmationOfPayeeCheck', () => {
 });
 
 describe('settings form', () => {
-  it('round-trips the API shape with VAT as a percentage', () => {
-    const f = settingsToForm({ registeredOffice: '1 Example Way', bank: { accountName: COMPANY_NAME, sortCode: '123456', accountNumber: '12345678' }, rateCard: { ...DEFAULT_RATE_CARD } });
+  it('round-trips the API shape with VAT as a percentage and the office as an address', () => {
+    const f = settingsToForm({ registeredOffice: { line1: '1 Example Way', town: 'London', postcode: 'N1 1AA' }, bank: { accountName: COMPANY_NAME, sortCode: '123456', accountNumber: '12345678' }, rateCard: { ...DEFAULT_RATE_CARD } });
     expect(f.vatRatePct).toBe('20');
     expect(f.storageDailyPence).toBe(4500);
+    expect(f.registeredOffice).toBe('1 Example Way\nLondon\nN1 1AA');
     const patch = buildSettingsPatch(f);
     expect(patch.rateCard).toEqual({ ...DEFAULT_RATE_CARD });
+    expect(patch.registeredOffice).toEqual({ line1: '1 Example Way', town: 'London', postcode: 'N1 1AA' });
     expect(patch.bank).toEqual({ accountName: COMPANY_NAME, sortCode: '123456', accountNumber: '12345678', bankName: undefined });
     expect(patch.companyNumber).toBe('17430389');
+  });
+  it('reads the rate card in the API spelling (perMilePence / adminPence) and the web spelling alike', () => {
+    expect(settingsToForm({ rateCard: { recoveryCalloutPence: 9000, perMilePence: 300, adminPence: 2500, storageDailyPence: 4500, engineerFeePence: 28500, vatRate: 0.2 } }).recoveryPerLoadedMilePence).toBe(300);
+    expect(settingsToForm({ rateCard: { recoveryCalloutPence: 9000, perMilePence: 300, adminPence: 2500, storageDailyPence: 4500, engineerFeePence: 28500, vatRate: 0.2 } }).recoveryAdminPence).toBe(2500);
+    expect(settingsToForm({ rateCard: { ...DEFAULT_RATE_CARD } }).recoveryAdminPence).toBe(2500);
+  });
+  it('parses the office textarea into an address and leaves out an empty bank block', () => {
+    expect(linesToAddress('1 Example Way\nLondon\nN1 1AA')).toEqual({ line1: '1 Example Way', town: 'London', postcode: 'N1 1AA' });
+    expect(linesToAddress('Unit 4, Some Estate, Barking, IG11 7AB')).toEqual({ line1: 'Unit 4', line2: 'Some Estate', town: 'Barking', postcode: 'IG11 7AB' });
+    expect(linesToAddress('1 Example Way, London N1 1AA')).toEqual({ line1: '1 Example Way', town: 'London', postcode: 'N1 1AA' });
+    expect(linesToAddress('1 Example Way')).toBeUndefined();
+    expect(linesToAddress('1 Example Way\nnot a postcode')).toBeUndefined();
+    expect(addressToLines(undefined)).toBe('');
+    expect(addressToLines('legacy string')).toBe('legacy string');
+    const f = settingsToForm(undefined);
+    f.registeredOffice = '1 Example Way\nnot a postcode';
+    expect(validateSettings(f).registeredOffice).toMatch(/postcode/);
+    const patch = buildSettingsPatch(f);
+    expect(patch.registeredOffice).toBeUndefined();
+    expect(patch.bank).toBeUndefined();
   });
   it('fills rate-card gaps with the brief defaults (£90 + £3/mile + £25; £45/day; £285)', () => {
     const patch = buildSettingsPatch(settingsToForm(undefined));
@@ -46,6 +68,8 @@ describe('settings form', () => {
     f.vatRatePct = '20%';
     expect(validateSettings(f)).toEqual({});
     expect(buildSettingsPatch(f).vatNumber).toBe('GB123456789');
+    expect(buildSettingsPatch(f).bank).toBeUndefined(); // no account name → no bank block (the API wants all three fields together)
+    f.bankAccountName = COMPANY_NAME;
     expect(buildSettingsPatch(f).bank?.sortCode).toBe('123456');
   });
   it('parses percentages and reads keys / users defensively', () => {

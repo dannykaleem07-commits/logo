@@ -149,12 +149,12 @@ export function EngineerReportForm({ view }: { view: ClaimView }) {
               {smallClaims && <span className="muted"> Small claims track: expert fees are capped at {formatGBP(SMALL_CLAIMS_EXPERT_FEE_CAP_PENCE)} per expert (PD 27A para 7.3(2)); permission is needed for expert evidence (CPR 27.5).</span>}
             </div>
             <div className="row">
-              <Button variant="primary" onClick={generate} disabled={!canGenerate} loading={create.isPending} title={!report ? 'Save the report first' : dirty ? 'Save your edits first' : !checklist?.ok ? 'Complete the missing items first' : undefined}>
+              <Button variant="primary" onClick={generate} disabled={!canGenerate || Boolean(report?.issuedAt)} loading={issue.isPending} title={!report ? 'Save the report first' : report.issuedAt ? 'Already issued' : dirty ? 'Save your edits first' : !checklist?.ok ? 'Complete the missing items first' : undefined}>
                 Generate report.engineer
               </Button>
               {!canGenerate && <span className="xs muted">{!report ? 'Save the report first.' : dirty ? 'Unsaved edits.' : !checklist?.ok ? 'Blocked until the checklist is complete.' : ''}</span>}
             </div>
-            <ApiErrorNotice error={create.error} what="draft the report document" />
+            <ApiErrorNotice error={issue.error} what="issue the report" />
           </div>
         </Card>
       </div>

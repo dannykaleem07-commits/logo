@@ -7,6 +7,7 @@ import {
   acceptanceHireDays,
   impecuniosityReadiness,
   enforceabilityReadiness,
+  detectClientRearEnd,
   ACCEPTANCE_CONDITIONS as C,
 } from './index.js';
 import { FILE1_ACCIDENT, file1Bundle, file3Bundle, day0Bundle, hire, offer, gate, ledger } from '../playbook/fixture.js';
@@ -243,5 +244,69 @@ describe('assessAcceptance', () => {
     const b = file1Bundle();
     b.claim = { ...b.claim, liability: 'admitted' };
     expect(assessAcceptance(b).liabilityScore).toBe(95);
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+// Adversarial verification: the heuristics must never hand points to a weak file. Every expected
+// score below is hand-computed from the factor table (baseline 50; TP breach +25; admission +20;
+// contradiction −15; dispute scenario −20).
+// ---------------------------------------------------------------------------------------------
+describe('adversarial: liability heuristics must not inflate a weak file', () => {
+  const base: AccidentDetails = { occurredAt: '2026-09-21T08:30:00+01:00', location: 'A13 Newham Way', circumstances: 'Collision on the carriageway.' };
+
+  it('the client’s own account of running into the vehicle in front is not a +25 breach by the third party', () => {
+    const own = scoreLiability({ ...base, circumstances: 'I ran into the back of the car in front when it braked suddenly at the lights.' });
+    expect(own.factors.some((f) => f.factor === 'clear_breach_by_third_party')).toBe(false);
+    expect(own.factors.find((f) => f.factor === 'client_account_rear_end_by_client')!.delta).toBe(-25);
+    expect(own.score).toBe(25); // 50 − 25
+    expect(own.band).toBe('weak');
+    for (const text of ['I rear-ended a van on the A13.', 'I couldn’t stop in time and hit the car in front.', 'I hit the back of the bus.']) {
+      expect(detectClientRearEnd({ ...base, circumstances: text }), text).toBe(true);
+      expect(scoreLiability({ ...base, circumstances: text }).score, text).toBe(25);
+    }
+    // the genuine rear-end by the third party still scores +25, and "didn't stop in time" in the third person is not first person
+    expect(scoreLiability({ ...base, circumstances: 'The van behind did not stop in time and ran into the back of me.' }).score).toBe(75);
+    expect(detectClientRearEnd({ ...base, circumstances: 'The van behind didn’t stop in time and hit me.' })).toBe(false);
+    // an explicit Highway Code rule against the third party (handler’s finding) still wins over the heuristic
+    expect(scoreLiability({ ...base, circumstances: 'I ran into the back of the car in front after it reversed into me.' }, { highwayCodeRulesAgainstThirdParty: [201] }).score).toBe(75);
+  });
+
+  it('denials are not admissions: "did not admit", "does not accept fault", "not his fault", "says the client was at fault", "refused to accept"', () => {
+    for (const tp of ['The third party did not admit liability.', 'He does not accept fault.', 'He said it was not his fault.', 'He says the client was at fault.', 'He refused to accept responsibility.', 'He never admitted anything.']) {
+      expect(scoreLiability({ ...base, thirdPartyAccount: tp }).factors.some((f) => f.factor === 'third_party_admission'), tp).toBe(false);
+    }
+    // a denial that blames the client is a contradiction: 50 − 15 = 35
+    expect(scoreLiability({ ...base, thirdPartyAccount: 'He said it was not his fault.' }).score).toBe(35);
+    expect(scoreLiability({ ...base, thirdPartyAccount: 'He says the client was at fault.' }).score).toBe(35);
+    // real admissions still score +20
+    for (const tp of ['He admitted it was his fault.', 'He accepted full responsibility at the scene.', 'He said he was at fault.', 'The driver took responsibility.']) {
+      expect(scoreLiability({ ...base, thirdPartyAccount: tp }).score, tp).toBe(70);
+    }
+  });
+
+  it('"does not dispute liability" is not a contradiction; "disputes liability" is', () => {
+    const r = scoreLiability({ ...base, thirdPartyAccount: 'The third party does not dispute liability.' });
+    expect(r.factors.some((f) => f.factor === 'third_party_account_contradicts')).toBe(false);
+    expect(r.score).toBe(50);
+    expect(scoreLiability({ ...base, thirdPartyAccount: 'The third party disputes liability.' }).score).toBe(35);
+    expect(scoreLiability({ ...base, thirdPartyAccount: 'He denies it.' }).score).toBe(35);
+  });
+
+  it('an admission that describes the manoeuvre is not double-counted as a contradiction', () => {
+    const r = scoreLiability({ ...base, thirdPartyAccount: 'He admitted he pulled out without looking.' });
+    expect(r.factors.map((f) => f.factor)).toEqual(['baseline', 'third_party_admission']);
+    expect(r.score).toBe(70);
+    // without the admission, "he pulled out in front of me" (the client, in the TP’s telling) is a contradiction
+    expect(scoreLiability({ ...base, thirdPartyAccount: 'He pulled out in front of me.' }).score).toBe(35);
+  });
+
+  it('File 3 with a third party who "did not admit fault" stays a decline (the Tescher scenario is not softened by a denial)', () => {
+    const b = file3Bundle();
+    b.claim = { ...b.claim, accident: { ...b.claim.accident, thirdPartyAccount: 'The third party did not admit fault and says the client cut across him.' } };
+    const r = assessAcceptance(b);
+    expect(r.liabilityScore).toBe(15); // 50 − 15 − 20
+    expect(r.decision).toBe('decline');
+    expect(r.costsExposure).toBe('high');
   });
 });

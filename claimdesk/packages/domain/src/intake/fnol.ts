@@ -74,7 +74,7 @@ export const MIN_CIRCUMSTANCES_CHARS = 40;
 
 // Local copy of the UK registration formats (vehicle module not imported, to keep intake decoupled).
 const REG_CURRENT = /^[A-HJ-PR-Y]{2}\d{2}[A-HJ-PR-Z]{3}$/;
-const REG_PREFIX = /^[A-HJ-NPR-TV-Y]\d{1,3}[A-Z]{3}$/;
+const REG_PREFIX = /^[A-HJ-NP-TV-Y]\d{1,3}[A-Z]{3}$/; // Q-prefix (indeterminate age) is valid — same as vehicle/registration.ts
 const REG_SUFFIX = /^[A-Z]{3}\d{1,3}[A-HJ-NPR-TV-Y]$/;
 const REG_NI = /^[A-Z](?:[IZ][A-Z]|[A-Z][IZ])\d{1,4}$/;
 const REG_DATELESS_A = /^[A-Z]{1,3}\d{1,4}$/;

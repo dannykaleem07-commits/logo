@@ -12,11 +12,14 @@ export interface PlaybookRule {
   code: string;
   title: string;
   basis: string[];
-  templateId?: string;
+  /** Document template, or null for a task with no CCGUK document (the kb/data/playbook-rules.json shape). */
+  templateId?: string | null;
   /** Plain-English description of when the engine raises the action. */
   trigger: string;
   /** Minimum urgency when the action is raised (the engine may raise it further from the due date). */
   defaultPriority?: PlaybookAction['priority'];
+  /** Alias for defaultPriority, as kb/data/playbook-rules.json spells it. */
+  priority?: PlaybookAction['priority'];
 }
 
 export const GTA_BENCHMARK = 'GTA (16 March 2026 wording) — industry benchmark only; CCGUK is not a subscriber (GTA 2.7(j))';

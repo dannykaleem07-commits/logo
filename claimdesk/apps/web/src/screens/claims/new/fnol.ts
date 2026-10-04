@@ -8,12 +8,21 @@
  *  - the script guard asks "Has anyone offered you a vehicle? What exactly, by whom, when?" and logs the
  *    answer to the intervention register (lesson m). Nothing here advises on accepting or refusing an offer.
  *
+ * Bodies mirror the API's zod schemas (apps/api/src/schemas/claims.ts): the claim is created in one POST with the
+ * insurer and third-party refs, the inline intervention offer, `servicesAgreedAt`, `injuryReferralTo` and the intake
+ * answers the domain validator checks (`takenCold`, `witnesses` with relationships, `offerDisclosed` + details,
+ * `thirdParty.registrationUnknown`). The API creates the witness parties itself and runs the connected-party check;
+ * a decision already given on the offer is recorded with PATCH offers. `PATCH /claims/:id` is strict, so nothing
+ * else is patched on the new claim.
+ *
  * TODO wire when @ccguk/domain intake lands: replace DISCLOSURE_TEXT / SCRIPT_GUARD_QUESTION with the
  * exported `intakeScript` and run `validateFnol` on the built body before POST.
  */
-import type { AccidentDetails, InterventionOffer, ISODateTime } from '@ccguk/domain';
-import { normaliseRegistration, isValidUkRegistration } from '@ccguk/domain';
-import type { CreateClaimBody, CreateEventBody, InterventionOfferInput, PartyInput, VehicleInput, VehicleLookupResult, WitnessInput } from '../../../api/client';
+import type { AccidentDetails, InterventionOffer, ISODate, ISODateTime, Party, PartyRole } from '@ccguk/domain';
+import { normaliseRegistration, isValidUkRegistration, MIN_CIRCUMSTANCES_CHARS } from '@ccguk/domain';
+import type { ClaimVehicleInput, CreateClaimBody, CreateEventBody, FnolOfferInput, OfferPatchBody, PartyInput, PartyRef, VehicleInput, VehicleLookupResult, VehicleRef, WitnessInput } from '../../../api/client';
+
+export { MIN_CIRCUMSTANCES_CHARS };
 
 // ---------------------------------------------------------------------------
 // Script text
@@ -39,6 +48,10 @@ export const INJURY_REFERRAL_NOTICE =
   'Injury reported. A personal injury referral-out task will be created on submission and logged on the file. CCGUK takes no fee for the referral and continues the damage-only claim.';
 
 export const CIRCUMSTANCES_CAPTION = "The client's own words — do not suggest.";
+
+export const TAKEN_COLD_LABEL = 'The account was taken cold: open questions only, recorded verbatim, nothing suggested.';
+export const TP_REG_UNKNOWN_LABEL = 'Registration unknown — the other driver failed to stop (MIB untraced route; report to the police within 14 days).';
+export const WITNESS_RELATIONSHIP_HINT = 'Feeds the connected-party check (lesson g). Write "None" if a stranger.';
 
 // ---------------------------------------------------------------------------
 // State
@@ -135,10 +148,14 @@ export interface AccidentForm {
   roadworthyAfter: boolean | undefined;
   driveable: boolean | undefined;
   airbagsDeployed: boolean | undefined;
+  /** Handler's confirmation that the account was taken cold (sent as `takenCold: true`; never as false). */
+  takenCold: boolean;
 }
 
+export type FnolChannel = NonNullable<CreateClaimBody['channel']>;
+
 export interface FnolState {
-  channel: CreateClaimBody['channel'];
+  channel: FnolChannel;
   disclosure: { acknowledged: boolean; readAt: string; acknowledgedBy: string };
   claimant: PartyForm;
   driverSameAsClaimant: boolean;
@@ -153,7 +170,7 @@ export interface FnolState {
     useManual: boolean;
   };
   accident: AccidentForm;
-  thirdParty: { registration: string; driverName: string; insurerName: string; insurerPolicyNumber: string; contact: string };
+  thirdParty: { registration: string; registrationUnknown: boolean; driverName: string; insurerName: string; insurerPolicyNumber: string; contact: string };
   witnesses: WitnessInput[];
   injury: { referralTo: string; notes: string };
   offer: OfferForm;
@@ -182,9 +199,10 @@ export function initialFnolState(): FnolState {
       injuries: undefined,
       roadworthyAfter: undefined,
       driveable: undefined,
-      airbagsDeployed: undefined
+      airbagsDeployed: undefined,
+      takenCold: false
     },
-    thirdParty: { registration: '', driverName: '', insurerName: '', insurerPolicyNumber: '', contact: '' },
+    thirdParty: { registration: '', registrationUnknown: false, driverName: '', insurerName: '', insurerPolicyNumber: '', contact: '' },
     witnesses: [],
     injury: { referralTo: '', notes: '' },
     offer: emptyOffer(),
@@ -200,6 +218,8 @@ export function initialFnolState(): FnolState {
 export type StepErrors = Record<string, string>;
 
 const has = (s: string | undefined) => Boolean(s && s.trim());
+/** The API requires at least five characters for a phone number. */
+const phoneOk = (p: string) => p.replace(/\s+/g, '').length >= 5;
 
 export function lookupLinkedClaims(state: FnolState) {
   return state.vehicle.lookup?.linkedClaims ?? [];
@@ -219,8 +239,10 @@ export function validateStep(step: Step, state: FnolState, now: Date = new Date(
     case 2:
       if (!has(state.claimant.name)) e['claimant.name'] = 'Full legal name is required.';
       if (!has(state.claimant.phone) && !has(state.claimant.email)) e['claimant.contact'] = 'A phone number or email address is required.';
+      else if (has(state.claimant.phone) && !phoneOk(state.claimant.phone)) e['claimant.contact'] = 'The phone number looks too short.';
       if (has(state.claimant.email) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.claimant.email.trim())) e['claimant.email'] = 'Enter a valid email address.';
       if (!state.driverSameAsClaimant && !has(state.driver.name)) e['driver.name'] = 'Driver name is required when the claimant was not driving.';
+      if (!state.driverSameAsClaimant && has(state.driver.phone) && !phoneOk(state.driver.phone)) e['driver.contact'] = 'The phone number looks too short.';
       break;
     case 3: {
       const reg = normaliseRegistration(state.vehicle.registration);
@@ -241,14 +263,20 @@ export function validateStep(step: Step, state: FnolState, now: Date = new Date(
       if (!a.occurredAt) e['accident.occurredAt'] = 'Date and time of the accident are required.';
       else if (Date.parse(a.occurredAt) > now.getTime()) e['accident.occurredAt'] = 'The accident cannot be in the future.';
       if (!has(a.location)) e['accident.location'] = 'Location is required.';
-      if (!has(a.circumstances) || a.circumstances.trim().length < 20) e['accident.circumstances'] = "Record the client's account in their own words (at least a sentence).";
+      if (!has(a.circumstances) || a.circumstances.trim().length < MIN_CIRCUMSTANCES_CHARS) e['accident.circumstances'] = `Record the client's account in their own words (at least ${MIN_CIRCUMSTANCES_CHARS} characters).`;
+      if (!a.takenCold) e['accident.takenCold'] = 'Confirm the account was taken cold before continuing.';
       if (a.injuries === undefined) e['accident.injuries'] = 'Answer the injuries question.';
       if (a.roadworthyAfter === undefined) e['accident.roadworthyAfter'] = 'Answer whether the vehicle is roadworthy.';
       if (a.driveable === undefined) e['accident.driveable'] = 'Answer whether the vehicle is driveable.';
       if (a.airbagsDeployed === undefined) e['accident.airbagsDeployed'] = 'Answer whether airbags deployed.';
-      if (has(state.thirdParty.registration) && !isValidUkRegistration(state.thirdParty.registration)) e['thirdParty.registration'] = 'Third-party registration does not look valid; record it as given but check it.';
+      if (state.thirdParty.registrationUnknown) {
+        if (has(state.thirdParty.registration)) e['thirdParty.registration'] = 'Either record the registration or mark it unknown, not both.';
+      } else if (has(state.thirdParty.registration) && !isValidUkRegistration(state.thirdParty.registration)) {
+        e['thirdParty.registration'] = 'Not a valid UK registration format — the API refuses it. Check it with the client, or mark it unknown.';
+      }
       state.witnesses.forEach((w, i) => {
         if (!has(w.name)) e[`witness.${i}.name`] = 'Witness name is required (or remove the row).';
+        if (!has(w.relationshipToClaimant) && !w.independent) e[`witness.${i}.relationship`] = 'How does the client know this witness? ("None" if a stranger.)';
       });
       break;
     }
@@ -283,50 +311,82 @@ export function anyServiceAgreed(s: FnolState['services']): boolean {
 // Builders (state → API bodies)
 // ---------------------------------------------------------------------------
 
-export function toPartyInput(p: PartyForm, roles: PartyInput['roles']): PartyInput {
-  const out: PartyInput = { kind: 'individual', name: p.name.trim(), roles };
-  if (has(p.phone)) out.phone = p.phone.trim();
-  if (has(p.email)) out.email = p.email.trim();
-  if (has(p.dateOfBirth)) out.dateOfBirth = p.dateOfBirth;
-  if (has(p.drivingLicenceNumber)) out.drivingLicenceNumber = p.drivingLicenceNumber.trim();
-  if (has(p.line1) || has(p.postcode)) {
-    out.address = { line1: p.line1.trim(), postcode: p.postcode.trim().toUpperCase() };
-    if (has(p.line2)) out.address.line2 = p.line2.trim();
-    if (has(p.town)) out.address.town = p.town.trim();
-  }
+/** A complete address needs line 1 and a postcode (API `addressSchema`); anything less is kept as a note. */
+export function toAddress(p: Pick<PartyForm, 'line1' | 'line2' | 'town' | 'postcode'>): Party['address'] | undefined {
+  if (!has(p.line1) || p.postcode.trim().length < 2) return undefined;
+  const out: NonNullable<Party['address']> = { line1: p.line1.trim(), postcode: p.postcode.trim().toUpperCase() };
+  if (has(p.line2)) out.line2 = p.line2.trim();
+  if (has(p.town)) out.town = p.town.trim();
   return out;
 }
 
+export function toPartyInput(p: PartyForm, roles: PartyInput['roles']): PartyInput {
+  const out: PartyInput = { kind: 'individual', name: p.name.trim(), roles };
+  const notes: string[] = [];
+  if (has(p.phone)) {
+    if (phoneOk(p.phone)) out.phone = p.phone.trim();
+    else notes.push(`Phone as given: ${p.phone.trim()}`);
+  }
+  if (has(p.email)) out.email = p.email.trim();
+  if (has(p.dateOfBirth)) out.dateOfBirth = p.dateOfBirth;
+  if (has(p.drivingLicenceNumber)) out.drivingLicenceNumber = p.drivingLicenceNumber.trim();
+  const address = toAddress(p);
+  if (address) out.address = address;
+  else if (has(p.line1) || has(p.line2) || has(p.town) || has(p.postcode)) {
+    notes.push(`Address (incomplete): ${[p.line1, p.line2, p.town, p.postcode].map((x) => x.trim()).filter(Boolean).join(', ')}`);
+  }
+  if (notes.length) out.notes = notes.join('. ');
+  return out;
+}
+
+/** Where the vehicle details come from: the DVLA/DVSA lookup, or the handler's manual entry (stored as unverified). */
+export function vehicleSource(v: FnolState['vehicle']): 'lookup' | 'manual' {
+  return v.useManual || v.lookupState !== 'ok' || v.lookup?.status !== 'ok' ? 'manual' : 'lookup';
+}
+
+/** Legacy helper kept for callers that want the flat details; `toVehicleRef` is what the claim body uses. */
 export function toVehicleInput(v: FnolState['vehicle']): VehicleInput {
+  const ref = toVehicleRef(v, new Date().toISOString().slice(0, 10));
+  return 'id' in ref ? { registration: normaliseRegistration(v.registration) } : ref;
+}
+
+/**
+ * The vehicle for POST /claims. A successful lookup has already upserted the vehicle with its DVLA/DVSA records,
+ * so it is referenced by id; otherwise the details are sent (API `vehicleInput`; make/model default to UNKNOWN
+ * server-side). A manual odometer reading becomes a 'client' reading dated today.
+ */
+export function toVehicleRef(v: FnolState['vehicle'], today: ISODate): VehicleRef {
   const registration = normaliseRegistration(v.registration);
-  const fromLookup = v.lookup?.status === 'ok' ? v.lookup.vehicle : v.lookup?.status === 'manual_required' ? v.lookup.partial : undefined;
-  const manual = v.useManual || v.lookupState !== 'ok';
-  const out: VehicleInput = { registration, ownership: 'client', manual };
-  if (fromLookup && !manual) {
-    if (fromLookup.make) out.make = fromLookup.make;
-    if (fromLookup.model) out.model = fromLookup.model;
-    if (fromLookup.variant) out.variant = fromLookup.variant;
-    if (fromLookup.colour) out.colour = fromLookup.colour;
-    if (fromLookup.fuelType) out.fuelType = fromLookup.fuelType;
-    if (fromLookup.transmission) out.transmission = fromLookup.transmission;
-    if (fromLookup.yearOfManufacture) out.yearOfManufacture = fromLookup.yearOfManufacture;
-    if (fromLookup.engineCapacityCc) out.engineCapacityCc = fromLookup.engineCapacityCc;
-    if (fromLookup.vin) out.vin = fromLookup.vin;
-    if (fromLookup.motExpiryDate) out.motExpiryDate = fromLookup.motExpiryDate;
-    if (fromLookup.taxDueDate) out.taxDueDate = fromLookup.taxDueDate;
-    const ves = v.lookup?.status === 'ok' ? v.lookup.ves : undefined;
-    if (ves?.id) out.lookupId = ves.id;
-  } else {
-    const m = v.manual;
-    if (has(m.make)) out.make = m.make.trim();
-    if (has(m.model)) out.model = m.model.trim();
-    if (has(m.colour)) out.colour = m.colour.trim();
-    if (m.fuelType) out.fuelType = m.fuelType;
-    if (m.transmission) out.transmission = m.transmission;
-    if (has(m.yearOfManufacture) && /^\d{4}$/.test(m.yearOfManufacture.trim())) out.yearOfManufacture = Number(m.yearOfManufacture);
-    if (has(m.vin)) out.vin = m.vin.trim().toUpperCase();
-    if (has(m.motExpiryDate)) out.motExpiryDate = m.motExpiryDate;
-    if (has(m.odometerMiles) && /^\d+$/.test(m.odometerMiles.trim())) out.odometerMiles = Number(m.odometerMiles);
+  const source = vehicleSource(v);
+  const ok = v.lookup?.status === 'ok' ? v.lookup : undefined;
+  if (source === 'lookup' && ok?.vehicle.id) return { id: ok.vehicle.id };
+  const out: ClaimVehicleInput = { registration, ownership: 'client' };
+  if (source === 'lookup' && ok) {
+    const f = ok.vehicle;
+    if (f.make) out.make = f.make;
+    if (f.model) out.model = f.model;
+    if (f.variant) out.variant = f.variant;
+    if (f.colour) out.colour = f.colour;
+    if (f.fuelType) out.fuelType = f.fuelType;
+    if (f.transmission) out.transmission = f.transmission;
+    if (f.yearOfManufacture) out.yearOfManufacture = f.yearOfManufacture;
+    if (f.engineCapacityCc) out.engineCapacityCc = f.engineCapacityCc;
+    if (f.vin) out.vin = f.vin;
+    if (f.motExpiryDate) out.motExpiryDate = f.motExpiryDate;
+    if (f.taxDueDate) out.taxDueDate = f.taxDueDate;
+    return out;
+  }
+  const m = v.manual;
+  if (has(m.make)) out.make = m.make.trim();
+  if (has(m.model)) out.model = m.model.trim();
+  if (has(m.colour)) out.colour = m.colour.trim();
+  if (m.fuelType) out.fuelType = m.fuelType;
+  if (m.transmission) out.transmission = m.transmission;
+  if (has(m.yearOfManufacture) && /^\d{4}$/.test(m.yearOfManufacture.trim())) out.yearOfManufacture = Number(m.yearOfManufacture);
+  if (has(m.vin)) out.vin = m.vin.trim().toUpperCase();
+  if (has(m.motExpiryDate)) out.motExpiryDate = m.motExpiryDate;
+  if (has(m.odometerMiles) && /^\d+$/.test(m.odometerMiles.trim())) {
+    out.odometer = [{ source: 'client', date: today, miles: Number(m.odometerMiles), note: 'Stated by the client at FNOL (unverified)' }];
   }
   return out;
 }
@@ -345,41 +405,34 @@ export function toAccidentDetails(a: AccidentForm): AccidentDetails {
   return out;
 }
 
-export function buildCreateClaimBody(state: FnolState): CreateClaimBody {
-  const body: CreateClaimBody = {
-    channel: state.channel,
-    disclosure: { callRecordingReadAt: state.disclosure.readAt, acknowledged: true, ...(has(state.disclosure.acknowledgedBy) ? { acknowledgedBy: state.disclosure.acknowledgedBy.trim() } : {}) },
-    claimant: toPartyInput(state.claimant, state.driverSameAsClaimant ? ['claimant', 'driver', 'keeper'] : ['claimant', 'keeper']),
-    vehicle: toVehicleInput(state.vehicle),
-    accident: toAccidentDetails(state.accident),
-    witnesses: state.witnesses.filter((w) => has(w.name)).map((w) => ({ ...w, name: w.name.trim() })),
-    services: { hire: state.services.hire, recovery: state.services.recovery, storage: state.services.storage, engineer: state.services.engineer, ...(has(state.services.notes) ? { notes: state.services.notes.trim() } : {}) },
-    gtaSubscriber: false
+/** `offerDetails` for the domain validator: what / by whom / when, as the client described it. */
+export function offerDetailsFrom(o: OfferForm): NonNullable<CreateClaimBody['offerDetails']> {
+  return {
+    what: has(o.vehicleClassOffered) ? o.vehicleClassOffered.trim() : has(o.otherTerms) ? o.otherTerms.trim() : undefined,
+    byWhom: has(o.offerorName) ? o.offerorName.trim() : undefined,
+    when: o.receivedAt || undefined
   };
-  if (!state.driverSameAsClaimant) body.driver = toPartyInput(state.driver, ['driver']);
-  const tp = state.thirdParty;
-  if (has(tp.registration) || has(tp.driverName) || has(tp.insurerName) || has(tp.contact)) {
-    body.thirdParty = {};
-    if (has(tp.registration)) body.thirdParty.registration = normaliseRegistration(tp.registration);
-    if (has(tp.driverName)) body.thirdParty.driverName = tp.driverName.trim();
-    if (has(tp.insurerName)) body.thirdParty.insurerName = tp.insurerName.trim();
-    if (has(tp.insurerPolicyNumber)) body.thirdParty.insurerPolicyNumber = tp.insurerPolicyNumber.trim();
-    if (has(tp.contact)) body.thirdParty.contact = tp.contact.trim();
-  }
-  if (has(state.clientInsurer.name) || has(state.clientInsurer.policyNumber)) {
-    body.clientInsurer = {};
-    if (has(state.clientInsurer.name)) body.clientInsurer.name = state.clientInsurer.name.trim();
-    if (has(state.clientInsurer.policyNumber)) body.clientInsurer.policyNumber = state.clientInsurer.policyNumber.trim();
-  }
-  if (state.accident.injuries) {
-    body.injury = { reported: true, ...(has(state.injury.referralTo) ? { referralTo: state.injury.referralTo.trim() } : {}), ...(has(state.injury.notes) ? { notes: state.injury.notes.trim() } : {}) };
-  }
-  if (has(state.handlerId)) body.handlerId = state.handlerId.trim();
-  return body;
 }
 
-/** The intervention-register entry for a "yes" to the script-guard question. Null when no offer was made. */
-export function buildOfferInput(state: FnolState): InterventionOfferInput | null {
+export type KnownParty = Pick<Party, 'id' | 'name' | 'roles'>;
+
+/** An existing party with this exact name (case-insensitive) and role, so insurers are not duplicated per claim. */
+export function pickExistingParty(parties: KnownParty[], name: string, role: PartyRole = 'insurer'): KnownParty | undefined {
+  const n = name.trim().toLowerCase();
+  if (!n) return undefined;
+  return parties.find((p) => p.name.trim().toLowerCase() === n && p.roles.includes(role));
+}
+
+/** Insurer ref for the body: the known party's id when one matches, otherwise details for a new company party. */
+export function insurerRef(name: string, known: KnownParty[] = []): PartyRef {
+  const match = pickExistingParty(known, name, 'insurer');
+  return match ? { id: match.id } : { kind: 'company', name: name.trim(), roles: ['insurer'] };
+}
+
+export const DEFAULT_INJURY_REFERRAL = 'Personal injury solicitor — to be instructed';
+
+/** The intervention-register entry for a "yes" to the script-guard question (inline in POST /claims). Null when no offer. */
+export function buildFnolOffer(state: FnolState): FnolOfferInput | null {
   const o = state.offer;
   if (!o.offered) return null;
   const terms: InterventionOffer['terms'] = {};
@@ -389,52 +442,105 @@ export function buildOfferInput(state: FnolState): InterventionOfferInput | null
   if (o.insuranceIncluded !== undefined) terms.insuranceIncluded = o.insuranceIncluded;
   if (has(o.durationStated)) terms.durationStated = o.durationStated.trim();
   if (has(o.otherTerms)) terms.otherTerms = o.otherTerms.trim();
-  const input: InterventionOfferInput = {
-    receivedAt: o.receivedAt,
-    channel: o.channel,
-    offerorName: o.offerorName.trim(),
-    terms,
-    suitabilityReasons: [],
-    clientDecision: o.clientDecision,
-    evidenceIds: []
-  };
+  const input: FnolOfferInput = { offerorName: o.offerorName.trim(), channel: o.channel, clientToldToIgnore: false };
+  if (o.receivedAt) input.receivedAt = o.receivedAt;
   if (has(o.vehicleClassOffered)) input.vehicleClassOffered = o.vehicleClassOffered.trim();
   if (o.dailyRatePence !== null) {
     input.dailyRatePence = o.dailyRatePence;
     input.rateIncludesVat = o.rateIncludesVat;
   }
-  if (has(o.clientReasons)) input.clientReasons = o.clientReasons.trim();
-  if (o.clientDecision !== 'pending') input.clientDecisionAt = state.disclosure.readAt || o.receivedAt;
+  if (Object.keys(terms).length) input.terms = terms;
   return input;
 }
 
-/** Events to append after the claim exists: services agreed (starts the GTA 4.1 NCAF clock) and the injury referral task. */
+/** PATCH /claims/:id/offers/:oid body when the client had already decided at FNOL; null while pending. */
+export function buildOfferDecision(state: FnolState, now: ISODateTime): OfferPatchBody | null {
+  const o = state.offer;
+  if (!o.offered || o.clientDecision === 'pending') return null;
+  const body: OfferPatchBody = { clientDecision: o.clientDecision, clientDecisionAt: state.disclosure.readAt || now };
+  if (has(o.clientReasons)) body.clientReasons = o.clientReasons.trim();
+  return body;
+}
+
+export interface BuildOptions {
+  now: ISODateTime;
+  /** Parties already on file (insurers) so the body references them by id instead of creating duplicates. */
+  knownParties?: KnownParty[];
+}
+
+export function buildCreateClaimBody(state: FnolState, opts: BuildOptions): CreateClaimBody {
+  const now = opts.now;
+  const today = now.slice(0, 10);
+  const known = opts.knownParties ?? [];
+  const notes: string[] = [`FNOL via ${state.channel.replace(/_/g, ' ')}`];
+  const body: CreateClaimBody = {
+    claimant: toPartyInput(state.claimant, state.driverSameAsClaimant ? ['claimant', 'driver', 'keeper'] : ['claimant', 'keeper']),
+    vehicle: toVehicleRef(state.vehicle, today),
+    accident: toAccidentDetails(state.accident),
+    liability: 'unknown',
+    fnolAt: state.disclosure.readAt || now,
+    callRecordingDisclosed: state.disclosure.acknowledged,
+    ...(state.accident.takenCold ? { takenCold: true as const } : {}),
+    ...(state.offer.offered !== undefined ? { offerDisclosed: state.offer.offered } : {}),
+    ...(state.offer.offered ? { offerDetails: offerDetailsFrom(state.offer) } : {}),
+    // descriptive web fields (see api/client.ts CreateClaimBody)
+    channel: state.channel,
+    disclosure: { callRecordingReadAt: state.disclosure.readAt || now, acknowledged: true, ...(has(state.disclosure.acknowledgedBy) ? { acknowledgedBy: state.disclosure.acknowledgedBy.trim() } : {}) },
+    witnesses: state.witnesses.filter((w) => has(w.name)).map((w) => ({ ...w, name: w.name.trim() })),
+    services: { hire: state.services.hire, recovery: state.services.recovery, storage: state.services.storage, engineer: state.services.engineer, ...(has(state.services.notes) ? { notes: state.services.notes.trim() } : {}) }
+  };
+  if (state.disclosure.readAt) notes.push(`Call-recording disclosure read ${state.disclosure.readAt}${has(state.disclosure.acknowledgedBy) ? ` by ${state.disclosure.acknowledgedBy.trim()}` : ''} and acknowledged`);
+  if (!state.driverSameAsClaimant) body.driver = toPartyInput(state.driver, ['driver']);
+
+  const tp = state.thirdParty;
+  if (has(tp.driverName)) {
+    const party: PartyInput = { kind: 'individual', name: tp.driverName.trim(), roles: ['third_party_driver'] };
+    if (has(tp.contact)) party.notes = `Contact as given by the client: ${tp.contact.trim()}`;
+    body.thirdParties = [party];
+  } else if (has(tp.contact)) notes.push(`Third-party contact as given: ${tp.contact.trim()}`);
+  if (tp.registrationUnknown) body.thirdParty = { registrationUnknown: true };
+  else if (has(tp.registration)) body.thirdPartyVehicle = { registration: normaliseRegistration(tp.registration), ownership: 'third_party' };
+  if (has(tp.insurerName)) body.atFaultInsurer = insurerRef(tp.insurerName, known);
+  if (has(tp.insurerPolicyNumber)) body.atFaultInsurerRef = tp.insurerPolicyNumber.trim();
+
+  if (has(state.clientInsurer.name)) body.clientInsurer = insurerRef(state.clientInsurer.name, known);
+  if (has(state.clientInsurer.policyNumber)) body.clientPolicyNumber = state.clientInsurer.policyNumber.trim();
+
+  if (state.accident.injuries) {
+    body.injuryReferralTo = has(state.injury.referralTo) ? state.injury.referralTo.trim() : DEFAULT_INJURY_REFERRAL;
+    if (has(state.injury.notes)) notes.push(`Injury notes: ${state.injury.notes.trim()}`);
+  }
+  const offer = buildFnolOffer(state);
+  if (offer) body.interventionOffer = offer;
+  if (anyServiceAgreed(state.services)) {
+    body.servicesAgreedAt = now;
+    notes.push(`Services agreed at FNOL: ${agreedServices(state.services).join(', ')}${has(state.services.notes) ? ` (${state.services.notes.trim()})` : ''}`);
+  }
+  if (has(state.handlerId)) body.handlerId = state.handlerId.trim();
+  body.notes = notes.join('. ');
+  return body;
+}
+
+export function agreedServices(s: FnolState['services']): Array<'hire' | 'recovery' | 'storage' | 'engineer'> {
+  return (['hire', 'recovery', 'storage', 'engineer'] as const).filter((k) => s[k]);
+}
+
+/**
+ * Events to append after the claim exists. The API itself appends `fnol` (with the witness reports), `services_agreed`
+ * (from servicesAgreedAt), the injury-referral note and the `intervention_offer` event; this note adds the one detail
+ * the API's event does not carry in its summary: which services were agreed.
+ */
 export function buildFollowUpEvents(state: FnolState, now: ISODateTime): CreateEventBody[] {
   const events: CreateEventBody[] = [];
   if (anyServiceAgreed(state.services)) {
-    const agreed = (['hire', 'recovery', 'storage', 'engineer'] as const).filter((k) => state.services[k]);
-    events.push({
-      type: 'services_agreed',
-      at: now,
-      summary: `Services agreed at FNOL: ${agreed.join(', ')}`,
-      data: { services: agreed, notes: state.services.notes.trim() || undefined },
-      attributableTo: 'ccguk'
-    });
-  }
-  if (state.accident.injuries) {
+    const agreed = agreedServices(state.services);
     events.push({
       type: 'note',
       at: now,
-      summary: `Injury reported at FNOL — personal injury referral-out task created${has(state.injury.referralTo) ? ` (${state.injury.referralTo.trim()})` : ''}; no fee taken`,
-      data: { task: 'injury_referral', referralTo: state.injury.referralTo.trim() || undefined, feeTaken: false, notes: state.injury.notes.trim() || undefined },
+      summary: `Services agreed at FNOL: ${agreed.join(', ')}`,
+      data: { task: 'services_agreed_detail', services: agreed, notes: state.services.notes.trim() || undefined },
       attributableTo: 'ccguk'
     });
   }
   return events;
-}
-
-/** The injuryReferral patch for PATCH /claims/:id (only when injuries were reported). */
-export function buildInjuryReferral(state: FnolState, now: ISODateTime): { referredTo: string; referredAt: ISODateTime; feeTaken: false } | null {
-  if (!state.accident.injuries) return null;
-  return { referredTo: state.injury.referralTo.trim() || 'Personal injury solicitor — to be instructed', referredAt: now, feeTaken: false };
 }

@@ -20,6 +20,7 @@
  * client under a statement of truth (CPR 22 / PD 32 wording; CPR 32.14 contempt warning).
  */
 import type { ISODate, ISODateTime, Pence } from '@ccguk/domain';
+import { addCalendarDays, addCalendarMonths } from '@ccguk/domain';
 import { brand } from '../brand.js';
 import { type BaseDocumentData, type RecipientBlock, type Signatory, sampleBaseData, sampleClaim } from '../common.js';
 import {
@@ -82,11 +83,20 @@ export function assertNotBeforeCreation(field: string, signedAt: DateLike, creat
   if (before) throw new SignatureDateError(field, signedAt, createdAt);
 }
 
+/**
+ * Last day on which a payment may fall due under RAO art 60F(2)(c): the payments must be required within a period
+ * of twelve months or less beginning with the date of the agreement, so the final day is twelve months on, less one.
+ */
+export function art60fFinalPaymentLimit(agreementDate: DateLike): ISODate {
+  return toISODate(addCalendarDays(addCalendarMonths(toISODate(agreementDate), 12), -1));
+}
+
 export interface DrivingLicence {
   number: string;
   /** "United Kingdom" — Owner Liability Regs Sch 2 asks for the country of issue. */
   countryOfIssue: string;
-  expiresOn: ISODate;
+  /** Sch 2 also asks for the expiry date. Optional in the type because the party record may not hold it yet; the agreement says so when it is missing, and the notices require it. */
+  expiresOn?: ISODate;
 }
 
 /** The hirer / claimant as a party to an agreement or the person completing a form. */
@@ -121,7 +131,7 @@ function yesNo(v: boolean | undefined, whenUndefined = 'Not stated'): string {
 
 function licenceText(l: DrivingLicence | undefined): string {
   if (!l) return 'Not supplied';
-  return `${l.number} (${l.countryOfIssue}; expires ${formatDateLong(l.expiresOn)})`;
+  return `${l.number} (${l.countryOfIssue}; ${l.expiresOn ? `expires ${formatDateLong(l.expiresOn)}` : 'expiry date not recorded'})`;
 }
 
 /** Generic table with a header row; every cell is escaped. Columns listed in `numeric` are right-aligned. */
@@ -205,6 +215,8 @@ export interface CreditHireCharges {
   excessPence: Pence;
   /** Optional excess waiver, per day (excluding VAT). */
   excessWaiverDailyPence?: Pence;
+  /** Whether the hirer has taken the waiver (it changes what is owed). Undefined = offered, choice not yet recorded. */
+  excessWaiverSelected?: boolean;
   /** GTA 5.4 non-standard risk driver supplement per day and cap per hire — industry benchmark figures from the rate card. */
   additionalDriverDailyPence?: Pence;
   additionalDriverCapPence?: Pence;
@@ -264,7 +276,7 @@ export function statementOfLiabilityText(hirerName: string, addressLines: string
 
 export const creditHireAgreementTemplate: Template<CreditHireAgreementData> = {
   id: 'agreement.credit_hire',
-  version: '1.0.0',
+  version: '1.1.0',
   kind: 'agreement',
   title: 'Credit Hire Agreement',
   recipientRole: 'client',
@@ -276,6 +288,10 @@ export const creditHireAgreementTemplate: Template<CreditHireAgreementData> = {
     'createdAt',
     'hirer.name',
     'hirer.addressLines',
+    // Owner Liability Regs Sch 2 particulars (section 8): an individual hirer must have these before signing.
+    'hirer.dateOfBirth',
+    'hirer.licence.number',
+    'hirer.licence.countryOfIssue',
     'vehicle.registration',
     'vehicle.makeModel',
     'vehicle.gtaGroup',
@@ -309,6 +325,7 @@ export const creditHireAgreementTemplate: Template<CreditHireAgreementData> = {
       vatRate: 0.2,
       excessPence: 75000,
       excessWaiverDailyPence: 1200,
+      excessWaiverSelected: false,
       additionalDriverDailyPence: 550,
       additionalDriverCapPence: 11000
     },
@@ -332,8 +349,17 @@ export const creditHireAgreementTemplate: Template<CreditHireAgreementData> = {
     if (d.signatures?.hirerSignedAt) assertNotBeforeCreation('signatures.hirerSignedAt', d.signatures.hirerSignedAt, d.createdAt);
     if (d.signatures?.ccgukSignedAt) assertNotBeforeCreation('signatures.ccgukSignedAt', d.signatures.ccgukSignedAt, d.createdAt);
     if (d.reExecutedOn) assertNotBeforeCreation('reExecutedOn', d.reExecutedOn, d.createdAt);
-    if (d.credit.maxInstalments > 12 || d.credit.maxInstalments < 1) {
-      throw new RangeError(`credit.maxInstalments must be between 1 and 12 to fit RAO art 60F(2)(b); received ${d.credit.maxInstalments}`);
+    if (!Number.isInteger(d.credit.maxInstalments) || d.credit.maxInstalments > 12 || d.credit.maxInstalments < 1) {
+      throw new RangeError(`credit.maxInstalments must be a whole number between 1 and 12 to fit RAO art 60F(2)(b); received ${d.credit.maxInstalments}`);
+    }
+    // art 60F(2)(c): every payment must fall due within twelve months beginning with the date of the agreement.
+    const agreementDate = toISODate(d.date);
+    const finalLimit = art60fFinalPaymentLimit(d.date);
+    const finalDue = toISODate(d.credit.finalPaymentDueBy);
+    if (finalDue > finalLimit || finalDue < agreementDate) {
+      throw new RangeError(
+        `credit.finalPaymentDueBy (${d.credit.finalPaymentDueBy}) must fall within twelve months beginning with the agreement date ${agreementDate} (last permitted day ${finalLimit}) to fit RAO art 60F(2)(c)`
+      );
     }
 
     const company = brand.company;
@@ -342,6 +368,8 @@ export const creditHireAgreementTemplate: Template<CreditHireAgreementData> = {
     const rate = formatRate(d.charges.dailyRatePence, 'day');
     const vat = formatPercent(d.charges.vatRate);
     const instalments = formatNumber(d.credit.maxInstalments);
+    const waiverSelected = d.charges.excessWaiverSelected;
+    const licenceExpiryMissing = !d.hirer.licence?.expiresOn;
 
     const partyRows = [
       { label: 'Hire company ("we", "us")', value: `${company.registeredName}, company number ${company.companyNumber}, registered office ${office}` },
@@ -369,7 +397,10 @@ export const creditHireAgreementTemplate: Template<CreditHireAgreementData> = {
       { label: 'Your excess', value: `${formatGBP(d.charges.excessPence)} per incident of damage to or loss of the vehicle` }
     ];
     if (d.charges.excessWaiverDailyPence !== undefined) {
-      chargeRows.push({ label: 'Excess waiver (optional)', value: `${formatRate(d.charges.excessWaiverDailyPence, 'day')} excluding VAT; reduces your excess to nil` });
+      const label = waiverSelected === true ? 'Excess waiver (taken)' : waiverSelected === false ? 'Excess waiver (offered, not taken)' : 'Excess waiver (optional)';
+      const effect =
+        waiverSelected === true ? 'charged for each day of hire; your excess is nil' : waiverSelected === false ? 'not charged; your excess applies in full' : 'if taken, reduces your excess to nil';
+      chargeRows.push({ label, value: `${formatRate(d.charges.excessWaiverDailyPence, 'day')} excluding VAT; ${effect}` });
     }
     if (d.charges.additionalDriverDailyPence !== undefined) {
       const cap = d.charges.additionalDriverCapPence !== undefined ? `, capped at ${formatGBP(d.charges.additionalDriverCapPence)} for the hire` : '';
@@ -448,9 +479,13 @@ ${dataTable(['Additional driver', 'Date of birth', 'Driving licence', 'Non-stand
 ${clauses(7, [
   `The vehicle is insured under our fleet policy for the drivers named in this agreement. Cover is for social, domestic and pleasure use and commuting unless we agree otherwise in writing.`,
   `You are responsible for the first ${escapeHtml(formatGBP(d.charges.excessPence))} of the cost of each incident of damage to or loss of the vehicle during the hire (the excess), unless the damage is caused by a third party whose insurer accepts liability. ${
-    d.charges.excessWaiverDailyPence !== undefined
-      ? `If you take the excess waiver at ${escapeHtml(formatRate(d.charges.excessWaiverDailyPence, 'day'))} excluding VAT, your excess is reduced to nil.`
-      : 'No excess waiver is included in this agreement.'
+    d.charges.excessWaiverDailyPence === undefined
+      ? 'No excess waiver is included in this agreement.'
+      : waiverSelected === true
+        ? `You have taken the excess waiver at ${escapeHtml(formatRate(d.charges.excessWaiverDailyPence, 'day'))} excluding VAT, charged for each day of hire, so your excess is nil.`
+        : waiverSelected === false
+          ? `You have not taken the excess waiver offered at ${escapeHtml(formatRate(d.charges.excessWaiverDailyPence, 'day'))} excluding VAT, so the excess above applies in full.`
+          : `If you take the excess waiver at ${escapeHtml(formatRate(d.charges.excessWaiverDailyPence, 'day'))} excluding VAT, your excess is reduced to nil.`
   }`,
   `You are responsible for the full cost of damage or loss caused by a breach of section 6, by a driver not named in this agreement, by misfuelling, or by driving the vehicle after a warning light or fault made it unsafe to do so.`,
   `${
@@ -465,7 +500,11 @@ ${clauses(7, [
 <h2>8. Penalty charges, fines and parking charges: statement of liability</h2>
 ${clauses(8, [
   `You are liable for every fixed penalty notice, penalty charge notice, parking charge, congestion charge, road-user charge, toll and fine incurred in respect of the vehicle during the hire, including any authorised extension.`,
-  `This agreement contains the particulars required by Schedule 2 to the Road Traffic (Owner Liability) Regulations 2000 (your full name, date of birth, permanent address and driving licence details, the vehicle, and the start and expected end of the hire). We will give those particulars, a copy of this agreement and your statement of liability to the enforcement authority or creditor so that liability for any notice is transferred to you. For private parking charges we will do so under paragraph 13 of Schedule 4 to the Protection of Freedoms Act 2012.`,
+  `${
+    licenceExpiryMissing
+      ? 'This agreement sets out the particulars required by Schedule 2 to the Road Traffic (Owner Liability) Regulations 2000 (your full name, date of birth, permanent address and driving licence details, the vehicle, and the start and expected end of the hire), except your driving licence expiry date, which was not recorded when this agreement was generated. You must give it to us before the vehicle is delivered so that the particulars are complete.'
+      : 'This agreement contains the particulars required by Schedule 2 to the Road Traffic (Owner Liability) Regulations 2000 (your full name, date of birth, permanent address and driving licence details, the vehicle, and the start and expected end of the hire).'
+  } We will give those particulars, a copy of this agreement and your statement of liability to the enforcement authority or creditor so that liability for any notice is transferred to you. For private parking charges we will do so under paragraph 13 of Schedule 4 to the Protection of Freedoms Act 2012.`,
   `If we pay a penalty or charge that is your liability because the enforcement authority or creditor will not transfer it, you must repay us that amount. We will not add any administration fee to it.`
 ])}
 ${callout(`<p>${escapeHtml(statementOfLiabilityText(d.hirer.name, d.hirer.addressLines))}</p>${signatureFields([
@@ -541,7 +580,7 @@ ${clauses(12, [
 </div>
 ${d.reExecutedOn ? reExecutionLine(d.reExecutedOn, d.supersedesVersion ?? '[previous version]') : ''}
 <div class="integrity">
-  <div>Agreement ${escapeHtml(d.agreementNumber)} generated from ledger data on ${escapeHtml(formatDateTime(d.createdAt))}. Template agreement.credit_hire version 1.0.0.</div>
+  <div>Agreement ${escapeHtml(d.agreementNumber)} generated from ledger data on ${escapeHtml(formatDateTime(d.createdAt))}. Template agreement.credit_hire version ${escapeHtml(creditHireAgreementTemplate.version)}.</div>
   <div>Document hash (SHA-256): <span class="hash">{{SHA256}}</span></div>
 </div>
 </div>`;
@@ -708,7 +747,7 @@ ${signatureFields([
   { label: 'Full name', value: d.hirer.name },
   { label: 'Date', value: d.signedAt ? formatDateLong(d.signedAt) : '' }
 ])}
-<div class="integrity"><div>Form generated on ${escapeHtml(formatDateTime(d.createdAt))}. Template form.express_request_to_start version 1.0.0.</div></div>`;
+<div class="integrity"><div>Form generated on ${escapeHtml(formatDateTime(d.createdAt))}. Template form.express_request_to_start version ${escapeHtml(expressRequestToStartTemplate.version)}.</div></div>`;
     return baseLayout({
       title: 'Express request to begin the hire during the cancellation period',
       subtitle: `Agreement ${d.agreementNumber}`,
@@ -883,7 +922,7 @@ ${qa('6. Did you have the use of another vehicle while your own was off the road
 ${d.furtherInformation ? qa('7. Is there anything else you wish to say about the offers or your need for a vehicle?', nl2p(d.furtherInformation)) : ''}
 
 ${statementOfTruth({ kind: 'claimant', documentNoun: 'mitigation statement', signatoryName: d.hirer.name, date: d.signedAt })}
-<div class="integrity"><div>Questionnaire generated from the intervention register on ${escapeHtml(formatDateTime(d.createdAt))}. Template form.mitigation_questionnaire version 1.0.0.${
+<div class="integrity"><div>Questionnaire generated from the intervention register on ${escapeHtml(formatDateTime(d.createdAt))}. Template form.mitigation_questionnaire version ${escapeHtml(mitigationQuestionnaireTemplate.version)}.${
       d.signedAt ? ` Signed electronically ${escapeHtml(formatDateTime(d.signedAt))}.` : ''
     }</div></div>`;
     return baseLayout({
@@ -1091,7 +1130,7 @@ ${qa('Could you have paid for a hire vehicle using a credit card, overdraft or l
 <h2>11. Documents enclosed</h2>
 ${numberedList(d.incomeEvidenceEnclosed)}
 ${statementOfTruth({ kind: 'claimant', documentNoun: 'statement of means', signatoryName: d.claimant.name, date: d.signedAt })}
-<div class="integrity"><div>Statement generated on ${escapeHtml(formatDateTime(d.createdAt))} from the answers you gave. Template form.statement_of_means version 1.0.0.${
+<div class="integrity"><div>Statement generated on ${escapeHtml(formatDateTime(d.createdAt))} from the answers you gave. Template form.statement_of_means version ${escapeHtml(statementOfMeansTemplate.version)}.${
       d.signedAt ? ` Signed electronically ${escapeHtml(formatDateTime(d.signedAt))}.` : ''
     }</div></div>`;
     return baseLayout({
@@ -1242,7 +1281,7 @@ ${nl2p(d.publicTransportConsidered)}
 <h2>7. Mobility or medical needs</h2>
 ${nl2p(d.mobilityNeeds ?? 'None.')}
 ${statementOfTruth({ kind: 'claimant', documentNoun: 'statement of need', signatoryName: d.claimant.name, date: d.signedAt })}
-<div class="integrity"><div>Statement generated on ${escapeHtml(formatDateTime(d.createdAt))} from the answers you gave. Template form.statement_of_need version 1.0.0.${
+<div class="integrity"><div>Statement generated on ${escapeHtml(formatDateTime(d.createdAt))} from the answers you gave. Template form.statement_of_need version ${escapeHtml(statementOfNeedTemplate.version)}.${
       d.signedAt ? ` Signed electronically ${escapeHtml(formatDateTime(d.signedAt))}.` : ''
     }</div></div>`;
     return baseLayout({
@@ -1379,7 +1418,7 @@ ${
 ${paras.map((p) => `  <li><div>${escapeHtml(p)}</div></li>`).join('\n')}
 </ol>
 ${statementOfTruth({ kind: 'witness', signatoryName: d.witness.name, date: d.signedAt })}
-<div class="integrity"><div>Draft generated on ${escapeHtml(formatDateTime(d.createdAt))} from the witness’s account of ${escapeHtml(formatDateLong(d.accountGivenAt))}. Template statement.witness version 1.0.0. Prepared with the assistance of ${escapeHtml(
+<div class="integrity"><div>Draft generated on ${escapeHtml(formatDateTime(d.createdAt))} from the witness’s account of ${escapeHtml(formatDateLong(d.accountGivenAt))}. Template statement.witness version ${escapeHtml(witnessStatementTemplate.version)}. Prepared with the assistance of ${escapeHtml(
       brand.company.registeredName
     )}, which is not a firm of solicitors; the witness signs in person.</div></div>`;
     return baseLayout({

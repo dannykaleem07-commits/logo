@@ -1,12 +1,13 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../../api/client';
+import type { ClaimFlag } from '@ccguk/domain';
+import { api, fnolErrorLines } from '../../../api/client';
 import { useInvalidateClaim } from '../../../api/hooks';
 import { PageHeader } from '../../../components/PageHeader';
 import { Card } from '../../../components/Card';
 import { Button } from '../../../components/Button';
 import { useToast } from '../../../components/Toast';
-import { STEPS, type FnolState, type Step, type StepErrors, initialFnolState, validateStep, firstInvalidStep, buildCreateClaimBody, buildOfferInput, buildFollowUpEvents, buildInjuryReferral } from './fnol';
+import { STEPS, type FnolState, type KnownParty, type Step, type StepErrors, initialFnolState, validateStep, firstInvalidStep, buildCreateClaimBody, buildFollowUpEvents, buildOfferDecision } from './fnol';
 import { StepDisclosure } from './StepDisclosure';
 import { StepParties } from './StepParties';
 import { StepVehicle } from './StepVehicle';
@@ -20,10 +21,25 @@ export interface StepProps {
   errors: StepErrors;
 }
 
+/** Insurers already on file, so the claim references them by id instead of creating a duplicate party per claim. */
+async function knownInsurers(state: FnolState): Promise<KnownParty[]> {
+  const names = [state.thirdParty.insurerName, state.clientInsurer.name].map((n) => n.trim()).filter(Boolean);
+  const out: KnownParty[] = [];
+  for (const name of names) {
+    try {
+      out.push(...(await api.getParties({ q: name, role: 'insurer', limit: 10 })));
+    } catch {
+      // lookup is an optimisation only; the API creates the insurer party when no id is given
+    }
+  }
+  return out;
+}
+
 /**
  * FNOL wizard. Steps: disclosure → claimant & driver → vehicle (lookup / manual, duplicate banner) →
  * accident (own words, injuries → referral) → script guard (vehicle offers → intervention register) →
- * services & review → submit (POST /claims, then events and offers).
+ * services & review → submit: one POST /claims (claim, insurers, third party, witnesses, inline offer, services
+ * agreed, injury referral, intake answers), then a services note, then the client's decision on the offer.
  */
 export function NewClaimPage() {
   const navigate = useNavigate();
@@ -73,40 +89,55 @@ export function NewClaimPage() {
     const now = new Date().toISOString();
     let claimId: string | undefined;
     try {
-      const claim = await api.createClaim(buildCreateClaimBody(state));
+      const known = await knownInsurers(state);
+      const { claim, intake } = await api.createClaim(buildCreateClaimBody(state, { now, knownParties: known }));
       claimId = claim.id;
       const problems: string[] = [];
+
+      // The API created the witness parties and ran the connected-party check (intake.witnesses / NON_INDEPENDENT_WITNESS flag).
       for (const ev of buildFollowUpEvents(state, now)) {
         try {
           await api.postEvent(claim.id, ev);
         } catch (e) {
-          problems.push(`event ${ev.type}: ${(e as Error).message}`);
+          problems.push(`note "${ev.summary}": ${(e as Error).message}`);
         }
       }
-      const offer = buildOfferInput(state);
-      if (offer) {
-        try {
-          await api.postOffer(claim.id, offer);
-        } catch (e) {
-          problems.push(`intervention offer: ${(e as Error).message}`);
+
+      // The offer itself went inline with the FNOL; a decision already given is recorded on the register entry.
+      const decision = buildOfferDecision(state, now);
+      if (decision) {
+        let offerId = intake?.offer?.id;
+        if (!offerId) {
+          try {
+            const offers = await api.getOffers(claim.id);
+            offerId = offers.find((o) => o.offerorName.trim().toLowerCase() === state.offer.offerorName.trim().toLowerCase())?.id;
+          } catch {
+            offerId = undefined;
+          }
+        }
+        if (!offerId) problems.push("client's decision on the offer: the register entry could not be found — record it on the Intervention register tab");
+        else {
+          try {
+            await api.updateOffer(claim.id, offerId, decision);
+          } catch (e) {
+            problems.push(`client's decision on the offer: ${(e as Error).message}`);
+          }
         }
       }
-      const referral = buildInjuryReferral(state, now);
-      if (referral) {
-        try {
-          await api.updateClaim(claim.id, { injuryReferral: referral });
-        } catch (e) {
-          problems.push(`injury referral: ${(e as Error).message}`);
-        }
-      }
+
       invalidate(claim.id);
-      if (problems.length) toast.warn(`Claim ${claim.reference} opened, but some follow-ups failed: ${problems.join('; ')}. Add them from the claim file.`);
-      else toast.success(`Claim ${claim.reference} opened.`);
+      const flags: ClaimFlag[] = intake?.flags ?? claim.flags ?? [];
+      const hardStop = flags.find((f) => f.severity === 'block' && !f.clearedAt);
+      if (hardStop) toast.error(`Claim ${claim.reference} opened with a hard stop (${hardStop.code}): ${hardStop.message}`);
+      else if (flags.length) toast.warn(`Claim ${claim.reference} opened with ${flags.length} flag${flags.length === 1 ? '' : 's'}: ${flags.map((f) => f.code).join(', ')}`);
+      if (problems.length) toast.warn(`Some follow-ups failed: ${problems.join('; ')}. Add them from the claim file.`);
+      else if (!hardStop && !flags.length) toast.success(`Claim ${claim.reference} opened.`);
       navigate(`/claims/${claim.id}`);
     } catch (e) {
-      const msg = (e as Error).message;
+      const lines = fnolErrorLines(e);
+      const msg = lines.length ? `${(e as Error).message}: ${lines.join('; ')}` : (e as Error).message;
       setSubmitError(msg);
-      toast.error(`Could not open the claim: ${msg}`);
+      toast.error(`Could not open the claim: ${(e as Error).message}`);
       if (claimId) navigate(`/claims/${claimId}`);
     } finally {
       setSubmitting(false);

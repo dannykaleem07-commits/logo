@@ -19,10 +19,13 @@ import { type AnyTemplate, registerTemplate, type Template } from '../registry.j
 
 type DateLike = ISODate | ISODateTime;
 
-/** Thrown when the signature time precedes the document's creation timestamp. */
+/**
+ * Thrown when the certificate's timestamps are out of order: a signature before the document existed, or a
+ * passcode verified before the document existed or after the signature it is supposed to authorise.
+ */
 export class CertificateDateError extends Error {
-  constructor(signedAt: string, createdAt: string) {
-    super(`certificate.signature: signedAt (${signedAt}) is earlier than the document creation timestamp (${createdAt}). A document cannot be signed before it exists.`);
+  constructor(signedAt: string, createdAt: string, message?: string) {
+    super(message ?? `certificate.signature: signedAt (${signedAt}) is earlier than the document creation timestamp (${createdAt}). A document cannot be signed before it exists.`);
     this.name = 'CertificateDateError';
   }
 }
@@ -96,7 +99,7 @@ export const signatureCertificateTemplate: Template<SignatureCertificateData> = 
       id: 'doc_01J8EXAMPLE0000000000000001',
       title: 'Credit Hire Agreement CHA-2026-00012',
       templateId: 'agreement.credit_hire',
-      templateVersion: '1.0.0',
+      templateVersion: '1.1.0',
       sha256: 'a3f1c9e2b7d04c6e8f21a5b9c3d7e1f0a2b4c6d8e0f1a3b5c7d9e1f3a5b7c9d1',
       createdAt: '2026-08-10T09:05:00+01:00'
     },
@@ -117,6 +120,22 @@ export const signatureCertificateTemplate: Template<SignatureCertificateData> = 
     const c = dateParts(d.document.createdAt);
     const before = s.hasTime && c.hasTime ? Date.parse(d.signer.signedAt) < Date.parse(d.document.createdAt) : toISODate(d.signer.signedAt) < toISODate(d.document.createdAt);
     if (before || d.integrity?.signedAfterCreation === false) throw new CertificateDateError(d.signer.signedAt, d.document.createdAt);
+    const otpAt = Date.parse(d.signer.otpVerifiedAt);
+    if (Number.isNaN(otpAt)) throw new TypeError(`certificate.signature: signer.otpVerifiedAt is not a valid ISO date-time: ${d.signer.otpVerifiedAt}`);
+    if (otpAt > Date.parse(d.signer.signedAt)) {
+      throw new CertificateDateError(
+        d.signer.signedAt,
+        d.signer.otpVerifiedAt,
+        `certificate.signature: the one-time passcode was verified at ${d.signer.otpVerifiedAt}, after the document was signed at ${d.signer.signedAt}. The identity check must precede the signature.`
+      );
+    }
+    if (otpAt < Date.parse(d.document.createdAt)) {
+      throw new CertificateDateError(
+        d.signer.otpVerifiedAt,
+        d.document.createdAt,
+        `certificate.signature: the one-time passcode was verified at ${d.signer.otpVerifiedAt}, before the document was generated at ${d.document.createdAt}. The passcode is issued only once the document hash is fixed.`
+      );
+    }
 
     const hashMatches = d.integrity?.hashMatchesDocument ?? d.signer.documentSha256AtSigning.toLowerCase() === d.document.sha256.toLowerCase();
 

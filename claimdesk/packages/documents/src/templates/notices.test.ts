@@ -3,7 +3,7 @@ import { brand } from '../brand.js';
 import { findProhibitedContent, htmlToText } from '../guards.js';
 import { DocumentDataError, getTemplate, hasTemplate, listTemplates, missingRequiredData, renderTemplate } from '../registry.js';
 import { statementOfLiabilityText } from './agreements-forms.js';
-import { DriverNominationError, noticeTemplates, pcnLiabilityTransferTemplate, s172ResponseTemplate, type S172ResponseData } from './notices.js';
+import { DriverNominationError, LiabilityTransferError, hireCoversInstant, noticeTemplates, pcnLiabilityTransferTemplate, s172ResponseTemplate, type S172ResponseData } from './notices.js';
 
 const BANNED = ['our client', 'our solicitors', 'we act for', 'legal advice', 'our lawyers', 'Invalid Date', 'NaN', 'undefined', '[object Object]'];
 
@@ -12,11 +12,11 @@ function textOf(id: string): string {
 }
 
 describe('notices: registration', () => {
-  it('registers both notices at 1.0.0 with kind notice', () => {
+  it('registers both notices with kind notice (pcn 1.1.0, s172 1.0.0)', () => {
     expect(noticeTemplates.map((t) => t.id)).toEqual(['notice.pcn_liability_transfer', 'notice.s172_response']);
-    for (const id of ['notice.pcn_liability_transfer', 'notice.s172_response']) {
+    for (const [id, version] of [['notice.pcn_liability_transfer', '1.1.0'], ['notice.s172_response', '1.0.0']] as const) {
       expect(hasTemplate(id)).toBe(true);
-      expect(listTemplates().find((m) => m.id === id)).toMatchObject({ id, kind: 'notice', version: '1.0.0' });
+      expect(listTemplates().find((m) => m.id === id)).toMatchObject({ id, kind: 'notice', version });
       expect(listTemplates().find((m) => m.id === id)?.requiredData).toContain('ourReference');
     }
   });
@@ -51,6 +51,7 @@ describe('notice.pcn_liability_transfer (council)', () => {
     expect(text).toContain('We are the registered keeper of the vehicle and the recipient of the Notice to Owner.');
     expect(text).toContain('the hirer signed a statement of liability acknowledging liability for any penalty charge notice served during the hire');
     expect(text).toContain('Road Traffic (Owner Liability) Regulations 2000');
+    expect(text).toContain('so it is a hiring agreement for the purposes of section 66 of the Road Traffic Offenders Act 1988');
     expect(text).toContain('Civil Enforcement of Road Traffic Contraventions (Representations and Appeals) (England) Regulations 2022');
     expect(text).toContain('Hirer’s full name Ms Jane Example');
     expect(text).toContain('Date of birth 14 May 1988');
@@ -94,7 +95,8 @@ describe('notice.pcn_liability_transfer (private parking, POFA Sch 4)', () => {
     expect(text).toContain('under paragraph 13 of Schedule 4 to the Protection of Freedoms Act 2012');
     expect(text).toContain('We are therefore not liable for the parking charge as keeper.');
     expect(text).toContain('by a notice to hirer under paragraph 14');
-    expect(text).toContain('as paragraph 13(2) of Schedule 4 requires');
+    expect(text).toContain('as paragraph 13 of Schedule 4 requires');
+    expect(text).not.toContain('13(2)');
     expect(text).toContain('Record that Courtesy Cars Group UK Ltd is not liable for the parking charge as keeper, and close the notice to keeper against us.');
     expect(text).toContain('Direct any notice to hirer to Ms Jane Example at the address for service above');
     expect(text).toContain('Amount stated £100.00');
@@ -102,8 +104,57 @@ describe('notice.pcn_liability_transfer (private parking, POFA Sch 4)', () => {
   });
 });
 
+describe('notice.pcn_liability_transfer: the hire must cover the contravention', () => {
+  const sample = pcnLiabilityTransferTemplate.sample();
+
+  it('refuses to transfer liability for a contravention outside the hire period', () => {
+    const before = { ...sample, notice: { ...sample.notice, contraventionAt: '2026-08-10T09:00:00+01:00' } }; // 30 minutes before delivery
+    expect(() => renderTemplate('notice.pcn_liability_transfer', before)).toThrow(LiabilityTransferError);
+    const after = { ...sample, notice: { ...sample.notice, contraventionAt: '2026-09-02T17:00:00+01:00' } }; // 20 minutes after collection
+    expect(() => renderTemplate('notice.pcn_liability_transfer', after)).toThrow(/falls outside hire CHA-2026-00012/);
+  });
+
+  it('accepts an open-ended hire and an authorised extension that covers the day', () => {
+    const openEnded = { ...sample, hire: { ...sample.hire, endAt: undefined }, notice: { ...sample.notice, contraventionAt: '2026-11-30T08:00:00+00:00' } };
+    const t = htmlToText(renderTemplate('notice.pcn_liability_transfer', openEnded).html);
+    expect(t).toContain('Expected end of hire until the hirer’s own vehicle was repaired or a total-loss settlement was paid');
+    const extended = { ...sample, hire: { ...sample.hire, extensions: [{ from: '2026-09-03', to: '2026-09-05' }] }, notice: { ...sample.notice, contraventionAt: '2026-09-04T12:00:00+01:00' } };
+    expect(htmlToText(renderTemplate('notice.pcn_liability_transfer', extended).html)).toContain('Authorised extensions 3 September 2026 to 5 September 2026');
+  });
+
+  it('hireCoversInstant follows the record exactly', () => {
+    const hire = sample.hire;
+    expect(hireCoversInstant(hire, '2026-08-10T09:30:00+01:00')).toBe(true); // the first minute
+    expect(hireCoversInstant(hire, '2026-09-02T16:40:00+01:00')).toBe(true); // the last minute
+    expect(hireCoversInstant(hire, '2026-09-02T16:41:00+01:00')).toBe(false);
+    expect(hireCoversInstant(hire, '2026-08-10T09:29:00+01:00')).toBe(false);
+    expect(hireCoversInstant({ ...hire, endAt: undefined }, '2030-01-01T00:00:00Z')).toBe(true);
+    expect(hireCoversInstant(hire, 'not a date')).toBe(false);
+  });
+});
+
 describe('notice.s172_response', () => {
   const sample = s172ResponseTemplate.sample();
+
+  it('will not nominate the hirer for an offence outside the hire period, but still gives the s.172(4) account for it', () => {
+    const outside = { ...sample, notice: { ...sample.notice, offenceAt: '2026-09-03T08:14:00+01:00' } };
+    expect(() => renderTemplate('notice.s172_response', outside)).toThrow(DriverNominationError);
+    expect(() => renderTemplate('notice.s172_response', outside)).toThrow(/falls outside hire CHA-2026-00012/);
+    const honest: S172ResponseData = {
+      ...outside,
+      cannotIdentify: true,
+      driver: undefined,
+      hire: undefined,
+      recordsSearched: [{ record: 'Hire agreements for LK26 CCG', searchedOn: '2026-09-04', result: 'The last hire ended on 2 September 2026 at 16:40; no agreement covered 3 September 2026.' }]
+    };
+    const t = htmlToText(renderTemplate('notice.s172_response', honest).html);
+    expect(t).toContain('We are unable to identify the driver');
+    expect(t).not.toContain('Jane Example');
+  });
+
+  it('refuses a nameless driver record', () => {
+    expect(() => renderTemplate('notice.s172_response', { ...sample, driver: { ...sample.driver!, name: '  ' } })).toThrow(DriverNominationError);
+  });
 
   it('identifies the hirer from the hire records with the supporting agreement and the 28-day position', () => {
     const text = textOf('notice.s172_response');

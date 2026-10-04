@@ -40,7 +40,7 @@ export function part36(opts: Part36Options): Part36Result {
   const by = opts.by ?? 'claimant';
   const consequences =
     by === 'claimant'
-      ? 'If the claimant obtains a judgment at least as advantageous as this offer, CPR 36.17(4) applies: interest on the sum at up to 10% above base rate, costs on the indemnity basis from expiry, interest on those costs and an additional amount of 10% of the sum awarded (up to £75,000).'
+      ? 'If the claimant obtains a judgment at least as advantageous as this offer, CPR 36.17(4) applies: interest on the sum at up to 10% above base rate, costs on the indemnity basis from expiry, interest on those costs and an additional amount of 10% of the first £500,000 awarded and 5% of any amount above that, capped at £75,000 (CPR 36.17(4)(d)).'
       : 'If the claimant fails to beat this offer at trial, CPR 36.17(3) applies: the claimant pays the defendant’s costs from expiry of the relevant period with interest. Decide on the walk-away number before responding (money.md §4).';
   const lifted = requested < PART36_MINIMUM_RELEVANT_PERIOD_DAYS ? ` The requested ${requested}-day period was lifted to the 21-day minimum (CPR 36.5(1)(c)).` : '';
   const note =

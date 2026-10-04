@@ -145,7 +145,8 @@
   display: none;
 }
 .topbar-search {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0; /* a flex item's default min-width:auto kept the input's intrinsic width and pushed the badges past 390px */
   max-width: 560px;
   display: flex;
   align-items: center;
@@ -180,6 +181,10 @@
   display: flex;
   gap: var(--s-2);
   align-items: center;
+  flex-shrink: 0;
+}
+.topbar-badge {
+  white-space: nowrap;
 }
 .topbar-badge {
   display: inline-flex;

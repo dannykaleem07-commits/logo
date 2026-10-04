@@ -98,7 +98,7 @@ export function SettingsPage() {
               <div className="stack">
                 <TextInput label="Registered name" value={COMPANY_NAME} onChange={() => undefined} disabled hint="Fixed. The legacy trading name, company number, address and domain are blocked everywhere (lesson i)." />
                 <TextInput label="Company number" value={COMPANY_NUMBER} onChange={() => undefined} disabled />
-                <TextArea label="Registered office" value={form.registeredOffice} onChange={set('registeredOffice')} rows={3} error={errors.registeredOffice} hint="Printed in every document footer (Companies Act 2006 Part 6 trading disclosures). Never a legacy address." />
+                <TextArea label="Registered office" value={form.registeredOffice} onChange={set('registeredOffice')} rows={3} error={errors.registeredOffice} hint="One part per line, postcode last. Printed in every document footer (Companies Act 2006 Part 6 trading disclosures). Never a legacy address." />
                 <TextInput label="VAT registration number" value={form.vatNumber} onChange={set('vatNumber')} placeholder="GB123456789 (blank if not registered)" error={errors.vatNumber} />
                 <TextInput label="ICO registration reference" value={form.icoRegistration} onChange={set('icoRegistration')} placeholder="ZA123456" error={errors.icoRegistration} hint="Data protection fee registration — required to hold client and third-party personal data." />
               </div>

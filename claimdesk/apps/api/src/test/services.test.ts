@@ -4,7 +4,7 @@
  */
 import { chmodSync, existsSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import type { GeneratedDocument } from '@ccguk/domain';
+import type { Claim, GeneratedDocument } from '@ccguk/domain';
 import { createTestApp, type TestApp } from './helpers.js';
 import { absoluteEvidencePath, manifestPath } from '../services/evidence.js';
 import { recomputeClocks } from '../services/claimView.js';
@@ -113,7 +113,10 @@ describe('documents: draft → consistency → approve → PDF → send → sign
     expect(clean.status).toBe(201);
     expect(clean.body.status).toBe('draft');
     expect(clean.body.consistency?.blocked).toBe(false);
-    expect(clean.body.consistency?.flags.filter((f) => f.severity === 'block')).toEqual([]);
+    // Every block the engine raised on the ledger-written table was reconciled by the system, with a reason; none is open.
+    expect(clean.body.consistency?.flags.filter((f) => f.severity === 'block' && !f.clearedAt)).toEqual([]);
+    const systemCleared = clean.body.consistency?.flags.filter((f) => f.clearedBy === 'system') ?? [];
+    expect(systemCleared.every((f) => f.code === 'AMOUNT_PAID_MISMATCH' && /ledger/i.test(f.clearedReason ?? ''))).toBe(true);
     const snap = clean.body.dataSnapshot as { totals: { receivedPence: number; claimedPence: number }; hire: { days: number; dailyRatePence: number }; pack: { sentAt: string } };
     expect(snap.totals.receivedPence).toBe(111200);
     expect(snap.hire.days).toBe(23);
@@ -134,15 +137,16 @@ describe('documents: draft → consistency → approve → PDF → send → sign
     });
     expect(wrong.status).toBe(201);
     expect(wrong.body.status).toBe('blocked');
-    const flag = wrong.body.consistency?.flags.find((f) => f.code === 'AMOUNT_PAID_MISMATCH');
+    const flag = wrong.body.consistency?.flags.find((f) => f.code === 'AMOUNT_PAID_MISMATCH' && !f.clearedAt);
     expect(flag?.severity).toBe('block');
+    expect(flag?.draftValue).toBe('£1,287.00'); // the handler's figure is the only open block — the system never clears a typed amount
     const blockedApprove = await t.api<ErrorBody>('POST', `/documents/${wrong.body.id}/approve`, {});
     expect(blockedApprove.status).toBe(409);
     expect(blockedApprove.body.error.code).toBe('DOCUMENT_BLOCKED');
     const cleared = await t.api<GeneratedDocument>('POST', `/documents/${wrong.body.id}/clear-flag`, { code: 'AMOUNT_PAID_MISMATCH', excerpt: flag?.excerpt, reason: 'Quoting the insurer’s own wrong figure to correct it; the letter states £1,112.00 received.' });
     expect(cleared.status).toBe(200);
     expect(cleared.body.status).toBe('draft');
-    expect(cleared.body.consistency?.flags.find((f) => f.code === 'AMOUNT_PAID_MISMATCH')?.clearedReason).toContain('wrong figure');
+    expect(cleared.body.consistency?.flags.find((f) => f.draftValue === '£1,287.00')?.clearedReason).toContain('wrong figure');
 
     const approved = await t.api<GeneratedDocument>('POST', `/documents/${wrong.body.id}/approve`, {});
     expect(approved.status).toBe(200);
@@ -203,6 +207,66 @@ describe('documents: draft → consistency → approve → PDF → send → sign
     expect(superseded.body.html).toContain('re-executed on 5 October 2026');
     expect((await t.api<GeneratedDocument>('GET', `/documents/${draft.body.id}`)).body.status).toBe('superseded');
   }, 120_000);
+});
+
+describe('intake: web-client FNOL body, domain validation and witness independence', () => {
+  const WEB_FNOL = {
+    channel: 'phone',
+    disclosure: { callRecordingReadAt: '2026-10-05T08:55:00.000Z', acknowledged: true, acknowledgedBy: 'Priya Shah' },
+    claimant: { name: 'Priya Shah', phone: '07700 900555', email: 'priya@example.test', address: { line1: '8 Mill Lane', town: 'Ilford', postcode: 'IG1 2AB' } },
+    vehicle: { registration: 'LB19 XYZ', make: 'BMW', model: '320d', gtaGroup: 'M' },
+    accident: { occurredAt: '2026-10-03T08:30:00.000Z', location: 'High Road, Ilford, at the junction with Ley Street', circumstances: 'I was stationary at the red light when the van behind failed to stop and hit the back of my car. The driver got out and said he was looking at his phone.', policeAttended: false, injuries: false, roadworthyAfter: false, driveable: false, cctvAvailable: true },
+    thirdParty: { registration: 'AB12 CDE', driverName: 'Mark Ellis', insurerName: 'Example Insurance plc', insurerPolicyNumber: 'POL-77' },
+    witnesses: [{ name: 'Rohan Shah', phone: '07700 900555', relationshipToClaimant: 'brother' }],
+    clientInsurer: { name: 'Own Insurer Ltd', policyNumber: 'OWN-1' },
+    injury: { reported: false },
+    services: { hire: true, recovery: true, storage: false, engineer: true },
+    gtaSubscriber: false,
+  };
+
+  it('accepts the wizard body, answers as a Claim with intake, defaults roles, links the witness and flags the connection', async () => {
+    const res = await t.api<Claim & { claim: Claim; intake: { validation: { ok: boolean; incomplete: Array<{ field: string }> }; witnesses: Array<{ independent: boolean; reasons: string[] }>; flags: Array<{ code: string }> } }>('POST', '/claims', WEB_FNOL);
+    expect(res.status).toBe(201);
+    expect(res.body.id).toBe(res.body.claim.id);
+    expect(res.body.reference).toMatch(/^CCG-/);
+    const claimant = await t.api<{ roles: string[] }>('GET', `/parties/${res.body.claimantId}`);
+    expect(claimant.body.roles).toEqual(['claimant', 'driver']);
+    expect(res.body.clientPolicyNumber).toBe('OWN-1');
+    expect(res.body.clientInsurerId).toBeTruthy();
+    expect(res.body.thirdPartyVehicleId).toBeTruthy();
+    expect(res.body.thirdPartyIds).toHaveLength(2); // the other driver + the witness
+    const codes = res.body.flags.map((f) => f.code);
+    expect(codes).toContain('NON_INDEPENDENT_WITNESS');
+    expect(res.body.intake.witnesses[0]).toMatchObject({ independent: false });
+    expect(res.body.intake.witnesses[0]!.reasons.join(' ')).toMatch(/brother|phone/);
+    // the script-guard question was not answered in this body → the domain's mandatory question becomes an open flag, not a 400
+    expect(codes).toContain('INTAKE_INCOMPLETE');
+    expect(res.body.intake.validation.incomplete.map((i) => i.field)).toEqual(['offerDisclosed']);
+    const events = await t.api<{ events: Array<{ type: string; data?: { callRecordingDisclosed?: boolean; channel?: string } }> }>('GET', `/claims/${res.body.id}/events`);
+    const fnol = events.body.events.find((e) => e.type === 'fnol');
+    expect(fnol?.data).toMatchObject({ callRecordingDisclosed: true, channel: 'phone' });
+  });
+
+  it('hard-stops a bad third-party plate, a short account and an account not taken cold', async () => {
+    const plate = await t.api<ErrorBody>('POST', '/claims', { ...WEB_FNOL, thirdParty: { ...WEB_FNOL.thirdParty, registration: '1NVALID!!' } });
+    expect(plate.status).toBe(400);
+    expect((plate.body.error.details?.missing as string[]).join(' ')).toContain('thirdParty.registration');
+    const cold = await t.api<ErrorBody>('POST', '/claims', { ...WEB_FNOL, takenCold: false });
+    expect(cold.status).toBe(400);
+    expect((cold.body.error.details?.missing as string[]).join(' ')).toContain('accident.takenCold');
+    const short = await t.api<ErrorBody>('POST', '/claims', { ...WEB_FNOL, accident: { ...WEB_FNOL.accident, circumstances: 'Rear-ended at the lights.' } });
+    expect(short.status).toBe(400);
+    expect((short.body.error.details?.missing as string[]).join(' ')).toContain('accident.circumstances');
+  });
+
+  it('allocate-check reports the domain warnings alongside the hard reasons', async () => {
+    const ids = seedFileOne();
+    const check = await t.api<{ allowed: boolean; reasons: string[]; warnings: string[] }>('POST', `/fleet/${ids.fleetUnitId}/allocate-check`, { use: 'credit_hire' });
+    expect(check.status).toBe(200);
+    expect(Array.isArray(check.body.warnings)).toBe(true);
+    expect(check.body.allowed).toBe(false); // File 1's unit has no policy linked
+    expect(check.body.reasons.join(' ')).toMatch(/polic/i);
+  });
 });
 
 describe('engineering', () => {

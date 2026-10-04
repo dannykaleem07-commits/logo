@@ -1,5 +1,5 @@
 import type { StepProps } from './NewClaimPage';
-import { CIRCUMSTANCES_CAPTION, INJURY_REFERRAL_NOTICE, type AccidentForm } from './fnol';
+import { CIRCUMSTANCES_CAPTION, INJURY_REFERRAL_NOTICE, MIN_CIRCUMSTANCES_CHARS, TAKEN_COLD_LABEL, TP_REG_UNKNOWN_LABEL, WITNESS_RELATIONSHIP_HINT, type AccidentForm } from './fnol';
 import type { WitnessInput } from '../../../api/client';
 import { Button } from '../../../components/Button';
 import { Checkbox, DateTimeInput, TextArea, TextInput, YesNo } from '../../../components/Form';
@@ -32,9 +32,17 @@ export function StepAccident({ state, update, errors }: StepProps) {
           value={a.circumstances}
           onChange={(v) => setA('circumstances', v)}
           error={errors['accident.circumstances']}
-          hint="Type what the client says, as they say it. Ask open questions only ('what happened next?'). Highway Code references and the liability narrative are added by the handler later, not here."
+          hint={`Type what the client says, as they say it (at least ${MIN_CIRCUMSTANCES_CHARS} characters). Ask open questions only ('what happened next?'). Highway Code references and the liability narrative are added by the handler later, not here.`}
           rows={7}
         />
+        <div className="span-2">
+          <Checkbox label={<strong>{TAKEN_COLD_LABEL}</strong>} checked={a.takenCold} onChange={(v) => setA('takenCold', v)} />
+          {errors['accident.takenCold'] && (
+            <div className="field-error" role="alert">
+              {errors['accident.takenCold']}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="grid-3">
@@ -49,7 +57,10 @@ export function StepAccident({ state, update, errors }: StepProps) {
       <fieldset className="fieldset">
         <legend>Third party</legend>
         <div className="form-grid">
-          <TextInput label="Third-party registration" value={state.thirdParty.registration} onChange={setTp('registration')} inputClassName="input-reg" error={errors['thirdParty.registration']} placeholder="As given by the client" />
+          <TextInput label="Third-party registration" value={state.thirdParty.registration} onChange={setTp('registration')} inputClassName="input-reg" error={errors['thirdParty.registration']} placeholder="As given by the client" disabled={state.thirdParty.registrationUnknown} hint="Mandatory intake question: the claim opens with an INTAKE_INCOMPLETE flag until it is recorded or marked unknown." />
+          <div className="field" style={{ justifyContent: 'flex-end' }}>
+            <Checkbox label={TP_REG_UNKNOWN_LABEL} checked={state.thirdParty.registrationUnknown} onChange={(v) => update((s) => ({ ...s, thirdParty: { ...s.thirdParty, registrationUnknown: v, registration: v ? '' : s.thirdParty.registration } }))} />
+          </div>
           <TextInput label="Third-party driver name" value={state.thirdParty.driverName} onChange={setTp('driverName')} />
           <TextInput label="Third-party insurer" value={state.thirdParty.insurerName} onChange={setTp('insurerName')} hint="As stated; confirmed via askMID / the insurer later." />
           <TextInput label="Third-party policy number" value={state.thirdParty.insurerPolicyNumber} onChange={setTp('insurerPolicyNumber')} />
@@ -65,7 +76,7 @@ export function StepAccident({ state, update, errors }: StepProps) {
             <div key={i} className="form-grid" style={{ alignItems: 'end' }}>
               <TextInput label="Name" required value={w.name} onChange={(v) => setWitness(i, { name: v })} error={errors[`witness.${i}.name`]} />
               <TextInput label="Phone / email" value={w.phone ?? ''} onChange={(v) => setWitness(i, { phone: v })} />
-              <TextInput label="Relationship to claimant" value={w.relationshipToClaimant ?? ''} onChange={(v) => setWitness(i, { relationshipToClaimant: v })} hint="Feeds the connected-party check (lesson g). 'None' if a stranger." />
+              <TextInput label="Relationship to claimant" required value={w.relationshipToClaimant ?? ''} onChange={(v) => setWitness(i, { relationshipToClaimant: v })} error={errors[`witness.${i}.relationship`]} hint={WITNESS_RELATIONSHIP_HINT} />
               <div className="row" style={{ paddingBottom: 4 }}>
                 <Checkbox label="Independent (no connection)" checked={w.independent ?? false} onChange={(v) => setWitness(i, { independent: v })} />
                 <Button size="sm" variant="ghost" onClick={() => removeWitness(i)}>

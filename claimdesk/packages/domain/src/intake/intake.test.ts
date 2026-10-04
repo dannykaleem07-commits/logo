@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { validateFnol, routeInjury, intakeScript, assertScriptGuard, scriptText, recordingDisclosureText, GUARD_QUESTION, isValidRegistrationLocal, INJURY_REFERRAL_TITLE, type FnolInput } from './index.js';
+import { isValidUkRegistration } from '../vehicle/index.js';
 
 function goodFnol(): FnolInput {
   return {
@@ -194,5 +195,56 @@ describe('intakeScript / assertScriptGuard', () => {
     for (const text of fine) expect(assertScriptGuard(text).ok, text).toBe(true);
     expect(assertScriptGuard('Has anyone offered you a car? What exactly, by whom, when?').guardQuestionPresent).toBe(true);
     expect(assertScriptGuard('Has anyone offered you a car?').guardQuestionPresent).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+// Adversarial verification — lesson m evasions, legitimate notes, plate-regex parity.
+// ---------------------------------------------------------------------------------------------
+describe('adversarial: intake', () => {
+  it('catches softer instructions to ignore or sit on an insurer’s offer (lesson m)', () => {
+    const banned = [
+      'There is no need to respond to their offer.',
+      "You don't need to speak to the insurer about a car.",
+      'Tell them you already have a car.',
+      "Don't worry about their offer, we will deal with it.",
+      'Leave their offer unanswered until we call you.',
+      'You can ignore their letter about the courtesy car.',
+      'Put the phone down if they offer you a car.',
+      'Tell them you’re sorted.',
+    ];
+    for (const text of banned) expect(assertScriptGuard(text).ok, text).toBe(false);
+  });
+
+  it('legitimate notes about offers still pass (recording a decision is not instructing one)', () => {
+    const fine = [
+      'The client chose not to accept the offer; reasons recorded in the mitigation questionnaire.',
+      'Tell us what exactly was offered, by whom and when.',
+      'The insurer’s offer was unsuitable because of the £500 excess; the client declined it.',
+      'We replied to the offer in writing within one working day.',
+      'Do not proceed with the recorded line if the client does not consent.',
+      'Leave the paperwork with us and we will send the summary today.',
+    ];
+    for (const text of fine) expect(assertScriptGuard(text).ok, text).toBe(true);
+    // the script itself, including every handler note, still passes after the pattern changes
+    expect(assertScriptGuard(scriptText()).ok).toBe(true);
+  });
+
+  it('the local plate regex agrees with the vehicle module, including Q-prefix plates', () => {
+    expect(isValidRegistrationLocal('Q123 ABC')).toBe(true);
+    for (const reg of ['Q123 ABC', 'AB12 CDE', 'A123 BCD', 'ABC 123D', 'AIZ 1234', 'ABC 1234', '1 A', 'IB12 CDE', 'AB12 CDEF', '12345678', 'QQ12 ABC', 'ZA12 ABC', 'AB12 QQQ', 'LC21GLF']) {
+      expect(isValidRegistrationLocal(reg), reg).toBe(isValidUkRegistration(reg));
+    }
+  });
+
+  it('an offer disclosed as "yes" with details and a witness marked "none" is a clean FNOL — the guard never blocks the truthful answer', () => {
+    const f = goodFnol();
+    f.offerDisclosed = true;
+    f.offerDetails = { what: 'small hatchback, £20.37/day', byWhom: 'esure', when: '2026-09-23 11:00' };
+    f.witnesses = [{ name: 'Passer-by', relationship: 'none' }];
+    const r = validateFnol(f);
+    expect(r.ok).toBe(true);
+    expect(r.errors).toEqual([]);
+    expect(r.warnings.map((w) => w.field)).toEqual(['offerDisclosed']);
   });
 });

@@ -42,6 +42,22 @@ export interface AppConfig {
   defaultUserId: string;
   /** Outbound lookup timeout. */
   lookupTimeoutMs: number;
+  /**
+   * Browser origins allowed by CORS. Default (CORS_ORIGINS unset): localhost / 127.0.0.1 / [::1] on any port and
+   * scheme. `CORS_ORIGINS=https://claims.example.com,https://ops.example.com` replaces the default; `*` reflects any
+   * origin (never the default — credentials are sent).
+   */
+  corsOrigins: Array<string | RegExp> | true;
+}
+
+export const LOCALHOST_ORIGINS: readonly RegExp[] = [/^https?:\/\/localhost(:\d+)?$/i, /^https?:\/\/127\.0\.0\.1(:\d+)?$/, /^https?:\/\/\[::1\](:\d+)?$/];
+
+/** Parse CORS_ORIGINS: unset → localhost only; a comma list → exactly those origins; `*` → any origin. */
+export function parseCorsOrigins(raw: string | undefined): Array<string | RegExp> | true {
+  const items = (raw ?? '').split(',').map((s) => s.trim()).filter(Boolean);
+  if (!items.length) return [...LOCALHOST_ORIGINS];
+  if (items.includes('*')) return true;
+  return items;
 }
 
 function str(name: string, fallback?: string): string | undefined {
@@ -94,6 +110,7 @@ export function loadConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     keysPresent: keysPresence(keys),
     defaultUserId: str('DEFAULT_USER_ID', 'handler')!,
     lookupTimeoutMs: int('LOOKUP_TIMEOUT_MS', 10_000),
+    corsOrigins: parseCorsOrigins(str('CORS_ORIGINS')),
     ...overrides,
   };
   if (cfg.chromiumPath) process.env.CHROMIUM_PATH = cfg.chromiumPath;
@@ -119,6 +136,7 @@ export function testConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     keysPresent: keysPresence(keys),
     defaultUserId: 'handler',
     lookupTimeoutMs: 2_000,
+    corsOrigins: [...LOCALHOST_ORIGINS],
     ...overrides,
   };
 }

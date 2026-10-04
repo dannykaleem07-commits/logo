@@ -5,10 +5,10 @@
 import type { FastifyInstance } from 'fastify';
 import { EvidenceImmutableError } from '@ccguk/db';
 import type { AppContext } from '../context.js';
-import { badRequest, notFound } from '../errors.js';
+import { badRequest, conflict, notFound } from '../errors.js';
 import { parse } from '../schemas/common.js';
-import { evidenceFields, evidenceKind } from '../schemas/services.js';
-import { discardStaged, openEvidenceStream, stageStream, storeEvidence, verifyEvidence, type StagedUpload } from '../services/evidence.js';
+import { evidenceFields, evidenceFileQuery, evidenceKind } from '../schemas/services.js';
+import { discardStaged, readEvidenceVerified, stageStream, storeEvidence, verifyEvidence, type StagedUpload } from '../services/evidence.js';
 import { params, requireClaim } from './helpers.js';
 import { z } from 'zod';
 
@@ -62,20 +62,26 @@ export function registerEvidenceRoutes(app: FastifyInstance, ctx: AppContext): v
     return ctx.repos.requireEvidence(ctx.db, id);
   });
 
+  /** The bytes are re-hashed on every read; a mismatch with the record is refused (409 EVIDENCE_TAMPERED) and audited. */
   app.get('/evidence/:id/file', async (request, reply) => {
     const { id } = params<{ id: string }>(request);
     const e = ctx.repos.requireEvidence(ctx.db, id);
-    const stream = openEvidenceStream(ctx, e);
-    if (!stream) throw notFound('evidence file', id);
-    const disposition = (request.query as { download?: string }).download ? 'attachment' : 'inline';
+    const q = parse(evidenceFileQuery, request.query);
+    const read = readEvidenceVerified(ctx, e);
+    if (!read) throw notFound('evidence file', id);
+    if (!read.intact) {
+      ctx.repos.appendAudit(ctx.db, { actor: request.actor, action: 'evidence.read.tampered', entity: 'evidence', entityId: id, after: { recordedSha256: e.sha256, computedSha256: read.computedSha256, bytesOnDisk: read.buffer.length, recordedBytes: e.bytes }, at: ctx.now() });
+      throw conflict('EVIDENCE_TAMPERED', `The stored bytes for evidence ${id} no longer hash to the recorded sha256 — the file is not served`, { recordedSha256: e.sha256, computedSha256: read.computedSha256 });
+    }
+    const disposition = q.download ? 'attachment' : 'inline';
     const ascii = e.filename.replace(/[^\x20-\x7e]/g, '_').replace(/"/g, '');
     return reply
       .header('content-type', e.mime)
-      .header('content-length', String(e.bytes))
+      .header('content-length', String(read.buffer.length))
       .header('content-disposition', `${disposition}; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(e.filename)}`)
       .header('x-sha256', e.sha256)
       .header('cache-control', 'private, max-age=0, must-revalidate')
-      .send(stream);
+      .send(read.buffer);
   });
 
   app.post('/evidence/:id/verify', async (request) => {

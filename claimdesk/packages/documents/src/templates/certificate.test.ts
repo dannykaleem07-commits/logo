@@ -28,7 +28,7 @@ describe('certificate.signature', () => {
     expect(text).toContain('Certificate CERT-3F9A1C2B7D4E6F80');
     expect(text).toContain('Document Credit Hire Agreement CHA-2026-00012');
     expect(text).toContain('Document id doc_01J8EXAMPLE0000000000000001');
-    expect(text).toContain('Template agreement.credit_hire version 1.0.0');
+    expect(text).toContain('Template agreement.credit_hire version 1.1.0');
     expect(text).toContain('SHA-256 of the signed document a3f1c9e2b7d04c6e8f21a5b9c3d7e1f0a2b4c6d8e0f1a3b5c7d9e1f3a5b7c9d1');
     expect(text).toContain('Claim reference CCG-2026-00012');
     expect(text).toContain('Signer Ms Jane Example');
@@ -60,6 +60,14 @@ describe('certificate.signature', () => {
   it('refuses a signature dated before the document was created, whether by the timestamps or by the esign integrity flag', () => {
     expect(() => renderTemplate('certificate.signature', { ...sample, signer: { ...sample.signer, signedAt: '2026-08-10T09:04:00+01:00' } })).toThrow(CertificateDateError);
     expect(() => renderTemplate('certificate.signature', { ...sample, integrity: { hashMatchesDocument: true, signedAfterCreation: false } })).toThrow(CertificateDateError);
+  });
+
+  it('refuses a passcode verified after the signature, or before the document existed', () => {
+    expect(() => renderTemplate('certificate.signature', { ...sample, signer: { ...sample.signer, otpVerifiedAt: '2026-08-10T09:41:01+01:00' } })).toThrow(CertificateDateError);
+    expect(() => renderTemplate('certificate.signature', { ...sample, signer: { ...sample.signer, otpVerifiedAt: '2026-08-10T09:41:01+01:00' } })).toThrow(/after the document was signed/);
+    expect(() => renderTemplate('certificate.signature', { ...sample, signer: { ...sample.signer, otpVerifiedAt: '2026-08-10T09:04:59+01:00' } })).toThrow(/before the document was generated/);
+    expect(() => renderTemplate('certificate.signature', { ...sample, signer: { ...sample.signer, otpVerifiedAt: sample.signer.signedAt } })).not.toThrow(); // same instant is fine
+    expect(() => renderTemplate('certificate.signature', { ...sample, signer: { ...sample.signer, otpVerifiedAt: 'yesterday' } })).toThrow(TypeError);
   });
 
   it('falls back to the certificate id as the reference when there is no claim', () => {

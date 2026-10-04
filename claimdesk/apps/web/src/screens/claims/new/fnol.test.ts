@@ -5,10 +5,15 @@ import { describe, expect, it } from 'vitest';
 import {
   anyServiceAgreed,
   buildCreateClaimBody,
+  buildFnolOffer,
   buildFollowUpEvents,
-  buildInjuryReferral,
-  buildOfferInput,
+  buildOfferDecision,
+  DEFAULT_INJURY_REFERRAL,
   DISCLOSURE_TEXT,
+  insurerRef,
+  pickExistingParty,
+  toVehicleRef,
+  vehicleSource,
   firstInvalidStep,
   initialFnolState,
   SCRIPT_GUARD_NOTE,
@@ -43,9 +48,10 @@ function completeState(): FnolState {
     injuries: false,
     roadworthyAfter: false,
     driveable: false,
-    airbagsDeployed: false
+    airbagsDeployed: false,
+    takenCold: true
   };
-  s.thirdParty = { registration: 'lk19 xyz', driverName: '', insurerName: 'esure', insurerPolicyNumber: '', contact: '' };
+  s.thirdParty = { registration: 'lk19 xyz', registrationUnknown: false, driverName: '', insurerName: 'esure', insurerPolicyNumber: '', contact: '' };
   s.offer = { ...s.offer, offered: false };
   s.services = { hire: true, recovery: true, storage: false, engineer: true, notes: '' };
   return s;
@@ -85,17 +91,36 @@ describe('validateStep', () => {
     s.vehicle.lookup = { status: 'ok', registration: 'AB12CDE', vehicle: { registration: 'AB12CDE' }, fleetUnit: { id: 'fleet-7', registration: 'AB12CDE' } };
     expect(validateStep(3, s, now)['vehicle.fleet']).toMatch(/hard stop/);
   });
-  it('step 4 requires the accident core fields and the yes/no answers', () => {
+  it('step 4 requires the accident core fields, the taken-cold confirmation and the yes/no answers', () => {
     const s = initialFnolState();
     const e = validateStep(4, s, now);
-    expect(Object.keys(e)).toEqual(expect.arrayContaining(['accident.occurredAt', 'accident.location', 'accident.circumstances', 'accident.injuries', 'accident.roadworthyAfter', 'accident.driveable', 'accident.airbagsDeployed']));
+    expect(Object.keys(e)).toEqual(expect.arrayContaining(['accident.occurredAt', 'accident.location', 'accident.circumstances', 'accident.takenCold', 'accident.injuries', 'accident.roadworthyAfter', 'accident.driveable', 'accident.airbagsDeployed']));
     const c = completeState();
     expect(validateStep(4, c, now)).toEqual({});
     c.accident.occurredAt = '2027-01-01T00:00:00Z';
     expect(validateStep(4, c, now)['accident.occurredAt']).toMatch(/future/);
     c.accident.occurredAt = '2026-10-03T17:30:00.000Z';
+    c.accident.circumstances = 'Hit from behind at the lights.'; // under the domain minimum (40 chars)
+    expect(validateStep(4, c, now)['accident.circumstances']).toMatch(/40 characters/);
+    c.accident.circumstances = completeState().accident.circumstances;
     c.witnesses.push({ name: '' });
-    expect(validateStep(4, c, now)).toHaveProperty('witness.0.name');
+    expect(Object.keys(validateStep(4, c, now))).toEqual(expect.arrayContaining(['witness.0.name', 'witness.0.relationship']));
+    c.witnesses = [{ name: 'Alex Brown', independent: true }];
+    expect(validateStep(4, c, now)).toEqual({});
+    c.witnesses = [{ name: 'Chris Smith', relationshipToClaimant: 'Brother' }];
+    expect(validateStep(4, c, now)).toEqual({});
+  });
+  it('step 4: a supplied third-party registration must be valid, or the plate is marked unknown (failed to stop)', () => {
+    const c = completeState();
+    c.thirdParty.registration = 'NOT A PLATE';
+    expect(validateStep(4, c, now)['thirdParty.registration']).toMatch(/not a valid UK registration/i);
+    c.thirdParty.registrationUnknown = true;
+    expect(validateStep(4, c, now)['thirdParty.registration']).toMatch(/not both/);
+    c.thirdParty.registration = '';
+    expect(validateStep(4, c, now)).toEqual({});
+    const body = buildCreateClaimBody(c, { now: now.toISOString() });
+    expect(body.thirdParty).toEqual({ registrationUnknown: true });
+    expect(body.thirdPartyVehicle).toBeUndefined();
   });
   it('step 5 requires the script-guard answer and the what/who/when of an offer', () => {
     const s = completeState();
@@ -115,54 +140,111 @@ describe('validateStep', () => {
   });
 });
 
-describe('buildCreateClaimBody', () => {
-  it('normalises registration and postcodes and carries the disclosure', () => {
-    const body = buildCreateClaimBody(completeState());
-    expect(body.vehicle.registration).toBe('AB12CDE');
-    expect(body.vehicle.manual).toBe(false);
-    expect(body.vehicle.lookupId).toBe('lk1');
-    expect(body.vehicle.make).toBe('VOLKSWAGEN');
-    expect(body.claimant.address?.postcode).toBe('N1 1AA');
-    expect(body.claimant.roles).toEqual(['claimant', 'driver', 'keeper']);
+describe('buildCreateClaimBody (apps/api createClaimBody shape)', () => {
+  const iso = now.toISOString();
+  it('normalises registration and postcodes, references insurers and the third party as party refs, and carries the disclosure', () => {
+    const body = buildCreateClaimBody(completeState(), { now: iso });
+    expect(body.vehicle).toMatchObject({ registration: 'AB12CDE', make: 'VOLKSWAGEN', model: 'GOLF', ownership: 'client' });
+    expect('manual' in body.vehicle).toBe(false);
+    expect('lookupId' in body.vehicle).toBe(false);
+    expect('id' in body.claimant ? undefined : body.claimant.address?.postcode).toBe('N1 1AA');
+    expect('id' in body.claimant ? undefined : body.claimant.roles).toEqual(['claimant', 'driver', 'keeper']);
     expect(body.driver).toBeUndefined();
-    expect(body.thirdParty?.registration).toBe('LK19XYZ');
-    expect(body.thirdParty?.insurerName).toBe('esure');
+    expect(body.thirdPartyVehicle).toEqual({ registration: 'LK19XYZ', ownership: 'third_party' });
+    expect(body.thirdParties).toBeUndefined();
+    expect(body.atFaultInsurer).toEqual({ kind: 'company', name: 'esure', roles: ['insurer'] });
     expect(body.accident.postcode).toBe('W12 7AB');
     expect(body.accident.circumstances).toMatch(/lane two/);
+    expect(body.liability).toBe('unknown');
+    expect(body.callRecordingDisclosed).toBe(true);
+    expect(body.fnolAt).toBe('2026-10-04T09:55:00.000Z');
     expect(body.disclosure).toEqual({ callRecordingReadAt: '2026-10-04T09:55:00.000Z', acknowledged: true, acknowledgedBy: 'DK' });
-    expect(body.gtaSubscriber).toBe(false);
-    expect(body.injury).toBeUndefined();
+    expect(body.handlerId).toBe('DK');
+    expect(body.servicesAgreedAt).toBe(iso);
     expect(body.services).toEqual({ hire: true, recovery: true, storage: false, engineer: true });
+    expect(body.injuryReferralTo).toBeUndefined();
+    expect(body.interventionOffer).toBeUndefined();
+    expect(body.takenCold).toBe(true);
+    expect(body.offerDisclosed).toBe(false);
+    expect(body.offerDetails).toBeUndefined();
+    expect(body.witnesses).toEqual([]);
+    expect(body.thirdParty).toBeUndefined();
+    expect(body.notes).toMatch(/Services agreed at FNOL: hire, recovery, engineer/);
+    expect(body.notes).toMatch(/disclosure read 2026-10-04T09:55:00.000Z by DK/);
+    expect(body.notes).not.toMatch(/ignore/i);
   });
-  it('uses manual entry when the lookup required it', () => {
+  it('references a looked-up vehicle by id (the lookup already stored the DVLA/DVSA records)', () => {
+    const s = completeState();
+    s.vehicle.lookup = { status: 'ok', registration: 'AB12CDE', vehicle: { id: 'veh-1', registration: 'AB12CDE', make: 'VOLKSWAGEN', model: 'GOLF' } };
+    expect(toVehicleRef(s.vehicle, '2026-10-04')).toEqual({ id: 'veh-1' });
+    expect(vehicleSource(s.vehicle)).toBe('lookup');
+    s.vehicle.useManual = true;
+    s.vehicle.manual = { ...s.vehicle.manual, make: 'Volkswagen', model: 'Golf GTI' };
+    expect(vehicleSource(s.vehicle)).toBe('manual');
+    expect(toVehicleRef(s.vehicle, '2026-10-04')).toMatchObject({ registration: 'AB12CDE', make: 'Volkswagen', model: 'Golf GTI' });
+  });
+  it('uses manual entry when the lookup required it, with the odometer as a client reading dated today', () => {
     const s = completeState();
     s.vehicle.lookupState = 'manual';
     s.vehicle.useManual = true;
     s.vehicle.lookup = { status: 'manual_required', registration: 'AB12CDE', reason: 'no keys' };
     s.vehicle.manual = { ...s.vehicle.manual, make: 'Ford', model: 'Focus', yearOfManufacture: '2018', odometerMiles: '45210', vin: 'wf0abc' };
-    const body = buildCreateClaimBody(s);
-    expect(body.vehicle).toMatchObject({ registration: 'AB12CDE', manual: true, make: 'Ford', model: 'Focus', yearOfManufacture: 2018, odometerMiles: 45210, vin: 'WF0ABC' });
-    expect(body.vehicle.lookupId).toBeUndefined();
+    const body = buildCreateClaimBody(s, { now: iso });
+    expect(body.vehicle).toMatchObject({ registration: 'AB12CDE', make: 'Ford', model: 'Focus', yearOfManufacture: 2018, vin: 'WF0ABC', ownership: 'client' });
+    expect('id' in body.vehicle ? undefined : body.vehicle.odometer).toEqual([{ source: 'client', date: '2026-10-04', miles: 45210, note: expect.stringMatching(/client/) }]);
   });
-  it('adds a separate driver and the injury block when reported', () => {
+  it('adds a separate driver, the third-party driver and the injury referral when reported (no PATCH of the claim)', () => {
     const s = completeState();
     s.driverSameAsClaimant = false;
     s.driver = { ...s.driver, name: 'Sam Smith' };
+    s.thirdParty = { ...s.thirdParty, driverName: 'Pat Jones', contact: 'pat@example.com', insurerPolicyNumber: 'POL-1' };
+    s.clientInsurer = { name: 'Admiral', policyNumber: 'ADM-9' };
     s.accident.injuries = true;
     s.injury = { referralTo: 'PI Solicitors LLP', notes: 'whiplash' };
-    const body = buildCreateClaimBody(s);
-    expect(body.driver?.name).toBe('Sam Smith');
-    expect(body.driver?.roles).toEqual(['driver']);
-    expect(body.claimant.roles).toEqual(['claimant', 'keeper']);
-    expect(body.injury).toEqual({ reported: true, referralTo: 'PI Solicitors LLP', notes: 'whiplash' });
+    const body = buildCreateClaimBody(s, { now: iso });
+    expect(body.driver).toMatchObject({ name: 'Sam Smith', roles: ['driver'] });
+    expect('id' in body.claimant ? undefined : body.claimant.roles).toEqual(['claimant', 'keeper']);
+    expect(body.thirdParties).toEqual([{ kind: 'individual', name: 'Pat Jones', roles: ['third_party_driver'], notes: 'Contact as given by the client: pat@example.com' }]);
+    expect(body.atFaultInsurerRef).toBe('POL-1');
+    expect(body.clientInsurer).toEqual({ kind: 'company', name: 'Admiral', roles: ['insurer'] });
+    expect(body.clientPolicyNumber).toBe('ADM-9');
+    expect(body.injuryReferralTo).toBe('PI Solicitors LLP');
+    expect(body.notes).toMatch(/Injury notes: whiplash/);
+    s.injury.referralTo = '';
+    expect(buildCreateClaimBody(s, { now: iso }).injuryReferralTo).toBe(DEFAULT_INJURY_REFERRAL);
+  });
+  it('reuses an insurer already on file by id instead of creating a duplicate party', () => {
+    const known = [
+      { id: 'p-esure', name: 'esure', roles: ['insurer' as const] },
+      { id: 'p-x', name: 'esure', roles: ['repairer' as const] }
+    ];
+    expect(pickExistingParty(known, ' ESURE ')?.id).toBe('p-esure');
+    expect(pickExistingParty(known, 'Aviva')).toBeUndefined();
+    expect(insurerRef('esure', known)).toEqual({ id: 'p-esure' });
+    expect(insurerRef('Aviva', known)).toEqual({ kind: 'company', name: 'Aviva', roles: ['insurer'] });
+    const body = buildCreateClaimBody(completeState(), { now: iso, knownParties: known });
+    expect(body.atFaultInsurer).toEqual({ id: 'p-esure' });
+  });
+  it('keeps a too-short phone or an incomplete address as a note rather than failing the API schema', () => {
+    const s = completeState();
+    s.claimant = { ...s.claimant, phone: '123', line1: '', postcode: 'N1 1AA' };
+    const body = buildCreateClaimBody(s, { now: iso });
+    const claimant = 'id' in body.claimant ? undefined : body.claimant;
+    expect(claimant?.phone).toBeUndefined();
+    expect(claimant?.address).toBeUndefined();
+    expect(claimant?.notes).toMatch(/Phone as given: 123/);
+    expect(claimant?.notes).toMatch(/Address \(incomplete\): N1 1AA/);
+    expect(validateStep(2, s, now)['claimant.contact']).toMatch(/too short/);
   });
 });
 
-describe('buildOfferInput (script guard → intervention register)', () => {
+describe('buildFnolOffer / buildOfferDecision (script guard → intervention register)', () => {
+  const iso = now.toISOString();
   it('returns null when no offer was made', () => {
-    expect(buildOfferInput(completeState())).toBeNull();
+    expect(buildFnolOffer(completeState())).toBeNull();
+    expect(buildOfferDecision(completeState(), iso)).toBeNull();
   });
-  it('captures what / who / when and the rate in pence', () => {
+  it('captures what / who / when and the rate in pence, inline in the FNOL body, never "told to ignore"', () => {
     const s = completeState();
     s.offer = {
       ...s.offer,
@@ -182,32 +264,54 @@ describe('buildOfferInput (script guard → intervention register)', () => {
       clientDecision: 'pending',
       clientReasons: ''
     };
-    const offer = buildOfferInput(s)!;
-    expect(offer).toMatchObject({ receivedAt: '2026-10-04T09:00:00.000Z', channel: 'phone', offerorName: 'esure', vehicleClassOffered: 'small hatchback', dailyRatePence: 2037, rateIncludesVat: false, clientDecision: 'pending', suitabilityReasons: [] });
-    expect(offer.terms).toEqual({ excessPence: 25000, mileageLimitPerDay: 100, deliveryIncluded: true, durationStated: 'until repairs done' });
-    expect(offer.clientDecisionAt).toBeUndefined();
+    const offer = buildFnolOffer(s)!;
+    expect(offer).toEqual({
+      offerorName: 'esure',
+      channel: 'phone',
+      clientToldToIgnore: false,
+      receivedAt: '2026-10-04T09:00:00.000Z',
+      vehicleClassOffered: 'small hatchback',
+      dailyRatePence: 2037,
+      rateIncludesVat: false,
+      terms: { excessPence: 25000, mileageLimitPerDay: 100, deliveryIncluded: true, durationStated: 'until repairs done' }
+    });
+    const body = buildCreateClaimBody(s, { now: iso });
+    expect(body.interventionOffer).toEqual(offer);
+    expect(body.offerDisclosed).toBe(true);
+    expect(body.offerDetails).toEqual({ what: 'small hatchback', byWhom: 'esure', when: '2026-10-04T09:00:00.000Z' });
+    expect(buildOfferDecision(s, iso)).toBeNull();
+    s.offer.clientDecision = 'declined';
+    s.offer.clientReasons = 'needs an automatic for a disability';
+    expect(buildOfferDecision(s, iso)).toEqual({ clientDecision: 'declined', clientDecisionAt: '2026-10-04T09:55:00.000Z', clientReasons: 'needs an automatic for a disability' });
+    s.offer.clientReasons = '';
+    expect(buildOfferDecision(s, iso)).toEqual({ clientDecision: 'declined', clientDecisionAt: '2026-10-04T09:55:00.000Z' });
   });
 });
 
 describe('follow-ups', () => {
-  it('services agreed → services_agreed event; injuries → referral note and injuryReferral patch with no fee', () => {
+  const iso = now.toISOString();
+  it('services agreed → one detail note (the API appends services_agreed, the fnol event and the witness reports itself)', () => {
     const s = completeState();
-    const iso = now.toISOString();
     const events = buildFollowUpEvents(s, iso);
     expect(events).toHaveLength(1);
-    expect(events[0]).toMatchObject({ type: 'services_agreed', at: iso, data: { services: ['hire', 'recovery', 'engineer'] } });
-    expect(buildInjuryReferral(s, iso)).toBeNull();
+    expect(events[0]).toMatchObject({ type: 'note', at: iso, summary: 'Services agreed at FNOL: hire, recovery, engineer', data: { task: 'services_agreed_detail', services: ['hire', 'recovery', 'engineer'] } });
 
-    s.accident.injuries = true;
-    s.injury.referralTo = 'PI Solicitors LLP';
-    const withInjury = buildFollowUpEvents(s, iso);
-    expect(withInjury).toHaveLength(2);
-    expect(withInjury[1]).toMatchObject({ type: 'note', data: { task: 'injury_referral', feeTaken: false, referralTo: 'PI Solicitors LLP' } });
-    expect(buildInjuryReferral(s, iso)).toEqual({ referredTo: 'PI Solicitors LLP', referredAt: iso, feeTaken: false });
+    s.witnesses = [
+      { name: 'Alex Brown', phone: '07700 900999', relationshipToClaimant: 'None', independent: true },
+      { name: 'Chris Smith', phone: 'c@example.com', relationshipToClaimant: 'Brother', independent: false },
+      { name: '   ' }
+    ];
+    const body = buildCreateClaimBody(s, { now: iso });
+    expect(body.witnesses).toEqual([
+      { name: 'Alex Brown', phone: '07700 900999', relationshipToClaimant: 'None', independent: true },
+      { name: 'Chris Smith', phone: 'c@example.com', relationshipToClaimant: 'Brother', independent: false }
+    ]);
+    expect(buildFollowUpEvents(s, iso)).toHaveLength(1); // witnesses are not posted again by the web
 
     s.services = { hire: false, recovery: false, storage: false, engineer: false, notes: '' };
     expect(anyServiceAgreed(s.services)).toBe(false);
-    expect(buildFollowUpEvents(s, iso).map((e) => e.type)).toEqual(['note']);
+    expect(buildFollowUpEvents(s, iso)).toEqual([]);
+    expect(buildCreateClaimBody(s, { now: iso }).servicesAgreedAt).toBeUndefined();
   });
 });
 

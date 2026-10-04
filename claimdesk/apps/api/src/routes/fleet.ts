@@ -7,10 +7,10 @@ import type { FleetUnit, HireAgreement, Party, PenaltyNotice, Vehicle } from '@c
 import type { AppContext } from '../context.js';
 import { badRequest, conflict } from '../errors.js';
 import { parse } from '../schemas/common.js';
-import { allocateCheckBody, fleetUnitBody, fleetUnitPatchBody, penaltyBody, penaltyDocumentBody, penaltyPatchBody, penaltyTransitionBody, policyBody } from '../schemas/services.js';
+import { allocateCheckBody, fleetUnitBody, fleetUnitPatchBody, penaltyBody, penaltyDocumentBody, penaltyListQuery, penaltyPatchBody, penaltyTransitionBody, policyBody } from '../schemas/services.js';
 import { createStandaloneDocument } from '../services/documents.js';
-import { canAllocateFallback } from '../services/fallbacks.js';
-import { complianceAlerts, liabilityTransferParticulars, penaltyTransition, s172ResponseData } from '../services/fleetFallbacks.js';
+import { canAllocateFor } from '../engines.js';
+import { allowedStages, complianceAlerts, liabilityTransferParticulars, penaltyTransition, s172ResponseData, S172RefusalError } from '../services/fleetFallbacks.js';
 import { params } from './helpers.js';
 
 export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void {
@@ -45,7 +45,7 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
   });
 
   app.get('/fleet/penalties', async (request) => {
-    const q = request.query as { open?: string; stage?: PenaltyNotice['stage']; fleetUnitId?: string };
+    const q = parse(penaltyListQuery, request.query);
     return { items: ctx.repos.listPenalties(ctx.db, { open: q.open === 'true' ? true : undefined, stage: q.stage, fleetUnitId: q.fleetUnitId }) };
   });
   app.post('/fleet/penalties', async (request, reply) => {
@@ -63,7 +63,7 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
   app.get('/fleet/penalties/:id', async (request) => {
     const { id } = params<{ id: string }>(request);
     const p = ctx.repos.requirePenalty(ctx.db, id);
-    return { ...p, hireMatch: matchHire(p).hire ?? null, allowedTransitions: penaltyTransition(p.stage, { penalty: p, now: ctx.now() }).allowed };
+    return { ...p, hireMatch: matchHire(p).hire ?? null, allowedTransitions: allowedStages({ penalty: p, hire: matchHire(p).hire, now: ctx.now() }) };
   });
   app.patch('/fleet/penalties/:id', async (request) => {
     const { id } = params<{ id: string }>(request);
@@ -138,11 +138,12 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
       const cannotIdentify = x('cannotIdentify') === true;
       const driverName = str('driverName') ?? (hirer && !cannotIdentify ? hirer.name : undefined);
       if (cannotIdentify && driverName) throw badRequest('s.172: you cannot both say the driver could not be identified (s.172(4)) and name a driver', { code: 'S172_REFUSAL' });
-      let s172: Record<string, unknown>;
+      let s172: ReturnType<typeof s172ResponseData>;
       try {
-        s172 = s172ResponseData({ penalty, unit, vehicle, hire, hirer, keeperName: settings.companyName, keeperAddressLines, cannotIdentify, driverName, driverAddressLines: x('driverAddressLines') as string[] | undefined, driverLicenceNumber: str('driverLicenceNumber'), diligence: Array.isArray(x('diligence')) ? (x('diligence') as string[]) : [] });
+        s172 = s172ResponseData({ penalty, unit, vehicle, hire, hirer, additionalDrivers: hire ? ctx.repos.getParties(ctx.db, hire.additionalDrivers.map((d) => d.partyId)) : [], keeperName: settings.companyName, keeperAddressLines, cannotIdentify, driverName, driverAddressLines: x('driverAddressLines') as string[] | undefined, driverLicenceNumber: str('driverLicenceNumber'), diligence: Array.isArray(x('diligence')) ? (x('diligence') as string[]) : [] });
       } catch (err) {
-        throw badRequest((err as Error).message, { code: 'S172_REFUSAL' });
+        if (err instanceof S172RefusalError) throw badRequest(err.message, { code: 'S172_REFUSAL' });
+        throw err;
       }
       const recordsSearched = Array.isArray(x('recordsSearched')) ? (x('recordsSearched') as unknown[]) : (Array.isArray(x('diligence')) ? (x('diligence') as string[]) : []).map((d) => ({ record: d, searchedOn: ctx.now().slice(0, 10), searchedBy: request.user.name, result: 'Does not identify the driver' }));
       data = {
@@ -238,18 +239,22 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
     const unit = ctx.repos.requireFleetUnit(ctx.db, id);
     const policies = ctx.repos.listPolicies(ctx.db);
     const at = body.at ?? ctx.now();
-    const engine = ctx.engines().canAllocate;
-    let result = engine ? engine(unit, body.use, policies) : canAllocateFallback(unit, body.use, policies, at);
-    if (typeof result === 'boolean') result = { ok: result, reasons: result ? [] : ['Refused by the fleet engine'] };
-    if (ctx.repos.activeHireForFleetUnit(ctx.db, id)) result = { ok: false, reasons: [...result.reasons, 'Unit is currently on hire'] };
+    const vehicle = ctx.repos.getVehicle(ctx.db, unit.vehicleId);
+    const result = canAllocateFor(unit, body.use, policies, at, vehicle);
+    if (ctx.repos.activeHireForFleetUnit(ctx.db, id)) {
+      result.ok = false;
+      result.reasons.push('Unit is currently on hire');
+    }
     if (body.claimId) {
       const claim = ctx.repos.requireClaim(ctx.db, body.claimId);
-      const vehicle = ctx.repos.getVehicle(ctx.db, unit.vehicleId);
-      if (vehicle && claim.clientVehicleId === vehicle.id) result = { ok: false, reasons: [...result.reasons, 'This fleet unit is the client vehicle on the claim (lessons f, h)'] };
+      if (vehicle && claim.clientVehicleId === vehicle.id) {
+        result.ok = false;
+        result.reasons.push('This fleet unit is the client vehicle on the claim (lessons f, h)');
+      }
     }
     const policy = unit.policyId ? policies.find((p) => p.id === unit.policyId) : undefined;
-    ctx.repos.appendAudit(ctx.db, { actor: request.actor, action: 'fleet_unit.allocate_check', entity: 'fleet_units', entityId: id, after: { use: body.use, claimId: body.claimId, ok: result.ok, reasons: result.reasons }, at: ctx.now() });
-    return { allowed: result.ok, ok: result.ok, reasons: result.reasons, policy: policy ? { id: policy.id, insurerName: policy.insurerName, coveredUses: policy.coveredUses } : undefined };
+    ctx.repos.appendAudit(ctx.db, { actor: request.actor, action: 'fleet_unit.allocate_check', entity: 'fleet_units', entityId: id, after: { use: body.use, claimId: body.claimId, ok: result.ok, reasons: result.reasons, warnings: result.warnings }, at: ctx.now() });
+    return { allowed: result.ok, ok: result.ok, reasons: result.reasons, warnings: result.warnings, policy: policy ? { id: policy.id, insurerName: policy.insurerName, coveredUses: policy.coveredUses } : undefined };
   });
 
   /** The hire agreement (and hirer) that had the unit at the contravention time. */

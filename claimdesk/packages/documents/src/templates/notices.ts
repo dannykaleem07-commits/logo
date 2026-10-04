@@ -18,7 +18,7 @@
 import type { ISODate, ISODateTime, Pence } from '@ccguk/domain';
 import { brand } from '../brand.js';
 import { type ClaimHeader, type CompanySettings, type RecipientBlock, type Signatory, sampleSettings, sampleSignatory } from '../common.js';
-import { escapeHtml, formatDateLong, formatDateTime, formatDateWithDay, formatGBP, formatRegistration, joinAnd, nl2p, numberedList } from '../format.js';
+import { escapeHtml, formatDateLong, formatDateTime, formatDateWithDay, formatGBP, formatRegistration, joinAnd, nl2p, numberedList, toISODate } from '../format.js';
 import { baseLayout, callout, keyValueTable, reLine } from '../layout.js';
 import { type AnyTemplate, registerTemplate, type Template } from '../registry.js';
 import { type DrivingLicence, statementOfLiabilityText } from './agreements-forms.js';
@@ -87,6 +87,29 @@ function hirePeriodText(h: NoticeHireRecord): string {
   return `${formatDateTime(h.startAt)} to ${end}`;
 }
 
+/**
+ * Whether the hire record covers an instant: on or after the start, and (when the hire has ended) on or before the
+ * end or within an authorised extension (compared by London calendar day). A notice must never assert that a hirer
+ * had the vehicle at a time the records do not support.
+ */
+export function hireCoversInstant(h: NoticeHireRecord, at: ISODateTime): boolean {
+  const t = Date.parse(at);
+  const start = Date.parse(h.startAt);
+  if (Number.isNaN(t) || Number.isNaN(start) || t < start) return false;
+  if (!h.endAt) return true;
+  if (t <= Date.parse(h.endAt)) return true;
+  const day = toISODate(at);
+  return (h.extensions ?? []).some((e) => toISODate(e.from) <= day && day <= toISODate(e.to));
+}
+
+/** Thrown when the hire records do not cover the time of the contravention (perimeter.md: do not guess). */
+export class LiabilityTransferError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'LiabilityTransferError';
+  }
+}
+
 /** Owner Liability Regs 2000 Schedule 2 particulars as a table, from the hire record. */
 function schedule2Table(hirer: NoticeHirer, vehicle: NoticeVehicle, hire: NoticeHireRecord): string {
   const rows = [
@@ -95,7 +118,7 @@ function schedule2Table(hirer: NoticeHirer, vehicle: NoticeVehicle, hire: Notice
     { label: 'Permanent address', value: hirer.addressLines.filter((l) => l.trim() !== '').join(', ') },
     { label: 'Driving licence number', value: hirer.licence.number },
     { label: 'Licence country of issue', value: hirer.licence.countryOfIssue },
-    { label: 'Licence expiry date', value: formatDateLong(hirer.licence.expiresOn) },
+    { label: 'Licence expiry date', value: hirer.licence.expiresOn ? formatDateLong(hirer.licence.expiresOn) : 'Not recorded' },
     { label: 'Vehicle registration mark', value: formatRegistration(vehicle.registration) },
     { label: 'Make and model', value: `${vehicle.make} ${vehicle.model}` },
     { label: 'Hire agreement number', value: hire.agreementNumber },
@@ -160,7 +183,7 @@ export interface PcnLiabilityTransferData extends NoticeBaseData {
 
 export const pcnLiabilityTransferTemplate: Template<PcnLiabilityTransferData> = {
   id: 'notice.pcn_liability_transfer',
-  version: '1.0.0',
+  version: '1.1.0',
   kind: 'notice',
   title: 'Transfer of liability to the hirer',
   recipientRole: 'other',
@@ -227,6 +250,11 @@ export const pcnLiabilityTransferTemplate: Template<PcnLiabilityTransferData> = 
     enclosures: ['Copy of hire agreement CHA-2026-00012 containing the Schedule 2 particulars', 'Copy of the hirer’s signed statement of liability', 'Copy of the Notice to Owner EX12345678']
   }),
   render: (d) => {
+    if (!hireCoversInstant(d.hire, d.notice.contraventionAt)) {
+      throw new LiabilityTransferError(
+        `notice.pcn_liability_transfer: the alleged contravention at ${d.notice.contraventionAt} falls outside hire ${d.hire.agreementNumber} (${d.hire.startAt} to ${d.hire.endAt ?? 'continuing'}). Liability cannot be transferred to a hirer the records do not put in the vehicle at that time.`
+      );
+    }
     const company = brand.company;
     const isPrivate = d.kind === 'private';
     const statement = d.statementOfLiabilityOverride ?? statementOfLiabilityText(d.hirer.name, d.hirer.addressLines);
@@ -250,7 +278,7 @@ export const pcnLiabilityTransferTemplate: Template<PcnLiabilityTransferData> = 
         )} under a hire agreement. We give you this statement, and the documents listed below, under paragraph 13 of Schedule 4 to the Protection of Freedoms Act 2012. We are therefore not liable for the parking charge as keeper. Any claim lies against the hirer, by a notice to hirer under paragraph 14, served within the period that paragraph allows.</p>`
       : `<p>We are the registered keeper of the vehicle and the recipient of the ${escapeHtml(d.notice.noticeType)}. We make representations on the ground that the vehicle was hired to ${escapeHtml(
           d.hirer.name
-        )} under a vehicle hiring agreement at the time of the alleged contravention, and that the hirer signed a statement of liability acknowledging liability for any penalty charge notice served during the hire. The agreement contains the particulars prescribed by Schedule 2 to the Road Traffic (Owner Liability) Regulations 2000. Under those Regulations and the Civil Enforcement of Road Traffic Contraventions (Representations and Appeals) (England) Regulations 2022, the hirer, not the hire firm, is to be treated as the owner, and the penalty charge is payable by the hirer.</p>`;
+        )} under a vehicle hiring agreement at the time of the alleged contravention, and that the hirer signed a statement of liability acknowledging liability for any penalty charge notice served during the hire. The agreement contains the particulars prescribed by Schedule 2 to the Road Traffic (Owner Liability) Regulations 2000, so it is a hiring agreement for the purposes of section 66 of the Road Traffic Offenders Act 1988. On that ground, under the Civil Enforcement of Road Traffic Contraventions (Representations and Appeals) (England) Regulations 2022, the hirer, not the hire firm, is to be treated as the owner, and the penalty charge is payable by the hirer.</p>`;
 
     const facts = `
 <h2>The facts</h2>
@@ -263,7 +291,7 @@ ${numberedList([
 
     const statementBlock = callout(
       `<p>${escapeHtml(statement)}</p><p class="small">Signed by ${escapeHtml(d.hirer.name)} on ${escapeHtml(formatDateTime(d.hire.signedAt))}. A copy of the signed statement is enclosed.${
-        isPrivate ? ' It acknowledges responsibility for parking charges and gives an address for service, as paragraph 13(2) of Schedule 4 requires.' : ''
+        isPrivate ? ' It acknowledges responsibility for parking charges and gives an address for service, as paragraph 13 of Schedule 4 requires.' : ''
       }</p>`,
       'The hirer’s statement of liability'
     );
@@ -428,8 +456,16 @@ export const s172ResponseTemplate: Template<S172ResponseData> = {
     if (d.driver && !d.hire) {
       throw new DriverNominationError(`notice.s172_response: a driver (${d.driver.name}) was supplied without the hire record that identifies them. Nominations must be supported by the records.`);
     }
+    if (d.driver && d.driver.name.trim() === '') {
+      throw new DriverNominationError('notice.s172_response: a driver was supplied without a name. Either identify the person from the records or give the s.172(4) account.');
+    }
     if (d.cannotIdentify && (!d.recordsSearched || d.recordsSearched.length === 0)) {
       throw new DriverNominationError('notice.s172_response: cannotIdentify is true but no records searched were supplied. The s.172(4) account must list the records searched.');
+    }
+    if (d.driver && d.hire && !hireCoversInstant(d.hire, d.notice.offenceAt)) {
+      throw new DriverNominationError(
+        `notice.s172_response: the alleged offence at ${d.notice.offenceAt} falls outside hire ${d.hire.agreementNumber} (${d.hire.startAt} to ${d.hire.endAt ?? 'continuing'}). The hire records do not put ${d.driver.name} in the vehicle at that time, so no one is nominated; give the s.172(4) account instead.`
+      );
     }
 
     const company = brand.company;
@@ -470,7 +506,12 @@ ${d.diligenceNote ? nl2p(d.diligenceNote) : ''}
         { label: 'Address', value: driver.addressLines.filter((l) => l.trim() !== '').join(', ') }
       ];
       if (driver.dateOfBirth) driverRows.push({ label: 'Date of birth', value: formatDateLong(driver.dateOfBirth) });
-      if (driver.licence) driverRows.push({ label: 'Driving licence', value: `${driver.licence.number} (${driver.licence.countryOfIssue}; expires ${formatDateLong(driver.licence.expiresOn)})` });
+      if (driver.licence) {
+        driverRows.push({
+          label: 'Driving licence',
+          value: `${driver.licence.number} (${driver.licence.countryOfIssue}; ${driver.licence.expiresOn ? `expires ${formatDateLong(driver.licence.expiresOn)}` : 'expiry date not recorded'})`
+        });
+      }
       driverRows.push({ label: 'Basis of identification', value: `${roleText[0]!.toUpperCase()}${roleText.slice(1)} under agreement ${hire.agreementNumber}` });
       const others = hire.additionalDrivers && hire.additionalDrivers.length > 0 ? joinAnd(hire.additionalDrivers) : '';
       substance = `

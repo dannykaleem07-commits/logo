@@ -428,6 +428,7 @@ function chaserBuilder(rung: 7 | 14 | 21): Builder {
       .map((h) => ({
         label:
           h.head === 'hire' && hire ? hireLabel(hire, h) : h.head === 'storage' && storage ? `Storage, ${storage.days} day${storage.days === 1 ? '' : 's'} at ${formatGBP(storage.dailyRatePence)} per day${h.invoiceReference ? ` (invoice ${h.invoiceReference})` : ''}` : `${h.label}${h.invoiceReference ? ` (invoice ${h.invoiceReference})` : ''}`,
+        head: h.head,
         claimedPence: h.claimedPence,
         receivedPence: h.receivedPence,
         outstandingPence: h.outstandingPence,

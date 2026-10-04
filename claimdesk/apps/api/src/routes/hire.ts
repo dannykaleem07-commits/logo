@@ -5,7 +5,7 @@ import { conflict } from '../errors.js';
 import { parse } from '../schemas/common.js';
 import { createHireBody, endHireBody } from '../schemas/hire.js';
 import { recomputeClocks } from '../services/claimView.js';
-import { canAllocateFallback } from '../services/fallbacks.js';
+import { canAllocateFor } from '../engines.js';
 import { assertNoHardStop, params, requireClaim } from './helpers.js';
 
 export function enforceabilityGaps(h: HireAgreement): string[] {
@@ -34,9 +34,7 @@ export function registerHireRoutes(app: FastifyInstance, ctx: AppContext): void 
     const body = parse(createHireBody, request.body);
     const unit = ctx.repos.requireFleetUnit(ctx.db, body.fleetUnitId);
     const policies = ctx.repos.listPolicies(ctx.db);
-    const engine = ctx.engines().canAllocate;
-    const raw = engine ? engine(unit, body.use, policies) : canAllocateFallback(unit, body.use, policies, body.startAt);
-    const allocation = typeof raw === 'boolean' ? { ok: raw, reasons: raw ? [] : ['Allocation refused by fleet.canAllocate'] } : raw;
+    const allocation = canAllocateFor(unit, body.use, policies, body.startAt, ctx.repos.getVehicle(ctx.db, unit.vehicleId));
     const active = ctx.repos.activeHireForFleetUnit(ctx.db, unit.id);
     if (active) allocation.reasons.push(`Unit already on hire under ${active.agreementNumber} (claim ${active.claimId})`);
     if (active || !allocation.ok) {
