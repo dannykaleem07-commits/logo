@@ -137,21 +137,31 @@ interface LedgerSets {
   claimedTotalGross: Pence;
 }
 
+/** Salvage is a credit (retained by the claimant): it is netted off every total, as in the schedule of loss (money.md §3). */
+function signOf(e: LedgerEntry): 1 | -1 {
+  return e.head === 'salvage' ? -1 : 1;
+}
+
 function ledgerSets(ledger: LedgerEntry[]): LedgerSets {
   const paidEntries = ledger.filter((e) => PAID_KINDS.has(e.kind));
   const claimedEntries = ledger.filter((e) => CLAIMED_KINDS.has(e.kind));
   const paidSet = new Set<Pence>();
   const claimedSet = new Set<Pence>();
   const vat = (e: LedgerEntry): Pence => e.vatPence ?? 0;
+  const signedNet = (e: LedgerEntry): Pence => signOf(e) * e.amountPence;
+  const signedGross = (e: LedgerEntry): Pence => signOf(e) * gross(e);
+  const signedVat = (e: LedgerEntry): Pence => signOf(e) * vat(e);
   const addAll = (entries: LedgerEntry[], set: Set<Pence>) => {
     for (const e of entries) {
       set.add(e.amountPence);
       set.add(gross(e));
       if (e.vatPence) set.add(e.vatPence); // an invoice's "VAT £23.00" line is a ledger figure too
     }
-    set.add(sum(entries, (e) => e.amountPence));
-    set.add(sum(entries, gross));
-    set.add(sum(entries, vat));
+    // Totals across heads net the salvage credit off; a letter states "less salvage of £900" as a positive figure,
+    // so per-head sums stay absolute.
+    set.add(sum(entries, signedNet));
+    set.add(sum(entries, signedGross));
+    set.add(sum(entries, signedVat));
     const heads = new Set(entries.map((e) => e.head));
     for (const h of heads) {
       const hs = entries.filter((e) => e.head === h);
@@ -162,10 +172,10 @@ function ledgerSets(ledger: LedgerEntry[]): LedgerSets {
   };
   addAll(paidEntries, paidSet);
   addAll(claimedEntries, claimedSet);
-  const paidTotalNet = sum(paidEntries, (e) => e.amountPence);
-  const paidTotalGross = sum(paidEntries, gross);
-  const claimedTotalNet = sum(claimedEntries, (e) => e.amountPence);
-  const claimedTotalGross = sum(claimedEntries, gross);
+  const paidTotalNet = sum(paidEntries, signedNet);
+  const paidTotalGross = sum(paidEntries, signedGross);
+  const claimedTotalNet = sum(claimedEntries, signedNet);
+  const claimedTotalGross = sum(claimedEntries, signedGross);
   // outstanding balances
   claimedSet.add(claimedTotalNet - paidTotalNet);
   claimedSet.add(claimedTotalGross - paidTotalGross);

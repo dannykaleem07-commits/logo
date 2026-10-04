@@ -218,14 +218,15 @@ export function validatePaymentPack(bundle: ClaimBundle): PaymentPackValidation 
 /**
  * True when ledger `paid`/`interim_paid` entries dated on or before `asOf` cover the invoiced
  * (or, failing invoices, claimed) total net of write-offs. Used by clocks to decide whether a
- * payment pack has been settled.
+ * payment pack has been settled. Salvage is a credit (retained by the claimant) and is netted off,
+ * as in the schedule of loss — otherwise a total-loss file could never read as paid in full.
  */
 export function ledgerPaidInFull(bundle: Pick<ClaimBundle, 'ledger'>, asOf: ISODateTime): boolean {
   const asOfDate = londonDate(asOf);
   const sum = (kinds: readonly string[], dated = false): Pence =>
     bundle.ledger
       .filter((l) => kinds.includes(l.kind) && (!dated || l.date <= asOfDate))
-      .reduce((acc, l) => acc + l.amountPence + (l.vatPence ?? 0), 0);
+      .reduce((acc, l) => acc + (l.head === 'salvage' ? -1 : 1) * (l.amountPence + (l.vatPence ?? 0)), 0);
   const invoiced = sum(['invoiced']);
   const claimed = invoiced > 0 ? invoiced : sum(['claimed']);
   const writtenOff = sum(['written_off']);
