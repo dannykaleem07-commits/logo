@@ -690,6 +690,7 @@ class CallSession:
             "caller_language": self.caller_language,
             "segments": [s.to_dict() for s in self.segments],
             "fields": self.fields, "field_sources": self.field_sources,
+            "field_labels": {f.key: f.label for f in self.hub.capture_fields},
             "confirmed_fields": sorted(self.confirmed_fields),
             "pins": [p.to_dict() for p in self.pins],
             "tasks": [t.to_dict() for t in self.tasks],

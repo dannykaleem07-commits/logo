@@ -10,21 +10,31 @@ Two panes and a scripts rail. Left: *they said · you said*. Middle: **Say next*
 
 - **Business › Hub** – pick the business (Courtesy Cars UK, Fixmyfile, or your own), then the call hub under it. The breadcrumb is the hierarchy: business rules apply to every hub, the hub adds the call-type specifics.
 - **● Start call** – or let it start itself: when WhatsApp (or another call app) begins playing audio, a banner offers to listen. **+ New call** ends the current call (saving it) and opens a fresh one in one click.
-- **It never changes what you are reading.** An answer only ever grows – new words are appended, the start stays put (enforced in the engine as well as the screen). If a better answer arrives while you are still reading, it waits in a green **Next answer ready** bar: press **→** or *Show it* when you are done, or it comes through on its own after a few seconds.
+- **It never changes what you are reading.** An answer only ever grows – new words are appended, the start stays put (enforced in the engine as well as the screen). If a better answer arrives while you are still reading, it waits in a blue **Next answer ready** bar: press **→** or *Show it* when you are done, or it comes through on its own after a few seconds.
 - **Scripts** – click any script (opening, recording notice, terms, status line, closing) and it is pinned on top, full size, until you press **Done reading**; answers queue behind it. Reading the recording notice marks the call as notified.
 - **Said it (Space)** / **Another answer (Ctrl+R)** / **Not this (Esc)** – and every one of those teaches it.
 - **AI** dropdown – *Fastest* (Claude Haiku 4.5), *Balanced* (Claude Sonnet 5.5), *Smart* (Claude Opus 5.5), *Max* (Claude Fable 5.1 – slower, deepest), or *ChatGPT*.
 - **🤖 AI mode** – an AI employee takes the call (below). **👤 Take over** hands it back.
-- **🧠 badge** – how much it has learned: answers, facts, lessons.
+- **🧠 in the status bar** – reads *Learning on* until it has learned something, then *n learned*; hover it for the answers, facts and lessons behind the number.
+- **You / Caller** – the two level bars in the top bar; if *Caller* stays flat while they are talking, their audio is not being captured.
 - **⬇ Transcript** – download this call's transcript as .txt or .docx. **Calls** – every call on this PC: read, search, download, save the whole call, play the recording.
 - **Advanced ▾** – opens the full Call Desk cockpit underneath (file, intake form, pins, checklist, wrap-up tools). Settings → Interface switches the default view.
-- **Earlier answers** – the last few suggestions sit under the current one; click to bring one back. ⧉ copies, 🔊 reads it aloud.
+- **Earlier answers** – the last few suggestions sit under the current one; click to bring one back. ⧉ copies, 🔊 reads it aloud. A long answer scrolls inside the panel; on a small or scaled screen the scripts rail and *Earlier answers* tuck away to give the answer the room (**Scripts** brings the rail back).
 - **⚙** – Business profile…, Edit / train this hub…, Rehearse with the AI…, Settings…, Run setup again…, Save last call to computer…, Call history…, Floating overlay.
 - **First run** – a four-step setup (AI key with a connection test → speech engine → which app to listen to, with a live microphone meter → your name). An amber banner tells you if anything is still missing; a second banner appears when a newer build is available to download.
 
 ![Script pinned while reading](docs/simple_script.png)
 
 ![Setup](docs/setup.png)
+
+### Easy on the eyes, easy by keyboard
+
+- **Fits a laptop.** The whole window fits a 1366 x 768 screen and Windows scaling up to 150 %; on a narrow screen the scripts rail and button labels shorten instead of anything falling off the edge. Opening **Advanced** never squeezes the answer below two readable lines – the file and intake area scrolls inside the drawer instead.
+- **Readable in both themes.** Text, buttons, badges, warnings and placeholders meet WCAG AA contrast in dark and light. Status is always written in words as well as colour (*Recording · notice given*, *Idle*, *AI listening*).
+- **Keyboard all the way.** Tab reaches every control with a visible focus ring, and Enter or Space presses the one you Tabbed to. Otherwise Space is *Said it* and Esc is *Not this*, whatever you last clicked. Select a script and press Enter to read it.
+- **Change it live.** Settings → Interface → *Theme* and *Font size* apply the moment you press Save, mid-call included. Global hotkeys are shown and typed the Windows way (*Ctrl+Shift+L*).
+
+![Light theme](docs/simple_light.png)
 
 ## Memory and self-training
 
@@ -137,7 +147,7 @@ Two businesses and three hubs ship pre-loaded:
 
 ## AI mode: an AI employee takes the call
 
-Press **🤖 AI mode** on a live call and a named member of the team (Settings → *AI mode & saving* → employee name, voice) answers the caller in a realistic voice, using the business rules, the hub's answers and what it has learned from you. Every line it says is in the transcript as *You* and shown in the Say panel, so you can follow the call and step in. Press **👤 Take over** at any moment.
+Press **🤖 AI mode** on a live call and a named member of the team (Settings → *AI mode* → employee name, voice) answers the caller in a realistic voice, using the business rules, the hub's answers and what it has learned from you. Every line it says is in the transcript as *You* and shown in the Say panel, so you can follow the call and step in. Press **👤 Take over** at any moment.
 
 - **Audio**: it speaks into the device you choose and refuses to start if that device is not connected, so it can never talk into the room by mistake. On a real call that is a virtual cable (install the free VB-Audio Virtual Cable; CallPilot speaks into *CABLE Input*, and WhatsApp / Teams uses *CABLE Output* as its microphone). The caller still comes in through the normal app capture.
 - **Barge-in**: if the caller talks over it, it stops and listens (on real calls; in rehearsal the microphone would hear its own voice, so it finishes its sentence and ignores the echo).
@@ -149,9 +159,9 @@ Press **🤖 AI mode** on a live call and a named member of the team (Settings �
 
 ## Saving, downloading and recording calls
 
-- **Recording** (Settings → *Recording, whisper & email*): stereo WAV, caller left / you right, encrypted on disk, with the recording notice time stamped in the transcript. Pause with one click when card details are read out.
-- **Auto-save** (Settings → *AI mode & saving*): after every call the transcript (.txt, .srt, .docx), call.json, pins.csv, the as-discussed email draft and the decrypted recording.wav are written to *Documents\CallPilot\Calls* (or the folder you choose).
-- **⬇ Transcript** on the call screen downloads the current or last call's transcript; **Calls** lists every call with search, download, *Save whole call to computer…*, *Recording* and *Delete*; the wrap-up dialog has **💾 Save call to computer…**.
+- **Recording** (Settings → *Recording & email*): stereo WAV, caller left / you right, encrypted on disk, with the recording notice time stamped in the transcript. Pause with one click when card details are read out.
+- **Auto-save** (Settings → *AI mode* → *Save every call to this PC*): after every call the transcript (.txt, .srt, .docx), call.json, pins.csv, the as-discussed email draft and the decrypted recording.wav are written to *Documents\CallPilot\Calls* (or the folder you choose).
+- **⬇ Transcript** on the call screen downloads the current or last call's transcript; **Calls** lists every call with search, *⬇ Transcript ▾* (.txt or .docx), *Save call…*, *Recording folder* and *Delete*; the wrap-up dialog has **💾 Save call to computer…**.
 
 ![Calls](docs/calls.png)
 
@@ -218,7 +228,7 @@ Decisions still needed before that build: current phone setup, where files live 
 
 1. **Install**: click the download button at the top of this page (`CallPilot-Setup.exe`), or use the portable `CallPilot.exe`. The installer closes a running copy, keeps your settings and calls, offers *Start with Windows*, and the app shows a banner with a download link when a newer build is published. Every green build refreshes the [`callpilot-latest`](https://github.com/dannykaleem07-commits/logo/releases/tag/callpilot-latest) release; versioned releases are published from *Actions → Run workflow → version*. Windows 10 2004+ / Windows 11. SmartScreen: *More info → Run anyway* (the EXE is not code-signed).
 2. **Settings → API keys**: Anthropic (Claude) or OpenAI, plus Deepgram for live speech. DeepL optional.
-3. **Settings → Audio sources**: start the call app, *Refresh*, tick the app marked 🔊.
+3. **Settings → Audio**: start the call app, *Refresh*, tick the app marked 🔊.
 4. Pick the **business** and **hub**, press **● Start call** (or **+ New call**). Click *Recording notice* in the scripts rail and read it; the dot turns red.
 5. Read the **Say next** answer; glance at **Still need** for what to ask; press **Space** when you've said it. **⬇ Transcript** or **Calls** afterwards.
 6. End the call → **Wrap up** → tick what to keep → **Save wrap-up** → open the email draft. The call is saved to your computer automatically.
@@ -257,5 +267,5 @@ tests/       32 tests: crypto, audit, redaction, pins, rules, deck, pipeline, pr
 | "None of the selected apps are running or capturable" | Start the call first, *Refresh running apps*, tick the 🔊 entry. Newer WhatsApp builds may run as `WhatsApp.Root.exe` or `msedgewebview2.exe` |
 | Caller's words appear as "Us" | Use a headset; the echo guard is automatic |
 | No cards | Settings → API keys → *Test AI connection* |
-| Outlook draft fails | Outlook desktop must be installed and signed in; otherwise use *Open in mail app (.eml)* |
+| Outlook draft fails | Outlook desktop must be installed and signed in; otherwise use *Mail app (.eml)* |
 | Logs | `%APPDATA%\CallPilot\logs\callpilot.log` (personal data redacted) |

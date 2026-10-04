@@ -6,21 +6,25 @@ import datetime as dt
 import json
 from pathlib import Path
 
-from PySide6.QtWidgets import (QDialog, QFileDialog, QHBoxLayout, QListWidget, QMessageBox, QPushButton,
-                               QSplitter, QTextBrowser, QVBoxLayout)
+from PySide6.QtCore import Qt
+from PySide6.QtWidgets import (QDialog, QFileDialog, QHBoxLayout, QListWidget, QListWidgetItem, QMessageBox,
+                               QPushButton, QSplitter, QTextBrowser, QVBoxLayout)
 
 from callpilot.core.sessions import SessionStore, export_srt, export_text, secure_delete
+from callpilot.ui.widgets import fit_to_screen
 
 
 class HistoryDialog(QDialog):
     def __init__(self, store: SessionStore, parent=None, audit=None):
         super().__init__(parent)
         self.setWindowTitle("Call history")
-        self.resize(1000, 640)
+        fit_to_screen(self, 1000, 640)
         self.store = store
         self.audit = audit
         self.files: list[Path] = []
         self.current: dict | None = None
+        self._cache: dict[Path, tuple[float, dict]] = {}   # path -> (mtime, record)
+        self._last_error = ""
         root = QVBoxLayout(self)
         from PySide6.QtWidgets import QLineEdit
 
@@ -30,6 +34,9 @@ class HistoryDialog(QDialog):
         root.addWidget(self.search)
         split = QSplitter()
         self.list = QListWidget()
+        self.list.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.list.setTextElideMode(Qt.ElideRight)
+        self.list.setWordWrap(True)
         self.view = QTextBrowser()
         split.addWidget(self.list)
         split.addWidget(self.view)
@@ -43,14 +50,50 @@ class HistoryDialog(QDialog):
             row.addWidget(b)
         row.addStretch()
         root.addLayout(row)
+        # No default button: Enter in the search box runs the search only, never an export.
+        for b in self.findChildren(QPushButton):
+            b.setAutoDefault(False)
         self.list.currentRowChanged.connect(self._show)
         self._load()
+
+    def _record(self, f: Path) -> dict | None:
+        """The decoded call, decrypted once per file version."""
+        try:
+            mtime = f.stat().st_mtime
+            hit = self._cache.get(f)
+            if hit is not None and hit[0] == mtime:
+                return hit[1]
+            rec = self.store.load(f)
+            self._cache[f] = (mtime, rec)
+            return rec
+        except Exception as e:  # noqa: BLE001
+            self._cache.pop(f, None)
+            self._last_error = str(e)
+            return None
+
+    def _label(self, f: Path, rec: dict | None = None) -> str:
+        """'Sat 03 Oct 22:55  Courtesy Cars · Jane Smith' rather than the raw file name."""
+        if rec is None:
+            rec = self._record(f)
+        if rec is not None:
+            fields = rec.get("fields") or {}
+            who = fields.get("caller_name") or fields.get("client_name") or ""
+            return (f"{dt.datetime.fromtimestamp(rec.get('started_at', 0)):%a %d %b %H:%M}  "
+                    f"{rec.get('hub_name', '').split('–')[0].strip()}{' · ' + who if who else ''}")
+        try:
+            d = dt.datetime.strptime(f.stem[:15], "%Y%m%d-%H%M%S")
+        except ValueError:
+            return f.stem
+        return f"{d:%a %d %b %H:%M}  (cannot open)"
 
     def _load(self):
         self.list.clear()
         self.files = self.store.list()
         for f in self.files:
-            self.list.addItem(("🔒 " if f.suffix == ".cpv" else "") + f.stem)
+            item = QListWidgetItem(("🔒 " if f.suffix == ".cpv" else "") + self._label(f))
+            if f.suffix == ".cpv":
+                item.setToolTip("Encrypted")
+            self.list.addItem(item)
         if self.files:
             self.list.setCurrentRow(0)
         else:
@@ -59,11 +102,9 @@ class HistoryDialog(QDialog):
     def _show(self, row: int):
         if row < 0 or row >= len(self.files):
             return
-        try:
-            self.current = self.store.load(self.files[row])
-        except Exception as e:  # noqa: BLE001
-            self.view.setPlainText(f"Cannot open this file: {e}")
-            self.current = None
+        self.current = self._record(self.files[row])
+        if self.current is None:
+            self.view.setPlainText(f"Cannot open this file: {self._last_error}")
             return
         if self.audit:
             self.audit.record("history_viewed", file=self.files[row].name)
@@ -90,9 +131,8 @@ class HistoryDialog(QDialog):
         words = [w for w in q.split() if w]
         hits = []
         for f in self.store.list():
-            try:
-                rec = self.store.load(f)
-            except Exception:  # noqa: BLE001
+            rec = self._record(f)
+            if rec is None:
                 continue
             lines = []
             for s in rec.get("segments", []):
@@ -111,7 +151,7 @@ class HistoryDialog(QDialog):
         self.files = [h[0] for h in hits]
         self._hits = hits
         for f, rec, lines in hits:
-            self.list.addItem(f"{f.stem}  ({len(lines)} hits)")
+            self.list.addItem(f"{self._label(f, rec)}  ({len(lines)} hits)")
         if not hits:
             self.view.setPlainText("No matches.")
             return

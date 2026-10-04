@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import html
 
-from PySide6.QtCore import QPoint, Qt
+from PySide6.QtCore import QPoint, Qt, QTimer, Signal
 from PySide6.QtGui import QColor, QPainter
 from PySide6.QtWidgets import QHBoxLayout, QLabel, QPushButton, QVBoxLayout, QWidget
 
@@ -18,6 +18,8 @@ from callpilot.ui import winutil
 
 
 class OverlayWindow(QWidget):
+    hidden = Signal()   # closed from inside the app (✕ or code), not by an OS minimise / show-desktop
+
     def __init__(self, opacity: float = 0.92, font_pt: int = 15, exclude_capture: bool = True):
         super().__init__(None, Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
@@ -34,11 +36,18 @@ class OverlayWindow(QWidget):
         self.status.setStyleSheet("color:#8EA0BD;font-size:9pt;font-weight:700;")
         bar.addWidget(self.status)
         bar.addStretch()
-        for txt, slot in (("A−", lambda: self._zoom(-1)), ("A+", lambda: self._zoom(1)), ("✕", self.hide)):
-            b = QPushButton(txt)
-            b.setFixedSize(26, 22)
-            b.setStyleSheet("QPushButton{background:transparent;color:#8EA0BD;border:none;font-weight:700;"
-                            "padding:0;font-size:10pt}QPushButton:hover{color:white}")
+        for text, tip, slot in (
+                ("A−", "Smaller text", lambda: self._zoom(-1)),
+                ("A+", "Larger text", lambda: self._zoom(1)),
+                ("✕", "Hide overlay – bring it back with the Overlay button or your overlay hotkey "
+                      "(Ctrl+Shift+O by default)", self.hide)):
+            b = QPushButton(text)
+            b.setFixedSize(32, 32)
+            b.setToolTip(tip)
+            b.setAccessibleName(tip.split(" – ")[0])
+            b.setStyleSheet("QPushButton{background:transparent;color:#8EA0BD;border:none;border-radius:6px;"
+                            "font-weight:700;padding:0;font-size:10pt}"
+                            "QPushButton:hover,QPushButton:focus{color:white;border:1px solid #1F7BFF}")
             b.clicked.connect(slot)
             bar.addWidget(b)
         lay.addLayout(bar)
@@ -47,20 +56,38 @@ class OverlayWindow(QWidget):
         self.body.setTextFormat(Qt.RichText)
         lay.addWidget(self.body)
         self.resize(560, 220)
+        # Streamed tokens arrive many times a second: coalesce them into one repaint per 100 ms.
+        self._flush = QTimer(self)
+        self._flush.setSingleShot(True)
+        self._flush.setInterval(100)
+        self._flush.timeout.connect(self._render)
+        self._last_h = -1
 
     def showEvent(self, e):
         super().showEvent(e)
         if self._exclude:
             winutil.exclude_from_capture(self, True)
+        self._render()   # a freshly shown overlay is current at once
+
+    def hideEvent(self, e):
+        super().hideEvent(e)
+        if not e.spontaneous():   # an OS minimise or show-desktop must not untick the Overlay button
+            self.hidden.emit()
 
     def set_click_through(self, enabled: bool) -> None:
-        self.setWindowFlag(Qt.WindowTransparentForInput, enabled)
-        if self.isVisible():
+        vis = self.isVisible()
+        # setWindowFlag hides the window; that internal hide must not reach listeners of `hidden`.
+        self.blockSignals(True)
+        try:
+            self.setWindowFlag(Qt.WindowTransparentForInput, enabled)
+        finally:
+            self.blockSignals(False)
+        if vis:
             self.show()
 
     def _zoom(self, d: int) -> None:
         self.font_pt = max(9, min(32, self.font_pt + d))
-        self.show_cards(self._last)
+        self._render()
 
     def paintEvent(self, _):
         p = QPainter(self)
@@ -87,6 +114,13 @@ class OverlayWindow(QWidget):
 
     def show_cards(self, cards: list[Card]) -> None:
         self._last = list(cards)
+        if self.isVisible() and not self._flush.isActive():
+            self._flush.start()
+
+    def _render(self) -> None:
+        if not self.isVisible():
+            return
+        cards = self._last
         if not cards:
             self.body.setText("<span style='color:#8EA0BD'>Listening…</span>")
             return
@@ -95,7 +129,7 @@ class OverlayWindow(QWidget):
         parts = []
         w = by.get(WATCH)
         if w:
-            parts.append(f"<div style='color:#EF4444;font-weight:700;font-size:{f - 1}pt'>⚠ {html.escape(w.text)}</div>")
+            parts.append(f"<div style='color:#F87171;font-weight:700;font-size:{f - 1}pt'>⚠ {html.escape(w.text)}</div>")
         s = by.get(SAY)
         if s:
             if s.filler:
@@ -114,5 +148,8 @@ class OverlayWindow(QWidget):
             parts.append(f"<div style='color:#7DD3FC;font-size:{f - 3}pt;margin-top:6px'>❓ "
                          + " &nbsp;•&nbsp; ".join(html.escape(q) for q in a.text.split(" | ")) + "</div>")
         self.body.setText("".join(parts))
-        self.adjustSize()
-        self.resize(max(self.width(), 560), self.height())
+        h = self.body.sizeHint().height()
+        if h != self._last_h:   # only re-fit the window when the text needs a different height
+            self._last_h = h
+            self.adjustSize()
+            self.resize(max(self.width(), 560), self.height())

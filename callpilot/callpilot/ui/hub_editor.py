@@ -14,6 +14,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QCheckBox, QDialog, QDialogBut
                                QTabWidget, QVBoxLayout, QWidget)
 
 from callpilot.hubs.model import CaptureField, Hub, parse_qa_csv, read_document
+from callpilot.ui.widgets import fit_to_screen, scrollable
 
 QA_GEN_SYSTEM = """You build call-centre answer banks. From the company knowledge provided, write the
 questions callers most often ask and an approved, compliant, spoken answer for each (2-3 short sentences,
@@ -25,17 +26,28 @@ def _lines(text: str) -> list[str]:
     return [ln.strip(" -•\t") for ln in text.splitlines() if ln.strip(" -•\t")]
 
 
+def _hint(text: str) -> QLabel:
+    lbl = QLabel(text)
+    lbl.setWordWrap(True)
+    lbl.setObjectName("hint")
+    return lbl
+
+
 class HubEditor(QDialog):
     _qa_ready = Signal(list, str)
 
     def __init__(self, hub: Hub, provider_factory=None, parent=None):
         super().__init__(parent)
         self.setWindowTitle(f"Call hub – {hub.name}")
-        self.resize(980, 720)
+        fit_to_screen(self, 980, 720)
         self.hub = hub
         self.provider_factory = provider_factory
         self.documents = list(hub.documents)
         root = QVBoxLayout(self)
+        where = _hint(f"Business profile › {hub.company or 'this business'} › Call hub › {hub.name}.  "
+                      "Business-wide rules and scripts live in the Business profile; this hub adds the answers, "
+                      "knowledge, intake and scripts for this call type.")
+        root.addWidget(where)
         tabs = QTabWidget()
         root.addWidget(tabs)
 
@@ -45,6 +57,7 @@ class HubEditor(QDialog):
         self.name = QLineEdit(hub.name)
         self.company = QLineEdit(hub.company)
         self.description = QLineEdit(hub.description)
+        self.description.setCursorPosition(0)
         self.persona = QPlainTextEdit(hub.persona)
         self.tone = QPlainTextEdit(hub.tone)
         self.greeting = QPlainTextEdit(hub.greeting)
@@ -61,15 +74,16 @@ class HubEditor(QDialog):
         gf.addRow("Closing script", self.closing)
         gf.addRow("Recording / consent notice", self.consent)
         self.status_line = QLineEdit(hub.status_line)
+        self.status_line.setCursorPosition(0)
         self.status_line.setPlaceholderText("Footer on every email draft, e.g. 'Paralegal services. Not a firm of solicitors.'")
         gf.addRow("Status line (email footer)", self.status_line)
-        tabs.addTab(g, "General")
+        tabs.addTab(scrollable(g), "General")
 
         # ---------------- call types
         ctw = QWidget()
         ctl = QVBoxLayout(ctw)
-        ctl.addWidget(QLabel("Instructions the AI gets for each call type (new accident, handler, engineer, bodyshop, "
-                             "client chase, council). One block per type: 'key: instructions'."))
+        ctl.addWidget(_hint("Instructions the AI gets for each call type (new accident, handler, engineer, bodyshop, "
+                            "client chase, council). One block per type: 'key: instructions'."))
         self.call_types = QPlainTextEdit("\n\n".join(f"{k}: {v}" for k, v in hub.call_types.items()))
         ctl.addWidget(self.call_types)
         tabs.addTab(ctw, "Call types")
@@ -77,11 +91,11 @@ class HubEditor(QDialog):
         # ---------------- scripts
         scw = QWidget()
         scl = QVBoxLayout(scw)
-        scl.addWidget(QLabel("Scripts you read out on this type of call (opening and closing come from General). "
-                             "One script per block: a title line, then the text. Blank line between scripts."))
+        scl.addWidget(_hint("Scripts you read out on this type of call (opening and closing come from General). "
+                            "One script per block: a title line, then the text. Blank line between scripts."))
         self.scripts_edit = QPlainTextEdit("\n\n".join(f"{sc.get('title', '')}\n{sc.get('text', '')}" for sc in hub.scripts))
         scl.addWidget(self.scripts_edit)
-        tabs.addTab(scw, f"Scripts ({len(hub.scripts)})")
+        tabs.addTab(scw, f"Hub scripts ({len(hub.scripts)})")
 
         # ---------------- rules
         r = QWidget()
@@ -91,24 +105,26 @@ class HubEditor(QDialog):
         self.disclosures = QPlainTextEdit("\n".join(hub.required_disclosures))
         self.escalations = QPlainTextEdit("\n".join(hub.escalation_triggers))
         self.fillers = QPlainTextEdit("\n".join(hub.fillers))
-        rf.addRow(QLabel("One item per line."))
+        rf.addRow(_hint("One item per line."))
         rf.addRow("Rules the AI must follow", self.rules)
         rf.addRow("Banned phrases (alert if you say them)", self.forbidden)
         rf.addRow("Mandatory disclosures (checklist)", self.disclosures)
         rf.addRow("Escalation keywords (alert if caller says them)", self.escalations)
         rf.addRow("House filler phrases", self.fillers)
-        tabs.addTab(r, "Rules && compliance")
+        tabs.addTab(scrollable(r), "Rules && compliance")
 
         # ---------------- Q&A
         q = QWidget()
         ql = QVBoxLayout(q)
-        ql.addWidget(QLabel("Approved answers appear instantly (no AI wait) when the caller asks something "
-                            "similar, and guide the AI's wording for everything else."))
+        ql.addWidget(_hint("Approved answers appear instantly (no AI wait) when the caller asks something "
+                           "similar, and guide the AI's wording for everything else."))
         self.qa = QTableWidget(0, 2)
         self.qa.setHorizontalHeaderLabels(["Caller asks…", "Approved answer"])
         self.qa.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
         self.qa.setWordWrap(True)
         self.qa.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.qa.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.qa.verticalHeader().setVisible(False)
         for p in hub.qa:
             self._add_qa(p.get("q", ""), p.get("a", ""))
         ql.addWidget(self.qa)
@@ -126,11 +142,13 @@ class HubEditor(QDialog):
         # ---------------- knowledge
         k = QWidget()
         kl = QVBoxLayout(k)
-        kl.addWidget(QLabel("Policies, procedures, price lists, scripts, FAQs… Paste text below or import "
-                            "PDF / Word / text files. Everything is searched live during calls."))
+        kl.addWidget(_hint("Policies, procedures, price lists, scripts, FAQs… Paste text below or import "
+                           "PDF / Word / text files. Everything is searched live during calls."))
         self.knowledge = QPlainTextEdit(hub.knowledge)
         kl.addWidget(self.knowledge, 2)
-        kl.addWidget(QLabel("Imported documents"))
+        docs_lbl = QLabel("Imported documents")
+        docs_lbl.setWordWrap(True)
+        kl.addWidget(docs_lbl)
         self.docs = QListWidget()
         kl.addWidget(self.docs, 1)
         self._refresh_docs()
@@ -148,10 +166,12 @@ class HubEditor(QDialog):
         # ---------------- fields
         fw = QWidget()
         fl = QVBoxLayout(fw)
-        fl.addWidget(QLabel("Details the AI listens for and fills in automatically during the call."))
+        fl.addWidget(_hint("Details the AI listens for and fills in automatically during the call."))
         self.fields = QTableWidget(0, 4)
         self.fields.setHorizontalHeaderLabels(["Key", "Label", "Hint", "Required"])
         self.fields.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.fields.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.fields.verticalHeader().setVisible(False)
         for cf in hub.capture_fields:
             self._add_field(cf)
         fl.addWidget(self.fields)

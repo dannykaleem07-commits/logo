@@ -15,13 +15,20 @@ from PySide6.QtWidgets import (QCheckBox, QDialog, QDialogButtonBox, QFormLayout
 from callpilot.ai.wrapup import EmailDraft
 from callpilot.core.config import Settings
 from callpilot.core.files import CaseFile, ChronologyEntry, Deadline
+from callpilot.ui.theme import palette
+from callpilot.ui.widgets import fit_to_screen
+
+
+def _count(title: str, n: int) -> str:
+    """Tab label with its count, or just the title when there is nothing in it."""
+    return f"{title} ({n})" if n else title
 
 
 class WrapUpDialog(QDialog):
     def __init__(self, settings: Settings, record: dict, case_file: CaseFile | None, hub, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Wrap up")
-        self.resize(1240, 760)
+        fit_to_screen(self, 1240, 760)
         self.s = settings
         self.rec = record
         self.file = case_file
@@ -52,19 +59,19 @@ class WrapUpDialog(QDialog):
         self.pins_list = self._checklist(
             [(f"[{p.get('kind', '')}] {p.get('value', '')}  —  “{p.get('quote', '')[:120]}”", p)
              for p in self._all_pins()], checked=True)
-        left.addTab(self.pins_list, f"Pins ({self.pins_list.count()})")
+        left.addTab(self.pins_list, _count("Pins", self.pins_list.count()))
         self.chron_list = self._checklist(
             [(f"{c.get('event_date', '')}  {c.get('text', '')}", c) for c in self.summary.get("chronology", []) or []],
             checked=True)
-        left.addTab(self.chron_list, f"Chronology ({self.chron_list.count()})")
+        left.addTab(self.chron_list, _count("Chronology", self.chron_list.count()))
         self.dead_list = self._checklist(
             [(f"{d.get('due_at', '')}  {d.get('kind', '')} – {d.get('text', '')}", d)
              for d in self._all_deadlines()], checked=True)
-        left.addTab(self.dead_list, f"Deadlines ({self.dead_list.count()})")
+        left.addTab(self.dead_list, _count("Deadlines", self.dead_list.count()))
         self.task_list = self._checklist(
             [(f"{t.get('title', '')}  ({t.get('owner', 'us')}{', due ' + t['due_at'] if t.get('due_at') else ''})", t)
              for t in self._all_tasks()], checked=True)
-        left.addTab(self.task_list, f"Tasks ({self.task_list.count()})")
+        left.addTab(self.task_list, _count("Tasks", self.task_list.count()))
         gaps = QTextBrowser()
         gaps.setHtml(self._qa_html())
         left.addTab(gaps, "QA")
@@ -73,7 +80,9 @@ class WrapUpDialog(QDialog):
         # ---- right: email draft
         right = QWidget()
         rl = QVBoxLayout(right)
-        rl.addWidget(QLabel("“As discussed” email – drafted, never sent by the app"))
+        email_title = QLabel("“As discussed” email – drafted, never sent by the app")
+        email_title.setWordWrap(True)
+        rl.addWidget(email_title)
         form = QFormLayout()
         email = self.summary.get("email") or {}
         self.to = QLineEdit(email.get("to", "") or self._guess_to())
@@ -84,13 +93,17 @@ class WrapUpDialog(QDialog):
         self.body = QPlainTextEdit(email.get("body", ""))
         rl.addWidget(self.body, 1)
         self.status_line = QLabel(getattr(hub, "status_line", "") or "")
-        self.status_line.setObjectName("section")
+        self.status_line.setObjectName("hint")
         self.status_line.setWordWrap(True)
         rl.addWidget(self.status_line)
         btns = QHBoxLayout()
-        self.btn_outlook = QPushButton("Create Outlook draft")
-        self.btn_eml = QPushButton("Open in mail app (.eml)")
+        # short labels keep this side narrow enough for all six tabs on the left at 125-150 % scaling
+        self.btn_outlook = QPushButton("Outlook draft")
+        self.btn_outlook.setToolTip("Create a draft in Outlook – nothing is sent")
+        self.btn_eml = QPushButton("Mail app (.eml)")
+        self.btn_eml.setToolTip("Open the email in your mail app as a .eml file – nothing is sent")
         self.btn_copy = QPushButton("Copy text")
+        self.btn_copy.setToolTip("Copy the To, Subject and body to paste anywhere")
         self.btn_outlook.clicked.connect(self._outlook)
         self.btn_eml.clicked.connect(self._eml)
         self.btn_copy.clicked.connect(self._copy)
@@ -99,24 +112,35 @@ class WrapUpDialog(QDialog):
         btns.addStretch()
         rl.addLayout(btns)
         split.addWidget(right)
-        split.setSizes([620, 620])
+        split.setStretchFactor(0, 3)
+        split.setStretchFactor(1, 2)
+        split.setSizes([740, 500])   # the tabbed side gets ~60 % so all six tabs show without scroll arrows
 
-        bottom = QHBoxLayout()
+        # the checkbox gets its own row so its long label never widens the button row
         self.save_to_file = QCheckBox("Save ticked items, file note and confirmed intake to the file")
         self.save_to_file.setChecked(case_file is not None)
         self.save_to_file.setEnabled(case_file is not None)
-        bottom.addWidget(self.save_to_file)
+        root.addWidget(self.save_to_file)
+        self.save_to_file.setVisible(case_file is not None)
+        bottom = QHBoxLayout()
+        if case_file is None:
+            no_file = QLabel("No file attached – the call, transcript and summary are saved in Calls either way.")
+            no_file.setObjectName("hint")
+            no_file.setWordWrap(True)
+            bottom.addWidget(no_file, 1)
         bottom.addStretch()
         bb = QDialogButtonBox()
         self.btn_export = bb.addButton("💾 Save call to computer…", QDialogButtonBox.ActionRole)
         self.btn_export.clicked.connect(self._export)
         self.btn_save = bb.addButton("Save wrap-up", QDialogButtonBox.AcceptRole)
         self.btn_save.setObjectName("primary")
-        bb.addButton("Close without saving to file", QDialogButtonBox.RejectRole)
+        self.btn_save.setToolTip("Keeps this wrap-up with the call" + (" and updates the file" if case_file is not None else ""))
+        bb.addButton("Close" if case_file is None else "Close without saving to file", QDialogButtonBox.RejectRole)
         bb.accepted.connect(self._save)
         bb.rejected.connect(self.reject)
         bottom.addWidget(bb)
         root.addLayout(bottom)
+        self.btn_save.setDefault(True)   # Enter saves; only sticks once the button is inside the dialog
 
     # ------------------------------------------------------------- helpers
     def _all_pins(self) -> list[dict]:
@@ -191,7 +215,8 @@ class WrapUpDialog(QDialog):
         if self.summary.get("vulnerability"):
             rows.append(f"<p><b>Vulnerability:</b> {html.escape(self.summary['vulnerability'])}</p>")
         if self.summary.get("error"):
-            rows.append(f"<p style='color:#EF4444'>Wrap-up AI error: {html.escape(self.summary['error'])}</p>")
+            rows.append(f"<p style='color:{palette(self.s.ui.theme)['bad_text']}'>Wrap-up AI error: "
+                        f"{html.escape(self.summary['error'])}</p>")
         return "".join(rows)
 
     def _draft(self) -> EmailDraft:
@@ -205,7 +230,7 @@ class WrapUpDialog(QDialog):
             QMessageBox.information(self, "Outlook", "Draft created in Outlook → Drafts. Nothing has been sent.")
         except Exception as e:  # noqa: BLE001
             QMessageBox.warning(self, "Outlook", f"Could not create the Outlook draft ({e}).\n"
-                                                 "Use “Open in mail app” instead.")
+                                                 "Use “Mail app (.eml)” instead.")
 
     def _eml(self):
         try:

@@ -15,6 +15,7 @@ from callpilot.ai.translator import LANGUAGES
 from callpilot.core import secrets
 from callpilot.core.config import Settings
 from callpilot.core.crypto import BadPassphrase, Vault
+from callpilot.ui.widgets import fit_to_screen, scrollable
 
 CLAUDE_LIVE = ["claude-haiku-4-5-20251001", "claude-sonnet-5-5", "claude-opus-5-5"]
 CLAUDE_WRAP = ["claude-sonnet-5-5", "claude-opus-5-5", "claude-haiku-4-5-20251001", "claude-fable-5-1"]
@@ -36,6 +37,42 @@ def _device_combo(names, current) -> QComboBox:
         c.addItem(current, current)
     c.setCurrentIndex(max(0, c.findData(current)))
     return c
+
+
+_KEY_NAMES = {"ctrl": "Ctrl", "shift": "Shift", "alt": "Alt", "cmd": "Win", "space": "Space", "tab": "Tab",
+              "esc": "Esc", "enter": "Enter", "backspace": "Backspace", "delete": "Delete", "insert": "Insert",
+              "home": "Home", "end": "End", "page_up": "PageUp", "page_down": "PageDown", "up": "Up", "down": "Down",
+              "left": "Left", "right": "Right"}
+_KEY_CODES = {v.lower(): k for k, v in _KEY_NAMES.items()} | {"control": "ctrl", "windows": "cmd", "escape": "esc",
+                                                              "return": "enter", "del": "delete", "pgup": "page_up",
+                                                              "pgdn": "page_down"}
+
+
+def pretty_hotkey(spec: str) -> str:
+    """'<ctrl>+<shift>+l' (how the hotkey library stores it) → 'Ctrl+Shift+L' (how Windows writes it)."""
+    out = []
+    for tok in (t.strip() for t in (spec or "").split("+") if t.strip()):
+        name = tok[1:-1] if tok.startswith("<") and tok.endswith(">") else tok
+        if name.lower() in _KEY_NAMES:
+            out.append(_KEY_NAMES[name.lower()])
+        elif len(name) > 1 and name[0] in "fF" and name[1:].isdigit():
+            out.append(name.upper())
+        else:
+            out.append(name.upper() if len(name) == 1 else name)
+    return "+".join(out)
+
+
+def pynput_hotkey(text: str) -> str:
+    """'Ctrl+Shift+L' (or '<ctrl>+<shift>+l') → '<ctrl>+<shift>+l'. Blank stays blank (hotkey off)."""
+    out = []
+    for tok in (t.strip() for t in (text or "").split("+") if t.strip()):
+        name = (tok[1:-1] if tok.startswith("<") and tok.endswith(">") else tok).lower()
+        code = _KEY_CODES.get(name, name)
+        if code in _KEY_NAMES or (len(code) > 1 and code[0] == "f" and code[1:].isdigit()):
+            out.append(f"<{code}>")
+        else:
+            out.append(code)
+    return "+".join(out)
 
 
 def _combo(items, current, editable=False) -> QComboBox:
@@ -60,7 +97,10 @@ class KeyEdit(QWidget):
         eye = QPushButton("👁")
         eye.setFixedWidth(40)
         eye.setCheckable(True)
+        eye.setToolTip("Show key")
+        eye.setAccessibleName("Show or hide key")
         eye.toggled.connect(lambda on: self.edit.setEchoMode(QLineEdit.Normal if on else QLineEdit.Password))
+        eye.toggled.connect(lambda on: eye.setToolTip("Hide key" if on else "Show key"))
         lay.addWidget(self.edit, 1)
         lay.addWidget(eye)
 
@@ -75,12 +115,23 @@ class SettingsDialog(QDialog):
     def __init__(self, settings: Settings, parent=None, start_tab: int = 0, audit=None):
         super().__init__(parent)
         self.setWindowTitle("CallPilot settings")
-        self.resize(760, 640)
+        fit_to_screen(self, 1100, 640)
         self.s = settings
         self.audit = audit
         root = QVBoxLayout(self)
+        # ten sections: a list down the left side, not a tab strip that runs off a 125-150 % screen. The tab
+        # widget stays (its own bar hidden) so section indices and tabText() keep working.
+        body = QHBoxLayout()
+        body.setSpacing(16)
+        self.nav = QListWidget()
+        self.nav.setObjectName("nav")
+        self.nav.setAccessibleName("Settings sections")
+        self.nav.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.tabs = QTabWidget()
-        root.addWidget(self.tabs)
+        self.tabs.tabBar().hide()
+        body.addWidget(self.nav)
+        body.addWidget(self.tabs, 1)
+        root.addLayout(body, 1)
         self._build_keys()
         self._build_ai()
         self._build_speech()
@@ -91,7 +142,16 @@ class SettingsDialog(QDialog):
         self._build_memory()
         self._build_privacy()
         self._build_ui()
+        for i in range(self.tabs.count()):
+            it = QListWidgetItem(self.tabs.tabText(i).replace("&&", "&"))
+            it.setToolTip(self.tabs.tabToolTip(i))
+            self.nav.addItem(it)
+        self.nav.ensurePolished()
+        self.nav.setFixedWidth(self.nav.sizeHintForColumn(0) + 40)   # + room for the bold selected row and the focus ring
+        self.nav.currentRowChanged.connect(self.tabs.setCurrentIndex)
+        self.tabs.currentChanged.connect(self.nav.setCurrentRow)
         self.tabs.setCurrentIndex(start_tab)
+        self.nav.setCurrentRow(start_tab)
         bb = QDialogButtonBox(QDialogButtonBox.Save | QDialogButtonBox.Cancel)
         bb.accepted.connect(self._save)
         bb.rejected.connect(self.reject)
@@ -99,12 +159,15 @@ class SettingsDialog(QDialog):
         self._test_done.connect(lambda msg: QMessageBox.information(self, "Connection test", msg))
 
     # ------------------------------------------------------------------ tabs
-    def _tab(self, title: str) -> QFormLayout:
+    def _tab(self, title: str, tip: str = "") -> QFormLayout:
         w = QWidget()
         f = QFormLayout(w)
         f.setLabelAlignment(Qt.AlignRight)
         f.setVerticalSpacing(10)
-        self.tabs.addTab(w, title)
+        f.setRowWrapPolicy(QFormLayout.WrapLongRows)
+        idx = self.tabs.addTab(scrollable(w), title)
+        if tip:
+            self.tabs.setTabToolTip(idx, tip)
         return f
 
     def _build_keys(self):
@@ -139,7 +202,8 @@ class SettingsDialog(QDialog):
         self.effort = _combo(["low", "medium", "high"], a.anthropic_effort)
         self.effort.setToolTip("Lower effort = faster live suggestions. 'low' is recommended on calls.")
         f.addRow("Claude effort", self.effort)
-        self.fast = QCheckBox("Fast mode (Opus only, up to 2.5× faster output, premium pricing)")
+        self.fast = QCheckBox("Fast mode")
+        self.fast.setToolTip("Opus only. Up to 2.5× faster output at premium pricing.")
         self.fast.setChecked(a.anthropic_fast_mode)
         f.addRow("", self.fast)
         self.fallbacks = QCheckBox("Automatic fallback model if a request is declined")
@@ -155,13 +219,15 @@ class SettingsDialog(QDialog):
         self.window_s.setValue(a.context_window_s)
         self.window_s.setToolTip("Only this much recent transcript is sent with each card request; the hub and file are cached.")
         f.addRow("Transcript window per card", self.window_s)
-        self.learn = QCheckBox("Train itself after every call (remember answers that worked, facts, your preferences)")
+        self.learn = QCheckBox("Train itself after every call")
+        self.learn.setToolTip("Remembers answers that worked, facts and your preferences.")
         self.learn.setChecked(a.learn_after_calls)
         f.addRow("", self.learn)
         self.use_memory = QCheckBox("Use memory of past calls while suggesting")
         self.use_memory.setChecked(a.use_memory)
         f.addRow("", self.use_memory)
-        self.speculative = QCheckBox("Speculative drafting (start answering before the caller finishes)")
+        self.speculative = QCheckBox("Speculative drafting")
+        self.speculative.setToolTip("Starts writing an answer before the caller finishes.")
         self.speculative.setChecked(a.speculative)
         f.addRow("", self.speculative)
         self.max_tokens = QSpinBox()
@@ -205,7 +271,7 @@ class SettingsDialog(QDialog):
         from callpilot.audio.capture import list_input_devices, list_output_devices
 
         au = self.s.audio
-        f = self._tab("Audio sources")
+        f = self._tab("Audio", "Audio sources")
         self.mic_enabled = QCheckBox("Transcribe my microphone (shows what you said)")
         self.mic_enabled.setChecked(au.mic_enabled)
         f.addRow("", self.mic_enabled)
@@ -218,6 +284,7 @@ class SettingsDialog(QDialog):
         self.mode.setCurrentIndex(max(0, self.mode.findData(au.capture_mode)))
         f.addRow("Caller audio from", self.mode)
         box = QVBoxLayout()
+        box.setContentsMargins(0, 0, 0, 0)
         self.apps = QListWidget()
         self.apps.setMinimumHeight(180)
         box.addWidget(self.apps)
@@ -230,10 +297,10 @@ class SettingsDialog(QDialog):
         row.addStretch()
         row.addWidget(add)
         box.addLayout(row)
-        hint = QLabel("🔊 = currently playing audio. Tip: start the WhatsApp call first, then tick the app "
-                      "with 🔊. Per-app capture needs Windows 10 (2004) or Windows 11.")
+        hint = QLabel("🔊 marks apps playing audio right now. Start the call first, then tick that app. "
+                      "Per-app capture needs Windows 10 (2004) or Windows 11.")
         hint.setWordWrap(True)
-        hint.setObjectName("section")
+        hint.setObjectName("hint")
         box.addWidget(hint)
         wrap = QWidget()
         wrap.setLayout(box)
@@ -321,7 +388,7 @@ class SettingsDialog(QDialog):
         from callpilot.audio.capture import list_output_devices
 
         r, w, em = self.s.recording, self.s.whisper, self.s.email
-        f = self._tab("Recording, whisper && email")
+        f = self._tab("Recording && email", "Recording, whisper & email")
         self.rec_enabled = QCheckBox("Record calls (two tracks: caller left, you right; encrypted after the call)")
         self.rec_enabled.setChecked(r.enabled)
         self.rec_clips = QCheckBox("Keep a 10-second audio clip behind every pin")
@@ -353,14 +420,15 @@ class SettingsDialog(QDialog):
         self.em_sig.setPlaceholderText("Your email signature (the hub's status line is added underneath)")
         f.addRow("Signature", self.em_sig)
         note = QLabel("The app has no send capability. Every email is a draft; the final click is yours.")
-        note.setObjectName("section")
+        note.setObjectName("hint")
+        note.setWordWrap(True)
         f.addRow("", note)
 
     def _build_aimode(self):
         from callpilot.audio.capture import list_output_devices
 
         va, ex = self.s.voice_agent, self.s.export
-        f = self._tab("AI mode && saving")
+        f = self._tab("AI mode", "AI mode & saving")
         note = QLabel("AI mode: a named member of the team takes the call in a realistic voice. It uses the business "
                       "rules, the hub's answers and what it has learned from you. It hands the call back to you on "
                       "escalation words, distress, a request for a person, or anything outside the playbook. It does "
@@ -380,10 +448,13 @@ class SettingsDialog(QDialog):
         self.va_handoff.setPlaceholderText("Let me pass you to a colleague who can help with that – one moment please.")
         f.addRow("Hand-off line", self.va_handoff)
         f.addRow(QLabel(""))
-        self.ex_auto = QCheckBox("After every call, save the transcript, summary, pins and recording to my computer")
+        self.ex_auto = QCheckBox("Save every call to this PC")
+        self.ex_auto.setToolTip("After every call, save the transcript, summary, pins and recording to the folder "
+                                "below. Follows the Privacy settings (nothing is saved if call history is off).")
         self.ex_auto.setChecked(ex.auto_save_calls)
         f.addRow("", self.ex_auto)
         row = QHBoxLayout()
+        row.setContentsMargins(0, 0, 0, 0)   # lines up with the other fields in the form
         self.ex_folder = QLineEdit(ex.folder)
         self.ex_folder.setPlaceholderText("Documents\\CallPilot\\Calls")
         pick = QPushButton("Choose…")
@@ -407,8 +478,11 @@ class SettingsDialog(QDialog):
 
         w = QWidget()
         lay = QVBoxLayout(w)
-        lay.addWidget(QLabel("Everything the AI has learned from your calls. Tick-free: select a row and delete it "
-                             "if it is wrong. Answers with a higher score are offered first."))
+        intro = QLabel("Everything the AI has learned from your calls. Select a row and press Delete selected "
+                       "if it is wrong. Answers with a higher score are offered first.")
+        intro.setWordWrap(True)
+        intro.setObjectName("hint")
+        lay.addWidget(intro)
         self.mem_store = MemoryStore()
         self.mem_list = QListWidget()
         lay.addWidget(self.mem_list, 1)
@@ -423,7 +497,7 @@ class SettingsDialog(QDialog):
             row.addWidget(b)
         row.addStretch()
         lay.addLayout(row)
-        self.tabs.addTab(w, "Memory")
+        self.tabs.addTab(scrollable(w), "Memory")
         self._mem_refresh()
 
     def _mem_refresh(self):
@@ -461,16 +535,20 @@ class SettingsDialog(QDialog):
 
     def _build_privacy(self):
         p = self.s.privacy
-        f = self._tab("Privacy && security")
+        f = self._tab("Privacy", "Privacy & security")
         self.save_sessions = QCheckBox("Save call history")
         self.save_sessions.setChecked(p.save_sessions)
         self.encrypt = QCheckBox("Encrypt call history (AES-256-GCM)")
         self.encrypt.setChecked(p.encrypt_sessions)
         self.retention = QSpinBox()
         self.retention.setRange(0, 3650)
-        self.retention.setSuffix(" days (0 = keep forever)")
+        self.retention.setSuffix(" days")
+        self.retention.setSpecialValueText("Keep forever")
+        self.retention.setToolTip("Set to 0 to keep calls forever")
         self.retention.setValue(p.retention_days)
-        self.redact_saved = QCheckBox("Redact personal data (phone, email, NI no., DOB, postcode) in saved history")
+        self.redact_saved = QCheckBox("Redact personal data in saved history")
+        self.redact_saved.setToolTip("Phone numbers, email addresses, NI numbers, dates of birth and postcodes are "
+                                     "masked in saved calls and in calls saved to this PC.")
         self.redact_saved.setChecked(p.redact_saved_pii)
         self.redact_cloud = QCheckBox("Strip card / bank details before anything is sent to AI providers")
         self.redact_cloud.setChecked(p.redact_payment_data_before_cloud)
@@ -500,18 +578,21 @@ class SettingsDialog(QDialog):
         self.agent_name = QLineEdit(self.s.agent_name)
         self.agent_name.setPlaceholderText("Used in opening scripts")
         f.addRow("Your name", self.agent_name)
-        self.mode = QComboBox()
-        self.mode.addItem("Simple – transcript + what to say next (recommended)", "simple")
-        self.mode.addItem("Advanced – full Call Desk cockpit", "advanced")
-        self.mode.setCurrentIndex(max(0, self.mode.findData(u.mode)))
-        f.addRow("View (restart to apply)", self.mode)
+        self.view_mode = QComboBox()
+        self.view_mode.addItem("Simple – transcript + what to say next (recommended)", "simple")
+        self.view_mode.addItem("Advanced – full Call Desk cockpit", "advanced")
+        self.view_mode.setCurrentIndex(max(0, self.view_mode.findData(u.mode)))
+        f.addRow("View (restart to apply)", self.view_mode)
         self.auto_detect = QCheckBox("Offer to start when WhatsApp / Teams / Zoom begins playing audio")
         self.auto_detect.setChecked(u.auto_detect_calls)
         f.addRow("", self.auto_detect)
-        self.theme = _combo(["dark", "light"], u.theme)
+        self.theme = QComboBox()
+        self.theme.addItem("Dark", "dark")
+        self.theme.addItem("Light", "light")
+        self.theme.setCurrentIndex(max(0, self.theme.findData(u.theme)))
         f.addRow("Theme", self.theme)
         self.font_pt = QSpinBox()
-        self.font_pt.setRange(8, 18)
+        self.font_pt.setRange(10, 18)
         self.font_pt.setValue(u.font_pt)
         f.addRow("Font size", self.font_pt)
         self.overlay = QCheckBox("Show floating teleprompter during calls")
@@ -530,11 +611,12 @@ class SettingsDialog(QDialog):
         self.click_through.setChecked(u.overlay_click_through)
         f.addRow("", self.click_through)
         self.hk = {}
-        for key, label in (("hotkey_toggle_call", "Start / end call"), ("hotkey_regenerate", "Regenerate"),
-                           ("hotkey_overlay", "Show / hide overlay"), ("hotkey_copy", "Copy top card"),
-                           ("hotkey_pin", "Pin last line (global)")):
-            e = QLineEdit(getattr(u, key))
-            e.setPlaceholderText("<ctrl>+<shift>+x")
+        for key, label in (("hotkey_toggle_call", "Start / end call"), ("hotkey_regenerate", "Another answer"),
+                           ("hotkey_overlay", "Show / hide overlay"), ("hotkey_copy", "Copy the answer"),
+                           ("hotkey_pin", "Pin last line")):
+            e = QLineEdit(pretty_hotkey(getattr(u, key)))
+            e.setPlaceholderText("e.g. Ctrl+Shift+X")
+            e.setToolTip("Works from any app, even when CallPilot is in the background.")
             self.hk[key] = e
             f.addRow(label, e)
 
@@ -665,16 +747,16 @@ class SettingsDialog(QDialog):
         p.consent_reminder = self.consent.isChecked()
         p.require_unlock = self.require_unlock.isChecked()
         self.s.agent_name = self.agent_name.text().strip()
-        u.mode = self.mode.currentData()
+        u.mode = self.view_mode.currentData()
         u.auto_detect_calls = self.auto_detect.isChecked()
-        u.theme = self.theme.currentText()
+        u.theme = self.theme.currentData() or "dark"
         u.font_pt = self.font_pt.value()
         u.overlay_enabled = self.overlay.isChecked()
         u.overlay_opacity = self.opacity.value()
         u.overlay_font_pt = self.overlay_font.value()
         u.overlay_click_through = self.click_through.isChecked()
         for key, e in self.hk.items():
-            setattr(u, key, e.text().strip())
+            setattr(u, key, pynput_hotkey(e.text()))
         if self.audit:
             self.audit.record("settings_saved", provider=a.provider, stt=sp.engine, capture=au.capture_mode)
         QTimer.singleShot(0, self.accept)

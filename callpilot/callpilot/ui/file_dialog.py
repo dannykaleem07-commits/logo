@@ -8,13 +8,14 @@ from PySide6.QtWidgets import (QComboBox, QDialog, QDialogButtonBox, QFormLayout
                                QSplitter, QTableWidget, QTableWidgetItem, QTabWidget, QVBoxLayout, QWidget)
 
 from callpilot.core.files import ROLES, STAGES, CaseFile, Contact, Deadline, FileStore
+from callpilot.ui.widgets import fit_to_screen, scrollable
 
 
 class FilePicker(QDialog):
     def __init__(self, store: FileStore, parent=None, query: str = ""):
         super().__init__(parent)
         self.setWindowTitle("Attach a file to this call")
-        self.resize(900, 560)
+        fit_to_screen(self, 900, 560)
         self.store = store
         self.selected: CaseFile | None = None
         root = QVBoxLayout(self)
@@ -97,7 +98,7 @@ class FileEditor(QDialog):
     def __init__(self, f: CaseFile, parent=None):
         super().__init__(parent)
         self.setWindowTitle("File")
-        self.resize(820, 620)
+        fit_to_screen(self, 820, 620)
         self.file = f
         root = QVBoxLayout(self)
         tabs = QTabWidget()
@@ -132,13 +133,16 @@ class FileEditor(QDialog):
                          ("Client insurer", self.insurer), ("Third-party insurer", self.tp_insurer),
                          ("Summary", self.summary)):
             form.addRow(label, w)
-        tabs.addTab(g, "File")
+        tabs.addTab(scrollable(g), "File")
 
         c = QWidget()
         cl = QVBoxLayout(c)
         self.contacts = QTableWidget(0, 5)
-        self.contacts.setHorizontalHeaderLabels(["Name", "Role", "Organisation", "Phone numbers (comma)", "Email"])
+        self.contacts.setHorizontalHeaderLabels(["Name", "Role", "Organisation", "Phones", "Email"])
+        self.contacts.horizontalHeaderItem(3).setToolTip("Separate several numbers with commas")
         self.contacts.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.contacts.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.contacts.verticalHeader().setVisible(False)
         for ct in f.contacts:
             self._add_contact(ct)
         cl.addWidget(self.contacts)
@@ -158,6 +162,8 @@ class FileEditor(QDialog):
         self.deadlines = QTableWidget(0, 3)
         self.deadlines.setHorizontalHeaderLabels(["Due (YYYY-MM-DD)", "Kind", "What"])
         self.deadlines.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+        self.deadlines.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.deadlines.verticalHeader().setVisible(False)
         for dd in f.deadlines:
             if not dd.done:
                 self._add_deadline(dd)

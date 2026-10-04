@@ -8,18 +8,19 @@ import threading
 import time
 from pathlib import Path
 
-from PySide6.QtCore import QByteArray, QObject, Qt, QTimer, Signal
+from PySide6.QtCore import QByteArray, QEvent, QObject, Qt, QTimer, Signal
 from PySide6.QtGui import QAction, QIcon, QKeySequence, QShortcut
-from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QFileDialog, QFrame, QHBoxLayout,
-                               QInputDialog, QLabel, QListWidget, QMainWindow, QMenu, QMessageBox,
-                               QPushButton, QScrollArea, QSplitter, QStatusBar, QSystemTrayIcon, QTabWidget,
-                               QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QApplication, QCheckBox, QComboBox, QFileDialog, QFrame,
+                               QHBoxLayout, QInputDialog, QLabel, QListWidget, QMainWindow, QMenu, QMessageBox,
+                               QPushButton, QScrollArea, QSizePolicy, QSplitter, QStatusBar, QSystemTrayIcon,
+                               QTabBar, QTabWidget, QVBoxLayout, QWidget)
 
 from callpilot import __app_name__, __version__
 from callpilot.ai import tts
 from callpilot.ai.providers import make_provider
 from callpilot.ai.translator import language_name
 from callpilot.core import config
+from callpilot.core.config import model_label
 from callpilot.core.audit import AuditLog
 from callpilot.core.controller import CallController
 from callpilot.core.business import BusinessStore
@@ -54,7 +55,53 @@ class Bridge(QObject):
     event = Signal(str, object)
 
 
+class _EnterPressesButton(QObject):
+    """Keyboard access in the main window.
+
+    * Return/Enter activates the focused button (QMainWindow buttons have no autoDefault, so Enter did nothing).
+    * The spec's single-key hotkeys (Space = said it, →, A/P/T/W) give way to the control the handler has Tabbed
+      to: Space presses that button or ticks that box, letters type-ahead in a list or combo, → moves in a list.
+      Only focus that arrived by Tab / Shift+Tab counts, so a mouse user who has just clicked a button still gets
+      Space = said it exactly as before. Esc always stays 'not this'."""
+
+    _MODS = Qt.ControlModifier | Qt.AltModifier | Qt.MetaModifier
+
+    def __init__(self, window):
+        super().__init__(window)
+        self._win = window
+        self._kb_focus = None   # the widget focused by Tab / Shift+Tab, if focus is still there
+
+    def _defers(self, w, key: int) -> bool:
+        if key == Qt.Key_Space:
+            return isinstance(w, (QAbstractButton, QComboBox, QAbstractItemView, QTabBar))
+        if key in (Qt.Key_A, Qt.Key_P, Qt.Key_T, Qt.Key_W):
+            return isinstance(w, (QComboBox, QAbstractItemView))
+        if key in (Qt.Key_Left, Qt.Key_Right):
+            return isinstance(w, (QAbstractItemView, QTabBar, QComboBox))
+        return False
+
+    def eventFilter(self, obj, ev):
+        t = ev.type()
+        if t == QEvent.FocusIn:
+            if isinstance(obj, QWidget) and obj.window() is self._win:
+                self._kb_focus = obj if ev.reason() in (Qt.TabFocusReason, Qt.BacktabFocusReason) else None
+        elif t == QEvent.ShortcutOverride:
+            if (obj is self._kb_focus and obj.hasFocus() and not (ev.modifiers() & self._MODS)
+                    and self._defers(obj, ev.key())):
+                ev.accept()          # the focused control handles the key; the window hotkey does not fire
+                return True
+        elif (t == QEvent.KeyPress and ev.key() in (Qt.Key_Return, Qt.Key_Enter)
+                and not (ev.modifiers() & (self._MODS | Qt.ShiftModifier))
+                and isinstance(obj, QAbstractButton) and obj.isEnabled() and obj.window() is self._win):
+            obj.click()
+            return True
+        return False
+
+
 class MainWindow(QMainWindow):
+    START_LABEL = "●  Start call   (Ctrl+Shift+L)"
+    END_LABEL = "■  End call"
+
     def __init__(self, settings: config.Settings, audit: AuditLog, icon: QIcon | None = None):
         super().__init__()
         self.s = settings
@@ -64,11 +111,14 @@ class MainWindow(QMainWindow):
         self.files = FileStore()
         self.memory = MemoryStore()
         self.businesses = BusinessStore()
+        self._hub_cache: Hub | None = None    # current_hub() runs on every transcript line; avoid re-reading disk
+        self._biz_cache = None
         self.last_record: dict | None = None
         self.ai_mode = False
         self.controller: CallController | None = None
         self.case_file: CaseFile | None = None
         self._saved_sessions: set[int] = set()
+        self._save_thread: threading.Thread | None = None
         self.call_started_at: float | None = None
         self._notice_flag = False
         self._rec_paused = False
@@ -86,6 +136,8 @@ class MainWindow(QMainWindow):
         self.overlay = OverlayWindow(settings.ui.overlay_opacity, settings.ui.overlay_font_pt,
                                      settings.privacy.exclude_windows_from_capture)
         self.overlay.set_click_through(settings.ui.overlay_click_through)
+        self._overlay_auto = False   # True while the overlay is shown automatically for a call
+        self.overlay.hidden.connect(lambda: self.btn_overlay.setChecked(False))   # its own ✕ unticks the button
         self._restore_geometry()
         self._load_hubs()
         self._setup_hotkeys()
@@ -123,7 +175,7 @@ class MainWindow(QMainWindow):
         v.addWidget(self._bottom)
         sb = QStatusBar()
         self.setStatusBar(sb)
-        sb.addWidget(QLabel("Us"))
+        sb.addWidget(QLabel("You"))
         sb.addWidget(self.mic_meter)
         sb.addWidget(QLabel("Caller"))
         sb.addWidget(self.caller_meter)
@@ -139,14 +191,16 @@ class MainWindow(QMainWindow):
         h.setContentsMargins(18, 8, 18, 8)
         title = QLabel(f"◉ {__app_name__}")
         title.setObjectName("title")
+        self._title = title
         h.addWidget(title)
         h.addSpacing(10)
         self.hub_combo = QComboBox()
         self.hub_combo.setMinimumWidth(260)
         self.hub_combo.currentIndexChanged.connect(self._on_hub_changed)
         h.addWidget(self.hub_combo)
-        hub_btn = QPushButton("▾")
-        hub_btn.setFixedWidth(30)
+        hub_btn = QPushButton("Hub")   # Qt draws the menu arrow itself; a text '▾' would double it
+        hub_btn.setToolTip("Manage call hubs: edit, new, duplicate, import, export, delete")
+        hub_btn.setAccessibleName("Manage call hubs")
         hub_menu = QMenu(self)
         for label, slot in (("Edit / train this hub…", self._edit_hub), ("New hub…", self._new_hub),
                             ("Duplicate hub", self._duplicate_hub), ("Import hub (.json)…", self._import_hub),
@@ -165,13 +219,15 @@ class MainWindow(QMainWindow):
         self.caller_lbl.setObjectName("badge")
         h.addWidget(self.caller_lbl)
         h.addStretch()
-        self.rec_dot = RecordDot()
+        self.rec_dot = RecordDot(self.s.ui.theme)
         self.timer_lbl = QLabel("00:00")
         self.lang_badge = QLabel("")
         self.lang_badge.setObjectName("badge")
         self.lang_badge.setVisible(False)
         self.latency_badge = QLabel("")
         self.latency_badge.setObjectName("badge")
+        self.latency_badge.setToolTip("AI model writing the live answers "
+                                      "(change it with the preset picker or Settings → AI co-pilot)")
         for b in (self.rec_dot, self.timer_lbl, self.lang_badge, self.latency_badge):
             h.addWidget(b)
         h.addSpacing(8)
@@ -187,6 +243,7 @@ class MainWindow(QMainWindow):
         self.btn_mute = QPushButton("🎙")
         self.btn_mute.setCheckable(True)
         self.btn_mute.setToolTip("Mute my microphone")
+        self.btn_mute.setAccessibleName("Mute microphone")
         self.btn_mute.toggled.connect(self._toggle_mute)
         self.btn_overlay = QPushButton("Overlay")
         self.btn_overlay.setCheckable(True)
@@ -194,6 +251,8 @@ class MainWindow(QMainWindow):
         self.btn_history = QPushButton("History")
         self.btn_history.clicked.connect(self._open_history)
         self.btn_settings = QPushButton("⚙")
+        self.btn_settings.setToolTip("Settings")
+        self.btn_settings.setAccessibleName("Settings")
         self.btn_settings.clicked.connect(lambda: self._open_settings())
         for b in (self.btn_mute, self.btn_overlay, self.btn_history, self.btn_settings):
             h.addWidget(b)
@@ -222,27 +281,28 @@ class MainWindow(QMainWindow):
         right = self._right_panel = QWidget()
         rl = QVBoxLayout(right)
         rl.setContentsMargins(0, 0, 0, 0)
-        rl.setSpacing(10)
-        self.cards = CardsPanel(self.s.ui.theme)
+        rl.setSpacing(8)
+        self.cards = CardsPanel(self.s.ui.theme, self.s.ui.font_pt)
         self.cards.used.connect(lambda c: self._card_action(c, "used"))
         self.cards.dismissed.connect(lambda c: self._card_action(c, "dismissed"))
         cards_scroll = QScrollArea()
         cards_scroll.setWidgetResizable(True)
         cards_scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         cards_scroll.setWidget(self.cards)
+        self.cards_scroll = cards_scroll
         rl.addWidget(cards_scroll, 3)
         intake_box = card()
         il = QVBoxLayout(intake_box)
-        il.setContentsMargins(14, 10, 14, 10)
+        il.setContentsMargins(16, 12, 16, 12)
         ih = QHBoxLayout()
-        self.ring = ProgressRing(self.s.ui.theme)
+        self.ring = ProgressRing(self.s.ui.theme, self.s.ui.font_pt)
         ih.addWidget(self.ring)
         ih.addSpacing(8)
         itxt = QVBoxLayout()
         itxt.addWidget(section("Intake"))
         self.missing_lbl = QLabel("")
         self.missing_lbl.setWordWrap(True)
-        self.missing_lbl.setObjectName("filler")
+        self.missing_lbl.setObjectName("hint")
         itxt.addWidget(self.missing_lbl)
         ih.addLayout(itxt, 1)
         il.addLayout(ih)
@@ -267,8 +327,9 @@ class MainWindow(QMainWindow):
         bottom.setObjectName("header")
         b = QHBoxLayout(bottom)
         b.setContentsMargins(18, 8, 18, 8)
-        self.btn_call = QPushButton("●  Start call   (Ctrl+Shift+L)")
+        self.btn_call = QPushButton(self.START_LABEL)
         self.btn_call.setObjectName("start")
+        self.btn_call.setToolTip("Start or end the call (Ctrl+Shift+L)")
         self.btn_call.clicked.connect(self._toggle_call)
         self.btn_pin = QPushButton("📌 Pin last line   (P)")
         self.btn_pin.clicked.connect(self._pin)
@@ -290,9 +351,10 @@ class MainWindow(QMainWindow):
         b.addWidget(self.btn_wrap)
 
     def _build_statusbar_widgets(self):
-        self.mic_meter = LevelMeter("Us", self.s.ui.theme)
+        self.mic_meter = LevelMeter("You", self.s.ui.theme)
         self.caller_meter = LevelMeter("Caller", self.s.ui.theme)
         self.status_lbl = QLabel("Ready")
+        self.status_lbl.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Preferred)   # long paths never widen the window
 
     def _install_shortcuts(self):
         # in-app hotkeys (the spec's single keys), only when the window has focus and no text box does
@@ -302,12 +364,26 @@ class MainWindow(QMainWindow):
             sc = QShortcut(QKeySequence(key), self)
             sc.setContext(Qt.WindowShortcut)
             sc.activated.connect(slot)
+        self._enterfilter = _EnterPressesButton(self)
+        QApplication.instance().installEventFilter(self._enterfilter)
 
     def _apply_theme(self):
-        QApplication.instance().setStyleSheet(stylesheet(self.s.ui.theme, self.s.ui.font_pt))
-        prov = "Claude" if self.s.ai.provider == "anthropic" else "ChatGPT"
-        live = self.s.ai.anthropic_model if self.s.ai.provider == "anthropic" else self.s.ai.openai_model
-        self.latency_badge.setText(f"{prov} · {live.split('-2')[0]}")
+        """Apply the theme and font size everywhere, live: the app stylesheet, plus every widget that draws its
+        own colours (meters, badges, cards, transcript, intake, file, pins) so nothing keeps the old theme."""
+        theme, pt = self.s.ui.theme, self.s.ui.font_pt
+        QApplication.instance().setStyleSheet(stylesheet(theme, pt))
+        for name in ("mic_meter", "caller_meter", "rec_dot", "transcript", "intake", "file_pane", "pins_view"):
+            w = getattr(self, name, None)
+            if w is not None:
+                w.set_theme(theme)
+        for name in ("cards", "ring"):
+            w = getattr(self, name, None)
+            if w is not None:
+                w.set_theme(theme, pt)
+        self._update_model_badge()
+
+    def _update_model_badge(self):
+        self.latency_badge.setText(model_label(self.s.ai))
 
     def showEvent(self, e):
         super().showEvent(e)
@@ -320,6 +396,7 @@ class MainWindow(QMainWindow):
 
     # ================================================================ hubs / files
     def _load_hubs(self, select: str | None = None):
+        self._hub_cache = self._biz_cache = None
         select = select or self.s.active_hub
         self.hub_combo.blockSignals(True)
         self.hub_combo.clear()
@@ -332,13 +409,19 @@ class MainWindow(QMainWindow):
 
     def current_hub(self) -> Hub | None:
         hid = self.hub_combo.currentData()
-        return self.hubs.get(hid) if hid else None
+        if hid and self._hub_cache is not None and self._hub_cache.id == hid:
+            return self._hub_cache
+        self._hub_cache = self.hubs.get(hid) if hid else None
+        return self._hub_cache
 
     def current_business(self):
         hub = self.current_hub()
-        if hub and hub.business_id:
-            return self.businesses.get(hub.business_id)
-        return None
+        if not (hub and hub.business_id):
+            return None
+        if self._biz_cache is not None and self._biz_cache.id == hub.business_id:
+            return self._biz_cache
+        self._biz_cache = self.businesses.get(hub.business_id)
+        return self._biz_cache
 
     def _edit_business(self):
         from callpilot.ui.business_editor import BusinessEditor
@@ -354,11 +437,14 @@ class MainWindow(QMainWindow):
             dlg = HubEditor(h, provider_factory=lambda: make_provider(self.s.ai), parent=self)
             if dlg.exec():
                 self.hubs.save(dlg.hub)
+                self._hub_cache = self._biz_cache = None
                 return True
             return False
 
         dlg = BusinessEditor(b, self.businesses, self.hubs, self, open_hub_editor=open_hub)
-        if dlg.exec():
+        accepted = dlg.exec()
+        self._hub_cache = self._biz_cache = None   # even a cancelled editor may have changed the cached objects
+        if accepted:
             if link_hub is not None:
                 link_hub.business_id = b.id
                 self.hubs.save(link_hub)
@@ -377,13 +463,18 @@ class MainWindow(QMainWindow):
         # default call type for the hub
         default = "new_accident" if "courtesy" in hub.id else "handler"
         self.call_type.setCurrentIndex(max(0, self.call_type.findData(default)))
+        # the booking shortcut only makes sense for courtesy / hire-car hubs
+        key = f"{hub.id} {hub.business_id} {hub.name}".lower()
+        self.btn_book.setVisible("courtesy" in key or "hire" in key)
 
     def _edit_hub(self):
         hub = self.current_hub()
         if not hub:
             return
         dlg = HubEditor(hub, provider_factory=lambda: make_provider(self.s.ai), parent=self)
-        if dlg.exec():
+        accepted = dlg.exec()
+        self._hub_cache = self._biz_cache = None   # even a cancelled editor may have changed the cached hub
+        if accepted:
             self.hubs.save(dlg.hub)
             self.audit.record("hub_saved", hub=dlg.hub.id, version=dlg.hub.version)
             self._load_hubs(dlg.hub.id)
@@ -496,7 +587,16 @@ class MainWindow(QMainWindow):
             except Exception as e:  # noqa: BLE001
                 log.exception("start failed")
                 self.bridge.event.emit("start_failed", str(e))
+                return
+            # scan for the AI's output device here, once, so toggling AI mode never blocks the window
+            dev = self.s.voice_agent.output_device
+            try:
+                present = (not dev) or tts.find_output_device(dev) is not None
+            except Exception:  # noqa: BLE001
+                present = True   # cannot enumerate; speak() reports if it is missing
+            self._ai_dev_check = (dev, present)
 
+        self._ai_dev_check = ("", True)
         threading.Thread(target=run, daemon=True).start()
 
     def _show_script(self, text: str, label: str, more: str = ""):
@@ -533,14 +633,16 @@ class MainWindow(QMainWindow):
         self.call_started_at = None
         self.btn_call.setEnabled(True)
         self.btn_call.setObjectName("start")
-        self.btn_call.setText("●  Start call   (Ctrl+Shift+L)")
+        self.btn_call.setText(self.START_LABEL)
         self.btn_call.setStyle(self.btn_call.style())
         self.rec_dot.set_state(False, False)
         self.status_lbl.setText("Call ended")
         self.cards.show_cards([])
         self.overlay.show_cards([])
-        if self.s.ui.overlay_enabled and not self.btn_overlay.isChecked():
-            self.overlay.hide()
+        self.overlay.set_status("CallPilot")
+        if self._overlay_auto:   # shown automatically for this call: hide it again; a manual choice is kept
+            self._overlay_auto = False
+            self.btn_overlay.setChecked(False)
         if not (ctl and ctl.session and ctl.session.segments):
             return
         sess = ctl.session
@@ -563,16 +665,23 @@ class MainWindow(QMainWindow):
             self._wrapping_up = False
         self._saved_sessions.add(id(sess))
         self._learn_in_background(rec, hub, sess)
-        try:
-            rec = self._encrypt_recording(rec)
-            f = self.store.save(rec)
-            self.last_record = rec
-            self._auto_export_in_background(rec)
-            self.audit.record("call_saved", file=f.name if f else None, segments=len(sess.segments), hub=hub.id,
-                              case_file=self.case_file.id if self.case_file else "", wrote_file=saved_to_file,
-                              cards=len(rec.get("ai_cards", [])), pins=len(rec.get("pins", [])))
-        except Exception as e:  # noqa: BLE001
-            self.bridge.event.emit("error", f"Could not save call: {e}")
+        # encrypting the recording and writing the session can take seconds: do it off the GUI thread
+        self.last_record = rec   # Transcript / Save call work straight away
+        self.status_lbl.setText("Saving the call…")
+        work = dict(rec)   # own copy: _encrypt_recording mutates it, and the learner is reading rec
+        segs, hub_id, cf_id = len(sess.segments), hub.id, (case_file.id if case_file else "")
+
+        def run():
+            try:
+                rec2 = self._encrypt_recording(work)
+                f = self.store.save(rec2)
+                self.bridge.event.emit("saved", {"rec": rec2, "file": f.name if f else None, "segments": segs,
+                                                 "hub": hub_id, "case_file": cf_id, "wrote_file": saved_to_file})
+            except Exception as e:  # noqa: BLE001
+                self.bridge.event.emit("error", f"Could not save call: {e}")
+
+        self._save_thread = threading.Thread(target=run, daemon=True, name="callpilot-save")
+        self._save_thread.start()
 
     # ================================================================ AI mode / rehearsal / exports
     def _auto_export_in_background(self, rec: dict):
@@ -599,22 +708,19 @@ class MainWindow(QMainWindow):
         if on and not self.controller.rehearse:
             dev = self.s.voice_agent.output_device
             if not dev:
-                QMessageBox.information(self, "AI mode",
-                                        "AI mode speaks into the call through a virtual audio cable.\n\n"
-                                        "1. Install VB-Audio Virtual Cable (free).\n"
-                                        "2. Settings → AI mode → output device = 'CABLE Input'.\n"
-                                        "3. In WhatsApp/Teams set the microphone to 'CABLE Output'.\n\n"
-                                        "Until then you can rehearse: ⚙ → Rehearse with the AI.")
+                self._ai_mode_blocked("AI mode needs a virtual audio cable before it can talk to the caller. "
+                                      "In Settings → AI mode, set Speaks into to CABLE Input, and pick CABLE Output "
+                                      "as the microphone in WhatsApp or Teams. Until then you can rehearse: "
+                                      "⚙ → Rehearse with the AI.")
                 on = False
             else:
-                try:
-                    present = tts.find_output_device(dev) is not None
-                except Exception:  # noqa: BLE001
-                    present = True   # cannot enumerate here; speak() will report if it is missing
+                # scanned off the GUI thread when the call started (see _start_call)
+                scanned, present = getattr(self, "_ai_dev_check", ("", True))
+                if scanned != dev:
+                    present = True   # device changed since the scan; speak() will report if it is absent
                 if not present:
-                    QMessageBox.warning(self, "AI mode", f"The output device '{dev}' is not connected, so the AI "
-                                        "would speak into the room instead of the call.\n\nPlug in / enable the "
-                                        "virtual cable or choose another device in Settings → AI mode.")
+                    self._ai_mode_blocked(f"'{dev}' isn't connected, so AI mode would talk into the room instead of "
+                                          "the call. Plug it in or choose another device in Settings → AI mode.")
                     on = False
         self.ai_mode = on
         try:
@@ -624,6 +730,14 @@ class MainWindow(QMainWindow):
             self.ai_mode = False
             self.bridge.event.emit("error", f"AI mode could not start: {e}")
         self.audit.record("ai_mode", on=self.ai_mode)
+
+    def _ai_mode_blocked(self, text: str):
+        """AI mode could not switch on. No modal: the call must keep flowing (SimpleWindow shows a banner)."""
+        self.status_lbl.setText("⚠ " + text.split(". ")[0] + ".")
+        box = QMessageBox(QMessageBox.Warning, "AI mode", text, QMessageBox.Ok, self)
+        box.setWindowModality(Qt.NonModal)
+        box.setAttribute(Qt.WA_DeleteOnClose)
+        box.show()
 
     def _rehearse(self):
         if self.controller is not None:
@@ -658,14 +772,25 @@ class MainWindow(QMainWindow):
                                            "Text (*.txt);;Word (*.docx)")
         if not f:
             return
-        if f.lower().endswith(".docx"):
-            from callpilot.core.export import transcript_docx
+        if hasattr(self, "btn_transcript"):
+            self.btn_transcript.setEnabled(False)
+        self.status_lbl.setText("Saving transcript…")
+        emit, audit = self.bridge.event.emit, self.audit
 
-            transcript_docx(rec, Path(f))
-        else:
-            Path(f).write_text(export_text(rec), encoding="utf-8")
-        self.status_lbl.setText(f"Transcript saved: {f}")
-        self.audit.record("transcript_downloaded", path=f)
+        def run():   # building a Word file mid-call must not stall the window
+            try:
+                if f.lower().endswith(".docx"):
+                    from callpilot.core.export import transcript_docx
+
+                    transcript_docx(rec, Path(f))
+                else:
+                    Path(f).write_text(export_text(rec), encoding="utf-8")
+                audit.record("transcript_downloaded", path=f)
+                emit("transcript_saved", {"path": f})
+            except Exception as e:  # noqa: BLE001
+                emit("transcript_saved", {"path": f, "error": str(e)})
+
+        threading.Thread(target=run, daemon=True, name="callpilot-export").start()
 
     def _save_call_to_computer(self):
         rec = self.last_record
@@ -673,14 +798,20 @@ class MainWindow(QMainWindow):
             QMessageBox.information(self, "Save call", "End the call first, then save it.")
             return
         d = QFileDialog.getExistingDirectory(self, "Save call to…", str(default_export_dir()))
-        if d:
-            if self.s.privacy.redact_saved_pii:
-                rec = redact_record(rec)
-            folder = export_call(rec, Path(d), vault=self.store.vault)
-            self.status_lbl.setText(f"Call saved to {folder}")
-            from callpilot.ui.calls_dialog import open_folder
+        if not d:
+            return
+        self.status_lbl.setText("Saving call…")
+        redact, vault, emit = self.s.privacy.redact_saved_pii, self.store.vault, self.bridge.event.emit
 
-            open_folder(folder)
+        def run():   # decrypting and copying the recording can take seconds
+            try:
+                r = redact_record(rec) if redact else rec
+                folder = export_call(r, Path(d), vault=vault)
+                emit("call_exported", {"folder": str(folder)})
+            except Exception as e:  # noqa: BLE001
+                emit("call_exported", {"error": str(e)})
+
+        threading.Thread(target=run, daemon=True, name="callpilot-export").start()
 
     def _learn_in_background(self, rec: dict, hub, sess):
         """Self-training: remember what worked on this call for the next one."""
@@ -729,7 +860,8 @@ class MainWindow(QMainWindow):
             if self.controller is None and self._prep_session is None:
                 return  # a straggler from a call that has ended
             cards = payload if self.chk_auto.isChecked() else [c for c in payload if c.type == WATCH]
-            self.cards.show_cards(cards)
+            if not self.cards_scroll.isHidden():
+                self.cards.show_cards(cards)
             self.overlay.show_cards(cards)
             self._maybe_whisper(cards)
         elif kind == "pin":
@@ -754,13 +886,15 @@ class MainWindow(QMainWindow):
             self._update_rec_dot()
         elif kind == "sentiment":
             face = "🙂" if payload > 0.25 else ("😟" if payload < -0.25 else "😐")
-            self.sentiment.setText(f"mood {face}")
+            word = "calm" if payload > 0.25 else ("upset" if payload < -0.25 else "neutral")
+            self.sentiment.setText(f"Mood: {word} {face}")
+            self.sentiment.setToolTip("Caller's tone over the last few lines")
             self.sentiment.setVisible(True)
         elif kind == "language":
             self.lang_badge.setText(f"Caller: {language_name(payload)}")
             self.lang_badge.setVisible(True)
         elif kind == "latency":
-            self.overlay.set_status(f"CallPilot · {payload['first_token_ms'] / 1000:.2f}s")
+            self.overlay.set_status("CallPilot · live")
             self.status_lbl.setText(f"Live · first words in {payload['first_token_ms'] / 1000:.2f}s")
         elif kind == "status":
             self.status_lbl.setText(str(payload))
@@ -773,20 +907,21 @@ class MainWindow(QMainWindow):
                 self.controller.set_muted("agent", self.btn_mute.isChecked())
             self.btn_call.setEnabled(True)
             self.btn_call.setObjectName("danger")
-            self.btn_call.setText("■  End call")
+            self.btn_call.setText(self.END_LABEL)
             self.btn_call.setStyle(self.btn_call.style())
             self._set_call_buttons(True)
             self._update_rec_dot()
             if not self.status_lbl.text().startswith("Capturing"):
                 self.status_lbl.setText("Live")
-            if self.s.ui.overlay_enabled:
-                self.overlay.show()
+            if self.s.ui.overlay_enabled and not self.btn_overlay.isChecked():
+                self.btn_overlay.setChecked(True)   # shows it via _toggle_overlay
+                self._overlay_auto = True           # set AFTER setChecked so the toggle slot does not clear it
             self.audit.record("call_started", hub=self.controller.hub.id if self.controller else "",
                               call_type=self.call_type.currentData(), case_file=self.case_file.id if self.case_file else "")
         elif kind == "start_failed":
             self.controller = None
             self.btn_call.setEnabled(True)
-            self.btn_call.setText("●  Start call   (Ctrl+Shift+L)")
+            self.btn_call.setText(self.START_LABEL)
             self.status_lbl.setText("Could not start")
             QMessageBox.warning(self, "Could not start the call", str(payload))
         elif kind == "call_ended":
@@ -796,11 +931,37 @@ class MainWindow(QMainWindow):
         elif kind == "ai_mode":
             pass  # the simple view renders this
         elif kind == "handoff":
-            self.status_lbl.setText("⚠ The AI asked you to take over – press Take over")
+            self.status_lbl.setText("⚠ The AI asked for a colleague – press Take over")
             if self.tray:
                 self.tray.showMessage("CallPilot", "The AI employee needs you on the call.", QSystemTrayIcon.Warning, 5000)
+        elif kind == "saved":
+            rec = payload["rec"]
+            self.last_record = rec
+            self._auto_export_in_background(rec)
+            self.audit.record("call_saved", file=payload["file"], segments=payload["segments"], hub=payload["hub"],
+                              case_file=payload["case_file"], wrote_file=payload["wrote_file"],
+                              cards=len(rec.get("ai_cards", [])), pins=len(rec.get("pins", [])))
+            if self.controller is None:
+                self.status_lbl.setText("Call saved")
+        elif kind == "transcript_saved":
+            if hasattr(self, "btn_transcript"):
+                self.btn_transcript.setEnabled(True)
+            err = payload.get("error")
+            msg = f"⚠ Could not save the transcript: {err}" if err else f"Transcript saved: {payload['path']}"
+            self.status_lbl.setText(msg)
+            self.status_lbl.setToolTip(msg)
+        elif kind == "call_exported":
+            err = payload.get("error")
+            msg = f"⚠ Could not save the call: {err}" if err else f"Call saved to {payload['folder']}"
+            self.status_lbl.setText(msg)
+            self.status_lbl.setToolTip(msg)
+            if not err:   # only for 'Save call to computer…', never after the automatic export
+                from callpilot.ui.calls_dialog import open_folder
+
+                open_folder(Path(payload["folder"]))
         elif kind == "exported":
             self.status_lbl.setText(f"Call saved to {payload}")
+            self.status_lbl.setToolTip(f"Call saved to {payload}")
         elif kind == "learned":
             n = int(payload.get("added", 0)) + int(payload.get("deterministic", 0))
             self.status_lbl.setText(f"Learned {n} new thing{'s' if n != 1 else ''} from that call"
@@ -821,9 +982,13 @@ class MainWindow(QMainWindow):
         done, total = self.intake.progress()
         self.ring.set_progress(done, total)
         miss = self.intake.missing()
-        labels = {f.key: f.label for f in (self.current_hub().capture_fields if self.current_hub() else [])}
-        self.missing_lbl.setText(("Still missing: " + ", ".join(labels.get(k, k) for k in miss[:5])
-                                  + (" …" if len(miss) > 5 else "")) if miss else "All required fields heard – tick to confirm.")
+        hub = self.current_hub()
+        labels = {f.key: f.label for f in (hub.capture_fields if hub else [])}
+        n = len(miss)
+        self.missing_lbl.setText((f"{n} required field{'s' if n != 1 else ''} still to fill – "
+                                  + ", ".join(labels.get(k, k) for k in miss[:3])
+                                  + (f" and {n - 3} more" if n > 3 else ""))
+                                 if miss else "All required fields heard – tick each one to confirm.")
 
     def _on_tick(self):
         ctl = self.controller
@@ -847,11 +1012,12 @@ class MainWindow(QMainWindow):
     def _card_action(self, card_obj, action: str):
         sess = self._session()
         if not sess:
-            return
+            return None
         typ = card_obj.type if card_obj is not None else None
         c = sess.mark_card(typ, action)
         if c:
             self.audit.record("card_" + action, card=c.id, type=c.type)
+        return c
 
     def _regenerate(self):
         if self._session():
@@ -901,6 +1067,7 @@ class MainWindow(QMainWindow):
     def _ask(self, text: str):
         sess = self._session()
         if sess:
+            self.status_lbl.setText("Asking the AI…")
             sess.ask(text)
             return
         hub = self.current_hub()
@@ -916,8 +1083,9 @@ class MainWindow(QMainWindow):
         if self._prep_session is None or self._prep_session.hub.id != hub.id:
             if self._prep_session is not None:
                 self._prep_session.end(summarize=False)
-                self._prep_session = CallSession(self.s, hub, prov, self.bridge.event.emit, case_file=self.case_file,
+            self._prep_session = CallSession(self.s, hub, prov, self.bridge.event.emit, case_file=self.case_file,
                                              call_type=self.call_type.currentData() or "", memory=self.memory)
+        self.status_lbl.setText("Asking the AI…")
         self._prep_session.ask(text)
 
     def _maybe_whisper(self, cards: list[Card]):
@@ -942,14 +1110,17 @@ class MainWindow(QMainWindow):
 
     def _toggle_mute(self, muted: bool):
         self.btn_mute.setText("🔇" if muted else "🎙")
+        self.btn_mute.setToolTip("Unmute my microphone" if muted else "Mute my microphone")
+        self.btn_mute.setAccessibleName("Microphone muted – unmute" if muted else "Mute microphone")
         if self.controller:
             self.controller.set_muted("agent", muted)
 
     def _toggle_translation_view(self, on: bool):
         self.transcript.show_translation = on
-        self.transcript._dirty = True
+        self.transcript.rebuild()
 
     def _toggle_overlay(self, on: bool):
+        self._overlay_auto = False   # any toggle (button, ✕, hotkey, gear, tray) makes the state manual
         self.overlay.setVisible(on)
 
     def _open_settings(self, tab: int = 0):
@@ -1000,7 +1171,7 @@ class MainWindow(QMainWindow):
         self.tray = QSystemTrayIcon(icon, self)
         menu = QMenu()
         for label, slot in (("Show CallPilot", self.showNormal), ("Start / end call", self._toggle_call),
-                            ("Toggle overlay", lambda: self.btn_overlay.toggle()),
+                            ("Toggle overlay", lambda: self.btn_overlay.setChecked(not self.overlay.isVisible())),
                             ("Quit", QApplication.instance().quit)):
             a = QAction(label, self)
             a.triggered.connect(slot)
@@ -1021,18 +1192,25 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, e):
         ctl = self.controller
-        if ctl is not None:
-            if ctl.running:
-                if QMessageBox.question(self, "Quit", "A call is in progress. End it and quit?") != QMessageBox.Yes:
-                    e.ignore()
-                    return
-                ctl.stop(summarize=False)
-            if ctl.session and ctl.session.segments and id(ctl.session) not in self._saved_sessions:
-                self._saved_sessions.add(id(ctl.session))
-                try:
-                    self.store.save(self._encrypt_recording(ctl.session.to_record()))
-                except Exception:  # noqa: BLE001
-                    log.exception("saving call on close")
+        if ctl is not None and ctl.running:
+            if QMessageBox.question(self, "Quit", "A call is in progress. End it and quit?") != QMessageBox.Yes:
+                e.ignore()
+                return
+            ctl.stop(summarize=False)
+        unsaved = bool(ctl is not None and ctl.session and ctl.session.segments
+                       and id(ctl.session) not in self._saved_sessions)
+        t = self._save_thread
+        if (t is not None and t.is_alive()) or unsaved:
+            self.status_lbl.setText("Saving the call…")
+            QApplication.processEvents()
+        if t is not None and t.is_alive():
+            t.join()   # never quit with a half-written session or a half-zeroed recording
+        if unsaved:
+            self._saved_sessions.add(id(ctl.session))
+            try:
+                self.store.save(self._encrypt_recording(ctl.session.to_record()))
+            except Exception:  # noqa: BLE001
+                log.exception("saving call on close")
         self.s.ui.window_geometry = bytes(self.saveGeometry().toBase64()).decode()
         self.s.ui.overlay_geometry = bytes(self.overlay.saveGeometry().toBase64()).decode()
         self.s.ui.auto_answer = self.chk_auto.isChecked()

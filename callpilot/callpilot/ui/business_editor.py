@@ -9,10 +9,18 @@ from PySide6.QtWidgets import (QDialog, QDialogButtonBox, QFormLayout, QHBoxLayo
 
 from callpilot.core.business import Business, BusinessStore, Script
 from callpilot.hubs.model import Hub, HubStore
+from callpilot.ui.widgets import fit_to_screen
 
 
 def _lines(text: str) -> list[str]:
     return [ln.strip(" -•\t") for ln in text.splitlines() if ln.strip(" -•\t")]
+
+
+def _hint(text: str) -> QLabel:
+    lbl = QLabel(text)
+    lbl.setWordWrap(True)
+    lbl.setObjectName("hint")
+    return lbl
 
 
 class BusinessEditor(QDialog):
@@ -20,13 +28,13 @@ class BusinessEditor(QDialog):
                  open_hub_editor=None):
         super().__init__(parent)
         self.setWindowTitle(f"Business profile – {business.name}")
-        self.resize(900, 680)
+        fit_to_screen(self, 900, 680)
         self.b = business
         self.bstore = bstore
         self.hstore = hstore
         self.open_hub_editor = open_hub_editor
         root = QVBoxLayout(self)
-        intro = QLabel("Business profile → Call hubs → Calls.  Everything here applies to every hub and every call "
+        intro = QLabel("Business profile › Call hubs › Calls.  Everything here applies to every hub and every call "
                        "this business takes. Hub-specific answers and intake live in each hub.")
         intro.setWordWrap(True)
         intro.setObjectName("hint")
@@ -38,7 +46,9 @@ class BusinessEditor(QDialog):
         f = QFormLayout(g)
         self.name = QLineEdit(business.name)
         self.tagline = QLineEdit(business.tagline)
+        self.tagline.setCursorPosition(0)
         self.website = QLineEdit(business.website)
+        self.website.setCursorPosition(0)
         self.status = QPlainTextEdit(business.status_line)
         self.status.setMaximumHeight(70)
         self.status.setPlaceholderText("e.g. 'Fixmyfile provides paralegal and dispute services. Not a firm of solicitors.'")
@@ -54,7 +64,7 @@ class BusinessEditor(QDialog):
 
         r = QWidget()
         rf = QFormLayout(r)
-        rf.addRow(QLabel("One per line. These apply to every hub of this business."))
+        rf.addRow(_hint("One per line. These apply to every hub of this business."))
         self.rules = QPlainTextEdit("\n".join(business.rules))
         self.banned = QPlainTextEdit("\n".join(business.banned_phrases))
         rf.addRow("Rules the AI must follow", self.rules)
@@ -63,12 +73,14 @@ class BusinessEditor(QDialog):
 
         sw = QWidget()
         sl = QVBoxLayout(sw)
-        sl.addWidget(QLabel("Scripts you read out on calls. They appear in the Scripts panel during a call and the "
-                            "AI employee uses them in AI mode. 'When' can be opening, consent, terms, closing or blank."))
+        sl.addWidget(_hint("Scripts you read out on calls. They appear in the Scripts panel during a call and the "
+                           "AI employee uses them in AI mode. 'When' can be opening, consent, terms, closing or blank."))
         self.scripts = QTableWidget(0, 3)
         self.scripts.setHorizontalHeaderLabels(["Title", "When", "Text"])
         self.scripts.horizontalHeader().setSectionResizeMode(2, QHeaderView.Stretch)
         self.scripts.setWordWrap(True)
+        self.scripts.verticalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.scripts.verticalHeader().setVisible(False)
         for s in business.scripts:
             self._add_script(s)
         sl.addWidget(self.scripts, 1)
@@ -85,8 +97,8 @@ class BusinessEditor(QDialog):
 
         hw = QWidget()
         hl = QVBoxLayout(hw)
-        hl.addWidget(QLabel("Call hubs under this business – each one is a call type with its own answers, "
-                            "knowledge, intake fields and scripts."))
+        hl.addWidget(_hint("Call hubs under this business – each one is a call type with its own answers, "
+                           "knowledge, intake fields and scripts."))
         self.hubs = QListWidget()
         hl.addWidget(self.hubs, 1)
         row = QHBoxLayout()
@@ -112,7 +124,6 @@ class BusinessEditor(QDialog):
         self.scripts.setItem(r, 0, QTableWidgetItem(s.title))
         self.scripts.setItem(r, 1, QTableWidgetItem(s.when))
         self.scripts.setItem(r, 2, QTableWidgetItem(s.text))
-        self.scripts.setRowHeight(r, 70)
 
     def _refresh_hubs(self):
         self.hubs.clear()

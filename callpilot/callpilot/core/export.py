@@ -9,7 +9,7 @@ import re
 import shutil
 from pathlib import Path
 
-from callpilot.core.sessions import export_srt, export_text, redact_record
+from callpilot.core.sessions import export_srt, export_text, field_label, redact_record
 
 
 def default_export_dir() -> Path:
@@ -71,8 +71,9 @@ def transcript_docx(rec: dict, path: Path) -> Path:
     fields = {k: v for k, v in (rec.get("fields") or {}).items() if v}
     if fields:
         d.add_heading("Details captured", level=2)
+        labels = rec.get("field_labels") or {}
         for k, v in fields.items():
-            d.add_paragraph(f"{k.replace('_', ' ')}: {v}", style="List Bullet")
+            d.add_paragraph(f"{field_label(k, labels)}: {v}", style="List Bullet")
     d.save(str(path))
     return path
 

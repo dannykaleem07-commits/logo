@@ -202,6 +202,27 @@ def apply_preset(ai: "AISettings", key: str) -> None:
         ai.openai_model, ai.openai_wrapup_model = p["live"], p["wrap"]
 
 
+def _live_model(ai: "AISettings") -> str:
+    return ai.anthropic_model if ai.provider == "anthropic" else ai.openai_model
+
+
+def preset_for(ai: "AISettings") -> str | None:
+    """Key of the preset whose live model is the one actually configured, else None (custom model)."""
+    live = _live_model(ai)
+    for key, p in MODEL_PRESETS.items():
+        if p["provider"] == ai.provider and p["live"] == live:
+            return key
+    return None
+
+
+def model_label(ai: "AISettings") -> str:
+    """Human name of the live model, e.g. 'Claude Haiku 4.5'; the raw model id for a custom model."""
+    key = preset_for(ai)
+    if key:
+        return MODEL_PRESETS[key]["label"].split(" – ", 1)[-1].split(" (", 1)[0]
+    return _live_model(ai)
+
+
 _lock = threading.Lock()
 
 

@@ -6,11 +6,24 @@ import threading
 
 from PySide6.QtCore import Qt, QTimer, Signal
 from PySide6.QtWidgets import (QCheckBox, QComboBox, QHBoxLayout, QLabel, QLineEdit, QListWidget,
-                               QListWidgetItem, QPushButton, QVBoxLayout, QWizard, QWizardPage)
+                               QListWidgetItem, QPushButton, QVBoxLayout, QWidget, QWizard, QWizardPage)
 
 from callpilot.core import config, secrets
 from callpilot.core.config import MODEL_PRESETS, Settings, apply_preset
-from callpilot.ui.widgets import LevelMeter
+from callpilot.ui.widgets import LevelMeter, fit_to_screen
+
+
+def _heading(page: QWizardPage, lay: QVBoxLayout, title: str, hint: str) -> None:
+    """Step title and a one-line explanation at the top of the page, on the same 16 px edge as the fields."""
+    t = QLabel(title)
+    t.setObjectName("title")
+    h = QLabel(hint)
+    h.setObjectName("hint")
+    h.setWordWrap(True)
+    lay.addWidget(t)
+    lay.addWidget(h)
+    lay.addSpacing(8)
+    page.setAccessibleName(title)
 
 
 def _key_row(name: str, placeholder: str) -> tuple[QHBoxLayout, QLineEdit]:
@@ -21,7 +34,10 @@ def _key_row(name: str, placeholder: str) -> tuple[QHBoxLayout, QLineEdit]:
     eye = QPushButton("👁")
     eye.setFixedWidth(40)
     eye.setCheckable(True)
+    eye.setToolTip("Show key")
+    eye.setAccessibleName("Show or hide key")
     eye.toggled.connect(lambda on: edit.setEchoMode(QLineEdit.Normal if on else QLineEdit.Password))
+    eye.toggled.connect(lambda on: eye.setToolTip("Hide key" if on else "Show key"))
     row.addWidget(edit, 1)
     row.addWidget(eye)
     return row, edit
@@ -33,20 +49,27 @@ class AIPage(QWizardPage):
     def __init__(self, s: Settings):
         super().__init__()
         self.s = s
-        self.setTitle("1 · Which AI?")
-        self.setSubTitle("Pick the brain and paste its key. You can change this any time from the AI dropdown.")
         lay = QVBoxLayout(self)
+        _heading(self, lay, "1 · Which AI?",
+                 "Choose which AI writes your answers, then paste its key. You can change this later.")
         self.preset = QComboBox()
         for key, p in MODEL_PRESETS.items():
             self.preset.addItem(p["label"], key)
         self.preset.setCurrentIndex(max(0, self.preset.findData(s.ai.preset)))
         lay.addWidget(self.preset)
-        lay.addWidget(QLabel("Anthropic key (Claude) – console.anthropic.com"))
+        self._lbl_text = {"anthropic": "Anthropic key (Claude) – console.anthropic.com",
+                          "openai": "OpenAI key (ChatGPT, also used for voice) – platform.openai.com"}
+        self.lbl_anthropic = QLabel(self._lbl_text["anthropic"])
+        lay.addWidget(self.lbl_anthropic)
         r1, self.k_anthropic = _key_row("anthropic_api_key", "sk-ant-…")
         lay.addLayout(r1)
-        lay.addWidget(QLabel("OpenAI key (ChatGPT, also used for voice) – platform.openai.com"))
+        self.lbl_openai = QLabel(self._lbl_text["openai"])
+        lay.addWidget(self.lbl_openai)
         r2, self.k_openai = _key_row("openai_api_key", "sk-…")
         lay.addLayout(r2)
+        for lbl, edit in ((self.lbl_anthropic, self.k_anthropic), (self.lbl_openai, self.k_openai)):
+            lbl.setWordWrap(True)
+            lbl.setBuddy(edit)
         row = QHBoxLayout()
         self.btn_test = QPushButton("Test connection")
         self.result = QLabel("")
@@ -59,6 +82,13 @@ class AIPage(QWizardPage):
         hint = QLabel("Keys are stored in Windows Credential Manager, never in a file.")
         hint.setObjectName("hint")
         lay.addWidget(hint)
+        self.preset.currentIndexChanged.connect(self._mark_needed)
+        self._mark_needed()
+
+    def _mark_needed(self, *_):
+        prov = MODEL_PRESETS.get(self.preset.currentData(), {}).get("provider")
+        for key, lbl in (("anthropic", self.lbl_anthropic), ("openai", self.lbl_openai)):
+            lbl.setText(self._lbl_text[key] + (" · needed for this choice" if key == prov else ""))
 
     def _save(self):
         secrets.set("anthropic_api_key", self.k_anthropic.text())
@@ -94,10 +124,10 @@ class SpeechPage(QWizardPage):
     def __init__(self, s: Settings):
         super().__init__()
         self.s = s
-        self.setTitle("2 · Speech to text")
-        self.setSubTitle("Deepgram is the fastest (about a third of a second). OpenAI works with the key you already "
-                         "entered. Offline keeps audio on this PC but is slower.")
         lay = QVBoxLayout(self)
+        _heading(self, lay, "2 · Speech to text",
+                 "Deepgram is the fastest (about a third of a second). OpenAI works with the key you already "
+                         "entered. Offline keeps audio on this PC but is slower.")
         self.engine = QComboBox()
         for label, key in (("Deepgram streaming – fastest (recommended)", "deepgram"),
                            ("OpenAI transcription – uses your OpenAI key", "openai"),
@@ -132,9 +162,9 @@ class AudioPage(QWizardPage):
     def __init__(self, s: Settings):
         super().__init__()
         self.s = s
-        self.setTitle("3 · What to listen to")
-        self.setSubTitle("Tick the app your calls come through. Speak now to check your microphone.")
         lay = QVBoxLayout(self)
+        _heading(self, lay, "3 · What to listen to",
+                 "Tick the app your calls come through. Speak now to check your microphone.")
         self.apps = QListWidget()
         self.apps.setMinimumHeight(170)
         lay.addWidget(self.apps)
@@ -254,9 +284,9 @@ class FinishPage(QWizardPage):
     def __init__(self, s: Settings):
         super().__init__()
         self.s = s
-        self.setTitle("4 · You")
-        self.setSubTitle("Used in the opening line and the email drafts.")
         lay = QVBoxLayout(self)
+        _heading(self, lay, "4 · You",
+                 "Used in the opening line and the email drafts.")
         lay.addWidget(QLabel("Your name"))
         self.name = QLineEdit(s.agent_name)
         lay.addWidget(self.name)
@@ -266,7 +296,7 @@ class FinishPage(QWizardPage):
         self.learn = QCheckBox("Learn from every call (answers that worked, facts, your style)")
         self.learn.setChecked(s.ai.learn_after_calls)
         lay.addWidget(self.learn)
-        done = QLabel("That's it. Press ● Start call when the next call comes in, and say the recording notice.")
+        done = QLabel("That's it. When the next call comes in, press ● Start call and say the recording notice.")
         done.setWordWrap(True)
         lay.addWidget(done)
 
@@ -283,11 +313,20 @@ class SetupWizard(QWizard):
         self.s = s
         self.setWindowTitle("CallPilot setup")
         self.setWizardStyle(QWizard.ClassicStyle)
-        self.resize(720, 560)
+        fit_to_screen(self, 720, 560)
         self.addPage(AIPage(s))
         self.addPage(SpeechPage(s))
         self.addPage(AudioPage(s))
         self.addPage(FinishPage(s))
+
+    def showEvent(self, e):
+        super().showEvent(e)
+        # Qt's classic wizard draws a 2 px ruler above Back / Next in a fixed bright colour that ignores the theme
+        # (a white bar in the dark theme). The buttons sit at the bottom edge anyway, so the ruler goes.
+        for c in self.findChildren(QWidget):
+            if (c.metaObject().className() == "QWidget" and c.height() <= 2 and c.width() > 100
+                    and not c.findChildren(QWidget)):
+                c.hide()
 
     def accept(self):
         self.s.first_run = False

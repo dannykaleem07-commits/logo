@@ -87,6 +87,13 @@ def secure_delete(f: Path) -> None:
     f.unlink(missing_ok=True)
 
 
+def field_label(key: str, labels: dict | None = None) -> str:
+    """The hub's label for an intake field ('Caller full name'), or the key in plain words ('Caller name')."""
+    if labels and labels.get(key):
+        return labels[key]
+    return key.replace("_", " ").strip().capitalize()
+
+
 def export_text(rec: dict) -> str:
     out = [f"CallPilot transcript – {rec.get('hub_name', '')}",
            f"Started: {dt.datetime.fromtimestamp(rec.get('started_at', 0)):%d/%m/%Y %H:%M:%S}", ""]
@@ -97,7 +104,8 @@ def export_text(rec: dict) -> str:
         if s.get("translation"):
             out.append(f"           ↳ {s['translation']}")
     if rec.get("fields"):
-        out += ["", "Captured details:"] + [f"  {k}: {v}" for k, v in rec["fields"].items() if v]
+        labels = rec.get("field_labels") or {}
+        out += ["", "Captured details:"] + [f"  {field_label(k, labels)}: {v}" for k, v in rec["fields"].items() if v]
     summ = rec.get("summary") or {}
     if summ:
         out += ["", "Summary:", f"  {summ.get('summary', '')}"]
