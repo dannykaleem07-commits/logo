@@ -15,7 +15,7 @@ import { DateText } from '../../../components/DateText';
 import { VehiclePicker, MANUAL_MODE_NOTICE, type VehiclePickerValue } from '../../vehicles/VehiclePicker';
 import { OnFileMatches } from '../../vehicles/OnFileMatches';
 import { CopyDetailsPanel } from '../../vehicles/CopyDetailsPanel';
-import { applyOnFile, describeVehicle, FUEL_LABEL } from '../../vehicles/vehiclePicker';
+import { applyOnFile, describeVehicle, FUEL_LABEL } from '../../vehicles/vehiclePickerModel';
 import { LOOKUP_PROVIDER_LABEL } from '../../claim/lib/vehicle';
 
 /**

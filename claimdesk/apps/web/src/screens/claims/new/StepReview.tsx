@@ -4,7 +4,7 @@ import type { StepProps } from './NewClaimPage';
 import type { PartyRef } from '../../../api/client';
 import { anyServiceAgreed, buildCreateClaimBody, buildFnolOffer, vehicleSource, type Step } from './fnol';
 import { useCatalogueFeatures, useCatalogueModel, segmentLabel } from '../../../api/vehiclesApi';
-import { describeVehicle, featureLabels, SOURCE_LABEL } from '../../vehicles/vehiclePicker';
+import { describeVehicle, featureLabels, SOURCE_LABEL } from '../../vehicles/vehiclePickerModel';
 import { Checkbox, TextArea } from '../../../components/Form';
 import { KeyValue } from '../../../components/KeyValue';
 import { Button } from '../../../components/Button';

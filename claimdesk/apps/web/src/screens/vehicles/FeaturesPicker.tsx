@@ -3,7 +3,7 @@ import type { FeatureVocabulary } from '../../api/vehiclesApi';
 import { Badge } from '../../components/Badge';
 import { Checkbox, TextInput } from '../../components/Form';
 import { Tabs } from '../../components/Tabs';
-import { filterVocabulary, toggleId, type FeatureTab } from './vehiclePicker';
+import { filterVocabulary, toggleId, type FeatureTab } from './vehiclePickerModel';
 
 /**
  * Features and extras (§D.3): "Standard on this vehicle" and "Added extras" tabs, category groups of tick boxes and a

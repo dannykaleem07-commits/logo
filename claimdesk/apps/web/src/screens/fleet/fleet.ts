@@ -14,7 +14,7 @@ import type { FleetUnitRow, FleetUnitWriteBody } from '../../api/client';
 import type { VehiclePatchBody } from '../../api/vehiclesApi';
 import type { Tone } from '../../lib/status';
 import { daysBetween } from '../../lib/dates';
-import { emptyPickerValue, patchHasChanges, pickerFromVehicle, toVehicleInput, validatePicker, vehiclePatchFrom, type PickerErrors, type VehiclePickerValue } from '../vehicles/vehiclePicker';
+import { emptyPickerValue, patchHasChanges, pickerFromVehicle, toVehicleInput, validatePicker, vehiclePatchFrom, type PickerErrors, type VehiclePickerValue } from '../vehicles/vehiclePickerModel';
 import { emptyGtaPanel, gtaPanelFromUnit, gtaSuggestionInput, validateGtaPanel, type GtaPanelState } from './gtaPanel';
 
 // ---------------------------------------------------------------------------

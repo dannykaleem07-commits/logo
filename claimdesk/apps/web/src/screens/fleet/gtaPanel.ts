@@ -10,7 +10,7 @@ import type { GtaRate, GtaSuggestion, GtaSuggestionBasis, ISODate, Pence } from 
 import { gtaRate } from '@ccguk/domain';
 import type { FleetGtaSuggestionInput } from '../../api/client';
 import type { GtaSuggestQuery } from '../../api/vehiclesApi';
-import type { VehiclePickerValue } from '../vehicles/vehiclePicker';
+import type { VehiclePickerValue } from '../vehicles/vehiclePickerModel';
 
 /** The caveat under the panel (§F.1, exact wording). */
 export const GTA_PANEL_CAVEAT = 'GTA rates are an industry benchmark only. Courtesy Cars Group UK Ltd is not a GTA subscriber. Set your own daily rate if it differs.';

@@ -1,7 +1,7 @@
 import type { ExternalVehicleLink } from '@ccguk/domain';
 import { PastedDetailsPanel } from './PastedDetailsPanel';
 import { TotalCarCheckPanel, tccUrlFor } from './TotalCarCheckPanel';
-import { applyParsed, type VehiclePickerValue } from './vehiclePicker';
+import { applyParsed, type VehiclePickerValue } from './vehiclePickerModel';
 
 /**
  * Total Car Check button + paste panel, applying the pasted details to a picker value (§E.2–E.3). Rendered by the

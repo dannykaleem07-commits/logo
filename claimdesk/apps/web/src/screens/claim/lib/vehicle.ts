@@ -5,7 +5,7 @@
 import type { ISODate, LookupRecord, MotTest, OdometerReading, OdometerSource, Vehicle } from '@ccguk/domain';
 import type { FormResult } from './chronology';
 import { segmentLabel, type FeatureVocabulary } from '../../../api/vehiclesApi';
-import { featureLabels } from '../../vehicles/vehiclePicker';
+import { featureLabels } from '../../vehicles/vehiclePickerModel';
 
 export const ODOMETER_SOURCE_LABEL: Record<OdometerSource, string> = {
   mot: 'MOT test',

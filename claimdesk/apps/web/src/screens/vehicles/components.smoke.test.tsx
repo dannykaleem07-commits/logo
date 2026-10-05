@@ -14,7 +14,7 @@ import { todayISO } from '../../lib/dates';
 import { qk } from '../../api/hooks';
 import { vk, type CatalogueMakeSummary, type CatalogueModelSummary, type FeatureVocabulary, type GtaRateListItem, type GtaSegmentItem, type NormalisedModel } from '../../api/vehiclesApi';
 import { VehiclePicker, MANUAL_MODE_NOTICE } from './VehiclePicker';
-import { emptyPickerValue, setBody, setEngine, setGeneration, setMake, setModel, setTrim, setYear, parseBodyOption, type VehiclePickerValue } from './vehiclePicker';
+import { emptyPickerValue, setBody, setEngine, setGeneration, setMake, setModel, setTrim, setYear, parseBodyOption, type VehiclePickerValue } from './vehiclePickerModel';
 import { StepVehicle } from '../claims/new/StepVehicle';
 import { initialFnolState, type FnolState } from '../claims/new/fnol';
 import { UnitDialog } from '../fleet/UnitDialog';

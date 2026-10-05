@@ -9,7 +9,7 @@ import { useCatalogueFeatures, useLookupMode, usePatchVehicle } from '../../../a
 import { Modal } from '../../../components/Modal';
 import { VehiclePicker } from '../../vehicles/VehiclePicker';
 import { CopyDetailsPanel } from '../../vehicles/CopyDetailsPanel';
-import { patchHasChanges, pickerFromVehicle, validatePicker, vehiclePatchFrom, type VehiclePickerValue } from '../../vehicles/vehiclePicker';
+import { patchHasChanges, pickerFromVehicle, validatePicker, vehiclePatchFrom, type VehiclePickerValue } from '../../vehicles/vehiclePickerModel';
 import { Card } from '../../../components/Card';
 import { Table, type Column } from '../../../components/Table';
 import { Badge, VerificationBadge } from '../../../components/Badge';

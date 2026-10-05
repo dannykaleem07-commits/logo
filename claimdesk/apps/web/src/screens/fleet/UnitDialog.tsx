@@ -12,7 +12,7 @@ import { useToast } from '../../components/Toast';
 import { todayISO } from '../../lib/dates';
 import { CopyDetailsPanel } from '../vehicles/CopyDetailsPanel';
 import { VehiclePicker } from '../vehicles/VehiclePicker';
-import { pickerFromVehicle, emptyPickerValue, type VehiclePickerValue } from '../vehicles/vehiclePicker';
+import { pickerFromVehicle, emptyPickerValue, type VehiclePickerValue } from '../vehicles/vehiclePickerModel';
 import { buildUnitBody, buildUnitPatch, emptyUnitForm, FLEET_USES, FLEET_USE_LABEL, unitRegistration, unitToForm, UNIT_STATUSES, UNIT_STATUS_LABEL, validateUnitForm, type FleetUnitView, type UnitForm, type UnitFormErrors } from './fleet';
 import { useUpdateFleetUnit } from './fleetApi';
 import { FleetGtaPanel } from './FleetGtaPanel';

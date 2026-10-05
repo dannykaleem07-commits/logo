@@ -61,7 +61,7 @@ import {
   type CascadeStep,
   type VehiclePickerValue,
   type VehicleSourceInput
-} from './vehiclePicker';
+} from './vehiclePickerModel';
 
 export type { VehiclePickerValue, VehicleSourceInput };
 
@@ -89,7 +89,7 @@ const toInt = (s: string): number | undefined => {
 /**
  * One vehicle form for three uses (§D.9): New claim (`claim`), the claim Vehicle tab "Edit details" (`edit`) and the
  * fleet unit dialog (`fleet`). Sections: registration + search (on-file matches, Total Car Check, paste) when the
- * registration is shown → the catalogue cascade → details → features and extras. All state logic is in vehiclePicker.ts.
+ * registration is shown → the catalogue cascade → details → features and extras. All state logic is in vehiclePickerModel.ts.
  */
 export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
   const { value, onChange, mode, showRegistration = true, lookupMode, onUseOnFile, errors = {}, disabled } = props;

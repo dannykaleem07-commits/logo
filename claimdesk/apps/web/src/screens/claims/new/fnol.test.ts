@@ -3,7 +3,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { parseVehicleCheckText, type OnFileMatch } from '@ccguk/domain';
-import { applyParsed } from '../../vehicles/vehiclePicker';
+import { applyParsed } from '../../vehicles/vehiclePickerModel';
 import {
   anyServiceAgreed,
   buildCreateClaimBody,

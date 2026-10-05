@@ -7,7 +7,7 @@ import { useGtaSuggest } from '../../api/vehiclesApi';
 import { Badge, VerificationBadge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { MoneyInput, Select, TextInput } from '../../components/Form';
-import type { VehiclePickerValue } from '../vehicles/vehiclePicker';
+import type { VehiclePickerValue } from '../vehicles/vehiclePickerModel';
 import {
   applySuggestion,
   benchmarkLine,

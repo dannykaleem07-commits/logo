@@ -5,7 +5,7 @@ import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { DateText } from '../../components/DateText';
 import { LOOKUP_PROVIDER_LABEL } from '../claim/lib/vehicle';
-import { describeVehicle, FUEL_LABEL } from './vehiclePicker';
+import { describeVehicle, FUEL_LABEL } from './vehiclePickerModel';
 
 /** A fleet vehicle cannot be the client vehicle on a claim (lessons f, h). */
 export function isFleetMatch(m: OnFileMatch): boolean {

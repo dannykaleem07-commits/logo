@@ -47,7 +47,7 @@ import {
   vehiclePatchFrom,
   yearOptions,
   type VehiclePickerValue
-} from './vehiclePicker';
+} from './vehiclePickerModel';
 
 // ---------------------------------------------------------------------------
 // Fixtures (synthetic, in the normalised shape GET /catalogue/makes/:make/models/:model returns)

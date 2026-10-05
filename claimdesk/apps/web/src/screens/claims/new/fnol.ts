@@ -21,7 +21,7 @@
 import type { AccidentDetails, InterventionOffer, ISODate, ISODateTime, OnFileMatch, Party, PartyRole } from '@ccguk/domain';
 import { normaliseRegistration, isValidUkRegistration, MIN_CIRCUMSTANCES_CHARS } from '@ccguk/domain';
 import type { ClaimVehicleInput, CreateClaimBody, CreateEventBody, FnolOfferInput, LookupMode, OfferPatchBody, PartyInput, PartyRef, VehicleInput, VehicleLookupResult, VehicleRef, WitnessInput } from '../../../api/client';
-import { emptyPickerValue, toVehicleInput as pickerToVehicleInput, validatePicker, type VehiclePickerValue } from '../../vehicles/vehiclePicker';
+import { emptyPickerValue, toVehicleInput as pickerToVehicleInput, validatePicker, type VehiclePickerValue } from '../../vehicles/vehiclePickerModel';
 
 export { MIN_CIRCUMSTANCES_CHARS };
 

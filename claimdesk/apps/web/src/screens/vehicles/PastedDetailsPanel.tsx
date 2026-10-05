@@ -7,7 +7,7 @@ import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { TextArea } from '../../components/Form';
 import { todayISO } from '../../lib/dates';
-import { defaultParsedSelection, findMake, parsedRows, type ParsedCatalogueMatch, type ParsedField } from './vehiclePicker';
+import { defaultParsedSelection, findMake, parsedRows, type ParsedCatalogueMatch, type ParsedField } from './vehiclePickerModel';
 
 export interface PastedDetailsResult {
   parsed: ParsedVehicleCheck;

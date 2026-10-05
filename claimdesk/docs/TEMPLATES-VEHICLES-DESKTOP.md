@@ -1549,7 +1549,7 @@ Layout (one component, three uses):
    `.check-grid`, search box.
 
 The pure state logic (cascade reset, options from a model detail, applying a parsed paste, applying an on-file match,
-building `VehicleSpec` and the API body) lives in `vehiclePicker.ts` with unit tests. Uses: New Claim `StepVehicle`
+building `VehicleSpec` and the API body) lives in `vehiclePickerModel.ts` with unit tests. Uses: New Claim `StepVehicle`
 (`claim`), claim Vehicle tab "Edit details" modal (`edit`), Fleet `UnitDialog` (`fleet`, plus the GTA panel §F.1).
 
 ### D.10 Persisting the specification
@@ -2017,7 +2017,7 @@ vehicles-web; (3) templates-api. Integration after wave 3: `pnpm -r typecheck`, 
 | Resolvers | each key against `sampleMergeSource()`; open hire/storage never produce end dates; GTA rates carry verification | — |
 | Converters | chain selection with fake converters; Word script snapshot; LibreOffice integration (env-gated); browser converter on the real assets with the §A.11.5 acceptance | Word path on a PC with Office: 01/03 page counts match Word's own |
 | API | `createTestApp` tests for every route in §C.5, §D.8, §E, §F.3; generation → approve → PDF; tamper → 409; supersede reuses inputs | CI smoke (§G.7) |
-| Web | pure logic tests (`templates.ts`, `fillValues.ts`, `vehiclePicker.ts`, `gtaPanel.ts`), component smoke tests with mocked fetch; copy guard | click-through on the packaged app |
+| Web | pure logic tests (`templates.ts`, `fillValues.ts`, `vehiclePickerModel.ts`, `gtaPanel.ts`), component smoke tests with mocked fetch; copy guard | click-through on the packaged app |
 | Desktop | `node --check packaging/launch.cjs`; unit tests for the browser lookup/argument builder (pure helpers exported for tests) | CI installed-app smoke; Windows 11 console minimised check; stop-on-close |
 
 ---

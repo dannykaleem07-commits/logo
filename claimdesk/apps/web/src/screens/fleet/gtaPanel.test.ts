@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { GtaRate, GtaSuggestion } from '@ccguk/domain';
 import { formatGBP } from '@ccguk/domain';
-import { emptyPickerValue } from '../vehicles/vehiclePicker';
+import { emptyPickerValue } from '../vehicles/vehiclePickerModel';
 import {
   applySuggestion,
   benchmarkLine,
