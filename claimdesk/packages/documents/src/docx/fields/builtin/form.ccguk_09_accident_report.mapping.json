@@ -1,0 +1,1001 @@
+{
+  "schemaVersion": 1,
+  "templateId": "form.ccguk_09_accident_report",
+  "sourceSha256": "1dfe05ae73f2480ff5f30c57de39d691ebd1b7504783d639fd33125d419c72bd",
+  "subjects": [],
+  "entries": [
+    {
+      "slot": {
+        "section": "title",
+        "label": "reference"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date"
+      },
+      "key": "doc.dateToday"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "full-name"
+      },
+      "key": "claimant.name"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "date-of-birth"
+      },
+      "key": "claimant.dateOfBirth"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "address"
+      },
+      "key": "claimant.address"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "telephone"
+      },
+      "key": "claimant.phone"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "email"
+      },
+      "key": "claimant.email"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "driving-licence-number"
+      },
+      "key": "claimant.drivingLicenceNumber"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "licence-held-since"
+      },
+      "key": "claimant.licenceHeldSince"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "occupation"
+      },
+      "key": "claimant.occupation"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "pco-private-hire-driver"
+      },
+      "key": "claimant.isPcoDriver",
+      "optionBlanks": {
+        "yes": {
+          "key": "claimant.pcoBadgeNumber"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "signed-client-authority-held"
+      },
+      "key": "claim.clientAuthoritySigned"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "yes-dated"
+      },
+      "key": "claim.clientAuthoritySignedOn",
+      "label": "Client authority — dated"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "photo-id-verified"
+      },
+      "key": "claimant.photoIdVerified",
+      "note": "Ticked YES only when a photo ID evidence item is verified; never ticked NO by ClaimDesk."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "make-and-model"
+      },
+      "key": "vehicle.makeModel"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "registration"
+      },
+      "key": "vehicle.registration"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "vin"
+      },
+      "key": "vehicle.vin"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "colour"
+      },
+      "key": "vehicle.colour"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "year-mileage"
+      },
+      "key": "vehicle.yearMileage"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "transmission"
+      },
+      "key": "vehicle.transmission"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "registered-keeper"
+      },
+      "key": "vehicle.registeredKeeperName"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "owner-if-different"
+      },
+      "key": "vehicle.ownerIfDifferent"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "finance-or-lease-on-the-vehicle"
+      },
+      "key": "vehicle.financeOrLease",
+      "optionBlanks": {
+        "yes": {
+          "key": "vehicle.financeLender"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "outstanding-balance"
+      },
+      "key": "vehicle.financeOutstandingPence"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "own-insurer"
+      },
+      "key": "ownInsurer.name"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "policy-number"
+      },
+      "key": "ownInsurer.policyNumber"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "cover"
+      },
+      "key": "ownInsurer.cover"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "policy-excess"
+      },
+      "key": "ownInsurer.excessPence"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "own-claim-reference"
+      },
+      "key": "ownInsurer.claimRef",
+      "note": "The own insurer's claim reference (not the policy number)."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "reported-to-own-insurer-on"
+      },
+      "key": "ownInsurer.reportedOn"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "date"
+      },
+      "key": "accident.date"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "time"
+      },
+      "key": "accident.time"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "road-junction"
+      },
+      "key": "accident.location"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "town-and-postcode"
+      },
+      "key": "accident.townPostcode"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "direction-of-travel"
+      },
+      "key": "accident.directionOfTravel"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "weather"
+      },
+      "key": "accident.weather"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "light"
+      },
+      "key": "accident.light"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "road-surface"
+      },
+      "key": "accident.roadSurface"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "speed-limit"
+      },
+      "key": "accident.speedLimitMph"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "number-of-lanes"
+      },
+      "key": "accident.numberOfLanes"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "clients-lane"
+      },
+      "key": "accident.clientLane"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "bus-lane-present"
+      },
+      "key": "accident.busLanePresent",
+      "optionBlanks": {
+        "yes": {
+          "key": "accident.busLaneHours"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "lane-markings-merges-or-lane-endings"
+      },
+      "key": "accident.laneMarkings"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "clients-approximate-speed"
+      },
+      "key": "accident.clientSpeedMph"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "other-vehicles-speed"
+      },
+      "key": "accident.otherVehicleSpeedMph"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "anyone-in-the-clients-vehicle"
+      },
+      "key": "accident.clientVehicleOccupied"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "passengers-names-and-where-they-were-sitting"
+      },
+      "key": "accident.clientPassengers"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "what-happened-in-the-clients-own-words"
+      },
+      "key": "accident.circumstances",
+      "note": "The client's account exactly as recorded; never re-worded."
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "account-taken-by"
+      },
+      "key": "accident.accountTakenBy"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "date-and-time-taken"
+      },
+      "key": "accident.accountTakenAt"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "did-anyone-apologise-or-say-anything-at-the-scen"
+      },
+      "key": "accident.sceneStatements"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "panels-damaged"
+      },
+      "key": "vehicle.panelsDamaged"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "point-of-first-impact"
+      },
+      "key": "accident.pointOfFirstImpact"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "direction-of-force"
+      },
+      "key": "accident.directionOfForce"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "vehicle-driveable"
+      },
+      "key": "accident.driveable"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "airbags-deployed"
+      },
+      "key": "accident.airbagsDeployed"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "any-pre-existing-damage"
+      },
+      "key": "vehicle.preExistingDamage"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "current-location-of-vehicle"
+      },
+      "key": "storage.currentLocation"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "recovered-on"
+      },
+      "key": "recovery.date"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "recovered-by"
+      },
+      "key": "recovery.agentName"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "photographs-taken"
+      },
+      "key": "evidence.photosTaken"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "yes-number"
+      },
+      "key": "evidence.photoCount",
+      "label": "Photographs — number"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "stored-at"
+      },
+      "key": "evidence.photosStoredAt"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "registration"
+      },
+      "key": "tp.vehicleRegistration"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "make-model-and-colour"
+      },
+      "key": "tp.vehicleMakeModelColour"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "driver-name"
+      },
+      "key": "tp.driverName"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "driver-address"
+      },
+      "key": "tp.driverAddress"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "driver-telephone"
+      },
+      "key": "tp.driverPhone"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "details-obtained-how"
+      },
+      "key": "tp.detailsSource"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "third-party-insurer"
+      },
+      "key": "tpInsurer.name"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "policy-number"
+      },
+      "key": "tp.policyNumber",
+      "label": "Third party's policy number"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "askmid-checked-on"
+      },
+      "key": "tp.askMidCheckedOn"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "askmid-result"
+      },
+      "key": "tp.askMidResult"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "third-party-claim-reference"
+      },
+      "key": "tpInsurer.claimRef"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "insurer-contacted-on"
+      },
+      "key": "tpInsurer.firstContactedOn"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "damage-to-other-vehicle"
+      },
+      "key": "tp.vehicleDamage"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "passengers-in-other-vehicle"
+      },
+      "key": "tp.passengers"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "police-attended"
+      },
+      "key": "accident.policeAttended"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "police-reference"
+      },
+      "key": "accident.policeReference"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "force-and-station"
+      },
+      "key": "accident.policeForceStation"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "reported-within-24-hours"
+      },
+      "key": "accident.reportedToPoliceWithin24h"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "breath-test-carried-out"
+      },
+      "key": "accident.breathTest",
+      "optionBlanks": {
+        "yes": {
+          "key": "accident.breathTestResult"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "anyone-reported-for-an-offence"
+      },
+      "key": "accident.reportedForOffence"
+    },
+    {
+      "slot": {
+        "section": "witnesses",
+        "label": "table-name-contact"
+      },
+      "key": "accident.witnesses",
+      "note": "Where they were and whether independent stay yours to enter; independence is never assumed."
+    },
+    {
+      "slot": {
+        "section": "injury",
+        "label": "was-anyone-injured"
+      },
+      "key": "accident.injuries"
+    },
+    {
+      "slot": {
+        "section": "injury",
+        "label": "client-told-on"
+      },
+      "key": "accident.injuryAdviceGivenOn"
+    },
+    {
+      "slot": {
+        "section": "injury",
+        "label": "by"
+      },
+      "key": "accident.injuryAdviceChannel",
+      "label": "Injury advice given by"
+    },
+    {
+      "slot": {
+        "section": "injury",
+        "label": "confirmed-in-writing"
+      },
+      "key": "accident.injuryAdviceConfirmedInWriting"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "contact-address",
+        "label": "client-dashcam"
+      },
+      "key": "accident.cctv.client_dashcam.contact"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "request-sent",
+        "label": "client-dashcam"
+      },
+      "key": "accident.cctv.client_dashcam.requestSentOn"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "overwrite-date",
+        "label": "client-dashcam"
+      },
+      "key": "accident.cctv.client_dashcam.overwriteDate",
+      "note": "Ask the operator; never assume 30 days."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "contact-address",
+        "label": "third-party-dashcam"
+      },
+      "key": "accident.cctv.tp_dashcam.contact"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "request-sent",
+        "label": "third-party-dashcam"
+      },
+      "key": "accident.cctv.tp_dashcam.requestSentOn"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "overwrite-date",
+        "label": "third-party-dashcam"
+      },
+      "key": "accident.cctv.tp_dashcam.overwriteDate",
+      "note": "Ask the operator; never assume 30 days."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "contact-address",
+        "label": "council-traffic-cameras"
+      },
+      "key": "accident.cctv.council.contact"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "request-sent",
+        "label": "council-traffic-cameras"
+      },
+      "key": "accident.cctv.council.requestSentOn"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "overwrite-date",
+        "label": "council-traffic-cameras"
+      },
+      "key": "accident.cctv.council.overwriteDate",
+      "note": "Ask the operator; never assume 30 days."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "contact-address",
+        "label": "bus-or-coach-operator"
+      },
+      "key": "accident.cctv.bus_operator.contact"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "request-sent",
+        "label": "bus-or-coach-operator"
+      },
+      "key": "accident.cctv.bus_operator.requestSentOn"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "overwrite-date",
+        "label": "bus-or-coach-operator"
+      },
+      "key": "accident.cctv.bus_operator.overwriteDate",
+      "note": "Ask the operator; never assume 30 days."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "contact-address",
+        "label": "shops-and-businesses-at-the-scene"
+      },
+      "key": "accident.cctv.shops.contact"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "request-sent",
+        "label": "shops-and-businesses-at-the-scene"
+      },
+      "key": "accident.cctv.shops.requestSentOn"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "overwrite-date",
+        "label": "shops-and-businesses-at-the-scene"
+      },
+      "key": "accident.cctv.shops.overwriteDate",
+      "note": "Ask the operator; never assume 30 days."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "contact-address",
+        "label": "petrol-station"
+      },
+      "key": "accident.cctv.petrol_station.contact"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "request-sent",
+        "label": "petrol-station"
+      },
+      "key": "accident.cctv.petrol_station.requestSentOn"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "overwrite-date",
+        "label": "petrol-station"
+      },
+      "key": "accident.cctv.petrol_station.overwriteDate",
+      "note": "Ask the operator; never assume 30 days."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "contact-address",
+        "label": "residential-doorbell-cameras"
+      },
+      "key": "accident.cctv.doorbell.contact"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "request-sent",
+        "label": "residential-doorbell-cameras"
+      },
+      "key": "accident.cctv.doorbell.requestSentOn"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "overwrite-date",
+        "label": "residential-doorbell-cameras"
+      },
+      "key": "accident.cctv.doorbell.overwriteDate",
+      "note": "Ask the operator; never assume 30 days."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "contact-address",
+        "label": "other"
+      },
+      "key": "accident.cctv.other.contact"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "request-sent",
+        "label": "other"
+      },
+      "key": "accident.cctv.other.requestSentOn"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "overwrite-date",
+        "label": "other"
+      },
+      "key": "accident.cctv.other.overwriteDate",
+      "note": "Ask the operator; never assume 30 days."
+    },
+    {
+      "slot": {
+        "section": "09",
+        "label": "recovery-required"
+      },
+      "key": "recovery.required",
+      "optionBlanks": {
+        "yes": {
+          "key": "recovery.part2SignedOn"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "09",
+        "label": "storage-required"
+      },
+      "key": "storage.required",
+      "optionBlanks": {
+        "yes": {
+          "key": "storage.part3SignedOn"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "09",
+        "label": "engineering-assessment"
+      },
+      "key": "engineer.required",
+      "optionBlanks": {
+        "yes": {
+          "key": "engineer.part4SignedOn"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "09",
+        "label": "replacement-vehicle-on-credit-hire"
+      },
+      "key": "hire.required",
+      "optionBlanks": {
+        "yes": {
+          "key": "hire.agreementSignedOn"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "09",
+        "label": "impecuniosity-to-be-relied-on"
+      },
+      "key": "means.impecuniosityReliedOn",
+      "optionBlanks": {
+        "yes": {
+          "key": "means.statementCompletedOn"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "09",
+        "label": "cctv-preservation-requests-sent-day-1"
+      },
+      "key": "clocks.cctvPreservation.startDate"
+    },
+    {
+      "slot": {
+        "section": "09",
+        "label": "follow-up-around-day-25"
+      },
+      "key": "clocks.cctvPreservation.followUpDate"
+    },
+    {
+      "slot": {
+        "section": "09",
+        "label": "third-party-insurer-first-chaser"
+      },
+      "key": "clocks.chaser1.dueDate"
+    },
+    {
+      "slot": {
+        "section": "09",
+        "label": "second-chaser"
+      },
+      "key": "clocks.chaser2.dueDate"
+    },
+    {
+      "slot": {
+        "section": "09",
+        "label": "three-month-point-for-a-reasoned-reply"
+      },
+      "key": "clocks.icobs3Months.dueDate"
+    },
+    {
+      "slot": {
+        "section": "09",
+        "label": "limitation-date"
+      },
+      "key": "clocks.limitation.dueDate"
+    },
+    {
+      "slot": {
+        "section": "10",
+        "label": "form-completed-by"
+      },
+      "key": "handler.name"
+    },
+    {
+      "slot": {
+        "section": "10",
+        "label": "date",
+        "nth": 1
+      },
+      "key": "doc.dateToday",
+      "label": "Form completed — date"
+    },
+    {
+      "slot": {
+        "section": "10",
+        "label": "reviewed-by"
+      },
+      "key": "doc.reviewedBy"
+    },
+    {
+      "slot": {
+        "section": "10",
+        "label": "date",
+        "nth": 2
+      },
+      "key": "doc.reviewedOn",
+      "label": "Reviewed — date"
+    },
+    {
+      "slot": {
+        "section": "10",
+        "label": "ccguk-reference-allocated"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "10",
+        "label": "ledger-opened"
+      },
+      "key": "claim.ledgerOpened"
+    }
+  ],
+  "ignore": []
+}

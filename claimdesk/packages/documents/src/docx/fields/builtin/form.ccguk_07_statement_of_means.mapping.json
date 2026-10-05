@@ -1,0 +1,795 @@
+{
+  "schemaVersion": 1,
+  "templateId": "form.ccguk_07_statement_of_means",
+  "sourceSha256": "933ea5fe196d0f3331abc8416857a9d4627efa26785ef636e26975a511f0323a",
+  "subjects": [
+    "hire"
+  ],
+  "entries": [
+    {
+      "slot": {
+        "section": "title",
+        "label": "reference"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date"
+      },
+      "key": "doc.date",
+      "policy": "handler",
+      "note": "Only the day it is completed with the client."
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "client-full-name"
+      },
+      "key": "claimant.name"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "date-of-birth"
+      },
+      "key": "claimant.dateOfBirth"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "address"
+      },
+      "key": "claimant.address"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "ccguk-reference"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "date-hire-began"
+      },
+      "key": "hire.startAt"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "employment-status"
+      },
+      "key": "means.employmentStatus"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "occupation"
+      },
+      "key": "claimant.occupation"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "number-of-dependants"
+      },
+      "key": "means.dependants"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "household-adults"
+      },
+      "key": "means.householdAdults"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "amount-gbp",
+        "label": "employed-net-pay"
+      },
+      "key": "means.income.employedNetPay.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "frequency",
+        "label": "employed-net-pay"
+      },
+      "key": "means.income.employedNetPay.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "amount-gbp",
+        "label": "self-employed-net-drawings"
+      },
+      "key": "means.income.selfEmployedDrawings.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "frequency",
+        "label": "self-employed-net-drawings"
+      },
+      "key": "means.income.selfEmployedDrawings.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "amount-gbp",
+        "label": "universal-credit"
+      },
+      "key": "means.income.universalCredit.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "frequency",
+        "label": "universal-credit"
+      },
+      "key": "means.income.universalCredit.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "amount-gbp",
+        "label": "pip-dla"
+      },
+      "key": "means.income.pipDla.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "frequency",
+        "label": "pip-dla"
+      },
+      "key": "means.income.pipDla.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "amount-gbp",
+        "label": "child-benefit"
+      },
+      "key": "means.income.childBenefit.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "frequency",
+        "label": "child-benefit"
+      },
+      "key": "means.income.childBenefit.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "amount-gbp",
+        "label": "housing-benefit-housing-element"
+      },
+      "key": "means.income.housingBenefit.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "frequency",
+        "label": "housing-benefit-housing-element"
+      },
+      "key": "means.income.housingBenefit.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "amount-gbp",
+        "label": "pension"
+      },
+      "key": "means.income.pension.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "frequency",
+        "label": "pension"
+      },
+      "key": "means.income.pension.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "amount-gbp",
+        "label": "other-income-state-source"
+      },
+      "key": "means.income.other.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "frequency",
+        "label": "other-income-state-source"
+      },
+      "key": "means.income.other.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "qualifier": "amount-gbp",
+        "label": "total-monthly-income"
+      },
+      "key": "means.income.totalMonthly",
+      "format": "money-digits",
+      "note": "Calculate only when every filled line has a frequency."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "rent-or-mortgage"
+      },
+      "key": "means.outgoings.rentMortgage.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "frequency",
+        "label": "rent-or-mortgage"
+      },
+      "key": "means.outgoings.rentMortgage.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "council-tax"
+      },
+      "key": "means.outgoings.councilTax.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "frequency",
+        "label": "council-tax"
+      },
+      "key": "means.outgoings.councilTax.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "gas-electricity-and-water"
+      },
+      "key": "means.outgoings.utilities.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "frequency",
+        "label": "gas-electricity-and-water"
+      },
+      "key": "means.outgoings.utilities.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "food-and-household"
+      },
+      "key": "means.outgoings.foodHousehold.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "frequency",
+        "label": "food-and-household"
+      },
+      "key": "means.outgoings.foodHousehold.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "telephone-broadband-and-tv"
+      },
+      "key": "means.outgoings.telecoms.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "frequency",
+        "label": "telephone-broadband-and-tv"
+      },
+      "key": "means.outgoings.telecoms.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "vehicle-insurance"
+      },
+      "key": "means.outgoings.vehicleInsurance.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "frequency",
+        "label": "vehicle-insurance"
+      },
+      "key": "means.outgoings.vehicleInsurance.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "fuel-and-travel"
+      },
+      "key": "means.outgoings.fuelTravel.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "frequency",
+        "label": "fuel-and-travel"
+      },
+      "key": "means.outgoings.fuelTravel.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "loan-repayments"
+      },
+      "key": "means.outgoings.loans.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "frequency",
+        "label": "loan-repayments"
+      },
+      "key": "means.outgoings.loans.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "credit-and-store-card-repayments"
+      },
+      "key": "means.outgoings.cardRepayments.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "frequency",
+        "label": "credit-and-store-card-repayments"
+      },
+      "key": "means.outgoings.cardRepayments.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "childcare"
+      },
+      "key": "means.outgoings.childcare.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "frequency",
+        "label": "childcare"
+      },
+      "key": "means.outgoings.childcare.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "other-essential-outgoings-state-what"
+      },
+      "key": "means.outgoings.other.amount",
+      "format": "money-digits",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "frequency",
+        "label": "other-essential-outgoings-state-what"
+      },
+      "key": "means.outgoings.other.frequency",
+      "note": "Weekly, fortnightly, four-weekly or monthly."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "amount-gbp",
+        "label": "total-monthly-outgoings"
+      },
+      "key": "means.outgoings.totalMonthly",
+      "format": "money-digits",
+      "note": "Calculate only when every filled line has a frequency."
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "current-account-balance-on-the-day-hire-began"
+      },
+      "key": "means.currentAccountBalance",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "savings-isas-or-other-accounts-total-balance"
+      },
+      "key": "means.savingsTotal",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "overdraft-facility"
+      },
+      "key": "means.overdraftLimit",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "amount-already-used"
+      },
+      "key": "means.overdraftUsed",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "credit-card-1-provider"
+      },
+      "key": "means.creditCards[0].provider"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "limit-balance",
+        "nth": 1
+      },
+      "key": "means.creditCards[0].limit",
+      "label": "Credit card 1 — limit",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "limit-balance",
+        "nth": 2
+      },
+      "key": "means.creditCards[0].balance",
+      "label": "Credit card 1 — balance",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "credit-card-2-provider"
+      },
+      "key": "means.creditCards[1].provider"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "limit-balance",
+        "nth": 3
+      },
+      "key": "means.creditCards[1].limit",
+      "label": "Credit card 2 — limit",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "limit-balance",
+        "nth": 4
+      },
+      "key": "means.creditCards[1].balance",
+      "label": "Credit card 2 — balance",
+      "note": "The client's own figure; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "any-other-credit-facility-available"
+      },
+      "key": "means.otherCredit"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "could-you-have-paid-roughly-gbp-500-upfront-that"
+      },
+      "key": "means.couldPay500Upfront",
+      "note": "The client's own answer; never defaulted."
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "if-you-could-not-have-paid-what-would-you-have-h"
+      },
+      "key": "means.sacrificesNarrative",
+      "note": "In the client's own words."
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "any-other-vehicle-in-the-household"
+      },
+      "key": "means.otherVehicleInHousehold",
+      "optionBlanks": {
+        "yes": {
+          "key": "means.otherVehicleDetails"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "if-yes-was-it-available-to-you"
+      },
+      "key": "means.otherVehicleAvailable"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "explanation",
+        "nth": 1
+      },
+      "key": "means.otherVehicleExplanation"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "could-public-transport-have-covered-your-journey"
+      },
+      "key": "means.publicTransportSuitable"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "explanation",
+        "nth": 2
+      },
+      "key": "means.publicTransportExplanation"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "bank-statements-for-the-three-months-before-the"
+      },
+      "key": "means.docs.bankStatements",
+      "note": "Confirm three months and every account."
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "payslips-for-the-three-months-before-the-acciden"
+      },
+      "key": "means.docs.payslips"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "benefit-award-letters-or-universal-credit-statem"
+      },
+      "key": "means.docs.benefitLetters"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "credit-card-statements-showing-limit-and-balance"
+      },
+      "key": "means.docs.creditCardStatements"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "evidence-of-any-overdraft-limit"
+      },
+      "key": "means.docs.overdraftEvidence"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "evidence-of-rent-or-mortgage-and-council-tax"
+      },
+      "key": "means.docs.rentCouncilTaxEvidence"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "documents-received-on"
+      },
+      "key": "means.docsReceivedOn"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "received-by"
+      },
+      "key": "means.docsReceivedBy"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "documents-outstanding"
+      },
+      "key": "means.docsOutstanding"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "chased-on"
+      },
+      "key": "means.docsChasedOn"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "qualifier": "client",
+        "label": "full-name"
+      },
+      "key": "claimant.name"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "qualifier": "client",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "qualifier": "client",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "completed-with-client-by"
+      },
+      "key": "means.completedWithClientBy"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "date"
+      },
+      "key": "means.completedWithClientOn",
+      "label": "Office use — date completed with client"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "figures-cross-checked-against-bank-statements"
+      },
+      "key": "means.figuresCrossChecked",
+      "note": "An attestation; never ticked by ClaimDesk."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "checked-by"
+      },
+      "key": "means.checkedBy"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "discrepancies-found"
+      },
+      "key": "means.discrepancies"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "impecuniosity-to-be-relied-on"
+      },
+      "key": "means.impecuniosityReliedOn"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "decision-by"
+      },
+      "key": "means.decisionBy"
+    }
+  ],
+  "ignore": [
+    {
+      "section": "02",
+      "qualifier": "frequency",
+      "label": "total-monthly-income"
+    },
+    {
+      "section": "03",
+      "qualifier": "frequency",
+      "label": "total-monthly-outgoings"
+    }
+  ]
+}

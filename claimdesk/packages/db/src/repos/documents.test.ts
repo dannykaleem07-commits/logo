@@ -3,7 +3,7 @@ import { closeDatabase, type DatabaseHandle } from '../client.js';
 import { DocumentStateError, ValidationError } from '../errors.js';
 import { createTestDatabase } from '../testing.js';
 import { listAudit } from './audit.js';
-import { approveDocument, attachSignature, clearDocumentFlag, createDraft, getDocument, listDocuments, listSignaturesForClaim, markDocumentSent, setConsistency, supersedeDocument, voidDocument, type CreateDraftInput } from './documents.js';
+import { approveDocument, attachSignature, clearDocumentFlag, createDraft, getDocument, listDocuments, listSignaturesForClaim, markDocumentSent, setConsistency, setDocumentPdf, supersedeDocument, voidDocument, type CreateDraftInput } from './documents.js';
 
 let h: DatabaseHandle;
 beforeEach(() => {
@@ -110,5 +110,32 @@ describe('documents workflow', () => {
     expect(sigs[0]).toMatchObject({ documentId: d.id, certificateId: 'cert-1', signedAt: '2026-08-10T10:05:00.000Z' });
     // a signed agreement can be sent
     expect(markDocumentSent(h.db, d.id, handler, { sentVia: 'email' }).status).toBe('sent');
+  });
+});
+
+describe('DOCX document columns (migration 0004)', () => {
+  it('HTML drafts default to format html with no DOCX fields', () => {
+    const d = createDraft(h.db, draft());
+    expect(d.format).toBe('html');
+    expect(d.docxPath).toBeUndefined();
+    expect(d.docxSha256).toBeUndefined();
+    expect(d.pdfConverter).toBeUndefined();
+  });
+
+  it('createDraft / supersedeDocument / setDocumentPdf carry format, docxPath, docxSha256 and pdfConverter', () => {
+    const sha = 'd'.repeat(64);
+    const d = createDraft(h.db, draft({ templateId: 'form.ccguk_07_statement_of_means', templateVersion: '1.1.0', format: 'docx', docxPath: 'claim-1/x.docx', docxSha256: sha, sha256: sha }));
+    expect(d).toMatchObject({ format: 'docx', docxPath: 'claim-1/x.docx', docxSha256: sha, sha256: sha });
+    expect(listDocuments(h.db, { claimId: 'claim-1' })[0]).toMatchObject({ format: 'docx', docxSha256: sha });
+
+    const withPdf = setDocumentPdf(h.db, d.id, { pdfPath: 'claim-1/x.pdf', sha256: 'e'.repeat(64), pdfConverter: 'browser' });
+    expect(withPdf).toMatchObject({ pdfPath: 'claim-1/x.pdf', sha256: 'e'.repeat(64), pdfConverter: 'browser', docxSha256: sha });
+    // an HTML render without a converter id leaves the column alone
+    expect(setDocumentPdf(h.db, d.id, { pdfPath: 'claim-1/x.pdf', sha256: 'f'.repeat(64) }).pdfConverter).toBe('browser');
+
+    const sha2 = 'a'.repeat(64);
+    const next = supersedeDocument(h.db, d.id, handler, draft({ templateId: d.templateId, templateVersion: '1.1.0', format: 'docx', docxPath: 'claim-1/y.docx', docxSha256: sha2, sha256: sha2 }));
+    expect(next).toMatchObject({ format: 'docx', docxPath: 'claim-1/y.docx', docxSha256: sha2, supersedesId: d.id });
+    expect(getDocument(h.db, d.id)?.status).toBe('superseded');
   });
 });

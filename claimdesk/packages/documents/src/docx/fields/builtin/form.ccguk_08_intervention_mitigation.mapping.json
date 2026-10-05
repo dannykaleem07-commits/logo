@@ -1,0 +1,452 @@
+{
+  "schemaVersion": 1,
+  "templateId": "form.ccguk_08_intervention_mitigation",
+  "sourceSha256": "7ba7a32dd4ab41313761ddf9adfc11931aa7a083179554df83736d8ad6be3a81",
+  "subjects": [
+    "offer"
+  ],
+  "entries": [
+    {
+      "slot": {
+        "section": "title",
+        "label": "reference"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date"
+      },
+      "key": "doc.dateToday",
+      "note": "Complete this the day an offer is made."
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "client-full-name"
+      },
+      "key": "claimant.name"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "ccguk-reference"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "vehicle-registration"
+      },
+      "key": "vehicle.makeModelReg"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "date-of-accident"
+      },
+      "key": "accident.date"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "third-party-insurer"
+      },
+      "key": "tpInsurer.name"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "third-party-claim-ref"
+      },
+      "key": "tpInsurer.claimRef"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "daily-hire-rate-on-this-file"
+      },
+      "key": "hire.dailyRatePence",
+      "policy": "auto-if-known"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "daily-storage-rate"
+      },
+      "key": "storage.dailyRatePence"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "no-offer-made"
+      },
+      "key": "intervention.noOfferMade",
+      "note": "Confirm that no offer of any kind has been made."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "offer-made"
+      },
+      "key": "intervention.offerMade"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "position-recorded-as-at"
+      },
+      "key": "doc.dateToday"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "recorded-by"
+      },
+      "key": "handler.name"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "date-and-time-offer-made"
+      },
+      "key": "intervention.receivedAt"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "method"
+      },
+      "key": "intervention.channel",
+      "note": "SMS, WhatsApp or via-the-client offers are left for you to record."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "made-by-name"
+      },
+      "key": "intervention.offerorName"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "organisation"
+      },
+      "key": "intervention.offerorOrganisation"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "made-to-client-or-ccguk"
+      },
+      "key": "intervention.madeTo"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "written-terms-received"
+      },
+      "key": "intervention.writtenTermsReceived"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "where-the-written-offer-is-filed"
+      },
+      "key": "intervention.writtenOfferLocation"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "vehicle-offered-make-and-model"
+      },
+      "key": "intervention.vehicleOffered"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "group-class"
+      },
+      "key": "intervention.vehicleClassOffered"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "transmission"
+      },
+      "key": "intervention.transmissionOffered"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "matches-clients-own-vehicle"
+      },
+      "key": "intervention.matchesClientVehicle"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "fuel-type"
+      },
+      "key": "intervention.fuelTypeOffered"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "suitable-for-clients-use"
+      },
+      "key": "intervention.suitable"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "insurance-excess-payable-by-client"
+      },
+      "key": "intervention.terms.excessPence"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "not-stated"
+      },
+      "key": "intervention.terms.excessNotStated",
+      "label": "Excess — not stated"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "deposit-or-payment-required"
+      },
+      "key": "intervention.terms.depositPence"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "none"
+      },
+      "key": "intervention.terms.depositNone",
+      "label": "Deposit — none"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "permitted-drivers"
+      },
+      "key": "intervention.permittedDrivers"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "minimum-driver-age"
+      },
+      "key": "intervention.minimumDriverAge"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "mileage-limit"
+      },
+      "key": "intervention.terms.mileageLimit"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "charge-for-excess-mileage"
+      },
+      "key": "intervention.excessMileageCharge"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "duration-offered"
+      },
+      "key": "intervention.terms.durationStated"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "what-happens-when-it-expires"
+      },
+      "key": "intervention.onExpiry"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "delivery-date-and-time-offered"
+      },
+      "key": "intervention.deliveryAt"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "delivery-address-offered"
+      },
+      "key": "intervention.deliveryAddress"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "repair-offered-as-part-of-it"
+      },
+      "key": "intervention.repairOffered",
+      "optionBlanks": {
+        "yes": {
+          "key": "intervention.repairerOffered"
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "courtesy-car-for-full-repair"
+      },
+      "key": "intervention.courtesyCarForFullRepair"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "any-condition-attached"
+      },
+      "key": "intervention.terms.otherTerms"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "any-cost-at-all-to-the-client"
+      },
+      "key": "intervention.costToClient"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "terms-put-to-client-on"
+      },
+      "key": "intervention.termsPutToClientAt"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "by"
+      },
+      "key": "intervention.termsPutToClientBy",
+      "label": "Terms put to client by"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "clients-decision"
+      },
+      "key": "intervention.clientDecision"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "confirmed-to-client-in-writing-on"
+      },
+      "key": "intervention.confirmedToClientOn"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "insurer-notified-of-decision-on"
+      },
+      "key": "intervention.replySentAt"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "clients-reasons-in-the-clients-own-words"
+      },
+      "key": "intervention.clientReasons",
+      "note": "Verbatim from the offer record; never the suitability summary."
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "hire-ended-as-a-result"
+      },
+      "key": "intervention.hireEndedAsResult",
+      "optionBlanks": {
+        "yes": {
+          "key": "hire.endDate",
+          "onlyIf": {
+            "key": "intervention.hireEndedAsResult",
+            "equals": true
+          }
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "days-saved"
+      },
+      "key": "intervention.daysSaved"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "value-of-days-saved"
+      },
+      "key": "intervention.valueOfDaysSaved"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "calculated-by"
+      },
+      "key": "intervention.calculatedBy"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "table-date-who"
+      },
+      "key": "intervention.chronology",
+      "note": "Only events with a verbatim quote; days lost are yours to enter."
+    },
+    {
+      "slot": {
+        "section": "07",
+        "qualifier": "client",
+        "label": "full-name"
+      },
+      "key": "claimant.name"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "qualifier": "client",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "qualifier": "client",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    }
+  ],
+  "ignore": []
+}

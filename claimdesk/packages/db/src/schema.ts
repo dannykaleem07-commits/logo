@@ -539,6 +539,12 @@ export const documents = sqliteTable(
     signature: text('signature', { mode: 'json' }).$type<SignatureRecord>(),
     dataSnapshot: text('data_snapshot', { mode: 'json' }).$type<Record<string, unknown>>().notNull(),
     updatedAt: text('updated_at').notNull(),
+    /** 'docx' for documents filled from a Word template (migration 0004, TEMPLATES-VEHICLES-DESKTOP §C.3). */
+    format: text('format').$type<'html' | 'docx'>().notNull().default('html'),
+    /** DOCX documents: the filled .docx relative to DOCUMENTS_DIR. */
+    docxPath: text('docx_path'),
+    docxSha256: text('docx_sha256'),
+    pdfConverter: text('pdf_converter').$type<'word' | 'libreoffice' | 'browser' | 'chromium-html'>(),
   },
   (t) => [
     index('documents_claim_idx').on(t.claimId),
@@ -882,3 +888,48 @@ export type GtaRateInsert = typeof gtaRates.$inferInsert;
 export type GtaSegmentDefaultRow = typeof gtaSegmentDefaults.$inferSelect;
 export type VehicleCatalogueCustomRow = typeof vehicleCatalogueCustom.$inferSelect;
 export type VehicleCatalogueCustomInsert = typeof vehicleCatalogueCustom.$inferInsert;
+
+// ---------------------------------------------------------------------------
+// Word template library (migration 0004, TEMPLATES-VEHICLES-DESKTOP §C.3)
+// ---------------------------------------------------------------------------
+
+/**
+ * Built-in (shipped .docx assets; the row caches the scan and holds a mapping override layer) and uploaded Word
+ * templates (files under TEMPLATES_DIR, path relative to it). Uploaded files are immutable: a replacement adds a new
+ * file and bumps `file_version`.
+ */
+export const documentTemplates = sqliteTable(
+  'document_templates',
+  {
+    id: text('id').primaryKey(),
+    source: text('source').$type<'builtin' | 'uploaded'>().notNull(),
+    kind: text('kind').notNull(),
+    title: text('title').notNull(),
+    description: text('description'),
+    recipientRole: text('recipient_role'),
+    fileName: text('file_name').notNull(),
+    /** Uploads: relative to TEMPLATES_DIR; built-ins: NULL. */
+    filePath: text('file_path'),
+    sha256: text('sha256').notNull(),
+    bytes: integer('bytes').notNull(),
+    fileVersion: integer('file_version').notNull().default(1),
+    mappingRevision: integer('mapping_revision').notNull().default(0),
+    scanVersion: integer('scan_version').notNull(),
+    /** JSON DocxScan without `text`. */
+    scan: text('scan', { mode: 'json' }).$type<unknown>().notNull(),
+    /** JSON TemplateMapping (uploads) | override layer (built-ins) | NULL. */
+    mapping: text('mapping', { mode: 'json' }).$type<unknown>(),
+    warnings: text('warnings', { mode: 'json' }).$type<unknown[]>().notNull().default([]),
+    warningsAcknowledgedAt: text('warnings_acknowledged_at'),
+    warningsAcknowledgedBy: text('warnings_acknowledged_by'),
+    active: integer('active', { mode: 'boolean' }).notNull().default(true),
+    createdAt: text('created_at').notNull(),
+    createdBy: text('created_by').notNull(),
+    updatedAt: text('updated_at').notNull(),
+    updatedBy: text('updated_by').notNull(),
+  },
+  (t) => [index('document_templates_source_idx').on(t.source), index('document_templates_sha_idx').on(t.sha256)],
+);
+
+export type DocumentTemplateDbRow = typeof documentTemplates.$inferSelect;
+export type DocumentTemplateDbInsert = typeof documentTemplates.$inferInsert;

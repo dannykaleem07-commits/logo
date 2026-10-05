@@ -37,6 +37,9 @@ Environment (`.env` in `apps/api/` or the repo root; every variable is optional)
 | `TRUST_PROXY` | `loopback` | Fastify `trustProxy`: which hops may set `X-Forwarded-For` (decides the IP used by the login rate limiter and recorded on audit rows). `true` trusts any client's header (spoofable); a comma list of proxy addresses/CIDRs for a remote reverse proxy |
 | `DEFAULT_USER_ID` | `handler` | header mode only: user assumed when `X-User-Id` is absent (never in production) |
 | `LOOKUP_TIMEOUT_MS` | `10000` | outbound lookup timeout |
+| `TEMPLATES_DIR` | `$DATA_DIR/templates` | uploaded Word templates (`<templateId>/v<n>-<sha12>.docx`, immutable). Never under the app folder (an upgrade replaces it); the desktop launcher sets `%LOCALAPPDATA%\ClaimDesk\data\templates` |
+| `DOCX_PDF_CONVERTER` | `auto` | DOCX → PDF: `auto` (Microsoft Word → LibreOffice → built-in browser), or `word` / `libreoffice` / `browser` tried first (the others still fall back). Conversions run in `$DATA_DIR/tmp/convert` |
+| `SOFFICE_PATH` | — | LibreOffice `soffice` for the DOCX converter (otherwise the usual install paths / PATH) |
 | `CORS_ORIGINS` | localhost only | browser origins allowed by CORS (credentials on). Unset → `http(s)://localhost`, `127.0.0.1`, `[::1]` on any port; a comma list replaces that; `*` reflects any origin (explicit opt-in only) |
 
 Keys never leave the process: only presence flags are exposed (`/api/health`, `Settings.apiKeys`).
@@ -100,7 +103,7 @@ Every response carries `x-request-id` (honours an inbound `X-Request-Id`).
 
 ```
 src/
-  config.ts            loadConfig()/testConfig() — env, data dirs, key presence
+  config.ts            loadConfig()/testConfig() — env, data dirs (incl. TEMPLATES_DIR), key presence, DOCX_PDF_CONVERTER
   context.ts           AppContext { config, handle, db, repos, settings(), kb, now(), engines(), logger, close() }
   app.ts               buildApp(ctx, { logger? }): cors (localhost origins unless CORS_ORIGINS), multipart (25 MB), static web + SPA fallback (never for /api), error handler, auth hook (session / header mode)
   server.ts            start(): migrations on boot, data dirs, ensureDefaultLogin, listen
@@ -120,6 +123,9 @@ src/
     documentData.ts    one-source-of-truth template data per template id
     documents.ts       draft → consistency → approve (PDF) → send (record) → supersede → sign
     consistencyReconcile.ts  system clearance of engine misreads on ledger-written table figures
+    mergeSource.ts     buildMergeSource(): the claim → MergeSource the DOCX field resolvers read
+    docxTemplates.ts   Word template library: boot sync of the built-ins, upload pipeline, summary/detail, mapping, test fill
+    docxDocuments.ts   values form + DOCX claim document generation (baseline suppression, _docx snapshot)
     engineeringFallbacks.ts  total-loss / checklist adapters + estimate text-extraction provider
     fleetFallbacks.ts  compliance / penalty / notice-data adapters
     companiesHouse.ts  Companies House client (profile + gazette filings)
@@ -203,7 +209,8 @@ offer capture into the intervention register. Response: the `Claim` (top level, 
 
 ### Documents (`routes/documents.ts`, `services/documents.ts`, `services/documentData.ts`)
 
-- `GET /templates` → `{items: TemplateMeta[]}` with `requiredData` and `recipientRole`.
+- `GET /templates` → `{items: TemplateMeta[]}` with `requiredData`, `recipientRole` and `format: 'html'` (the Word
+  templates are listed by `GET /docx-templates`, below).
 - `POST /claims/:id/documents {templateId, data?, recipientPartyId?}` → `201` draft. The template data is assembled
   from the bundle — ledger, events, offers, hire, storage, recovery, PAV, estimate, report, settings and the recipient
   party — by `documentData.ts` (one builder per template id). Handlers may supply only the extra free-text fields a
@@ -231,7 +238,72 @@ offer capture into the intervention register. Response: the `Claim` (top level, 
   `document.pdf`); a tampered PDF is refused (`409 DOCUMENT_PDF_TAMPERED`) and a signed document whose PDF has gone is
   never re-rendered (`409 DOCUMENT_PDF_MISSING` — supersede and re-execute), so the signature's hash chain holds.
 - `POST /documents/:id/supersede {data?, reason?, reExecutedOn?}` → `201` new draft carrying the re-execution line;
-  the old document becomes `superseded`.
+  the old document becomes `superseded`. A Word (`format: 'docx'`) document is re-generated from its template with the
+  previous `_docx.inputs`, `confirm`, `variant` and subject; `values?` / `confirm?` in the body are merged over them.
+- `GET /documents/:id/docx` — the filled Word file of a DOCX document, re-hashed on every read (`x-sha256`;
+  `content-disposition: attachment; filename="<reference> <title>.docx"`); `404` for HTML documents, `409
+  DOCUMENT_DOCX_TAMPERED` when the bytes no longer match `docxSha256`.
+- `GET /documents/:id/letterhead.docx` — any HTML letter recomposed on the CCGUK formal Word letterhead
+  (`extractLetterContent` reads the layout's `data-letter-part` attributes, `composeLetterheadDocx` fills the built-in
+  letterhead). Not stored; `x-sha256`; audited `document.letterhead_docx` with the sha256. `400 NOT_A_LETTER` for
+  anything but an HTML letter, `422 LETTER_NOT_EXTRACTABLE` when the HTML carries no letter parts.
+- PDFs record which converter made them: `pdfConverter` is `chromium-html` for HTML documents and `word` /
+  `libreoffice` / `browser` for Word documents (the `document.pdf` audit row also lists every attempt). HTML PDFs carry
+  document metadata (title, author `Courtesy Cars Group UK Ltd`) and the registered office from Settings
+  (`formatRegisteredOffice`).
+- Template-id rules go through `canonicalTemplateId` (domain `templateIds.ts`): CCGUK-03/04/07/08 count as
+  `agreement.credit_hire`, `statement.witness`, `form.statement_of_means`, `form.mitigation_questionnaire` for the
+  semantic send events, default recipient roles, acceptance, the GTA payment pack and the consistency engine.
+
+### Word templates and DOCX claim documents (`routes/docxTemplates.ts`, `services/docxTemplates.ts`, `services/docxDocuments.ts`, `services/mergeSource.ts`)
+
+Design: `docs/TEMPLATES-VEHICLES-DESKTOP.md` §A–§C. The engine fills blanks in the user's Word files; it never rewrites
+printed wording and never fills a signature box. Built-ins are the ten CCGUK files shipped in
+`packages/documents/assets/docx/`; the `document_templates` row (migration 0004) caches their scan and holds a mapping
+override layer. At boot `syncBuiltinTemplates` hashes each asset and re-scans when the row is missing, the file changed
+or the scanner version moved on; it never throws (a failure marks the template inactive with a `SYNC_FAILED` warning).
+The first fill of a fresh database is not audited; every later refresh is (`docx_template.sync`).
+
+| Method & path | Body / query | Response | Errors |
+|---|---|---|---|
+| `GET /docx-templates` | `?includeInactive=true` | `{items: DocxTemplateSummary[]}` | — |
+| `POST /docx-templates` | multipart: `file` (.docx/.dotx, ≤ 15 MiB), `title`, `kind` (`letter\|form\|agreement\|statement\|report\|notice`), `description?`, `recipientRole?` | `201 DocxTemplateDetail` | `400 INVALID_DOCX` (`details.issues`), `409 TEMPLATE_DUPLICATE` (`details.id`), `413`, `422 NO_FILLABLE_SLOTS` |
+| `GET /docx-templates/:id` | — | `DocxTemplateDetail` (slots, blocks, outline, per-slot mapping with origin `builtin\|saved\|suggested\|none`, `mappingIssues`, field dictionary) | `404` |
+| `PATCH /docx-templates/:id` | `{title?, description?, active?, recipientRole?}` | `DocxTemplateSummary` | `404` |
+| `POST /docx-templates/:id/acknowledge` | `{}` | `DocxTemplateSummary` (records who/when) | `404` |
+| `PUT /docx-templates/:id/mapping` | `{entries: MappingEntry[] (slot = exact id), ignore?: string[]}` | `DocxTemplateDetail` (`mappingRevision + 1`) | `400 MAPPING_INVALID` (`details.issues`) |
+| `DELETE /docx-templates/:id/mapping` | — | `DocxTemplateDetail` (built-in back to its curated mapping) | `400` for uploads |
+| `POST /docx-templates/:id/file` | multipart `file` (uploads only) | `DocxTemplateDetail` + `carriedOver`, `dropped` slot ids | as `POST /docx-templates`; `400` for built-ins |
+| `GET /docx-templates/:id/file` | — | the original .docx (`attachment`, `x-sha256`) | `404` |
+| `POST /docx-templates/:id/test-fill` | `{claimId?, variant?}` | a filled .docx, not stored (sample data when no claim) | `404` |
+| `GET /claims/:id/docx-templates/:templateId/values` | `?variant&witnessPartyId&offerId&hireAgreementId&recipientPartyId&exhibitEvidenceIds=a,b` | `ClaimTemplateValues` (groups of `PlanRow`s, subjects, issues, summary) | `404`; unacknowledged warnings / a changed file are returned as block issues (`TEMPLATE_WARNINGS_UNACKNOWLEDGED`, `TEMPLATE_CHANGED`) |
+| `POST /claims/:id/docx-documents` | `GenerateDocxBody {templateId, variant?, subject?, values?, confirm?}` | `201 GeneratedDocument` (`format: 'docx'`, status `draft` or `blocked`) | `400 VALUES_REQUIRED` / `SLOT_NOT_FILLABLE` / `VALIDATION`, `409 TEMPLATE_WARNINGS_UNACKNOWLEDGED` / `TEMPLATE_CHANGED` / `GUARD_BLOCKED`, `404` (unknown or switched-off template) |
+| `GET /docx-converters` | `?refresh=true` | `{preference, order, available: {word, libreoffice, browser}}` | — |
+
+- **Upload pipeline**: one `file` part (route limit 15 MiB → `413`), `.docx`/`.dotx` only; `checkDocxSafety` refuses
+  non-zips, macro-enabled main parts, `vbaProject.bin`, ActiveX, altChunk, external template/OLE/frame links and DTDs
+  (`400 INVALID_DOCX`); `scanDocx` must find at least one slot (`422 NO_FILLABLE_SLOTS`); an active upload with the same
+  sha256 is a `409 TEMPLATE_DUPLICATE`. Warnings: legacy details and banned phrases in the wording (documents guards +
+  domain `legacyCheck`/`bannedPhraseCheck`), "our client" (`REGULATED_STATUS`), tracked changes / comments / legacy
+  form fields / external images / embedded objects, and `UNMAPPED_SLOTS`. The stored mapping holds only auto-mapper
+  suggestions scoring ≥ 0.75 (exact slot ids; shown as `suggested` with the score until a person saves). Files are
+  written under `TEMPLATES_DIR` and always resolved with `assertInsideStore`.
+- **Generation** (`services/docxDocuments.ts`): active template, warnings acknowledged, bytes re-hashed against the row,
+  effective mapping (built-in JSON ⊕ override, or the saved upload mapping) valid → clocks recomputed → `MergeSource`
+  (`services/mergeSource.ts`: bundle + own insurer, users, hire fleet unit/vehicle/policy, KB ⊕ manual GTA rates,
+  recipient via `resolveRecipient`, response deadline via `deadline()`, company details from Settings + brand; bank
+  details only from Settings) → `buildFillPlan` (block issues stop it) → `fillDocx` (core properties `<template title>
+  — <reference>`) → the preview HTML is stored in `documents.html` and checked by the consistency engine under the
+  canonical template id. Flags that the unfilled template raises too (same code and wording) are cleared by the system
+  with reason `TEMPLATE_BASELINE` (one-for-one, so a legacy name typed by a handler stays blocked); plan warnings become
+  warn flags. The .docx is written to `DOCUMENTS_DIR/<claimId>/<docId>.docx`; one transaction creates (or supersedes)
+  the draft (`templateVersion` `<fileVersion>.<mappingRevision>.0`, `sha256 = docxSha256`), stores the report and audits
+  `document.create` with `format`, `templateSha256`, `docxSha256`. `dataSnapshot._docx` keeps the reproducibility record
+  (template sha/version, scanner version, variant, subject, inputs, confirmations, printed values, removed blocks,
+  acknowledgement).
+- **Approval** converts the verified .docx with `convertDocxToPdf` (preference `DOCX_PDF_CONVERTER`), stamps PDF
+  metadata, stores the PDF and its sha256 as for HTML documents and records `pdfConverter`; send, e-sign and PDF reads
+  are unchanged.
 - Signatures: `POST /documents/:id/sign/start {signerPartyId, signerName?, contact, channel}` → `esign.generateOtp`
   (`ESIGN_SECRET`/`SIGNING_SECRET`), stores the challenge, returns `{challengeId, channel, expiresAt, contactMasked,
   devCode, debugCode}` (codes only when `NODE_ENV !== 'production'`). `POST /documents/:id/sign/verify {challengeId,
@@ -396,7 +468,13 @@ directory ageing and verification, KB search/advise/GTA rates/ladder; watch poll
 on the full seed; settings Confirmation-of-Payee warning and legacy refusal. `hardening.test.ts`: CORS default (localhost
 only, lookalike hosts refused), `/api` 404s never fall through to the SPA shell, zod on `force` and list filters, store
 path containment, evidence and PDF reads re-hashed (tampered bytes → 409 + audit), certificate route, and a signed PDF
-is never re-rendered. `auth.test.ts` (built with `authMode: 'session'`): scrypt format and verification, cookie parsing,
+is never re-rendered. `docxTemplates.test.ts`: the ten built-ins (warnings on 01, 02 and the letterhead; zero mapping
+issues), synthetic uploads built in-test with fflate (suggested mapping, refusals: not a zip, macro content type, DTD,
+oversize, no slots, extension; duplicate), mapping save/reset, replacement files, test fill, converters, the values form
+on File 1, generation (acknowledgement gate, baseline suppression, `GUARD_BLOCKED` for 05 without bank details,
+`SLOT_NOT_FILLABLE` for a signature box, `VALUES_REQUIRED`), the stored .docx (`PK`, `x-sha256`, tamper → 409), approval
+to PDF with the browser converter, supersede re-using and merging inputs, and `letterhead.docx` for an approved
+`letter.chaser_7` (`NOT_A_LETTER` for an invoice). `auth.test.ts` (built with `authMode: 'session'`): scrypt format and verification, cookie parsing,
 the default account, login → HttpOnly cookie → `/auth/me`, wrong password and unknown user both `401
 INVALID_CREDENTIALS`, protected routes `401` without a cookie (and with only `X-User-Id`), the `claim.create` audit row
 records `courtesycars`, logout, the `429` rate limit (and that a spoofed `X-Forwarded-For` does not reset it),

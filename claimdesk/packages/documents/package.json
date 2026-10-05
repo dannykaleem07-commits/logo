@@ -14,7 +14,8 @@
     "build": "tsc -p tsconfig.json --noEmit",
     "samples": "tsx src/samples.ts",
     "docx:scan": "tsx src/docx/cli.ts",
-    "docx:samples": "tsx src/docx/samples.ts"
+    "docx:samples": "tsx src/docx/samples.ts",
+    "docx:mappings": "tsx src/docx/fields/report.ts"
   },
   "dependencies": {
     "@ccguk/domain": "workspace:*",

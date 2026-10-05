@@ -6,6 +6,7 @@ import { documents, signatures, type DocumentRow } from '../schema.js';
 import { compact, denull, newId, nowIso } from '../util.js';
 import { appendAudit, type Actor } from './audit.js';
 
+/** Includes the DOCX columns (`format`, `docxPath`, `docxSha256`; `pdfConverter` is set at approval) — §C.3. */
 export type CreateDraftInput = Omit<GeneratedDocument, 'id' | 'status' | 'createdAt' | 'approvedAt' | 'approvedBy' | 'sentAt' | 'sentVia' | 'signature'> & {
   id?: Id;
   createdAt?: ISODateTime;
@@ -159,10 +160,13 @@ export function markDocumentSent(db: Db, id: Id, actor: Actor, input: { sentVia:
   });
 }
 
-/** Record the rendered PDF path and its hash. */
-export function setDocumentPdf(db: Db, id: Id, pdf: { pdfPath: string; sha256: string }): GeneratedDocument {
+/** Record the rendered PDF path and its hash (and, when given, which converter produced it — §A.11). */
+export function setDocumentPdf(db: Db, id: Id, pdf: { pdfPath: string; sha256: string; pdfConverter?: GeneratedDocument['pdfConverter'] }): GeneratedDocument {
   requireDocument(db, id, { includeHtml: false });
-  db.update(documents).set({ pdfPath: pdf.pdfPath, sha256: pdf.sha256, updatedAt: nowIso() }).where(eq(documents.id, id)).run();
+  db.update(documents)
+    .set({ pdfPath: pdf.pdfPath, sha256: pdf.sha256, ...(pdf.pdfConverter ? { pdfConverter: pdf.pdfConverter } : {}), updatedAt: nowIso() })
+    .where(eq(documents.id, id))
+    .run();
   return requireDocument(db, id);
 }
 

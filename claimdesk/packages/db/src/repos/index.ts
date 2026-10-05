@@ -21,3 +21,4 @@ export * from './settings.js';
 export * from './labourLibrary.js';
 export * from './gtaRates.js';
 export * from './catalogueCustom.js';
+export * from './documentTemplates.js';

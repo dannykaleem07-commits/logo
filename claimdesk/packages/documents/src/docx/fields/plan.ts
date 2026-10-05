@@ -16,7 +16,7 @@ import { resolveField } from './resolve.js';
 import type { MergeSource } from './source.js';
 import type { FieldDef, FieldValue, FillPlan, FillPlanIssue, FillPolicy, MappingEntry, OptionBlankEntry, PlanInputType, PlanInputs, PlanOrigin, PlanRow, SlotInput, TemplateMapping } from './types.js';
 
-export const GTA_BENCHMARK_NOTE = 'GTA rates are an industry benchmark only. Courtesy Cars Group UK Ltd is not a GTA subscriber.';
+export const DOCX_GTA_BENCHMARK_NOTE = 'GTA rates are an industry benchmark only. Courtesy Cars Group UK Ltd is not a GTA subscriber.';
 /** Separator between a choice slot id and an option slug for the blank printed inside that option. */
 export const OPTION_BLANK_SEPARATOR = '|';
 
@@ -341,7 +341,7 @@ export function buildFillPlan(scan: DocxScan, mapping: TemplateMapping, source: 
     const overridable = def?.overridable !== false;
     const inputAllowed = !NO_INPUT.includes(policy) && overridable && inVariant && !isIgnored;
     const label = entry?.label ?? (slot.qualifierTitle ? `${slot.qualifierTitle} — ${slot.label}` : slot.label);
-    const notes = [entry?.note, def?.requiresConfirmationUnlessVerified ? GTA_BENCHMARK_NOTE : undefined, !inVariant ? `Not used in the ${variantId ?? 'selected'} copy` : undefined].filter(Boolean).join(' ');
+    const notes = [entry?.note, def?.requiresConfirmationUnlessVerified ? DOCX_GTA_BENCHMARK_NOTE : undefined, !inVariant ? `Not used in the ${variantId ?? 'selected'} copy` : undefined].filter(Boolean).join(' ');
     const row = makeRow(slot, slot.id, label, inputTypeOf(slot, def), policy, inputAllowed, def, entry?.key, notes || undefined);
     row.required = !!entry?.required;
     const w: Work = { row, slot, ...(entry ? { entry } : {}), ...(def ? { def } : {}), fromInput: false, ...(entry?.onlyIf ? { onlyIf: entry.onlyIf } : {}) };

@@ -52,7 +52,7 @@ function compatible(slot: DocxSlot, def: FieldDef): boolean {
 }
 
 function tokens(slug: string): Set<string> {
-  return new Set(slug.split('-').filter((t) => t && t !== 'and' && t !== 'of' && t !== 'the'));
+  return new Set(slug.split('-').filter(Boolean));
 }
 
 function jaccard(a: Set<string>, b: Set<string>): number {

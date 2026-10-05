@@ -9,6 +9,7 @@ import path from 'node:path';
 import {
   bannedPhraseCheck,
   buildCertificate,
+  canonicalTemplateId,
   certificateIdFor,
   checkDraft,
   clearFlag as clearConsistencyFlag,
@@ -29,7 +30,7 @@ import {
   type ISODateTime,
   type SignatureRecord,
 } from '@ccguk/domain';
-import { DocumentDataError, TemplateNotFoundError, getTemplate, hasTemplate, htmlToText, listTemplates, mergePdfs, renderPdf, renderTemplate, sha256Hex, type TemplateMeta } from '@ccguk/documents';
+import { DocumentDataError, TemplateNotFoundError, convertDocxToPdf, formatRegisteredOffice, getTemplate, hasTemplate, htmlToText, listTemplates, mergePdfs, renderPdf, renderTemplate, sha256Hex, type ConvertDocxResult, type TemplateMeta } from '@ccguk/documents';
 import type { Actor } from '@ccguk/db';
 import type { AppContext } from '../context.js';
 import { badRequest, conflict, HttpError, notFound } from '../errors.js';
@@ -38,6 +39,8 @@ import { kbCitations } from './kb.js';
 import { reconcileSystemFigures, type ReconciledFlag } from './consistencyReconcile.js';
 import { loadBundle, recomputeClocks } from './claimView.js';
 import { assertInsideStore } from './evidence.js';
+import { supersedeDocxDocument } from './docxDocuments.js';
+import type { SlotInput } from '@ccguk/documents';
 
 export interface DocUser {
   id: Id;
@@ -112,6 +115,28 @@ export function readCertificatePdf(ctx: AppContext, doc: GeneratedDocument): { p
   return { pdf, sha256: sha256Hex(pdf), certificateId: doc.signature.certificateId };
 }
 
+/** Resolve a stored DOCX path under DOCUMENTS_DIR (refused when it escapes the store). */
+export function resolveDocxPath(ctx: AppContext, docxPath: string): string {
+  const abs = path.isAbsolute(docxPath) ? docxPath : path.join(ctx.config.documentsDir, docxPath);
+  return assertInsideStore(ctx.config.documentsDir, abs, 'document docxPath');
+}
+
+/**
+ * The filled .docx of a DOCX document, re-hashed on every read: 404 when the document is not a Word document or the
+ * file is gone, 409 DOCUMENT_DOCX_TAMPERED when the bytes no longer hash to the recorded docxSha256.
+ */
+export function readDocumentDocx(ctx: AppContext, doc: GeneratedDocument): { docx: Buffer; sha256: string } {
+  if (doc.format !== 'docx' || !doc.docxPath || !doc.docxSha256) throw notFound('Word file of document', doc.id);
+  const abs = resolveDocxPath(ctx, doc.docxPath);
+  if (!existsSync(abs)) throw notFound('Word file of document', doc.id);
+  const docx = readFileSync(abs);
+  const sha256 = sha256Hex(docx);
+  if (sha256 !== doc.docxSha256.toLowerCase()) {
+    throw conflict('DOCUMENT_DOCX_TAMPERED', `The stored Word file for document ${doc.id} does not hash to its recorded sha256 — it is not served or converted`, { recordedSha256: doc.docxSha256, computedSha256: sha256 });
+  }
+  return { docx, sha256 };
+}
+
 function toDraftRole(role: RecipientRole | undefined): 'at_fault_insurer' | 'client' | 'own_insurer' | 'court' | 'other' | undefined {
   if (!role) return undefined;
   return role === 'supplier' ? 'other' : role;
@@ -155,7 +180,7 @@ export function createClaimDocument(ctx: AppContext, input: CreateClaimDocumentI
   if (!meta) templateError(new TemplateNotFoundError(input.templateId));
   recomputeClocks(ctx, input.claimId);
   const bundle = loadBundle(ctx, input.claimId, true);
-  const role = (meta!.recipientRole as RecipientRole | undefined) ?? defaultRecipientRole(input.templateId);
+  const role = (meta!.recipientRole as RecipientRole | undefined) ?? defaultRecipientRole(canonicalTemplateId(input.templateId));
   // A letter addressed to the client's own insurer is checked as such (the FOS is open to the client there; DISP 2.7).
   const ownInsurer = Boolean(input.recipientPartyId && bundle.claim.clientInsurerId && input.recipientPartyId === bundle.claim.clientInsurerId);
   const assembled = assembleTemplateData(ctx, bundle, input.templateId, role, input.user, { extra: input.extra, recipientPartyId: input.recipientPartyId, ...(ownInsurer ? { recipientRole: 'own_insurer' as RecipientRole } : {}) });
@@ -332,16 +357,35 @@ export interface PdfRender {
   sha256: string;
   pages: number;
   relativePath: string;
+  /** Which converter produced the PDF ('chromium-html' for HTML documents). */
+  converter: NonNullable<GeneratedDocument['pdfConverter']>;
+  /** DOCX documents: every converter tried, in order (audited). */
+  attempts?: ConvertDocxResult['attempts'];
 }
 
-/** Render the PDF (header: our reference; footer: status line + Part 6 disclosure) and, for the GTA pack, merge the component PDFs. */
+/**
+ * Render the PDF. HTML documents: header with our reference, footer with the status line + Part 6 disclosure, PDF
+ * metadata; the GTA pack merges its component PDFs. DOCX documents: the stored .docx is verified (409
+ * DOCUMENT_DOCX_TAMPERED) and converted with the configured chain (Word → LibreOffice → browser, §A.11).
+ */
 export async function renderDocumentPdf(ctx: AppContext, doc: GeneratedDocument): Promise<PdfRender> {
   const settings = ctx.settings();
-  const ro = settings.registeredOffice;
   const reference = doc.claimId ? (ctx.repos.getClaim(ctx.db, doc.claimId)?.reference ?? doc.id) : doc.id;
+  const metadata = { title: `${doc.title} — ${reference}`, subject: doc.title, keywords: [reference, doc.templateId] };
+  if (doc.format === 'docx') {
+    const { docx } = readDocumentDocx(ctx, doc);
+    const workDir = path.join(ctx.config.dataDir, 'tmp', 'convert');
+    mkdirSync(workDir, { recursive: true });
+    const converted = await convertDocxToPdf(docx, { preference: ctx.config.docxPdfConverter, workDir, metadata });
+    const { relative, absolute } = documentPdfPath(ctx, doc);
+    mkdirSync(path.dirname(absolute), { recursive: true });
+    writeFileSync(absolute, converted.pdf);
+    return { pdf: converted.pdf, sha256: converted.sha256, pages: converted.pages, relativePath: relative, converter: converted.converter, attempts: converted.attempts };
+  }
   const rendered = await renderPdf(doc.html, {
     reference,
-    registeredOffice: ro ? [ro.line1, ro.line2, ro.town, ro.postcode].filter(Boolean).join(', ') : undefined,
+    registeredOffice: formatRegisteredOffice(settings.registeredOffice),
+    metadata,
   });
   let pdf = rendered.pdf;
   let pages = rendered.pages;
@@ -362,7 +406,7 @@ export async function renderDocumentPdf(ctx: AppContext, doc: GeneratedDocument)
   const { relative, absolute } = documentPdfPath(ctx, doc);
   mkdirSync(path.dirname(absolute), { recursive: true });
   writeFileSync(absolute, pdf);
-  return { pdf, sha256: sha256Hex(pdf), pages, relativePath: relative };
+  return { pdf, sha256: sha256Hex(pdf), pages, relativePath: relative, converter: 'chromium-html' };
 }
 
 export async function approveDocument(ctx: AppContext, id: Id, actor: Actor, note?: string): Promise<GeneratedDocument> {
@@ -376,9 +420,9 @@ export async function approveDocument(ctx: AppContext, id: Id, actor: Actor, not
   const pdf = await renderDocumentPdf(ctx, doc);
   const now = ctx.now();
   return ctx.db.transaction((tx) => {
-    ctx.repos.setDocumentPdf(tx, id, { pdfPath: pdf.relativePath, sha256: pdf.sha256 });
+    ctx.repos.setDocumentPdf(tx, id, { pdfPath: pdf.relativePath, sha256: pdf.sha256, pdfConverter: pdf.converter });
     const approved = ctx.repos.approveDocument(tx, id, actor, now);
-    ctx.repos.appendAudit(tx, { actor, action: 'document.pdf', entity: 'documents', entityId: id, after: { pdfPath: pdf.relativePath, sha256: pdf.sha256, pages: pdf.pages, note }, at: now });
+    ctx.repos.appendAudit(tx, { actor, action: 'document.pdf', entity: 'documents', entityId: id, after: { pdfPath: pdf.relativePath, sha256: pdf.sha256, pages: pdf.pages, converter: pdf.converter, attempts: pdf.attempts, note }, at: now });
     return approved;
   });
 }
@@ -427,8 +471,8 @@ export async function sendDocument(ctx: AppContext, id: Id, input: { via: NonNul
     const pdf = await renderDocumentPdf(ctx, full);
     const at = ctx.now();
     ctx.db.transaction((tx) => {
-      ctx.repos.setDocumentPdf(tx, id, { pdfPath: pdf.relativePath, sha256: pdf.sha256 });
-      ctx.repos.appendAudit(tx, { actor, action: 'document.pdf', entity: 'documents', entityId: id, after: { pdfPath: pdf.relativePath, sha256: pdf.sha256, pages: pdf.pages, reason: 'rendered at send — no stored PDF' }, at });
+      ctx.repos.setDocumentPdf(tx, id, { pdfPath: pdf.relativePath, sha256: pdf.sha256, pdfConverter: pdf.converter });
+      ctx.repos.appendAudit(tx, { actor, action: 'document.pdf', entity: 'documents', entityId: id, after: { pdfPath: pdf.relativePath, sha256: pdf.sha256, pages: pdf.pages, converter: pdf.converter, attempts: pdf.attempts, reason: 'rendered at send — no stored PDF' }, at });
     });
   }
   const now = ctx.now();
@@ -440,7 +484,7 @@ export async function sendDocument(ctx: AppContext, id: Id, input: { via: NonNul
       const outType = input.via === 'post' || input.via === 'hand' ? 'letter_out' : 'email_out';
       const e1 = ctx.repos.appendEvent(tx, { claimId: sent.claimId, type: outType, at: now, summary: `${sent.title} sent by ${input.via}${input.to ? ` to ${input.to}` : ''}`, data: { documentId: id, templateId: sent.templateId, via: input.via, to: input.to, note: input.note }, attributableTo: 'ccguk', documentId: id, createdBy: actor.userId, recordedAt: now });
       events.push({ id: e1.id, type: e1.type });
-      const semantic = SEMANTIC_SEND_EVENT[sent.templateId];
+      const semantic = SEMANTIC_SEND_EVENT[canonicalTemplateId(sent.templateId)];
       if (semantic) {
         const e2 = ctx.repos.appendEvent(tx, { claimId: sent.claimId, type: semantic, at: now, summary: `${sent.title} sent (${input.via})`, data: { documentId: id, templateId: sent.templateId, via: input.via }, attributableTo: 'ccguk', documentId: id, createdBy: actor.userId, recordedAt: now });
         events.push({ id: e2.id, type: e2.type });
@@ -462,10 +506,18 @@ export async function sendDocument(ctx: AppContext, id: Id, input: { via: NonNul
   return { ...result, pdfUrl: `/api/documents/${id}/pdf`, pdfBase64: pdf?.toString('base64'), note: 'Recorded only — nothing has been transmitted. Attach the PDF and send it by the recorded channel.' };
 }
 
-export function supersedeDocument(ctx: AppContext, id: Id, input: { extra?: Record<string, unknown>; reason?: string; reExecutedOn?: ISODate }, user: DocUser, actor: Actor): GeneratedDocument {
+export function supersedeDocument(
+  ctx: AppContext,
+  id: Id,
+  input: { extra?: Record<string, unknown>; reason?: string; reExecutedOn?: ISODate; docx?: { values?: Record<string, SlotInput>; confirm?: string[] } },
+  user: DocUser,
+  actor: Actor,
+): GeneratedDocument {
   const old = ctx.repos.requireDocument(ctx.db, id, { includeHtml: false });
   if (old.status === 'void' || old.status === 'superseded') throw conflict('DOCUMENT_STATE', `A ${old.status} document cannot be superseded`);
   if (!old.claimId) throw conflict('DOCUMENT_STATE', 'Standalone documents are re-created rather than superseded');
+  // Word documents are re-generated from the template with the previous inputs, confirmations and subject (§C.6).
+  if (old.format === 'docx') return supersedeDocxDocument(ctx, old, { ...(input.docx ?? {}), ...(input.reExecutedOn ? { reExecutedOn: input.reExecutedOn } : {}) }, user, actor);
   const extra = input.extra ?? pickExtra(old.dataSnapshot);
   return createClaimDocument(ctx, { claimId: old.claimId, templateId: old.templateId, extra, recipientPartyId: old.recipientPartyId, user, actor, supersedes: old, reExecutedOn: input.reExecutedOn });
 }

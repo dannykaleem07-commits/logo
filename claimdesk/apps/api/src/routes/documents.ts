@@ -1,20 +1,36 @@
 /**
  * Documents routes: templates, draft creation (+ consistency report), flag clearing, approval (PDF), send (recorded
- * only), supersede, e-signature start/verify, PDF download.
+ * only), supersede, e-signature start/verify, PDF download, the filled Word file of a DOCX document and any HTML
+ * letter recomposed on the CCGUK Word letterhead (TEMPLATES-VEHICLES-DESKTOP §C.5, §C.7).
  */
 import type { FastifyInstance } from 'fastify';
-import { listTemplates } from '@ccguk/documents';
-import type { DocumentStatus } from '@ccguk/domain';
+import { builtinAssetBytes, composeLetterheadDocx, extractLetterContent, LETTERHEAD_TEMPLATE_ID, listTemplates, readDocumentMeta } from '@ccguk/documents';
+import type { DocumentStatus, GeneratedDocument } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
-import { notFound } from '../errors.js';
+import { HttpError, notFound, unprocessable } from '../errors.js';
 import { parse } from '../schemas/common.js';
+import { supersedeDocxExtra } from '../schemas/docxTemplates.js';
 import { approveDocumentBody, clearDocumentFlagBody, createDocumentBody, documentGetQuery, documentListQuery, sendDocumentBody, signStartBody, signVerifyBody, supersedeDocumentBody } from '../schemas/services.js';
-import { approveDocument, clearDocumentFlag, createClaimDocument, readCertificatePdf, readDocumentPdf, sendDocument, startSignature, supersedeDocument, verifySignature } from '../services/documents.js';
+import { approveDocument, clearDocumentFlag, createClaimDocument, readCertificatePdf, readDocumentDocx, readDocumentPdf, sendDocument, startSignature, supersedeDocument, templateMeta, verifySignature } from '../services/documents.js';
+import { safeFileName } from '../services/docxTemplates.js';
 import { params, requireClaim } from './helpers.js';
+
+const DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+
+/** `attachment; filename="…"` with an RFC 5987 UTF-8 variant (titles carry dashes and ampersands). */
+export function attachmentDisposition(fileName: string): string {
+  const ascii = fileName.replace(/[^\x20-\x7E]/g, '-').replace(/["\\]/g, '_');
+  return `attachment; filename="${ascii}"; filename*=UTF-8''${encodeURIComponent(fileName)}`;
+}
+
+function referenceOf(ctx: AppContext, doc: GeneratedDocument): string {
+  return doc.claimId ? (ctx.repos.getClaim(ctx.db, doc.claimId)?.reference ?? doc.id) : doc.id;
+}
 
 export function registerDocumentsRoutes(app: FastifyInstance, ctx: AppContext): void {
   app.get('/templates', async () => {
-    return { items: listTemplates() };
+    // HTML templates; the Word templates are listed by GET /docx-templates (format 'docx').
+    return { items: listTemplates().map((t) => ({ ...t, format: 'html' as const })) };
   });
 
   app.get('/claims/:id/documents', async (request) => {
@@ -81,8 +97,38 @@ export function registerDocumentsRoutes(app: FastifyInstance, ctx: AppContext): 
   app.post('/documents/:id/supersede', async (request, reply) => {
     const { id } = params<{ id: string }>(request);
     const body = parse(supersedeDocumentBody, request.body ?? {}) ?? {};
-    const doc = supersedeDocument(ctx, id, { extra: body.data, reason: body.reason, reExecutedOn: body.reExecutedOn }, request.user, request.actor);
+    // Word documents: new slot values / confirmations are merged over the previous inputs (§C.6).
+    const docx = parse(supersedeDocxExtra, request.body ?? {});
+    const doc = supersedeDocument(ctx, id, { extra: body.data, reason: body.reason, reExecutedOn: body.reExecutedOn, docx: { ...(docx.values ? { values: docx.values } : {}), ...(docx.confirm ? { confirm: docx.confirm } : {}) } }, request.user, request.actor);
     return reply.status(201).send(doc);
+  });
+
+  /** The filled Word file of a DOCX document, re-hashed on every read (409 DOCUMENT_DOCX_TAMPERED). */
+  app.get('/documents/:id/docx', async (request, reply) => {
+    const { id } = params<{ id: string }>(request);
+    const doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: false });
+    const { docx, sha256 } = readDocumentDocx(ctx, doc);
+    const name = `${safeFileName(`${referenceOf(ctx, doc)} ${doc.title}`)}.docx`;
+    return reply.header('content-type', DOCX_MIME).header('content-disposition', attachmentDisposition(name)).header('x-sha256', sha256).send(docx);
+  });
+
+  /**
+   * An HTML letter recomposed on the CCGUK formal letterhead (not stored). 400 NOT_A_LETTER for anything that is not
+   * an HTML letter; 422 LETTER_NOT_EXTRACTABLE when the HTML carries no letter parts. Audited with the sha256.
+   */
+  app.get('/documents/:id/letterhead.docx', async (request, reply) => {
+    const { id } = params<{ id: string }>(request);
+    const doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: true });
+    const kind = templateMeta(doc.templateId)?.kind ?? readDocumentMeta(doc.html).kind;
+    if (doc.format === 'docx' || kind !== 'letter') throw new HttpError(400, 'NOT_A_LETTER', `Document ${id} (${doc.templateId}) is not an HTML letter; only letters can be put on the letterhead`, { templateId: doc.templateId, kind });
+    const content = extractLetterContent(doc.html);
+    if (!content) throw unprocessable('LETTER_NOT_EXTRACTABLE', `The letter text of document ${id} could not be read (it was made with a layout that does not mark the letter parts). Re-generate it to get a letterhead copy.`);
+    const reference = referenceOf(ctx, doc);
+    const now = ctx.now();
+    const { docx, sha256 } = composeLetterheadDocx(builtinAssetBytes(LETTERHEAD_TEMPLATE_ID), content, { now: new Date(now), reference, title: `${doc.title} — ${reference}` });
+    ctx.repos.appendAudit(ctx.db, { actor: request.actor, action: 'document.letterhead_docx', entity: 'documents', entityId: id, after: { sha256, reference, status: doc.status, documentSha256: doc.sha256 }, at: now });
+    const name = `${safeFileName(`${reference} ${doc.title} (letterhead)`)}.docx`;
+    return reply.header('content-type', DOCX_MIME).header('content-disposition', attachmentDisposition(name)).header('x-sha256', sha256).send(Buffer.from(docx));
   });
 
   app.post('/documents/:id/sign/start', async (request) => {

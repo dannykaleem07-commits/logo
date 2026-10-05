@@ -1,0 +1,970 @@
+{
+  "schemaVersion": 1,
+  "templateId": "agreement.ccguk_03_credit_hire",
+  "sourceSha256": "80d334a0b5272bc5ed2505e770655d0194a74338f070e1cf9878d99c5d64abbe",
+  "variants": [
+    {
+      "id": "hirer",
+      "label": "Hirer's copy (without the internal enforceability check)",
+      "removeBlocks": [
+        "enforceability-check"
+      ],
+      "default": true
+    },
+    {
+      "id": "office",
+      "label": "Office copy (full)"
+    }
+  ],
+  "guards": [
+    "hireReference",
+    "openRecordsNoNow",
+    "ratePositionInstruction"
+  ],
+  "subjects": [
+    "hire"
+  ],
+  "entries": [
+    {
+      "slot": {
+        "section": "title",
+        "label": "reference"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date"
+      },
+      "key": "doc.date",
+      "note": "Fill today only when the client signs today."
+    },
+    {
+      "slot": {
+        "section": "01",
+        "qualifier": "hirer-client",
+        "label": "full-name"
+      },
+      "key": "hire.hirerName"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "qualifier": "hirer-client",
+        "label": "date-of-birth"
+      },
+      "key": "claimant.dateOfBirth",
+      "format": "date-compact"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "qualifier": "hirer-client",
+        "label": "address"
+      },
+      "key": "claimant.address"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "qualifier": "hirer-client",
+        "label": "telephone"
+      },
+      "key": "claimant.phone"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "qualifier": "hirer-client",
+        "label": "driving-licence-no"
+      },
+      "key": "claimant.drivingLicenceNumber"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "agreement-hire-start"
+      },
+      "key": "hire.startAt"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "agreement-ref"
+      },
+      "key": "hire.agreementNumber",
+      "note": "Replaces the printed CCG-HIRE- box whole."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "licence-type"
+      },
+      "key": "claimant.licenceType"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "licence-held-for"
+      },
+      "key": "claimant.licenceHeldYears"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "licence-number"
+      },
+      "key": "claimant.drivingLicenceNumber"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "date-of-birth"
+      },
+      "key": "claimant.dateOfBirth"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "own-insurer-policy"
+      },
+      "key": "ownInsurer.namePolicy"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "own-claim-ref"
+      },
+      "key": "ownInsurer.claimRef",
+      "note": "The own insurer's claim reference (not the policy number)."
+    },
+    {
+      "slot": {
+        "section": "replacement-vehicle-insurance",
+        "label": "insurance-provider"
+      },
+      "key": "hireVehicle.insurerName"
+    },
+    {
+      "slot": {
+        "section": "replacement-vehicle-insurance",
+        "label": "policy-fleet-ref"
+      },
+      "key": "hireVehicle.policyNumber"
+    },
+    {
+      "slot": {
+        "section": "replacement-vehicle-insurance",
+        "label": "excess"
+      },
+      "key": "hire.excessPence"
+    },
+    {
+      "slot": {
+        "section": "replacement-vehicle-insurance",
+        "label": "basis-of-cover"
+      },
+      "key": "hire.insuranceBasis"
+    },
+    {
+      "slot": {
+        "section": "authorised-driver-declaration",
+        "label": "more-than-3-accidents-or-claims-in-the-previous"
+      },
+      "key": "hire.driverDecl.moreThan3Accidents3y",
+      "note": "The hirer's own declaration; never defaulted."
+    },
+    {
+      "slot": {
+        "section": "authorised-driver-declaration",
+        "label": "disqualified-from-driving-within-the-previous-3"
+      },
+      "key": "hire.driverDecl.disqualified3y",
+      "note": "The hirer's own declaration; never defaulted."
+    },
+    {
+      "slot": {
+        "section": "authorised-driver-declaration",
+        "label": "convicted-of-any-major-vehicle-related-offence"
+      },
+      "key": "hire.driverDecl.majorConviction",
+      "note": "The hirer's own declaration; never defaulted."
+    },
+    {
+      "slot": {
+        "section": "authorised-driver-declaration",
+        "label": "holds-a-full-valid-licence-for-the-vehicle-suppl"
+      },
+      "key": "hire.driverDecl.fullValidLicence",
+      "note": "The hirer's own declaration; never defaulted."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "original-vehicle-pending-assessment",
+        "label": "make-and-model"
+      },
+      "key": "vehicle.makeModel"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "replacement-vehicle-credit-hire",
+        "label": "make-and-model"
+      },
+      "key": "hireVehicle.makeModel"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "original-vehicle-pending-assessment",
+        "label": "registration"
+      },
+      "key": "vehicle.registration"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "replacement-vehicle-credit-hire",
+        "label": "registration"
+      },
+      "key": "hireVehicle.registration"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "original-vehicle-pending-assessment",
+        "label": "engine-fuel"
+      },
+      "key": "vehicle.engineFuel"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "replacement-vehicle-credit-hire",
+        "label": "engine-fuel"
+      },
+      "key": "hireVehicle.engineFuel"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "original-vehicle-pending-assessment",
+        "label": "transmission"
+      },
+      "key": "vehicle.transmission"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "replacement-vehicle-credit-hire",
+        "label": "transmission"
+      },
+      "key": "hireVehicle.transmission"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "original-vehicle-pending-assessment",
+        "label": "accident-date"
+      },
+      "key": "accident.date",
+      "format": "date-compact"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "replacement-vehicle-credit-hire",
+        "label": "hire-start"
+      },
+      "key": "hire.startAt",
+      "format": "date-compact"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "original-vehicle-pending-assessment",
+        "label": "gta-comparator-group"
+      },
+      "key": "vehicle.gtaGroup",
+      "note": "GTA benchmark only — CCGUK is not a GTA subscriber. Prints only when the rate is verified or you confirm it."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "replacement-vehicle-credit-hire",
+        "label": "gta-comparator-group"
+      },
+      "key": "hire.gtaGroup",
+      "note": "GTA benchmark only — CCGUK is not a GTA subscriber. Prints only when the rate is verified or you confirm it."
+    },
+    {
+      "slot": {
+        "section": "a-contractual-hire-charges",
+        "qualifier": "rate",
+        "label": "daily-credit-hire-replacement-vehicle"
+      },
+      "key": "hire.dailyRatePence"
+    },
+    {
+      "slot": {
+        "section": "a-contractual-hire-charges",
+        "qualifier": "rate",
+        "label": "vehicle-delivery"
+      },
+      "key": "hire.deliveryChargePence",
+      "requiredBeforeSigning": true,
+      "note": "Enter the delivery charge (or 0.00) before the hirer signs."
+    },
+    {
+      "slot": {
+        "section": "a-contractual-hire-charges",
+        "qualifier": "rate",
+        "label": "administration-and-setup-fee"
+      },
+      "key": "hire.adminFeePence",
+      "requiredBeforeSigning": true,
+      "note": "Enter the administration fee (or 0.00) before the hirer signs."
+    },
+    {
+      "slot": {
+        "section": "a-contractual-hire-charges",
+        "qualifier": "basis-of-charge",
+        "label": "comparator-hirers-own-vehicle-class"
+      },
+      "key": "hire.gta.ownClassGroup",
+      "label": "GTA group — Hirer's own vehicle class",
+      "note": "GTA benchmark only — CCGUK is not a GTA subscriber. Prints only when the rate is verified or you confirm it."
+    },
+    {
+      "slot": {
+        "section": "a-contractual-hire-charges",
+        "qualifier": "rate",
+        "label": "comparator-hirers-own-vehicle-class"
+      },
+      "key": "hire.gta.ownClassRatePence",
+      "label": "GTA rate — Hirer's own vehicle class",
+      "note": "GTA benchmark only — CCGUK is not a GTA subscriber. Prints only when the rate is verified or you confirm it."
+    },
+    {
+      "slot": {
+        "section": "a-contractual-hire-charges",
+        "qualifier": "basis-of-charge",
+        "label": "comparator-own-class-plus-automatic-uplift-if-ap"
+      },
+      "key": "hire.gta.ownClassAutoGroup",
+      "note": "GTA benchmark only — CCGUK is not a GTA subscriber. Prints only when the rate is verified or you confirm it."
+    },
+    {
+      "slot": {
+        "section": "a-contractual-hire-charges",
+        "qualifier": "rate",
+        "label": "comparator-own-class-plus-automatic-uplift-if-ap"
+      },
+      "key": "hire.gta.ownClassAutoRatePence",
+      "note": "GTA benchmark only — CCGUK is not a GTA subscriber. Prints only when the rate is verified or you confirm it."
+    },
+    {
+      "slot": {
+        "section": "a-contractual-hire-charges",
+        "qualifier": "basis-of-charge",
+        "label": "comparator-replacement-vehicle-class"
+      },
+      "key": "hire.gta.replacementClassGroup",
+      "label": "GTA group — replacement vehicle class",
+      "note": "GTA benchmark only — CCGUK is not a GTA subscriber. Prints only when the rate is verified or you confirm it."
+    },
+    {
+      "slot": {
+        "section": "a-contractual-hire-charges",
+        "qualifier": "rate",
+        "label": "comparator-replacement-vehicle-class"
+      },
+      "key": "hire.gta.replacementClassRatePence",
+      "label": "GTA rate — replacement vehicle class",
+      "note": "GTA benchmark only — CCGUK is not a GTA subscriber. Prints only when the rate is verified or you confirm it."
+    },
+    {
+      "slot": {
+        "section": "a-contractual-hire-charges",
+        "qualifier": "rate",
+        "label": "actual-ccguk-credit-hire-rate-charged"
+      },
+      "key": "hire.dailyRatePence"
+    },
+    {
+      "slot": {
+        "section": "a-contractual-hire-charges",
+        "label": "the-replacement-vehicle-was-supplied-at"
+      },
+      "key": "hire.dailyRatePence",
+      "label": "Rate position — supplied at (per day)",
+      "note": "The printed drafting sentence after this blank is not rewritten; edit it in Word if needed."
+    },
+    {
+      "slot": {
+        "section": "c-variable-contingent-charges",
+        "qualifier": "hirer",
+        "label": "full-name"
+      },
+      "key": "claimant.name",
+      "policy": "auto-if-known"
+    },
+    {
+      "slot": {
+        "section": "c-variable-contingent-charges",
+        "qualifier": "hirer",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "c-variable-contingent-charges",
+        "qualifier": "hirer",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "c-variable-contingent-charges",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "c-variable-contingent-charges",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "this-agreement-was-concluded-at-ccguks-business"
+      },
+      "key": "hire.contractChannel",
+      "when": "premises",
+      "note": "Record how the agreement was actually made; never defaulted."
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "this-agreement-was-concluded-away-from-ccguks-bu"
+      },
+      "key": "hire.contractChannel",
+      "when": "away",
+      "note": "Record how the agreement was actually made; never defaulted."
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "this-agreement-was-concluded-at-a-distance-by-te"
+      },
+      "key": "hire.contractChannel",
+      "when": "distance",
+      "note": "Record how the agreement was actually made; never defaulted."
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "place-where-signed"
+      },
+      "key": "hire.signedPlace"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "time-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "vehicle-collected-from"
+      },
+      "key": "hire.collectionMethod",
+      "optionBlanks": {
+        "delivered-to": {
+          "key": "hire.deliveryAddress",
+          "onlyIf": {
+            "key": "hire.collectionMethod",
+            "equals": "delivered"
+          }
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "cancellation-information-given-to-the-hirer-on-a"
+      },
+      "key": "hire.cancellationInfoGiven"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "on"
+      },
+      "key": "hire.cancellationInfoDate",
+      "label": "Cancellation information given on"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "by"
+      },
+      "key": "hire.cancellationInfoMedium",
+      "label": "Cancellation information given by"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "i-do-not-have-access-to-any-other-suitable-vehic"
+      },
+      "policy": "handler",
+      "label": "Need — no other suitable vehicle",
+      "note": "The client completes this in their own words; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "my-own-vehicle-is-presently-unavailable-pending"
+      },
+      "policy": "handler",
+      "label": "Need — own vehicle unavailable",
+      "note": "The client completes this in their own words; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "public-transport-is-not-a-reasonable-substitute"
+      },
+      "policy": "handler",
+      "label": "Need — public transport not a reasonable substitute",
+      "note": "The client completes this in their own words; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "what-i-need-a-vehicle-for-in-my-own-words"
+      },
+      "policy": "handler",
+      "label": "What I need a vehicle for (own words)",
+      "note": "The client completes this in their own words; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "journeys-i-cannot-make-without-a-vehicle"
+      },
+      "policy": "handler",
+      "label": "Journeys I cannot make without a vehicle (own words)",
+      "note": "The client completes this in their own words; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "vehicle-selection-and-availability",
+        "label": "my-damaged-vehicle-is"
+      },
+      "key": "vehicle.classDescription"
+    },
+    {
+      "slot": {
+        "section": "vehicle-selection-and-availability",
+        "label": "transmission-required"
+      },
+      "key": "vehicle.transmission"
+    },
+    {
+      "slot": {
+        "section": "vehicle-selection-and-availability",
+        "label": "why-a-direct-equivalent-was-not-supplied"
+      },
+      "key": "hire.substitutionReason"
+    },
+    {
+      "slot": {
+        "section": "vehicle-selection-and-availability",
+        "label": "vehicle-actually-supplied-and-why"
+      },
+      "key": "hire.selectionReason"
+    },
+    {
+      "slot": {
+        "section": "vehicle-selection-and-availability",
+        "label": "i-did-not-request-an-upgraded-luxury-or-premium"
+      },
+      "policy": "handler",
+      "label": "No upgrade requested",
+      "note": "The client completes this in their own words; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "vehicle-selection-and-availability",
+        "label": "i-accept-the-vehicle-supplied-as-a-suitable-temp"
+      },
+      "policy": "handler",
+      "label": "Vehicle accepted as a suitable temporary replacement",
+      "note": "The client completes this in their own words; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "vehicle-selection-and-availability",
+        "qualifier": "hirer",
+        "label": "full-name"
+      },
+      "key": "claimant.name",
+      "policy": "auto-if-known"
+    },
+    {
+      "slot": {
+        "section": "vehicle-selection-and-availability",
+        "qualifier": "hirer",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "vehicle-selection-and-availability",
+        "qualifier": "hirer",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "vehicle-selection-and-availability",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "vehicle-selection-and-availability",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "recorded-mileage"
+      },
+      "key": "hire.odometerOut"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "fuel-level"
+      },
+      "key": "hire.fuelOutPercent"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "battery-charge"
+      },
+      "key": "hire.chargeOutPercent"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "keys-supplied"
+      },
+      "key": "hire.keysSupplied"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "handover-date-and-time"
+      },
+      "key": "hire.releasedAt"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "collection"
+      },
+      "key": "hire.collectionMethod"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "condition-report-ref"
+      },
+      "key": "hire.conditionReportRef"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "registration"
+      },
+      "key": "hireVehicle.registration"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "i-have-had-the-opportunity-to-read-this-agreemen"
+      },
+      "policy": "handler",
+      "label": "Acknowledgement — read the agreement",
+      "note": "The client ticks each acknowledgement themselves."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "i-understand-that-the-hire-vehicle-is-not-provid"
+      },
+      "policy": "handler",
+      "label": "Acknowledgement — hire vehicle terms",
+      "note": "The client ticks each acknowledgement themselves."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "i-understand-my-obligation-to-cooperate-with-rea"
+      },
+      "policy": "handler",
+      "label": "Acknowledgement — duty to cooperate",
+      "note": "The client ticks each acknowledgement themselves."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "i-will-promptly-report-any-accident-damage-warni"
+      },
+      "policy": "handler",
+      "label": "Acknowledgement — report accidents and damage",
+      "note": "The client ticks each acknowledgement themselves."
+    },
+    {
+      "slot": {
+        "section": "08",
+        "label": "i-have-been-given-a-copy-of-this-agreement-inclu"
+      },
+      "policy": "handler",
+      "label": "Acknowledgement — copy given",
+      "note": "The client ticks each acknowledgement themselves."
+    },
+    {
+      "slot": {
+        "section": "09",
+        "qualifier": "hirer",
+        "label": "full-name"
+      },
+      "key": "claimant.name",
+      "policy": "auto-if-known"
+    },
+    {
+      "slot": {
+        "section": "09",
+        "qualifier": "hirer",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "09",
+        "qualifier": "hirer",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "09",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "09",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "agreement-signed-and-dated-by-the-hirer-in-the-h"
+      },
+      "key": "hire.enfCheck.signedAndDated",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "signature-date-is-the-actual-date-of-signing-not"
+      },
+      "key": "hire.enfCheck.signatureDateActual",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "daily-rate-admin-fee-and-all-contingent-charges"
+      },
+      "key": "hire.enfCheck.chargesStated",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "on-premises-off-premises-distance-correctly-reco"
+      },
+      "key": "hire.enfCheck.channelRecorded",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "cancellation-information-given-on-a-durable-medi"
+      },
+      "key": "hire.enfCheck.cancellationInfoDurable",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "statement-of-need-completed-in-the-hirers-own-wo"
+      },
+      "key": "hire.enfCheck.needStatementOwnWords",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "handover-and-condition-report-completed-signed-a"
+      },
+      "key": "hire.enfCheck.handoverReportCompleted",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "copy-of-the-signed-agreement-given-to-the-hirer"
+      },
+      "key": "hire.enfCheck.copyGiven",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "statement-of-means-completed-where-impecuniosity"
+      },
+      "key": "hire.enfCheck.statementOfMeans",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "gta-comparator-recorded-for-the-hirers-own-vehic"
+      },
+      "key": "hire.enfCheck.gtaComparatorRecorded",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "checked-by"
+      },
+      "key": "hire.enfCheck.checkedBy",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "date"
+      },
+      "key": "hire.enfCheck.checkedDate",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "enforceability-check-internal-use-not-for-the-hi",
+        "label": "defects-found-and-action-taken"
+      },
+      "key": "hire.enfCheck.defects",
+      "variants": [
+        "office"
+      ]
+    },
+    {
+      "slot": {
+        "section": "cancellation-form",
+        "label": "my-vehicle-credit-hire-agreement-reference"
+      },
+      "key": "hire.agreementNumber"
+    },
+    {
+      "slot": {
+        "section": "cancellation-form",
+        "label": "name"
+      },
+      "key": "claimant.name",
+      "policy": "auto-if-known"
+    },
+    {
+      "slot": {
+        "section": "cancellation-form",
+        "label": "address"
+      },
+      "key": "claimant.address"
+    },
+    {
+      "slot": {
+        "section": "cancellation-form",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "cancellation-form",
+        "label": "date"
+      },
+      "policy": "signature",
+      "label": "Cancellation form — date",
+      "note": "Dated by the hirer only if they cancel."
+    }
+  ],
+  "ignore": []
+}

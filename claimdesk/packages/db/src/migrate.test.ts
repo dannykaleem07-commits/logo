@@ -41,6 +41,7 @@ const EXPECTED_TABLES = [
   'gta_rates',
   'gta_segment_defaults',
   'vehicle_catalogue_custom',
+  'document_templates',
 ];
 
 /** Number of migrations in the journal (each slice that adds one keeps this test right without editing it). */
@@ -137,6 +138,43 @@ describe('migrations', () => {
       expect(tables).toEqual(expect.arrayContaining(['gta_rates', 'gta_segment_defaults', 'vehicle_catalogue_custom']));
       const indexes = h.sqlite.prepare("select name from sqlite_master where type = 'index'").all().map((r) => (r as { name: string }).name);
       expect(indexes).toEqual(expect.arrayContaining(['gta_rates_group_period_uq', 'vehicle_catalogue_custom_make_idx']));
+      const n = h.sqlite.prepare('select count(*) as n from __drizzle_migrations').get() as { n: number };
+      expect(n.n).toBe(JOURNAL_ENTRIES);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it('0004 upgrades a database created by 0000–0003: documents keep their rows as format html', () => {
+    const dir = mkdtempSync(path.join(os.tmpdir(), 'claimdesk-mig-'));
+    try {
+      mkdirSync(path.join(dir, 'meta'));
+      const journal = JSON.parse(readFileSync(path.join(migrationsFolder, 'meta', '_journal.json'), 'utf8')) as { entries: Array<{ tag: string; when: number }> };
+      const firstFour = journal.entries.slice(0, 4);
+      expect(firstFour.map((e) => e.tag)).toEqual(['0000_init', '0001_append_only_triggers', '0002_auth_sessions', '0003_vehicle_catalogue_gta']);
+      // drizzle applies a migration only when its timestamp is later than the last one applied
+      expect(journal.entries[4]?.tag).toBe('0004_document_templates');
+      expect(journal.entries[4]!.when).toBeGreaterThan(firstFour[3]!.when);
+      writeFileSync(path.join(dir, 'meta', '_journal.json'), JSON.stringify({ ...journal, entries: firstFour }));
+      for (const e of firstFour) copyFileSync(path.join(migrationsFolder, `${e.tag}.sql`), path.join(dir, `${e.tag}.sql`));
+
+      const h = createDatabase({ path: ':memory:' });
+      handles.push(h);
+      runMigrations(h.db, { migrationsFolder: dir });
+      h.sqlite
+        .prepare(
+          "insert into documents (id, claim_id, template_id, template_version, title, status, html, sha256, created_at, created_by, data_snapshot, updated_at) values ('d1', 'c1', 'letter.chaser_7', '1.0.0', 'Chaser', 'draft', '<p>x</p>', 'abc', '2026-01-01T00:00:00.000Z', 'handler', '{}', '2026-01-01T00:00:00.000Z')",
+        )
+        .run();
+
+      runMigrations(h.db);
+      expect(h.sqlite.prepare("select format, docx_path, docx_sha256, pdf_converter from documents where id = 'd1'").get()).toEqual({ format: 'html', docx_path: null, docx_sha256: null, pdf_converter: null });
+      const indexes = h.sqlite.prepare("select name from sqlite_master where type = 'index'").all().map((r) => (r as { name: string }).name);
+      expect(indexes).toEqual(expect.arrayContaining(['document_templates_source_idx', 'document_templates_sha_idx']));
+      const cols = h.sqlite.prepare('pragma table_info(document_templates)').all() as Array<{ name: string; notnull: number; dflt_value: string | null }>;
+      expect(cols.find((c) => c.name === 'warnings')).toMatchObject({ notnull: 1, dflt_value: "'[]'" });
+      expect(cols.find((c) => c.name === 'file_version')).toMatchObject({ notnull: 1, dflt_value: '1' });
+      expect(cols.find((c) => c.name === 'mapping_revision')).toMatchObject({ notnull: 1, dflt_value: '0' });
       const n = h.sqlite.prepare('select count(*) as n from __drizzle_migrations').get() as { n: number };
       expect(n.n).toBe(JOURNAL_ENTRIES);
     } finally {

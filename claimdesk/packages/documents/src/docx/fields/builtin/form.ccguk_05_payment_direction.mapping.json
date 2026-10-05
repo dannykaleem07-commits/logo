@@ -1,0 +1,346 @@
+{
+  "schemaVersion": 1,
+  "templateId": "form.ccguk_05_payment_direction",
+  "sourceSha256": "381038233f64793a8b59d3db6b2f1c9b723980baefe66a85d1c3e1613e3a863c",
+  "guards": [
+    "bankRequired",
+    "bankAccountName"
+  ],
+  "subjects": [],
+  "entries": [
+    {
+      "slot": {
+        "section": "title",
+        "label": "reference"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date"
+      },
+      "key": "doc.date",
+      "note": "Fill today only when the client signs today."
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "client-full-name"
+      },
+      "key": "claimant.name"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "date-of-birth"
+      },
+      "key": "claimant.dateOfBirth"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "address"
+      },
+      "key": "claimant.address"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "telephone"
+      },
+      "key": "claimant.phone"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "email"
+      },
+      "key": "claimant.email"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "vehicle-make-model"
+      },
+      "key": "vehicle.makeModel"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "registration"
+      },
+      "key": "vehicle.registration"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "date-of-accident"
+      },
+      "key": "accident.date"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "ccguk-reference"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "third-party-insurer"
+      },
+      "key": "tpInsurer.name"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "third-party-claim-ref"
+      },
+      "key": "tpInsurer.claimRef"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "own-insurer"
+      },
+      "key": "ownInsurer.name"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "own-claim-ref"
+      },
+      "key": "ownInsurer.claimRef",
+      "note": "The own insurer's claim reference (not the policy number)."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "credit-hire-charges"
+      },
+      "key": "payment.directs.hire",
+      "note": "If no box is ticked, this direction covers every head."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "recovery-charges"
+      },
+      "key": "payment.directs.recovery",
+      "note": "If no box is ticked, this direction covers every head."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "storage-charges"
+      },
+      "key": "payment.directs.storage",
+      "note": "If no box is ticked, this direction covers every head."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "engineering-assessment-and-report-fees"
+      },
+      "key": "payment.directs.engineering",
+      "note": "If no box is ticked, this direction covers every head."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "vehicle-damage-repair-costs"
+      },
+      "key": "payment.directs.repair",
+      "note": "If no box is ticked, this direction covers every head."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "vehicle-damage-pre-accident-value-on-a-total-los"
+      },
+      "key": "payment.directs.pav",
+      "note": "If no box is ticked, this direction covers every head."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "policy-excess"
+      },
+      "key": "payment.directs.excess",
+      "note": "If no box is ticked, this direction covers every head."
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "any-other-accident-related-vehicle-loss-and-inte"
+      },
+      "key": "payment.directs.other",
+      "note": "If no box is ticked, this direction covers every head."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "bank"
+      },
+      "key": "company.bank.bankName",
+      "note": "From Settings only."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "sort-code"
+      },
+      "key": "company.bank.sortCode",
+      "note": "From Settings only."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "account-number"
+      },
+      "key": "company.bank.accountNumber",
+      "note": "From Settings only."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "label": "payment-reference"
+      },
+      "key": "payment.reference"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "revoked-on"
+      },
+      "policy": "never",
+      "note": "Completed only if the client revokes this direction."
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "revocation-received-by"
+      },
+      "policy": "never",
+      "note": "Completed only if the client revokes this direction."
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "paying-parties-notified-of-revocation-on"
+      },
+      "policy": "never",
+      "note": "Completed only if the client revokes this direction."
+    },
+    {
+      "slot": {
+        "section": "05",
+        "label": "notified-by"
+      },
+      "policy": "never",
+      "note": "Completed only if the client revokes this direction."
+    },
+    {
+      "slot": {
+        "section": "06",
+        "qualifier": "client",
+        "label": "full-name"
+      },
+      "key": "claimant.name",
+      "policy": "auto-if-known"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "qualifier": "client",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "qualifier": "client",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "qualifier": "for-courtesy-cars-group-uk-ltd",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "form-taken-by"
+      },
+      "key": "handler.name",
+      "policy": "suggest"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "date-taken"
+      },
+      "key": "doc.signedDate"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "copy-given-to-client-on"
+      },
+      "key": "doc.copyToClientAt"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "method"
+      },
+      "key": "doc.copyToClientMethod"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "sent-to-third-party-insurer-on"
+      },
+      "key": "doc.sentToTpInsurerAt"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "sent-to-own-insurer-on"
+      },
+      "key": "doc.sentToOwnInsurerAt"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "acknowledged-by-insurer-on"
+      },
+      "key": "doc.insurerAcknowledgedAt"
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "acknowledgement-held-at"
+      },
+      "policy": "handler",
+      "label": "Acknowledgement held at"
+    }
+  ],
+  "ignore": []
+}

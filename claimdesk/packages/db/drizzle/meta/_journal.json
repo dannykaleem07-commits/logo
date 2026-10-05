@@ -29,6 +29,13 @@
       "when": 1791400000000,
       "tag": "0003_vehicle_catalogue_gta",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1791500000000,
+      "tag": "0004_document_templates",
+      "breakpoints": true
     }
   ]
 }

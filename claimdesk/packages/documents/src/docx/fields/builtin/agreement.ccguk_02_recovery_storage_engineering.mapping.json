@@ -667,6 +667,7 @@
         "label": "total"
       },
       "key": "storage.days",
+      "format": "int",
       "label": "Storage log — total days",
       "note": "Closed storage only; blank while the vehicle is still in storage.",
       "variants": [

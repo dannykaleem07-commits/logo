@@ -3,7 +3,7 @@
  * appendix describes without naming: option blanks, address lines, exhibit sub-fields). Each non-handler field has a
  * pure resolver over the MergeSource (§B.3 rules in derive.ts).
  */
-import { formatRegistration, gtaRate, londonDate } from '@ccguk/domain';
+import { gtaRate, londonDate } from '@ccguk/domain';
 import { slugify } from '../text.js';
 import {
   addressNoPostcode,
@@ -1078,5 +1078,3 @@ export function listFieldGroups(): Array<{ group: FieldGroup; fields: FieldDef[]
   return [...out.entries()].map(([group, fields]) => ({ group, fields }));
 }
 
-/** Registration formatting is applied by the resolvers; re-exported for formatters that receive raw input. */
-export { formatRegistration };

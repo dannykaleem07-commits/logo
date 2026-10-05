@@ -20,6 +20,7 @@ import type {
   Pence
 } from '../types.js';
 import { signatureDateChecks } from '../esign/dates.js';
+import { canonicalTemplateId } from '../templateIds.js';
 import { extractAmounts, extractCitations, extractDates, extractDeadlines, type ExtractedAmount, type ExtractedDate } from './extract.js';
 import { bannedPhraseCheck, excerptAround, legacyCheck, REGISTERED_NAME } from './legacy.js';
 import { calendarDaysBetween, chargeableDays, datePart, dayNumber, formatLongDate, normaliseSpace, toPlainText } from './text.js';
@@ -228,7 +229,7 @@ function headNear(text: string, index: number, length: number): HeadOfLoss | und
 
 function inferRole(ctx: DraftContext): RecipientRole | undefined {
   if (ctx.recipientRole) return ctx.recipientRole;
-  if (AT_FAULT_INSURER_TEMPLATES.includes(ctx.templateId)) return 'at_fault_insurer';
+  if (AT_FAULT_INSURER_TEMPLATES.includes(canonicalTemplateId(ctx.templateId))) return 'at_fault_insurer';
   return undefined;
 }
 
@@ -303,7 +304,7 @@ export function deadlineChecks(text: string, ctx: DraftContext): ConsistencyFlag
   }
   const deadlines = all.filter((d) => d.iso >= draftDate);
   if (deadlines.length === 0) return flags;
-  const mapped = TEMPLATE_CLOCKS[ctx.templateId];
+  const mapped = TEMPLATE_CLOCKS[canonicalTemplateId(ctx.templateId)];
   const role = inferRole(ctx);
   const kinds = mapped ?? (role ? ROLE_CLOCKS[role] : undefined);
   if (!kinds) return flags;

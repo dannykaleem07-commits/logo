@@ -11,6 +11,7 @@ import type { GtaRate, InsurerDirectoryEntry, ISODateTime, KbEntry } from '@ccgu
 import * as kbPkg from '@ccguk/kb';
 import { loadConfig, type AppConfig } from './config.js';
 import { resolveEngines, type DomainEngines } from './engines.js';
+import { syncBuiltinTemplates } from './services/docxTemplates.js';
 
 export interface Logger {
   info(msg: string, meta?: Record<string, unknown>): void;
@@ -142,8 +143,13 @@ export function ensureDefaultUser(database: Db, id: string): void {
   db.createUser(database, { ...DEFAULT_HANDLER, id, mfaEnabled: false });
 }
 
+/** Temp folder for DOCX → PDF conversions (<DATA_DIR>/tmp/convert, §A.11). */
+export function convertWorkDir(config: AppConfig): string {
+  return path.join(config.dataDir, 'tmp', 'convert');
+}
+
 export function ensureDataDirs(config: AppConfig): void {
-  for (const dir of [config.evidenceDir, config.documentsDir]) mkdirSync(dir, { recursive: true });
+  for (const dir of [config.evidenceDir, config.documentsDir, config.templatesDir, convertWorkDir(config)]) mkdirSync(dir, { recursive: true });
   if (config.databasePath !== ':memory:') mkdirSync(path.dirname(config.databasePath), { recursive: true });
 }
 
@@ -170,5 +176,8 @@ export function buildContext(options: BuildContextOptions = {}): AppContext {
     logger,
     close: () => db.closeDatabase(handle),
   };
+  // Built-in Word templates: cache their scans in document_templates once per boot (never throws; a failure marks the
+  // template inactive with a warning — TEMPLATES-VEHICLES-DESKTOP §C.4).
+  if (options.migrate ?? true) syncBuiltinTemplates(ctx);
   return ctx;
 }

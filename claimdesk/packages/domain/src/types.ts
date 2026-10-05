@@ -734,6 +734,14 @@ export interface GeneratedDocument {
   consistency?: ConsistencyReport;
   signature?: SignatureRecord;
   dataSnapshot: Record<string, unknown>; // exact ledger/event data the template rendered from
+  /** 'docx' for documents filled from a Word template (TEMPLATES-VEHICLES-DESKTOP §C.3); absent/'html' otherwise. */
+  format?: 'html' | 'docx';
+  /** DOCX documents: the filled .docx, relative to DOCUMENTS_DIR. */
+  docxPath?: string;
+  /** DOCX documents: sha256 of the filled .docx (re-checked on every read). */
+  docxSha256?: string;
+  /** Which converter produced the approved PDF ('chromium-html' for HTML documents). */
+  pdfConverter?: 'word' | 'libreoffice' | 'browser' | 'chromium-html';
 }
 
 export interface SignatureRecord {

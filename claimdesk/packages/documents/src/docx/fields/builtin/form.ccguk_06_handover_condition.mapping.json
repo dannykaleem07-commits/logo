@@ -1,0 +1,1222 @@
+{
+  "schemaVersion": 1,
+  "templateId": "form.ccguk_06_handover_condition",
+  "sourceSha256": "42941cabcd0f076b7d31334a03facd9261a1ceb75b08dc2fc62d96fb4e371527",
+  "variants": [
+    {
+      "id": "release",
+      "label": "Release (vehicle out)",
+      "default": true
+    },
+    {
+      "id": "return",
+      "label": "Return (vehicle in)"
+    }
+  ],
+  "guards": [
+    "openRecordsNoNow",
+    "hireReference"
+  ],
+  "subjects": [
+    "hire"
+  ],
+  "entries": [
+    {
+      "slot": {
+        "section": "title",
+        "label": "reference"
+      },
+      "key": "claim.reference"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date"
+      },
+      "key": "hire.releaseDate",
+      "note": "The release date."
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "registration"
+      },
+      "key": "hireVehicle.registration"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "hire-agreement-ref"
+      },
+      "key": "hire.agreementNumber",
+      "note": "Replaces the printed CCG-HIRE- box whole."
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "make-and-model"
+      },
+      "key": "hireVehicle.makeModel"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "colour"
+      },
+      "key": "hireVehicle.colour"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "vin"
+      },
+      "key": "hireVehicle.vin"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "transmission"
+      },
+      "key": "hireVehicle.transmission"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "hirer-full-name"
+      },
+      "key": "hire.hirerName"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "driving-licence-no"
+      },
+      "key": "claimant.drivingLicenceNumber"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "hirer-address"
+      },
+      "key": "claimant.address"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "telephone"
+      },
+      "key": "claimant.phone"
+    },
+    {
+      "slot": {
+        "section": "01",
+        "label": "email"
+      },
+      "key": "claimant.email"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "date-and-time-out"
+      },
+      "key": "hire.releasedAt"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "released-by"
+      },
+      "key": "hire.releasedBy"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "odometer-out"
+      },
+      "key": "hire.odometerOut"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "fuel-out",
+        "nth": 1
+      },
+      "key": "hire.fuelOut",
+      "label": "Fuel out (eighths)"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "fuel-out",
+        "nth": 2
+      },
+      "key": "hire.fuelOutPercent",
+      "label": "Fuel out (%)"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "battery-charge-out"
+      },
+      "key": "hire.batteryOutPercent"
+    },
+    {
+      "slot": {
+        "section": "02",
+        "label": "collected-or-delivered"
+      },
+      "key": "hire.collectionMethod",
+      "optionBlanks": {
+        "delivered-to": {
+          "key": "hire.deliveryAddress",
+          "onlyIf": {
+            "key": "hire.collectionMethod",
+            "equals": "delivered"
+          }
+        }
+      }
+    },
+    {
+      "slot": {
+        "section": "items-handed-over",
+        "label": "keys"
+      },
+      "key": "hire.release.keys"
+    },
+    {
+      "slot": {
+        "section": "items-handed-over",
+        "label": "v5c-hire-document-pack"
+      },
+      "key": "hire.release.documentPack"
+    },
+    {
+      "slot": {
+        "section": "items-handed-over",
+        "label": "insurance-certificate-cover-note"
+      },
+      "key": "hire.release.insuranceCertificate"
+    },
+    {
+      "slot": {
+        "section": "items-handed-over",
+        "label": "locking-wheel-nut-key"
+      },
+      "key": "hire.release.lockingWheelNut"
+    },
+    {
+      "slot": {
+        "section": "items-handed-over",
+        "label": "charging-cable-s"
+      },
+      "key": "hire.release.chargingCables"
+    },
+    {
+      "slot": {
+        "section": "items-handed-over",
+        "label": "parcel-shelf-load-cover"
+      },
+      "key": "hire.release.parcelShelf"
+    },
+    {
+      "slot": {
+        "section": "items-handed-over",
+        "label": "warning-triangle-hi-vis"
+      },
+      "key": "hire.release.warningTriangle"
+    },
+    {
+      "slot": {
+        "section": "items-handed-over",
+        "label": "spare-wheel-or-repair-kit"
+      },
+      "key": "hire.release.spareWheel"
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "front-bumper"
+      },
+      "key": "hire.condition.frontBumper.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "front-bumper"
+      },
+      "key": "hire.condition.frontBumper.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "bonnet"
+      },
+      "key": "hire.condition.bonnet.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "bonnet"
+      },
+      "key": "hire.condition.bonnet.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "nearside-front-wing"
+      },
+      "key": "hire.condition.nearsideFrontWing.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "nearside-front-wing"
+      },
+      "key": "hire.condition.nearsideFrontWing.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "offside-front-wing"
+      },
+      "key": "hire.condition.offsideFrontWing.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "offside-front-wing"
+      },
+      "key": "hire.condition.offsideFrontWing.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "nearside-front-door"
+      },
+      "key": "hire.condition.nearsideFrontDoor.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "nearside-front-door"
+      },
+      "key": "hire.condition.nearsideFrontDoor.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "offside-front-door"
+      },
+      "key": "hire.condition.offsideFrontDoor.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "offside-front-door"
+      },
+      "key": "hire.condition.offsideFrontDoor.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "nearside-rear-door"
+      },
+      "key": "hire.condition.nearsideRearDoor.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "nearside-rear-door"
+      },
+      "key": "hire.condition.nearsideRearDoor.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "offside-rear-door"
+      },
+      "key": "hire.condition.offsideRearDoor.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "offside-rear-door"
+      },
+      "key": "hire.condition.offsideRearDoor.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "nearside-rear-quarter"
+      },
+      "key": "hire.condition.nearsideRearQuarter.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "nearside-rear-quarter"
+      },
+      "key": "hire.condition.nearsideRearQuarter.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "offside-rear-quarter"
+      },
+      "key": "hire.condition.offsideRearQuarter.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "offside-rear-quarter"
+      },
+      "key": "hire.condition.offsideRearQuarter.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "rear-bumper"
+      },
+      "key": "hire.condition.rearBumper.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "rear-bumper"
+      },
+      "key": "hire.condition.rearBumper.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "boot-tailgate"
+      },
+      "key": "hire.condition.bootTailgate.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "boot-tailgate"
+      },
+      "key": "hire.condition.bootTailgate.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "roof"
+      },
+      "key": "hire.condition.roof.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "roof"
+      },
+      "key": "hire.condition.roof.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "windscreen"
+      },
+      "key": "hire.condition.windscreen.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "windscreen"
+      },
+      "key": "hire.condition.windscreen.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "rear-screen"
+      },
+      "key": "hire.condition.rearScreen.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "rear-screen"
+      },
+      "key": "hire.condition.rearScreen.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "nearside-mirror"
+      },
+      "key": "hire.condition.nearsideMirror.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "nearside-mirror"
+      },
+      "key": "hire.condition.nearsideMirror.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "offside-mirror"
+      },
+      "key": "hire.condition.offsideMirror.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "offside-mirror"
+      },
+      "key": "hire.condition.offsideMirror.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "lights-and-lenses"
+      },
+      "key": "hire.condition.lightsAndLenses.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "lights-and-lenses"
+      },
+      "key": "hire.condition.lightsAndLenses.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "wheel-tyre-nsf"
+      },
+      "key": "hire.condition.wheelTyreNsf.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "wheel-tyre-nsf"
+      },
+      "key": "hire.condition.wheelTyreNsf.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "wheel-tyre-osf"
+      },
+      "key": "hire.condition.wheelTyreOsf.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "wheel-tyre-osf"
+      },
+      "key": "hire.condition.wheelTyreOsf.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "wheel-tyre-nsr"
+      },
+      "key": "hire.condition.wheelTyreNsr.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "wheel-tyre-nsr"
+      },
+      "key": "hire.condition.wheelTyreNsr.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "wheel-tyre-osr"
+      },
+      "key": "hire.condition.wheelTyreOsr.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "wheel-tyre-osr"
+      },
+      "key": "hire.condition.wheelTyreOsr.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "spare-wheel-kit"
+      },
+      "key": "hire.condition.spareWheelKit.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "spare-wheel-kit"
+      },
+      "key": "hire.condition.spareWheelKit.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "interior-trim"
+      },
+      "key": "hire.condition.interiorTrim.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "interior-trim"
+      },
+      "key": "hire.condition.interiorTrim.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "seats-and-upholstery"
+      },
+      "key": "hire.condition.seatsAndUpholstery.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "seats-and-upholstery"
+      },
+      "key": "hire.condition.seatsAndUpholstery.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "out",
+        "label": "load-area-boot-floor"
+      },
+      "key": "hire.condition.loadAreaBootFloor.out",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P."
+    },
+    {
+      "slot": {
+        "section": "03",
+        "qualifier": "in",
+        "label": "load-area-boot-floor"
+      },
+      "key": "hire.condition.loadAreaBootFloor.in",
+      "note": "Codes as printed: OK, S, C, D, CR, M, P.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "table-panel-code"
+      },
+      "key": "hire.releaseDamage"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "photographs-taken-at-release"
+      },
+      "key": "hire.release.photoCount",
+      "label": "Photographs taken at release"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "yes-number-taken",
+        "nth": 1
+      },
+      "key": "hire.release.photoCount",
+      "label": "Photographs at release — number taken"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "stored-at",
+        "nth": 1
+      },
+      "key": "hire.release.photoStore"
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "photographs-taken-at-return"
+      },
+      "key": "hire.return.photoCount",
+      "label": "Photographs taken at return",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "yes-number-taken",
+        "nth": 2
+      },
+      "key": "hire.return.photoCount",
+      "label": "Photographs at return — number taken",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "04",
+        "label": "stored-at",
+        "nth": 2
+      },
+      "key": "hire.return.photoStore",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "05",
+        "qualifier": "hirer-at-release",
+        "label": "full-name"
+      },
+      "key": "hire.hirerName"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "qualifier": "hirer-at-release",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "qualifier": "hirer-at-release",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "qualifier": "for-ccguk-at-release",
+        "label": "full-name"
+      },
+      "key": "hire.releasedBy"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "qualifier": "for-ccguk-at-release",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "05",
+        "qualifier": "for-ccguk-at-release",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "date-and-time-in"
+      },
+      "key": "hire.returnedAt",
+      "note": "Blank until the hire has ended.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "received-by"
+      },
+      "key": "hire.receivedBy",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "odometer-in"
+      },
+      "key": "hire.odometerIn",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "miles-covered"
+      },
+      "key": "hire.milesCovered",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "fuel-in",
+        "nth": 1
+      },
+      "key": "hire.fuelIn",
+      "label": "Fuel in (eighths)",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "fuel-in",
+        "nth": 2
+      },
+      "key": "hire.fuelInPercent",
+      "label": "Fuel in (%)",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "battery-charge-in"
+      },
+      "key": "hire.batteryInPercent",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "returned-by"
+      },
+      "key": "hire.returnedBy",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "06",
+        "label": "location-of-return"
+      },
+      "key": "hire.returnLocation",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "items-returned",
+        "label": "keys"
+      },
+      "key": "hire.return.keys",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "items-returned",
+        "label": "document-pack"
+      },
+      "key": "hire.return.documentPack",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "items-returned",
+        "label": "charging-cable-s"
+      },
+      "key": "hire.return.chargingCables",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "items-returned",
+        "label": "locking-wheel-nut-key"
+      },
+      "key": "hire.return.lockingWheelNut",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "items-returned",
+        "label": "parcel-shelf-load-cover"
+      },
+      "key": "hire.return.parcelShelf",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "items-returned",
+        "label": "spare-wheel-or-repair-kit"
+      },
+      "key": "hire.return.spareWheel",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "items-returned",
+        "label": "personal-items-removed-by-hirer"
+      },
+      "key": "hire.return.personalItemsRemoved",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "items-returned",
+        "label": "vehicle-cleanliness"
+      },
+      "key": "hire.return.cleanliness",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "table-panel-code"
+      },
+      "key": "hire.returnDamage",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "new-damage-identified"
+      },
+      "key": "hire.return.newDamage",
+      "when": "no",
+      "label": "New damage identified? — NO",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "yes-recorded-above-photographed-and-notified-to"
+      },
+      "key": "hire.return.newDamage",
+      "when": "yes",
+      "label": "New damage identified? — YES",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "and-notified-to-the-hirer-on"
+      },
+      "key": "hire.return.damageNotifiedDate",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "fuel-charge-shortfall"
+      },
+      "key": "hire.return.fuelShortfall",
+      "optionBlanks": {
+        "yes": {
+          "key": "hire.return.fuelShortfallAmount"
+        }
+      },
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "charge-raised",
+        "nth": 1
+      },
+      "key": "hire.return.fuelChargePence",
+      "label": "Fuel / charge — charge raised",
+      "note": "Never computed; enter only a charge actually raised.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "cleaning-required-beyond-normal"
+      },
+      "key": "hire.return.cleaningRequired",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "07",
+        "label": "charge-raised",
+        "nth": 2
+      },
+      "key": "hire.return.cleaningChargePence",
+      "label": "Cleaning — charge raised",
+      "note": "Never computed; enter only a charge actually raised.",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "hirer-at-return",
+        "label": "full-name"
+      },
+      "key": "hire.hirerName",
+      "policy": "auto-if-known",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "hirer-at-return",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "hirer-at-return",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "for-ccguk-at-return",
+        "label": "full-name"
+      },
+      "key": "hire.receivedBy",
+      "variants": [
+        "return"
+      ]
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "for-ccguk-at-return",
+        "label": "signature"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "08",
+        "qualifier": "for-ccguk-at-return",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    }
+  ],
+  "ignore": []
+}

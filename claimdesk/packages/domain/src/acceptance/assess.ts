@@ -13,6 +13,7 @@
  */
 import type { CaseAcceptance, ClaimBundle, GateResult, GeneratedDocument, HireAgreement, ISODateTime, Pence } from '../types.js';
 import { formatGBP } from '../money.js';
+import { canonicalTemplateId } from '../templateIds.js';
 import { isoToMs } from '../calendar/index.js';
 import { LIABILITY_DECLINE_THRESHOLD, LIABILITY_WEAK_THRESHOLD, scoreLiability, type LiabilityExtras, type LiabilityScore } from './liability.js';
 
@@ -156,7 +157,7 @@ function readinessFromGate(gate: GateResult | undefined): CaseAcceptance['impecu
 export function impecuniosityReadiness(bundle: ClaimBundle, gates?: GateResult[]): { readiness: CaseAcceptance['impecuniosityReadiness']; missing: string[] } {
   const fromGate = readinessFromGate(gates?.find((g) => g.gate === 'impecuniosity'));
   if (fromGate) return { readiness: fromGate, missing: gates!.find((g) => g.gate === 'impecuniosity')!.missing };
-  const statement = bundle.documents.some((d) => d.templateId === 'form.statement_of_means' && ON_FILE.has(d.status)) || bundle.hire.some((h) => !!h.statementOfMeansDocumentId);
+  const statement = bundle.documents.some((d) => canonicalTemplateId(d.templateId) === 'form.statement_of_means' && ON_FILE.has(d.status)) || bundle.hire.some((h) => !!h.statementOfMeansDocumentId);
   const bank = bundle.evidence.filter((e) => e.kind === 'bank_statement').length;
   const income = bundle.evidence.some((e) => e.kind === 'payslip' || INCOME.test(e.description ?? ''));
   const missing: string[] = [];

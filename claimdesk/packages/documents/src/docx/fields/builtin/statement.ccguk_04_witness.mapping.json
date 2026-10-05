@@ -1,0 +1,345 @@
+{
+  "schemaVersion": 1,
+  "templateId": "statement.ccguk_04_witness",
+  "sourceSha256": "dbda1bf4f444dca34b5e08f4a4cb69cbcfc16f2349f6d61b5ef803e65175d935",
+  "blocks": [
+    {
+      "block": "exhibit-sheet",
+      "removeWhen": {
+        "key": "witness.exhibitRefsList",
+        "equals": "None"
+      }
+    }
+  ],
+  "guards": [
+    "witnessRelationship"
+  ],
+  "subjects": [
+    "witness"
+  ],
+  "entries": [
+    {
+      "slot": {
+        "section": "title",
+        "label": "party-on-whose-behalf-made",
+        "nth": 1
+      },
+      "key": "witness.onBehalfOf"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "initials-and-surname-of-witness",
+        "nth": 1
+      },
+      "key": "witness.initialsSurname"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "number-of-this-statement-1st-2nd"
+      },
+      "key": "witness.statementNumber"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "exhibit-s-referred-to"
+      },
+      "key": "witness.exhibitRefsList"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date-made",
+        "nth": 1
+      },
+      "policy": "signature",
+      "label": "Date made",
+      "note": "Completed when the witness signs."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "full-name",
+        "nth": 1
+      },
+      "key": "witness.fullName"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "dd-month-yyyy"
+      },
+      "key": "accident.dateLong",
+      "format": "date-long",
+      "label": "Date of the collision"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "witness"
+      },
+      "key": "witness.fullName"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date-of-birth"
+      },
+      "key": "witness.dateOfBirth"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "address"
+      },
+      "key": "witness.address"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "telephone",
+        "nth": 1
+      },
+      "key": "witness.phone"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "email",
+        "nth": 1
+      },
+      "key": "witness.email"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "claimant-vehicle"
+      },
+      "key": "vehicle.makeModelReg"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "other-vehicle"
+      },
+      "key": "tp.vehicleMakeModelReg"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "location-of-collision"
+      },
+      "key": "accident.location"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date-and-approximate-time"
+      },
+      "key": "accident.dateTimeApprox"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "relationship-to-claimant"
+      },
+      "key": "witness.relationshipToClaimant",
+      "required": true,
+      "note": "Say \"none\" for an independent witness; family, friend, passenger or employer otherwise. Never assumed."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "full-name",
+        "nth": 2
+      },
+      "key": "witness.fullName",
+      "label": "Statement opening — full name"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "full-address-including-postcode"
+      },
+      "key": "witness.address",
+      "label": "Statement opening — address"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "paragraphs"
+      },
+      "key": "witness.paragraphs",
+      "note": "One fact per paragraph, in the witness's own words; never pre-filled."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "full-name",
+        "nth": 3
+      },
+      "key": "witness.fullName",
+      "label": "Statement of truth — full name"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date-signed"
+      },
+      "policy": "signature"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "telephone",
+        "nth": 2
+      },
+      "key": "witness.phone"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "email",
+        "nth": 2
+      },
+      "key": "witness.email"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "party-on-whose-behalf-made",
+        "nth": 2
+      },
+      "key": "witness.onBehalfOf"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "initials-and-surname-of-witness",
+        "nth": 2
+      },
+      "key": "witness.initialsSurname"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "exhibit-reference-e-g-ab1"
+      },
+      "key": "witness.exhibits[0].ref"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "date-made",
+        "nth": 2
+      },
+      "policy": "signature",
+      "label": "Exhibit sheet — date made"
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "ab1",
+        "nth": 1
+      },
+      "key": "witness.exhibits[0].ref",
+      "label": "Exhibit heading reference"
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "ab1",
+        "nth": 2
+      },
+      "key": "witness.exhibits[0].ref",
+      "label": "Exhibit certificate reference"
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "full-name"
+      },
+      "key": "witness.fullName"
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "dd-month-yyyy"
+      },
+      "policy": "signature",
+      "label": "Exhibit certificate — dated",
+      "note": "Dated when the witness signs the statement."
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "item"
+      },
+      "key": "witness.exhibits[0].item"
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "exhibit-page"
+      },
+      "key": "witness.exhibits[0].pageOfTotal"
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "what-this-shows"
+      },
+      "policy": "handler",
+      "label": "What this shows",
+      "note": "In the witness's own words."
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "taken-created-by"
+      },
+      "policy": "handler",
+      "label": "Taken / created by"
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "date-and-time"
+      },
+      "key": "witness.exhibits[0].capturedAt",
+      "note": "From the original capture time (EXIF), never the upload time."
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "device-source"
+      },
+      "key": "witness.exhibits[0].deviceSource"
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "original-held-by"
+      },
+      "key": "witness.exhibits[0].originalHeldBy"
+    },
+    {
+      "slot": {
+        "section": "exhibit",
+        "label": "insert-photograph-plan-screenshot-or-document-he"
+      },
+      "policy": "never",
+      "note": "Paste the image in Word."
+    }
+  ],
+  "ignore": []
+}

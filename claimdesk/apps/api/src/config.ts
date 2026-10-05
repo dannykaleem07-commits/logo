@@ -88,6 +88,15 @@ export interface AppConfig {
    * it; it is handed to the browser as a link (TEMPLATES-VEHICLES-DESKTOP §E.2), so a wrong format can be fixed here.
    */
   totalCarCheckUrlTemplate: string;
+  /** DATA_DIR: the root of everything the app writes (temp conversion folders live under <dataDir>/tmp). */
+  dataDir: string;
+  /**
+   * Uploaded Word templates (TEMPLATES_DIR, default <dataDir>/templates; the desktop launcher sets
+   * %LOCALAPPDATA%\ClaimDesk\data\templates). Never under the app folder, which an upgrade replaces (§C.2).
+   */
+  templatesDir: string;
+  /** DOCX → PDF converter preference (DOCX_PDF_CONVERTER: auto | word | libreoffice | browser; default auto, §A.11). */
+  docxPdfConverter: 'auto' | 'word' | 'libreoffice' | 'browser';
 }
 
 export const LOCALHOST_ORIGINS: readonly RegExp[] = [/^https?:\/\/localhost(:\d+)?$/i, /^https?:\/\/127\.0\.0\.1(:\d+)?$/, /^https?:\/\/\[::1\](:\d+)?$/];
@@ -139,6 +148,12 @@ export function parseTrustProxy(raw: string | undefined): boolean | string {
   if (v.toLowerCase() === 'true') return true;
   if (v.toLowerCase() === 'false') return false;
   return v;
+}
+
+/** DOCX_PDF_CONVERTER: auto (default) | word | libreoffice | browser; anything else is 'auto'. */
+export function parseDocxPdfConverter(raw: string | undefined): AppConfig['docxPdfConverter'] {
+  const v = raw?.trim().toLowerCase();
+  return v === 'word' || v === 'libreoffice' || v === 'browser' ? v : 'auto';
 }
 
 /** TOTALCARCHECK_URL_TEMPLATE: an https URL containing {REG}; anything else falls back to the built-in template. */
@@ -204,6 +219,9 @@ export function loadConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     esignDelivery: str('ESIGN_DELIVERY')?.trim().toLowerCase() === 'handler' ? 'handler' : 'external',
     trustProxy: parseTrustProxy(str('TRUST_PROXY')),
     totalCarCheckUrlTemplate: parseTotalCarCheckTemplate(str('TOTALCARCHECK_URL_TEMPLATE')),
+    dataDir,
+    templatesDir: str('TEMPLATES_DIR', path.join(dataDir, 'templates'))!,
+    docxPdfConverter: parseDocxPdfConverter(str('DOCX_PDF_CONVERTER')),
     ...overrides,
   };
   if (cfg.authMode === 'header' && cfg.env === 'production') throw new Error('AUTH_MODE=header is not allowed in production: X-User-Id is not authentication');
@@ -214,7 +232,7 @@ export function loadConfig(overrides: Partial<AppConfig> = {}): AppConfig {
 
 /**
  * Config for tests: in-memory database, no keys, a fresh scratch directory per app under the OS temp dir
- * (`<tmp>/claimdesk-api-tests/<uuid>/{evidence,documents}`) — `test/helpers.ts` removes it on close.
+ * (`<tmp>/claimdesk-api-tests/<uuid>/{evidence,documents,templates,tmp}`) — `test/helpers.ts` removes it on close.
  */
 export function testConfig(overrides: Partial<AppConfig> = {}): AppConfig {
   const keys: ApiKeys = {};
@@ -241,6 +259,9 @@ export function testConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     esignDelivery: 'external',
     trustProxy: 'loopback',
     totalCarCheckUrlTemplate: TOTAL_CAR_CHECK_URL_TEMPLATE,
+    dataDir: scratch,
+    templatesDir: path.join(scratch, 'templates'),
+    docxPdfConverter: 'auto',
     ...overrides,
     // Mirror loadConfig: production defaults to Secure cookies unless the override says otherwise.
     cookieSecure: overrides.cookieSecure ?? overrides.env === 'production',

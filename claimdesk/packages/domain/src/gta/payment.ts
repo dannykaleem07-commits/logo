@@ -7,6 +7,7 @@
  */
 import type { ClaimBundle, GeneratedDocument, ISODate, ISODateTime, Pence } from '../types.js';
 import { addCalendarDays, calendarDaysBetween, compareIso, londonDate, startOfDay } from '../calendar/index.js';
+import { canonicalTemplateId } from '../templateIds.js';
 
 export const GTA_LATE_PAYMENT_BASIS = 'GTA 6.8.6 — benchmark only, CCGUK is not a subscriber';
 export const GTA_LATE_PAYMENT_HIRES_FROM: ISODate = '2026-03-16';
@@ -140,7 +141,11 @@ const DRAFT_STATUSES: ReadonlySet<GeneratedDocument['status']> = new Set(['draft
 
 function docsFor(bundle: ClaimBundle, item: PaymentPackItem): { final: GeneratedDocument[]; draft: GeneratedDocument[] } {
   const prefixes = paymentPackTemplatePrefixes[item];
-  const matching = bundle.documents.filter((d) => prefixes.some((p) => d.templateId === p || d.templateId.startsWith(p)));
+  // CCGUK Word templates count as their HTML equivalents (CCGUK-08 → form.mitigation_questionnaire; §C.8).
+  const matching = bundle.documents.filter((d) => {
+    const id = canonicalTemplateId(d.templateId);
+    return prefixes.some((p) => id === p || id.startsWith(p));
+  });
   return { final: matching.filter((d) => FINAL_STATUSES.has(d.status)), draft: matching.filter((d) => DRAFT_STATUSES.has(d.status)) };
 }
 

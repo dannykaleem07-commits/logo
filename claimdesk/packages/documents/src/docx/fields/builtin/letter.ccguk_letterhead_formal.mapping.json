@@ -1,0 +1,222 @@
+{
+  "schemaVersion": 1,
+  "templateId": "letter.ccguk_letterhead_formal",
+  "sourceSha256": "02a874addfacdf514ae9164f0399f34fe4a8bd4cca338850c043201f99cee7d9",
+  "guards": [
+    "signatoryRole"
+  ],
+  "subjects": [
+    "recipient"
+  ],
+  "entries": [
+    {
+      "slot": {
+        "section": "title",
+        "label": "name-of-handler"
+      },
+      "key": "recipient.attentionName",
+      "removeIfEmpty": "paragraph",
+      "note": "The recipient's handler, not CCGUK's."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "department-team"
+      },
+      "key": "recipient.department",
+      "removeIfEmpty": "paragraph"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "insurer-or-company-name"
+      },
+      "key": "recipient.name"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "address-line-1"
+      },
+      "key": "recipient.addressLine1",
+      "removeIfEmpty": "paragraph"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "address-line-2"
+      },
+      "key": "recipient.addressLine2",
+      "removeIfEmpty": "paragraph"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "town-postcode"
+      },
+      "key": "recipient.townPostcode",
+      "removeIfEmpty": "paragraph"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "recipient-insurer-co-uk"
+      },
+      "key": "recipient.email",
+      "removeIfEmpty": "paragraph",
+      "label": "By email"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "ccg-0000-26"
+      },
+      "key": "claim.reference",
+      "label": "Our Ref"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "insurer-reference"
+      },
+      "key": "recipient.theirReference",
+      "removeIfEmpty": "row",
+      "label": "Your Ref"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "third-party-claim-number"
+      },
+      "key": "tpInsurer.claimRef",
+      "removeIfEmpty": "row",
+      "label": "Claim No."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "full-name-of-client"
+      },
+      "key": "claimant.name",
+      "label": "Client"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "make-model-reg"
+      },
+      "key": "vehicle.makeModelReg",
+      "label": "Vehicle"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "dd-month-yyyy",
+        "nth": 1
+      },
+      "key": "accident.dateLong",
+      "format": "date-long",
+      "label": "Date of Accident"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "dd-month-yyyy",
+        "nth": 2
+      },
+      "key": "doc.dateLong",
+      "format": "date-long",
+      "label": "Date"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "sir-or-madam"
+      },
+      "key": "recipient.salutation",
+      "label": "Dear …"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "subject-of-this-letter"
+      },
+      "key": "doc.subject",
+      "required": true,
+      "label": "RE: subject"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "client"
+      },
+      "key": "claimant.name",
+      "label": "RE: client"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "reg"
+      },
+      "key": "vehicle.registration",
+      "label": "RE: registration"
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "paragraphs"
+      },
+      "key": "doc.body.paragraphs",
+      "note": "Paragraph 1 keeps the printed opening sentence; paragraphs are numbered automatically."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "dd-month-yyyy",
+        "nth": 3
+      },
+      "key": "doc.replyByDate",
+      "format": "date-long",
+      "removeIfEmpty": "paragraph",
+      "label": "Reply by",
+      "note": "The reply-by sentence is removed when no date is confirmed."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "sincerely-faithfully"
+      },
+      "key": "doc.valediction",
+      "label": "Yours …",
+      "note": "Faithfully for \"Sir or Madam\", sincerely for a named addressee."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "full-name"
+      },
+      "key": "handler.name",
+      "label": "Signatory",
+      "note": "The letter prints \"Claims Manager\" under the name."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "list-every-enclosure-numbered"
+      },
+      "key": "doc.enclosures",
+      "removeIfEmpty": "paragraph",
+      "label": "Enc."
+    },
+    {
+      "slot": {
+        "section": "title",
+        "label": "name-and-capacity-of-anyone-copied"
+      },
+      "key": "doc.cc",
+      "removeIfEmpty": "paragraph",
+      "label": "Cc."
+    }
+  ],
+  "ignore": []
+}

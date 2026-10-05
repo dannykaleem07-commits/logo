@@ -240,7 +240,7 @@ export function sampleMergeSource(): MergeSource {
   const tpVehicle: Vehicle = { id: 'v-tp', registration: 'CD34EFG', make: 'Ford', model: 'Focus', colour: 'silver', odometer: [], ownership: 'third_party', lookups: [], createdAt: CREATED };
   const hireVehicle: Vehicle = {
     id: 'v-hire',
-    registration: 'EF56GHI',
+    registration: 'EF56GHK',
     vin: 'SB1KZ3JE00E123456',
     make: 'Toyota',
     model: 'Corolla',
