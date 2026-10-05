@@ -4,6 +4,13 @@ import { id, isoDateTime, pence, vatRate } from './common.js';
 export const hireEndTrigger = z.enum(['repair_complete_24h', 'tl_payment_5wd', 'insurer_termination_1wd', 'cash_in_lieu', 'client_returned', 'replacement_purchased', 'manual']);
 export const fleetUse = z.enum(['credit_hire', 'self_drive', 'pco']);
 
+/** A GTA group code: trimmed, upper-cased, 1–3 letters and up to 2 digits (S1, M, CP2). */
+export const gtaGroupCode = z
+  .string()
+  .trim()
+  .transform((s) => s.toUpperCase())
+  .pipe(z.string().regex(/^[A-Z]{1,3}\d{0,2}$/, 'Expected a GTA group such as S1, M or CP2'));
+
 export const enforceabilityInput = z.object({
   cancellationInfoProvidedAt: isoDateTime.optional(),
   schedule3FormProvidedAt: isoDateTime.optional(),
@@ -28,8 +35,35 @@ export const createHireBody = z.object({
   signedAt: isoDateTime.optional(),
   enforceability: enforceabilityInput.optional(),
   needStatementEvidenceId: id.optional(),
-  /** Allow the hire to be recorded despite an allocation refusal (reason is audited). */
+  /** Pre-0.3 field, still accepted (reason ≥ 3) and recorded in the hire.create audit only: it no longer bypasses
+   *  anything by itself — refusals are overridden through manager mode (§A). */
   overrideAllocation: z.object({ reason: z.string().trim().min(3) }).optional(),
+  /** A hire that has already ended (entered late): its end, what ended it (default manual) and why. */
+  endAt: isoDateTime.optional(),
+  endTrigger: hireEndTrigger.optional(),
+  endReason: z.string().trim().max(1000).optional(),
+  /** The client's car group chosen by hand on the pricing guide (otherwise the recorded/suggested group). */
+  clientGtaGroup: gtaGroupCode.optional(),
+});
+
+/** PATCH /claims/:id/hire/:hireId — correct the dates, rate or groups of a hire (§C.3). */
+export const correctHireBody = z.object({
+  startAt: isoDateTime.optional(),
+  endAt: isoDateTime.nullable().optional(), // null = re-open (still running)
+  endTrigger: hireEndTrigger.optional(), // default: existing trigger, else 'manual' when an end is set
+  dailyRatePence: pence.refine((p) => p > 0, 'Daily rate must be more than £0').optional(),
+  gtaGroup: gtaGroupCode.optional(),
+  clientGtaGroup: gtaGroupCode.nullable().optional(),
+  reason: z.string().trim().min(3, 'Give the reason for the change'),
+  ledger: z.enum(['auto', 'skip']).default('auto'),
+});
+export type CorrectHireBody = z.infer<typeof correctHireBody>;
+
+/** GET /claims/:id/hire/pricing-guide query. */
+export const pricingGuideQuery = z.object({
+  fleetUnitId: id,
+  startAt: isoDateTime.optional(),
+  clientGroup: gtaGroupCode.optional(),
 });
 
 export const endHireBody = z.object({

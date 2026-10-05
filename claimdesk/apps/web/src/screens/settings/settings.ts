@@ -184,7 +184,7 @@ export function validateSettings(f: SettingsForm): SettingsErrors {
   const legacy = (text: string): LegacyHit[] => findLegacyDetails(text);
   for (const k of ['registeredOffice', 'bankAccountName', 'bankName'] as const) {
     const hits = legacy(f[k]);
-    if (hits.length) e[k] = `Legacy detail blocked (lesson i): ${hits.map((h) => `"${h.found}"`).join(', ')}`;
+    if (hits.length) e[k] = `Legacy detail blocked: ${hits.map((h) => `"${h.found}"`).join(', ')}`;
   }
   if (f.registeredOffice.trim() && !e.registeredOffice && !linesToAddress(f.registeredOffice)) e.registeredOffice = 'One part per line, ending with the postcode (e.g. "1 Example Way", "London", "N1 1AA")';
   if (f.bankSortCode && !/^\d{2}-?\d{2}-?\d{2}$/.test(f.bankSortCode.trim())) e.bankSortCode = 'Sort code is six digits (e.g. 12-34-56)';
@@ -276,7 +276,7 @@ export const API_KEYS: ApiKeyMeta[] = [
     label: 'Commercial vehicle-data gateway',
     unlocks: 'Spec decode, valuation and provenance (write-off, finance, stolen) for PAV and total-loss work.',
     env: 'VEHICLE_GATEWAY_API_KEY',
-    registerNote: 'Choose a licensed gateway (BLUEPRINT §4.1 names CarAnalytics, Vehicle Smart and DealerPricing) and read the licence for "no resale" / "internal use" clauses before signing.',
+    registerNote: 'Choose a licensed gateway (for example CarAnalytics, Vehicle Smart or DealerPricing) and read the licence for "no resale" / "internal use" clauses before signing.',
     cost: 'Pence per lookup; valuation ≈ £0.10–£0.25; provenance ≈ £1.25–£4.99'
   },
   {
@@ -313,3 +313,41 @@ export function usersFrom(settings: Settings | undefined): UserRow[] {
 }
 
 export const ROLE_LABEL: Record<string, string> = { handler: 'Handler', approver: 'Approver', engineer: 'Engineer', admin: 'Admin' };
+
+// ---------------------------------------------------------------------------
+// Page layout (0.3 §E15): sub-nav anchors and the one-line lookups status
+// ---------------------------------------------------------------------------
+
+export type SettingsSection = { label: string } & ({ id: string; to?: never } | { to: string; id?: never });
+
+/** Sub-nav at the top of Settings: anchors on this page, and links to the Templates and GTA rates pages. */
+export const SETTINGS_SECTIONS: readonly SettingsSection[] = [
+  { id: 'company', label: 'Company' },
+  { id: 'bank', label: 'Bank' },
+  { id: 'rates', label: 'Rates' },
+  { id: 'manager-mode', label: 'Manager mode' },
+  { id: 'updates', label: 'Updates' },
+  { to: '/settings/templates', label: 'Templates' },
+  { to: '/settings/gta-rates', label: 'GTA rates' },
+  { id: 'lookups', label: 'Lookups' },
+  { id: 'password', label: 'Password' }
+];
+
+/** The section anchor in a URL hash ("#updates" → "updates"), only when it is one of this page's anchors. */
+export function sectionFromHash(hash: string | undefined | null): string | undefined {
+  const id = decodeURIComponent((hash ?? '').replace(/^#/, '')).trim();
+  return SETTINGS_SECTIONS.some((s) => s.id === id) ? id : undefined;
+}
+
+/** "Lookups: manual — 0 of 5 keys set" (the collapsed API-keys line). */
+export function lookupsSummary(settings: Settings | undefined): string {
+  const mode = lookupModeOf(settings);
+  const set = API_KEYS.filter((k) => apiKeyPresent(settings, k.key) === true).length;
+  const modeText = mode ?? 'checking';
+  return `Lookups: ${modeText} — ${set} of ${API_KEYS.length} keys set`;
+}
+
+/** The Users card is shown only when the API returned users. */
+export function showUsersCard(settings: Settings | undefined): boolean {
+  return usersFrom(settings).length > 0;
+}

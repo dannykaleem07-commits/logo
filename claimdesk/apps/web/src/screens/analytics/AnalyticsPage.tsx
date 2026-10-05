@@ -227,7 +227,7 @@ function InterventionsCard({ data, loading, error }: { data: InterventionsAnalyt
             <div className="stat">
               <span className="stat-label">Replied within 1 WD</span>
               <span className={`stat-value ${pct(d.repliedWithin1Wd, d.offers) < 100 ? 'amber' : 'green'}`}>{formatPct(pct(d.repliedWithin1Wd, d.offers))}</span>
-              <span className="stat-sub">{d.repliedWithin1Wd} of {d.offers} — lesson c</span>
+              <span className="stat-sub">{d.repliedWithin1Wd} of {d.offers} offers</span>
             </div>
           </div>
           {rows.length > 0 && <Table columns={columns} rows={rows} rowKey={(r) => r.insurerName} caption="Intervention offers by insurer" />}

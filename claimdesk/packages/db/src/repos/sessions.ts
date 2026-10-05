@@ -19,6 +19,8 @@ export interface SessionRecord {
   lastSeenAt: ISODateTime;
   ip?: string;
   userAgent?: string;
+  /** Manager mode is on for this session until this instant (sliding idle expiry, §A.4.1 of the 0.3 design). */
+  managerModeUntil?: ISODateTime;
 }
 
 export interface CreateSessionInput {
@@ -44,6 +46,7 @@ function toRecord(row: SessionRow): SessionRecord {
   const rec: SessionRecord = { id: row.id, userId: row.userId, createdAt: row.createdAt, expiresAt: row.expiresAt, lastSeenAt: row.lastSeenAt };
   if (row.ip !== null) rec.ip = row.ip;
   if (row.userAgent !== null) rec.userAgent = row.userAgent;
+  if (row.managerModeUntil !== null) rec.managerModeUntil = row.managerModeUntil;
   return rec;
 }
 
@@ -58,6 +61,7 @@ export function createSession(db: Db, input: CreateSessionInput): SessionRecord 
     lastSeenAt: createdAt,
     ip: input.ip ?? null,
     userAgent: input.userAgent ? input.userAgent.slice(0, USER_AGENT_MAX) : null,
+    managerModeUntil: null,
   };
   db.insert(sessions).values(row).run();
   return toRecord(row);
@@ -73,6 +77,12 @@ export function getSessionByTokenHash(db: Db, tokenHash: string): SessionRecord 
 
 export function touchSession(db: Db, id: string, at: ISODateTime = nowIso()): void {
   db.update(sessions).set({ lastSeenAt: at }).where(eq(sessions.id, id)).run();
+}
+
+/** Turn manager mode on for a session until `until` (sliding idle expiry), or off with null. Unknown ids are a no-op. */
+export function setSessionManagerMode(db: Db, id: string, until: ISODateTime | null): void {
+  if (until !== null && Number.isNaN(Date.parse(until))) throw new ValidationError('managerModeUntil must be an ISO date-time');
+  db.update(sessions).set({ managerModeUntil: until }).where(eq(sessions.id, id)).run();
 }
 
 /** Delete one session. Returns true when a row was removed. */

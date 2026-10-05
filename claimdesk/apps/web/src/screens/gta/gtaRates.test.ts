@@ -5,6 +5,9 @@ import { hireTotals } from '../claim/lib/hire';
 import {
   emptyRateForm,
   gtaPeriodFor,
+  groupRatesByFamily,
+  rateFamily,
+  splitByPeriod,
   knownGroups,
   ORIGIN_LABEL,
   rateActions,
@@ -115,5 +118,30 @@ describe('hire totals take the merged rates (useGtaRates)', () => {
     expect(builtIn?.benchmark?.gtaDailyRatePence).toBe(4232);
     expect(hireTotals(hire, '2026-10-04T10:00:00Z', [])?.benchmark).toBeUndefined();
     expect(withRates?.hirePence).toBe(builtIn?.hirePence);
+  });
+});
+
+describe('default view: current period grouped by family (0.3 §E14)', () => {
+  const row = (group: string, period = '2026-27'): GtaRateListItem => ({ ...KB_ROW, group, period, effectiveFrom: `${period.slice(0, 4)}-07-01` });
+  it('families by leading letters, in S / M / F / CP / PV order', () => {
+    expect(rateFamily('S1').key).toBe('S');
+    expect(rateFamily('m').key).toBe('M');
+    expect(rateFamily('F6').key).toBe('F');
+    expect(rateFamily('CP2').key).toBe('CP');
+    expect(rateFamily('PV2').key).toBe('PV');
+    expect(rateFamily('X9').key).toBe('OTHER');
+    const grouped = groupRatesByFamily([row('PV2'), row('M2'), row('S3'), row('X1'), row('S1'), row('CP1'), row('F6'), row('M')]);
+    expect(grouped.map((g) => g.key)).toEqual(['S', 'M', 'F', 'CP', 'PV', 'OTHER']);
+    expect(grouped[0]!.items.map((r) => r.group)).toEqual(['S1', 'S3']);
+    expect(grouped[1]!.items.map((r) => r.group)).toEqual(['M', 'M2']);
+    expect(groupRatesByFamily([])).toEqual([]);
+  });
+  it('shows the current period by default and keeps earlier periods for the toggle', () => {
+    const rows = [row('S1'), row('CP1', '2025-26'), row('M', '2025-26'), row('M'), row('S1', '2027-28')];
+    const { current, previous } = splitByPeriod(rows, gtaPeriodFor('2026-10-05').period);
+    expect(current.map((r) => `${r.group} ${r.period}`)).toEqual(['S1 2026-27', 'M 2026-27', 'S1 2027-28']);
+    expect(previous.map((r) => `${r.group} ${r.period}`)).toEqual(['CP1 2025-26', 'M 2025-26']);
+    // nothing in force yet → show everything rather than an empty page
+    expect(splitByPeriod([row('CP1', '2025-26')], '2026-27')).toEqual({ current: [row('CP1', '2025-26')], previous: [] });
   });
 });

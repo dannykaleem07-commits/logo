@@ -1,6 +1,13 @@
 import { isApiError } from '../api/client';
+import { describeErrorDetails } from '../lib/errorDetails';
 
-/** Consistent inline error for a failed query. Network failures say so plainly (the API may simply be down). */
+/** Shown under a refusal that only a manager can override (docs/V03-MANAGER-MODE-HIRE-PRICING.md §A.1 point 5). */
+export const MANAGER_CAN_OVERRIDE = 'A manager (admin or approver) can override this in manager mode.';
+
+/**
+ * Consistent inline error for a failed query or mutation. Network failures say so plainly (the API may simply be down).
+ * The error's details (reasons, flags, missing items …) are listed under the message in plain English.
+ */
 export function ApiErrorNotice({ error, what = 'load this' }: { error: unknown; what?: string }) {
   if (!error) return null;
   if (isApiError(error)) {
@@ -11,9 +18,18 @@ export function ApiErrorNotice({ error, what = 'load this' }: { error: unknown; 
         </div>
       );
     }
+    const lines = describeErrorDetails(error.code, error.details);
     return (
       <div className="notice notice-danger" role="alert">
-        <strong>{error.code}</strong> — {error.message}
+        <strong>{error.override?.label ?? error.code}</strong> — {error.message}
+        {lines.length > 0 && (
+          <ul className="error-details">
+            {lines.map((line, i) => (
+              <li key={i}>{line}</li>
+            ))}
+          </ul>
+        )}
+        {error.override?.allowed === false && <div className="error-override-hint">{MANAGER_CAN_OVERRIDE}</div>}
       </div>
     );
   }

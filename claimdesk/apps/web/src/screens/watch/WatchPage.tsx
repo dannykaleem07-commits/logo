@@ -16,6 +16,7 @@ import { ApiErrorNotice } from '../../components/ApiErrorNotice';
 import { DateText } from '../../components/DateText';
 import { Table, type Column } from '../../components/Table';
 import { useToast } from '../../components/Toast';
+import { plainText } from '../../lib/plainText';
 import { companiesHouseUrl, companyStatusLabel, companyStatusTone, isCompanyNumber, normaliseCompanyNumber, riskTone, sortWatch, strikeOffNotices, supplierRiskBanner, WATCH_ROLES } from './watch';
 
 /** Companies House watch list (BLUEPRINT §3.11, lesson k): status, overdue filings, gazette notices, risk. */
@@ -91,7 +92,7 @@ export function WatchPage() {
           {w.riskReasons.length > 0 && (
             <ul className="risk-reasons">
               {w.riskReasons.map((r, i) => (
-                <li key={i}>{r}</li>
+                <li key={i}>{plainText(r)}</li>
               ))}
             </ul>
           )}

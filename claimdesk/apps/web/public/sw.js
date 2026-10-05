@@ -8,7 +8,7 @@
  *
  * Bump CACHE_VERSION whenever the shell changes shape; old caches are deleted on activate.
  */
-const CACHE_VERSION = 'claimdesk-shell-v2';
+const CACHE_VERSION = 'claimdesk-shell-v3';
 const SHELL = ['/', '/index.html', '/manifest.webmanifest', '/logo.png', '/icons/icon-192.png', '/icons/icon-512.png'];
 
 self.addEventListener('install', (event) => {

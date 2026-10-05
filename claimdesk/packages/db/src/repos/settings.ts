@@ -1,5 +1,5 @@
 import { eq } from 'drizzle-orm';
-import type { Address, BankDetails, ISODateTime } from '@ccguk/domain';
+import { MANAGER_MODE_DEFAULT_IDLE_MINUTES, MANAGER_MODE_MAX_IDLE_MINUTES, MANAGER_MODE_MIN_IDLE_MINUTES, type Address, type BankDetails, type ISODateTime } from '@ccguk/domain';
 import type { Db } from '../client.js';
 import { ValidationError } from '../errors.js';
 import { settings, type ApiKeysPresent, type RateCard, type SettingsRow } from '../schema.js';
@@ -16,6 +16,8 @@ export interface Settings {
   icoRegistration?: string;
   rateCard: RateCard;
   apiKeysPresent: ApiKeysPresent;
+  /** Manager mode switches itself off after this many minutes without activity (1–480, default 60). */
+  managerModeIdleMinutes: number;
   updatedAt: ISODateTime;
 }
 
@@ -55,6 +57,7 @@ export const DEFAULT_SETTINGS: Settings = {
   // bank, VAT and ICO were not supplied: they stay unset until entered in Settings (never invented)
   rateCard: DEFAULT_RATE_CARD,
   apiKeysPresent: DEFAULT_API_KEYS_PRESENT,
+  managerModeIdleMinutes: MANAGER_MODE_DEFAULT_IDLE_MINUTES,
   updatedAt: '1970-01-01T00:00:00.000Z',
 };
 
@@ -66,6 +69,7 @@ function toSettings(row: SettingsRow): Settings {
     registeredOffice: row.registeredOffice ?? DEFAULT_REGISTERED_OFFICE,
     rateCard: { ...DEFAULT_RATE_CARD, ...row.rateCard },
     apiKeysPresent: { ...DEFAULT_API_KEYS_PRESENT, ...row.apiKeysPresent },
+    managerModeIdleMinutes: row.managerModeIdleMinutes ?? MANAGER_MODE_DEFAULT_IDLE_MINUTES,
   };
 }
 
@@ -76,6 +80,12 @@ export function getSettings(db: Db): Settings {
 
 /** Merge a patch into settings (creates the row on first save). Audited as `settings.patch`. */
 export function patchSettings(db: Db, patch: SettingsPatch, actor: Actor): Settings {
+  if (patch.managerModeIdleMinutes !== undefined) {
+    const m = patch.managerModeIdleMinutes;
+    if (!Number.isInteger(m) || m < MANAGER_MODE_MIN_IDLE_MINUTES || m > MANAGER_MODE_MAX_IDLE_MINUTES) {
+      throw new ValidationError(`managerModeIdleMinutes must be a whole number of minutes from ${MANAGER_MODE_MIN_IDLE_MINUTES} to ${MANAGER_MODE_MAX_IDLE_MINUTES}`);
+    }
+  }
   for (const [k, v] of Object.entries(patch.rateCard ?? {})) {
     if (k === 'vatRate') {
       if (typeof v !== 'number' || v < 0 || v > 1) throw new ValidationError('rateCard.vatRate must be a fraction between 0 and 1');
@@ -99,6 +109,7 @@ export function patchSettings(db: Db, patch: SettingsPatch, actor: Actor): Setti
       icoRegistration: patch.icoRegistration ?? before.icoRegistration ?? null,
       rateCard: { ...before.rateCard, ...patch.rateCard },
       apiKeysPresent: { ...before.apiKeysPresent, ...patch.apiKeysPresent },
+      managerModeIdleMinutes: patch.managerModeIdleMinutes ?? before.managerModeIdleMinutes,
       updatedAt: at,
     };
     tx.insert(settings).values(next).onConflictDoUpdate({ target: settings.id, set: next }).run();

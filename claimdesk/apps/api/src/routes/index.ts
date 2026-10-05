@@ -28,6 +28,7 @@ import { registerSettingsRoutes } from './settings.js';
 import { registerCatalogueRoutes } from './catalogue.js';
 import { registerGtaRatesRoutes } from './gtaRates.js';
 import { registerDocxTemplatesRoutes } from './docxTemplates.js';
+import { registerUpdatesRoutes } from './updates.js';
 import { registerJobsModule } from '../jobs.js';
 
 export const routeModules: RouteModule[] = [
@@ -54,6 +55,7 @@ export const routeModules: RouteModule[] = [
   registerCatalogueRoutes,
   registerGtaRatesRoutes,
   registerDocxTemplatesRoutes,
+  registerUpdatesRoutes,
   registerJobsModule,
 ];
 

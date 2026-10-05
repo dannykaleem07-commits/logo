@@ -62,7 +62,7 @@ export const vehicleSourceSchema = z.object({
 });
 
 export const vehicleInput = z.object({
-  registration: z.string().trim().min(2).max(10),
+  registration: z.string().trim().min(2).max(15),
   vin: z.string().optional(),
   make: z.string().trim().min(1).default('UNKNOWN'),
   model: z.string().trim().min(1).default('UNKNOWN'),
@@ -102,7 +102,7 @@ export const vehicleListQuery = z.object({
 });
 
 export const lookupBody = z.object({
-  registration: z.string().trim().min(2).max(10),
+  registration: z.string().trim().min(2).max(15),
   ownership: ownership.optional(),
   /** Which providers to query (default both vehicle providers). */
   providers: z.array(z.enum(['dvla_ves', 'dvsa_mot'])).optional(),

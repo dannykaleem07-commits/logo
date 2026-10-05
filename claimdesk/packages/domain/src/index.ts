@@ -21,4 +21,5 @@ export * from './playbook/index.js';
 export * from './intake/index.js';
 export * from './fleet/index.js';
 export * from './templateIds.js';
+export * from './events/index.js';
 export * from './override/index.js';

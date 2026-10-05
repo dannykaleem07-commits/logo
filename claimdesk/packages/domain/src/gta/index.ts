@@ -10,6 +10,7 @@ export {
   GTA_ADDITIONAL_DRIVER_DAILY_PENCE,
   GTA_ADDITIONAL_DRIVER_CAP_PENCE,
   HIRE_DAY_CONVENTION,
+  HIRE_END_TRIGGER_TEXT,
   hireDays,
   calculateHire,
   offHireDeadline,
@@ -50,3 +51,6 @@ export type { GtaSuggestionBasis, GtaSuggestInput, GtaSuggestion } from './sugge
 
 export { gtaRateKey, mergeGtaRates } from './merge.js';
 export type { ManualGtaRateRow, MergedGtaRate } from './merge.js';
+
+export { CLIENT_GROUP_MISSING, HIRE_GROUP_MISSING, PRICING_SUGGESTION_LABELS, hirePricingGuide } from './pricing.js';
+export type { ClientGroupSource, HirePricingGuide, HirePricingGuideInput, PricingGuideLine, PricingSuggestion } from './pricing.js';

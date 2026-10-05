@@ -4,8 +4,11 @@
  * unit and per policy (Collingwood will not cover credit hire and self-drive together); London PHV
  * zero-emission-capable eligibility (TfL rule encoded as data with a verification note); penalty deadlines.
  */
-import type { ComplianceAlert, FleetUnit, InsurancePolicy, ISODate, ISODateTime, PenaltyNotice, Vehicle, Verification } from '../types.js';
+import type { ComplianceAlert, FleetUnit, FleetUse, InsurancePolicy, ISODate, ISODateTime, PenaltyNotice, Vehicle, Verification } from '../types.js';
 import { addCalendarDays, londonDate } from '../calendar/index.js';
+
+/** How a penalty notice kind reads in an alert ("Council PCN RB12345678"), never the stored code. */
+const PENALTY_KIND_TEXT: Readonly<Record<string, string>> = { pcn_council: 'Council PCN', pcn_private: 'Private parking charge', nip_s172: 'NIP (s.172)' };
 
 export interface FleetUnitRecord {
   unit: FleetUnit;
@@ -90,6 +93,13 @@ export function phvEligibility(vehicle: Vehicle, zeroEmissionRangeMiles?: number
   return { eligible, reasons, verification };
 }
 
+const USE_WORDS: Record<FleetUse, string> = { credit_hire: 'credit hire', self_drive: 'self-drive', pco: 'PCO / private hire' };
+
+/** Declared uses in plain words ("credit hire, self-drive"), never the stored codes. */
+function useWords(uses: readonly FleetUse[]): string {
+  return uses.map((u) => USE_WORDS[u] ?? u).join(', ');
+}
+
 function formatDate(d: ISODate): string {
   return d;
 }
@@ -142,7 +152,7 @@ export function complianceAlerts(units: FleetUnitRecord[], now: ISODateTime, opt
         push(
           'USE_NOT_COVERED',
           'block',
-          `${reg}: declared use ${notCovered.join(', ')} is not covered by policy ${policy.policyNumber} (${policy.insurerName}: ${policy.coveredUses.join(', ') || 'no uses'}) — Collingwood will not cover credit hire and self-drive together, so each use needs its own policy (BLUEPRINT §3.12).`,
+          `${reg}: declared use ${useWords(notCovered)} is not covered by policy ${policy.policyNumber} (${policy.insurerName}: ${useWords(policy.coveredUses) || 'no uses'}) — Collingwood will not cover credit hire and self-drive together, so each use needs its own policy.`,
         );
       }
     }
@@ -171,8 +181,8 @@ export function complianceAlerts(units: FleetUnitRecord[], now: ISODateTime, opt
 
     // Penalty deadlines
     for (const p of (opts.penalties ?? []).filter((x) => x.fleetUnitId === unit.id && x.stage !== 'paid' && x.stage !== 'cancelled')) {
-      if (p.responseDeadline < today) push('PENALTY_DEADLINE', 'block', `${reg}: ${p.kind} ${p.noticeNumber} (${p.issuer}) response deadline ${formatDate(p.responseDeadline)} has passed — out-of-time routes only on true facts (TE7/TE9).`, p.responseDeadline);
-      else if (p.responseDeadline <= horizon) push('PENALTY_DEADLINE', 'warn', `${reg}: ${p.kind} ${p.noticeNumber} (${p.issuer}) response due ${formatDate(p.responseDeadline)}${p.kind === 'nip_s172' ? ' — s.172 RTA 1988: 28 days' : ''}.`, p.responseDeadline);
+      if (p.responseDeadline < today) push('PENALTY_DEADLINE', 'block', `${reg}: ${PENALTY_KIND_TEXT[p.kind] ?? p.kind} ${p.noticeNumber} (${p.issuer}) response deadline ${formatDate(p.responseDeadline)} has passed — out-of-time routes only on true facts (TE7/TE9).`, p.responseDeadline);
+      else if (p.responseDeadline <= horizon) push('PENALTY_DEADLINE', 'warn', `${reg}: ${PENALTY_KIND_TEXT[p.kind] ?? p.kind} ${p.noticeNumber} (${p.issuer}) response due ${formatDate(p.responseDeadline)}${p.kind === 'nip_s172' ? ' — s.172 RTA 1988: 28 days' : ''}.`, p.responseDeadline);
       if (p.discountDeadline && p.discountDeadline >= today && p.discountDeadline <= horizon && (p.stage === 'received' || p.stage === 'hirer_identified')) {
         push('PENALTY_DEADLINE', 'info', `${reg}: ${p.noticeNumber} discount period ends ${formatDate(p.discountDeadline)} — decide pay / transfer / represent before it.`, p.discountDeadline);
       }

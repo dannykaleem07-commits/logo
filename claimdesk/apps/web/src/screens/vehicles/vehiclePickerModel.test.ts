@@ -523,3 +523,29 @@ describe('legacy vehicles, pasted values and pasted trims', () => {
     expect(st).toMatchObject({ transmission: undefined, engineCapacityCc: 1497 });
   });
 });
+
+describe('registration rules relaxed in manager mode (0.3 §A.6 B08, B12, B17)', () => {
+  it('flags a non-UK plate (a warning in manager mode), accepts UK formats and empty', async () => {
+    const { registrationFormatMessage, NON_UK_REGISTRATION } = await import('./vehiclePickerModel');
+    expect(registrationFormatMessage('DE 123 4567')).toBe(NON_UK_REGISTRATION);
+    expect(registrationFormatMessage('W 12345X')).toBe(NON_UK_REGISTRATION);
+    expect(registrationFormatMessage('FL25 MXX')).toBeUndefined();
+    expect(registrationFormatMessage('kr20vxa')).toBeUndefined();
+    expect(registrationFormatMessage('')).toBeUndefined();
+  });
+  it('detects a client vehicle on a claim (REGISTRATION_ON_CLAIM pre-warning)', async () => {
+    const { isClientVehicleOnClaim } = await import('./vehiclePickerModel');
+    const base = { vehicleId: 'v', registration: 'KR20VXA', make: 'X', model: 'Y', lookups: [] };
+    expect(isClientVehicleOnClaim([{ ...base, match: 'exact', ownership: 'client', claims: [{ id: 'c', reference: 'R', openedAt: '2026-01-01' }] }] as never)).toBe(true);
+    expect(isClientVehicleOnClaim([{ ...base, match: 'partial', ownership: 'client', claims: [{ id: 'c', reference: 'R', openedAt: '2026-01-01' }] }] as never)).toBe(false);
+    expect(isClientVehicleOnClaim([{ ...base, match: 'exact', ownership: 'fleet', claims: [] }] as never)).toBe(false);
+    expect(isClientVehicleOnClaim(undefined)).toBe(false);
+  });
+  it('a fleet vehicle offered as the client vehicle: blocked normally, a warning in manager mode', async () => {
+    const { fleetMatchHandling } = await import('./vehiclePickerModel');
+    expect(fleetMatchHandling({ blockFleet: true, managerOn: false })).toBe('block');
+    expect(fleetMatchHandling({ blockFleet: true, managerOn: true })).toBe('warn');
+    expect(fleetMatchHandling({ blockFleet: false, managerOn: true })).toBe('allow');
+    expect(fleetMatchHandling({ blockFleet: false, warnFleet: true, managerOn: true })).toBe('warn');
+  });
+});

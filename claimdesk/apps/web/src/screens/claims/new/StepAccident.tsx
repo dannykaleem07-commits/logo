@@ -4,9 +4,17 @@ import type { WitnessInput } from '../../../api/client';
 import { Button } from '../../../components/Button';
 import { Checkbox, DateTimeInput, TextArea, TextInput, YesNo } from '../../../components/Form';
 import { Badge } from '../../../components/Badge';
+import { StepScriptGuard } from './StepScriptGuard';
 
-/** Step 4 — accident, third party, witnesses, injuries (→ referral), roadworthy / driveable / airbags. */
-export function StepAccident({ state, update, errors }: StepProps) {
+/** Shown under the third-party registration (0.3 §E8). */
+export const TP_REG_HINT = 'If unknown, the claim opens with a reminder to get it. If the other driver failed to stop, tick the box.';
+
+/**
+ * Step 4 — accident, third party, witnesses, injuries (→ referral), roadworthy / driveable / airbags, then the script
+ * guard: "Has anyone offered the client a vehicle?" (0.3 §E6: the offers block closes this step).
+ */
+export function StepAccident(props: StepProps) {
+  const { state, update, errors, warnings = {} } = props;
   const a = state.accident;
   const setA = <K extends keyof AccidentForm>(k: K, v: AccidentForm[K]) => update((s) => ({ ...s, accident: { ...s.accident, [k]: v } }));
   const setTp = (k: keyof typeof state.thirdParty) => (v: string) => update((s) => ({ ...s, thirdParty: { ...s.thirdParty, [k]: v } }));
@@ -17,8 +25,8 @@ export function StepAccident({ state, update, errors }: StepProps) {
     <div className="stack">
       <h2>Accident</h2>
       <div className="form-grid">
-        <DateTimeInput label="Date and time" required value={a.occurredAt} onChange={(v) => setA('occurredAt', v)} error={errors['accident.occurredAt']} max={new Date().toISOString().slice(0, 16)} />
-        <TextInput label="Location" required value={a.location} onChange={(v) => setA('location', v)} error={errors['accident.location']} placeholder="Road, junction, town" />
+        <DateTimeInput label="Date and time" required value={a.occurredAt} onChange={(v) => setA('occurredAt', v)} error={errors['accident.occurredAt']} warning={warnings['accident.occurredAt']} max={new Date().toISOString().slice(0, 16)} />
+        <TextInput label="Location" required value={a.location} onChange={(v) => setA('location', v)} error={errors['accident.location']} warning={warnings['accident.location']} placeholder="Road, junction, town" />
         <TextInput label="Postcode (approx.)" value={a.postcode} onChange={(v) => setA('postcode', v)} inputClassName="input-reg" />
         <div />
         <TextArea
@@ -32,16 +40,21 @@ export function StepAccident({ state, update, errors }: StepProps) {
           value={a.circumstances}
           onChange={(v) => setA('circumstances', v)}
           error={errors['accident.circumstances']}
+          warning={warnings['accident.circumstances']}
           hint={`Type what the client says, as they say it (at least ${MIN_CIRCUMSTANCES_CHARS} characters). Ask open questions only ('what happened next?'). Highway Code references and the liability narrative are added by the handler later, not here.`}
           rows={7}
         />
         <div className="span-2">
           <Checkbox label={<strong>{TAKEN_COLD_LABEL}</strong>} checked={a.takenCold} onChange={(v) => setA('takenCold', v)} />
-          {errors['accident.takenCold'] && (
+          {errors['accident.takenCold'] ? (
             <div className="field-error" role="alert">
               {errors['accident.takenCold']}
             </div>
-          )}
+          ) : warnings['accident.takenCold'] ? (
+            <div className="field-warning manager-field-warning" role="status">
+              {warnings['accident.takenCold']}
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -49,7 +62,7 @@ export function StepAccident({ state, update, errors }: StepProps) {
         <YesNo label="Police attended?" value={a.policeAttended} onChange={(v) => setA('policeAttended', v)} />
         <TextInput label="Police reference" value={a.policeReference} onChange={(v) => setA('policeReference', v)} disabled={a.policeAttended !== true} />
         <div />
-        <YesNo label="CCTV likely available?" value={a.cctvAvailable} onChange={(v) => setA('cctvAvailable', v)} hint="Council / TfL / premises — footage is overwritten within weeks (§7 days 1–7)." />
+        <YesNo label="CCTV likely available?" value={a.cctvAvailable} onChange={(v) => setA('cctvAvailable', v)} hint="Council / TfL / premises — footage is overwritten within weeks: ask for it in the first week." />
         <YesNo label="Dashcam footage?" value={a.dashcamAvailable} onChange={(v) => setA('dashcamAvailable', v)} />
         <div />
       </div>
@@ -57,7 +70,7 @@ export function StepAccident({ state, update, errors }: StepProps) {
       <fieldset className="fieldset">
         <legend>Third party</legend>
         <div className="form-grid">
-          <TextInput label="Third-party registration" value={state.thirdParty.registration} onChange={setTp('registration')} inputClassName="input-reg" error={errors['thirdParty.registration']} placeholder="As given by the client" disabled={state.thirdParty.registrationUnknown} hint="Mandatory intake question: the claim opens with an INTAKE_INCOMPLETE flag until it is recorded or marked unknown." />
+          <TextInput label="Third-party registration" value={state.thirdParty.registration} onChange={setTp('registration')} inputClassName="input-reg" error={errors['thirdParty.registration']} warning={warnings['thirdParty.registration']} placeholder="As given by the client" disabled={state.thirdParty.registrationUnknown} hint={TP_REG_HINT} />
           <div className="field" style={{ justifyContent: 'flex-end' }}>
             <Checkbox label={TP_REG_UNKNOWN_LABEL} checked={state.thirdParty.registrationUnknown} onChange={(v) => update((s) => ({ ...s, thirdParty: { ...s.thirdParty, registrationUnknown: v, registration: v ? '' : s.thirdParty.registration } }))} />
           </div>
@@ -74,9 +87,9 @@ export function StepAccident({ state, update, errors }: StepProps) {
         <div className="stack-sm">
           {state.witnesses.map((w, i) => (
             <div key={i} className="form-grid" style={{ alignItems: 'end' }}>
-              <TextInput label="Name" required value={w.name} onChange={(v) => setWitness(i, { name: v })} error={errors[`witness.${i}.name`]} />
+              <TextInput label="Name" required value={w.name} onChange={(v) => setWitness(i, { name: v })} error={errors[`witness.${i}.name`]} warning={warnings[`witness.${i}.name`]} />
               <TextInput label="Phone / email" value={w.phone ?? ''} onChange={(v) => setWitness(i, { phone: v })} />
-              <TextInput label="Relationship to claimant" required value={w.relationshipToClaimant ?? ''} onChange={(v) => setWitness(i, { relationshipToClaimant: v })} error={errors[`witness.${i}.relationship`]} hint={WITNESS_RELATIONSHIP_HINT} />
+              <TextInput label="Relationship to claimant" required value={w.relationshipToClaimant ?? ''} onChange={(v) => setWitness(i, { relationshipToClaimant: v })} error={errors[`witness.${i}.relationship`]} warning={warnings[`witness.${i}.relationship`]} hint={WITNESS_RELATIONSHIP_HINT} />
               <div className="row" style={{ paddingBottom: 4 }}>
                 <Checkbox label="Independent (no connection)" checked={w.independent ?? false} onChange={(v) => setWitness(i, { independent: v })} />
                 <Button size="sm" variant="ghost" onClick={() => removeWitness(i)}>
@@ -95,7 +108,7 @@ export function StepAccident({ state, update, errors }: StepProps) {
 
       <h3>Injuries and vehicle condition</h3>
       <div className="grid-2">
-        <YesNo label="Was anyone injured?" required value={a.injuries} onChange={(v) => setA('injuries', v)} error={errors['accident.injuries']} />
+        <YesNo label="Was anyone injured?" required value={a.injuries} onChange={(v) => setA('injuries', v)} error={errors['accident.injuries']} warning={warnings['accident.injuries']} />
         {a.injuries && (
           <div className="stack-sm">
             <div className="notice notice-info" role="status">
@@ -107,10 +120,12 @@ export function StepAccident({ state, update, errors }: StepProps) {
         )}
       </div>
       <div className="grid-3">
-        <YesNo label="Roadworthy after the accident?" required value={a.roadworthyAfter} onChange={(v) => setA('roadworthyAfter', v)} error={errors['accident.roadworthyAfter']} hint="Lights, tyres, steering, leaks, sharp edges." />
-        <YesNo label="Driveable?" required value={a.driveable} onChange={(v) => setA('driveable', v)} error={errors['accident.driveable']} />
-        <YesNo label="Airbags deployed?" required value={a.airbagsDeployed} onChange={(v) => setA('airbagsDeployed', v)} error={errors['accident.airbagsDeployed']} />
+        <YesNo label="Roadworthy after the accident?" required value={a.roadworthyAfter} onChange={(v) => setA('roadworthyAfter', v)} error={errors['accident.roadworthyAfter']} warning={warnings['accident.roadworthyAfter']} hint="Lights, tyres, steering, leaks, sharp edges." />
+        <YesNo label="Driveable?" required value={a.driveable} onChange={(v) => setA('driveable', v)} error={errors['accident.driveable']} warning={warnings['accident.driveable']} />
+        <YesNo label="Airbags deployed?" required value={a.airbagsDeployed} onChange={(v) => setA('airbagsDeployed', v)} error={errors['accident.airbagsDeployed']} warning={warnings['accident.airbagsDeployed']} />
       </div>
+
+      <StepScriptGuard {...props} />
     </div>
   );
 }

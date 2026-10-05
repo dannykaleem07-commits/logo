@@ -1,7 +1,9 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useState, type ReactNode } from 'react';
 import { ErrorAlert } from '../../components/ErrorAlert';
 import { formatGBP } from '@ccguk/domain';
 import '../../styles/screens.css';
+import './gta.css';
+import { EyeIcon } from '../../app/Icons';
 import { isApiError } from '../../api/client';
 import { useUserName } from '../../api/hooks';
 import {
@@ -29,6 +31,9 @@ import { useToast } from '../../components/Toast';
 import { todayISO } from '../../lib/dates';
 import {
   emptyRateForm,
+  groupRatesByFamily,
+  gtaPeriodFor,
+  splitByPeriod,
   knownGroups,
   ORIGIN_LABEL,
   ORIGIN_TONE,
@@ -47,7 +52,35 @@ import {
   type RateFormErrors
 } from './gtaRates';
 
-const errText = (e: unknown) => (isApiError(e) ? `${e.code}: ${e.message}` : (e as Error).message);
+const errText = (e: unknown) => (isApiError(e) ? e.message : (e as Error).message);
+
+function PencilIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
+    </svg>
+  );
+}
+
+function TrashIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 6h18" />
+      <path d="M8 6V4h8v2" />
+      <path d="M19 6l-1 14H6L5 6" />
+    </svg>
+  );
+}
+
+/** A small icon-only button; the label is its accessible name and tooltip. */
+function IconButton({ label, onClick, disabled, children }: { label: string; onClick: () => void; disabled?: boolean; children: ReactNode }) {
+  return (
+    <button type="button" className="btn btn-ghost btn-sm icon-btn" aria-label={label} title={label} onClick={onClick} disabled={disabled}>
+      {children}
+    </button>
+  );
+}
 
 /** "Verified by <name>" under the badge of a verified row. */
 function VerifiedBy({ item }: { item: GtaRateListItem }) {
@@ -67,8 +100,12 @@ export function GtaRatesPage() {
   const remove = useDeleteGtaRate();
   const toast = useToast();
   const [editing, setEditing] = useState<{ form: RateForm; title: string } | null>(null);
+  const [showPrevious, setShowPrevious] = useState(false);
   const items = sortRates(ratesQ.data?.items ?? []);
   const groups = knownGroups(items);
+  const currentPeriod = gtaPeriodFor(todayISO()).period;
+  const { current, previous } = splitByPeriod(items, currentPeriod);
+  const families = groupRatesByFamily(showPrevious ? items : current);
 
   const hide = (item: GtaRateListItem, hidden: boolean) =>
     suppress.mutate(
@@ -82,14 +119,24 @@ export function GtaRatesPage() {
   };
 
   const columns: Column<GtaRateListItem>[] = [
-    { key: 'group', header: 'Group', render: (r) => <span className="strong mono">{r.group}</span> },
-    { key: 'desc', header: 'Description', className: 'wrap', render: (r) => <span className="small">{r.description ?? '—'}</span> },
+    {
+      key: 'group',
+      header: 'Group',
+      render: (r) => (
+        <>
+          <span className="strong mono">{r.group}</span>
+          {r.description && <span className="rate-desc-phone xs muted">{r.description}</span>}
+        </>
+      )
+    },
+    { key: 'desc', header: 'Description', className: 'wrap col-hide-phone', render: (r) => <span className="small">{r.description ?? '—'}</span> },
     { key: 'rate', header: 'Daily rate', numeric: true, render: (r) => (r.dailyRatePence ? formatGBP(r.dailyRatePence) : '—') },
-    { key: 'period', header: 'Period', render: (r) => r.period },
-    { key: 'effective', header: 'Effective', render: (r) => <span className="xs nowrap">{`${r.effectiveFrom} – ${r.effectiveTo}`}</span> },
+    { key: 'period', header: 'Period', className: 'col-hide-phone', render: (r) => r.period },
+    { key: 'effective', header: 'Effective', className: 'col-hide-phone', render: (r) => <span className="xs nowrap">{`${r.effectiveFrom} – ${r.effectiveTo}`}</span> },
     {
       key: 'origin',
       header: 'Origin',
+      className: 'col-hide-phone',
       render: (r) => {
         const o = rateOrigin(r);
         return (
@@ -115,26 +162,29 @@ export function GtaRatesPage() {
       render: (r) => {
         const a = rateActions(r);
         return (
-          <div className="row" style={{ gap: 4, flexWrap: 'wrap' }}>
+          <div className="rate-actions">
             {a.edit && (
-              <Button size="sm" onClick={() => setEditing({ form: rateFormFromItem(r), title: a.edit === 'update' ? `Edit your rate — ${r.group} ${r.period}` : `Your rate for ${r.group} ${r.period}` })}>
-                Edit
-              </Button>
+              <IconButton
+                label={a.edit === 'update' ? `Edit your rate for ${r.group} ${r.period}` : `Set your own rate for ${r.group} ${r.period} (replaces the knowledge-base rate)`}
+                onClick={() => setEditing({ form: rateFormFromItem(r), title: a.edit === 'update' ? `Edit your rate — ${r.group} ${r.period}` : `Your rate for ${r.group} ${r.period}` })}
+              >
+                <PencilIcon />
+              </IconButton>
             )}
             {a.hide && (
-              <Button size="sm" variant="ghost" onClick={() => hide(r, true)} disabled={suppress.isPending}>
-                Hide
-              </Button>
+              <IconButton label={`Hide ${r.group} ${r.period} (not used for suggestions or hire benchmarks)`} onClick={() => hide(r, true)} disabled={suppress.isPending}>
+                <EyeIcon off />
+              </IconButton>
             )}
             {a.show && (
-              <Button size="sm" variant="ghost" onClick={() => hide(r, false)} disabled={suppress.isPending}>
-                Show
-              </Button>
+              <IconButton label={`Show ${r.group} ${r.period} again`} onClick={() => hide(r, false)} disabled={suppress.isPending}>
+                <EyeIcon />
+              </IconButton>
             )}
             {a.delete && (
-              <Button size="sm" variant="ghost" onClick={() => del(r)} disabled={remove.isPending}>
-                Delete
-              </Button>
+              <IconButton label={`Delete your rate for ${r.group} ${r.period}`} onClick={() => del(r)} disabled={remove.isPending}>
+                <TrashIcon />
+              </IconButton>
             )}
           </div>
         );
@@ -155,21 +205,37 @@ export function GtaRatesPage() {
         }
       />
       <div className="stack">
-        <div className="notice notice-warn" role="note">
+        <p className="xs muted rates-disclaimer" role="note">
           <strong>Industry benchmark only.</strong> {RATES_BANNER}
-          {ratesQ.data?.note ? <div className="xs" style={{ marginTop: 4 }}>{ratesQ.data.note}</div> : null}
-        </div>
+        </p>
 
-        <Card title="Rates" flush actions={<span className="small muted">{items.length} row{items.length === 1 ? '' : 's'}</span>}>
+        <Card
+          title={showPrevious ? 'Rates — all periods' : `Rates — ${current[0]?.period ?? currentPeriod}`}
+          flush
+          actions={
+            previous.length > 0 ? (
+              <label className="row small" style={{ gap: 6 }}>
+                <input type="checkbox" checked={showPrevious} onChange={(e) => setShowPrevious(e.target.checked)} />
+                Show previous periods ({previous.length})
+              </label>
+            ) : undefined
+          }
+        >
           <ApiErrorNotice error={ratesQ.error} what="load the GTA rates" />
           {ratesQ.isLoading ? (
             <Loading label="Loading GTA rates…" />
+          ) : families.length === 0 ? (
+            <p className="small muted" style={{ padding: '12px 16px' }}>
+              No rates loaded.
+            </p>
           ) : (
-            <Table columns={columns} rows={items} rowKey={(r) => `${r.group}|${r.period}|${r.id ?? 'kb'}`} caption="GTA benchmark rates" empty="No rates loaded" />
+            families.map((f) => (
+              <section key={f.key} className="rate-family" aria-label={f.label}>
+                <h4 className="rate-family-title">{f.label}</h4>
+                <Table columns={columns} rows={f.items} rowKey={(r) => `${r.group}|${r.period}|${r.id ?? 'kb'}`} caption={`GTA benchmark rates — ${f.label}`} empty="No rates" />
+              </section>
+            ))
           )}
-          <p className="xs muted" style={{ padding: '8px 16px' }}>
-            Your rate replaces the knowledge-base rate for the same group and period; Hide stops a row being used for fleet suggestions and hire benchmark lines; Delete removes your row (the knowledge-base rate, if any, shows again). Verification is shown exactly as stored.
-          </p>
         </Card>
 
         <SegmentDefaultsCard items={segmentsQ.data ?? []} loading={segmentsQ.isLoading} error={segmentsQ.error} groups={groups} />
@@ -306,7 +372,7 @@ function SegmentDefaultsCard({ items, loading, error, groups }: { items: GtaSegm
         />
       )
     },
-    { key: 'origin', header: 'Origin', render: (s) => <Badge tone={s.origin === 'manual' ? 'blue' : 'grey'}>{s.origin === 'manual' ? 'Your setting' : 'Knowledge base'}</Badge> },
+    { key: 'origin', header: 'Origin', className: 'col-hide-phone', render: (s) => <Badge tone={s.origin === 'manual' ? 'blue' : 'grey'}>{s.origin === 'manual' ? 'Your setting' : 'Knowledge base'}</Badge> },
     {
       key: 'actions',
       header: '',

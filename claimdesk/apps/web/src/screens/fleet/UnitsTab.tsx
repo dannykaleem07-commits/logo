@@ -17,6 +17,7 @@ import { todayISO } from '../../lib/dates';
 import { ALERT_CODE_LABEL, ALERT_SEVERITY_LABEL, describeDueDate, dueTone, dueToneToBadge, FLEET_USE_LABEL, groupAlertsBySeverity, insuranceExpiry, unitDescription, unitRegistration, UNIT_STATUSES, UNIT_STATUS_LABEL, unitStatusTone, type FleetUnitView } from './fleet';
 import { UnitDialog } from './UnitDialog';
 import { AllocateCheckDialog } from './AllocateCheckDialog';
+import { plainText } from '../../lib/plainText';
 
 /** Units table + compliance alerts (GET /fleet, GET /fleet/alerts). */
 export function UnitsTab({ onLogNotice }: { onLogNotice: (unitId: string) => void }) {
@@ -98,7 +99,7 @@ export function UnitsTab({ onLogNotice }: { onLogNotice: (unitId: string) => voi
             ✓ current
           </span>
         ) : (
-          <Badge tone="red" dot title="Tickets go to a stale address → CCJs (lesson l). Update the V5C with DVLA.">
+          <Badge tone="red" dot title="Tickets go to an old address and can end in county court judgments. Update the V5C with DVLA.">
             stale
           </Badge>
         )
@@ -198,7 +199,7 @@ export function UnitsTab({ onLogNotice }: { onLogNotice: (unitId: string) => voi
                           {ALERT_CODE_LABEL[a.code] ?? a.code}
                         </div>
                         <div className="list-sub">
-                          {a.message}
+                          {plainText(a.message)}
                           {a.dueDate ? (
                             <>
                               {' '}

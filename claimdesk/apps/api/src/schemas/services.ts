@@ -227,7 +227,7 @@ export const totalLossPredictBody = z.object({
 
 export const fleetUse = z.enum(['credit_hire', 'self_drive', 'pco']);
 export const fleetVehicleInput = z.object({
-  registration: z.string().trim().min(2).max(10),
+  registration: z.string().trim().min(2).max(15),
   make: z.string().trim().min(1).default('UNKNOWN'),
   model: z.string().trim().min(1).default('UNKNOWN'),
   variant: z.string().optional(),
@@ -268,6 +268,9 @@ export const fleetUnitBody = z
     dailyRatePence: pence.optional(),
     /** Optional: when omitted the server uses the GTA suggestion's group. */
     gtaGroup: gtaGroupCode.optional(),
+    /** The user left the group as "no group yet": do not take the suggestion; save UNGROUPED (manager mode, audited
+     * as GTA_SUGGESTION_UNAVAILABLE). Ignored when gtaGroup is given. */
+    gtaGroupUnknown: z.boolean().optional(),
     gtaSuggestion: gtaSuggestionInput.optional(),
     keeperAddressOnV5C: addressSchema.optional(),
     keeperAddressCurrent: z.boolean().optional(),
@@ -370,6 +373,8 @@ export const settingsPatchBody = z.object({
   bank: bankDetailsSchema.optional(),
   icoRegistration: z.string().optional(),
   rateCard: rateCardPatch.optional(),
+  /** Manager mode switches itself off after this many minutes without activity (0.3 §A.4.1). */
+  managerModeIdleMinutes: z.number().int().min(1).max(480).optional(),
 });
 
 export const jobsRunBody = z.object({ job: z.enum(['watch_poll', 'clocks_refresh']) });

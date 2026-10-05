@@ -31,21 +31,36 @@ export interface ClaimView extends ClaimBundle {
 
 export type ClaimTabId = 'overview' | 'chronology' | 'ledger' | 'clocks' | 'gates' | 'hire' | 'offers' | 'evidence' | 'documents' | 'engineering' | 'vehicle' | 'actions' | 'flags';
 
+/**
+ * Claim file tabs (0.3 §E1). The primary row holds the six used every day; the rest sit in the "More ▾" menu. Ids (and
+ * so the URLs /claims/:id/<tab>) never change. `CLAIM_TABS` lists all 13 in display order: primary, then More.
+ */
+export const PRIMARY_TAB_IDS: readonly ClaimTabId[] = ['overview', 'hire', 'documents', 'evidence', 'vehicle', 'actions'];
+export const MORE_TAB_IDS: readonly ClaimTabId[] = ['chronology', 'ledger', 'clocks', 'gates', 'offers', 'engineering', 'flags'];
+
 export const CLAIM_TABS: Array<TabItem & { id: ClaimTabId }> = [
   { id: 'overview', label: 'Overview' },
+  { id: 'hire', label: 'Hire' },
+  { id: 'documents', label: 'Documents' },
+  { id: 'evidence', label: 'Evidence' },
+  { id: 'vehicle', label: 'Vehicle' },
+  { id: 'actions', label: 'Next actions' },
   { id: 'chronology', label: 'Chronology' },
   { id: 'ledger', label: 'Ledger' },
   { id: 'clocks', label: 'Clocks' },
   { id: 'gates', label: 'Evidence gates' },
-  { id: 'hire', label: 'Hire · Storage · Recovery' },
-  { id: 'offers', label: 'Intervention register' },
-  { id: 'evidence', label: 'Evidence' },
-  { id: 'documents', label: 'Documents' },
+  { id: 'offers', label: 'Offers' },
   { id: 'engineering', label: 'Engineering' },
-  { id: 'vehicle', label: 'Vehicle & lookups' },
-  { id: 'actions', label: 'Next actions' },
   { id: 'flags', label: 'Flags' }
 ];
+
+/** Split tab items (with their badges) into the primary row and the More menu, keeping CLAIM_TABS order. */
+export function splitClaimTabs<T extends { id: string }>(tabs: readonly T[]): { primary: T[]; more: T[] } {
+  return {
+    primary: tabs.filter((t) => (PRIMARY_TAB_IDS as readonly string[]).includes(t.id)),
+    more: tabs.filter((t) => (MORE_TAB_IDS as readonly string[]).includes(t.id))
+  };
+}
 
 export function isClaimTab(id: string): id is ClaimTabId {
   return CLAIM_TABS.some((t) => t.id === id);

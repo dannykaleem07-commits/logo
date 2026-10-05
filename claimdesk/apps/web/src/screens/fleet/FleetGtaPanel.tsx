@@ -23,6 +23,7 @@ import {
   resetToSuggestion,
   suggestionDiffersLine,
   suggestQuery,
+  UNGROUPED_NOTE,
   type GtaPanelState
 } from './gtaPanel';
 
@@ -46,6 +47,8 @@ export function FleetGtaPanel({
   onChange,
   date,
   errors = {},
+  warnings = {},
+  groupOptional = false,
   disabled
 }: {
   vehicle: VehiclePickerValue;
@@ -53,6 +56,10 @@ export function FleetGtaPanel({
   onChange: (next: GtaPanelState) => void;
   date: ISODate;
   errors?: { gtaGroup?: string; dailyRatePence?: string };
+  /** Amber messages (manager mode). */
+  warnings?: { gtaGroup?: string };
+  /** Manager mode: the group may be left empty (saved as UNGROUPED with the daily rate, 0.3 §A.6 B09). */
+  groupOptional?: boolean;
   disabled?: boolean;
 }) {
   const ratesQ = useGtaRates(date);
@@ -111,24 +118,26 @@ export function FleetGtaPanel({
           {mode === 'select' ? (
             <Select
               label="GTA group"
-              required
+              required={!groupOptional}
               value={state.group && groups.includes(state.group) ? state.group : ''}
               placeholder={ratesQ.isLoading ? 'Loading groups…' : 'Choose…'}
               options={groupOptions(rates)}
               onChange={(v) => onChange(v === OTHER_GROUP ? editGroupMode(editGroup(state, OTHER_GROUP, rates, date), 'other') : editGroup(state, v, rates, date))}
               error={errors.gtaGroup}
+              warning={warnings.gtaGroup ?? (groupOptional && !state.group ? UNGROUPED_NOTE : undefined)}
               hint={view.groupPrefilled ? 'Pre-filled from the suggestion — change it if needed.' : 'Groups with a benchmark rate loaded; Other… for any other group.'}
               disabled={disabled}
             />
           ) : (
             <TextInput
               label="GTA group"
-              required
+              required={!groupOptional}
               value={state.group}
               placeholder="S1, M, M1, CP1…"
               autoCapitalize="characters"
               onChange={(t) => onChange(editGroup(state, t, rates, date))}
               error={errors.gtaGroup}
+              warning={warnings.gtaGroup ?? (groupOptional && !state.group ? UNGROUPED_NOTE : undefined)}
               hint={
                 <span className="row" style={{ gap: 6 }}>
                   {view.groupPrefilled ? 'Pre-filled from the suggestion.' : 'Any GTA group code.'}

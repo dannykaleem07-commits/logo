@@ -1,24 +1,30 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { flagName } from '../../../lib/flagNames';
+import { plainText } from '../../../lib/plainText';
 import { useNavigate } from 'react-router-dom';
 import type { ClaimFlag } from '@ccguk/domain';
-import { api, fnolErrorLines } from '../../../api/client';
-import { useInvalidateClaim } from '../../../api/hooks';
+import { api, fnolErrorLines, withRelaxed } from '../../../api/client';
+import { useInvalidateClaim, useMe } from '../../../api/hooks';
+import { useManagerMode } from '../../../app/managerMode';
+import { managerWarning, relaxedKeys } from '../../../lib/managerMode';
 import { PageHeader } from '../../../components/PageHeader';
 import { Card } from '../../../components/Card';
 import { Button } from '../../../components/Button';
 import { useToast } from '../../../components/Toast';
-import { STEPS, type FnolState, type KnownParty, type Step, type StepErrors, initialFnolState, validateStep, firstInvalidStep, buildCreateClaimBody, buildFollowUpEvents, buildOfferDecision } from './fnol';
+import { LAST_STEP, STEPS, type FnolState, type KnownParty, type Step, type StepErrors, initialFnolState, relaxedStepErrors, relaxedFnolErrors, firstBlockingStep, buildCreateClaimBody, buildFollowUpEvents, buildOfferDecision } from './fnol';
 import { StepDisclosure } from './StepDisclosure';
 import { StepParties } from './StepParties';
 import { StepVehicle } from './StepVehicle';
 import { StepAccident } from './StepAccident';
-import { StepScriptGuard } from './StepScriptGuard';
 import { StepReview } from './StepReview';
 
 export interface StepProps {
   state: FnolState;
   update: (patch: Partial<FnolState> | ((s: FnolState) => FnolState)) => void;
   errors: StepErrors;
+  /** Manager mode: relaxed checks, already prefixed "Allowed in manager mode: " (amber, never blocking). */
+  warnings?: StepErrors;
+  managerOn?: boolean;
 }
 
 /** Insurers already on file, so the claim references them by id instead of creating a duplicate party per claim. */
@@ -36,15 +42,21 @@ async function knownInsurers(state: FnolState): Promise<KnownParty[]> {
 }
 
 /**
- * FNOL wizard. Steps: disclosure → claimant & driver → vehicle (lookup / manual, duplicate banner) →
- * accident (own words, injuries → referral) → script guard (vehicle offers → intervention register) →
+ * FNOL wizard, five steps (0.3 §E6): disclosure → claimant & driver → vehicle (lookup / manual, duplicate banner) →
+ * accident & offers (own words, injuries → referral, then the script guard: vehicle offers → intervention register) →
  * services & review → submit: one POST /claims (claim, insurers, third party, witnesses, inline offer, services
  * agreed, injury referral, intake answers), then a services note, then the client's decision on the offer.
+ *
+ * Manager mode (§A.7): every step is clickable and only the five values the API needs block (`fnolHardKeys`); every
+ * other check is an amber warning, the relaxed rule keys go with the POST (audited as WEB_VALIDATION) and the server
+ * opens the claim with an "intake incomplete" flag (FNOL_INCOMPLETE override).
  */
 export function NewClaimPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const invalidate = useInvalidateClaim();
+  const managerOn = useManagerMode().on;
+  const meId = useMe().data?.id;
   const [state, setState] = useState<FnolState>(initialFnolState);
   const [step, setStep] = useState<Step>(1);
   const [touched, setTouched] = useState<Set<Step>>(new Set());
@@ -55,42 +67,58 @@ export function NewClaimPage() {
     setState((s) => (typeof patch === 'function' ? patch(s) : { ...s, ...patch }));
   }, []);
 
-  const errors = useMemo(() => (touched.has(step) ? validateStep(step, state) : {}), [touched, step, state]);
+  // E7: the handler defaults to the signed-in user.
+  useEffect(() => {
+    if (meId) setState((s) => (s.handlerId ? s : { ...s, handlerId: meId }));
+  }, [meId]);
+
+  const relaxed = useMemo(() => relaxedStepErrors(step, state, managerOn), [step, state, managerOn]);
+  const shown = touched.has(step);
+  const errors = shown ? relaxed.errors : {};
+  const warnings = useMemo(() => {
+    if (!shown || !managerOn) return {};
+    const out: StepErrors = {};
+    for (const [k, msg] of Object.entries(relaxed.warnings)) out[k] = managerWarning(msg) ?? msg;
+    return out;
+  }, [shown, managerOn, relaxed]);
   const maxReached = useMemo(() => {
+    if (managerOn) return LAST_STEP; // every step is clickable in manager mode
     let last: Step = 1;
     for (const s of STEPS) {
-      if (Object.keys(validateStep(s.n, state)).length > 0) break;
+      if (Object.keys(relaxedStepErrors(s.n, state, false).errors).length > 0) break;
       last = s.n;
     }
-    return Math.min(6, last + 1) as Step;
-  }, [state]);
+    return Math.min(LAST_STEP, last + 1) as Step;
+  }, [state, managerOn]);
 
   const goNext = () => {
-    const errs = validateStep(step, state);
+    const errs = relaxedStepErrors(step, state, managerOn).errors;
     setTouched((t) => new Set(t).add(step));
     if (Object.keys(errs).length > 0) {
       toast.warn('Complete the highlighted fields before continuing.');
       return;
     }
-    if (step < 6) setStep((step + 1) as Step);
+    if (step < LAST_STEP) setStep((step + 1) as Step);
   };
   const goBack = () => step > 1 && setStep((step - 1) as Step);
 
   const submit = async () => {
-    const invalid = firstInvalidStep(state);
+    const invalid = firstBlockingStep(state, managerOn);
     if (invalid) {
       setTouched(new Set(STEPS.map((s) => s.n)));
       setStep(invalid);
-      toast.warn('Some steps are incomplete.');
+      toast.warn(managerOn ? 'Even in manager mode a claim needs the claimant’s name, a registration, the accident date and time, the location and the client’s account.' : 'Some steps are incomplete.');
       return;
     }
+    const relaxedRules = managerOn ? relaxedKeys('fnol', relaxedFnolErrors(state, true).warnings) : [];
     setSubmitting(true);
     setSubmitError(null);
     const now = new Date().toISOString();
     let claimId: string | undefined;
     try {
       const known = await knownInsurers(state);
-      const { claim, intake } = await api.createClaim(buildCreateClaimBody(state, { now, knownParties: known }));
+      const body = buildCreateClaimBody(state, { now, knownParties: known });
+      const { claim, intake } = await api.createClaim(relaxedRules.length ? withRelaxed(body, relaxedRules) : body);
       claimId = claim.id;
       const problems: string[] = [];
 
@@ -115,7 +143,7 @@ export function NewClaimPage() {
             offerId = undefined;
           }
         }
-        if (!offerId) problems.push("client's decision on the offer: the register entry could not be found — record it on the Intervention register tab");
+        if (!offerId) problems.push("client's decision on the offer: the register entry could not be found — record it on the Offers tab");
         else {
           try {
             await api.updateOffer(claim.id, offerId, decision);
@@ -128,8 +156,8 @@ export function NewClaimPage() {
       invalidate(claim.id);
       const flags: ClaimFlag[] = intake?.flags ?? claim.flags ?? [];
       const hardStop = flags.find((f) => f.severity === 'block' && !f.clearedAt);
-      if (hardStop) toast.error(`Claim ${claim.reference} opened with a hard stop (${hardStop.code}): ${hardStop.message}`);
-      else if (flags.length) toast.warn(`Claim ${claim.reference} opened with ${flags.length} flag${flags.length === 1 ? '' : 's'}: ${flags.map((f) => f.code).join(', ')}`);
+      if (hardStop) toast.error(`Claim ${claim.reference} opened with a hard stop (${flagName(hardStop.code)}): ${plainText(hardStop.message)}`);
+      else if (flags.length) toast.warn(`Claim ${claim.reference} opened with ${flags.length} flag${flags.length === 1 ? '' : 's'}: ${flags.map((f) => flagName(f.code)).join(', ')} — see the Flags tab`);
       if (problems.length) toast.warn(`Some follow-ups failed: ${problems.join('; ')}. Add them from the claim file.`);
       else if (!hardStop && !flags.length) toast.success(`Claim ${claim.reference} opened.`);
       navigate(`/claims/${claim.id}`);
@@ -144,7 +172,7 @@ export function NewClaimPage() {
     }
   };
 
-  const props: StepProps = { state, update, errors };
+  const props: StepProps = { state, update, errors, warnings, managerOn };
 
   return (
     <div className="page">
@@ -155,7 +183,13 @@ export function NewClaimPage() {
             const cls = s.n === step ? 'current' : s.n < maxReached ? 'done' : '';
             return (
               <li key={s.n}>
-                <button type="button" className={`wizard-step ${cls}`} onClick={() => s.n <= maxReached && setStep(s.n)} disabled={s.n > maxReached} aria-current={s.n === step ? 'step' : undefined}>
+                <button
+                  type="button"
+                  className={`wizard-step ${cls}`}
+                  onClick={() => s.n <= maxReached && setStep(s.n)}
+                  disabled={s.n > maxReached}
+                  aria-current={s.n === step ? 'step' : undefined}
+                >
                   <span className="n">{s.n}</span>
                   {s.label}
                 </button>
@@ -168,8 +202,7 @@ export function NewClaimPage() {
           {step === 2 && <StepParties {...props} />}
           {step === 3 && <StepVehicle {...props} />}
           {step === 4 && <StepAccident {...props} />}
-          {step === 5 && <StepScriptGuard {...props} />}
-          {step === 6 && <StepReview {...props} onEdit={setStep} />}
+          {step === 5 && <StepReview {...props} onEdit={setStep} />}
         </div>
         {submitError && (
           <div className="notice notice-danger" style={{ marginTop: 16 }} role="alert">
@@ -180,7 +213,7 @@ export function NewClaimPage() {
           <Button onClick={goBack} disabled={step === 1 || submitting}>
             Back
           </Button>
-          {step < 6 ? (
+          {step < LAST_STEP ? (
             <Button variant="primary" onClick={goNext}>
               Continue
             </Button>

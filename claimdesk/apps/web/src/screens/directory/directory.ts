@@ -101,3 +101,23 @@ export function isHttpUrl(s: string): boolean {
     return false;
   }
 }
+
+/** Cards with a published third-party claims number first (that is the number a handler dials), then by name. */
+export function sortDirectory<T extends Pick<InsurerDirectoryEntry, 'name' | 'thirdPartyClaimsPhone'>>(entries: readonly T[]): T[] {
+  return [...entries].sort((a, b) => Number(Boolean(b.thirdPartyClaimsPhone)) - Number(Boolean(a.thirdPartyClaimsPhone)) || a.name.localeCompare(b.name, 'en-GB'));
+}
+
+/**
+ * The status banner shown on a compact card: only for a failed or stale record (red — do not dial without checking).
+ * Unverified and ageing records rely on the badge (and its tooltip) alone, so the warning is not said twice.
+ */
+export function cardBanner(status: DirectoryStatus): string | undefined {
+  return status.tone === 'red' ? status.warning : undefined;
+}
+
+/** Whether the closed "More about this insurer" section has anything in it beyond the verification line. */
+export function hasMoreDetails(entry: InsurerDirectoryEntry): boolean {
+  return Boolean(
+    entry.brands?.length || entry.policyholderClaimsPhone || entry.thirdPartyEmail || entry.claimsEmail || entry.complaintsEmail || entry.postalAddress || entry.group || entry.verification.sourceNote || entry.notes
+  );
+}

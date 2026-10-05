@@ -178,6 +178,21 @@ export function addClaimFlag(db: Db, id: Id, flag: Omit<ClaimFlag, 'raisedAt'> &
   return requireClaim(db, id);
 }
 
+/**
+ * Raise a flag, or bring the open flag with the same code up to date (its message and severity) when the situation it
+ * describes has changed — e.g. a hire corrected again after it was invoiced. Flags are claim state; the history stays
+ * in the audit rows of whatever changed.
+ */
+export function raiseOrUpdateClaimFlag(db: Db, id: Id, flag: Omit<ClaimFlag, 'raisedAt'> & { raisedAt?: ISODateTime }): Claim {
+  const claim = requireClaim(db, id);
+  const open = claim.flags.find((f) => f.code === flag.code && !f.clearedAt);
+  if (!open) return addClaimFlag(db, id, flag);
+  if (open.message === flag.message && open.severity === flag.severity) return claim;
+  const flags = claim.flags.map((f) => (f === open ? { ...f, message: flag.message, severity: flag.severity } : f));
+  db.update(claims).set({ flags, updatedAt: nowIso() }).where(eq(claims.id, id)).run();
+  return requireClaim(db, id);
+}
+
 /** Clear a flag with a reason; the clearance is audited (`claim.flag.clear`). */
 export function clearClaimFlag(db: Db, id: Id, code: string, actor: Actor, reason: string): Claim {
   if (!reason?.trim()) throw new ValidationError('a reason is required to clear a flag');

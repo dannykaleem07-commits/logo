@@ -93,14 +93,18 @@ describe('VehiclePicker', () => {
       expect(html, text).toContain(text);
     }
     expect(html).toContain(MANUAL_MODE_NOTICE);
-    // registration shown → Total Car Check + paste panel
+    // registration shown → Total Car Check + the "Paste from Total Car Check" button (0.3 §E5: the panel opens on click)
     expect(html).toContain(TCC_LABEL);
     expect(html).toContain(TCC_NOTE);
     expect(html).toContain('href="https://totalcarcheck.co.uk/FreeCheck?regno=AB12CDE"');
     expect(html).toContain('target="_blank"');
     expect(html).toContain('rel="noreferrer noopener"');
     expect(html).toContain('class="btn btn-secondary"');
-    expect(html).toContain('Read pasted details');
+    expect(html).toContain('Paste from Total Car Check');
+    expect(html).not.toContain('Read pasted details');
+    // Details and Features are closed sections (0.3 §E5)
+    expect(html).toMatch(/<details class="section"><summary class="section-summary">More vehicle details/);
+    expect(html).toMatch(/<details class="section"><summary class="section-summary">Features &amp; extras/);
   });
   it('edit mode without the registration hides the search and the paste panel (the host shows them)', () => {
     const html = render(<VehiclePicker value={picked()} onChange={() => undefined} mode="edit" showRegistration={false} lookupMode="live" />);
@@ -128,7 +132,7 @@ describe('New claim → Vehicle in manual mode', () => {
     expect(html).toContain('Use this vehicle');
     expect(html).toContain('CCG-2026-00001');
     expect(html).toContain(TCC_LABEL);
-    expect(html).toContain('Read pasted details');
+    expect(html).toContain('Paste from Total Car Check');
     expect(html).toContain('Odometer (miles)');
   });
   it('after "Use this vehicle" shows a read-only summary with "Change details"', () => {

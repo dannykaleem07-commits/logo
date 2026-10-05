@@ -40,7 +40,8 @@ describe('complianceAlerts', () => {
     const alerts = complianceAlerts([{ unit: fleetUnit({ declaredUses: ['credit_hire', 'self_drive'] }), vehicle: fleetVehicle(), policy: policy() }], NOW);
     expect(codes(alerts)).toEqual(['USE_NOT_COVERED']);
     expect(alerts[0]!.severity).toBe('block');
-    expect(alerts[0]!.message).toContain('self_drive');
+    expect(alerts[0]!.message).toContain('declared use self-drive'); // plain words, never the stored code (0.3 §E8)
+    expect(alerts[0]!.message).not.toContain('self_drive');
     expect(alerts[0]!.message).toContain('Collingwood');
   });
 

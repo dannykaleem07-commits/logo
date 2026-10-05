@@ -2,6 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
+import { ManagerModeProvider } from './app/managerMode';
 import { createAppRouter } from './app/router';
 import { installSessionExpiryRedirect } from './app/session';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -11,6 +12,7 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
 import './styles/shell.css';
+import './styles/manager.css';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -37,7 +39,9 @@ createRoot(document.getElementById('root')!).render(
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <ToastProvider>
-          <RouterProvider router={router} />
+          <ManagerModeProvider>
+            <RouterProvider router={router} />
+          </ManagerModeProvider>
         </ToastProvider>
       </QueryClientProvider>
     </ErrorBoundary>

@@ -168,8 +168,10 @@ export function invoiceArithmeticProblems(d: InvoiceBaseData, lineNetPence: Read
   if (!isVatRegistered(d) && t.vatPence !== 0) {
     problems.push(`totals.vatPence is ${formatGBP(t.vatPence)} but settings.vatNumber is empty (the invoice would say "VAT not applicable")`);
   }
-  if (d.receivedPence !== undefined && d.balancePence !== undefined && t.grossPence - d.receivedPence !== d.balancePence) {
-    problems.push(`balancePence ${formatGBP(d.balancePence)} is not gross ${formatGBP(t.grossPence)} − received ${formatGBP(d.receivedPence)}`);
+  // The balance never goes below £0.00: receipts above this invoice's total (an interim invoice, or a hire corrected
+  // shorter after payment) are printed as their own line, never netted into a negative balance.
+  if (d.receivedPence !== undefined && d.balancePence !== undefined && Math.max(0, t.grossPence - d.receivedPence) !== d.balancePence) {
+    problems.push(`balancePence ${formatGBP(d.balancePence)} is not gross ${formatGBP(t.grossPence)} − received ${formatGBP(d.receivedPence)} (never below £0.00)`);
   }
   return problems;
 }
@@ -199,7 +201,8 @@ export function invoiceTotalsTable(d: InvoiceBaseData): string {
   rows.push({ label: 'Total due', valuePence: d.totals.grossPence, emphasis: true });
   if (d.receivedPence !== undefined) {
     rows.push({ label: 'Received to date', valuePence: -d.receivedPence });
-    rows.push({ label: 'Balance outstanding', valuePence: d.balancePence ?? d.totals.grossPence - d.receivedPence, emphasis: true });
+    rows.push({ label: 'Balance outstanding', valuePence: d.balancePence ?? Math.max(0, d.totals.grossPence - d.receivedPence), emphasis: true });
+    if (d.receivedPence > d.totals.grossPence) rows.push({ label: 'Received in excess of this invoice', valuePence: d.receivedPence - d.totals.grossPence });
   }
   return `<div class="avoid-break">${figuresTable(rows, { caption: 'Summary' })}</div>`;
 }

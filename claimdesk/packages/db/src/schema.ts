@@ -124,6 +124,7 @@ export const sessions = sqliteTable(
     lastSeenAt: text('last_seen_at').notNull(),
     ip: text('ip'),
     userAgent: text('user_agent'),
+    managerModeUntil: text('manager_mode_until'),
   },
   (t) => [index('sessions_user_idx').on(t.userId), index('sessions_expires_idx').on(t.expiresAt)],
 );
@@ -388,6 +389,11 @@ export const hireAgreements = sqliteTable(
     statementOfMeansDocumentId: text('statement_of_means_document_id'),
     createdAt: text('created_at').notNull(),
     updatedAt: text('updated_at').notNull(),
+    clientGtaGroup: text('client_gta_group'),
+    clientGtaDailyRatePence: integer('client_gta_daily_rate_pence'),
+    hireGtaDailyRatePence: integer('hire_gta_daily_rate_pence'),
+    fleetDailyRatePence: integer('fleet_daily_rate_pence'),
+    pricingNote: text('pricing_note'),
   },
   (t) => [
     index('hire_agreements_claim_idx').on(t.claimId),
@@ -714,6 +720,7 @@ export const settings = sqliteTable('settings', {
   rateCard: text('rate_card', { mode: 'json' }).$type<RateCard>().notNull(),
   apiKeysPresent: text('api_keys_present', { mode: 'json' }).$type<ApiKeysPresent>().notNull(),
   updatedAt: text('updated_at').notNull(),
+  managerModeIdleMinutes: integer('manager_mode_idle_minutes'),
 });
 
 /** Append-only. */

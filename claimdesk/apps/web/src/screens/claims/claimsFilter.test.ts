@@ -60,3 +60,19 @@ describe('distinctOptions', () => {
     ]);
   });
 });
+
+describe('activeFilterCount and handlerOptions (0.3 §E2)', () => {
+  it('counts the drop-down filters that are set', async () => {
+    const { activeFilterCount } = await import('./claimsFilter');
+    expect(activeFilterCount({ status: '', handler: '', insurer: '' })).toBe(0);
+    expect(activeFilterCount({ status: 'chasing', handler: 'DK', insurer: '' })).toBe(2);
+  });
+  it('labels handlers with their names, not their ids', async () => {
+    const { handlerOptions } = await import('./claimsFilter');
+    const opts = handlerOptions([...rows, base({ id: '4', handlerId: 'DK' })]);
+    expect(opts).toEqual([
+      { value: 'DK', label: 'Danny' },
+      { value: 'AS', label: 'Unnamed handler' }
+    ].sort((a, b) => a.label.localeCompare(b.label)));
+  });
+});

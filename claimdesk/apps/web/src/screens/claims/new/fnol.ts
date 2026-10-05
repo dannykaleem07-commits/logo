@@ -22,6 +22,7 @@ import type { AccidentDetails, InterventionOffer, ISODate, ISODateTime, OnFileMa
 import { normaliseRegistration, isValidUkRegistration, MIN_CIRCUMSTANCES_CHARS } from '@ccguk/domain';
 import type { ClaimVehicleInput, CreateClaimBody, CreateEventBody, FnolOfferInput, LookupMode, OfferPatchBody, PartyInput, PartyRef, VehicleInput, VehicleLookupResult, VehicleRef, WitnessInput } from '../../../api/client';
 import { emptyPickerValue, toVehicleInput as pickerToVehicleInput, validatePicker, type VehiclePickerValue } from '../../vehicles/vehiclePickerModel';
+import { relaxErrors, type RelaxedResult } from '../../../lib/managerMode';
 
 export { MIN_CIRCUMSTANCES_CHARS };
 
@@ -52,21 +53,26 @@ export const CIRCUMSTANCES_CAPTION = "The client's own words — do not suggest.
 
 export const TAKEN_COLD_LABEL = 'The account was taken cold: open questions only, recorded verbatim, nothing suggested.';
 export const TP_REG_UNKNOWN_LABEL = 'Registration unknown — the other driver failed to stop (MIB untraced route; report to the police within 14 days).';
-export const WITNESS_RELATIONSHIP_HINT = 'Feeds the connected-party check (lesson g). Write "None" if a stranger.';
+export const WITNESS_RELATIONSHIP_HINT = 'Feeds the connected-party check. Write "None" if a stranger.';
 
 // ---------------------------------------------------------------------------
 // State
 // ---------------------------------------------------------------------------
 
-export type Step = 1 | 2 | 3 | 4 | 5 | 6;
+/**
+ * Five steps (0.3 §E6): the "Has anyone offered the client a vehicle?" block sits at the end of the accident step.
+ * Validation keys are unchanged (`offer.*` errors now belong to step 4).
+ */
+export type Step = 1 | 2 | 3 | 4 | 5;
+
+export const LAST_STEP: Step = 5;
 
 export const STEPS: Array<{ n: Step; label: string }> = [
   { n: 1, label: 'Disclosure' },
   { n: 2, label: 'Claimant & driver' },
   { n: 3, label: 'Vehicle' },
-  { n: 4, label: 'Accident' },
-  { n: 5, label: 'Vehicle offers' },
-  { n: 6, label: 'Services & review' }
+  { n: 4, label: 'Accident & offers' },
+  { n: 5, label: 'Services & review' }
 ];
 
 export interface PartyForm {
@@ -298,9 +304,7 @@ export function validateStep(step: Step, state: FnolState, now: Date = new Date(
         if (!has(w.name)) e[`witness.${i}.name`] = 'Witness name is required (or remove the row).';
         if (!has(w.relationshipToClaimant) && !w.independent) e[`witness.${i}.relationship`] = 'How does the client know this witness? ("None" if a stranger.)';
       });
-      break;
-    }
-    case 5: {
+      // The script guard ("Has anyone offered you a vehicle?") closes the accident step.
       const o = state.offer;
       if (o.offered === undefined) e['offer.offered'] = 'Ask the question and record the answer.';
       if (o.offered) {
@@ -310,10 +314,43 @@ export function validateStep(step: Step, state: FnolState, now: Date = new Date(
       }
       break;
     }
-    case 6:
+    case 5:
       break;
   }
   return e;
+}
+
+/**
+ * The checks manager mode never relaxes (0.3 §A.6 B13/B16): the five values the API needs to store a claim at all —
+ * claimant name, a registration, the accident date-time, location and the client's account. Only their "missing"
+ * form is hard: a non-UK plate, a future date or a short account are relaxed like everything else.
+ */
+export function fnolHardKeys(state: FnolState): string[] {
+  const keys = ['claimant.name', 'accident.location'];
+  if (!normaliseRegistration(state.vehicle.registration)) keys.push('vehicle.registration');
+  if (!state.accident.occurredAt) keys.push('accident.occurredAt');
+  if (!has(state.accident.circumstances)) keys.push('accident.circumstances');
+  return keys;
+}
+
+/** A step's errors, with everything but the hard keys turned into warnings in manager mode. */
+export function relaxedStepErrors(step: Step, state: FnolState, managerOn: boolean, now: Date = new Date()): RelaxedResult {
+  return relaxErrors(validateStep(step, state, now), managerOn, fnolHardKeys(state));
+}
+
+/** Every step's errors at once (keys never collide across steps), relaxed in manager mode. */
+export function relaxedFnolErrors(state: FnolState, managerOn: boolean, now: Date = new Date()): RelaxedResult {
+  const all: StepErrors = {};
+  for (const s of STEPS) Object.assign(all, validateStep(s.n, state, now));
+  return relaxErrors(all, managerOn, fnolHardKeys(state));
+}
+
+/** The first step with an error that blocks: any error normally, only the hard keys in manager mode. */
+export function firstBlockingStep(state: FnolState, managerOn: boolean, now: Date = new Date()): Step | null {
+  for (const s of STEPS) {
+    if (Object.keys(relaxedStepErrors(s.n, state, managerOn, now).errors).length > 0) return s.n;
+  }
+  return null;
 }
 
 export function firstInvalidStep(state: FnolState, now: Date = new Date()): Step | null {
@@ -505,7 +542,9 @@ export function buildCreateClaimBody(state: FnolState, opts: BuildOptions): Crea
     ...(state.offer.offered ? { offerDetails: offerDetailsFrom(state.offer) } : {}),
     // descriptive web fields (see api/client.ts CreateClaimBody)
     channel: state.channel,
-    disclosure: { callRecordingReadAt: state.disclosure.readAt || now, acknowledged: true, ...(has(state.disclosure.acknowledgedBy) ? { acknowledgedBy: state.disclosure.acknowledgedBy.trim() } : {}) },
+    disclosure: state.disclosure.acknowledged
+      ? { callRecordingReadAt: state.disclosure.readAt || now, acknowledged: true, ...(has(state.disclosure.acknowledgedBy) ? { acknowledgedBy: state.disclosure.acknowledgedBy.trim() } : {}) }
+      : { acknowledged: false },
     witnesses: state.witnesses.filter((w) => has(w.name)).map((w) => ({ ...w, name: w.name.trim() })),
     services: { hire: state.services.hire, recovery: state.services.recovery, storage: state.services.storage, engineer: state.services.engineer, ...(has(state.services.notes) ? { notes: state.services.notes.trim() } : {}) }
   };
@@ -563,4 +602,35 @@ export function buildFollowUpEvents(state: FnolState, now: ISODateTime): CreateE
     });
   }
   return events;
+}
+
+// ---------------------------------------------------------------------------
+// Handler (0.3 §E7): a select of users, the signed-in user first and pre-selected
+// ---------------------------------------------------------------------------
+
+export interface HandlerOption {
+  value: string;
+  label: string;
+  name: string;
+}
+
+/**
+ * The handler select: the signed-in user first ("Name (you)"), then everyone else by name. A value already chosen
+ * that is not a known user (an old free-text id) is kept as its own option so it is never silently dropped.
+ */
+export function handlerOptions(users: ReadonlyArray<{ id: string; name: string }>, me: { id: string; name: string } | null, current = ''): HandlerOption[] {
+  const out: HandlerOption[] = [];
+  const seen = new Set<string>();
+  if (me) {
+    const name = users.find((u) => u.id === me.id)?.name ?? me.name ?? me.id;
+    out.push({ value: me.id, label: `${name} (you)`, name });
+    seen.add(me.id);
+  }
+  for (const u of [...users].sort((a, b) => a.name.localeCompare(b.name))) {
+    if (seen.has(u.id)) continue;
+    seen.add(u.id);
+    out.push({ value: u.id, label: u.name, name: u.name });
+  }
+  if (current && !seen.has(current)) out.push({ value: current, label: current, name: current });
+  return out;
 }

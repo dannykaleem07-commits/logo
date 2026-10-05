@@ -13,7 +13,7 @@
  * sends a verification.
  */
 import type { FuelType, ISODate, OnFileMatch, ParsedVehicleCheck, Transmission, Vehicle, VehicleSourceInput, VehicleSpec } from '@ccguk/domain';
-import { normaliseRegistration, PS_TO_BHP } from '@ccguk/domain';
+import { isValidUkRegistration, normaliseRegistration, PS_TO_BHP } from '@ccguk/domain';
 import type { VehicleInput } from '../../api/client';
 import {
   CATALOGUE_SEGMENTS,
@@ -1187,4 +1187,32 @@ export function describeVehicle(v: Pick<VehiclePickerValue, 'make' | 'model' | '
   const name = [v.make, v.model, v.variant].map((x) => (x ?? '').trim()).filter(Boolean).join(' ');
   const parts = [name, v.yearOfManufacture ? String(v.yearOfManufacture) : '', v.engineCapacityCc ? `${v.engineCapacityCc.toLocaleString('en-GB')} cc` : '', v.fuelType ? FUEL_LABEL[v.fuelType] : '', v.transmission && v.transmission !== 'unknown' ? TRANSMISSION_LABEL[v.transmission] : ''];
   return parts.filter(Boolean).join(' · ');
+}
+
+// ---------------------------------------------------------------------------
+// Registration rules relaxed in manager mode (0.3 §A.6 B08, B12, B17)
+// ---------------------------------------------------------------------------
+
+export const NON_UK_REGISTRATION = 'This does not look like a UK registration mark — check it against the V5C.';
+
+/** A typed registration that is not a UK format (undefined when empty or valid). Relaxed in manager mode. */
+export function registrationFormatMessage(registration: string): string | undefined {
+  const reg = registration.trim();
+  if (!reg) return undefined;
+  return isValidUkRegistration(reg) ? undefined : NON_UK_REGISTRATION;
+}
+
+/** The searched registration is a client vehicle on a claim (a fleet unit for it is refused: REGISTRATION_ON_CLAIM). */
+export function isClientVehicleOnClaim(matches: readonly OnFileMatch[] | undefined): boolean {
+  return (matches ?? []).some((m) => m.match === 'exact' && m.ownership !== 'fleet' && m.claims.length > 0);
+}
+
+/**
+ * How an on-file CCGUK fleet vehicle is offered as a client vehicle: 'block' (normal mode, New claim), 'warn' (manager
+ * mode: allowed with a warning; the server still raises the FLEET_UNIT_AS_CLIENT_VEHICLE block flag) or 'allow' (the
+ * host does not block fleet vehicles).
+ */
+export function fleetMatchHandling(opts: { blockFleet: boolean; warnFleet?: boolean; managerOn: boolean }): 'block' | 'warn' | 'allow' {
+  if (opts.blockFleet) return opts.managerOn ? 'warn' : 'block';
+  return opts.warnFleet ? 'warn' : 'allow';
 }

@@ -8,7 +8,7 @@
  * Inputs are normalised to the API's raw shapes: dates `YYYY-MM-DD`, date-times ISO 8601, money integer pence,
  * choices arrays of option values, rows arrays of column records, paragraphs arrays of strings, null = leave blank.
  */
-import type { ClaimBundle } from '@ccguk/domain';
+import { OVERRIDABLE_TEMPLATE_GUARDS, type ClaimBundle } from '@ccguk/domain';
 import { poundsTextToPence } from '../../../lib/money';
 import { cleanSubject, type ClaimTemplateValues, type DocxSubject, type DocxTemplateSummary, type FillPlanIssue, type GenerateDocxBody, type PlanOrigin, type PlanRow, type SlotInput, type SubjectKind } from '../../../api/templatesApi';
 
@@ -413,13 +413,40 @@ export function warningIssues(issues: FillPlanIssue[]): FillPlanIssue[] {
   return issues.filter((i) => i.severity === 'warn');
 }
 
+/** Manager mode as the Fill dialog sees it. */
+export interface FillManagerOpts {
+  /** Manager mode is on: overridable blocks become warnings and Generate goes through (audited by the server). */
+  managerOn?: boolean;
+  /** The user may use manager mode: with it off, Generate stays enabled when every block is overridable, so the
+   * server's refusal opens the "override as manager?" prompt. */
+  managerAllowed?: boolean;
+}
+
+const OVERRIDABLE_FILL_ISSUES: ReadonlySet<string> = new Set<string>(['VALUES_REQUIRED', 'TEMPLATE_WARNINGS_UNACKNOWLEDGED', ...OVERRIDABLE_TEMPLATE_GUARDS]);
+
+/** A blocking issue a manager may override (VALUES_REQUIRED, unreviewed wording, the overridable template guards). */
+export function isOverridableFillIssue(issue: Pick<FillPlanIssue, 'code'>): boolean {
+  return OVERRIDABLE_FILL_ISSUES.has(issue.code);
+}
+
+/** Blocks a manager could override on Generate: overridable issues and the required values still blank. */
+export function managerOverridableBlocks(values: ClaimTemplateValues | undefined, state: FillState): { issues: FillPlanIssue[]; missing: PlanRow[] } {
+  if (!values) return { issues: [], missing: [] };
+  const rows = rowsOf(values);
+  return { issues: openBlockingIssues(values.issues ?? [], rows, state).filter(isOverridableFillIssue), missing: missingRequired(rows, state) };
+}
+
 /** Why Generate is disabled, or undefined when it is enabled. */
-export function generateBlocker(values: ClaimTemplateValues | undefined, state: FillState): string | undefined {
+export function generateBlocker(values: ClaimTemplateValues | undefined, state: FillState, opts: FillManagerOpts = {}): string | undefined {
   if (!state.templateId) return 'Choose a template first.';
   if (!values) return 'Waiting for the values from the claim.';
   const rows = rowsOf(values);
-  const blocking = openBlockingIssues(values.issues ?? [], rows, state);
+  const manager = Boolean(opts.managerOn || opts.managerAllowed);
+  const allBlocking = openBlockingIssues(values.issues ?? [], rows, state);
+  // Class C issues (e.g. placeholder bank details, a slot that cannot be filled) block even in manager mode.
+  const blocking = manager ? allBlocking.filter((i) => !isOverridableFillIssue(i)) : allBlocking;
   if (blocking.length) return `${blocking.length} blocking issue${blocking.length === 1 ? '' : 's'} must be resolved first.`;
+  if (manager) return undefined;
   const missing = missingRequired(rows, state);
   if (missing.length) return `${missing.length} required value${missing.length === 1 ? ' is' : 's are'} missing: ${missing.map((r) => r.label).slice(0, 4).join(', ')}${missing.length > 4 ? '…' : ''}.`;
   return undefined;

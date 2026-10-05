@@ -2,7 +2,7 @@
  * Analytics over the ledger and chronology: overview, debtor days by insurer, reductions by head, cycle times,
  * intervention statistics. Everything is derived — nothing is stored.
  */
-import { addWorkingDays, type Claim, type ClaimStatus, type HeadOfLoss, type ISODateTime, type LedgerEntry, type Pence } from '@ccguk/domain';
+import { addWorkingDays, liveEvents, type Claim, type ClaimStatus, type HeadOfLoss, type ISODateTime, type LedgerEntry, type Pence } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
 import { acceptanceFor, actionsFor, gatesFor, loadBundle } from './claimView.js';
 import { complianceAlerts } from './fleetFallbacks.js';
@@ -48,7 +48,7 @@ export function debtorDays(ctx: AppContext): DebtorDays {
   const all: number[] = [];
   let outstandingTotal = 0;
   for (const claim of allClaims(ctx)) {
-    const events = ctx.repos.listEvents(ctx.db, claim.id);
+    const events = liveEvents(ctx.repos.listEvents(ctx.db, claim.id));
     const pack = events.find((e) => e.type === 'payment_pack_sent');
     const position = ctx.repos.ledgerPosition(ctx.db, claim.id);
     const outstanding = Math.max(0, position.totals.outstandingPence);
@@ -169,7 +169,7 @@ const STAGES: Array<{ code: string; from: Claim['status'] | string; to: string; 
 export function cycleTimes(ctx: AppContext): CycleTimes {
   const samples = new Map<string, number[]>();
   for (const claim of allClaims(ctx)) {
-    const events = ctx.repos.listEvents(ctx.db, claim.id);
+    const events = liveEvents(ctx.repos.listEvents(ctx.db, claim.id));
     for (const st of STAGES) {
       const from = events.find((e) => e.type === st.fromEvent);
       if (!from) continue;

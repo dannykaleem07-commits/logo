@@ -14,6 +14,7 @@ import { loadBundle, recomputeClocks } from '../services/claimView.js';
 import { createClaimDocument } from '../services/documents.js';
 import { assessTotalLoss, engineerReportChecklist, extractLinesProvider, predictTotalLoss } from '../services/engineeringFallbacks.js';
 import { gtaRatesFor } from '../services/kb.js';
+import { gateFor } from '../services/override.js';
 import { applyEventSideEffects } from '../services/sideEffects.js';
 import { params, requireClaim } from './helpers.js';
 import { gtaRate } from '@ccguk/domain';
@@ -160,7 +161,9 @@ export function registerEngineeringRoutes(app: FastifyInstance, ctx: AppContext)
     if (e.claimId !== id) throw conflict('WRONG_CLAIM', 'Estimate belongs to another claim');
     if (e.approvedBy) throw conflict('ESTIMATE_APPROVED', `Already approved by ${e.approvedBy}`);
     const unconfirmed = e.lines.filter((l) => !l.confirmedByEngineer && !l.preExisting);
-    if (unconfirmed.length) throw conflict('LINES_UNCONFIRMED', `${unconfirmed.length} line(s) are not confirmed by the engineer`, { lineIds: unconfirmed.map((l) => l.id) });
+    if (unconfirmed.length) {
+      gateFor(ctx, request).refuse(conflict('LINES_UNCONFIRMED', `${unconfirmed.length} line(s) are not confirmed by the engineer`, { lineIds: unconfirmed.map((l) => l.id) }), { claimId: id, entity: 'estimates', entityId: eid });
+    }
     const now = ctx.now();
     return ctx.db.transaction((tx) => {
       const approved = ctx.repos.updateEstimate(tx, eid, { approvedBy: request.user.id });
@@ -260,7 +263,10 @@ export function registerEngineeringRoutes(app: FastifyInstance, ctx: AppContext)
     requireClaim(ctx, id);
     const pav = ctx.repos.requirePav(ctx.db, pid);
     if (pav.claimId !== id) throw conflict('WRONG_CLAIM', 'PAV belongs to another claim');
-    if (pav.comparables.filter((c) => !c.excluded).length < 3) throw conflict('TOO_FEW_COMPARABLES', 'At least three retained comparables are needed before a PAV is approved');
+    const retained = pav.comparables.filter((c) => !c.excluded).length;
+    if (retained < 3) {
+      gateFor(ctx, request).refuse(conflict('TOO_FEW_COMPARABLES', 'At least three retained comparables are needed before a PAV is approved', { retained }), { claimId: id, entity: 'pav_assessments', entityId: pid });
+    }
     const now = ctx.now();
     return ctx.db.transaction((tx) => {
       const approved = ctx.repos.approvePav(tx, pid, request.user.id, now);
@@ -358,12 +364,19 @@ export function registerEngineeringRoutes(app: FastifyInstance, ctx: AppContext)
     if (report.issuedAt) throw conflict('REPORT_ISSUED', `Report already issued at ${report.issuedAt}`);
     const bundle = loadBundle(ctx, id);
     const checklist = engineerReportChecklist(report, bundle, bundle.estimate);
-    const force = (parse(issueReportBody, request.body ?? {}) ?? {}).force === true;
-    if (!checklist.complete && !force) throw conflict('CHECKLIST_INCOMPLETE', `The report checklist is incomplete: ${checklist.missing.join(', ')}`, { missing: checklist.missing, items: checklist.items });
+    // `force` is still accepted but no longer bypasses on its own: an incomplete checklist is overridden only through the
+    // gate in manager mode (0.3 §A.6 B32), and the event records it.
+    parse(issueReportBody, request.body ?? {});
+    const gate = gateFor(ctx, request);
+    let forced = false;
+    if (!checklist.complete) {
+      gate.refuse(conflict('CHECKLIST_INCOMPLETE', `The report checklist is incomplete: ${checklist.missing.join(', ')}`, { missing: checklist.missing, items: checklist.items }), { claimId: id, entity: 'engineer_reports', entityId: rid });
+      forced = true;
+    }
     const now = ctx.now();
     const { issued, event, effects } = ctx.db.transaction((tx) => {
       const r = ctx.repos.issueEngineerReport(tx, rid, { issuedAt: now });
-      const e = ctx.repos.appendEvent(tx, { claimId: id, type: 'report_issued', at: now, summary: `Engineer’s report issued${report.totalLoss?.decision === 'total_loss' ? ' — total loss' : ''}`, data: { reportId: rid, forced: force || undefined }, attributableTo: 'engineer', createdBy: request.user.id, recordedAt: now });
+      const e = ctx.repos.appendEvent(tx, { claimId: id, type: 'report_issued', at: now, summary: `Engineer’s report issued${report.totalLoss?.decision === 'total_loss' ? ' — total loss' : ''}`, data: { reportId: rid, ...(forced ? { forced: true, overrideReason: gate.reason } : {}) }, attributableTo: 'engineer', createdBy: request.user.id, recordedAt: now });
       const fx = applyEventSideEffects({ ...ctx, db: tx }, e, request.actor);
       ctx.repos.appendAudit(tx, { actor: request.actor, action: 'engineer_report.issue', entity: 'engineer_reports', entityId: rid, after: { issuedAt: now, eventId: e.id, checklistComplete: checklist.complete }, at: now });
       return { issued: r, event: e, effects: fx };

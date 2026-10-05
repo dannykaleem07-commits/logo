@@ -5,7 +5,7 @@
  *   The file sits with the party named on each event from that event until the next one. Summing those gaps
  *   per party gives the days attributable to the insurer, the repairer, the client and CCGUK.
  */
-import type { ClaimEvent, EventType, ISODateTime } from '@ccguk/domain';
+import { correctedEventId, liveEvents, supersededEventIds, type ClaimEvent, type EventType, type ISODateTime } from '@ccguk/domain';
 import type { CreateEventBody } from '../../../api/client';
 
 export type Attributable = NonNullable<ClaimEvent['attributableTo']>;
@@ -215,6 +215,44 @@ export function attributableDays(events: Array<Pick<ClaimEvent, 'at' | 'attribut
   return [...totals.entries()]
     .map(([party, v]) => ({ party, days: Math.round((v.ms / MS_DAY) * 10) / 10, segments: v.segments }))
     .sort((a, b) => b.days - a.days);
+}
+
+/**
+ * Days attributable from the live events only: an event replaced by a correcting entry (append-only correction,
+ * `data.correctsEventId`) no longer counts, though the chronology still shows it struck through.
+ */
+export function liveAttributableDays(events: readonly ClaimEvent[], until: ISODateTime): AttributableDays[] {
+  return attributableDays(liveEvents(events), until);
+}
+
+export interface SupersededMark {
+  /** The entry that replaced this one (the newest correction pointing at it). */
+  replacedBy?: ClaimEvent;
+  /** "Replaced by the entry recorded 5 Oct 2026, 10:42". */
+  title: string;
+}
+
+function recordedText(iso: string | undefined): string {
+  if (!iso) return 'later';
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/London' });
+}
+
+/**
+ * Corrected events, keyed by id: shown struck through with a "Corrected" badge and a tooltip naming the entry that
+ * replaced them. Nothing is edited or removed — events are append-only.
+ */
+export function supersededMarks(events: readonly ClaimEvent[]): Map<string, SupersededMark> {
+  const ids = supersededEventIds(events);
+  const out = new Map<string, SupersededMark>();
+  if (ids.size === 0) return out;
+  for (const id of ids) {
+    const correctors = events.filter((e) => correctedEventId(e) === id && e.id !== id).sort((a, b) => (a.recordedAt ?? '').localeCompare(b.recordedAt ?? ''));
+    const replacedBy = correctors[correctors.length - 1];
+    out.set(id, { ...(replacedBy ? { replacedBy } : {}), title: `Replaced by the entry recorded ${recordedText(replacedBy?.recordedAt)}` });
+  }
+  return out;
 }
 
 export const ATTRIBUTION_EXPLANATION =

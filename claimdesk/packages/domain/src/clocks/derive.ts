@@ -28,6 +28,7 @@ import {
 } from '../calendar/index.js';
 import { latePaymentTierStart, paidInFullAt } from '../gta/payment.js';
 import { PROGRESS_CHECK_WD, isMonitoringTouch } from '../gta/monitoring.js';
+import { liveEvents } from '../events/corrections.js';
 import { clockDefinitions } from './definitions.js';
 
 export const GTA_6_8_HIRES_FROM = '2026-03-16';
@@ -133,18 +134,20 @@ function hireEndAfter(ctx: Ctx, at: ISODateTime): 'none' | { endedAt?: ISODateTi
   return { endedAt: latest, hireIds: active.map((h) => h.id) };
 }
 
+/** The hire records decide when there are any (a corrected start lives there); the first live `hire_started` event
+ *  is only a fallback for a file with no hire record. */
 function earliestHireStart(ctx: Ctx): ISODateTime | undefined {
-  const starts = ctx.bundle.hire.map((h) => h.startAt);
-  const ev = first(ctx, 'hire_started');
-  if (ev) starts.push(ev.at);
-  if (starts.length === 0) return undefined;
-  return starts.sort(compareIso)[0];
+  if (ctx.bundle.hire.length > 0) return ctx.bundle.hire.map((h) => h.startAt).sort(compareIso)[0];
+  return first(ctx, 'hire_started')?.at;
 }
 
 // ---------------------------------------------------------------------------------------------
 
 export function deriveClocks(bundle: ClaimBundle, now: ISODateTime): Clock[] {
-  const events = bundle.events.filter((e) => le(e.at, now)).sort((a, b) => compareIso(a.at, b.at));
+  // Corrected events (`data.correctsEventId`) are dropped first, so a corrected start or end moves the clocks.
+  const events = liveEvents(bundle.events)
+    .filter((e) => le(e.at, now))
+    .sort((a, b) => compareIso(a.at, b.at));
   const ctx: Ctx = { bundle, now, events, claimId: bundle.claim.id };
   const clocks: Clock[] = [];
   const add = (s: Spec | undefined): void => {

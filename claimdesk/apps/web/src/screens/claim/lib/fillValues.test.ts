@@ -7,6 +7,8 @@ import {
   effectiveInput,
   fillReducer,
   generateBlocker,
+  isOverridableFillIssue,
+  managerOverridableBlocks,
   groupRows,
   groupsOf,
   GTA_BENCHMARK_CAVEAT,
@@ -227,6 +229,30 @@ describe('required values, blocking issues and the Generate button', () => {
     expect(generateBlocker(values01(), stateFor(T01))).toBeUndefined();
     expect(generateBlocker(undefined, stateFor(T01))).toMatch(/Waiting/);
     expect(generateBlocker(values01(), initialFillState())).toMatch(/Choose a template/);
+  });
+  it('manager mode on: missing values, unreviewed wording and overridable guards no longer block; class C issues still do', () => {
+    const r = row({ slotId: 'a/b', label: 'B', required: true, value: null, origin: 'none' });
+    const base = { ...values01(), groups: [{ section: 's', title: 'S', rows: [r] }] };
+    const v = { ...base, issues: [{ code: 'TEMPLATE_WARNINGS_UNACKNOWLEDGED', severity: 'block' as const, message: 'Review the wording first' }, { code: 'PRINTED_RATES_DIFFER', severity: 'block' as const, message: 'Rates differ' }] };
+    const s = stateFor(T01);
+    expect(generateBlocker(v, s)).toMatch(/2 blocking issues/);
+    expect(generateBlocker(v, s, { managerOn: true, managerAllowed: true })).toBeUndefined();
+    expect(managerOverridableBlocks(v, s).issues.map((i) => i.code)).toEqual(['TEMPLATE_WARNINGS_UNACKNOWLEDGED', 'PRINTED_RATES_DIFFER']);
+    const c = { ...v, issues: [...v.issues, { code: 'BANK_DETAILS_PLACEHOLDER', severity: 'block' as const, message: 'Bank details are placeholders' }] };
+    expect(generateBlocker(c, s, { managerOn: true, managerAllowed: true })).toMatch(/1 blocking issue/);
+    expect(isOverridableFillIssue({ code: 'SLOT_NOT_FILLABLE' })).toBe(false);
+    expect(isOverridableFillIssue({ code: 'TEMPLATE_CHANGED' })).toBe(false);
+  });
+  it('a manager with manager mode off can press Generate when every block is overridable (the server asks to override)', () => {
+    const r = row({ slotId: 'a/b', label: 'B', required: true, value: null, origin: 'none' });
+    const v = { ...values01(), groups: [{ section: 's', title: 'S', rows: [r] }], issues: [] };
+    const s = stateFor(T01);
+    expect(generateBlocker(v, s)).toMatch(/1 required value is missing: B/);
+    expect(generateBlocker(v, s, { managerAllowed: true })).toBeUndefined();
+    const c = { ...v, issues: [{ code: 'BANK_DETAILS_PLACEHOLDER', severity: 'block' as const, message: 'Bank details are placeholders' }] };
+    expect(generateBlocker(c, s, { managerAllowed: true })).toMatch(/1 blocking issue/);
+    // a handler is unchanged
+    expect(generateBlocker(v, s, { managerOn: false, managerAllowed: false })).toMatch(/required value/);
   });
 });
 

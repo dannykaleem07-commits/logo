@@ -3,7 +3,8 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { closeDatabase, type DatabaseHandle } from '../client.js';
 import { NotFoundError, ValidationError } from '../errors.js';
 import { createTestDatabase } from '../testing.js';
-import { createSession, deleteExpiredSessions, deleteSession, deleteUserSessions, getSessionByTokenHash, listUserSessions, touchSession } from './sessions.js';
+import { createSession, deleteExpiredSessions, deleteSession, deleteUserSessions, getSessionByTokenHash, listUserSessions, setSessionManagerMode, touchSession } from './sessions.js';
+import { DEFAULT_SETTINGS, getSettings, patchSettings } from './settings.js';
 import { createUser, getPasswordHash, getUser, getUserByUsername, listUsers, setPassword, updateUser } from './users.js';
 
 const HASH = 'scrypt$16384$8$1$c2FsdHNhbHRzYWx0c2FsdA==$aGFzaGhhc2hoYXNoaGFzaA==';
@@ -126,5 +127,63 @@ describe('sessions', () => {
 
   it('rejects a session for a user that does not exist', () => {
     expect(() => createSession(h.db, { tokenHash: tokenHash(), userId: 'ghost', createdAt: '2026-10-05T09:00:00.000Z', expiresAt: '2026-10-05T21:00:00.000Z' })).toThrow(/FOREIGN KEY/);
+  });
+});
+
+describe('sessions — manager mode (0.3 §A.4.1)', () => {
+  beforeEach(() => {
+    createUser(h.db, { id: 'boss', name: 'Boss', email: 'boss@x.test', role: 'admin' });
+  });
+
+  it('is off on a new session, set and cleared with setSessionManagerMode, and only on that session', () => {
+    const a = createSession(h.db, { tokenHash: tokenHash(), userId: 'boss', createdAt: '2026-10-05T09:00:00.000Z', expiresAt: '2026-10-05T21:00:00.000Z' });
+    const b = createSession(h.db, { tokenHash: tokenHash(), userId: 'boss', createdAt: '2026-10-05T09:00:00.000Z', expiresAt: '2026-10-05T21:00:00.000Z' });
+    expect(a.managerModeUntil).toBeUndefined();
+    expect(getSessionByTokenHash(h.db, a.id)).not.toHaveProperty('managerModeUntil');
+    setSessionManagerMode(h.db, a.id, '2026-10-05T10:00:00.000Z');
+    expect(getSessionByTokenHash(h.db, a.id)?.managerModeUntil).toBe('2026-10-05T10:00:00.000Z');
+    expect(getSessionByTokenHash(h.db, b.id)?.managerModeUntil).toBeUndefined();
+    expect(listUserSessions(h.db, 'boss').find((s) => s.id === a.id)?.managerModeUntil).toBe('2026-10-05T10:00:00.000Z');
+    setSessionManagerMode(h.db, a.id, null);
+    expect(getSessionByTokenHash(h.db, a.id)).not.toHaveProperty('managerModeUntil');
+  });
+
+  it('refuses a value that is not a date-time and ignores an unknown session', () => {
+    const a = createSession(h.db, { tokenHash: tokenHash(), userId: 'boss', createdAt: '2026-10-05T09:00:00.000Z', expiresAt: '2026-10-05T21:00:00.000Z' });
+    expect(() => setSessionManagerMode(h.db, a.id, 'tomorrow')).toThrow(ValidationError);
+    expect(() => setSessionManagerMode(h.db, 'f'.repeat(64), '2026-10-05T10:00:00.000Z')).not.toThrow();
+  });
+
+  it('dies with the session (sign-out deletes the row)', () => {
+    const a = createSession(h.db, { tokenHash: tokenHash(), userId: 'boss', createdAt: '2026-10-05T09:00:00.000Z', expiresAt: '2026-10-05T21:00:00.000Z' });
+    setSessionManagerMode(h.db, a.id, '2026-10-05T10:00:00.000Z');
+    deleteSession(h.db, a.id);
+    expect(getSessionByTokenHash(h.db, a.id)).toBeUndefined();
+  });
+});
+
+describe('settings — managerModeIdleMinutes', () => {
+  it('defaults to 60 and accepts whole minutes from 1 to 480', () => {
+    expect(DEFAULT_SETTINGS.managerModeIdleMinutes).toBe(60);
+    expect(getSettings(h.db).managerModeIdleMinutes).toBe(60);
+    expect(patchSettings(h.db, { managerModeIdleMinutes: 15 }, { userId: 'admin' }).managerModeIdleMinutes).toBe(15);
+    expect(getSettings(h.db).managerModeIdleMinutes).toBe(15);
+    // other patches keep it
+    expect(patchSettings(h.db, { icoRegistration: 'ZA123456' }, { userId: 'admin' }).managerModeIdleMinutes).toBe(15);
+    expect(patchSettings(h.db, { managerModeIdleMinutes: 1 }, { userId: 'admin' }).managerModeIdleMinutes).toBe(1);
+    expect(patchSettings(h.db, { managerModeIdleMinutes: 480 }, { userId: 'admin' }).managerModeIdleMinutes).toBe(480);
+  });
+
+  it('refuses 0, 481 and fractions', () => {
+    for (const bad of [0, 481, 2.5, -5, Number.NaN]) {
+      expect(() => patchSettings(h.db, { managerModeIdleMinutes: bad }, { userId: 'admin' })).toThrow(ValidationError);
+    }
+    expect(getSettings(h.db).managerModeIdleMinutes).toBe(60);
+  });
+
+  it('reads 60 from a settings row saved before the column existed (null)', () => {
+    patchSettings(h.db, { icoRegistration: 'ZA123456' }, { userId: 'admin' });
+    h.sqlite.prepare("update settings set manager_mode_idle_minutes = null where id = 'default'").run();
+    expect(getSettings(h.db).managerModeIdleMinutes).toBe(60);
   });
 });

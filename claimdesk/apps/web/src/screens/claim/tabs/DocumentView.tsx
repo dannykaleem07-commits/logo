@@ -18,9 +18,10 @@ import { todayISO } from '../../../lib/dates';
 import type { ClaimView } from '../claimFile';
 import { ReasonDialog } from '../components/ReasonDialog';
 import { shortHash } from '../lib/evidence';
-import { approvalBlocker, canSend, canSign, consistencyCodeLabel, docxValuesUsed, flagCounts, canComposeLetterhead, hasApprovedPdf, isBlocked, isDocx, isHtmlLetter, pdfConverterNote, SEND_VIA_OPTIONS, supersedeBodyFrom } from '../lib/documents';
+import { approvalBlocker, approveLabel, canSend, canSign, consistencyCodeLabel, docxValuesUsed, flagCounts, canComposeLetterhead, hasApprovedPdf, isBlocked, isDocx, isHtmlLetter, pdfConverterNote, SEND_VIA_OPTIONS, supersedeBodyFrom } from '../lib/documents';
 import { templatesApi } from '../../../api/templatesApi';
 import { DocxPreview } from '../components/DocxPreview';
+import { useManagerMode } from '../../../app/managerMode';
 import { GTA_BENCHMARK_CAVEAT, originLabel } from '../lib/fillValues';
 
 type Dialog = 'send' | 'sign' | 'supersede' | null;
@@ -35,6 +36,7 @@ export function DocumentView({ view }: { view: ClaimView }) {
   const [dialog, setDialog] = useState<Dialog>(null);
   const [clearing, setClearing] = useState<{ flag: ConsistencyFlag; index: number } | null>(null);
   const approve = useApproveDocument(docId ?? '', claimId);
+  const managerOn = useManagerMode().on;
   const clear = useClearFlag(docId ?? '', claimId);
   const toast = useToast();
   // fetched (not a plain link) so a refusal — e.g. a letter made with a layout that does not mark its parts — is shown
@@ -80,7 +82,8 @@ export function DocumentView({ view }: { view: ClaimView }) {
   }
 
   const blocked = isBlocked(doc);
-  const blocker = approvalBlocker(doc);
+  const blocker = approvalBlocker(doc, { managerOn });
+  const approveText = approveLabel(doc, { managerOn });
   const counts = flagCounts(doc.consistency);
   const supersededBy = view.documents.find((d) => d.supersedesId === doc.id);
   const certificateDoc = doc.signature ? view.documents.find((d) => d.id === doc.signature?.certificateId) : undefined;
@@ -147,7 +150,7 @@ export function DocumentView({ view }: { view: ClaimView }) {
             size="sm"
             variant="primary"
             disabled={Boolean(blocker)}
-            title={blocker}
+            title={blocker ?? (approveText !== 'Approve' ? 'Manager mode: each open block flag is cleared with your reason, then the document is approved' : undefined)}
             loading={approve.isPending}
             onClick={() =>
               approve.mutate(undefined, {
@@ -155,7 +158,7 @@ export function DocumentView({ view }: { view: ClaimView }) {
               })
             }
           >
-            Approve
+            {approveText}
           </Button>
           <Button size="sm" disabled={!canSend(doc)} title={canSend(doc) ? undefined : 'Approve first'} onClick={() => setDialog('send')}>
             Send…
@@ -174,6 +177,11 @@ export function DocumentView({ view }: { view: ClaimView }) {
       </div>
 
       <StepList doc={doc} blocked={blocked} />
+      {blocked && managerOn && !blocker && (
+        <div className="manager-note" role="status">
+          <strong>Manager mode.</strong> {counts.blocking} block flag{counts.blocking === 1 ? '' : 's'} will be cleared with your reason (recorded on each flag and in the audit log), then the document is approved. Read any flag about regulated status or old company details first.
+        </div>
+      )}
       {blocker && doc.status !== 'approved' && doc.status !== 'sent' && doc.status !== 'signed' && (
         <div className={`notice ${blocked ? 'notice-danger' : 'notice-info'}`} role={blocked ? 'alert' : undefined}>
           <strong>{blocked ? 'Approval blocked.' : 'Not yet approvable.'}</strong> {blocker}
@@ -215,7 +223,7 @@ export function DocumentView({ view }: { view: ClaimView }) {
             ) : (
               <>
                 <div className="xs muted" style={{ padding: '8px 16px', borderBottom: '1px solid var(--line)' }}>
-                  Checked <DateText value={doc.consistency.checkedAt} time /> against the ledger, the intervention register, hire and storage records, the clocks and prior outgoing letters.
+                  Checked <DateText value={doc.consistency.checkedAt} time /> against the ledger, the offers log, hire and storage records, the clocks and prior outgoing letters.
                 </div>
                 {doc.consistency.flags.length === 0 && <EmptyState title="No flags">Every amount, date and assertion matches the file.</EmptyState>}
                 {doc.consistency.flags.map((f, i) => (
@@ -541,7 +549,7 @@ function SignDialog({ doc, view, onClose }: { doc: GeneratedDocument; view: Clai
             />
             <Select label="Code sent by" required value={channel} onChange={(v) => v && setChannel(v)} options={[{ value: 'email', label: 'Email' }, { value: 'sms', label: 'SMS' }]} />
             <TextInput label={channel === 'email' ? 'Email address' : 'Mobile number'} required value={contact} onChange={setContact} type={channel === 'email' ? 'email' : 'tel'} />
-            <p className="xs muted">The record keeps the signer, the contact used, the IP address, the time and the document hash, and issues a completion certificate (BLUEPRINT §3.8). The signature date can never be earlier than the document’s creation.</p>
+            <p className="xs muted">The record keeps the signer, the contact used, the IP address, the time and the document hash, and issues a completion certificate. The signature date can never be earlier than the document’s creation.</p>
             <ApiErrorNotice error={start.error} what="start the signature" />
           </form>
         )}

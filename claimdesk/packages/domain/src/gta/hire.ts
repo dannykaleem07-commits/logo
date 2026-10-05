@@ -69,6 +69,8 @@ export interface HireCalculation {
   breakdown: HireBreakdownLine[];
   warnings: string[];
   benchmark?: HireBenchmark;
+  /** The same benchmark at the GTA guide for the client's accident-damaged car (`opts.likeForLikeGroup`). */
+  likeForLike?: HireBenchmark;
 }
 
 export interface HireCalculationOptions {
@@ -80,6 +82,8 @@ export interface HireCalculationOptions {
   vatRate?: number;
   /** Rate table for the benchmark line; pass [] to suppress the benchmark. */
   rates?: GtaRate[];
+  /** GTA group of the client's accident-damaged car: adds `likeForLike`, the benchmark at that group's guide. */
+  likeForLikeGroup?: string;
 }
 
 export function calculateHire(agreement: HireAgreement, endAt?: ISODateTime, opts: HireCalculationOptions = {}): HireCalculation {
@@ -131,9 +135,12 @@ export function calculateHire(agreement: HireAgreement, endAt?: ISODateTime, opt
   const vatPence = vatOn(netPence, vatRate);
 
   const rates = opts.rates ?? defaultGtaRates;
-  const rate = rates.length ? gtaRate(agreement.gtaGroup, londonDate(agreement.startAt), rates) : undefined;
-  const benchmark: HireBenchmark | undefined = rate
-    ? {
+  const benchmarkFor = (group: string | undefined): { rate?: GtaRate; benchmark?: HireBenchmark } => {
+    const rate = rates.length && group && group.trim() ? gtaRate(group, londonDate(agreement.startAt), rates) : undefined;
+    if (!rate) return {};
+    return {
+      rate,
+      benchmark: {
         group: rate.group,
         period: rate.period,
         gtaDailyRatePence: rate.dailyRatePence,
@@ -141,8 +148,11 @@ export function calculateHire(agreement: HireAgreement, endAt?: ISODateTime, opt
         differencePence: hirePence - days * rate.dailyRatePence,
         verification: rate.verification,
         note: GTA_NON_SUBSCRIBER_NOTE,
-      }
-    : undefined;
+      },
+    };
+  };
+  const { rate, benchmark } = benchmarkFor(agreement.gtaGroup);
+  const likeForLike = opts.likeForLikeGroup !== undefined ? benchmarkFor(opts.likeForLikeGroup).benchmark : undefined;
   if (rate && rate.verification.status !== 'verified') warnings.push(`GTA benchmark rate for ${rate.group} (${rate.period}) is ${rate.verification.status}`);
 
   const result: HireCalculation = {
@@ -163,6 +173,7 @@ export function calculateHire(agreement: HireAgreement, endAt?: ISODateTime, opt
     warnings,
   };
   if (benchmark) result.benchmark = benchmark;
+  if (likeForLike) result.likeForLike = likeForLike;
   return result;
 }
 
@@ -179,6 +190,17 @@ export interface OffHireDeadline {
   /** True when the basis is a GTA paragraph (benchmark only for a non-subscriber). */
   gta: boolean;
 }
+
+/** Plain-English wording for what ended a hire, used in chronology summaries (never the enum code). */
+export const HIRE_END_TRIGGER_TEXT: Readonly<Record<HireEndTrigger, string>> = {
+  repair_complete_24h: 'repair completed',
+  tl_payment_5wd: 'total-loss payment received',
+  insurer_termination_1wd: 'insurer termination notice',
+  cash_in_lieu: 'cash in lieu received',
+  client_returned: 'client returned the car',
+  replacement_purchased: 'client bought a replacement',
+  manual: 'other reason',
+};
 
 /** When the hire must end after a trigger event at `at` (BLUEPRINT §3.3 end triggers, lesson d). */
 export function offHireDeadline(trigger: HireEndTrigger, at: ISODateTime): OffHireDeadline {

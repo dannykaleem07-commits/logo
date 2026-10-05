@@ -178,3 +178,50 @@ export function segmentGroupError(draft: string): string | undefined {
 export function segmentChanged(item: GtaSegmentItem, draft: string | undefined): boolean {
   return draft !== undefined && draft.trim().toUpperCase() !== item.group.toUpperCase();
 }
+
+// ---------------------------------------------------------------------------
+// Default view (0.3 §E14): the current period, grouped S / M / F / CP / PV; earlier periods behind a toggle
+// ---------------------------------------------------------------------------
+
+export interface RateFamily {
+  key: string;
+  label: string;
+}
+
+/** Families in display order; codes that match none fall into "Other groups". */
+export const RATE_FAMILIES: readonly RateFamily[] = [
+  { key: 'S', label: 'Standard cars (S)' },
+  { key: 'M', label: 'MPV and crossover (M)' },
+  { key: 'F', label: '4x4 (F)' },
+  { key: 'CP', label: 'Pick-ups (CP)' },
+  { key: 'PV', label: 'Panel vans (PV)' }
+];
+const OTHER_FAMILY: RateFamily = { key: 'OTHER', label: 'Other groups' };
+
+/** The family of a group code: its leading letters ('CP1' → CP, 'M' → M, 'S3' → S). */
+export function rateFamily(group: string): RateFamily {
+  const letters = /^[A-Z]+/.exec(group.trim().toUpperCase())?.[0] ?? '';
+  return RATE_FAMILIES.find((f) => f.key === letters) ?? OTHER_FAMILY;
+}
+
+/**
+ * Split the rows at the current GTA period: `current` holds this period's rows (and any already entered for a later
+ * one), `previous` the earlier periods. When nothing is in force yet, everything is current so the page is never empty.
+ */
+export function splitByPeriod<T extends Pick<GtaRateListItem, 'period'>>(items: readonly T[], currentPeriod: string): { current: T[]; previous: T[] } {
+  const current = items.filter((i) => i.period >= currentPeriod);
+  const previous = items.filter((i) => i.period < currentPeriod);
+  if (!current.length) return { current: [...previous], previous: [] };
+  return { current, previous };
+}
+
+/** Rows grouped by family in RATE_FAMILIES order (empty families left out), each sorted like the table. */
+export function groupRatesByFamily(items: readonly GtaRateListItem[]): Array<RateFamily & { items: GtaRateListItem[] }> {
+  const sorted = sortRates(items);
+  const out: Array<RateFamily & { items: GtaRateListItem[] }> = [];
+  for (const family of [...RATE_FAMILIES, OTHER_FAMILY]) {
+    const rows = sorted.filter((i) => rateFamily(i.group).key === family.key);
+    if (rows.length) out.push({ ...family, items: rows });
+  }
+  return out;
+}

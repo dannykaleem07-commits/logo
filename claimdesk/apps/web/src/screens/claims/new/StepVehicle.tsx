@@ -22,14 +22,17 @@ import { LOOKUP_PROVIDER_LABEL } from '../../claim/lib/vehicle';
  * Step 3 — registration → search. Live mode (DVLA/DVSA keys set): the lookup as before, still showing what is on
  * file. Manual mode (no keys): the button reads "Search", ClaimDesk searches its own records, and the details come from
  * a vehicle already on file ("Use this vehicle"), a Total Car Check paste or the catalogue cascade — all unverified.
- * Cross-file duplicate banner and fleet hard stop as before (lessons f, h).
+ * Cross-file duplicate banner and fleet hard stop as before (lessons f, h). In manager mode the fleet hard stop and a
+ * non-UK plate are warnings: the server still raises the fleet block flag on the claim.
  */
-export function StepVehicle({ state, update, errors }: StepProps) {
+export function StepVehicle({ state, update, errors, warnings = {}, managerOn = false }: StepProps) {
   const lookup = useVehicleLookup();
   const settingsMode = useLookupMode();
   const v = state.vehicle;
   const reg = normaliseRegistration(v.registration);
   const regValid = reg.length > 0 && isValidUkRegistration(reg);
+  // Manager mode: a non-UK plate can still be searched (ClaimDesk's own records; the details are typed by hand).
+  const canSearch = regValid || (managerOn && reg.length >= 2);
   const mode = vehicleLookupMode(v, settingsMode);
   const manualMode = mode === 'manual';
 
@@ -38,7 +41,7 @@ export function StepVehicle({ state, update, errors }: StepProps) {
 
   const runLookup = async (registration: string = reg) => {
     const r = normaliseRegistration(registration);
-    if (!r || !isValidUkRegistration(r)) return;
+    if (!r || (!isValidUkRegistration(r) && !(managerOn && r.length >= 2))) return;
     update((s) => ({ ...s, vehicle: { ...s.vehicle, registration: r === normaliseRegistration(s.vehicle.registration) ? s.vehicle.registration : r, lookupState: 'loading', lookupError: '', lookup: null, onFile: null, picker: { ...s.vehicle.picker, registration: r } } }));
     try {
       const result = await lookup.mutateAsync(r);
@@ -92,7 +95,7 @@ export function StepVehicle({ state, update, errors }: StepProps) {
             autoComplete="off"
             aria-invalid={errors['vehicle.registration'] ? true : undefined}
           />
-          <Button variant="primary" onClick={() => void runLookup()} disabled={!regValid} loading={v.lookupState === 'loading'}>
+          <Button variant="primary" onClick={() => void runLookup()} disabled={!canSearch} loading={v.lookupState === 'loading'}>
             {manualMode ? 'Search' : 'Look up'}
           </Button>
         </div>
@@ -100,6 +103,10 @@ export function StepVehicle({ state, update, errors }: StepProps) {
           <div className="field-error">{errors['vehicle.registration']}</div>
         ) : errors['vehicle.lookup'] ? (
           <div className="field-error">{errors['vehicle.lookup']}</div>
+        ) : warnings['vehicle.registration'] || warnings['vehicle.lookup'] ? (
+          <div className="field-warning manager-field-warning" role="status">
+            {warnings['vehicle.registration'] ?? warnings['vehicle.lookup']}
+          </div>
         ) : manualMode ? null : (
           <div className="field-hint">DVLA Vehicle Enquiry Service and DVSA MOT history when API keys are set; otherwise ClaimDesk searches its own records (details entered are recorded as unverified).</div>
         )}
@@ -111,11 +118,16 @@ export function StepVehicle({ state, update, errors }: StepProps) {
         </div>
       )}
 
-      {hardStop && (
-        <div className="notice notice-danger" role="alert">
-          <strong>Hard stop — fleet unit.</strong> {formatRegistration(reg)} is a CCGUK fleet vehicle{v.lookup?.fleetUnit?.id ? ` (${v.lookup.fleetUnit.id})` : ''}. A fleet unit cannot be the client vehicle on a claim (lessons f, h). Check the registration with the client.
-        </div>
-      )}
+      {hardStop &&
+        (managerOn ? (
+          <div className="manager-note" role="status">
+            <strong>Fleet unit — allowed in manager mode.</strong> {formatRegistration(reg)} is a CCGUK fleet vehicle. The claim opens with a hard-stop flag on the file until the registration is corrected or the flag is cleared with a reason.
+          </div>
+        ) : (
+          <div className="notice notice-danger" role="alert">
+            <strong>Hard stop — fleet unit.</strong> {formatRegistration(reg)} is a CCGUK fleet vehicle. A fleet unit cannot be the client vehicle on a claim. Check the registration with the client.
+          </div>
+        ))}
 
       {linked.length > 0 && (
         <div className="notice notice-warn" role="alert">
@@ -147,7 +159,7 @@ export function StepVehicle({ state, update, errors }: StepProps) {
         onFile.length > 0 && (
           <fieldset className="fieldset">
             <legend>Already on file</legend>
-            <OnFileMatches matches={onFile} onUse={pickOnFile} onSearchRegistration={(r) => void runLookup(r)} blockFleet />
+            <OnFileMatches matches={onFile} onUse={pickOnFile} onSearchRegistration={(r) => void runLookup(r)} blockFleet={!managerOn} />
           </fieldset>
         )
       )}
@@ -209,6 +221,7 @@ export function StepVehicle({ state, update, errors }: StepProps) {
               onChange={(t) => setVehicle({ odometerMiles: t })}
               inputMode="numeric"
               error={errors['vehicle.odometerMiles']}
+              warning={warnings['vehicle.odometerMiles']}
               hint="As stated by the client; a photo of the odometer is captured at handover."
             />
           </div>
@@ -217,6 +230,11 @@ export function StepVehicle({ state, update, errors }: StepProps) {
       {errors['vehicle.fleet'] && (
         <div className="field-error" role="alert">
           {errors['vehicle.fleet']}
+        </div>
+      )}
+      {showHandEntry && managerOn && pickerWarningLines(warnings).length > 0 && (
+        <div className="field-warning manager-field-warning" role="status">
+          {pickerWarningLines(warnings).join(' ')}
         </div>
       )}
     </div>
@@ -249,4 +267,12 @@ function OnFileSummary({ match, onChange }: { match: OnFileMatch; onChange: () =
       </div>
     </fieldset>
   );
+}
+
+/** Relaxed vehicle-detail checks (make, model, year …) shown once under the picker in manager mode. */
+function pickerWarningLines(warnings: Record<string, string>): string[] {
+  const skip = new Set(['vehicle.registration', 'vehicle.lookup', 'vehicle.fleet', 'vehicle.odometerMiles']);
+  return Object.entries(warnings)
+    .filter(([k]) => k.startsWith('vehicle.') && !skip.has(k))
+    .map(([, msg]) => msg);
 }

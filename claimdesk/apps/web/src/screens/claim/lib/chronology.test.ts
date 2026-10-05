@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ClaimEvent } from '@ccguk/domain';
-import { ATTRIBUTABLE_LABEL, attributableDays, defaultAttribution, EVENT_GROUPS, EVENT_LABEL, eventBodyFrom, eventGroup, emptyEventForm, filterEvents, sortEvents } from './chronology';
+import { ATTRIBUTABLE_LABEL, attributableDays, defaultAttribution, EVENT_GROUPS, EVENT_LABEL, eventBodyFrom, eventGroup, emptyEventForm, filterEvents, liveAttributableDays, sortEvents, supersededMarks } from './chronology';
 
 const ev = (id: string, type: ClaimEvent['type'], at: string, attributableTo?: ClaimEvent['attributableTo']): ClaimEvent => ({
   id,
@@ -75,5 +75,29 @@ describe('eventBodyFrom', () => {
   it('builds the body and drops empty optionals', () => {
     const r = eventBodyFrom({ type: 'repair_delay', at: '2026-10-03T09:00:00.000Z', summary: '  Parts on back order  ', attributableTo: 'repairer', evidenceIds: [] }, now);
     expect(r).toEqual({ ok: true, body: { type: 'repair_delay', at: '2026-10-03T09:00:00.000Z', summary: 'Parts on back order', attributableTo: 'repairer', evidenceIds: undefined, documentId: undefined } });
+  });
+});
+
+describe('corrected events (append-only corrections)', () => {
+  const started = ev('s1', 'hire_started', '2026-09-01T09:00:00Z', 'ccguk');
+  const corrected: ClaimEvent = { ...ev('s2', 'hire_started', '2026-09-03T09:00:00Z', 'ccguk'), recordedAt: '2026-10-05T09:42:00Z', data: { correctsEventId: 's1', correction: true } };
+  const delay = ev('d1', 'repair_delay', '2026-09-05T09:00:00Z', 'repairer');
+  it('marks the replaced entry with the time the replacement was recorded', () => {
+    const marks = supersededMarks([started, corrected, delay]);
+    expect([...marks.keys()]).toEqual(['s1']);
+    expect(marks.get('s1')?.replacedBy?.id).toBe('s2');
+    expect(marks.get('s1')?.title).toBe('Replaced by the entry recorded 5 Oct 2026, 10:42');
+    expect(supersededMarks([started, delay]).size).toBe(0);
+  });
+  it('a chain marks every replaced entry', () => {
+    const third: ClaimEvent = { ...ev('s3', 'hire_started', '2026-09-02T09:00:00Z', 'ccguk'), recordedAt: '2026-10-06T09:00:00Z', data: { correctsEventId: 's2' } };
+    expect([...supersededMarks([started, corrected, third]).keys()].sort()).toEqual(['s1', 's2']);
+  });
+  it('attributable days count the live entries only', () => {
+    const all = attributableDays([started, corrected, delay], '2026-09-06T09:00:00Z');
+    const live = liveAttributableDays([started, corrected, delay], '2026-09-06T09:00:00Z');
+    expect(all.find((d) => d.party === 'ccguk')?.days).toBe(4); // 1 Sep → 5 Sep, both starts counted
+    expect(live.find((d) => d.party === 'ccguk')?.days).toBe(2); // 3 Sep → 5 Sep, the corrected start only
+    expect(live.find((d) => d.party === 'repairer')?.days).toBe(1);
   });
 });

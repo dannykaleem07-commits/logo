@@ -118,7 +118,7 @@ describe('panel copy', () => {
     expect(suggestionDiffersLine({ group: 'S3', suggestion: suggestion('S3', RATES[0]!) }, (p) => formatGBP(p))).toBeNull();
     const other = editGroup(emptyGtaPanel(), OTHER_GROUP, RATES, DATE);
     expect(other.groupMode).toBe('other');
-    expect(validateGtaPanel({ ...other, group: 'NOT A GROUP', ratePence: 100 })).toHaveProperty('group');
+    expect(validateGtaPanel({ ...other, group: 'NOT A GROUP', ratePence: 100 })).toHaveProperty('groupFormat');
   });
   it('suggestion and benchmark lines, and the caveat wording', () => {
     expect(suggestionLine(suggestion('M1', RATES[1]!))).toBe('Suggested GTA group M1 — from the catalogue model (medium confidence)');
@@ -131,5 +131,19 @@ describe('panel copy', () => {
     expect(panelView(s, [verified], DATE).rate?.verification.status).toBe('verified');
     const u = applySuggestion(emptyGtaPanel(), suggestion('M1', RATES[1]!), GROUPS);
     expect(panelView(u, RATES, DATE).rate?.verification.status).toBe('unverified');
+  });
+});
+
+describe('GTA group in manager mode (0.3 §A.6 B09)', () => {
+  it('no group is its own rule key (relaxed); a malformed group and a missing rate are hard keys', async () => {
+    const { GTA_PANEL_HARD_KEYS } = await import('./gtaPanel');
+    expect([...GTA_PANEL_HARD_KEYS].sort()).toEqual(['groupFormat', 'ratePence']);
+    expect(validateGtaPanel({ ...emptyGtaPanel(), ratePence: 5000 })).toEqual({ group: expect.any(String) });
+    expect(validateGtaPanel({ ...emptyGtaPanel(), group: 'S1!', ratePence: 5000 })).toEqual({ groupFormat: expect.any(String) });
+    expect(validateGtaPanel({ ...emptyGtaPanel(), group: 'S1', ratePence: 0 })).toEqual({ ratePence: expect.any(String) });
+    const { relaxErrors } = await import('../../lib/managerMode');
+    const r = relaxErrors(validateGtaPanel({ ...emptyGtaPanel(), ratePence: null }) as Record<string, string>, true, GTA_PANEL_HARD_KEYS);
+    expect(Object.keys(r.warnings)).toEqual(['group']);
+    expect(Object.keys(r.errors)).toEqual(['ratePence']);
   });
 });

@@ -203,15 +203,25 @@ export function panelView(s: GtaPanelState, rates: readonly GtaRate[] | undefine
   return view;
 }
 
-export type GtaPanelErrors = Partial<Record<'group' | 'ratePence', string>>;
+/**
+ * Rule keys: `group` — no group chosen (relaxed in manager mode: the group is optional and the server stores UNGROUPED
+ * when a daily rate is given, 0.3 §A.6 B09); `groupFormat` — not a group shape (hard); `ratePence` — no daily rate or
+ * ≤ 0 (hard: type a rate).
+ */
+export type GtaPanelErrors = Partial<Record<'group' | 'groupFormat' | 'ratePence', string>>;
+
+export const GTA_PANEL_HARD_KEYS: readonly (keyof GtaPanelErrors)[] = ['groupFormat', 'ratePence'];
 
 export function validateGtaPanel(s: GtaPanelState): GtaPanelErrors {
   const e: GtaPanelErrors = {};
   if (!s.group) e.group = 'Choose a GTA group (industry benchmark group, e.g. S1, M, M1)';
-  else if (!GTA_GROUP_RE.test(s.group)) e.group = 'A GTA group looks like S1, M, M1 or CP2';
+  else if (!GTA_GROUP_RE.test(s.group)) e.groupFormat = 'A GTA group looks like S1, M, M1 or CP2';
   if (s.ratePence === null || s.ratePence <= 0) e.ratePence = 'Enter the daily rate in pounds';
   return e;
 }
+
+/** Shown under the group box in manager mode when no group is chosen. */
+export const UNGROUPED_NOTE = 'No GTA group — the unit is saved as UNGROUPED, with your daily rate. Add the group later for the pricing guide.';
 
 /** `gtaSuggestion` for POST /fleet: what was suggested, kept in the LookupRecord raw for provenance. */
 export function gtaSuggestionInput(s: GtaPanelState): FleetGtaSuggestionInput | undefined {

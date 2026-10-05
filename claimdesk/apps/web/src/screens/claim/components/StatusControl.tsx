@@ -1,6 +1,9 @@
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import type { ClaimStatus } from '@ccguk/domain';
 import { useSetClaimStatus } from '../../../api/hooks';
+import { withRelaxed } from '../../../api/client';
+import { useManagerMode } from '../../../app/managerMode';
+import { MANAGER_WARNING_PREFIX } from '../../../lib/managerMode';
 import { Button } from '../../../components/Button';
 import { Modal } from '../../../components/Modal';
 import { TextArea } from '../../../components/Form';
@@ -17,19 +20,27 @@ export function StatusControl({ claimId, status, hardStop }: { claimId: string; 
   const [touched, setTouched] = useState(false);
   const set = useSetClaimStatus(claimId);
   const toast = useToast();
+  const managerOn = useManagerMode().on;
   const needsReason = target ? STATUS_REASON_REQUIRED.has(target) : false;
-  const valid = Boolean(target) && (!needsReason || reason.trim().length >= 3);
-  const close = () => {
+  const reasonMissing = needsReason && reason.trim().length < 3;
+  // Manager mode: the server uses the override reason as the status reason (0.3 §A.6 B15).
+  const reasonRelaxed = managerOn && reasonMissing;
+  const valid = Boolean(target) && (!reasonMissing || reasonRelaxed);
+  // Stable identity: the dialog never re-takes focus while the reason is typed (docs/V03 §D.1).
+  const resetRef = useRef(set.reset);
+  resetRef.current = set.reset;
+  const close = useCallback(() => {
     setTarget('');
     setReason('');
     setTouched(false);
-    set.reset();
-  };
+    resetRef.current();
+  }, []);
   const submit = () => {
     setTouched(true);
     if (!valid || !target) return;
+    const body = { status: target, reason: reason.trim() || undefined };
     set.mutate(
-      { status: target, reason: reason.trim() || undefined },
+      reasonRelaxed ? withRelaxed(body, ['status.reason']) : body,
       {
         onSuccess: () => {
           toast.success(`Status changed to ${claimStatusLabel(target)}`);
@@ -69,18 +80,24 @@ export function StatusControl({ claimId, status, hardStop }: { claimId: string; 
             <StatusBadge status={status} /> <span aria-hidden="true">→</span> {target && <StatusBadge status={target} />}
           </div>
           {target && statusChangeNote(target) && <div className="notice notice-info">{statusChangeNote(target)}</div>}
-          {hardStop && target && !['declined', 'closed'].includes(target) && (
-            <div className="notice notice-danger">
-              <strong>Hard stop open.</strong> The API refuses to progress a claim with an uncleared block flag. Clear it (with a reason) first.
-            </div>
-          )}
+          {hardStop && target && !['declined', 'closed'].includes(target) &&
+            (managerOn ? (
+              <div className="manager-note" role="status">
+                Manager mode will override the hard stop; the flag stays on the file.
+              </div>
+            ) : (
+              <div className="notice notice-danger">
+                <strong>Hard stop open.</strong> The API refuses to progress a claim with an uncleared block flag. Clear it (with a reason) first.
+              </div>
+            ))}
           <form
             onSubmit={(e) => {
               e.preventDefault();
               submit();
             }}
           >
-            <TextArea label={needsReason ? 'Reason (required)' : 'Reason (optional, goes on the file note)'} required={needsReason} value={reason} onChange={setReason} rows={3} autoFocus error={touched && needsReason && reason.trim().length < 3 ? 'A reason is required for this status' : undefined} />
+            <TextArea label={needsReason ? 'Reason (required)' : 'Reason (optional, goes on the file note)'} required={needsReason} value={reason} onChange={setReason} rows={3} autoFocus error={touched && reasonMissing && !reasonRelaxed ? 'A reason is required for this status' : undefined} />
+            {reasonRelaxed && <div className="xs" style={{ color: 'var(--amber)', marginTop: 4 }}>{MANAGER_WARNING_PREFIX}no reason given — the manager-mode reason is recorded instead.</div>}
           </form>
           <ApiErrorNotice error={set.error} what="change the status" />
         </div>

@@ -32,6 +32,8 @@ export function VehicleTab({ view }: { view: ClaimView }) {
   const toast = useToast();
   const [result, setResult] = useState<VehicleLookupResult | null>(null);
   const [editing, setEditing] = useState(false);
+  const [showAllFields, setShowAllFields] = useState(false);
+  const [addingReading, setAddingReading] = useState(false);
   const lookupMode = useLookupMode();
   const vocabulary = useCatalogueFeatures().data;
   const conflictsQ = useMileageConflicts(v.id);
@@ -104,7 +106,7 @@ export function VehicleTab({ view }: { view: ClaimView }) {
               <Link to={`/claims/${l.id}`}>{l.reference}</Link>
             </span>
           ))}
-          . Each registration is unique per incident: separate ledger, documents and insurer on each file (lessons f, h).
+          . Each registration is unique per incident: separate ledger, documents and insurer on each file.
         </div>
       )}
       {v.ownership === 'fleet' && (
@@ -131,7 +133,22 @@ export function VehicleTab({ view }: { view: ClaimView }) {
             </>
           }
         >
-          <KeyValue items={identificationRows(v, vocabulary).map((r) => ({ label: r.label, value: r.value ?? <span className="muted">—</span> }))} />
+          {(() => {
+            // 0.3 §E13: empty rows are hidden behind "Show all fields".
+            const rows = identificationRows(v, vocabulary);
+            const filled = rows.filter((r) => r.value !== undefined && r.value !== null && r.value !== '');
+            const shown = showAllFields ? rows : filled;
+            return (
+              <>
+                <KeyValue items={shown.map((r) => ({ label: r.label, value: r.value ?? <span className="muted">—</span> }))} />
+                {filled.length < rows.length && (
+                  <button type="button" className="btn btn-ghost btn-sm" aria-expanded={showAllFields} onClick={() => setShowAllFields((x) => !x)}>
+                    {showAllFields ? 'Hide empty fields' : `Show all fields (${rows.length - filled.length} empty)`}
+                  </button>
+                )}
+              </>
+            );
+          })()}
           <ApiErrorNotice error={lookup.error} what="look up the vehicle" />
           {result && (
             <div className={`notice ${result.status === 'ok' ? 'notice-success' : 'notice-warn'} small`} style={{ marginTop: 12 }}>
@@ -177,7 +194,12 @@ export function VehicleTab({ view }: { view: ClaimView }) {
         <Card title="Mileage conflicts" actions={<Badge tone={conflicts.length ? 'red' : 'green'} dot>{conflicts.length ? `${conflicts.length} conflict${conflicts.length === 1 ? '' : 's'}` : 'consistent'}</Badge>}>
           <ApiErrorNotice error={conflictsQ.error} what="check mileage" />
           {conflicts.length === 0 ? (
-            <p className="small muted">The API compares every reading (MOT, accident report, handover, collection, engineer, photos). Non-monotonic readings or variance beyond tolerance are flagged here (lesson e) and must be resolved before the engineer’s report or the PAV issues.</p>
+            <p className="small muted">
+              All readings agree.{' '}
+              <span className="info-tip" title="Every reading (MOT, accident report, handover, collection, engineer, photos) is compared. A reading lower than an earlier one, or a gap beyond tolerance, shows here and must be sorted out before the engineer’s report or the pre-accident valuation is issued." aria-label="How mileage is checked" role="img">
+                ⓘ
+              </span>
+            </p>
           ) : (
             <ul className="checklist">
               {conflicts.map((c, i) => (
@@ -205,8 +227,23 @@ export function VehicleTab({ view }: { view: ClaimView }) {
         </Card>
       </div>
 
-      <Card title="Odometer readings" flush actions={<span className="small muted">{v.odometer.length} reading{v.odometer.length === 1 ? '' : 's'}</span>}>
-        <OdometerForm view={view} />
+      <Card
+        title="Odometer readings"
+        flush
+        actions={
+          <span className="row" style={{ gap: 8 }}>
+            <span className="small muted">
+              {v.odometer.length} reading{v.odometer.length === 1 ? '' : 's'}
+            </span>
+            {!addingReading && (
+              <Button size="sm" onClick={() => setAddingReading(true)}>
+                Add reading
+              </Button>
+            )}
+          </span>
+        }
+      >
+        {addingReading && <OdometerForm view={view} onDone={() => setAddingReading(false)} />}
         <Table columns={readingColumns} rows={sortReadings(v.odometer)} rowKey={(r, i) => `${r.date}-${r.source}-${i}`} caption="Odometer readings" empty={<EmptyState title="No odometer readings">Add the MOT reading, the accident-report reading and photographed readings at handover and collection.</EmptyState>} />
       </Card>
 
@@ -288,7 +325,7 @@ function EditVehicleDialog({ open, vehicle, lookupMode, links, onClose, onSaved 
   );
 }
 
-function OdometerForm({ view }: { view: ClaimView }) {
+function OdometerForm({ view, onDone }: { view: ClaimView; onDone: () => void }) {
   const today = todayISO();
   const [form, setForm] = useState(() => emptyOdometerForm(today));
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -302,6 +339,7 @@ function OdometerForm({ view }: { view: ClaimView }) {
       onSuccess: () => {
         toast.success('Reading added — conflicts re-checked');
         setForm(emptyOdometerForm(today));
+        onDone();
       }
     });
   };
@@ -324,9 +362,10 @@ function OdometerForm({ view }: { view: ClaimView }) {
         </div>
       </div>
       <div className="form-actions">
-        <span className="hint">Readings are append-only; a wrong one is answered with a corrected reading and a note.</span>
+        <span className="hint">Readings cannot be edited: correct a wrong one with a new reading and a note.</span>
+        <Button onClick={onDone}>Cancel</Button>
         <Button type="submit" variant="primary" loading={add.isPending}>
-          Add reading
+          Save reading
         </Button>
       </div>
       <ApiErrorNotice error={add.error} what="add the reading" />

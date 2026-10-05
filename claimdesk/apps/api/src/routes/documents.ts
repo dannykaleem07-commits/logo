@@ -13,6 +13,7 @@ import { supersedeDocxExtra } from '../schemas/docxTemplates.js';
 import { approveDocumentBody, clearDocumentFlagBody, createDocumentBody, documentGetQuery, documentListQuery, sendDocumentBody, signStartBody, signVerifyBody, supersedeDocumentBody } from '../schemas/services.js';
 import { approveDocument, clearDocumentFlag, createClaimDocument, readCertificatePdf, readDocumentDocx, readDocumentPdf, sendDocument, startSignature, supersedeDocument, templateMeta, verifySignature } from '../services/documents.js';
 import { safeFileName } from '../services/docxTemplates.js';
+import { gateFor } from '../services/override.js';
 import { params, requireClaim } from './helpers.js';
 
 const DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
@@ -45,7 +46,7 @@ export function registerDocumentsRoutes(app: FastifyInstance, ctx: AppContext): 
     const { id } = params<{ id: string }>(request);
     requireClaim(ctx, id);
     const body = parse(createDocumentBody, request.body);
-    const doc = createClaimDocument(ctx, { claimId: id, templateId: body.templateId, extra: body.data, recipientPartyId: body.recipientPartyId, user: request.user, actor: request.actor });
+    const doc = createClaimDocument(ctx, { claimId: id, templateId: body.templateId, extra: body.data, recipientPartyId: body.recipientPartyId, user: request.user, actor: request.actor, gate: gateFor(ctx, request) });
     return reply.status(201).send(doc);
   });
 
@@ -84,7 +85,7 @@ export function registerDocumentsRoutes(app: FastifyInstance, ctx: AppContext): 
   app.post('/documents/:id/approve', async (request) => {
     const { id } = params<{ id: string }>(request);
     const body = parse(approveDocumentBody, request.body ?? {});
-    return approveDocument(ctx, id, request.actor, body?.note);
+    return approveDocument(ctx, id, request.actor, body?.note, gateFor(ctx, request));
   });
 
   app.post('/documents/:id/send', async (request) => {
@@ -99,7 +100,7 @@ export function registerDocumentsRoutes(app: FastifyInstance, ctx: AppContext): 
     const body = parse(supersedeDocumentBody, request.body ?? {}) ?? {};
     // Word documents: new slot values / confirmations are merged over the previous inputs (§C.6).
     const docx = parse(supersedeDocxExtra, request.body ?? {});
-    const doc = supersedeDocument(ctx, id, { extra: body.data, reason: body.reason, reExecutedOn: body.reExecutedOn, docx: { ...(docx.values ? { values: docx.values } : {}), ...(docx.confirm ? { confirm: docx.confirm } : {}) } }, request.user, request.actor);
+    const doc = supersedeDocument(ctx, id, { extra: body.data, reason: body.reason, reExecutedOn: body.reExecutedOn, docx: { ...(docx.values ? { values: docx.values } : {}), ...(docx.confirm ? { confirm: docx.confirm } : {}) } }, request.user, request.actor, gateFor(ctx, request));
     return reply.status(201).send(doc);
   });
 

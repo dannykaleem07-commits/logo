@@ -5,9 +5,11 @@ import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { DateText } from '../../components/DateText';
 import { LOOKUP_PROVIDER_LABEL } from '../claim/lib/vehicle';
-import { describeVehicle, FUEL_LABEL } from './vehiclePickerModel';
+import { useManagerMode } from '../../app/managerMode';
+import { MANAGER_WARNING_PREFIX } from '../../lib/managerMode';
+import { describeVehicle, fleetMatchHandling, FUEL_LABEL } from './vehiclePickerModel';
 
-/** A fleet vehicle cannot be the client vehicle on a claim (lessons f, h). */
+/** A fleet vehicle cannot be the client vehicle on a claim (allowed with a warning in manager mode; the claim gets a block flag). */
 export function isFleetMatch(m: OnFileMatch): boolean {
   return m.ownership === 'fleet' || Boolean(m.fleetUnit);
 }
@@ -23,6 +25,7 @@ export function OnFileMatches({
   onUse,
   onSearchRegistration,
   blockFleet = false,
+  warnFleet = false,
   useLabel = 'Use this vehicle',
   disabled
 }: {
@@ -30,11 +33,17 @@ export function OnFileMatches({
   onUse?: (m: OnFileMatch) => void;
   /** For a similar (partial) registration: search that registration instead. */
   onSearchRegistration?: (registration: string) => void;
-  /** New claim: a fleet vehicle is a hard stop, so it gets no "Use this vehicle". */
+  /** New claim: a fleet vehicle is a hard stop, so it gets no "Use this vehicle" — except in manager mode (0.3 §A.6 B17). */
   blockFleet?: boolean;
+  /** Offer "Use this vehicle" for a fleet vehicle with an "Allowed in manager mode" warning. */
+  warnFleet?: boolean;
   useLabel?: string;
   disabled?: boolean;
 }) {
+  const managerOn = useManagerMode().on;
+  const handling = fleetMatchHandling({ blockFleet, warnFleet, managerOn });
+  const hardBlock = handling === 'block';
+  const warn = handling === 'warn';
   if (matches.length === 0) return <p className="small muted">Nothing on file for this registration yet.</p>;
   return (
     <div className="grid-2">
@@ -78,18 +87,25 @@ export function OnFileMatches({
                 </div>
               )}
               <div className="row" style={{ marginTop: 4 }}>
-                {blockFleet && fleet ? (
+                {hardBlock && fleet ? (
                   <span className="xs strong" style={{ color: 'var(--red)' }}>
-                    CCGUK fleet vehicle — cannot be the client vehicle (hard stop).
+                    CCGUK fleet vehicle — cannot be the client vehicle. A manager can override this in manager mode.
                   </span>
                 ) : m.match === 'partial' && onSearchRegistration ? (
                   <Button size="sm" onClick={() => onSearchRegistration(m.registration)} disabled={disabled}>
                     Search {formatRegistration(m.registration)}
                   </Button>
                 ) : onUse ? (
-                  <Button size="sm" variant="primary" onClick={() => onUse(m)} disabled={disabled}>
-                    {useLabel}
-                  </Button>
+                  <span className="stack-sm" style={{ gap: 4 }}>
+                    {warn && fleet && (
+                      <span className="xs" role="status" style={{ color: 'var(--amber)' }}>
+                        {MANAGER_WARNING_PREFIX}a CCGUK fleet vehicle as the client vehicle — the claim gets a block flag until it is cleared.
+                      </span>
+                    )}
+                    <Button size="sm" variant="primary" onClick={() => onUse(m)} disabled={disabled}>
+                      {useLabel}
+                    </Button>
+                  </span>
                 ) : null}
               </div>
             </div>

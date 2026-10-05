@@ -16,11 +16,12 @@ import fastifyStatic from '@fastify/static';
 import { ZodError } from 'zod';
 import { DbError, DocumentStateError, ImmutableError, NotFoundError, ValidationError, VerificationError, type Actor } from '@ccguk/db';
 import type { UserRecord } from '@ccguk/db';
-import type { User } from '@ccguk/domain';
+import { MANAGER_OVERRIDE_HEADER, MANAGER_OVERRIDES_RESPONSE_HEADER, MANAGER_RELAXED_HEADER, type User } from '@ccguk/domain';
 import type { AppContext } from './context.js';
-import { HttpError } from './errors.js';
+import { HttpError, type OverrideInfo } from './errors.js';
 import { registerAllRoutes } from './routes/index.js';
 import { readSessionToken, resolveSession } from './services/auth.js';
+import { gateFor, peekGate } from './services/override.js';
 
 /** Inline styles are allowed (React style props, docx-preview's generated CSS); scripts, objects and forms are not. */
 export const CONTENT_SECURITY_POLICY = [
@@ -78,11 +79,15 @@ export interface BuildAppOptions {
 }
 
 export interface ErrorBody {
-  error: { code: string; message: string; details?: unknown; requestId?: string };
+  error: { code: string; message: string; details?: unknown; requestId?: string; override?: OverrideInfo };
 }
 
 export function mapError(err: unknown): { status: number; body: ErrorBody['error'] } {
-  if (err instanceof HttpError) return { status: err.statusCode, body: { code: err.code, message: err.message, details: err.details } };
+  if (err instanceof HttpError) {
+    const body: ErrorBody['error'] = { code: err.code, message: err.message, details: err.details };
+    if (err.override) body.override = err.override;
+    return { status: err.statusCode, body };
+  }
   if (err instanceof ZodError) {
     return {
       status: 400,
@@ -124,7 +129,7 @@ export async function buildApp(ctx: AppContext, options: BuildAppOptions = {}): 
 
   // CORS: localhost origins only unless CORS_ORIGINS lists others (config.ts). Credentials are allowed, so the origin
   // list is never a wildcard by default.
-  await app.register(cors, { origin: ctx.config.corsOrigins, credentials: true, exposedHeaders: ['x-request-id', 'x-sha256', 'x-certificate-id'] });
+  await app.register(cors, { origin: ctx.config.corsOrigins, credentials: true, exposedHeaders: ['x-request-id', 'x-sha256', 'x-certificate-id', MANAGER_OVERRIDES_RESPONSE_HEADER] });
   await app.register(multipart, { limits: { fileSize: MAX_UPLOAD_BYTES, files: 10, fields: 50 } });
 
   // Request id + identity. Everything downstream reads request.user / request.actor.
@@ -174,6 +179,37 @@ export async function buildApp(ctx: AppContext, options: BuildAppOptions = {}): 
     const type = String(reply.getHeader('content-type') ?? '');
     if (/^text\/html/i.test(type) && !reply.hasHeader('content-security-policy')) reply.header('content-security-policy', CONTENT_SECURITY_POLICY);
     if (!reply.hasHeader('x-content-type-options')) reply.header('x-content-type-options', 'nosniff');
+    return payload;
+  });
+
+  // Manager mode (0.3 §A.4.3): build the override gate up front for any mutation that carries a manager header, so
+  // web-only relaxations (X-Manager-Relaxed) are recorded even on routes that never call the gate themselves.
+  app.addHook('preHandler', async (request) => {
+    if (request.method === 'GET' || request.method === 'HEAD') return;
+    if (request.headers[MANAGER_OVERRIDE_HEADER] === undefined && request.headers[MANAGER_RELAXED_HEADER] === undefined) return;
+    if (!request.user) return;
+    gateFor(ctx, request);
+  });
+
+  // One audit row per applied override, only when the response succeeded; then tell the client what was overridden.
+  app.addHook('onSend', async (request, reply, payload) => {
+    const gate = peekGate(request);
+    if (!gate?.applied.length || reply.statusCode >= 400) return payload;
+    const at = ctx.now();
+    ctx.db.transaction((tx) => {
+      for (const o of gate.applied) {
+        ctx.repos.appendAudit(tx, {
+          actor: request.actor,
+          action: `override.${o.code}`,
+          entity: o.target.claimId ? 'claims' : o.target.entity,
+          entityId: o.target.claimId ?? o.target.entityId,
+          before: { code: o.code, message: o.message, details: o.details ?? null },
+          after: { reason: o.reason, class: o.class, label: o.label, target: { entity: o.target.entity, entityId: o.target.entityId }, method: request.method, route: request.routeOptions.url, requestId: request.requestId },
+          at,
+        });
+      }
+    });
+    reply.header(MANAGER_OVERRIDES_RESPONSE_HEADER, encodeURIComponent(JSON.stringify(gate.applied.map((o) => ({ code: o.code, label: o.label, reason: o.reason })))));
     return payload;
   });
 

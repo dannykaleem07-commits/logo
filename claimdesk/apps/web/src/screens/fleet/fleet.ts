@@ -1,5 +1,5 @@
 /**
- * Fleet screen model (pure; unit-tested). BLUEPRINT §3.12 (lesson l):
+ * Fleet screen model (pure; unit-tested):
  *  - MOT, tax, insurance and service dates are coloured by how close they are (red expired, amber ≤ 30 days);
  *  - the keeper address on the V5C must be current (RENTX's CCJs came from tickets sent to a stale address);
  *  - class-of-use allocation is checked server-side (POST /fleet/:id/allocate-check) — the web only shows reasons;
@@ -14,7 +14,8 @@ import type { FleetUnitRow, FleetUnitWriteBody } from '../../api/client';
 import type { VehiclePatchBody } from '../../api/vehiclesApi';
 import type { Tone } from '../../lib/status';
 import { daysBetween } from '../../lib/dates';
-import { emptyPickerValue, patchHasChanges, pickerFromVehicle, toVehicleInput, validatePicker, vehiclePatchFrom, type PickerErrors, type VehiclePickerValue } from '../vehicles/vehiclePickerModel';
+import { relaxErrors } from '../../lib/managerMode';
+import { emptyPickerValue, patchHasChanges, pickerFromVehicle, registrationFormatMessage, toVehicleInput, validatePicker, vehiclePatchFrom, type PickerErrors, type VehiclePickerValue } from '../vehicles/vehiclePickerModel';
 import { emptyGtaPanel, gtaPanelFromUnit, gtaSuggestionInput, validateGtaPanel, type GtaPanelState } from './gtaPanel';
 
 // ---------------------------------------------------------------------------
@@ -258,7 +259,8 @@ export function emptyUnitForm(): UnitForm {
   return {
     vehicle: emptyPickerValue(),
     gta: emptyGtaPanel(),
-    declaredUses: [],
+    // Most units are credit-hire cars (0.3 §A.6 B11): ticked by default, untick for self-drive / PCO only.
+    declaredUses: ['credit_hire'],
     policyId: '',
     keeperLine1: '',
     keeperLine2: '',
@@ -289,21 +291,43 @@ export function unitToForm(u: FleetUnitView, groupsWithRates: readonly string[] 
   };
 }
 
-export type UnitFormErrors = Partial<Record<'registration' | 'gtaGroup' | 'dailyRatePence' | 'declaredUses' | 'policyId' | 'keeperPostcode', string>> & {
+/**
+ * Unit form rule keys (each check has its own key so manager mode can relax one rule without the others):
+ *  - registration — new unit without a registration (hard)
+ *  - registrationFormat — not a UK registration format (relaxed: a foreign plate is allowed in manager mode, B12)
+ *  - gtaGroup — no GTA group (relaxed in manager mode: the server stores UNGROUPED when a rate is given)
+ *  - gtaGroupFormat — not a GTA group shape (hard: data shape)
+ *  - dailyRatePence — no daily rate, or ≤ 0 (hard)
+ *  - declaredUses — no class of use (hard)
+ *  - policyId — credit hire + self-drive without a policy covering both (relaxed)
+ *  - keeperPostcode — postcode not a UK format, or missing with an address (relaxed)
+ * Vehicle field checks (`vehicle`, from the picker) are format checks and stay hard.
+ */
+export type UnitRuleKey = 'registration' | 'registrationFormat' | 'gtaGroup' | 'gtaGroupFormat' | 'dailyRatePence' | 'declaredUses' | 'policyId' | 'keeperPostcode';
+
+export type UnitFormErrors = Partial<Record<UnitRuleKey, string>> & {
   vehicle?: PickerErrors;
 };
+
+/** Never relaxed, even in manager mode (values the user simply has to give). */
+export const UNIT_HARD_KEYS: readonly UnitRuleKey[] = ['registration', 'gtaGroupFormat', 'dailyRatePence', 'declaredUses'];
 
 const UK_POSTCODE = /^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i;
 
 export function validateUnitForm(f: UnitForm, isNew: boolean): UnitFormErrors {
   const e: UnitFormErrors = {};
   if (isNew && !f.vehicle.registration.trim()) e.registration = 'Registration is required';
+  else if (isNew) {
+    const format = registrationFormatMessage(f.vehicle.registration);
+    if (format) e.registrationFormat = format;
+  }
   const gta = validateGtaPanel(f.gta);
   if (gta.group) e.gtaGroup = gta.group;
+  if (gta.groupFormat) e.gtaGroupFormat = gta.groupFormat;
   if (gta.ratePence) e.dailyRatePence = gta.ratePence;
   if (f.declaredUses.length === 0) e.declaredUses = 'Declare at least one class of use';
   if (f.declaredUses.includes('credit_hire') && f.declaredUses.includes('self_drive') && !f.policyId.trim()) {
-    e.policyId = 'Credit hire and self-drive together need a policy that covers both — Collingwood will not (§3.12)';
+    e.policyId = 'Credit hire and self-drive together need a policy that covers both — Collingwood will not cover both';
   }
   if (f.keeperPostcode.trim() && !UK_POSTCODE.test(f.keeperPostcode.trim())) e.keeperPostcode = 'Enter a UK postcode';
   if (f.keeperLine1.trim() && !f.keeperPostcode.trim()) e.keeperPostcode = 'Postcode is required with the address';
@@ -312,11 +336,31 @@ export function validateUnitForm(f: UnitForm, isNew: boolean): UnitFormErrors {
   return e;
 }
 
+export interface RelaxedUnitErrors {
+  /** What still blocks saving. */
+  errors: UnitFormErrors;
+  /** Relaxed in manager mode: shown in amber, sent as X-Manager-Relaxed `fleet.<key>`. */
+  warnings: Partial<Record<UnitRuleKey, string>>;
+}
+
+/** Manager mode (0.3 §A.6 B09, B11): every unit rule except the hard keys becomes a warning; picker checks stay. */
+export function relaxUnitErrors(e: UnitFormErrors, managerOn: boolean): RelaxedUnitErrors {
+  const { vehicle, ...rules } = e;
+  const r = relaxErrors(rules as Record<string, string>, managerOn, UNIT_HARD_KEYS);
+  const errors = r.errors as UnitFormErrors;
+  if (vehicle) errors.vehicle = vehicle;
+  return { errors, warnings: r.warnings as Partial<Record<UnitRuleKey, string>> };
+}
+
+export function hasErrors(e: UnitFormErrors | PenaltyFormErrors): boolean {
+  return Object.keys(e).length > 0;
+}
+
 /** POST /fleet body (§F.1 step 5): vehicle (picker fields + spec + source), group, daily rate and the GTA suggestion. */
 export type FleetUnitBody = FleetUnitWriteBody;
 
 /** PATCH /fleet/:id body: the unit's fields and, when the vehicle changed, the vehicle patch with its source. */
-export type FleetUnitPatchBody = Omit<FleetUnitWriteBody, 'vehicle' | 'gtaSuggestion'> & { vehicle?: VehiclePatchBody };
+export type FleetUnitPatchBody = Omit<FleetUnitWriteBody, 'vehicle' | 'gtaSuggestion' | 'gtaGroupUnknown'> & { vehicle?: VehiclePatchBody };
 
 function keeperAddress(f: UnitForm): Address | undefined {
   return f.keeperLine1.trim()
@@ -339,6 +383,7 @@ export function buildUnitBody(f: UnitForm): FleetUnitBody {
     phvLicensed: f.phvLicensed
   };
   if (group) body.gtaGroup = group;
+  else body.gtaGroupUnknown = true;
   if (f.gta.ratePence !== null) body.dailyRatePence = f.gta.ratePence;
   const suggestion = gtaSuggestionInput(f.gta);
   if (suggestion) body.gtaSuggestion = suggestion;
@@ -389,7 +434,23 @@ export function emptyPenaltyForm(fleetUnitId = ''): PenaltyForm {
   return { fleetUnitId, kind: '', issuer: '', noticeNumber: '', contraventionAt: '', receivedAt: '', amountPence: null, discountDeadline: '', responseDeadline: '', hireAgreementId: '', notes: '' };
 }
 
-export type PenaltyFormErrors = Partial<Record<keyof PenaltyForm, string>>;
+/**
+ * Penalty rule keys: a field name for "required / amount" checks (hard), and its own key for each date-order check
+ * (relaxed in manager mode, 0.3 §A.6 B31): a notice can be logged with the dates exactly as printed on it.
+ */
+export type PenaltyOrderKey = 'contraventionInFuture' | 'receivedBeforeContravention' | 'responseBeforeReceived' | 'discountAfterResponse';
+export type PenaltyFormErrors = Partial<Record<keyof PenaltyForm | PenaltyOrderKey, string>>;
+
+export const PENALTY_ORDER_KEYS: readonly PenaltyOrderKey[] = ['contraventionInFuture', 'receivedBeforeContravention', 'responseBeforeReceived', 'discountAfterResponse'];
+/** The field each date-order rule is shown under. */
+export const PENALTY_ORDER_FIELD: Record<PenaltyOrderKey, keyof PenaltyForm> = {
+  contraventionInFuture: 'contraventionAt',
+  receivedBeforeContravention: 'receivedAt',
+  responseBeforeReceived: 'responseDeadline',
+  discountAfterResponse: 'discountDeadline'
+};
+/** Every penalty rule except the date-order checks is hard. */
+export const PENALTY_HARD_KEYS: readonly (keyof PenaltyForm)[] = ['fleetUnitId', 'kind', 'issuer', 'noticeNumber', 'contraventionAt', 'receivedAt', 'amountPence', 'responseDeadline', 'discountDeadline', 'hireAgreementId', 'notes'];
 
 export function validatePenaltyForm(f: PenaltyForm, now: Date): PenaltyFormErrors {
   const e: PenaltyFormErrors = {};
@@ -398,14 +459,27 @@ export function validatePenaltyForm(f: PenaltyForm, now: Date): PenaltyFormError
   if (!f.issuer.trim()) e.issuer = 'Issuer is required (council, police force, operator)';
   if (!f.noticeNumber.trim()) e.noticeNumber = 'Notice number is required';
   if (!f.contraventionAt) e.contraventionAt = 'When did the contravention happen?';
-  else if (Date.parse(f.contraventionAt) > now.getTime()) e.contraventionAt = 'Contravention cannot be in the future';
+  else if (Date.parse(f.contraventionAt) > now.getTime()) e.contraventionInFuture = 'Contravention cannot be in the future';
   if (!f.receivedAt) e.receivedAt = 'When was the notice received? This starts the response clock';
-  else if (f.contraventionAt && Date.parse(f.receivedAt) < Date.parse(f.contraventionAt)) e.receivedAt = 'Received before the contravention — check the dates';
+  else if (f.contraventionAt && Date.parse(f.receivedAt) < Date.parse(f.contraventionAt)) e.receivedBeforeContravention = 'Received before the contravention — check the dates';
   if (f.amountPence === null || f.amountPence < 0) e.amountPence = 'Enter the amount on the notice in pounds';
   if (!f.responseDeadline) e.responseDeadline = 'Enter the response deadline printed on the notice';
-  else if (f.receivedAt && f.responseDeadline < f.receivedAt.slice(0, 10)) e.responseDeadline = 'Deadline is before the notice was received';
-  if (f.discountDeadline && f.responseDeadline && f.discountDeadline > f.responseDeadline) e.discountDeadline = 'Discount deadline is after the response deadline';
+  else if (f.receivedAt && f.responseDeadline < f.receivedAt.slice(0, 10)) e.responseBeforeReceived = 'Deadline is before the notice was received';
+  if (f.discountDeadline && f.responseDeadline && f.discountDeadline > f.responseDeadline) e.discountAfterResponse = 'Discount deadline is after the response deadline';
   return e;
+}
+
+/** Manager mode: the date-order checks become warnings; everything else still blocks. */
+export function relaxPenaltyErrors(e: PenaltyFormErrors, managerOn: boolean): { errors: PenaltyFormErrors; warnings: PenaltyFormErrors } {
+  const r = relaxErrors(e as Record<string, string>, managerOn, PENALTY_HARD_KEYS);
+  return { errors: r.errors as PenaltyFormErrors, warnings: r.warnings as PenaltyFormErrors };
+}
+
+/** The message shown under a field: its own check first, then its date-order check. */
+export function penaltyFieldMessage(e: PenaltyFormErrors, field: keyof PenaltyForm): string | undefined {
+  if (e[field]) return e[field];
+  const order = PENALTY_ORDER_KEYS.find((k) => PENALTY_ORDER_FIELD[k] === field);
+  return order ? e[order] : undefined;
 }
 
 export type PenaltyBody = Omit<PenaltyNotice, 'id' | 'documentIds' | 'stage'>;
@@ -438,4 +512,11 @@ export function sortPenalties<T extends Pick<PenaltyNotice, 'stage' | 'responseD
 
 export function vehicleFor(units: FleetUnitView[], unitId: string): Vehicle | undefined {
   return units.find((u) => u.id === unitId)?.vehicle;
+}
+
+/** The toast after adding a unit, from what the server actually saved. */
+export function unitAddedText(saved: Pick<FleetUnitRow, 'gtaGroup'>, chosenGroup: string): string {
+  if (saved.gtaGroup === 'UNGROUPED') return 'Unit added to the fleet register (no GTA group yet — saved as UNGROUPED)';
+  if (!chosenGroup.trim()) return `Unit added to the fleet register (GTA group ${saved.gtaGroup} suggested — check it)`;
+  return 'Unit added to the fleet register';
 }

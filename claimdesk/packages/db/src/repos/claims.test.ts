@@ -3,7 +3,7 @@ import type { Claim } from '@ccguk/domain';
 import { closeDatabase, type DatabaseHandle } from '../client.js';
 import { createTestDatabase } from '../testing.js';
 import { listAudit } from './audit.js';
-import { addClaimFlag, clearClaimFlag, createClaim, getClaimByReference, linkClaims, listClaims, nextClaimReference, setClaimStatus, updateClaim, type CreateClaimInput } from './claims.js';
+import { addClaimFlag, clearClaimFlag, raiseOrUpdateClaimFlag, createClaim, getClaimByReference, linkClaims, listClaims, nextClaimReference, setClaimStatus, updateClaim, type CreateClaimInput } from './claims.js';
 import { createParty } from './parties.js';
 import { upsertVehicle } from './vehicles.js';
 
@@ -104,6 +104,16 @@ describe('claims repo', () => {
     const audit = listAudit(h.db, { entity: 'claims', entityId: c.id });
     expect(audit).toHaveLength(1);
     expect(audit[0]).toMatchObject({ action: 'claim.status', userId: 'user-1', ip: '10.0.0.1', before: { status: 'fnol' }, after: { status: 'accepted', reason: 'liability admitted by insurer' } });
+  });
+
+  it('flags: raiseOrUpdate brings the open flag up to date (one flag, latest message), or raises a new one after clearing', () => {
+    const c = createClaim(h.db, baseInput());
+    raiseOrUpdateClaimFlag(h.db, c.id, { code: 'HIRE_PERIOD_CHANGED_AFTER_INVOICE', severity: 'warn', message: 'now 4 days', raisedBy: 'system' });
+    const again = raiseOrUpdateClaimFlag(h.db, c.id, { code: 'HIRE_PERIOD_CHANGED_AFTER_INVOICE', severity: 'warn', message: 'now 11 days', raisedBy: 'system' });
+    expect(again.flags.map((f) => f.message)).toEqual(['now 11 days']);
+    clearClaimFlag(h.db, c.id, 'HIRE_PERIOD_CHANGED_AFTER_INVOICE', { userId: 'u1' }, 'credit note issued');
+    const next = raiseOrUpdateClaimFlag(h.db, c.id, { code: 'HIRE_PERIOD_CHANGED_AFTER_INVOICE', severity: 'warn', message: 'now 12 days', raisedBy: 'system' });
+    expect(next.flags.map((f) => [f.message, Boolean(f.clearedAt)])).toEqual([['now 11 days', true], ['now 12 days', false]]);
   });
 
   it('flags: add is de-duplicated while uncleared; clear needs a reason and is audited', () => {

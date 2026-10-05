@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { plainText } from '../../lib/plainText';
 import { useSearchParams } from 'react-router-dom';
 import type { KbEntry, KbEntryType } from '@ccguk/domain';
 import '../../styles/screens.css';
@@ -26,7 +27,7 @@ export function KbPage() {
   };
   return (
     <div className="page">
-      <PageHeader title="Knowledge base" subtitle="Curated, cited, human-approved. Unverified citations are flagged here and blocked by the consistency engine in any draft that relies on them (UNVERIFIED_CITATION)." />
+      <PageHeader title="Knowledge base" subtitle="Curated, cited, human-approved. Unverified citations are flagged here and blocked by the consistency engine in any draft that relies on them." />
       <Tabs items={[{ id: 'search', label: 'Search' }, { id: 'advisor', label: 'Advisor' }, { id: 'plan', label: 'Get paid faster' }, { id: 'rates', label: 'GTA rates' }]} value={view} onChange={setView} ariaLabel="Knowledge base views" />
       <div style={{ marginTop: 16 }}>
         {view === 'advisor' ? <AdvisorPanel /> : view === 'plan' ? <PlanPanel /> : view === 'rates' ? <RatesPanel /> : <SearchPanel />}
@@ -184,7 +185,7 @@ function AdvisorPanel() {
                 <strong>
                   {unverified.length} unverified citation{unverified.length === 1 ? '' : 's'}:
                 </strong>{' '}
-                {unverified.join(', ')}. The consistency engine flags UNVERIFIED_CITATION on any draft relying on these — verify on the source first.
+                {unverified.join(', ')}. The consistency engine flags any draft relying on these — verify on the source first.
               </div>
             )}
             {advice.points.length === 0 ? (
@@ -270,10 +271,10 @@ function PlanPanel() {
                       {s.benchmarkOnly && <Badge tone="navy">benchmark</Badge>}
                     </div>
                     <div className="small" style={{ marginTop: 2 }}>
-                      {s.why}
+                      {plainText(s.why)}
                     </div>
                     <div className="row xs muted" style={{ marginTop: 6 }}>
-                      {s.basis.map((b) => (
+                      {s.basis.map(plainText).filter(Boolean).map((b) => (
                         <span key={b} className="cite-chip">
                           {b}
                         </span>

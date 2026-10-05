@@ -41,19 +41,21 @@ export function TemplatesPage() {
         </div>
       )
     },
-    { key: 'kind', header: 'Kind', render: (t) => templateKindName(t.kind) },
+    { key: 'kind', header: 'Kind', className: 'col-hide-phone', render: (t) => templateKindName(t.kind) },
     {
       key: 'source',
       header: 'Source',
+      className: 'col-hide-phone',
       render: (t) => {
         const b = sourceBadge(t.source);
         return <Badge tone={b.tone}>{b.label}</Badge>;
       }
     },
-    { key: 'version', header: 'Version', render: (t) => <span className="mono xs" title={`Mapping revision ${t.mappingRevision}`}>v{t.fileVersion}</span> },
+    { key: 'version', header: 'Version', className: 'col-hide-phone', render: (t) => <span className="mono xs" title={`Mapping revision ${t.mappingRevision}`}>v{t.fileVersion}</span> },
     {
       key: 'mapped',
       header: 'Mapped',
+      className: 'col-hide-phone',
       render: (t) => {
         const b = mappedBadge(t);
         return (
@@ -96,7 +98,7 @@ export function TemplatesPage() {
         </span>
       )
     },
-    { key: 'updated', header: 'Updated', render: (t) => <DateText value={t.updatedAt} /> }
+    { key: 'updated', header: 'Updated', className: 'col-hide-phone', render: (t) => <DateText value={t.updatedAt} /> }
   ];
 
   return (

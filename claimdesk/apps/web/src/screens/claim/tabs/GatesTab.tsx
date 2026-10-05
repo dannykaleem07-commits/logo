@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { plainText } from '../../../lib/plainText';
 import type { GateResult } from '@ccguk/domain';
 import { Card } from '../../../components/Card';
 import { Loading } from '../../../components/Spinner';
@@ -31,7 +32,7 @@ const WHERE_TO_FIX: Record<GateResult['gate'], Array<{ label: string; to: string
     { label: 'Bank statements, payslips', to: '../evidence' }
   ],
   mitigation: [
-    { label: 'Intervention register', to: '../offers' },
+    { label: 'Offers', to: '../offers' },
     { label: 'Mitigation questionnaire (form)', to: '../documents' }
   ],
   enforceability: [{ label: 'Hire agreement checklist (CCR 2013, art 60F)', to: '../hire' }],
@@ -59,7 +60,7 @@ export function GatesTab({ view }: { view: ClaimView }) {
                     {gateLabel(g.gate)} <GateBadge gate={g} />
                   </div>
                   <div className="list-sub">
-                    {g.missing.length ? `Missing: ${g.missing.join('; ')}` : 'Complete — nothing missing.'}
+                    {g.missing.length ? `Missing: ${g.missing.map(plainText).join('; ')}` : 'Complete — nothing missing.'}
                   </div>
                   <div className="row xs" style={{ gap: 10, marginTop: 4 }}>
                     {WHERE_TO_FIX[g.gate].map((w) => (

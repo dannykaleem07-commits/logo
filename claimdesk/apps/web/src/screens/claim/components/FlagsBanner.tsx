@@ -3,6 +3,7 @@ import type { ClaimFlag } from '@ccguk/domain';
 import { Button } from '../../../components/Button';
 import { DateText } from '../../../components/DateText';
 import { useToast } from '../../../components/Toast';
+import { plainText } from '../../../lib/plainText';
 import { useClearClaimFlag } from '../claimApi';
 import { ReasonDialog } from './ReasonDialog';
 
@@ -19,14 +20,14 @@ export function FlagsBanner({ claimId, flags, showCleared = false }: { claimId: 
         <div key={`${f.code}-${f.raisedAt}-${i}`} className={`flag-item ${f.severity} ${f.clearedAt ? 'cleared' : ''}`} role={f.severity === 'block' && !f.clearedAt ? 'alert' : undefined}>
           <div className="flag-body">
             <div>
-              <strong>{f.severity === 'block' ? 'Hard stop' : f.severity === 'warn' ? 'Warning' : 'Note'}:</strong> {f.message}
+              <strong>{f.severity === 'block' ? 'Hard stop' : f.severity === 'warn' ? 'Warning' : 'Note'}:</strong> {plainText(f.message)}
             </div>
-            <div className="flag-code">
-              {f.code} · raised <DateText value={f.raisedAt} time /> by {f.raisedBy}
+            <div className="flag-code" title={f.code}>
+              Raised <DateText value={f.raisedAt} time /> by {f.raisedBy}
               {f.clearedAt ? (
                 <>
                   {' '}
-                  · cleared <DateText value={f.clearedAt} time /> {f.clearedBy ? `by ${f.clearedBy}` : ''}: {f.clearedReason}
+                  · cleared <DateText value={f.clearedAt} time /> {f.clearedBy ? `by ${f.clearedBy}` : ''}: {f.clearedReason ? plainText(f.clearedReason) : ''}
                 </>
               ) : null}
             </div>
@@ -40,7 +41,7 @@ export function FlagsBanner({ claimId, flags, showCleared = false }: { claimId: 
       ))}
       <ReasonDialog
         open={clearing !== null}
-        title={`Clear flag ${clearing?.code ?? ''}`}
+        title="Clear this flag"
         danger={clearing?.severity === 'block'}
         busy={clear.isPending}
         error={clear.error}
@@ -54,7 +55,7 @@ export function FlagsBanner({ claimId, flags, showCleared = false }: { claimId: 
             { code: clearing.code, reason },
             {
               onSuccess: () => {
-                toast.success(`Flag ${clearing.code} cleared — reason logged`);
+                toast.success('Flag cleared — reason logged');
                 setClearing(null);
               }
             }
@@ -62,7 +63,7 @@ export function FlagsBanner({ claimId, flags, showCleared = false }: { claimId: 
         }}
       >
         <div className={`flag-item ${clearing?.severity ?? 'info'}`}>
-          <div className="flag-body">{clearing?.message}</div>
+          <div className="flag-body">{clearing ? plainText(clearing.message) : null}</div>
         </div>
         {clearing?.severity === 'block' && <p className="small">A hard stop protects the file (duplicate registration, fleet unit as a client vehicle, legacy detail). Clear it only when the underlying problem is fixed; the reason is audited.</p>}
       </ReasonDialog>

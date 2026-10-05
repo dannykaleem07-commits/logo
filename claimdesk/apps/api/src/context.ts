@@ -12,6 +12,7 @@ import * as kbPkg from '@ccguk/kb';
 import { loadConfig, type AppConfig } from './config.js';
 import { resolveEngines, type DomainEngines } from './engines.js';
 import { syncBuiltinTemplates } from './services/docxTemplates.js';
+import { appVersion } from './routes/health.js';
 
 export interface Logger {
   info(msg: string, meta?: Record<string, unknown>): void;
@@ -153,11 +154,31 @@ export function ensureDataDirs(config: AppConfig): void {
   if (config.databasePath !== ':memory:') mkdirSync(path.dirname(config.databasePath), { recursive: true });
 }
 
+/**
+ * Backup before migrating (V03 §F.2.2): an existing database file with pending migrations is copied to
+ * `<dirname(databasePath)>/backups/claimdesk-before-<version>-<yyyyMMdd-HHmmss>.sqlite` (newest 5 kept) before the
+ * migrations run. A failure is a warning only — the start continues.
+ */
+export function backupBeforeMigrating(handle: DatabaseHandle, databasePath: string, existedBefore: boolean, logger: Logger): string | undefined {
+  try {
+    const result = db.backupBeforeMigrate(handle, { databasePath, existedBefore, version: appVersion() });
+    if (result.file) logger.info('database backed up before migrating', { file: result.file, pendingMigrations: result.pending, removedOldBackups: result.removed.length });
+    return result.file;
+  } catch (err) {
+    logger.warn('database backup before migrating failed; starting anyway', { error: String(err) });
+    return undefined;
+  }
+}
+
 export function buildContext(options: BuildContextOptions = {}): AppContext {
   const config = options.config ?? loadConfig();
   const logger = options.logger ?? (config.env === 'test' ? silentLogger : consoleLogger);
+  const existedBefore = config.databasePath !== ':memory:' && config.databasePath !== '' && existsSync(config.databasePath);
   const handle = db.createDatabase({ path: config.databasePath });
-  if (options.migrate ?? true) db.runMigrations(handle.db);
+  if (options.migrate ?? true) {
+    backupBeforeMigrating(handle, config.databasePath, existedBefore, logger);
+    db.runMigrations(handle.db);
+  }
   ensureDefaultUser(handle.db, config.defaultUserId);
   // Settings carry the presence flags so the UI can show which lookups are live (keys themselves never leave the process).
   const current = db.getSettings(handle.db);

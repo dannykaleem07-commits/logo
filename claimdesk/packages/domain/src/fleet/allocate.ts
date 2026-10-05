@@ -42,7 +42,7 @@ export function canAllocate(unit: FleetUnit, use: FleetUse, policy: InsurancePol
     else if (vehicle.taxDueDate && vehicle.taxDueDate < today) reasons.push(`Vehicle tax expired ${vehicle.taxDueDate}.`);
   }
 
-  if (!unit.keeperAddressCurrent) warnings.push('V5C keeper address is not current: penalty notices for this hire will go to the old address (lesson l).');
+  if (!unit.keeperAddressCurrent) warnings.push('V5C keeper address is not current: penalty notices for this hire will go to the old address.');
   if (unit.serviceDueDate && unit.serviceDueDate < today) warnings.push(`Service overdue since ${unit.serviceDueDate}.`);
 
   return { ok: reasons.length === 0, reasons, warnings };

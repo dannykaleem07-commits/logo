@@ -65,8 +65,23 @@ import type {
 // Errors and transport
 // ---------------------------------------------------------------------------
 
+/**
+ * What the server says about an overridable refusal (docs/V03-MANAGER-MODE-HIRE-PRICING.md §A.4.3). Present only on
+ * class A/B refusals; class C errors never carry it.
+ */
+export interface OverrideInfo {
+  code: string;
+  class: 'A' | 'B';
+  label: string;
+  warning?: string;
+  /** The signed-in user may override it in manager mode (admin or approver). */
+  allowed: boolean;
+  /** Manager mode as the server saw it for this request. */
+  managerMode: 'on' | 'off';
+}
+
 export interface ApiErrorBody {
-  error: { code: string; message: string; details?: unknown };
+  error: { code: string; message: string; details?: unknown; override?: OverrideInfo };
 }
 
 export class ApiError extends Error {
@@ -74,13 +89,16 @@ export class ApiError extends Error {
   readonly code: string;
   readonly details?: unknown;
   readonly url: string;
-  constructor(status: number, code: string, message: string, url: string, details?: unknown) {
+  /** Parsed from `body.error.override`: the refusal can be overridden in manager mode. */
+  readonly override?: OverrideInfo;
+  constructor(status: number, code: string, message: string, url: string, details?: unknown, override?: OverrideInfo) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
     this.code = code;
     this.url = url;
     this.details = details;
+    if (override) this.override = override;
   }
   /** True for a network failure (no HTTP response at all). */
   get isNetwork(): boolean {
@@ -140,6 +158,22 @@ export function asList<T>(res: unknown): T[] {
   return [];
 }
 
+/** Validate `body.error.override` defensively (an unexpected shape is ignored, never trusted). */
+export function parseOverrideInfo(raw: unknown): OverrideInfo | undefined {
+  if (!raw || typeof raw !== 'object') return undefined;
+  const o = raw as Record<string, unknown>;
+  if (typeof o.code !== 'string' || typeof o.label !== 'string' || typeof o.allowed !== 'boolean') return undefined;
+  const info: OverrideInfo = {
+    code: o.code,
+    class: o.class === 'B' ? 'B' : 'A',
+    label: o.label,
+    allowed: o.allowed,
+    managerMode: o.managerMode === 'on' ? 'on' : 'off',
+  };
+  if (typeof o.warning === 'string' && o.warning) info.warning = o.warning;
+  return info;
+}
+
 async function parseError(res: Response, url: string): Promise<ApiError> {
   let body: unknown = undefined;
   const text = await res.text().catch(() => '');
@@ -152,7 +186,7 @@ async function parseError(res: Response, url: string): Promise<ApiError> {
   }
   const err = (body as Partial<ApiErrorBody> | undefined)?.error;
   if (err && typeof err === 'object' && typeof err.message === 'string') {
-    return new ApiError(res.status, err.code ?? `HTTP_${res.status}`, err.message, url, err.details);
+    return new ApiError(res.status, err.code ?? `HTTP_${res.status}`, err.message, url, err.details, parseOverrideInfo(err.override));
   }
   const message = typeof body === 'string' && body ? body.slice(0, 300) : `${res.status} ${res.statusText || 'request failed'}`;
   return new ApiError(res.status, `HTTP_${res.status}`, message, url, body);
@@ -189,34 +223,194 @@ export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): () 
   };
 }
 
+// ---------------------------------------------------------------------------
+// Manager mode (docs/V03-MANAGER-MODE-HIRE-PRICING.md §A.5.1) — the whole override UX hangs off request()
+// ---------------------------------------------------------------------------
+
+/** Request header: URI-encoded reason; present = "override if manager mode is on" (non-GET only). */
+export const MANAGER_OVERRIDE_HEADER = 'X-Manager-Override';
+/** Request header: URI-encoded comma list of web-only rule keys relaxed in manager mode (max 20). */
+export const MANAGER_RELAXED_HEADER = 'X-Manager-Relaxed';
+/** Response header: URI-encoded JSON `Array<{ code, label, reason }>` of the overrides a 2xx response applied. */
+export const MANAGER_OVERRIDES_RESPONSE_HEADER = 'x-manager-overrides';
+const MAX_RELAXED_KEYS = 20;
+
+/** One override the server applied, from the `x-manager-overrides` response header. */
+export interface AppliedOverrideNotice {
+  code: string;
+  label: string;
+  reason: string;
+}
+
+export type OverrideDecision = { action: 'override'; reason: string } | { action: 'cancel' };
+
+let managerOverrideReason: string | null = null;
+const overrideListeners = new Set<(applied: AppliedOverrideNotice[]) => void>();
+let overridePromptHandler: ((error: ApiError) => Promise<OverrideDecision>) | null = null;
+let managerModeReactivator: (() => Promise<boolean>) | null = null;
+
+/** Non-null = manager mode is on: every non-GET request carries `X-Manager-Override: <reason>`. */
+export function setManagerOverrideReason(reason: string | null): void {
+  managerOverrideReason = reason === null ? null : reason.trim() || 'Manager override';
+}
+
+/** The reason currently sent with mutations, or null when manager mode is off (for tests and the provider). */
+export function getManagerOverrideReason(): string | null {
+  return managerOverrideReason;
+}
+
+/** Listen for the overrides a successful response applied. Returns a function that unsubscribes. */
+export function onManagerOverrides(listener: (applied: AppliedOverrideNotice[]) => void): () => void {
+  overrideListeners.add(listener);
+  return () => {
+    overrideListeners.delete(listener);
+  };
+}
+
+/**
+ * Register who asks the user whether to override an overridable refusal (the provider's OverridePrompt). On
+ * `override` the handler must have turned manager mode on (setManagerOverrideReason) before it resolves; the request is
+ * then re-sent once. Returns a function that unregisters.
+ */
+export function setOverridePromptHandler(handler: ((error: ApiError) => Promise<OverrideDecision>) | null): () => void {
+  overridePromptHandler = handler;
+  return () => {
+    if (overridePromptHandler === handler) overridePromptHandler = null;
+  };
+}
+
+/**
+ * Register what turns manager mode back on when the client believed it on but the server says it expired. Resolves
+ * true when it is on again (the request is then re-sent once). Returns a function that unregisters.
+ */
+export function setManagerModeReactivator(fn: (() => Promise<boolean>) | null): () => void {
+  managerModeReactivator = fn;
+  return () => {
+    if (managerModeReactivator === fn) managerModeReactivator = null;
+  };
+}
+
+const RELAXED_KEYS = Symbol('claimdesk.managerRelaxedKeys');
+
+/**
+ * Attach web-only relaxed rule keys to a request body (a Symbol property: never serialised, invisible to TS excess
+ * checks). Returns a shallow copy; the keys are sent as X-Manager-Relaxed only while manager mode is on.
+ */
+export function withRelaxed<T extends object>(body: T, keys: readonly string[]): T {
+  const copy = (Array.isArray(body) ? [...body] : { ...body }) as T;
+  const clean = keys.map((k) => k.trim()).filter(Boolean);
+  if (clean.length) Object.defineProperty(copy, RELAXED_KEYS, { value: clean, enumerable: false });
+  return copy;
+}
+
+/** The relaxed rule keys attached by `withRelaxed` (empty when none). */
+export function relaxedKeysOf(body: unknown): string[] {
+  if (!body || typeof body !== 'object') return [];
+  const keys = (body as { [RELAXED_KEYS]?: unknown })[RELAXED_KEYS];
+  return Array.isArray(keys) ? keys.filter((k): k is string => typeof k === 'string') : [];
+}
+
+/** Decode the `x-manager-overrides` response header; a malformed value yields []. */
+export function parseAppliedOverrides(header: string | null): AppliedOverrideNotice[] {
+  if (!header) return [];
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(decodeURIComponent(header));
+  } catch {
+    try {
+      parsed = JSON.parse(header);
+    } catch {
+      return [];
+    }
+  }
+  if (!Array.isArray(parsed)) return [];
+  const out: AppliedOverrideNotice[] = [];
+  for (const item of parsed) {
+    if (!item || typeof item !== 'object') continue;
+    const o = item as Record<string, unknown>;
+    if (typeof o.code !== 'string') continue;
+    out.push({ code: o.code, label: typeof o.label === 'string' && o.label ? o.label : o.code, reason: typeof o.reason === 'string' ? o.reason : '' });
+  }
+  return out;
+}
+
+function notifyOverrides(applied: AppliedOverrideNotice[]): void {
+  for (const listener of [...overrideListeners]) {
+    try {
+      listener(applied);
+    } catch (e) {
+      console.warn('[ClaimDesk] manager override listener failed', e);
+    }
+  }
+}
+
 export async function request<T>(path: string, opts: RequestOptions = {}): Promise<T> {
   const url = buildUrl(path, opts.query);
-  const headers: Record<string, string> = { Accept: 'application/json', ...(opts.headers ?? {}) };
-  let body: BodyInit | undefined;
-  if (opts.formData) {
-    body = opts.formData; // browser sets multipart boundary
-  } else if (opts.body !== undefined) {
-    headers['Content-Type'] = 'application/json';
-    body = JSON.stringify(opts.body);
-  }
-  let res: Response;
-  try {
-    res = await fetch(url, { method: opts.method ?? (body ? 'POST' : 'GET'), headers, body, signal: opts.signal, credentials: 'same-origin' });
-  } catch (e) {
-    if (e instanceof DOMException && e.name === 'AbortError') throw e;
-    throw new ApiError(0, 'NETWORK', `Cannot reach the ClaimDesk API (${(e as Error).message})`, url);
-  }
-  if (!res.ok) {
-    const error = await parseError(res, url);
-    if (error.status === 401 && redirectsOn401(path) && unauthorizedHandler) {
-      try {
-        unauthorizedHandler(error);
-      } catch (e) {
-        console.warn('[ClaimDesk] unauthorized handler failed', e);
-      }
+  const method = opts.method ?? (opts.formData || opts.body !== undefined ? 'POST' : 'GET');
+  const relaxed = relaxedKeysOf(opts.body).slice(0, MAX_RELAXED_KEYS);
+
+  const send = async (): Promise<Response> => {
+    const headers: Record<string, string> = { Accept: 'application/json', ...(opts.headers ?? {}) };
+    let body: BodyInit | undefined;
+    if (opts.formData) {
+      body = opts.formData; // browser sets multipart boundary
+    } else if (opts.body !== undefined) {
+      headers['Content-Type'] = 'application/json';
+      body = JSON.stringify(opts.body);
     }
-    throw error;
+    if (method !== 'GET' && managerOverrideReason !== null) {
+      headers[MANAGER_OVERRIDE_HEADER] = encodeURIComponent(managerOverrideReason);
+      if (relaxed.length) headers[MANAGER_RELAXED_HEADER] = encodeURIComponent(relaxed.join(','));
+    }
+    try {
+      return await fetch(url, { method, headers, body, signal: opts.signal, credentials: 'same-origin' });
+    } catch (e) {
+      if (e instanceof DOMException && e.name === 'AbortError') throw e;
+      throw new ApiError(0, 'NETWORK', `Cannot reach the ClaimDesk API (${(e as Error).message})`, url);
+    }
+  };
+
+  /** The second attempt after an override decision; null when the refusal is not one the user can override now. */
+  const retryAfterOverride = async (error: ApiError): Promise<Response | null> => {
+    if (method === 'GET' || error.override?.allowed !== true) return null;
+    if (managerOverrideReason !== null && error.override.managerMode === 'off' && managerModeReactivator) {
+      // The client believed manager mode on but the server let it expire: switch it back on and re-send once.
+      let back = false;
+      try {
+        back = await managerModeReactivator();
+      } catch (e) {
+        console.warn('[ClaimDesk] manager mode reactivation failed', e);
+      }
+      return back ? send() : null;
+    }
+    if (!overridePromptHandler) return null;
+    const decision = await overridePromptHandler(error);
+    if (decision.action !== 'override') return null;
+    if (managerOverrideReason === null) setManagerOverrideReason(decision.reason);
+    return send();
+  };
+
+  let res = await send();
+  if (!res.ok) {
+    let error = await parseError(res, url);
+    const retried = await retryAfterOverride(error);
+    if (retried) {
+      res = retried;
+      if (!res.ok) error = await parseError(res, url);
+    }
+    if (!res.ok) {
+      if (error.status === 401 && redirectsOn401(path) && unauthorizedHandler) {
+        try {
+          unauthorizedHandler(error);
+        } catch (e) {
+          console.warn('[ClaimDesk] unauthorized handler failed', e);
+        }
+      }
+      throw error;
+    }
   }
+  const applied = parseAppliedOverrides(res.headers.get(MANAGER_OVERRIDES_RESPONSE_HEADER));
+  if (applied.length) notifyOverrides(applied);
   if (res.status === 204) return undefined as T;
   const ct = res.headers.get('content-type') ?? '';
   if (ct.includes('application/json')) return (await res.json()) as T;
@@ -433,7 +627,8 @@ export interface CreateClaimBody {
   offerDetails?: { what?: string; byWhom?: string; when?: string };
   // --- descriptive web fields the API folds in (apps/api services/intake.ts normaliseFnol) ---
   channel?: 'phone' | 'whatsapp' | 'web_form' | 'in_person' | 'email';
-  disclosure?: { callRecordingReadAt: ISODateTime; acknowledged: true; acknowledgedBy?: string };
+  /** `acknowledged: false` only when a manager opened the claim without the disclosure (it is then flagged). */
+  disclosure?: { callRecordingReadAt?: ISODateTime; acknowledged: boolean; acknowledgedBy?: string };
   /** `[]` = the witnesses question was asked and there were none. The API creates the witness parties (role `witness`). */
   witnesses?: WitnessInput[];
   /** Only `registrationUnknown` is sent here (the other third-party facts go in the native fields, or they would be duplicated). */
@@ -734,6 +929,8 @@ export interface FleetGtaSuggestionInput {
 export type FleetUnitWriteBody = Omit<Partial<FleetUnit>, 'gtaGroup' | 'dailyRatePence'> & {
   vehicle?: VehicleInput;
   gtaGroup?: string;
+  /** POST only: the group was left as "no group yet" — save UNGROUPED (manager mode), never a guessed group. */
+  gtaGroupUnknown?: boolean;
   dailyRatePence?: Pence;
   gtaSuggestion?: FleetGtaSuggestionInput;
 };
@@ -831,6 +1028,8 @@ export interface Settings {
   rateCard?: RateCardView;
   apiKeys?: { dvlaVes: boolean; dvsaMot: boolean; companiesHouse: boolean; gateway: boolean; esign?: boolean; anthropic?: boolean };
   warnings?: Array<{ code: string; message: string }>;
+  /** Manager mode switches itself off after this many minutes without activity (1–480, default 60; 0.3 §A.4.1). */
+  managerModeIdleMinutes?: number;
   [key: string]: unknown;
 }
 

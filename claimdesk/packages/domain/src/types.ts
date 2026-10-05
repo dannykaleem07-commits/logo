@@ -512,6 +512,15 @@ export interface HireAgreement {
   needStatementEvidenceId?: Id;
   mitigationQuestionnaireDocumentId?: Id;
   statementOfMeansDocumentId?: Id;
+  // Pricing snapshot at the time of the decision (0.3, §B.3). GTA figures are a benchmark only.
+  /** GTA group of the client's accident-damaged car (like for like). */
+  clientGtaGroup?: string;
+  clientGtaDailyRatePence?: Pence;
+  /** GTA guide for the car we give (group `gtaGroup`). */
+  hireGtaDailyRatePence?: Pence;
+  /** The fleet car's own daily rate when the hire was set up. */
+  fleetDailyRatePence?: Pence;
+  pricingNote?: string;
 }
 
 export type HireEndTrigger =

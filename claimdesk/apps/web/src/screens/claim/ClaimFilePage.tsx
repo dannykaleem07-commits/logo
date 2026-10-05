@@ -7,7 +7,7 @@ import { Loading } from '../../components/Spinner';
 import { ApiErrorNotice } from '../../components/ApiErrorNotice';
 import { Badge } from '../../components/Badge';
 import { isOverdue } from '../../lib/clocks';
-import { CLAIM_TABS, hasHardStop, openFlags, type ClaimView } from './claimFile';
+import { CLAIM_TABS, hasHardStop, openFlags, splitClaimTabs, type ClaimView } from './claimFile';
 import { StatusControl } from './components/StatusControl';
 import { FlagsBanner } from './components/FlagsBanner';
 import { OverviewTab } from './tabs/OverviewTab';
@@ -74,6 +74,9 @@ export function ClaimFilePage() {
     const tone = t.id === 'offers' || t.id === 'actions' ? 'amber' : 'red';
     return n ? { ...t, badge: <Badge tone={tone}>{n}</Badge> } : t;
   });
+  // Primary row + "More ▾" (0.3 §E1); the open-flag count shows on More while Flags sits inside it.
+  const { primary, more } = splitClaimTabs(tabs);
+  const moreBadge = counts.flags ? <Badge tone="red">{counts.flags}</Badge> : undefined;
   const linked = view.linkedClaims ?? view.claim.linkedClaimIds.map((lid) => ({ id: lid, reference: lid, status: '' }));
 
   return (
@@ -120,12 +123,12 @@ export function ClaimFilePage() {
               {l.status ? ` (${l.status.replace(/_/g, ' ')})` : ''}
             </span>
           ))}
-          . Each file keeps its own ledger, documents and insurer (BLUEPRINT §3.2).
+          . Each file keeps its own ledger, documents and insurer.
         </div>
       )}
       <FlagsBanner claimId={view.claim.id} flags={flags} />
       <div className="claim-tabs-wrap">
-        <Tabs items={tabs} value={current} onChange={(tab) => navigate(`/claims/${id}/${tab}`)} ariaLabel="Claim file sections" />
+        <Tabs items={primary} more={more} moreBadge={moreBadge} narrowPrimary={3} value={current} onChange={(tab) => navigate(`/claims/${id}/${tab}`)} ariaLabel="Claim file sections" />
       </div>
       <div style={{ marginTop: 16 }} id={`tabpanel-${current}`} role="tabpanel">
         <Routes>

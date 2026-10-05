@@ -55,7 +55,7 @@ export function OverviewTab({ view }: { view: ClaimView }) {
         {gates.isLoading ? <Loading /> : <GatesRow gates={gates.gates} />}
         <ApiErrorNotice error={gates.error} what="load the gates" />
         <p className="xs muted" style={{ margin: '10px 0 0' }}>
-          A claim cannot move to payment pack until its gates are green (BLUEPRINT principle 2). Hover or expand a tile for what is missing.
+          A claim cannot move to the payment pack until its gates are green. Hover or expand a tile for what is missing.
         </p>
       </Card>
 

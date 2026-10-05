@@ -10,6 +10,8 @@ import { EmptyState } from '../../../components/EmptyState';
 import { Loading } from '../../../components/Spinner';
 import { ApiErrorNotice } from '../../../components/ApiErrorNotice';
 import { useToast } from '../../../components/Toast';
+import { useManagerMode } from '../../../app/managerMode';
+import { MANAGER_WARNING_PREFIX } from '../../../lib/managerMode';
 import type { ClaimView } from '../claimFile';
 import { flagCounts } from '../lib/documents';
 import {
@@ -19,6 +21,8 @@ import {
   fillReducer,
   generateBlocker,
   groupsOf,
+  isOverridableFillIssue,
+  managerOverridableBlocks,
   GTA_BENCHMARK_CAVEAT,
   hasEdit,
   initialFillState,
@@ -68,7 +72,12 @@ export function FillTemplateDialog({ view, onClose, initialTemplateId, initialSt
   const groups = useMemo(() => groupsOf(values), [values]);
   const subjectsNeeded = template?.subjects ?? values?.template.subjects ?? [];
   const subjectIssue = subjectBlocker(subjectsNeeded, state.subject);
-  const blocker = state.step === 'check' ? generateBlocker(values, effectiveState) : undefined;
+  const manager = useManagerMode();
+  const managerOpts = { managerOn: manager.on, managerAllowed: manager.allowed };
+  const blocker = state.step === 'check' ? generateBlocker(values, effectiveState, managerOpts) : undefined;
+  const overridable = managerOverridableBlocks(values, effectiveState);
+  const needsOverride = overridable.issues.length + overridable.missing.length > 0;
+  const generateTitle = blocker ?? (needsOverride ? (manager.on ? 'Manager mode: generates with these gaps (recorded as an override)' : 'Generate will ask whether to override as a manager') : undefined);
 
   const submit = () => {
     if (!values || blocker) return;
@@ -95,8 +104,8 @@ export function FillTemplateDialog({ view, onClose, initialTemplateId, initialSt
     ) : (
       <>
         <Button onClick={() => dispatch({ type: 'back' })}>Back</Button>
-        <Button variant="primary" loading={generate.isPending} disabled={Boolean(blocker) || valuesQ.isFetching} title={blocker} onClick={submit}>
-          Generate
+        <Button variant="primary" loading={generate.isPending} disabled={Boolean(blocker) || valuesQ.isFetching} title={generateTitle} onClick={submit}>
+          {needsOverride && manager.on ? 'Generate anyway' : 'Generate'}
         </Button>
       </>
     );
@@ -127,7 +136,7 @@ export function FillTemplateDialog({ view, onClose, initialTemplateId, initialSt
             {values && (
               <>
                 <div className="fill-summary">{summaryLine(computeSummary(rows, effectiveState))}</div>
-                <IssuesPanel issues={values.issues ?? []} rows={rows} state={effectiveState} templateId={state.templateId} />
+                <IssuesPanel issues={values.issues ?? []} rows={rows} state={effectiveState} templateId={state.templateId} managerOn={manager.on} managerAllowed={manager.allowed} />
                 {groups.length === 0 && <EmptyState title="Nothing to fill">This template has no blanks mapped to the claim.</EmptyState>}
                 {groups.map((g) => {
                   const open = !state.collapsed.includes(g.section);
@@ -271,11 +280,24 @@ function ChooseStep({
 // Step 2 — values
 // ---------------------------------------------------------------------------
 
-function IssuesPanel({ issues, rows, state, templateId }: { issues: FillPlanIssue[]; rows: PlanRow[]; state: FillState; templateId: string }) {
-  const blocking = openBlockingIssues(issues, rows, state);
+function IssuesPanel({ issues, rows, state, templateId, managerOn = false, managerAllowed = false }: { issues: FillPlanIssue[]; rows: PlanRow[]; state: FillState; templateId: string; managerOn?: boolean; managerAllowed?: boolean }) {
+  const allBlocking = openBlockingIssues(issues, rows, state);
   const warnings = warningIssues(issues);
-  const missing = missingRequired(rows, state).filter((r) => !blocking.some((i) => i.slotId === r.slotId));
-  if (!blocking.length && !warnings.length && !missing.length) return null;
+  const allMissing = missingRequired(rows, state).filter((r) => !allBlocking.some((i) => i.slotId === r.slotId));
+  // In manager mode the overridable blocks are shown as amber warnings; class C ones stay red.
+  const blocking = managerOn ? allBlocking.filter((i) => !isOverridableFillIssue(i)) : allBlocking;
+  const relaxed = managerOn ? allBlocking.filter(isOverridableFillIssue) : [];
+  const missing = managerOn ? [] : allMissing;
+  const relaxedMissing = managerOn ? allMissing : [];
+  const offerOverride = !managerOn && managerAllowed && allBlocking.every(isOverridableFillIssue) && (allBlocking.length > 0 || allMissing.length > 0);
+  if (!allBlocking.length && !warnings.length && !allMissing.length) return null;
+  const reviewLink = (i: FillPlanIssue) =>
+    i.code === 'TEMPLATE_WARNINGS_UNACKNOWLEDGED' && (
+      <>
+        {' '}
+        <Link to={`/settings/templates/${encodeURIComponent(templateId)}`}>Review the template</Link>
+      </>
+    );
   return (
     <div className="stack-sm">
       {blocking.length > 0 && (
@@ -285,12 +307,7 @@ function IssuesPanel({ issues, rows, state, templateId }: { issues: FillPlanIssu
             {blocking.map((i, n) => (
               <li key={`${i.code}-${n}`}>
                 {i.message}
-                {i.code === 'TEMPLATE_WARNINGS_UNACKNOWLEDGED' && (
-                  <>
-                    {' '}
-                    <Link to={`/settings/templates/${encodeURIComponent(templateId)}`}>Review the template</Link>
-                  </>
-                )}
+                {reviewLink(i)}
               </li>
             ))}
           </ul>
@@ -299,6 +316,25 @@ function IssuesPanel({ issues, rows, state, templateId }: { issues: FillPlanIssu
       {missing.length > 0 && (
         <div className="notice notice-danger small">
           <strong>Required:</strong> {missing.map((r) => r.label).join(', ')}
+        </div>
+      )}
+      {offerOverride && <div className="xs muted">As a manager you can still generate: Generate will ask whether to override, and the override is recorded.</div>}
+      {(relaxed.length > 0 || relaxedMissing.length > 0) && (
+        <div className="notice notice-warn small">
+          <ul style={{ margin: 0, paddingLeft: 18 }}>
+            {relaxed.map((i, n) => (
+              <li key={`${i.code}-${n}`}>
+                {MANAGER_WARNING_PREFIX}
+                {i.message}
+                {reviewLink(i)}
+              </li>
+            ))}
+            {relaxedMissing.length > 0 && (
+              <li>
+                {MANAGER_WARNING_PREFIX}left blank to complete by hand — {relaxedMissing.map((r) => r.label).join(', ')}
+              </li>
+            )}
+          </ul>
         </div>
       )}
       {warnings.length > 0 && (

@@ -1,0 +1,72 @@
+/* Settings page layout (0.3 §E15): sub-nav, collapsed lookups line, sticky Save bar. Uses the shared tokens only. */
+.settings-subnav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1) var(--s-2);
+  margin: 0 0 var(--s-4);
+  padding: 0;
+  list-style: none;
+}
+.settings-subnav a {
+  display: inline-block;
+  padding: 4px 10px;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+.settings-subnav a:hover,
+.settings-subnav a:focus-visible {
+  border-color: var(--blue);
+  color: var(--blue);
+}
+.settings-page .card {
+  scroll-margin-top: calc(var(--topbar-h) + var(--s-4));
+}
+.settings-lookups > summary {
+  cursor: pointer;
+  list-style: none;
+  padding: var(--s-3) var(--s-4);
+  font-weight: 600;
+}
+.settings-lookups > summary::-webkit-details-marker {
+  display: none;
+}
+.settings-lookups > summary::after {
+  content: ' ▸';
+  color: var(--muted);
+}
+.settings-lookups[open] > summary::after {
+  content: ' ▾';
+}
+.settings-savebar {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s-3);
+  margin-top: var(--s-4);
+  padding: var(--s-3) var(--s-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-md);
+}
+@media (max-width: 640px) {
+  .settings-savebar {
+    justify-content: space-between;
+  }
+}
+/* Updates card: the download button wraps on phones instead of widening the page. */
+.btn.update-download {
+  align-self: flex-start;
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+  height: auto;
+}

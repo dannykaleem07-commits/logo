@@ -40,6 +40,7 @@ import { reconcileSystemFigures, type ReconciledFlag } from './consistencyReconc
 import { loadBundle, recomputeClocks } from './claimView.js';
 import { assertInsideStore } from './evidence.js';
 import { supersedeDocxDocument } from './docxDocuments.js';
+import { STRICT_GATE, type OverrideGate, type OverrideTarget } from './override.js';
 import type { SlotInput } from '@ccguk/documents';
 
 export interface DocUser {
@@ -173,6 +174,8 @@ export interface CreateClaimDocumentInput {
   /** Supersession: the previous document. */
   supersedes?: GeneratedDocument;
   reExecutedOn?: ISODate;
+  /** Manager-mode override gate of the request (default strict). */
+  gate?: OverrideGate;
 }
 
 export function createClaimDocument(ctx: AppContext, input: CreateClaimDocumentInput): GeneratedDocument {
@@ -183,7 +186,7 @@ export function createClaimDocument(ctx: AppContext, input: CreateClaimDocumentI
   const role = (meta!.recipientRole as RecipientRole | undefined) ?? defaultRecipientRole(canonicalTemplateId(input.templateId));
   // A letter addressed to the client's own insurer is checked as such (the FOS is open to the client there; DISP 2.7).
   const ownInsurer = Boolean(input.recipientPartyId && bundle.claim.clientInsurerId && input.recipientPartyId === bundle.claim.clientInsurerId);
-  const assembled = assembleTemplateData(ctx, bundle, input.templateId, role, input.user, { extra: input.extra, recipientPartyId: input.recipientPartyId, ...(ownInsurer ? { recipientRole: 'own_insurer' as RecipientRole } : {}) });
+  const assembled = assembleTemplateData(ctx, bundle, input.templateId, role, input.user, { extra: input.extra, recipientPartyId: input.recipientPartyId, ...(ownInsurer ? { recipientRole: 'own_insurer' as RecipientRole } : {}), ...(input.gate ? { gate: input.gate } : {}) });
   // Keep the handler's own fields with the snapshot so a re-issue (supersede) can carry them forward unchanged.
   if (input.extra && Object.keys(input.extra).length) assembled.data._handlerExtra = input.extra;
   const now = ctx.now();
@@ -409,11 +412,25 @@ export async function renderDocumentPdf(ctx: AppContext, doc: GeneratedDocument)
   return { pdf, sha256: sha256Hex(pdf), pages, relativePath: relative, converter: 'chromium-html' };
 }
 
-export async function approveDocument(ctx: AppContext, id: Id, actor: Actor, note?: string): Promise<GeneratedDocument> {
-  const doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: true });
+/**
+ * Approve a draft (renders and stores the PDF). Uncleared block flags refuse with 409 DOCUMENT_BLOCKED through the
+ * override gate (class A, 0.3 §A.6 B18): overridden in manager mode, each open block flag is cleared through the normal
+ * flag-clearing path (audited, reason "Manager override: <reason>") and the document is then approved.
+ */
+export async function approveDocument(ctx: AppContext, id: Id, actor: Actor, note?: string, gate: OverrideGate = STRICT_GATE): Promise<GeneratedDocument> {
+  let doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: true });
   if (doc.status === 'blocked' || doc.consistency?.blocked) {
     const open = (doc.consistency?.flags ?? []).filter((f) => f.severity === 'block' && !f.clearedAt);
-    throw conflict('DOCUMENT_BLOCKED', `Document is blocked by the consistency check: ${open.map((f) => f.code).join(', ')}. Clear each flag with a reason first.`, { flags: open });
+    const target: OverrideTarget = { entity: 'documents', entityId: id };
+    if (doc.claimId) target.claimId = doc.claimId;
+    gate.refuse(conflict('DOCUMENT_BLOCKED', `Document is blocked by the consistency check: ${open.map((f) => f.code).join(', ')}. Clear each flag with a reason first.`, { flags: open }), target);
+    const reason = `Manager override: ${gate.reason}`;
+    for (let i = 0; i < 200; i += 1) {
+      const next = (doc.consistency?.flags ?? []).find((f) => f.severity === 'block' && !f.clearedAt);
+      if (!next) break;
+      clearDocumentFlag(ctx, id, { code: next.code, ...(next.excerpt !== undefined ? { excerpt: next.excerpt } : {}), reason }, actor);
+      doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: true });
+    }
   }
   if (doc.status !== 'draft') throw conflict('DOCUMENT_STATE', `Only a draft can be approved (status is ${doc.status})`);
   if (actor.userId === 'system') throw conflict('HUMAN_REQUIRED', 'A human approver is required');
@@ -531,14 +548,15 @@ export function supersedeDocument(
   input: { extra?: Record<string, unknown>; reason?: string; reExecutedOn?: ISODate; docx?: { values?: Record<string, SlotInput>; confirm?: string[] } },
   user: DocUser,
   actor: Actor,
+  gate: OverrideGate = STRICT_GATE,
 ): GeneratedDocument {
   const old = ctx.repos.requireDocument(ctx.db, id, { includeHtml: false });
   if (old.status === 'void' || old.status === 'superseded') throw conflict('DOCUMENT_STATE', `A ${old.status} document cannot be superseded`);
   if (!old.claimId) throw conflict('DOCUMENT_STATE', 'Standalone documents are re-created rather than superseded');
   // Word documents are re-generated from the template with the previous inputs, confirmations and subject (§C.6).
-  if (old.format === 'docx') return supersedeDocxDocument(ctx, old, { ...(input.docx ?? {}), ...(input.reExecutedOn ? { reExecutedOn: input.reExecutedOn } : {}) }, user, actor);
+  if (old.format === 'docx') return supersedeDocxDocument(ctx, old, { ...(input.docx ?? {}), ...(input.reExecutedOn ? { reExecutedOn: input.reExecutedOn } : {}) }, user, actor, gate);
   const extra = input.extra ?? pickExtra(old.dataSnapshot);
-  return createClaimDocument(ctx, { claimId: old.claimId, templateId: old.templateId, extra, recipientPartyId: old.recipientPartyId, user, actor, supersedes: old, reExecutedOn: input.reExecutedOn });
+  return createClaimDocument(ctx, { claimId: old.claimId, templateId: old.templateId, extra, recipientPartyId: old.recipientPartyId, user, actor, supersedes: old, reExecutedOn: input.reExecutedOn, gate });
 }
 
 /** The free-text fields a previous snapshot carried (everything not derivable is kept; derived blocks are rebuilt). */

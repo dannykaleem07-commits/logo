@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addressToLines, apiKeyPresent, buildSettingsPatch, COMPANY_DETAILS, COMPANY_NAME, confirmationOfPayeeCheck, DEFAULT_RATE_CARD, DEFAULT_REGISTERED_OFFICE, LEGAL_FOOTER, linesToAddress, lookupModeLabel, lookupModeOf, MORE_SETTINGS_LINKS, parsePct, settingsToForm, usersFrom, validateSettings, versionLabel } from './settings';
+import { API_KEYS, addressToLines, apiKeyPresent, lookupsSummary, sectionFromHash, SETTINGS_SECTIONS, showUsersCard, buildSettingsPatch, COMPANY_DETAILS, COMPANY_NAME, confirmationOfPayeeCheck, DEFAULT_RATE_CARD, DEFAULT_REGISTERED_OFFICE, LEGAL_FOOTER, linesToAddress, lookupModeLabel, lookupModeOf, MORE_SETTINGS_LINKS, parsePct, settingsToForm, usersFrom, validateSettings, versionLabel } from './settings';
 
 describe('confirmationOfPayeeCheck', () => {
   it('passes only the exact registered name', () => {
@@ -122,5 +122,38 @@ describe('company details, lookup mode and version (design doc §H.4)', () => {
     ]);
     expect(versionLabel('0.2.57')).toBe('ClaimDesk 0.2.57');
     expect(versionLabel(undefined)).toBe('ClaimDesk');
+  });
+});
+
+describe('settings page layout (0.3 §E15)', () => {
+  it('lists the sub-nav sections in the agreed order: anchors on this page, links for Templates and GTA rates', () => {
+    expect(SETTINGS_SECTIONS.map((s) => s.label)).toEqual(['Company', 'Bank', 'Rates', 'Manager mode', 'Updates', 'Templates', 'GTA rates', 'Lookups', 'Password']);
+    expect(SETTINGS_SECTIONS.filter((s) => s.to).map((s) => s.to)).toEqual(['/settings/templates', '/settings/gta-rates']);
+    expect(SETTINGS_SECTIONS.find((s) => s.label === 'Manager mode')?.id).toBe('manager-mode');
+    expect(SETTINGS_SECTIONS.find((s) => s.label === 'Updates')?.id).toBe('updates');
+  });
+  it('reads only known anchors from the URL hash', () => {
+    expect(sectionFromHash('#updates')).toBe('updates');
+    expect(sectionFromHash('#manager-mode')).toBe('manager-mode');
+    expect(sectionFromHash('lookups')).toBe('lookups');
+    expect(sectionFromHash('#nope')).toBeUndefined();
+    expect(sectionFromHash('')).toBeUndefined();
+    expect(sectionFromHash(undefined)).toBeUndefined();
+  });
+  it('collapses the API keys to one status line', () => {
+    expect(lookupsSummary({ lookupMode: 'manual', apiKeys: { dvlaVes: false, dvsaMot: false, companiesHouse: false, gateway: false } })).toBe('Lookups: manual — 0 of 5 keys set');
+    expect(lookupsSummary({ lookupMode: 'live', apiKeys: { dvlaVes: true, dvsaMot: true, companiesHouse: false, gateway: false } })).toBe('Lookups: live — 2 of 5 keys set');
+    expect(lookupsSummary(undefined)).toBe('Lookups: checking — 0 of 5 keys set');
+  });
+  it('hides the Users card when the list is empty', () => {
+    expect(showUsersCard(undefined)).toBe(false);
+    expect(showUsersCard({ users: [] })).toBe(false);
+    expect(showUsersCard({ users: [{ id: 'u1', name: 'Danny', email: 'd@example.com', role: 'admin' }] })).toBe(true);
+  });
+  it('carries no spec references in visible copy', () => {
+    const f = settingsToForm(undefined);
+    f.registeredOffice = '66 Paul Street, London EC2A 4PX';
+    expect(validateSettings(f).registeredOffice).not.toMatch(/lesson/i);
+    for (const k of API_KEYS) expect(`${k.label} ${k.unlocks} ${k.registerNote}`).not.toMatch(/BLUEPRINT|lesson/);
   });
 });

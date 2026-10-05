@@ -261,7 +261,7 @@ describe('crossFileRegistrationCheck', () => {
     expect(r.isFleetUnit).toBe(false);
     expect(r.hardStop).toBe(false);
     expect(r.severity).toBe('warn');
-    expect(r.message).toContain('AB12 CDE already appears on 2 other claims (c1, c2)');
+    expect(r.message).toContain('AB12 CDE already appears on 2 other claims (CCG-2026-c1, CCG-2026-c2)');
     // excluding the file being checked
     expect(crossFileRegistrationCheck('AB12CDE', claims, vehicles, [], { excludeClaimId: 'c1' }).duplicateClaimIds).toEqual(['c2']);
   });

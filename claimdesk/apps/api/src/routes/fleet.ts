@@ -3,10 +3,11 @@
  * penalties CRUD + stage transitions, PCN liability-transfer / s.172 response documents.
  */
 import type { FastifyInstance } from 'fastify';
-import { gtaRate, londonDate, type Address, type FleetUnit, type GtaSuggestion, type HireAgreement, type Party, type PenaltyNotice, type Vehicle, type VehicleSourceInput } from '@ccguk/domain';
+import { gtaRate, londonDate, normaliseRegistration, type Address, type FleetUnit, type GtaSuggestion, type HireAgreement, type Party, type PenaltyNotice, type Vehicle, type VehicleSourceInput } from '@ccguk/domain';
 import type { Settings } from '@ccguk/db';
 import type { AppContext } from '../context.js';
 import { badRequest, conflict, unprocessable } from '../errors.js';
+import { gateFor, NEW_ENTITY, type OverrideTarget } from '../services/override.js';
 import { parse } from '../schemas/common.js';
 import { allocateCheckBody, fleetUnitBody, fleetUnitPatchBody, penaltyBody, penaltyDocumentBody, penaltyListQuery, penaltyPatchBody, penaltyTransitionBody, policyBody } from '../schemas/services.js';
 import { gtaSuggestionFor } from '../services/catalogue.js';
@@ -16,6 +17,9 @@ import { differsFromVerified, sourceLookupRecord } from '../services/lookup.js';
 import { canAllocateFor } from '../engines.js';
 import { allowedStages, complianceAlerts, liabilityTransferParticulars, penaltyTransition, s172ResponseData, S172RefusalError } from '../services/fleetFallbacks.js';
 import { params } from './helpers.js';
+
+/** GTA group stored on a fleet unit saved in manager mode without a group (0.3 §A.6 B09). */
+export const UNGROUPED = 'UNGROUPED';
 
 /** Courtesy Cars Group UK Ltd registered office, used only when Settings has none (§H defaults set it). */
 export const CCGUK_REGISTERED_OFFICE_LINES = ['44 Syon Lane', 'Isleworth', 'London', 'TW7 5NQ'] as const;
@@ -111,7 +115,14 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
     const hire = hireId ? ctx.repos.getHire(ctx.db, hireId) : undefined;
     const now = ctx.now();
     const check = penaltyTransition(body.stage, { penalty, hire, now });
-    if (!check.ok) throw conflict('TRANSITION_REFUSED', check.reasons.join('; '), { reasons: check.reasons, allowed: check.allowed });
+    if (!check.ok) {
+      const err = conflict('TRANSITION_REFUSED', check.reasons.join('; '), { reasons: check.reasons, allowed: check.allowed });
+      // Naming the hirer or transferring liability needs the hire records (s.172, lesson l): never overridable (class C).
+      if (body.stage === 'hirer_identified' || body.stage === 'liability_transferred') throw err;
+      const target: OverrideTarget = { entity: 'penalty_notices', entityId: id };
+      if (hire?.claimId) target.claimId = hire.claimId;
+      gateFor(ctx, request).refuse(err, target);
+    }
     return ctx.db.transaction((tx) => {
       const p = ctx.repos.setPenaltyStage(tx, id, body.stage, { hireAgreementId: hire?.id, documentId: body.documentId, notes: body.note ? [penalty.notes, `${now.slice(0, 10)}: ${body.note}`].filter(Boolean).join('\n') : undefined });
       ctx.repos.appendAudit(tx, { actor: request.actor, action: 'penalty.transition', entity: 'penalty_notices', entityId: id, before: { stage: penalty.stage }, after: { stage: body.stage, hireAgreementId: hire?.id, documentId: body.documentId, note: body.note }, at: now });
@@ -144,7 +155,7 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
     let data: Record<string, unknown>;
     const particulars = liabilityTransferParticulars({ penalty, unit, vehicle, hire, hirer, keeperName: settings.companyName, keeperAddressLines });
     if (body.templateId === 'notice.pcn_liability_transfer') {
-      if (!hire || !hirer || !hireRecord) throw conflict('NO_HIRER', 'No hire agreement covers the contravention time — liability cannot be transferred without the hirer (lesson l: do not guess)');
+      if (!hire || !hirer || !hireRecord) throw conflict('NO_HIRER', 'No hire agreement covers the contravention time — liability cannot be transferred without the hirer (do not guess)');
       const licence = (x('hirerLicence') as { number?: string; countryOfIssue?: string; expiresOn?: string } | undefined) ?? {};
       data = {
         ourReference,
@@ -210,6 +221,9 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
    * suggestion (recorded group → catalogue → segment default → heuristic) and its benchmark rate, or answers 422
    * GTA_SUGGESTION_UNAVAILABLE. The vehicle details are recorded with an unverified LookupRecord (catalogue/manual/TCC).
    */
+  /** Suggestion bases good enough to record on the vehicle itself. */
+  const CONFIDENT_SUGGESTION_BASES: ReadonlySet<string> = new Set(['recorded', 'custom_override', 'catalogue_trim', 'catalogue_generation', 'catalogue_model']);
+
   app.post('/fleet', async (request, reply) => {
     const body = parse(fleetUnitBody, request.body);
     const now = ctx.now();
@@ -235,12 +249,17 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
         ...((v?.yearOfManufacture ?? known?.yearOfManufacture) !== undefined ? { yearOfManufacture: (v?.yearOfManufacture ?? known?.yearOfManufacture)! } : {}),
         date,
       });
-      gtaGroup = gtaGroup ?? suggestion.group ?? undefined;
+      // An explicit "no group yet" never takes a guessed (or previously recorded) group.
+      gtaGroup = gtaGroup ?? (body.gtaGroupUnknown ? undefined : (suggestion.group ?? undefined));
       if (dailyRatePence === undefined && gtaGroup) {
         dailyRatePence = suggestion.group === gtaGroup && suggestion.rate ? suggestion.rate.dailyRatePence : gtaRate(gtaGroup, date, gtaRatesFor(ctx))?.dailyRatePence;
       }
       if (!gtaGroup || dailyRatePence === undefined) {
-        throw unprocessable('GTA_SUGGESTION_UNAVAILABLE', 'Choose a GTA group and daily rate', { suggestion });
+        const err = unprocessable('GTA_SUGGESTION_UNAVAILABLE', 'Choose a GTA group and daily rate', { suggestion });
+        // No daily rate: the user has to type one (C-input). A typed rate with no group: manager mode saves UNGROUPED.
+        if (dailyRatePence === undefined) throw err;
+        gateFor(ctx, request).refuse(err, { entity: 'fleet_units', entityId: body.vehicle ? normaliseRegistration(body.vehicle.registration) : (body.vehicleId ?? NEW_ENTITY) });
+        gtaGroup = UNGROUPED;
       }
     }
     const group = gtaGroup;
@@ -257,7 +276,9 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
           ...fields,
           make: fields.make || existing?.make || 'UNKNOWN',
           model: fields.model || existing?.model || 'UNKNOWN',
-          gtaGroup: fields.gtaGroup ?? group,
+          // Only a group the user chose, or one that came from the vehicle's record or the catalogue, is written onto
+          // the vehicle; a low-confidence guess (segment default, heuristic) stays on the unit only.
+          gtaGroup: fields.gtaGroup ?? (group !== UNGROUPED && (body.gtaGroup !== undefined || (suggestion && CONFIDENT_SUGGESTION_BASES.has(suggestion.basis))) ? group : undefined),
           ownership: 'fleet',
           odometer: [],
           lookups: [{ ...provenance, raw, id: ctx.repos.newId() }],
@@ -266,11 +287,12 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
       }
       if (!vehicleId) throw badRequest('vehicleId or vehicle is required');
       const vehicle = ctx.repos.requireVehicle(tx, vehicleId);
-      if (ctx.repos.listClaimsForRegistration(tx, vehicle.registration).some((c) => c.clientVehicleId === vehicleId)) {
-        throw conflict('REGISTRATION_ON_CLAIM', `${vehicle.registration} is a client vehicle on an open claim — a fleet unit cannot also be a client vehicle (lessons f, h)`);
+      const onClaim = ctx.repos.listClaimsForRegistration(tx, vehicle.registration).find((c) => c.clientVehicleId === vehicleId);
+      if (onClaim) {
+        gateFor(ctx, request).refuse(conflict('REGISTRATION_ON_CLAIM', `${vehicle.registration} is a client vehicle on an open claim — a fleet unit cannot also be a client vehicle`), { claimId: onClaim.id, entity: 'vehicles', entityId: vehicleId });
       }
       if (body.policyId) ctx.repos.requirePolicy(tx, body.policyId);
-      const { vehicle: _v, gtaSuggestion: _g, ...rest } = body;
+      const { vehicle: _v, gtaSuggestion: _g, gtaGroupUnknown: _u, ...rest } = body;
       const u = ctx.repos.createFleetUnit(tx, { ...rest, gtaGroup: group, dailyRatePence: rate, vehicleId, keeperAddressCurrent: body.keeperAddressCurrent ?? true });
       if (vehicle.ownership !== 'fleet') ctx.repos.updateVehicle(tx, vehicleId, { ownership: 'fleet' });
       ctx.repos.appendAudit(tx, {
@@ -323,11 +345,25 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
   app.delete('/fleet/:id', async (request, reply) => {
     const { id } = params<{ id: string }>(request);
     const u = ctx.repos.requireFleetUnit(ctx.db, id);
-    if (ctx.repos.activeHireForFleetUnit(ctx.db, id)) throw conflict('UNIT_ON_HIRE', 'Unit is on hire — end the hire first');
+    const openHire = ctx.repos.activeHireForFleetUnit(ctx.db, id);
+    if (openHire) {
+      // Manager mode (0.3 §A.6 B10): the car is disposed, the open hire is left running and its claim is flagged.
+      gateFor(ctx, request).refuse(conflict('UNIT_ON_HIRE', 'Unit is on hire — end the hire first', { hireAgreementId: openHire.id, agreementNumber: openHire.agreementNumber }), { claimId: openHire.claimId, entity: 'fleet_units', entityId: id });
+    }
     const now = ctx.now();
     ctx.db.transaction((tx) => {
       ctx.repos.updateFleetUnit(tx, id, { status: 'disposed' });
-      ctx.repos.appendAudit(tx, { actor: request.actor, action: 'fleet_unit.dispose', entity: 'fleet_units', entityId: id, before: { status: u.status }, after: { status: 'disposed' }, at: now });
+      ctx.repos.appendAudit(tx, { actor: request.actor, action: 'fleet_unit.dispose', entity: 'fleet_units', entityId: id, before: { status: u.status }, after: { status: 'disposed', ...(openHire ? { openHireId: openHire.id, claimId: openHire.claimId } : {}) }, at: now });
+      if (openHire) {
+        const registration = ctx.repos.getVehicle(tx, u.vehicleId)?.registration ?? id;
+        ctx.repos.addClaimFlag(tx, openHire.claimId, {
+          code: 'HIRE_ON_DISPOSED_UNIT',
+          severity: 'warn',
+          message: `Fleet car ${registration} was disposed in manager mode while hire ${openHire.agreementNumber ?? openHire.id} was still open. End the hire with its real date.`,
+          raisedAt: now,
+          raisedBy: request.user.id,
+        });
+      }
     });
     return reply.status(204).send();
   });
@@ -348,7 +384,7 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
       const claim = ctx.repos.requireClaim(ctx.db, body.claimId);
       if (vehicle && claim.clientVehicleId === vehicle.id) {
         result.ok = false;
-        result.reasons.push('This fleet unit is the client vehicle on the claim (lessons f, h)');
+        result.reasons.push('This fleet unit is the client vehicle on the claim');
       }
     }
     const policy = unit.policyId ? policies.find((p) => p.id === unit.policyId) : undefined;

@@ -33,6 +33,7 @@ import {
   generateDocxBody,
 } from '../schemas/docxTemplates.js';
 import { claimTemplateValues, createDocxClaimDocument } from '../services/docxDocuments.js';
+import { gateFor } from '../services/override.js';
 import {
   converterOrderFor,
   listTemplateSummaries,
@@ -162,7 +163,7 @@ export function registerDocxTemplatesRoutes(app: FastifyInstance, ctx: AppContex
     const { id } = params<{ id: string }>(request);
     requireClaim(ctx, id);
     const body = parse(generateDocxBody, request.body);
-    const doc = await createDocxClaimDocument(ctx, { claimId: id, body, user: request.user, actor: request.actor });
+    const doc = await createDocxClaimDocument(ctx, { claimId: id, body, user: request.user, actor: request.actor, gate: gateFor(ctx, request) });
     return reply.status(201).send(doc);
   });
 

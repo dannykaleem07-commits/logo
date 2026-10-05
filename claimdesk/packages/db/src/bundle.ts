@@ -1,4 +1,4 @@
-import type { ClaimBundle, Id, Party } from '@ccguk/domain';
+import { liveEvents, type ClaimBundle, type Id, type Party } from '@ccguk/domain';
 import type { Db } from './client.js';
 import { requireClaim } from './repos/claims.js';
 import { listClocks } from './repos/clocks.js';
@@ -19,6 +19,8 @@ export interface LoadClaimBundleOptions {
   includeHtml?: boolean;
   /** Include superseded ledger entries. Default false. */
   includeSupersededLedger?: boolean;
+  /** Include events replaced by a correcting event (`data.correctsEventId`). Default false — engines read live events. */
+  includeSupersededEvents?: boolean;
 }
 
 /**
@@ -44,7 +46,7 @@ export function loadClaimBundle(db: Db, claimId: Id, options: LoadClaimBundleOpt
     claimant,
     vehicle,
     thirdParties,
-    events: listEvents(db, claimId),
+    events: options.includeSupersededEvents ? listEvents(db, claimId) : liveEvents(listEvents(db, claimId)),
     ledger: listLedger(db, claimId, { includeSuperseded: options.includeSupersededLedger ?? false }),
     offers: listOffers(db, claimId),
     hire: listHire(db, claimId),

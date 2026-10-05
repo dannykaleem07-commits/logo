@@ -14,6 +14,7 @@ import { ApiErrorNotice } from '../../../../components/ApiErrorNotice';
 import { useToast } from '../../../../components/Toast';
 import type { ClaimView } from '../../claimFile';
 import { EvidencePicker } from '../../components/EvidencePicker';
+import { useManagerMode } from '../../../../app/managerMode';
 import { reportBodyFrom, reportChecklist, reportFormFrom, SALVAGE_OPTIONS, unwrapReport, type ReportForm } from '../../lib/engineering';
 
 /** Engineer's report (BLUEPRINT §4.6): every field, the forCourt toggle (CPR 35 / PD 35) and the API checklist of missing items. */
@@ -27,6 +28,7 @@ export function EngineerReportForm({ view }: { view: ClaimView }) {
   const [dirty, setDirty] = useState(false);
   const save = useSaveEngineerReport(claimId);
   const issue = useIssueEngineerReport(claimId);
+  const managerOn = useManagerMode().on;
   const engineers = useParties({ role: 'engineer', limit: 100 });
   const navigate = useNavigate();
   const toast = useToast();
@@ -70,14 +72,15 @@ export function EngineerReportForm({ view }: { view: ClaimView }) {
   const generate = () => {
     if (!report) return;
     issue.mutate(
-      { reportId: report.id },
+      // In manager mode an incomplete checklist is overridden (audited as CHECKLIST_INCOMPLETE; the event records forced: true).
+      issueAnyway ? { reportId: report.id, force: true } : { reportId: report.id },
       {
         onSuccess: (res) => {
           if (res.document?.id) {
             toast.success('Report issued and drafted — review the consistency report before approval');
             navigate(`/claims/${claimId}/documents/${res.document.id}`);
           } else {
-            toast.warn(`Report issued. ${res.documentNote ?? 'Draft the report.engineer document from the Documents tab.'}`);
+            toast.warn(`Report issued. ${res.documentNote ?? 'Draft the engineer’s report document from the Documents tab.'}`);
           }
         }
       }
@@ -86,7 +89,10 @@ export function EngineerReportForm({ view }: { view: ClaimView }) {
 
   const engineerOptions = (engineers.data ?? []).map((p) => ({ value: p.id, label: p.name }));
   if (form.engineerPartyId && !engineerOptions.some((o) => o.value === form.engineerPartyId)) engineerOptions.push({ value: form.engineerPartyId, label: form.engineerPartyId });
-  const canGenerate = Boolean(report) && !dirty && (checklist?.ok ?? false);
+  const checklistOk = checklist?.ok ?? false;
+  // A saved, unedited report is still required in manager mode; only the incomplete checklist is overridden.
+  const issueAnyway = managerOn && Boolean(report) && !report?.issuedAt && !dirty && Boolean(checklist) && !checklistOk;
+  const canGenerate = Boolean(report) && !dirty && (checklistOk || issueAnyway);
 
   return (
     <div className="stack">
@@ -149,10 +155,11 @@ export function EngineerReportForm({ view }: { view: ClaimView }) {
               {smallClaims && <span className="muted"> Small claims track: expert fees are capped at {formatGBP(SMALL_CLAIMS_EXPERT_FEE_CAP_PENCE)} per expert (PD 27A para 7.3(2)); permission is needed for expert evidence (CPR 27.5).</span>}
             </div>
             <div className="row">
-              <Button variant="primary" onClick={generate} disabled={!canGenerate || Boolean(report?.issuedAt)} loading={issue.isPending} title={!report ? 'Save the report first' : report.issuedAt ? 'Already issued' : dirty ? 'Save your edits first' : !checklist?.ok ? 'Complete the missing items first' : undefined}>
-                Generate report.engineer
+              <Button variant="primary" onClick={generate} disabled={!canGenerate || Boolean(report?.issuedAt)} loading={issue.isPending} title={!report ? 'Save the report first' : report.issuedAt ? 'Already issued' : dirty ? 'Save your edits first' : issueAnyway ? 'Manager mode: issue with the checklist incomplete (recorded in the audit log)' : !checklistOk ? 'Complete the missing items first' : undefined}>
+                {report?.issuedAt ? 'Report issued' : issueAnyway ? 'Issue anyway' : 'Generate the engineer’s report'}
               </Button>
-              {!canGenerate && <span className="xs muted">{!report ? 'Save the report first.' : dirty ? 'Unsaved edits.' : !checklist?.ok ? 'Blocked until the checklist is complete.' : ''}</span>}
+              {!canGenerate && <span className="xs muted">{!report ? 'Save the report first.' : dirty ? 'Unsaved edits.' : !checklistOk ? 'Blocked until the checklist is complete.' : ''}</span>}
+              {issueAnyway && <span className="xs" style={{ color: 'var(--amber)' }}>Checklist incomplete — allowed in manager mode.</span>}
             </div>
             <ApiErrorNotice error={issue.error} what="issue the report" />
           </div>
@@ -169,7 +176,7 @@ export function EngineerReportForm({ view }: { view: ClaimView }) {
       >
         <Card title="Instructions and engineer">
           <div className="form-grid">
-            <Select label="Engineer" required value={form.engineerPartyId} onChange={(v) => set('engineerPartyId', v)} options={engineerOptions} placeholder={engineers.isLoading ? 'Loading…' : 'Choose the engineer party'} error={errors.engineerPartyId} hint="Parties with the engineer role; independent IAEA-qualified engineers preferred (supplier risk, lesson k)" />
+            <Select label="Engineer" required value={form.engineerPartyId} onChange={(v) => set('engineerPartyId', v)} options={engineerOptions} placeholder={engineers.isLoading ? 'Loading…' : 'Choose the engineer party'} error={errors.engineerPartyId} hint="Parties with the engineer role; independent IAEA-qualified engineers preferred" />
             <TextInput label="Qualifications (IAEA / IMI)" required value={form.engineerQualifications} onChange={(v) => set('engineerQualifications', v)} error={errors.engineerQualifications} />
             <TextInput label="Instructed by" required value={form.instructedBy} onChange={(v) => set('instructedBy', v)} error={errors.instructedBy} />
             <DateTimeInput label="Instructed at" required value={form.instructedAt} onChange={(v) => set('instructedAt', v)} error={errors.instructedAt} />

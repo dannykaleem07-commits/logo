@@ -17,7 +17,12 @@ import {
   toVehicleRef,
   vehicleSource,
   firstInvalidStep,
+  firstBlockingStep,
+  fnolHardKeys,
+  handlerOptions,
   initialFnolState,
+  relaxedFnolErrors,
+  relaxedStepErrors,
   SCRIPT_GUARD_NOTE,
   SCRIPT_GUARD_QUESTION,
   STEPS,
@@ -58,6 +63,78 @@ function completeState(): FnolState {
   s.services = { hire: true, recovery: true, storage: false, engineer: true, notes: '' };
   return s;
 }
+
+describe('manager mode (0.3 §A.6 B13, B16, B17)', () => {
+  function onlyHardFields(): FnolState {
+    const s = initialFnolState();
+    s.claimant.name = 'Jane Smith';
+    s.vehicle.registration = 'AB12 CDE';
+    s.accident.occurredAt = '2026-10-03T17:30:00.000Z';
+    s.accident.location = 'A40 Westway';
+    s.accident.circumstances = 'Hit from behind.';
+    return s;
+  }
+  it('the five hard keys: claimant name, registration, date-time, location, account (only when missing)', () => {
+    expect(fnolHardKeys(initialFnolState()).sort()).toEqual(['accident.circumstances', 'accident.location', 'accident.occurredAt', 'claimant.name', 'vehicle.registration']);
+    // present but imperfect values are not hard: a non-UK plate, a short account
+    const s = onlyHardFields();
+    s.vehicle.registration = 'ABCDEFGH';
+    expect(fnolHardKeys(s).sort()).toEqual(['accident.location', 'claimant.name']);
+  });
+  it('relaxes every other error into a warning, and keeps errors as they were when off', () => {
+    const s = initialFnolState();
+    const off = relaxedStepErrors(2, s, false, now);
+    expect(Object.keys(off.errors)).toEqual(expect.arrayContaining(['claimant.name', 'claimant.contact']));
+    expect(off.warnings).toEqual({});
+    const on = relaxedStepErrors(2, s, true, now);
+    expect(Object.keys(on.errors)).toEqual(['claimant.name']);
+    expect(Object.keys(on.warnings)).toEqual(['claimant.contact']);
+    expect(relaxedStepErrors(1, s, true, now)).toEqual({ errors: {}, warnings: { disclosure: expect.any(String) } });
+  });
+  it('a claim with only the five hard fields can be opened in manager mode', () => {
+    const s = onlyHardFields();
+    expect(firstBlockingStep(s, false, now)).toBe(1);
+    expect(firstBlockingStep(s, true, now)).toBeNull();
+    const { errors, warnings } = relaxedFnolErrors(s, true, now);
+    expect(errors).toEqual({});
+    expect(Object.keys(warnings)).toEqual(expect.arrayContaining(['disclosure', 'claimant.contact', 'vehicle.lookup', 'accident.takenCold', 'accident.injuries', 'accident.circumstances', 'offer.offered']));
+    expect(firstBlockingStep(initialFnolState(), true, now)).toBe(2);
+    const missingAccount = onlyHardFields();
+    missingAccount.accident.circumstances = '  ';
+    expect(firstBlockingStep(missingAccount, true, now)).toBe(4);
+  });
+  it('the fleet-registration hard stop and a non-UK plate become warnings', () => {
+    const s = completeState();
+    s.vehicle.lookup = { status: 'ok', registration: 'AB12CDE', vehicle: { registration: 'AB12CDE' }, fleetUnit: { id: 'fleet-7', registration: 'AB12CDE' } };
+    expect(relaxedStepErrors(3, s, false, now).errors['vehicle.fleet']).toMatch(/hard stop/);
+    expect(relaxedStepErrors(3, s, true, now)).toEqual({ errors: {}, warnings: { 'vehicle.fleet': expect.stringMatching(/hard stop/) } });
+    const plate = completeState();
+    plate.vehicle = { ...plate.vehicle, registration: 'ABCDEFGH', lookup: null, lookupState: 'idle' };
+    expect(relaxedStepErrors(3, plate, true, now)).toEqual({ errors: {}, warnings: { 'vehicle.registration': expect.stringMatching(/UK registration/) } });
+  });
+  it('an unacknowledged disclosure is sent as not acknowledged (never stamped as read)', () => {
+    const s = onlyHardFields();
+    const body = buildCreateClaimBody(s, { now: now.toISOString() });
+    expect(body.callRecordingDisclosed).toBe(false);
+    expect(body.disclosure).toEqual({ acknowledged: false });
+  });
+});
+
+describe('handlerOptions (0.3 §E7)', () => {
+  const users = [
+    { id: 'u2', name: 'Zara Patel' },
+    { id: 'u1', name: 'Courtesy Cars' },
+    { id: 'u3', name: 'Adam Jones' }
+  ];
+  it('puts the signed-in user first, then everyone by name', () => {
+    expect(handlerOptions(users, { id: 'u1', name: 'Courtesy Cars' }).map((o) => o.label)).toEqual(['Courtesy Cars (you)', 'Adam Jones', 'Zara Patel']);
+    expect(handlerOptions(users, { id: 'u1', name: 'Courtesy Cars' })[0]).toEqual({ value: 'u1', label: 'Courtesy Cars (you)', name: 'Courtesy Cars' });
+  });
+  it('works before /users loads and keeps an unknown current value', () => {
+    expect(handlerOptions([], { id: 'u1', name: 'Courtesy Cars' })).toEqual([{ value: 'u1', label: 'Courtesy Cars (you)', name: 'Courtesy Cars' }]);
+    expect(handlerOptions(users, null, 'DK').map((o) => o.value)).toEqual(['u3', 'u1', 'u2', 'DK']);
+  });
+});
 
 describe('validateStep', () => {
   it('step 1 requires the disclosure acknowledgement', () => {
@@ -123,21 +200,26 @@ describe('validateStep', () => {
     expect(body.thirdParty).toEqual({ registrationUnknown: true });
     expect(body.thirdPartyVehicle).toBeUndefined();
   });
-  it('step 5 requires the script-guard answer and the what/who/when of an offer', () => {
+  it('step 4 closes with the script-guard answer and the what/who/when of an offer (same keys as before)', () => {
     const s = completeState();
     s.offer.offered = undefined;
-    expect(validateStep(5, s, now)).toHaveProperty('offer.offered');
+    expect(validateStep(4, s, now)).toHaveProperty('offer.offered');
     s.offer.offered = true;
-    expect(Object.keys(validateStep(5, s, now))).toEqual(expect.arrayContaining(['offer.offerorName', 'offer.receivedAt', 'offer.what']));
+    expect(Object.keys(validateStep(4, s, now))).toEqual(expect.arrayContaining(['offer.offerorName', 'offer.receivedAt', 'offer.what']));
     s.offer.offerorName = 'esure';
     s.offer.receivedAt = '2026-10-04T09:00:00.000Z';
     s.offer.vehicleClassOffered = 'small hatchback';
-    expect(validateStep(5, s, now)).toEqual({});
+    expect(validateStep(4, s, now)).toEqual({});
+    expect(validateStep(5, s, now)).toEqual({}); // services & review has no checks of its own
   });
-  it('firstInvalidStep walks the steps in order', () => {
+  it('firstInvalidStep walks the five steps in order', () => {
     expect(firstInvalidStep(initialFnolState(), now)).toBe(1);
     expect(firstInvalidStep(completeState(), now)).toBeNull();
-    expect(STEPS.map((s) => s.n)).toEqual([1, 2, 3, 4, 5, 6]);
+    expect(STEPS.map((s) => s.n)).toEqual([1, 2, 3, 4, 5]);
+    expect(STEPS.map((s) => s.label)).toEqual(['Disclosure', 'Claimant & driver', 'Vehicle', 'Accident & offers', 'Services & review']);
+    const s = completeState();
+    s.offer.offered = undefined;
+    expect(firstInvalidStep(s, now)).toBe(4);
   });
 });
 

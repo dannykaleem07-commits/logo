@@ -421,6 +421,11 @@
 @media (max-width: 480px) {
   .topbar-search {
     height: 34px;
+    /* the icon and padding gave the word "Search" no room (it showed as "Se"); the box itself says what it is */
+    padding: 0 8px;
+  }
+  .topbar-search svg {
+    display: none;
   }
   .topbar-badge {
     padding: 4px 6px;

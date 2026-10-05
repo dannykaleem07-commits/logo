@@ -19,7 +19,7 @@
 import { randomUUID } from 'node:crypto';
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
-import { canonicalTemplateId, TEMPLATE_CLOCKS, type ClaimBundle, type ConsistencyCode, type ConsistencyFlag, type ConsistencyReport, type GeneratedDocument, type ISODateTime } from '@ccguk/domain';
+import { canonicalTemplateId, OVERRIDABLE_TEMPLATE_GUARDS, TEMPLATE_CLOCKS, type ClaimBundle, type ConsistencyCode, type ConsistencyFlag, type ConsistencyReport, type GeneratedDocument, type ISODateTime } from '@ccguk/domain';
 import { buildFillPlan, docxToPreviewHtml, fillDocx, formatDateLong, SCANNER_VERSION, sha256Hex, type DocxScan, type FillPlan, type PlanRow, type SlotInput, type TemplateMapping, type VerificationStatus } from '@ccguk/documents';
 import type { Actor, DocumentTemplateRow } from '@ccguk/db';
 import type { AppContext } from '../context.js';
@@ -30,6 +30,7 @@ import { claimHeader, defaultRecipientRole, type RecipientRole } from './documen
 import { runConsistency, type DocUser } from './documents.js';
 import { effectiveMapping, scanCached, templateBytes, templateSummary, warningsAcknowledged, type DocxTemplateSummary } from './docxTemplates.js';
 import { buildMergeSource, type MergeSubject } from './mergeSource.js';
+import { STRICT_GATE, type OverrideGate, type OverrideTarget } from './override.js';
 
 export type { GenerateDocxBody };
 
@@ -216,6 +217,28 @@ export interface CreateDocxDocumentInput {
   reExecutedOn?: string;
   /** Re-generation: slot id → the value shown when it was confirmed (a changed figure needs confirming again). */
   confirmedDisplay?: Record<string, string>;
+  /** Manager-mode override gate of the request (default strict: jobs and system callers never override). */
+  gate?: OverrideGate;
+}
+
+const OVERRIDABLE_GUARDS: ReadonlySet<string> = new Set(OVERRIDABLE_TEMPLATE_GUARDS);
+/** Plan block codes that are never overridden (0.3 §A.6 B21): typing into a signature box is forging; a bad variant is a bug. */
+const HARD_PLAN_BLOCKS: ReadonlySet<string> = new Set(['SLOT_NOT_FILLABLE', 'UNKNOWN_VARIANT']);
+
+/**
+ * Plan blocks through the override gate. SLOT_NOT_FILLABLE / UNKNOWN_VARIANT, or any guard outside
+ * OVERRIDABLE_TEMPLATE_GUARDS (e.g. BANK_DETAILS_PLACEHOLDER), throw as before. Otherwise VALUES_REQUIRED (class B) and
+ * GUARD_BLOCKED (class A) are refused through the gate; when overridden the blocks are returned so they can be kept on
+ * the document as warn flags (missing slots are simply left blank for hand completion).
+ */
+function refusePlanBlocks(blocks: FillPlan['issues'], gate: OverrideGate, target: OverrideTarget): FillPlan['issues'] {
+  if (!blocks.length) return [];
+  const values = blocks.filter((b) => b.code === 'VALUES_REQUIRED');
+  const guards = blocks.filter((b) => b.code !== 'VALUES_REQUIRED');
+  if (blocks.some((b) => HARD_PLAN_BLOCKS.has(b.code)) || guards.some((b) => !OVERRIDABLE_GUARDS.has(b.code))) throw planError(blocks);
+  if (values.length) gate.refuse(planError(values), target);
+  if (guards.length) gate.refuse(planError(guards), target);
+  return blocks;
 }
 
 const norm = (s: string | undefined): string =>
@@ -275,8 +298,10 @@ export function createDocxClaimDocumentSync(ctx: AppContext, input: CreateDocxDo
   ctx.repos.requireClaim(ctx.db, claimId);
   // 1. Template, acknowledgement, bytes
   const p = prepare(ctx, body.templateId);
+  const gate = input.gate ?? STRICT_GATE;
+  const target: OverrideTarget = { claimId, entity: 'document_templates', entityId: p.row.id };
   if (!warningsAcknowledged(p.row)) {
-    throw conflict('TEMPLATE_WARNINGS_UNACKNOWLEDGED', `The wording warnings on "${p.row.title}" have not been reviewed. Confirm "I have reviewed this wording" on the template first.`, { templateId: p.row.id, warnings: p.row.warnings });
+    gate.refuse(conflict('TEMPLATE_WARNINGS_UNACKNOWLEDGED', `The wording warnings on "${p.row.title}" have not been reviewed. Confirm "I have reviewed this wording" on the template first.`, { templateId: p.row.id, warnings: p.row.warnings }), target);
   }
   if (!p.shaOk) throw conflict('TEMPLATE_CHANGED', `The file behind "${p.row.title}" no longer matches the recorded sha256`, { templateId: p.row.id, recordedSha256: p.row.sha256, computedSha256: p.computedSha256 });
   // 2. Mapping
@@ -290,8 +315,7 @@ export function createDocxClaimDocumentSync(ctx: AppContext, input: CreateDocxDo
   const inputs = body.values ?? {};
   const confirm = body.confirm ?? [];
   const plan = buildFillPlan(p.scan, p.mapping, source, { values: inputs, confirm, ...(input.confirmedDisplay ? { confirmedDisplay: input.confirmedDisplay } : {}), ...(body.variant ? { variant: body.variant } : {}) });
-  const blocks = plan.issues.filter((i) => i.severity === 'block');
-  if (blocks.length) throw planError(blocks);
+  const overriddenBlocks = refusePlanBlocks(plan.issues.filter((i) => i.severity === 'block'), gate, target);
   // 5. Fill
   const now = ctx.now();
   const nowDate = new Date(now);
@@ -313,9 +337,11 @@ export function createDocxClaimDocumentSync(ctx: AppContext, input: CreateDocxDo
   const baseline = runConsistency(ctx, docxToPreviewHtml(p.bytes, meta), bundle, p.canonicalId, role, now);
   const ack = { ...(p.row.warningsAcknowledgedAt ? { at: p.row.warningsAcknowledgedAt } : {}), ...(p.row.warningsAcknowledgedBy ? { by: p.row.warningsAcknowledgedBy } : {}) };
   const { report: suppressedReport, suppressed } = suppressBaseline(checked, baseline, ack, now);
-  const planFlags: ConsistencyFlag[] = plan.issues
-    .filter((i) => i.severity === 'warn')
-    .map((i) => ({ code: i.code as ConsistencyCode, severity: 'warn' as const, message: i.message, ...(i.slotId ? { excerpt: i.slotId } : {}) }));
+  const planFlags: ConsistencyFlag[] = [
+    ...plan.issues.filter((i) => i.severity === 'warn').map((i) => ({ code: i.code as ConsistencyCode, severity: 'warn' as const, message: i.message, ...(i.slotId ? { excerpt: i.slotId } : {}) })),
+    // Overridden in manager mode: kept on the document as warnings so the gaps stay visible until completed by hand.
+    ...overriddenBlocks.map((i) => ({ code: i.code as ConsistencyCode, severity: 'warn' as const, message: `${i.message} (overridden in manager mode${i.code === 'VALUES_REQUIRED' ? ': left blank to complete by hand' : ''})`, ...(i.slotId ? { excerpt: i.slotId } : {}) })),
+  ];
   const report: ConsistencyReport = { ...suppressedReport, flags: [...suppressedReport.flags, ...planFlags] };
   report.blocked = report.flags.some((f) => f.severity === 'block' && !f.clearedAt);
   // 7. Store the .docx and record the draft
@@ -407,7 +433,7 @@ export async function createDocxClaimDocument(ctx: AppContext, input: CreateDocx
 }
 
 /** Supersede a DOCX document: the previous inputs/confirmations/subject, with any new values on top (§C.6). */
-export function supersedeDocxDocument(ctx: AppContext, old: GeneratedDocument, extra: { values?: Record<string, SlotInput>; confirm?: string[]; reExecutedOn?: string }, user: DocUser, actor: Actor): GeneratedDocument {
+export function supersedeDocxDocument(ctx: AppContext, old: GeneratedDocument, extra: { values?: Record<string, SlotInput>; confirm?: string[]; reExecutedOn?: string }, user: DocUser, actor: Actor, gate: OverrideGate = STRICT_GATE): GeneratedDocument {
   if (!old.claimId) throw conflict('DOCUMENT_STATE', 'Standalone documents are re-created rather than superseded');
   const prev = (old.dataSnapshot?._docx ?? undefined) as DocxSnapshot | undefined;
   if (!prev) throw conflict('DOCUMENT_STATE', `Document ${old.id} has no DOCX generation record and cannot be re-generated`);
@@ -427,5 +453,5 @@ export function supersedeDocxDocument(ctx: AppContext, old: GeneratedDocument, e
     const shown = prev.values?.find((v) => v.slotId === slotId)?.display;
     if (shown !== undefined) confirmedDisplay[slotId] = shown;
   }
-  return createDocxClaimDocumentSync(ctx, { claimId: old.claimId, body, user, actor, supersedes: old, confirmedDisplay, ...(extra.reExecutedOn ? { reExecutedOn: extra.reExecutedOn } : {}) });
+  return createDocxClaimDocumentSync(ctx, { claimId: old.claimId, body, user, actor, supersedes: old, confirmedDisplay, gate, ...(extra.reExecutedOn ? { reExecutedOn: extra.reExecutedOn } : {}) });
 }

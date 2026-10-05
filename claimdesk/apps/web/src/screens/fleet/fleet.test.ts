@@ -20,6 +20,12 @@ import {
   unitToForm,
   validatePenaltyForm,
   validateUnitForm,
+  penaltyFieldMessage,
+  relaxPenaltyErrors,
+  relaxUnitErrors,
+  hasErrors,
+  UNIT_HARD_KEYS,
+  unitAddedText,
   type FleetUnitView
 } from './fleet';
 
@@ -80,7 +86,9 @@ describe('alerts', () => {
 describe('unit form', () => {
   it('validates the essentials and the Collingwood two-uses rule', () => {
     const f = emptyUnitForm();
-    const e = validateUnitForm(f, true);
+    // credit hire is ticked by default (0.3 §A.6 B11)
+    expect(f.declaredUses).toEqual(['credit_hire']);
+    const e = validateUnitForm({ ...f, declaredUses: [] }, true);
     expect(Object.keys(e)).toEqual(expect.arrayContaining(['registration', 'gtaGroup', 'declaredUses', 'dailyRatePence']));
     f.vehicle.registration = 'LK19 XYZ';
     f.gta = { ...f.gta, group: 'S1', groupDirty: true };
@@ -94,7 +102,7 @@ describe('unit form', () => {
     f.keeperPostcode = 'n1 1aa';
     expect(validateUnitForm(f, true)).toEqual({});
     f.gta = { ...f.gta, group: 'nonsense group' };
-    expect(validateUnitForm(f, true)).toHaveProperty('gtaGroup');
+    expect(validateUnitForm(f, true)).toHaveProperty('gtaGroupFormat');
     f.gta = { ...f.gta, group: 'S1' };
     f.vehicle = { ...f.vehicle, vin: 'WF0SHORT' };
     expect(validateUnitForm(f, true)).toEqual({ vehicle: { vin: expect.stringMatching(/17 characters/) } });
@@ -146,6 +154,16 @@ describe('unit form', () => {
     const own = buildUnitBody({ ...f, gta: editRate(f.gta, 5900) });
     expect(own.dailyRatePence).toBe(5900);
     expect(own.gtaGroup).toBe('M1');
+    expect(own.gtaGroupUnknown).toBeUndefined();
+    // "no group yet" is sent explicitly so the server never takes a guessed group
+    const none = buildUnitBody({ ...f, gta: { ...editRate(f.gta, 4500), group: '' } });
+    expect(none.gtaGroup).toBeUndefined();
+    expect(none.gtaGroupUnknown).toBe(true);
+  });
+  it('the "unit added" toast follows what the server saved', () => {
+    expect(unitAddedText({ gtaGroup: 'UNGROUPED' }, '')).toMatch(/saved as UNGROUPED/);
+    expect(unitAddedText({ gtaGroup: 'S2' }, '')).toBe('Unit added to the fleet register (GTA group S2 suggested — check it)');
+    expect(unitAddedText({ gtaGroup: 'M1' }, 'M1')).toBe('Unit added to the fleet register');
   });
   it('round-trips a unit row into the form; its group and rate are the user\'s own (not overwritten by a suggestion)', () => {
     const unit: FleetUnitView = {
@@ -222,10 +240,12 @@ describe('penalty form', () => {
     f.responseDeadline = '2026-10-22';
     expect(validatePenaltyForm(f, now)).toEqual({});
     f.receivedAt = '2026-09-19T10:00:00.000Z';
-    expect(validatePenaltyForm(f, now)).toHaveProperty('receivedAt');
+    expect(validatePenaltyForm(f, now)).toHaveProperty('receivedBeforeContravention');
+    expect(penaltyFieldMessage(validatePenaltyForm(f, now), 'receivedAt')).toMatch(/before the contravention/);
     f.receivedAt = '2026-09-25T10:00:00.000Z';
     f.discountDeadline = '2026-11-01';
-    expect(validatePenaltyForm(f, now)).toHaveProperty('discountDeadline');
+    expect(validatePenaltyForm(f, now)).toHaveProperty('discountAfterResponse');
+    expect(penaltyFieldMessage(validatePenaltyForm(f, now), 'discountDeadline')).toMatch(/after the response deadline/);
   });
   it('builds the body with pence and optional fields dropped', () => {
     const f = { ...emptyPenaltyForm('u1'), kind: 'pcn_council' as const, issuer: ' LB Camden ', noticeNumber: 'CU123', contraventionAt: '2026-09-20T08:00:00.000Z', receivedAt: '2026-09-25T10:00:00.000Z', amountPence: 13000, responseDeadline: '2026-10-22' };
@@ -242,5 +262,78 @@ describe('penalty form', () => {
       hireAgreementId: undefined,
       notes: undefined
     });
+  });
+});
+
+describe('manager mode relaxations (0.3 §A.6 B09, B11, B12, B31)', () => {
+  const now = new Date('2026-10-04T12:00:00Z');
+  const complete = (): UnitForm => {
+    const f = emptyUnitForm();
+    f.vehicle.registration = 'LK19 XYZ';
+    f.gta = { ...f.gta, group: 'S1', groupDirty: true, ratePence: 4980, rateDirty: true };
+    return f;
+  };
+
+  it('unit form: the hard keys are registration (empty), group shape, daily rate and declared use', () => {
+    expect([...UNIT_HARD_KEYS].sort()).toEqual(['dailyRatePence', 'declaredUses', 'gtaGroupFormat', 'registration']);
+    const f = { ...emptyUnitForm(), declaredUses: [] };
+    const r = relaxUnitErrors(validateUnitForm(f, true), true);
+    expect(Object.keys(r.errors).sort()).toEqual(['dailyRatePence', 'declaredUses', 'registration']);
+    // no group → only a warning in manager mode (saved as UNGROUPED)
+    expect(Object.keys(r.warnings)).toEqual(['gtaGroup']);
+    const off = relaxUnitErrors(validateUnitForm(f, true), false);
+    expect(off.warnings).toEqual({});
+    expect(off.errors).toHaveProperty('gtaGroup');
+  });
+
+  it('unit form: postcode format, postcode with an address, credit hire + self-drive without a policy and a non-UK plate become warnings', () => {
+    const f = { ...complete(), declaredUses: ['credit_hire', 'self_drive'] as UnitForm['declaredUses'], keeperLine1: '1 Depot Road', keeperPostcode: '' };
+    f.vehicle = { ...f.vehicle, registration: 'DE 123 4567' }; // 'B 123 XYZ' (§I.3) is a valid UK prefix plate
+    const e = validateUnitForm(f, true);
+    expect(Object.keys(e).sort()).toEqual(['keeperPostcode', 'policyId', 'registrationFormat']);
+    const on = relaxUnitErrors(e, true);
+    expect(hasErrors(on.errors)).toBe(false);
+    expect(Object.keys(on.warnings).sort()).toEqual(['keeperPostcode', 'policyId', 'registrationFormat']);
+    expect(hasErrors(relaxUnitErrors(e, false).errors)).toBe(true);
+    const bad = validateUnitForm({ ...f, keeperPostcode: 'NOT A CODE' }, true);
+    expect(bad.keeperPostcode).toBe('Enter a UK postcode');
+    expect(relaxUnitErrors(bad, true).warnings.keeperPostcode).toBe('Enter a UK postcode');
+  });
+
+  it('unit form: a missing or zero daily rate and an empty registration still block in manager mode', () => {
+    const f = complete();
+    f.gta = { ...f.gta, ratePence: 0 };
+    expect(relaxUnitErrors(validateUnitForm(f, true), true).errors).toHaveProperty('dailyRatePence');
+    f.gta = { ...f.gta, ratePence: 4980 };
+    f.vehicle = { ...f.vehicle, registration: '  ' };
+    expect(relaxUnitErrors(validateUnitForm(f, true), true).errors).toHaveProperty('registration');
+    // picker format checks (VIN) are never relaxed
+    const g = complete();
+    g.vehicle = { ...g.vehicle, vin: 'SHORT' };
+    expect(relaxUnitErrors(validateUnitForm(g, true), true).errors.vehicle).toHaveProperty('vin');
+  });
+
+  it('unit body without a group sends no gtaGroup (the server stores UNGROUPED with the rate)', () => {
+    const f = complete();
+    f.gta = { ...f.gta, group: '' };
+    const body = buildUnitBody(f);
+    expect(body).not.toHaveProperty('gtaGroup');
+    expect(body.dailyRatePence).toBe(4980);
+  });
+
+  it('penalty form: only the date-order checks relax; required fields and the amount stay hard', () => {
+    const f = { ...emptyPenaltyForm('u1'), kind: 'pcn_council' as const, issuer: 'LB Camden', noticeNumber: 'CU1', amountPence: 13000 };
+    f.contraventionAt = '2026-10-10T08:00:00.000Z'; // in the future
+    f.receivedAt = '2026-10-09T08:00:00.000Z'; // before the contravention
+    f.responseDeadline = '2026-10-01'; // before it was received
+    f.discountDeadline = '2026-10-05'; // after the response deadline
+    const e = validatePenaltyForm(f, now);
+    expect(Object.keys(e).sort()).toEqual(['contraventionInFuture', 'discountAfterResponse', 'receivedBeforeContravention', 'responseBeforeReceived']);
+    const on = relaxPenaltyErrors(e, true);
+    expect(on.errors).toEqual({});
+    expect(Object.keys(on.warnings).sort()).toEqual(Object.keys(e).sort());
+    expect(relaxPenaltyErrors(e, false).errors).toEqual(e);
+    const missing = relaxPenaltyErrors(validatePenaltyForm({ ...f, issuer: '', amountPence: null, contraventionAt: '' }, now), true);
+    expect(Object.keys(missing.errors).sort()).toEqual(['amountPence', 'contraventionAt', 'issuer']);
   });
 });

@@ -50,6 +50,8 @@ ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
 WizardStyle=modern
+; Show the welcome page (Inno 6 hides it by default): it carries the "updates in place, data kept" text (0.3 §F.2.3).
+DisableWelcomePage=no
 SetupIconFile=..\icon.ico
 UninstallDisplayIcon={app}\{#AppExe}
 UninstallDisplayName={#AppName}
@@ -96,6 +98,76 @@ Type: filesandordirs; Name: "{app}\app"
 Type: dirifempty; Name: "{app}"
 
 [Code]
+const
+  UninstallKey = 'Software\Microsoft\Windows\CurrentVersion\Uninstall\{322DAE75-FC0F-4786-B2BB-62E4A6A3D59B}_is1';
+
+// Next numeric part of a dotted version ('0.3.12' → 0, then 3, then 12); a missing or non-numeric part counts as 0.
+function NextVersionPart(var S: String): Integer;
+var
+  P: Integer;
+  Part: String;
+begin
+  P := Pos('.', S);
+  if P > 0 then
+  begin
+    Part := Copy(S, 1, P - 1);
+    Delete(S, 1, P);
+  end
+  else
+  begin
+    Part := S;
+    S := '';
+  end;
+  Result := StrToIntDef(Trim(Part), 0);
+end;
+
+// Numeric per part: 1 when A is newer than B, -1 when older, 0 when the same.
+function ClaimDeskCompareVersions(A, B: String): Integer;
+var
+  I, X, Y: Integer;
+begin
+  Result := 0;
+  for I := 1 to 4 do
+  begin
+    X := NextVersionPart(A);
+    Y := NextVersionPart(B);
+    if X > Y then
+    begin
+      Result := 1;
+      exit;
+    end;
+    if X < Y then
+    begin
+      Result := -1;
+      exit;
+    end;
+  end;
+end;
+
+// Downgrade guard (0.3 §F.2.3): when a newer ClaimDesk is installed, an interactive setup asks first (default No).
+// Silent installs (CI, scripted) carry on. The data folder is never touched either way.
+function InitializeSetup(): Boolean;
+var
+  Installed: String;
+begin
+  Result := True;
+  if not RegQueryStringValue(HKCU, UninstallKey, 'DisplayVersion', Installed) then
+    if not RegQueryStringValue(HKLM, UninstallKey, 'DisplayVersion', Installed) then
+      Installed := '';
+  if (Installed <> '') and (ClaimDeskCompareVersions(Installed, '{#AppVersion}') > 0) and (not WizardSilent()) then
+    Result := MsgBox('ClaimDesk ' + Installed + ' is installed, which is newer than this setup ({#AppVersion}).' + #13#10#13#10 +
+                     'Install the older version anyway? Your data is kept either way.', mbConfirmation, MB_YESNO or MB_DEFBUTTON2) = IDYES;
+end;
+
+// Welcome text (0.3 §F.2.3). Set here rather than in [Messages] so %LOCALAPPDATA% is shown literally.
+procedure InitializeWizard();
+begin
+  WizardForm.WelcomeLabel2.Caption :=
+    'This will install ' + '{#AppName} {#AppVersion}' + ' on your computer.' + #13#10#13#10 +
+    'This updates ClaimDesk in place. Your claims and settings in %LOCALAPPDATA%\ClaimDesk are kept, and a backup of the database is made the first time the new version starts.' + #13#10#13#10 +
+    'If ClaimDesk is open, you will be asked to close it first.';
+end;
+
 // Is ClaimDesk.exe running for this user? (find.exe answers 0 when tasklist lists it)
 function ClaimDeskRunning(): Boolean;
 var

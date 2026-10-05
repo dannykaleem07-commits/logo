@@ -72,7 +72,7 @@ function stageBasis(stage: PenaltyNotice['stage']): string {
     case 'cancelled':
       return 'The issuer has cancelled the notice. Keep the correspondence as evidence on the unit.';
     case 'escalated':
-      return 'Charge certificate / order for recovery stage. Check the V5C address history: an order served to a stale address can be challenged (lesson l).';
+      return 'Charge certificate / order for recovery stage. Check the V5C address history: an order served to an old address can be challenged.';
     case 'received':
       return 'Notice logged; the response clock runs from the date of service.';
   }

@@ -16,7 +16,7 @@ import { useToast } from '../../../components/Toast';
 import { todayISO } from '../../../lib/dates';
 import { partyName, pickList, type ClaimView } from '../claimFile';
 import { EvidencePicker } from '../components/EvidencePicker';
-import { activeEntries, APPEND_ONLY_NOTE, emptyLedgerForm, filterRows, HEAD_OPTIONS, headLabel, KIND_OPTIONS, kindLabel, kindSign, ledgerBodyFrom, positionByHead, runningTotals, type LedgerFilter, type LedgerRow } from '../lib/ledger';
+import { activeEntries, APPEND_ONLY_NOTE, correctsText, emptyLedgerForm, filterRows, HEAD_OPTIONS, headLabel, KIND_OPTIONS, kindLabel, kindSign, ledgerBodyFrom, positionByHead, runningTotals, type LedgerFilter, type LedgerRow } from '../lib/ledger';
 import { formatGBP } from '@ccguk/domain';
 
 const KIND_TONE: Record<LedgerKind, 'navy' | 'blue' | 'amber' | 'red' | 'green' | 'grey'> = {
@@ -78,7 +78,7 @@ export function LedgerTab({ view }: { view: ClaimView }) {
           <div className="xs muted">
             {r.entry.reference ? `ref ${r.entry.reference}` : ''}
             {r.entry.counterpartyId ? ` · ${partyName(view, r.entry.counterpartyId) ?? r.entry.counterpartyId}` : ''}
-            {r.correction ? ` · corrects ${r.entry.supersedesId}` : ''}
+            {r.correction ? ` · ${correctsText(r.entry, entries)}` : ''}
             {r.superseded ? ' · superseded' : ''}
           </div>
         </div>

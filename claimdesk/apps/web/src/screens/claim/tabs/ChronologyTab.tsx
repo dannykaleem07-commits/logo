@@ -19,7 +19,6 @@ import {
   ATTRIBUTABLE_LABEL,
   ATTRIBUTABLE_OPTIONS,
   ATTRIBUTION_EXPLANATION,
-  attributableDays,
   defaultAttribution,
   emptyEventForm,
   EVENT_GROUPS,
@@ -28,10 +27,14 @@ import {
   eventGroup,
   eventLabel,
   filterEvents,
+  liveAttributableDays,
   sortEvents,
+  supersededMarks,
   type Attributable,
   type ChronologyFilter
 } from '../lib/chronology';
+
+const STRUCK = { textDecoration: 'line-through', opacity: 0.65 } as const;
 
 const ATTRIBUTION_TONE: Record<Attributable, 'blue' | 'amber' | 'grey' | 'navy' | 'green'> = {
   insurer: 'blue',
@@ -60,7 +63,10 @@ export function ChronologyTab({ view }: { view: ClaimView }) {
 
   const hiresEnded = view.hire.length > 0 && view.hire.every((h) => h.endAt);
   const until = hiresEnded ? view.hire.map((h) => h.endAt as string).sort().slice(-1)[0] ?? nowIso : nowIso;
-  const days = useMemo(() => attributableDays(events, until), [events, until]);
+  // Corrected entries stay visible (struck through); the counters use the live entries only.
+  const days = useMemo(() => liveAttributableDays(events, until), [events, until]);
+  const superseded = useMemo(() => supersededMarks(events), [events]);
+  const struck = (e: ClaimEvent) => (superseded.has(e.id) ? STRUCK : undefined);
   const rows = useMemo(() => sortEvents(filterEvents(events, filter), dir), [events, filter, dir]);
   const evidenceById = useMemo(() => new Map(view.evidence.map((e) => [e.id, e])), [view.evidence]);
 
@@ -84,18 +90,46 @@ export function ChronologyTab({ view }: { view: ClaimView }) {
   };
 
   const columns: Column<ClaimEvent>[] = [
-    { key: 'at', header: 'When', width: '150px', render: (e) => <DateText value={e.at} time /> },
+    {
+      key: 'at',
+      header: 'When',
+      width: '150px',
+      render: (e) => (
+        <span style={struck(e)}>
+          <DateText value={e.at} time />
+        </span>
+      )
+    },
     {
       key: 'type',
       header: 'Event',
+      render: (e) => {
+        const mark = superseded.get(e.id);
+        return (
+          <div title={mark?.title}>
+            <div className="strong" style={struck(e)}>
+              {eventLabel(e.type)}
+            </div>
+            <div className="xs muted">{eventGroup(e.type)?.label ?? ''}</div>
+            {mark && (
+              <Badge tone="amber" title={mark.title}>
+                Corrected
+              </Badge>
+            )}
+          </div>
+        );
+      }
+    },
+    {
+      key: 'summary',
+      header: 'Summary',
+      className: 'wrap',
       render: (e) => (
-        <div>
-          <div className="strong">{eventLabel(e.type)}</div>
-          <div className="xs muted">{eventGroup(e.type)?.label ?? ''}</div>
-        </div>
+        <span style={struck(e)} title={superseded.get(e.id)?.title}>
+          {e.summary}
+        </span>
       )
     },
-    { key: 'summary', header: 'Summary', className: 'wrap', render: (e) => e.summary },
     {
       key: 'attr',
       header: 'Attributable to',
@@ -181,7 +215,7 @@ export function ChronologyTab({ view }: { view: ClaimView }) {
             )}
           </div>
           <div className="form-actions">
-            <span className="hint">Enter submits. Events are append-only; a mistake is corrected with a note.</span>
+            <span className="hint">Enter submits. Events are append-only; a mistake is corrected with a new entry, and the corrected one stays visible, struck through.</span>
             <Button type="submit" variant="primary" loading={post.isPending}>
               Add event
             </Button>

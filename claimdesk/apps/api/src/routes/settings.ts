@@ -9,10 +9,12 @@ import type { FastifyInstance } from 'fastify';
 import { legacyCheck, REGISTERED_NAME } from '@ccguk/domain';
 import type { Settings } from '@ccguk/db';
 import type { AppContext } from '../context.js';
-import { badRequest } from '../errors.js';
+import { HttpError } from '../errors.js';
 import { parse } from '../schemas/common.js';
 import { settingsPatchBody } from '../schemas/services.js';
 import { lookupModeOf } from '../services/lookup.js';
+import { gateFor, type OverrideTarget } from '../services/override.js';
+import { configRolesOnly } from './helpers.js';
 
 export interface SettingsWarning {
   code: 'CONFIRMATION_OF_PAYEE' | 'REGISTERED_OFFICE_MISSING' | 'BANK_NOT_SET' | 'ICO_MISSING' | 'VAT_MISSING';
@@ -50,11 +52,14 @@ export function registerSettingsRoutes(app: FastifyInstance, ctx: AppContext): v
     return { items, total: items.length };
   });
 
-  app.patch('/settings', async (request) => {
+  // Admin/approver only (0.3 §A.4.2, B42: any handler could change the bank details).
+  app.patch('/settings', { preHandler: configRolesOnly }, async (request) => {
     const body = parse(settingsPatchBody, request.body);
+    const gate = gateFor(ctx, request);
+    const target: OverrideTarget = { entity: 'settings', entityId: 'default' };
     const legacy = legacyCheck(JSON.stringify(body));
-    if (legacy.length) throw badRequest(`Legacy details are blocked: ${legacy.map((f) => f.draftValue ?? f.message).join('; ')}`, { code: 'LEGACY_DETAIL', flags: legacy });
-    if (body.companyName && body.companyName.trim() !== REGISTERED_NAME) throw badRequest(`companyName must be the registered name "${REGISTERED_NAME}"`);
+    if (legacy.length) gate.refuse(new HttpError(400, 'LEGACY_DETAIL', `Legacy details are blocked: ${legacy.map((f) => f.draftValue ?? f.message).join('; ')}`, { code: 'LEGACY_DETAIL', flags: legacy }), target);
+    if (body.companyName && body.companyName.trim() !== REGISTERED_NAME) gate.refuse(new HttpError(400, 'COMPANY_NAME_NOT_REGISTERED', `companyName must be the registered name "${REGISTERED_NAME}"`), target);
     const before = ctx.settings();
     const now = ctx.now();
     const after = ctx.db.transaction((tx) => {

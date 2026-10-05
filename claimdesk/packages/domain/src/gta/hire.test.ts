@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { calculateHire, hireDays, offHireDeadline } from './hire.js';
+import { calculateHire, HIRE_END_TRIGGER_TEXT, hireDays, offHireDeadline } from './hire.js';
 import { mkHire } from './fixtures.js';
 
 describe('hireDays (24-hour periods started)', () => {
@@ -161,5 +161,34 @@ describe('offHireDeadline', () => {
     for (const t of ['repair_complete_24h', 'tl_payment_5wd', 'insurer_termination_1wd', 'cash_in_lieu'] as const) {
       expect(offHireDeadline(t, '2026-07-06T14:00:00+01:00').basis).toMatch(/benchmark only/);
     }
+  });
+});
+
+describe('calculateHire — like-for-like benchmark (0.3 pricing guide)', () => {
+  it('adds likeForLike for the client car group, same maths as benchmark, existing fields unchanged', () => {
+    const h = mkHire({ gtaGroup: 'M', dailyRatePence: 4980 });
+    const plain = calculateHire(h, '2026-07-16T10:00:00+01:00');
+    const r = calculateHire(h, '2026-07-16T10:00:00+01:00', { likeForLikeGroup: 'S1' });
+    expect(r.likeForLike).toMatchObject({ group: 'S1', period: '2026-27', gtaDailyRatePence: 4232, hireAtGtaRatePence: 42320, differencePence: 49800 - 42320 });
+    expect(r.likeForLike?.note).toMatch(/not a GTA subscriber/);
+    const { likeForLike: _l, ...rest } = r;
+    expect(rest).toEqual(plain);
+    expect(plain.likeForLike).toBeUndefined();
+  });
+  it('no likeForLike for an unknown group or an empty rate table', () => {
+    const h = mkHire();
+    expect(calculateHire(h, '2026-07-16T10:00:00+01:00', { likeForLikeGroup: 'ZZ9' }).likeForLike).toBeUndefined();
+    expect(calculateHire(h, '2026-07-16T10:00:00+01:00', { likeForLikeGroup: 'S1', rates: [] }).likeForLike).toBeUndefined();
+    expect(calculateHire(h, '2026-07-16T10:00:00+01:00', { likeForLikeGroup: '' }).likeForLike).toBeUndefined();
+  });
+});
+
+describe('HIRE_END_TRIGGER_TEXT', () => {
+  it('words every end trigger in plain English (no enum codes in chronology summaries)', () => {
+    for (const [code, text] of Object.entries(HIRE_END_TRIGGER_TEXT)) {
+      expect(text, code).not.toMatch(/_/);
+      expect(text.length, code).toBeGreaterThan(3);
+    }
+    expect(HIRE_END_TRIGGER_TEXT.client_returned).toBe('client returned the car');
   });
 });

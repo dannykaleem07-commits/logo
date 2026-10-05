@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { LedgerEntry } from '@ccguk/domain';
-import { activeEntries, emptyLedgerForm, filterRows, HEAD_LABEL, HEAD_ORDER, kindSign, ledgerBodyFrom, positionByHead, runningTotals } from './ledger';
+import { activeEntries, correctsText, emptyLedgerForm, filterRows, HEAD_LABEL, HEAD_ORDER, kindSign, ledgerBodyFrom, positionByHead, runningTotals } from './ledger';
 
 let seq = 0;
 const entry = (over: Partial<LedgerEntry>): LedgerEntry => {
@@ -80,5 +80,15 @@ describe('ledgerBodyFrom', () => {
       ok: true,
       body: { head: 'hire', kind: 'paid', amountPence: 111_200, vatPence: undefined, date: today, description: 'BACS from esure', reference: 'REM-1', counterpartyId: undefined, supersedesId: undefined, sourceEvidenceId: undefined, sourceDocumentId: undefined }
     });
+  });
+});
+
+describe('correctsText', () => {
+  it('names the corrected entry by its date and description, never its id', () => {
+    const old = entry({ id: 'd0ac4f6f-632f-4f5c-b8a3-99371a8489c3', date: '2026-09-27', description: 'Credit hire 7 days × £49.99' });
+    const fix = entry({ supersedesId: old.id });
+    expect(correctsText(fix, [old, fix])).toBe('corrects the entry of 27 Sept 2026 (Credit hire 7 days × £49.99)');
+    expect(correctsText(fix, [fix])).toBe('corrects an earlier entry');
+    expect(correctsText(old, [old])).toBe('');
   });
 });

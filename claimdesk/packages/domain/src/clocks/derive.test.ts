@@ -558,3 +558,46 @@ describe('deriveClocks — a full live-file chronology', () => {
     expect(due.map((c) => c.kind)).toEqual(['gta_4_2_handling_ref_5wd', 'gta_4_10_authorisation_check_3wd', 'chaser_day_7']);
   });
 });
+
+describe('deriveClocks — corrected hire events (0.3 editable hire dates)', () => {
+  const now = '2026-07-20T12:00:00+01:00';
+  it('moving the hire start later (a correcting hire_started) moves the NCAF clock', () => {
+    const original = mkEvent('hire_started', '2026-07-03T16:00:00+01:00', { id: 'ev_h1' });
+    const before = one(deriveClocks(mkBundle({ events: [original] }), now), 'gta_4_1_ncaf_1wd');
+    expect(before).toMatchObject({ startsAt: '2026-07-03T16:00:00+01:00', dueAt: '2026-07-06T16:00:00+01:00', sourceEventId: 'ev_h1' });
+    const corrected = mkEvent('hire_started', '2026-07-08T10:00:00+01:00', { id: 'ev_h2', data: { correctsEventId: 'ev_h1', correction: true } });
+    const after = one(deriveClocks(mkBundle({ events: [original, corrected] }), now), 'gta_4_1_ncaf_1wd');
+    expect(after).toMatchObject({ startsAt: '2026-07-08T10:00:00+01:00', dueAt: '2026-07-09T10:00:00+01:00', sourceEventId: 'ev_h2' });
+  });
+
+  it('a corrected hire_ended moves the off-hire clock', () => {
+    const started = mkEvent('hire_started', '2026-07-06T10:00:00+01:00');
+    const done = mkEvent('repair_completed', T.repairDone);
+    const ended = mkEvent('hire_ended', '2026-07-25T09:00:00+01:00', { id: 'ev_end1' });
+    const met = one(deriveClocks(mkBundle({ events: [started, done, ended] }), '2026-07-28T12:00:00+01:00'), 'gta_4_8_offhire_repair_24h');
+    expect(met).toMatchObject({ status: 'met', metAt: '2026-07-25T09:00:00+01:00' });
+    const fix = mkEvent('hire_ended', '2026-07-27T09:00:00+01:00', { id: 'ev_end2', data: { correctsEventId: 'ev_end1' } });
+    const late = one(deriveClocks(mkBundle({ events: [started, done, ended, fix] }), '2026-07-28T12:00:00+01:00'), 'gta_4_8_offhire_repair_24h');
+    expect(late).toMatchObject({ status: 'breached', metAt: '2026-07-27T09:00:00+01:00' });
+  });
+
+  it('a hire re-opened by a note correcting hire_ended is running again', () => {
+    const started = mkEvent('hire_started', '2026-07-06T10:00:00+01:00');
+    const done = mkEvent('repair_completed', T.repairDone);
+    const ended = mkEvent('hire_ended', '2026-07-25T09:00:00+01:00', { id: 'ev_end1' });
+    const reopened = mkEvent('note', '2026-07-25T11:00:00+01:00', { data: { correctsEventId: 'ev_end1' } });
+    const c = one(deriveClocks(mkBundle({ events: [started, done, ended, reopened] }), '2026-07-25T12:00:00+01:00'), 'gta_4_8_offhire_repair_24h');
+    expect(c.status).toBe('running');
+    expect(c.metAt).toBeUndefined();
+  });
+
+  it('GTA 6.8.6 reads the hire record start, not an older uncorrected event, when a record exists', () => {
+    const pack = mkEvent('payment_pack_sent', T.pack);
+    const oldEvent = mkEvent('hire_started', '2026-03-10T10:00:00+00:00');
+    const hire = mkHire({ startAt: '2026-07-06T10:00:00+01:00' });
+    const c = one(deriveClocks(mkBundle({ events: [oldEvent, pack], hire: [hire] }), '2026-07-28T12:00:00+01:00'), 'gta_6_8_late_payment_10pc_day31');
+    expect(c.status).not.toBe('not_applicable');
+    const noRecord = one(deriveClocks(mkBundle({ events: [oldEvent, pack] }), '2026-07-28T12:00:00+01:00'), 'gta_6_8_late_payment_10pc_day31');
+    expect(noRecord.status).toBe('not_applicable');
+  });
+});

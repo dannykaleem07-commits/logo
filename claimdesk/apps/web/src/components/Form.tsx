@@ -3,23 +3,43 @@
  *  - MoneyInput: people type pounds, the value is integer pence (or null when empty).
  *  - DateInput: ISODate (YYYY-MM-DD). DateTimeInput: ISODateTime (UTC ISO string).
  *  - Select: string union values.
+ * Every field also takes `warning` (amber, role=status): shown when there is no `error`; error > warning > hint.
+ * Manager mode turns relaxed validation errors into warnings (docs/V03-MANAGER-MODE-HIRE-PRICING.md §A.5, §D.2).
  */
-import { useEffect, useId, useState, type ReactNode, type InputHTMLAttributes, type TextareaHTMLAttributes, type SelectHTMLAttributes } from 'react';
+import { useEffect, useId, useRef, useState, type ReactNode, type InputHTMLAttributes, type TextareaHTMLAttributes, type SelectHTMLAttributes } from 'react';
 import type { ISODate, ISODateTime, Pence } from '@ccguk/domain';
 import { isMoneyText, penceToPoundsText, poundsTextToPence } from '../lib/money';
-import { fromDateTimeLocalValue, toDateTimeLocalValue } from '../lib/dates';
+import { fromDateTimeLocalValue, isISODate, toDateTimeLocalValue } from '../lib/dates';
 
 export interface FieldProps {
   label?: ReactNode;
   hint?: ReactNode;
   error?: string;
+  /** Amber "you may carry on" message (e.g. a check relaxed in manager mode). Hidden while there is an error. */
+  warning?: ReactNode;
   required?: boolean;
   className?: string;
   children: ReactNode;
   htmlFor?: string;
 }
 
-export function Field({ label, hint, error, required, className = '', children, htmlFor }: FieldProps) {
+/** Message under a field: error > warning > hint. */
+function FieldMessage({ error, warning, hint }: { error?: string; warning?: ReactNode; hint?: ReactNode }) {
+  if (error) return <div className="field-error" role="alert">{error}</div>;
+  if (warning)
+    return (
+      <div className="field-warning" role="status">
+        <span className="field-warning-icon" aria-hidden="true">
+          ⚠
+        </span>{' '}
+        {warning}
+      </div>
+    );
+  if (hint) return <div className="field-hint">{hint}</div>;
+  return null;
+}
+
+export function Field({ label, hint, error, warning, required, className = '', children, htmlFor }: FieldProps) {
   return (
     <div className={`field ${className}`.trim()}>
       {label && (
@@ -33,7 +53,7 @@ export function Field({ label, hint, error, required, className = '', children, 
         </label>
       )}
       {children}
-      {error ? <div className="field-error" role="alert">{error}</div> : hint ? <div className="field-hint">{hint}</div> : null}
+      <FieldMessage error={error} warning={warning} hint={hint} />
     </div>
   );
 }
@@ -42,6 +62,7 @@ type BaseInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onC
   label?: ReactNode;
   hint?: ReactNode;
   error?: string;
+  warning?: ReactNode;
   className?: string;
 };
 
@@ -52,11 +73,11 @@ export interface TextInputProps extends BaseInputProps {
   inputClassName?: string;
 }
 
-export function TextInput({ label, hint, error, required, className, value, onChange, type = 'text', inputClassName = '', id, ...rest }: TextInputProps) {
+export function TextInput({ label, hint, error, warning, required, className, value, onChange, type = 'text', inputClassName = '', id, ...rest }: TextInputProps) {
   const auto = useId();
   const inputId = id ?? auto;
   return (
-    <Field label={label} hint={hint} error={error} required={required} className={className} htmlFor={inputId}>
+    <Field label={label} hint={hint} error={error} warning={warning} required={required} className={className} htmlFor={inputId}>
       <input id={inputId} type={type} className={`input ${inputClassName}`.trim()} value={value} onChange={(e) => onChange(e.target.value)} aria-invalid={error ? true : undefined} required={required} {...rest} />
     </Field>
   );
@@ -66,16 +87,17 @@ export interface TextAreaProps extends Omit<TextareaHTMLAttributes<HTMLTextAreaE
   label?: ReactNode;
   hint?: ReactNode;
   error?: string;
+  warning?: ReactNode;
   className?: string;
   value: string;
   onChange: (value: string) => void;
 }
 
-export function TextArea({ label, hint, error, required, className, value, onChange, id, ...rest }: TextAreaProps) {
+export function TextArea({ label, hint, error, warning, required, className, value, onChange, id, ...rest }: TextAreaProps) {
   const auto = useId();
   const inputId = id ?? auto;
   return (
-    <Field label={label} hint={hint} error={error} required={required} className={className} htmlFor={inputId}>
+    <Field label={label} hint={hint} error={error} warning={warning} required={required} className={className} htmlFor={inputId}>
       <textarea id={inputId} className="textarea" value={value} onChange={(e) => onChange(e.target.value)} aria-invalid={error ? true : undefined} required={required} {...rest} />
     </Field>
   );
@@ -91,6 +113,7 @@ export interface SelectProps<V extends string> extends Omit<SelectHTMLAttributes
   label?: ReactNode;
   hint?: ReactNode;
   error?: string;
+  warning?: ReactNode;
   className?: string;
   value: V | '';
   onChange: (value: V | '') => void;
@@ -98,11 +121,11 @@ export interface SelectProps<V extends string> extends Omit<SelectHTMLAttributes
   placeholder?: string;
 }
 
-export function Select<V extends string>({ label, hint, error, required, className, value, onChange, options, placeholder, id, ...rest }: SelectProps<V>) {
+export function Select<V extends string>({ label, hint, error, warning, required, className, value, onChange, options, placeholder, id, ...rest }: SelectProps<V>) {
   const auto = useId();
   const inputId = id ?? auto;
   return (
-    <Field label={label} hint={hint} error={error} required={required} className={className} htmlFor={inputId}>
+    <Field label={label} hint={hint} error={error} warning={warning} required={required} className={className} htmlFor={inputId}>
       <select id={inputId} className="select" value={value} onChange={(e) => onChange(e.target.value as V | '')} aria-invalid={error ? true : undefined} required={required} {...rest}>
         {placeholder !== undefined && <option value="">{placeholder}</option>}
         {options.map((o) => (
@@ -123,7 +146,7 @@ export interface MoneyInputProps extends Omit<BaseInputProps, 'placeholder'> {
 }
 
 /** Pounds in the box, pence in the model. Text state is local so "12." can be typed; commits on each valid keystroke. */
-export function MoneyInput({ label, hint, error, required, className, value, onChange, placeholder = '0.00', allowNegative = false, id, ...rest }: MoneyInputProps) {
+export function MoneyInput({ label, hint, error, warning, required, className, value, onChange, placeholder = '0.00', allowNegative = false, id, ...rest }: MoneyInputProps) {
   const auto = useId();
   const inputId = id ?? auto;
   const [text, setText] = useState(() => penceToPoundsText(value));
@@ -135,7 +158,7 @@ export function MoneyInput({ label, hint, error, required, className, value, onC
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
   return (
-    <Field label={label} hint={hint} error={error ?? localError} required={required} className={className} htmlFor={inputId}>
+    <Field label={label} hint={hint} error={error ?? localError} warning={warning} required={required} className={className} htmlFor={inputId}>
       <div className="input-group">
         <span className="input-prefix" aria-hidden="true">
           £
@@ -180,12 +203,52 @@ export interface DateInputProps extends BaseInputProps {
   onChange: (value: ISODate | '') => void;
 }
 
-export function DateInput({ label, hint, error, required, className, value, onChange, id, ...rest }: DateInputProps) {
+/**
+ * Local draft for date / date-time inputs (§D.2). While a value is half typed the browser reports '' — pushing that to
+ * the model (and back) lets a parent re-render wipe the half-typed segments. So the box keeps its own draft, the model
+ * only ever receives a complete value, an emptied box is pushed ('') on blur, and a model change from outside (a reset)
+ * resyncs the draft only when it differs from the draft and the box is not focused.
+ */
+function useDraftValue<M extends string>(value: M | '', toDraft: (v: M | '') => string, fromDraft: (d: string) => M | '') {
+  const ref = useRef<HTMLInputElement>(null);
+  const [draft, setDraft] = useState(() => toDraft(value));
+  useEffect(() => {
+    if (ref.current && ref.current === document.activeElement) return;
+    setDraft((d) => ((fromDraft(d) || '') === (value || '') ? d : toDraft(value)));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  return { ref, draft, setDraft };
+}
+
+const dateDraft = (v: ISODate | ''): string => v;
+const dateFromDraft = (d: string): ISODate | '' => (isISODate(d) ? d : '');
+
+export function DateInput({ label, hint, error, warning, required, className, value, onChange, id, onBlur, ...rest }: DateInputProps) {
   const auto = useId();
   const inputId = id ?? auto;
+  const { ref, draft, setDraft } = useDraftValue<ISODate>(value, dateDraft, dateFromDraft);
   return (
-    <Field label={label} hint={hint} error={error} required={required} className={className} htmlFor={inputId}>
-      <input id={inputId} type="date" className="input" value={value} onChange={(e) => onChange(e.target.value)} aria-invalid={error ? true : undefined} required={required} {...rest} />
+    <Field label={label} hint={hint} error={error} warning={warning} required={required} className={className} htmlFor={inputId}>
+      <input
+        ref={ref}
+        id={inputId}
+        type="date"
+        className="input"
+        value={draft}
+        onChange={(e) => {
+          const d = e.target.value;
+          setDraft(d);
+          const parsed = dateFromDraft(d);
+          if (parsed !== '' && parsed !== value) onChange(parsed);
+        }}
+        onBlur={(e) => {
+          if (dateFromDraft(draft) === '' && value !== '') onChange('');
+          onBlur?.(e);
+        }}
+        aria-invalid={error ? true : undefined}
+        required={required}
+        {...rest}
+      />
     </Field>
   );
 }
@@ -195,18 +258,29 @@ export interface DateTimeInputProps extends BaseInputProps {
   onChange: (value: ISODateTime | '') => void;
 }
 
-/** datetime-local in the browser's zone; the model holds a UTC ISO string. */
-export function DateTimeInput({ label, hint, error, required, className, value, onChange, id, ...rest }: DateTimeInputProps) {
+/** datetime-local in the browser's zone; the model holds a UTC ISO string. Keeps a local draft while typing (§D.2). */
+export function DateTimeInput({ label, hint, error, warning, required, className, value, onChange, id, onBlur, ...rest }: DateTimeInputProps) {
   const auto = useId();
   const inputId = id ?? auto;
+  const { ref, draft, setDraft } = useDraftValue<ISODateTime>(value, toDateTimeLocalValue, fromDateTimeLocalValue);
   return (
-    <Field label={label} hint={hint} error={error} required={required} className={className} htmlFor={inputId}>
+    <Field label={label} hint={hint} error={error} warning={warning} required={required} className={className} htmlFor={inputId}>
       <input
+        ref={ref}
         id={inputId}
         type="datetime-local"
         className="input"
-        value={toDateTimeLocalValue(value)}
-        onChange={(e) => onChange(fromDateTimeLocalValue(e.target.value))}
+        value={draft}
+        onChange={(e) => {
+          const d = e.target.value;
+          setDraft(d);
+          const parsed = fromDateTimeLocalValue(d);
+          if (parsed !== '' && parsed !== value) onChange(parsed);
+        }}
+        onBlur={(e) => {
+          if (fromDateTimeLocalValue(draft) === '' && value !== '') onChange('');
+          onBlur?.(e);
+        }}
         aria-invalid={error ? true : undefined}
         required={required}
         {...rest}
@@ -215,22 +289,22 @@ export function DateTimeInput({ label, hint, error, required, className, value, 
   );
 }
 
-export function Checkbox({ label, checked, onChange, hint, disabled }: { label: ReactNode; checked: boolean; onChange: (v: boolean) => void; hint?: ReactNode; disabled?: boolean }) {
+export function Checkbox({ label, checked, onChange, hint, warning, disabled }: { label: ReactNode; checked: boolean; onChange: (v: boolean) => void; hint?: ReactNode; warning?: ReactNode; disabled?: boolean }) {
   return (
     <label className="check">
       <input type="checkbox" checked={checked} disabled={disabled} onChange={(e) => onChange(e.target.checked)} />
       <span>
         {label}
-        {hint && <div className="field-hint">{hint}</div>}
+        <FieldMessage warning={warning} hint={hint} />
       </span>
     </label>
   );
 }
 
 /** Tri-state yes/no (undefined = not answered). */
-export function YesNo({ label, value, onChange, hint, error, required }: { label: ReactNode; value: boolean | undefined; onChange: (v: boolean) => void; hint?: ReactNode; error?: string; required?: boolean }) {
+export function YesNo({ label, value, onChange, hint, error, warning, required }: { label: ReactNode; value: boolean | undefined; onChange: (v: boolean) => void; hint?: ReactNode; error?: string; warning?: ReactNode; required?: boolean }) {
   return (
-    <Field label={label} hint={hint} error={error} required={required}>
+    <Field label={label} hint={hint} error={error} warning={warning} required={required}>
       <div className="yesno" role="group">
         <button type="button" aria-pressed={value === true} onClick={() => onChange(true)}>
           Yes

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { InsurerDirectoryEntry } from '@ccguk/domain';
-import { copyForCallText, directoryStatus, filterDirectory, hasCopycats, isHttpUrl, ivrPressLine, UNVERIFIED_WARNING } from './directory';
+import { cardBanner, copyForCallText, directoryStatus, hasMoreDetails, sortDirectory, filterDirectory, hasCopycats, isHttpUrl, ivrPressLine, UNVERIFIED_WARNING } from './directory';
 
 const today = '2026-10-04';
 
@@ -72,5 +72,23 @@ describe('filters and helpers', () => {
     expect(hasCopycats(entry({ copycatNumbers: ['0333 006 44xx'] }))).toBe(true);
     expect(isHttpUrl('https://www.admiral.com/claims')).toBe(true);
     expect(isHttpUrl('admiral.com')).toBe(false);
+  });
+});
+
+describe('compact cards (0.3 §E3)', () => {
+  it('puts cards with a third-party number first, then by name', () => {
+    const list = [entry({ id: 'z', name: 'Zurich', thirdPartyClaimsPhone: undefined }), entry({ id: 'a', name: 'Aviva', thirdPartyClaimsPhone: undefined }), entry({ id: 'h', name: 'Hastings' }), entry({ id: 'e', name: 'esure' })];
+    expect(sortDirectory(list).map((e) => e.name)).toEqual(['esure', 'Hastings', 'Aviva', 'Zurich']);
+  });
+  it('drops the duplicate UNVERIFIED banner (the badge stays) but keeps the red failed / stale warning', () => {
+    const unverified = directoryStatus(entry(), today);
+    expect(unverified.label).toBe('Unverified');
+    expect(cardBanner(unverified)).toBeUndefined();
+    const failed = directoryStatus(entry({ verification: { status: 'failed' }, lastFailed: '2026-10-01' }), today);
+    expect(cardBanner(failed)).toMatch(/failed on a live call/);
+  });
+  it('knows when there is more to show', () => {
+    expect(hasMoreDetails(entry())).toBe(true);
+    expect(hasMoreDetails(entry({ brands: [], verification: { status: 'unverified' } }))).toBe(false);
   });
 });

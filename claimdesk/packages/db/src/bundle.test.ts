@@ -144,3 +144,26 @@ describe('loadClaimBundle — File 1 archetype round trip', () => {
     expect(() => loadClaimBundle(h.db, 'nope')).toThrow(NotFoundError);
   });
 });
+
+describe('loadClaimBundle — corrected events (0.3)', () => {
+  it('drops events replaced by a correcting event unless includeSupersededEvents', async () => {
+    const { appendEvent } = await import('./repos/events.js');
+    const started = loadClaimBundle(h.db, ids.claimId).events.find((e) => e.type === 'hire_started');
+    expect(started).toBeDefined();
+    const fix = appendEvent(h.db, {
+      claimId: ids.claimId,
+      type: 'hire_started',
+      at: '2026-08-11T10:00:00.000Z',
+      summary: 'Hire start corrected',
+      data: { hireId: ids.hireId, correctsEventId: started!.id, correction: true },
+      evidenceIds: [],
+      createdBy: 'system',
+    });
+    const live = loadClaimBundle(h.db, ids.claimId).events;
+    expect(live.some((e) => e.id === started!.id)).toBe(false);
+    expect(live.filter((e) => e.type === 'hire_started').map((e) => e.id)).toEqual([fix.id]);
+    const all = loadClaimBundle(h.db, ids.claimId, { includeSupersededEvents: true }).events;
+    expect(all.map((e) => e.id)).toEqual(expect.arrayContaining([started!.id, fix.id]));
+    expect(all).toHaveLength(live.length + 1);
+  });
+});

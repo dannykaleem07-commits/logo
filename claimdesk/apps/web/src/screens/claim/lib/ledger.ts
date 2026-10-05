@@ -178,6 +178,17 @@ export function runningTotals(entries: LedgerEntry[]): LedgerRow[] {
   });
 }
 
+/** "corrects the entry of 27 Sept 2026 (Credit hire 7 days × £49.99)" — never the internal id. */
+export function correctsText(entry: Pick<LedgerEntry, 'supersedesId'>, all: readonly LedgerEntry[]): string {
+  if (!entry.supersedesId) return '';
+  const old = all.find((e) => e.id === entry.supersedesId);
+  if (!old) return 'corrects an earlier entry';
+  const d = new Date(`${old.date}T12:00:00Z`);
+  const date = Number.isNaN(d.getTime()) ? old.date : d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Europe/London' });
+  const desc = old.description?.trim();
+  return `corrects the entry of ${date}${desc ? ` (${desc.length > 60 ? `${desc.slice(0, 57)}…` : desc})` : ''}`;
+}
+
 export interface LedgerFilter {
   head?: HeadOfLoss | '';
   kind?: LedgerKind | '';

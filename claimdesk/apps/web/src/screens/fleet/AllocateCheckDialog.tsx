@@ -50,7 +50,7 @@ export function AllocateCheckDialog({ open, units, initialUnitId, onClose }: { o
   return (
     <Modal open={open} onClose={onClose} title="Allocation check" footer={<><Button onClick={onClose}>Close</Button><Button variant="primary" onClick={run} disabled={!unitId || !use} loading={busy}>Check cover</Button></>}>
       <div className="stack">
-        <p className="basis">Allocating a unit outside its declared use and policy cover leaves the hire uninsured and the hire charge unrecoverable. The check reads the unit's declared uses and its policy's covered uses (BLUEPRINT §3.12).</p>
+        <p className="basis">Allocating a unit outside its declared use and policy cover leaves the hire uninsured and the hire charge unrecoverable. The check reads the unit's declared uses and its policy's covered uses.</p>
         <div className="form-grid">
           <Select label="Fleet unit" value={unitId} onChange={setUnitId} placeholder="Choose a unit" options={units.map((u) => ({ value: u.id, label: `${formatRegistration(unitRegistration(u))} · ${u.vehicle?.make ?? ''} ${u.vehicle?.model ?? ''} · ${u.gtaGroup}`.replace(/\s+/g, ' ').trim(), disabled: u.status === 'disposed' }))} required />
           <Select<FleetUse> label="Intended use" value={use} onChange={setUse} placeholder="Choose the use" options={FLEET_USES.map((u) => ({ value: u, label: FLEET_USE_LABEL[u] }))} required />

@@ -186,7 +186,10 @@ describe('POST /auth/login and GET /auth/me', () => {
 
     const me = await inject('GET', '/auth/me', { cookie });
     expect(me.statusCode).toBe(200);
-    expect(me.json()).toEqual({ user: { id: 'courtesycars', name: 'Courtesy Cars', username: 'courtesycars', email: 'claims@courtesycars.net', role: 'admin' } });
+    expect(me.json()).toEqual({
+      user: { id: 'courtesycars', name: 'Courtesy Cars', username: 'courtesycars', email: 'claims@courtesycars.net', role: 'admin' },
+      managerMode: { allowed: true, on: false, idleMinutes: 60, defaultReason: 'Manager override' },
+    });
 
     // The database holds sha256(token), never the token.
     const rows = t.ctx.handle.sqlite.prepare('select * from sessions').all() as Array<{ id: string; expires_at: string }>;

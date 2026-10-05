@@ -11,7 +11,8 @@ import { Money } from '../../components/Money';
 import { DateText } from '../../components/DateText';
 import { ApiErrorNotice } from '../../components/ApiErrorNotice';
 import { Table, type Column } from '../../components/Table';
-import { groupByClaim } from '../../lib/clocks';
+import { actionGroupTitle, clockRowsByClaim, groupActions, type ActionGroup, type ClockRow } from './dashboard';
+import './dashboard.css';
 import type { DebtorDaysSummary } from '../../api/client';
 
 /**
@@ -22,8 +23,8 @@ export function DashboardPage() {
   const now = new Date();
   const dash = useDashboardData(now);
   const openClaims = dash.claims.filter((c) => !['settled', 'closed', 'declined'].includes(c.status)).length;
-  const overdueGroups = groupByClaim(dash.clocksOverdue);
-  const todayGroups = groupByClaim(dash.clocksToday);
+  const clockRows = clockRowsByClaim(dash.clocksOverdue, dash.clocksToday);
+  const actionGroups = groupActions(dash.nextActions).slice(0, 25);
   const refFor = (c: DashboardClock) => c.claimReference ?? dash.claims.find((x) => x.id === c.claimId)?.reference ?? c.claimId;
 
   return (
@@ -53,7 +54,7 @@ export function DashboardPage() {
         </div>
       ))}
 
-      <div className="grid-4" style={{ marginBottom: 20 }}>
+      <div className="grid-4 kpi-grid" style={{ marginBottom: 20 }}>
         <Link to="#clocks" className="stat">
           <span className="stat-label">Clocks overdue</span>
           <span className={`stat-value ${dash.clocksOverdue.length ? 'red' : ''}`}>{dash.isLoading ? '…' : dash.clocksOverdue.length}</span>
@@ -82,17 +83,14 @@ export function DashboardPage() {
         <Card id="clocks" title="Clocks" actions={<Badge tone={dash.clocksOverdue.length ? 'red' : 'grey'}>{dash.clocksOverdue.length} overdue</Badge>} flush>
           {dash.isLoading ? (
             <Loading />
-          ) : overdueGroups.size === 0 && todayGroups.size === 0 ? (
+          ) : clockRows.length === 0 ? (
             <EmptyState title="Nothing due today" icon="✓">
               No running clock is due or overdue. New clocks derive from each event you log.
             </EmptyState>
           ) : (
             <ul className="list">
-              {[...overdueGroups.entries()].map(([claimId, clocks]) => (
-                <ClockGroup key={`o-${claimId}`} claimId={claimId} reference={refFor(clocks[0]!)} clocks={clocks} now={now} tone="red" />
-              ))}
-              {[...todayGroups.entries()].map(([claimId, clocks]) => (
-                <ClockGroup key={`t-${claimId}`} claimId={claimId} reference={refFor(clocks[0]!)} clocks={clocks} now={now} tone="amber" />
+              {clockRows.map((row) => (
+                <ClockLine key={row.claimId} row={row} reference={refFor(row.worst)} now={now} />
               ))}
             </ul>
           )}
@@ -114,7 +112,7 @@ export function DashboardPage() {
                       <Link to={d.claimId ? `/claims/${d.claimId}/documents` : '#'}>{d.title}</Link>
                     </div>
                     <div className="list-sub">
-                      {d.claimReference ?? d.claimId} · {d.templateId || 'document'} · <DateText value={d.createdAt} time />
+                      {d.claimReference ?? d.claimId} · <DateText value={d.createdAt} time />
                       {d.blockedFlags ? ` · ${d.blockedFlags} block flag${d.blockedFlags === 1 ? '' : 's'}` : ''}
                     </div>
                   </div>
@@ -125,42 +123,15 @@ export function DashboardPage() {
           )}
         </Card>
 
-        <Card title="Next actions" actions={<span className="muted small">get-paid-faster playbook (§7)</span>} flush>
+        <Card title="Next actions" actions={<span className="muted small">most urgent first</span>} flush>
           {dash.isLoading ? (
             <Loading />
-          ) : dash.nextActions.length === 0 ? (
-            <EmptyState title="No actions queued">Playbook actions appear once a claim has services agreed.</EmptyState>
+          ) : actionGroups.length === 0 ? (
+            <EmptyState title="No actions queued">Actions appear once a claim has services agreed.</EmptyState>
           ) : (
             <ul className="list">
-              {dash.nextActions.slice(0, 25).map((a, i) => (
-                <li key={`${a.claimId}-${a.code}-${i}`}>
-                  <div className="list-main">
-                    <div className="list-title">
-                      <Link to={`/claims/${a.claimId}/actions`}>{a.title}</Link>
-                      {a.blockedBy && a.blockedBy.length > 0 && (
-                        <Badge tone="amber" className="small" title={`Blocked by: ${a.blockedBy.join(', ')}`}>
-                          blocked
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="list-sub">
-                      {a.claimReference ?? a.claimId} · {a.why}
-                      {a.dueAt ? (
-                        <>
-                          {' '}
-                          · due <DateText value={a.dueAt} time />
-                        </>
-                      ) : null}
-                      {a.valuePence ? (
-                        <>
-                          {' '}
-                          · protects <Money pence={a.valuePence} showPence={false} />
-                        </>
-                      ) : null}
-                    </div>
-                  </div>
-                  <PriorityBadge priority={a.priority} />
-                </li>
+              {actionGroups.map((g) => (
+                <ActionLine key={g.key} group={g} />
               ))}
             </ul>
           )}
@@ -185,27 +156,89 @@ function dedupeErrors(errors: Error[]): Error[] {
   });
 }
 
-function ClockGroup({ claimId, reference, clocks, now, tone }: { claimId: string; reference: string; clocks: DashboardClock[]; now: Date; tone: 'red' | 'amber' }) {
+/** One claim: its worst clock, and "+n more" for the rest (all on the claim's Clocks tab). */
+function ClockLine({ row, reference, now }: { row: ClockRow; reference: string; now: Date }) {
+  const c = row.worst;
   return (
-    <li>
+    <li className="dash-line">
       <div className="list-main">
-        <div className="list-title">
-          <Link to={`/claims/${claimId}/clocks`}>{reference}</Link>
-          {clocks[0]?.claimantName && <span className="muted small"> · {clocks[0].claimantName}</span>}
-        </div>
-        <div className="stack-sm" style={{ marginTop: 6 }}>
-          {clocks.map((c) => (
-            <div key={c.id} className="row" style={{ gap: 8 }}>
-              <ClockPill clock={c} now={now} />
-              <span className="small">{c.label}</span>
-              {c.attributableTo && (
-                <span className="xs muted">on {c.attributableTo}</span>
-              )}
-            </div>
-          ))}
+        <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
+          <Link to={`/claims/${row.claimId}/clocks`} className="strong">
+            {reference}
+          </Link>
+          {c.claimantName && <span className="muted small">{c.claimantName}</span>}
+          <ClockPill clock={c} now={now} />
+          <span className="small">{c.label}</span>
+          {row.more > 0 && (
+            <Link to={`/claims/${row.claimId}/clocks`} className="xs muted">
+              +{row.more} more
+            </Link>
+          )}
         </div>
       </div>
-      <Badge tone={tone}>{clocks.length}</Badge>
+      {/* the clock pill already says "overdue by …" */}
+      {row.tone !== 'red' && <Badge tone={row.tone}>today</Badge>}
+    </li>
+  );
+}
+
+/** One line per action (or per group of identical actions): title · ref · due · £ protected, with a "Why" disclosure. */
+function ActionLine({ group }: { group: ActionGroup }) {
+  const first = group.items[0]!;
+  const single = group.items.length === 1;
+  const blocked = group.items.some((a) => a.blockedBy && a.blockedBy.length > 0);
+  return (
+    <li className="dash-line">
+      <div className="list-main">
+        <div className="row" style={{ gap: 6, flexWrap: 'wrap' }}>
+          {single ? (
+            <Link to={`/claims/${first.claimId}/actions`} className="strong">
+              {group.title}
+            </Link>
+          ) : (
+            <span className="strong">{actionGroupTitle(group)}</span>
+          )}
+          {/* separators are drawn by CSS between items, so a wrapped line never starts with "·" */}
+          <span className="dash-meta small muted">
+            {single && <span>{first.claimReference ?? first.claimId}</span>}
+            {group.dueAt && (
+              <span>
+                due <DateText value={group.dueAt} time />
+              </span>
+            )}
+            {group.protectedPence ? (
+              <span>
+                protects <Money pence={group.protectedPence} showPence={false} />
+              </span>
+            ) : null}
+          </span>
+          {blocked && (
+            <Badge tone="amber" className="small">
+              blocked
+            </Badge>
+          )}
+        </div>
+        <details className="dash-why">
+          <summary>{single ? 'Why' : `Why · the ${new Set(group.items.map((a) => a.claimId)).size} claims`}</summary>
+          <div className="small">{first.why}</div>
+          {!single && (
+            <ul className="dash-claims">
+              {group.items.map((a, i) => (
+                <li key={`${a.claimId}-${i}`}>
+                  <Link to={`/claims/${a.claimId}/actions`}>{a.claimReference ?? a.claimId}</Link>
+                  {a.dueAt ? (
+                    <span className="xs muted">
+                      {' '}
+                      · due <DateText value={a.dueAt} time />
+                    </span>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          )}
+        </details>
+      </div>
+      <PriorityBadge priority={group.priority} />
     </li>
   );
 }

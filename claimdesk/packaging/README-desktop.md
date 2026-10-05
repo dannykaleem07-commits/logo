@@ -64,6 +64,33 @@ iscc /Qp /DAppVersion=$env:CLAIMDESK_VERSION /DSourceDir=$PWD\packaging\dist\Cla
   `magick convert apps\web\public\icons\icon-512.png -define icon:auto-resize=48,32,24,16 packaging\icon.ico`.
 - **AppId `{322DAE75-FC0F-4786-B2BB-62E4A6A3D59B}` must never change**: upgrades find the installed copy by it.
 
+## Updating
+
+ClaimDesk updates in place: download the newest `ClaimDesk-Setup-<version>.exe` and run it over the installed copy.
+
+- **Where to get it.** Settings → Updates shows the installed version and, when a newer one is out, a **Download
+  ClaimDesk-Setup-<version>.exe** link (the check asks GitHub at most once an hour through the local API; it never
+  blocks the app and says "Could not check for updates" when offline). The side bar shows "Update available: <version>"
+  under the version number. Every Setup is also on https://github.com/dannykaleem07-commits/logo/releases.
+- **What the Setup does.** Same AppId, so it finds the installed copy (`UsePreviousAppDir`), asks to close a running
+  ClaimDesk, replaces the program folder (`%LOCALAPPDATA%\Programs\ClaimDesk\app`) wholesale and leaves the data folder
+  (`%LOCALAPPDATA%\ClaimDesk`) alone. No administrator rights. Installing an *older* Setup over a newer copy asks first
+  (default No); silent installs carry on.
+- **First start of the new version.** If the database has migrations to apply, it is copied first to
+  `%LOCALAPPDATA%\ClaimDesk\data\backups\claimdesk-before-<version>-<yyyyMMdd-HHmmss>.sqlite` (`VACUUM INTO`; the
+  newest 5 are kept), then migrated. A failed backup is logged as a warning and the start carries on. Later starts find
+  nothing to migrate and make no backup.
+- **Going back.** Run the older Setup. Setups from 0.3 onwards ask first ("ClaimDesk X is installed, which is newer
+  than this setup") — answer Yes; the 0.2.6 Setup has no such question and installs without asking. An older version can open a newer
+  database (new columns are unused by it). To restore the data as it was before an upgrade: Start menu → Stop
+  ClaimDesk, rename `data\claimdesk.sqlite` (and any `-wal` / `-shm` next to it), copy the backup file in its place as
+  `claimdesk.sqlite`, start ClaimDesk.
+- **Turning the check off.** `CLAIMDESK_UPDATE_CHECK=off` in `%LOCALAPPDATA%\ClaimDesk\claimdesk.env` (Settings →
+  Updates then says checks are off). `CLAIMDESK_UPDATE_URL` points the check at another releases list (tests).
+- **CI proves it.** The Windows workflow installs the real published 0.2.6 Setup (SHA-256 pinned), creates a fleet
+  car, a claim and a hire, upgrades it in place to the new Setup and checks the data, the migrations, the backup file
+  and a back-dated hire edit (step "Upgrade the published 0.2.6 install").
+
 ## Sign it (when a certificate exists)
 
 Without a code-signing certificate Windows SmartScreen shows "Unknown publisher" / "Windows protected your PC" (More
@@ -90,6 +117,10 @@ CI (`claimdesk-windows.yml`, every push to the branch that touches `claimdesk/`)
 2. Installed-app test: silent per-user install; registry `Publisher` and `DisplayVersion`; Start menu shortcuts; exe
    VersionInfo; the installed exe serves live data with the right version; a marker file survives an upgrade; `--stop`;
    silent uninstall removes the program folder and keeps the data.
+3. Upgrade the published 0.2.6 install: the real `ClaimDesk-Setup-0.2.6.exe` (SHA-256 checked) installed silently,
+   a fleet unit, a claim and a hire created, then the new Setup installed over it: version, data, hire pricing and
+   corrections, manager mode, `data\backups\claimdesk-before-<version>-*.sqlite`, a back-dated hire start, and a
+   silent uninstall that keeps the data.
 
 By hand on a Windows 11 PC (not automatable on the runner):
 

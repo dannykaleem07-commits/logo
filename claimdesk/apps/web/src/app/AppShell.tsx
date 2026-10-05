@@ -1,13 +1,16 @@
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { NAV_ITEMS } from './nav';
-import { MenuIcon, NavIcon, SearchIcon, SignOutIcon } from './Icons';
-import { qk, useDashboardData, useHealth, useLogout, useMe } from '../api/hooks';
+import { MenuIcon, NavIcon, SearchIcon, ShieldIcon, SignOutIcon } from './Icons';
+import { minutesText, useManagerMode } from './managerMode';
+import { clearSignedInState } from './session';
+import { useDashboardData, useHealth, useLogout, useMe } from '../api/hooks';
 import type { AuthUser } from '../api/client';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { LOGIN_PATH } from '../lib/auth';
 import { SHELL_CONTACT_LINE, versionLabel } from '../screens/settings/settings';
+import { UpdateNotice } from '../screens/settings/UpdateNotice';
 
 /**
  * Layout: left nav (drawer on phones), top bar with global search + the two global badges
@@ -28,6 +31,7 @@ export function AppShell() {
       <SideNav open={navOpen} {...userProps} />
       <TopBar onMenu={() => setNavOpen((o) => !o)} {...userProps} />
       <main className="main" id="main">
+        <ManagerBanner />
         <ErrorBoundary>
           <Outlet />
         </ErrorBoundary>
@@ -56,7 +60,7 @@ function useSignOut() {
     // flushSync commits the route change before the cache is emptied, so the auth gate never re-renders here
     // with an empty cache (which would bounce to /login?next=… instead of a clean /login).
     await navigate(LOGIN_PATH, { replace: true, flushSync: true });
-    queryClient.removeQueries({ predicate: (q) => q.queryKey[0] !== qk.loginDefaults[0] || q.queryKey[1] !== qk.loginDefaults[1] });
+    clearSignedInState(queryClient);
   };
   return { signOut, signingOut };
 }
@@ -130,6 +134,7 @@ function SideNav({ open, ...userProps }: { open: boolean } & UserProps) {
         <div className="app-version" title={health.data?.version ? `Version ${health.data.version}` : undefined}>
           {versionLabel(health.data?.version)}
         </div>
+        <UpdateNotice />
       </div>
     </nav>
   );
@@ -138,8 +143,17 @@ function SideNav({ open, ...userProps }: { open: boolean } & UserProps) {
 function TopBar({ onMenu, ...userProps }: { onMenu: () => void } & UserProps) {
   const navigate = useNavigate();
   const [params] = useSearchParams();
-  const [q, setQ] = useState(params.get('q') ?? '');
-  useEffect(() => setQ(params.get('q') ?? ''), [params]);
+  const location = useLocation();
+  const urlQ = params.get('q') ?? '';
+  const onClaims = location.pathname === '/claims';
+  const [q, setQ] = useState(onClaims ? urlQ : '');
+  const inputRef = useRef<HTMLInputElement>(null);
+  const narrow = useNarrowScreen();
+  // Follow the claims list's ?q= only when the q string itself (or the page) changes, and never while the user is
+  // typing here; other pages' ?q= (e.g. the KB search) is not the global search.
+  useEffect(() => {
+    if (document.activeElement !== inputRef.current) setQ(onClaims ? urlQ : '');
+  }, [urlQ, onClaims]);
   const dash = useDashboardData();
   const blocked = dash.blockedDocuments.length;
   const dueToday = dash.clocksToday.length;
@@ -158,7 +172,7 @@ function TopBar({ onMenu, ...userProps }: { onMenu: () => void } & UserProps) {
       </button>
       <form className="topbar-search" role="search" onSubmit={submit}>
         <SearchIcon />
-        <input type="search" placeholder="Search registration, claim ref or name" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Global search" />
+        <input ref={inputRef} type="search" placeholder={narrow ? 'Search' : 'Search registration, claim ref or name'} value={q} onChange={(e) => setQ(e.target.value)} aria-label="Global search" />
       </form>
       <div className="topbar-badges">
         <Link to="/#blocked-documents" className={`topbar-badge ${blocked > 0 ? 'hot' : ''}`} title="Documents blocked by the consistency engine (need a human to clear each flag)">
@@ -166,13 +180,85 @@ function TopBar({ onMenu, ...userProps }: { onMenu: () => void } & UserProps) {
           <span className="label-short">Blocked</span>
           <span className="count">{blocked}</span>
         </Link>
-        <Link to="/#clocks" className={`topbar-badge ${overdue > 0 ? 'hot' : dueToday > 0 ? 'warm' : ''}`} title={`${overdue} overdue, ${dueToday} due today`}>
-          <span className="label-long">Clocks due today</span>
-          <span className="label-short">Clocks</span>
-          <span className="count">{overdue > 0 ? `${dueToday}+${overdue}` : dueToday}</span>
+        <Link to="/#clocks" className={`topbar-badge topbar-clocks ${overdue > 0 ? 'hot' : dueToday > 0 ? 'warm' : ''}`} title="Clocks due today and overdue (open the dashboard list)">
+          <span className="label-long">{clocksPillText(overdue, dueToday)}</span>
+          <span className="label-short">{overdue > 0 ? `${overdue} overdue` : `${dueToday} due today`}</span>
         </Link>
       </div>
+      <ManagerToggle />
       <UserBox {...userProps} place="top" />
     </header>
+  );
+}
+
+/** Top-bar clocks pill: "11 overdue · 1 due today". */
+export function clocksPillText(overdue: number, dueToday: number): string {
+  return `${overdue} overdue · ${dueToday} due today`;
+}
+
+/** Phones and narrow tablets (the nav becomes a drawer at the same width). Server render: false. */
+function useNarrowScreen(query = '(max-width: 900px)'): boolean {
+  const get = () => typeof window !== 'undefined' && typeof window.matchMedia === 'function' && window.matchMedia(query).matches;
+  const [narrow, setNarrow] = useState(get);
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+    const mq = window.matchMedia(query);
+    const onChange = () => setNarrow(mq.matches);
+    onChange();
+    mq.addEventListener?.('change', onChange);
+    return () => mq.removeEventListener?.('change', onChange);
+  }, [query]);
+  return narrow;
+}
+
+/** "Manager mode" / "Manager mode ON" (admin and approver only). One click, no dialog (docs/V03 §A.1). */
+function ManagerToggle() {
+  const mm = useManagerMode();
+  const [failed, setFailed] = useState<string | null>(null);
+  if (!mm.allowed) return null;
+  const toggle = async () => {
+    setFailed(null);
+    try {
+      if (mm.on) await mm.turnOff('user');
+      else await mm.turnOn();
+    } catch (e) {
+      setFailed((e as Error)?.message ?? 'Could not change manager mode');
+    }
+  };
+  return (
+    <button
+      type="button"
+      className={`manager-toggle ${mm.on ? 'on' : ''}`}
+      onClick={() => void toggle()}
+      disabled={mm.pending}
+      aria-pressed={mm.on}
+      aria-busy={mm.pending || undefined}
+      title={failed ?? (mm.on ? 'Manager mode is on: click to turn it off' : 'Turn manager mode on: override anything that would normally stop you (every override is audited)')}
+    >
+      <ShieldIcon />
+      <span className="manager-toggle-long">{mm.on ? 'Manager mode ON' : 'Manager mode'}</span>
+      <span className="manager-toggle-short">{mm.on ? 'ON' : 'Manager'}</span>
+    </button>
+  );
+}
+
+/** The full-width "Manager mode is on" banner under the top bar, with the reason box and Turn off. */
+function ManagerBanner() {
+  const mm = useManagerMode();
+  if (!mm.on) return null;
+  return (
+    <div className="manager-banner" role="region" aria-label="Manager mode">
+      <div className="manager-banner-text">
+        <strong>Manager mode is on.</strong> Anything that would normally stop you can be overridden, and every override is recorded in the audit log.
+      </div>
+      <label className="manager-banner-reason">
+        <span>Reason</span>
+        <input type="text" className="input" value={mm.reason} maxLength={500} onChange={(e) => mm.setReason(e.target.value)} onBlur={() => !mm.reason.trim() && mm.setReason('Manager override')} />
+      </label>
+      <span className="manager-banner-idle">Switches off after {minutesText(mm.idleMinutes)} without activity</span>
+      <button type="button" className="manager-banner-off" onClick={() => void mm.turnOff('user').catch(() => undefined)} disabled={mm.pending}>
+        Turn off
+      </button>
+    </div>
   );
 }

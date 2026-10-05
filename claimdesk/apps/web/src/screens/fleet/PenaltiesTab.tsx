@@ -136,7 +136,7 @@ export function PenaltiesTab({ onLogNotice }: { onLogNotice: () => void }) {
       >
         <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--line)' }} className="stack-sm">
           <p className="basis">
-            Workflow (BLUEPRINT §3.12): log on receipt → identify the hirer from the signed agreement → transfer liability (Road Traffic (Owner Liability) Regs 2000 Sch 2 particulars) or answer the s.172 request within 28 days → representations → appeal. Notice documents are drafted on the hirer's claim file and go through consistency check → approval → send; nothing is sent from here.
+            Workflow: log on receipt → identify the hirer from the signed agreement → transfer liability (Road Traffic (Owner Liability) Regs 2000 Sch 2 particulars) or answer the s.172 request within 28 days → representations → appeal. Notice documents are drafted on the hirer's claim file and go through consistency check → approval → send; nothing is sent from here.
           </p>
         </div>
         {penalties.isLoading ? (

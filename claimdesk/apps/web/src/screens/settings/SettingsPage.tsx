@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import '../../styles/screens.css';
+import './settings.css';
 import { isApiError } from '../../api/client';
 import { useSettings, useUpdateSettings } from '../../api/hooks';
 import { PageHeader } from '../../components/PageHeader';
@@ -8,27 +9,66 @@ import { Card } from '../../components/Card';
 import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { MoneyInput, TextArea, TextInput } from '../../components/Form';
-import { EmptyState } from '../../components/EmptyState';
 import { Loading } from '../../components/Spinner';
 import { ApiErrorNotice } from '../../components/ApiErrorNotice';
 import { Table, type Column } from '../../components/Table';
 import { useToast } from '../../components/Toast';
 import { ChangePasswordCard } from './ChangePasswordCard';
-import { API_KEYS, apiKeyPresent, buildSettingsPatch, COMPANY_DETAILS, COMPANY_NAME, COMPANY_NUMBER, confirmationOfPayeeCheck, lookupModeLabel, lookupModeOf, MORE_SETTINGS_LINKS, ROLE_LABEL, settingsToForm, usersFrom, validateSettings, type SettingsErrors, type SettingsForm, type UserRow } from './settings';
+import { ManagerModeCard } from './ManagerModeCard';
+import { UpdatesCard } from './UpdatesCard';
+import {
+  API_KEYS,
+  apiKeyPresent,
+  buildSettingsPatch,
+  COMPANY_DETAILS,
+  COMPANY_NAME,
+  COMPANY_NUMBER,
+  confirmationOfPayeeCheck,
+  lookupModeLabel,
+  lookupModeOf,
+  lookupsSummary,
+  ROLE_LABEL,
+  sectionFromHash,
+  SETTINGS_SECTIONS,
+  settingsToForm,
+  showUsersCard,
+  usersFrom,
+  validateSettings,
+  type SettingsErrors,
+  type SettingsForm,
+  type UserRow
+} from './settings';
 
-/** Company details, bank (Confirmation of Payee), rate card, API key presence and the read-only users list. */
+const FORM_ID = 'settings-form';
+
+/**
+ * Settings (0.3 §E15): a sub-nav of anchors, then Company · Bank · Rates (one form, one sticky Save) · Manager mode ·
+ * Updates · Lookups (one status line, details on click) · Users (only when there are any) · Password.
+ */
 export function SettingsPage() {
   const settings = useSettings();
   const update = useUpdateSettings();
   const toast = useToast();
+  const location = useLocation();
   const [form, setForm] = useState<SettingsForm>(() => settingsToForm(undefined));
   const [dirty, setDirty] = useState(false);
   const [errors, setErrors] = useState<SettingsErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
+  const lookupsRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
     if (settings.data && !dirty) setForm(settingsToForm(settings.data));
   }, [settings.data, dirty]);
+
+  // Anchors (#updates from the side-bar notice, the sub-nav): scroll once the section exists; #lookups opens itself.
+  const loaded = Boolean(settings.data) || Boolean(settings.error);
+  useEffect(() => {
+    const id = sectionFromHash(location.hash);
+    if (!id) return;
+    if (id === 'lookups' && lookupsRef.current) lookupsRef.current.open = true;
+    const el = document.getElementById(id);
+    el?.scrollIntoView?.({ block: 'start', behavior: 'smooth' });
+  }, [location.hash, loaded]);
 
   const set = <K extends keyof SettingsForm>(k: K) => (v: SettingsForm[K]) => {
     setDirty(true);
@@ -50,7 +90,7 @@ export function SettingsPage() {
       setDirty(false);
       toast.success('Settings saved');
     } catch (err) {
-      setServerError(isApiError(err) ? `${err.code}: ${err.message}` : (err as Error).message);
+      setServerError(isApiError(err) ? err.message : (err as Error).message);
     }
   };
 
@@ -63,27 +103,31 @@ export function SettingsPage() {
   ];
 
   return (
-    <div className="page">
+    <div className="page settings-page">
       <PageHeader
         title="Settings"
         subtitle={`${COMPANY_NAME} · company number ${COMPANY_NUMBER} · registered in England and Wales`}
         actions={
-          <>
-            <Link className="btn btn-secondary" to="/watch">
-              Counterparty watch
-            </Link>
-            <Button variant="primary" onClick={save} loading={update.isPending} disabled={!dirty}>
-              Save settings
-            </Button>
-          </>
+          <Link className="btn btn-secondary" to="/watch">
+            Counterparty watch
+          </Link>
         }
       />
+      <nav aria-label="Settings sections">
+        <ul className="settings-subnav">
+          {SETTINGS_SECTIONS.map((s) => (
+            <li key={s.label}>{s.to ? <Link to={s.to}>{s.label}</Link> : <Link to={{ hash: s.id }}>{s.label}</Link>}</li>
+          ))}
+        </ul>
+      </nav>
+
       {settings.isLoading ? (
         <Loading label="Loading settings…" />
       ) : settings.error ? (
         <ApiErrorNotice error={settings.error} what="load settings" />
       ) : (
         <form
+          id={FORM_ID}
           className="stack"
           onSubmit={(e) => {
             e.preventDefault();
@@ -96,11 +140,11 @@ export function SettingsPage() {
             </div>
           )}
           <div className="grid-2">
-            <Card title="Company details">
+            <Card id="company" title="Company details">
               <div className="stack">
-                <TextInput label="Registered name" value={COMPANY_NAME} onChange={() => undefined} disabled hint="Fixed. The legacy trading name, company number, address and domain are blocked everywhere (lesson i)." />
+                <TextInput label="Registered name" value={COMPANY_NAME} onChange={() => undefined} disabled hint="Fixed. Old trading names, company numbers, addresses and web addresses are blocked everywhere." />
                 <TextInput label="Company number" value={COMPANY_NUMBER} onChange={() => undefined} disabled hint={`Registered in England & Wales. Trading as ${COMPANY_DETAILS.tradingName}.`} />
-                <TextArea label="Registered office" value={form.registeredOffice} onChange={set('registeredOffice')} rows={4} error={errors.registeredOffice} hint={`One part per line, postcode last. Printed in every document footer (Companies Act 2006 Part 6 trading disclosures). Default: ${COMPANY_DETAILS.registeredOffice}. Never a legacy address.`} />
+                <TextArea label="Registered office" value={form.registeredOffice} onChange={set('registeredOffice')} rows={4} error={errors.registeredOffice} hint={`One part per line, postcode last. Printed in every document footer. Default: ${COMPANY_DETAILS.registeredOffice}.`} />
                 <dl className="xs" style={{ display: 'grid', gridTemplateColumns: 'max-content 1fr', gap: '2px 12px', margin: 0 }}>
                   {(
                     [
@@ -117,13 +161,13 @@ export function SettingsPage() {
                     </div>
                   ))}
                 </dl>
-                <p className="xs muted">These contact details print on every letter and document (letterhead header and footer). Bank, VAT and ICO numbers are not pre-filled: enter them below when you have them.</p>
+                <p className="xs muted">These contact details print on every letter and document. Bank, VAT and ICO numbers are not pre-filled: enter them when you have them.</p>
                 <TextInput label="VAT registration number" value={form.vatNumber} onChange={set('vatNumber')} placeholder="GB123456789 (blank if not registered)" error={errors.vatNumber} />
                 <TextInput label="ICO registration reference" value={form.icoRegistration} onChange={set('icoRegistration')} placeholder="ZA123456" error={errors.icoRegistration} hint="Data protection fee registration — required to hold client and third-party personal data." />
               </div>
             </Card>
 
-            <Card title="Bank account (Confirmation of Payee)">
+            <Card id="bank" title="Bank account (Confirmation of Payee)">
               <div className="stack">
                 {!cop.match && (
                   <div className="notice notice-danger" role="alert">
@@ -135,101 +179,100 @@ export function SettingsPage() {
                     <strong>Full match expected.</strong> Account name equals the registered name exactly.
                   </div>
                 )}
-                <TextInput label="Account name" value={form.bankAccountName} onChange={set('bankAccountName')} placeholder={COMPANY_NAME} required error={errors.bankAccountName} hint={`Must be exactly "${COMPANY_NAME}" — a trading name here is what broke File 1's bank validation.`} />
+                <TextInput label="Account name" value={form.bankAccountName} onChange={set('bankAccountName')} placeholder={COMPANY_NAME} required error={errors.bankAccountName} hint={`Must be exactly "${COMPANY_NAME}" — a trading name here makes insurers' bank validation fail.`} />
                 <div className="form-grid">
                   <TextInput label="Sort code" value={form.bankSortCode} onChange={set('bankSortCode')} placeholder="12-34-56" inputMode="numeric" error={errors.bankSortCode} />
                   <TextInput label="Account number" value={form.bankAccountNumber} onChange={set('bankAccountNumber')} placeholder="12345678" inputMode="numeric" error={errors.bankAccountNumber} />
                 </div>
                 <TextInput label="Bank" value={form.bankName} onChange={set('bankName')} error={errors.bankName} />
-                <p className="basis">Vendor verification pack (BLUEPRINT §7.7): bank letter on bank letterhead, certificate of incorporation ({COMPANY_NUMBER}), proof of registered office, director ID. Generate it from a claim file → Documents → <code>letter.vendor_verification_pack</code>.</p>
+                <p className="basis">Insurers may ask for a vendor verification pack: a bank letter on bank letterhead, the certificate of incorporation ({COMPANY_NUMBER}), proof of the registered office and the director's ID. Make it from a claim file → Documents → New document.</p>
               </div>
             </Card>
 
-            <Card title="Rate card">
+            <Card id="rates" title="Rate card">
               <div className="stack">
-                <p className="basis">Defaults from the brief: recovery £90 call-out + £3 per loaded mile + £25 admin; storage £45/day; engineer's fee £285. Invoices and the ledger read these; templates never accept free-typed amounts.</p>
+                <p className="basis">Defaults: recovery £90 call-out + £3 per loaded mile + £25 admin; storage £45/day; engineer's fee £285. Invoices and the ledger use these.</p>
                 <div className="form-grid">
                   <MoneyInput label="Recovery call-out" value={form.recoveryCalloutPence} onChange={set('recoveryCalloutPence')} error={errors.recoveryCalloutPence} />
                   <MoneyInput label="Recovery per loaded mile" value={form.recoveryPerLoadedMilePence} onChange={set('recoveryPerLoadedMilePence')} error={errors.recoveryPerLoadedMilePence} />
                   <MoneyInput label="Recovery admin" value={form.recoveryAdminPence} onChange={set('recoveryAdminPence')} error={errors.recoveryAdminPence} />
-                  <MoneyInput label="Storage per day" value={form.storageDailyPence} onChange={set('storageDailyPence')} error={errors.storageDailyPence} hint="Insurers commonly cap at engineer's report + 48 h (File 2)." />
+                  <MoneyInput label="Storage per day" value={form.storageDailyPence} onChange={set('storageDailyPence')} error={errors.storageDailyPence} hint="Insurers commonly cap storage at the engineer's report + 48 hours." />
                   <MoneyInput label="Engineer's fee" value={form.engineerFeePence} onChange={set('engineerFeePence')} error={errors.engineerFeePence} />
                   <TextInput label="VAT rate (%)" value={form.vatRatePct} onChange={set('vatRatePct')} placeholder="20" inputMode="decimal" error={errors.vatRatePct} />
                 </div>
-                <p className="xs muted">GTA daily rates are not set here: they are an industry benchmark loaded from the knowledge base with their verification status (CCGUK is not a subscriber).</p>
+                <p className="xs muted">
+                  GTA daily rates are not set here: they are an industry benchmark with their verification status (CCGUK is not a subscriber) — see <Link to="/settings/gta-rates">GTA rates</Link>.
+                </p>
               </div>
             </Card>
-
-            <Card title="API keys" flush>
-              <div className={`notice ${lookupMode === 'live' ? 'notice-success' : 'notice-info'}`} role="status" style={{ margin: 'var(--s-3)' }}>
-                {lookupModeLabel(lookupMode)}
-              </div>
-              <ul className="key-list">
-                {API_KEYS.map((k) => {
-                  const present = apiKeyPresent(settings.data, k.key);
-                  return (
-                    <li key={k.key}>
-                      <div className="key-name">
-                        {k.label}
-                        <div className="xs muted">{k.unlocks}</div>
-                        <div className="key-env">{k.env}</div>
-                      </div>
-                      <div className="stack-sm" style={{ alignItems: 'flex-end', gap: 4 }}>
-                        {present === undefined ? <Badge tone="grey">unknown</Badge> : present ? <Badge tone="green" dot>present</Badge> : <Badge tone="amber" dot>missing → manual entry</Badge>}
-                        <span className="xs muted">{k.cost}</span>
-                        {k.registerUrl ? (
-                          <a className="xs" href={k.registerUrl} target="_blank" rel="noreferrer noopener" title={k.registerNote}>
-                            Register ↗
-                          </a>
-                        ) : (
-                          <span className="xs muted" title={k.registerNote}>
-                            licensed gateway
-                          </span>
-                        )}
-                      </div>
-                      <div className="xs muted" style={{ flexBasis: '100%' }}>
-                        {k.registerNote}
-                      </div>
-                    </li>
-                  );
-                })}
-              </ul>
-              <div className="card-footer xs muted">Keys live in the API's environment, never in the browser. Without a key the matching lookup returns <code>manual_required</code> and the entry is recorded as unverified.</div>
-            </Card>
-          </div>
-
-          <Card title="More settings">
-            <ul className="stack-sm" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
-              {MORE_SETTINGS_LINKS.map((l) => (
-                <li key={l.to}>
-                  <Link to={l.to}>{l.label}</Link>
-                  <div className="xs muted">{l.description}</div>
-                </li>
-              ))}
-            </ul>
-          </Card>
-
-          <Card title="Users and roles" actions={<Badge tone="grey">read-only</Badge>} flush>
-            {users.length === 0 ? (
-              <EmptyState title="No user list from the API yet">
-                Roles: handler (runs files), approver (clears consistency flags and approves documents), engineer (estimates, PAV, reports), admin (settings). MFA is required for every role (BLUEPRINT §9).
-              </EmptyState>
-            ) : (
-              <Table columns={userColumns} rows={users} rowKey={(u) => u.id} caption="Users" />
-            )}
-          </Card>
-          <div className="row" style={{ justifyContent: 'flex-end' }}>
-            {dirty && <span className="xs muted">Unsaved changes</span>}
-            <Button variant="primary" type="submit" loading={update.isPending} disabled={!dirty}>
-              Save settings
-            </Button>
           </div>
         </form>
       )}
-      {/* Outside the settings <form> (forms cannot nest) and shown even when settings fail to load. */}
-      <div className="grid-2" style={{ marginTop: 'var(--s-4)' }}>
-        <ChangePasswordCard />
+
+      {/* Outside the settings <form> (forms cannot nest; these cards save themselves) and shown even when settings fail to load. */}
+      <div className="stack" style={{ marginTop: 'var(--s-4)' }}>
+        <ManagerModeCard />
+        <UpdatesCard id="updates" />
+
+        <section className="card" id="lookups">
+          <details className="settings-lookups" ref={lookupsRef}>
+            <summary>{lookupsSummary(settings.data)}</summary>
+            <div className={`notice ${lookupMode === 'live' ? 'notice-success' : 'notice-info'}`} role="status" style={{ margin: '0 var(--s-3) var(--s-3)' }}>
+              {lookupModeLabel(lookupMode)}
+            </div>
+            <ul className="key-list">
+              {API_KEYS.map((k) => {
+                const present = apiKeyPresent(settings.data, k.key);
+                return (
+                  <li key={k.key}>
+                    <div className="key-name">
+                      {k.label}
+                      <div className="xs muted">{k.unlocks}</div>
+                      <div className="key-env">{k.env}</div>
+                    </div>
+                    <div className="stack-sm" style={{ alignItems: 'flex-end', gap: 4 }}>
+                      {present === undefined ? <Badge tone="grey">unknown</Badge> : present ? <Badge tone="green" dot>set</Badge> : <Badge tone="amber" dot>not set → manual entry</Badge>}
+                      <span className="xs muted">{k.cost}</span>
+                      {k.registerUrl ? (
+                        <a className="xs" href={k.registerUrl} target="_blank" rel="noreferrer noopener" title={k.registerNote}>
+                          Register ↗
+                        </a>
+                      ) : (
+                        <span className="xs muted" title={k.registerNote}>
+                          licensed gateway
+                        </span>
+                      )}
+                    </div>
+                    <div className="xs muted" style={{ flexBasis: '100%' }}>
+                      {k.registerNote}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+            <div className="card-footer xs muted">Keys live on this computer's ClaimDesk set-up, never in the browser. Without a key you type the details in yourself and they are recorded as unverified.</div>
+          </details>
+        </section>
+
+        {showUsersCard(settings.data) && (
+          <Card title="Users and roles" actions={<Badge tone="grey">read-only</Badge>} flush>
+            <Table columns={userColumns} rows={users} rowKey={(u) => u.id} caption="Users" />
+          </Card>
+        )}
+
+        <div id="password" className="grid-2 settings-password">
+          <ChangePasswordCard />
+        </div>
       </div>
+
+      {!settings.isLoading && !settings.error && (
+        <div className="settings-savebar" role="region" aria-label="Save settings">
+          {dirty ? <span className="xs muted">Unsaved changes</span> : <span className="xs muted">Company, bank and rates</span>}
+          <Button variant="primary" type="submit" form={FORM_ID} loading={update.isPending} disabled={!dirty}>
+            Save settings
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

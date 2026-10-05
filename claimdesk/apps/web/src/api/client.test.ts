@@ -1,6 +1,26 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Vehicle } from '@ccguk/domain';
-import { ApiError, asList, buildUrl, isApiError, normaliseCreateClaimResult, normaliseLookupResult, seg, unwrap } from './client';
+import {
+  ApiError,
+  asList,
+  buildUrl,
+  isApiError,
+  normaliseCreateClaimResult,
+  normaliseLookupResult,
+  onManagerOverrides,
+  parseAppliedOverrides,
+  parseOverrideInfo,
+  relaxedKeysOf,
+  request,
+  seg,
+  setManagerModeReactivator,
+  setManagerOverrideReason,
+  setOverridePromptHandler,
+  unwrap,
+  withRelaxed,
+  type AppliedOverrideNotice,
+  type OverrideInfo
+} from './client';
 
 describe('buildUrl', () => {
   it('prefixes the base and skips empty query values', () => {
@@ -124,5 +144,219 @@ describe('unwrap (enveloped write replies)', () => {
     expect(unwrap({ offer: { id: 'o1' }, replyClock: undefined }, 'offer')).toEqual({ id: 'o1' });
     expect(unwrap({ id: 'h1', startAt: 'x' }, 'hire')).toEqual({ id: 'h1', startAt: 'x' });
     expect(unwrap([1], 'event')).toEqual([1]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Manager mode in request() (docs/V03-MANAGER-MODE-HIRE-PRICING.md §A.5.1)
+// ---------------------------------------------------------------------------
+
+interface Call {
+  url: string;
+  method: string;
+  headers: Record<string, string>;
+  body: unknown;
+}
+
+const json = (status: number, body: unknown, headers: Record<string, string> = {}) =>
+  new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json', ...headers } });
+
+const HARD_STOP: OverrideInfo = { code: 'HARD_STOP', class: 'A', label: 'Uncleared hard-stop flag on the claim', warning: 'The flag stays on the file until someone clears it with a reason.', allowed: true, managerMode: 'off' };
+const refusal = (override?: OverrideInfo) => json(409, { error: { code: 'HARD_STOP', message: 'Claim has an uncleared hard stop', details: { flags: [{ code: 'FLEET_UNIT_AS_CLIENT_VEHICLE', message: 'Fleet unit' }] }, requestId: 'r1', ...(override ? { override } : {}) } });
+
+describe('request() in manager mode', () => {
+  let calls: Call[];
+  let replies: Array<() => Response>;
+  const cleanups: Array<() => void> = [];
+
+  beforeEach(() => {
+    calls = [];
+    replies = [];
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (url: string, init: RequestInit = {}) => {
+        calls.push({ url, method: String(init.method), headers: { ...(init.headers as Record<string, string>) }, body: init.body });
+        const next = replies.shift();
+        if (!next) throw new Error(`unexpected fetch ${String(init.method)} ${url}`);
+        return next();
+      })
+    );
+  });
+  afterEach(() => {
+    setManagerOverrideReason(null);
+    while (cleanups.length) cleanups.pop()!();
+    vi.unstubAllGlobals();
+  });
+
+  it('sends X-Manager-Override on non-GET requests only while manager mode is on', async () => {
+    replies.push(() => json(200, { ok: true }), () => json(200, { ok: true }), () => json(200, { ok: true }), () => json(200, { ok: true }));
+    await request('/claims/c1/status', { method: 'POST', body: { status: 'accepted' } });
+    setManagerOverrideReason('Agent forgot — backdated');
+    await request('/claims/c1/status', { method: 'POST', body: { status: 'accepted' } });
+    await request('/claims', { method: 'GET' });
+    await request('/fleet/u1', { method: 'DELETE' });
+    expect(calls[0]!.headers['X-Manager-Override']).toBeUndefined();
+    expect(calls[1]!.headers['X-Manager-Override']).toBe(encodeURIComponent('Agent forgot — backdated'));
+    expect(calls[2]!.headers['X-Manager-Override']).toBeUndefined();
+    expect(calls[3]!.headers['X-Manager-Override']).toBe(encodeURIComponent('Agent forgot — backdated'));
+  });
+
+  it('withRelaxed keys travel as X-Manager-Relaxed only while on, and never in the JSON body', async () => {
+    const body = withRelaxed({ status: 'pre_action' }, ['status.reason', 'fnol.claimant.contact']);
+    expect(relaxedKeysOf(body)).toEqual(['status.reason', 'fnol.claimant.contact']);
+    expect(JSON.stringify(body)).toBe('{"status":"pre_action"}');
+    replies.push(() => json(200, {}), () => json(200, {}));
+    await request('/claims/c1/status', { method: 'POST', body });
+    setManagerOverrideReason('Manager override');
+    await request('/claims/c1/status', { method: 'POST', body });
+    expect(calls[0]!.headers['X-Manager-Relaxed']).toBeUndefined();
+    expect(calls[1]!.headers['X-Manager-Relaxed']).toBe(encodeURIComponent('status.reason,fnol.claimant.contact'));
+    expect(calls[1]!.body).toBe('{"status":"pre_action"}');
+  });
+
+  it('passes the x-manager-overrides response header to the listeners', async () => {
+    const seen: AppliedOverrideNotice[][] = [];
+    cleanups.push(onManagerOverrides((a) => seen.push(a)));
+    const applied = [{ code: 'HARD_STOP', label: 'Uncleared hard-stop flag on the claim', reason: 'Manager override' }];
+    replies.push(() => json(200, { id: 'c1' }, { 'x-manager-overrides': encodeURIComponent(JSON.stringify(applied)) }), () => json(200, { id: 'c1' }));
+    setManagerOverrideReason('Manager override');
+    await expect(request('/claims/c1/status', { method: 'POST', body: {} })).resolves.toEqual({ id: 'c1' });
+    await request('/claims/c1/status', { method: 'POST', body: {} });
+    expect(seen).toEqual([applied]);
+  });
+
+  it('parses ApiError.override from the error body', async () => {
+    replies.push(() => refusal(HARD_STOP));
+    const err = await request('/claims/c1/status', { method: 'POST', body: {} }).catch((e: unknown) => e);
+    expect(isApiError(err)).toBe(true);
+    expect((err as ApiError).override).toEqual(HARD_STOP);
+    expect((err as ApiError).details).toEqual({ flags: [{ code: 'FLEET_UNIT_AS_CLIENT_VEHICLE', message: 'Fleet unit' }] });
+    expect(parseOverrideInfo({ code: 'X' })).toBeUndefined();
+    expect(parseOverrideInfo({ code: 'X', label: 'L', allowed: false, class: 'B', managerMode: 'on', warning: '' })).toEqual({ code: 'X', label: 'L', allowed: false, class: 'B', managerMode: 'on' });
+  });
+
+  it('prompt → override re-sends the same request once and resolves the caller', async () => {
+    const asked: ApiError[] = [];
+    cleanups.push(
+      setOverridePromptHandler(async (e) => {
+        asked.push(e);
+        setManagerOverrideReason('Customer waiting'); // what the provider does when it turns manager mode on
+        return { action: 'override', reason: 'Customer waiting' };
+      })
+    );
+    replies.push(() => refusal(HARD_STOP), () => json(200, { status: 'accepted' }));
+    await expect(request('/claims/c1/status', { method: 'POST', body: { status: 'accepted' } })).resolves.toEqual({ status: 'accepted' });
+    expect(asked).toHaveLength(1);
+    expect(asked[0]!.override?.code).toBe('HARD_STOP');
+    expect(calls).toHaveLength(2);
+    expect(calls[1]!.method).toBe('POST');
+    expect(calls[1]!.url).toBe(calls[0]!.url);
+    expect(calls[1]!.body).toBe(calls[0]!.body);
+    expect(calls[0]!.headers['X-Manager-Override']).toBeUndefined();
+    expect(calls[1]!.headers['X-Manager-Override']).toBe('Customer%20waiting');
+  });
+
+  it('re-sends FormData uploads unchanged', async () => {
+    cleanups.push(
+      setOverridePromptHandler(async () => {
+        setManagerOverrideReason('Manager override');
+        return { action: 'override', reason: 'Manager override' };
+      })
+    );
+    const fd = new FormData();
+    fd.append('kind', 'photo');
+    replies.push(() => refusal(HARD_STOP), () => json(201, { id: 'e1' }));
+    await expect(request('/claims/c1/evidence', { method: 'POST', formData: fd })).resolves.toEqual({ id: 'e1' });
+    expect(calls[1]!.body).toBe(fd);
+    expect(calls[1]!.headers['Content-Type']).toBeUndefined();
+  });
+
+  it('cancel rethrows the original refusal, and a second refusal is not prompted again', async () => {
+    let asked = 0;
+    cleanups.push(
+      setOverridePromptHandler(async () => {
+        asked++;
+        return { action: 'cancel' };
+      })
+    );
+    replies.push(() => refusal(HARD_STOP));
+    const err = await request('/claims/c1/status', { method: 'POST', body: {} }).catch((e: unknown) => e);
+    expect((err as ApiError).code).toBe('HARD_STOP');
+    expect(calls).toHaveLength(1);
+    expect(asked).toBe(1);
+
+    // override chosen, but the retry is refused again → that error is thrown, no third attempt
+    cleanups.push(
+      setOverridePromptHandler(async () => {
+        asked++;
+        setManagerOverrideReason('Manager override');
+        return { action: 'override', reason: 'Manager override' };
+      })
+    );
+    replies.push(() => refusal(HARD_STOP), () => json(403, { error: { code: 'FORBIDDEN', message: 'Not allowed' } }));
+    const again = await request('/claims/c1/status', { method: 'POST', body: {} }).catch((e: unknown) => e);
+    expect((again as ApiError).code).toBe('FORBIDDEN');
+    expect(calls).toHaveLength(3);
+    expect(asked).toBe(2);
+  });
+
+  it('never prompts for GET, class C errors or a refusal the user may not override', async () => {
+    let asked = 0;
+    cleanups.push(
+      setOverridePromptHandler(async () => {
+        asked++;
+        return { action: 'override', reason: 'x' };
+      })
+    );
+    replies.push(
+      () => refusal(HARD_STOP),
+      () => json(409, { error: { code: 'IMMUTABLE', message: 'Ledger rows are append-only' } }),
+      () => refusal({ ...HARD_STOP, allowed: false })
+    );
+    await expect(request('/claims/c1', { method: 'GET' })).rejects.toBeInstanceOf(ApiError);
+    await expect(request('/claims/c1/ledger/l1', { method: 'PATCH', body: {} })).rejects.toMatchObject({ code: 'IMMUTABLE' });
+    await expect(request('/claims/c1/status', { method: 'POST', body: {} })).rejects.toMatchObject({ code: 'HARD_STOP', override: { allowed: false } });
+    expect(asked).toBe(0);
+    expect(calls).toHaveLength(3);
+  });
+
+  it('expired on the server while the client believed it on → reactivate and re-send once, without a prompt', async () => {
+    let prompted = 0;
+    let reactivated = 0;
+    cleanups.push(
+      setOverridePromptHandler(async () => {
+        prompted++;
+        return { action: 'cancel' };
+      })
+    );
+    cleanups.push(
+      setManagerModeReactivator(async () => {
+        reactivated++;
+        return true;
+      })
+    );
+    setManagerOverrideReason('Manager override');
+    replies.push(() => refusal({ ...HARD_STOP, managerMode: 'off' }), () => json(200, { ok: true }));
+    await expect(request('/claims/c1/status', { method: 'POST', body: {} })).resolves.toEqual({ ok: true });
+    expect(reactivated).toBe(1);
+    expect(prompted).toBe(0);
+    expect(calls).toHaveLength(2);
+    expect(calls[1]!.headers['X-Manager-Override']).toBe('Manager%20override');
+
+    // reactivation refused (e.g. the role changed) → the original error
+    cleanups.push(setManagerModeReactivator(async () => false));
+    replies.push(() => refusal({ ...HARD_STOP, managerMode: 'off' }));
+    await expect(request('/claims/c1/status', { method: 'POST', body: {} })).rejects.toMatchObject({ code: 'HARD_STOP' });
+    expect(calls).toHaveLength(3);
+  });
+
+  it('decodes the applied-overrides header defensively', () => {
+    expect(parseAppliedOverrides(null)).toEqual([]);
+    expect(parseAppliedOverrides('not json')).toEqual([]);
+    expect(parseAppliedOverrides(encodeURIComponent('{"a":1}'))).toEqual([]);
+    expect(parseAppliedOverrides(encodeURIComponent(JSON.stringify([{ code: 'X' }, 'junk', { code: 'Y', label: 'Why', reason: 'r' }])))).toEqual([
+      { code: 'X', label: 'X', reason: '' },
+      { code: 'Y', label: 'Why', reason: 'r' }
+    ]);
   });
 });

@@ -317,6 +317,14 @@ describe('invoices: reconciliation (InvoiceConsistencyError)', () => {
 
   it('refuses a balance that is not gross − received', () => {
     expect(() => renderTemplate('invoice.hire', { ...hire, receivedPence: 111200, balancePence: 8000 })).toThrow(/balancePence/);
+    expect(() => renderTemplate('invoice.hire', { ...hire, receivedPence: 150000, balancePence: -30480 })).toThrow(/never below/);
+  });
+
+  it('prints a £0.00 balance and the excess when receipts exceed the invoice (interim invoice, hire corrected after payment)', () => {
+    const text = renderText('invoice.hire', { ...hireInvoiceTemplate.sample(), receivedPence: 150000, balancePence: 0 });
+    expect(text).toContain('Received to date -£1,500.00');
+    expect(text).toContain('Balance outstanding £0.00');
+    expect(text).toContain('Received in excess of this invoice £304.80');
   });
 
   it('allows a capped additional-driver line below the product, never above it', () => {

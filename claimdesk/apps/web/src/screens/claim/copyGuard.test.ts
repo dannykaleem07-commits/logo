@@ -75,3 +75,23 @@ describe('append-only screens render no edit or delete control (README conventio
     expect(/never edited or deleted/i.test(text)).toBe(true);
   });
 });
+
+describe('no internal ids or design references in screen copy (0.3 §E8, §E12)', () => {
+  const screens = join(root, '..');
+  const read = (rel: string) => readFileSync(join(screens, rel), 'utf8');
+  it.each([
+    ['analytics/AnalyticsPage.tsx', /— lesson [a-z]/],
+    ['kb/KbPage.tsx', /\(UNVERIFIED_CITATION\)|flags UNVERIFIED_CITATION/],
+    ['kb/kb.ts', /\(lesson [a-z]\)/],
+    ['claim/tabs/ClocksTab.tsx', /className="xs muted mono">\{c\.kind\}/],
+    ['claim/tabs/engineering/EngineerReportForm.tsx', /Generate report\.engineer|the report\.engineer document/],
+    ['claim/tabs/LedgerTab.tsx', /corrects \$\{r\.entry\.supersedesId\}/],
+    ['claims/new/NewClaimPage.tsx', /flags\.map\(\(f\) => f\.code\)/]
+  ])('%s', (rel, re) => {
+    expect(re.test(read(rel)), `${rel} matches ${re}`).toBe(false);
+  });
+  it('server text that can carry ids or references is passed through plainText where it is shown', () => {
+    expect(read('watch/WatchPage.tsx')).toMatch(/plainText\(r\)/);
+    expect(read('claim/components/GatesRow.tsx')).toMatch(/plainText\(m\)/);
+  });
+});

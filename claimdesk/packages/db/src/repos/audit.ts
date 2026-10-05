@@ -1,4 +1,4 @@
-import { and, desc, eq, sql, type SQL } from 'drizzle-orm';
+import { and, desc, eq, inArray, or, sql, type SQL } from 'drizzle-orm';
 import type { Id, ISODateTime } from '@ccguk/domain';
 import type { Db } from '../client.js';
 import { AuditImmutableError } from '../errors.js';
@@ -73,6 +73,54 @@ export function listAudit(db: Db, filter: ListAuditFilter = {}): AuditEntry[] {
     .orderBy(desc(auditLog.at), desc(sql`rowid`))
     .limit(filter.limit ?? 200)
     .offset(filter.offset ?? 0)
+    .all();
+  return rows.map(denull);
+}
+
+/**
+ * Audit trail of one claim (0.3 §A.6 B44): rows whose entityId is the claim or one of `relatedIds` (its hires, storage,
+ * recovery, offers, documents, estimates, PAVs, engineer reports…), or whose `after.claimId` is the claim. Newest first.
+ */
+export function listAuditForClaim(db: Db, claimId: Id, relatedIds: readonly Id[] = [], limit = 500): AuditEntry[] {
+  const ids = [...new Set([claimId, ...relatedIds.filter((x) => typeof x === 'string' && x.length > 0)])];
+  // SQLite caps bound parameters per statement; chunk large id lists into OR'd IN clauses.
+  const chunks: SQL[] = [];
+  for (let i = 0; i < ids.length; i += 500) chunks.push(inArray(auditLog.entityId, ids.slice(i, i + 500)));
+  const byClaimId = sql`(json_valid(${auditLog.after}) and json_extract(${auditLog.after}, '$.claimId') = ${claimId})`;
+  const rows = db
+    .select()
+    .from(auditLog)
+    .where(or(...chunks, byClaimId))
+    .orderBy(desc(auditLog.at), desc(sql`rowid`))
+    .limit(Math.max(1, Math.min(limit, 5000)))
+    .all();
+  return rows.map(denull);
+}
+
+export interface ListAuditByActionsFilter {
+  /** Action prefixes, e.g. `['override.']`. */
+  prefixes?: readonly string[];
+  /** Exact actions, e.g. `['manager_mode.on', 'manager_mode.off']`. */
+  actions?: readonly string[];
+  limit?: number;
+}
+
+/** Audit rows whose action starts with one of `prefixes` or equals one of `actions`, newest first. */
+export function listAuditByActions(db: Db, filter: ListAuditByActionsFilter): AuditEntry[] {
+  const conds: SQL[] = [];
+  for (const p of filter.prefixes ?? []) {
+    if (!p) continue;
+    // Escape LIKE wildcards so a prefix such as 'override.' matches literally.
+    conds.push(sql`${auditLog.action} like ${`${p.replace(/[\\%_]/g, (c) => `\\${c}`)}%`} escape '\\'`);
+  }
+  if (filter.actions?.length) conds.push(inArray(auditLog.action, [...filter.actions]));
+  if (!conds.length) return [];
+  const rows = db
+    .select()
+    .from(auditLog)
+    .where(or(...conds))
+    .orderBy(desc(auditLog.at), desc(sql`rowid`))
+    .limit(Math.max(1, Math.min(filter.limit ?? 50, 1000)))
     .all();
   return rows.map(denull);
 }

@@ -1,12 +1,18 @@
 import type { FastifyInstance } from 'fastify';
 import { mileageConflicts, normaliseRegistration, isValidUkRegistration } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
-import { badRequest } from '../errors.js';
+import { HttpError } from '../errors.js';
 import { parse } from '../schemas/common.js';
 import { lookupBody, mileageConflictsQuery, odometerReadingInput, onFileQuery, vehicleInput, vehicleListQuery, vehiclePatchBody } from '../schemas/vehicles.js';
 import { createLookupClients, differsFromVerified, lookupVehicle, manualLookupRecord, sourceLookupRecord, type LookupClients } from '../services/lookup.js';
+import { gateFor } from '../services/override.js';
 import { onFileMatches } from '../services/vehicleSearch.js';
 import { params } from './helpers.js';
+
+/** 400 REGISTRATION_FORMAT (overridable, class B). */
+function registrationFormatError(raw: string): HttpError {
+  return new HttpError(400, 'REGISTRATION_FORMAT', `"${raw}" is not a valid UK registration format`);
+}
 
 export interface VehiclesRouteOptions {
   clients?: LookupClients;
@@ -28,7 +34,8 @@ export function registerVehiclesRoutes(app: FastifyInstance, ctx: AppContext, op
   app.post('/vehicles', async (request, reply) => {
     const body = parse(vehicleInput, request.body);
     const reg = normaliseRegistration(body.registration);
-    if (!isValidUkRegistration(reg)) throw badRequest(`"${body.registration}" is not a valid UK registration format`);
+    // Not a UK format: class B (0.3 §A.6 B12) — a foreign or trade plate can be saved in manager mode.
+    if (!isValidUkRegistration(reg)) gateFor(ctx, request).refuse(registrationFormatError(body.registration), { entity: 'vehicles', entityId: reg });
     const now = ctx.now();
     const { odometer, source, ...fields } = body;
     const meta = { requestedAt: now, requestedBy: request.user.id };
@@ -87,7 +94,11 @@ export function registerVehiclesRoutes(app: FastifyInstance, ctx: AppContext, op
   app.post('/vehicles/lookup', async (request) => {
     const body = parse(lookupBody, request.body);
     const reg = normaliseRegistration(body.registration);
-    if (!isValidUkRegistration(reg)) throw badRequest(`"${body.registration}" is not a valid UK registration format`);
+    if (!isValidUkRegistration(reg)) {
+      gateFor(ctx, request).refuse(registrationFormatError(body.registration), { entity: 'vehicles', entityId: reg });
+      // Overridden: DVLA/DVSA only know UK plates, so skip the live providers and answer manual_required.
+      return lookupVehicle(ctx, clients, { registration: reg, ownership: body.ownership, providers: [] }, request.actor);
+    }
     return lookupVehicle(ctx, clients, { registration: reg, ownership: body.ownership, providers: body.providers }, request.actor);
   });
 

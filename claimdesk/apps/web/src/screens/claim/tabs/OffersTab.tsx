@@ -195,7 +195,7 @@ export function OffersTab({ view }: { view: ClaimView }) {
       >
         <ApiErrorNotice error={offersQ.error} what="load the register" />
         <ApiErrorNotice error={create.error} what="draft the reply" />
-        <Table columns={columns} rows={sorted} rowKey={(o) => o.id} caption="Intervention register" empty={<EmptyState title="No offers logged">When the client reports an offer — what exactly, by whom, when — log it here. The 1-working-day reply clock starts from the time received.</EmptyState>} />
+        <Table columns={columns} rows={sorted} rowKey={(o) => o.id} caption="Offers" empty={<EmptyState title="No offers logged">When the client reports an offer — what exactly, by whom, when — log it here. The 1-working-day reply clock starts from the time received.</EmptyState>} />
       </Card>
 
       {(dialog?.kind === 'add' || dialog?.kind === 'edit') && <OfferDialog claimId={claimId} view={view} offer={dialog.kind === 'edit' ? dialog.offer : undefined} onClose={() => setDialog(null)} />}

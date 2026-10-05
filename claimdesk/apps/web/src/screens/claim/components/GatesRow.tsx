@@ -1,4 +1,5 @@
 import type { GateResult } from '@ccguk/domain';
+import { plainText } from '../../../lib/plainText';
 
 const GATE_LABEL: Record<GateResult['gate'], string> = {
   need: 'Need',
@@ -31,7 +32,7 @@ export function GatesRow({ gates, expanded = false }: { gates: GateResult[]; exp
     <div className="gates-row" role="list">
       {gates.map((g) => (
         <details key={g.gate} className={`gate-tile ${g.status}`} open={expanded || undefined} role="listitem">
-          <summary title={g.missing.length ? `Missing: ${g.missing.join('; ')}` : 'Complete'}>
+          <summary title={g.missing.length ? `Missing: ${g.missing.map(plainText).join('; ')}` : 'Complete'}>
             <span className="gate-name">{GATE_LABEL[g.gate] ?? g.gate}</span>
             <span className="gate-light">{STATUS_WORD[g.status]}</span>
           </summary>
@@ -43,7 +44,7 @@ export function GatesRow({ gates, expanded = false }: { gates: GateResult[]; exp
                 <ul>
                   {g.missing.map((m) => (
                     <li key={m} className="missing">
-                      {m}
+                      {plainText(m)}
                     </li>
                   ))}
                 </ul>
@@ -55,7 +56,7 @@ export function GatesRow({ gates, expanded = false }: { gates: GateResult[]; exp
                 <ul>
                   {g.present.map((m) => (
                     <li key={m} className="present">
-                      {m}
+                      {plainText(m)}
                     </li>
                   ))}
                 </ul>

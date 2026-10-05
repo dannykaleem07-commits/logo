@@ -6,15 +6,17 @@ import type { FastifyInstance } from 'fastify';
 import { crossFileRegistrationCheck, type Claim, type ClaimFlag, type ClaimStatus, type Id, type Party, type PartyRole, type Vehicle } from '@ccguk/domain';
 import type { Actor, Db } from '@ccguk/db';
 import type { AppContext } from '../context.js';
-import { badRequest } from '../errors.js';
+import { badRequest, HttpError } from '../errors.js';
 import { parse } from '../schemas/common.js';
 import { claimListQuery, claimPatchBody, clearFlagBody, createClaimBody, statusBody, type CreateClaimBody } from '../schemas/claims.js';
 import type { PartyRef } from '../schemas/parties.js';
 import type { VehicleRef } from '../schemas/vehicles.js';
 import { acceptanceFor, actionsFor, buildClaimView, gatesFor, loadBundle, recomputeClocks } from '../services/claimView.js';
+import { listClaimsResponse } from '../services/claimList.js';
 import { routeInjuryFor, scoreLiabilityFor, validateFnolInput, type FnolValidation, type LiabilityScore } from '../engines.js';
 import { FNOL_DEFAULT_ROLES, isIndependentRelationship, normaliseFnol, toFnolInput, type NormalisedFnol, type ResolvedRefs } from '../services/intake.js';
 import { manualLookupRecord, sourceLookupRecord } from '../services/lookup.js';
+import { gateFor, NEW_ENTITY, STRICT_GATE, type OverrideGate } from '../services/override.js';
 import { assertNoHardStop, params, requireClaim } from './helpers.js';
 
 const STATUS_RANK: Record<ClaimStatus, number> = {
@@ -71,11 +73,27 @@ export interface IntakeReport {
  */
 export type CreatedClaim = Claim & { claim: Claim; intake: IntakeReport };
 
-export function createClaimFromFnol(ctx: AppContext, body: CreateClaimBody, actor: Actor): CreatedClaim {
+/** An intake question as people read it: the plain message, without the field path or internal design references. */
+function intakeIssueText(issue: { field: string; message: string }): string {
+  return issue.message.replace(/\s*\((?:[^()]*\b)?lessons?\s+[a-z](?:\s*,\s*[a-z])*\)/gi, '').trim();
+}
+
+/**
+ * Open a claim from an FNOL body. Hard intake errors refuse with 400 FNOL_INCOMPLETE through the override gate (class
+ * B, 0.3 §A.6 B13): in manager mode the claim opens anyway with an INTAKE_INCOMPLETE warn flag listing what is missing.
+ * The five zod-required fields (claimant name, registration, accident date-time, location, circumstances) stay hard.
+ */
+export function createClaimFromFnol(ctx: AppContext, body: CreateClaimBody, actor: Actor, gate: OverrideGate = STRICT_GATE): CreatedClaim {
   const n = normaliseFnol(body);
   const validation = validateFnolInput(toFnolInput(n, resolveRefsForValidation(ctx, n)));
+  let overriddenGaps: string[] = [];
   if (!validation.ok) {
-    throw badRequest('FNOL is missing mandatory fields', { missing: validation.missing, errors: validation.errors, incomplete: validation.incomplete, warnings: validation.warnings });
+    gate.refuse(
+      new HttpError(400, 'FNOL_INCOMPLETE', 'FNOL is missing mandatory fields', { missing: validation.missing, errors: validation.errors, incomplete: validation.incomplete, warnings: validation.warnings }),
+      { entity: 'claims', entityId: NEW_ENTITY },
+    );
+    // Overridden: the claim opens and the flag lists every hard gap.
+    overriddenGaps = validation.errors.length ? validation.errors.map(intakeIssueText) : validation.missing;
   }
   if (n.interventionOffer && (n.interventionOffer as { clientToldToIgnore?: unknown }).clientToldToIgnore === true) {
     throw badRequest('Script guard: never tell the client to ignore an offer — record what was offered, by whom and when');
@@ -121,7 +139,7 @@ export function createClaimFromFnol(ctx: AppContext, body: CreateClaimBody, acto
       if (linked.length) reasons.push(`shares ${[...new Set(linked.flatMap((c) => c.matchedOn))].join(', ')} with the ${linked.some((c) => c.party.id === claimant.id) ? 'claimant' : 'driver'}`);
       const independent = reasons.length === 0;
       if (!independent) {
-        flags.push({ code: 'NON_INDEPENDENT_WITNESS', severity: 'warn', message: `Witness ${party.name}: ${reasons.join('; ')} (lesson g). Do not present this witness as independent; seek CCTV, dashcam or an unconnected witness before relying on liability.`, raisedAt: now, raisedBy: 'system' });
+        flags.push({ code: 'NON_INDEPENDENT_WITNESS', severity: 'warn', message: `Witness ${party.name}: ${reasons.join('; ')}. Do not present this witness as independent; seek CCTV, dashcam or an unconnected witness before relying on liability.`, raisedAt: now, raisedBy: 'system' });
       }
       return { partyId: party.id, name: party.name, independent, reasons };
     });
@@ -130,10 +148,16 @@ export function createClaimFromFnol(ctx: AppContext, body: CreateClaimBody, acto
       flags.push({
         code: 'INTAKE_INCOMPLETE',
         severity: 'warn',
-        message: `FNOL questions still open (BLUEPRINT §3.1): ${validation.incomplete.map((i) => `${i.field} — ${i.message}`).join(' | ')}`,
+        message: `Intake questions still open: ${validation.incomplete.map(intakeIssueText).join(' | ')}`,
         raisedAt: now,
         raisedBy: 'system',
       });
+    }
+    if (overriddenGaps.length) {
+      const gaps = `Missing intake answers: ${overriddenGaps.join(' | ')} (opened in manager mode)`;
+      const open = flags.find((f) => f.code === 'INTAKE_INCOMPLETE' && !f.clearedAt);
+      if (open) open.message = `${open.message} | ${gaps}`;
+      else flags.push({ code: 'INTAKE_INCOMPLETE', severity: 'warn', message: gaps, raisedAt: now, raisedBy: 'system' });
     }
 
     const claim = ctx.repos.createClaim(tx, {
@@ -270,25 +294,14 @@ export function registerClaimsRoutes(app: FastifyInstance, ctx: AppContext): voi
       limit: q.limit,
       offset: q.offset,
     });
-    const partyIds = [...new Set(items.map((c) => c.claimantId))];
-    const parties = new Map(ctx.repos.getParties(ctx.db, partyIds).map((p) => [p.id, p]));
-    const vehicleIds = [...new Set(items.map((c) => c.clientVehicleId))];
-    const vehicles = new Map(vehicleIds.map((id) => [id, ctx.repos.getVehicle(ctx.db, id)]));
-    return {
-      items: items.map((c) => ({
-        ...c,
-        claimantName: parties.get(c.claimantId)?.name,
-        registration: vehicles.get(c.clientVehicleId)?.registration,
-        openFlags: c.flags.filter((f) => !f.clearedAt).length,
-      })),
-      total: items.length,
-      byStatus: ctx.repos.countClaimsByStatus(ctx.db),
-    };
+    return listClaimsResponse(ctx, items, ctx.repos.countClaimsByStatus(ctx.db));
   });
 
   app.post('/claims', async (request, reply) => {
     const body = parse(createClaimBody, request.body);
-    const created = createClaimFromFnol(ctx, body, request.actor);
+    const gate = gateFor(ctx, request);
+    const created = createClaimFromFnol(ctx, body, request.actor, gate);
+    gate.bindClaim(created.id);
     return reply.status(201).send(created);
   });
 
@@ -327,11 +340,15 @@ export function registerClaimsRoutes(app: FastifyInstance, ctx: AppContext): voi
     const claim = requireClaim(ctx, id);
     if (claim.status === body.status) return claim;
     const progressing = STATUS_RANK[body.status] >= STATUS_RANK.accepted && !['declined', 'closed'].includes(body.status);
-    if (progressing) assertNoHardStop(claim);
-    if (['pre_action', 'litigation'].includes(body.status) && !body.reason) {
-      throw badRequest('A reason is required when moving to pre_action or litigation (litigation documents are drafts for the claimant to sign)');
+    const gate = gateFor(ctx, request);
+    if (progressing) assertNoHardStop(claim, gate);
+    let reason = body.reason;
+    if (['pre_action', 'litigation'].includes(body.status) && !reason) {
+      // Manager mode (0.3 §A.6 B15): the override reason becomes the status reason.
+      if (gate.active) reason = gate.reason;
+      else throw badRequest('A reason is required when moving to pre_action or litigation (litigation documents are drafts for the claimant to sign)');
     }
-    return ctx.repos.setClaimStatus(ctx.db, id, body.status, request.actor, body.reason);
+    return ctx.repos.setClaimStatus(ctx.db, id, body.status, request.actor, reason);
   });
 
   app.post('/claims/:id/flags/:code/clear', async (request) => {
@@ -369,7 +386,20 @@ export function registerClaimsRoutes(app: FastifyInstance, ctx: AppContext): voi
   app.get('/claims/:id/audit', async (request) => {
     const { id } = params<{ id: string }>(request);
     requireClaim(ctx, id);
-    return { entries: ctx.repos.listAudit(ctx.db, { entityId: id, limit: 500 }) };
+    // The claim's own rows plus those of its hires, storage, recovery, offers, documents, estimates, PAVs and
+    // engineer reports, and any row whose `after.claimId` is the claim (0.3 §A.6 B44).
+    const db = ctx.db;
+    const related = [
+      ...ctx.repos.listHire(db, id),
+      ...ctx.repos.listStorage(db, id),
+      ...ctx.repos.listRecovery(db, id),
+      ...ctx.repos.listOffers(db, id),
+      ...ctx.repos.listDocuments(db, { claimId: id, includeHtml: false, limit: 10_000 }),
+      ...ctx.repos.listEstimates(db, id),
+      ...ctx.repos.listPav(db, id),
+      ...ctx.repos.listEngineerReports(db, id),
+    ].map((r) => r.id);
+    return { entries: ctx.repos.listAuditForClaim(db, id, related, 500) };
   });
 }
 

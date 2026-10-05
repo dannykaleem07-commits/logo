@@ -1,0 +1,17 @@
+/* Directory compact cards (0.3 §E3). Shared tokens only. */
+.dir-tp-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+  flex-wrap: wrap;
+}
+.dir-more > summary {
+  cursor: pointer;
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+  padding: var(--s-1) 0;
+}
+.dir-more[open] > summary {
+  margin-bottom: var(--s-2);
+}

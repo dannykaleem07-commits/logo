@@ -33,7 +33,6 @@ export function ClocksTab({ view }: { view: ClaimView }) {
       render: (c) => (
         <div>
           <div className="strong">{c.label}</div>
-          <div className="xs muted mono">{c.kind}</div>
         </div>
       )
     },

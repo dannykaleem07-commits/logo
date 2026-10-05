@@ -4,8 +4,9 @@
  * (`unauthorizedRedirectTarget`) is pure and lives in lib/auth.ts.
  */
 import type { QueryClient } from '@tanstack/react-query';
-import { setUnauthorizedHandler } from '../api/client';
+import { setManagerOverrideReason, setUnauthorizedHandler } from '../api/client';
 import { qk } from '../api/hooks';
+import { managerQk, OFF_VIEW } from '../api/managerApi';
 import { pathOf, unauthorizedRedirectTarget } from '../lib/auth';
 
 export function installSessionExpiryRedirect(
@@ -26,4 +27,17 @@ export function installSessionExpiryRedirect(
         redirecting = false;
       });
   });
+}
+
+/**
+ * After a sign-out: tell every observer the user and manager mode are gone (so ManagerModeProvider drops the red bar
+ * and the X-Manager-Override header at once), then empty the cache except the sign-in defaults. removeQueries alone
+ * does not notify mounted observers, which kept the previous user's manager mode on the sign-in screen.
+ */
+export function clearSignedInState(queryClient: QueryClient): void {
+  setManagerOverrideReason(null);
+  if (typeof document !== 'undefined') document.body.classList.remove('manager-mode');
+  queryClient.setQueryData(qk.me, null);
+  queryClient.setQueryData(managerQk.mode, OFF_VIEW);
+  queryClient.removeQueries({ predicate: (q) => q.queryKey[0] !== qk.loginDefaults[0] || q.queryKey[1] !== qk.loginDefaults[1] });
 }

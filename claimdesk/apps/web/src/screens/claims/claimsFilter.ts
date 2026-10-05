@@ -40,3 +40,15 @@ export function distinctOptions<T>(rows: T[], id: (r: T) => string | undefined, 
   }
   return [...map.entries()].map(([value, l]) => ({ value, label: l })).sort((a, b) => a.label.localeCompare(b.label));
 }
+
+/** How many of the three drop-down filters (status, handler, insurer) are set — the Filters toggle shows it. */
+export function activeFilterCount(f: Pick<ClaimsFilterState, 'status' | 'handler' | 'insurer'>): number {
+  return [f.status, f.handler, f.insurer].filter(Boolean).length;
+}
+
+/** Handler filter options: names from the list rows (GET /claims sends `handlerName`), never a bare user id when a name is known. */
+export function handlerOptions(rows: ClaimSummary[]): SelectOption[] {
+  const named = new Map<string, string>();
+  for (const r of rows) if (r.handlerId && r.handlerName) named.set(r.handlerId, r.handlerName);
+  return distinctOptions(rows, (c) => c.handlerId, (c) => (c.handlerId ? named.get(c.handlerId) : undefined) ?? c.handlerName ?? (c.handlerId ? 'Unnamed handler' : undefined));
+}

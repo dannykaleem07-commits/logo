@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { GeneratedDocument } from '@ccguk/domain';
-import { approvalBlocker, canSend, canSign, extraDataBody, extraDataFields, flagCounts, groupTemplates, humanise, isBlocked, sortDocuments, supersedeBodyFrom } from './documents';
+import { approvalBlocker, approveLabel, canSend, canSign, extraDataBody, extraDataFields, flagCounts, groupTemplates, humanise, isBlocked, sortDocuments, supersedeBodyFrom } from './documents';
 
 const doc = (over: Partial<GeneratedDocument>): GeneratedDocument => ({
   id: 'd1',
@@ -73,6 +73,18 @@ describe('approval gate (lesson a: £1,287 stated vs £1,112 received blocks)', 
     expect(approvalBlocker(cleared)).toBeUndefined();
     expect(approvalBlocker(doc({ status: 'draft' }))).toMatch(/Waiting/);
     expect(approvalBlocker(doc({ status: 'sent' }))).toMatch(/Already approved/);
+  });
+  it('manager mode opens approval despite block flags but still blocks state problems', () => {
+    const blocked = doc({ status: 'blocked', consistency: { checkedAt: 'x', blocked: true, flags: [{ code: 'LEGACY_DETAIL', severity: 'block', message: 'Old company number' }] } });
+    expect(approvalBlocker(blocked, { managerOn: false })).toMatch(/must be cleared/);
+    expect(approvalBlocker(blocked, { managerOn: true })).toBeUndefined();
+    expect(approveLabel(blocked, { managerOn: true })).toBe('Clear flags and approve');
+    expect(approveLabel(blocked, { managerOn: false })).toBe('Approve');
+    expect(approveLabel(doc({ status: 'draft', consistency: { checkedAt: 'x', blocked: false, flags: [] } }), { managerOn: true })).toBe('Approve');
+    // state problems are never overridden
+    expect(approvalBlocker(doc({ status: 'sent' }), { managerOn: true })).toMatch(/Already approved/);
+    expect(approvalBlocker(doc({ status: 'superseded' }), { managerOn: true })).toMatch(/superseded/);
+    expect(approvalBlocker(doc({ status: 'draft' }), { managerOn: true })).toMatch(/Waiting/);
   });
   it('send and sign follow the status', () => {
     expect(canSend(doc({ status: 'draft' }))).toBe(false);

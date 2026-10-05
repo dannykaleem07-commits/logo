@@ -17,10 +17,13 @@ import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { DateInput, Field, Select, TextInput } from '../../components/Form';
 import { useToast } from '../../components/Toast';
+import { useManagerMode } from '../../app/managerMode';
+import { MANAGER_WARNING_PREFIX } from '../../lib/managerMode';
 import { todayISO } from '../../lib/dates';
 import { CopyDetailsPanel } from './CopyDetailsPanel';
 import { FeaturesPicker } from './FeaturesPicker';
 import { OnFileMatches } from './OnFileMatches';
+import { Section } from './Section';
 import {
   applyOnFile,
   BODY_LABEL,
@@ -36,6 +39,7 @@ import {
   FUEL_TYPES,
   fuelOptions,
   generationOptions,
+  isClientVehicleOnClaim,
   linkToCatalogue,
   NOT_LISTED,
   NOT_LISTED_LABEL,
@@ -75,6 +79,13 @@ export interface VehiclePickerProps {
   /** FNOL: reuse an existing vehicle. */
   onUseOnFile?(match: OnFileMatch): void;
   errors?: Partial<Record<keyof VehiclePickerValue, string>>;
+  /** Amber messages (e.g. a check relaxed in manager mode) — shown when the field has no error. */
+  warnings?: Partial<Record<keyof VehiclePickerValue, string>>;
+  /**
+   * 'inline' (default): Details and Features are closed sections at the end of the picker. 'external': the host places
+   * <VehicleDetailsSection> and <VehicleFeaturesSection> itself (the fleet unit dialog puts them after the GTA panel).
+   */
+  detailsPlacement?: 'inline' | 'external';
   disabled?: boolean;
 }
 
@@ -92,7 +103,8 @@ const toInt = (s: string): number | undefined => {
  * registration is shown → the catalogue cascade → details → features and extras. All state logic is in vehiclePickerModel.ts.
  */
 export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
-  const { value, onChange, mode, showRegistration = true, lookupMode, onUseOnFile, errors = {}, disabled } = props;
+  const { value, onChange, mode, showRegistration = true, lookupMode, onUseOnFile, errors = {}, warnings = {}, detailsPlacement = 'inline', disabled } = props;
+  const managerOn = useManagerMode().on;
   const uid = useId();
   const toast = useToast();
   const today = todayISO();
@@ -165,6 +177,7 @@ export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
   const typedModel = Boolean(value.model.trim()) && !value.catalogue?.modelSlug;
   const typedMake = Boolean(value.make.trim()) && !make;
   const source = effectiveSource(value);
+  const versionSummary = [gen?.name ?? '', value.bodyType ?? '', value.engineCapacityCc ? `${value.engineCapacityCc.toLocaleString('en-GB')} cc` : '', value.variant.trim()].filter(Boolean).join(' · ');
   const listId = (name: string) => `${uid}-${name}`;
 
   const AddButton = ({ level, name, label = 'Add to catalogue' }: { level: CustomCatalogueLevel; name: string; label?: string }) => (
@@ -227,19 +240,41 @@ export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
               </Button>
             </div>
             {errors.registration ? (
-              <div className="field-error">{errors.registration}</div>
+              <div className="field-error" role="alert">
+                {errors.registration}
+              </div>
+            ) : warnings.registration ? (
+              <div className="field-warning" role="status">
+                <span className="field-warning-icon" aria-hidden="true">
+                  ⚠
+                </span>{' '}
+                {warnings.registration}
+              </div>
             ) : (
               <div className="field-hint">{lookupMode === 'manual' ? MANUAL_MODE_NOTICE : 'Searches the vehicles ClaimDesk already holds. Total Car Check and the catalogue below fill in anything missing.'}</div>
             )}
           </div>
           {searchReg && onFileQ.data && (
             <>
-              {mode === 'fleet' && onFileQ.data.some((m) => m.match === 'exact' && m.ownership !== 'fleet' && m.claims.length > 0) && (
-                <div className="notice notice-danger small" role="alert">
-                  <strong>REGISTRATION_ON_CLAIM.</strong> This registration is a client vehicle on a claim — a fleet unit cannot also be a client vehicle (lessons f, h). Saving will be refused.
-                </div>
-              )}
-              <OnFileMatches matches={onFileQ.data} onUse={(m) => (onUseOnFile ? onUseOnFile(m) : onChange(applyOnFile(value, m)))} useLabel={onUseOnFile ? 'Use this vehicle' : 'Use these details'} blockFleet={mode === 'claim'} disabled={disabled} />
+              {mode === 'fleet' &&
+                isClientVehicleOnClaim(onFileQ.data) &&
+                (managerOn ? (
+                  <div className="notice notice-warn small" role="status">
+                    {MANAGER_WARNING_PREFIX}this registration is a client vehicle on a claim. Saving it as a fleet unit is recorded as a manager override.
+                  </div>
+                ) : (
+                  <div className="notice notice-danger small" role="alert">
+                    <strong>Client vehicle on a claim.</strong> A fleet unit cannot also be a client vehicle, so saving will be refused. A manager can override this in manager mode.
+                  </div>
+                ))}
+              <OnFileMatches
+                matches={onFileQ.data}
+                onUse={(m) => (onUseOnFile ? onUseOnFile(m) : onChange(applyOnFile(value, m)))}
+                useLabel={onUseOnFile ? 'Use this vehicle' : 'Use these details'}
+                blockFleet={mode === 'claim' && !managerOn}
+                warnFleet={mode === 'claim' && managerOn}
+                disabled={disabled}
+              />
             </>
           )}
           {onFileQ.error ? <div className="notice notice-warn small">Could not search the records: {(onFileQ.error as Error).message}</div> : null}
@@ -276,24 +311,6 @@ export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
             <div className="row" style={{ alignSelf: 'end' }}>
               <AddButton level="make" name={value.make} label={`Add “${value.make.trim()}” to the catalogue`} />
             </div>
-          )}
-
-          {isFree('year') ? (
-            <TextInput
-              label="Year of manufacture"
-              value={value.yearOfManufacture ? String(value.yearOfManufacture) : ''}
-              inputMode="numeric"
-              placeholder="2019"
-              disabled={disabled}
-              error={errors.yearOfManufacture}
-              hint={backToList('year')}
-              onChange={(t) => onChange(setYear(value, toInt(t), model))}
-            />
-          ) : (
-            stepSelect('year', yearOptions(make, today, value.yearOfManufacture), value.yearOfManufacture ? String(value.yearOfManufacture) : '', (v) => onChange(setYear(value, v ? Number(v) : undefined, model)), {
-              error: errors.yearOfManufacture,
-              placeholder: 'Not known'
-            })
           )}
 
           <TextInput
@@ -340,52 +357,22 @@ export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
             </>
           )}
 
-          {model && genOpts.length > 0 && (
-            <>
-              {isFree('generation') ? (
-                <TextInput
-                  label="Generation"
-                  value={freeText.generation ?? ''}
-                  onChange={(t) => setFreeText((f) => ({ ...f, generation: t }))}
-                  placeholder="e.g. Mk8 (2017–2023)"
-                  disabled={disabled}
-                  hint={
-                    <span className="row">
-                      {backToList('generation')}
-                      <AddButton level="generation" name={freeText.generation ?? ''} />
-                    </span>
-                  }
-                />
-              ) : (
-                stepSelect('generation', genOpts, value.catalogue?.generationId ?? '', (v) => onChange(setGeneration(value, v || undefined, model)), {
-                  hint: model.generations.length > genOpts.length ? `Showing the generations on sale in ${value.yearOfManufacture}.` : undefined
-                })
-              )}
-            </>
-          )}
-
-          {gen && bodyOpts.length > 0 && !isFree('body') ? (
-            stepSelect('body', bodyOpts, bodyOptionValue(value), (v) => onChange(setBody(value, parseBodyOption(v), model)), {
-              hint: value.seats ? `${value.seats} seats` : undefined
-            })
+          {isFree('year') ? (
+            <TextInput
+              label="Year of manufacture"
+              value={value.yearOfManufacture ? String(value.yearOfManufacture) : ''}
+              inputMode="numeric"
+              placeholder="2019"
+              disabled={disabled}
+              error={errors.yearOfManufacture}
+              hint={backToList('year')}
+              onChange={(t) => onChange(setYear(value, toInt(t), model))}
+            />
           ) : (
-            <>
-              <TextInput
-                label="Body type"
-                value={value.bodyType ?? ''}
-                list={listId('bodies')}
-                disabled={disabled}
-                onChange={(t) => onChange({ ...value, bodyType: t || undefined })}
-                hint={gen && bodyOpts.length > 0 ? backToList('body') : undefined}
-              />
-              <datalist id={listId('bodies')}>
-                {Object.values(BODY_LABEL).map((b) => (
-                  <option key={b} value={b} />
-                ))}
-              </datalist>
-              <TextInput label="Doors" value={value.doors ? String(value.doors) : ''} inputMode="numeric" disabled={disabled} error={errors.doors} onChange={(t) => onChange({ ...value, doors: toInt(t) })} />
-              <TextInput label="Seats" value={value.seats ? String(value.seats) : ''} inputMode="numeric" disabled={disabled} error={errors.seats} onChange={(t) => onChange({ ...value, seats: toInt(t) })} />
-            </>
+            stepSelect('year', yearOptions(make, today, value.yearOfManufacture), value.yearOfManufacture ? String(value.yearOfManufacture) : '', (v) => onChange(setYear(value, v ? Number(v) : undefined, model)), {
+              error: errors.yearOfManufacture,
+              placeholder: 'Not known'
+            })
           )}
 
           <Select<FuelType>
@@ -398,43 +385,6 @@ export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
             disabled={disabled}
           />
 
-          {gen && engineOpts.length > 0 && !isFree('engine') ? (
-            stepSelect('engine', engineOpts, value.catalogue?.engineId ?? '', (v) => onChange(setEngine(value, v || undefined, model)), {
-              hint: value.engineCapacityCc ? `${value.engineCapacityCc.toLocaleString('en-GB')} cc${value.powerPs ? ` · ${value.powerPs} PS` : ''}` : undefined
-            })
-          ) : (
-            <>
-              <TextInput
-                label="Engine size (cc)"
-                value={value.engineCapacityCc ? String(value.engineCapacityCc) : ''}
-                inputMode="numeric"
-                placeholder="1598"
-                disabled={disabled}
-                error={errors.engineCapacityCc}
-                onChange={(t) => onChange(setEngineFree(value, { engineCapacityCc: toInt(t), powerPs: value.powerPs }, model))}
-                hint={gen && engineOpts.length > 0 ? backToList('engine') : undefined}
-              />
-              <TextInput
-                label="Power (PS)"
-                value={value.powerPs ? String(value.powerPs) : ''}
-                inputMode="numeric"
-                disabled={disabled}
-                error={errors.powerPs}
-                onChange={(t) => onChange(setEngineFree(value, { engineCapacityCc: value.engineCapacityCc, powerPs: toInt(t) }, model))}
-              />
-              {gen && isFree('engine') && (
-                <TextInput
-                  label="Engine name for the catalogue"
-                  value={freeText.engine ?? ''}
-                  placeholder="e.g. 1.5 TSI 150PS petrol"
-                  disabled={disabled}
-                  onChange={(t) => setFreeText((f) => ({ ...f, engine: t }))}
-                  hint={<AddButton level="engine" name={freeText.engine ?? ''} />}
-                />
-              )}
-            </>
-          )}
-
           <Select<Transmission>
             label="Transmission"
             value={value.transmission ?? ''}
@@ -445,30 +395,128 @@ export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
             disabled={disabled}
           />
 
-          {gen && trimOpts.length > 0 && !isFree('trim') ? (
-            stepSelect('trim', trimOpts, value.catalogue?.trimId ?? '', (v) => onChange(setTrim(value, v || undefined, model)), {
-              error: errors.variant,
-              // a pasted or stored variant that names no listed trim stays visible until a trim is chosen
-              ...(value.variant.trim() && !value.catalogue?.trimId ? { hint: `Pasted / stored: ${value.variant.trim()}` } : value.catalogue?.trimId && value.variant.trim() && trimOpts.find((o) => o.value === value.catalogue?.trimId)?.label !== value.variant.trim() ? { hint: `Recorded as: ${value.variant.trim()}` } : {})
-            })
-          ) : (
-            <TextInput
-              label="Trim / variant"
-              value={value.variant}
-              placeholder="e.g. Zetec, SE, R-Line"
-              disabled={disabled}
-              error={errors.variant}
-              onChange={(t) => onChange(setTrimFree(value, t, model))}
-              hint={
-                gen ? (
-                  <span className="row">
-                    {trimOpts.length > 0 && backToList('trim')}
-                    <AddButton level="trim" name={value.variant} />
-                  </span>
-                ) : undefined
-              }
-            />
-          )}
+        </div>
+        <div style={{ marginTop: 12 }}>
+          <Section
+            forceOpen={Boolean(errors.doors || errors.seats || errors.engineCapacityCc || errors.powerPs || errors.variant)}
+            summary={
+              <>
+                Version, body and engine<span className="section-note">{versionSummary || 'optional — helps the GTA group suggestion'}</span>
+              </>
+            }
+          >
+            <div className="form-grid">
+              {model && genOpts.length > 0 && (
+                <>
+                  {isFree('generation') ? (
+                    <TextInput
+                      label="Generation"
+                      value={freeText.generation ?? ''}
+                      onChange={(t) => setFreeText((f) => ({ ...f, generation: t }))}
+                      placeholder="e.g. Mk8 (2017–2023)"
+                      disabled={disabled}
+                      hint={
+                        <span className="row">
+                          {backToList('generation')}
+                          <AddButton level="generation" name={freeText.generation ?? ''} />
+                        </span>
+                      }
+                    />
+                  ) : (
+                    stepSelect('generation', genOpts, value.catalogue?.generationId ?? '', (v) => onChange(setGeneration(value, v || undefined, model)), {
+                      hint: model.generations.length > genOpts.length ? `Showing the generations on sale in ${value.yearOfManufacture}.` : undefined
+                    })
+                  )}
+                </>
+              )}
+
+              {gen && bodyOpts.length > 0 && !isFree('body') ? (
+                stepSelect('body', bodyOpts, bodyOptionValue(value), (v) => onChange(setBody(value, parseBodyOption(v), model)), {
+                  hint: value.seats ? `${value.seats} seats` : undefined
+                })
+              ) : (
+                <>
+                  <TextInput
+                    label="Body type"
+                    value={value.bodyType ?? ''}
+                    list={listId('bodies')}
+                    disabled={disabled}
+                    onChange={(t) => onChange({ ...value, bodyType: t || undefined })}
+                    hint={gen && bodyOpts.length > 0 ? backToList('body') : undefined}
+                  />
+                  <datalist id={listId('bodies')}>
+                    {Object.values(BODY_LABEL).map((b) => (
+                      <option key={b} value={b} />
+                    ))}
+                  </datalist>
+                  <TextInput label="Doors" value={value.doors ? String(value.doors) : ''} inputMode="numeric" disabled={disabled} error={errors.doors} onChange={(t) => onChange({ ...value, doors: toInt(t) })} />
+                  <TextInput label="Seats" value={value.seats ? String(value.seats) : ''} inputMode="numeric" disabled={disabled} error={errors.seats} onChange={(t) => onChange({ ...value, seats: toInt(t) })} />
+                </>
+              )}
+
+              {gen && engineOpts.length > 0 && !isFree('engine') ? (
+                stepSelect('engine', engineOpts, value.catalogue?.engineId ?? '', (v) => onChange(setEngine(value, v || undefined, model)), {
+                  hint: value.engineCapacityCc ? `${value.engineCapacityCc.toLocaleString('en-GB')} cc${value.powerPs ? ` · ${value.powerPs} PS` : ''}` : undefined
+                })
+              ) : (
+                <>
+                  <TextInput
+                    label="Engine size (cc)"
+                    value={value.engineCapacityCc ? String(value.engineCapacityCc) : ''}
+                    inputMode="numeric"
+                    placeholder="1598"
+                    disabled={disabled}
+                    error={errors.engineCapacityCc}
+                    onChange={(t) => onChange(setEngineFree(value, { engineCapacityCc: toInt(t), powerPs: value.powerPs }, model))}
+                    hint={gen && engineOpts.length > 0 ? backToList('engine') : undefined}
+                  />
+                  <TextInput
+                    label="Power (PS)"
+                    value={value.powerPs ? String(value.powerPs) : ''}
+                    inputMode="numeric"
+                    disabled={disabled}
+                    error={errors.powerPs}
+                    onChange={(t) => onChange(setEngineFree(value, { engineCapacityCc: value.engineCapacityCc, powerPs: toInt(t) }, model))}
+                  />
+                  {gen && isFree('engine') && (
+                    <TextInput
+                      label="Engine name for the catalogue"
+                      value={freeText.engine ?? ''}
+                      placeholder="e.g. 1.5 TSI 150PS petrol"
+                      disabled={disabled}
+                      onChange={(t) => setFreeText((f) => ({ ...f, engine: t }))}
+                      hint={<AddButton level="engine" name={freeText.engine ?? ''} />}
+                    />
+                  )}
+                </>
+              )}
+
+              {gen && trimOpts.length > 0 && !isFree('trim') ? (
+                stepSelect('trim', trimOpts, value.catalogue?.trimId ?? '', (v) => onChange(setTrim(value, v || undefined, model)), {
+                  error: errors.variant,
+                  // a pasted or stored variant that names no listed trim stays visible until a trim is chosen
+                  ...(value.variant.trim() && !value.catalogue?.trimId ? { hint: `Pasted / stored: ${value.variant.trim()}` } : value.catalogue?.trimId && value.variant.trim() && trimOpts.find((o) => o.value === value.catalogue?.trimId)?.label !== value.variant.trim() ? { hint: `Recorded as: ${value.variant.trim()}` } : {})
+                })
+              ) : (
+                <TextInput
+                  label="Trim / variant"
+                  value={value.variant}
+                  placeholder="e.g. Zetec, SE, R-Line"
+                  disabled={disabled}
+                  error={errors.variant}
+                  onChange={(t) => onChange(setTrimFree(value, t, model))}
+                  hint={
+                    gen ? (
+                      <span className="row">
+                        {trimOpts.length > 0 && backToList('trim')}
+                        <AddButton level="trim" name={value.variant} />
+                      </span>
+                    ) : undefined
+                  }
+                />
+              )}
+            </div>
+          </Section>
         </div>
         {modelQ.isError && value.catalogue?.modelSlug && <p className="xs muted">The catalogue detail for this model could not be loaded; type the remaining details.</p>}
         <p className="xs muted" style={{ marginTop: 8, marginBottom: 0 }}>
@@ -476,31 +524,70 @@ export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
         </p>
       </fieldset>
 
-      <fieldset className="fieldset">
-        <legend>Details</legend>
-        <div className="form-grid">
-          <TextInput label="Colour" value={value.colour ?? ''} disabled={disabled} error={errors.colour} onChange={(t) => onChange({ ...value, colour: t || undefined })} />
-          <TextInput label="VIN" value={value.vin ?? ''} inputClassName="input-reg" disabled={disabled} error={errors.vin} onChange={(t) => onChange({ ...value, vin: t || undefined })} hint="17 characters, from the V5C." />
-          <Field label="First registered (month)" error={errors.monthOfFirstRegistration} htmlFor={listId('month')}>
-            <input id={listId('month')} type="month" className="input" value={value.monthOfFirstRegistration ?? ''} disabled={disabled} onChange={(e) => onChange({ ...value, monthOfFirstRegistration: e.target.value || undefined })} />
-          </Field>
-          <DateInput label="MOT expiry" value={value.motExpiryDate ?? ''} disabled={disabled} error={errors.motExpiryDate} onChange={(d) => onChange({ ...value, motExpiryDate: d || undefined })} />
-          <DateInput label="Tax due" value={value.taxDueDate ?? ''} disabled={disabled} error={errors.taxDueDate} onChange={(d) => onChange({ ...value, taxDueDate: d || undefined })} />
-        </div>
-      </fieldset>
-
-      <fieldset className="fieldset">
-        <legend>Features and extras</legend>
-        <FeaturesPicker
-          vocabulary={featuresQ.data}
-          loading={featuresQ.isLoading}
-          features={value.features}
-          extras={value.extras}
-          disabled={disabled}
-          trimStandard={gen && value.catalogue?.trimId ? (gen.trims.find((t) => t.id === value.catalogue!.trimId)?.features ?? []) : undefined}
-          onChange={(f) => onChange({ ...value, ...f })}
-        />
-      </fieldset>
+      {detailsPlacement === 'inline' && (
+        <>
+          <VehicleDetailsSection value={value} onChange={onChange} errors={errors} disabled={disabled} />
+          <VehicleFeaturesSection value={value} onChange={onChange} disabled={disabled} />
+        </>
+      )}
     </div>
+  );
+}
+
+const DETAIL_FIELDS: ReadonlyArray<keyof VehiclePickerValue> = ['colour', 'vin', 'monthOfFirstRegistration', 'motExpiryDate', 'taxDueDate'];
+
+/** "More vehicle details" (colour, VIN, first registered, MOT, tax): closed until opened, or until one holds an error. */
+export function VehicleDetailsSection({ value, onChange, errors = {}, disabled }: { value: VehiclePickerValue; onChange(next: VehiclePickerValue): void; errors?: Partial<Record<keyof VehiclePickerValue, string>>; disabled?: boolean }) {
+  const uid = useId();
+  const filled = DETAIL_FIELDS.filter((k) => Boolean(value[k])).length;
+  return (
+    <Section
+      forceOpen={DETAIL_FIELDS.some((k) => Boolean(errors[k]))}
+      summary={
+        <>
+          More vehicle details<span className="section-note">{filled ? `${filled} of ${DETAIL_FIELDS.length} filled` : 'colour, VIN, MOT, tax'}</span>
+        </>
+      }
+    >
+      <div className="form-grid">
+        <TextInput label="Colour" value={value.colour ?? ''} disabled={disabled} error={errors.colour} onChange={(t) => onChange({ ...value, colour: t || undefined })} />
+        <TextInput label="VIN" value={value.vin ?? ''} inputClassName="input-reg" disabled={disabled} error={errors.vin} onChange={(t) => onChange({ ...value, vin: t || undefined })} hint="17 characters, from the V5C." />
+        <Field label="First registered (month)" error={errors.monthOfFirstRegistration} htmlFor={`${uid}-month`}>
+          <input id={`${uid}-month`} type="month" className="input" value={value.monthOfFirstRegistration ?? ''} disabled={disabled} onChange={(e) => onChange({ ...value, monthOfFirstRegistration: e.target.value || undefined })} />
+        </Field>
+        <DateInput label="MOT expiry" value={value.motExpiryDate ?? ''} disabled={disabled} error={errors.motExpiryDate} onChange={(d) => onChange({ ...value, motExpiryDate: d || undefined })} />
+        <DateInput label="Tax due" value={value.taxDueDate ?? ''} disabled={disabled} error={errors.taxDueDate} onChange={(d) => onChange({ ...value, taxDueDate: d || undefined })} />
+      </div>
+    </Section>
+  );
+}
+
+/** "Features & extras (n selected)": closed until opened. */
+export function VehicleFeaturesSection({ value, onChange, disabled }: { value: VehiclePickerValue; onChange(next: VehiclePickerValue): void; disabled?: boolean }) {
+  const featuresQ = useCatalogueFeatures();
+  const makeSlug = value.catalogue?.makeSlug;
+  const modelSlug = value.catalogue?.modelSlug;
+  const modelQ = useCatalogueModel(makeSlug && modelSlug ? makeSlug : undefined, modelSlug);
+  const model = modelQ.data && modelQ.data.slug === modelSlug ? modelQ.data : undefined;
+  const gen = model && value.catalogue?.generationId ? model.generations.find((g) => g.id === value.catalogue!.generationId) : undefined;
+  const n = value.features.length + value.extras.length;
+  return (
+    <Section
+      summary={
+        <>
+          Features &amp; extras<span className="section-note">({n} selected)</span>
+        </>
+      }
+    >
+      <FeaturesPicker
+        vocabulary={featuresQ.data}
+        loading={featuresQ.isLoading}
+        features={value.features}
+        extras={value.extras}
+        disabled={disabled}
+        trimStandard={gen && value.catalogue?.trimId ? (gen.trims.find((t) => t.id === value.catalogue!.trimId)?.features ?? []) : undefined}
+        onChange={(f) => onChange({ ...value, ...f })}
+      />
+    </Section>
   );
 }

@@ -31,7 +31,8 @@ import {
 import type { Settings } from '@ccguk/db';
 import { formatRegisteredOffice } from '@ccguk/documents';
 import type { AppContext } from '../context.js';
-import { badRequest, conflict, notFound } from '../errors.js';
+import { badRequest, conflict, HttpError, notFound } from '../errors.js';
+import { STRICT_GATE, type OverrideGate } from './override.js';
 import { gtaRatesFor } from './kb.js';
 import { absoluteEvidencePath } from './evidence.js';
 import { existsSync, readFileSync } from 'node:fs';
@@ -94,6 +95,13 @@ export interface BuildInput {
   now: ISODateTime;
   /** Handler-supplied extras (read-only here: selectors such as offerId; never amounts the ledger knows). */
   extra?: Record<string, unknown>;
+  /** Manager-mode override gate of the request (absent = strict). */
+  gate?: OverrideGate;
+}
+
+/** Refuse a class A guard of a builder through the override gate (keyed to the claim and the template). */
+function refuseIn(b: Pick<BuildInput, 'gate' | 'bundle' | 'templateId'>, error: HttpError): void {
+  (b.gate ?? STRICT_GATE).refuse(error, { claimId: b.bundle.claim.id, entity: 'templates', entityId: b.templateId });
 }
 
 export interface AssembledData {
@@ -420,12 +428,32 @@ function hireLabel(h: NonNullable<ReturnType<typeof hireBlock>>, head: HeadSumma
   return `Hire, ${h.days} day${h.days === 1 ? '' : 's'} at ${formatGBP(h.dailyRatePence)} per day${head.invoiceReference ? ` (invoice ${head.invoiceReference})` : ''}`;
 }
 
+/** Pack facts typed by the handler (`data.pack`) when no pack is on the file — used only after a manager override. */
+function typedPack(extra: Record<string, unknown> | undefined): { sentAt: ISODate; sentBy: string; sentTo?: string; contents: string[] } | undefined {
+  const p = extra?.pack;
+  if (!p || typeof p !== 'object' || Array.isArray(p)) return undefined;
+  const o = p as Record<string, unknown>;
+  if (typeof o.sentAt !== 'string' || !/^\d{4}-\d{2}-\d{2}/.test(o.sentAt)) return undefined;
+  const contents = Array.isArray(o.contents) ? o.contents.filter((c): c is string => typeof c === 'string') : [];
+  return {
+    sentAt: o.sentAt.slice(0, 10),
+    sentBy: typeof o.sentBy === 'string' ? o.sentBy : 'email',
+    ...(typeof o.sentTo === 'string' ? { sentTo: o.sentTo } : {}),
+    contents: contents.length ? contents : ['Covering letter', 'Hire account', "Engineer's report"],
+  };
+}
+
 function chaserBuilder(rung: 7 | 14 | 21): Builder {
   return (b, base) => {
     const { bundle, ctx, now } = b;
     const today = datePart(now);
-    const pack = packBlock(bundle);
-    if (!pack) throw conflict('NO_PAYMENT_PACK', 'No payment pack has been sent on this claim — the chaser ladder starts after the pack');
+    let pack: { sentAt: ISODate; sentBy: string; sentTo?: string; contents: string[] } | undefined = packBlock(bundle);
+    if (!pack) {
+      // Manager mode (0.3 §A.6 B25): a chaser before the pack. The pack facts must then be typed (data.pack); without
+      // them the template reports what is missing.
+      refuseIn(b, conflict('NO_PAYMENT_PACK', 'No payment pack has been sent on this claim — the chaser ladder starts after the pack'));
+      pack = typedPack(b.extra);
+    }
     const hire = hireBlock(ctx, bundle, now);
     const storage = storageBlock(bundle, now);
     const heads = headSummaries(bundle)
@@ -446,13 +474,13 @@ function chaserBuilder(rung: 7 | 14 | 21): Builder {
     const responseDeadline = deadline(bundle, today, 7, clockKinds);
     const data: Record<string, unknown> = {
       ...base,
-      pack: { sentAt: pack.sentAt, sentBy: pack.sentBy, sentTo: pack.sentTo, contents: pack.contents },
+      pack: pack ? { sentAt: pack.sentAt, sentBy: pack.sentBy, sentTo: pack.sentTo, contents: pack.contents } : undefined,
       hire: hire ? { startAt: hire.startAt, endAt: hire.endAt, days: hire.days, dailyRatePence: hire.dailyRatePence, gtaGroup: hire.gtaGroup } : undefined,
       heads,
       totals,
       payments: payments(bundle).map((p) => ({ date: p.date, amountPence: p.amountPence, reference: p.reference })),
-      daysSincePack: calendarDaysBetween(pack.sentAt, today),
-      benchmarkDueAt: datePart(addCalendarMonths(pack.sentAt, 1)),
+      daysSincePack: pack ? calendarDaysBetween(pack.sentAt, today) : undefined,
+      benchmarkDueAt: pack ? datePart(addCalendarMonths(pack.sentAt, 1)) : undefined,
       claimNotifiedAt,
       icobsReplyDueAt: datePart(addCalendarMonths(claimNotifiedAt, 3)),
       previousLetters: previousLetters.length ? previousLetters : undefined,
@@ -550,7 +578,8 @@ const builders: Record<string, Builder> = {
   'invoice.hire': (b, base) => {
     const hire = hireBlock(b.ctx, b.bundle, b.now);
     if (!hire) throw conflict('NO_HIRE', 'No hire agreement on this claim');
-    if (hire.open) throw conflict('HIRE_OPEN', 'Hire is still running — end the hire with its trigger before invoicing');
+    // Overridden: hireBlock already costs an open hire to now, so this is an interim invoice dated today.
+    if (hire.open) refuseIn(b, conflict('HIRE_OPEN', 'Hire is still running — end the hire with its trigger before invoicing'));
     const head = headSummaries(b.bundle).find((h) => h.head === 'hire');
     return {
       ...base,
@@ -569,7 +598,7 @@ const builders: Record<string, Builder> = {
   'invoice.storage': (b, base) => {
     const storage = storageBlock(b.bundle, b.now);
     if (!storage) throw conflict('NO_STORAGE', 'No storage record on this claim');
-    if (storage.open) throw conflict('STORAGE_OPEN', 'Storage is still running — end it with its trigger before invoicing');
+    if (storage.open) refuseIn(b, conflict('STORAGE_OPEN', 'Storage is still running — end it with its trigger before invoicing'));
     const head = headSummaries(b.bundle).find((h) => h.head === 'storage');
     const report = reportBlock(b.ctx, b.bundle);
     const notice = latestEvent(b.bundle, 'collect_or_pay_notice_sent');
@@ -899,7 +928,7 @@ function leafPaths(obj: Record<string, unknown>, prefix = ''): string[] {
   return out;
 }
 
-function mergeExtra(extra: Record<string, unknown>, derived: Record<string, unknown>, path: string, conflicts: string[]): Record<string, unknown> {
+function mergeExtra(extra: Record<string, unknown>, derived: Record<string, unknown>, path: string, conflicts: string[], preferExtra = false): Record<string, unknown> {
   const out: Record<string, unknown> = { ...extra };
   for (const [k, dv] of Object.entries(derived)) {
     const p = path ? `${path}.${k}` : k;
@@ -913,11 +942,12 @@ function mergeExtra(extra: Record<string, unknown>, derived: Record<string, unkn
       continue;
     }
     if (isPlainObject(dv) && isPlainObject(ev)) {
-      out[k] = mergeExtra(ev, dv, p, conflicts);
+      out[k] = mergeExtra(ev, dv, p, conflicts, preferExtra);
       continue;
     }
-    if (JSON.stringify(ev) !== JSON.stringify(dv)) conflicts.push(p);
-    out[k] = dv;
+    const differs = JSON.stringify(ev) !== JSON.stringify(dv);
+    if (differs) conflicts.push(p);
+    out[k] = differs && preferExtra ? ev : dv;
   }
   return out;
 }
@@ -936,9 +966,14 @@ export interface AssembleOptions {
   extra?: Record<string, unknown>;
   recipientPartyId?: Id;
   recipientRole?: RecipientRole;
+  /** Manager-mode override gate of the request (absent = strict). */
+  gate?: OverrideGate;
 }
 
-/** Build the data object a template renders from. Throws 400 EXTRA_OVERRIDES_LEDGER when extra fields collide with derived ones. */
+/**
+ * Build the data object a template renders from. Refuses 400 EXTRA_OVERRIDES_LEDGER (through the override gate) when
+ * extra fields collide with derived ones; overridden in manager mode, the typed values win.
+ */
 export function assembleTemplateData(ctx: AppContext, bundle: ClaimBundle, templateId: string, templateRole: RecipientRole | undefined, user: BuildInput['user'], opts: AssembleOptions = {}): AssembledData {
   const now = ctx.now();
   const recipientRole: RecipientRole = opts.recipientRole ?? templateRole ?? 'other';
@@ -954,11 +989,17 @@ export function assembleTemplateData(ctx: AppContext, bundle: ClaimBundle, templ
     templateId,
   };
   const builder = builders[templateId] ?? litigationBuilders[templateId] ?? correspondenceBuilders[templateId] ?? genericBuilder;
-  const derived = stripUndefined(builder({ ctx, bundle, templateId, recipientRole, recipientPartyId: opts.recipientPartyId, user, now, extra: opts.extra }, base));
+  const derived = stripUndefined(builder({ ctx, bundle, templateId, recipientRole, recipientPartyId: opts.recipientPartyId, user, now, extra: opts.extra, ...(opts.gate ? { gate: opts.gate } : {}) }, base));
   const conflicts: string[] = [];
-  const merged = mergeExtra(stripUndefined(opts.extra ?? {}), derived, '', conflicts);
+  const extra = stripUndefined(opts.extra ?? {});
+  let merged = mergeExtra(extra, derived, '', conflicts);
   if (conflicts.length) {
-    throw badRequest(`These fields are taken from the ledger/chronology and cannot be supplied by hand: ${conflicts.join(', ')}`, { code: 'EXTRA_OVERRIDES_LEDGER', fields: conflicts });
+    // details.code is kept for callers written against the 0.2 shape (VALIDATION + details.code).
+    refuseIn(
+      { gate: opts.gate, bundle, templateId },
+      new HttpError(400, 'EXTRA_OVERRIDES_LEDGER', `These fields are taken from the ledger/chronology and cannot be supplied by hand: ${conflicts.join(', ')}`, { code: 'EXTRA_OVERRIDES_LEDGER', fields: conflicts }),
+    );
+    merged = mergeExtra(extra, derived, '', [], true);
   }
   return { data: merged, recipientRole, recipientPartyId: recipient?.partyId ?? opts.recipientPartyId, derivedKeys: leafPaths(derived) };
 }

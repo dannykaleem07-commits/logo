@@ -2,18 +2,21 @@ import { useEffect, useMemo, useState } from 'react';
 import { ErrorAlert } from '../../components/ErrorAlert';
 import type { FleetUnit, FleetUse, InsurancePolicy } from '@ccguk/domain';
 import { formatRegistration } from '@ccguk/domain';
-import { isApiError } from '../../api/client';
+import { isApiError, withRelaxed } from '../../api/client';
 import { useCreateFleetUnit } from '../../api/hooks';
 import { useCreateFleetPolicy, useFleetPolicies, useLookupMode, type PolicyBody } from '../../api/vehiclesApi';
+import { useManagerMode } from '../../app/managerMode';
 import { Button } from '../../components/Button';
 import { Checkbox, DateInput, Field, Select, TextInput } from '../../components/Form';
 import { Modal } from '../../components/Modal';
 import { useToast } from '../../components/Toast';
 import { todayISO } from '../../lib/dates';
+import { managerWarning, relaxedKeys } from '../../lib/managerMode';
 import { CopyDetailsPanel } from '../vehicles/CopyDetailsPanel';
-import { VehiclePicker } from '../vehicles/VehiclePicker';
+import { Section } from '../vehicles/Section';
+import { VehicleDetailsSection, VehicleFeaturesSection, VehiclePicker } from '../vehicles/VehiclePicker';
 import { pickerFromVehicle, emptyPickerValue, type VehiclePickerValue } from '../vehicles/vehiclePickerModel';
-import { buildUnitBody, buildUnitPatch, emptyUnitForm, FLEET_USES, FLEET_USE_LABEL, unitRegistration, unitToForm, UNIT_STATUSES, UNIT_STATUS_LABEL, validateUnitForm, type FleetUnitView, type UnitForm, type UnitFormErrors } from './fleet';
+import { buildUnitBody, buildUnitPatch, emptyUnitForm, FLEET_USES, FLEET_USE_LABEL, hasErrors, relaxUnitErrors, unitAddedText, unitRegistration, unitToForm, UNIT_STATUSES, UNIT_STATUS_LABEL, validateUnitForm, type FleetUnitView, type UnitForm } from './fleet';
 import { useUpdateFleetUnit } from './fleetApi';
 import { FleetGtaPanel } from './FleetGtaPanel';
 
@@ -23,10 +26,21 @@ function policyLabel(p: InsurancePolicy): string {
   return `${p.insurerName} · ${p.policyNumber} · ${p.coveredUses.map((u) => FLEET_USE_LABEL[u]).join(', ')} · to ${p.endDate}`;
 }
 
+/** One line for the closed "Keeper address" section: '1 Depot Road, London, N1 1AA · current'. */
+export function keeperSummary(f: Pick<UnitForm, 'keeperLine1' | 'keeperLine2' | 'keeperTown' | 'keeperPostcode' | 'keeperAddressCurrent'>): string {
+  const line = [f.keeperLine1, f.keeperLine2, f.keeperTown, f.keeperPostcode.toUpperCase()].map((x) => x.trim()).filter(Boolean).join(', ');
+  if (!line) return 'not recorded';
+  return `${line} · ${f.keeperAddressCurrent ? 'current' : 'out of date on the V5C'}`;
+}
+
 /**
- * Add / edit a fleet unit (§F.1): the vehicle from the catalogue, a Total Car Check paste or typed (VehiclePicker,
- * fleet mode); the GTA group and daily rate pre-filled from the benchmark suggestion until edited; the policy from the
- * policies on file (or a new one). Pounds in the rate box, pence over the wire.
+ * Add / edit a fleet unit (§F.1, 0.3 §E4). Order: registration + search → make / model / year → GTA group + daily
+ * rate → declared use + policy + status → closed sections "More vehicle details", "Features & extras" and "Keeper
+ * address"; a closed section opens itself when it holds a problem. Pounds in the rate box, pence over the wire.
+ *
+ * Manager mode (0.3 §A.6 B09, B11, B12): the postcode checks, "credit hire + self-drive needs a policy", the GTA group
+ * (saved as UNGROUPED with the daily rate) and a non-UK plate become amber warnings; the registration, the daily rate
+ * and the declared use still block. The relaxed rules go to the server (X-Manager-Relaxed) and are audited.
  */
 export function UnitDialog({ open, unit, onClose }: { open: boolean; unit: FleetUnitView | null; onClose: () => void }) {
   const toast = useToast();
@@ -34,11 +48,13 @@ export function UnitDialog({ open, unit, onClose }: { open: boolean; unit: Fleet
   const update = useUpdateFleetUnit();
   const policiesQ = useFleetPolicies();
   const lookupMode = useLookupMode() ?? 'manual';
+  const managerOn = useManagerMode().on;
   const today = todayISO();
   const isNew = !unit;
   const [form, setForm] = useState<UnitForm>(() => (unit ? unitToForm(unit) : emptyUnitForm()));
   const [initialVehicle, setInitialVehicle] = useState<VehiclePickerValue>(() => (unit?.vehicle ? pickerFromVehicle(unit.vehicle) : emptyPickerValue()));
-  const [errors, setErrors] = useState<UnitFormErrors>({});
+  // Checks show once the user has tried to save, then follow every edit.
+  const [touched, setTouched] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [addingPolicy, setAddingPolicy] = useState(false);
 
@@ -47,31 +63,36 @@ export function UnitDialog({ open, unit, onClose }: { open: boolean; unit: Fleet
       const f = unit ? unitToForm(unit) : emptyUnitForm();
       setForm(f);
       setInitialVehicle(f.vehicle);
-      setErrors({});
+      setTouched(false);
       setServerError(null);
     }
   }, [open, unit]);
+
+  const checked = useMemo(() => relaxUnitErrors(touched ? validateUnitForm(form, isNew) : {}, managerOn), [touched, form, isNew, managerOn]);
+  const errors = checked.errors;
+  const warnings = checked.warnings;
 
   const set = <K extends keyof UnitForm>(k: K) => (v: UnitForm[K]) => setForm((f) => ({ ...f, [k]: v }));
   const toggleUse = (use: FleetUse) => (on: boolean) => setForm((f) => ({ ...f, declaredUses: on ? [...new Set([...f.declaredUses, use])] : f.declaredUses.filter((u) => u !== use) }));
 
   const submit = async () => {
-    const e = validateUnitForm(form, isNew);
-    setErrors(e);
-    if (Object.keys(e).length > 0) return;
+    setTouched(true);
+    const r = relaxUnitErrors(validateUnitForm(form, isNew), managerOn);
+    if (hasErrors(r.errors)) return;
+    const relaxed = relaxedKeys('fleet', r.warnings as Record<string, string>);
     setServerError(null);
     try {
       if (unit) {
-        const res = await update.mutateAsync({ id: unit.id, body: buildUnitPatch(form, initialVehicle) });
+        const res = await update.mutateAsync({ id: unit.id, body: withRelaxed(buildUnitPatch(form, initialVehicle), relaxed) });
         if (res?.warnings?.length) toast.warn(`Unit updated. ${res.warnings.length === 1 ? 'One vehicle value differs' : `${res.warnings.length} vehicle values differ`} from the verified DVLA/DVSA record (${res.warnings.map((w) => w.field).join(', ')}).`);
         else toast.success('Unit updated');
       } else {
-        await create.mutateAsync(buildUnitBody(form));
-        toast.success('Unit added to the fleet register');
+        const created = await create.mutateAsync(withRelaxed(buildUnitBody(form), relaxed));
+        toast.success(unitAddedText(created, form.gta.group));
       }
       onClose();
     } catch (err) {
-      setServerError(isApiError(err) ? `${err.code}: ${err.message}` : (err as Error).message);
+      setServerError(isApiError(err) ? err.message : (err as Error).message);
     }
   };
 
@@ -84,6 +105,7 @@ export function UnitDialog({ open, unit, onClose }: { open: boolean; unit: Fleet
     return [...opts, { value: ADD_POLICY, label: 'Add policy…' }];
   }, [policies, form.policyId]);
   const reg = isNew ? form.vehicle.registration : unit ? unitRegistration(unit) : '';
+  const keeperFilled = Boolean(form.keeperLine1.trim() || form.keeperPostcode.trim() || form.keeperTown.trim());
 
   return (
     <>
@@ -111,7 +133,7 @@ export function UnitDialog({ open, unit, onClose }: { open: boolean; unit: Fleet
         <ErrorAlert message={serverError} />
         {isNew ? (
           <p className="xs muted" style={{ margin: 0 }}>
-            A fleet registration can never be a client vehicle on a claim (lessons f, h).
+            A fleet registration cannot also be a client vehicle on a claim.
           </p>
         ) : (
           <p className="xs muted" style={{ margin: 0 }}>
@@ -125,16 +147,26 @@ export function UnitDialog({ open, unit, onClose }: { open: boolean; unit: Fleet
           mode="fleet"
           showRegistration={isNew}
           lookupMode={lookupMode}
-          errors={{ ...(errors.vehicle ?? {}), ...(errors.registration ? { registration: errors.registration } : {}) }}
+          detailsPlacement="external"
+          errors={{ ...(errors.vehicle ?? {}), ...(errors.registration || errors.registrationFormat ? { registration: errors.registration ?? errors.registrationFormat } : {}) }}
+          warnings={warnings.registrationFormat ? { registration: managerWarning(warnings.registrationFormat) } : {}}
         />
 
-        <FleetGtaPanel vehicle={form.vehicle} state={form.gta} onChange={set('gta')} date={today} errors={{ gtaGroup: errors.gtaGroup, dailyRatePence: errors.dailyRatePence }} />
+        <FleetGtaPanel
+          vehicle={form.vehicle}
+          state={form.gta}
+          onChange={set('gta')}
+          date={today}
+          groupOptional={managerOn}
+          errors={{ gtaGroup: errors.gtaGroup ?? errors.gtaGroupFormat, dailyRatePence: errors.dailyRatePence }}
+          warnings={{ gtaGroup: managerWarning(warnings.gtaGroup) }}
+        />
 
         <fieldset className="fieldset">
           <legend>Use, cover and status</legend>
           <div className="form-grid">
             <div className="span-2">
-              <Field label="Declared class of use" required error={errors.declaredUses} hint="Each unit's declared use must sit inside its policy cover. Collingwood will not cover credit hire and self-drive together (BLUEPRINT §3.12).">
+              <Field label="Declared class of use" required error={errors.declaredUses} hint="Each unit's declared use must sit inside its policy cover. Collingwood will not cover credit hire and self-drive together.">
                 <div className="check-grid">
                   {FLEET_USES.map((u) => (
                     <Checkbox key={u} label={FLEET_USE_LABEL[u]} checked={form.declaredUses.includes(u)} onChange={toggleUse(u)} />
@@ -149,27 +181,37 @@ export function UnitDialog({ open, unit, onClose }: { open: boolean; unit: Fleet
               options={policyOptions}
               onChange={(v) => (v === ADD_POLICY ? setAddingPolicy(true) : set('policyId')(v))}
               error={errors.policyId}
+              warning={managerWarning(warnings.policyId)}
               hint={bothUses ? 'Two uses declared: the policy must cover both.' : 'Fleet policy covering the declared uses.'}
             />
             <Select<FleetUnit['status']> label="Status" value={form.status} onChange={(v) => v && set('status')(v)} options={UNIT_STATUSES.map((s) => ({ value: s, label: UNIT_STATUS_LABEL[s] }))} />
-            <Checkbox label="PHV / PCO licensed" checked={form.phvLicensed} onChange={set('phvLicensed')} hint="Required for PCO use (TfL PHV licence)." />
+            {(form.declaredUses.includes('pco') || form.phvLicensed) && <Checkbox label="PHV / PCO licensed" checked={form.phvLicensed} onChange={set('phvLicensed')} hint="Required for PCO use (TfL PHV licence)." />}
             <DateInput label="Service due" value={form.serviceDueDate} onChange={set('serviceDueDate')} />
           </div>
         </fieldset>
 
-        <fieldset className="fieldset">
-          <legend>Keeper address on the V5C</legend>
-          <p className="basis">PCNs and NIPs go to the V5C address. RENTX's CCJs arose from tickets posted to an old address (lesson l) — keep this current and tick the box only when the V5C shows the live address.</p>
+        <VehicleDetailsSection value={form.vehicle} onChange={set('vehicle')} errors={errors.vehicle} />
+        <VehicleFeaturesSection value={form.vehicle} onChange={set('vehicle')} />
+
+        <Section
+          forceOpen={Boolean(errors.keeperPostcode || warnings.keeperPostcode)}
+          summary={
+            <>
+              Keeper address<span className="section-note">{keeperSummary(form)}</span>
+            </>
+          }
+        >
+          <p className="basis" style={{ marginTop: 0 }}>PCNs and NIPs go to the address on the V5C. Keep it current, and tick the box only when the V5C shows the live address.</p>
           <div className="form-grid" style={{ marginTop: 12 }}>
             <TextInput label="Address line 1" value={form.keeperLine1} onChange={set('keeperLine1')} />
             <TextInput label="Address line 2" value={form.keeperLine2} onChange={set('keeperLine2')} />
             <TextInput label="Town" value={form.keeperTown} onChange={set('keeperTown')} />
-            <TextInput label="Postcode" value={form.keeperPostcode} onChange={set('keeperPostcode')} error={errors.keeperPostcode} autoCapitalize="characters" />
+            <TextInput label="Postcode" value={form.keeperPostcode} onChange={set('keeperPostcode')} error={errors.keeperPostcode} warning={managerWarning(warnings.keeperPostcode)} autoCapitalize="characters" />
             <div className="span-2">
-              <Checkbox label="The V5C shows the current registered-keeper address" checked={form.keeperAddressCurrent} onChange={set('keeperAddressCurrent')} hint="Untick to raise a KEEPER_ADDRESS_STALE alert until the V5C is updated with DVLA." />
+              <Checkbox label="The V5C shows the current registered-keeper address" checked={form.keeperAddressCurrent} onChange={set('keeperAddressCurrent')} hint={keeperFilled ? 'Untick to raise a "keeper address out of date" alert until the V5C is updated with DVLA.' : undefined} />
             </div>
           </div>
-        </fieldset>
+        </Section>
         <button type="submit" className="sr-only" tabIndex={-1}>
           Save
         </button>

@@ -22,3 +22,6 @@ export {
   HIRE_FIRM_COMPANY_NUMBER,
 } from './transfer.js';
 export type { TransferParticulars, LiabilityTransfer, S172PersonData, S172ResponseData, S172Options } from './transfer.js';
+
+export { hirePeriodsOverlap, overlappingHires, fleetStatusFromHires } from './hireOverlap.js';
+export type { HirePeriod } from './hireOverlap.js';

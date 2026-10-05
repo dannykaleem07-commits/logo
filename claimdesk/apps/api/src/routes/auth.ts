@@ -6,12 +6,18 @@
  *   POST /auth/logout           public — 204; deletes the session row and expires the cookie
  *   GET  /auth/me               public — { user } or 401 UNAUTHENTICATED
  *   POST /auth/change-password  session — { currentPassword, newPassword } → 204; signs out the user's other sessions
+ *   GET  /auth/manager-mode     session — ManagerModeView (0.3 §A.4.2)
+ *   POST /auth/manager-mode     session — { on, why? } → ManagerModeView; on:true is admin/approver only (403 FORBIDDEN)
+ *   GET  /auth/manager-mode/log session, admin/approver — { items } recent overrides and manager-mode on/off rows
  *
  * Audit rows: auth.login, auth.login_failed (the username tried, never the password), auth.logout,
- * auth.password_changed, auth.password_change_failed. Passwords and tokens are never logged or audited.
+ * auth.password_changed, auth.password_change_failed, manager_mode.on, manager_mode.off. Passwords and tokens are
+ * never logged or audited.
  */
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { z } from 'zod';
+import { DEFAULT_OVERRIDE_REASON, MANAGER_ROLES } from '@ccguk/domain';
+import type { AuditEntry } from '@ccguk/db';
 import type { RequestUser } from '../app.js';
 import type { AppContext } from '../context.js';
 import { badRequest, HttpError } from '../errors.js';
@@ -30,6 +36,8 @@ import {
   sessionCookie,
   verifyPassword,
 } from '../services/auth.js';
+import { managerModeState, setManagerMode, type ManagerModeState } from '../services/override.js';
+import { requireRole } from './helpers.js';
 
 export const MIN_PASSWORD_LENGTH = 10;
 const MAX_PASSWORD_LENGTH = 1024;
@@ -43,6 +51,18 @@ export const changePasswordBody = z.object({
   currentPassword: z.string().min(1).max(MAX_PASSWORD_LENGTH),
   newPassword: z.string().min(MIN_PASSWORD_LENGTH, `New password must be at least ${MIN_PASSWORD_LENGTH} characters`).max(MAX_PASSWORD_LENGTH),
 });
+
+export const managerModeBody = z.object({ on: z.boolean(), why: z.enum(['user', 'idle']).optional() });
+const managerModeLogQuery = z.object({ limit: z.coerce.number().int().min(1).max(500).default(50) });
+
+/** GET /auth/manager-mode, POST /auth/manager-mode and GET /auth/me → managerMode. */
+export interface ManagerModeView { allowed: boolean; on: boolean; until?: string; idleMinutes: number; defaultReason: typeof DEFAULT_OVERRIDE_REASON }
+
+function managerModeView(state: ManagerModeState): ManagerModeView {
+  const v: ManagerModeView = { allowed: state.allowed, on: state.on, idleMinutes: state.idleMinutes, defaultReason: DEFAULT_OVERRIDE_REASON };
+  if (state.until) v.until = state.until;
+  return v;
+}
 
 const INVALID_CREDENTIALS_MESSAGE = 'Username or password is incorrect';
 
@@ -134,6 +154,8 @@ export function registerAuthRoutes(app: FastifyInstance, ctx: AppContext): void 
     noStore(reply);
     const user = currentUser(request);
     const sessionId = request.sessionId;
+    // Signing out always ends manager mode (audited when it was on).
+    if (user) setManagerMode(ctx, request, false, 'sign_out');
     if (sessionId && user) {
       const now = ctx.now();
       ctx.db.transaction((tx) => {
@@ -153,7 +175,42 @@ export function registerAuthRoutes(app: FastifyInstance, ctx: AppContext): void 
       if (readSessionToken(request.headers.cookie)) reply.header('set-cookie', clearSessionCookie(cookieOptions(ctx)));
       throw new HttpError(401, 'UNAUTHENTICATED', 'Not signed in');
     }
-    return { user: publicUser(user) };
+    return { user: publicUser(user), managerMode: managerModeView(managerModeState(ctx, request)) };
+  });
+
+  app.get('/auth/manager-mode', async (request, reply) => {
+    noStore(reply);
+    if (!currentUser(request)) throw new HttpError(401, 'UNAUTHENTICATED', 'Not signed in');
+    return managerModeView(managerModeState(ctx, request));
+  });
+
+  app.post('/auth/manager-mode', async (request, reply) => {
+    noStore(reply);
+    if (!currentUser(request)) throw new HttpError(401, 'UNAUTHENTICATED', 'Not signed in');
+    const body = parse(managerModeBody, request.body);
+    return managerModeView(setManagerMode(ctx, request, body.on, body.why ?? 'user'));
+  });
+
+  app.get('/auth/manager-mode/log', async (request, reply) => {
+    noStore(reply);
+    requireRole(request, MANAGER_ROLES);
+    const { limit } = parse(managerModeLogQuery, request.query ?? {});
+    const rows = ctx.repos.listAuditByActions(ctx.db, { prefixes: ['override.'], actions: ['manager_mode.on', 'manager_mode.off'], limit });
+    const names = new Map<string, string | undefined>();
+    const refs = new Map<string, string | undefined>();
+    const items = rows.map((row) => {
+      const item: AuditEntry & { userName?: string; claimReference?: string } = { ...row };
+      if (!names.has(row.userId)) names.set(row.userId, row.userId === 'system' ? 'System' : ctx.repos.getUser(ctx.db, row.userId)?.name);
+      const userName = names.get(row.userId);
+      if (userName) item.userName = userName;
+      if (row.entity === 'claims') {
+        if (!refs.has(row.entityId)) refs.set(row.entityId, ctx.repos.getClaim(ctx.db, row.entityId)?.reference);
+        const ref = refs.get(row.entityId);
+        if (ref) item.claimReference = ref;
+      }
+      return item;
+    });
+    return { items };
   });
 
   app.post('/auth/change-password', async (request, reply) => {

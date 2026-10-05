@@ -548,3 +548,24 @@
   font-size: var(--fs-sm);
   width: auto;
 }
+
+/* (i) tooltip marker for a one-line explanation (0.3 §E8, §E13) */
+.info-tip {
+  display: inline-block;
+  cursor: help;
+  color: var(--muted);
+  font-size: 0.95em;
+  line-height: 1;
+}
+.info-tip:hover {
+  color: var(--blue);
+}
+
+/* Next actions: the closed "Sources (n)" disclosure (0.3 §E12) */
+.action-sources {
+  margin-top: 4px;
+}
+.action-sources > summary {
+  cursor: pointer;
+  width: fit-content;
+}

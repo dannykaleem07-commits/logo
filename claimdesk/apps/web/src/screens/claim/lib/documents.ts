@@ -169,14 +169,23 @@ export function isBlocked(doc: Pick<GeneratedDocument, 'status' | 'consistency'>
   return doc.status === 'blocked' || Boolean(doc.consistency?.blocked) || flagCounts(doc.consistency).blocking > 0;
 }
 
-/** Why the Approve button is disabled, or undefined when approval is open. */
-export function approvalBlocker(doc: Pick<GeneratedDocument, 'status' | 'consistency'>): string | undefined {
+/**
+ * Why the Approve button is disabled, or undefined when approval is open. In manager mode uncleared block flags no
+ * longer block (the server clears each one with the override reason, then approves — 0.3 §A.6 B18); the document's
+ * state still does (approved, superseded, not yet checked).
+ */
+export function approvalBlocker(doc: Pick<GeneratedDocument, 'status' | 'consistency'>, opts: { managerOn?: boolean } = {}): string | undefined {
   if (doc.status === 'approved' || doc.status === 'sent' || doc.status === 'signed') return 'Already approved.';
   if (doc.status === 'superseded' || doc.status === 'void') return `This version is ${doc.status}; work on the current version.`;
   const counts = flagCounts(doc.consistency);
-  if (isBlocked(doc)) return `${counts.blocking} block flag${counts.blocking === 1 ? '' : 's'} must be cleared with a reason before a person can approve.`;
+  if (isBlocked(doc) && !opts.managerOn) return `${counts.blocking} block flag${counts.blocking === 1 ? '' : 's'} must be cleared with a reason before a person can approve.`;
   if (!doc.consistency) return 'Waiting for the consistency check.';
   return undefined;
+}
+
+/** The Approve button's label: "Clear flags and approve" when manager mode will clear open block flags first. */
+export function approveLabel(doc: Pick<GeneratedDocument, 'status' | 'consistency'>, opts: { managerOn?: boolean } = {}): string {
+  return opts.managerOn && isBlocked(doc) && !approvalBlocker(doc, opts) ? 'Clear flags and approve' : 'Approve';
 }
 
 export function canSend(doc: Pick<GeneratedDocument, 'status'>): boolean {

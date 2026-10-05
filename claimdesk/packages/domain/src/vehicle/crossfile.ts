@@ -32,10 +32,12 @@ export function crossFileRegistrationCheck(
   const matchedVehicleIds = vehicles.filter((v) => normaliseRegistration(v.registration) === reg).map((v) => v.id);
   const vehicleIdSet = new Set(matchedVehicleIds);
 
-  const duplicateClaimIds = claims
+  const duplicates = claims
     .filter((c) => c.id !== opts.excludeClaimId)
-    .filter((c) => vehicleIdSet.has(c.clientVehicleId) || (c.thirdPartyVehicleId !== undefined && vehicleIdSet.has(c.thirdPartyVehicleId)))
-    .map((c) => c.id);
+    .filter((c) => vehicleIdSet.has(c.clientVehicleId) || (c.thirdPartyVehicleId !== undefined && vehicleIdSet.has(c.thirdPartyVehicleId)));
+  const duplicateClaimIds = duplicates.map((c) => c.id);
+  // The message names claims by their reference (what people see), never by internal id.
+  const duplicateRefs = duplicates.map((c) => c.reference || c.id);
 
   const fleetByVehicle = fleetUnits.some((fu) => vehicleIdSet.has(fu.vehicleId));
   const fleetByOwnership = vehicles.some((v) => vehicleIdSet.has(v.id) && v.ownership === 'fleet');
@@ -49,7 +51,7 @@ export function crossFileRegistrationCheck(
   }
   if (duplicateClaimIds.length > 0) {
     parts.push(
-      `${display} already appears on ${duplicateClaimIds.length} other claim${duplicateClaimIds.length === 1 ? '' : 's'} (${duplicateClaimIds.join(', ')}). Open a linked but separate file with its own ledger, documents and insurer; a banner is shown on each file.`
+      `${display} already appears on ${duplicateClaimIds.length} other claim${duplicateClaimIds.length === 1 ? '' : 's'} (${duplicateRefs.join(', ')}). Open a linked but separate file with its own ledger, documents and insurer; a banner is shown on each file.`
     );
   }
   if (parts.length === 0) parts.push(`${display} is not on any other file and is not a fleet unit.`);

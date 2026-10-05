@@ -3,6 +3,7 @@ name: ClaimDesk Windows build
 # Builds ClaimDesk.exe and the installer (ClaimDesk-Setup-<ver>.exe) on Windows, smoke-tests the portable folder
 # (sign in, example claims, HTML and Word-template PDFs, vehicle catalogue, manual vehicle search), then installs,
 # upgrades and uninstalls the installer the way a user would (design doc docs/TEMPLATES-VEHICLES-DESKTOP.md §G.7).
+# It also upgrades the real published 0.2.6 install in place and checks the data survives (docs/V03-MANAGER-MODE-HIRE-PRICING.md §F.2.4).
 # A commit whose message contains [windows-release] (or a manual run) also publishes both files as a GitHub release.
 # The build job only reads the repository (its token cannot push or publish); a separate release job, which runs no
 # build tools or package scripts, is the only one allowed to write, and it only uploads the tested files.
@@ -70,7 +71,7 @@ jobs:
       - name: Build ClaimDesk.exe and the portable folder
         run: node packaging/build-package.mjs
 
-      - name: Smoke test (portable) — sign in, example claims, PDFs from HTML and Word templates, catalogue, manual search
+      - name: Smoke test (portable) — sign in, example claims, PDFs from HTML and Word templates, catalogue, manual search, manager mode, update check, pricing guide
         env:
           CLAIMDESK_HOME: ${{ runner.temp }}\claimdesk-home
           CLAIMDESK_NO_BROWSER: '1'
@@ -192,6 +193,29 @@ jobs:
           Write-Host "lookup: $($look.Status) $($look.Body.status) mode=$($look.Body.lookupMode) tcc=$($tcc[0].url)"
           if ($look.Body.status -ne 'manual_required') { throw 'an unknown registration without keys must return manual_required' }
           if ($tcc.Count -lt 1 -or $tcc[0].url -notmatch 'totalcarcheck\.co\.uk') { throw 'no Total Car Check link in the lookup response' }
+
+          # --- 0.3 (docs/V03-MANAGER-MODE-HIRE-PRICING.md §F.2.4): manager mode, the update check, the hire pricing guide
+          $mm = Api 'GET' '/api/auth/manager-mode'
+          Write-Host "manager mode: $($mm.Status) allowed=$($mm.Body.allowed) on=$($mm.Body.on) idle=$($mm.Body.idleMinutes)"
+          if ($mm.Status -ne 200) { throw "GET /api/auth/manager-mode: $($mm.Status) $($mm.Text)" }
+          if ($mm.Body.allowed -ne $true -or $mm.Body.on -ne $false) { throw "manager mode should be allowed and off for courtesycars: $($mm.Text)" }
+          $mmOn = Api 'POST' '/api/auth/manager-mode' @{ on = $true }
+          if ($mmOn.Status -ne 200 -or $mmOn.Body.on -ne $true) { throw "manager mode on: $($mmOn.Status) $($mmOn.Text)" }
+          $mmOff = Api 'POST' '/api/auth/manager-mode' @{ on = $false }
+          if ($mmOff.Status -ne 200 -or $mmOff.Body.on -ne $false) { throw "manager mode off: $($mmOff.Status) $($mmOff.Text)" }
+          $upd = Api 'GET' '/api/updates/check'
+          Write-Host "update check: $($upd.Status) status=$($upd.Body.status) current=$($upd.Body.current) latest=$($upd.Body.latest) available=$($upd.Body.updateAvailable)"
+          if ($upd.Status -ne 200) { throw "GET /api/updates/check: $($upd.Status) $($upd.Text)" }
+          if ($upd.Body.current -ne $env:VER) { throw "update check current '$($upd.Body.current)' is not $env:VER" }
+          if (@('ok', 'offline', 'error') -notcontains $upd.Body.status) { throw "update check status '$($upd.Body.status)'" }
+          $file3 = ($claims.items | Where-Object { $_.reference -eq 'CCG-2026-00003' }).id
+          if (-not $file3) { throw 'example claim CCG-2026-00003 missing' }
+          $units = @((Api 'GET' '/api/fleet').Body.items)
+          if ($units.Count -lt 1) { throw 'no fleet units in the example data' }
+          $guide = Api 'GET' "/api/claims/$file3/hire/pricing-guide?fleetUnitId=$($units[0].id)"
+          Write-Host "pricing guide: $($guide.Status) fleet=$($guide.Body.fleetDailyRatePence) hireCar=$($guide.Body.hireCar.group)/$($guide.Body.hireCar.dailyRatePence) clientCar=$($guide.Body.clientCar.group)/$($guide.Body.clientCar.dailyRatePence) higher=$($guide.Body.higherGroup)"
+          if ($guide.Status -ne 200) { throw "pricing guide: $($guide.Status) $($guide.Text)" }
+          if (-not $guide.Body.hireCar -or -not $guide.Body.clientCar) { throw "pricing guide without hireCar / clientCar: $($guide.Text)" }
 
           # --- web app and localhost
           $page = curl.exe -s "$base/"
@@ -366,6 +390,170 @@ jobs:
           if (-not (Test-Path (Join-Path $env:LOCALAPPDATA 'ClaimDesk\marker.txt'))) { throw 'a silent uninstall deleted %LOCALAPPDATA%\ClaimDesk' }
           Write-Host 'Installed-app smoke test passed'
 
+      # docs/V03-MANAGER-MODE-HIRE-PRICING.md §F.2.4: the owner's real upgrade path. The published 0.2.6 Setup (SHA-256
+      # pinned; the step fails loudly if the asset changes or cannot be downloaded) is installed, given a fleet car, a
+      # claim and a hire, then this build's Setup is installed over it: data kept, migrations applied, backup made.
+      - name: Upgrade the published 0.2.6 install — data created on 0.2.6, upgraded in place, data, backup and hire edit checked
+        run: |
+          Remove-Item Env:CLAIMDESK_VERSION -ErrorAction SilentlyContinue   # each installed app reports its own version
+          $setup = Resolve-Path "packaging\dist\ClaimDesk-Setup-$env:VER.exe"
+          $installDir = Join-Path $env:LOCALAPPDATA 'Programs\ClaimDesk'
+          $exe = Join-Path $installDir 'ClaimDesk.exe'
+          $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{322DAE75-FC0F-4786-B2BB-62E4A6A3D59B}_is1'
+          $env:CLAIMDESK_HOME = "$env:RUNNER_TEMP\upgrade-home"
+          $env:CLAIMDESK_NO_BROWSER = '1'
+          $base = 'http://127.0.0.1:4000'
+          $jar = "$env:RUNNER_TEMP\upgrade-cookies.txt"
+          function Api([string]$method, [string]$path, $body = $null) {
+            $a = @('-s', '-b', $jar, '-c', $jar, '-X', $method)
+            if ($null -ne $body) {
+              $f = Join-Path $env:RUNNER_TEMP 'upgrade-body.json'
+              Set-Content -Path $f -Value ($body | ConvertTo-Json -Depth 30 -Compress) -NoNewline -Encoding utf8NoBOM
+              $a += @('-H', 'content-type: application/json', '--data-binary', "@$f")
+            }
+            $f2 = Join-Path $env:RUNNER_TEMP 'upgrade-resp.json'
+            if (Test-Path $f2) { Remove-Item $f2 -Force }
+            $code = & curl.exe @a -o $f2 -w '%{http_code}' "$base$path"
+            $text = if (Test-Path $f2) { Get-Content $f2 -Raw } else { '' }
+            $json = $null
+            if ($text) { try { $json = $text | ConvertFrom-Json -Depth 50 } catch { $json = $null } }
+            return [pscustomobject]@{ Status = [int]$code; Body = $json; Text = $text }
+          }
+          function Install([string]$log, [string]$file) {
+            $p = Start-Process -FilePath $file -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CURRENTUSER', "/LOG=`"$log`"" -PassThru -Wait
+            if ($p.ExitCode -ne 0) { Get-Content $log -Tail 60; throw "setup $file exited with $($p.ExitCode)" }
+          }
+          function Wait-Health {
+            for ($i = 0; $i -lt 90; $i++) {
+              try { $h = Invoke-RestMethod "$base/api/health" -TimeoutSec 5; if ($h.ok) { return $h } } catch { }
+              Start-Sleep -Seconds 2
+            }
+            throw 'ClaimDesk did not answer on port 4000'
+          }
+          function Start-App([string]$tag) {
+            return Start-Process -FilePath $exe -ArgumentList '--no-browser' -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\upgrade-$tag-out.log" -RedirectStandardError "$env:RUNNER_TEMP\upgrade-$tag-err.log"
+          }
+          function Stop-App($proc, [string]$tag) {
+            & $exe --stop
+            Start-Sleep -Seconds 3
+            $still = $true
+            try { Invoke-RestMethod "$base/api/health" -TimeoutSec 2 | Out-Null } catch { $still = $false }
+            if ($still) { Stop-Process -Id $proc.Id -Force; throw "ClaimDesk.exe --stop did not stop the app ($tag)" }
+            Get-Content "$env:RUNNER_TEMP\upgrade-$tag-out.log" -Tail 20 -ErrorAction SilentlyContinue
+            Get-Content "$env:RUNNER_TEMP\upgrade-$tag-err.log" -Tail 20 -ErrorAction SilentlyContinue
+          }
+          function Sign-In {
+            if (Test-Path $jar) { Remove-Item $jar -Force }
+            $r = Api 'POST' '/api/auth/login' @{ username = 'courtesycars'; password = 'CourtesyCars123!' }
+            if ($r.Status -ne 200) { throw "sign-in failed: $($r.Status) $($r.Text)" }
+          }
+
+          # --- 1. the published 0.2.6 Setup, checked against its SHA-256
+          $oldSetup = "$env:RUNNER_TEMP\ClaimDesk-Setup-0.2.6.exe"
+          curl.exe -sSL --fail --retry 3 --retry-delay 5 -o $oldSetup 'https://github.com/dannykaleem07-commits/logo/releases/download/claimdesk-v0.2.6/ClaimDesk-Setup-0.2.6.exe'
+          if ($LASTEXITCODE -ne 0 -or -not (Test-Path $oldSetup)) { throw 'could not download ClaimDesk-Setup-0.2.6.exe from the claimdesk-v0.2.6 release' }
+          $sha = (Get-FileHash -Algorithm SHA256 -Path $oldSetup).Hash.ToLowerInvariant()
+          Write-Host "ClaimDesk-Setup-0.2.6.exe sha256=$sha $((Get-Item $oldSetup).Length) bytes"
+          if ($sha -ne '316865366b2a45da83f967ddb9f86a886177199ae910a54e843bd5c18f85c2b7') { throw "the 0.2.6 Setup has changed (sha256 $sha)" }
+
+          # --- 2. install 0.2.6 silently and start it
+          Install "$env:RUNNER_TEMP\upgrade-setup-026.log" $oldSetup
+          $reg = Get-ItemProperty -Path $key
+          if ($reg.DisplayVersion -ne '0.2.6') { throw "0.2.6 DisplayVersion is '$($reg.DisplayVersion)'" }
+          $proc = Start-App '026'
+          $h = Wait-Health
+          Write-Host "0.2.6 health: version=$($h.version) dataset=$($h.dataset)"
+          if ($h.version -ne '0.2.6') { throw "expected version 0.2.6, got '$($h.version)'" }
+          if ($h.dataset -ne 'live') { throw "expected the live dataset, got '$($h.dataset)'" }
+
+          # --- 3. data entered on 0.2.6: a fleet car, a claim (the FNOL body of apps/api/src/test/helpers.ts) and a hire
+          Sign-In
+          $unit = Api 'POST' '/api/fleet' @{ vehicle = @{ registration = 'FL25 UPG'; make = 'NISSAN'; model = 'QASHQAI' }; gtaGroup = 'M2'; dailyRatePence = 7468; declaredUses = @('credit_hire') }
+          if ($unit.Status -ne 201) { throw "create fleet unit on 0.2.6: $($unit.Status) $($unit.Text)" }
+          $unitId = $unit.Body.id
+          $fnol = @{
+            claimant = @{ kind = 'individual'; name = 'Amina Yusuf'; phone = '07700 900123'; email = 'amina@example.com'; address = @{ line1 = '12 High Street'; town = 'Reading'; postcode = 'RG1 1AA' }; roles = @('claimant', 'driver') }
+            vehicle = @{ registration = 'KX21 ABC'; make = 'Toyota'; model = 'Yaris'; yearOfManufacture = 2021; fuelType = 'hybrid'; ownership = 'client' }
+            thirdPartyVehicle = @{ registration = 'LM19 XYZ'; make = 'Ford'; model = 'Transit'; ownership = 'third_party' }
+            atFaultInsurer = @{ kind = 'company'; name = 'Example Insurance plc'; roles = @('insurer') }
+            accident = @{
+              occurredAt = '2026-10-03T08:15:00.000Z'
+              location = 'A329 London Road, Reading'
+              circumstances = 'I was stationary in traffic when the van behind failed to stop and struck the rear of my car. The driver apologised at the scene.'
+              cctvAvailable = $true
+              independentWitness = $false
+              injuries = $false
+              driveable = $false
+            }
+            liability = 'unknown'
+            callRecordingDisclosed = $true
+          }
+          $claim = Api 'POST' '/api/claims' $fnol
+          if ($claim.Status -ne 201) { throw "create claim on 0.2.6: $($claim.Status) $($claim.Text)" }
+          $claimId = $claim.Body.id
+          $startAt = [DateTime]::UtcNow.AddHours(-1).ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", [Globalization.CultureInfo]::InvariantCulture)
+          # no insurance policy in a new database: 0.2.6 honours the body override for the allocation refusal
+          $hire = Api 'POST' "/api/claims/$claimId/hire" @{ fleetUnitId = $unitId; startAt = $startAt; use = 'credit_hire'; overrideAllocation = @{ reason = 'CI upgrade test' } }
+          if ($hire.Status -ne 201) { throw "start hire on 0.2.6: $($hire.Status) $($hire.Text)" }
+          $hireId = $hire.Body.hire.id
+          $claimCount = (Api 'GET' '/api/claims').Body.total
+          Write-Host "0.2.6 data: unit=$unitId claim=$claimId ($($claim.Body.reference)) hire=$hireId ($($hire.Body.hire.agreementNumber)) claims=$claimCount"
+          if (-not $unitId -or -not $claimId -or -not $hireId) { throw 'ids missing from the 0.2.6 responses' }
+          Stop-App $proc '026'
+
+          # --- 4. this build's Setup over it: version, data, migrations, backup, manager mode, a back-dated hire edit
+          Install "$env:RUNNER_TEMP\upgrade-setup-new.log" $setup
+          $reg = Get-ItemProperty -Path $key
+          if ($reg.DisplayVersion -ne $env:VER) { throw "DisplayVersion after the upgrade is '$($reg.DisplayVersion)', expected $env:VER" }
+          $proc = Start-App 'new'
+          $h = Wait-Health
+          Write-Host "upgraded health: version=$($h.version) dataset=$($h.dataset)"
+          if ($h.version -ne $env:VER) { throw "upgraded version '$($h.version)' is not $env:VER" }
+          Sign-In
+          $after = (Api 'GET' '/api/claims').Body.total
+          if ($after -ne $claimCount) { throw "claim count changed across the upgrade: $claimCount -> $after" }
+          $c = Api 'GET' "/api/claims/$claimId"
+          if ($c.Status -ne 200) { throw "the 0.2.6 claim is gone after the upgrade: $($c.Status) $($c.Text)" }
+          $hl = Api 'GET' "/api/claims/$claimId/hire"
+          if ($hl.Status -ne 200) { throw "GET hire after the upgrade: $($hl.Status) $($hl.Text)" }
+          $item = @($hl.Body.hire | Where-Object { $_.id -eq $hireId })[0]
+          if (-not $item) { throw "the 0.2.6 hire $hireId is gone after the upgrade: $($hl.Text)" }
+          $names = $item.PSObject.Properties.Name
+          if ($names -notcontains 'pricing' -or $null -eq $item.pricing) { throw "hire item without pricing after the upgrade: $($hl.Text)" }
+          if ($names -notcontains 'corrections') { throw "hire item without corrections after the upgrade: $($hl.Text)" }
+          Write-Host "hire after upgrade: start=$($item.startAt) days=$($item.calculation.days) pricing.snapshot=$($item.pricing.snapshot) corrections=$(@($item.corrections).Count)"
+          $mm = Api 'GET' '/api/auth/manager-mode'
+          if ($mm.Status -ne 200) { throw "GET /api/auth/manager-mode after the upgrade: $($mm.Status) $($mm.Text)" }
+          $backups = @(Get-ChildItem -Path (Join-Path $env:CLAIMDESK_HOME 'data\backups') -Filter "claimdesk-before-$env:VER-*.sqlite" -ErrorAction SilentlyContinue)
+          Write-Host "backups: $($backups.Name -join ', ')"
+          if ($backups.Count -lt 1) { throw "no data\backups\claimdesk-before-$env:VER-*.sqlite after the upgrade" }
+          # ConvertFrom-Json may already have turned the ISO string into a DateTime (UTC or local kind): normalise to UTC
+          $s0 = $item.startAt
+          $start0 = if ($s0 -is [datetime]) { $s0.ToUniversalTime() } else { [DateTimeOffset]::Parse([string]$s0, [Globalization.CultureInfo]::InvariantCulture).UtcDateTime }
+          $newStart = $start0.AddDays(-2).ToString("yyyy-MM-dd'T'HH:mm:ss.fff'Z'", [Globalization.CultureInfo]::InvariantCulture)
+          $patch = Api 'PATCH' "/api/claims/$claimId/hire/$hireId" @{ startAt = $newStart; reason = 'CI backdate' }
+          Write-Host "backdate: $($patch.Status) changed=$($patch.Body.changed) days $($patch.Body.before.days) -> $($patch.Body.after.days) ledger=$($patch.Body.ledger.action)"
+          if ($patch.Status -ne 200) { throw "PATCH the hire start: $($patch.Status) $($patch.Text)" }
+          if ([int]$patch.Body.after.days -le [int]$patch.Body.before.days) { throw "back-dating the start by 2 days did not add days: $($patch.Text)" }
+          $hl2 = Api 'GET' "/api/claims/$claimId/hire"
+          $item2 = @($hl2.Body.hire | Where-Object { $_.id -eq $hireId })[0]
+          if (@($item2.corrections).Count -lt 1) { throw "the correction is not listed on the hire: $($hl2.Text)" }
+          Stop-App $proc 'new'
+
+          # --- 5. a second start makes no new backup; then a silent uninstall keeps the data
+          $proc = Start-App 'again'
+          $null = Wait-Health
+          Stop-App $proc 'again'
+          $backups2 = @(Get-ChildItem -Path (Join-Path $env:CLAIMDESK_HOME 'data\backups') -Filter 'claimdesk-before-*.sqlite' -ErrorAction SilentlyContinue)
+          if ($backups2.Count -ne $backups.Count) { throw "a second start made another backup ($($backups.Count) -> $($backups2.Count))" }
+          $unins = Join-Path $installDir 'unins000.exe'
+          Start-Process -FilePath $unins -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART' -Wait
+          for ($i = 0; $i -lt 60 -and (Test-Path $exe); $i++) { Start-Sleep -Seconds 2 }
+          if (Test-Path $exe) { throw 'uninstall left ClaimDesk.exe behind' }
+          if (-not (Test-Path $env:CLAIMDESK_HOME)) { throw 'the silent uninstall deleted the home folder' }
+          if (-not (Test-Path (Join-Path $env:CLAIMDESK_HOME 'data\claimdesk.sqlite'))) { throw 'the silent uninstall deleted the database' }
+          Write-Host 'Upgrade from the published 0.2.6 passed'
+
       - name: Zip the portable folder
         run: |
           $zip = "ClaimDesk-Windows-x64-$env:VER.zip"
@@ -409,16 +597,20 @@ jobs:
           tag_name: claimdesk-v${{ needs.windows.outputs.ver }}
           name: ClaimDesk ${{ needs.windows.outputs.ver }} for Windows
           target_commitish: ${{ github.sha }}
-          prerelease: true
+          prerelease: false
+          make_latest: 'true'
           files: |
             dist/ClaimDesk-Setup-${{ needs.windows.outputs.ver }}.exe
             dist/ClaimDesk-Windows-x64-${{ needs.windows.outputs.ver }}.zip
           body: |
-            Download **ClaimDesk-Setup-${{ needs.windows.outputs.ver }}.exe**, run it (no administrator rights needed). Publisher: Courtesy Cars Group UK Ltd. Windows may show 'Unknown publisher' until the installer is code-signed; if Windows says Smart App Control blocked it, a code-signed build is needed (or turn Smart App Control off in Windows Security → App & browser control).
+            **ClaimDesk ${{ needs.windows.outputs.ver }} for Windows — update.** Download **ClaimDesk-Setup-${{ needs.windows.outputs.ver }}.exe** and run it. It updates ClaimDesk in place: your claims, documents and settings in `%LOCALAPPDATA%\ClaimDesk` are kept, and a backup of the database is made automatically the first time the new version starts. No administrator rights are needed. If ClaimDesk is open, the installer asks to close it first.
 
-            - The Start menu gets **ClaimDesk**, **ClaimDesk (example claims)** and **Stop ClaimDesk**. ClaimDesk opens in its own window; closing the window stops it.
-            - Sign in: username `courtesycars`, password `CourtesyCars123!` (filled in for you). Change it in Settings before real data goes in — this repository is public.
-            - Installing a newer version updates ClaimDesk in place. Your data stays in `%LOCALAPPDATA%\ClaimDesk`; uninstalling keeps it unless you choose to delete it.
-            - No installer wanted? `ClaimDesk-Windows-x64-${{ needs.windows.outputs.ver }}.zip` is the same program: unzip, double-click **ClaimDesk.exe**.
+            **What's new in 0.3**
+            - **Manager mode** — one click in the top bar (admin and approver users). Anything that would stop you can be overridden; every override is recorded with who, when and why. Switches itself off after 60 minutes without activity, and when you sign out.
+            - **Hire pricing guide** — when you pick a car for hire you see its daily rate, the GTA guide for the car you are giving and for the client's damaged car, the difference, and a warning when the car is a higher group. Pick the agreed rate with one click. (GTA rates are an industry benchmark only; CCGUK is not a subscriber.)
+            - **Edit hire dates** — change the start and end of any hire, including back-dating a hire an agent forgot to enter. Charges, clocks and the ledger are recalculated; every change is kept in the history.
+            - **Typing fixed** — fields in pop-up windows no longer lose the cursor after each letter.
+            - **Simpler screens** — fewer tabs, shorter forms, plain English.
+            - **Updates** — Settings → Updates shows your version and tells you when a newer one is out.
 
-            Built and tested on Windows by GitHub Actions: example claims, an HTML letter and a Word-template agreement rendered to PDF, the vehicle catalogue and manual vehicle search; then installed, upgraded and uninstalled silently with the data kept.
+            Windows may say "Unknown publisher" until the installer is code-signed. From 0.3 on, ClaimDesk tells you about new versions itself (Settings → Updates).
