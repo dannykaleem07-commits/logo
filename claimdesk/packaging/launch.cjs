@@ -5,7 +5,7 @@
 //
 //   ClaimDesk.exe              start (or bring up) ClaimDesk with your data, port 4000
 //   ClaimDesk.exe --demo       the example claims, kept apart in <home>\demo, port 4001
-//   ClaimDesk.exe --stop       stop the running ClaimDesk (with --demo: the example-claims one)
+//   ClaimDesk.exe --stop       stop every running ClaimDesk (your data and the example claims; --demo: example claims only)
 //   --no-browser               start the server only (CI, services); CLAIMDESK_NO_BROWSER=1 does the same
 //   --seed-only                create the example claims and exit
 'use strict';
@@ -103,6 +103,56 @@ function shouldStopOnWindowExit(elapsedMs, env = {}) {
   const flag = String(envGet(env, 'CLAIMDESK_STOP_ON_CLOSE') ?? '1').trim().toLowerCase();
   if (flag === '0' || flag === 'false' || flag === 'no' || flag === 'off') return false;
   return elapsedMs >= HANDOVER_MS;
+}
+
+/** Files a Chromium browser holds in its --user-data-dir while it runs (Windows: lockfile; Linux/macOS: SingletonLock). */
+const PROFILE_LOCKS = ['lockfile', 'SingletonLock'];
+
+/** Is a browser running with this app-window profile? */
+function profileInUse(profileDir, exists = (p) => { try { fs.lstatSync(p); return true; } catch { return false; } }) {
+  return PROFILE_LOCKS.some((name) => exists(path.join(profileDir, name)));
+}
+
+/**
+ * Stop-on-close by watching the window profile, not the process this launcher spawned: the browser keeps its lock
+ * file in the profile while any ClaimDesk window is open, so this works when the URL was handed to a window that was
+ * already open (after an upgrade or "Stop ClaimDesk" left one behind), and a slow hand-over never stops the server
+ * under an open window. Feed it one observation per poll: it answers 'closed' once, after the lock has been seen and
+ * then missed on `absentPolls` polls in a row; 'never' when no lock was seen within `firstSeenWithin` polls (the caller
+ * then falls back to the process-exit rule).
+ */
+function createWindowWatch({ absentPolls = 2, firstSeenWithin = 30 } = {}) {
+  let seen = false;
+  let absent = 0;
+  let polls = 0;
+  let done = false;
+  return {
+    get seen() {
+      return seen;
+    },
+    observe(open) {
+      if (done) return 'done';
+      polls += 1;
+      if (open) {
+        seen = true;
+        absent = 0;
+        return 'open';
+      }
+      if (!seen) {
+        if (polls >= firstSeenWithin) {
+          done = true;
+          return 'never';
+        }
+        return 'waiting';
+      }
+      absent += 1;
+      if (absent >= absentPolls) {
+        done = true;
+        return 'closed';
+      }
+      return 'closing';
+    },
+  };
 }
 
 /** Parse a /api/health body; null unless it is ClaimDesk's API. Older APIs without `dataset` are live data. */
@@ -267,11 +317,37 @@ function openAppWindow(url, home, dataset, opts = {}) {
     return { mode: 'tab' };
   }
   child.on('error', () => openDefaultBrowser(url));
-  // With this profile already open the browser hands the URL over and this process exits within a second or two.
-  // Otherwise it is the profile's main process and exits only when the last ClaimDesk window closes.
+  const wantStop = typeof opts.onAllWindowsClosed === 'function' && shouldStopOnWindowExit(Number.MAX_SAFE_INTEGER, env);
+  let fired = false;
+  const fire = () => {
+    if (fired) return;
+    fired = true;
+    opts.onAllWindowsClosed();
+  };
+  // Preferred: watch the profile's lock file (see createWindowWatch); it follows every ClaimDesk window of this
+  // profile, including one opened by an earlier launcher.
+  const watch = createWindowWatch();
+  let timer;
+  if (wantStop) {
+    timer = setInterval(() => {
+      const r = watch.observe(profileInUse(profile));
+      if (r === 'closed') {
+        clearInterval(timer);
+        fire();
+      } else if (r === 'never') clearInterval(timer);
+    }, 2000);
+    timer.unref();
+  }
+  // Fallback when the browser never showed a lock file: with this profile already open the browser hands the URL over
+  // and this process exits within a second or two; otherwise it is the profile's main process and exits only when the
+  // last ClaimDesk window closes.
   child.on('exit', () => {
     const elapsed = Date.now() - started;
-    if (typeof opts.onAllWindowsClosed === 'function' && shouldStopOnWindowExit(elapsed, env)) opts.onAllWindowsClosed();
+    if (!wantStop || watch.seen) return;
+    if (shouldStopOnWindowExit(elapsed, env)) {
+      if (timer) clearInterval(timer);
+      fire();
+    }
   });
   child.unref();
   return { mode: 'window', exe };
@@ -404,7 +480,19 @@ async function importTs(APP, rel) {
   return import(pathToFileURL(path.join(APP, rel)).href);
 }
 
+/**
+ * `--stop --demo` stops the example claims; plain `--stop` (the Start menu "Stop ClaimDesk") stops whatever ClaimDesk
+ * is running — your data and the example claims — as the portable "Stop ClaimDesk.cmd" does.
+ */
 async function stopRunning(opts) {
+  if (opts.demo) return stopDataset(true);
+  const live = await stopDataset(false);
+  const demo = await stopDataset(true, { quietIfNotRunning: true });
+  return live || demo;
+}
+
+async function stopDataset(demoFlag, { quietIfNotRunning = false } = {}) {
+  const opts = { demo: demoFlag };
   const dataset = opts.demo ? 'demo' : 'live';
   // the env file may move the port: read it the same way a start would
   const home = homeDir();
@@ -415,7 +503,7 @@ async function stopRunning(opts) {
   const port = portFor(opts.demo, { ...fileVars, ...process.env });
   const h = await probeHealth(port);
   if (!h) {
-    console.log(`ClaimDesk${opts.demo ? ' (example claims)' : ''} is not running.`);
+    if (!quietIfNotRunning) console.log(`ClaimDesk${opts.demo ? ' (example claims)' : ''} is not running.`);
     return 0;
   }
   if (h.dataset !== dataset) {
@@ -527,6 +615,8 @@ module.exports = {
   appWindowArgs,
   windowProfileDir,
   shouldStopOnWindowExit,
+  profileInUse,
+  createWindowWatch,
   parseHealth,
   parseRegDefault,
   parseEnvFile,

@@ -21,6 +21,7 @@ import {
   OTHER_GROUP,
   panelView,
   resetToSuggestion,
+  suggestionDiffersLine,
   suggestQuery,
   type GtaPanelState
 } from './gtaPanel';
@@ -75,6 +76,7 @@ export function FleetGtaPanel({
   const showNoRate = Boolean(view.noRate) && (rates !== undefined || (state.suggestion?.group === state.group && !state.suggestion?.rate));
   const mode = effectiveGroupMode(state, groups);
   const benchmark = benchmarkLine(view.rate, (p) => formatGBP(p));
+  const differs = suggestionDiffersLine(state, (p) => formatGBP(p));
 
   return (
     <fieldset className="fieldset">
@@ -94,6 +96,11 @@ export function FleetGtaPanel({
           ) : null}
         </div>
         {suggestion?.reason && <p className="xs muted" style={{ margin: 0 }}>{suggestion.reason}</p>}
+        {differs && (
+          <div className="notice notice-warn small" role="status">
+            {differs}
+          </div>
+        )}
         {benchmark && view.rate && (
           <div className="small row" style={{ gap: 8, flexWrap: 'wrap' }}>
             <span>{benchmark}</span>

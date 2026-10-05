@@ -204,6 +204,43 @@ export function findModel(models: readonly CatalogueModelSummary[] | undefined, 
   return models.find((m) => matchKey(m.name) === k || matchKey(m.slug) === k);
 }
 
+/**
+ * Link a vehicle saved without catalogue ids (seeded, older records, DVLA upper case "FORD" / "FOCUS", a TCC model
+ * string "GOLF MATCH EDITION TSI") to the catalogue, so the generation, body, engine and trim lists appear. An exact
+ * name keeps the text as stored; otherwise the longest catalogue model name that starts the text (whole words) is the
+ * model and the rest becomes the variant when none is set. Nothing else changes (year, fuel, gearbox, engine size,
+ * colour stay). Returns the same object when there is nothing to link.
+ */
+export function linkToCatalogue(v: VehiclePickerValue, make: CatalogueMakeSummary | undefined, models: readonly CatalogueModelSummary[] | undefined): VehiclePickerValue {
+  if (v.catalogue?.modelSlug || !make || !models?.length || !has(v.model)) return v;
+  let hit = findModel(models, v.model);
+  let remainder = '';
+  if (!hit) {
+    const k = matchKey(v.model);
+    const candidates = models
+      .filter((m) => {
+        const mk = matchKey(m.name);
+        return mk.length > 0 && k.startsWith(`${mk} `);
+      })
+      .sort((a, b) => matchKey(b.name).length - matchKey(a.name).length);
+    hit = candidates[0];
+    if (!hit) return v;
+    // the words of the stored text after the model name ("C-HR ICON" → "ICON")
+    const words = v.model.trim().split(/\s+/);
+    let used = 0;
+    while (used < words.length && matchKey(words.slice(0, used + 1).join(' ')).length <= matchKey(hit.name).length) used += 1;
+    remainder = words.slice(used).join(' ');
+  }
+  const next: VehiclePickerValue = {
+    ...v,
+    model: remainder ? hit.name : v.model,
+    variant: has(v.variant) ? v.variant : remainder,
+    catalogue: { makeSlug: make.slug, modelSlug: hit.slug, ...(hit.custom ? { custom: true } : {}) },
+    segment: v.segment ?? hit.segment
+  };
+  return syncSource(next);
+}
+
 /** The make slug for the current value: the catalogue pick, else the typed make resolved against the make list. */
 export function makeSlugOf(v: Pick<VehiclePickerValue, 'make' | 'catalogue'>, makes?: readonly CatalogueMakeSummary[]): string | undefined {
   return v.catalogue?.makeSlug || findMake(makes, v.make)?.slug;
@@ -274,37 +311,63 @@ export function syncSource(v: VehiclePickerValue): VehiclePickerValue {
 }
 
 /**
- * Clear every step after `step` (the step itself is kept). `model` (the current catalogue detail) lets a cleared trim
- * take back the standard features it pre-ticked.
+ * Clear the steps after `step` (the step itself is kept). Up to the model, everything later is cleared (another
+ * vehicle). From the generation on, `model` (the current catalogue detail) decides: a later value that still fits the
+ * new choice is kept — a pasted fuel, gearbox or engine size survives picking the body — and only what no longer fits
+ * is cleared. `prev` is the value before the change, so a cleared trim takes back the standard features it pre-ticked.
  */
-export function clearAfter(v: VehiclePickerValue, step: CascadeStep, model?: NormalisedModel): VehiclePickerValue {
+export function clearAfter(v: VehiclePickerValue, step: CascadeStep, model?: NormalisedModel, prev: VehiclePickerValue = v): VehiclePickerValue {
   const idx = CASCADE_STEPS.indexOf(step);
-  let next: VehiclePickerValue = { ...v };
   const later = (s: CascadeStep) => CASCADE_STEPS.indexOf(s) > idx;
-  if (later('trim')) {
-    next = dropTrimFeatures(next, findTrim(model, v.catalogue?.generationId, v.catalogue?.trimId));
-    next.variant = '';
-    if (next.catalogue) next = withCatalogue(next, { trimId: undefined });
-  }
-  if (later('transmission')) next.transmission = undefined;
-  if (later('engine')) {
-    next.engineCapacityCc = undefined;
-    next.powerPs = undefined;
-    if (next.catalogue) next = withCatalogue(next, { engineId: undefined });
-  }
-  if (later('fuel')) next.fuelType = undefined;
-  if (later('body')) {
-    next.bodyType = undefined;
-    next.doors = undefined;
-    next.seats = undefined;
-  }
-  if (later('generation') && next.catalogue) next = withCatalogue(next, { generationId: undefined });
+  const keepFitting = Boolean(model) && idx >= CASCADE_STEPS.indexOf('generation');
+  let next: VehiclePickerValue = { ...v };
+  if (later('year')) next.yearOfManufacture = undefined;
   if (later('model')) {
     next.model = '';
     next.segment = undefined;
     next.catalogue = undefined;
   }
-  if (later('year')) next.yearOfManufacture = undefined;
+  if (later('generation') && next.catalogue) next = withCatalogue(next, { generationId: undefined });
+  const gen = keepFitting ? findGeneration(model, next.catalogue?.generationId) : undefined;
+  /** Kept when the step's options (for the new choice) include it, or there is no list to check against. */
+  const fits = (opts: PickerOption[], value: string | undefined): boolean => keepFitting && has(value) && (opts.length === 0 || opts.some((o) => o.value === value));
+  const year = next.yearOfManufacture;
+
+  if (later('body') && !fits(bodyOptions(model, gen?.id), next.bodyType ? bodyOptionValue(next) || next.bodyType : undefined)) {
+    next.bodyType = undefined;
+    next.doors = undefined;
+    next.seats = undefined;
+  }
+  if (later('fuel') && !fits(fuelOptions(model, gen?.id, year), next.fuelType)) next.fuelType = undefined;
+  // engine and trim ids belong to one generation: a different generation never keeps them (plain values may stay)
+  const sameGeneration = prev.catalogue?.generationId === next.catalogue?.generationId;
+  if (later('engine')) {
+    const engineId = next.catalogue?.engineId;
+    const engine = gen && engineId && sameGeneration ? gen.engines.find((e) => e.id === engineId) : undefined;
+    const engineFits = Boolean(engine && fits(engineOptions(model, gen!.id, { fuel: next.fuelType, year }), engineId));
+    if (!engineFits) {
+      if (next.catalogue?.engineId) next = withCatalogue(next, { engineId: undefined });
+      // a typed or pasted capacity stays while an engine of that size (±60 cc) is still on offer
+      const cc = next.engineCapacityCc;
+      const ccFits = keepFitting && cc !== undefined && (!gen || enginesFor(gen, year).some((e) => e.cc !== undefined && Math.abs(e.cc - cc) <= 60 && (!next.fuelType || e.domainFuel === next.fuelType)));
+      if (!ccFits || engineId) {
+        next.engineCapacityCc = undefined;
+        next.powerPs = undefined;
+      }
+    }
+  }
+  if (later('transmission') && !fits(transmissionOptions(model, gen?.id, next.catalogue?.engineId), next.transmission)) next.transmission = undefined;
+  if (later('trim')) {
+    const trimId = next.catalogue?.trimId;
+    const trimFits = Boolean(gen && trimId && sameGeneration && fits(trimOptions(model, gen.id, { bodyType: next.bodyType, engineId: next.catalogue?.engineId, year }), trimId));
+    if (!trimFits) {
+      const oldTrim = findTrim(model, prev.catalogue?.generationId, prev.catalogue?.trimId);
+      next = dropTrimFeatures(next, oldTrim);
+      if (next.catalogue?.trimId) next = withCatalogue(next, { trimId: undefined });
+      // a variant typed or pasted by hand (no catalogue trim) stays; the name of a trim that no longer fits goes
+      if (!keepFitting || trimId || (oldTrim && matchKey(oldTrim.name) === matchKey(next.variant))) next.variant = '';
+    }
+  }
   return syncSource(next);
 }
 
@@ -347,29 +410,35 @@ export function setSegment(v: VehiclePickerValue, segment: string | undefined): 
 
 export function setGeneration(v: VehiclePickerValue, generationId: string | undefined, model?: NormalisedModel): VehiclePickerValue {
   if ((generationId || undefined) === v.catalogue?.generationId) return v;
-  const next = clearAfter(v, 'generation', model);
-  return next.catalogue ? syncSource(withCatalogue(next, { generationId: generationId || undefined })) : next;
+  if (!v.catalogue) return clearAfter(v, 'generation', model);
+  return clearAfter(withCatalogue(v, { generationId: generationId || undefined }), 'generation', model, v);
 }
 
 /** Body chosen from an option value `body|doors` (see bodyOptions) or typed. Seats follow when the generation has one count. */
 export function setBody(v: VehiclePickerValue, body: { bodyType?: string; doors?: number; seats?: number }, model?: NormalisedModel): VehiclePickerValue {
-  const next = clearAfter(v, 'body', model);
-  return { ...next, bodyType: body.bodyType || undefined, doors: body.doors, seats: body.seats ?? (body.bodyType ? seatsFor(model, v.catalogue?.generationId, bodySlugOf(body.bodyType)) : undefined) };
+  const withBody: VehiclePickerValue = { ...v, bodyType: body.bodyType || undefined, doors: body.doors, seats: body.seats ?? (body.bodyType ? seatsFor(model, v.catalogue?.generationId, bodySlugOf(body.bodyType)) : undefined) };
+  return clearAfter(withBody, 'body', model, v);
 }
 
 export function setFuel(v: VehiclePickerValue, fuel: FuelType | undefined, model?: NormalisedModel): VehiclePickerValue {
   if (fuel === v.fuelType) return v;
-  return { ...clearAfter(v, 'fuel', model), fuelType: fuel };
+  return clearAfter({ ...v, fuelType: fuel }, 'fuel', model, v);
 }
 
 /** Picking a catalogue engine sets engineCapacityCc, fuelType and powerPs. */
 export function setEngine(v: VehiclePickerValue, engineId: string | undefined, model?: NormalisedModel): VehiclePickerValue {
-  let next = clearAfter(v, 'engine', model);
   const engine = findEngine(model, v.catalogue?.generationId, engineId);
-  if (!engine) return next;
-  if (next.catalogue) next = withCatalogue(next, { engineId: engine.id });
+  if (!engine) {
+    const cleared = v.catalogue?.engineId ? withCatalogue(v, { engineId: undefined }) : v;
+    return clearAfter(cleared, 'engine', model, v);
+  }
+  let next: VehiclePickerValue = v.catalogue ? withCatalogue(v, { engineId: engine.id }) : { ...v };
   const power = engine.powerPs ?? (engine.powerKw ? Math.round(engine.powerKw * 1.35962) : undefined);
-  return syncSource({ ...next, engineCapacityCc: engine.cc ?? next.engineCapacityCc, fuelType: engine.domainFuel, powerPs: power });
+  // The catalogue's capacity is nominal: a capacity already read from the vehicle's own record (1,498 cc for a
+  // "1.5") is kept while it is within 60 cc of it, the same tolerance used to match a pasted engine.
+  const keepCc = v.engineCapacityCc !== undefined && engine.cc !== undefined && Math.abs(v.engineCapacityCc - engine.cc) <= 60 && !v.catalogue?.engineId;
+  next = { ...next, engineCapacityCc: keepCc ? v.engineCapacityCc : (engine.cc ?? next.engineCapacityCc), fuelType: engine.domainFuel, powerPs: power ?? (keepCc ? v.powerPs : undefined) };
+  return clearAfter(next, 'engine', model, v);
 }
 
 /** "Not listed" engine: capacity and power typed by hand. */
@@ -380,7 +449,7 @@ export function setEngineFree(v: VehiclePickerValue, e: { engineCapacityCc?: num
 
 export function setTransmission(v: VehiclePickerValue, t: Transmission | undefined, model?: NormalisedModel): VehiclePickerValue {
   if (t === v.transmission) return v;
-  return { ...clearAfter(v, 'transmission', model), transmission: t };
+  return clearAfter({ ...v, transmission: t }, 'transmission', model, v);
 }
 
 /** Picking a trim sets the variant and pre-ticks the trim's standard features (the previous trim's are taken back). */
@@ -519,6 +588,25 @@ export function trimOptions(model: NormalisedModel | undefined, generationId: st
 }
 
 /**
+ * The trim a DVLA/TCC model string names, e.g. "Match Edition TSI EVO S-A" → Match Edition, "1.0 EcoBoost Zetec" →
+ * Zetec: the longest trim name found as whole words in the text, preferring one at the start. Two different trims of
+ * the same length → none (never guessed).
+ */
+export function trimInVariant(gen: NormalisedGeneration, variant: string): NormalisedTrim | undefined {
+  const k = ` ${matchKey(variant)} `;
+  if (k.trim() === '') return undefined;
+  const hits = gen.trims
+    .map((t) => ({ t, key: matchKey(t.name) }))
+    .filter((x) => x.key.length > 0 && k.includes(` ${x.key} `))
+    .sort((a, b) => b.key.length - a.key.length || Number(!k.startsWith(` ${a.key} `)) - Number(!k.startsWith(` ${b.key} `)));
+  if (!hits.length) return undefined;
+  const best = hits[0]!;
+  const tie = hits.find((h) => h !== best && h.key.length === best.key.length && h.key !== best.key);
+  if (tie && k.startsWith(` ${best.key} `) === k.startsWith(` ${tie.key} `)) return undefined;
+  return best.t;
+}
+
+/**
  * Fill catalogue ids the value implies but does not hold yet, once the model detail is loaded (after a paste or an
  * on-file pick): the segment, the generation when exactly one matches the year, the trim named by the variant and
  * the engine matching the capacity, fuel and power. Conservative: nothing is guessed when two candidates fit.
@@ -544,10 +632,12 @@ export function resolveFromModel(v: VehiclePickerValue, model: NormalisedModel |
     changed = true;
   }
   if (gen && !next.catalogue?.trimId && has(next.variant)) {
-    const trim = gen.trims.find((t) => matchKey(t.name) === matchKey(next.variant));
+    const exact = gen.trims.find((t) => matchKey(t.name) === matchKey(next.variant));
+    const trim = exact ?? trimInVariant(gen, next.variant);
     if (trim) {
       next = withCatalogue(next, { trimId: trim.id });
-      next = { ...next, variant: trim.name, features: uniq([...next.features, ...(trim.features ?? [])]) };
+      // an exact name is the trim; a longer DVLA/TCC string ("Match Edition TSI EVO S-A") is kept as the variant
+      next = { ...next, variant: exact ? trim.name : next.variant, features: uniq([...next.features, ...(trim.features ?? [])]) };
       changed = true;
     }
   }

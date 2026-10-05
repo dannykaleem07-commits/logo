@@ -228,6 +228,8 @@ export interface GuardContext {
   templateId?: string;
   /** Additive: keys whose value was typed by the handler (an explicit entry is not a derived end date). */
   handlerKeys?: Set<string>;
+  /** Additive: field key → the first slot that prints it (so a guard issue can point at the row that clears it). */
+  slotIdsByKey?: Map<string, string>;
 }
 
 // ---------------------------------------------------------------------------
@@ -254,6 +256,11 @@ export interface PlanInputs {
   values?: Record<string, SlotInput>;
   /** Slot ids whose suggested / unverified value the handler confirmed. */
   confirm?: string[];
+  /**
+   * Additive: slot id → the text that was on screen when it was confirmed (re-generation). A confirmation only
+   * stands while the value still prints the same; a changed figure needs confirming again.
+   */
+  confirmedDisplay?: Record<string, string>;
   variant?: string;
 }
 

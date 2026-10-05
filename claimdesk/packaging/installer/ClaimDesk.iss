@@ -79,7 +79,7 @@ Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs 
 [Icons]
 Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExe}"; WorkingDir: "{app}"; Flags: runminimized; Comment: "Accident claims - {#Publisher}"
 Name: "{autoprograms}\{#AppName} (example claims)"; Filename: "{app}\{#AppExe}"; Parameters: "--demo"; WorkingDir: "{app}"; Flags: runminimized; Comment: "ClaimDesk with example claims (kept apart from your data)"
-Name: "{autoprograms}\Stop {#AppName}"; Filename: "{app}\{#AppExe}"; Parameters: "--stop"; WorkingDir: "{app}"; Flags: runminimized; Comment: "Stop the running ClaimDesk"
+Name: "{autoprograms}\Stop {#AppName}"; Filename: "{app}\{#AppExe}"; Parameters: "--stop"; WorkingDir: "{app}"; Flags: runminimized; Comment: "Stop the running ClaimDesk (your data and the example claims)"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; WorkingDir: "{app}"; Flags: runminimized; Tasks: desktopicon
 
 [Run]
@@ -87,7 +87,8 @@ Filename: "{app}\{#AppExe}"; Description: "Start {#AppName} now"; WorkingDir: "{
 
 [UninstallRun]
 ; Stop ClaimDesk first: the server keeps ClaimDesk.exe and better_sqlite3.node open.
-Filename: "{sys}\taskkill.exe"; Parameters: "/F /IM {#AppExe}"; Flags: runhidden; RunOnceId: "StopClaimDesk"
+; /T also ends the ClaimDesk app window (Edge started by ClaimDesk), so its profile under the data folder is released.
+Filename: "{sys}\taskkill.exe"; Parameters: "/F /T /IM {#AppExe}"; Flags: runhidden; RunOnceId: "StopClaimDesk"
 
 [UninstallDelete]
 ; The program folder only (files the app may have created next to itself). Never the data folder.
@@ -95,14 +96,32 @@ Type: filesandordirs; Name: "{app}\app"
 Type: dirifempty; Name: "{app}"
 
 [Code]
-// Stop a running ClaimDesk before files are replaced (upgrade in place).
+// Is ClaimDesk.exe running for this user? (find.exe answers 0 when tasklist lists it)
+function ClaimDeskRunning(): Boolean;
+var
+  Code: Integer;
+begin
+  Result := Exec(ExpandConstant('{cmd}'), '/C ""' + ExpandConstant('{sys}\tasklist.exe') + '" /FI "IMAGENAME eq {#AppExe}" /NH | "' + ExpandConstant('{sys}\find.exe') + '" /I "{#AppExe}""', '', SW_HIDE, ewWaitUntilTerminated, Code) and (Code = 0);
+end;
+
+// Stop a running ClaimDesk before files are replaced (upgrade in place). Interactive installs ask first, so nothing
+// typed is lost without warning; /T also ends the ClaimDesk app window so no orphan window keeps the old version open.
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 var
   Code: Integer;
 begin
-  Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /IM {#AppExe}', '', SW_HIDE, ewWaitUntilTerminated, Code);
-  Sleep(800);
   Result := '';
+  if ClaimDeskRunning() then
+  begin
+    if not WizardSilent() then
+      if MsgBox('ClaimDesk is running and will be closed to update it.' + #13#10#13#10 + 'Save any open work in ClaimDesk, then click OK. Click Cancel to update later.', mbConfirmation, MB_OKCANCEL) <> IDOK then
+      begin
+        Result := 'ClaimDesk is still running. Close it (Start menu > Stop ClaimDesk), then run the installer again.';
+        exit;
+      end;
+    Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /T /IM {#AppExe}', '', SW_HIDE, ewWaitUntilTerminated, Code);
+    Sleep(800);
+  end;
 end;
 
 // Uninstall keeps %LOCALAPPDATA%\ClaimDesk (claims, evidence, documents, settings). Optional prompt, default No;

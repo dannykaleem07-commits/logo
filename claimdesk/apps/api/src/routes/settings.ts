@@ -12,18 +12,15 @@ import type { AppContext } from '../context.js';
 import { badRequest } from '../errors.js';
 import { parse } from '../schemas/common.js';
 import { settingsPatchBody } from '../schemas/services.js';
+import { lookupModeOf } from '../services/lookup.js';
 
 export interface SettingsWarning {
   code: 'CONFIRMATION_OF_PAYEE' | 'REGISTERED_OFFICE_MISSING' | 'BANK_NOT_SET' | 'ICO_MISSING' | 'VAT_MISSING';
   message: string;
 }
 
-export type LookupMode = 'live' | 'manual';
-
-/** 'live' when a DVLA VES or DVSA MOT key is configured; otherwise searches use ClaimDesk records and Total Car Check. */
-export function lookupModeOf(keys: { dvlaVes?: boolean; dvsaMot?: boolean } | undefined): LookupMode {
-  return keys?.dvlaVes || keys?.dvsaMot ? 'live' : 'manual';
-}
+// one definition of the lookup mode, shared with GET /health and POST /vehicles/lookup
+export { lookupModeOf, type LookupMode } from '../services/lookup.js';
 
 export function settingsWarnings(s: Settings): SettingsWarning[] {
   const w: SettingsWarning[] = [];

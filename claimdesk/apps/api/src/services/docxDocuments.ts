@@ -45,7 +45,7 @@ export interface DocxSnapshot {
   /** What the handler typed (re-used on supersede). */
   inputs: Record<string, SlotInput>;
   confirm: string[];
-  values: Array<{ slotId: string; key?: string; display: string; origin: PlanRow['origin']; verification?: VerificationStatus }>;
+  values: Array<{ slotId: string; key?: string; label?: string; display: string; origin: PlanRow['origin']; verification?: VerificationStatus }>;
   removedBlocks: string[];
   docxSha256: string;
   /** Additive: who acknowledged the template warnings, and when (baseline suppression relies on it). */
@@ -214,6 +214,8 @@ export interface CreateDocxDocumentInput {
   actor: Actor;
   supersedes?: GeneratedDocument;
   reExecutedOn?: string;
+  /** Re-generation: slot id → the value shown when it was confirmed (a changed figure needs confirming again). */
+  confirmedDisplay?: Record<string, string>;
 }
 
 const norm = (s: string | undefined): string =>
@@ -287,7 +289,7 @@ export function createDocxClaimDocumentSync(ctx: AppContext, input: CreateDocxDo
   // 4. Plan
   const inputs = body.values ?? {};
   const confirm = body.confirm ?? [];
-  const plan = buildFillPlan(p.scan, p.mapping, source, { values: inputs, confirm, ...(body.variant ? { variant: body.variant } : {}) });
+  const plan = buildFillPlan(p.scan, p.mapping, source, { values: inputs, confirm, ...(input.confirmedDisplay ? { confirmedDisplay: input.confirmedDisplay } : {}), ...(body.variant ? { variant: body.variant } : {}) });
   const blocks = plan.issues.filter((i) => i.severity === 'block');
   if (blocks.length) throw planError(blocks);
   // 5. Fill
@@ -300,6 +302,8 @@ export function createDocxClaimDocumentSync(ctx: AppContext, input: CreateDocxDo
     coreProps: { title: `${title} — ${reference}`, subject: title, keywords: [reference, p.row.id], created: nowDate, modified: nowDate },
     now: nowDate,
     ...(p.mapping.style?.valueRun ? { valueRunStyle: p.mapping.style.valueRun } : {}),
+    // a user's own template keeps its own font for the values; the CCGUK built-ins use their value style
+    inheritValueStyle: p.row.source !== 'builtin',
   });
   // 6. Preview + consistency (canonical id), baseline suppression, plan warnings as flags
   const meta = { title, kind: p.row.kind, reference, date: now.slice(0, 10) };
@@ -330,7 +334,7 @@ export function createDocxClaimDocumentSync(ctx: AppContext, input: CreateDocxDo
     ...(Object.keys(subject).length ? { subject } : {}),
     inputs,
     confirm,
-    values: plan.rows.map((r) => ({ slotId: r.slotId, ...(r.key ? { key: r.key } : {}), display: r.display, origin: r.origin, ...(r.verification ? { verification: r.verification } : {}) })),
+    values: plan.rows.map((r) => ({ slotId: r.slotId, ...(r.key ? { key: r.key } : {}), label: r.label, display: r.display, origin: r.origin, ...(r.verification ? { verification: r.verification } : {}) })),
     removedBlocks: plan.removeBlocks,
     docxSha256: filled.sha256,
     ...(p.row.warningsAcknowledgedAt ? { warningsAcknowledgedAt: p.row.warningsAcknowledgedAt } : {}),
@@ -414,5 +418,14 @@ export function supersedeDocxDocument(ctx: AppContext, old: GeneratedDocument, e
     values: { ...(prev.inputs ?? {}), ...(extra.values ?? {}) },
     confirm: [...new Set([...(prev.confirm ?? []), ...(extra.confirm ?? [])])],
   };
-  return createDocxClaimDocumentSync(ctx, { claimId: old.claimId, body, user, actor, supersedes: old, ...(extra.reExecutedOn ? { reExecutedOn: extra.reExecutedOn } : {}) });
+  // A carried-over confirmation covers the figure the handler saw, not whatever the slot resolves to now: a GTA
+  // benchmark or suggestion that has changed since is left blank until confirmed again (confirmed afresh = extra).
+  const fresh = new Set(extra.confirm ?? []);
+  const confirmedDisplay: Record<string, string> = {};
+  for (const slotId of prev.confirm ?? []) {
+    if (fresh.has(slotId)) continue;
+    const shown = prev.values?.find((v) => v.slotId === slotId)?.display;
+    if (shown !== undefined) confirmedDisplay[slotId] = shown;
+  }
+  return createDocxClaimDocumentSync(ctx, { claimId: old.claimId, body, user, actor, supersedes: old, confirmedDisplay, ...(extra.reExecutedOn ? { reExecutedOn: extra.reExecutedOn } : {}) });
 }

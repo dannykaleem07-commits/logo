@@ -15,7 +15,7 @@ import { badRequest, notFound } from '../errors.js';
 import { parse } from '../schemas/common.js';
 import { fuelType } from '../schemas/vehicles.js';
 import { getModel, gtaSuggestionFor, listMakes, listModels, makeSlugFor, matchVehicle, modelSlugFor, searchVehicles } from '../services/catalogue.js';
-import { params } from './helpers.js';
+import { configRolesOnly, params } from './helpers.js';
 
 const CACHE = 'private, max-age=3600';
 const cached = (reply: FastifyReply): void => {
@@ -59,6 +59,7 @@ const suggestQuery = z.object({
   fuelType: fuelType.optional(),
   variant: z.string().trim().max(120).optional(),
   recordedGroup: z.string().trim().max(8).optional(),
+  yearOfManufacture: z.coerce.number().int().min(1900).max(2100).optional(),
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'expected YYYY-MM-DD').optional(),
 });
 
@@ -102,7 +103,7 @@ export function registerCatalogueRoutes(app: FastifyInstance, ctx: AppContext): 
 
   app.get('/catalogue/custom', async () => ({ items: ctx.repos.listCustomCatalogueEntries(ctx.db) }));
 
-  app.post('/catalogue/custom', async (request, reply) => {
+  app.post('/catalogue/custom', { preHandler: configRolesOnly }, async (request, reply) => {
     const body = parse(customBody, request.body);
     if (body.level !== 'make' && !body.model) throw badRequest(`A ${body.level} entry needs the model it belongs to`);
     if ((body.level === 'trim' || body.level === 'engine') && !body.generationId) throw badRequest(`A ${body.level} entry needs the generation it belongs to`);
@@ -133,7 +134,7 @@ export function registerCatalogueRoutes(app: FastifyInstance, ctx: AppContext): 
     return reply.status(201).send(entry);
   });
 
-  app.delete('/catalogue/custom/:id', async (request, reply) => {
+  app.delete('/catalogue/custom/:id', { preHandler: configRolesOnly }, async (request, reply) => {
     const { id } = params<{ id: string }>(request);
     const before = ctx.repos.getCustomCatalogueEntry(ctx.db, id);
     if (!before || before.deletedAt) throw notFound('catalogue entry', id);

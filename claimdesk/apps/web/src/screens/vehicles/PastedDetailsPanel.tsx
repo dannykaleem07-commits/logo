@@ -7,7 +7,7 @@ import { Badge } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { TextArea } from '../../components/Form';
 import { todayISO } from '../../lib/dates';
-import { defaultParsedSelection, parsedRows, type ParsedCatalogueMatch, type ParsedField } from './vehiclePicker';
+import { defaultParsedSelection, findMake, parsedRows, type ParsedCatalogueMatch, type ParsedField } from './vehiclePicker';
 
 export interface PastedDetailsResult {
   parsed: ParsedVehicleCheck;
@@ -29,10 +29,23 @@ export function PastedDetailsPanel({ registration, currentMake, onUse, disabled 
   const [busy, setBusy] = useState(false);
   const [used, setUsed] = useState(false);
 
-  const read = () => {
+  const read = async () => {
     const p = parseVehicleCheckText(text, { expectedRegistration: registration || undefined, today: todayISO() });
+    const sel = new Set(defaultParsedSelection(p));
+    // a "make" the catalogue does not know (often page text) is shown but not ticked
+    if (p.fields.make) {
+      try {
+        const makes = await qc.fetchQuery({ queryKey: vk.makes, queryFn: ({ signal }) => vehiclesApi.catalogueMakes(signal), staleTime: 60 * 60_000 });
+        if (makes.length && !findMake(makes, p.fields.make)) {
+          sel.delete('make');
+          p.warnings = [...p.warnings, `"${p.fields.make}" is not a make in the catalogue — check it before using it (it is not ticked).`];
+        }
+      } catch {
+        /* the catalogue is a convenience: the paste is shown as read */
+      }
+    }
     setParsed(p);
-    setSelected(new Set(defaultParsedSelection(p)));
+    setSelected(sel);
     setUsed(false);
   };
 
@@ -98,7 +111,7 @@ export function PastedDetailsPanel({ registration, currentMake, onUse, disabled 
         hint="On the results page select the vehicle details, copy them (Ctrl+C) and paste here (Ctrl+V). Extra page text is ignored. Nothing is saved until you use the details and save the form."
       />
       <div className="row">
-        <Button onClick={read} disabled={disabled || !text.trim()}>
+        <Button onClick={() => void read()} disabled={disabled || !text.trim()}>
           Read pasted details
         </Button>
         {parsed && <span className="xs muted">{rows.length ? `${rows.length} field${rows.length === 1 ? '' : 's'} found` : 'No vehicle details found in the text'}</span>}

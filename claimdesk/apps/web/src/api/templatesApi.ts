@@ -120,7 +120,7 @@ export interface MappingIssue {
 }
 
 export interface TemplateWarning {
-  code: 'LEGACY_DETAIL' | 'BANNED_PHRASE' | 'REGULATED_STATUS' | 'BRAND_CLAIM_IMAGE' | 'TRACKED_CHANGES' | 'COMMENTS' | 'LEGACY_FORM_FIELDS' | 'EXTERNAL_IMAGE' | 'EMBEDDED_OBJECT' | 'UNMAPPED_SLOTS' | (string & {});
+  code: 'LEGACY_DETAIL' | 'BANNED_PHRASE' | 'REGULATED_STATUS' | 'BRAND_CLAIM_IMAGE' | 'TRACKED_CHANGES' | 'COMMENTS' | 'LEGACY_FORM_FIELDS' | 'EXTERNAL_IMAGE' | 'EMBEDDED_OBJECT' | 'UNMAPPED_SLOTS' | 'SYNC_FAILED' | (string & {});
   message: string;
   excerpt?: string;
 }
@@ -304,7 +304,8 @@ export interface DocxSnapshot {
   subject?: DocxSubject;
   inputs: Record<string, SlotInput>;
   confirm: string[];
-  values: Array<{ slotId: string; key?: string; display: string; origin: PlanOrigin; verification?: VerificationStatus }>;
+  /** `label`: the row's label as shown in the values form (additive; older snapshots have none). */
+  values: Array<{ slotId: string; key?: string; label?: string; display: string; origin: PlanOrigin; verification?: VerificationStatus }>;
   removedBlocks: string[];
   docxSha256: string;
 }

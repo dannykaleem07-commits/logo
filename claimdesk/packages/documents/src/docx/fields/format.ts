@@ -96,6 +96,9 @@ function boxes(printed: string, groups: Array<string | undefined>): string {
 }
 
 /** Date / date-time / time value into a printed date-ish blank. */
+/** Below this cell width (about 4.6 cm) a date-and-time blank is filled compactly. */
+export const NARROW_DATETIME_TWIPS = 2600;
+
 function dateIntoBlank(slot: DocxSlot, value: FieldValue, format?: FormatName): string | undefined {
   const b = slot.blank!;
   const p = partsOf(value);
@@ -107,6 +110,8 @@ function dateIntoBlank(slot: DocxSlot, value: FieldValue, format?: FormatName): 
     case 'date':
       return p.y ? boxes(b.text, [p.d, p.m, p.y]) : undefined;
     case 'datetime':
+      // a narrow cell cannot hold the printed "dd / mm / yyyy  at  hh : mm" spacing on one line: single spaces
+      if (p.y && p.hh && slot.widthTwips !== undefined && slot.widthTwips < NARROW_DATETIME_TWIPS) return `${compactDate(p)} at ${p.hh}:${p.mm}`;
       return p.y ? boxes(b.text, [p.d, p.m, p.y, p.hh, p.mm]) : undefined;
     case 'month-year':
       return p.y ? boxes(b.text, [p.m, p.y]) : undefined;

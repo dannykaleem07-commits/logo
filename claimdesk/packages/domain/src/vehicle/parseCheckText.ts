@@ -88,6 +88,7 @@ function normLabel(s: string): string {
   return s
     .toLowerCase()
     .replace(/₂/g, '2')
+    .replace(/^co2(?=[a-z])/, 'co2 ') // GOV.UK "CO₂Emissions" (no space)
     .replace(/\([^)]*\)\s*$/g, '')
     .replace(/[\s:*?.\-–—]+$/g, '')
     .replace(/\s+/g, ' ')
@@ -107,6 +108,8 @@ const LABEL_BY_KEY = new Map(LABEL_ENTRIES.map((e) => [e.key, e] as const));
 
 /** Groups whose values are free text (extra care in the weak `Label Value` layout). */
 const FREE_TEXT: ReadonlySet<Group> = new Set(['make', 'model', 'colour', 'bodyType', 'euro']);
+/** Words a results page prints where a make or model would be (never a vehicle). */
+const NOT_A_VEHICLE = /^(information|info|details?|unknown|not (?:known|available|found)|n\/?a|none|vehicle|check|search|more|see (?:below|above)|-+|—)$/i;
 
 // ---------------------------------------------------------------------------
 // Value parsers
@@ -244,6 +247,11 @@ function parseValue(group: Group, raw: string, set: Setter, c: Ctx, weak: boolea
     if (value.length > 60 || !/[a-z0-9]/i.test(value)) return false;
     if (LABEL_BY_KEY.has(normLabel(value))) return false;
     if (weak && (!/^[A-Z0-9]/.test(value) || value.split(' ').length > 5)) return false;
+    if (group === 'make' || group === 'model') {
+      // page text, not a vehicle: "Information", "N/A", "Description of the vehicle is below"
+      if (NOT_A_VEHICLE.test(value)) return false;
+      if (value.split(/\s+/).filter((w) => /^[a-z]/.test(w)).length >= 3) return false;
+    }
   }
   switch (group) {
     case 'registration': {
@@ -376,7 +384,8 @@ function parseValue(group: Group, raw: string, set: Setter, c: Ctx, weak: boolea
         any = true;
       }
       let status: string | undefined;
-      if (/no (?:details|results|mot)|not (?:held|found)|no record/i.test(value)) status = 'No details held';
+      if (/no mot (?:required|needed)|not (?:yet )?(?:due|required)|exempt|under 3 years|less than 3 years/i.test(value)) status = 'Exempt / not yet due';
+      else if (/no (?:details|results|mot)|not (?:held|found)|no record/i.test(value)) status = 'No details held';
       else if (/not valid|invalid|expired|overdue|fail/i.test(value)) status = 'Expired';
       else if (/\bvalid\b|\bpass(?:ed)?\b|\byes\b|in date/i.test(value)) status = 'Valid';
       if (status) {
@@ -405,6 +414,8 @@ function parseValue(group: Group, raw: string, set: Setter, c: Ctx, weak: boolea
     case 'mileage':
     case 'lastMot': {
       let any = false;
+      // "45,390 (at last MOT)": a note in brackets after the figure
+      const value = cleanFree(raw).replace(/\s*\((?![^)]*\d)[^)]*\)\s*$/, '');
       if (group === 'lastMot') {
         const d = parseLooseDate(value);
         if (d?.date) {
@@ -471,7 +482,7 @@ export function parseVehicleCheckText(text: string, opts: { expectedRegistration
     .replace(/[\u00A0\u2007\u202F]/g, ' ');
 
   const lines = input.split('\n');
-  let pending: { entry: LabelEntry; line: number } | undefined;
+  let pending: { entry: LabelEntry; line: number; dash: boolean } | undefined;
 
   const tryValue = (entry: LabelEntry, raw: string, lineNo: number, weak: boolean): boolean => {
     const set: Setter = (field, value) => setField(c, field, value, entry.label, raw.trim(), lineNo);
@@ -496,7 +507,10 @@ export function parseVehicleCheckText(text: string, opts: { expectedRegistration
       pending = undefined;
       const first = cells[0]!;
       const firstIsLabelish = Boolean(isLabelOnly(first) || splitLabel(first)?.strong);
-      if (!firstIsLabelish && tryValue(p.entry, cells.length === 1 ? line.replace(/\t/g, ' ') : first, lineNo, false)) {
+      const candidate = cells.length === 1 ? line.replace(/\t/g, ' ') : first;
+      // "Model —" then a sentence on the next line is page text, not the model
+      const sentence = p.dash && FREE_TEXT.has(p.entry.group) && candidate.trim().split(/\s+/).length > 5;
+      if (!firstIsLabelish && !sentence && tryValue(p.entry, candidate, lineNo, false)) {
         if (cells.length === 1) continue;
         matchedAny = true;
         start = 1;
@@ -516,7 +530,7 @@ export function parseVehicleCheckText(text: string, opts: { expectedRegistration
           continue;
         }
         if (cells.length === 1) {
-          pending = { entry: only, line: lineNo };
+          pending = { entry: only, line: lineNo, dash: /[-–—]\s*$/.test(cell) };
           matchedAny = true;
         }
         continue;

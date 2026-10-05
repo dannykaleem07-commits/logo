@@ -52,6 +52,8 @@ export function runTemplateGuards(ids: GuardId[], ctx: GuardContext): GuardResul
       case 'bankRequired': {
         const b = src.company.bank;
         if (!b || !b.sortCode?.trim() || !b.accountNumber?.trim()) out.push({ code: 'BANK_DETAILS_REQUIRED', severity: 'block', message: 'Bank details are not set in Settings. This form cannot be generated without the sort code and account number.' });
+        // 00-00-00 is not a UK sort code: it is the visible placeholder of the example dataset, never a payment route
+        else if (/^0+$/.test(b.sortCode.replace(/\D/g, ''))) out.push({ code: 'BANK_DETAILS_PLACEHOLDER', severity: 'block', message: 'The sort code in Settings is a placeholder (00-00-00). Enter the real bank details exactly as the bank holds them before generating a payment direction.' });
         break;
       }
       case 'bankAccountName': {
@@ -93,7 +95,11 @@ export function runTemplateGuards(ids: GuardId[], ctx: GuardContext): GuardResul
         break;
       }
       case 'witnessRelationship': {
-        if (!present(values.get('witness.relationshipToClaimant'))) out.push({ code: 'WITNESS_RELATIONSHIP_REQUIRED', severity: 'block', message: "Enter the witness's relationship to the claimant (none, family, friend, passenger …)." });
+        if (!present(values.get('witness.relationshipToClaimant'))) {
+          // point at the row that clears it, so the values form can lift the block as soon as it is typed
+          const slotId = ctx.slotIdsByKey?.get('witness.relationshipToClaimant');
+          out.push({ code: 'WITNESS_RELATIONSHIP_REQUIRED', severity: 'block', message: "Enter the witness's relationship to the claimant (none, family, friend, passenger …).", ...(slotId ? { slotId } : {}) });
+        }
         break;
       }
       case 'ratePositionInstruction': {

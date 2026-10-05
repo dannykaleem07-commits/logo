@@ -5,8 +5,9 @@
  * letterhead.
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
 import path from 'node:path';
+// fflate (an API devDependency, the same zip library @ccguk/documents uses) builds .docx files in-test.
+import { strToU8, zipSync, type Zippable } from 'fflate';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { docxToPlainText, renderSample, scanDocx } from '@ccguk/documents';
 import type { GeneratedDocument } from '@ccguk/domain';
@@ -18,13 +19,6 @@ import { syncBuiltinTemplates, type DocxTemplateDetail, type DocxTemplateSummary
 const CHROMIUM = '/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
 if (!process.env.CHROMIUM_PATH && existsSync(CHROMIUM)) process.env.CHROMIUM_PATH = CHROMIUM;
 
-// fflate is a dependency of @ccguk/documents (not of the API): load it from there to build .docx files in-test.
-interface Fflate {
-  zipSync(files: Record<string, [Uint8Array, { level?: number; mtime?: Date }]>): Uint8Array;
-  strToU8(s: string): Uint8Array;
-}
-const docsRequire = createRequire(new URL('../../../../packages/documents/package.json', import.meta.url));
-const { zipSync, strToU8 } = docsRequire('fflate') as Fflate;
 
 type ErrorBody = { error: { code: string; message: string; details?: { id?: string; issues?: Array<{ code: string; slotId?: string }> } } };
 
@@ -55,7 +49,7 @@ function buildDocx(opts: { body?: string; mainContentType?: string; extraParts?:
     'word/document.xml': opts.documentXml ?? `${DECL}<w:document xmlns:w="${W}"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>`,
     ...(opts.extraParts ?? {}),
   };
-  const zippable: Record<string, [Uint8Array, { level: number; mtime: Date }]> = {};
+  const zippable: Zippable = {};
   for (const [name, content] of Object.entries(files)) zippable[name] = [strToU8(content), { level: 6, mtime: new Date(2026, 0, 1) }];
   return zipSync(zippable);
 }

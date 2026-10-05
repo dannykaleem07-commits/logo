@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import type { FastifyInstance } from 'fastify';
 import type { AppContext } from '../context.js';
 import { engineStatus } from '../engines.js';
-import { lookupModeOf } from './settings.js';
+import { lookupModeFor } from '../services/lookup.js';
 
 let packageVersion: string | undefined;
 
@@ -50,7 +50,7 @@ export function registerHealthRoutes(app: FastifyInstance, ctx: AppContext): voi
       time: ctx.now(),
       env: ctx.config.env,
       database: dbOk ? 'ok' : 'error',
-      lookups: { ...ctx.config.keysPresent, mode: lookupModeOf(ctx.config.keysPresent) },
+      lookups: { ...ctx.config.keysPresent, mode: lookupModeFor(ctx) },
       kbData: Boolean(ctx.kb.dataDir),
       engines: engineStatus(),
     };

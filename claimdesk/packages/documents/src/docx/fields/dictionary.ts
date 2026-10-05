@@ -130,6 +130,11 @@ function photos(src: MergeSource) {
   return src.evidence.filter((e) => e.kind === 'photo');
 }
 
+/** Photographs of the client's damaged vehicle: the hire car's handover photos (tagged release / return) are not. */
+function damagePhotos(src: MergeSource) {
+  return photos(src).filter((e) => !(e.tags ?? []).some((t) => t === 'release' || t === 'return'));
+}
+
 function tagged(src: MergeSource, tag: string) {
   return photos(src).filter((e) => (e.tags ?? []).includes(tag));
 }
@@ -232,7 +237,7 @@ function evidenceRow(src: MergeSource, which: string): { date?: string; ref?: st
       return ev.length ? { date: ev[0]!.at, ref: `${ev.length} storage log entr${ev.length === 1 ? 'y' : 'ies'}` } : undefined;
     }
     case 'photos': {
-      const p = byTime(photos(src), (e) => e.capturedAt ?? e.uploadedAt);
+      const p = byTime(damagePhotos(src), (e) => e.capturedAt ?? e.uploadedAt);
       return p.length ? { date: p[0]!.capturedAt ?? p[0]!.uploadedAt, ref: `${p.length} photograph${p.length === 1 ? '' : 's'}` } : undefined;
     }
     case 'engineerReport': {
@@ -267,6 +272,36 @@ const EVIDENCE_ROWS: Array<[string, string]> = [
   ['invoices', 'Invoices and final account'],
   ['remittance', 'Remittance / settlement advice']
 ];
+
+const TITLES = /^(mr|mrs|ms|miss|mx|dr|prof|sir|dame|lord|lady|rev)\.?$/i;
+
+/** "Ms Priya Patel" → "Ms Patel"; "Priya Patel" → "Priya Patel"; a team or a department → undefined. */
+export function personalSalutation(name: string | undefined): string | undefined {
+  const words = (name ?? '').replace(/[,;].*$/, '').trim().split(/\s+/).filter(Boolean);
+  if (words.length < 2 || words.length > 5) return undefined;
+  if (words.some((w) => /\b(team|department|claims|dept|unit|office|services|ltd|limited|plc|insurance|llp)\b/i.test(w))) return undefined;
+  if (TITLES.test(words[0]!)) return `${words[0]!.replace(/\.$/, '')} ${words[words.length - 1]}`;
+  return words.join(' ');
+}
+
+/** Who the letter greets: the client by name, else a named person "for the attention of", else Sir or Madam. */
+function recipientSalutation(r: NonNullable<MergeSource['recipient']>): string {
+  if (r.role === 'client') return personalSalutation(r.name) ?? 'Sir or Madam';
+  return personalSalutation(r.attention) ?? 'Sir or Madam';
+}
+
+/** London calendar date of the first CCTV preservation request sent on the claim. */
+function firstCctvRequestDate(s: MergeSource): string | undefined {
+  const at = eventsOfType(s, (t) => t === 'cctv_request_sent')
+    .map((e) => e.at)
+    .sort()[0];
+  return at ? londonDate(at) : undefined;
+}
+
+function addDaysIso(date: string, days: number): string {
+  const [y, m, d] = date.slice(0, 10).split('-').map(Number) as [number, number, number];
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().slice(0, 10);
+}
 
 const CCTV_SOURCES: Array<[string, string]> = [
   ['client_dashcam', 'Client dashcam'],
@@ -397,11 +432,11 @@ const defs: FieldDef[] = [
   // Handler
   f('handler.name', HD, 'text', 'auto', 'Your name (person producing the document)', 'src.user.name', (s) => txt(s.user.name), { syn: ['form completed by', 'recorded by', 'form taken by', 'full name ccguk', 'released by', 'checked by'] }),
   f('handler.position', HD, 'text', 'auto', 'Your position', 'src.user.roleLabel', (s) => txt(s.user.roleLabel), { syn: ['position', 'role'] }),
-  f('handler.caseHandler', HD, 'text', 'auto', 'Case handler', 'src.caseHandler?.name ?? src.user.name', (s) => txt(s.caseHandler?.name ?? s.user.name), { syn: ['case handler'] }),
+  f('handler.caseHandler', HD, 'text', 'auto', 'Case handler', 'src.caseHandler?.name ?? src.user.name', (s) => txt(s.caseHandler?.name ?? s.user.name), { syn: ['case handler', 'handler name', 'your handler', 'handler', 'claims handler'] }),
   f('handler.contact', HD, 'text', 'auto', 'Case handler contact', '`${company.caseHandlerPhone} · ${company.email}`', (s) => txt(`${s.company.caseHandlerPhone} · ${s.company.email}`), { syn: ['contact'] }),
 
   // A1.2 Claim
-  f('claim.reference', 'Claim', 'text', 'auto', 'Our reference', 'bundle.claim.reference', (s) => txt(s.claim.reference), { syn: ['reference', 'our ref', 'ccguk reference', 'claim ref', 'file ref', 'ccguk reference allocated'] }),
+  f('claim.reference', 'Claim', 'text', 'auto', 'Our reference', 'bundle.claim.reference', (s) => txt(s.claim.reference), { syn: ['reference', 'our ref', 'ccguk reference', 'claim ref', 'file ref', 'ccguk reference allocated', 'claim reference', 'claim ref no', 'our claim reference', 'claim number'] }),
   f('claim.openedAt', 'Claim', 'date', 'auto-if-known', 'File opened', 'bundle.claim.openedAt', (s) => dateOf(s.claim.openedAt), { syn: ['file opened', 'date opened'] }),
   f('claim.firstInstructedAt', 'Claim', 'date', 'auto-if-known', 'First instructed on', "first services_agreed event, else claim.openedAt", (s) => dateOf(firstInstructed(s)), { syn: ['first appointed', 'instructed on'] }),
   f('claim.retrospectiveAppointment', 'Claim', 'bool', 'suggest', 'Signed after CCGUK began acting', 'date(src.now) > date(claim.firstInstructedAt)', (s) => {
@@ -423,7 +458,7 @@ const defs: FieldDef[] = [
   f('claim.ledgerOpened', 'Claim', 'bool', 'auto', 'Ledger opened', 'true (every ClaimDesk claim has a ledger)', () => bool(true), { syn: ['ledger opened'] }),
 
   // Client
-  f('claimant.name', 'Client', 'text', 'auto', 'Client full name', 'bundle.claimant.name', (s) => txt(s.claimant.name), { syn: ['customer full name', 'client full name', 'client', 'full name', 'hirer full name', 'title and full name', 'name', 'full name of client'], aliases: ['claimant.fullName'] }),
+  f('claimant.name', 'Client', 'text', 'auto', 'Client full name', 'bundle.claimant.name', (s) => txt(s.claimant.name), { syn: ['customer full name', 'client full name', 'client', 'full name', 'hirer full name', 'title and full name', 'name', 'full name of client', 'client name', 'customer name'], aliases: ['claimant.fullName'] }),
   f('claimant.initialsSurname', 'Client', 'text', 'auto', 'Client initials and surname', 'derived from bundle.claimant.name', (s) => txt(initialsSurname(s.claimant.name)), { syn: ['initials and surname'] }),
   f('claimant.dateOfBirth', 'Client', 'date', 'auto-if-known', 'Date of birth', 'bundle.claimant.dateOfBirth', (s) => (s.claimant.dateOfBirth ? { t: 'date', v: londonDate(s.claimant.dateOfBirth) } : undefined), { syn: ['date of birth', 'dob'] }),
   f('claimant.address', 'Client', 'text', 'auto-if-known', 'Address with postcode', 'formatAddressInline(bundle.claimant.address)', (s) => txt(addressOneLine(s.claimant.address)), { syn: ['address', 'address and postcode', 'home address', 'hirer address'], aliases: ['claimant.addressFull', 'claimant.addressInline'] }),
@@ -895,7 +930,7 @@ const defs: FieldDef[] = [
     ] as Array<[string, string, FieldType]>
   ).map(([k, label, type]) => f(`witness.exhibits[0].${k}`, 'Witness', type, 'auto-if-known', label, `src.exhibits[0] → ${k}`, (s) => exhibitField(s, 0, k))),
   h('witness.relationshipToClaimant', 'Witness', 'text', 'Relationship to claimant', { syn: ['relationship to claimant'] }),
-  h('witness.paragraphs', 'Witness', 'list', 'Statement paragraphs (own words)'),
+  h('witness.paragraphs', 'Witness', 'list', 'Statement paragraphs (own words)', { syn: ['paragraphs', 'statement'] }),
 
   // Intervention
   f('intervention.offerMade', 'Intervention', 'bool', 'auto-if-known', 'Offer made', 'subject offer present', (s) => yesIf(!!s.offer), { syn: ['offer made'] }),
@@ -1009,9 +1044,9 @@ const defs: FieldDef[] = [
   ...MEANS_DOCS.map(([k, label, kinds]) => f(`means.docs.${k}`, 'Means', 'bool', 'suggest', `Supplied — ${label}`, `evidence kinds ${kinds.join(', ')}`, (s) => yesIf(evidenceOfKinds(s, kinds).length > 0))),
 
   // Evidence
-  f('evidence.photosTaken', 'Evidence', 'bool', 'auto-if-known', 'Photographs taken', "evidence of kind 'photo'", (s) => yesIf(photos(s).length > 0), { syn: ['photographs taken'] }),
-  f('evidence.photoCount', 'Evidence', 'int', 'auto-if-known', 'Number of photographs', "evidence of kind 'photo'", (s) => (photos(s).length ? int(photos(s).length) : undefined), { syn: ['number'] }),
-  f('evidence.photosStoredAt', 'Evidence', 'text', 'suggest', 'Photographs stored at', '`ClaimDesk evidence store, claim <reference>`', (s) => (photos(s).length ? txt(evidenceStore(s)) : undefined), { syn: ['stored at'] }),
+  f('evidence.photosTaken', 'Evidence', 'bool', 'auto-if-known', 'Photographs taken', "evidence of kind 'photo' of the client's vehicle (not the hire car's handover photos)", (s) => yesIf(damagePhotos(s).length > 0), { syn: ['photographs taken'] }),
+  f('evidence.photoCount', 'Evidence', 'int', 'auto-if-known', 'Number of photographs', "evidence of kind 'photo' of the client's vehicle (not the hire car's handover photos)", (s) => (damagePhotos(s).length ? int(damagePhotos(s).length) : undefined), { syn: ['number'] }),
+  f('evidence.photosStoredAt', 'Evidence', 'text', 'suggest', 'Photographs stored at', '`ClaimDesk evidence store, claim <reference>`', (s) => (damagePhotos(s).length ? txt(evidenceStore(s)) : undefined), { syn: ['stored at'] }),
   ...EVIDENCE_ROWS.flatMap(([k, label]) => [
     f(`evidence.${k}`, 'Evidence', 'rows', 'suggest', `Evidence held — ${label}`, 'matching evidence kinds / documents (first date, filename)', (s) => {
       const r = evidenceRow(s, k);
@@ -1023,8 +1058,16 @@ const defs: FieldDef[] = [
   ]),
 
   // Diary
-  f('clocks.cctvPreservation.startDate', 'Diary', 'date', 'auto-if-known', 'CCTV preservation requests sent — day 1', 'clock cctv_preservation startsAt', (s) => dateOf(s.clocks.find((c) => c.kind === 'cctv_preservation')?.startsAt)),
-  f('clocks.cctvPreservation.followUpDate', 'Diary', 'date', 'auto-if-known', 'CCTV follow-up', 'clock cctv_preservation dueAt', (s) => dateOf(s.clocks.find((c) => c.kind === 'cctv_preservation')?.dueAt)),
+  // Day 1 is the day the first CCTV preservation request actually went out (blank until one has); the follow-up is
+  // day 25 counted from it (footage is commonly overwritten at about 30 days). Never the 7-day clock's deadline.
+  f('clocks.cctvPreservation.startDate', 'Diary', 'date', 'auto-if-known', 'CCTV preservation requests sent — day 1', 'first cctv_request_sent event (London date)', (s) => {
+    const d = firstCctvRequestDate(s);
+    return d ? { t: 'date', v: d } : undefined;
+  }),
+  f('clocks.cctvPreservation.followUpDate', 'Diary', 'date', 'auto-if-known', 'CCTV follow-up (around day 25)', 'first cctv_request_sent date + 24 days', (s) => {
+    const d = firstCctvRequestDate(s);
+    return d ? { t: 'date', v: addDaysIso(d, 24) } : undefined;
+  }),
   f('clocks.chaser1.dueDate', 'Diary', 'date', 'auto-if-known', 'Third-party insurer first chaser', 'clock chaser_day_7 dueAt', (s) => dateOf(s.clocks.find((c) => c.kind === 'chaser_day_7')?.dueAt)),
   f('clocks.chaser2.dueDate', 'Diary', 'date', 'auto-if-known', 'Second chaser', 'clock chaser_day_14 dueAt', (s) => dateOf(s.clocks.find((c) => c.kind === 'chaser_day_14')?.dueAt)),
   f('clocks.icobs3Months.dueDate', 'Diary', 'date', 'auto-if-known', 'Three-month point for a reasoned reply', 'clock icobs_8_2_6_three_months dueAt', (s) => dateOf(s.clocks.find((c) => c.kind === 'icobs_8_2_6_three_months')?.dueAt)),
@@ -1032,7 +1075,7 @@ const defs: FieldDef[] = [
 
   // Recipient
   f('recipient.name', 'Recipient', 'text', 'auto', 'Recipient name', 'src.recipient.name', (s) => txt(s.recipient?.name), { syn: ['insurer or company name', 'recipient'] }),
-  h('recipient.attentionName', 'Recipient', 'text', 'For the attention of (person)', { syn: ['name of handler', 'for the attention of'] }),
+  h('recipient.attentionName', 'Recipient', 'text', 'For the attention of (person)', { syn: ['for the attention of', 'attention', 'fao'] }),
   f('recipient.department', 'Recipient', 'text', 'auto-if-known', 'Department / team', 'src.recipient.attention', (s) => txt(s.recipient?.attention), { syn: ['department team'] }),
   f('recipient.addressLines', 'Recipient', 'list', 'auto-if-known', 'Address lines', 'src.recipient.addressLines (all but last)', (s) => list((s.recipient?.addressLines ?? []).slice(0, -1))),
   f('recipient.addressLine1', 'Recipient', 'text', 'auto-if-known', 'Address line 1', 'src.recipient.addressLines[0] (when more than one line)', (s) => {
@@ -1046,7 +1089,7 @@ const defs: FieldDef[] = [
   f('recipient.townPostcode', 'Recipient', 'text', 'auto-if-known', 'Town, POSTCODE', 'last address line', (s) => txt((s.recipient?.addressLines ?? []).slice(-1)[0]), { syn: ['town postcode'] }),
   f('recipient.email', 'Recipient', 'text', 'auto-if-known', 'By email', 'src.recipient.email', (s) => txt(s.recipient?.email), { syn: ['by email', 'recipient insurer co uk'] }),
   f('recipient.theirReference', 'Recipient', 'text', 'auto-if-known', 'Your ref', 'src.recipient.theirReference', (s) => txt(s.recipient?.theirReference), { syn: ['your ref', 'insurer reference'] }),
-  f('recipient.salutation', 'Recipient', 'text', 'auto-if-known', 'Salutation', "'Sir or Madam' unless a named addressee is entered", (s) => (s.recipient ? txt('Sir or Madam') : undefined), { syn: ['sir or madam', 'dear'] })
+  f('recipient.salutation', 'Recipient', 'text', 'auto-if-known', 'Salutation', "the client or a named person → 'Mr Smith' / their name; an organisation → 'Sir or Madam'", (s) => (s.recipient ? txt(recipientSalutation(s.recipient)) : undefined), { syn: ['sir or madam', 'dear'] })
 ];
 
 // ---------------------------------------------------------------------------

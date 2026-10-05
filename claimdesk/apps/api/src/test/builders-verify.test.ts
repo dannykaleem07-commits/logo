@@ -232,10 +232,11 @@ describe('(b) ledger figures and dates on Files 1 and 2', () => {
     const l2 = await draft(file2, 'letter.letter_before_claim', { liabilityBasis: HANDLER_FIELDS.liabilityBasis });
     expect(l2.status).toBe(201);
     const s2 = l2.body.dataSnapshot as { scheduleTotalPence: number; schedule: Array<{ description: string; netPence: number }>; interest: { fromDate: string } };
-    expect(s2.scheduleTotalPence).toBe(172352); // £7,701.12 gross position less £5,977.60 paid
-    expect(s2.schedule.reduce((a, l) => a + l.netPence, 0)).toBe(172352);
+    // no VAT (none is charged): storage £1,395.00 − £540.00 paid + engineer fee £285.00 refused = £1,140.00
+    expect(s2.scheduleTotalPence).toBe(114000);
+    expect(s2.schedule.reduce((a, l) => a + l.netPence, 0)).toBe(114000);
     expect(s2.interest.fromDate).toBe('2026-09-12'); // the payment pack date
-    expect(l2.body.html).toContain('£1,723.52');
+    expect(l2.body.html).toContain('£1,140.00');
 
     const typed = await draft(file2, 'letter.letter_before_claim', { liabilityBasis: HANDLER_FIELDS.liabilityBasis, scheduleTotalPence: 200000 });
     expect(typed.status).toBe(400);

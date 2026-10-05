@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { ErrorAlert } from '../../../components/ErrorAlert';
 import { Link } from 'react-router-dom';
 import type { MotTest, OdometerReading, OdometerSource, Vehicle } from '@ccguk/domain';
 import { formatRegistration } from '@ccguk/domain';
@@ -279,7 +280,7 @@ function EditVehicleDialog({ open, vehicle, lookupMode, links, onClose, onSaved 
     >
       <div className="stack">
         {lookupMode === 'manual' && <div className="notice notice-info small">No DVLA/DVSA keys are set up. Read the details on Total Car Check and copy them in, or pick the vehicle from the catalogue. Everything saved here is unverified until the V5C or MOT certificate backs it.</div>}
-        {patch.error ? <div className="notice notice-danger small" role="alert">{isApiError(patch.error) ? `${patch.error.code}: ${patch.error.message}` : (patch.error as Error).message}</div> : null}
+        <ErrorAlert message={patch.error ? (isApiError(patch.error) ? `${patch.error.code}: ${patch.error.message}` : (patch.error as Error).message) : null} className="small" />
         <CopyDetailsPanel registration={vehicle.registration} value={value} onChange={setValue} links={links} />
         <VehiclePicker value={value} onChange={setValue} mode="edit" showRegistration={false} lookupMode={lookupMode} errors={errors} />
       </div>

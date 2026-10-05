@@ -117,3 +117,35 @@ test('claimdesk.env template documents the 0.2 settings; the parser ignores comm
   assert.deepEqual(launch.parseEnvFile(text), {});
   assert.deepEqual(launch.parseEnvFile('DVLA_VES_API_KEY = abc \r\n# PORT=1\r\nEMPTY=\r\nCLAIMDESK_BROWSER=tab'), { DVLA_VES_API_KEY: 'abc', CLAIMDESK_BROWSER: 'tab' });
 });
+
+test('window watch: stops once the profile lock has been seen and then missed twice in a row', () => {
+  const w = launch.createWindowWatch();
+  assert.equal(w.observe(false), 'waiting'); // the browser is still starting
+  assert.equal(w.observe(true), 'open');
+  assert.equal(w.observe(false), 'closing'); // one missed poll is not enough (a restart in progress)
+  assert.equal(w.observe(true), 'open');
+  assert.equal(w.observe(false), 'closing');
+  assert.equal(w.observe(false), 'closed');
+  assert.equal(w.observe(false), 'done'); // fires once
+});
+
+test('window watch: a hand-over to an already-open window keeps the server (the lock stays)', () => {
+  const w = launch.createWindowWatch();
+  for (let i = 0; i < 10; i++) assert.equal(w.observe(true), 'open');
+  assert.equal(w.seen, true);
+});
+
+test('window watch: no lock file ever seen → "never" (the process-exit rule is used instead)', () => {
+  const w = launch.createWindowWatch({ firstSeenWithin: 3 });
+  assert.equal(w.observe(false), 'waiting');
+  assert.equal(w.observe(false), 'waiting');
+  assert.equal(w.observe(false), 'never');
+  assert.equal(w.seen, false);
+});
+
+test('profileInUse: Chromium lock file names', () => {
+  const dir = path.join('C:', 'Home', 'window');
+  assert.equal(launch.profileInUse(dir, (p) => p === path.join(dir, 'lockfile')), true);
+  assert.equal(launch.profileInUse(dir, (p) => p === path.join(dir, 'SingletonLock')), true);
+  assert.equal(launch.profileInUse(dir, () => false), false);
+});

@@ -223,7 +223,7 @@ describe('ledger', () => {
 });
 
 describe('recovery', () => {
-  it('writes a claimed ledger entry equal to 9000 + 300 × miles + 2500 (+VAT)', async () => {
+  it('writes a claimed ledger entry equal to 9000 + 300 × miles + 2500 (no VAT by default: no VAT number is held)', async () => {
     const created = await t.api<Created>('POST', '/claims', FNOL);
     const id = created.body.claim.id;
     const res = await t.api<{ recovery: { loadedMiles: number }; ledgerEntry: LedgerEntry; charge: { netPence: number; vatPence: number; grossPence: number } }>('POST', `/claims/${id}/recovery`, {
@@ -235,9 +235,9 @@ describe('recovery', () => {
     expect(res.status).toBe(201);
     const expectedNet = 9000 + 300 * 12 + 2500; // 15100
     expect(res.body.charge.netPence).toBe(expectedNet);
-    expect(res.body.charge.vatPence).toBe(Math.round(expectedNet * 0.2));
-    expect(res.body.charge.grossPence).toBe(expectedNet + Math.round(expectedNet * 0.2));
-    expect(res.body.ledgerEntry).toMatchObject({ head: 'recovery', kind: 'claimed', amountPence: expectedNet, vatPence: Math.round(expectedNet * 0.2) });
+    expect(res.body.charge.vatPence).toBe(0);
+    expect(res.body.charge.grossPence).toBe(expectedNet);
+    expect(res.body.ledgerEntry).toMatchObject({ head: 'recovery', kind: 'claimed', amountPence: expectedNet });
     const ledger = await t.api<{ entries: LedgerEntry[] }>('GET', `/claims/${id}/ledger?head=recovery`);
     expect(ledger.body.entries).toHaveLength(1);
     const events = await t.api<{ events: Array<{ type: string }> }>('GET', `/claims/${id}/events?type=recovery`);

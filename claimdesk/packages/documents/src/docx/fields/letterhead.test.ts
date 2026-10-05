@@ -3,6 +3,8 @@ import { docxToPlainText } from '../preview.js';
 import type { LetterContent } from '../types.js';
 import { builtinAssetBytes, LETTERHEAD_TEMPLATE_ID } from './builtin/index.js';
 import { composeLetterheadDocx } from './letterhead.js';
+import { openDocx } from '../zip.js';
+import { decodeUtf8 } from '../xml.js';
 
 const NOW = new Date('2026-10-04T08:30:00Z');
 const base = (over: Partial<LetterContent> = {}): LetterContent => ({
@@ -84,6 +86,19 @@ describe('composeLetterheadDocx (§A.10)', () => {
     expect(text).toContain('Yours sincerely');
     expect(text).toContain('1. Invoice INV-HIRE-0012; 2. Engineer report');
     expect(text).toContain('Priya Patel (client)');
+  });
+
+  it('without Enc. / Cc. the spacer and rule that introduced them are dropped too (no stray rule on a page of its own)', () => {
+    const tail = (docx: Uint8Array): string => {
+      const xml = decodeUtf8(openDocx(docx).entries.get('word/document.xml')!);
+      return xml.slice(xml.lastIndexOf('07425 475922'));
+    };
+    const bare = tail(compose(base()).docx);
+    expect(bare).not.toContain('w:pBdr');
+    expect(bare).toMatch(/^07425 475922<\/w:t><\/w:r><\/w:p><w:sectPr/);
+    const withEnc = tail(compose(base({ enclosures: ['Invoice INV-HIRE-0012'] })).docx);
+    expect(withEnc).toContain('w:pBdr');
+    expect(withEnc).toContain('Invoice INV-HIRE-0012');
   });
 
   it('is deterministic for the same inputs', () => {

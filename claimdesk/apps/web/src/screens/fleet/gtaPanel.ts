@@ -70,7 +70,8 @@ export function groupOptions(rates: readonly GtaRate[] | undefined): Array<{ val
   const opts = groupsWithRates(rates).map((g) => {
     const r = (rates ?? []).find((x) => x.group.toUpperCase() === g);
     // First sentence of the description only ('MPV/crossover group M1'), so the Select stays readable.
-    const short = r?.description?.split(/\.\s/)[0]?.replace(/\.$/, '').trim();
+    // Parenthesised examples ('(e.g. Golf, Focus)') go first, so an 'e.g.' never cuts the label mid-bracket.
+    const short = r?.description?.replace(/\s*\([^)]*\)/g, '').split(/\.\s/)[0]?.replace(/\.$/, '').trim();
     return { value: g, label: short && short !== g ? `${g} — ${short}` : g };
   });
   return [...opts, { value: OTHER_GROUP, label: 'Other…' }];
@@ -80,7 +81,7 @@ export function groupOptions(rates: readonly GtaRate[] | undefined): Array<{ val
  * GET /gta/suggest query for the picker facts and today's date, or null while make or model is missing. Catalogue
  * slugs are sent when the vehicle was picked from the catalogue (the API accepts slugs or names).
  */
-export function suggestQuery(v: Pick<VehiclePickerValue, 'make' | 'model' | 'variant' | 'catalogue' | 'segment' | 'bodyType' | 'engineCapacityCc' | 'fuelType'>, date: ISODate): GtaSuggestQuery | null {
+export function suggestQuery(v: Pick<VehiclePickerValue, 'make' | 'model' | 'variant' | 'catalogue' | 'segment' | 'bodyType' | 'engineCapacityCc' | 'fuelType'> & Partial<Pick<VehiclePickerValue, 'yearOfManufacture'>>, date: ISODate): GtaSuggestQuery | null {
   const make = v.make.trim();
   const model = v.model.trim();
   if (!make || !model) return null;
@@ -93,6 +94,7 @@ export function suggestQuery(v: Pick<VehiclePickerValue, 'make' | 'model' | 'var
   if (v.engineCapacityCc && Number.isInteger(v.engineCapacityCc) && v.engineCapacityCc > 0) q.engineCapacityCc = v.engineCapacityCc;
   if (v.fuelType) q.fuelType = v.fuelType;
   if (v.variant.trim()) q.variant = v.variant.trim();
+  if (v.yearOfManufacture !== undefined && Number.isInteger(v.yearOfManufacture)) q.yearOfManufacture = v.yearOfManufacture;
   return q;
 }
 
@@ -165,9 +167,17 @@ export function suggestionLine(s: GtaSuggestion): string {
 }
 
 /** "Benchmark daily rate £65.49 (2026-27, unverified)". */
-export function benchmarkLine(rate: Pick<GtaRate, 'dailyRatePence' | 'period' | 'verification'> | null | undefined, formatPence: (p: Pence) => string): string | null {
+/** The benchmark line always names its group, so it is never read as the rate of a different (suggested) group. */
+export function benchmarkLine(rate: Pick<GtaRate, 'group' | 'dailyRatePence' | 'period' | 'verification'> | null | undefined, formatPence: (p: Pence) => string): string | null {
   if (!rate) return null;
-  return `Benchmark daily rate ${formatPence(rate.dailyRatePence)} (${rate.period}, ${rate.verification.status})`;
+  return `Benchmark daily rate for ${rate.group.toUpperCase()}: ${formatPence(rate.dailyRatePence)} (${rate.period}, ${rate.verification.status})`;
+}
+
+/** "Suggested S3 (benchmark £55.00) — this unit is S1" when the saved or chosen group is not the suggested one. */
+export function suggestionDiffersLine(s: Pick<GtaPanelState, 'group' | 'suggestion'>, formatPence: (p: Pence) => string): string | null {
+  const sg = s.suggestion;
+  if (!sg?.group || !s.group || sg.group.toUpperCase() === s.group.toUpperCase()) return null;
+  return `Suggested ${sg.group.toUpperCase()}${sg.rate ? ` (benchmark ${formatPence(sg.rate.dailyRatePence)})` : ''} — this unit is ${s.group.toUpperCase()}`;
 }
 
 export interface GtaPanelView {

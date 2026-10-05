@@ -20,6 +20,7 @@ import {
   findModel,
   fuelOptions,
   generationOptions,
+  linkToCatalogue,
   modelWithoutRemainder,
   parseBodyOption,
   parsedRecordFields,
@@ -40,6 +41,7 @@ import {
   toSpec,
   toVehicleInput,
   transmissionOptions,
+  trimInVariant,
   trimOptions,
   validatePicker,
   vehiclePatchFrom,
@@ -174,14 +176,23 @@ describe('cascade', () => {
     const v = picked();
     const gen = setGeneration(v, 'ford-fiesta-mk7-2008-2017', FIESTA);
     expect(gen.catalogue).toEqual({ makeSlug: 'ford', modelSlug: 'fiesta', generationId: 'ford-fiesta-mk7-2008-2017' });
-    expect(gen).toMatchObject({ bodyType: undefined, doors: undefined, fuelType: undefined, engineCapacityCc: undefined, powerPs: undefined, transmission: undefined, variant: '' });
+    // the Mk8 engine and trim ids go; body, fuel and gearbox that the Mk7 also offers stay
+    expect(gen).toMatchObject({ bodyType: 'Hatchback', doors: 5, fuelType: 'petrol', engineCapacityCc: undefined, powerPs: undefined, transmission: 'manual', variant: '' });
     expect(gen.features).toEqual([]); // the Zetec's pre-ticked features go with the trim
     expect(gen.make).toBe('Ford');
     expect(gen.yearOfManufacture).toBe(2019);
 
+    // a petrol engine does not fit diesel; the gearbox and the Zetec trim are still on offer and stay
     const fuel = setFuel(v, 'diesel', FIESTA);
-    expect(fuel).toMatchObject({ fuelType: 'diesel', engineCapacityCc: undefined, transmission: undefined, variant: '', bodyType: 'Hatchback' });
+    expect(fuel).toMatchObject({ fuelType: 'diesel', engineCapacityCc: undefined, powerPs: undefined, transmission: 'manual', variant: 'Zetec', bodyType: 'Hatchback' });
     expect(fuel.catalogue?.engineId).toBeUndefined();
+    expect(fuel.catalogue?.trimId).toBe('zetec');
+    // the estate has no ST-3: picking it clears that trim and its features
+    const st3 = setTrim(setEngine(v, '1-5-ecoboost-200ps-petrol', FIESTA), 'st-3', FIESTA);
+    const estate = setBody(st3, parseBodyOption('estate|5'), FIESTA);
+    expect(estate.catalogue?.trimId).toBeUndefined();
+    expect(estate.variant).toBe('');
+    expect(estate.features).not.toContain('heated_seats_front');
 
     const make = setMake(v, 'Vauxhall');
     expect(make).toMatchObject({ make: 'Vauxhall', model: '', catalogue: undefined, segment: undefined, yearOfManufacture: undefined, variant: '' });
@@ -451,5 +462,64 @@ describe('API shapes used by the picker (client.ts / vehiclesApi.ts)', () => {
     const vehicle = { id: 'v1', registration: 'AB12CDE', make: 'FORD', model: 'FIESTA', odometer: [], ownership: 'client' as const, lookups: [], createdAt: '2026-01-01T00:00:00Z' };
     expect(normaliseVehiclePatchResult({ ...vehicle, vehicle, lookupId: 'l1', warnings: [{ code: 'DIFFERS_FROM_VERIFIED', field: 'colour', verifiedValue: 'RED' }] })).toEqual({ vehicle, lookupId: 'l1', warnings: [{ code: 'DIFFERS_FROM_VERIFIED', field: 'colour', verifiedValue: 'RED' }] });
     expect(normaliseVehiclePatchResult(vehicle)).toEqual({ vehicle, warnings: [] });
+  });
+});
+
+describe('legacy vehicles, pasted values and pasted trims', () => {
+  const vehicle = (over: Partial<Vehicle> = {}): Vehicle => ({ id: 'v1', registration: 'LM19KPX', make: 'FORD', model: 'FIESTA', variant: '1.0 EcoBoost Zetec', yearOfManufacture: 2019, fuelType: 'petrol', transmission: 'manual', engineCapacityCc: 999, odometer: [], ownership: 'client', lookups: [], createdAt: '2026-01-01T00:00:00Z', ...over }) as Vehicle;
+
+  it('links a DVLA upper-case vehicle saved without catalogue ids, keeping everything else', () => {
+    const v = pickerFromVehicle(vehicle());
+    expect(v.catalogue).toBeUndefined();
+    const linked = linkToCatalogue(v, MAKES[0], MODELS);
+    expect(linked.catalogue).toEqual({ makeSlug: 'ford', modelSlug: 'fiesta' });
+    expect(linked).toMatchObject({ model: 'FIESTA', variant: '1.0 EcoBoost Zetec', yearOfManufacture: 2019, fuelType: 'petrol', transmission: 'manual', engineCapacityCc: 999, segment: 'supermini' });
+    // then the model detail fills the generation for the year, the engine by size and the trim named in the variant
+    const resolved = resolveFromModel(linked, FIESTA);
+    expect(resolved.catalogue).toMatchObject({ generationId: 'ford-fiesta-mk8-2017-2023', trimId: 'zetec' });
+    expect(resolved.variant).toBe('1.0 EcoBoost Zetec');
+    // already linked, unknown model or no model list → unchanged
+    expect(linkToCatalogue(linked, MAKES[0], MODELS)).toBe(linked);
+    const unknown = pickerFromVehicle(vehicle({ model: 'PUMA' }));
+    expect(linkToCatalogue(unknown, MAKES[0], MODELS)).toBe(unknown);
+    expect(linkToCatalogue(v, MAKES[0], undefined)).toBe(v);
+  });
+
+  it('splits a TCC/DVLA model string into the catalogue model and the variant', () => {
+    const v = { ...emptyPickerValue('AB12CDE'), make: 'FORD', model: 'TRANSIT CUSTOM 280 LIMITED' };
+    const linked = linkToCatalogue(v, MAKES[0], MODELS);
+    expect(linked).toMatchObject({ model: 'Transit Custom', variant: '280 LIMITED', catalogue: { makeSlug: 'ford', modelSlug: 'transit-custom' } });
+  });
+
+  it('finding the trim inside a longer variant: longest whole-word name, never a guess between equals', () => {
+    const mk8 = FIESTA.generations[1]!;
+    expect(trimInVariant(mk8, '1.0 EcoBoost Zetec')?.id).toBe('zetec');
+    expect(trimInVariant(mk8, 'ST-3 1.5 EcoBoost')?.id).toBe('st-3');
+    expect(trimInVariant(mk8, 'Zetecs')).toBeUndefined();
+    expect(trimInVariant({ ...mk8, trims: [{ id: 'match-edition', name: 'Match Edition' }, { id: 'match', name: 'Match' }] }, 'Match Edition TSI EVO S-A')?.id).toBe('match-edition');
+    expect(trimInVariant({ ...mk8, trims: [{ id: 'se', name: 'SE' }, { id: 'gt', name: 'GT' }] }, 'GT SE')?.id).toBe('gt');
+  });
+
+  it('a paste survives the rest of the cascade: body and engine keep petrol, automatic and the pasted 998 cc', () => {
+    let v: VehiclePickerValue = {
+      ...emptyPickerValue('WR19TCC'),
+      make: 'Ford',
+      model: 'Fiesta',
+      yearOfManufacture: 2019,
+      fuelType: 'petrol',
+      transmission: 'automatic',
+      engineCapacityCc: 998,
+      catalogue: { makeSlug: 'ford', modelSlug: 'fiesta', generationId: 'ford-fiesta-mk8-2017-2023' },
+      source: { provider: 'totalcarcheck_manual', appliedFields: ['fuelType', 'transmission', 'engineCapacityCc'] }
+    };
+    v = setBody(v, parseBodyOption('hatchback|5'), FIESTA);
+    expect(v).toMatchObject({ bodyType: 'Hatchback', doors: 5, fuelType: 'petrol', transmission: 'automatic', engineCapacityCc: 998 });
+    v = setEngine(v, '1-0-ecoboost-100ps-petrol', FIESTA);
+    expect(v).toMatchObject({ fuelType: 'petrol', transmission: 'automatic', engineCapacityCc: 998, powerPs: 100 });
+    expect(v.catalogue?.engineId).toBe('1-0-ecoboost-100ps-petrol');
+    expect(v.source.provider).toBe('totalcarcheck_manual');
+    // an engine with no automatic gearbox clears the gearbox, and a different engine size replaces the pasted one
+    const st = setEngine(v, '1-5-ecoboost-200ps-petrol', FIESTA);
+    expect(st).toMatchObject({ transmission: undefined, engineCapacityCc: 1497 });
   });
 });

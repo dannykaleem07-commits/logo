@@ -182,6 +182,31 @@ describe('migrations', () => {
     }
   });
 
+  it('0005 sets an untouched 20% VAT rate back to 0 when no VAT number is held; a VAT-registered row keeps its rate', () => {
+    const dir = mkdtempSync(path.join(os.tmpdir(), 'claimdesk-mig-'));
+    try {
+      mkdirSync(path.join(dir, 'meta'));
+      const journal = JSON.parse(readFileSync(path.join(migrationsFolder, 'meta', '_journal.json'), 'utf8')) as { entries: Array<{ tag: string; when: number }> };
+      const before = journal.entries.slice(0, 5);
+      expect(journal.entries[5]?.tag).toBe('0005_no_default_vat');
+      expect(journal.entries[5]!.when).toBeGreaterThan(before[4]!.when);
+      writeFileSync(path.join(dir, 'meta', '_journal.json'), JSON.stringify({ ...journal, entries: before }));
+      for (const e of before) copyFileSync(path.join(migrationsFolder, `${e.tag}.sql`), path.join(dir, `${e.tag}.sql`));
+      const run = (vatNumber: string | null) => {
+        const h = createDatabase({ path: ':memory:' });
+        handles.push(h);
+        runMigrations(h.db, { migrationsFolder: dir });
+        h.sqlite.prepare('insert into settings (id, company_name, vat_number, rate_card, api_keys_present, updated_at) values (?, ?, ?, ?, ?, ?)').run('default', 'Courtesy Cars Group UK Ltd', vatNumber, JSON.stringify({ recoveryCalloutPence: 9000, perMilePence: 300, adminPence: 2500, storageDailyPence: 4500, engineerFeePence: 28500, vatRate: 0.2 }), '{}', '2026-01-01T00:00:00.000Z');
+        runMigrations(h.db);
+        return (JSON.parse((h.sqlite.prepare("select rate_card from settings where id = 'default'").get() as { rate_card: string }).rate_card) as { vatRate: number; storageDailyPence: number });
+      };
+      expect(run(null)).toMatchObject({ vatRate: 0, storageDailyPence: 4500 });
+      expect(run('GB123456789')).toMatchObject({ vatRate: 0.2 });
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it('set the connection pragmas', () => {
     const h = createDatabase({ path: ':memory:' });
     handles.push(h);

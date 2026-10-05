@@ -296,6 +296,8 @@ export interface GtaSuggestQuery {
   fuelType?: Vehicle['fuelType'];
   variant?: string;
   recordedGroup?: string;
+  /** The vehicle's own year: picks the catalogue generation (the date only picks the benchmark rate). */
+  yearOfManufacture?: number;
   date: ISODate;
 }
 
@@ -321,7 +323,10 @@ export function catalogueFactsFor(
   const shipped = getCatalogueModel(makeSlug, modelSlug);
   const merged = getModel(ctx, makeSlug, modelSlug);
   const catalogue: { trimGroup?: string; generationGroup?: string; modelGroup?: string; segment?: string } = {};
-  const gen = shipped && q.generationId ? shipped.generations.find((g) => g.id === q.generationId) : shipped && q.year !== undefined ? generationsForYear(shipped, q.year)[0] : undefined;
+  // the generation is the one chosen, else the one on sale in the vehicle's year, else the only one; never the
+  // newest generation just because the rate date is today
+  const forYear = shipped && q.year !== undefined ? generationsForYear(shipped, q.year) : [];
+  const gen = shipped && q.generationId ? shipped.generations.find((g) => g.id === q.generationId) : forYear.length === 1 ? forYear[0] : shipped && q.year === undefined && shipped.generations.length === 1 ? shipped.generations[0] : undefined;
   const trim = gen && q.trimId ? gen.trims.find((t) => t.id === q.trimId) : undefined;
   if (trim?.gtaGroup) catalogue.trimGroup = trim.gtaGroup;
   if (gen?.gtaGroup) catalogue.generationGroup = gen.gtaGroup;
@@ -341,8 +346,8 @@ export function catalogueFactsFor(
 }
 
 export function gtaSuggestionFor(ctx: AppContext, q: GtaSuggestQuery): GtaSuggestion {
-  const year = Number(q.date.slice(0, 4));
-  const facts = catalogueFactsFor(ctx, { ...q, year: Number.isFinite(year) ? year : undefined });
+  const year = q.yearOfManufacture;
+  const facts = catalogueFactsFor(ctx, { ...q, year: year !== undefined && Number.isInteger(year) ? year : undefined });
   const vehicle: GtaSuggestQueryVehicle = { make: q.make ?? '', model: q.model ?? '' };
   // For the heuristic: display names rather than slugs.
   if (facts.makeSlug) {

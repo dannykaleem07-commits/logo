@@ -18,7 +18,7 @@ import { todayISO } from '../../../lib/dates';
 import type { ClaimView } from '../claimFile';
 import { ReasonDialog } from '../components/ReasonDialog';
 import { shortHash } from '../lib/evidence';
-import { approvalBlocker, canSend, canSign, consistencyCodeLabel, docxValuesUsed, flagCounts, hasApprovedPdf, isBlocked, isDocx, isHtmlLetter, pdfConverterNote, SEND_VIA_OPTIONS, supersedeBodyFrom } from '../lib/documents';
+import { approvalBlocker, canSend, canSign, consistencyCodeLabel, docxValuesUsed, flagCounts, canComposeLetterhead, hasApprovedPdf, isBlocked, isDocx, isHtmlLetter, pdfConverterNote, SEND_VIA_OPTIONS, supersedeBodyFrom } from '../lib/documents';
 import { templatesApi } from '../../../api/templatesApi';
 import { DocxPreview } from '../components/DocxPreview';
 import { GTA_BENCHMARK_CAVEAT, originLabel } from '../lib/fillValues';
@@ -37,6 +37,36 @@ export function DocumentView({ view }: { view: ClaimView }) {
   const approve = useApproveDocument(docId ?? '', claimId);
   const clear = useClearFlag(docId ?? '', claimId);
   const toast = useToast();
+  // fetched (not a plain link) so a refusal — e.g. a letter made with a layout that does not mark its parts — is shown
+  const downloadLetterhead = async () => {
+    if (!doc) return;
+    try {
+      const res = await fetch(templatesApi.documentLetterheadDocxUrl(doc.id), { credentials: 'include' });
+      if (!res.ok) {
+        let message = `HTTP ${res.status}`;
+        try {
+          const body = (await res.json()) as { error?: { message?: string } };
+          if (body?.error?.message) message = body.error.message;
+        } catch {
+          /* not JSON */
+        }
+        toast.error(`The letterhead copy could not be made: ${message}`);
+        return;
+      }
+      const blob = await res.blob();
+      const name = /filename="([^"]+)"/.exec(res.headers.get('content-disposition') ?? '')?.[1] ?? `${doc.title}.docx`;
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+    } catch (e) {
+      toast.error(`The letterhead copy could not be made: ${(e as Error).message}`);
+    }
+  };
 
   if (!docId) return <EmptyState title="No document selected" />;
   if (docQ.isLoading && !doc) return <Loading label="Loading document…" />;
@@ -101,15 +131,17 @@ export function DocumentView({ view }: { view: ClaimView }) {
                 <span className="xs muted">The PDF is made when the document is approved</span>
               )}
             </>
-          ) : (
+          ) : hasApprovedPdf(doc) ? (
             <a className="btn btn-secondary btn-sm" href={api.documentPdfUrl(doc.id)} target="_blank" rel="noreferrer">
               PDF
             </a>
+          ) : (
+            <span className="xs muted">The PDF is made when the document is approved</span>
           )}
-          {isHtmlLetter(doc) && (
-            <a className="btn btn-secondary btn-sm" href={templatesApi.documentLetterheadDocxUrl(doc.id)} download title="The same letter recomposed on the CCGUK letterhead as a Word file">
+          {canComposeLetterhead(doc) && (
+            <Button size="sm" variant="secondary" title="The same letter recomposed on the CCGUK letterhead as a Word file" onClick={() => void downloadLetterhead()}>
               Download on letterhead (Word)
-            </a>
+            </Button>
           )}
           <Button
             size="sm"

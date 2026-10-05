@@ -192,8 +192,18 @@ export type SlotValue =
   | { type: 'check'; checked: boolean }
   | { type: 'choice'; selected: string[]; blanks?: Record<string, string> } // option slugs; text for blanks inside options
   | { type: 'rows'; rows: Array<Record<string, string>> } // keys = column slugs
-  | { type: 'paragraphs'; items: string[]; replaceFixedLead?: boolean }
+  | { type: 'paragraphs'; items: string[]; replaceFixedLead?: boolean; headings?: number[]; tables?: ParagraphTable[] }
   | { type: 'remove'; scope: 'paragraph' | 'row' }; // remove the containing paragraph / table row
+
+/**
+ * A table in a numbered-paragraphs body (an HTML letter's figures table): printed as a real Word table in place of
+ * item `index`, unnumbered. `rows` are cell texts; the first `headerRows` rows print bold.
+ */
+export interface ParagraphTable {
+  index: number;
+  rows: string[][];
+  headerRows?: number;
+}
 
 export interface FillInstruction {
   slotId: string;
@@ -225,6 +235,11 @@ export interface FillOptions {
   now: Date;
   /** Default style for inserted runs (mapping 'style.valueRun'). */
   valueRunStyle?: RunStyle;
+  /**
+   * A user's own template: a value put into an empty paragraph with no style of its own inherits the document's
+   * font and size (no run properties) instead of the CCGUK built-ins' Calibri 9 pt.
+   */
+  inheritValueStyle?: boolean;
   /** Type-level guarantee: signature slots are never filled. */
   allowSignatureSlots?: false;
 }
@@ -258,15 +273,20 @@ export interface LetterContent {
   subject: string;
   subjectClient?: string;
   subjectReg?: string;
-  /** Numbered automatically. */
+  /** Numbered automatically (except the headings and tables below). */
   paragraphs: string[];
+  /** Indexes into `paragraphs` printed as unnumbered bold headings (h2, a box title, a table caption). */
+  headings?: number[];
+  /** Items printed as real Word tables, unnumbered (the item text is the tab-joined fallback). */
+  tables?: ParagraphTable[];
   /** True when the paragraphs already contain an opening (HTML letters). */
   replaceFixedOpening: boolean;
   /** Display date; sentence removed when absent. */
   replyBy?: string;
   /** Derived from salutation when absent. */
   valediction?: 'sincerely' | 'faithfully';
-  signatory: { name: string };
+  /** `role` as signed in the HTML letter; replaces the letterhead's printed "Claims Manager" when it differs. */
+  signatory: { name: string; role?: string };
   enclosures?: string[];
   cc?: string[];
 }

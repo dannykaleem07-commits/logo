@@ -431,6 +431,22 @@ export async function approveDocument(ctx: AppContext, id: Id, actor: Actor, not
 // Send (records only) and supersede
 // ---------------------------------------------------------------------------
 
+/** recipientPartyId / recipientRole of a sent document (role from the claim: client, own or at-fault insurer). */
+function sendRecipient(ctx: AppContext, db: Parameters<AppContext['repos']['getClaim']>[0], doc: GeneratedDocument): { recipientPartyId?: string; recipientRole?: string } {
+  const partyId = doc.recipientPartyId;
+  if (!partyId || !doc.claimId) return {};
+  const claim = ctx.repos.getClaim(db, doc.claimId);
+  const role = !claim ? undefined : partyId === claim.claimantId ? 'client' : partyId === claim.clientInsurerId ? 'own_insurer' : partyId === claim.atFaultInsurerId ? 'at_fault_insurer' : undefined;
+  return { recipientPartyId: partyId, ...(role ? { recipientRole: role } : {}) };
+}
+
+/** The 09 form's CCTV source code for a preservation letter (council / TfL cameras, premises, police, other). */
+function cctvSourceOf(snapshot: Record<string, unknown> | undefined): string | undefined {
+  const t = typeof snapshot?.['operatorType'] === 'string' ? (snapshot['operatorType'] as string) : undefined;
+  if (!t) return undefined;
+  return ({ council: 'council', tfl: 'council', premises: 'shops', police: 'other', other: 'other' } as Record<string, string>)[t] ?? 'other';
+}
+
 const SEMANTIC_SEND_EVENT: Record<string, EventType> = {
   'letter.ncaf': 'ncaf_sent',
   'pack.gta_payment': 'payment_pack_sent',
@@ -482,11 +498,14 @@ export async function sendDocument(ctx: AppContext, id: Id, input: { via: NonNul
     let offerReplyRecorded: Id | undefined;
     if (sent.claimId) {
       const outType = input.via === 'post' || input.via === 'hand' ? 'letter_out' : 'email_out';
-      const e1 = ctx.repos.appendEvent(tx, { claimId: sent.claimId, type: outType, at: now, summary: `${sent.title} sent by ${input.via}${input.to ? ` to ${input.to}` : ''}`, data: { documentId: id, templateId: sent.templateId, via: input.via, to: input.to, note: input.note }, attributableTo: 'ccguk', documentId: id, createdBy: actor.userId, recordedAt: now });
+      // who it went to, as ids: the Word forms' "sent to … on" dates match on these, never on the free-text `to`
+      const recipient = sendRecipient(ctx, tx, sent);
+      const e1 = ctx.repos.appendEvent(tx, { claimId: sent.claimId, type: outType, at: now, summary: `${sent.title} sent by ${input.via}${input.to ? ` to ${input.to}` : ''}`, data: { documentId: id, templateId: sent.templateId, via: input.via, to: input.to, note: input.note, ...recipient }, attributableTo: 'ccguk', documentId: id, createdBy: actor.userId, recordedAt: now });
       events.push({ id: e1.id, type: e1.type });
       const semantic = SEMANTIC_SEND_EVENT[canonicalTemplateId(sent.templateId)];
       if (semantic) {
-        const e2 = ctx.repos.appendEvent(tx, { claimId: sent.claimId, type: semantic, at: now, summary: `${sent.title} sent (${input.via})`, data: { documentId: id, templateId: sent.templateId, via: input.via }, attributableTo: 'ccguk', documentId: id, createdBy: actor.userId, recordedAt: now });
+        const source = semantic === 'cctv_request_sent' ? cctvSourceOf(sent.dataSnapshot) : undefined;
+        const e2 = ctx.repos.appendEvent(tx, { claimId: sent.claimId, type: semantic, at: now, summary: `${sent.title} sent (${input.via})`, data: { documentId: id, templateId: sent.templateId, via: input.via, ...recipient, ...(source ? { source } : {}) }, attributableTo: 'ccguk', documentId: id, createdBy: actor.userId, recordedAt: now });
         events.push({ id: e2.id, type: e2.type });
         const offerId = sent.dataSnapshot?.offer && typeof (sent.dataSnapshot.offer as { offerId?: unknown }).offerId === 'string' ? (sent.dataSnapshot.offer as { offerId: string }).offerId : undefined;
         if (semantic === 'intervention_reply_sent' && offerId) {

@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
 import { spawnSync } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { PDFDocument } from 'pdf-lib';
@@ -153,28 +153,15 @@ class FakeChild extends EventEmitter implements ChildLike {
 }
 
 describe('Microsoft Word converter', () => {
-  it('ships the normative PowerShell script', () => {
-    // Snapshot of the script in design doc §A.11.2.
-    expect(WORD_CONVERT_SCRIPT).toBe(
-      [
-        'param([string]$In, [string]$Out)',
-        "$ErrorActionPreference = 'Stop'",
-        '$word = New-Object -ComObject Word.Application',
-        '$wordPid = $null',
-        'try {',
-        '  $word.Visible = $false',
-        '  $word.DisplayAlerts = 0                      # wdAlertsNone',
-        '  $word.Options.UpdateLinksAtOpen = $false',
-        '  $doc = $word.Documents.Open($In, $false, $true, $false)   # ConfirmConversions, ReadOnly, AddToRecentFiles',
-        '  $doc.ExportAsFixedFormat($Out, 17, $false, 0, 0, 0, 0, 0, $true, $true, 0, $true, $true, $false)  # wdExportFormatPDF; DocStructureTags; BitmapMissingFonts',
-        '  $doc.Close(0)',
-        '} finally {',
-        '  $word.Quit(0)',
-        '  [void][System.Runtime.InteropServices.Marshal]::ReleaseComObject($word)',
-        '}',
-        ''
-      ].join('\n')
-    );
+  it('ships the PowerShell script: read-only open, macros force-disabled, its own Word PID recorded', () => {
+    expect(WORD_CONVERT_SCRIPT.startsWith('param([string]$In, [string]$Out)')).toBe(true);
+    expect(WORD_CONVERT_SCRIPT).toContain('$word.DisplayAlerts = 0');
+    expect(WORD_CONVERT_SCRIPT).toContain('$word.AutomationSecurity = 3');
+    expect(WORD_CONVERT_SCRIPT).toContain('$word.Options.UpdateLinksAtOpen = $false');
+    // ReadOnly, not added to recent files, OpenAndRepair off, NoEncodingDialog on
+    expect(WORD_CONVERT_SCRIPT).toContain('$word.Documents.Open($In, $false, $true, $false, $m, $m, $m, $m, $m, $m, $m, $false, $false, $m, $true)');
+    expect(WORD_CONVERT_SCRIPT).toContain("($Out + '.wordpid')");
+    expect(WORD_CONVERT_SCRIPT.indexOf('AutomationSecurity')).toBeLessThan(WORD_CONVERT_SCRIPT.indexOf('Documents.Open'));
     expect(WORD_CONVERT_SCRIPT).toContain('$doc.ExportAsFixedFormat($Out, 17,');
     expect(WORD_CONVERT_SCRIPT).toContain('$word.Quit(0)');
   });
@@ -259,6 +246,15 @@ describe('Microsoft Word converter', () => {
     await expect(conv.convert({ docxPath, outDir: join(wd, 'out'), header: { titlePage: false, hasPageFields: false }, timeoutMs: 30 })).rejects.toThrow(/did not finish/);
     expect(killedPids).toEqual([200]);
     expect(trees).toEqual([5000]);
+
+    // when the script recorded its own Word, only that PID is stopped (another conversion's Word is left alone)
+    killedPids.length = 0;
+    listCalls = 0;
+    const out2 = join(wd, 'out2');
+    mkdirSync(out2, { recursive: true });
+    writeFileSync(join(out2, 'in.pdf.wordpid'), '777\r\n');
+    await expect(conv.convert({ docxPath, outDir: out2, header: { titlePage: false, hasPageFields: false }, timeoutMs: 30 })).rejects.toThrow(/did not finish/);
+    expect(killedPids).toEqual([777]);
   });
 
   it('runProcess resolves with exit code and output', async () => {

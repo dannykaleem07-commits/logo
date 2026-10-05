@@ -11,8 +11,9 @@ import { setDocxProperties } from './props.js';
 import { scanPackage, targetParagraph, type SlotTarget } from './scan.js';
 import { GLYPH_CHECKED, GLYPH_UNCHECKED, paragraphRuns, paragraphText, replaceRange, restyleHintRun, runText, symGlyph } from './text.js';
 import type { DocxSlot, FillInstruction, FillOptions, FillReport, FillResult, RunStyle, SlotValue } from './types.js';
+import { safeLinkTarget } from './safety.js';
 import { openDocx, writeDocx } from './zip.js';
-import { childElements, closestW, createT, createW, insertAfter, isW, markDirty, NS, removeNode, setTText, setWAttr, stripControlChars, wAttr, wChild, wChildren, wDescendants } from './xml.js';
+import { childElements, closestW, createT, createW, decodeUtf8, insertAfter, isW, markDirty, NS, partDom, removeNode, setTText, setWAttr, stripControlChars, wAttr, wChild, wChildren, wDescendants } from './xml.js';
 
 export const MAX_VALUE_LENGTH = 20_000;
 export const DEFAULT_VALUE_STYLE: Required<Omit<RunStyle, 'bold'>> & { bold: boolean } = { font: 'Calibri', sizeHalfPoints: 18, color: '1A1A1A', bold: false };
@@ -54,7 +55,7 @@ function runFromStyle(doc: Element['ownerDocument'], style: RunStyle): Element {
 }
 
 /** Run properties for a value inserted into a run-less paragraph: paragraph mark rPr → valueRunStyle → default. */
-function newValueRun(p: Element, valueRunStyle?: RunStyle): Element {
+function newValueRun(p: Element, valueRunStyle?: RunStyle | null): Element {
   const doc = p.ownerDocument!;
   const markRPr = wChild(wChild(p, 'pPr'), 'rPr');
   if (markRPr && childElements(markRPr).some((c) => !['ins', 'del', 'moveFrom', 'moveTo', 'rPrChange'].includes(c.localName ?? ''))) {
@@ -64,6 +65,8 @@ function newValueRun(p: Element, valueRunStyle?: RunStyle): Element {
     run.appendChild(rPr);
     return run;
   }
+  // null: inherit the paragraph / document defaults (uploaded templates)
+  if (valueRunStyle === null) return createW(doc, 'r');
   return runFromStyle(doc, valueRunStyle ?? DEFAULT_VALUE_STYLE);
 }
 
@@ -78,7 +81,7 @@ function setRunText(run: Element, text: string): void {
 }
 
 /** Fill an empty paragraph (cell / line / block): first run with an empty w:t, else a run without text, else a new run. */
-function fillEmptyParagraph(p: Element, text: string, valueRunStyle?: RunStyle): void {
+function fillEmptyParagraph(p: Element, text: string, valueRunStyle?: RunStyle | null): void {
   const runs = paragraphRuns(p);
   const target = runs.find((r) => wChildren(r, 't').length > 0 && runText(r).length === 0) ?? runs.find((r) => runText(r).length === 0);
   if (target) {
@@ -188,7 +191,7 @@ function cellShading(tr: Element): string {
     .join(',');
 }
 
-function setCellText(tc: Element, text: string, valueRunStyle?: RunStyle): void {
+function setCellText(tc: Element, text: string, valueRunStyle?: RunStyle | null): void {
   let p = wChildren(tc, 'p')[0];
   if (!p) {
     p = createW(tc.ownerDocument!, 'p');
@@ -205,7 +208,7 @@ function setCellText(tc: Element, text: string, valueRunStyle?: RunStyle): void 
   fillEmptyParagraph(p, text, valueRunStyle);
 }
 
-function fillTable(t: Extract<SlotTarget, { t: 'table' }>, rows: Array<Record<string, string>>, valueRunStyle?: RunStyle): void {
+function fillTable(t: Extract<SlotTarget, { t: 'table' }>, rows: Array<Record<string, string>>, valueRunStyle?: RunStyle | null): void {
   const dataRows = [...t.rows];
   const n = dataRows.length;
   if (rows.length > n && n > 0) {
@@ -234,21 +237,162 @@ function fillTable(t: Extract<SlotTarget, { t: 'table' }>, rows: Array<Record<st
   });
 }
 
-function renumber(paras: Element[]): void {
+const NUMBER_RUN = /^(\s*)(\d+)\.(\s*)$/;
+
+function numberRunOf(p: Element): Element | undefined {
+  const run = paragraphRuns(p).find((r) => runText(r).trim().length > 0);
+  return run && NUMBER_RUN.test(runText(run)) ? run : undefined;
+}
+
+/** Number the paragraphs 1..n in order; `skip` (headings, tables) take no number and do not advance the count. */
+function renumber(paras: Element[], skip: Set<number> = new Set()): void {
   let start: number | undefined;
+  let n = 0;
   paras.forEach((p, i) => {
-    const run = paragraphRuns(p).find((r) => runText(r).trim().length > 0);
+    if (skip.has(i)) return;
+    const run = numberRunOf(p);
     if (!run) return;
-    const txt = runText(run);
-    const mm = /^(\s*)(\d+)\.(\s*)$/.exec(txt);
-    if (!mm) return;
+    const mm = NUMBER_RUN.exec(runText(run))!;
     if (start === undefined) start = Number(mm[2]);
     const t = wChildren(run, 't')[0];
-    if (t) setTText(t, `${mm[1]}${start + i}.${mm[3]}`);
+    if (t) setTText(t, `${mm[1]}${start + n}.${mm[3]}`);
+    n += 1;
   });
 }
 
-function fillParagraphs(t: Extract<SlotTarget, { t: 'paragraphs' }>, items: string[], replaceFixedLead: boolean): void {
+/** Drop the leading tab that separates the number from the text (a w:tab element or a '\t' in the first w:t). */
+function stripLeadingTab(p: Element): void {
+  for (const r of paragraphRuns(p)) {
+    for (const c of childElements(r)) {
+      const name = c.localName ?? '';
+      if (name === 'rPr') continue;
+      if (name === 'tab') {
+        removeNode(c);
+        return;
+      }
+      if (name === 't') {
+        const txt = c.textContent ?? '';
+        if (txt === '') continue;
+        if (txt.startsWith('\t')) setTText(c, txt.slice(1));
+        return;
+      }
+      return;
+    }
+  }
+}
+
+/** Insert w:b in schema order (after rStyle / rFonts). */
+function addBold(rPr: Element): void {
+  if (wChild(rPr, 'b')) return;
+  const b = createW(rPr.ownerDocument!, 'b');
+  const after = childElements(rPr).filter((c) => isW(c, 'rStyle') || isW(c, 'rFonts')).pop();
+  if (after) insertAfter(b, after);
+  else rPr.insertBefore(b, rPr.firstChild);
+}
+
+/** A numbered paragraph → an unnumbered heading in the number's own style (bold, navy), flush with the margin. */
+function toHeadingParagraph(p: Element): void {
+  const num = numberRunOf(p);
+  const numRPr = num ? wChild(num, 'rPr') : undefined;
+  if (num) removeNode(num);
+  stripLeadingTab(p);
+  for (const r of paragraphRuns(p)) {
+    const old = wChild(r, 'rPr');
+    if (numRPr) {
+      const rPr = numRPr.cloneNode(true) as Element;
+      if (old) r.replaceChild(rPr, old);
+      else r.insertBefore(rPr, r.firstChild);
+    } else {
+      addBold(old ?? (r.insertBefore(createW(r.ownerDocument!, 'rPr'), r.firstChild) as Element));
+    }
+  }
+  const doc = p.ownerDocument!;
+  let pPr = wChild(p, 'pPr');
+  if (!pPr) pPr = p.insertBefore(createW(doc, 'pPr'), p.firstChild) as Element;
+  const ind = wChild(pPr, 'ind');
+  if (ind) {
+    setWAttr(ind, 'left', '0');
+    setWAttr(ind, 'hanging', '0');
+  }
+  if (!wChild(pPr, 'keepNext')) {
+    const keep = createW(doc, 'keepNext');
+    const style = wChild(pPr, 'pStyle');
+    if (style) insertAfter(keep, style);
+    else pPr.insertBefore(keep, pPr.firstChild);
+  }
+}
+
+const MONEY_CELL = /^\(?[-−–]?\s*£|^[-−]?[\d,]+\.\d{2}$/;
+
+function bodyTextWidth(p: Element): number {
+  const body = p.ownerDocument ? wDescendants(p.ownerDocument, 'body')[0] : undefined;
+  const sect = body ? wChildren(body, 'sectPr')[0] : undefined;
+  const w = Number(wAttr(wChild(sect, 'pgSz'), 'w') ?? 11906);
+  const mar = wChild(sect, 'pgMar');
+  const left = Number(wAttr(mar, 'left') ?? 1134);
+  const right = Number(wAttr(mar, 'right') ?? 1134);
+  const width = w - left - right;
+  return Number.isFinite(width) && width > 2000 ? width : 9638;
+}
+
+/** A numbered paragraph → a real Word table (rows of cells), in the paragraph's text style, indented like the body. */
+function toTableInPlace(p: Element, table: { rows: string[][]; headerRows?: number }): void {
+  const doc = p.ownerDocument!;
+  const runs = paragraphRuns(p).filter((r) => runText(r).trim().length > 0);
+  const num = numberRunOf(p);
+  const textRun = runs.filter((r) => r !== num).pop() ?? runs[runs.length - 1];
+  const textRPr = textRun ? wChild(textRun, 'rPr') : undefined;
+  const ind = Number(wAttr(wChild(wChild(p, 'pPr'), 'ind'), 'left') ?? 0) || 0;
+  const cols = Math.max(1, ...table.rows.map((r) => r.length));
+  const avail = Math.max(2000, bodyTextWidth(p) - ind);
+  const widths = cols === 1 ? [avail] : [Math.round(avail * 0.46), ...Array.from({ length: cols - 1 }, () => Math.floor((avail - Math.round(avail * 0.46)) / (cols - 1)))];
+  const el = (name: string, attrs: Record<string, string> = {}, children: Element[] = []): Element => {
+    const e = createW(doc, name);
+    for (const [k, v] of Object.entries(attrs)) setWAttr(e, k, v);
+    for (const c of children) e.appendChild(c);
+    return e;
+  };
+  const border = (name: string) => el(name, { val: 'single', sz: '4', space: '0', color: 'D0D5DD' });
+  const tbl = el('tbl', {}, [
+    el('tblPr', {}, [
+      el('tblW', { w: String(avail), type: 'dxa' }),
+      el('tblInd', { w: String(ind), type: 'dxa' }),
+      el('tblBorders', {}, [border('top'), border('bottom'), border('insideH')]),
+      el('tblLayout', { type: 'fixed' }),
+      el('tblCellMar', {}, [el('left', { w: '60', type: 'dxa' }), el('right', { w: '60', type: 'dxa' })])
+    ]),
+    el('tblGrid', {}, widths.map((w) => el('gridCol', { w: String(w) })))
+  ]);
+  const header = table.headerRows ?? 0;
+  // a column of amounts is right-aligned throughout (its heading included)
+  const moneyCol = Array.from({ length: cols }, (_, ci) => ci > 0 && table.rows.slice(header).some((r) => MONEY_CELL.test((r[ci] ?? '').trim())));
+  table.rows.forEach((cells, ri) => {
+    const tr = el('tr');
+    if (ri < header) tr.appendChild(el('trPr', {}, [el('tblHeader')]));
+    for (let ci = 0; ci < cols; ci++) {
+      const text = cleanValue(cells[ci] ?? '');
+      const pPr = el('pPr', {}, [el('spacing', { before: '30', after: '30' }), ...(moneyCol[ci] ? [el('jc', { val: 'right' })] : [])]);
+      const para = el('p', {}, [pPr]);
+      if (text) {
+        const r = el('r');
+        const rPr = textRPr ? (textRPr.cloneNode(true) as Element) : el('rPr');
+        if (ri < header) addBold(rPr);
+        r.appendChild(rPr);
+        r.appendChild(createT(doc, text.replace(/\n+/g, ' ')));
+        para.appendChild(r);
+      }
+      tr.appendChild(el('tc', {}, [el('tcPr', {}, [el('tcW', { w: String(widths[ci]), type: 'dxa' })]), para]));
+    }
+    tbl.appendChild(tr);
+  });
+  p.parentNode!.insertBefore(tbl, p);
+  // a small gap after the table, in the body's paragraph spacing
+  const spacer = el('p', {}, [el('pPr', {}, [el('spacing', { before: '0', after: '120' })])]);
+  insertAfter(spacer, tbl);
+  removeNode(p);
+}
+
+function fillParagraphs(t: Extract<SlotTarget, { t: 'paragraphs' }>, items: string[], replaceFixedLead: boolean, extras: { headings?: number[]; tables?: Array<{ index: number; rows: string[][]; headerRows?: number }> } = {}): void {
   const paras = [...t.paras];
   const ranges = [...t.ranges];
   const last = paras[paras.length - 1]!;
@@ -290,7 +434,34 @@ function fillParagraphs(t: Extract<SlotTarget, { t: 'paragraphs' }>, items: stri
     }
     replaceRange(pt, bs, be, item, { restyleHint: t.hint });
   });
-  renumber(paras);
+  const headings = new Set((extras.headings ?? []).filter((i) => i > 0 && i < paras.length));
+  const tables = (extras.tables ?? []).filter((x) => x.index > 0 && x.index < paras.length && !headings.has(x.index) && x.rows.length > 0);
+  renumber(paras, new Set([...headings, ...tables.map((x) => x.index)]));
+  for (const i of headings) toHeadingParagraph(paras[i]!);
+  for (const x of tables) toTableInPlace(paras[x.index]!, x);
+}
+
+/**
+ * A link to anything but http/https/mailto (e.g. javascript:) never reaches a filled document, even from a template
+ * stored before the upload gate refused them: its target becomes "#".
+ */
+function neutraliseUnsafeLinks(pkg: ReturnType<typeof openDocx>): void {
+  for (const name of [...pkg.entries.keys()]) {
+    if (!name.endsWith('.rels')) continue;
+    const raw = decodeUtf8(pkg.entries.get(name)!);
+    if (!/hyperlink/i.test(raw)) continue;
+    const doc = partDom(pkg, name);
+    const rels = doc.getElementsByTagNameNS(NS.rels, 'Relationship');
+    let changed = false;
+    for (let i = 0; i < rels.length; i++) {
+      const r = rels[i]!;
+      if (!/\/hyperlink$/.test(r.getAttribute('Type') ?? '')) continue;
+      if (safeLinkTarget(r.getAttribute('Target') ?? '')) continue;
+      r.setAttribute('Target', '#');
+      changed = true;
+    }
+    if (changed) markDirty(pkg, name);
+  }
 }
 
 /** Remove a paragraph safely (keeps section properties and the one paragraph a cell must hold). */
@@ -316,6 +487,38 @@ function removeRow(tr: Element): void {
     return;
   }
   removeNode(tr);
+}
+
+/** The last body element before the final sectPr of word/document.xml (undefined when there is none). */
+function lastBodyContent(pkg: ReturnType<typeof openDocx>): { body: Element; el: Element } | undefined {
+  if (!pkg.entries.has('word/document.xml')) return undefined;
+  const body = wDescendants(partDom(pkg, 'word/document.xml'), 'body')[0];
+  if (!body) return undefined;
+  const kids = childElements(body).filter((c) => !isW(c, 'sectPr'));
+  const el = kids[kids.length - 1];
+  return el ? { body, el } : undefined;
+}
+
+/** A paragraph with nothing visible in it: no runs, fields, content controls, drawings or section break. */
+function isBareParagraph(p: Element): boolean {
+  if (!isW(p, 'p')) return false;
+  if (wChild(wChild(p, 'pPr'), 'sectPr')) return false;
+  return childElements(p).every((c) => isW(c, 'pPr') || isW(c, 'bookmarkStart') || isW(c, 'bookmarkEnd') || isW(c, 'proofErr'));
+}
+
+/** Drop bare paragraphs at the end of the body, keeping one after a closing table (Word needs it). */
+function trimTrailingEmptyParagraphs(body: Element): boolean {
+  let changed = false;
+  for (;;) {
+    const kids = childElements(body).filter((c) => !isW(c, 'sectPr'));
+    const last = kids[kids.length - 1];
+    if (!last || !isBareParagraph(last)) break;
+    const prev = kids[kids.length - 2];
+    if (!prev || isW(prev, 'tbl')) break;
+    removeNode(last);
+    changed = true;
+  }
+  return changed;
 }
 
 function removeBodyNode(el: Element): void {
@@ -363,6 +566,8 @@ export function fillDocx(bytes: Uint8Array, instructions: FillInstruction[], opt
   const { scan, targets, blockNodes } = scanPackage(pkg);
   const byId = new Map(scan.slots.map((s) => [s.id, s]));
   const report: FillReport = { filled: [], removed: [], skipped: [] };
+  // the mapping's own style wins; an uploaded template otherwise inherits its own font (null), a built-in gets the default
+  const valueStyle: RunStyle | null | undefined = opts.valueRunStyle ?? (opts.inheritValueStyle ? null : undefined);
   const rangeOps: RangeOp[] = [];
   const later: Array<() => void> = [];
   const removals: Array<() => void> = [];
@@ -456,7 +661,7 @@ export function fillDocx(bytes: Uint8Array, instructions: FillInstruction[], opt
             if (t.run) {
               setRunText(t.run, text);
             } else {
-              fillEmptyParagraph(t.para, text, opts.valueRunStyle);
+              fillEmptyParagraph(t.para, text, valueStyle);
             }
             if (slot.kind === 'block' && t.cell) shrinkBlockMargins(t.cell);
           });
@@ -478,12 +683,12 @@ export function fillDocx(bytes: Uint8Array, instructions: FillInstruction[], opt
         }
         case 'table': {
           if (value.type !== 'rows') break;
-          later.push(() => fillTable(t, value.rows, opts.valueRunStyle));
+          later.push(() => fillTable(t, value.rows, valueStyle));
           break;
         }
         case 'paragraphs': {
           if (value.type !== 'paragraphs') break;
-          later.push(() => fillParagraphs(t, value.items, value.replaceFixedLead ?? false));
+          later.push(() => fillParagraphs(t, value.items, value.replaceFixedLead ?? false, { ...(value.headings ? { headings: value.headings } : {}), ...(value.tables ? { tables: value.tables } : {}) }));
           break;
         }
       }
@@ -500,8 +705,11 @@ export function fillDocx(bytes: Uint8Array, instructions: FillInstruction[], opt
   }
   // 2. Whole-run / structural fills.
   for (const fn of later) fn();
-  // 3. Removals.
+  // 3. Removals. When they take away the end of the body (e.g. empty Enc./Cc. lines), the spacer and rule that only
+  // introduced them would otherwise be left behind and can spill onto a page of their own.
+  const bodyEnd = removals.length ? lastBodyContent(pkg) : undefined;
   for (const fn of removals) fn();
+  if (bodyEnd && !bodyEnd.el.parentNode && trimTrailingEmptyParagraphs(bodyEnd.body)) touched.add('word/document.xml');
   // 4. Blocks (variants).
   for (const prefix of opts.removeBlocks ?? []) {
     for (const b of scan.blocks) {
@@ -512,6 +720,7 @@ export function fillDocx(bytes: Uint8Array, instructions: FillInstruction[], opt
     }
   }
   for (const part of touched) markDirty(pkg, part);
+  neutraliseUnsafeLinks(pkg);
   setDocxProperties(pkg, opts.coreProps);
   const docx = writeDocx(pkg, { mtime: opts.now });
   return { docx, sha256: sha256Hex(docx), report };

@@ -15,7 +15,8 @@ export function FeaturesPicker({
   extras,
   onChange,
   disabled,
-  loading
+  loading,
+  trimStandard
 }: {
   vocabulary: FeatureVocabulary | undefined;
   features: string[];
@@ -23,6 +24,11 @@ export function FeaturesPicker({
   onChange: (next: { features: string[]; extras: string[] }) => void;
   disabled?: boolean;
   loading?: boolean;
+  /**
+   * The chosen catalogue trim's standard equipment: undefined when no trim is chosen, [] when the catalogue lists
+   * none for it (then nothing is pre-ticked and the hint says so).
+   */
+  trimStandard?: readonly string[];
 }) {
   const [tab, setTab] = useState<FeatureTab>('standard');
   const [query, setQuery] = useState('');
@@ -45,7 +51,7 @@ export function FeaturesPicker({
         ]}
       />
       <p className="xs muted" style={{ margin: 0 }}>
-        {tab === 'standard' ? 'Equipment the vehicle came with (picking a trim ticks its usual standard equipment — untick anything this vehicle lacks).' : 'Options and after-market fits: tow bar, roof bars, hand controls, tracker …'}
+        {tab === 'standard' ? standardHint(trimStandard) : 'Options and after-market fits: tow bar, roof bars, hand controls, tracker …'}
       </p>
       <TextInput type="search" label="Search features" value={query} onChange={setQuery} placeholder="e.g. heated seats, tow bar, wheelchair" disabled={disabled} />
       {loading && !vocabulary && <p className="xs muted">Loading the features list…</p>}
@@ -68,4 +74,11 @@ export function FeaturesPicker({
       })}
     </div>
   );
+}
+
+/** Promise pre-ticking only when the chosen trim actually lists standard equipment in the catalogue. */
+export function standardHint(trimStandard: readonly string[] | undefined): string {
+  if (trimStandard === undefined) return 'Equipment the vehicle came with. Tick what this vehicle has.';
+  if (trimStandard.length === 0) return 'No standard equipment is listed for this trim in the catalogue — tick what the vehicle has.';
+  return 'Equipment the vehicle came with: the trim’s usual standard equipment is ticked — untick anything this vehicle lacks.';
 }

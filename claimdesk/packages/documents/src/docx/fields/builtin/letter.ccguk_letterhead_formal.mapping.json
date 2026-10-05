@@ -167,6 +167,8 @@
         "label": "paragraphs"
       },
       "key": "doc.body.paragraphs",
+      "label": "Letter paragraphs",
+      "required": true,
       "note": "Paragraph 1 keeps the printed opening sentence; paragraphs are numbered automatically."
     },
     {

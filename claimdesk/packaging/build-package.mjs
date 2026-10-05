@@ -13,6 +13,15 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 
+
+/**
+ * With `shell: true` Node joins the arguments with spaces and does not quote them, so a checkout under a path with
+ * spaces ("C:\\Users\\Jo Smith\\…") would split. Quote any argument that needs it for cmd.exe / sh.
+ */
+function shellArg(a) {
+  return /[\s"&()^%!|<>]/.test(a) ? `"${a.replace(/"/g, '\\"')}"` : a;
+}
+
 const HERE = dirname(fileURLToPath(import.meta.url));
 const ROOT = dirname(HERE);
 const args = process.argv.slice(2);
@@ -129,6 +138,8 @@ writeFileSync(join(OUT, 'README.txt'), [
   '',
   'Windows may say "Windows protected your PC" or "Unknown publisher" because the program is not yet',
   'code-signed. Click "More info" then "Run anyway".',
+  'If Windows says Smart App Control blocked this app, a code-signed build is needed (or turn Smart App',
+  'Control off in Windows Security > App & browser control).',
   '',
   `${PUBLISHER} · Registered in England & Wales No. 17430389 · 44 Syon Lane, Isleworth, London TW7 5NQ`,
   'claims@courtesycars.net · 020 7052 5403 · www.courtesycars.net',
@@ -199,7 +210,7 @@ if (!args.includes('--no-exe')) {
     try {
       // rcedit (Electron's resource editor) sets the icon and file details before the app is injected.
       const tmp = join(HERE, '.rcedit');
-      execFileSync('npm', ['install', '--no-save', '--no-audit', '--no-fund', '--prefix', tmp, 'rcedit@4.0.1'], { stdio: 'inherit', shell: true });
+      execFileSync('npm', ['install', '--no-save', '--no-audit', '--no-fund', '--prefix', shellArg(tmp), 'rcedit@4.0.1'], { stdio: 'inherit', shell: true });
       const rcedit = createRequire(join(tmp, 'package.json'))('rcedit');
       const details = {
         'file-version': `${VERSION}.0`,
@@ -226,7 +237,7 @@ if (!args.includes('--no-exe')) {
   }
   const postject = ['--yes', 'postject@1.0.0-alpha.6', EXE, 'NODE_SEA_BLOB', join(HERE, 'sea-prep.blob'), '--sentinel-fuse', FUSE];
   if (process.platform === 'darwin') postject.push('--macho-segment-name', 'NODE_SEA');
-  execFileSync('npx', postject, { stdio: 'inherit', shell: WIN });
+  execFileSync('npx', WIN ? postject.map(shellArg) : postject, { stdio: 'inherit', shell: WIN });
   rmSync(join(HERE, 'sea-prep.blob'), { force: true });
 }
 

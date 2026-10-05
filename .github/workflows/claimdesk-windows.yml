@@ -4,6 +4,8 @@ name: ClaimDesk Windows build
 # (sign in, example claims, HTML and Word-template PDFs, vehicle catalogue, manual vehicle search), then installs,
 # upgrades and uninstalls the installer the way a user would (design doc docs/TEMPLATES-VEHICLES-DESKTOP.md §G.7).
 # A commit whose message contains [windows-release] (or a manual run) also publishes both files as a GitHub release.
+# The build job only reads the repository (its token cannot push or publish); a separate release job, which runs no
+# build tools or package scripts, is the only one allowed to write, and it only uploads the tested files.
 on:
   push:
     branches: [claude/busy-franklin-nzq139]
@@ -11,24 +13,30 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: claimdesk-windows-${{ github.ref }}
-  cancel-in-progress: true
+  # a newer push cancels a plain build, never a release run part-way
+  cancel-in-progress: ${{ !contains(github.event.head_commit.message, '[windows-release]') && github.event_name != 'workflow_dispatch' }}
 
 jobs:
   windows:
     runs-on: windows-latest
-    timeout-minutes: 60
+    timeout-minutes: 75
+    outputs:
+      ver: ${{ steps.version.outputs.ver }}
     defaults:
       run:
         working-directory: claimdesk
         shell: pwsh
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Version
+        id: version
         # <major>.<minor from package.json>.<run number>, e.g. 0.2.57; every later step reads VER / CLAIMDESK_VERSION.
         run: |
           $pkg = Get-Content package.json -Raw | ConvertFrom-Json
@@ -39,6 +47,7 @@ jobs:
           $ver = "$($parts[0]).$($parts[1]).$run"
           "VER=$ver" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
           "CLAIMDESK_VERSION=$ver" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "ver=$ver" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           Write-Host "ClaimDesk $ver"
 
       - uses: pnpm/action-setup@v4
@@ -66,6 +75,9 @@ jobs:
           CLAIMDESK_HOME: ${{ runner.temp }}\claimdesk-home
           CLAIMDESK_NO_BROWSER: '1'
         run: |
+          # The build step needs CLAIMDESK_VERSION; the app must not see it, or /api/health would echo it back and the
+          # version checks below would pass even with a stale or missing app\version.json.
+          Remove-Item Env:CLAIMDESK_VERSION -ErrorAction SilentlyContinue
           $base = 'http://127.0.0.1:4001'   # --demo serves the example claims on port 4001
           $jar = "$env:RUNNER_TEMP\cookies.txt"
           function Api([string]$method, [string]$path, $body = $null, [string]$out = '') {
@@ -174,7 +186,8 @@ jobs:
           $makes = Api 'GET' '/api/catalogue/makes'
           Write-Host "catalogue makes: $($makes.Body.items.Count)"
           if ($makes.Status -ne 200 -or $makes.Body.items.Count -lt 60) { throw 'expected at least 60 catalogue makes' }
-          $look = Api 'POST' '/api/vehicles/lookup' @{ registration = 'ZZ99ZZZ' }
+          # a valid current-format registration that is not in the example claims (the format check refuses e.g. ZZ99ZZZ)
+          $look = Api 'POST' '/api/vehicles/lookup' @{ registration = 'AB12CDE' }
           $tcc = @($look.Body.externalLinks | Where-Object { $_.id -eq 'totalcarcheck' })
           Write-Host "lookup: $($look.Status) $($look.Body.status) mode=$($look.Body.lookupMode) tcc=$($tcc[0].url)"
           if ($look.Body.status -ne 'manual_required') { throw 'an unknown registration without keys must return manual_required' }
@@ -248,6 +261,11 @@ jobs:
           $setup = "packaging\dist\ClaimDesk-Setup-$env:VER.exe"
           if (-not (Test-Path $setup)) { throw "$setup was not produced" }
           Write-Host "$setup  $([math]::Round((Get-Item $setup).Length / 1MB, 1)) MB"
+          # An "old" installer (version 0.0.1, same files) so the smoke test performs a real version upgrade.
+          $oldArgs = @('/Qp', '/DAppVersion=0.0.1', "/DSourceDir=$PWD\packaging\dist\ClaimDesk", "/O$PWD\packaging\dist\old", 'packaging\installer\ClaimDesk.iss')
+          & $iscc @oldArgs
+          if ($LASTEXITCODE -ne 0) { throw "ISCC (old installer) failed with exit code $LASTEXITCODE" }
+          if (-not (Test-Path 'packaging\dist\old\ClaimDesk-Setup-0.0.1.exe')) { throw 'the old installer was not produced' }
 
       - name: Sign the installer (disabled — no certificate yet)
         if: false
@@ -263,15 +281,17 @@ jobs:
 
       - name: Installed-app smoke test — install, publisher and version, start, upgrade keeps data, silent uninstall keeps data
         run: |
+          Remove-Item Env:CLAIMDESK_VERSION -ErrorAction SilentlyContinue   # the installed app reports its own version
           $setup = Resolve-Path "packaging\dist\ClaimDesk-Setup-$env:VER.exe"
+          $oldSetup = Resolve-Path 'packaging\dist\old\ClaimDesk-Setup-0.0.1.exe'
           $installDir = Join-Path $env:LOCALAPPDATA 'Programs\ClaimDesk'
           $exe = Join-Path $installDir 'ClaimDesk.exe'
           $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\{322DAE75-FC0F-4786-B2BB-62E4A6A3D59B}_is1'
           $startMenu = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'
           $env:CLAIMDESK_HOME = "$env:RUNNER_TEMP\installed-home"
           $env:CLAIMDESK_NO_BROWSER = '1'
-          function Install([string]$log) {
-            $p = Start-Process -FilePath $setup -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CURRENTUSER', "/LOG=`"$log`"" -PassThru -Wait
+          function Install([string]$log, [string]$file = $setup) {
+            $p = Start-Process -FilePath $file -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CURRENTUSER', "/LOG=`"$log`"" -PassThru -Wait
             if ($p.ExitCode -ne 0) { Get-Content $log -Tail 60; throw "setup exited with $($p.ExitCode)" }
           }
           function Wait-Health([int]$port) {
@@ -285,8 +305,15 @@ jobs:
             return Start-Process -FilePath $exe -ArgumentList '--no-browser' -PassThru -RedirectStandardOutput "$env:RUNNER_TEMP\inst-$tag-out.log" -RedirectStandardError "$env:RUNNER_TEMP\inst-$tag-err.log"
           }
 
-          # --- install
+          # --- install an older version first, then upgrade it: DisplayVersion moves on and stale program files go
+          Install "$env:RUNNER_TEMP\setup-0.log" $oldSetup
+          $old = Get-ItemProperty -Path $key
+          if ($old.DisplayVersion -ne '0.0.1') { throw "old DisplayVersion is '$($old.DisplayVersion)'" }
+          Set-Content -Path (Join-Path $installDir 'app\stale.txt') -Value 'left by the old version'
+
+          # --- install (upgrade from 0.0.1)
           Install "$env:RUNNER_TEMP\setup-1.log"
+          if (Test-Path (Join-Path $installDir 'app\stale.txt')) { throw 'the upgrade left a stale file in {app}\app' }
           if (-not (Test-Path $exe)) { throw "$exe was not installed" }
           $reg = Get-ItemProperty -Path $key
           Write-Host "registry: Publisher=$($reg.Publisher) DisplayVersion=$($reg.DisplayVersion) DisplayName=$($reg.DisplayName)"
@@ -313,7 +340,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path (Join-Path $env:LOCALAPPDATA 'ClaimDesk') | Out-Null
           Set-Content -Path (Join-Path $env:LOCALAPPDATA 'ClaimDesk\marker.txt') -Value 'default data folder'
 
-          # --- upgrade in place (setup stops the running ClaimDesk first)
+          # --- reinstall over a running ClaimDesk (setup stops it first)
           Install "$env:RUNNER_TEMP\setup-2.log"
           if (-not (Test-Path (Join-Path $env:CLAIMDESK_HOME 'marker.txt'))) { throw 'the upgrade removed data' }
           if (-not (Test-Path (Join-Path $env:CLAIMDESK_HOME 'data\claimdesk.sqlite'))) { throw 'the upgrade removed the database' }
@@ -358,23 +385,40 @@ jobs:
           path: claimdesk/${{ env.ZIP }}
           retention-days: 30
 
+  release:
+    # Only this job can write to the repository: it downloads the tested files and publishes them, nothing else.
+    needs: windows
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[windows-release]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ClaimDesk-Setup-${{ needs.windows.outputs.ver }}
+          path: dist
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: ClaimDesk-Windows-x64-${{ needs.windows.outputs.ver }}
+          path: dist
+
       - name: Publish release
-        if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[windows-release]')
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: claimdesk-v${{ env.VER }}
-          name: ClaimDesk ${{ env.VER }} for Windows
+          tag_name: claimdesk-v${{ needs.windows.outputs.ver }}
+          name: ClaimDesk ${{ needs.windows.outputs.ver }} for Windows
           target_commitish: ${{ github.sha }}
           prerelease: true
           files: |
-            claimdesk/packaging/dist/${{ env.SETUP }}
-            claimdesk/${{ env.ZIP }}
+            dist/ClaimDesk-Setup-${{ needs.windows.outputs.ver }}.exe
+            dist/ClaimDesk-Windows-x64-${{ needs.windows.outputs.ver }}.zip
           body: |
-            Download **ClaimDesk-Setup-${{ env.VER }}.exe**, run it (no administrator rights needed). Publisher: Courtesy Cars Group UK Ltd. Windows may show 'Unknown publisher' until the installer is code-signed.
+            Download **ClaimDesk-Setup-${{ needs.windows.outputs.ver }}.exe**, run it (no administrator rights needed). Publisher: Courtesy Cars Group UK Ltd. Windows may show 'Unknown publisher' until the installer is code-signed; if Windows says Smart App Control blocked it, a code-signed build is needed (or turn Smart App Control off in Windows Security → App & browser control).
 
             - The Start menu gets **ClaimDesk**, **ClaimDesk (example claims)** and **Stop ClaimDesk**. ClaimDesk opens in its own window; closing the window stops it.
             - Sign in: username `courtesycars`, password `CourtesyCars123!` (filled in for you). Change it in Settings before real data goes in — this repository is public.
             - Installing a newer version updates ClaimDesk in place. Your data stays in `%LOCALAPPDATA%\ClaimDesk`; uninstalling keeps it unless you choose to delete it.
-            - No installer wanted? `ClaimDesk-Windows-x64-${{ env.VER }}.zip` is the same program: unzip, double-click **ClaimDesk.exe**.
+            - No installer wanted? `ClaimDesk-Windows-x64-${{ needs.windows.outputs.ver }}.zip` is the same program: unzip, double-click **ClaimDesk.exe**.
 
             Built and tested on Windows by GitHub Actions: example claims, an HTML letter and a Word-template agreement rendered to PDF, the vehicle catalogue and manual vehicle search; then installed, upgraded and uninstalled silently with the data kept.

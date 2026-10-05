@@ -100,7 +100,8 @@ describe('buildFillPlan — precedence (§B.9)', () => {
     const p = plan(W04);
     expect(blocks(p)).toContain('VALUES_REQUIRED');
     expect(row(p, 'title/relationship-to-claimant')).toMatchObject({ required: true, missing: true, editable: true });
-    const ok = plan(W04, { values: { 'title/relationship-to-claimant': 'None — independent passer-by' } });
+    expect(p.issues.find((i) => i.code === 'WITNESS_RELATIONSHIP_REQUIRED')?.slotId).toBe('title/relationship-to-claimant');
+    const ok = plan(W04, { values: { 'title/relationship-to-claimant': 'None — independent passer-by', 'title/paragraphs': ['I saw the blue van pull out.'] } });
     expect(blocks(ok)).toEqual([]);
     expect(row(ok, 'title/relationship-to-claimant').missing).toBe(false);
   });
@@ -148,6 +149,9 @@ describe('buildFillPlan — precedence (§B.9)', () => {
     const other = sampleMergeSource();
     other.company = { ...other.company, bank: { ...BANK, accountName: 'Courtesy Cars Ltd' } };
     expect(blocks(plan(P05, {}, other))).toContain('BANK_ACCOUNT_NAME_MISMATCH');
+    const placeholder = sampleMergeSource();
+    placeholder.company = { ...placeholder.company, bank: { ...BANK, sortCode: '00-00-00' } };
+    expect(blocks(plan(P05, {}, placeholder))).toContain('BANK_DETAILS_PLACEHOLDER');
     const good = sampleMergeSource();
     good.company = { ...good.company, bank: { ...BANK, accountName: 'COURTESY CARS GROUP UK LIMITED' } };
     const p = plan(P05, {}, good);
@@ -164,6 +168,69 @@ describe('buildFillPlan — precedence (§B.9)', () => {
     expect(repl).toMatchObject({ display: '', verification: 'unverified', needsConfirmation: true, value: 7120 });
     const c = plan(H03, { confirm: [repl.slotId] });
     expect(row(c, repl.slotId).display).toBe('71.20');
+  });
+
+  it('a carried-over confirmation stands only while the confirmed figure is unchanged', () => {
+    const slot = '04-hire-charges-and-gta-rate-benchmarking/a-contractual-hire-charges/@rate/comparator-replacement-vehicle-class';
+    const same = plan(H03, { confirm: [slot], confirmedDisplay: { [slot]: '71.20' } });
+    expect(row(same, slot)).toMatchObject({ display: '71.20', confirmed: true });
+    const changed = plan(H03, { confirm: [slot], confirmedDisplay: { [slot]: '55.00' } });
+    expect(row(changed, slot)).toMatchObject({ display: '', confirmed: false, needsConfirmation: true });
+    expect(row(changed, slot).note).toMatch(/Previously confirmed as "55.00"/);
+    expect(changed.issues.find((i) => i.code === 'CONFIRMATION_STALE')).toMatchObject({ severity: 'warn', slotId: slot });
+  });
+
+  it('02 C1.4 total adds the Additional (clause 5) line and typed line charges; a typed total wins', () => {
+    const base = 'c1-service-record/c1-4-account/@charge/';
+    const add = plan(L02, { variant: 'submission', values: { 'c1-service-record/c1-4-account/@carried-out/additional-clause-5': 'Specialist lifting equipment', [`${base}additional-clause-5`]: '£120.00' } });
+    expect(ins(add, `${base}additional-clause-5`)).toEqual({ type: 'text', text: '120.00' });
+    expect(ins(add, `${base}total`)).toEqual({ type: 'text', text: '1,231.00' });
+    const typedLine = plan(L02, { variant: 'submission', values: { [`${base}recovery`]: '£100.00' } });
+    expect(ins(typedLine, `${base}total`)).toEqual({ type: 'text', text: '1,060.00' });
+    const typedTotal = plan(L02, { variant: 'submission', values: { [`${base}additional-clause-5`]: '£120.00', [`${base}total`]: '£999.00' } });
+    expect(ins(typedTotal, `${base}total`)).toEqual({ type: 'text', text: '999.00' });
+  });
+
+  it('an impossible date typed by the handler is refused, never printed', () => {
+    for (const bad of ['31/02/2026', '2026-13-45']) {
+      const p = plan(L01, { values: { 'title/date': bad } });
+      expect(row(p, 'title/date').inputType).toBe('date');
+      expect(p.issues.find((i) => i.code === 'INVALID_INPUT' && i.slotId === 'title/date'), bad).toBeDefined();
+      expect(row(p, 'title/date').display, bad).not.toMatch(/31 \/ 02|45/);
+    }
+    expect(row(plan(L01, { values: { 'title/date': '28/02/2026' } }), 'title/date').display.replace(/\s+/g, '')).toBe('28/02/2026');
+  });
+
+  it('the letterhead and witness statement bodies are required: drafting placeholders never print', () => {
+    const lh = plan(LH);
+    expect(row(lh, 'title/paragraphs')).toMatchObject({ label: 'Letter paragraphs', required: true, missing: true });
+    expect(lh.issues.find((i) => i.code === 'VALUES_REQUIRED' && i.slotId === 'title/paragraphs')).toBeDefined();
+    const w = plan(W04, { values: { 'title/relationship-to-claimant': 'None' } });
+    expect(row(w, 'title/paragraphs')).toMatchObject({ label: 'Statement paragraphs', required: true, missing: true });
+    expect(blocks(w)).toEqual(['VALUES_REQUIRED']);
+  });
+
+  it('a date-and-time blank in a narrow cell is filled compactly so it does not wrap (03 hire start, 06 time out)', () => {
+    const hireStart = plan(H03).rows.find((r) => r.slotId.startsWith('01-parties-and-agreement-details/agreement-hire-st'))!;
+    expect(hireStart.display).toBe('11/08/2026 at 10:00');
+    const out = plan(C06).rows.find((r) => r.slotId === '02-release-vehicle-out/date-and-time-out')!;
+    expect(out.display).toBe('11/08/2026 at 11:15');
+    // a wide cell keeps the printed spacing
+    expect(row(plan(L02, { variant: 'submission' }), 'c1-service-record/c1-1-recovery/attended').display).toBe('10 / 08 / 2026  at  12 : 00');
+  });
+
+  it('a named addressee is greeted by name and signed off "sincerely"; a team stays "Sir or Madam"', () => {
+    const p = plan(LH, { values: { 'title/name-of-handler': 'Ms Priya Patel', 'title/paragraphs': ['x'] } });
+    expect(row(p, 'title/sir-or-madam').display).toBe('Ms Patel');
+    expect(row(p, 'title/sincerely-faithfully').display).toBe('sincerely');
+    const team = plan(LH, { values: { 'title/name-of-handler': 'Third Party Claims Team', 'title/paragraphs': ['x'] } });
+    expect(row(team, 'title/sir-or-madam').display).toBe('Sir or Madam');
+    expect(row(team, 'title/sincerely-faithfully').display).toBe('faithfully');
+    const client = sampleMergeSource();
+    client.recipient = { name: 'Ms Jane Example', addressLines: ['1 Road'], role: 'client' };
+    const c = plan(LH, { values: { 'title/paragraphs': ['x'] } }, client);
+    expect(row(c, 'title/sir-or-madam').display).toBe('Ms Example');
+    expect(row(c, 'title/sincerely-faithfully').display).toBe('sincerely');
   });
 
   it('option blanks are separate rows and merge into the choice instruction', () => {
@@ -206,7 +273,7 @@ describe('buildFillPlan — precedence (§B.9)', () => {
   });
 
   it('letterhead: valediction follows the salutation; empty recipient lines are removed', () => {
-    const p = plan(LH, { values: { 'title/sir-or-madam': 'Ms Jones', 'title/subject-of-this-letter': 'Hire charges' } });
+    const p = plan(LH, { values: { 'title/sir-or-madam': 'Ms Jones', 'title/subject-of-this-letter': 'Hire charges', 'title/paragraphs': ['We write about the hire charges.'] } });
     expect(row(p, 'title/sincerely-faithfully').display).toBe('sincerely');
     expect(blocks(p)).toEqual([]);
     const bare = sampleMergeSource();

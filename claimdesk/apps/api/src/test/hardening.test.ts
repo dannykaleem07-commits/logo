@@ -83,9 +83,11 @@ describe('/api namespace and error envelope', () => {
   });
 
   it('health exposes key presence flags only', async () => {
-    const res = await t.api<{ lookups: Record<string, boolean>; engines: unknown }>('GET', '/health');
+    const res = await t.api<{ lookups: Record<string, boolean | string>; engines: unknown }>('GET', '/health');
     expect(res.status).toBe(200);
-    for (const v of Object.values(res.body.lookups)) expect(typeof v).toBe('boolean');
+    // `mode` is the derived lookup mode ('live' | 'manual'); every other entry is a key-presence flag
+    expect(res.body.lookups.mode).toBe('manual');
+    for (const [k, v] of Object.entries(res.body.lookups)) if (k !== 'mode') expect(typeof v).toBe('boolean');
     expect(JSON.stringify(res.body)).not.toMatch(/secret|apiKey|password/i);
   });
 });
@@ -192,4 +194,53 @@ describe('store integrity', () => {
     expect(missing.body.error.code).toBe('DOCUMENT_PDF_MISSING');
     expect(t.ctx.repos.listEvents(t.ctx.db, ids.claimId).some((e) => e.documentId === draft.body.id && (e.type === 'email_out' || e.type === 'letter_out'))).toBe(false);
   }, 120_000);
+});
+
+describe('Content-Security-Policy', () => {
+  it('the web app shell is served with a script-src self policy; JSON gets nosniff', async () => {
+    const { mkdtempSync, rmSync: rm } = await import('node:fs');
+    const os = await import('node:os');
+    const path = await import('node:path');
+    const web = mkdtempSync(path.join(os.tmpdir(), 'claimdesk-web-'));
+    writeFileSync(path.join(web, 'index.html'), '<!doctype html><html><body><div id="root"></div></body></html>');
+    const w = await createTestApp('2026-10-05T09:00:00.000Z', { config: { webDistDir: web } });
+    try {
+      const shell = await w.app.inject({ method: 'GET', url: '/claims/abc' });
+      expect(shell.statusCode).toBe(200);
+      const csp = String(shell.headers['content-security-policy'] ?? '');
+      expect(csp).toContain("script-src 'self'");
+      expect(csp).toContain("object-src 'none'");
+      expect(csp).not.toMatch(/script-src[^;]*unsafe/);
+      const json = await w.app.inject({ method: 'GET', url: '/api/health' });
+      expect(json.headers['x-content-type-options']).toBe('nosniff');
+      expect(json.headers['content-security-policy']).toBeUndefined();
+    } finally {
+      await w.close();
+      rm(web, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('roles on shared configuration', () => {
+  it('a handler cannot change GTA rates, the catalogue or the template library; an admin or approver can', async () => {
+    t.ctx.repos.createUser(t.ctx.db, { id: 'boss', name: 'Admin (test)', email: 'boss@ccguk.test', role: 'admin' });
+    const users = t.ctx.repos.listUsers(t.ctx.db);
+    const handler = users.find((u) => u.role === 'handler')!;
+    const boss = users.find((u) => u.id === 'boss')!;
+    expect(handler).toBeDefined();
+    expect(boss).toBeDefined();
+    const as = (id: string) => ({ 'x-user-id': id });
+    const rate = { group: 'S9', period: '2026-27', effectiveFrom: '2026-07-01', effectiveTo: '2027-06-30', dailyRatePence: 5000 };
+    const refused = await t.api<ErrorBody>('POST', '/settings/gta-rates', rate, as(handler.id));
+    expect(refused.status).toBe(403);
+    expect(refused.body.error.code).toBe('FORBIDDEN');
+    expect((await t.api<ErrorBody>('PUT', '/settings/gta-segments/suv-small', { group: 'M1' }, as(handler.id))).status).toBe(403);
+    expect((await t.api<ErrorBody>('POST', '/catalogue/custom', { level: 'make', make: 'Test' }, as(handler.id))).status).toBe(403);
+    expect((await t.api<ErrorBody>('POST', '/docx-templates/letter.ccguk_letterhead_formal/acknowledge', {}, as(handler.id))).status).toBe(403);
+    expect((await t.api<ErrorBody>('DELETE', '/docx-templates/letter.ccguk_letterhead_formal/mapping', undefined, as(handler.id))).status).toBe(403);
+    // reading stays open to every signed-in user
+    expect((await t.api('GET', '/docx-templates', undefined, as(handler.id))).status).toBe(200);
+    const allowed = await t.api<ErrorBody>('POST', '/settings/gta-rates', rate, as(boss.id));
+    expect(allowed.status).not.toBe(403);
+  });
 });

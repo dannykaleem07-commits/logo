@@ -471,7 +471,7 @@ export function sampleMergeSource(): MergeSource {
     offer: offer1,
     events,
     clocks: [
-      clock('k-cctv', 'cctv_preservation', '2026-08-10T09:00:00Z', '2026-09-04T09:00:00Z'),
+      clock('k-cctv', 'cctv_preservation', '2026-08-10T09:00:00Z', '2026-08-17T09:00:00Z'),
       clock('k-ch7', 'chaser_day_7', '2026-08-10T16:00:00Z', '2026-08-17T16:00:00Z'),
       clock('k-ch14', 'chaser_day_14', '2026-08-10T16:00:00Z', '2026-08-24T16:00:00Z'),
       clock('k-icobs', 'icobs_8_2_6_three_months', '2026-08-10T16:00:00Z', '2026-11-10T16:00:00Z'),

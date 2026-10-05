@@ -28,6 +28,7 @@
   "devDependencies": {
     "vitest": "^3.2.7",
     "typescript": "^5.9.3",
-    "@types/node": "^22.19.0"
+    "@types/node": "^22.19.0",
+    "fflate": "^0.8.3"
   }
 }

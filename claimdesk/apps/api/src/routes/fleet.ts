@@ -232,6 +232,7 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
         fuelType: v?.fuelType ?? known?.fuelType,
         variant: v?.variant ?? known?.variant,
         recordedGroup: gtaGroup ?? v?.gtaGroup ?? known?.gtaGroup,
+        ...((v?.yearOfManufacture ?? known?.yearOfManufacture) !== undefined ? { yearOfManufacture: (v?.yearOfManufacture ?? known?.yearOfManufacture)! } : {}),
         date,
       });
       gtaGroup = gtaGroup ?? suggestion.group ?? undefined;

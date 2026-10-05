@@ -96,3 +96,12 @@ describe('approval gate (lesson a: £1,287 stated vs £1,112 received blocks)', 
     expect(supersedeBodyFrom({ reExecutedOn: '2026-10-01', reason: 'Re-signed after correction' }, today)).toEqual({ ok: true, body: { reason: 'Re-signed after correction', reExecutedOn: '2026-10-01' } });
   });
 });
+
+describe('letterhead copy offered only for letters that mark their parts', () => {
+  it('needs data-letter-part="body" in the HTML', async () => {
+    const { canComposeLetterhead } = await import('./documents');
+    expect(canComposeLetterhead({ templateId: 'letter.chaser_7', html: '<main class="body" data-letter-part="body"><p>x</p></main>' })).toBe(true);
+    expect(canComposeLetterhead({ templateId: 'letter.ncaf', html: '<html><body><h1>New Claim Advice Form</h1></body></html>' })).toBe(false);
+    expect(canComposeLetterhead({ templateId: 'invoice.hire', html: '<main data-letter-part="body"></main>' })).toBe(false);
+  });
+});

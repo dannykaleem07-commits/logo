@@ -3,7 +3,7 @@ import { formatRegistration, formatGBP, normaliseRegistration } from '@ccguk/dom
 import type { StepProps } from './NewClaimPage';
 import type { PartyRef } from '../../../api/client';
 import { anyServiceAgreed, buildCreateClaimBody, buildFnolOffer, vehicleSource, type Step } from './fnol';
-import { useCatalogueFeatures, segmentLabel } from '../../../api/vehiclesApi';
+import { useCatalogueFeatures, useCatalogueModel, segmentLabel } from '../../../api/vehiclesApi';
 import { describeVehicle, featureLabels, SOURCE_LABEL } from '../../vehicles/vehiclePicker';
 import { Checkbox, TextArea } from '../../../components/Form';
 import { KeyValue } from '../../../components/KeyValue';
@@ -32,8 +32,24 @@ export function StepReview({ state, update, onEdit }: StepProps & { onEdit: (s: 
     ) : source === 'lookup' ? (
       <Badge tone="green">DVLA / DVSA lookup{'id' in body.vehicle ? ' · on file' : ''}</Badge>
     ) : (
-      <Badge tone="amber">{handSource ? SOURCE_LABEL[handSource.provider] : 'manual'} · unverified</Badge>
+      <span>
+        {handSource ? SOURCE_LABEL[handSource.provider] : 'Typed by hand'} <Badge tone="amber">unverified</Badge>
+      </span>
     );
+  // "Volkswagen Golf · Mk7 (2013–2020) · Match Edition · 1.5 TSI EVO 150PS petrol" from the catalogue detail
+  const cat = spec?.catalogue;
+  const catModel = useCatalogueModel(cat?.makeSlug, cat?.modelSlug).data;
+  const catGen = cat?.generationId ? catModel?.generations.find((g) => g.id === cat.generationId) : undefined;
+  const catalogueMatch = cat
+    ? [
+        [vehicleDetails?.make, catModel?.name ?? vehicleDetails?.model].filter(Boolean).join(' '),
+        catGen?.name ?? (cat.generationId ? 'generation matched' : ''),
+        (cat.trimId ? catGen?.trims.find((t) => t.id === cat.trimId)?.name : undefined) ?? (cat.trimId ? 'trim matched' : ''),
+        (cat.engineId ? catGen?.engines.find((e) => e.id === cat.engineId)?.label : undefined) ?? (cat.engineId ? 'engine matched' : '')
+      ]
+        .filter(Boolean)
+        .join(' · ')
+    : '—';
   const EditBtn = ({ step }: { step: Step }) => (
     <Button size="sm" variant="ghost" onClick={() => onEdit(step)}>
       Edit
@@ -103,7 +119,7 @@ export function StepReview({ state, update, onEdit }: StepProps & { onEdit: (s: 
                 { label: 'Colour / VIN', value: [vehicleDetails?.colour, vehicleDetails?.vin].filter(Boolean).join(' · ') || '—', hidden: !vehicleDetails },
                 { label: 'First registered / MOT / tax', value: [vehicleDetails?.monthOfFirstRegistration, vehicleDetails?.motExpiryDate ? `MOT ${vehicleDetails.motExpiryDate}` : '', vehicleDetails?.taxDueDate ? `tax ${vehicleDetails.taxDueDate}` : ''].filter(Boolean).join(' · ') || '—', hidden: !vehicleDetails },
                 { label: 'Segment', value: segmentLabel(spec?.segment) ?? '—', hidden: !spec?.segment },
-                { label: 'Catalogue match', value: spec?.catalogue ? [spec.catalogue.makeSlug, spec.catalogue.modelSlug, spec.catalogue.generationId ? 'generation' : '', spec.catalogue.trimId ? 'trim' : '', spec.catalogue.engineId ? 'engine' : ''].filter(Boolean).join(' · ') : '—', hidden: !spec?.catalogue },
+                { label: 'Catalogue match', value: catalogueMatch, hidden: !spec?.catalogue },
                 { label: 'Standard features', value: spec?.features.length ? featureLabels(vocab, spec.features).join(', ') : '—', hidden: !spec?.features.length },
                 { label: 'Added extras', value: spec?.extras.length ? featureLabels(vocab, spec.extras).join(', ') : '—', hidden: !spec?.extras.length },
                 { label: 'Copied fields', value: handSource?.appliedFields?.length ? handSource.appliedFields.join(', ') : '—', hidden: handSource?.provider !== 'totalcarcheck_manual' },

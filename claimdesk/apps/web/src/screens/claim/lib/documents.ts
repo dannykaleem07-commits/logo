@@ -260,6 +260,16 @@ export function isHtmlLetter(doc: Pick<GeneratedDocument, 'templateId'>): boolea
   return !isDocx(doc) && doc.templateId.startsWith('letter.');
 }
 
+/**
+ * The letterhead Word copy can be made only from a letter whose HTML marks its parts (data-letter-part="body");
+ * older or imported letters without the marks are refused by the API, so the button is not offered for them.
+ */
+export function canComposeLetterhead(doc: Pick<GeneratedDocument, 'templateId'> & { html?: string | null }): boolean {
+  if (!isHtmlLetter(doc)) return false;
+  if (doc.html === undefined || doc.html === null) return true;
+  return /data-letter-part\s*=\s*["']body["']/.test(doc.html);
+}
+
 const KIND_SINGULAR: Record<string, string> = {
   letter: 'Letter',
   invoice: 'Invoice',
@@ -327,7 +337,7 @@ export function docxValuesUsed(doc: Pick<GeneratedDocument, 'dataSnapshot'> | un
   if (!Array.isArray(values)) return [];
   return values
     .filter((v) => v && typeof v === 'object' && typeof v.slotId === 'string')
-    .map((v) => ({ slotId: v.slotId, label: slotLabelFromId(v.slotId), key: v.key, display: typeof v.display === 'string' ? v.display : '', origin: String(v.origin ?? 'none'), verification: v.verification }));
+    .map((v) => ({ slotId: v.slotId, label: typeof v.label === 'string' && v.label.trim() ? v.label : slotLabelFromId(v.slotId), key: v.key, display: typeof v.display === 'string' ? v.display : '', origin: String(v.origin ?? 'none'), verification: v.verification }));
 }
 
 function sentenceCase(slug: string): string {

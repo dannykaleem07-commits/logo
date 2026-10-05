@@ -173,3 +173,28 @@ describe('FIELD_DEFS', () => {
     expect(JSON.parse(JSON.stringify(plain))).toEqual(plain);
   });
 });
+
+describe('09 CCTV diary dates', () => {
+  it('day 1 is the first request actually sent; the follow-up is day 25 from it, never the 7-day clock deadline', async () => {
+    const { resolveField } = await import('./resolve.js');
+    const { sampleMergeSource } = await import('./source.js');
+    const s = sampleMergeSource();
+    expect(resolveField('clocks.cctvPreservation.startDate', s)).toEqual({ t: 'date', v: '2026-08-10' });
+    expect(resolveField('clocks.cctvPreservation.followUpDate', s)).toEqual({ t: 'date', v: '2026-09-03' });
+    const none = { ...s, events: s.events.filter((e) => e.type !== 'cctv_request_sent') };
+    expect(resolveField('clocks.cctvPreservation.startDate', none)).toBeUndefined();
+    expect(resolveField('clocks.cctvPreservation.followUpDate', none)).toBeUndefined();
+  });
+});
+
+describe('photographs of the damaged vehicle', () => {
+  it('the hire car handover photos (tagged release / return) are not counted as damage photos', async () => {
+    const { resolveField } = await import('./resolve.js');
+    const { sampleMergeSource } = await import('./source.js');
+    const s = sampleMergeSource();
+    const all = s.evidence.filter((e) => e.kind === 'photo').length;
+    const handover = s.evidence.filter((e) => e.kind === 'photo' && (e.tags ?? []).some((t) => t === 'release' || t === 'return')).length;
+    expect(handover).toBeGreaterThan(0);
+    expect(resolveField('evidence.photoCount', s)).toMatchObject({ t: 'int', v: all - handover });
+  });
+});

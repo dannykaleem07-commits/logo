@@ -4,14 +4,19 @@
  *
  * Address lines map in order to [Address line 1], [Address line 2], [Town, POSTCODE] (the last line always goes to
  * the town/postcode slot; extra middle lines join line 2); unused lines, BY EMAIL, the Your Ref / Claim No. rows, the
- * reply-by sentence, Enc. and Cc. are removed. Paragraphs are numbered 1..n by the engine. The pre-printed signatory
- * role "Claims Manager" is never changed.
+ * reply-by sentence, Enc. and Cc. are removed. Paragraphs are numbered 1..n by the engine; headings and tables from
+ * the HTML letter print unnumbered (a table as a real Word table). The pre-printed signatory role "Claims Manager" is
+ * replaced only by the role the HTML letter was signed in.
  */
 import { fillDocx } from '../fill.js';
 import { scanDocx } from '../scan.js';
 import type { FillInstruction, FillResult, LetterContent, SlotValue } from '../types.js';
 import { builtinMapping, LETTERHEAD_TEMPLATE_ID } from './builtin/index.js';
 import { resolveSelectors } from './mapping.js';
+import { sha256Hex } from '../../hash.js';
+import { openDocx, writeDocx } from '../zip.js';
+import { markDirty, partDom, setTText, stripControlChars, wDescendants } from '../xml.js';
+import { PRINTED_LETTER_ROLE } from './guards.js';
 
 /** Rows of the reference panel removed when their value is absent (besides the mapping's own removeIfEmpty rows). */
 const REMOVE_ROW_WHEN_EMPTY = new Set(['claimant.name#ref', 'vehicle.makeModelReg', 'accident.dateLong']);
@@ -72,7 +77,9 @@ export function composeLetterheadDocx(letterhead: Uint8Array, content: LetterCon
     if (entry.key === 'claimant.name') lookup = slot.labelSlug === 'client' ? 'claimant.name#subject' : 'claimant.name#ref';
     if (entry.key === 'doc.body.paragraphs') {
       const items = content.paragraphs.map((p) => p.trim()).filter(Boolean);
-      if (items.length) value = { type: 'paragraphs', items, replaceFixedLead: content.replaceFixedOpening };
+      // keep indexes aligned with content.paragraphs: blank items are not dropped here (they never come from extraction)
+      if (items.length === content.paragraphs.length && items.length) value = { type: 'paragraphs', items, replaceFixedLead: content.replaceFixedOpening, ...(content.headings?.length ? { headings: content.headings } : {}), ...(content.tables?.length ? { tables: content.tables } : {}) };
+      else if (items.length) value = { type: 'paragraphs', items, replaceFixedLead: content.replaceFixedOpening };
     } else {
       const text = byKey[lookup];
       if (text !== undefined) value = { type: 'text', text };
@@ -82,9 +89,26 @@ export function composeLetterheadDocx(letterhead: Uint8Array, content: LetterCon
     else if (REMOVE_ROW_WHEN_EMPTY.has(lookup)) instructions.push({ slotId: slot.id, value: { type: 'remove', scope: 'row' } });
   }
 
-  return fillDocx(letterhead, instructions, {
+  const filled = fillDocx(letterhead, instructions, {
     coreProps: { title: opts.title, subject: clean(content.subject) ?? opts.title, keywords: [opts.reference, LETTERHEAD_TEMPLATE_ID], created: opts.now, modified: opts.now },
     now: opts.now,
     ...(mapping.style?.valueRun ? { valueRunStyle: mapping.style.valueRun } : {})
   });
+  const role = clean(content.signatory.role);
+  return role && role !== PRINTED_LETTER_ROLE ? withSignatoryRole(filled, role, opts.now) : filled;
+}
+
+/**
+ * The letterhead prints "Claims Manager" under the signatory's name. A letter signed in another role (e.g. a
+ * director) keeps that role: the printed line is replaced, in its own run style, nothing else changes.
+ */
+function withSignatoryRole(filled: FillResult, role: string, now: Date): FillResult {
+  const pkg = openDocx(filled.docx);
+  const doc = partDom(pkg, 'word/document.xml');
+  const t = wDescendants(doc, 't').find((x) => (x.textContent ?? '').trim() === PRINTED_LETTER_ROLE);
+  if (!t) return filled;
+  setTText(t, stripControlChars(role).slice(0, 200));
+  markDirty(pkg, 'word/document.xml');
+  const docx = writeDocx(pkg, { mtime: now });
+  return { ...filled, docx, sha256: sha256Hex(docx) };
 }

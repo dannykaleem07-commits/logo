@@ -36,6 +36,7 @@ import {
   FUEL_TYPES,
   fuelOptions,
   generationOptions,
+  linkToCatalogue,
   NOT_LISTED,
   NOT_LISTED_LABEL,
   parseBodyOption,
@@ -110,6 +111,17 @@ export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
   const [freeText, setFreeText] = useState<Partial<Record<CascadeStep, string>>>({});
   const [searchReg, setSearchReg] = useState('');
   const onFileQ = useOnFile(searchReg, { enabled: showRegistration && Boolean(searchReg) });
+
+  // A vehicle saved without catalogue ids (seeded, older records, DVLA upper case) is linked to the catalogue model
+  // once the model list is in, so the generation, body, engine and trim lists appear. Never while the model is being
+  // typed (the Model box links an exact name itself).
+  const typedModelText = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    if (!make || !models || value.catalogue?.modelSlug || !value.model.trim()) return;
+    if (typedModelText.current === value.model) return;
+    const next = linkToCatalogue(value, make, models);
+    if (next !== value) onChange(next);
+  }, [make, models, value, onChange]);
 
   // Once the model detail is loaded, fill the catalogue ids the value implies (after a paste or an on-file pick).
   const resolvedKey = useRef('');
@@ -295,6 +307,7 @@ export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
             placeholder={makeSlug ? 'Start typing, e.g. Fiesta' : 'Type the model'}
             hint={value.catalogue?.modelSlug ? segmentLabel(value.segment) : typedModel ? (makeSlug ? 'Not in the catalogue — kept as typed.' : undefined) : modelsQ.isFetching ? 'Loading models…' : undefined}
             onChange={(t) => {
+              typedModelText.current = t;
               const hit = findModel(models, t);
               onChange(hit && makeSlug ? setModel(value, { ...hit, name: t }, makeSlug, model) : setModel(value, t, undefined, model));
             }}
@@ -433,7 +446,11 @@ export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
           />
 
           {gen && trimOpts.length > 0 && !isFree('trim') ? (
-            stepSelect('trim', trimOpts, value.catalogue?.trimId ?? '', (v) => onChange(setTrim(value, v || undefined, model)), { error: errors.variant })
+            stepSelect('trim', trimOpts, value.catalogue?.trimId ?? '', (v) => onChange(setTrim(value, v || undefined, model)), {
+              error: errors.variant,
+              // a pasted or stored variant that names no listed trim stays visible until a trim is chosen
+              ...(value.variant.trim() && !value.catalogue?.trimId ? { hint: `Pasted / stored: ${value.variant.trim()}` } : value.catalogue?.trimId && value.variant.trim() && trimOpts.find((o) => o.value === value.catalogue?.trimId)?.label !== value.variant.trim() ? { hint: `Recorded as: ${value.variant.trim()}` } : {})
+            })
           ) : (
             <TextInput
               label="Trim / variant"
@@ -474,7 +491,15 @@ export function VehiclePicker(props: VehiclePickerProps): JSX.Element {
 
       <fieldset className="fieldset">
         <legend>Features and extras</legend>
-        <FeaturesPicker vocabulary={featuresQ.data} loading={featuresQ.isLoading} features={value.features} extras={value.extras} disabled={disabled} onChange={(f) => onChange({ ...value, ...f })} />
+        <FeaturesPicker
+          vocabulary={featuresQ.data}
+          loading={featuresQ.isLoading}
+          features={value.features}
+          extras={value.extras}
+          disabled={disabled}
+          trimStandard={gen && value.catalogue?.trimId ? (gen.trims.find((t) => t.id === value.catalogue!.trimId)?.features ?? []) : undefined}
+          onChange={(f) => onChange({ ...value, ...f })}
+        />
       </fieldset>
     </div>
   );

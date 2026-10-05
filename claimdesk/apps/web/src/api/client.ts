@@ -275,11 +275,20 @@ export interface ChangePasswordBody {
   newPassword: string;
 }
 
+/** GET /health (apps/api routes/health.ts). */
 export interface Health {
   ok: boolean;
+  service?: string;
   version?: string;
+  /** 'demo' only when the desktop launcher started the example-claims dataset. */
+  dataset?: 'live' | 'demo';
+  pid?: number;
   time?: ISODateTime;
-  lookups?: { dvlaVes?: boolean; dvsaMot?: boolean; companiesHouse?: boolean; gateway?: boolean };
+  env?: string;
+  database?: 'ok' | 'error';
+  /** Key-presence flags plus the derived lookup mode ('manual' when no DVLA/DVSA key is configured). */
+  lookups?: { dvlaVes?: boolean; dvsaMot?: boolean; companiesHouse?: boolean; gateway?: boolean; mode?: LookupMode };
+  kbData?: boolean;
 }
 
 export interface ClaimListFilters {
@@ -663,15 +672,11 @@ export interface CreateDocumentBody {
   recipientPartyId?: Id;
 }
 
-/** Which program made a document's PDF (docs/TEMPLATES-VEHICLES-DESKTOP.md §C.3). */
-export type PdfConverterId = 'word' | 'libreoffice' | 'browser' | 'chromium-html';
+/** Which program made a document's PDF (docs/TEMPLATES-VEHICLES-DESKTOP.md §C.3); the domain type's union. */
+export type PdfConverterId = NonNullable<GeneratedDocument['pdfConverter']>;
 
-/** Document fields added for Word (.docx) documents (§C.3); absent on older API responses (= 'html'). */
-export interface DocumentFormatFields {
-  format?: 'html' | 'docx';
-  docxSha256?: string;
-  pdfConverter?: PdfConverterId;
-}
+/** Document fields added for Word (.docx) documents (§C.3), taken from the domain record; absent = 'html'. */
+export type DocumentFormatFields = Pick<GeneratedDocument, 'format' | 'docxSha256' | 'pdfConverter'>;
 
 /** A generated document as the web reads it: the domain record plus the DOCX format fields. */
 export type ClaimDocument = GeneratedDocument & DocumentFormatFields;

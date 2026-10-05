@@ -62,6 +62,27 @@ describe('POST /fleet GTA pre-fill', () => {
     expect(explicit.body.vehicle.lookups[0]).toMatchObject({ provider: 'totalcarcheck_manual', raw: { source: 'totalcarcheck_paste' } });
   });
 
+  it('refuses a GTA group that is not a group code; a spaced or lower-case code is normalised', async () => {
+    const bad = await t.api<ErrorBody>('POST', '/fleet', { vehicle: { registration: 'FL21ABF', make: 'volkswagen', model: 'golf' }, declaredUses: ['credit_hire'], gtaGroup: 'not a group!', dailyRatePence: 4000 });
+    expect(bad.status).toBe(400);
+    expect(t.ctx.repos.findByRegistration(t.ctx.db, 'FL21ABF')).toBeUndefined();
+    const ok = await t.api<UnitView>('POST', '/fleet', { vehicle: { registration: 'FL21ABG', make: 'volkswagen', model: 'golf' }, declaredUses: ['credit_hire'], gtaGroup: ' s3 ', dailyRatePence: 4000 });
+    expect(ok.status).toBe(201);
+    expect(ok.body.gtaGroup).toBe('S3');
+  });
+
+  it('the GTA suggestion picks the generation by the vehicle year, never by the rate date', async () => {
+    const newer = await t.api<{ group: string | null; basis: string }>('GET', '/gta/suggest?make=volkswagen&model=golf&date=2026-10-05&yearOfManufacture=2022');
+    const older = await t.api<{ group: string | null; basis: string }>('GET', '/gta/suggest?make=volkswagen&model=golf&date=2026-10-05&yearOfManufacture=2015');
+    const noYear = await t.api<{ group: string | null; basis: string }>('GET', '/gta/suggest?make=volkswagen&model=golf&date=2026-10-05');
+    expect(newer.status).toBe(200);
+    // fixture catalogue: Golf Mk8 (2020–) carries group M, the Mk7 (2012–2020) none
+    expect(newer.body).toMatchObject({ basis: 'catalogue_generation', group: 'M' });
+    // a 2015 car is not given the newest generation's group, and neither is a car of unknown year
+    expect(older.body.basis).not.toBe('catalogue_generation');
+    expect(noYear.body.basis).not.toBe('catalogue_generation');
+  });
+
   it('answers 422 GTA_SUGGESTION_UNAVAILABLE when no group or no rate results', async () => {
     const unknown = await t.api<ErrorBody>('POST', '/fleet', { vehicle: { registration: 'AB18 UNK' }, declaredUses: ['credit_hire'] });
     expect(unknown.status).toBe(422);

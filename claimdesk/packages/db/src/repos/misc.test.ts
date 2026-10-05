@@ -53,6 +53,13 @@ describe('settings', () => {
     expect(listAudit(h.db, { entity: 'settings' })).toHaveLength(1);
   });
 
+  it('charges no VAT by default and refuses a VAT rate without a VAT number', () => {
+    expect(DEFAULT_RATE_CARD.vatRate).toBe(0);
+    expect(() => patchSettings(h.db, { rateCard: { vatRate: 0.2 } }, { userId: 'admin' })).toThrow(/VAT number/);
+    expect(getSettings(h.db).rateCard.vatRate).toBe(0);
+    expect(patchSettings(h.db, { vatNumber: 'GB123456789', rateCard: { vatRate: 0.2 } }, { userId: 'admin' }).rateCard.vatRate).toBe(0.2);
+  });
+
   it('falls back to the real registered office when none is saved; bank, VAT and ICO stay unset (design doc §H.2)', () => {
     expect(DEFAULT_SETTINGS.registeredOffice).toEqual({ line1: '44 Syon Lane', line2: 'Isleworth', town: 'London', postcode: 'TW7 5NQ' });
     expect(DEFAULT_SETTINGS.bank).toBeUndefined();

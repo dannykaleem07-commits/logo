@@ -6,8 +6,8 @@
  *   recipient (children data-line="name|attention|address", data-email on the element), ref-our, ref-your, ref-claim,
  *   ref-client, ref-vehicle, ref-accident, ref-date, subject (p.re or table.subject), salutation, body (main.body),
  *   reply-by, valediction, signatory-name, enclosures, cc.
- * Body: each top-level paragraph, heading or list item becomes one paragraph (the letterhead numbers them); a table
- * becomes tab-separated lines (caption first); boxes (div) are read through. The subject, salutation and reply-by
+ * Body: each top-level paragraph or list item becomes one numbered paragraph; headings (h1–h6, a box's title, a
+ * table caption) print unnumbered and bold; a table prints as a real Word table; boxes (div) are read through. The subject, salutation and reply-by
  * parts inside the body are not repeated as paragraphs.
  *
  * No DOM library: a small tag scanner is enough for the HTML our own layout produces (well-formed, escaped).
@@ -168,38 +168,66 @@ export function elementText(node: Node): string {
     .join('\n');
 }
 
-function tableLines(table: El): string {
-  const lines: string[] = [];
+interface TableRows {
+  caption?: string;
+  rows: string[][];
+  headerRows: number;
+}
+
+function tableRows(table: El): TableRows {
+  const rows: string[][] = [];
+  let caption: string | undefined;
+  let headerRows = 0;
+  let inBody = false;
   for (const c of walk(table)) {
-    if (c.tag === 'caption') lines.push(elementText(c));
+    if (c.tag === 'caption') caption = elementText(c).replace(/\s*\n\s*/g, ' ').trim() || undefined;
     if (c.tag === 'tr') {
-      const cells = c.children.filter((x): x is El => typeof x !== 'string' && (x.tag === 'td' || x.tag === 'th')).map((cell) => elementText(cell).replace(/[\t\n]+/g, ' ').trim());
-      if (cells.some(Boolean)) lines.push(cells.join('\t'));
+      const cellEls = c.children.filter((x): x is El => typeof x !== 'string' && (x.tag === 'td' || x.tag === 'th'));
+      const cells = cellEls.map((cell) => elementText(cell).replace(/[\t\n]+/g, ' ').trim());
+      if (!cells.some(Boolean)) continue;
+      const inHead = c.parent?.tag === 'thead' || (cellEls.length > 0 && cellEls.every((x) => x.tag === 'th'));
+      if (inHead && !inBody && headerRows === rows.length) headerRows += 1;
+      else inBody = true;
+      rows.push(cells);
     }
   }
-  return lines.join('\n');
+  return { ...(caption ? { caption } : {}), rows, headerRows };
+}
+
+/** One body item: a numbered paragraph, an unnumbered heading, or a table (printed as a Word table). */
+export interface BodyItem {
+  text: string;
+  kind: 'para' | 'heading' | 'table';
+  rows?: string[][];
+  headerRows?: number;
 }
 
 /** Parts that never become body paragraphs (they fill their own slots on the letterhead). */
 const NOT_BODY = new Set(['subject', 'salutation', 'reply-by', 'valediction', 'signatory-name', 'enclosures', 'cc', 'recipient']);
 
-function bodyParagraphs(body: El): string[] {
-  const out: string[] = [];
-  const push = (s: string) => {
+export function bodyItems(body: El): BodyItem[] {
+  const out: BodyItem[] = [];
+  const push = (s: string, kind: BodyItem['kind'] = 'para') => {
     const t = s.trim();
-    if (t) out.push(t);
+    if (t) out.push({ text: kind === 'heading' ? t.replace(/\s*\n\s*/g, ' ') : t, kind });
   };
   const visit = (e: El): void => {
     const part = partOf(e);
     if (part && NOT_BODY.has(part)) return;
     if (RAW.has(e.tag)) return;
-    if (e.tag === 'p' || HEADING.test(e.tag) || e.tag === 'pre' || e.tag === 'blockquote' || e.tag === 'address') return push(elementText(e));
+    if (HEADING.test(e.tag) || hasClass(e, 'callout-title')) return push(elementText(e), 'heading');
+    if (e.tag === 'p' || e.tag === 'pre' || e.tag === 'blockquote' || e.tag === 'address') return push(elementText(e));
     if (e.tag === 'ul' || e.tag === 'ol' || e.tag === 'dl') {
       for (const li of e.children) if (typeof li !== 'string' && (li.tag === 'li' || li.tag === 'dt' || li.tag === 'dd')) push(elementText(li));
       return;
     }
-    if (e.tag === 'table') return push(tableLines(e));
-    const blockChildren = e.children.some((c) => typeof c !== 'string' && (BLOCK.has(c.tag) || (partOf(c) !== undefined && NOT_BODY.has(partOf(c)!))));
+    if (e.tag === 'table') {
+      const t = tableRows(e);
+      if (t.caption) push(t.caption, 'heading');
+      if (t.rows.length) out.push({ text: t.rows.map((r) => r.join('\t')).join('\n'), kind: 'table', rows: t.rows, headerRows: t.headerRows });
+      return;
+    }
+    const blockChildren = e.children.some((c) => typeof c !== 'string' && (BLOCK.has(c.tag) || hasClass(c, 'callout-title') || (partOf(c) !== undefined && NOT_BODY.has(partOf(c)!))));
     if (!blockChildren) return push(elementText(e));
     // a box (callout, avoid-break wrapper): loose inline content between its blocks is a paragraph of its own
     let loose: Node[] = [];
@@ -209,7 +237,7 @@ function bodyParagraphs(body: El): string[] {
     };
     for (const c of e.children) {
       if (typeof c !== 'string' && partOf(c) && NOT_BODY.has(partOf(c)!)) continue;
-      if (typeof c === 'string' || !BLOCK.has(c.tag)) {
+      if (typeof c === 'string' || (!BLOCK.has(c.tag) && !hasClass(c, 'callout-title'))) {
         loose.push(c);
         continue;
       }
@@ -301,6 +329,8 @@ export function extractLetterContent(html: string): LetterContent | null {
   const sigEl = first('signatory-name');
   const strong = sigEl ? findAll(sigEl, (e) => e.tag === 'strong' || e.tag === 'b')[0] : undefined;
   const signatoryName = (strong ? elementText(strong) : sigEl ? (elementText(sigEl).split('\n')[0] ?? '') : '').trim();
+  // the role is the line after the name ("<strong>Name</strong><br>Director<br>For and on behalf of …")
+  const signatoryRole = sigEl ? (elementText(sigEl).split('\n')[1] ?? '').trim() : '';
 
   const listItems = (p: string): string[] | undefined => {
     const e = first(p);
@@ -310,8 +340,12 @@ export function extractLetterContent(html: string): LetterContent | null {
   };
 
   // A reply-by sentence whose date could not be read stays in the body (never silently dropped)
-  const paragraphs = bodyParagraphs(body);
-  if (replyEl && !replyBy) paragraphs.push(elementText(replyEl));
+  const items = bodyItems(body);
+  if (replyEl && !replyBy) items.push({ text: elementText(replyEl), kind: 'para' });
+  const paragraphs = items.map((i) => i.text);
+  // the first item keeps the letterhead's paragraph 1 (numbered); later headings and tables print unnumbered
+  const headings = items.flatMap((i, n) => (n > 0 && i.kind === 'heading' ? [n] : []));
+  const tables = items.flatMap((i, n) => (n > 0 && i.kind === 'table' && i.rows ? [{ index: n, rows: i.rows, headerRows: i.headerRows ?? 0 }] : []));
 
   const out: LetterContent = {
     recipient,
@@ -320,8 +354,10 @@ export function extractLetterContent(html: string): LetterContent | null {
     subject,
     paragraphs,
     replaceFixedOpening: true,
-    signatory: { name: signatoryName },
+    signatory: { name: signatoryName, ...(signatoryRole ? { role: signatoryRole } : {}) },
   };
+  if (headings.length) out.headings = headings;
+  if (tables.length) out.tables = tables;
   if (client) out.subjectClient = client;
   if (subjectReg) out.subjectReg = subjectReg;
   if (replyBy) out.replyBy = replyBy;

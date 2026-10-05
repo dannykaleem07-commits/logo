@@ -416,6 +416,16 @@
   }
 }
 
+/* a fieldset is min-content wide by default: it would push a phone-width page sideways */
+fieldset.fieldset {
+  min-width: 0;
+  min-inline-size: 0;
+}
+.kv .badge,
+.badge.wrap {
+  white-space: normal;
+  max-width: 100%;
+}
 fieldset.fieldset {
   border: 1px solid var(--line);
   border-radius: var(--r-md);

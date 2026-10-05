@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { templatesApi } from '../../../api/templatesApi';
 import { Loading } from '../../../components/Spinner';
+import { neutraliseLinks } from '../lib/safeLinks';
 import '../../templates/templates.css';
 
 type PreviewState = { status: 'loading' } | { status: 'ready' } | { status: 'error'; message: string };
@@ -39,6 +40,8 @@ export function DocxPreview({ docId, title, fallbackHtml }: { docId: string; tit
           useBase64URL: true,
           experimental: false
         });
+        // the document is rendered into the app page itself: a link may never run script here
+        if (bodyRef.current) neutraliseLinks(bodyRef.current);
         if (!cancelled) setState({ status: 'ready' });
       } catch (e) {
         if (cancelled || (e instanceof DOMException && e.name === 'AbortError')) return;

@@ -67,6 +67,13 @@ describe('routes render without the API', () => {
     expect(render('/capture/abc')).toContain('Guided capture');
     expect(render('/nope')).toContain('Page not found');
   });
+  it('the Word templates and GTA rates settings pages are routed', () => {
+    for (const [path, heading] of [['/settings/templates', 'Document templates'], ['/settings/gta-rates', 'GTA benchmark rates']] as const) {
+      const html = render(path);
+      expect(html, path).not.toContain('Page not found');
+      expect(html, path).toContain(heading);
+    }
+  });
   it('global search box and nav are present on every page', () => {
     const html = render('/kb');
     expect(html).toContain('Search registration, claim ref or name');

@@ -228,7 +228,7 @@ function ChooseStep({
               <Select label="Witness" required value={state.subject.witnessPartyId ?? ''} onChange={(v) => dispatch({ type: 'setSubject', subject: { witnessPartyId: v || undefined } })} options={options.witnesses} placeholder="Choose the witness…" hint={options.witnesses.length ? undefined : 'Add the witness as a party on the claim first'} />
             )}
             {subjects.includes('offer') && (
-              <Select label="Intervention offer" value={state.subject.offerId ?? ''} onChange={(v) => dispatch({ type: 'setSubject', subject: { offerId: v || undefined } })} options={options.offers} placeholder="No offer made" />
+              <Select label="Intervention offer" value={state.subject.offerId ?? ''} onChange={(v) => dispatch({ type: 'setSubject', subject: { offerId: v || undefined } })} options={options.offers} placeholder={options.offers.length ? 'The latest offer on the claim' : 'No offer on the claim — records "no offer made"'} hint={options.offers.length ? 'The record is filled from this offer; choose another if needed.' : undefined} />
             )}
             {subjects.includes('hire') && (
               <Select label="Hire agreement" value={state.subject.hireAgreementId ?? ''} onChange={(v) => dispatch({ type: 'setSubject', subject: { hireAgreementId: v || undefined } })} options={options.hires} placeholder="The latest hire agreement" />

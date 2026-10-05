@@ -646,6 +646,7 @@ export function testFill(ctx: AppContext, id: string, input: { claimId?: string;
     coreProps: { title: `${row.title} — test copy`, subject: row.title, keywords: [source.claim.reference, row.id, 'test copy'], created: now, modified: now },
     now,
     ...(mapping.style?.valueRun ? { valueRunStyle: mapping.style.valueRun } : {}),
+    inheritValueStyle: row.source !== 'builtin',
   });
   return { docx, sha256, fileName: `${safeFileName(row.title)} (test copy).docx` };
 }

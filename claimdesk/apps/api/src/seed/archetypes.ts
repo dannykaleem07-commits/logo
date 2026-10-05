@@ -28,7 +28,8 @@ export interface SeedSummary {
   flagsRaised: number;
 }
 
-const VAT = 0.2;
+// No VAT is charged: CCGUK's contracts say the rates are the total amounts payable, and no VAT number is held.
+const VAT = 0;
 const vat = (p: number) => Math.round(p * VAT);
 
 export async function seedArchetypes(ctx: AppContext): Promise<SeedSummary> {

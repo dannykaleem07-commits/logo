@@ -135,11 +135,17 @@ describe('claim documents: Word documents', () => {
     expect(html).not.toContain('The PDF is made when the document is approved');
   });
 
-  it('an HTML letter keeps its preview and PDF link and adds the letterhead Word download', () => {
-    const html = renderDocument(docxDocument({ id: 'doc-2', templateId: 'letter.ncaf', format: 'html', dataSnapshot: {} }));
+  it('an HTML letter keeps its preview, offers the PDF once approved, and the letterhead Word download when its parts are marked', () => {
+    const marked = '<!DOCTYPE html><html><body><main class="body" data-letter-part="body"><p>Preview</p></main></body></html>';
+    const html = renderDocument(docxDocument({ id: 'doc-2', templateId: 'letter.ncaf', format: 'html', dataSnapshot: {}, html: marked, status: 'approved', approvedAt: '2026-10-04T11:00:00.000Z', approvedBy: 'courtesycars' }));
     expect(html).toContain('Download on letterhead (Word)');
-    expect(html).toContain('href="/api/documents/doc-2/letterhead.docx"');
+    expect(html).toContain('href="/api/documents/doc-2/pdf"');
     expect(html).toContain('>PDF<');
+    // a draft has no PDF yet; a letter whose HTML does not mark its parts cannot be put on the letterhead
+    const draft = renderDocument(docxDocument({ id: 'doc-3', templateId: 'letter.ncaf', format: 'html', dataSnapshot: {} }));
+    expect(draft).toContain('The PDF is made when the document is approved');
+    expect(draft).not.toContain('>PDF<');
+    expect(draft).not.toContain('Download on letterhead (Word)');
     expect(html).toContain('<iframe');
     expect(html).not.toContain('Values used');
     expect(html).not.toContain('Download Word (.docx)');

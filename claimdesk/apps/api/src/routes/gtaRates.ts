@@ -14,7 +14,7 @@ import type { AppContext } from '../context.js';
 import { badRequest, conflict, notFound } from '../errors.js';
 import { isoDate, parse } from '../schemas/common.js';
 import { CATALOGUE_SEGMENTS, kbGtaRates, kbSegmentDefaults, SEGMENT_LABELS } from '../services/kb.js';
-import { params } from './helpers.js';
+import { configRolesOnly, params } from './helpers.js';
 
 const GROUP = /^[A-Z]{1,3}\d{0,2}$/;
 const PERIOD = /^\d{4}-\d{2}$/;
@@ -103,7 +103,7 @@ export function registerGtaRatesRoutes(app: FastifyInstance, ctx: AppContext): v
 
   app.get('/settings/gta-rates', async () => ({ items: gtaRateListing(kbGtaRates(ctx), ctx.repos.listGtaRates(ctx.db)), note: GTA_NON_SUBSCRIBER_NOTE }));
 
-  app.post('/settings/gta-rates', async (request, reply) => {
+  app.post('/settings/gta-rates', { preHandler: configRolesOnly }, async (request, reply) => {
     const body = parse(rateBody, request.body);
     if (ctx.repos.findGtaRate(ctx.db, body.group, body.period)) throw conflict('GTA_RATE_EXISTS', `A rate for group ${body.group} and period ${body.period} already exists — edit that row instead`);
     const verification = verificationFor(body.verification, request.user.id);
@@ -116,7 +116,7 @@ export function registerGtaRatesRoutes(app: FastifyInstance, ctx: AppContext): v
     return reply.status(201).send(row);
   });
 
-  app.put('/settings/gta-rates/:id', async (request) => {
+  app.put('/settings/gta-rates/:id', { preHandler: configRolesOnly }, async (request) => {
     const { id } = params<{ id: string }>(request);
     const body = parse(rateBody, request.body);
     const before = ctx.repos.getGtaRate(ctx.db, id);
@@ -132,7 +132,7 @@ export function registerGtaRatesRoutes(app: FastifyInstance, ctx: AppContext): v
     });
   });
 
-  app.delete('/settings/gta-rates/:id', async (request, reply) => {
+  app.delete('/settings/gta-rates/:id', { preHandler: configRolesOnly }, async (request, reply) => {
     const { id } = params<{ id: string }>(request);
     const before = ctx.repos.getGtaRate(ctx.db, id);
     if (!before) throw notFound('gta rate', id);
@@ -145,7 +145,7 @@ export function registerGtaRatesRoutes(app: FastifyInstance, ctx: AppContext): v
   });
 
   /** Hide (or show again) the KB row for a group and period. Answers with the row as the settings list shows it. */
-  app.post('/settings/gta-rates/suppress', async (request) => {
+  app.post('/settings/gta-rates/suppress', { preHandler: configRolesOnly }, async (request) => {
     const body = parse(suppressBody, request.body);
     const kb = kbGtaRates(ctx);
     const kbRow = kb.find((r) => gtaRateKey(r.group, r.period) === gtaRateKey(body.group, body.period));
@@ -176,7 +176,7 @@ export function registerGtaRatesRoutes(app: FastifyInstance, ctx: AppContext): v
 
   app.get('/settings/gta-segments', async () => ({ items: segmentItems(), note: GTA_NON_SUBSCRIBER_NOTE }));
 
-  app.put('/settings/gta-segments/:segment', async (request) => {
+  app.put('/settings/gta-segments/:segment', { preHandler: configRolesOnly }, async (request) => {
     const segment = requireSegment(params<{ segment: string }>(request).segment);
     const body = parse(segmentBody, request.body);
     const before = ctx.repos.listGtaSegmentDefaults(ctx.db).find((r) => r.segment === segment);
@@ -188,7 +188,7 @@ export function registerGtaRatesRoutes(app: FastifyInstance, ctx: AppContext): v
     return segmentItems().find((i) => i.segment === segment);
   });
 
-  app.delete('/settings/gta-segments/:segment', async (request, reply) => {
+  app.delete('/settings/gta-segments/:segment', { preHandler: configRolesOnly }, async (request, reply) => {
     const segment = requireSegment(params<{ segment: string }>(request).segment);
     const before = ctx.repos.listGtaSegmentDefaults(ctx.db).find((r) => r.segment === segment);
     const now = ctx.now();

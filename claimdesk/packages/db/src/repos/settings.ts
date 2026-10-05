@@ -33,7 +33,9 @@ export const DEFAULT_RATE_CARD: RateCard = {
   adminPence: 2500,
   storageDailyPence: 4500,
   engineerFeePence: 28500,
-  vatRate: 0.2,
+  // CCGUK's own contracts state the rates are the total amounts payable and that no VAT is charged; VAT can only be
+  // charged with a VAT number in Settings (none is held — never invented), so the default is 0.
+  vatRate: 0,
 };
 
 export const DEFAULT_API_KEYS_PRESENT: ApiKeysPresent = { dvlaVes: false, dvsaMot: false, companiesHouse: false, gateway: false, esign: false };
@@ -83,6 +85,9 @@ export function patchSettings(db: Db, patch: SettingsPatch, actor: Actor): Setti
   }
   return db.transaction((tx) => {
     const before = getSettings(tx);
+    const vatRateNext = patch.rateCard?.vatRate ?? before.rateCard.vatRate;
+    const vatNumberNext = (patch.vatNumber ?? before.vatNumber ?? '').trim();
+    if (vatRateNext > 0 && !vatNumberNext) throw new ValidationError('rateCard.vatRate above 0 needs the VAT number in Settings: VAT cannot be charged without a VAT registration');
     const at = nowIso();
     const next = {
       id: SETTINGS_ID,

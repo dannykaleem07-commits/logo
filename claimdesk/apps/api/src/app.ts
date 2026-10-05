@@ -22,6 +22,22 @@ import { HttpError } from './errors.js';
 import { registerAllRoutes } from './routes/index.js';
 import { readSessionToken, resolveSession } from './services/auth.js';
 
+/** Inline styles are allowed (React style props, docx-preview's generated CSS); scripts, objects and forms are not. */
+export const CONTENT_SECURITY_POLICY = [
+  "default-src 'self'",
+  "script-src 'self'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self' data: blob:",
+  "connect-src 'self'",
+  "frame-src 'self' blob: data:",
+  "worker-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+].join('; ');
+
 export const MAX_UPLOAD_BYTES = 25 * 1024 * 1024;
 
 export interface RequestUser extends User {
@@ -150,6 +166,15 @@ export async function buildApp(ctx: AppContext, options: BuildAppOptions = {}): 
     }
     if (routeUrl !== undefined && PUBLIC_API_ROUTES.has(routeUrl)) return;
     throw new HttpError(401, 'UNAUTHENTICATED', 'Sign in required');
+  });
+
+  // Content-Security-Policy on every HTML response (the web app shell and HTML documents): scripts only from the
+  // app itself, so a javascript: link or injected markup can never run (docx-preview renders Word files into the page).
+  app.addHook('onSend', async (_request, reply, payload) => {
+    const type = String(reply.getHeader('content-type') ?? '');
+    if (/^text\/html/i.test(type) && !reply.hasHeader('content-security-policy')) reply.header('content-security-policy', CONTENT_SECURITY_POLICY);
+    if (!reply.hasHeader('x-content-type-options')) reply.header('x-content-type-options', 'nosniff');
+    return payload;
   });
 
   app.setErrorHandler((err: unknown, request: FastifyRequest, reply: FastifyReply) => {

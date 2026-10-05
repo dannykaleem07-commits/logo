@@ -113,6 +113,7 @@ function findOnPath(names: string[]): string | undefined {
 /**
  * Installed browsers by platform. Every Windows 10/11 PC has Microsoft Edge (Chromium), so a packaged ClaimDesk
  * renders PDFs with nothing extra installed; Chrome is the fallback.
+ * KEEP IN SYNC with packaging/launch.cjs browserRoots()/findAppBrowser() (the desktop app window looks in the same places).
  */
 export function installedBrowserCandidates(platform: NodeJS.Platform = process.platform, env: NodeJS.ProcessEnv = process.env): string[] {
   if (platform === 'win32') {

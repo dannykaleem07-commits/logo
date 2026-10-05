@@ -18,6 +18,7 @@ import {
   OTHER_GROUP,
   panelView,
   resetToSuggestion,
+  suggestionDiffersLine,
   suggestionLine,
   suggestQuery,
   validateGtaPanel
@@ -42,6 +43,8 @@ describe('suggestQuery', () => {
     const q = suggestQuery({ ...emptyPickerValue(), make: 'Ford', model: 'Puma', variant: 'ST-Line', catalogue: { makeSlug: 'ford', modelSlug: 'puma', generationId: 'g1', trimId: 't1' }, segment: 'suv-small', engineCapacityCc: 999, fuelType: 'petrol', bodyType: 'SUV' }, DATE);
     expect(q).toEqual({ make: 'ford', model: 'puma', generationId: 'g1', trimId: 't1', segment: 'suv-small', bodyType: 'SUV', engineCapacityCc: 999, fuelType: 'petrol', variant: 'ST-Line', date: DATE });
     expect(suggestQuery({ ...emptyPickerValue(), make: 'Lada', model: 'Niva' }, DATE)).toEqual({ make: 'Lada', model: 'Niva', date: DATE });
+    // the vehicle's own year picks the catalogue generation (the date only picks the rate)
+    expect(suggestQuery({ ...emptyPickerValue(), make: 'Lada', model: 'Niva', yearOfManufacture: 2003 }, DATE)).toEqual({ make: 'Lada', model: 'Niva', yearOfManufacture: 2003, date: DATE });
   });
 });
 
@@ -108,13 +111,18 @@ describe('panel copy', () => {
   it('select of groups with rates plus Other…; free entry validated', () => {
     expect(groupOptions(RATES).map((o) => o.value)).toEqual(['M', 'M1', 'S1', OTHER_GROUP]);
     expect(groupOptions(RATES).at(-1)?.label).toBe('Other…');
+    // an "e.g." inside brackets never cuts the label mid-parenthesis
+    const eg: GtaRate[] = [{ ...RATES[0]!, group: 'S3', description: 'Standard group S3 (e.g. Golf, Focus). Larger family hatchbacks.' }, { ...RATES[0]!, group: 'S1', description: 'Standard group S1 (smallest standard cars, e.g. Fiesta)' }];
+    expect(groupOptions(eg).slice(0, 2).map((o) => o.label)).toEqual(['S1 — Standard group S1', 'S3 — Standard group S3']);
+    expect(suggestionDiffersLine({ group: 'S1', suggestion: suggestion('S3', { ...RATES[0]!, group: 'S3', dailyRatePence: 5500 }) }, (p) => formatGBP(p))).toBe('Suggested S3 (benchmark £55.00) — this unit is S1');
+    expect(suggestionDiffersLine({ group: 'S3', suggestion: suggestion('S3', RATES[0]!) }, (p) => formatGBP(p))).toBeNull();
     const other = editGroup(emptyGtaPanel(), OTHER_GROUP, RATES, DATE);
     expect(other.groupMode).toBe('other');
     expect(validateGtaPanel({ ...other, group: 'NOT A GROUP', ratePence: 100 })).toHaveProperty('group');
   });
   it('suggestion and benchmark lines, and the caveat wording', () => {
     expect(suggestionLine(suggestion('M1', RATES[1]!))).toBe('Suggested GTA group M1 — from the catalogue model (medium confidence)');
-    expect(benchmarkLine(RATES[1], (p) => formatGBP(p))).toBe('Benchmark daily rate £65.49 (2026-27, unverified)');
+    expect(benchmarkLine(RATES[1], (p) => formatGBP(p))).toBe(`Benchmark daily rate for ${RATES[1]!.group.toUpperCase()}: £65.49 (2026-27, unverified)`);
     expect(GTA_PANEL_CAVEAT).toBe('GTA rates are an industry benchmark only. Courtesy Cars Group UK Ltd is not a GTA subscriber. Set your own daily rate if it differs.');
   });
   it('verification is shown as stored — a verified KB rate stays verified, an unverified one stays unverified', () => {

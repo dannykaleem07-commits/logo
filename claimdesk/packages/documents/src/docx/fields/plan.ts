@@ -8,7 +8,7 @@
  */
 import { parseGBP } from '@ccguk/domain';
 import type { DocxScan, DocxSlot, FillInstruction, SlotValue } from '../types.js';
-import { getFieldDef } from './dictionary.js';
+import { getFieldDef, personalSalutation } from './dictionary.js';
 import { formatForSlot, optionMatches, slotValueDisplay, valueText } from './format.js';
 import { runTemplateGuards } from './guards.js';
 import { isStricterOrEqual, resolveSelectors } from './mapping.js';
@@ -79,6 +79,15 @@ function inputTypeOfBlank(pattern: string | undefined, def: FieldDef | undefined
   }
 }
 
+function realCalendarDate(y: string, m: string, d: string): boolean {
+  const dt = new Date(Date.UTC(Number(y), Number(m) - 1, Number(d)));
+  return dt.getUTCFullYear() === Number(y) && dt.getUTCMonth() === Number(m) - 1 && dt.getUTCDate() === Number(d);
+}
+
+/** Line items that make up the C1.4 account total (the total is what these print, not what the records say). */
+const ACCOUNT_LINE_KEYS = ['recovery.netPence', 'storage.netPence', 'engineer.feePence', 'payment.additionalPence'];
+const ACCOUNT_TOTAL_KEY = 'payment.totalPence';
+
 /** Handler input → FieldValue for text-like rows; undefined when it cannot be read. */
 function inputToValue(raw: SlotInput, inputType: PlanInputType, def: FieldDef | undefined): FieldValue | undefined {
   if (raw === null) return undefined;
@@ -87,9 +96,9 @@ function inputToValue(raw: SlotInput, inputType: PlanInputType, def: FieldDef | 
       if (typeof raw !== 'string') return undefined;
       const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw.trim());
       const uk = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(raw.trim());
-      if (iso) return { t: 'date', v: raw.trim() };
-      if (uk) return { t: 'date', v: `${uk[3]}-${uk[2]!.padStart(2, '0')}-${uk[1]!.padStart(2, '0')}` };
-      return undefined;
+      const ymd: [string, string, string] | undefined = iso ? [iso[1]!, iso[2]!, iso[3]!] : uk ? [uk[3]!, uk[2]!.padStart(2, '0'), uk[1]!.padStart(2, '0')] : undefined;
+      // a calendar date only: 31/02 or month 13 is refused (INVALID_INPUT), never printed
+      return ymd && realCalendarDate(ymd[0], ymd[1], ymd[2]) ? { t: 'date', v: `${ymd[0]}-${ymd[1]}-${ymd[2]}` } : undefined;
     }
     case 'datetime':
       return typeof raw === 'string' && !Number.isNaN(Date.parse(raw)) ? { t: 'datetime', v: raw } : undefined;
@@ -317,6 +326,16 @@ export function buildFillPlan(scan: DocxScan, mapping: TemplateMapping, source: 
         if (policy === 'auto' || policy === 'auto-if-known' || policy === 'suggest') {
           const needsConfirm = policy === 'suggest' || gtaUnverified;
           row.needsConfirmation = needsConfirm;
+          // A confirmation carried over from an earlier generation stands only while the figure is unchanged.
+          const before = inputs.confirmedDisplay?.[row.slotId];
+          if (needsConfirm && row.confirmed && before !== undefined) {
+            const now = w.option ? (sv?.type === 'text' ? sv.text : '') : slotValueDisplay(sv, blankSlot);
+            if (now !== before) {
+              row.confirmed = false;
+              row.note = [row.note, `Previously confirmed as "${before}"; the value has changed since — check it and confirm again.`].filter(Boolean).join(' ');
+              issues.push({ code: 'CONFIRMATION_STALE', severity: 'warn', message: `${row.label}: the confirmed value "${before}" has changed to "${now}"; it is left blank until confirmed again.`, slotId: row.slotId });
+            }
+          }
           if (!needsConfirm || row.confirmed) {
             w.value = resolved;
             w.slotValue = sv;
@@ -400,6 +419,43 @@ export function buildFillPlan(scan: DocxScan, mapping: TemplateMapping, source: 
   }
   if (changed) collect();
 
+  // The account total adds up what the account lines print (a typed line or the Additional charge included),
+  // unless the handler typed the total. While a service is still open (no record total) and nothing was typed,
+  // the total stays blank.
+  for (const tw of works) {
+    if (tw.row.key !== ACCOUNT_TOTAL_KEY || tw.fromInput || tw.option) continue;
+    const section = tw.slot.sectionPath.join('/');
+    const lines = works.filter((w) => !w.option && w.row.key && ACCOUNT_LINE_KEYS.includes(w.row.key) && w.slot.sectionPath.join('/') === section);
+    if (!lines.length) continue;
+    const typed = lines.some((w) => w.fromInput);
+    if (!tw.value && !typed) continue;
+    const amounts = lines.map((w) => (w.slotValue && w.value?.t === 'money' ? w.value.v : undefined));
+    // a service on the record whose line prints nothing: the total cannot be stated
+    const unstated = lines.some((w, i) => amounts[i] === undefined && !w.fromInput && w.row.key !== 'payment.additionalPence' && resolveField(w.row.key!, source) !== undefined);
+    if (unstated || amounts.every((a) => a === undefined)) continue;
+    const total: FieldValue = { t: 'money', v: amounts.reduce<number>((a, b) => a + (b ?? 0), 0) };
+    if (tw.value?.t === 'money' && tw.value.v === total.v) continue;
+    tw.value = total;
+    tw.slotValue = formatForSlot(total, tw.slot, tw.def, tw.entry?.format, tw.entry?.when);
+    tw.row.note = [tw.row.note, 'Worked out from the account lines as printed.'].filter(Boolean).join(' ');
+    changed = true;
+  }
+  if (changed) collect();
+
+  // A named person typed "for the attention of" is greeted by name (unless the salutation itself was typed).
+  const attention = printed.get('recipient.attentionName');
+  const named = attention?.t === 'text' ? personalSalutation(attention.v) : undefined;
+  if (named) {
+    for (const w of works) {
+      if (w.row.key !== 'recipient.salutation' || w.fromInput || !w.slotValue) continue;
+      const v: FieldValue = { t: 'text', v: named };
+      w.value = v;
+      w.slotValue = formatForSlot(v, w.slot, w.def, w.entry?.format, w.entry?.when);
+      changed = true;
+    }
+    if (changed) collect();
+  }
+
   // Valediction follows the salutation actually printed.
   const salutation = keyValue('recipient.salutation');
   for (const w of works) {
@@ -457,7 +513,9 @@ export function buildFillPlan(scan: DocxScan, mapping: TemplateMapping, source: 
     if (inRemoved(w.slot) || !w.row.key || guardValues.has(w.row.key)) continue;
     if (w.slotValue) guardValues.set(w.row.key, w.value);
   }
-  issues.push(...runTemplateGuards(mapping.guards ?? [], { scan, source, values: guardValues, ...(variantId !== undefined ? { variant: variantId } : {}), templateId: mapping.templateId, handlerKeys }));
+  const slotIdsByKey = new Map<string, string>();
+  for (const w of works) if (!inRemoved(w.slot) && w.row.key && !slotIdsByKey.has(w.row.key)) slotIdsByKey.set(w.row.key, w.row.slotId);
+  issues.push(...runTemplateGuards(mapping.guards ?? [], { scan, source, values: guardValues, ...(variantId !== undefined ? { variant: variantId } : {}), templateId: mapping.templateId, handlerKeys, slotIdsByKey }));
 
   return { templateId: mapping.templateId, ...(variantId !== undefined ? { variant: variantId } : {}), rows, instructions, removeBlocks, issues };
 }

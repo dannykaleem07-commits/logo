@@ -127,6 +127,42 @@ describe('checkDocxSafety', () => {
     expect(codeOf(() => scanDocx(evilDoc))).toBe('XML_DTD_REFUSED');
   });
 
+  it('refuses a UTF-16 (or otherwise non-UTF-8) XML part, so a DTD cannot hide from the text checks', () => {
+    const utf16 = (text: string) => {
+      const out = new Uint8Array(2 + text.length * 2);
+      out[0] = 0xff;
+      out[1] = 0xfe;
+      for (let i = 0; i < text.length; i++) out[2 + i * 2] = text.charCodeAt(i);
+      return out;
+    };
+    const hidden = docx('', { extraParts: { 'word/theme/theme1.xml': utf16('<?xml version="1.0" encoding="UTF-16"?><!DOCTYPE a [<!ELEMENT a ANY>]><a/>') } });
+    const res = checkDocxSafety(hidden);
+    expect(res.ok).toBe(false);
+    expect(res.errors.map((e) => e.code)).toContain('XML_ENCODING_REFUSED');
+    const declared = docx('', { extraParts: { 'customXml/item1.xml': '<?xml version="1.0" encoding="ISO-8859-1"?><a/>' } });
+    expect(checkDocxSafety(declared).errors.map((e) => e.code)).toContain('XML_ENCODING_REFUSED');
+    // any XML part must parse, whatever its name
+    const broken = docx('', { extraParts: { 'word/theme/theme1.xml': `${DECL}<a><b></a>` } });
+    expect(checkDocxSafety(broken).errors.map((e) => e.code)).toContain('INVALID_XML');
+    expect(checkDocxSafety(docx('')).ok).toBe(true);
+  });
+
+  it('refuses links that are not http, https or mailto (javascript: in a relationship or a HYPERLINK field); fill neutralises them', () => {
+    const rel = (id: string, target: string) => `<Relationship Id="${id}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${target}" TargetMode="External"/>`;
+    const bad = docx('', { extraRels: rel('rIdX', 'javascript:fetch(1)') });
+    expect(checkDocxSafety(bad).errors.map((e) => e.code)).toContain('HYPERLINK_REFUSED');
+    const sneaky = docx('', { extraRels: rel('rIdX', ' java&#9;script:alert(1)') });
+    expect(checkDocxSafety(sneaky).errors.map((e) => e.code)).toContain('HYPERLINK_REFUSED');
+    const field = docx('<w:p><w:r><w:instrText xml:space="preserve"> HYPERLINK "javascript:alert(1)" </w:instrText></w:r></w:p>');
+    expect(checkDocxSafety(field).errors.map((e) => e.code)).toContain('HYPERLINK_REFUSED');
+    const ok = docx('', { extraRels: `${rel('rIdA', 'https://www.courtesycars.net')}${rel('rIdB', 'mailto:claims@courtesycars.net')}` });
+    expect(checkDocxSafety(ok).ok).toBe(true);
+    const filled = fillDocx(bad, [], { coreProps, now });
+    const rels = new TextDecoder().decode(unzipSync(filled.docx)['word/_rels/document.xml.rels']!);
+    expect(rels).not.toContain('javascript:');
+    expect(rels).toContain('Target="#"');
+  });
+
   it('refuses macros: vbaProject.bin and a macro-enabled main part (.docm)', () => {
     const vba = docx('', { extraParts: { 'word/vbaProject.bin': new Uint8Array([1, 2, 3]) } });
     expect(checkDocxSafety(vba).errors.map((e) => e.code)).toContain('MACROS_REFUSED');

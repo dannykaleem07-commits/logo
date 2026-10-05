@@ -111,7 +111,7 @@ function withRole(parties: Array<Party | undefined>, role: Party['roles'][number
 }
 
 /**
- * Build the merge source for a claim. `subject` picks the witness (04), offer (08), hire (03/06/07; default the latest
+ * Build the merge source for a claim. `subject` picks the witness (04), offer (08; default the latest offer), hire (03/06/07; default the latest
  * hire), recipient (letters) and exhibits (04). Unknown subject ids are refused (400) rather than silently ignored.
  */
 export function buildMergeSource(ctx: AppContext, claimId: string, user: DocUserLike, subject: MergeSubject = {}, opts: BuildMergeSourceOptions = {}): MergeSource {
@@ -156,6 +156,10 @@ export function buildMergeSource(ctx: AppContext, claimId: string, user: DocUser
   if (subject.offerId) {
     offer = bundle.offers.find((o) => o.id === subject.offerId);
     if (!offer) throw badRequest(`offerId ${subject.offerId} is not on this claim`);
+  } else if (bundle.offers.length) {
+    // like the hire, the offer defaults to the latest one on the claim: a claim with an offer never prints a
+    // mitigation record with neither "offer made" nor "no offer made" ticked
+    offer = [...bundle.offers].sort((a, b) => b.receivedAt.localeCompare(a.receivedAt))[0];
   }
 
   const ownInsurer = bundle.claim.clientInsurerId ? ctx.repos.getParty(ctx.db, bundle.claim.clientInsurerId) : undefined;

@@ -15,7 +15,9 @@ describe('confirmationOfPayeeCheck', () => {
 describe('settings form', () => {
   it('round-trips the API shape with VAT as a percentage and the office as an address', () => {
     const f = settingsToForm({ registeredOffice: { line1: '44 Syon Lane', line2: 'Isleworth', town: 'London', postcode: 'TW7 5NQ' }, bank: { accountName: COMPANY_NAME, sortCode: '123456', accountNumber: '12345678' }, rateCard: { ...DEFAULT_RATE_CARD } });
-    expect(f.vatRatePct).toBe('20');
+    // no VAT by default: CCGUK's contracts say no VAT is charged and no VAT number is held
+    expect(f.vatRatePct).toBe('0');
+    expect(settingsToForm({ vatNumber: 'GB123456789', rateCard: { ...DEFAULT_RATE_CARD, vatRate: 0.2 } }).vatRatePct).toBe('20');
     expect(f.storageDailyPence).toBe(4500);
     expect(f.registeredOffice).toBe('44 Syon Lane\nIsleworth\nLondon\nTW7 5NQ');
     const patch = buildSettingsPatch(f);
@@ -46,7 +48,14 @@ describe('settings form', () => {
   });
   it('fills rate-card gaps with the brief defaults (£90 + £3/mile + £25; £45/day; £285)', () => {
     const patch = buildSettingsPatch(settingsToForm(undefined));
-    expect(patch.rateCard).toEqual({ recoveryCalloutPence: 9000, recoveryPerLoadedMilePence: 300, recoveryAdminPence: 2500, storageDailyPence: 4500, engineerFeePence: 28500, vatRate: 0.2 });
+    expect(patch.rateCard).toEqual({ recoveryCalloutPence: 9000, recoveryPerLoadedMilePence: 300, recoveryAdminPence: 2500, storageDailyPence: 4500, engineerFeePence: 28500, vatRate: 0 });
+  });
+  it('refuses a VAT rate above 0 without a VAT number', () => {
+    const f = settingsToForm(undefined);
+    f.vatRatePct = '20';
+    expect(validateSettings(f).vatRatePct).toMatch(/VAT number/);
+    f.vatNumber = 'GB123456789';
+    expect(validateSettings(f).vatRatePct).toBeUndefined();
   });
   it('blocks legacy details and checks formats', () => {
     const f = settingsToForm(undefined);
@@ -95,7 +104,7 @@ describe('company details, lookup mode and version (design doc §H.4)', () => {
     expect(f.icoRegistration).toBe('');
     expect(validateSettings(f)).toEqual({});
     expect(COMPANY_DETAILS).toMatchObject({ caseHandlerPhone: '07425 475922', officePhone: '020 7052 5403', claimsEmail: 'claims@courtesycars.net', website: 'www.courtesycars.net' });
-    expect(LEGAL_FOOTER).toBe('Courtesy Cars Group UK Ltd · Registered in England & Wales No. 17430389 · 44 Syon Lane, Isleworth, London TW7 5NQ');
+    expect(LEGAL_FOOTER).toBe('Courtesy Cars Group UK Ltd · Registered in England & Wales No. 17430389 · 44 Syon Lane, Isleworth, London TW7 5NQ · 020 7052 5403 · 07425 475922');
   });
   it('reads the lookup mode from the API, or from the key flags of an older API', () => {
     expect(lookupModeOf({ lookupMode: 'manual' })).toBe('manual');

@@ -293,6 +293,8 @@ export interface GtaSuggestQuery {
   fuelType?: FuelType;
   variant?: string;
   recordedGroup?: string;
+  /** The vehicle's year: picks the catalogue generation (the date picks the benchmark rate). */
+  yearOfManufacture?: number;
   date?: ISODate;
 }
 

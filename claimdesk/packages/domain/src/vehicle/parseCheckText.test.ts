@@ -234,3 +234,22 @@ describe('parseLooseDate', () => {
     expect(parseLooseDate('31/02/2027')).toBeUndefined();
   });
 });
+
+describe('page junk and less common forms', () => {
+  it('ignores page text where a make or model would be', () => {
+    const r = parseVehicleCheckText('Make sure you accept cookies\nMake: Information\nModel —\nDescription of the vehicle is below\nFORD', { today: '2026-10-05' });
+    expect(r.fields.make).toBeUndefined();
+    expect(r.fields.model).toBeUndefined();
+  });
+  it('reads "No MOT required", a mileage with a note in brackets and GOV.UK "CO₂Emissions"', () => {
+    const r = parseVehicleCheckText('MOT: No MOT required (under 3 years)\nMileage: 45,390 (at last MOT)\nCO₂Emissions\n99 g/km', { today: '2026-10-05' });
+    expect(r.fields.motStatus).toBe('Exempt / not yet due');
+    expect(r.fields.lastMotMileage).toBe(45390);
+    expect(r.fields.co2Gkm).toBe(99);
+  });
+  it('still reads a real model on the line after its label', () => {
+    const r = parseVehicleCheckText('Model —\nGOLF MATCH EDITION TSI\nMake\nVOLKSWAGEN', { today: '2026-10-05' });
+    expect(r.fields.model).toBe('GOLF MATCH EDITION TSI');
+    expect(r.fields.make).toBe('VOLKSWAGEN');
+  });
+});

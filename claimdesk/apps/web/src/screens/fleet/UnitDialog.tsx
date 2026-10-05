@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { ErrorAlert } from '../../components/ErrorAlert';
 import type { FleetUnit, FleetUse, InsurancePolicy } from '@ccguk/domain';
 import { formatRegistration } from '@ccguk/domain';
 import { isApiError } from '../../api/client';
@@ -107,11 +108,7 @@ export function UnitDialog({ open, unit, onClose }: { open: boolean; unit: Fleet
           void submit();
         }}
       >
-        {serverError && (
-          <div className="notice notice-danger" role="alert">
-            {serverError}
-          </div>
-        )}
+        <ErrorAlert message={serverError} />
         {isNew ? (
           <p className="xs muted" style={{ margin: 0 }}>
             A fleet registration can never be a client vehicle on a claim (lessons f, h).

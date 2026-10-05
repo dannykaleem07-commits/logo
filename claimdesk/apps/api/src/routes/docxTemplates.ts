@@ -47,7 +47,7 @@ import {
   uploadTemplate,
 } from '../services/docxTemplates.js';
 import { attachmentDisposition } from './documents.js';
-import { params, requireClaim } from './helpers.js';
+import { configRolesOnly, params, requireClaim } from './helpers.js';
 
 const DOCX_MIME = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 
@@ -87,7 +87,7 @@ export function registerDocxTemplatesRoutes(app: FastifyInstance, ctx: AppContex
     return { items: listTemplateSummaries(ctx, q.includeInactive === 'true') };
   });
 
-  app.post('/docx-templates', async (request, reply) => {
+  app.post('/docx-templates', { preHandler: configRolesOnly }, async (request, reply) => {
     const upload = await readUpload(request);
     const fields = parse(docxTemplateUploadFields, blankToUndefined(upload.fields));
     const detail = uploadTemplate(
@@ -103,7 +103,7 @@ export function registerDocxTemplatesRoutes(app: FastifyInstance, ctx: AppContex
     return templateDetail(ctx, ctx.repos.requireDocumentTemplate(ctx.db, id));
   });
 
-  app.patch('/docx-templates/:id', async (request) => {
+  app.patch('/docx-templates/:id', { preHandler: configRolesOnly }, async (request) => {
     const { id } = params<{ id: string }>(request);
     const body = parse(docxTemplatePatchBody, request.body ?? {});
     ctx.repos.requireDocumentTemplate(ctx.db, id);
@@ -111,25 +111,25 @@ export function registerDocxTemplatesRoutes(app: FastifyInstance, ctx: AppContex
     return templateSummary(ctx, row);
   });
 
-  app.post('/docx-templates/:id/acknowledge', async (request) => {
+  app.post('/docx-templates/:id/acknowledge', { preHandler: configRolesOnly }, async (request) => {
     const { id } = params<{ id: string }>(request);
     ctx.repos.requireDocumentTemplate(ctx.db, id);
     const row = ctx.repos.acknowledgeTemplateWarnings(ctx.db, id, request.actor);
     return templateSummary(ctx, row);
   });
 
-  app.put('/docx-templates/:id/mapping', async (request) => {
+  app.put('/docx-templates/:id/mapping', { preHandler: configRolesOnly }, async (request) => {
     const { id } = params<{ id: string }>(request);
     const body = parse(docxTemplateMappingBody, request.body);
     return saveMapping(ctx, id, { entries: body.entries, ...(body.ignore ? { ignore: body.ignore } : {}) }, request.actor);
   });
 
-  app.delete('/docx-templates/:id/mapping', async (request) => {
+  app.delete('/docx-templates/:id/mapping', { preHandler: configRolesOnly }, async (request) => {
     const { id } = params<{ id: string }>(request);
     return resetMapping(ctx, id, request.actor);
   });
 
-  app.post('/docx-templates/:id/file', async (request) => {
+  app.post('/docx-templates/:id/file', { preHandler: configRolesOnly }, async (request) => {
     const { id } = params<{ id: string }>(request);
     const row = ctx.repos.requireDocumentTemplate(ctx.db, id);
     if (row.source !== 'uploaded') throw badRequest('Built-in templates ship with the app and cannot be replaced; upload your own version as a new template');

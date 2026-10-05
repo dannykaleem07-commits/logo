@@ -386,13 +386,23 @@ export function originLabel(origin: string | undefined): string {
   return (ORIGIN_LABEL as Record<string, string>)[origin ?? 'none'] ?? origin ?? '—';
 }
 
-/** Blocking issues still standing: a VALUES_REQUIRED issue goes away once the handler fills that row. */
+/**
+ * Block issues that stand only while one row is blank: they go away as soon as the handler fills that row
+ * (the API re-checks them on Generate).
+ */
+const CLEARED_BY_FILLING: Record<string, string | undefined> = {
+  VALUES_REQUIRED: undefined,
+  WITNESS_RELATIONSHIP_REQUIRED: 'witness.relationshipToClaimant'
+};
+
+/** Blocking issues still standing: a "fill this row" issue goes away once the handler fills that row. */
 export function openBlockingIssues(issues: FillPlanIssue[], rows: PlanRow[], state: Pick<FillState, 'edits' | 'confirmed'>): FillPlanIssue[] {
   const byId = new Map(rows.map((r) => [r.slotId, r]));
   return issues.filter((i) => {
     if (i.severity !== 'block') return false;
-    if (i.code === 'VALUES_REQUIRED' && i.slotId) {
-      const row = byId.get(i.slotId);
+    if (Object.prototype.hasOwnProperty.call(CLEARED_BY_FILLING, i.code)) {
+      const key = CLEARED_BY_FILLING[i.code];
+      const row = (i.slotId ? byId.get(i.slotId) : undefined) ?? (key ? rows.find((r) => r.key === key && !isLocked(r)) : undefined);
       if (row && rowWillPrint(row, state)) return false;
     }
     return true;

@@ -7,6 +7,7 @@ import { loadConfig } from './config.js';
 import { buildContext, ensureDataDirs } from './context.js';
 import { buildApp } from './app.js';
 import { ensureDefaultLogin, prefillExposureWarning } from './services/auth.js';
+import { lookupModeFor } from './services/lookup.js';
 
 export async function start(): Promise<void> {
   const config = loadConfig();
@@ -29,8 +30,10 @@ export async function start(): Promise<void> {
     database: config.databasePath,
     evidenceDir: config.evidenceDir,
     documentsDir: config.documentsDir,
+    templatesDir: config.templatesDir,
+    docxPdfConverter: config.docxPdfConverter,
     kbData: ctx.kb.dataDir ?? 'not found',
-    lookups: config.keysPresent,
+    lookups: { ...config.keysPresent, mode: lookupModeFor(ctx) },
     auth: config.authMode,
     signIn: { username: login.username, created: login.created, prefill: config.loginPrefill },
   });

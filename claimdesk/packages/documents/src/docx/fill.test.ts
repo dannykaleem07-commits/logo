@@ -326,3 +326,16 @@ describe('fillDocx on the real assets', () => {
     expect(t).toContain('Cancellation form');
   });
 });
+
+describe('value style of an uploaded template', () => {
+  it('a value in an empty cell inherits the document font (no Calibri 9 pt) when inheritValueStyle is set', () => {
+    const src = docx(tbl([tr([labelCell('Client name'), tc([p()], { w: 2500 })])], [2300, 2500]));
+    const slot = scanDocx(src).slots.find((x) => x.label === 'Client name')!;
+    const t0 = new Date('2026-10-05T00:00:00Z');
+    const cp = { title: 'x', created: t0, modified: t0 };
+    const builtin = new TextDecoder().decode(unzipSync(fillDocx(src, [{ slotId: slot.id, value: { type: 'text', text: 'Jane Example' } }], { coreProps: cp, now: t0 }).docx)['word/document.xml']!);
+    const upload = new TextDecoder().decode(unzipSync(fillDocx(src, [{ slotId: slot.id, value: { type: 'text', text: 'Jane Example' } }], { coreProps: cp, now: t0, inheritValueStyle: true }).docx)['word/document.xml']!);
+    expect(builtin).toMatch(/<w:r><w:rPr><w:rFonts[^>]*Calibri[^>]*\/>[\s\S]*?<w:t[^>]*>Jane Example</);
+    expect(upload).toMatch(/<w:r><w:t[^>]*>Jane Example<\/w:t><\/w:r>/);
+  });
+});

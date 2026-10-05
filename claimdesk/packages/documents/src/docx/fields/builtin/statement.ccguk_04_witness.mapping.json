@@ -172,6 +172,8 @@
         "label": "paragraphs"
       },
       "key": "witness.paragraphs",
+      "label": "Statement paragraphs",
+      "required": true,
       "note": "One fact per paragraph, in the witness's own words; never pre-filled."
     },
     {

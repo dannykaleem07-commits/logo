@@ -358,8 +358,14 @@ export type VehicleLookupResponse =
   | { status: 'ok' | 'partial'; lookupMode: 'live'; registration: string; vehicle: Vehicle; providers: Record<string, 'ok' | LookupFailure>; lookupIds: Id[]; onFile: OnFileMatch[]; externalLinks: ExternalVehicleLink[] };
 
 /** 'live' when a DVLA VES or DVSA MOT key is configured, else 'manual'. */
+/** 'live' when a DVLA VES or DVSA MOT key is configured; otherwise searches use ClaimDesk records and Total Car Check. */
+export function lookupModeOf(keys: { dvlaVes?: boolean; dvsaMot?: boolean } | undefined): LookupMode {
+  return keys?.dvlaVes || keys?.dvsaMot ? 'live' : 'manual';
+}
+
+/** The lookup mode for this running API (GET /health `lookups.mode`, POST /vehicles/lookup `lookupMode`). */
 export function lookupModeFor(ctx: AppContext): LookupMode {
-  return ctx.config.keysPresent.dvlaVes || ctx.config.keysPresent.dvsaMot ? 'live' : 'manual';
+  return lookupModeOf(ctx.config.keysPresent);
 }
 
 export async function lookupVehicle(

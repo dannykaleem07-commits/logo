@@ -1,4 +1,5 @@
 import { useEffect, useId, useState } from 'react';
+import { ErrorAlert } from '../../components/ErrorAlert';
 import { formatGBP } from '@ccguk/domain';
 import '../../styles/screens.css';
 import { isApiError } from '../../api/client';
@@ -227,11 +228,7 @@ function RateDialog({ state, onClose }: { state: { form: RateForm; title: string
       }
     >
       <div className="stack">
-        {serverError && (
-          <div className="notice notice-danger small" role="alert">
-            {serverError}
-          </div>
-        )}
+        <ErrorAlert message={serverError} className="small" />
         <div className="form-grid">
           <TextInput label="GTA group" required value={form.group} onChange={set('group')} error={errors.group} placeholder="S1, M, M1, CP1…" autoCapitalize="characters" disabled={form.lockKey} hint={form.lockKey ? 'Your rate replaces the knowledge-base rate for this group and period.' : undefined} />
           <TextInput label="Description" value={form.description} onChange={set('description')} placeholder="Small car (GTA group S1)" />

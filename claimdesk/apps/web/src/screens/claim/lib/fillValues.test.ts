@@ -200,6 +200,20 @@ describe('required values, blocking issues and the Generate button', () => {
     expect(openBlockingIssues(v.issues, rows, s)).toEqual([]);
     expect(generateBlocker(v, s)).toBeUndefined();
   });
+  it('the witness relationship block clears once the relationship is typed (with or without a slot id on the issue)', () => {
+    const r = row({ slotId: 'title/relationship-to-claimant', label: 'Relationship to claimant', key: 'witness.relationshipToClaimant', required: true, value: null, origin: 'none' });
+    const issueNoSlot = { code: 'WITNESS_RELATIONSHIP_REQUIRED', severity: 'block' as const, message: "Enter the witness's relationship to the claimant" };
+    const issueWithSlot = { ...issueNoSlot, slotId: r.slotId };
+    const required = { code: 'VALUES_REQUIRED', severity: 'block' as const, message: 'Relationship to claimant is required.', slotId: r.slotId };
+    const v = { ...values01(), groups: [{ section: 'title', title: 'Title', rows: [r] }], issues: [required, issueWithSlot] };
+    let s = stateFor(T04);
+    expect(openBlockingIssues([required, issueNoSlot], [r], s)).toHaveLength(2);
+    expect(generateBlocker(v, s)).toMatch(/2 blocking issues/);
+    s = fillReducer(s, { type: 'edit', slotId: r.slotId, value: 'None (the witness is the claimant)' });
+    expect(openBlockingIssues([required, issueNoSlot], [r], s)).toEqual([]);
+    expect(openBlockingIssues([required, issueWithSlot], [r], s)).toEqual([]);
+    expect(generateBlocker(v, s)).toBeUndefined();
+  });
   it('a required suggestion counts as missing until confirmed', () => {
     const r = row({ slotId: 'a/b', label: 'B', required: true, policy: 'suggest', value: 'x', needsConfirmation: true, origin: 'suggested' });
     expect(missingRequired([r], stateFor('t'))).toHaveLength(1);

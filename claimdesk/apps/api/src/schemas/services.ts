@@ -252,6 +252,12 @@ export const gtaSuggestionInput = z.object({
   rateGroup: z.string().max(8).nullable().optional(),
   ratePeriod: z.string().max(16).nullable().optional(),
 });
+/** A GTA group code (S1, M, M1, CP2): trimmed and upper-cased, anything else refused. */
+export const gtaGroupCode = z
+  .string()
+  .trim()
+  .transform((g) => g.toUpperCase())
+  .pipe(z.string().regex(/^[A-Z]{1,3}\d{0,2}$/, 'expected a GTA group code like S1, M or M1'));
 export const fleetUnitBody = z
   .object({
     vehicleId: id.optional(),
@@ -261,7 +267,7 @@ export const fleetUnitBody = z
     /** Optional: when omitted the server uses the GTA suggestion's benchmark rate (or 422 GTA_SUGGESTION_UNAVAILABLE). */
     dailyRatePence: pence.optional(),
     /** Optional: when omitted the server uses the GTA suggestion's group. */
-    gtaGroup: z.string().trim().min(1).optional(),
+    gtaGroup: gtaGroupCode.optional(),
     gtaSuggestion: gtaSuggestionInput.optional(),
     keeperAddressOnV5C: addressSchema.optional(),
     keeperAddressCurrent: z.boolean().optional(),
@@ -277,7 +283,7 @@ export const fleetUnitPatchBody = z.object({
   declaredUses: z.array(fleetUse).min(1).optional(),
   policyId: id.nullable().optional(),
   dailyRatePence: pence.optional(),
-  gtaGroup: z.string().optional(),
+  gtaGroup: gtaGroupCode.optional(),
   keeperAddressOnV5C: addressSchema.optional(),
   keeperAddressCurrent: z.boolean().optional(),
   serviceDueDate: isoDate.optional(),

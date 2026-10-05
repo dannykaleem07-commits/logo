@@ -29,8 +29,11 @@ export const COMPANY_DETAILS = {
 /** The registered office as the API defaults it (packages/db DEFAULT_REGISTERED_OFFICE). */
 export const DEFAULT_REGISTERED_OFFICE: Address = { line1: '44 Syon Lane', line2: 'Isleworth', town: 'London', postcode: 'TW7 5NQ' };
 
-/** Footer line for the sign-in screen. */
-export const LEGAL_FOOTER = `${COMPANY_NAME} · Registered in England & Wales No. ${COMPANY_NUMBER} · ${COMPANY_DETAILS.registeredOffice}`;
+/** Footer line for the sign-in screen (registered office and both phone numbers). */
+export const LEGAL_FOOTER = `${COMPANY_NAME} · Registered in England & Wales No. ${COMPANY_NUMBER} · ${COMPANY_DETAILS.registeredOffice} · ${COMPANY_DETAILS.officePhone} · ${COMPANY_DETAILS.caseHandlerPhone}`;
+
+/** Second footer line of the app shell: where the company is and how to reach it. */
+export const SHELL_CONTACT_LINE = `44 Syon Lane, Isleworth TW7 5NQ · ${COMPANY_DETAILS.officePhone}`;
 
 /** "ClaimDesk 0.2.57" from GET /api/health `version`; just "ClaimDesk" until it is known. */
 export function versionLabel(version: string | undefined | null): string {
@@ -102,7 +105,7 @@ export interface SettingsForm {
 }
 
 /** Rate card defaults from BLUEPRINT §3.4 / ARCHITECTURE convention 11 (£90 + £3/mile + £25; £45/day; £285). */
-export const DEFAULT_RATE_CARD = { recoveryCalloutPence: 9000, recoveryPerLoadedMilePence: 300, recoveryAdminPence: 2500, storageDailyPence: 4500, engineerFeePence: 28500, vatRate: 0.2 } as const;
+export const DEFAULT_RATE_CARD = { recoveryCalloutPence: 9000, recoveryPerLoadedMilePence: 300, recoveryAdminPence: 2500, storageDailyPence: 4500, engineerFeePence: 28500, vatRate: 0 } as const;
 
 /** The API holds the registered office as an `Address`; the form edits it as one line per part (older builds sent a string). */
 export function addressToLines(a: Address | string | undefined): string {
@@ -189,6 +192,7 @@ export function validateSettings(f: SettingsForm): SettingsErrors {
   if (f.vatNumber && !/^(GB)?\s?\d{9}(\d{3})?$/i.test(f.vatNumber.replace(/\s+/g, ''))) e.vatNumber = 'UK VAT number: GB followed by 9 digits (leave blank if not registered)';
   if (f.icoRegistration && !/^[A-Z]{1,2}\d{6,7}$/i.test(f.icoRegistration.replace(/\s+/g, ''))) e.icoRegistration = 'ICO registration reference looks like ZA123456 or Z1234567';
   if (f.vatRatePct && parsePct(f.vatRatePct) === null) e.vatRatePct = 'Enter the VAT rate as a percentage, e.g. 20';
+  else if ((parsePct(f.vatRatePct) ?? 0) > 0 && !f.vatNumber.trim()) e.vatRatePct = 'VAT can only be charged with a VAT number — enter it above, or leave the rate at 0';
   for (const k of ['recoveryCalloutPence', 'recoveryPerLoadedMilePence', 'recoveryAdminPence', 'storageDailyPence', 'engineerFeePence'] as const) {
     const v = f[k];
     if (v !== null && v < 0) e[k] = 'Cannot be negative';
