@@ -255,3 +255,61 @@ describe('schedules (London time)', () => {
     }
   });
 });
+
+describe('control-room and settings routes', () => {
+  it('autonomy settings: validated, admin-only, always-ask entries refused', async () => {
+    t.ctx.repos.createUser(t.ctx.db, { id: 'boss', name: 'Owner', email: 'boss@ccguk.local', role: 'admin', mfaEnabled: false });
+    t.ctx.repos.createUser(t.ctx.db, { id: 'clerk', name: 'Clerk', email: 'clerk@ccguk.local', role: 'handler', mfaEnabled: false });
+    const admin = { 'x-user-id': 'boss' };
+    const got = await t.api<{ settings: { holdMinutes: number }; alwaysAsk: { templates: string[] }; templates: Array<{ id: string; alwaysAsk: boolean }> }>('GET', '/settings/autonomy');
+    expect(got.body.settings.holdMinutes).toBe(10);
+    expect(got.body.templates.find((x) => x.id === 'letter.letter_before_claim')?.alwaysAsk).toBe(true);
+    expect((await t.api('PATCH', '/settings/autonomy', { holdMinutes: 15 }, { 'x-user-id': 'clerk' })).status).toBe(403);
+    const bad = await t.api<{ error: { code: string } }>('PATCH', '/settings/autonomy', { autoSendTemplates: ['letter.chaser_7', 'letter.part36_offer'] }, admin);
+    expect(bad.status).toBe(400);
+    expect(bad.body.error.code).toBe('ALWAYS_ASK');
+    expect((await t.api('PATCH', '/settings/autonomy', { autoSendEmailKinds: ['ack', 'offer_response'] }, admin)).status).toBe(400);
+    expect((await t.api('PATCH', '/settings/autonomy', { thresholds: { external: 1.5 } }, admin)).status).toBe(400);
+    expect((await t.api('PATCH', '/settings/autonomy', { autoApproveTemplates: ['letter.does_not_exist'] }, admin)).status).toBe(400);
+    const ok = await t.api<{ settings: { holdMinutes: number; quietHours: unknown; killSwitch: boolean } }>('PATCH', '/settings/autonomy', { holdMinutes: 15, quietHours: null, killSwitch: true }, admin);
+    expect(ok.status).toBe(200);
+    expect(ok.body.settings).toMatchObject({ holdMinutes: 15, quietHours: null, killSwitch: true });
+    expect(t.ctx.repos.listAudit(t.ctx.db, { action: 'agents.kill_switch' })).toHaveLength(1);
+    expect(t.ctx.repos.listAudit(t.ctx.db, { action: 'autonomy.settings' }).length).toBeGreaterThan(0);
+  });
+
+  it('status, jobs, retry/cancel, schedules and review-now', async () => {
+    const status = await t.api<{ agents: Array<{ name: string }>; lanes: Record<string, { limit: number }>; pill: { state: string } }>('GET', '/agents/status');
+    expect(status.status).toBe(200);
+    expect(status.body.agents.map((a) => a.name)).toContain('case_manager');
+    expect(status.body.lanes.io!.limit).toBe(4);
+    const claimRes = await t.api<{ claim: { id: string } }>('POST', '/claims', FNOL);
+    const claimId = claimRes.body.claim.id;
+    const review = await t.api<JobRecord>('POST', `/claims/${claimId}/agent/review-now`);
+    expect(review.body).toMatchObject({ type: 'case.review', claimId, payload: { claimId, reason: 'owner' }, status: 'queued' });
+    const cancelled = await t.api<JobRecord>('POST', `/agents/jobs/${review.body.id}/cancel`);
+    expect(cancelled.body.status).toBe('cancelled');
+    const retried = await t.api<JobRecord>('POST', `/agents/jobs/${review.body.id}/retry`);
+    expect(retried.body.status).toBe('queued');
+    const jobs = await t.api<{ items: JobRecord[]; total: number }>('GET', `/agents/jobs?type=case.review&claimId=${claimId}`);
+    expect(jobs.body.total).toBe(2);
+    const detail = await t.api<{ job: JobRecord; attempts: unknown[] }>('GET', `/agents/jobs/${review.body.id}`);
+    expect(detail.body.job.id).toBe(review.body.id);
+    const agentView = await t.api<{ jobs: JobRecord[]; state: { paused: boolean } }>('GET', `/claims/${claimId}/agent`);
+    expect(agentView.body.state.paused).toBe(false);
+    expect(agentView.body.jobs.length).toBe(2);
+    const schedules = await t.api<{ items: Array<{ id: string; enabled: boolean }> }>('GET', '/agents/schedules');
+    expect(schedules.body.items.length).toBe(9);
+    const off = await t.api<{ enabled: boolean }>('PATCH', '/agents/schedules/watch.poll', { enabled: false });
+    expect(off.body.enabled).toBe(false);
+    const moved = await t.api<{ atLocal: string; nextRunAt: string }>('PATCH', '/agents/schedules/dailylog.compile', { atLocal: '17:30' });
+    expect(moved.body).toMatchObject({ atLocal: '17:30', nextRunAt: '2026-10-05T16:30:00.000Z' });
+    const now = await t.api<{ jobs: JobRecord[] }>('POST', '/agents/schedules/clocks.refresh/run-now');
+    expect(now.body.jobs[0]!.type).toBe('clocks.refresh');
+    // GET /jobs and POST /jobs/run keep working.
+    const legacy = await t.api<{ jobs: Array<{ job: string; nextRunAt: string | null }> }>('GET', '/jobs');
+    expect(legacy.body.jobs.map((j) => j.job)).toEqual(['watch_poll', 'clocks_refresh']);
+    const run = await t.api<{ job: string }>('POST', '/jobs/run', { job: 'clocks_refresh' });
+    expect(run.body.job).toBe('clocks_refresh');
+  });
+});

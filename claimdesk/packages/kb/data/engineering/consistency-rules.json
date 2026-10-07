@@ -86,7 +86,7 @@
   {
    "id": "consistency.photo_quality",
    "kind": "unusable_photos",
-   "message": "{count} photo(s) have quality issues that limit what can be seen ({photos}). Clearer photos would improve the assessment."
+   "message": "{count} photo(s) have quality issues that limit what can be seen ({photos}). Clearer photos would help the engineer confirm the assessment."
   }
  ]
 }
