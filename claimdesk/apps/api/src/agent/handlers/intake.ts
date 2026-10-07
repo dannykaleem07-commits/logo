@@ -116,8 +116,8 @@ export async function resolveConfirmFields(ctx: AppContext, item: NeedsYouItem &
   }
   if (choice.optionId !== 'apply') throw badRequest(`Unknown option ${choice.optionId}`);
   const parsed = choice.edits === undefined ? {} : confirmEdits.parse(choice.edits);
+  // Ids already decided elsewhere (e.g. applied from the Intake screen) are simply not pending any more.
   const wanted = new Set(parsed.apply ?? pending.map((p) => p.id));
-  for (const id of wanted) if (!pending.some((p) => p.id === id)) throw conflict('PROPOSAL_NOT_PENDING', `Proposal ${id} is not waiting on this card`);
   const toApply = pending.filter((p) => wanted.has(p.id));
   const results = await applyProposals(ctx, toApply, ownerApplier(ctx, actor), { ...(parsed.values ? { values: parsed.values } : {}), note: `confirmed by the owner (Needs-you ${item.id})` });
   const failed = results.filter((r) => !r.ok);
