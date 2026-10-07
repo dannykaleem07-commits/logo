@@ -1328,3 +1328,398 @@ Recorded (append-only `eligibility_assessments`) by `eligibility_assess` wheneve
 availability filter (per-car policy criteria), the green test, the `qualify.*` steps, clash codes 26–27, the handover
 guard, and the CCGUK-03 driver declarations (prefilled from the profile through the docx value resolver, still shown
 to the client to confirm at signing).
+
+---
+
+## G. Data model and migration
+
+### G.1 Migration numbering and the order guard
+
+SD §N: "the drizzle migrator only applies a migration whose `when` is greater than the last applied one" — confirmed
+in `drizzle-orm`'s sqlite dialect (`lastDbMigration.created_at < migration.folderMillis`). Autopilot therefore uses:
+
+| Migration file | Journal `when` | Owner |
+|---|---|---|
+| `0012_autopilot.sql` | **1792250000000** | `ap-foundation` |
+| phase 2 `0013_engineer_calls_sms.sql` (renamed from SD's `0012_…`) | 1792300000000 (unchanged) | `p2-foundation` |
+| phase 3 `0014_learning.sql` (renamed from SD's `0013_…`) | 1792400000000 (unchanged) | `p3-foundation` |
+
+A Knowledge Builder migration landing after Autopilot and before phase 2 takes the next free file number and a `when`
+in 1792260000000–1792290000000. Two guards make a silent skip impossible:
+
+1. `packages/db/src/migrationOrder.test.ts`: journal `when` values strictly increase in array order; file numbers are
+   unique; every journal tag has a file.
+2. `runMigrations` (boot): before calling drizzle, read the journal and `__drizzle_migrations`; if any journal entry
+   has `when` < the largest applied `created_at` and is not itself applied → throw `MIGRATION_ORDER` naming the file
+   (the app refuses to start rather than run with a missing table; the pre-migration backup from 0.4 is untouched).
+
+### G.2 `0012_autopilot.sql`
+
+Conventions as SD §N: text ids, ISO text dates, integer pence, JSON text, `--> statement-breakpoint` separators,
+append-only triggers in the 0001 form. Booking periods are additionally stored as integer epoch milliseconds for the
+overlap trigger.
+
+```sql
+CREATE TABLE `claim_autopilot` (`claim_id` text PRIMARY KEY NOT NULL,
+  `mode` text NOT NULL DEFAULT 'on' CHECK (`mode` IN ('on','paused','off')), `paused_by` text, `paused_reason` text, `paused_at` text,
+  `step_overrides` text NOT NULL DEFAULT '{}', `stage` text, `plan` text, `plan_hash` text, `plan_version` text,
+  `last_evaluated_at` text, `next_check_at` text, `updated_at` text NOT NULL);
+CREATE INDEX `claim_autopilot_next_idx` ON `claim_autopilot` (`mode`, `next_check_at`);
+CREATE TABLE `autopilot_log` (`id` text PRIMARY KEY NOT NULL, `claim_id` text NOT NULL, `step_id` text NOT NULL, `from_status` text,
+  `to_status` text NOT NULL, `action` text, `actor` text NOT NULL, `decision` text, `job_id` text, `run_id` text, `needs_you_id` text,
+  `refs` text NOT NULL DEFAULT '{}', `note` text, `at` text NOT NULL);                                           -- append-only
+CREATE INDEX `autopilot_log_claim_idx` ON `autopilot_log` (`claim_id`, `at`);
+
+CREATE TABLE `fleet_locations` (`id` text PRIMARY KEY NOT NULL, `name` text NOT NULL, `address` text, `postcode` text, `lat` real, `lon` real,
+  `is_default` integer NOT NULL DEFAULT 0, `created_at` text NOT NULL, `updated_at` text NOT NULL);
+ALTER TABLE `fleet_units` ADD `location_id` text;
+ALTER TABLE `fleet_units` ADD `current_mileage` integer;
+ALTER TABLE `fleet_units` ADD `mileage_at` text;
+ALTER TABLE `fleet_units` ADD `service_due_miles` integer;
+ALTER TABLE `fleet_units` ADD `phv_licence_number` text;
+ALTER TABLE `fleet_units` ADD `phv_licence_expiry` text;
+ALTER TABLE `fleet_units` ADD `turnaround_minutes` integer;
+ALTER TABLE `insurance_policies` ADD `driver_criteria` text;
+ALTER TABLE `insurance_policies` ADD `renews_policy_id` text;
+
+CREATE TABLE `fleet_readiness_tasks` (`id` text PRIMARY KEY NOT NULL, `fleet_unit_id` text NOT NULL,
+  `kind` text NOT NULL CHECK (`kind` IN ('valet','inspection','service','damage_repair','mot','tax','tyres','keys','phv_licence','other')),
+  `status` text NOT NULL CHECK (`status` IN ('open','done','cancelled')), `blocks_hire` integer NOT NULL DEFAULT 0,
+  `due_at` text, `ready_by_at` text, `reservation_id` text, `damage_id` text, `note` text,
+  `created_by` text NOT NULL, `created_at` text NOT NULL, `done_by` text, `done_at` text);
+CREATE INDEX `fleet_readiness_unit_idx` ON `fleet_readiness_tasks` (`fleet_unit_id`, `status`);
+CREATE TABLE `fleet_damage` (`id` text PRIMARY KEY NOT NULL, `fleet_unit_id` text NOT NULL, `panel` text NOT NULL, `description` text NOT NULL,
+  `severity` text NOT NULL CHECK (`severity` IN ('cosmetic','minor','major','unroadworthy')), `found_at` text NOT NULL, `found_by` text NOT NULL,
+  `reservation_id` text, `movement_id` text, `evidence_ids` text NOT NULL DEFAULT '[]', `repaired_at` text, `repair_task_id` text,
+  `chargeable` text NOT NULL DEFAULT 'tbc' CHECK (`chargeable` IN ('none','hirer','third_party','tbc')), `created_at` text NOT NULL);
+CREATE INDEX `fleet_damage_unit_idx` ON `fleet_damage` (`fleet_unit_id`, `repaired_at`);
+
+CREATE TABLE `fleet_reservations` (`id` text PRIMARY KEY NOT NULL, `fleet_unit_id` text NOT NULL, `claim_id` text NOT NULL,
+  `status` text NOT NULL CHECK (`status` IN ('held','confirmed','on_hire','returned','cancelled','expired')),
+  `use` text NOT NULL CHECK (`use` IN ('credit_hire','self_drive','pco')),
+  `start_at` text NOT NULL, `expected_end_at` text, `end_at` text, `collected_at` text,
+  `block_start_ms` integer NOT NULL, `block_end_ms` integer,                     -- NULL = open-ended (legacy hire with no end)
+  `hold_expires_at` text, `hold_expires_ms` integer,
+  `hirer_party_id` text NOT NULL, `driver_party_ids` text NOT NULL DEFAULT '[]',
+  `agreement_number` text, `hire_agreement_id` text, `hire_offer_id` text,
+  `daily_rate_pence` integer NOT NULL, `gta_group` text NOT NULL, `client_gta_group` text, `pricing_note` text, `substitution_reason` text,
+  `ranking` text, `clash_report` text, `overlap_override_audit_id` text,
+  `source` text NOT NULL CHECK (`source` IN ('autopilot','handler','backfill')),
+  `created_by` text NOT NULL, `created_at` text NOT NULL, `updated_at` text NOT NULL, `cancelled_reason` text);
+CREATE INDEX `fleet_reservations_unit_idx` ON `fleet_reservations` (`fleet_unit_id`, `status`, `block_start_ms`);
+CREATE INDEX `fleet_reservations_claim_idx` ON `fleet_reservations` (`claim_id`, `status`);
+CREATE UNIQUE INDEX `fleet_reservations_agreement_uq` ON `fleet_reservations` (`agreement_number`) WHERE `agreement_number` IS NOT NULL;
+CREATE UNIQUE INDEX `fleet_reservations_hire_uq` ON `fleet_reservations` (`hire_agreement_id`) WHERE `hire_agreement_id` IS NOT NULL;
+CREATE TABLE `fleet_reservation_events` (`id` text PRIMARY KEY NOT NULL, `reservation_id` text NOT NULL, `from_status` text,
+  `to_status` text NOT NULL, `actor` text NOT NULL, `reason` text, `data` text, `at` text NOT NULL);           -- append-only
+
+-- Overlap guard: a committed period of a car may not overlap another (§B.11). Physical-reality updates of on_hire/returned rows are not refused.
+CREATE TRIGGER `fleet_reservations_overlap_ins` BEFORE INSERT ON `fleet_reservations`
+WHEN NEW.`status` IN ('held','confirmed','on_hire','returned') AND NEW.`overlap_override_audit_id` IS NULL AND NEW.`source` <> 'backfill'
+BEGIN
+  SELECT RAISE(ABORT, 'RESERVATION_OVERLAP') WHERE EXISTS (SELECT 1 FROM `fleet_reservations` r
+    WHERE r.`fleet_unit_id` = NEW.`fleet_unit_id` AND r.`id` <> NEW.`id` AND r.`status` IN ('held','confirmed','on_hire','returned')
+      AND r.`block_start_ms` < COALESCE(NEW.`block_end_ms`, 9007199254740991)
+      AND NEW.`block_start_ms` < COALESCE(r.`block_end_ms`, 9007199254740991));
+END;
+CREATE TRIGGER `fleet_reservations_overlap_upd` BEFORE UPDATE OF `status`, `fleet_unit_id`, `block_start_ms`, `block_end_ms` ON `fleet_reservations`
+WHEN NEW.`status` IN ('held','confirmed') AND NEW.`overlap_override_audit_id` IS NULL
+BEGIN
+  SELECT RAISE(ABORT, 'RESERVATION_OVERLAP') WHERE EXISTS (SELECT 1 FROM `fleet_reservations` r
+    WHERE r.`fleet_unit_id` = NEW.`fleet_unit_id` AND r.`id` <> NEW.`id` AND r.`status` IN ('held','confirmed','on_hire','returned')
+      AND r.`block_start_ms` < COALESCE(NEW.`block_end_ms`, 9007199254740991)
+      AND NEW.`block_start_ms` < COALESCE(r.`block_end_ms`, 9007199254740991));
+END;
+
+CREATE TABLE `fleet_movements` (`id` text PRIMARY KEY NOT NULL, `reservation_id` text NOT NULL, `claim_id` text NOT NULL, `fleet_unit_id` text NOT NULL,
+  `kind` text NOT NULL CHECK (`kind` IN ('delivery','collection','swap_out','swap_in','transfer')),
+  `window_start` text NOT NULL, `window_end` text NOT NULL, `address` text, `postcode` text, `assigned_to` text,
+  `status` text NOT NULL CHECK (`status` IN ('planned','confirmed','done','failed','cancelled')), `done_at` text, `odometer` integer,
+  `fuel_eighths` integer, `condition_document_id` text, `evidence_ids` text NOT NULL DEFAULT '[]', `client_notified_at` text, `notes` text,
+  `created_by` text NOT NULL, `created_at` text NOT NULL, `updated_at` text NOT NULL);
+CREATE INDEX `fleet_movements_window_idx` ON `fleet_movements` (`status`, `window_start`);
+
+CREATE TABLE `hire_offers` (`id` text PRIMARY KEY NOT NULL, `claim_id` text NOT NULL, `reservation_id` text NOT NULL,
+  `status` text NOT NULL CHECK (`status` IN ('draft','sent','accepted','declined','expired','withdrawn','superseded')),
+  `channel` text NOT NULL CHECK (`channel` IN ('email','sms','phone','in_person')), `terms` text NOT NULL, `terms_sha256` text NOT NULL,
+  `outbox_id` text, `authorised_by` text NOT NULL, `sent_at` text, `expires_at` text NOT NULL, `response` text, `responded_at` text,
+  `created_by` text NOT NULL, `created_at` text NOT NULL, `updated_at` text NOT NULL);
+CREATE INDEX `hire_offers_claim_idx` ON `hire_offers` (`claim_id`, `status`);
+CREATE UNIQUE INDEX `hire_offers_outbox_uq` ON `hire_offers` (`outbox_id`) WHERE `outbox_id` IS NOT NULL;
+
+CREATE TABLE `driver_profiles` (`party_id` text PRIMARY KEY NOT NULL, `profile` text NOT NULL, `source` text NOT NULL,
+  `updated_by` text NOT NULL, `updated_at` text NOT NULL);
+CREATE TABLE `claim_hire_needs` (`claim_id` text PRIMARY KEY NOT NULL, `needs` text NOT NULL, `updated_by` text NOT NULL, `updated_at` text NOT NULL);
+CREATE TABLE `eligibility_assessments` (`id` text PRIMARY KEY NOT NULL, `claim_id` text NOT NULL, `party_id` text, `policy_id` text,
+  `kind` text NOT NULL CHECK (`kind` IN ('driver','need','means','roadworthiness','injury','acceptance','overall')),
+  `outcome` text NOT NULL, `reasons` text NOT NULL, `inputs_sha256` text NOT NULL, `created_by` text NOT NULL, `created_at` text NOT NULL); -- append-only
+CREATE INDEX `eligibility_claim_idx` ON `eligibility_assessments` (`claim_id`, `kind`, `created_at`);
+
+CREATE TABLE `clash_findings` (`id` text PRIMARY KEY NOT NULL, `code` text NOT NULL,
+  `severity` text NOT NULL CHECK (`severity` IN ('block','warn','info')), `override_class` text,
+  `claim_id` text, `fleet_unit_id` text, `reservation_id` text, `hire_id` text, `related` text NOT NULL DEFAULT '{}',
+  `message` text NOT NULL, `data` text, `dedupe_key` text NOT NULL,
+  `status` text NOT NULL CHECK (`status` IN ('open','acknowledged','overridden','resolved')),
+  `first_seen_at` text NOT NULL, `last_seen_at` text NOT NULL, `resolved_at` text, `resolved_by` text, `resolution_note` text, `override_audit_id` text);
+CREATE UNIQUE INDEX `clash_findings_open_uq` ON `clash_findings` (`dedupe_key`) WHERE `status` IN ('open','acknowledged');
+CREATE INDEX `clash_findings_claim_idx` ON `clash_findings` (`claim_id`, `status`);
+CREATE INDEX `clash_findings_unit_idx` ON `clash_findings` (`fleet_unit_id`, `status`);
+
+CREATE TABLE `document_packs` (`id` text PRIMARY KEY NOT NULL, `claim_id` text NOT NULL,
+  `stage` text NOT NULL CHECK (`stage` IN ('signup','hire_offer','hire_start','off_hire','billing','payment','closure')),
+  `reservation_id` text, `items` text NOT NULL,
+  `status` text NOT NULL CHECK (`status` IN ('preparing','reviewing','awaiting_approval','approved','sent','signed','superseded','cancelled')),
+  `approved_by` text, `approved_at` text, `sent_at` text, `outbox_id` text, `created_by` text NOT NULL, `created_at` text NOT NULL, `updated_at` text NOT NULL);
+CREATE INDEX `document_packs_claim_idx` ON `document_packs` (`claim_id`, `stage`, `status`);
+CREATE TABLE `signature_requests` (`id` text PRIMARY KEY NOT NULL, `pack_id` text, `document_id` text NOT NULL, `claim_id` text NOT NULL,
+  `signer_party_id` text NOT NULL, `method` text NOT NULL CHECK (`method` IN ('kiosk_otp_email','kiosk_handler_code','wet_email','wet_post')),
+  `status` text NOT NULL CHECK (`status` IN ('prepared','sent','chased','returned','signed','declined','cancelled')),
+  `sent_at` text, `chase_count` integer NOT NULL DEFAULT 0, `last_chased_at` text, `next_chase_at` text, `returned_evidence_id` text,
+  `signed_at` text, `confirmed_by` text, `created_at` text NOT NULL, `updated_at` text NOT NULL);
+CREATE INDEX `signature_requests_open_idx` ON `signature_requests` (`status`, `next_chase_at`);
+CREATE TABLE `signature_request_events` (`id` text PRIMARY KEY NOT NULL, `signature_request_id` text NOT NULL, `from_status` text,
+  `to_status` text NOT NULL, `actor` text NOT NULL, `note` text, `at` text NOT NULL);                            -- append-only
+CREATE TABLE `kiosk_sessions` (`id` text PRIMARY KEY NOT NULL, `pack_id` text NOT NULL, `claim_id` text NOT NULL, `signer_party_id` text NOT NULL,
+  `token_sha256` text NOT NULL, `lan` integer NOT NULL DEFAULT 0, `created_by` text NOT NULL, `created_at` text NOT NULL, `expires_at` text NOT NULL,
+  `opened_at` text, `opened_ip` text, `opened_user_agent` text, `completed_at` text, `closed_reason` text);
+CREATE UNIQUE INDEX `kiosk_sessions_token_uq` ON `kiosk_sessions` (`token_sha256`);
+
+CREATE TABLE `settlement_offers` (`id` text PRIMARY KEY NOT NULL, `claim_id` text NOT NULL, `head` text NOT NULL, `amount_pence` integer,
+  `received_at` text NOT NULL, `offeror_name` text NOT NULL, `channel` text NOT NULL, `terms` text, `evidence_ids` text NOT NULL DEFAULT '[]',
+  `mail_message_id` text, `status` text NOT NULL CHECK (`status` IN ('open','accepted','countered','rejected','lapsed','superseded')),
+  `decided_by` text, `decided_at` text, `decision_note` text, `created_by` text NOT NULL, `created_at` text NOT NULL);
+CREATE INDEX `settlement_offers_claim_idx` ON `settlement_offers` (`claim_id`, `status`);
+
+ALTER TABLE `hire_agreements` ADD `use` text;
+ALTER TABLE `hire_agreements` ADD `hirer_party_id` text;
+ALTER TABLE `hire_agreements` ADD `driver_party_ids` text;
+ALTER TABLE `hire_agreements` ADD `reservation_id` text;
+ALTER TABLE `hire_agreements` ADD `expected_end_at` text;
+ALTER TABLE `agent_settings` ADD `autopilot` text NOT NULL DEFAULT '{}';
+ALTER TABLE `outbox` ADD `autopilot_step_id` text;
+
+-- Back-fill: one reservation per existing hire (keeps the diary complete; legacy overlaps are kept, never refused).
+INSERT INTO `fleet_reservations` (`id`, `fleet_unit_id`, `claim_id`, `status`, `use`, `start_at`, `expected_end_at`, `end_at`, `collected_at`,
+  `block_start_ms`, `block_end_ms`, `hirer_party_id`, `driver_party_ids`, `agreement_number`, `hire_agreement_id`, `daily_rate_pence`, `gta_group`,
+  `client_gta_group`, `pricing_note`, `source`, `created_by`, `created_at`, `updated_at`)
+SELECT lower(hex(randomblob(16))), h.`fleet_unit_id`, h.`claim_id`,
+  CASE WHEN h.`end_at` IS NULL OR h.`end_at` > strftime('%Y-%m-%dT%H:%M:%fZ','now') THEN 'on_hire' ELSE 'returned' END,
+  COALESCE((SELECT json_extract(e.`data`, '$.use') FROM `events` e WHERE e.`claim_id` = h.`claim_id` AND e.`type` = 'hire_started'
+            AND json_extract(e.`data`, '$.hireId') = h.`id` ORDER BY e.`recorded_at` LIMIT 1), 'credit_hire'),
+  h.`start_at`, h.`end_at`, h.`end_at`, h.`collected_at`,
+  CAST(unixepoch(h.`start_at`, 'subsec') * 1000 AS INTEGER),
+  CASE WHEN h.`end_at` IS NULL THEN NULL ELSE CAST(unixepoch(COALESCE(MAX(h.`end_at`, COALESCE(h.`collected_at`, h.`end_at`)), h.`end_at`), 'subsec') * 1000 AS INTEGER) END,
+  c.`claimant_id`, '[]', h.`agreement_number`, h.`id`, h.`daily_rate_pence`, h.`gta_group`, h.`client_gta_group`, h.`pricing_note`,
+  'backfill', 'system', h.`created_at`, h.`created_at`
+FROM `hire_agreements` h JOIN `claims` c ON c.`id` = h.`claim_id`;
+UPDATE `hire_agreements` SET `reservation_id` = (SELECT r.`id` FROM `fleet_reservations` r WHERE r.`hire_agreement_id` = `hire_agreements`.`id`),
+  `use` = (SELECT r.`use` FROM `fleet_reservations` r WHERE r.`hire_agreement_id` = `hire_agreements`.`id`),
+  `hirer_party_id` = (SELECT c.`claimant_id` FROM `claims` c WHERE c.`id` = `hire_agreements`.`claim_id`), `driver_party_ids` = '[]';
+-- BEFORE UPDATE / BEFORE DELETE RAISE(ABORT) triggers on: autopilot_log, fleet_reservation_events, eligibility_assessments, signature_request_events
+```
+
+`ap-foundation` checks the real column names (`claims.claimant_id`, `events.recorded_at`, `events.data`) against
+`schema.ts` before writing the file and adjusts the back-fill if they differ; `unixepoch(…, 'subsec')` needs SQLite
+≥ 3.42 (bundled 3.53.2). Test: a 0.4 database with three hires (one open, one ended, two overlapping under a past
+manager override) migrates; the back-fill creates three reservations; the overlap triggers then refuse a new
+overlapping hold and accept a touching one.
+
+### G.3 Additions to existing domain types (`packages/domain/src/types.ts`, by `ap-foundation`)
+
+* `EventType` += `services_agreed` (exists) is now appended by code; new: `hire_offered`, `hire_offer_accepted`,
+  `hire_offer_declined`, `booking_confirmed`, `booking_cancelled`, `hire_vehicle_delivered`, `hire_vehicle_collected`,
+  `hire_start_notice_sent`, `documents_signed`.
+* `HireAgreement` += optional `use?: FleetUse; hirerPartyId?: Id; driverPartyIds?: Id[]; reservationId?: Id;
+  expectedEndAt?: ISODateTime`.
+* `FleetUnit` += optional `locationId`, `currentMileage`, `mileageAt`, `serviceDueMiles`, `phvLicenceNumber`,
+  `phvLicenceExpiry`, `turnaroundMinutes`; `InsurancePolicy` += optional `driverCriteria?: DriverCriteria;
+  renewsPolicyId?: Id`.
+* `EvidenceKind` += `signature_image`, `signed_document`.
+* `SignatureRecord` += optional `method?: 'otp' | 'kiosk_otp_email' | 'kiosk_handler_code' | 'wet_ink' | 'scan';
+  drawnSignatureSha256?: string; evidenceId?: Id` (absent = today's `otp`).
+* No database CHECK constraint exists on `events.type` or `evidence.kind` (verified in `0000_init.sql`), so the unions
+  grow without a table rebuild.
+
+---
+
+## H. Jobs, tools, Needs-you, routes and perimeter
+
+### H.1 Job types (added to `JOB_TYPES` / `JOB_TYPE_INFO`)
+
+| Type | Lane | AI | Agent | Mutates | Priority | Idempotency key | Trigger / schedule |
+|---|---|---|---|---|---|---|---|
+| `autopilot.tick` | io | – | autopilot | yes | 2 | `autopilot.tick:<claimId>:<London minute>` | sweep; nudges from booking/offer/pack/sign/event routes; Needs-you resolutions; "Run now" |
+| `autopilot.sweep` | io | – | autopilot | – | 4 | `autopilot.sweep:<5-min slot>` | every 5 min: claims with `next_check_at ≤ now`, or with events/mail/evidence recorded since `last_evaluated_at`, or with a new claim |
+| `autopilot.judge` | ai | yes | case_manager | – | 2 | `autopilot.judge:<claimId>:<stepId>:<planHash>` | tick |
+| `hire_offer.parse_reply` | ai | yes | mail | – | 1 | `hire_offer.parse_reply:<messageId>` | tick (reply not matched by code) |
+| `pack.prepare` | cpu | – | autopilot | yes | 3 | `pack.prepare:<claimId>:<stage>:<reservationId or '-'>:<revision>` | tick |
+| `booking.expire_holds` | io | – | autopilot | yes | 1 | `booking.expire_holds:<5-min slot>` | every 5 min |
+| `fleet.status_sync` | io | – | autopilot | – | 5 | `fleet.status_sync:<hour>` | hourly + after booking writes |
+| `fleet.compliance_watch` | io | – | autopilot | – | 5 | `fleet.compliance_watch:<date>` | 06:30 daily |
+| `clash.check` | io | – | autopilot | – | 2 | `clash.check:<subjectKind>:<id>:<minute>` | claim/vehicle/party/driver changes |
+| `clash.sweep` | io | – | autopilot | – | 6 | `clash.sweep:<date>` | 02:30 daily |
+| `signing.chase` | io | – | autopilot | yes | 4 | `signing.chase:<date>` | 09:15 weekdays |
+| `signing.match_return` | io | – | autopilot | – | 3 | `signing.match_return:<15-min slot>` | every 15 min |
+| `movement.remind` | io | – | autopilot | – | 4 | `movement.remind:<date>` | 16:00 daily (next day's movements) |
+
+Schedules are appended to `DEFAULT_SCHEDULES` (`apps/api/src/agent/scheduler.ts`) by `ap-foundation`.
+`AI_JOB_DEFAULTS` gains `autopilot.judge` (case_manager, `claude-sonnet-5-5`, effort `medium`, 6 turns, 5 min) and
+`hire_offer.parse_reply` (mail, `claude-sonnet-5-5`, effort `low`, 1 turn, 2 min); both appear in Settings > AI.
+Result schema ids `autopilot_judge` and `hire_reply` are added to `RESULT_SCHEMAS` (strict, < 16 KB).
+
+### H.2 MCP tools
+
+Tool → dispatcher → `decide()` → perimeter → route as the agent (SD §B.3). Inputs `zod/v4` strict, nullable-required.
+Tools whose class is not `read` carry `describe()` with `kind` and `step` from `rc.step`.
+
+| Tool | Class | Input | Route / effect | Owner slice |
+|---|---|---|---|---|
+| `autopilot_plan` | read | `{claimId}` | `GET /claims/:id/autopilot` (plan, trimmed) | ap-autopilot |
+| `fleet_search` | read | `{claimId, startAt?, expectedEndAt?, use?, limit?}` | `POST /fleet/availability` (ranked + excluded, reasons) | ap-booking |
+| `fleet_unit_get` | read | `{fleetUnitId}` | `GET /fleet/:id` + readiness + bookings | ap-booking |
+| `fleet_calendar` | read | `{fleetUnitId?, from, to}` | `GET /fleet/calendar` | ap-booking |
+| `bookings_list` | read | `{claimId}` | `GET /claims/:id/bookings` (reservations, movements) | ap-booking |
+| `clash_check` | read* | `{claimId, fleetUnitId?, startAt?, expectedEndAt?}` | `POST /clashes/check` (*persists findings for the claim; class read because it changes nothing the claim relies on) | ap-clash |
+| `eligibility_get` | read | `{claimId}` | `GET /claims/:id/eligibility` | ap-clash |
+| `hire_offers_list` | read | `{claimId}` | `GET /claims/:id/hire-offers` | ap-autopilot |
+| `signatures_list` | read | `{claimId}` | `GET /claims/:id/signatures` + packs | ap-paperwork |
+| `eligibility_assess` | internal | `{claimId}` | `POST /claims/:id/eligibility/assess` (records the computed assessment) | ap-clash |
+| `booking_hold` | internal | `{claimId, fleetUnitId, use, startAt, expectedEndAt, rankingRef}` | `POST /claims/:id/bookings` | ap-booking |
+| `booking_release` | internal | `{reservationId, reason}` | `POST /bookings/:id/release` | ap-booking |
+| `booking_confirm` | internal | `{reservationId, hireOfferId?}` | `POST /bookings/:id/confirm` (requires an accepted offer for agents) | ap-booking |
+| `booking_update_period` | internal | `{reservationId, expectedEndAt, reason}` | `PATCH /bookings/:id` (clash re-check) | ap-booking |
+| `movement_schedule` | internal | `{reservationId, kind, windowStart, windowEnd, address: 'client_home' \| 'delivery_address'}` | `POST /bookings/:id/movements` | ap-booking |
+| `readiness_task_create` | internal | `{fleetUnitId, kind, dueAt?, note}` | `POST /fleet/:id/readiness` | ap-booking |
+| `hire_offer_prepare` | draft | `{claimId, reservationId, outboxId, alternatives: Id[]}` | `POST /claims/:id/hire-offers` (binds offer ↔ outbox, computes terms hash) | ap-autopilot |
+| `hire_acceptance_record` | internal | `{hireOfferId, decision, messageId, chosenFleetUnitId?, confidence}` | `POST /hire-offers/:id/response` (`sensitive` when confidence < 0.9 → asks) | ap-autopilot |
+| `claim_status_set` | internal | `{claimId, status}` | `POST /claims/:id/status` (perimeter refuses final statuses) | ap-autopilot |
+| `pack_prepare` | draft | `{claimId, stage, reservationId?}` | enqueue `pack.prepare` (in-process `run`) | ap-paperwork |
+| existing `email_draft`, `document_draft`, `docx_document_draft`, `event_append`, `send_request`, `ledger_propose`, `payment_received_propose`, `task_schedule`, `needs_you_create`, `legal_escalate`, `vehicle_lookup` | as SD | as SD | as SD; `event_append`'s allowed types gain nothing (repair events are already allowed) | — |
+
+Tool subsets: **autopilot** (deterministic principal) = all tools above plus the listed existing ones; **case_manager**
+in `autopilot.judge` = `claim_brief`, `autopilot_plan`, `fleet_search`, `bookings_list`, `eligibility_get`,
+`kb_search`, `brain_search`, `memory_recall` (read only); **case_manager** in `case.review` gains `autopilot_plan`,
+`bookings_list`, `eligibility_get`, `hire_offers_list` (read); **mail** in `hire_offer.parse_reply` = none (`--tools ""`).
+
+### H.3 Needs-you kinds and resolvers
+
+| Kind | Raised by | Options | Resolver (runs as the owner) | Owner slice |
+|---|---|---|---|---|
+| `choose_car` | `hire.choose` not green / judge `ask_owner` | `unit:<id>` × top 3 (recommended marked), `search_again` (edit needs/period), `no_hire` (reason) | moves/places the hold as the owner; marks the offer `authorisedBy` owner; nudges the tick | ap-autopilot |
+| `autopilot_step` | any confirm/owner step | `do_it` (runs the prepared action as the owner), `skip` (reason), `snooze` (until), `open` | as chosen; audited `autopilot.step_resolve` | ap-autopilot |
+| `approve_pack` | `pack.prepare` complete | `approve_send`, `approve_only`, `edit` (opens the document editor; edits saved as corrections), `reject` (reason) | approves each document (human), queues the outbox | ap-paperwork |
+| `confirm_signed` | `signing.match_return` | `confirm` (signed on date X), `not_signed`, `wrong_document` | `POST /documents/:id/mark-signed` as the owner; enforceability sync | ap-paperwork |
+| `clash_review` | new block finding on a booked/hired claim; nightly sweep | `resolved` (reason), `acknowledge` (warn), `cancel_booking`, `open_booking` (override in the dialog as manager) | updates the finding; never overrides by itself | ap-clash |
+| `eligibility_review` | driver `refer`, need weak, means unknown when required | `insurer_accepted` (evidence id required), `decline_hire` (reason), `request_info` (prepared doc_request) | records the decision as an assessment; `insurer_accepted` lets the booking override `DRIVER_REFERRAL` | ap-clash |
+
+Existing kinds used: `missing_info`, `approve_send`, `question`, `override_needed`, `offer_decision`, `money`,
+`legal_review`, `failure`, `new_claim`. The Needs-you page gets a kind → panel registry
+(`apps/web/src/screens/needsYou/kindPanels.ts`, created by `ap-foundation`); each slice provides its panels.
+
+### H.4 Routes (all under `/api`, session auth; human-only marked H)
+
+| Slice | Routes |
+|---|---|
+| ap-foundation | `GET/PATCH /settings/autopilot` |
+| ap-autopilot | `GET /claims/:id/autopilot`; `POST /claims/:id/autopilot/evaluate`; `POST /claims/:id/autopilot/pause` (H), `…/resume` (H); `POST /claims/:id/autopilot/steps/:stepId/:action` (H; run/skip/ask/auto/done/snooze); `GET /claims/:id/hire-offers`, `POST /claims/:id/hire-offers`, `POST /hire-offers/:id/response`, `POST /hire-offers/:id/accept` (H, phone/in person), `POST /hire-offers/:id/withdraw`; `GET/POST /claims/:id/settlement-offers`, `PATCH /claims/:id/settlement-offers/:oid` (decision fields H) |
+| ap-booking | `POST /fleet/availability`; `GET /fleet/calendar?from&to&unitIds&group&use`; `GET /claims/:id/bookings`; `POST /claims/:id/bookings`; `GET /bookings/:id`; `PATCH /bookings/:id`; `POST /bookings/:id/confirm`; `POST /bookings/:id/release`; `POST /bookings/:id/handover` (H); `POST /bookings/:id/return` (H); `POST /bookings/:id/movements`; `PATCH /movements/:id`; `GET /fleet/movements?day&range`; `GET/POST /fleet/:id/readiness`, `PATCH /fleet/readiness/:taskId`; `POST /fleet/:id/damage`, `PATCH /fleet/damage/:id`; `GET/POST /fleet/locations`, `PATCH /fleet/locations/:id`; `POST /fleet/:id/allocate-check` (made period-aware) |
+| ap-clash | `POST /clashes/check`; `GET /claims/:id/clashes`; `GET /fleet/clashes`; `POST /clashes/:id/acknowledge` (H), `POST /clashes/:id/resolve` (H); `GET/PUT /parties/:id/driver-profile` (PUT H); `GET/PUT /fleet/policies/:id/criteria` (PUT H); `GET/PUT /claims/:id/hire-needs`; `GET /claims/:id/eligibility`; `POST /claims/:id/eligibility/assess` |
+| ap-paperwork | `GET /claims/:id/packs`; `POST /claims/:id/packs` (prepare); `POST /packs/:id/approve` (H); `POST /packs/:id/send-for-signature` (H); `POST /packs/:id/kiosk` (H); `GET /api/kiosk/:token`, `GET /api/kiosk/:token/documents/:docId/pdf`, `POST /api/kiosk/:token/read`, `POST /api/kiosk/:token/otp/start`, `POST /api/kiosk/:token/sign`, `POST /api/kiosk/:token/close` (token auth, not session; never agent-reachable); `GET /claims/:id/signatures`; `POST /documents/:id/mark-signed` (H); `PATCH /claims/:id/hire/:hireId/paperwork` (H) |
+
+### H.5 Perimeter additions (`apps/api/src/agent/perimeter.ts`, by `ap-foundation`)
+
+* `HUMAN_ONLY_ROUTES` += `POST /api/bookings/:id/handover`, `POST /api/bookings/:id/return`,
+  `POST /api/documents/:id/mark-signed`, `POST /api/packs/:id/approve`, `POST /api/packs/:id/send-for-signature`,
+  `POST /api/packs/:id/kiosk`, `POST /api/hire-offers/:id/accept`, `POST /api/clashes/:id/acknowledge`,
+  `POST /api/clashes/:id/resolve`, `PUT /api/parties/:id/driver-profile`, `PUT /api/fleet/policies/:id/criteria`,
+  `POST /api/claims/:id/autopilot/pause|resume`, `POST /api/claims/:id/autopilot/steps/:stepId/:action`,
+  `PATCH /api/claims/:id/hire/:hireId/paperwork`; the `/api/kiosk/*` routes refuse any run token outright.
+* Money/settlement rule 4 += `PATCH /api/claims/:id/settlement-offers/:oid` with decision fields.
+* Claim scope (rule 3): `namedClaimIds` resolves the claim of `/api/bookings/:id`, `/api/hire-offers/:id`,
+  `/api/packs/:id`, `/api/movements/:id`, `/api/clashes/:id` (as it does for `/api/documents/:id`); fleet-wide
+  routes (`/fleet/availability`, `/fleet/calendar`) are reachable by claim-scoped runs only with the run's own
+  `claimId` and return no other claim's references or party names (reservations of other claims appear as "booked").
+* `CLAIMDESK_ALLOW_FAKE_AI` and the kill switch behave as SD; the autopilot principal is a normal agent principal
+  (`role: 'handler'`, never manager).
+
+---
+
+## I. User interface (apps/web)
+
+### I.1 Claim tab **Autopilot** (`screens/claim/tabs/AutopilotTab.tsx`, ap-autopilot)
+
+Placed after Overview. Top: a 14-stage progress bar with the current stage; mode chip (**On** / **Paused** /
+**Off**) and one-click **Pause autopilot on this claim** (reason prompt) / **Resume**; a **Next** card ("Next: send the
+hire offer for AB12 CDE — automatic, held 10 minutes for Undo") and **Waiting on** chips (client since 2 h, insurer
+since 3 days). Clash card (open block/warn findings). Then the timeline: one lane per track (Intake, Qualify, Sign-up,
+Notify, Vehicle, Hire, Money, Close); each step row shows a status icon (✓ done, ● due, ◷ waiting, ⛔ blocked, ⏸
+paused, – n/a), title, mode chip (**Auto** / **Ask me** / **I do it**, with "raised because …" tooltip from
+`modeReasons`), due date with countdown (red when overdue), what we wait for, links (document, email, booking, Needs-you
+card), and a menu: **Run now**, **Always ask me on this claim**, **Skip** (reason), **Mark done** (reason), **Snooze**.
+Done steps collapse into a "Done (23)" group with dates and who/what did them (from `autopilot_log`). Polls every 15 s.
+
+### I.2 Booking dialog (`screens/claim/booking/BookingDialog.tsx`, ap-booking)
+
+Opened by **Find a car** (Hire tab, Autopilot tab, `choose_car` card) and from an empty calendar cell. Left: period
+(start; expected end prefilled from §B.6 with "why"), use (prefilled from needs), needs checklist (prefilled; edits
+saved to the claim's needs). Right: ranked cars — score bar, factor chips (Like for like 0.9, Needs ✓, Ready now,
+Cover +62 days, £/day vs guide, Distance), the pricing guide (existing `PricingGuidePanel`), driver outcome; a
+collapsible **Not available (7)** list with every reason. Bottom: the Clash panel (§C.5) for the selected car; actions
+**Hold for 24 h**, **Hold and offer to client** (opens the prepared offer for edit/approve), **Book now** (client
+present: confirm directly), and the manager override when a class A finding blocks. Keyboard accessible; works at
+phone width.
+
+### I.3 Fleet calendar (`/fleet/calendar`, ap-booking)
+
+Rows = cars (group, registration, location), columns = days (2 / 4 / 8 weeks; today line). Bars: held (striped,
+with expiry), confirmed (solid), on hire (dark), returned (grey), cancelled hidden; readiness blocks (hatched:
+valet, service, repair); compliance markers (MOT ▲, tax ■, policy end │, service ●) — amber when inside a booking;
+movements (delivery ↓, collection ↑); red outline for clash findings. Filters: group, use, location, "free between
+dates". Click a bar → booking card; click an empty cell → Booking dialog for that car and date (claim picker). An
+accessible table view for screen readers and printing.
+
+### I.4 Movements board (`/fleet/movements`, ap-booking)
+
+Today / Tomorrow / This week: deliveries and collections with slot, address, car, client name and phone (owner view),
+status buttons (**Confirmed**, **On the way**, **Done** → Handover or Return dialog, **Failed** → reason and re-slot),
+"Print run sheet".
+
+### I.5 Handover and Return dialogs (ap-booking)
+
+Handover: checklist (pack signed ✓ / **Sign now in kiosk**; licence evidence ✓ / **Capture** via the existing capture
+page; DVLA check date and summary; driver eligibility ✓), odometer out, fuel (eighths), keys, condition report (opens
+the CCGUK-06 release values form; photos via capture), **Start hire**. Return: odometer in, fuel, damage rows with
+severity and photos, collected time, contractual end (prefilled with the off-hire deadline and its basis), **End
+hire**; amber warning when the end is past the deadline.
+
+### I.6 Kiosk (`/sign/kiosk/:token`, ap-paperwork)
+
+Full screen, large type, one document at a time with progress ("2 of 5"), "I have read this" enabled at the end of the
+document, typed name, signature pad (clear/redo), code entry, **Sign**; "Hand back to the Claims Team" exit with the
+handler's password. No navigation; no other claim data.
+
+### I.7 Needs-you panels
+
+`choose_car` (ranked table with factor chips and the judge's recommendation), `approve_pack` (document list with PDF
+previews, reviewer verdicts, signer, "send to"), `confirm_signed` (scan beside the generated PDF, page by page),
+`clash_review` (finding, related bookings/claims, actions), `eligibility_review` (criteria table, outcome reasons,
+evidence upload), `autopilot_step` (what, why, prepared items, the button that does it).
+
+### I.8 Settings
+
+**Settings > Autopilot** (`/settings/autopilot`, ap-autopilot): master switch, new-claims default; step modes table
+(Auto / Ask me / I do it; floors greyed with the reason, e.g. "Agreements always need you"); booking timings (hold
+hours, offer reminder, turnaround, lead time, window length, max per window, business hours); green thresholds
+(like-for-like minimum, clear-winner gap, daily auto-offer cap); ranking weights (sliders, normalised); projection
+defaults; signing (OTP by email / handler code, chase days, LAN tablet on/off with warning); eligibility options
+(require means before offer). **Settings > Fleet > Driver criteria** (`/settings/fleet/criteria`, ap-clash): defaults
+and per-policy criteria with "check against your policy wording" notice. **Fleet > Locations** (ap-booking).
+
+### I.9 Daily log
+
+New sections (additive to SD §J.2 `DailyLog.sections`): `autopilot` (steps done automatically, holds placed/expired,
+offers sent/accepted/declined, bookings confirmed, packs prepared/approved/signed, status changes), `fleet` (today's
+and tomorrow's movements, cars returned, readiness tasks due, compliance lapses ahead), `clashes` (new / overridden /
+resolved findings with codes). Every line has the claim reference, the step id or clash code, the rule ids of the
+policy decision, and a link — built from `autopilot_log`, `fleet_reservation_events`, `clash_findings` and audit rows
+by `apps/api/src/autopilot/dailyLog.ts`.
