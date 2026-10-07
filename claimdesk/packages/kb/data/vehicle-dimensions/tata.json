@@ -1,0 +1,69 @@
+{
+  "make": "Tata",
+  "slug": "tata",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "safari": {
+      "Mk1 (1998–2007)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4650,
+            "widthMm": 1920,
+            "heightMm": 1925,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.12,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Body-on-frame; tall roof with stepped rear section; spare position may vary."
+          }
+        }
+      }
+    },
+    "tl": {
+      "TL pick-up (2003–2009)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 4880,
+            "widthMm": 1700,
+            "heightMm": 1800,
+            "wheelbaseMm": 2950,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.12,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab 4x4 assumed; single cab version also sold. Dimensions approximate."
+          }
+        }
+      }
+    }
+  }
+}

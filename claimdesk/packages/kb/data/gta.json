@@ -73,6 +73,25 @@
     "licence": "quote_only"
   },
   {
+    "id": "gta-4-6",
+    "type": "gta",
+    "citation": "GTA para 4.6 (16 March 2026)",
+    "title": "Hire period starts when the customer both needs and takes delivery of the replacement vehicle",
+    "principle": "Under the GTA the hire period commences when the customer both needs and takes delivery of the replacement vehicle; both conditions must be met. On-hire trigger for the clocks engine: record the delivery date/time and the evidence of need (vehicle unroadworthy or off the road for repair) on the same day. Benchmark only for a non-subscriber (2.7(j)).",
+    "text": "The hire period commences when the customer both needs and takes delivery of the replacement vehicle.",
+    "tags": ["gta", "4.6", "hire period", "start", "on-hire", "delivery", "need", "clock"],
+    "topics": ["gta", "credit_hire", "mitigation"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "Search snippets only, not a fetched page (www.gtacredithire.com WebFetch returned EGRESS_BLOCKED on 2026-10-07). A search-engine result summary citing both the 17 March 2025 and 16 March 2026 GTA PDFs stated that clause 4.6 in each reads 'The hire period commences when the customer both needs and takes delivery of the replacement vehicle.' A separate summary said the same sentence appeared as para 2.4 in an older (2007) version, so the paragraph number has moved over time; confirm the 2026 paragraph number and wording against the PDF.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
+    },
+    "licence": "quote_only"
+  },
+  {
     "id": "gta-4-7",
     "type": "gta",
     "citation": "GTA para 4.7 (16 March 2026)",
@@ -182,6 +201,24 @@
     "licence": "quote_only"
   },
   {
+    "id": "gta-5-3",
+    "type": "gta",
+    "citation": "GTA para 5.3 (16 March 2026)",
+    "title": "Daily settlement rate: per 24-hour period, inclusive of delivery/collection, breakdown cover, unlimited mileage and insurance",
+    "principle": "The GTA daily settlement rate is the amount paid for each 24-hour period (the GTA's example: 15.00 Monday 1 July to 15.00 Tuesday 9 July is eight days). The rate is inclusive of free delivery/collection of the vehicle, 24-hour breakdown cover, unlimited mileage, and full liability, theft and damage insurance subject to a £50 excess (a higher excess can apply where the customer has a third party/TPFT policy or their own policy excess is higher, with no compulsory additional charge to the customer). Delivery and collection therefore cannot be billed as separate items against the GTA benchmark; the only extras are those listed in 5.4. Benchmark only for a non-subscriber (2.7(j)).",
+    "tags": ["gta", "5.3", "daily rate", "24 hour period", "hire days", "delivery", "collection", "breakdown cover", "unlimited mileage", "£50 excess", "extras"],
+    "topics": ["gta", "credit_hire", "bhr"],
+    "url": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
+      "sourceNote": "Search snippets only, not a fetched page (www.gtacredithire.com WebFetch returned EGRESS_BLOCKED on 2026-10-07). Two search-engine result summaries attributed to the 16 March 2026 GTA PDF stated that the daily settlement rates are inclusive of 'free delivery/collection of the vehicle', '24 hour breakdown cover', 'unlimited mileage' and 'full liability, theft and damage insurance subject to a £50 excess unless the customer has a third party/TPFT policy or their own motor insurance policy excess exceeds this figure, when a higher excess can apply but with no compulsory additional charge to the customer', and that the daily settlement rate is the amount paid for each 24-hour period, e.g. '15.00 Monday 1 July to 15.00 Tuesday 9 July is eight days'. A third summary (drawing on the 2021-2026 wordings) placed this in section 5.3 and said 5.4 lists the only extras chargeable to an insurer. Paragraph number and exact wording to be confirmed against the 2026 PDF.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
+    },
+    "licence": "quote_only"
+  },
+  {
     "id": "gta-5-4",
     "type": "gta",
     "citation": "GTA para 5.4 (16 March 2026)",
@@ -193,9 +230,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.gtacredithire.com/wp-content/uploads/2026/02/GTA_new_wording_10_02_26-v11.1-FINAL-Clean-1.pdf",
-      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet of the 2021/2025 GTA wording: 'the additional insurance premium per hire claim is set at £5.50 per day capped at £110 for all individual hire claims other than for bike hires where the cap is £148.50', with the non-standard risk definition. Consistent with BLUEPRINT (£5.50/day, cap £110). Confirm the 2026 figures.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "PDF not fetchable (egress proxy policy denial). Search-engine snippet of the 2021/2025 GTA wording: 'the additional insurance premium per hire claim is set at £5.50 per day capped at £110 for all individual hire claims other than for bike hires where the cap is £148.50', with the non-standard risk definition. Consistent with BLUEPRINT (£5.50/day, cap £110). Confirm the 2026 figures. 2026-10-07 (search snippets only, not a fetched page): a search-engine result summary again returned the £5.50 per day / £110 cap / £148.50 bike cap wording and named the 16 March 2026 PDF as the current version, but did not state that the figures were read from the 2026 text. A second summary said 5.4 lists 'the only extra amounts that may be charged to an insurer' and that the list also includes a £12 per day add-on for dual-control vehicles (£7 per day if insurance cover is not provided), but expressly said those details came from the 2021 version; the dual-control figures are therefore not added to the principle until checked against the 2026 PDF.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "quote_only"
   },
@@ -340,9 +377,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.gtacredithire.com/rates/",
-      "sourceNote": "gtacredithire.com (rates, car-hire, commercial, private-hire-taxi, motorcycle pages and the 2025 Rate Review Communication PDF) and trade press (iloveclaims.com, postonline.co.uk, insurancetimes.co.uk, thecho.co.uk) were all blocked by the session egress proxy on 2026-10-04. Statements come from search-engine snippets: 'Maximum daily settlement rates applicable for new hires starting between 1st July 2026 and 30th June 2027'; 'revised rates approved on 25th June 2026'; 'analysis of 16 million vehicle group pricing data points'. The 2026-27 percentage changes by category were not surfaced (2025-26 changes were: Standard +12%, Prestige +3%, 4x4 -3%, MPV +1%, Sports -2%, Motorcycles +12%).",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "gtacredithire.com (rates, car-hire, commercial, private-hire-taxi, motorcycle pages and the 2025 Rate Review Communication PDF) and trade press (iloveclaims.com, postonline.co.uk, insurancetimes.co.uk, thecho.co.uk) were all blocked by the session egress proxy on 2026-10-04. Statements come from search-engine snippets: 'Maximum daily settlement rates applicable for new hires starting between 1st July 2026 and 30th June 2027'; 'revised rates approved on 25th June 2026'; 'analysis of 16 million vehicle group pricing data points'. The 2026-27 percentage changes by category were not surfaced (2025-26 changes were: Standard +12%, Prestige +3%, 4x4 -3%, MPV +1%, Sports -2%, Motorcycles +12%). 2026-10-07 re-check (search snippets only, not fetched pages; www.gtacredithire.com WebFetch returned EGRESS_BLOCKED): search-engine result summaries again confirmed the 1 July 2026 to 30 June 2027 window and the 16 million data points, and that insurers and CHCs commit in advance to adopt the independently reviewed rates for one year; one summary dated the iloveclaims.com announcement 25 June 2026, so '25 June 2026' may be the announcement date rather than the approval date. The 2026-27 percentage changes by category were again not surfaced. An S4 row (£54.88) was added to gta-rates.json from three agreeing snippets. Single, unconfirmed snippets also gave F1 (Ford Kuga) £112.10, F2 (Hyundai Santa Fe 2.2) £111.74, P1 (BMW 116d) £84.61 and S5 (Vauxhall Insignia 1.4) £58.05 for 2026-27; these are NOT recorded as rates until checked against the page. Insurance Times reported the GTA chief as saying greater regional stability was needed before EV-specific credit hire scales are launched (article date not shown in the snippet), so no separate electric-vehicle groups were found.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "quote_only"
   }

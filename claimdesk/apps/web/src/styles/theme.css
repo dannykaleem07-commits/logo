@@ -1,0 +1,241 @@
+/* Light / Dark / System: the top-bar appearance menu, Settings → Appearance, and the few places where a colour is a
+ * real-world object rather than a theme colour (logo artwork, paper documents, the 3D stage). Imported by
+ * app/ThemeMenu.tsx (always in the shell) and screens/settings/AppearanceCard.tsx. Tokens only (styles/tokens.css). */
+
+/* ---- top-bar menu ---- */
+.theme-menu {
+  position: relative;
+  flex-shrink: 0;
+}
+.theme-menu-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--r-md);
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.theme-menu-button:hover,
+.theme-menu-button[aria-expanded='true'] {
+  background: var(--surface-2);
+  color: var(--ink);
+}
+.theme-menu-button svg,
+.theme-menu-item svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+.theme-menu-list {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 60;
+  min-width: 168px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-md);
+}
+.theme-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: transparent;
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  text-align: left;
+  cursor: pointer;
+}
+.theme-menu-item:hover,
+.theme-menu-item:focus-visible {
+  background: var(--blue-50);
+  color: var(--navy);
+  box-shadow: none;
+  outline: none;
+}
+.theme-menu-item[aria-checked='true'] {
+  color: var(--navy);
+  font-weight: var(--fw-semi);
+}
+.theme-menu-check {
+  margin-left: auto;
+  font-size: var(--fs-xs);
+}
+@media (max-width: 480px) {
+  .theme-menu-button {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* ---- Settings → Appearance ---- */
+.appearance-options {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-3);
+}
+@media (max-width: 640px) {
+  .appearance-options {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.appearance-option {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px;
+  padding: var(--s-3);
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.appearance-option:hover {
+  border-color: var(--muted-2);
+}
+.appearance-option.is-selected {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 1px var(--navy);
+}
+.appearance-option:focus-within {
+  box-shadow: var(--focus);
+}
+.appearance-label {
+  margin-top: 6px;
+  font-weight: var(--fw-semi);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+}
+.appearance-hint {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+/* Mini screenshots: fixed light and dark swatches (they show the theme, so they must not follow it). */
+.appearance-preview {
+  --ap-bg: #f6f7f9;
+  --ap-side: #ffffff;
+  --ap-card: #ffffff;
+  --ap-ink: #18212f;
+  --ap-line: #dde1e7;
+  --ap-accent: #0a2a4f;
+  display: flex;
+  height: 72px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--ap-bg);
+}
+.appearance-preview-dark {
+  --ap-bg: #0e1319;
+  --ap-side: #161c24;
+  --ap-card: #161c24;
+  --ap-ink: #e8edf4;
+  --ap-line: #344050;
+  --ap-accent: #2c66b8;
+}
+.appearance-preview-system {
+  background: linear-gradient(135deg, #f6f7f9 0 50%, #0e1319 50% 100%);
+}
+.ap-side {
+  width: 22%;
+  background: var(--ap-side);
+  border-right: 1px solid var(--ap-line);
+}
+.appearance-preview-system .ap-side {
+  background: #ffffff;
+  border-right-color: #dde1e7;
+}
+.ap-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+}
+.ap-line {
+  height: 6px;
+  width: 70%;
+  border-radius: 3px;
+  background: var(--ap-line);
+}
+.ap-line-strong {
+  width: 45%;
+  background: var(--ap-ink);
+  opacity: 0.8;
+}
+.ap-pill {
+  margin-top: auto;
+  width: 34%;
+  height: 12px;
+  border-radius: 6px;
+  background: var(--ap-accent);
+}
+.appearance-preview-system .ap-line-strong {
+  background: #8a95a5;
+}
+.appearance-preview-system .ap-line {
+  background: #6e7a8a;
+}
+.appearance-preview-system .ap-pill {
+  background: #2c66b8;
+}
+
+/* ---- real-world colours in dark mode ---- */
+/* The CCGUK logo artwork is navy on white: in dark mode it sits on its own white plate rather than being recoloured. */
+.nav-brand-logo,
+.login-logo {
+  background: var(--logo-plate);
+}
+:root[data-theme='dark'] .nav-brand-logo,
+:root[data-theme='dark'] .login-logo {
+  padding: 6px 8px;
+  border-radius: var(--r-md);
+  box-sizing: content-box;
+}
+:root[data-theme='dark'] .nav-brand-logo {
+  max-width: calc(100% - 16px);
+}
+:root[data-theme='dark'] .login-logo {
+  max-width: calc(100% - 16px);
+}
+
+/* Word previews: docx-preview paints white pages; the text on them must stay document ink in dark mode. */
+:root .docx-paper-body section.docx {
+  color: var(--doc-ink);
+  background: var(--doc-paper);
+}
+
+/* 3D / 2D damage model (screens/engineer/damage3d, owned by the 3D slice): dark stage and readable selected states.
+ * Kept here so that slice's file does not need theme edits; move into damage3d.css when it is next touched. */
+:root .dm3-area {
+  background: linear-gradient(180deg, var(--viewer-top) 0%, var(--viewer-bottom) 100%);
+}
+:root .dm3-legend {
+  background: var(--viewer-chip);
+}
+:root .dm3-seg button[aria-pressed='true'],
+:root .dm3-seg button[aria-pressed='true']:hover:not(:disabled),
+:root .dm3-sev button[aria-pressed='true'],
+:root .dm3-ops button[aria-pressed='true'],
+:root .dm3-ops button[aria-pressed='true']:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+:root .dm3-tip {
+  background: var(--accent);
+  color: var(--on-accent);
+}

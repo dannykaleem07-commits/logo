@@ -1,0 +1,155 @@
+{
+  "make": "LEVC",
+  "slug": "levc",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "tx1": {
+      "TX1 (1997–2002)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4580,
+            "widthMm": 1750,
+            "heightMm": 1770,
+            "wheelbaseMm": 2885,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 15,
+            "profile": "taxi",
+            "bonnetRatio": 0.18,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.15,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Purpose-built London taxi; rear-hinged rear passenger doors, 54ft turning circle. London Taxis International (LTI) build."
+          }
+        }
+      }
+    },
+    "txii": {
+      "TXII (2002–2006)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4580,
+            "widthMm": 1750,
+            "heightMm": 1770,
+            "wheelbaseMm": 2885,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 15,
+            "profile": "taxi",
+            "bonnetRatio": 0.18,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.15,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Purpose-built London taxi; rear-hinged rear passenger doors, 54ft turning circle. LTI build."
+          }
+        }
+      }
+    },
+    "tx4": {
+      "TX4 (2006–2017)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4570,
+            "widthMm": 1770,
+            "heightMm": 1835,
+            "wheelbaseMm": 2885,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "taxi",
+            "bonnetRatio": 0.18,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.15,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Purpose-built London taxi; rear-hinged rear passenger doors, 54ft turning circle. LTI/LTC build."
+          }
+        }
+      }
+    },
+    "tx": {
+      "TX (2018–present)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4855,
+            "widthMm": 1940,
+            "heightMm": 1880,
+            "wheelbaseMm": 2990,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 17,
+            "profile": "taxi",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.15,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Range-extended electric London taxi; rear-hinged rear doors; panoramic roof. Width excludes mirrors."
+          }
+        }
+      }
+    },
+    "vn5": {
+      "VN5 (2021–2024)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4855,
+            "widthMm": 1940,
+            "heightMm": 1920,
+            "wheelbaseMm": 2990,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.1,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Range-extended electric van on the TX taxi platform; side load door. Width excludes mirrors."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,432 @@
+{
+  "make": "BYD",
+  "slug": "byd",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "dolphin-surf": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3990,
+            "widthMm": 1720,
+            "heightMm": 1590,
+            "wheelbaseMm": 2500,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.19,
+            "rearOverhangRatio": 0.157,
+            "frontOverhangRatio": 0.217,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Seagull-based city EV."
+          }
+        }
+      }
+    },
+    "dolphin": {
+      "Mk1 (2023–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4290,
+            "widthMm": 1770,
+            "heightMm": 1570,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.156,
+            "frontOverhangRatio": 0.215,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "dolphin-g-dm-i": {
+      "Mk1 (2026–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4150,
+            "widthMm": 1770,
+            "heightMm": 1570,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.155,
+            "frontOverhangRatio": 0.214,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "New plug-in-hybrid supermini; dimensions estimated from the Dolphin family, treat as uncertain."
+          }
+        }
+      }
+    },
+    "atto-2": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4310,
+            "widthMm": 1830,
+            "heightMm": 1675,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.184,
+            "frontOverhangRatio": 0.208,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "DM-i plug-in-hybrid version has an open lower grille."
+          }
+        }
+      }
+    },
+    "atto-3": {
+      "Mk1 (2023–2026)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4455,
+            "widthMm": 1875,
+            "heightMm": 1615,
+            "wheelbaseMm": 2720,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.183,
+            "frontOverhangRatio": 0.206,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      },
+      "Atto 3 Evo (2026–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4455,
+            "widthMm": 1875,
+            "heightMm": 1615,
+            "wheelbaseMm": 2720,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.183,
+            "frontOverhangRatio": 0.206,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Evo update; body shell largely carried over."
+          }
+        }
+      }
+    },
+    "seal": {
+      "Mk1 (2023–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4800,
+            "widthMm": 1875,
+            "heightMm": 1460,
+            "wheelbaseMm": 2920,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.208,
+            "frontOverhangRatio": 0.184,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.42,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Fastback-style four-door saloon with boot lid."
+          }
+        }
+      }
+    },
+    "seal-6-dm-i": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4840,
+            "widthMm": 1875,
+            "heightMm": 1495,
+            "wheelbaseMm": 2790,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.224,
+            "frontOverhangRatio": 0.199,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.38,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4840,
+            "widthMm": 1875,
+            "heightMm": 1505,
+            "wheelbaseMm": 2790,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.203,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seal 6 Touring."
+          }
+        }
+      }
+    },
+    "seal-u": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4785,
+            "widthMm": 1890,
+            "heightMm": 1670,
+            "wheelbaseMm": 2765,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.198,
+            "frontOverhangRatio": 0.224,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "DM-i shown; Seal U EV has a closed nose."
+          }
+        }
+      }
+    },
+    "sealion-5-dm-i": {
+      "Mk1 (2026–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4740,
+            "widthMm": 1860,
+            "heightMm": 1710,
+            "wheelbaseMm": 2710,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.201,
+            "frontOverhangRatio": 0.227,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "New plug-in-hybrid SUV; dimensions approximate and uncertain."
+          }
+        }
+      }
+    },
+    "sealion-7": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4830,
+            "widthMm": 1925,
+            "heightMm": 1620,
+            "wheelbaseMm": 2930,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.189,
+            "frontOverhangRatio": 0.205,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Coupe-SUV roofline."
+          }
+        }
+      }
+    },
+    "e6": {
+      "Mk1 (2013–2014)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4560,
+            "widthMm": 1820,
+            "heightMm": 1645,
+            "wheelbaseMm": 2830,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.178,
+            "frontOverhangRatio": 0.201,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Very rare early fleet/taxi import."
+          }
+        }
+      },
+      "Mk2 (2021–2022)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4695,
+            "widthMm": 1810,
+            "heightMm": 1670,
+            "wheelbaseMm": 2800,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 17,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.182,
+            "frontOverhangRatio": 0.222,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Fleet/taxi MPV."
+          }
+        }
+      }
+    },
+    "shark": {
+      "Mk1 (2026–present)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5455,
+            "widthMm": 1970,
+            "heightMm": 1925,
+            "wheelbaseMm": 3260,
+            "groundClearanceMm": 240,
+            "wheelDiameterIn": 18,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.241,
+            "frontOverhangRatio": 0.161,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.05,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Shark 6 plug-in-hybrid double cab."
+          }
+        }
+      }
+    }
+  }
+}

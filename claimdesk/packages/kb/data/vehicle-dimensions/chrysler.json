@@ -1,0 +1,567 @@
+{
+  "make": "Chrysler",
+  "slug": "chrysler",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "300c": {
+      "LX Mk1 (2005–2010)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5000,
+            "widthMm": 1880,
+            "heightMm": 1485,
+            "wheelbaseMm": 3050,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.32,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.35,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 5015,
+            "widthMm": 1880,
+            "heightMm": 1515,
+            "wheelbaseMm": 3050,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.32,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "300C Touring."
+          }
+        }
+      },
+      "LD Mk2 (2012–2015)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5065,
+            "widthMm": 1900,
+            "heightMm": 1485,
+            "wheelbaseMm": 3050,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.32,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.38,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "300m": {
+      "LH (1999–2004)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5025,
+            "widthMm": 1890,
+            "heightMm": 1420,
+            "wheelbaseMm": 2870,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.5,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Cab-forward LH platform; long front overhang."
+          }
+        }
+      }
+    },
+    "crossfire": {
+      "ZH (2004–2008)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4060,
+            "widthMm": 1765,
+            "heightMm": 1305,
+            "wheelbaseMm": 2400,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.85,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Boat-tail fastback; 18in front / 19in rear staggered wheels."
+          },
+          "roadster": {
+            "lengthMm": 4060,
+            "widthMm": 1765,
+            "heightMm": 1315,
+            "wheelbaseMm": 2400,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "delta": {
+      "Lancia-built (2011–2014)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4520,
+            "widthMm": 1795,
+            "heightMm": 1500,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Lancia Delta rebadged for the UK."
+          }
+        }
+      }
+    },
+    "grand-voyager": {
+      "GS (1996–2000)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 5070,
+            "widthMm": 1950,
+            "heightMm": 1740,
+            "wheelbaseMm": 3030,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.22,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "RG (2001–2007)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 5095,
+            "widthMm": 1995,
+            "heightMm": 1750,
+            "wheelbaseMm": 3030,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.22,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "RT (2008–2015, facelift 2011)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 5145,
+            "widthMm": 2000,
+            "heightMm": 1750,
+            "wheelbaseMm": 3080,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 17,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.12,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "neon": {
+      "PL Mk2 (2000–2004)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4430,
+            "widthMm": 1710,
+            "heightMm": 1420,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.5,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "pt-cruiser": {
+      "Mk1 (2000–2006)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4290,
+            "widthMm": 1705,
+            "heightMm": 1600,
+            "wheelbaseMm": 2615,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Retro tall-roof five-door wagon with separate-wing styling."
+          },
+          "convertible": {
+            "lengthMm": 4290,
+            "widthMm": 1705,
+            "heightMm": 1540,
+            "wheelbaseMm": 2615,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Fixed sports bar over the cabin."
+          }
+        }
+      },
+      "Facelift (2006–2009)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4290,
+            "widthMm": 1705,
+            "heightMm": 1600,
+            "wheelbaseMm": 2615,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4290,
+            "widthMm": 1705,
+            "heightMm": 1540,
+            "wheelbaseMm": 2615,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Fixed sports bar over the cabin."
+          }
+        }
+      }
+    },
+    "sebring": {
+      "JS (2007–2010)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4850,
+            "widthMm": 1810,
+            "heightMm": 1495,
+            "wheelbaseMm": 2765,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4920,
+            "widthMm": 1815,
+            "heightMm": 1470,
+            "wheelbaseMm": 2765,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fabric or retractable hard-top versions."
+          }
+        }
+      }
+    },
+    "stratus": {
+      "JX Convertible (1996–2001)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 4890,
+            "widthMm": 1780,
+            "heightMm": 1390,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 15,
+            "profile": "convertible",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "voyager": {
+      "GS (1996–2000)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4735,
+            "widthMm": 1950,
+            "heightMm": 1740,
+            "wheelbaseMm": 2880,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.22,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "RG (2001–2007)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4810,
+            "widthMm": 1995,
+            "heightMm": 1750,
+            "wheelbaseMm": 2880,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.22,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "ypsilon": {
+      "Lancia-built (2011–2015)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3840,
+            "widthMm": 1675,
+            "heightMm": 1520,
+            "wheelbaseMm": 2390,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "large-upright",
+            "note": "Lancia Ypsilon rebadged; hidden rear door handles."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,570 @@
+{
+ "make": "Bentley",
+ "slug": "bentley",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "arnage": {
+   "Arnage Green / Red Label (1998–2002)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5390,
+      "widthMm": 1930,
+      "heightMm": 1515,
+      "wheelbaseMm": 3115,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.232,
+      "frontOverhangRatio": 0.19,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.3,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "Quad round headlamps; Red Label most common."
+     }
+    }
+   },
+   "Arnage R / T / RL (2002–2009)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5400,
+      "widthMm": 1930,
+      "heightMm": 1515,
+      "wheelbaseMm": 3115,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 19,
+      "profile": "notchback",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.233,
+      "frontOverhangRatio": 0.19,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.3,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "RL long-wheelbase approx 5650 mm."
+     }
+    }
+   }
+  },
+  "azure": {
+   "Azure Mk1 (1995–2003)": {
+    "bodies": {
+     "convertible": {
+      "lengthMm": 5340,
+      "widthMm": 1875,
+      "heightMm": 1460,
+      "wheelbaseMm": 3060,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "convertible",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.235,
+      "frontOverhangRatio": 0.192,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "Based on Continental R; fabric roof."
+     }
+    }
+   },
+   "Azure Mk2 (2006–2010)": {
+    "bodies": {
+     "convertible": {
+      "lengthMm": 5410,
+      "widthMm": 1930,
+      "heightMm": 1525,
+      "wheelbaseMm": 3115,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 20,
+      "profile": "convertible",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.233,
+      "frontOverhangRatio": 0.191,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "Arnage-based; fabric roof."
+     }
+    }
+   }
+  },
+  "continental-r": {
+   "Continental R / T / SC (1991–2003)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 5340,
+      "widthMm": 1875,
+      "heightMm": 1460,
+      "wheelbaseMm": 3060,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "coupe",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.235,
+      "frontOverhangRatio": 0.192,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.45,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "Continental T shorter (approx 5235 mm, 2957 mm wheelbase)."
+     }
+    }
+   }
+  },
+  "brooklands": {
+   "Brooklands Coupe (2008–2011)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 5410,
+      "widthMm": 1930,
+      "heightMm": 1465,
+      "wheelbaseMm": 3115,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 20,
+      "profile": "coupe",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.233,
+      "frontOverhangRatio": 0.191,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.45,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "Pillarless two-door coupe."
+     }
+    }
+   }
+  },
+  "continental-gt": {
+   "Mk1 (2003–2011)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4805,
+      "widthMm": 1920,
+      "heightMm": 1390,
+      "wheelbaseMm": 2745,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.236,
+      "frontOverhangRatio": 0.193,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.55,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright"
+     },
+     "convertible": {
+      "lengthMm": 4805,
+      "widthMm": 1920,
+      "heightMm": 1400,
+      "wheelbaseMm": 2745,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.236,
+      "frontOverhangRatio": 0.193,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "GTC: fabric roof."
+     }
+    }
+   },
+   "Mk2 (2011–2018)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4805,
+      "widthMm": 1945,
+      "heightMm": 1405,
+      "wheelbaseMm": 2745,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 20,
+      "profile": "coupe",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.236,
+      "frontOverhangRatio": 0.193,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.55,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright"
+     },
+     "convertible": {
+      "lengthMm": 4805,
+      "widthMm": 1945,
+      "heightMm": 1405,
+      "wheelbaseMm": 2745,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 20,
+      "profile": "convertible",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.236,
+      "frontOverhangRatio": 0.193,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "GTC: fabric roof."
+     }
+    }
+   },
+   "Mk3 (2018–2024)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4850,
+      "widthMm": 1955,
+      "heightMm": 1405,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 21,
+      "profile": "coupe",
+      "bonnetRatio": 0.33,
+      "rearOverhangRatio": 0.247,
+      "frontOverhangRatio": 0.165,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.55,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright"
+     },
+     "convertible": {
+      "lengthMm": 4850,
+      "widthMm": 1955,
+      "heightMm": 1400,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 21,
+      "profile": "convertible",
+      "bonnetRatio": 0.33,
+      "rearOverhangRatio": 0.247,
+      "frontOverhangRatio": 0.165,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "GTC: fabric roof."
+     }
+    }
+   },
+   "Mk4 (2024–present)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4895,
+      "widthMm": 1965,
+      "heightMm": 1395,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 22,
+      "profile": "coupe",
+      "bonnetRatio": 0.33,
+      "rearOverhangRatio": 0.251,
+      "frontOverhangRatio": 0.167,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.55,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "Single round headlamp per side; PHEV."
+     },
+     "convertible": {
+      "lengthMm": 4895,
+      "widthMm": 1965,
+      "heightMm": 1395,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 22,
+      "profile": "convertible",
+      "bonnetRatio": 0.33,
+      "rearOverhangRatio": 0.251,
+      "frontOverhangRatio": 0.167,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "Single round headlamp per side; PHEV; fabric roof."
+     }
+    }
+   }
+  },
+  "flying-spur": {
+   "Continental Flying Spur (2005–2013)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5305,
+      "widthMm": 1915,
+      "heightMm": 1480,
+      "wheelbaseMm": 3065,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 19,
+      "profile": "notchback",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.232,
+      "frontOverhangRatio": 0.19,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.4,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright"
+     }
+    }
+   },
+   "Flying Spur (2013–2019)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5295,
+      "widthMm": 1975,
+      "heightMm": 1490,
+      "wheelbaseMm": 3065,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 20,
+      "profile": "notchback",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.231,
+      "frontOverhangRatio": 0.19,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.4,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright"
+     }
+    }
+   },
+   "Flying Spur (2019–2024)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5315,
+      "widthMm": 1980,
+      "heightMm": 1485,
+      "wheelbaseMm": 3195,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 21,
+      "profile": "notchback",
+      "bonnetRatio": 0.33,
+      "rearOverhangRatio": 0.239,
+      "frontOverhangRatio": 0.16,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright"
+     }
+    }
+   },
+   "Flying Spur hybrid V8 (2024–present)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5315,
+      "widthMm": 1980,
+      "heightMm": 1475,
+      "wheelbaseMm": 3195,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 21,
+      "profile": "notchback",
+      "bonnetRatio": 0.33,
+      "rearOverhangRatio": 0.239,
+      "frontOverhangRatio": 0.16,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "Single round headlamp per side; PHEV."
+     }
+    }
+   }
+  },
+  "mulsanne": {
+   "Mulsanne (2010–2020)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5575,
+      "widthMm": 1925,
+      "heightMm": 1520,
+      "wheelbaseMm": 3265,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 20,
+      "profile": "notchback",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.228,
+      "frontOverhangRatio": 0.186,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.3,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "EWB variant approx 5825 mm."
+     }
+    }
+   }
+  },
+  "bentayga": {
+   "Mk1 (2016–2020)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 5140,
+      "widthMm": 2000,
+      "heightMm": 1740,
+      "wheelbaseMm": 2995,
+      "groundClearanceMm": 220,
+      "wheelDiameterIn": 21,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.2,
+      "frontOverhangRatio": 0.217,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright"
+     }
+    }
+   },
+   "Facelift (2020–present)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 5125,
+      "widthMm": 2000,
+      "heightMm": 1730,
+      "wheelbaseMm": 2995,
+      "groundClearanceMm": 220,
+      "wheelDiameterIn": 21,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.2,
+      "frontOverhangRatio": 0.216,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "large-upright",
+      "note": "EWB from 2022 approx 5320 mm."
+     }
+    }
+   }
+  }
+ }
+}

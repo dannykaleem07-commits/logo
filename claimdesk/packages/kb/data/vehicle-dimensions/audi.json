@@ -1,0 +1,1949 @@
+{
+  "make": "Audi",
+  "slug": "audi",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "a1": {
+      "8X (2010–2018)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3955,
+            "widthMm": 1740,
+            "heightMm": 1420,
+            "wheelbaseMm": 2470,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "3-door figures; 5-door Sportback is the same length and about 5 mm wider and taller."
+          }
+        }
+      },
+      "GB (2018–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4030,
+            "widthMm": 1740,
+            "heightMm": 1410,
+            "wheelbaseMm": 2565,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          }
+        }
+      }
+    },
+    "a2": {
+      "8Z (2000–2005)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3825,
+            "widthMm": 1675,
+            "heightMm": 1555,
+            "wheelbaseMm": 2405,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.55,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Aluminium monovolume body; small service flap instead of opening bonnet."
+          }
+        }
+      }
+    },
+    "a3": {
+      "8L (1996–2003)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4150,
+            "widthMm": 1735,
+            "heightMm": 1425,
+            "wheelbaseMm": 2515,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "3- and 5-door share dimensions."
+          }
+        }
+      },
+      "8P (2003–2013)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4240,
+            "widthMm": 1765,
+            "heightMm": 1420,
+            "wheelbaseMm": 2580,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "3-door figures; 5-door Sportback about 4290 mm long. Singleframe grille from 2005."
+          },
+          "convertible": {
+            "lengthMm": 4240,
+            "widthMm": 1765,
+            "heightMm": 1425,
+            "wheelbaseMm": 2580,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Fabric roof (2008–2013)."
+          }
+        }
+      },
+      "8V (2012–2020)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4310,
+            "widthMm": 1785,
+            "heightMm": 1425,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "5-door Sportback figures; 3-door about 4240 mm long, 2600 mm wheelbase."
+          },
+          "saloon": {
+            "lengthMm": 4455,
+            "widthMm": 1795,
+            "heightMm": 1415,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          },
+          "convertible": {
+            "lengthMm": 4420,
+            "widthMm": 1795,
+            "heightMm": 1410,
+            "wheelbaseMm": 2595,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Fabric roof."
+          }
+        }
+      },
+      "8Y (2020–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4345,
+            "widthMm": 1815,
+            "heightMm": 1450,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Sportback."
+          },
+          "saloon": {
+            "lengthMm": 4495,
+            "widthMm": 1815,
+            "heightMm": 1425,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          },
+          "crossover": {
+            "lengthMm": 4350,
+            "widthMm": 1815,
+            "heightMm": 1490,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 18,
+            "profile": "hatch",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A3 allstreet: raised suspension, cladding and roof rails."
+          }
+        }
+      }
+    },
+    "a4": {
+      "B5 (1995–2001)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4480,
+            "widthMm": 1735,
+            "heightMm": 1415,
+            "wheelbaseMm": 2615,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4490,
+            "widthMm": 1735,
+            "heightMm": 1440,
+            "wheelbaseMm": 2615,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 15,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "A4 Avant."
+          }
+        }
+      },
+      "B6 (2001–2005; Cabriolet 2002–2006)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4545,
+            "widthMm": 1765,
+            "heightMm": 1430,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4545,
+            "widthMm": 1765,
+            "heightMm": 1450,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "A4 Avant."
+          },
+          "convertible": {
+            "lengthMm": 4575,
+            "widthMm": 1775,
+            "heightMm": 1390,
+            "wheelbaseMm": 2655,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A4 Cabriolet (B6 body, 2002–2006); fabric roof."
+          }
+        }
+      },
+      "B7 (2004–2008; Cabriolet 2006–2009)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4585,
+            "widthMm": 1770,
+            "heightMm": 1425,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          },
+          "estate": {
+            "lengthMm": 4585,
+            "widthMm": 1770,
+            "heightMm": 1455,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A4 Avant."
+          },
+          "convertible": {
+            "lengthMm": 4575,
+            "widthMm": 1775,
+            "heightMm": 1390,
+            "wheelbaseMm": 2655,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A4 Cabriolet; fabric roof."
+          }
+        }
+      },
+      "B8 (2008–2015; allroad to 2016)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4705,
+            "widthMm": 1825,
+            "heightMm": 1425,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          },
+          "estate": {
+            "lengthMm": 4705,
+            "widthMm": 1825,
+            "heightMm": 1435,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A4 Avant; allroad quattro raised and clad."
+          }
+        }
+      },
+      "B9 (2015–2024)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4725,
+            "widthMm": 1840,
+            "heightMm": 1425,
+            "wheelbaseMm": 2820,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Facelift (2019) about 4760 mm long."
+          },
+          "estate": {
+            "lengthMm": 4725,
+            "widthMm": 1840,
+            "heightMm": 1435,
+            "wheelbaseMm": 2820,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A4 Avant; facelift about 4760 mm long."
+          }
+        }
+      }
+    },
+    "a5": {
+      "8T (2007–2016)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4625,
+            "widthMm": 1855,
+            "heightMm": 1370,
+            "wheelbaseMm": 2750,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          },
+          "liftback": {
+            "lengthMm": 4710,
+            "widthMm": 1855,
+            "heightMm": 1390,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "liftback",
+            "bonnetRatio": 0.31,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.65,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A5 Sportback, frameless door glass."
+          },
+          "convertible": {
+            "lengthMm": 4625,
+            "widthMm": 1855,
+            "heightMm": 1385,
+            "wheelbaseMm": 2750,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Fabric roof."
+          }
+        }
+      },
+      "F5 (2016–2024)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4675,
+            "widthMm": 1845,
+            "heightMm": 1370,
+            "wheelbaseMm": 2765,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          },
+          "liftback": {
+            "lengthMm": 4735,
+            "widthMm": 1845,
+            "heightMm": 1385,
+            "wheelbaseMm": 2825,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "liftback",
+            "bonnetRatio": 0.31,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.65,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A5 Sportback, frameless door glass."
+          },
+          "convertible": {
+            "lengthMm": 4675,
+            "widthMm": 1845,
+            "heightMm": 1385,
+            "wheelbaseMm": 2765,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Fabric roof."
+          }
+        }
+      },
+      "B10 (2024–present; replaces A4)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4830,
+            "widthMm": 1860,
+            "heightMm": 1445,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "liftback",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.65,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Formerly A4 territory; A5 Sportback-style saloon with tailgate."
+          },
+          "estate": {
+            "lengthMm": 4835,
+            "widthMm": 1860,
+            "heightMm": 1460,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A5 Avant."
+          }
+        }
+      }
+    },
+    "a6": {
+      "C5 (1997–2004; allroad to 2005)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4795,
+            "widthMm": 1810,
+            "heightMm": 1455,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.5,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4795,
+            "widthMm": 1810,
+            "heightMm": 1480,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "A6 Avant; allroad quattro raised and clad."
+          }
+        }
+      },
+      "C6 (2004–2011)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4915,
+            "widthMm": 1855,
+            "heightMm": 1460,
+            "wheelbaseMm": 2845,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          },
+          "estate": {
+            "lengthMm": 4935,
+            "widthMm": 1855,
+            "heightMm": 1465,
+            "wheelbaseMm": 2845,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A6 Avant."
+          }
+        }
+      },
+      "C7 (2011–2018)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4915,
+            "widthMm": 1875,
+            "heightMm": 1455,
+            "wheelbaseMm": 2910,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          },
+          "estate": {
+            "lengthMm": 4925,
+            "widthMm": 1875,
+            "heightMm": 1460,
+            "wheelbaseMm": 2910,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A6 Avant."
+          }
+        }
+      },
+      "C8 (2018–2025)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4940,
+            "widthMm": 1885,
+            "heightMm": 1455,
+            "wheelbaseMm": 2925,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          },
+          "estate": {
+            "lengthMm": 4940,
+            "widthMm": 1885,
+            "heightMm": 1465,
+            "wheelbaseMm": 2925,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A6 Avant."
+          }
+        }
+      },
+      "C9 (2025–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5000,
+            "widthMm": 1875,
+            "heightMm": 1430,
+            "wheelbaseMm": 2925,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.55,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Dimensions approximate; new model."
+          },
+          "estate": {
+            "lengthMm": 5000,
+            "widthMm": 1875,
+            "heightMm": 1460,
+            "wheelbaseMm": 2925,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "A6 Avant; dimensions approximate."
+          }
+        }
+      }
+    },
+    "a6-e-tron": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4930,
+            "widthMm": 1925,
+            "heightMm": 1525,
+            "wheelbaseMm": 2945,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "liftback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.65,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "A6 Sportback e-tron."
+          },
+          "estate": {
+            "lengthMm": 4930,
+            "widthMm": 1925,
+            "heightMm": 1530,
+            "wheelbaseMm": 2945,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "estate",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "A6 Avant e-tron."
+          }
+        }
+      }
+    },
+    "a7": {
+      "4G (2010–2018)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4970,
+            "widthMm": 1910,
+            "heightMm": 1420,
+            "wheelbaseMm": 2915,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "liftback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.75,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Frameless door glass."
+          }
+        }
+      },
+      "4K (2018–2025)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4970,
+            "widthMm": 1910,
+            "heightMm": 1420,
+            "wheelbaseMm": 2925,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "liftback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.75,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Frameless door glass."
+          }
+        }
+      }
+    },
+    "a8": {
+      "D2 (1994–2002)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5035,
+            "widthMm": 1880,
+            "heightMm": 1440,
+            "wheelbaseMm": 2880,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Aluminium body; LWB about 5165 mm."
+          }
+        }
+      },
+      "D3 (2003–2010)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5050,
+            "widthMm": 1895,
+            "heightMm": 1445,
+            "wheelbaseMm": 2945,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Aluminium body; L version about 5180 mm."
+          }
+        }
+      },
+      "D4 (2010–2017)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5135,
+            "widthMm": 1950,
+            "heightMm": 1460,
+            "wheelbaseMm": 2990,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "L version about 5265 mm."
+          }
+        }
+      },
+      "D5 (2018–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5170,
+            "widthMm": 1945,
+            "heightMm": 1475,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "L version about 5300 mm."
+          }
+        }
+      }
+    },
+    "q2": {
+      "GA (2016–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4190,
+            "widthMm": 1795,
+            "heightMm": 1510,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Contrasting C-pillar \"blade\"."
+          }
+        }
+      }
+    },
+    "q3": {
+      "8U (2011–2018)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4385,
+            "widthMm": 1830,
+            "heightMm": 1610,
+            "wheelbaseMm": 2605,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          }
+        }
+      },
+      "F3 (2018–2025)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4485,
+            "widthMm": 1850,
+            "heightMm": 1615,
+            "wheelbaseMm": 2680,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Q3 Sportback (2019–) about 4500 x 1565 mm with sloping roof."
+          }
+        }
+      },
+      "Mk3 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4530,
+            "widthMm": 1860,
+            "heightMm": 1615,
+            "wheelbaseMm": 2680,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "shield",
+            "note": "Dimensions approximate; new model; Sportback variant also offered."
+          }
+        }
+      }
+    },
+    "q4-e-tron": {
+      "F4 (2021–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4590,
+            "widthMm": 1865,
+            "heightMm": 1630,
+            "wheelbaseMm": 2765,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Q4 Sportback e-tron has a sloping roof, about 1615 mm high."
+          }
+        }
+      }
+    },
+    "q5": {
+      "8R (2008–2016)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4630,
+            "widthMm": 1880,
+            "heightMm": 1655,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          }
+        }
+      },
+      "FY (2017–2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4665,
+            "widthMm": 1895,
+            "heightMm": 1660,
+            "wheelbaseMm": 2820,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Q5 Sportback (2021–) has a coupe-style roof."
+          }
+        }
+      },
+      "Mk3 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4715,
+            "widthMm": 1900,
+            "heightMm": 1655,
+            "wheelbaseMm": 2820,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "shield",
+            "note": "Q5 Sportback variant also offered."
+          }
+        }
+      }
+    },
+    "q6-e-tron": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4770,
+            "widthMm": 1940,
+            "heightMm": 1650,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "q7": {
+      "4L (2006–2015)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5085,
+            "widthMm": 1985,
+            "heightMm": 1735,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          }
+        }
+      },
+      "4M (2015–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5065,
+            "widthMm": 1970,
+            "heightMm": 1740,
+            "wheelbaseMm": 2995,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Seven-seat option."
+          }
+        }
+      }
+    },
+    "q8": {
+      "4M (2018–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4985,
+            "widthMm": 1995,
+            "heightMm": 1705,
+            "wheelbaseMm": 2995,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 21,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Frameless door glass."
+          }
+        }
+      }
+    },
+    "e-tron": {
+      "GE (2019–2022)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4900,
+            "widthMm": 1935,
+            "heightMm": 1630,
+            "wheelbaseMm": 2930,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "e-tron Sportback (2020–) has a sloping roof, about 1615 mm high."
+          }
+        }
+      }
+    },
+    "q8-e-tron": {
+      "GE facelift (2023–2025)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4915,
+            "widthMm": 1935,
+            "heightMm": 1635,
+            "wheelbaseMm": 2930,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Sportback variant also offered."
+          }
+        }
+      }
+    },
+    "e-tron-gt": {
+      "F8 (2021–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4990,
+            "widthMm": 1965,
+            "heightMm": 1395,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.78,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Four-door fastback with boot lid."
+          }
+        }
+      }
+    },
+    "r8": {
+      "Type 42 (2007–2015)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4440,
+            "widthMm": 1905,
+            "heightMm": 1250,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.65,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Mid-engined; contrasting side blade."
+          },
+          "roadster": {
+            "lengthMm": 4440,
+            "widthMm": 1905,
+            "heightMm": 1245,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "R8 Spyder; fabric roof."
+          }
+        }
+      },
+      "Type 4S (2015–2024)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4425,
+            "widthMm": 1940,
+            "heightMm": 1240,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.65,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Mid-engined."
+          },
+          "roadster": {
+            "lengthMm": 4425,
+            "widthMm": 1940,
+            "heightMm": 1245,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "roadster",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "R8 Spyder; fabric roof."
+          }
+        }
+      }
+    },
+    "tt": {
+      "8N (1998–2006)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4040,
+            "widthMm": 1765,
+            "heightMm": 1345,
+            "wheelbaseMm": 2425,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "coupe",
+            "bonnetRatio": 0.32,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.85,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Bauhaus arched roof; hatchback tailgate."
+          },
+          "roadster": {
+            "lengthMm": 4040,
+            "widthMm": 1765,
+            "heightMm": 1350,
+            "wheelbaseMm": 2425,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "roadster",
+            "bonnetRatio": 0.32,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "8J (2006–2014)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4180,
+            "widthMm": 1840,
+            "heightMm": 1350,
+            "wheelbaseMm": 2470,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.32,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.75,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Hatchback tailgate."
+          },
+          "roadster": {
+            "lengthMm": 4180,
+            "widthMm": 1840,
+            "heightMm": 1360,
+            "wheelbaseMm": 2470,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.32,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          }
+        }
+      },
+      "8S (2014–2023)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4180,
+            "widthMm": 1830,
+            "heightMm": 1355,
+            "wheelbaseMm": 2505,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.32,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.75,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield",
+            "note": "Hatchback tailgate."
+          },
+          "roadster": {
+            "lengthMm": 4180,
+            "widthMm": 1830,
+            "heightMm": 1355,
+            "wheelbaseMm": 2505,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.32,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "shield"
+          }
+        }
+      }
+    }
+  }
+}

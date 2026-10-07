@@ -1,0 +1,123 @@
+{
+  "make": "Chery",
+  "slug": "chery",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "tiggo-4": {
+      "Mk1 (2026–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4320,
+            "widthMm": 1830,
+            "heightMm": 1660,
+            "wheelbaseMm": 2610,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "tiggo-7": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4555,
+            "widthMm": 1860,
+            "heightMm": 1695,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "tiggo-8": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4720,
+            "widthMm": 1860,
+            "heightMm": 1745,
+            "wheelbaseMm": 2710,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Seven-seat body."
+          }
+        }
+      }
+    },
+    "tiggo-9": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4820,
+            "widthMm": 1930,
+            "heightMm": 1700,
+            "wheelbaseMm": 2820,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 20,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,256 @@
+{
+  "make": "Cadillac",
+  "slug": "cadillac",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "bls": {
+      "Mk1 (2006–2010)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4680,
+            "widthMm": 1760,
+            "heightMm": 1450,
+            "wheelbaseMm": 2675,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "large-upright",
+            "note": "Saab 9-3 (Epsilon) based."
+          },
+          "estate": {
+            "lengthMm": 4680,
+            "widthMm": 1760,
+            "heightMm": 1480,
+            "wheelbaseMm": 2675,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "cts": {
+      "Mk1 (2004–2007)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4830,
+            "widthMm": 1795,
+            "heightMm": 1440,
+            "wheelbaseMm": 2880,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.4,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "Mk2 (2008–2012)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4865,
+            "widthMm": 1840,
+            "heightMm": 1470,
+            "wheelbaseMm": 2880,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "lyriq": {
+      "Mk1 (2025–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5005,
+            "widthMm": 1975,
+            "heightMm": 1625,
+            "wheelbaseMm": 3095,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 22,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "optiq": {
+      "Mk1 (2025–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4820,
+            "widthMm": 1910,
+            "heightMm": 1640,
+            "wheelbaseMm": 2955,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 21,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "seville": {
+      "Mk5 (1998–2004)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5105,
+            "widthMm": 1905,
+            "heightMm": 1410,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "srx": {
+      "Mk1 (2004–2009)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4950,
+            "widthMm": 1845,
+            "heightMm": 1720,
+            "wheelbaseMm": 2955,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "large-upright",
+            "note": "Long estate-like crossover; 7-seat option."
+          }
+        }
+      }
+    },
+    "sts": {
+      "Mk1 (2005–2009)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4985,
+            "widthMm": 1845,
+            "heightMm": 1465,
+            "wheelbaseMm": 2955,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    }
+  }
+}

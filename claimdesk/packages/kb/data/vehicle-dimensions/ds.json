@@ -1,0 +1,360 @@
+{
+  "make": "DS Automobiles",
+  "slug": "ds",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "ds-3": {
+      "DS 3 hatchback (2015–2019)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3950,
+            "widthMm": 1715,
+            "heightMm": 1455,
+            "wheelbaseMm": 2465,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.158,
+            "frontOverhangRatio": 0.218,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.15,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Floating-roof three-door; ex-Citroen DS3."
+          },
+          "convertible": {
+            "lengthMm": 3950,
+            "widthMm": 1715,
+            "heightMm": 1460,
+            "wheelbaseMm": 2465,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.158,
+            "frontOverhangRatio": 0.218,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.15,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Cabrio: fixed roof rails with full-length fabric sunroof."
+          }
+        }
+      },
+      "DS 3 Crossback (2019–2022)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4120,
+            "widthMm": 1790,
+            "heightMm": 1535,
+            "wheelbaseMm": 2560,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.178,
+            "frontOverhangRatio": 0.201,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Flush pop-out door handles; shark-fin B-pillar."
+          }
+        }
+      },
+      "DS 3 (Crossback facelift) (2023–)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4120,
+            "widthMm": 1790,
+            "heightMm": 1535,
+            "wheelbaseMm": 2560,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.178,
+            "frontOverhangRatio": 0.201,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "ds-4": {
+      "Mk1 (2015–2018)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4285,
+            "widthMm": 1810,
+            "heightMm": 1505,
+            "wheelbaseMm": 2610,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.164,
+            "frontOverhangRatio": 0.227,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Coupe-styled five-door with hidden rear handles."
+          },
+          "crossover": {
+            "lengthMm": 4285,
+            "widthMm": 1810,
+            "heightMm": 1535,
+            "wheelbaseMm": 2610,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 18,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.164,
+            "frontOverhangRatio": 0.227,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "DS 4 Crossback: raised ride and cladding."
+          }
+        }
+      },
+      "Mk2 (2021–2025)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4400,
+            "widthMm": 1830,
+            "heightMm": 1470,
+            "wheelbaseMm": 2675,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "hatch",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.165,
+            "frontOverhangRatio": 0.227,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.32,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "N°4 (2025–)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4400,
+            "widthMm": 1830,
+            "heightMm": 1470,
+            "wheelbaseMm": 2675,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "hatch",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.165,
+            "frontOverhangRatio": 0.227,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.32,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Renamed N4 facelift; E-Tense electric version has a closed nose."
+          }
+        }
+      }
+    },
+    "ds-5": {
+      "DS 5 (2015–2018)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4530,
+            "widthMm": 1870,
+            "heightMm": 1505,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "hatch",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.167,
+            "frontOverhangRatio": 0.231,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Shooting-brake style hatch."
+          }
+        }
+      }
+    },
+    "ds-7": {
+      "DS 7 Crossback (2018–2022)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4575,
+            "widthMm": 1905,
+            "heightMm": 1625,
+            "wheelbaseMm": 2740,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.189,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "DS 7 (2022–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4590,
+            "widthMm": 1895,
+            "heightMm": 1625,
+            "wheelbaseMm": 2740,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.189,
+            "frontOverhangRatio": 0.214,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "ds-9": {
+      "DS 9 (2020–2025)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4935,
+            "widthMm": 1855,
+            "heightMm": 1460,
+            "wheelbaseMm": 2895,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.219,
+            "frontOverhangRatio": 0.194,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.35,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "ds-no8": {
+      "N°8 (2025–)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4820,
+            "widthMm": 1900,
+            "heightMm": 1580,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.191,
+            "frontOverhangRatio": 0.207,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Electric fastback crossover; dimensions approximate."
+          }
+        }
+      }
+    }
+  }
+}

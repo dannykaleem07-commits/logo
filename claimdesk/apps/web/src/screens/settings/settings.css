@@ -9,18 +9,24 @@
 }
 .settings-subnav a {
   display: inline-block;
-  padding: 4px 10px;
-  border: 1px solid var(--line-2);
-  border-radius: var(--r-pill);
-  background: var(--surface);
+  padding: 5px 12px;
+  border: none;
+  border-radius: var(--r-md);
+  background: var(--neutral-bg);
   color: var(--ink-2);
   font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
   text-decoration: none;
+  transition: background 0.12s ease, color 0.12s ease;
 }
 .settings-subnav a:hover,
 .settings-subnav a:focus-visible {
-  border-color: var(--blue);
-  color: var(--blue);
+  background: var(--blue-50);
+  color: var(--navy);
+  text-decoration: none;
+}
+.card .settings-subnav {
+  margin-bottom: 0;
 }
 .settings-page .card {
   scroll-margin-top: calc(var(--topbar-h) + var(--s-4));

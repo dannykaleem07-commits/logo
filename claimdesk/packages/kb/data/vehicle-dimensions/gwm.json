@@ -1,0 +1,123 @@
+{
+ "make": "GWM",
+ "slug": "gwm",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "03": {
+   "Funky Cat (2022–2024)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4235,
+      "widthMm": 1825,
+      "heightMm": 1605,
+      "wheelbaseMm": 2650,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 18,
+      "profile": "hatch",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.157,
+      "frontOverhangRatio": 0.217,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "closed-ev",
+      "note": "Retro-styled electric hatch with round headlamps."
+     }
+    }
+   },
+   "Ora 03 (2024–2026)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4235,
+      "widthMm": 1825,
+      "heightMm": 1605,
+      "wheelbaseMm": 2650,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 18,
+      "profile": "hatch",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.157,
+      "frontOverhangRatio": 0.217,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "closed-ev",
+      "note": "Renamed Ora 03; same body as Funky Cat."
+     }
+    }
+   }
+  },
+  "ora-07": {
+   "Mk1 (2024–)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4870,
+      "widthMm": 1860,
+      "heightMm": 1500,
+      "wheelbaseMm": 2870,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 19,
+      "profile": "fastback",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.206,
+      "frontOverhangRatio": 0.205,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.62,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "closed-ev",
+      "note": "Fastback electric saloon with frog-eye lamps."
+     }
+    }
+   }
+  },
+  "haval-jolion-pro": {
+   "Mk1 (2024–)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4475,
+      "widthMm": 1840,
+      "heightMm": 1575,
+      "wheelbaseMm": 2700,
+      "groundClearanceMm": 170,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.191,
+      "frontOverhangRatio": 0.206,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   }
+  }
+ }
+}

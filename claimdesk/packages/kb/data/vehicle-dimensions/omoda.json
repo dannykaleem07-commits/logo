@@ -1,0 +1,151 @@
+{
+  "make": "Omoda",
+  "slug": "omoda",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "5": {
+      "Launch spec (2024–2025)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4400,
+            "widthMm": 1830,
+            "heightMm": 1590,
+            "wheelbaseMm": 2630,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 18,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.5,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Facelift (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4425,
+            "widthMm": 1830,
+            "heightMm": 1590,
+            "wheelbaseMm": 2630,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 18,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.5,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "wide",
+            "note": "Facelift length approximate."
+          }
+        }
+      }
+    },
+    "e5": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4425,
+            "widthMm": 1830,
+            "heightMm": 1590,
+            "wheelbaseMm": 2630,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 18,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.5,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "7": {
+      "Mk1 (2026–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4620,
+            "widthMm": 1875,
+            "heightMm": 1670,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.32,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "wide",
+            "note": "Plug-in hybrid; dimensions approximate pending UK specifications."
+          }
+        }
+      }
+    },
+    "9": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4775,
+            "widthMm": 1920,
+            "heightMm": 1670,
+            "wheelbaseMm": 2800,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.5,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "wide",
+            "note": "Plug-in hybrid flagship."
+          }
+        }
+      }
+    }
+  }
+}

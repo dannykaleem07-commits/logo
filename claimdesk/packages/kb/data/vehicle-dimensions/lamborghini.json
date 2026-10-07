@@ -1,0 +1,580 @@
+{
+  "make": "Lamborghini",
+  "slug": "lamborghini",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "diablo": {
+      "Diablo VT / 6.0 (1999–2001)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4470,
+            "widthMm": 2040,
+            "heightMm": 1105,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors. Fixed headlamps from 1999."
+          },
+          "roadster": {
+            "lengthMm": 4470,
+            "widthMm": 2040,
+            "heightMm": 1115,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors. Removable targa roof panel."
+          }
+        }
+      }
+    },
+    "murcielago": {
+      "Murciélago (2002–2006)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4580,
+            "widthMm": 2045,
+            "heightMm": 1135,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors."
+          },
+          "roadster": {
+            "lengthMm": 4580,
+            "widthMm": 2045,
+            "heightMm": 1135,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors. Temporary soft top."
+          }
+        }
+      },
+      "Murciélago LP640 / LP670-4 SV (2006–2010)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4610,
+            "widthMm": 2060,
+            "heightMm": 1135,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors. LP670-4 SV is about 4705 mm long."
+          },
+          "roadster": {
+            "lengthMm": 4610,
+            "widthMm": 2060,
+            "heightMm": 1135,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors."
+          }
+        }
+      }
+    },
+    "gallardo": {
+      "Gallardo (2003–2008)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4300,
+            "widthMm": 1900,
+            "heightMm": 1165,
+            "wheelbaseMm": 2560,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4300,
+            "widthMm": 1900,
+            "heightMm": 1185,
+            "wheelbaseMm": 2560,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Spyder, fabric roof."
+          }
+        }
+      },
+      "Gallardo LP560-4 (2008–2013)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4345,
+            "widthMm": 1900,
+            "heightMm": 1165,
+            "wheelbaseMm": 2560,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4345,
+            "widthMm": 1900,
+            "heightMm": 1185,
+            "wheelbaseMm": 2560,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Spyder, fabric roof."
+          }
+        }
+      }
+    },
+    "aventador": {
+      "Aventador LP700-4 / SV (2011–2016)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4780,
+            "widthMm": 2030,
+            "heightMm": 1135,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors."
+          },
+          "roadster": {
+            "lengthMm": 4780,
+            "widthMm": 2030,
+            "heightMm": 1135,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "roadster",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors. Removable two-piece carbon roof."
+          }
+        }
+      },
+      "Aventador S / SVJ / Ultimae (2017–2022)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4795,
+            "widthMm": 2030,
+            "heightMm": 1135,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors. SVJ is about 4945 mm long."
+          },
+          "roadster": {
+            "lengthMm": 4795,
+            "widthMm": 2030,
+            "heightMm": 1135,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "roadster",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors. Removable two-piece carbon roof."
+          }
+        }
+      }
+    },
+    "huracan": {
+      "Huracán (2014–2019)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4460,
+            "widthMm": 1925,
+            "heightMm": 1165,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4460,
+            "widthMm": 1925,
+            "heightMm": 1180,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Spyder, fabric roof."
+          }
+        }
+      },
+      "Huracán EVO (2019–2024)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4520,
+            "widthMm": 1935,
+            "heightMm": 1165,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Includes Tecnica / STO / Sterrato variants with differing dimensions."
+          },
+          "convertible": {
+            "lengthMm": 4520,
+            "widthMm": 1935,
+            "heightMm": 1180,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Spyder, fabric roof."
+          }
+        }
+      }
+    },
+    "urus": {
+      "Urus / Urus S / Performante (2018–2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5110,
+            "widthMm": 2015,
+            "heightMm": 1640,
+            "wheelbaseMm": 3005,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 22,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.55,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Urus SE (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5125,
+            "widthMm": 2020,
+            "heightMm": 1640,
+            "wheelbaseMm": 3005,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 22,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.55,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Plug-in hybrid."
+          }
+        }
+      }
+    },
+    "revuelto": {
+      "Revuelto (2024–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4945,
+            "widthMm": 2035,
+            "heightMm": 1160,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors. V12 plug-in hybrid."
+          }
+        }
+      }
+    },
+    "temerario": {
+      "Temerario (2025–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4705,
+            "widthMm": 1995,
+            "heightMm": 1200,
+            "wheelbaseMm": 2660,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "V8 plug-in hybrid; conventional doors."
+          }
+        }
+      }
+    }
+  }
+}

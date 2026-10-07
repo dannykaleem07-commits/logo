@@ -1,0 +1,1328 @@
+{
+  "make": "Mazda",
+  "slug": "mazda",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "demio": {
+      "DW (1998–2003)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3800,
+            "widthMm": 1670,
+            "heightMm": 1535,
+            "wheelbaseMm": 2390,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Tall mini-MPV style hatchback."
+          }
+        }
+      }
+    },
+    "mazda2": {
+      "DY (2003–2007)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3925,
+            "widthMm": 1680,
+            "heightMm": 1530,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "DE (2007–2015)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3885,
+            "widthMm": 1695,
+            "heightMm": 1475,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.35,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "3- and 5-door share dimensions."
+          }
+        }
+      },
+      "DJ (2015–2025)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4060,
+            "widthMm": 1695,
+            "heightMm": 1495,
+            "wheelbaseMm": 2570,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "mazda2-hybrid": {
+      "Mk1 (2022–)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3940,
+            "widthMm": 1745,
+            "heightMm": 1505,
+            "wheelbaseMm": 2560,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Toyota Yaris (XP210) rebadge."
+          }
+        }
+      }
+    },
+    "323": {
+      "BJ (1998–2003)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4210,
+            "widthMm": 1705,
+            "heightMm": 1410,
+            "wheelbaseMm": 2610,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "323F five-door."
+          },
+          "saloon": {
+            "lengthMm": 4355,
+            "widthMm": 1705,
+            "heightMm": 1410,
+            "wheelbaseMm": 2610,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "mazda3": {
+      "BK (2004–2009)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4415,
+            "widthMm": 1745,
+            "heightMm": 1465,
+            "wheelbaseMm": 2640,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "saloon": {
+            "lengthMm": 4490,
+            "widthMm": 1755,
+            "heightMm": 1465,
+            "wheelbaseMm": 2640,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "BL (2009–2013)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4460,
+            "widthMm": 1755,
+            "heightMm": 1470,
+            "wheelbaseMm": 2640,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "saloon": {
+            "lengthMm": 4580,
+            "widthMm": 1755,
+            "heightMm": 1470,
+            "wheelbaseMm": 2640,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "BM/BN (2013–2019)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4465,
+            "widthMm": 1795,
+            "heightMm": 1465,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "saloon": {
+            "lengthMm": 4580,
+            "widthMm": 1795,
+            "heightMm": 1450,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.55,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "BP (2019–)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4460,
+            "widthMm": 1795,
+            "heightMm": 1440,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "hatch",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.55,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Thick C-pillar, fastback-like rear."
+          },
+          "saloon": {
+            "lengthMm": 4660,
+            "widthMm": 1795,
+            "heightMm": 1440,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.55,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "premacy": {
+      "CP (1999–2005)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4295,
+            "widthMm": 1705,
+            "heightMm": 1570,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.22,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "mazda5": {
+      "CR (2005–2010)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4505,
+            "widthMm": 1755,
+            "heightMm": 1665,
+            "wheelbaseMm": 2750,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.22,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "CW (2010–2015)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4585,
+            "widthMm": 1750,
+            "heightMm": 1615,
+            "wheelbaseMm": 2750,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.22,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "mpv": {
+      "LW (1999–2006)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4750,
+            "widthMm": 1830,
+            "heightMm": 1745,
+            "wheelbaseMm": 2840,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.22,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "626": {
+      "GF/GW (1997–2002)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4595,
+            "widthMm": 1760,
+            "heightMm": 1405,
+            "wheelbaseMm": 2610,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "liftback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.55,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Five-door liftback-style hatch."
+          },
+          "saloon": {
+            "lengthMm": 4575,
+            "widthMm": 1760,
+            "heightMm": 1405,
+            "wheelbaseMm": 2610,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4660,
+            "widthMm": 1760,
+            "heightMm": 1490,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "GW estate on longer wheelbase."
+          }
+        }
+      }
+    },
+    "mazda6": {
+      "GG/GY (2002–2007)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4670,
+            "widthMm": 1780,
+            "heightMm": 1435,
+            "wheelbaseMm": 2675,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "liftback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.65,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Five-door liftback."
+          },
+          "saloon": {
+            "lengthMm": 4670,
+            "widthMm": 1780,
+            "heightMm": 1435,
+            "wheelbaseMm": 2675,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4700,
+            "widthMm": 1780,
+            "heightMm": 1450,
+            "wheelbaseMm": 2675,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "GH (2008–2012)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4735,
+            "widthMm": 1795,
+            "heightMm": 1440,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 17,
+            "profile": "liftback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.65,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Five-door liftback."
+          },
+          "saloon": {
+            "lengthMm": 4735,
+            "widthMm": 1795,
+            "heightMm": 1440,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4765,
+            "widthMm": 1795,
+            "heightMm": 1490,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "GJ/GL (2013–2023)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4870,
+            "widthMm": 1840,
+            "heightMm": 1450,
+            "wheelbaseMm": 2830,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.55,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4805,
+            "widthMm": 1840,
+            "heightMm": 1480,
+            "wheelbaseMm": 2750,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Tourer on shorter wheelbase."
+          }
+        }
+      }
+    },
+    "mazda6e": {
+      "Mk1 (2026–)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4920,
+            "widthMm": 1890,
+            "heightMm": 1490,
+            "wheelbaseMm": 2895,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "liftback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.7,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Electric; dimensions approximate."
+          }
+        }
+      }
+    },
+    "mx-5": {
+      "NB (1998–2005)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3975,
+            "widthMm": 1680,
+            "heightMm": 1225,
+            "wheelbaseMm": 2265,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 15,
+            "profile": "roadster",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "NC (2005–2015)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4020,
+            "widthMm": 1720,
+            "heightMm": 1245,
+            "wheelbaseMm": 2330,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "roadster",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4020,
+            "widthMm": 1720,
+            "heightMm": 1255,
+            "wheelbaseMm": 2330,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Roadster Coupe (retractable hard top)."
+          }
+        }
+      },
+      "ND (2015–)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3915,
+            "widthMm": 1735,
+            "heightMm": 1225,
+            "wheelbaseMm": 2310,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 3915,
+            "widthMm": 1735,
+            "heightMm": 1235,
+            "wheelbaseMm": 2310,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.65,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "RF retractable fastback (targa with fixed buttresses)."
+          }
+        }
+      }
+    },
+    "rx-8": {
+      "SE3P (2003–2010)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4435,
+            "widthMm": 1770,
+            "heightMm": 1340,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.68,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Rear-hinged \"freestyle\" rear doors, no B-pillar; facelift about 4470 mm."
+          }
+        }
+      }
+    },
+    "tribute": {
+      "EP (2001–2004)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4395,
+            "widthMm": 1825,
+            "heightMm": 1755,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.12,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Ford Maverick/Escape twin."
+          }
+        }
+      }
+    },
+    "cx-7": {
+      "ER (2007–2012)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4680,
+            "widthMm": 1870,
+            "heightMm": 1645,
+            "wheelbaseMm": 2750,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "cx-3": {
+      "DK (2015–2021)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4275,
+            "widthMm": 1765,
+            "heightMm": 1535,
+            "wheelbaseMm": 2570,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "cx-30": {
+      "DM (2019–)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4395,
+            "widthMm": 1795,
+            "heightMm": 1540,
+            "wheelbaseMm": 2655,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Black lower body cladding."
+          }
+        }
+      }
+    },
+    "mx-30": {
+      "DR (2020–)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4395,
+            "widthMm": 1795,
+            "heightMm": 1555,
+            "wheelbaseMm": 2655,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Rear-hinged \"freestyle\" rear doors; EV and R-EV."
+          }
+        }
+      }
+    },
+    "cx-5": {
+      "KE (2012–2017)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4555,
+            "widthMm": 1840,
+            "heightMm": 1670,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "KF (2017–2025)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4575,
+            "widthMm": 1845,
+            "heightMm": 1680,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 195,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.32,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk3 (2026–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4690,
+            "widthMm": 1860,
+            "heightMm": 1695,
+            "wheelbaseMm": 2815,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Dimensions approximate; new model."
+          }
+        }
+      }
+    },
+    "cx-60": {
+      "KH (2022–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4745,
+            "widthMm": 1890,
+            "heightMm": 1680,
+            "wheelbaseMm": 2870,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Longitudinal engine, long bonnet."
+          }
+        }
+      }
+    },
+    "cx-80": {
+      "KL (2024–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4995,
+            "widthMm": 1890,
+            "heightMm": 1710,
+            "wheelbaseMm": 3120,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seven-seat."
+          }
+        }
+      }
+    },
+    "cx-6e": {
+      "Mk1 (2026–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4850,
+            "widthMm": 1935,
+            "heightMm": 1620,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 21,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Electric; dimensions approximate."
+          }
+        }
+      }
+    },
+    "b2500": {
+      "UN (1999–2006)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5000,
+            "widthMm": 1785,
+            "heightMm": 1755,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.12,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab 4x4 figures (most common UK variant); single and extended (Freestyle) cab versions are shorter in the cab and longer in the bed."
+          }
+        }
+      }
+    },
+    "bt-50": {
+      "Mk1 (2006–2011)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5075,
+            "widthMm": 1805,
+            "heightMm": 1760,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.12,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab 4x4 figures (most common UK variant); single and extended (Freestyle) cab versions are shorter in the cab and longer in the bed."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "make": "Dodge",
+  "slug": "dodge",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "avenger": {
+      "JS (2007–2010)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4850,
+            "widthMm": 1845,
+            "heightMm": 1495,
+            "wheelbaseMm": 2765,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "caliber": {
+      "PM (2006–2011)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4415,
+            "widthMm": 1800,
+            "heightMm": 1535,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "journey": {
+      "JC (2008–2011)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4890,
+            "widthMm": 1835,
+            "heightMm": 1690,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 17,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Seven-seat crossover MPV."
+          }
+        }
+      }
+    },
+    "nitro": {
+      "KA (2007–2010)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4545,
+            "widthMm": 1855,
+            "heightMm": 1775,
+            "wheelbaseMm": 2765,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    }
+  }
+}

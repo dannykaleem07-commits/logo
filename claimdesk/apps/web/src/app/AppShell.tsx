@@ -12,6 +12,7 @@ import { LOGIN_PATH } from '../lib/auth';
 import { SHELL_CONTACT_LINE, versionLabel } from '../screens/settings/settings';
 import { UpdateNotice } from '../screens/settings/UpdateNotice';
 import { SupremeTopbar } from './SupremeTopbar';
+import { ThemeMenu } from './ThemeMenu';
 
 /**
  * Layout: left nav (grouped, data-driven from nav.ts; a drawer on phones), top bar with global search + the two global badges
@@ -245,6 +246,7 @@ function TopBar({ onMenu, ...userProps }: { onMenu: () => void } & UserProps) {
           <span className="label-short">{overdue > 0 ? `${overdue} overdue` : `${dueToday} due today`}</span>
         </Link>
       </div>
+      <ThemeMenu />
       <ManagerToggle />
       <UserBox {...userProps} place="top" />
     </header>

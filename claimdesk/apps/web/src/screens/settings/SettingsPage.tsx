@@ -17,6 +17,7 @@ import { ChangePasswordCard } from './ChangePasswordCard';
 import { ManagerModeCard } from './ManagerModeCard';
 import { UpdatesCard } from './UpdatesCard';
 import { ImportFolderCard } from './ImportFolderCard';
+import { AppearanceCard } from './AppearanceCard';
 import {
   API_KEYS,
   apiKeyPresent,
@@ -223,6 +224,7 @@ export function SettingsPage() {
 
       {/* Outside the settings <form> (forms cannot nest; these cards save themselves) and shown even when settings fail to load. */}
       <div className="stack" style={{ marginTop: 'var(--s-4)' }}>
+        <AppearanceCard />
         <ManagerModeCard />
         <UpdatesCard id="updates" />
         <ImportFolderCard />

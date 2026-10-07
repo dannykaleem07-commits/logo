@@ -30,7 +30,7 @@
   font-size: var(--fs-sm);
 }
 .dash-kpi.is-hot {
-  border-color: #f4c7c3;
+  border-color: var(--red-line);
 }
 @media (max-width: 1100px) {
   .dash-kpis {
@@ -62,7 +62,7 @@
   margin-bottom: var(--s-5);
   border-radius: var(--r-lg);
   background: var(--amber-bg);
-  color: #6b3d05;
+  color: var(--amber-ink);
   font-size: var(--fs-sm);
 }
 .dash-fleet:hover {

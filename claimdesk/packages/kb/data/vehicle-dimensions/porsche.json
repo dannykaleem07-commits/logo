@@ -1,0 +1,814 @@
+{
+  "make": "Porsche",
+  "slug": "porsche",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "911": {
+      "996 (1997–2005; 3.6 facelift 2002)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4430,
+            "widthMm": 1765,
+            "heightMm": 1305,
+            "wheelbaseMm": 2350,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.25,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.85,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "\"Fried egg\" teardrop headlamps."
+          },
+          "convertible": {
+            "lengthMm": 4430,
+            "widthMm": 1765,
+            "heightMm": 1305,
+            "wheelbaseMm": 2350,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.25,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Fabric roof; Targa has glass roof."
+          }
+        }
+      },
+      "997 (2004–2012; 997.2 facelift 2008 with PDK)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4435,
+            "widthMm": 1810,
+            "heightMm": 1310,
+            "wheelbaseMm": 2350,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.25,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.85,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4435,
+            "widthMm": 1810,
+            "heightMm": 1310,
+            "wheelbaseMm": 2350,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.25,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Fabric roof; Targa has glass roof."
+          }
+        }
+      },
+      "991 (2011–2019; 991.2 turbocharged Carrera from 2016)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4490,
+            "widthMm": 1810,
+            "heightMm": 1305,
+            "wheelbaseMm": 2450,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.85,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Wide-body Carrera 4/GTS about 1850 mm wide."
+          },
+          "convertible": {
+            "lengthMm": 4490,
+            "widthMm": 1810,
+            "heightMm": 1305,
+            "wheelbaseMm": 2450,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "992.1 (2019–2024)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4520,
+            "widthMm": 1850,
+            "heightMm": 1300,
+            "wheelbaseMm": 2450,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.85,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "20in front / 21in rear staggered wheels."
+          },
+          "convertible": {
+            "lengthMm": 4520,
+            "widthMm": 1850,
+            "heightMm": 1300,
+            "wheelbaseMm": 2450,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "992.2 (2024–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4540,
+            "widthMm": 1850,
+            "heightMm": 1300,
+            "wheelbaseMm": 2450,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.85,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "20in front / 21in rear staggered wheels."
+          },
+          "convertible": {
+            "lengthMm": 4540,
+            "widthMm": 1850,
+            "heightMm": 1300,
+            "wheelbaseMm": 2450,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "boxster": {
+      "986 (1996–2004)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4320,
+            "widthMm": 1780,
+            "heightMm": 1290,
+            "wheelbaseMm": 2415,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 17,
+            "profile": "roadster",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "987 (2004–2012; 987.2 facelift 2009 with PDK)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4330,
+            "widthMm": 1800,
+            "heightMm": 1295,
+            "wheelbaseMm": 2415,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "981 (2012–2016)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4375,
+            "widthMm": 1800,
+            "heightMm": 1280,
+            "wheelbaseMm": 2475,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "982 718 Boxster (2016–2026; UK orders closed 2025; final deliveries 2026)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4380,
+            "widthMm": 1800,
+            "heightMm": 1280,
+            "wheelbaseMm": 2475,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "718 Boxster."
+          }
+        }
+      }
+    },
+    "cayman": {
+      "987c (2005–2012)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4340,
+            "widthMm": 1800,
+            "heightMm": 1305,
+            "wheelbaseMm": 2415,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.72,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "981c (2013–2016)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4380,
+            "widthMm": 1800,
+            "heightMm": 1295,
+            "wheelbaseMm": 2475,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.72,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "982c 718 Cayman (2016–2026; UK orders closed 2025; final deliveries 2026)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4380,
+            "widthMm": 1800,
+            "heightMm": 1295,
+            "wheelbaseMm": 2475,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.72,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "718 Cayman."
+          }
+        }
+      }
+    },
+    "cayenne": {
+      "9PA (955/957) (2002–2010; 957 facelift 2007; Diesel from 2009)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4800,
+            "widthMm": 1930,
+            "heightMm": 1700,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "92A (958) (2010–2017; facelift 2014)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4855,
+            "widthMm": 1940,
+            "heightMm": 1705,
+            "wheelbaseMm": 2895,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "9YA / 9YB Coupe (2018–present; Coupe from 2019; 9YB facelift 2023)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4920,
+            "widthMm": 1985,
+            "heightMm": 1695,
+            "wheelbaseMm": 2895,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 21,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Cayenne Coupe (9YB) has a sloping roof, about 1675 mm high, no roof rails."
+          }
+        }
+      },
+      "Cayenne Electric (2026–present; UK deliveries from 2026; outputs are launch-control maxima)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4985,
+            "widthMm": 1980,
+            "heightMm": 1675,
+            "wheelbaseMm": 3025,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 21,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Dimensions approximate; new model."
+          }
+        }
+      }
+    },
+    "macan": {
+      "95B (2014–2024; facelifts 2019 and 2021)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4695,
+            "widthMm": 1925,
+            "heightMm": 1625,
+            "wheelbaseMm": 2805,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.5,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Macan Electric (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4785,
+            "widthMm": 1940,
+            "heightMm": 1620,
+            "wheelbaseMm": 2895,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 21,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.55,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "panamera": {
+      "970 (2009–2016; facelift 2013)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4970,
+            "widthMm": 1930,
+            "heightMm": 1420,
+            "wheelbaseMm": 2920,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 19,
+            "profile": "liftback",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.7,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "971 (2016–2024; Sport Turismo 2017-2024; facelift 2020)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 5050,
+            "widthMm": 1935,
+            "heightMm": 1425,
+            "wheelbaseMm": 2950,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "liftback",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.7,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Executive LWB about 5200 mm long."
+          },
+          "estate": {
+            "lengthMm": 5050,
+            "widthMm": 1935,
+            "heightMm": 1430,
+            "wheelbaseMm": 2950,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "estate",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Panamera Sport Turismo."
+          }
+        }
+      },
+      "976 (2024–present)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 5050,
+            "widthMm": 1935,
+            "heightMm": 1425,
+            "wheelbaseMm": 2950,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "liftback",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.7,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "taycan": {
+      "J1 (2020–2024; Cross Turismo from 2021; Sport Turismo from 2022)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4965,
+            "widthMm": 1965,
+            "heightMm": 1380,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.75,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "closed-ev",
+            "note": "Four-door fastback with boot lid."
+          },
+          "estate": {
+            "lengthMm": 4975,
+            "widthMm": 1965,
+            "heightMm": 1400,
+            "wheelbaseMm": 2905,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "closed-ev",
+            "note": "Cross Turismo (about 1410 mm, raised) / Sport Turismo."
+          }
+        }
+      },
+      "J1 facelift (2024–present; outputs are launch-control maxima)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4965,
+            "widthMm": 1965,
+            "heightMm": 1380,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.75,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "closed-ev",
+            "note": "Four-door fastback with boot lid."
+          },
+          "estate": {
+            "lengthMm": 4975,
+            "widthMm": 1965,
+            "heightMm": 1400,
+            "wheelbaseMm": 2905,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "closed-ev",
+            "note": "Cross Turismo / Sport Turismo."
+          }
+        }
+      }
+    }
+  }
+}

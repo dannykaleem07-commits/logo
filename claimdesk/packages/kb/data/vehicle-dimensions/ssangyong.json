@@ -1,0 +1,593 @@
+{
+ "make": "SsangYong",
+ "slug": "ssangyong",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "musso": {
+   "FJ SUV (1993–2005)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4655,
+      "widthMm": 1865,
+      "heightMm": 1735,
+      "wheelbaseMm": 2630,
+      "groundClearanceMm": 205,
+      "wheelDiameterIn": 16,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.209,
+      "frontOverhangRatio": 0.226,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": true,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "wide",
+      "note": "Length includes tailgate spare."
+     }
+    }
+   },
+   "Musso Sports Q100 (2003–2006)": {
+    "bodies": {
+     "pickup": {
+      "lengthMm": 4900,
+      "widthMm": 1865,
+      "heightMm": 1735,
+      "wheelbaseMm": 2630,
+      "groundClearanceMm": 205,
+      "wheelDiameterIn": 16,
+      "profile": "pickup-double",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.268,
+      "frontOverhangRatio": 0.195,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.05,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "wide",
+      "note": "Musso Sports: double cab on Musso SUV body; dimensions approximate."
+     }
+    }
+   },
+   "Q200 pick-up (2018–)": {
+    "bodies": {
+     "pickup": {
+      "lengthMm": 5095,
+      "widthMm": 1950,
+      "heightMm": 1840,
+      "wheelbaseMm": 3100,
+      "groundClearanceMm": 215,
+      "wheelDiameterIn": 18,
+      "profile": "pickup-double",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.228,
+      "frontOverhangRatio": 0.164,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.05,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Standard bed shown; long-bed approx 5405 mm on 3210 mm wheelbase."
+     }
+    }
+   }
+  },
+  "korando": {
+   "KJ (1996–2006)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4330,
+      "widthMm": 1840,
+      "heightMm": 1840,
+      "wheelbaseMm": 2480,
+      "groundClearanceMm": 210,
+      "wheelDiameterIn": 16,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.213,
+      "frontOverhangRatio": 0.214,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.1,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": true,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "wide",
+      "note": "3-door; long bonnet; length includes tailgate spare."
+     }
+    }
+   },
+   "C200 Korando C (2010–2019)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4410,
+      "widthMm": 1830,
+      "heightMm": 1675,
+      "wheelbaseMm": 2650,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.191,
+      "frontOverhangRatio": 0.208,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "C300 (2019–)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4450,
+      "widthMm": 1870,
+      "heightMm": 1620,
+      "wheelbaseMm": 2675,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.192,
+      "frontOverhangRatio": 0.207,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "e-Motion electric shares body."
+     }
+    }
+   }
+  },
+  "rexton": {
+   "Y200 (2002–2006)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4720,
+      "widthMm": 1870,
+      "heightMm": 1760,
+      "wheelbaseMm": 2820,
+      "groundClearanceMm": 200,
+      "wheelDiameterIn": 16,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.202,
+      "frontOverhangRatio": 0.201,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Height without rails; approx 1830 mm with rails."
+     }
+    }
+   },
+   "Y250 Rexton II (2006–2012)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4755,
+      "widthMm": 1880,
+      "heightMm": 1830,
+      "wheelbaseMm": 2820,
+      "groundClearanceMm": 200,
+      "wheelDiameterIn": 16,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.204,
+      "frontOverhangRatio": 0.203,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "Y290 Rexton W (2013–2017)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4755,
+      "widthMm": 1900,
+      "heightMm": 1840,
+      "wheelbaseMm": 2820,
+      "groundClearanceMm": 200,
+      "wheelDiameterIn": 18,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.204,
+      "frontOverhangRatio": 0.203,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "Y400 (2017–)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4850,
+      "widthMm": 1960,
+      "heightMm": 1825,
+      "wheelbaseMm": 2865,
+      "groundClearanceMm": 225,
+      "wheelDiameterIn": 18,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.204,
+      "frontOverhangRatio": 0.205,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   }
+  },
+  "kyron": {
+   "D100 (2005–2012)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4660,
+      "widthMm": 1880,
+      "heightMm": 1755,
+      "wheelbaseMm": 2740,
+      "groundClearanceMm": 200,
+      "wheelDiameterIn": 16,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.198,
+      "frontOverhangRatio": 0.214,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Split grille in pre-2008 bumper."
+     }
+    }
+   }
+  },
+  "actyon": {
+   "C100 (2006–2011)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4455,
+      "widthMm": 1880,
+      "heightMm": 1730,
+      "wheelbaseMm": 2740,
+      "groundClearanceMm": 195,
+      "wheelDiameterIn": 16,
+      "profile": "suv-coupe",
+      "bonnetRatio": 0.27,
+      "rearOverhangRatio": 0.185,
+      "frontOverhangRatio": 0.2,
+      "glasshouseHeightRatio": 0.28,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Coupe-SUV with sloping rear roof."
+     }
+    }
+   },
+   "J120 (2025–)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4740,
+      "widthMm": 1910,
+      "heightMm": 1680,
+      "wheelbaseMm": 2680,
+      "groundClearanceMm": 190,
+      "wheelDiameterIn": 20,
+      "profile": "suv-coupe",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.209,
+      "frontOverhangRatio": 0.226,
+      "glasshouseHeightRatio": 0.28,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Fastback SUV; dimensions approximate."
+     }
+    }
+   }
+  },
+  "actyon-sports": {
+   "Q150 (2007–2012)": {
+    "bodies": {
+     "pickup": {
+      "lengthMm": 4965,
+      "widthMm": 1900,
+      "heightMm": 1755,
+      "wheelbaseMm": 3060,
+      "groundClearanceMm": 195,
+      "wheelDiameterIn": 16,
+      "profile": "pickup-double",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.223,
+      "frontOverhangRatio": 0.161,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.05,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "korando-sports": {
+   "Q150 (2012–2018)": {
+    "bodies": {
+     "pickup": {
+      "lengthMm": 4990,
+      "widthMm": 1910,
+      "heightMm": 1790,
+      "wheelbaseMm": 3060,
+      "groundClearanceMm": 205,
+      "wheelDiameterIn": 18,
+      "profile": "pickup-double",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.225,
+      "frontOverhangRatio": 0.162,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.05,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "rodius": {
+   "A100 (2005–2013)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 5125,
+      "widthMm": 1915,
+      "heightMm": 1820,
+      "wheelbaseMm": 3000,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "mpv",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.187,
+      "frontOverhangRatio": 0.228,
+      "glasshouseHeightRatio": 0.35,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "7/11-seat; distinctive stepped rear glasshouse; hinged doors."
+     }
+    }
+   }
+  },
+  "turismo": {
+   "A200 (2013–2018)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 5130,
+      "widthMm": 1915,
+      "heightMm": 1815,
+      "wheelbaseMm": 3000,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 17,
+      "profile": "mpv",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.187,
+      "frontOverhangRatio": 0.228,
+      "glasshouseHeightRatio": 0.35,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Hinged doors."
+     }
+    }
+   }
+  },
+  "tivoli": {
+   "X100 (2015–)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4200,
+      "widthMm": 1800,
+      "heightMm": 1590,
+      "wheelbaseMm": 2600,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 16,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.191,
+      "frontOverhangRatio": 0.19,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "2019 facelift approx 4225 mm."
+     }
+    }
+   },
+   "X100 Tivoli XLV (2016–2019)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4440,
+      "widthMm": 1800,
+      "heightMm": 1635,
+      "wheelbaseMm": 2600,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 16,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.207,
+      "frontOverhangRatio": 0.207,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Tivoli XLV: longer rear overhang."
+     }
+    }
+   },
+   "X150 Tivoli Grand (2021–)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4480,
+      "widthMm": 1810,
+      "heightMm": 1615,
+      "wheelbaseMm": 2600,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 16,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.21,
+      "frontOverhangRatio": 0.21,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Tivoli Grand: long-body version."
+     }
+    }
+   }
+  },
+  "torres": {
+   "J100 (2024–)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4700,
+      "widthMm": 1890,
+      "heightMm": 1720,
+      "wheelbaseMm": 2680,
+      "groundClearanceMm": 195,
+      "wheelDiameterIn": 18,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.215,
+      "frontOverhangRatio": 0.215,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.1,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Spare-wheel-shaped tailgate garnish (no external spare)."
+     }
+    }
+   }
+  }
+ }
+}

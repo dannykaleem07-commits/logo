@@ -1,0 +1,434 @@
+{
+ "make": "Saab",
+ "slug": "saab",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "9-3": {
+   "Mk1 (1998–2002, convertible to 2003)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4630,
+      "widthMm": 1710,
+      "heightMm": 1430,
+      "wheelbaseMm": 2605,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.25,
+      "rearOverhangRatio": 0.183,
+      "frontOverhangRatio": 0.254,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.45,
+      "doors": [
+       3,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "3- and 5-door share length; curved wraparound windscreen."
+     },
+     "convertible": {
+      "lengthMm": 4630,
+      "widthMm": 1710,
+      "heightMm": 1410,
+      "wheelbaseMm": 2605,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "convertible",
+      "bonnetRatio": 0.25,
+      "rearOverhangRatio": 0.218,
+      "frontOverhangRatio": 0.219,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Fabric roof; continued to 2003."
+     }
+    }
+   },
+   "Mk2 (2002–2007)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4635,
+      "widthMm": 1760,
+      "heightMm": 1465,
+      "wheelbaseMm": 2675,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.203,
+      "frontOverhangRatio": 0.22,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     },
+     "convertible": {
+      "lengthMm": 4635,
+      "widthMm": 1760,
+      "heightMm": 1435,
+      "wheelbaseMm": 2675,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "convertible",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.212,
+      "frontOverhangRatio": 0.211,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Fabric roof."
+     },
+     "estate": {
+      "lengthMm": 4655,
+      "widthMm": 1760,
+      "heightMm": 1525,
+      "wheelbaseMm": 2675,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.204,
+      "frontOverhangRatio": 0.221,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "SportWagon / SportCombi from 2005."
+     }
+    }
+   },
+   "Mk2 facelift (2007–2012)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4645,
+      "widthMm": 1760,
+      "heightMm": 1465,
+      "wheelbaseMm": 2675,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.203,
+      "frontOverhangRatio": 0.221,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Facelift: clamshell bonnet and larger grille."
+     },
+     "convertible": {
+      "lengthMm": 4645,
+      "widthMm": 1760,
+      "heightMm": 1435,
+      "wheelbaseMm": 2675,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "convertible",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.212,
+      "frontOverhangRatio": 0.212,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Fabric roof."
+     },
+     "estate": {
+      "lengthMm": 4670,
+      "widthMm": 1760,
+      "heightMm": 1525,
+      "wheelbaseMm": 2675,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.205,
+      "frontOverhangRatio": 0.222,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "SportWagon / SportCombi from 2005."
+     }
+    }
+   }
+  },
+  "9-3x": {
+   "Mk1 (2009–2011)": {
+    "bodies": {
+     "estate": {
+      "lengthMm": 4685,
+      "widthMm": 1800,
+      "heightMm": 1575,
+      "wheelbaseMm": 2675,
+      "groundClearanceMm": 170,
+      "wheelDiameterIn": 17,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.206,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Raised AWD estate with body cladding."
+     }
+    }
+   }
+  },
+  "9-5": {
+   "Mk1 (1997–2001)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4805,
+      "widthMm": 1790,
+      "heightMm": 1450,
+      "wheelbaseMm": 2705,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.21,
+      "frontOverhangRatio": 0.227,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.4,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     },
+     "estate": {
+      "lengthMm": 4810,
+      "widthMm": 1790,
+      "heightMm": 1500,
+      "wheelbaseMm": 2705,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.21,
+      "frontOverhangRatio": 0.228,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.1,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     }
+    }
+   },
+   "Mk1 facelift (2001–2005)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4805,
+      "widthMm": 1790,
+      "heightMm": 1450,
+      "wheelbaseMm": 2705,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.21,
+      "frontOverhangRatio": 0.227,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.4,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     },
+     "estate": {
+      "lengthMm": 4810,
+      "widthMm": 1790,
+      "heightMm": 1500,
+      "wheelbaseMm": 2705,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.21,
+      "frontOverhangRatio": 0.228,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.1,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     }
+    }
+   },
+   "Mk1 second facelift (2005–2010)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4840,
+      "widthMm": 1790,
+      "heightMm": 1450,
+      "wheelbaseMm": 2705,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.212,
+      "frontOverhangRatio": 0.229,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.4,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Second facelift: chrome-rimmed headlamps."
+     },
+     "estate": {
+      "lengthMm": 4840,
+      "widthMm": 1790,
+      "heightMm": 1500,
+      "wheelbaseMm": 2705,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.212,
+      "frontOverhangRatio": 0.229,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.1,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     }
+    }
+   },
+   "Mk2 (2010–2011)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5010,
+      "widthMm": 1870,
+      "heightMm": 1465,
+      "wheelbaseMm": 2835,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.208,
+      "frontOverhangRatio": 0.226,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Wraparound blacked-out glasshouse."
+     },
+     "estate": {
+      "lengthMm": 5010,
+      "widthMm": 1870,
+      "heightMm": 1520,
+      "wheelbaseMm": 2835,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.208,
+      "frontOverhangRatio": 0.226,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "SportCombi barely reached production; dimensions approximate."
+     }
+    }
+   }
+  }
+ }
+}

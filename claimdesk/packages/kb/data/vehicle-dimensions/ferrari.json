@@ -1,0 +1,1216 @@
+{
+  "make": "Ferrari",
+  "slug": "ferrari",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "360": {
+      "360 (1999–2005)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4475,
+            "widthMm": 1920,
+            "heightMm": 1215,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "360 Modena."
+          },
+          "convertible": {
+            "lengthMm": 4475,
+            "widthMm": 1920,
+            "heightMm": 1235,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "360 Spider, fabric roof."
+          }
+        }
+      }
+    },
+    "456m": {
+      "456M (1998–2003)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4765,
+            "widthMm": 1920,
+            "heightMm": 1300,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "2+2 V12 GT; pop-up headlamps."
+          }
+        }
+      }
+    },
+    "550": {
+      "550 Maranello / Barchetta (1996–2002)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4550,
+            "widthMm": 1935,
+            "heightMm": 1275,
+            "wheelbaseMm": 2500,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "roadster": {
+            "lengthMm": 4550,
+            "widthMm": 1935,
+            "heightMm": 1260,
+            "wheelbaseMm": 2500,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "550 Barchetta: no proper roof, temporary soft top."
+          }
+        }
+      }
+    },
+    "575m": {
+      "575M Maranello / Superamerica (2002–2006)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4550,
+            "widthMm": 1935,
+            "heightMm": 1275,
+            "wheelbaseMm": 2500,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4550,
+            "widthMm": 1935,
+            "heightMm": 1275,
+            "wheelbaseMm": 2500,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Superamerica with rotating glass roof."
+          }
+        }
+      }
+    },
+    "enzo": {
+      "Enzo (2002–2004)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4700,
+            "widthMm": 2035,
+            "heightMm": 1145,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Scissor doors; F1-style nose."
+          }
+        }
+      }
+    },
+    "612-scaglietti": {
+      "612 Scaglietti (2004–2011)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4900,
+            "widthMm": 1955,
+            "heightMm": 1345,
+            "wheelbaseMm": 2950,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Four-seat V12 GT."
+          }
+        }
+      }
+    },
+    "f430": {
+      "F430 (2004–2009)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4510,
+            "widthMm": 1925,
+            "heightMm": 1215,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4510,
+            "widthMm": 1925,
+            "heightMm": 1235,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "F430 Spider, fabric roof."
+          }
+        }
+      }
+    },
+    "599": {
+      "599 (2006–2012)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4665,
+            "widthMm": 1960,
+            "heightMm": 1335,
+            "wheelbaseMm": 2750,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "599 GTB Fiorano / GTO."
+          },
+          "roadster": {
+            "lengthMm": 4665,
+            "widthMm": 1960,
+            "heightMm": 1275,
+            "wheelbaseMm": 2750,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "SA Aperta, limited run."
+          }
+        }
+      }
+    },
+    "california": {
+      "California (2009–2014)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 4565,
+            "widthMm": 1900,
+            "heightMm": 1310,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Folding metal hard top; 2+2."
+          }
+        }
+      },
+      "California T (2014–2017)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 4570,
+            "widthMm": 1910,
+            "heightMm": 1320,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Folding metal hard top; 2+2."
+          }
+        }
+      }
+    },
+    "458": {
+      "458 (2010–2015)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4525,
+            "widthMm": 1935,
+            "heightMm": 1215,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "458 Italia / Speciale."
+          },
+          "convertible": {
+            "lengthMm": 4525,
+            "widthMm": 1935,
+            "heightMm": 1210,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "458 Spider, folding hard top."
+          }
+        }
+      }
+    },
+    "ff": {
+      "FF (2011–2016)": {
+        "bodies": {
+          "shooting-brake": {
+            "lengthMm": 4905,
+            "widthMm": 1955,
+            "heightMm": 1380,
+            "wheelbaseMm": 2990,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "estate",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.4,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Four-seat V12 shooting brake; tailgate."
+          }
+        }
+      }
+    },
+    "f12": {
+      "F12berlinetta / F12tdf (2012–2017)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4620,
+            "widthMm": 1940,
+            "heightMm": 1275,
+            "wheelbaseMm": 2720,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "laferrari": {
+      "LaFerrari / Aperta (2013–2016)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4700,
+            "widthMm": 1990,
+            "heightMm": 1115,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Hybrid hypercar; butterfly doors."
+          },
+          "roadster": {
+            "lengthMm": 4700,
+            "widthMm": 1990,
+            "heightMm": 1115,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "roadster",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Aperta, removable roof panel."
+          }
+        }
+      }
+    },
+    "488": {
+      "488 (2015–2019)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4570,
+            "widthMm": 1950,
+            "heightMm": 1215,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "488 GTB / Pista."
+          },
+          "convertible": {
+            "lengthMm": 4570,
+            "widthMm": 1950,
+            "heightMm": 1210,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "488 Spider, folding hard top."
+          }
+        }
+      }
+    },
+    "gtc4lusso": {
+      "GTC4Lusso (2016–2020)": {
+        "bodies": {
+          "shooting-brake": {
+            "lengthMm": 4920,
+            "widthMm": 1980,
+            "heightMm": 1385,
+            "wheelbaseMm": 2990,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "estate",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.4,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Four-seat shooting brake; tailgate."
+          }
+        }
+      }
+    },
+    "812": {
+      "812 (2017–2023)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4655,
+            "widthMm": 1970,
+            "heightMm": 1275,
+            "wheelbaseMm": 2720,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "812 Superfast / Competizione."
+          },
+          "convertible": {
+            "lengthMm": 4655,
+            "widthMm": 1970,
+            "heightMm": 1280,
+            "wheelbaseMm": 2720,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "812 GTS, folding hard top."
+          }
+        }
+      }
+    },
+    "portofino": {
+      "Portofino (2018–2020)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 4585,
+            "widthMm": 1940,
+            "heightMm": 1320,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.34,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Folding metal hard top; 2+2."
+          }
+        }
+      },
+      "Portofino M (2021–2023)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 4595,
+            "widthMm": 1940,
+            "heightMm": 1320,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.34,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Folding metal hard top; 2+2."
+          }
+        }
+      }
+    },
+    "f8": {
+      "F8 Tributo / Spider (2019–2023)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4610,
+            "widthMm": 1980,
+            "heightMm": 1205,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "F8 Tributo."
+          },
+          "convertible": {
+            "lengthMm": 4610,
+            "widthMm": 1980,
+            "heightMm": 1205,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "F8 Spider, folding hard top."
+          }
+        }
+      }
+    },
+    "monza": {
+      "Monza SP1 / SP2 (2019–2020)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4655,
+            "widthMm": 1995,
+            "heightMm": 1155,
+            "wheelbaseMm": 2720,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 21,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.12,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Windscreen-less barchetta (SP1 single seat, SP2 two seat)."
+          }
+        }
+      }
+    },
+    "sf90": {
+      "SF90 (2020–2025)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4710,
+            "widthMm": 1970,
+            "heightMm": 1185,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "SF90 Stradale plug-in hybrid."
+          },
+          "convertible": {
+            "lengthMm": 4710,
+            "widthMm": 1970,
+            "heightMm": 1190,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "SF90 Spider, folding hard top."
+          }
+        }
+      }
+    },
+    "roma": {
+      "Roma / Roma Spider (2020–2025)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4655,
+            "widthMm": 1975,
+            "heightMm": 1300,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "2+2 front-engine fastback coupe."
+          },
+          "convertible": {
+            "lengthMm": 4655,
+            "widthMm": 1975,
+            "heightMm": 1305,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Roma Spider, fabric roof."
+          }
+        }
+      }
+    },
+    "296": {
+      "296 (2022–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4565,
+            "widthMm": 1960,
+            "heightMm": 1185,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "296 GTB plug-in hybrid V6."
+          },
+          "convertible": {
+            "lengthMm": 4565,
+            "widthMm": 1960,
+            "heightMm": 1190,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "296 GTS, folding hard top."
+          }
+        }
+      }
+    },
+    "daytona-sp3": {
+      "Daytona SP3 (2022–2025)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4685,
+            "widthMm": 2050,
+            "heightMm": 1140,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 21,
+            "profile": "roadster",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Icona series targa; butterfly doors."
+          }
+        }
+      }
+    },
+    "purosangue": {
+      "Purosangue (2023–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4975,
+            "widthMm": 2030,
+            "heightMm": 1590,
+            "wheelbaseMm": 3020,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 22,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.55,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Four-door with rear-hinged rear doors; 22in front / 23in rear wheels."
+          }
+        }
+      }
+    },
+    "12cilindri": {
+      "12Cilindri (2024–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4735,
+            "widthMm": 2175,
+            "heightMm": 1290,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.4,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4735,
+            "widthMm": 2175,
+            "heightMm": 1290,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 21,
+            "profile": "convertible",
+            "bonnetRatio": 0.4,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.5,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "12Cilindri Spider, folding hard top."
+          }
+        }
+      }
+    },
+    "f80": {
+      "F80 (2025–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4840,
+            "widthMm": 2060,
+            "heightMm": 1140,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 105,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Hybrid hypercar; butterfly doors; dimensions approximate."
+          }
+        }
+      }
+    },
+    "amalfi": {
+      "Amalfi (2026–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4660,
+            "widthMm": 1975,
+            "heightMm": 1300,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.7,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Roma successor; dimensions approximate, assumed close to Roma."
+          }
+        }
+      }
+    },
+    "849-testarossa": {
+      "849 Testarossa (2026–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4720,
+            "widthMm": 2000,
+            "heightMm": 1190,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "SF90 successor plug-in hybrid; dimensions approximate."
+          },
+          "convertible": {
+            "lengthMm": 4720,
+            "widthMm": 2000,
+            "heightMm": 1195,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Spider; dimensions approximate."
+          }
+        }
+      }
+    }
+  }
+}

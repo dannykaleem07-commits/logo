@@ -157,10 +157,10 @@
   background: var(--grey);
 }
 .nav-foot .dot.ok {
-  background: #22a35a;
+  background: var(--green);
 }
 .nav-foot .dot.down {
-  background: #e5484d;
+  background: var(--red);
 }
 .nav-company,
 .app-version {
@@ -177,7 +177,7 @@
   align-items: center;
   gap: var(--s-3);
   padding: 0 var(--s-8);
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--topbar-bg);
   backdrop-filter: saturate(1.4) blur(8px);
   border-bottom: 1px solid var(--line);
 }
@@ -199,12 +199,12 @@
   transition: background 0.12s ease, border-color 0.12s ease;
 }
 .topbar-search:hover {
-  background: #eceff3;
+  background: var(--surface-hover);
 }
 .topbar-search:focus-within {
   border-color: var(--blue);
   box-shadow: var(--focus);
-  background: #fff;
+  background: var(--surface);
 }
 .topbar-search input {
   flex: 1;
@@ -266,15 +266,15 @@
   color: var(--red);
 }
 .topbar-badge.hot .count {
-  background: var(--red);
-  color: #fff;
+  background: var(--red-solid);
+  color: var(--on-solid);
 }
 .topbar-badge.warm {
   color: var(--amber);
 }
 .topbar-badge.warm .count {
-  background: var(--amber);
-  color: #fff;
+  background: var(--amber-solid);
+  color: var(--on-solid);
 }
 .topbar-badge .label-long {
   display: inline;
@@ -441,7 +441,7 @@
     display: block;
     position: fixed;
     inset: 0;
-    background: rgba(6, 28, 54, 0.4);
+    background: var(--backdrop);
     z-index: 110;
   }
   .nav-link {
@@ -507,5 +507,85 @@
   .topbar-badge {
     padding: 4px 4px;
     gap: 4px;
+  }
+}
+
+/* ---- Top bar fit (theme pass): the Agents / Needs-you pills, the appearance button and the user box left the search
+ * box no width at all between 900 and ~1600 px and on phones. Desktop keeps a usable search and condenses the badges;
+ * phones show a search icon that opens to the full bar width while it is in use. ---- */
+@media (min-width: 901px) {
+  .topbar-search {
+    min-width: 220px;
+  }
+}
+@media (min-width: 901px) and (max-width: 1599px) {
+  .topbar-badge .label-long {
+    display: none;
+  }
+  .topbar-badge .label-short {
+    display: inline;
+  }
+  .topbar-user .user-text {
+    display: none;
+  }
+}
+@media (min-width: 901px) and (max-width: 1180px) {
+  .manager-toggle-long {
+    display: none;
+  }
+  .manager-toggle-short {
+    display: inline;
+  }
+}
+@media (max-width: 640px) {
+  .topbar-search {
+    position: relative;
+    flex: 0 0 38px;
+    max-width: none;
+    padding: 0;
+    justify-content: center;
+    transition: flex-basis 0.15s ease;
+  }
+  .topbar-search svg {
+    display: block;
+    pointer-events: none;
+  }
+  /* the input covers the whole icon box, so a tap anywhere on it starts a search */
+  .topbar-search input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    padding: 0 10px 0 34px;
+    background: transparent;
+  }
+  .topbar-search svg {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .topbar-search:not(:focus-within) input {
+    color: transparent;
+  }
+  .topbar-search:not(:focus-within) input::placeholder {
+    color: transparent;
+  }
+  .topbar-search:focus-within {
+    flex: 1 1 auto;
+  }
+  .topbar:has(.topbar-search:focus-within) .topbar-badges,
+  .topbar:has(.topbar-search:focus-within) .theme-menu,
+  .topbar:has(.topbar-search:focus-within) .manager-toggle {
+    display: none;
+  }
+}
+/* Phones: only the badges that need attention (red or amber) stay in the bar; the quiet ones (nothing blocked, nothing
+ * due, agents off or running) are one tap away on the dashboard. Keeps search, appearance and manager mode on screen. */
+@media (max-width: 480px) {
+  .topbar-badges .topbar-badge:not(.hot):not(.warm) {
+    display: none;
+  }
+  .topbar {
+    gap: 6px;
   }
 }

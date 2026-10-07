@@ -1,0 +1,236 @@
+{
+ "make": "Tesla",
+ "slug": "tesla",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "roadster": {
+   "Roadster 2.0/2.5 (2010–2012)": {
+    "bodies": {
+     "roadster": {
+      "lengthMm": 3945,
+      "widthMm": 1850,
+      "heightMm": 1125,
+      "wheelbaseMm": 2350,
+      "groundClearanceMm": 125,
+      "wheelDiameterIn": 17,
+      "profile": "roadster",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.202,
+      "frontOverhangRatio": 0.202,
+      "glasshouseHeightRatio": 0.24,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Lotus Elise-based mid-engined electric; removable roof."
+     }
+    }
+   }
+  },
+  "model-s": {
+   "Pre-facelift (2014–2016)": {
+    "bodies": {
+     "liftback": {
+      "lengthMm": 4975,
+      "widthMm": 1965,
+      "heightMm": 1445,
+      "wheelbaseMm": 2960,
+      "groundClearanceMm": 155,
+      "wheelDiameterIn": 19,
+      "profile": "liftback",
+      "bonnetRatio": 0.27,
+      "rearOverhangRatio": 0.194,
+      "frontOverhangRatio": 0.211,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.6,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Black nosecone front; electric liftback; flush door handles."
+     }
+    }
+   },
+   "Facelift (2016–2021)": {
+    "bodies": {
+     "liftback": {
+      "lengthMm": 4980,
+      "widthMm": 1965,
+      "heightMm": 1445,
+      "wheelbaseMm": 2960,
+      "groundClearanceMm": 155,
+      "wheelDiameterIn": 19,
+      "profile": "liftback",
+      "bonnetRatio": 0.27,
+      "rearOverhangRatio": 0.195,
+      "frontOverhangRatio": 0.211,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.6,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Electric liftback; flush door handles."
+     }
+    }
+   }
+  },
+  "model-x": {
+   "Mk1 (2016–2021)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 5035,
+      "widthMm": 2000,
+      "heightMm": 1685,
+      "wheelbaseMm": 2965,
+      "groundClearanceMm": 155,
+      "wheelDiameterIn": 20,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.197,
+      "frontOverhangRatio": 0.214,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Falcon-wing rear doors; panoramic windscreen."
+     }
+    }
+   }
+  },
+  "model-3": {
+   "Mk1 (2019–2023)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4695,
+      "widthMm": 1850,
+      "heightMm": 1445,
+      "wheelbaseMm": 2875,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "fastback",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.194,
+      "frontOverhangRatio": 0.194,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.62,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Electric saloon with separate boot lid; glass roof."
+     }
+    }
+   },
+   "Highland facelift (2023–present)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4720,
+      "widthMm": 1850,
+      "heightMm": 1445,
+      "wheelbaseMm": 2875,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "fastback",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.195,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.62,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Highland: slimmer headlamps, no front fog lamps."
+     }
+    }
+   }
+  },
+  "model-y": {
+   "Mk1 (2022–2025)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4750,
+      "widthMm": 1920,
+      "heightMm": 1625,
+      "wheelbaseMm": 2890,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 19,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.188,
+      "frontOverhangRatio": 0.204,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.5,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Electric crossover; liftback tailgate."
+     }
+    }
+   },
+   "Juniper facelift (2025–present)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4790,
+      "widthMm": 1920,
+      "heightMm": 1625,
+      "wheelbaseMm": 2890,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 19,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.191,
+      "frontOverhangRatio": 0.206,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.5,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Juniper: full-width front and rear light bars."
+     }
+    }
+   }
+  }
+ }
+}

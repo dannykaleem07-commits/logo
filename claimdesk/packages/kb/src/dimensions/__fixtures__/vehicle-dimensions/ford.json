@@ -1,0 +1,36 @@
+{
+  "make": "Ford",
+  "slug": "ford",
+  "verification": { "status": "unverified", "sourceNote": "Fixture for tests." },
+  "models": {
+    "fiesta": {
+      "Mk7 (2008–2017)": {
+        "bodies": { "hatchback": { "lengthMm": 3950, "widthMm": 1722, "heightMm": 1481, "wheelbaseMm": 2489, "profile": "hatch" } }
+      },
+      "Mk8 (2017–2023)": {
+        "bodies": {
+          "hatchback-5-door": {
+            "lengthMm": 4040, "widthMm": 1735, "heightMm": 1476, "wheelbaseMm": 2493, "groundClearanceMm": 145, "wheelDiameterIn": 16,
+            "profile": "hatch", "bonnetRatio": 0.2, "frontOverhangRatio": 0.21, "rearOverhangRatio": 0.17, "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.9, "doors": 5, "roofRails": false, "spareOnTailgate": false, "slidingSideDoor": false,
+            "lampStyle": "swept", "grilleStyle": "trapezoid", "note": "UK 5-door"
+          },
+          "hatchback-3-door": { "lengthMm": 4040, "widthMm": 1735, "heightMm": 1476, "wheelbaseMm": 2493, "doors": 3, "profile": "hatch" }
+        }
+      }
+    },
+    "transit-custom": {
+      "Gen1 (2012–2023)": {
+        "bodies": {
+          "panel-van": { "lengthMm": 4972, "widthMm": 1986, "heightMm": 2000, "wheelbaseMm": 2933, "profile": "van", "slidingSideDoor": true },
+          "panel-van-high-roof": { "lengthMm": 4972, "widthMm": 1986, "heightMm": 2280, "wheelbaseMm": 2933, "profile": "van" }
+        }
+      }
+    },
+    "ranger": {
+      "Gen3 (2012–2022)": { "bodies": { "pickup": { "lengthMm": "5362", "widthMm": 1860, "heightMm": 99999, "profile": "double-cab pick-up", "lampStyle": 7 } } }
+    },
+    "broken": "not an object",
+    "puma": { "Gen2 (2019–present)": { "nobodies": true } }
+  }
+}

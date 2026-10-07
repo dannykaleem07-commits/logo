@@ -1,7 +1,7 @@
 [
   {
     "group": "S1",
-    "description": "Standard group S1 (smallest standard cars, e.g. city cars). 2026-27 maximum daily settlement rate, ex VAT.",
+    "description": "Standard group S1 (smallest standard cars, e.g. city cars; Nissan Micra 1.0 per a search snippet). 2026-27 maximum daily settlement rate, ex VAT.",
     "dailyRatePence": 4232,
     "period": "2026-27",
     "effectiveFrom": "2026-07-01",
@@ -9,9 +9,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
-      "sourceNote": "Figure £42.32 confirmed in the project BLUEPRINT (earlier research against the gtacredithire.com Car Hire Rates 2026-27 page). Not re-fetched on 2026-10-04: www.gtacredithire.com is blocked by the session egress proxy (CONNECT 403) and search-engine snippets did not surface the S1 row. Treat as benchmark pending a human check of the page or the downloadable rates spreadsheet.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "Figure £42.32 confirmed in the project BLUEPRINT (earlier research against the gtacredithire.com Car Hire Rates 2026-27 page). Not re-fetched on 2026-10-04: www.gtacredithire.com is blocked by the session egress proxy (CONNECT 403) and search-engine snippets did not surface the S1 row. Treat as benchmark pending a human check of the page or the downloadable rates spreadsheet. 2026-10-07: a search-engine result summary (search snippet, not a fetched page; www.gtacredithire.com WebFetch again returned EGRESS_BLOCKED) stated 'For GTA Group S1, which includes vehicles such as the Nissan Micra (1.0), the GTA rate is £42.32 for the 2026-27 period', for new hires 1 July 2026 to 30 June 2027, with gtacredithire.com rates pages as the listed sources. This is the first snippet to surface the S1 row; it agrees with the held figure. Still unverified pending a human check.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     }
   },
   {
@@ -31,7 +31,7 @@
   },
   {
     "group": "S3",
-    "description": "Standard group S3 (e.g. Toyota Corolla). 2026-27 maximum daily settlement rate, ex VAT.",
+    "description": "Standard group S3 (e.g. Toyota Corolla; Vauxhall Astra 1.4 per a search snippet). 2026-27 maximum daily settlement rate, ex VAT.",
     "dailyRatePence": 5118,
     "period": "2026-27",
     "effectiveFrom": "2026-07-01",
@@ -39,9 +39,24 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
-      "sourceNote": "Search-engine snippet of the gtacredithire.com page titled 'Car Hire Rates 2026': 'Group S3 vehicles like the Toyota Corolla, the GTA Rate is £51.18'. Period inferred from the page title (2026-27 table); page not fetched directly (egress proxy policy denial). Confirm period and figure.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "Search-engine snippet of the gtacredithire.com page titled 'Car Hire Rates 2026': 'Group S3 vehicles like the Toyota Corolla, the GTA Rate is £51.18'. Period inferred from the page title (2026-27 table); page not fetched directly (egress proxy policy denial). Confirm period and figure. 2026-10-07: a further search-engine result summary (search snippet, not a fetched page) for the 2026-27 table (new hires 1 July 2026 to 30 June 2027) gave 'Vauxhall Astra (1.4): £51.18', agreeing with the held S3 figure; the snippet did not print the group code next to the Astra, so the Astra example is inferred from the matching rate.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
+    }
+  },
+  {
+    "group": "S4",
+    "description": "Standard group S4 (e.g. Ford Focus 1.6; Peugeot 307 1.6 / Peugeot 2008 Allure e-HDi per search snippets). 2026-27 maximum daily settlement rate, ex VAT.",
+    "dailyRatePence": 5488,
+    "period": "2026-27",
+    "effectiveFrom": "2026-07-01",
+    "effectiveTo": "2027-06-30",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
+      "sourceNote": "Search snippets only, not a fetched page (www.gtacredithire.com WebFetch returned EGRESS_BLOCKED on 2026-10-07). Three separate search-engine result summaries for the gtacredithire.com page titled 'Car Hire Rates 2026' (maximum daily settlement rates for new hires 1 July 2026 to 30 June 2027) gave the same £54.88 figure: 'For GTA Group S4, a Peugeot 307 (1.6) has a GTA Rate of £54.88'; 'the Peugeot 2008 Allure E-hdi in GTA Group S4 has a GTA Rate of £54.88'; and 'Ford Focus (1.6): £54.88' (group code not printed beside the Focus). The figure sits between S3 £51.18 and S6 £61.86, consistent with the group ladder. The example-vehicle wording differs between snippets; confirm the figure and examples against the page or the downloadable 2026-27 spreadsheet.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     }
   },
   {
@@ -144,14 +159,14 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.gtacredithire.com/rates/commercial/",
-      "sourceNote": "BLUEPRINT recorded CP1 £64.64 on a gtacredithire.com page labelled 2025-26. Search-engine snippet on 2026-10-04 agrees: 'new hires starting between 1st July 2025 and 30th June 2026 ... CP1 group vehicles (Ford Ranger 2.5, Mitsubishi L200 2.5 Single Cab, Toyota Hilux 2.5 Single Cab) are rated at £64.64'. The 2026-27 CP1 figure was not surfaced; the commercial page could not be fetched (egress proxy policy denial).",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "BLUEPRINT recorded CP1 £64.64 on a gtacredithire.com page labelled 2025-26. Search-engine snippet on 2026-10-04 agrees: 'new hires starting between 1st July 2025 and 30th June 2026 ... CP1 group vehicles (Ford Ranger 2.5, Mitsubishi L200 2.5 Single Cab, Toyota Hilux 2.5 Single Cab) are rated at £64.64'. The 2026-27 CP1 figure was not surfaced; the commercial page could not be fetched (egress proxy policy denial). 2026-10-07: a search-engine result summary (search snippet) of the 'Commercial Rates 2026 - 27' page again gave CP1 £64.64 (Toyota Hilux 2.5 / Ford Ranger 2.5 / Mitsubishi L200 2.5 single cab) and labelled it the 2025-26 figure; the 2026-27 CP1 figure was not surfaced.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     }
   },
   {
     "group": "CP2",
-    "description": "Commercial pick-up group CP2. 2025-26 maximum daily settlement rate, ex VAT.",
+    "description": "Commercial pick-up group CP2 (double/extended-cab pick-ups, e.g. Ford Ranger Double Cab 2.5, Toyota Hilux Extended Cab, per a search snippet). 2025-26 maximum daily settlement rate, ex VAT.",
     "dailyRatePence": 7334,
     "period": "2025-26",
     "effectiveFrom": "2025-07-01",
@@ -159,9 +174,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.gtacredithire.com/rates/commercial/",
-      "sourceNote": "BLUEPRINT recorded CP2 £73.34 on a gtacredithire.com page labelled 2025-26. Not found in any search-engine snippet on 2026-10-04 and the page could not be fetched (egress proxy policy denial). 2026-27 CP2 figure unknown.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "BLUEPRINT recorded CP2 £73.34 on a gtacredithire.com page labelled 2025-26. Not found in any search-engine snippet on 2026-10-04 and the page could not be fetched (egress proxy policy denial). 2026-27 CP2 figure unknown. 2026-10-07: a search-engine result summary (search snippet, not a fetched page) of the gtacredithire.com commercial page described the previous-year (2025-26) rows as 'CP2 (Double Cab Pickups): £73.34 for Ford Ranger Double Cab (2.5), Toyota Hilux Extended Cab', agreeing with the held figure. The 2026-27 CP2 figure was again not surfaced.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     }
   },
   {
@@ -174,9 +189,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.gtacredithire.com/rates/commercial/",
-      "sourceNote": "Search-engine snippet of the gtacredithire.com commercial rates page: 'Vauxhall Vivaro LWB (2.0) has a GTA Rate of £55.13 ... listed under the PV2 GTA Group'. The snippet appeared alongside 2025-26 CP1 data and the search summary judged it 2025-26, but the page is titled 'Commercial Rates 2026-27'; period therefore uncertain. Page not fetched directly (egress proxy policy denial). A Ford Transit XLWB 2.4 Luton at £74.12 was also seen without a group code and is not recorded.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "Search-engine snippet of the gtacredithire.com commercial rates page: 'Vauxhall Vivaro LWB (2.0) has a GTA Rate of £55.13 ... listed under the PV2 GTA Group'. The snippet appeared alongside 2025-26 CP1 data and the search summary judged it 2025-26, but the page is titled 'Commercial Rates 2026-27'; period therefore uncertain. Page not fetched directly (egress proxy policy denial). A Ford Transit XLWB 2.4 Luton at £74.12 was also seen without a group code and is not recorded. 2026-10-07: a further search-engine result summary (search snippet) stated 'for the 2025-26 period, the Vauxhall Vivaro in PV2 group had a GTA Rate of £55.13' and that the 2026-27 PV2 figure was not shown, which supports the 2025-26 attribution held here. Still unverified.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     }
   },
   {

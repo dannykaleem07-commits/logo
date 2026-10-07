@@ -1,0 +1,670 @@
+{
+ "make": "Jaguar",
+ "slug": "jaguar",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "xk": {
+   "X100 XK8/XKR (1996–2006)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4760,
+      "widthMm": 1830,
+      "heightMm": 1295,
+      "wheelbaseMm": 2590,
+      "groundClearanceMm": 125,
+      "wheelDiameterIn": 18,
+      "profile": "coupe",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.251,
+      "frontOverhangRatio": 0.205,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.65,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "wide",
+      "note": "Oval grille mouth."
+     },
+     "convertible": {
+      "lengthMm": 4760,
+      "widthMm": 1830,
+      "heightMm": 1305,
+      "wheelbaseMm": 2590,
+      "groundClearanceMm": 125,
+      "wheelDiameterIn": 18,
+      "profile": "convertible",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.251,
+      "frontOverhangRatio": 0.205,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "wide",
+      "note": "Fabric roof."
+     }
+    }
+   },
+   "X150 (2006–2014)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4790,
+      "widthMm": 1890,
+      "heightMm": 1320,
+      "wheelbaseMm": 2750,
+      "groundClearanceMm": 125,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.234,
+      "frontOverhangRatio": 0.192,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Aluminium body; hatch tailgate."
+     },
+     "convertible": {
+      "lengthMm": 4790,
+      "widthMm": 1890,
+      "heightMm": 1330,
+      "wheelbaseMm": 2750,
+      "groundClearanceMm": 125,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.234,
+      "frontOverhangRatio": 0.192,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Fabric roof."
+     }
+    }
+   }
+  },
+  "s-type": {
+   "X200 (1999–2007)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4880,
+      "widthMm": 1820,
+      "heightMm": 1445,
+      "wheelbaseMm": 2910,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.222,
+      "frontOverhangRatio": 0.182,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "wide",
+      "note": "Quad round headlamps; oval mesh grille."
+     }
+    }
+   }
+  },
+  "x-type": {
+   "X400 (2001–2009)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4670,
+      "widthMm": 1790,
+      "heightMm": 1390,
+      "wheelbaseMm": 2710,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.27,
+      "rearOverhangRatio": 0.202,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "Quad round headlamps; Mondeo-based platform."
+     },
+     "estate": {
+      "lengthMm": 4715,
+      "widthMm": 1790,
+      "heightMm": 1475,
+      "wheelbaseMm": 2710,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "estate",
+      "bonnetRatio": 0.27,
+      "rearOverhangRatio": 0.204,
+      "frontOverhangRatio": 0.221,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.12,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "Quad round headlamps."
+     }
+    }
+   }
+  },
+  "xj": {
+   "X308 (1997–2003)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5025,
+      "widthMm": 1800,
+      "heightMm": 1345,
+      "wheelbaseMm": 2870,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.236,
+      "frontOverhangRatio": 0.193,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.4,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "Quad round headlamps; LWB approx 5150 mm."
+     }
+    }
+   },
+   "X350/X358 (2003–2009)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5090,
+      "widthMm": 1870,
+      "heightMm": 1450,
+      "wheelbaseMm": 3035,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.222,
+      "frontOverhangRatio": 0.182,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.4,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "Aluminium body; LWB approx 5215 mm."
+     }
+    }
+   },
+   "X351 (2009–2019)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5120,
+      "widthMm": 1895,
+      "heightMm": 1460,
+      "wheelbaseMm": 3030,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 19,
+      "profile": "notchback",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.224,
+      "frontOverhangRatio": 0.184,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.6,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Coupe-like roofline with black C-pillar; LWB approx 5245 mm."
+     }
+    }
+   }
+  },
+  "xf": {
+   "X250 (2008–2015)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4960,
+      "widthMm": 1875,
+      "heightMm": 1460,
+      "wheelbaseMm": 2910,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.227,
+      "frontOverhangRatio": 0.186,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.55,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Pre-2011 low oval mesh grille; Sportbrake from 2012."
+     },
+     "estate": {
+      "lengthMm": 4965,
+      "widthMm": 1875,
+      "heightMm": 1495,
+      "wheelbaseMm": 2910,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 18,
+      "profile": "estate",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.228,
+      "frontOverhangRatio": 0.186,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Sportbrake (2012-2015)."
+     }
+    }
+   },
+   "X260 (2015–2024)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4955,
+      "widthMm": 1880,
+      "heightMm": 1455,
+      "wheelbaseMm": 2960,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.222,
+      "frontOverhangRatio": 0.181,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.55,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     },
+     "estate": {
+      "lengthMm": 4955,
+      "widthMm": 1880,
+      "heightMm": 1495,
+      "wheelbaseMm": 2960,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 18,
+      "profile": "estate",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.222,
+      "frontOverhangRatio": 0.181,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Sportbrake."
+     }
+    }
+   }
+  },
+  "xe": {
+   "X760 (2015–2019)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4675,
+      "widthMm": 1850,
+      "heightMm": 1415,
+      "wheelbaseMm": 2835,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.217,
+      "frontOverhangRatio": 0.177,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.55,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   },
+   "X760 facelift (2019–2024)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4680,
+      "widthMm": 1850,
+      "heightMm": 1415,
+      "wheelbaseMm": 2835,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.217,
+      "frontOverhangRatio": 0.177,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.55,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   }
+  },
+  "f-type": {
+   "X152 (2013–2019)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4470,
+      "widthMm": 1925,
+      "heightMm": 1310,
+      "wheelbaseMm": 2620,
+      "groundClearanceMm": 120,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.36,
+      "rearOverhangRatio": 0.219,
+      "frontOverhangRatio": 0.195,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Hatch tailgate."
+     },
+     "convertible": {
+      "lengthMm": 4470,
+      "widthMm": 1925,
+      "heightMm": 1310,
+      "wheelbaseMm": 2620,
+      "groundClearanceMm": 120,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.36,
+      "rearOverhangRatio": 0.219,
+      "frontOverhangRatio": 0.195,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Fabric roof."
+     }
+    }
+   },
+   "X152 facelift (2020–2024)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4470,
+      "widthMm": 1925,
+      "heightMm": 1310,
+      "wheelbaseMm": 2620,
+      "groundClearanceMm": 120,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.36,
+      "rearOverhangRatio": 0.219,
+      "frontOverhangRatio": 0.195,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Facelift: slimmer horizontal headlamps; hatch tailgate."
+     },
+     "convertible": {
+      "lengthMm": 4470,
+      "widthMm": 1925,
+      "heightMm": 1310,
+      "wheelbaseMm": 2620,
+      "groundClearanceMm": 120,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.36,
+      "rearOverhangRatio": 0.219,
+      "frontOverhangRatio": 0.195,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Facelift: slimmer horizontal headlamps; fabric roof."
+     }
+    }
+   }
+  },
+  "f-pace": {
+   "X761 (2016–2020)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4730,
+      "widthMm": 1935,
+      "heightMm": 1650,
+      "wheelbaseMm": 2875,
+      "groundClearanceMm": 210,
+      "wheelDiameterIn": 20,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.27,
+      "rearOverhangRatio": 0.208,
+      "frontOverhangRatio": 0.184,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   },
+   "X761 facelift (2021–2025)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4745,
+      "widthMm": 1935,
+      "heightMm": 1650,
+      "wheelbaseMm": 2875,
+      "groundClearanceMm": 210,
+      "wheelDiameterIn": 20,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.27,
+      "rearOverhangRatio": 0.209,
+      "frontOverhangRatio": 0.185,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   }
+  },
+  "e-pace": {
+   "X540 (2018–2020)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4395,
+      "widthMm": 1900,
+      "heightMm": 1650,
+      "wheelbaseMm": 2680,
+      "groundClearanceMm": 200,
+      "wheelDiameterIn": 19,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.187,
+      "frontOverhangRatio": 0.203,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   },
+   "X540 facelift (2021–2024)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4410,
+      "widthMm": 1900,
+      "heightMm": 1650,
+      "wheelbaseMm": 2680,
+      "groundClearanceMm": 200,
+      "wheelDiameterIn": 19,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.188,
+      "frontOverhangRatio": 0.204,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   }
+  },
+  "i-pace": {
+   "X590 (2018–2024)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4680,
+      "widthMm": 1895,
+      "heightMm": 1565,
+      "wheelbaseMm": 2990,
+      "groundClearanceMm": 175,
+      "wheelDiameterIn": 20,
+      "profile": "suv-coupe",
+      "bonnetRatio": 0.17,
+      "rearOverhangRatio": 0.18,
+      "frontOverhangRatio": 0.181,
+      "glasshouseHeightRatio": 0.28,
+      "roofTaper": 0.6,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Cab-forward electric crossover; open (functional) grille."
+     }
+    }
+   }
+  }
+ }
+}

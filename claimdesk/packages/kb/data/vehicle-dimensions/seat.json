@@ -1,0 +1,764 @@
+{
+  "make": "SEAT",
+  "slug": "seat",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "arosa": {
+      "6H facelift (1997–2004)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3535,
+            "widthMm": 1640,
+            "heightMm": 1460,
+            "wheelbaseMm": 2320,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.2,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "ibiza": {
+      "Mk2 facelift 6K2 (1999–2002)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3855,
+            "widthMm": 1640,
+            "heightMm": 1440,
+            "wheelbaseMm": 2440,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk3 6L (2002–2008)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3955,
+            "widthMm": 1700,
+            "heightMm": 1440,
+            "wheelbaseMm": 2460,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk4 6J (2008–2017)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4050,
+            "widthMm": 1695,
+            "heightMm": 1445,
+            "wheelbaseMm": 2470,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "5-door figures; 3-door SC about 1430 mm high."
+          },
+          "estate": {
+            "lengthMm": 4230,
+            "widthMm": 1695,
+            "heightMm": 1445,
+            "wheelbaseMm": 2470,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Ibiza ST."
+          }
+        }
+      },
+      "Mk5 KJ (2017–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4060,
+            "widthMm": 1780,
+            "heightMm": 1445,
+            "wheelbaseMm": 2565,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "leon": {
+      "Mk1 1M (1999–2005)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4190,
+            "widthMm": 1740,
+            "heightMm": 1440,
+            "wheelbaseMm": 2515,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk2 1P (2005–2012)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4315,
+            "widthMm": 1770,
+            "heightMm": 1460,
+            "wheelbaseMm": 2580,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Hidden rear door handles in the C-pillar."
+          }
+        }
+      },
+      "Mk3 5F (2013–2020)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4265,
+            "widthMm": 1815,
+            "heightMm": 1460,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "5-door figures; 3-door SC about 4230 mm long, 2590 mm wheelbase."
+          },
+          "estate": {
+            "lengthMm": 4535,
+            "widthMm": 1815,
+            "heightMm": 1455,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Leon ST."
+          }
+        }
+      },
+      "Mk4 KL (2020–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4370,
+            "widthMm": 1800,
+            "heightMm": 1455,
+            "wheelbaseMm": 2685,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4640,
+            "widthMm": 1800,
+            "heightMm": 1450,
+            "wheelbaseMm": 2685,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Sportstourer."
+          }
+        }
+      }
+    },
+    "toledo": {
+      "Mk2 1M (1999–2004)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4440,
+            "widthMm": 1745,
+            "heightMm": 1440,
+            "wheelbaseMm": 2515,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk3 5P (2005–2009)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4460,
+            "widthMm": 1770,
+            "heightMm": 1565,
+            "wheelbaseMm": 2575,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Tall Altea-based five-door with notch tail."
+          }
+        }
+      },
+      "Mk4 NH (2013–2019)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4480,
+            "widthMm": 1705,
+            "heightMm": 1460,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 15,
+            "profile": "liftback",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "cordoba": {
+      "Mk1 facelift 6K2 (1999–2002)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4160,
+            "widthMm": 1640,
+            "heightMm": 1440,
+            "wheelbaseMm": 2440,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 14,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4170,
+            "widthMm": 1640,
+            "heightMm": 1450,
+            "wheelbaseMm": 2440,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Cordoba Vario; approximate."
+          }
+        }
+      },
+      "Mk2 6L (2003–2006)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4280,
+            "widthMm": 1700,
+            "heightMm": 1440,
+            "wheelbaseMm": 2460,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "inca": {
+      "Mk1 (1996–2004)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4205,
+            "widthMm": 1640,
+            "heightMm": 1815,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 14,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Car-derived van (Ibiza front, VW Caddy Mk2 twin); twin rear doors, no side sliding door."
+          }
+        }
+      }
+    },
+    "altea": {
+      "5P (2004–2015)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4280,
+            "widthMm": 1770,
+            "heightMm": 1570,
+            "wheelbaseMm": 2580,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Altea XL about 4470 mm long; Freetrack about 1620 mm high."
+          }
+        }
+      }
+    },
+    "alhambra": {
+      "Mk1 7M (1996–2010)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4640,
+            "widthMm": 1810,
+            "heightMm": 1730,
+            "wheelbaseMm": 2840,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Hinged rear doors (VW Sharan / Ford Galaxy twin)."
+          }
+        }
+      },
+      "Mk2 7N (2010–2020)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4855,
+            "widthMm": 1905,
+            "heightMm": 1720,
+            "wheelbaseMm": 2920,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Sliding rear side doors."
+          }
+        }
+      }
+    },
+    "exeo": {
+      "3R (2009–2013)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4660,
+            "widthMm": 1770,
+            "heightMm": 1430,
+            "wheelbaseMm": 2640,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Audi A4 (B7) based; front-heavy overhang."
+          },
+          "estate": {
+            "lengthMm": 4670,
+            "widthMm": 1770,
+            "heightMm": 1450,
+            "wheelbaseMm": 2640,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Exeo ST."
+          }
+        }
+      }
+    },
+    "mii": {
+      "KF (2012–2021; Mii electric 2020–2021)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3555,
+            "widthMm": 1645,
+            "heightMm": 1480,
+            "wheelbaseMm": 2420,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.18,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.1,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "ateca": {
+      "KH (2016–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4380,
+            "widthMm": 1840,
+            "heightMm": 1615,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "arona": {
+      "KJ7 (2017–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4140,
+            "widthMm": 1780,
+            "heightMm": 1550,
+            "wheelbaseMm": 2565,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "tarraco": {
+      "KN (2019–2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4735,
+            "widthMm": 1840,
+            "heightMm": 1660,
+            "wheelbaseMm": 2790,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seven-seat."
+          }
+        }
+      }
+    }
+  }
+}

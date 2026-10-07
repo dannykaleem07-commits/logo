@@ -272,3 +272,18 @@ describe('pricing', () => {
     expect(costUsd({ inputTokens: 5, outputTokens: 5, cacheReadTokens: 0, cacheWriteTokens: 0 }, 'unknown-model')).toBe(0);
   });
 });
+
+describe('health', () => {
+  it('health is offline (presence only); checkKey uses models.retrieve metadata, never a model call', async () => {
+    const ok = driverWith([{ id: 'claude-opus-5-5', type: 'model', display_name: 'Claude Opus 5.5', created_at: '2026-01-01T00:00:00Z' }]);
+    expect(await ok.d.health()).toMatchObject({ kind: 'api_key', ready: true, apiKeyPresent: true });
+    expect(ok.captured).toHaveLength(0);
+    expect((await ok.d.checkKey()).ready).toBe(true);
+    expect(ok.captured[0]!.url).toMatch(/\/v1\/models\/claude-opus-5-5/);
+    const bad = driverWith([{ status: 401, body: { type: 'error', error: { type: 'authentication_error', message: 'invented' } } }]);
+    const h = await bad.d.checkKey();
+    expect(h.ready).toBe(false);
+    expect(h.problems.join(' ')).toMatch(/refused/);
+    expect((await bad.d.health()).ready).toBe(false);
+  });
+});

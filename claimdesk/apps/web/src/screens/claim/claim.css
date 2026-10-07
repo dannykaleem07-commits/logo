@@ -25,9 +25,9 @@
   cursor: pointer;
 }
 .subtab[aria-selected='true'] {
-  background: var(--navy);
-  border-color: var(--navy);
-  color: #fff;
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
 }
 
 /* Flags banner */
@@ -48,19 +48,19 @@
   font-size: var(--fs-sm);
 }
 .flag-item.block {
-  border-color: #fca5a5;
+  border-color: var(--red-line);
   background: var(--red-bg);
-  color: #7f1d1d;
+  color: var(--red-ink);
 }
 .flag-item.warn {
-  border-color: #fcd34d;
+  border-color: var(--amber-line);
   background: var(--amber-bg);
-  color: #78350f;
+  color: var(--amber-ink);
 }
 .flag-item.info {
-  border-color: #bfdbfe;
+  border-color: var(--info-line);
   background: var(--info-bg);
-  color: #1e3a8a;
+  color: var(--info-ink);
 }
 .flag-item .flag-body {
   flex: 1;
@@ -101,7 +101,7 @@
 .gate-tile summary {
   list-style: none;
   cursor: pointer;
-  padding: 10px 10px 8px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -111,57 +111,76 @@
 }
 .gate-tile .gate-name {
   font-size: var(--fs-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 700;
+  font-weight: var(--fw-medium);
   color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .gate-tile .gate-light {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   font-size: var(--fs-sm);
-  font-weight: 650;
+  font-weight: var(--fw-semi);
+  color: var(--ink);
 }
+/* calm tiles: one neutral border; the status lives in the dot (and the word next to it) */
 .gate-tile .gate-light::before {
   content: '';
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: currentColor;
+  background: var(--muted-2);
 }
-.gate-tile.green {
-  border-color: #86efac;
+.gate-tile:hover {
+  border-color: var(--line-2);
 }
-.gate-tile.green .gate-light {
-  color: var(--green);
+.gate-tile.green .gate-light::before {
+  background: var(--green);
 }
-.gate-tile.amber {
-  border-color: #fcd34d;
+.gate-tile.amber .gate-light::before {
+  background: var(--amber);
 }
-.gate-tile.amber .gate-light {
-  color: var(--amber);
-}
-.gate-tile.red {
-  border-color: #fca5a5;
+.gate-tile.red .gate-light::before {
+  background: var(--red);
 }
 .gate-tile.red .gate-light {
   color: var(--red);
 }
+/* the Evidence gates tab opens every tile: four wide columns read better than eight narrow ones */
+.gates-row:not(:has(> .gate-tile:not([open]))) {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .gates-row:not(:has(> .gate-tile:not([open]))) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 640px) {
+  .gates-row:not(:has(> .gate-tile:not([open]))) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
 .gate-tile .gate-detail {
-  padding: 0 10px 10px;
+  padding: 0 12px 12px;
   font-size: var(--fs-xs);
+  line-height: 1.5;
   color: var(--ink-2);
-  border-top: 1px dashed var(--line);
+  border-top: 1px solid var(--line);
 }
 .gate-tile .gate-detail ul {
   margin: 6px 0 0;
   padding-left: 16px;
 }
-.gate-tile .gate-detail li.present {
+.gate-tile .gate-detail li + li {
+  margin-top: 2px;
+}
+.gate-tile .gate-detail li.present::marker {
   color: var(--green);
 }
-.gate-tile .gate-detail li.missing {
+.gate-tile .gate-detail li.missing::marker {
   color: var(--red);
 }
 
@@ -213,15 +232,13 @@
   background: var(--surface);
 }
 .counter.insurer {
-  border-color: var(--blue);
+  border-color: var(--blue-100);
   background: var(--blue-50);
 }
 .counter .counter-label {
   font-size: var(--fs-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   color: var(--muted);
-  font-weight: 650;
+  font-weight: var(--fw-medium);
 }
 .counter .counter-value {
   font-size: var(--fs-xl);
@@ -376,8 +393,6 @@
   justify-content: center;
   color: var(--muted);
   font-size: var(--fs-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 .evidence-thumb img {
   width: 100%;
@@ -420,7 +435,7 @@
   height: min(1100px, calc(100vh - 220px));
   border: 1px solid var(--doc-rule);
   border-radius: var(--r-md);
-  background: #fff;
+  background: var(--doc-paper);
 }
 .consistency-flag {
   padding: var(--s-3) var(--s-4);
@@ -477,8 +492,8 @@
   color: var(--green);
 }
 .step-list .step.current {
-  background: var(--navy);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
 }
 .step-list .step.blocked {
   background: var(--red-bg);
@@ -546,6 +561,8 @@
   min-height: 30px;
   padding: 3px 8px;
   font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  color: var(--ink-2);
   width: auto;
 }
 

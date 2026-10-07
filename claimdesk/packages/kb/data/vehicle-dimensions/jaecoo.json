@@ -1,0 +1,125 @@
+{
+  "make": "Jaecoo",
+  "slug": "jaecoo",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "5": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4380,
+            "widthMm": 1860,
+            "heightMm": 1650,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.12,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Dimensions approximate; recent model, figures vary by market."
+          }
+        }
+      }
+    },
+    "e5": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4380,
+            "widthMm": 1860,
+            "heightMm": 1650,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.12,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Electric version of the Jaecoo 5; dimensions approximate."
+          }
+        }
+      }
+    },
+    "7": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4500,
+            "widthMm": 1865,
+            "heightMm": 1680,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 19,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.12,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "8": {
+      "Mk1 (2026–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4820,
+            "widthMm": 1930,
+            "heightMm": 1700,
+            "wheelbaseMm": 2820,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 20,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.12,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Seven-seat; dimensions approximate pending UK specifications."
+          }
+        }
+      }
+    }
+  }
+}

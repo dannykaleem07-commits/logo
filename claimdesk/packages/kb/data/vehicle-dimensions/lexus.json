@@ -1,0 +1,828 @@
+{
+ "make": "Lexus",
+ "slug": "lexus",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "is": {
+   "Mk1 XE10 (1999–2005)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4400,
+      "widthMm": 1720,
+      "heightMm": 1410,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 16,
+      "profile": "notchback",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.216,
+      "frontOverhangRatio": 0.177,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "Chronograph-style dials; clear-lens round tail lamps."
+     },
+     "estate": {
+      "lengthMm": 4505,
+      "widthMm": 1720,
+      "heightMm": 1425,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 16,
+      "profile": "estate",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.224,
+      "frontOverhangRatio": 0.183,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "IS SportCross (sporty estate/hatch)."
+     }
+    }
+   },
+   "Mk2 XE20 (2005–2013)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4575,
+      "widthMm": 1795,
+      "heightMm": 1425,
+      "wheelbaseMm": 2730,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.222,
+      "frontOverhangRatio": 0.181,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     },
+     "convertible": {
+      "lengthMm": 4635,
+      "widthMm": 1795,
+      "heightMm": 1415,
+      "wheelbaseMm": 2730,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 17,
+      "profile": "convertible",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.226,
+      "frontOverhangRatio": 0.185,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "IS 250C retractable hard-top."
+     }
+    }
+   },
+   "Mk3 XE30 (2013–2020)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4665,
+      "widthMm": 1810,
+      "heightMm": 1430,
+      "wheelbaseMm": 2800,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.22,
+      "frontOverhangRatio": 0.18,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "large-upright",
+      "note": "Spindle grille; separate L-shaped LED DRLs."
+     }
+    }
+   }
+  },
+  "gs": {
+   "Mk2 S160 (1997–2005)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4805,
+      "widthMm": 1800,
+      "heightMm": 1440,
+      "wheelbaseMm": 2800,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.229,
+      "frontOverhangRatio": 0.188,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "Quad round headlamps."
+     }
+    }
+   },
+   "Mk3 S190 (2005–2011)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4825,
+      "widthMm": 1820,
+      "heightMm": 1425,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.225,
+      "frontOverhangRatio": 0.184,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.55,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     }
+    }
+   },
+   "Mk4 L10 (2012–2018)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4850,
+      "widthMm": 1840,
+      "heightMm": 1455,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.226,
+      "frontOverhangRatio": 0.186,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Spindle grille."
+     }
+    }
+   }
+  },
+  "ls": {
+   "LS 430 XF30 (2000–2006)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4995,
+      "widthMm": 1830,
+      "heightMm": 1470,
+      "wheelbaseMm": 2925,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.228,
+      "frontOverhangRatio": 0.186,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.4,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     }
+    }
+   },
+   "LS 460/600h XF40 (2006–2017)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5030,
+      "widthMm": 1875,
+      "heightMm": 1465,
+      "wheelbaseMm": 2970,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 19,
+      "profile": "notchback",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.226,
+      "frontOverhangRatio": 0.184,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "SWB LS 460 shown; LWB (LS 460L / 600h L) approx 5150 mm on 3090 mm wheelbase."
+     }
+    }
+   },
+   "LS 500h XF50 (2018–2023)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 5235,
+      "widthMm": 1900,
+      "heightMm": 1450,
+      "wheelbaseMm": 3125,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 20,
+      "profile": "notchback",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.222,
+      "frontOverhangRatio": 0.181,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.6,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Coupe-like six-light roofline; spindle grille."
+     }
+    }
+   }
+  },
+  "es": {
+   "XZ10 (2019–present)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4975,
+      "widthMm": 1865,
+      "heightMm": 1445,
+      "wheelbaseMm": 2870,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.27,
+      "rearOverhangRatio": 0.203,
+      "frontOverhangRatio": 0.22,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.55,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Front-wheel-drive hybrid; spindle grille."
+     }
+    }
+   }
+  },
+  "ct": {
+   "CT 200h (2011–2020)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4350,
+      "widthMm": 1765,
+      "heightMm": 1430,
+      "wheelbaseMm": 2600,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.169,
+      "frontOverhangRatio": 0.233,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.45,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Spindle grille from 2014 facelift (pre-2014 approx 4320 mm, narrower grille)."
+     }
+    }
+   }
+  },
+  "rx": {
+   "Mk1 XU10 (1998–2003)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4575,
+      "widthMm": 1815,
+      "heightMm": 1670,
+      "wheelbaseMm": 2615,
+      "groundClearanceMm": 190,
+      "wheelDiameterIn": 17,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.205,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     }
+    }
+   },
+   "Mk2 XU30 (2003–2009)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4755,
+      "widthMm": 1845,
+      "heightMm": 1690,
+      "wheelbaseMm": 2715,
+      "groundClearanceMm": 190,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.206,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     }
+    }
+   },
+   "Mk3 AL10 (2009–2015)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4770,
+      "widthMm": 1885,
+      "heightMm": 1690,
+      "wheelbaseMm": 2740,
+      "groundClearanceMm": 190,
+      "wheelDiameterIn": 19,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.205,
+      "frontOverhangRatio": 0.221,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Spindle grille from 2012 facelift."
+     }
+    }
+   },
+   "Mk4 AL20 (2015–2022)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4890,
+      "widthMm": 1895,
+      "heightMm": 1690,
+      "wheelbaseMm": 2790,
+      "groundClearanceMm": 200,
+      "wheelDiameterIn": 20,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.206,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.45,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "large-upright",
+      "note": "Floating-roof C-pillar; 7-seat RX L approx 5000 mm."
+     }
+    }
+   },
+   "Mk5 AL30 (2022–present)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4890,
+      "widthMm": 1920,
+      "heightMm": 1695,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 190,
+      "wheelDiameterIn": 21,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.2,
+      "frontOverhangRatio": 0.217,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.45,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Body-coloured spindle-body grille."
+     }
+    }
+   }
+  },
+  "nx": {
+   "Mk1 AZ10 (2014–2021)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4630,
+      "widthMm": 1845,
+      "heightMm": 1645,
+      "wheelbaseMm": 2660,
+      "groundClearanceMm": 175,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.204,
+      "frontOverhangRatio": 0.221,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "large-upright"
+     }
+    }
+   },
+   "Mk2 AZ20 (2022–present)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4660,
+      "widthMm": 1865,
+      "heightMm": 1640,
+      "wheelbaseMm": 2690,
+      "groundClearanceMm": 185,
+      "wheelDiameterIn": 20,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.203,
+      "frontOverhangRatio": 0.22,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   }
+  },
+  "ux": {
+   "ZA10 (2019–present)": {
+    "bodies": {
+     "crossover": {
+      "lengthMm": 4495,
+      "widthMm": 1840,
+      "heightMm": 1540,
+      "wheelbaseMm": 2640,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.198,
+      "frontOverhangRatio": 0.215,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.45,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Low crossover; UX 300e electric shares body."
+     }
+    }
+   }
+  },
+  "lbx": {
+   "Mk1 (2024–present)": {
+    "bodies": {
+     "crossover": {
+      "lengthMm": 4190,
+      "widthMm": 1825,
+      "heightMm": 1545,
+      "wheelbaseMm": 2580,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.184,
+      "frontOverhangRatio": 0.2,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   }
+  },
+  "rz": {
+   "Mk1 (2023–2025)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4805,
+      "widthMm": 1895,
+      "heightMm": 1635,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 20,
+      "profile": "suv-coupe",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.195,
+      "frontOverhangRatio": 0.212,
+      "glasshouseHeightRatio": 0.28,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Electric; body-coloured spindle-body front."
+     }
+    }
+   },
+   "Mk1 facelift (2025–present)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4805,
+      "widthMm": 1895,
+      "heightMm": 1635,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 20,
+      "profile": "suv-coupe",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.195,
+      "frontOverhangRatio": 0.212,
+      "glasshouseHeightRatio": 0.28,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Electric; body-coloured spindle-body front."
+     }
+    }
+   }
+  },
+  "sc": {
+   "SC 430 Z40 (2001–2010)": {
+    "bodies": {
+     "convertible": {
+      "lengthMm": 4535,
+      "widthMm": 1825,
+      "heightMm": 1355,
+      "wheelbaseMm": 2620,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 18,
+      "profile": "convertible",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.232,
+      "frontOverhangRatio": 0.19,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "Retractable hard-top."
+     }
+    }
+   }
+  },
+  "rc": {
+   "XC10 (2015–2021)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4695,
+      "widthMm": 1840,
+      "heightMm": 1395,
+      "wheelbaseMm": 2730,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.231,
+      "frontOverhangRatio": 0.188,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.65,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "large-upright"
+     }
+    }
+   }
+  },
+  "lc": {
+   "Z100 (2017–present)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4770,
+      "widthMm": 1920,
+      "heightMm": 1345,
+      "wheelbaseMm": 2870,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 21,
+      "profile": "coupe",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.231,
+      "frontOverhangRatio": 0.167,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     },
+     "convertible": {
+      "lengthMm": 4770,
+      "widthMm": 1920,
+      "heightMm": 1350,
+      "wheelbaseMm": 2870,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 21,
+      "profile": "convertible",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.231,
+      "frontOverhangRatio": 0.167,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Fabric roof."
+     }
+    }
+   }
+  },
+  "lfa": {
+   "LFA (2010–2012)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4505,
+      "widthMm": 1895,
+      "heightMm": 1220,
+      "wheelbaseMm": 2605,
+      "groundClearanceMm": 120,
+      "wheelDiameterIn": 20,
+      "profile": "coupe",
+      "bonnetRatio": 0.32,
+      "rearOverhangRatio": 0.232,
+      "frontOverhangRatio": 0.19,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.65,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Front-mid V10; carbon body."
+     }
+    }
+   }
+  },
+  "lm": {
+   "Mk2 (2024–present)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 5125,
+      "widthMm": 1890,
+      "heightMm": 1955,
+      "wheelbaseMm": 3000,
+      "groundClearanceMm": 155,
+      "wheelDiameterIn": 19,
+      "profile": "mpv",
+      "bonnetRatio": 0.17,
+      "rearOverhangRatio": 0.187,
+      "frontOverhangRatio": 0.228,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.1,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Luxury MPV with powered sliding side doors."
+     }
+    }
+   }
+  }
+ }
+}

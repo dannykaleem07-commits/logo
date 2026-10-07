@@ -1,0 +1,353 @@
+{
+  "make": "smart",
+  "slug": "smart",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "fortwo": {
+      "W450 City-Coupe / fortwo (1998–2007; automated manual (softouch/softip); renamed fortwo 2004)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 2500,
+            "widthMm": 1515,
+            "heightMm": 1550,
+            "wheelbaseMm": 1810,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.13,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.42,
+            "roofTaper": 0.35,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Two-seat city car; rear-engined, Tridion safety cell; plastic body panels."
+          },
+          "convertible": {
+            "lengthMm": 2500,
+            "widthMm": 1515,
+            "heightMm": 1550,
+            "wheelbaseMm": 1810,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "convertible",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.13,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.35,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Cabrio: roll-back fabric roof with removable roof bars."
+          }
+        }
+      },
+      "W451 (2007–2015; automated manual; electric drive 2012-2015)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 2695,
+            "widthMm": 1560,
+            "heightMm": 1540,
+            "wheelbaseMm": 1865,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.42,
+            "roofTaper": 0.35,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Two-seat city car; rear-engined, Tridion safety cell."
+          },
+          "convertible": {
+            "lengthMm": 2695,
+            "widthMm": 1560,
+            "heightMm": 1540,
+            "wheelbaseMm": 1865,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "convertible",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.35,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "W453 / EQ fortwo (2015–2024; EQ fortwo from 2017; electric-only from 2020)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 2695,
+            "widthMm": 1665,
+            "heightMm": 1555,
+            "wheelbaseMm": 1875,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.13,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.42,
+            "roofTaper": 0.35,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Two-seat city car; rear-engined, Tridion safety cell."
+          },
+          "convertible": {
+            "lengthMm": 2695,
+            "widthMm": 1665,
+            "heightMm": 1555,
+            "wheelbaseMm": 1875,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "convertible",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.13,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.35,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "forfour": {
+      "W454 (2004–2006)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3750,
+            "widthMm": 1685,
+            "heightMm": 1450,
+            "wheelbaseMm": 2500,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Mitsubishi Colt based."
+          }
+        }
+      },
+      "W453 / EQ forfour (2015–2021; EQ forfour from 2017; electric-only from 2020)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3495,
+            "widthMm": 1665,
+            "heightMm": 1555,
+            "wheelbaseMm": 2495,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.13,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Rear-engined (Renault Twingo III sister)."
+          }
+        }
+      }
+    },
+    "roadster": {
+      "R452 roadster / roadster-coupe (2003–2006; automated manual)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3425,
+            "widthMm": 1615,
+            "heightMm": 1190,
+            "wheelbaseMm": 2360,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.14,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Mid-rear engined; targa-style removable roof panels."
+          },
+          "coupe": {
+            "lengthMm": 3425,
+            "widthMm": 1615,
+            "heightMm": 1200,
+            "wheelbaseMm": 2360,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 16,
+            "profile": "coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.14,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.75,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Roadster-Coupe with glass tailgate."
+          }
+        }
+      }
+    },
+    "smart-1": {
+      "HX11 (2023–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4270,
+            "widthMm": 1820,
+            "heightMm": 1635,
+            "wheelbaseMm": 2750,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.18,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "smart-3": {
+      "HC11 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4400,
+            "widthMm": 1845,
+            "heightMm": 1555,
+            "wheelbaseMm": 2785,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 19,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.18,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.62,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "smart-5": {
+      "#5 (2025–present; UK orders late 2025; deliveries from early 2026)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4705,
+            "widthMm": 1920,
+            "heightMm": 1705,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 20,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.12,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Dimensions approximate; new model."
+          }
+        }
+      }
+    }
+  }
+}

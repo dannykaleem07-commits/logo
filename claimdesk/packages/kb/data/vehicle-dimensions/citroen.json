@@ -1,0 +1,2177 @@
+{
+ "make": "Citroen",
+ "slug": "citroen",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "saxo": {
+   "Phase 2 (1999–2004)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3720,
+      "widthMm": 1595,
+      "heightMm": 1370,
+      "wheelbaseMm": 2385,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.151,
+      "frontOverhangRatio": 0.208,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.35,
+      "doors": [
+       3,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "c1": {
+   "Mk1 (2005–2014)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3435,
+      "widthMm": 1630,
+      "heightMm": 1465,
+      "wheelbaseMm": 2340,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.134,
+      "frontOverhangRatio": 0.185,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.35,
+      "doors": [
+       3,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "wide",
+      "note": "Glass tailgate; twin of Toyota Aygo / Peugeot 107."
+     }
+    }
+   },
+   "Mk2 (2014–2022)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3465,
+      "widthMm": 1615,
+      "heightMm": 1460,
+      "wheelbaseMm": 2340,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.137,
+      "frontOverhangRatio": 0.188,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.35,
+      "doors": [
+       3,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Airscape fabric roof option."
+     }
+    }
+   }
+  },
+  "c2": {
+   "C2 (2003–2009)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3665,
+      "widthMm": 1660,
+      "heightMm": 1460,
+      "wheelbaseMm": 2315,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.154,
+      "frontOverhangRatio": 0.214,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.25,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "wide",
+      "note": "Split tailgate."
+     }
+    }
+   }
+  },
+  "c3": {
+   "Mk1 (2002–2009)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3850,
+      "widthMm": 1665,
+      "heightMm": 1520,
+      "wheelbaseMm": 2460,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.152,
+      "frontOverhangRatio": 0.209,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.45,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "wide",
+      "note": "Arched one-curve roofline."
+     }
+    }
+   },
+   "Mk2 (2009–2016)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3940,
+      "widthMm": 1730,
+      "heightMm": 1540,
+      "wheelbaseMm": 2465,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.157,
+      "frontOverhangRatio": 0.217,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "wide",
+      "note": "Zenith panoramic windscreen common."
+     }
+    }
+   },
+   "Mk3 (2016–2024)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3995,
+      "widthMm": 1750,
+      "heightMm": 1475,
+      "wheelbaseMm": 2540,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.153,
+      "frontOverhangRatio": 0.211,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Airbump side panels; contrast roof common."
+     }
+    }
+   },
+   "Mk4 (2024–)": {
+    "bodies": {
+     "crossover": {
+      "lengthMm": 4015,
+      "widthMm": 1755,
+      "heightMm": 1575,
+      "wheelbaseMm": 2540,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 17,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.22,
+      "rearOverhangRatio": 0.183,
+      "frontOverhangRatio": 0.184,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.1,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Smart Car platform; e-C3 electric shares body."
+     }
+    }
+   }
+  },
+  "c3-pluriel": {
+   "Pluriel (2003–2010)": {
+    "bodies": {
+     "convertible": {
+      "lengthMm": 3935,
+      "widthMm": 1700,
+      "heightMm": 1565,
+      "wheelbaseMm": 2460,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.158,
+      "frontOverhangRatio": 0.217,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.4,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "wide",
+      "note": "Roll-back fabric roof with removable roof side arches; closed shape is a hatch."
+     }
+    }
+   }
+  },
+  "c3-picasso": {
+   "C3 Picasso (2009–2017)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4080,
+      "widthMm": 1730,
+      "heightMm": 1625,
+      "wheelbaseMm": 2540,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "mpv",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.169,
+      "frontOverhangRatio": 0.208,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.1,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "wide",
+      "note": "Boxy mini-MPV; height approx 1670 mm with rails."
+     }
+    }
+   }
+  },
+  "c3-aircross": {
+   "Mk1 (2017–2024)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4155,
+      "widthMm": 1755,
+      "heightMm": 1600,
+      "wheelbaseMm": 2605,
+      "groundClearanceMm": 175,
+      "wheelDiameterIn": 17,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.186,
+      "frontOverhangRatio": 0.187,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.1,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "Mk2 (2025–)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4390,
+      "widthMm": 1795,
+      "heightMm": 1660,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 190,
+      "wheelDiameterIn": 17,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.196,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.1,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Smart Car platform; 7-seat option."
+     }
+    }
+   }
+  },
+  "c4": {
+   "Mk1 (2004–2010)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4260,
+      "widthMm": 1775,
+      "heightMm": 1470,
+      "wheelbaseMm": 2610,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.162,
+      "frontOverhangRatio": 0.225,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.45,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     },
+     "coupe": {
+      "lengthMm": 4275,
+      "widthMm": 1770,
+      "heightMm": 1460,
+      "wheelbaseMm": 2610,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 16,
+      "profile": "coupe",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.171,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.6,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Three-door hatch coupe with split rear glass."
+     }
+    }
+   },
+   "Mk2 (2010–2018)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4330,
+      "widthMm": 1790,
+      "heightMm": 1490,
+      "wheelbaseMm": 2610,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.167,
+      "frontOverhangRatio": 0.23,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "Mk3 (2021–)": {
+    "bodies": {
+     "crossover": {
+      "lengthMm": 4360,
+      "widthMm": 1800,
+      "heightMm": 1525,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 155,
+      "wheelDiameterIn": 18,
+      "profile": "suv-coupe",
+      "bonnetRatio": 0.22,
+      "rearOverhangRatio": 0.186,
+      "frontOverhangRatio": 0.202,
+      "glasshouseHeightRatio": 0.28,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Fastback crossover; e-C4 electric shares body."
+     }
+    }
+   }
+  },
+  "c4-x": {
+   "C4 X (2023–)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4600,
+      "widthMm": 1800,
+      "heightMm": 1525,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 155,
+      "wheelDiameterIn": 18,
+      "profile": "fastback",
+      "bonnetRatio": 0.22,
+      "rearOverhangRatio": 0.21,
+      "frontOverhangRatio": 0.21,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.6,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Fastback crossover saloon with separate boot."
+     }
+    }
+   }
+  },
+  "c4-picasso": {
+   "Mk1 (2007–2013)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4470,
+      "widthMm": 1830,
+      "heightMm": 1680,
+      "wheelbaseMm": 2730,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "mpv",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.175,
+      "frontOverhangRatio": 0.214,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.25,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Panoramic windscreen."
+     }
+    }
+   },
+   "Mk2 (2013–2018)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4430,
+      "widthMm": 1825,
+      "heightMm": 1610,
+      "wheelbaseMm": 2785,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 17,
+      "profile": "mpv",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.167,
+      "frontOverhangRatio": 0.204,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.25,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "C4 SpaceTourer (2018–2022)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4440,
+      "widthMm": 1825,
+      "heightMm": 1610,
+      "wheelbaseMm": 2785,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 17,
+      "profile": "mpv",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.168,
+      "frontOverhangRatio": 0.205,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.25,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "grand-c4-picasso": {
+   "Mk1 (2006–2013)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4590,
+      "widthMm": 1830,
+      "heightMm": 1685,
+      "wheelbaseMm": 2730,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "mpv",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.182,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "7-seat; panoramic windscreen."
+     }
+    }
+   },
+   "Mk2 (2013–2018)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4600,
+      "widthMm": 1825,
+      "heightMm": 1635,
+      "wheelbaseMm": 2840,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 17,
+      "profile": "mpv",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.173,
+      "frontOverhangRatio": 0.21,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "Grand C4 SpaceTourer (2018–2022)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4600,
+      "widthMm": 1825,
+      "heightMm": 1635,
+      "wheelbaseMm": 2840,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 17,
+      "profile": "mpv",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.173,
+      "frontOverhangRatio": 0.21,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "c4-aircross": {
+   "C4 Aircross (2012–2017)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4340,
+      "widthMm": 1800,
+      "heightMm": 1625,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 185,
+      "wheelDiameterIn": 17,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.185,
+      "frontOverhangRatio": 0.2,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.32,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Mitsubishi ASX-based."
+     }
+    }
+   }
+  },
+  "c4-cactus": {
+   "C4 Cactus (2014–2020)": {
+    "bodies": {
+     "crossover": {
+      "lengthMm": 4155,
+      "widthMm": 1730,
+      "heightMm": 1480,
+      "wheelbaseMm": 2595,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.157,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Airbump door panels (pre-2018); raised hatch shape."
+     }
+    }
+   }
+  },
+  "c5": {
+   "Mk1 (2001–2008)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4745,
+      "widthMm": 1780,
+      "heightMm": 1475,
+      "wheelbaseMm": 2750,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "liftback",
+      "bonnetRatio": 0.25,
+      "rearOverhangRatio": 0.201,
+      "frontOverhangRatio": 0.219,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Facelift (2004-) length shown; pre-facelift approx 4620 mm."
+     },
+     "estate": {
+      "lengthMm": 4840,
+      "widthMm": 1780,
+      "heightMm": 1510,
+      "wheelbaseMm": 2750,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.207,
+      "frontOverhangRatio": 0.225,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.12,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Facelift length shown; pre-facelift approx 4730 mm."
+     }
+    }
+   },
+   "Mk2 (2008–2017)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4780,
+      "widthMm": 1860,
+      "heightMm": 1450,
+      "wheelbaseMm": 2815,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.197,
+      "frontOverhangRatio": 0.214,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Concave rear window."
+     },
+     "estate": {
+      "lengthMm": 4830,
+      "widthMm": 1860,
+      "heightMm": 1485,
+      "wheelbaseMm": 2815,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.2,
+      "frontOverhangRatio": 0.217,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "c5-aircross": {
+   "Mk1 (2019–2025)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4500,
+      "widthMm": 1840,
+      "heightMm": 1670,
+      "wheelbaseMm": 2730,
+      "groundClearanceMm": 190,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.188,
+      "frontOverhangRatio": 0.205,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "Mk2 (2025–)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4650,
+      "widthMm": 1900,
+      "heightMm": 1690,
+      "wheelbaseMm": 2785,
+      "groundClearanceMm": 190,
+      "wheelDiameterIn": 19,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.192,
+      "frontOverhangRatio": 0.209,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.25,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "c5-x": {
+   "C5 X (2022–)": {
+    "bodies": {
+     "liftback": {
+      "lengthMm": 4805,
+      "widthMm": 1865,
+      "heightMm": 1485,
+      "wheelbaseMm": 2785,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 19,
+      "profile": "liftback",
+      "bonnetRatio": 0.25,
+      "rearOverhangRatio": 0.201,
+      "frontOverhangRatio": 0.219,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Raised fastback estate-crossover."
+     }
+    }
+   }
+  },
+  "c6": {
+   "C6 (2006–2012)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4910,
+      "widthMm": 1860,
+      "heightMm": 1465,
+      "wheelbaseMm": 2900,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.213,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.55,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Concave rear window; hydropneumatic suspension."
+     }
+    }
+   }
+  },
+  "c8": {
+   "C8 (2002–2010)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4725,
+      "widthMm": 1855,
+      "heightMm": 1750,
+      "wheelbaseMm": 2825,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 16,
+      "profile": "mpv",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.181,
+      "frontOverhangRatio": 0.221,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Twin sliding side doors; shared with Peugeot 807 / Fiat Ulysse."
+     }
+    }
+   }
+  },
+  "c-crosser": {
+   "C-Crosser (2007–2012)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4645,
+      "widthMm": 1805,
+      "heightMm": 1715,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 195,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.204,
+      "frontOverhangRatio": 0.221,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.32,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Mitsubishi Outlander CW-based."
+     }
+    }
+   }
+  },
+  "c-zero": {
+   "C-Zero (2010–2020)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3475,
+      "widthMm": 1475,
+      "heightMm": 1610,
+      "wheelbaseMm": 2550,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 15,
+      "profile": "hatch",
+      "bonnetRatio": 0.1,
+      "rearOverhangRatio": 0.112,
+      "frontOverhangRatio": 0.154,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "closed-ev",
+      "note": "Rear-engined electric; twin of Mitsubishi i-MiEV."
+     }
+    }
+   }
+  },
+  "xsara": {
+   "Xsara (1997–2006)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4190,
+      "widthMm": 1705,
+      "heightMm": 1405,
+      "wheelbaseMm": 2540,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.166,
+      "frontOverhangRatio": 0.228,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     },
+     "coupe": {
+      "lengthMm": 4165,
+      "widthMm": 1705,
+      "heightMm": 1385,
+      "wheelbaseMm": 2540,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "coupe",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.172,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.55,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Three-door hatch coupe."
+     },
+     "estate": {
+      "lengthMm": 4365,
+      "widthMm": 1705,
+      "heightMm": 1425,
+      "wheelbaseMm": 2540,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.201,
+      "frontOverhangRatio": 0.217,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.12,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "xsara-picasso": {
+   "Xsara Picasso (1999–2010)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4275,
+      "widthMm": 1750,
+      "heightMm": 1635,
+      "wheelbaseMm": 2760,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 15,
+      "profile": "mpv",
+      "bonnetRatio": 0.13,
+      "rearOverhangRatio": 0.159,
+      "frontOverhangRatio": 0.195,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Monospace profile."
+     }
+    }
+   }
+  },
+  "synergie": {
+   "Synergie (1995–2002)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4455,
+      "widthMm": 1835,
+      "heightMm": 1730,
+      "wheelbaseMm": 2825,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 15,
+      "profile": "mpv",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.165,
+      "frontOverhangRatio": 0.201,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Twin sliding side doors; shared with Peugeot 806 / Fiat Ulysse Mk1."
+     }
+    }
+   }
+  },
+  "xantia": {
+   "Phase 2 (1997–2001)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4445,
+      "widthMm": 1755,
+      "heightMm": 1380,
+      "wheelbaseMm": 2740,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 15,
+      "profile": "liftback",
+      "bonnetRatio": 0.25,
+      "rearOverhangRatio": 0.185,
+      "frontOverhangRatio": 0.199,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Saloon-shaped five-door hatchback."
+     },
+     "estate": {
+      "lengthMm": 4710,
+      "widthMm": 1755,
+      "heightMm": 1460,
+      "wheelbaseMm": 2740,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 15,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.201,
+      "frontOverhangRatio": 0.217,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.12,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "ds3": {
+   "Citroen DS3 (2010–2015)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3950,
+      "widthMm": 1715,
+      "heightMm": 1455,
+      "wheelbaseMm": 2465,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.158,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.35,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Floating roof with contrast colour; shark-fin B-pillar."
+     },
+     "convertible": {
+      "lengthMm": 3950,
+      "widthMm": 1715,
+      "heightMm": 1460,
+      "wheelbaseMm": 2465,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.158,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.35,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Fabric folding roof panel with fixed sides; closed shape is a hatch."
+     }
+    }
+   }
+  },
+  "ds4": {
+   "Citroen DS4 (2011–2015)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4275,
+      "widthMm": 1810,
+      "heightMm": 1525,
+      "wheelbaseMm": 2610,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 17,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.163,
+      "frontOverhangRatio": 0.226,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.45,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Coupe-style hatch with hidden rear door handles; fixed rear windows."
+     }
+    }
+   }
+  },
+  "ds5": {
+   "Citroen DS5 (2012–2015)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4530,
+      "widthMm": 1870,
+      "heightMm": 1505,
+      "wheelbaseMm": 2725,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 18,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.167,
+      "frontOverhangRatio": 0.231,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.45,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Shooting-brake style hatch."
+     }
+    }
+   }
+  },
+  "ami": {
+   "Ami (2022–)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 2410,
+      "widthMm": 1390,
+      "heightMm": 1525,
+      "wheelbaseMm": 1730,
+      "groundClearanceMm": 125,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.05,
+      "rearOverhangRatio": 0.141,
+      "frontOverhangRatio": 0.141,
+      "glasshouseHeightRatio": 0.4,
+      "roofTaper": 0.08,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "closed-ev",
+      "note": "Electric quadricycle; symmetrical cube body; door hinged front on one side and rear on the other."
+     }
+    }
+   }
+  },
+  "berlingo": {
+   "Mk1 (1996–2008)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 4110,
+      "widthMm": 1720,
+      "heightMm": 1800,
+      "wheelbaseMm": 2690,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 14,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.155,
+      "frontOverhangRatio": 0.19,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Sliding side door optional on panel van."
+     }
+    }
+   },
+   "Mk2 (2008–2018)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 4380,
+      "widthMm": 1810,
+      "heightMm": 1800,
+      "wheelbaseMm": 2730,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 15,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.17,
+      "frontOverhangRatio": 0.207,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "L1 shown; L2 (2012-) approx 4630 mm."
+     },
+     "crew-van": {
+      "lengthMm": 4380,
+      "widthMm": 1810,
+      "heightMm": 1800,
+      "wheelbaseMm": 2730,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 15,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.17,
+      "frontOverhangRatio": 0.207,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Crew van: second-row seat behind bulkhead; L1 shown."
+     }
+    }
+   },
+   "Mk3 (2018–)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 4405,
+      "widthMm": 1850,
+      "heightMm": 1820,
+      "wheelbaseMm": 2785,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 16,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.166,
+      "frontOverhangRatio": 0.202,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "M (L1) shown; XL approx 4755 mm, 2975 mm wheelbase."
+     },
+     "crew-van": {
+      "lengthMm": 4405,
+      "widthMm": 1850,
+      "heightMm": 1820,
+      "wheelbaseMm": 2785,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 16,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.166,
+      "frontOverhangRatio": 0.202,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Crew van: second-row seat; M shown."
+     }
+    }
+   }
+  },
+  "berlingo-multispace": {
+   "Mk1 Multispace (1996–2008)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4110,
+      "widthMm": 1725,
+      "heightMm": 1810,
+      "wheelbaseMm": 2690,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 14,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.155,
+      "frontOverhangRatio": 0.19,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.06,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Passenger leisure-activity vehicle; sliding side door(s)."
+     }
+    }
+   },
+   "Mk2 Multispace (2008–2018)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4380,
+      "widthMm": 1810,
+      "heightMm": 1800,
+      "wheelbaseMm": 2730,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 15,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.17,
+      "frontOverhangRatio": 0.207,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.06,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Passenger version; Modutop roof option."
+     }
+    }
+   },
+   "Mk3 Berlingo MPV (2018–)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4405,
+      "widthMm": 1850,
+      "heightMm": 1850,
+      "wheelbaseMm": 2785,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 16,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.166,
+      "frontOverhangRatio": 0.202,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.06,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Passenger version; XL approx 4755 mm."
+     }
+    }
+   }
+  },
+  "nemo": {
+   "Nemo (2008–2017)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 3865,
+      "widthMm": 1715,
+      "heightMm": 1720,
+      "wheelbaseMm": 2515,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 15,
+      "profile": "van-low",
+      "bonnetRatio": 0.17,
+      "rearOverhangRatio": 0.157,
+      "frontOverhangRatio": 0.192,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Shared with Fiat Fiorino / Peugeot Bipper."
+     },
+     "mpv": {
+      "lengthMm": 3865,
+      "widthMm": 1715,
+      "heightMm": 1720,
+      "wheelbaseMm": 2515,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 15,
+      "profile": "van-low",
+      "bonnetRatio": 0.17,
+      "rearOverhangRatio": 0.157,
+      "frontOverhangRatio": 0.192,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.06,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Nemo Multispace passenger version."
+     }
+    }
+   }
+  },
+  "c15": {
+   "C15 (1984–2005)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 4090,
+      "widthMm": 1630,
+      "heightMm": 1810,
+      "wheelbaseMm": 2830,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 13,
+      "profile": "van-low",
+      "bonnetRatio": 0.17,
+      "rearOverhangRatio": 0.139,
+      "frontOverhangRatio": 0.169,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Visa-based van; twin rear doors, no sliding door; wheelbase uncertain."
+     }
+    }
+   }
+  },
+  "dispatch": {
+   "Mk1 (1996–2006)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 4520,
+      "widthMm": 1840,
+      "heightMm": 1940,
+      "wheelbaseMm": 2825,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 15,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.169,
+      "frontOverhangRatio": 0.206,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Shared with Peugeot Expert / Fiat Scudo Mk1."
+     }
+    }
+   },
+   "Mk2 (2007–2016)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 4805,
+      "widthMm": 1895,
+      "heightMm": 1940,
+      "wheelbaseMm": 3000,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 16,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.169,
+      "frontOverhangRatio": 0.207,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "L1H1 shown; L2 approx 5135 mm, 3122 mm wheelbase."
+     },
+     "crew-van": {
+      "lengthMm": 4805,
+      "widthMm": 1895,
+      "heightMm": 1940,
+      "wheelbaseMm": 3000,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 16,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.169,
+      "frontOverhangRatio": 0.207,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Crew van L1/L2."
+     },
+     "minibus": {
+      "lengthMm": 4805,
+      "widthMm": 1895,
+      "heightMm": 1940,
+      "wheelbaseMm": 3000,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 16,
+      "profile": "minibus",
+      "bonnetRatio": 0.12,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.18,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Dispatch Combi / Atlante passenger version."
+     }
+    }
+   },
+   "Mk3 (2016–)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 4960,
+      "widthMm": 1920,
+      "heightMm": 1905,
+      "wheelbaseMm": 3275,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 17,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.153,
+      "frontOverhangRatio": 0.187,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "M size shown; XS approx 4610 mm, XL approx 5310 mm."
+     },
+     "crew-van": {
+      "lengthMm": 4960,
+      "widthMm": 1920,
+      "heightMm": 1905,
+      "wheelbaseMm": 3275,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 17,
+      "profile": "van-low",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.153,
+      "frontOverhangRatio": 0.187,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.06,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Crew van (Dispatch Crew Cab) M/XL."
+     }
+    }
+   }
+  },
+  "spacetourer": {
+   "SpaceTourer (2016–)": {
+    "bodies": {
+     "minibus": {
+      "lengthMm": 4960,
+      "widthMm": 1920,
+      "heightMm": 1890,
+      "wheelbaseMm": 3275,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 17,
+      "profile": "minibus",
+      "bonnetRatio": 0.12,
+      "rearOverhangRatio": 0.177,
+      "frontOverhangRatio": 0.163,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "M size shown; XS approx 4610 mm, XL approx 5310 mm."
+     }
+    }
+   }
+  },
+  "relay": {
+   "Mk1 (1994–2006)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 4990,
+      "widthMm": 2000,
+      "heightMm": 2270,
+      "wheelbaseMm": 3200,
+      "groundClearanceMm": 175,
+      "wheelDiameterIn": 15,
+      "profile": "van-high",
+      "bonnetRatio": 0.11,
+      "rearOverhangRatio": 0.187,
+      "frontOverhangRatio": 0.172,
+      "glasshouseHeightRatio": 0.22,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "MWB standard/high roof shown; SWB approx 4655 mm, LWB approx 5395 mm."
+     },
+     "chassis-cab": {
+      "lengthMm": 5100,
+      "widthMm": 2000,
+      "heightMm": 2250,
+      "wheelbaseMm": 3200,
+      "groundClearanceMm": 175,
+      "wheelDiameterIn": 15,
+      "profile": "pickup-single",
+      "bonnetRatio": 0.12,
+      "rearOverhangRatio": 0.217,
+      "frontOverhangRatio": 0.156,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.05,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Chassis cab: cab plus bare chassis; dropside/tipper/Luton body varies."
+     }
+    }
+   },
+   "Mk2 (2006–2014)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 5415,
+      "widthMm": 2050,
+      "heightMm": 2525,
+      "wheelbaseMm": 3450,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "van-high",
+      "bonnetRatio": 0.11,
+      "rearOverhangRatio": 0.189,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.22,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "L2H2 shown; L1H1 approx 4965 x 2255 mm, L3H2 approx 6000 mm, L4H3 approx 6365 x 2775 mm."
+     },
+     "crew-van": {
+      "lengthMm": 5415,
+      "widthMm": 2050,
+      "heightMm": 2525,
+      "wheelbaseMm": 3450,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "van-high",
+      "bonnetRatio": 0.11,
+      "rearOverhangRatio": 0.189,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.22,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Crew van: second row behind bulkhead; L2H2/L3H2."
+     },
+     "chassis-cab": {
+      "lengthMm": 5945,
+      "widthMm": 2050,
+      "heightMm": 2255,
+      "wheelbaseMm": 4035,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "pickup-single",
+      "bonnetRatio": 0.11,
+      "rearOverhangRatio": 0.186,
+      "frontOverhangRatio": 0.135,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.05,
+      "doors": [
+       2,
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "L3 chassis cab shown (cab plus bare chassis); dropside/tipper/Luton body varies; crew-cab (4-door) variant shares chassis."
+     }
+    }
+   },
+   "Mk2 facelift (2014–2024)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 5415,
+      "widthMm": 2050,
+      "heightMm": 2525,
+      "wheelbaseMm": 3450,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "van-high",
+      "bonnetRatio": 0.11,
+      "rearOverhangRatio": 0.189,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.22,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "L2H2 shown; L1H1 approx 4965 x 2255 mm, L3H2 approx 6000 mm, L4H3 approx 6365 x 2775 mm."
+     },
+     "crew-van": {
+      "lengthMm": 5415,
+      "widthMm": 2050,
+      "heightMm": 2525,
+      "wheelbaseMm": 3450,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "van-high",
+      "bonnetRatio": 0.11,
+      "rearOverhangRatio": 0.189,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.22,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Crew van: second row behind bulkhead; L2H2/L3H2."
+     },
+     "chassis-cab": {
+      "lengthMm": 5945,
+      "widthMm": 2050,
+      "heightMm": 2255,
+      "wheelbaseMm": 4035,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "pickup-single",
+      "bonnetRatio": 0.11,
+      "rearOverhangRatio": 0.186,
+      "frontOverhangRatio": 0.135,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.05,
+      "doors": [
+       2,
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "L3 chassis cab shown (cab plus bare chassis); dropside/tipper/Luton body varies; crew-cab (4-door) variant shares chassis."
+     }
+    }
+   },
+   "2024 update (2024–)": {
+    "bodies": {
+     "panel-van": {
+      "lengthMm": 5415,
+      "widthMm": 2050,
+      "heightMm": 2525,
+      "wheelbaseMm": 3450,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "van-high",
+      "bonnetRatio": 0.11,
+      "rearOverhangRatio": 0.189,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.22,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "L2H2 shown; 2024 update revised front end; e-Relay shares body."
+     },
+     "crew-van": {
+      "lengthMm": 5415,
+      "widthMm": 2050,
+      "heightMm": 2525,
+      "wheelbaseMm": 3450,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "van-high",
+      "bonnetRatio": 0.11,
+      "rearOverhangRatio": 0.189,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.22,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Crew van L2H2/L3H2."
+     },
+     "chassis-cab": {
+      "lengthMm": 5945,
+      "widthMm": 2050,
+      "heightMm": 2255,
+      "wheelbaseMm": 4035,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "pickup-single",
+      "bonnetRatio": 0.11,
+      "rearOverhangRatio": 0.186,
+      "frontOverhangRatio": 0.135,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.05,
+      "doors": [
+       2,
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "L3 chassis cab shown (cab plus bare chassis); dropside/tipper/Luton body varies; crew-cab (4-door) variant shares chassis."
+     }
+    }
+   }
+  },
+  "relay-minibus": {
+   "Mk2 (2006–2014)": {
+    "bodies": {
+     "minibus": {
+      "lengthMm": 5415,
+      "widthMm": 2050,
+      "heightMm": 2525,
+      "wheelbaseMm": 3450,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "minibus",
+      "bonnetRatio": 0.12,
+      "rearOverhangRatio": 0.189,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "9-seat L2H2 combi shown; 17-seat L4H3 approx 6365 x 2775 mm."
+     }
+    }
+   },
+   "Mk2 facelift (2014–2024)": {
+    "bodies": {
+     "minibus": {
+      "lengthMm": 5415,
+      "widthMm": 2050,
+      "heightMm": 2525,
+      "wheelbaseMm": 3450,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "minibus",
+      "bonnetRatio": 0.12,
+      "rearOverhangRatio": 0.189,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "9-seat L2H2 combi shown; 17-seat L4H3 approx 6365 x 2775 mm."
+     }
+    }
+   },
+   "2024 update (2024–)": {
+    "bodies": {
+     "minibus": {
+      "lengthMm": 5415,
+      "widthMm": 2050,
+      "heightMm": 2525,
+      "wheelbaseMm": 3450,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 16,
+      "profile": "minibus",
+      "bonnetRatio": 0.12,
+      "rearOverhangRatio": 0.189,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.04,
+      "doors": [
+       4,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": true,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "9-seat L2H2 combi shown; 17-seat L4H3 approx 6365 x 2775 mm."
+     }
+    }
+   }
+  }
+ }
+}

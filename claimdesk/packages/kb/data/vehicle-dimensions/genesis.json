@@ -1,0 +1,232 @@
+{
+  "make": "Genesis",
+  "slug": "genesis",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "g70": {
+      "IK (2021–)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4685,
+            "widthMm": 1850,
+            "heightMm": 1400,
+            "wheelbaseMm": 2835,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.209,
+            "frontOverhangRatio": 0.186,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.35,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Crest grille and two-line lamps."
+          },
+          "shooting-brake": {
+            "lengthMm": 4685,
+            "widthMm": 1850,
+            "heightMm": 1400,
+            "wheelbaseMm": 2835,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 19,
+            "profile": "estate",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.205,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "g80": {
+      "RG3 (2021–)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4995,
+            "widthMm": 1925,
+            "heightMm": 1465,
+            "wheelbaseMm": 3010,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.187,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.38,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "electrified-g80": {
+      "RG3 EV (2022–)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4995,
+            "widthMm": 1925,
+            "heightMm": 1475,
+            "wheelbaseMm": 3010,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.187,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.38,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Closed-off crest grille pattern."
+          }
+        }
+      }
+    },
+    "gv60": {
+      "JW (2022–)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4515,
+            "widthMm": 1890,
+            "heightMm": 1580,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.172,
+            "frontOverhangRatio": 0.186,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "E-GMP coupe-crossover."
+          }
+        }
+      }
+    },
+    "gv70": {
+      "JK1 (2021–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4715,
+            "widthMm": 1910,
+            "heightMm": 1630,
+            "wheelbaseMm": 2875,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.183,
+            "frontOverhangRatio": 0.207,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.32,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "electrified-gv70": {
+      "JK1 EV (2022–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4715,
+            "widthMm": 1910,
+            "heightMm": 1630,
+            "wheelbaseMm": 2875,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.183,
+            "frontOverhangRatio": 0.207,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.32,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Closed-off crest grille pattern."
+          }
+        }
+      }
+    },
+    "gv80": {
+      "JX1 (2021–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4945,
+            "widthMm": 1975,
+            "heightMm": 1715,
+            "wheelbaseMm": 2955,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 22,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.189,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    }
+  }
+}

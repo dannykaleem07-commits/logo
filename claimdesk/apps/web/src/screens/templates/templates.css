@@ -14,7 +14,7 @@
   padding: 16px !important;
 }
 .docx-paper-body .docx-wrapper > section.docx {
-  box-shadow: 0 1px 4px rgba(7, 38, 71, 0.18) !important;
+  box-shadow: var(--shadow-md) !important;
   margin-bottom: 16px !important;
 }
 @media (max-width: 720px) {

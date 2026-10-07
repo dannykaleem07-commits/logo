@@ -1,0 +1,507 @@
+{
+  "make": "MINI",
+  "slug": "mini",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "hatch": {
+      "R50 / R53 Cooper S (2001–2006; One D from 2003; R53 Cooper S 2002-2006)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3625,
+            "widthMm": 1690,
+            "heightMm": 1415,
+            "wheelbaseMm": 2465,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.13,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.1,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Cooper S (R53) about 3655 mm long."
+          }
+        }
+      },
+      "R56 (2006–2013)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3700,
+            "widthMm": 1685,
+            "heightMm": 1405,
+            "wheelbaseMm": 2465,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.13,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.1,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Cooper S about 3715 mm long."
+          }
+        }
+      },
+      "F56 3-door / F55 5-door (2014–2024; 5-door F55 from 2014; Cooper SE electric 2020-2024; facelifts 2018 and 2021)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3820,
+            "widthMm": 1725,
+            "heightMm": 1415,
+            "wheelbaseMm": 2495,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.1,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "3-door figures; 5-door (F55) about 3980 mm long, 1425 mm high, 2565 mm wheelbase."
+          }
+        }
+      },
+      "F66 3-door / F65 5-door petrol and J01 Cooper Electric (2024–present; J01 Cooper Electric 3-door; F65 5-door petrol)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3875,
+            "widthMm": 1745,
+            "heightMm": 1430,
+            "wheelbaseMm": 2495,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.1,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "3-door petrol (F66) figures; Cooper Electric (J01) about 3860 x 1755 x 1460 mm, 2525 mm wheelbase, closed grille; 5-door (F65) about 4035 mm long, 2565 mm wheelbase."
+          }
+        }
+      }
+    },
+    "convertible": {
+      "R52 (2004–2008)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 3635,
+            "widthMm": 1690,
+            "heightMm": 1415,
+            "wheelbaseMm": 2465,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "convertible",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.13,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.25,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "R57 (2009–2015)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 3715,
+            "widthMm": 1685,
+            "heightMm": 1415,
+            "wheelbaseMm": 2465,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "convertible",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.25,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "F57 (2016–2024)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 3820,
+            "widthMm": 1725,
+            "heightMm": 1415,
+            "wheelbaseMm": 2495,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.25,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "F67 (2025–present)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 3880,
+            "widthMm": 1745,
+            "heightMm": 1430,
+            "wheelbaseMm": 2495,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.25,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "clubman": {
+      "R55 (2007–2014)": {
+        "bodies": {
+          "estate": {
+            "lengthMm": 3960,
+            "widthMm": 1685,
+            "heightMm": 1425,
+            "wheelbaseMm": 2545,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.08,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Split side-hinged rear \"barn\" doors plus single rear-hinged Clubdoor on the offside."
+          }
+        }
+      },
+      "F54 (2015–2024; facelift 2019)": {
+        "bodies": {
+          "estate": {
+            "lengthMm": 4255,
+            "widthMm": 1800,
+            "heightMm": 1440,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Split side-hinged rear \"barn\" doors."
+          }
+        }
+      }
+    },
+    "clubvan": {
+      "R55 Clubvan (2013–2014)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 3960,
+            "widthMm": 1685,
+            "heightMm": 1425,
+            "wheelbaseMm": 2545,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.08,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Car-derived van: Clubman body with blanked rear side windows and barn doors."
+          }
+        }
+      }
+    },
+    "countryman": {
+      "R60 (2010–2016)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4100,
+            "widthMm": 1790,
+            "heightMm": 1560,
+            "wheelbaseMm": 2595,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "F60 (2017–2024; facelift 2020)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4300,
+            "widthMm": 1820,
+            "heightMm": 1555,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "U25 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4435,
+            "widthMm": 1845,
+            "heightMm": 1655,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 19,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Countryman E/SE electric versions have a closed grille."
+          }
+        }
+      }
+    },
+    "paceman": {
+      "R61 (2013–2016)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4110,
+            "widthMm": 1785,
+            "heightMm": 1520,
+            "wheelbaseMm": 2595,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 17,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "coupe": {
+      "R58 (2011–2015)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 3735,
+            "widthMm": 1685,
+            "heightMm": 1385,
+            "wheelbaseMm": 2465,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 17,
+            "profile": "coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.28,
+            "roofTaper": 0.6,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "\"Helmet\" roof with integrated spoiler; boot lid."
+          }
+        }
+      }
+    },
+    "roadster": {
+      "R59 (2012–2015)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3735,
+            "widthMm": 1685,
+            "heightMm": 1390,
+            "wheelbaseMm": 2465,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 17,
+            "profile": "roadster",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "aceman": {
+      "J05 (2024–present)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4080,
+            "widthMm": 1755,
+            "heightMm": 1515,
+            "wheelbaseMm": 2605,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    }
+  }
+}

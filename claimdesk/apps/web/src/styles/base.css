@@ -187,19 +187,19 @@ code,
 }
 .notice-info {
   background: var(--info-bg);
-  color: #173f70;
+  color: var(--info-ink);
 }
 .notice-warn {
   background: var(--amber-bg);
-  color: #6b3d05;
+  color: var(--amber-ink);
 }
 .notice-danger {
   background: var(--red-bg);
-  color: #7a1a12;
+  color: var(--red-ink);
 }
 .notice-success {
   background: var(--green-bg);
-  color: #145232;
+  color: var(--green-ink);
 }
 .notice strong {
   font-weight: var(--fw-semi);

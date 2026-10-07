@@ -1,0 +1,431 @@
+{
+  "make": "Daewoo",
+  "slug": "daewoo",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "matiz": {
+      "M100 / M150 (1998–2005; facelift 2001)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3495,
+            "widthMm": 1495,
+            "heightMm": 1485,
+            "wheelbaseMm": 2340,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 13,
+            "profile": "hatch",
+            "bonnetRatio": 0.19,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "lanos": {
+      "T100 (1997–2003)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4075,
+            "widthMm": 1680,
+            "heightMm": 1430,
+            "wheelbaseMm": 2520,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "3- and 5-door hatchbacks share dimensions."
+          },
+          "saloon": {
+            "lengthMm": 4235,
+            "widthMm": 1680,
+            "heightMm": 1430,
+            "wheelbaseMm": 2520,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "kalos": {
+      "T200 (2003–2005; Chevrolet from 2005)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3880,
+            "widthMm": 1670,
+            "heightMm": 1495,
+            "wheelbaseMm": 2480,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.3,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          },
+          "saloon": {
+            "lengthMm": 4235,
+            "widthMm": 1670,
+            "heightMm": 1495,
+            "wheelbaseMm": 2480,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 14,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "nubira": {
+      "J100 / J150 (1997–2003)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4495,
+            "widthMm": 1720,
+            "heightMm": 1425,
+            "wheelbaseMm": 2570,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          },
+          "estate": {
+            "lengthMm": 4515,
+            "widthMm": 1720,
+            "heightMm": 1450,
+            "wheelbaseMm": 2570,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          },
+          "hatchback": {
+            "lengthMm": 4250,
+            "widthMm": 1720,
+            "heightMm": 1425,
+            "wheelbaseMm": 2570,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "J200 (2004–2005; Chevrolet from 2005)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4515,
+            "widthMm": 1725,
+            "heightMm": 1445,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          },
+          "estate": {
+            "lengthMm": 4580,
+            "widthMm": 1725,
+            "heightMm": 1460,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 15,
+            "profile": "estate",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "lacetti": {
+      "J200 (2004–2005; Chevrolet from 2005)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4295,
+            "widthMm": 1725,
+            "heightMm": 1445,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "leganza": {
+      "V100 (1997–2002)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4670,
+            "widthMm": 1780,
+            "heightMm": 1435,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "evanda": {
+      "V200 (2003–2005; Chevrolet from 2005)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4770,
+            "widthMm": 1815,
+            "heightMm": 1450,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "tacuma": {
+      "U100 (2000–2005; Chevrolet from 2005)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4350,
+            "widthMm": 1775,
+            "heightMm": 1580,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.22,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "musso": {
+      "FJ, Daewoo badge (1999–2002)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4655,
+            "widthMm": 1865,
+            "heightMm": 1735,
+            "wheelbaseMm": 2630,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 16,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "SsangYong Musso with Daewoo badge; body-on-frame."
+          }
+        }
+      }
+    },
+    "korando": {
+      "KJ, Daewoo badge (1999–2002)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4330,
+            "widthMm": 1840,
+            "heightMm": 1840,
+            "wheelbaseMm": 2480,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.12,
+            "doors": [
+              3
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "SsangYong Korando (KJ) with Daewoo badge; 3-door body-on-frame, flared wings."
+          }
+        }
+      }
+    }
+  }
+}

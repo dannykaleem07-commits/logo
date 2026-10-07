@@ -1,0 +1,1106 @@
+{
+  "make": "Aston Martin",
+  "slug": "aston-martin",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "db7": {
+      "DB7 Vantage / GT (1999–2004)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4665,
+            "widthMm": 1830,
+            "heightMm": 1240,
+            "wheelbaseMm": 2590,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.214,
+            "frontOverhangRatio": 0.231,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Vantage; original DB7 i6 about 4645 mm long."
+          },
+          "convertible": {
+            "lengthMm": 4665,
+            "widthMm": 1830,
+            "heightMm": 1255,
+            "wheelbaseMm": 2590,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.32,
+            "rearOverhangRatio": 0.222,
+            "frontOverhangRatio": 0.222,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Volante."
+          }
+        }
+      }
+    },
+    "vantage": {
+      "V8 Coupe / V8 Vantage, Virage-based (1993–2000)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4745,
+            "widthMm": 1945,
+            "heightMm": 1330,
+            "wheelbaseMm": 2610,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.216,
+            "frontOverhangRatio": 0.234,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Large hand-built Virage-based car; quad round lamps on V8 Vantage."
+          },
+          "convertible": {
+            "lengthMm": 4745,
+            "widthMm": 1945,
+            "heightMm": 1340,
+            "wheelbaseMm": 2610,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.225,
+            "frontOverhangRatio": 0.225,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "V8 Volante."
+          }
+        }
+      },
+      "V8 / V12 Vantage (2005–2017)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4385,
+            "widthMm": 1865,
+            "heightMm": 1255,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.195,
+            "frontOverhangRatio": 0.212,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "roadster": {
+            "lengthMm": 4385,
+            "widthMm": 1865,
+            "heightMm": 1260,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.204,
+            "frontOverhangRatio": 0.204,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fabric-roof Roadster."
+          }
+        }
+      },
+      "Vantage (2018–2023)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4465,
+            "widthMm": 1940,
+            "heightMm": 1275,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.189,
+            "frontOverhangRatio": 0.205,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Width excludes mirrors (about 2155 mm with)."
+          },
+          "roadster": {
+            "lengthMm": 4465,
+            "widthMm": 1940,
+            "heightMm": 1275,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "roadster",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.197,
+            "frontOverhangRatio": 0.197,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Vantage (2024–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4495,
+            "widthMm": 1980,
+            "heightMm": 1275,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.37,
+            "rearOverhangRatio": 0.191,
+            "frontOverhangRatio": 0.207,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          },
+          "roadster": {
+            "lengthMm": 4495,
+            "widthMm": 1980,
+            "heightMm": 1275,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 21,
+            "profile": "roadster",
+            "bonnetRatio": 0.37,
+            "rearOverhangRatio": 0.199,
+            "frontOverhangRatio": 0.199,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "vanquish": {
+      "V12 Vanquish (2001–2007)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4665,
+            "widthMm": 1925,
+            "heightMm": 1320,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.203,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Vanquish (2012–2018)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4720,
+            "widthMm": 1910,
+            "heightMm": 1295,
+            "wheelbaseMm": 2740,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.201,
+            "frontOverhangRatio": 0.218,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4720,
+            "widthMm": 1910,
+            "heightMm": 1295,
+            "wheelbaseMm": 2740,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Volante."
+          }
+        }
+      },
+      "Vanquish (2024–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4850,
+            "widthMm": 1980,
+            "heightMm": 1290,
+            "wheelbaseMm": 2885,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.37,
+            "rearOverhangRatio": 0.194,
+            "frontOverhangRatio": 0.211,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          },
+          "convertible": {
+            "lengthMm": 4850,
+            "widthMm": 1980,
+            "heightMm": 1290,
+            "wheelbaseMm": 2885,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 21,
+            "profile": "convertible",
+            "bonnetRatio": 0.37,
+            "rearOverhangRatio": 0.203,
+            "frontOverhangRatio": 0.203,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Volante."
+          }
+        }
+      }
+    },
+    "db9": {
+      "DB9 (2004–2012)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4710,
+            "widthMm": 1875,
+            "heightMm": 1270,
+            "wheelbaseMm": 2745,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.217,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4710,
+            "widthMm": 1875,
+            "heightMm": 1265,
+            "wheelbaseMm": 2745,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.209,
+            "frontOverhangRatio": 0.209,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Volante."
+          }
+        }
+      },
+      "DB9 facelift (2012–2016)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4720,
+            "widthMm": 1875,
+            "heightMm": 1280,
+            "wheelbaseMm": 2740,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.201,
+            "frontOverhangRatio": 0.218,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4720,
+            "widthMm": 1875,
+            "heightMm": 1280,
+            "wheelbaseMm": 2740,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Volante."
+          }
+        }
+      }
+    },
+    "dbs": {
+      "DBS V12 (2007–2012)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4720,
+            "widthMm": 1905,
+            "heightMm": 1280,
+            "wheelbaseMm": 2740,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.201,
+            "frontOverhangRatio": 0.218,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4720,
+            "widthMm": 1905,
+            "heightMm": 1280,
+            "wheelbaseMm": 2740,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "DBS Volante."
+          }
+        }
+      },
+      "DBS Superleggera (2018–2023)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4710,
+            "widthMm": 1970,
+            "heightMm": 1280,
+            "wheelbaseMm": 2805,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.37,
+            "rearOverhangRatio": 0.194,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          },
+          "convertible": {
+            "lengthMm": 4710,
+            "widthMm": 1970,
+            "heightMm": 1295,
+            "wheelbaseMm": 2805,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 21,
+            "profile": "convertible",
+            "bonnetRatio": 0.37,
+            "rearOverhangRatio": 0.202,
+            "frontOverhangRatio": 0.202,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Superleggera Volante."
+          }
+        }
+      }
+    },
+    "rapide": {
+      "Rapide (2010–2013)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 5020,
+            "widthMm": 1930,
+            "heightMm": 1360,
+            "wheelbaseMm": 2990,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "liftback",
+            "bonnetRatio": 0.31,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.194,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Four-door sporting liftback; width excludes mirrors."
+          }
+        }
+      },
+      "Rapide S / AMR (2013–2020)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 5020,
+            "widthMm": 1930,
+            "heightMm": 1360,
+            "wheelbaseMm": 2990,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "liftback",
+            "bonnetRatio": 0.31,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.194,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "virage": {
+      "Virage (2011–2012)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4705,
+            "widthMm": 1905,
+            "heightMm": 1280,
+            "wheelbaseMm": 2740,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.217,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4705,
+            "widthMm": 1905,
+            "heightMm": 1280,
+            "wheelbaseMm": 2740,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.209,
+            "frontOverhangRatio": 0.209,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Volante."
+          }
+        }
+      }
+    },
+    "db11": {
+      "DB11 (2016–2023)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4740,
+            "widthMm": 1940,
+            "heightMm": 1280,
+            "wheelbaseMm": 2805,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.196,
+            "frontOverhangRatio": 0.212,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4740,
+            "widthMm": 1940,
+            "heightMm": 1295,
+            "wheelbaseMm": 2805,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.204,
+            "frontOverhangRatio": 0.204,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Volante."
+          }
+        }
+      }
+    },
+    "db12": {
+      "DB12 (2023–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4725,
+            "widthMm": 1980,
+            "heightMm": 1295,
+            "wheelbaseMm": 2805,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.195,
+            "frontOverhangRatio": 0.211,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          },
+          "convertible": {
+            "lengthMm": 4725,
+            "widthMm": 1980,
+            "heightMm": 1295,
+            "wheelbaseMm": 2805,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 21,
+            "profile": "convertible",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.203,
+            "frontOverhangRatio": 0.203,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Volante."
+          }
+        }
+      }
+    },
+    "dbx": {
+      "DBX (2020–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5040,
+            "widthMm": 2000,
+            "heightMm": 1680,
+            "wheelbaseMm": 3060,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 22,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.185,
+            "frontOverhangRatio": 0.208,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Sloping-roof luxury SUV; DBX707 similar."
+          }
+        }
+      }
+    },
+    "cygnet": {
+      "Cygnet (2011–2013)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3080,
+            "widthMm": 1680,
+            "heightMm": 1500,
+            "wheelbaseMm": 2000,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.147,
+            "frontOverhangRatio": 0.203,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.15,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Toyota iQ-based city car."
+          }
+        }
+      }
+    },
+    "one-77": {
+      "One-77 (2010–2012)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4600,
+            "widthMm": 2005,
+            "heightMm": 1220,
+            "wheelbaseMm": 2790,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.37,
+            "rearOverhangRatio": 0.189,
+            "frontOverhangRatio": 0.205,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "valkyrie": {
+      "Valkyrie (2021–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4510,
+            "widthMm": 1915,
+            "heightMm": 1070,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 100,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.209,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Mid-engine hypercar; 20 in front / 21 in rear wheels; dimensions approximate."
+          },
+          "roadster": {
+            "lengthMm": 4510,
+            "widthMm": 1915,
+            "heightMm": 1070,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 100,
+            "wheelDiameterIn": 20,
+            "profile": "roadster",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.201,
+            "frontOverhangRatio": 0.201,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Valkyrie Spider; dimensions approximate."
+          }
+        }
+      }
+    },
+    "v12-speedster": {
+      "V12 Speedster (2021)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4700,
+            "widthMm": 1975,
+            "heightMm": 1205,
+            "wheelbaseMm": 2805,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 21,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.202,
+            "frontOverhangRatio": 0.202,
+            "glasshouseHeightRatio": 0.2,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Open speedster with no windscreen pillars; approximate."
+          }
+        }
+      }
+    },
+    "dbr22": {
+      "DBR22 (2024–2025)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4725,
+            "widthMm": 1980,
+            "heightMm": 1200,
+            "wheelbaseMm": 2805,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 21,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.203,
+            "frontOverhangRatio": 0.203,
+            "glasshouseHeightRatio": 0.2,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Open speedster on DBS chassis; approximate."
+          }
+        }
+      }
+    },
+    "valour": {
+      "Valour (2024–2025)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4520,
+            "widthMm": 1980,
+            "heightMm": 1290,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.37,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.209,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Limited-run V12 manual coupe on Vantage platform; dimensions approximate."
+          }
+        }
+      }
+    },
+    "valiant": {
+      "Valiant (2025)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4550,
+            "widthMm": 2000,
+            "heightMm": 1280,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.37,
+            "rearOverhangRatio": 0.195,
+            "frontOverhangRatio": 0.211,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Track-focused derivative of Valour; dimensions approximate."
+          }
+        }
+      }
+    },
+    "valhalla": {
+      "Valhalla (2025–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4730,
+            "widthMm": 2015,
+            "heightMm": 1160,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 105,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.217,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Mid-engine PHEV; 20 in front / 21 in rear wheels; approximate."
+          }
+        }
+      }
+    },
+    "lagonda-taraf": {
+      "Taraf (2015–2016)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5395,
+            "widthMm": 1915,
+            "heightMm": 1390,
+            "wheelbaseMm": 3190,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 20,
+            "profile": "notchback",
+            "bonnetRatio": 0.31,
+            "rearOverhangRatio": 0.217,
+            "frontOverhangRatio": 0.192,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Very rare; long-wheelbase super-saloon."
+          }
+        }
+      }
+    }
+  }
+}

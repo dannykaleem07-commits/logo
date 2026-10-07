@@ -1,0 +1,122 @@
+{
+  "make": "Alpine",
+  "slug": "alpine",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "a110": {
+      "Phase 1 (2018–2021)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4180,
+            "widthMm": 1798,
+            "heightMm": 1252,
+            "wheelbaseMm": 2420,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Mid-engined two-seater; A110S on 18 in wheels."
+          }
+        }
+      },
+      "Phase 2 (2022–2026)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4180,
+            "widthMm": 1798,
+            "heightMm": 1252,
+            "wheelbaseMm": 2420,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Mid-engined two-seater; A110 R about 1240 mm high."
+          }
+        }
+      }
+    },
+    "a290": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3990,
+            "widthMm": 1820,
+            "heightMm": 1520,
+            "wheelbaseMm": 2530,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "a390": {
+      "Mk1 (2026–present)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4615,
+            "widthMm": 1885,
+            "heightMm": 1532,
+            "wheelbaseMm": 2708,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    }
+  }
+}

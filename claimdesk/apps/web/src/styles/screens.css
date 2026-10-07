@@ -68,12 +68,12 @@
 .result-box.allowed {
   background: var(--green-bg);
   border-color: transparent;
-  color: #14532d;
+  color: var(--green-ink);
 }
 .result-box.blocked {
   background: var(--red-bg);
   border-color: transparent;
-  color: #7f1d1d;
+  color: var(--red-ink);
 }
 .result-box h4 {
   color: inherit;
@@ -117,6 +117,31 @@
   gap: 4px;
 }
 
+.due-list {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+}
+.due-list-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.due-list dt {
+  width: 66px;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+.due-list dd {
+  margin: 0;
+}
+.fleet-policy {
+  display: inline-block;
+  min-width: 140px;
+  max-width: 200px;
+}
+
 /* ---- Directory ---- */
 .dir-grid {
   display: grid;
@@ -144,8 +169,8 @@
   color: var(--muted);
 }
 .dir-tp {
-  border: none;
-  background: var(--blue-50);
+  border: 1px solid var(--line);
+  background: var(--surface-2);
   border-radius: var(--r-md);
   padding: var(--s-3) var(--s-4);
 }
@@ -196,7 +221,7 @@
   font-size: var(--fs-xs);
   border: none;
   background: var(--red-bg);
-  color: #7f1d1d;
+  color: var(--red-ink);
   border-radius: var(--r-md);
   padding: 8px 10px;
 }
@@ -275,8 +300,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: var(--navy);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -351,7 +376,7 @@
 }
 .cap-stage {
   position: relative;
-  background: #000;
+  background: var(--media-bg);
   border-radius: var(--r-lg);
   overflow: hidden;
   aspect-ratio: 4 / 3;
@@ -373,22 +398,22 @@
 }
 .cap-overlay .outline {
   fill: none;
-  stroke: #fff;
+  stroke: var(--media-fg);
   stroke-width: 1.2;
   stroke-dasharray: 3 2;
   opacity: 0.9;
 }
 .cap-overlay .guide {
   fill: none;
-  stroke: rgba(255, 255, 255, 0.5);
+  stroke: color-mix(in srgb, var(--media-fg) 50%, transparent);
   stroke-width: 0.6;
 }
 .cap-overlay text {
-  fill: #fff;
+  fill: var(--media-fg);
   font-size: 4px;
   font-weight: 600;
   paint-order: stroke;
-  stroke: rgba(0, 0, 0, 0.6);
+  stroke: color-mix(in srgb, var(--media-bg) 60%, transparent);
   stroke-width: 0.8;
 }
 .cap-controls {
@@ -403,7 +428,7 @@
   height: 68px;
   border-radius: 50%;
   border: 4px solid var(--navy);
-  background: #fff;
+  background: var(--media-fg);
   cursor: pointer;
   box-shadow: var(--shadow-md);
 }

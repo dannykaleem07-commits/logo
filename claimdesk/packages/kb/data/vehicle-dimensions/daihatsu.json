@@ -1,0 +1,380 @@
+{
+ "make": "Daihatsu",
+ "slug": "daihatsu",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "cuore": {
+   "L701 (1998–2003)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3395,
+      "widthMm": 1475,
+      "heightMm": 1425,
+      "wheelbaseMm": 2360,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 13,
+      "profile": "hatch",
+      "bonnetRatio": 0.17,
+      "rearOverhangRatio": 0.128,
+      "frontOverhangRatio": 0.177,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.25,
+      "doors": [
+       3,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "narrow",
+      "note": "Kei-derived city car."
+     }
+    }
+   },
+   "L276 (2007–2011)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3470,
+      "widthMm": 1475,
+      "heightMm": 1530,
+      "wheelbaseMm": 2490,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.118,
+      "frontOverhangRatio": 0.164,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "narrow",
+      "note": "Tall-roof kei-derived body."
+     }
+    }
+   }
+  },
+  "charade": {
+   "L251 (2003–2007)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3410,
+      "widthMm": 1475,
+      "heightMm": 1500,
+      "wheelbaseMm": 2390,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.16,
+      "rearOverhangRatio": 0.126,
+      "frontOverhangRatio": 0.173,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.25,
+      "doors": [
+       3,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "narrow",
+      "note": "Rebadged Cuore L250/L251."
+     }
+    }
+   },
+   "XP90 (2011–2013)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3785,
+      "widthMm": 1695,
+      "heightMm": 1530,
+      "wheelbaseMm": 2460,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.147,
+      "frontOverhangRatio": 0.203,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.35,
+      "doors": [
+       3,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Rebadged Toyota Yaris XP90 (5-door shown; 3-door approx 3750 mm)."
+     }
+    }
+   }
+  },
+  "sirion": {
+   "M100 (1998–2004)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3660,
+      "widthMm": 1600,
+      "heightMm": 1450,
+      "wheelbaseMm": 2380,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.147,
+      "frontOverhangRatio": 0.203,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow"
+     }
+    }
+   },
+   "M300 (2005–2011)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3610,
+      "widthMm": 1665,
+      "heightMm": 1550,
+      "wheelbaseMm": 2430,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.137,
+      "frontOverhangRatio": 0.19,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "narrow"
+     }
+    }
+   }
+  },
+  "yrv": {
+   "M200 (2001–2005)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3765,
+      "widthMm": 1625,
+      "heightMm": 1535,
+      "wheelbaseMm": 2370,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.156,
+      "frontOverhangRatio": 0.215,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.25,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "narrow",
+      "note": "Tall hatch with rising window line."
+     }
+    }
+   }
+  },
+  "materia": {
+   "M400 (2007–2011)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3800,
+      "widthMm": 1690,
+      "heightMm": 1635,
+      "wheelbaseMm": 2540,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 15,
+      "profile": "hatch",
+      "bonnetRatio": 0.17,
+      "rearOverhangRatio": 0.14,
+      "frontOverhangRatio": 0.192,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.05,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Boxy tall hatch / mini-MPV."
+     }
+    }
+   }
+  },
+  "grand-move": {
+   "G300 (1996–2002)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 3970,
+      "widthMm": 1640,
+      "heightMm": 1630,
+      "wheelbaseMm": 2395,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 14,
+      "profile": "mpv",
+      "bonnetRatio": 0.17,
+      "rearOverhangRatio": 0.179,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "narrow",
+      "note": "Compact MPV; length uncertain (approx)."
+     }
+    }
+   }
+  },
+  "copen": {
+   "L880 (2003–2011)": {
+    "bodies": {
+     "roadster": {
+      "lengthMm": 3395,
+      "widthMm": 1475,
+      "heightMm": 1245,
+      "wheelbaseMm": 2230,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 15,
+      "profile": "roadster",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.171,
+      "frontOverhangRatio": 0.172,
+      "glasshouseHeightRatio": 0.24,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "Electric folding hard-top."
+     }
+    }
+   }
+  },
+  "terios": {
+   "J100 (1997–2006)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 3845,
+      "widthMm": 1555,
+      "heightMm": 1700,
+      "wheelbaseMm": 2420,
+      "groundClearanceMm": 205,
+      "wheelDiameterIn": 15,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.186,
+      "frontOverhangRatio": 0.185,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.1,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": true,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "narrow",
+      "note": "Narrow-body compact 4x4; length includes tailgate spare."
+     }
+    }
+   },
+   "J200 (2006–2011)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4055,
+      "widthMm": 1695,
+      "heightMm": 1690,
+      "wheelbaseMm": 2580,
+      "groundClearanceMm": 200,
+      "wheelDiameterIn": 16,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.182,
+      "frontOverhangRatio": 0.182,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.1,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": true,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Length includes tailgate spare."
+     }
+    }
+   }
+  },
+  "fourtrak": {
+   "F70/F75 (1984–2002)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 3940,
+      "widthMm": 1690,
+      "heightMm": 1900,
+      "wheelbaseMm": 2210,
+      "groundClearanceMm": 210,
+      "wheelDiameterIn": 15,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.22,
+      "rearOverhangRatio": 0.219,
+      "frontOverhangRatio": 0.22,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.0,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": true,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "wide",
+      "note": "SWB 3-door shown; dimensions approximate (limited data); length includes tailgate spare."
+     }
+    }
+   }
+  }
+ }
+}

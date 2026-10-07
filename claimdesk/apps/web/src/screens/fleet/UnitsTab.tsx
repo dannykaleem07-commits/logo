@@ -58,8 +58,18 @@ export function UnitsTab({ onLogNotice }: { onLogNotice: (unitId: string) => voi
         </span>
       )
     },
-    { key: 'vehicle', header: 'Make / model', render: (u) => unitDescription(u) || <span className="muted">—</span> },
-    { key: 'group', header: 'GTA group', render: (u) => <Badge tone="navy" title="Industry benchmark group — CCGUK is not a GTA subscriber">{u.gtaGroup || '—'}</Badge> },
+    {
+      key: 'vehicle',
+      header: 'Vehicle',
+      render: (u) => (
+        <span className="stack-sm" style={{ gap: 4, alignItems: 'flex-start' }}>
+          <span>{unitDescription(u) || <span className="muted">—</span>}</span>
+          <Badge tone="navy" title="Industry benchmark group — CCGUK is not a GTA subscriber">
+            GTA {u.gtaGroup || '—'}
+          </Badge>
+        </span>
+      )
+    },
     {
       key: 'uses',
       header: 'Declared uses',
@@ -75,7 +85,7 @@ export function UnitsTab({ onLogNotice }: { onLogNotice: (unitId: string) => voi
       header: 'Policy',
       render: (u) =>
         u.policy ? (
-          <span className="small" title={`Covers: ${u.policy.coveredUses.map((x) => FLEET_USE_LABEL[x]).join(', ')}`}>
+          <span className="small fleet-policy" title={`Covers: ${u.policy.coveredUses.map((x) => FLEET_USE_LABEL[x]).join(', ')}`}>
             {u.policy.insurerName} <span className="muted xs">{u.policy.policyNumber}</span>
           </span>
         ) : u.policyId ? (
@@ -84,10 +94,21 @@ export function UnitsTab({ onLogNotice }: { onLogNotice: (unitId: string) => voi
           <Badge tone="amber">no policy</Badge>
         )
     },
-    { key: 'mot', header: 'MOT', render: (u) => <DueCell date={u.vehicle?.motExpiryDate} today={today} /> },
-    { key: 'tax', header: 'Tax', render: (u) => <DueCell date={u.vehicle?.taxDueDate} today={today} /> },
-    { key: 'ins', header: 'Insurance', render: (u) => <DueCell date={insuranceExpiry(u)} today={today} /> },
-    { key: 'service', header: 'Service', render: (u) => <DueCell date={u.serviceDueDate} today={today} /> },
+    {
+      key: 'due',
+      header: 'Due dates',
+      render: (u) => (
+        <DueList
+          today={today}
+          items={[
+            ['MOT', u.vehicle?.motExpiryDate],
+            ['Tax', u.vehicle?.taxDueDate],
+            ['Insurance', insuranceExpiry(u)],
+            ['Service', u.serviceDueDate]
+          ]}
+        />
+      )
+    },
     { key: 'rate', header: 'Rate/day', numeric: true, render: (u) => <Money pence={u.dailyRatePence} /> },
     { key: 'status', header: 'Status', render: (u) => <Badge tone={unitStatusTone(u.status)}>{UNIT_STATUS_LABEL[u.status]}</Badge> },
     {
@@ -234,6 +255,23 @@ export function UnitsTab({ onLogNotice }: { onLogNotice: (unitId: string) => voi
 }
 
 /** A dated cell coloured by proximity (red expired · amber ≤ 30 days · green later · grey not recorded). */
+/** The four fleet due dates in one compact column (MOT, tax, insurance, service); the distance is on hover. */
+export function DueList({ items, today }: { items: Array<[string, ISODate | undefined | null]>; today: ISODate }) {
+  return (
+    <dl className="due-list">
+      {items.map(([label, date]) => {
+        const tone = dueTone(date, today);
+        return (
+          <div key={label} className="due-list-row" title={tone === 'unknown' ? `${label}: no date recorded` : `${label}: ${describeDueDate(date, today)}`}>
+            <dt>{label}</dt>
+            <dd>{tone === 'unknown' ? <span className="muted">—</span> : <Badge tone={dueToneToBadge(tone)}>{<DateText value={date} />}</Badge>}</dd>
+          </div>
+        );
+      })}
+    </dl>
+  );
+}
+
 export function DueCell({ date, today }: { date: ISODate | undefined | null; today: ISODate }) {
   const tone = dueTone(date, today);
   if (tone === 'unknown') return <span className="muted">—</span>;

@@ -29,7 +29,7 @@
 }
 .btn-primary {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 .btn-primary:not(:disabled):hover {
   background: var(--accent-hover);
@@ -53,8 +53,8 @@
   background: var(--blue-50);
 }
 .btn-danger {
-  background: var(--red);
-  color: #fff;
+  background: var(--red-solid);
+  color: var(--on-solid);
 }
 .btn-danger:not(:disabled):hover {
   filter: brightness(0.94);
@@ -125,6 +125,13 @@
   }
   .card-header + .card-body {
     padding-top: var(--s-3);
+  }
+  /* flush bodies (tables, lists, the claims filter bar) stay flush on phones */
+  .card-body.card-body-flush {
+    padding: 0;
+  }
+  .card-header + .card-body.card-body-flush {
+    padding-top: var(--s-2);
   }
 }
 
@@ -347,7 +354,7 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(6, 28, 54, 0.4);
+  background: var(--backdrop);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -356,6 +363,7 @@
 }
 .modal {
   background: var(--surface);
+  border: 1px solid var(--line);
   border-radius: var(--r-lg);
   box-shadow: var(--shadow-lg);
   width: 100%;
@@ -555,8 +563,8 @@
   border-left: 1px solid var(--line-2);
 }
 .yesno button[aria-pressed='true'] {
-  background: var(--navy);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
 }
 .form-grid {
   display: grid;
@@ -587,6 +595,7 @@
 @media (max-width: 640px) {
   .filters-grid {
     grid-template-columns: minmax(0, 1fr);
+    padding: var(--s-4);
   }
 }
 
@@ -625,8 +634,8 @@ fieldset.fieldset legend {
   max-width: min(420px, calc(100vw - 32px));
 }
 .toast {
-  background: var(--navy);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
   padding: 12px 16px;
   border-radius: var(--r-md);
   box-shadow: var(--shadow-lg);
@@ -636,13 +645,13 @@ fieldset.fieldset legend {
   gap: var(--s-3);
 }
 .toast-success {
-  background: var(--green);
+  background: var(--green-solid);
 }
 .toast-error {
-  background: var(--red);
+  background: var(--red-solid);
 }
 .toast-warn {
-  background: var(--amber);
+  background: var(--amber-solid);
 }
 .toast button {
   margin-left: auto;
@@ -973,8 +982,8 @@ a.stat:hover {
   border-color: var(--blue-100);
 }
 .wizard-step.current .n {
-  background: var(--navy);
-  color: #fff;
+  background: var(--accent);
+  color: var(--on-accent);
 }
 .wizard-footer {
   display: flex;
@@ -1004,8 +1013,8 @@ a.stat:hover {
   font-family: var(--font-mono);
   font-weight: var(--fw-semi);
   letter-spacing: 0.1em;
-  background: #f9d648;
-  color: #111;
+  background: var(--plate-bg);
+  color: var(--plate-ink);
   border: none;
   border-radius: 4px;
   padding: 1px 8px;
@@ -1018,7 +1027,7 @@ a.stat:hover {
 .doc-preview {
   font-family: Calibri, Carlito, 'Liberation Sans', Arial, Helvetica, sans-serif;
   color: var(--doc-ink);
-  background: #fff;
+  background: var(--doc-paper);
   border: 1px solid var(--doc-rule);
   padding: var(--s-6);
 }

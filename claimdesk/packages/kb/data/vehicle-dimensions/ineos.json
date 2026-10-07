@@ -1,0 +1,68 @@
+{
+  "make": "Ineos",
+  "slug": "ineos",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "grenadier": {
+      "Mk1 (2022–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4895,
+            "widthMm": 1930,
+            "heightMm": 2035,
+            "wheelbaseMm": 2920,
+            "groundClearanceMm": 265,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.02,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Length includes rear-mounted spare wheel; split side-hinged rear doors; exposed hinges and safari windows optional."
+          }
+        }
+      }
+    },
+    "grenadier-quartermaster": {
+      "Mk1 (2023–present)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5440,
+            "widthMm": 1930,
+            "heightMm": 2050,
+            "wheelbaseMm": 3225,
+            "groundClearanceMm": 255,
+            "wheelDiameterIn": 18,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.02,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Double cab pick-up; spare carried under the load bed."
+          }
+        }
+      }
+    }
+  }
+}

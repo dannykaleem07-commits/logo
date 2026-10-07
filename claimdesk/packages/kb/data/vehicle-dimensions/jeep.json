@@ -1,0 +1,556 @@
+{
+  "make": "Jeep",
+  "slug": "jeep",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "avenger": {
+      "Mk1 (2023–)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4085,
+            "widthMm": 1775,
+            "heightMm": 1530,
+            "wheelbaseMm": 2560,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.12,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "cherokee": {
+      "XJ (1984–2001)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4255,
+            "widthMm": 1760,
+            "heightMm": 1640,
+            "wheelbaseMm": 2575,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 15,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.02,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "large-upright",
+            "note": "Square-section body; square headlamps."
+          }
+        }
+      },
+      "KJ (2001–2007)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4495,
+            "widthMm": 1820,
+            "heightMm": 1810,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.25,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Length includes tailgate-mounted spare."
+          }
+        }
+      },
+      "KK (2008–2013)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4495,
+            "widthMm": 1840,
+            "heightMm": 1795,
+            "wheelbaseMm": 2695,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "KL (2014–2020, facelift 2019)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4625,
+            "widthMm": 1860,
+            "heightMm": 1670,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "wide",
+            "note": "Split headlamps (slim DRL above, main lamps below) until the 2019 facelift."
+          }
+        }
+      }
+    },
+    "commander": {
+      "XK (2006–2010)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4790,
+            "widthMm": 1900,
+            "heightMm": 1825,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.02,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Stepped roof over third row."
+          }
+        }
+      }
+    },
+    "compass": {
+      "MK49 (2007–2010)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4405,
+            "widthMm": 1760,
+            "heightMm": 1630,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "MK49 facelift (2011–2014)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4450,
+            "widthMm": 1810,
+            "heightMm": 1650,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "MP (2017–2021)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4395,
+            "widthMm": 1820,
+            "heightMm": 1640,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "MP facelift (2021–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4405,
+            "widthMm": 1820,
+            "heightMm": 1630,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "grand-cherokee": {
+      "WJ (1999–2004)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4610,
+            "widthMm": 1835,
+            "heightMm": 1765,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "WK (2005–2010)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4750,
+            "widthMm": 1870,
+            "heightMm": 1740,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "WK2 (2011–2020)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4820,
+            "widthMm": 1940,
+            "heightMm": 1760,
+            "wheelbaseMm": 2915,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "WL (2023–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4915,
+            "widthMm": 1980,
+            "heightMm": 1795,
+            "wheelbaseMm": 2965,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "UK sold as 4xe plug-in hybrid."
+          }
+        }
+      }
+    },
+    "patriot": {
+      "MK74 (2007–2011)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4410,
+            "widthMm": 1760,
+            "heightMm": 1665,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.03,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "renegade": {
+      "BU (2015–2018)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4235,
+            "widthMm": 1805,
+            "heightMm": 1665,
+            "wheelbaseMm": 2570,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.03,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "BU facelift (2018–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4235,
+            "widthMm": 1805,
+            "heightMm": 1665,
+            "wheelbaseMm": 2570,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.03,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "wrangler": {
+      "TJ (1997–2006)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 3890,
+            "widthMm": 1740,
+            "heightMm": 1800,
+            "wheelbaseMm": 2375,
+            "groundClearanceMm": 220,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.0,
+            "doors": [
+              2
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Short-wheelbase 2-door; length includes tailgate spare; soft or hard top."
+          }
+        }
+      },
+      "JK (2007–2018)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4705,
+            "widthMm": 1875,
+            "heightMm": 1800,
+            "wheelbaseMm": 2945,
+            "groundClearanceMm": 220,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.0,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "4-door Unlimited figures; 2-door about 4225 mm long, 2425 mm wheelbase. Length includes tailgate spare."
+          }
+        }
+      },
+      "JL (2018–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4880,
+            "widthMm": 1895,
+            "heightMm": 1840,
+            "wheelbaseMm": 3010,
+            "groundClearanceMm": 225,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.0,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "4-door Unlimited figures; 2-door about 4335 mm long, 2460 mm wheelbase. Length includes tailgate spare."
+          }
+        }
+      }
+    }
+  }
+}

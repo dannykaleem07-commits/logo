@@ -257,7 +257,7 @@ function CaptureFlow({ claimId }: { claimId: string }) {
             {currentItem ? <img src={currentItem.previewUrl} alt={`${SHOT_LABEL[current]} capture`} /> : <video ref={videoRef} playsInline muted autoPlay />}
             {!currentItem && camera === 'live' && <ShotOverlay shot={current} />}
             {!currentItem && camera !== 'live' && (
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', padding: 16, textAlign: 'center' }} className="small">
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--media-fg)', padding: 16, textAlign: 'center' }} className="small">
                 {camera === 'starting' ? <Loading label="Starting camera…" /> : cameraError ?? 'Camera idle'}
               </div>
             )}

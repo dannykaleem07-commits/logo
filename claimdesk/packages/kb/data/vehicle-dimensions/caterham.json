@@ -1,0 +1,93 @@
+{
+ "make": "Caterham",
+ "slug": "caterham",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "seven": {
+   "Rover K-series era (2000–2006)": {
+    "bodies": {
+     "roadster": {
+      "lengthMm": 3100,
+      "widthMm": 1575,
+      "heightMm": 1090,
+      "wheelbaseMm": 2225,
+      "groundClearanceMm": 100,
+      "wheelDiameterIn": 13,
+      "profile": "roadster",
+      "bonnetRatio": 0.42,
+      "rearOverhangRatio": 0.155,
+      "frontOverhangRatio": 0.127,
+      "glasshouseHeightRatio": 0.2,
+      "roofTaper": 0.2,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "Cycle-winged open two-seater with no conventional doors; height with hood up. SV chassis approx 3300 x 1685 mm."
+     }
+    }
+   },
+   "Ford Sigma / Duratec era (2006–2013)": {
+    "bodies": {
+     "roadster": {
+      "lengthMm": 3100,
+      "widthMm": 1575,
+      "heightMm": 1090,
+      "wheelbaseMm": 2225,
+      "groundClearanceMm": 100,
+      "wheelDiameterIn": 15,
+      "profile": "roadster",
+      "bonnetRatio": 0.42,
+      "rearOverhangRatio": 0.155,
+      "frontOverhangRatio": 0.127,
+      "glasshouseHeightRatio": 0.2,
+      "roofTaper": 0.2,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "Cycle-winged open two-seater with no conventional doors; height with hood up. SV chassis approx 3300 x 1685 mm."
+     }
+    }
+   },
+   "Numbered range (2013–present)": {
+    "bodies": {
+     "roadster": {
+      "lengthMm": 3100,
+      "widthMm": 1575,
+      "heightMm": 1090,
+      "wheelbaseMm": 2225,
+      "groundClearanceMm": 100,
+      "wheelDiameterIn": 14,
+      "profile": "roadster",
+      "bonnetRatio": 0.42,
+      "rearOverhangRatio": 0.155,
+      "frontOverhangRatio": 0.127,
+      "glasshouseHeightRatio": 0.2,
+      "roofTaper": 0.2,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "narrow",
+      "note": "S3 chassis shown (270/310/360); 160/170 narrower (approx 1470 mm); SV/420/620 approx 3300 x 1685 mm."
+     }
+    }
+   }
+  }
+ }
+}

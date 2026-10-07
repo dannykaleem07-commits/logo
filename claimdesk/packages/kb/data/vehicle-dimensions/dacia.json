@@ -1,0 +1,316 @@
+{
+  "make": "Dacia",
+  "slug": "dacia",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "sandero": {
+      "Mk2 (2013–2020)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4070,
+            "widthMm": 1735,
+            "heightMm": 1520,
+            "wheelbaseMm": 2590,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.153,
+            "frontOverhangRatio": 0.211,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk3 (2021–)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4090,
+            "widthMm": 1770,
+            "heightMm": 1500,
+            "wheelbaseMm": 2605,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.152,
+            "frontOverhangRatio": 0.211,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Width excludes mirrors (about 1850 mm with)."
+          }
+        }
+      }
+    },
+    "sandero-stepway": {
+      "Mk2 (2013–2020)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4080,
+            "widthMm": 1760,
+            "heightMm": 1560,
+            "wheelbaseMm": 2590,
+            "groundClearanceMm": 195,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.153,
+            "frontOverhangRatio": 0.212,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Raised Sandero with cladding and roof bars."
+          }
+        }
+      },
+      "Mk3 (2021–)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4100,
+            "widthMm": 1770,
+            "heightMm": 1535,
+            "wheelbaseMm": 2605,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.153,
+            "frontOverhangRatio": 0.211,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Modular roof bars that rotate into crossbars."
+          }
+        }
+      }
+    },
+    "logan-mcv": {
+      "Mk2 (2013–2020)": {
+        "bodies": {
+          "estate": {
+            "lengthMm": 4490,
+            "widthMm": 1735,
+            "heightMm": 1550,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 15,
+            "profile": "estate",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.215,
+            "frontOverhangRatio": 0.198,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "duster": {
+      "Mk1 (2013–2017)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4315,
+            "widthMm": 1820,
+            "heightMm": 1695,
+            "wheelbaseMm": 2675,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.182,
+            "frontOverhangRatio": 0.198,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk2 (2018–2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4340,
+            "widthMm": 1805,
+            "heightMm": 1695,
+            "wheelbaseMm": 2675,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.184,
+            "frontOverhangRatio": 0.199,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk3 (2024–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4345,
+            "widthMm": 1815,
+            "heightMm": 1660,
+            "wheelbaseMm": 2655,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.187,
+            "frontOverhangRatio": 0.202,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Third generation, CMF-B platform."
+          }
+        }
+      }
+    },
+    "jogger": {
+      "Jogger (2022–)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4545,
+            "widthMm": 1785,
+            "heightMm": 1630,
+            "wheelbaseMm": 2895,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.189,
+            "frontOverhangRatio": 0.174,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seven-seat estate/MPV crossover; height without roof bars (about 1675 mm with)."
+          }
+        }
+      }
+    },
+    "spring": {
+      "Spring (2024–)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3700,
+            "widthMm": 1620,
+            "heightMm": 1520,
+            "wheelbaseMm": 2425,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.18,
+            "rearOverhangRatio": 0.145,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Small electric city car."
+          }
+        }
+      }
+    },
+    "bigster": {
+      "Bigster (2025–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4570,
+            "widthMm": 1815,
+            "heightMm": 1710,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 220,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.196,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    }
+  }
+}

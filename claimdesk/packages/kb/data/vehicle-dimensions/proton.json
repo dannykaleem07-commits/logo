@@ -1,0 +1,290 @@
+{
+ "make": "Proton",
+ "slug": "proton",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "persona": {
+   "Wira-based (1993–2004)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4370,
+      "widthMm": 1680,
+      "heightMm": 1395,
+      "wheelbaseMm": 2500,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 14,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.205,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Wira-based (Mitsubishi Lancer CB); dimensions approximate."
+     },
+     "hatchback": {
+      "lengthMm": 4100,
+      "widthMm": 1680,
+      "heightMm": 1395,
+      "wheelbaseMm": 2500,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.164,
+      "frontOverhangRatio": 0.226,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.45,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Wira-based five-door; dimensions approximate."
+     }
+    }
+   },
+   "Gen-2-based saloon (2008–2014)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4465,
+      "widthMm": 1725,
+      "heightMm": 1465,
+      "wheelbaseMm": 2600,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 15,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.201,
+      "frontOverhangRatio": 0.217,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Gen-2-based saloon; dimensions approximate."
+     }
+    }
+   }
+  },
+  "satria": {
+   "Mk1 (1994–2005)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3995,
+      "widthMm": 1680,
+      "heightMm": 1365,
+      "wheelbaseMm": 2440,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.163,
+      "frontOverhangRatio": 0.226,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.45,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Mitsubishi Colt CA-based."
+     }
+    }
+   }
+  },
+  "impian": {
+   "Mk1 (2001–2009)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4500,
+      "widthMm": 1725,
+      "heightMm": 1430,
+      "wheelbaseMm": 2600,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 15,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.202,
+      "frontOverhangRatio": 0.22,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     }
+    }
+   }
+  },
+  "gen-2": {
+   "Mk1 (2004–2012)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4310,
+      "widthMm": 1725,
+      "heightMm": 1440,
+      "wheelbaseMm": 2600,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 15,
+      "profile": "liftback",
+      "bonnetRatio": 0.25,
+      "rearOverhangRatio": 0.191,
+      "frontOverhangRatio": 0.206,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Saloon-shaped five-door hatchback."
+     }
+    }
+   }
+  },
+  "savvy": {
+   "Mk1 (2005–2011)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3705,
+      "widthMm": 1645,
+      "heightMm": 1500,
+      "wheelbaseMm": 2380,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.151,
+      "frontOverhangRatio": 0.207,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Renault D4F engine."
+     }
+    }
+   }
+  },
+  "satria-neo": {
+   "Mk1 (2006–2013)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3905,
+      "widthMm": 1710,
+      "heightMm": 1420,
+      "wheelbaseMm": 2440,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.157,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.45,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow"
+     }
+    }
+   }
+  },
+  "arena": {
+   "Mk1 (2003–2009)": {
+    "bodies": {
+     "pickup": {
+      "lengthMm": 4500,
+      "widthMm": 1680,
+      "heightMm": 1460,
+      "wheelbaseMm": 2600,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 14,
+      "profile": "pickup-single",
+      "bonnetRatio": 0.22,
+      "rearOverhangRatio": 0.245,
+      "frontOverhangRatio": 0.177,
+      "glasshouseHeightRatio": 0.25,
+      "roofTaper": 0.05,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "Car-derived coupe-utility (Wira-based) often fitted with a canopy; dimensions approximate."
+     }
+    }
+   }
+  },
+  "exora": {
+   "Mk1 (2011–2014)": {
+    "bodies": {
+     "mpv": {
+      "lengthMm": 4590,
+      "widthMm": 1810,
+      "heightMm": 1690,
+      "wheelbaseMm": 2730,
+      "groundClearanceMm": 160,
+      "wheelDiameterIn": 16,
+      "profile": "mpv",
+      "bonnetRatio": 0.18,
+      "rearOverhangRatio": 0.182,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.37,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "narrow",
+      "note": "7-seat MPV with conventional doors."
+     }
+    }
+   }
+  }
+ }
+}

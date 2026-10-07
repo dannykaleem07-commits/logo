@@ -1,0 +1,805 @@
+{
+ "make": "Alfa Romeo",
+ "slug": "alfa-romeo",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "145": {
+   "Type 930 (1994–2001)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4095,
+      "widthMm": 1710,
+      "heightMm": 1430,
+      "wheelbaseMm": 2540,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 15,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.16,
+      "frontOverhangRatio": 0.22,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.35,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "3-door; kinked glass line on tailgate side."
+     }
+    }
+   }
+  },
+  "146": {
+   "Type 930 (1995–2001)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4255,
+      "widthMm": 1710,
+      "heightMm": 1430,
+      "wheelbaseMm": 2540,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 15,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.169,
+      "frontOverhangRatio": 0.234,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "5-door with short notched tail."
+     }
+    }
+   }
+  },
+  "147": {
+   "Mk1 (2001–2004)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4170,
+      "widthMm": 1730,
+      "heightMm": 1440,
+      "wheelbaseMm": 2545,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.164,
+      "frontOverhangRatio": 0.226,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.3,
+      "doors": [
+       3,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield"
+     }
+    }
+   },
+   "Facelift (2004–2010)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4225,
+      "widthMm": 1730,
+      "heightMm": 1440,
+      "wheelbaseMm": 2545,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.167,
+      "frontOverhangRatio": 0.231,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.3,
+      "doors": [
+       3,
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Facelift: longer nose; 3- and 5-door same length."
+     }
+    }
+   }
+  },
+  "156": {
+   "Mk1 (1997–2003)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4430,
+      "widthMm": 1745,
+      "heightMm": 1415,
+      "wheelbaseMm": 2595,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 16,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.199,
+      "frontOverhangRatio": 0.215,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Rear door handles hidden in C-pillar."
+     },
+     "estate": {
+      "lengthMm": 4430,
+      "widthMm": 1745,
+      "heightMm": 1420,
+      "wheelbaseMm": 2595,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 16,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.199,
+      "frontOverhangRatio": 0.215,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Sportwagon: sloping tailgate."
+     }
+    }
+   },
+   "Facelift (2003–2006)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4435,
+      "widthMm": 1745,
+      "heightMm": 1415,
+      "wheelbaseMm": 2595,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 16,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.199,
+      "frontOverhangRatio": 0.216,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Rear door handles hidden in C-pillar."
+     },
+     "estate": {
+      "lengthMm": 4435,
+      "widthMm": 1745,
+      "heightMm": 1420,
+      "wheelbaseMm": 2595,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 16,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.199,
+      "frontOverhangRatio": 0.216,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Sportwagon: sloping tailgate."
+     }
+    }
+   }
+  },
+  "159": {
+   "Mk1 (2006–2011)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4660,
+      "widthMm": 1830,
+      "heightMm": 1415,
+      "wheelbaseMm": 2700,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.27,
+      "rearOverhangRatio": 0.202,
+      "frontOverhangRatio": 0.219,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield"
+     },
+     "estate": {
+      "lengthMm": 4660,
+      "widthMm": 1830,
+      "heightMm": 1420,
+      "wheelbaseMm": 2700,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 17,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.202,
+      "frontOverhangRatio": 0.219,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield"
+     }
+    }
+   }
+  },
+  "166": {
+   "Mk1 (1998–2003)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4720,
+      "widthMm": 1815,
+      "heightMm": 1415,
+      "wheelbaseMm": 2700,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 16,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.205,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "shield",
+      "note": "Pre-facelift: slim rectangular lamps."
+     }
+    }
+   },
+   "Facelift (2003–2007)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4720,
+      "widthMm": 1815,
+      "heightMm": 1415,
+      "wheelbaseMm": 2700,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.205,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Facelift: larger shield grille, revised lamps; length approx same."
+     }
+    }
+   }
+  },
+  "gt": {
+   "Mk1 (2004–2010)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4490,
+      "widthMm": 1765,
+      "heightMm": 1365,
+      "wheelbaseMm": 2595,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 17,
+      "profile": "coupe",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.211,
+      "frontOverhangRatio": 0.211,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.55,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Three-door hatch coupe."
+     }
+    }
+   }
+  },
+  "gtv": {
+   "Type 916 (1995–2005, facelift 2003)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4285,
+      "widthMm": 1780,
+      "heightMm": 1320,
+      "wheelbaseMm": 2540,
+      "groundClearanceMm": 125,
+      "wheelDiameterIn": 16,
+      "profile": "coupe",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.203,
+      "frontOverhangRatio": 0.204,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.65,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "shield",
+      "note": "Twin small round headlamps in bonnet slots."
+     }
+    }
+   }
+  },
+  "spider": {
+   "Type 916 (1995–2005, facelift 2003)": {
+    "bodies": {
+     "convertible": {
+      "lengthMm": 4285,
+      "widthMm": 1780,
+      "heightMm": 1315,
+      "wheelbaseMm": 2540,
+      "groundClearanceMm": 125,
+      "wheelDiameterIn": 16,
+      "profile": "convertible",
+      "bonnetRatio": 0.31,
+      "rearOverhangRatio": 0.203,
+      "frontOverhangRatio": 0.204,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "shield"
+     }
+    }
+   },
+   "Type 939 (2006–2010)": {
+    "bodies": {
+     "convertible": {
+      "lengthMm": 4395,
+      "widthMm": 1830,
+      "heightMm": 1320,
+      "wheelbaseMm": 2530,
+      "groundClearanceMm": 125,
+      "wheelDiameterIn": 18,
+      "profile": "convertible",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.212,
+      "frontOverhangRatio": 0.212,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "shield",
+      "note": "Triple round lamps per side."
+     }
+    }
+   }
+  },
+  "brera": {
+   "Mk1 (2006–2010)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4410,
+      "widthMm": 1830,
+      "heightMm": 1340,
+      "wheelbaseMm": 2530,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 18,
+      "profile": "coupe",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.213,
+      "frontOverhangRatio": 0.213,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.55,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "shield",
+      "note": "Triple round lamps per side; hatch tailgate."
+     }
+    }
+   }
+  },
+  "mito": {
+   "Mk1 (2008–2013)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4065,
+      "widthMm": 1720,
+      "heightMm": 1445,
+      "wheelbaseMm": 2510,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.161,
+      "frontOverhangRatio": 0.222,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.4,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "shield"
+     }
+    }
+   },
+   "Facelift (2014–2018)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4065,
+      "widthMm": 1720,
+      "heightMm": 1445,
+      "wheelbaseMm": 2510,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 16,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.161,
+      "frontOverhangRatio": 0.222,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.4,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "round",
+      "grilleStyle": "shield"
+     }
+    }
+   }
+  },
+  "giulietta": {
+   "Mk1 (2010–2016)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4350,
+      "widthMm": 1800,
+      "heightMm": 1465,
+      "wheelbaseMm": 2635,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 17,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.165,
+      "frontOverhangRatio": 0.229,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Rear door handles hidden in C-pillar."
+     }
+    }
+   },
+   "Facelift (2016–2020)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4350,
+      "widthMm": 1800,
+      "heightMm": 1465,
+      "wheelbaseMm": 2635,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 17,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.165,
+      "frontOverhangRatio": 0.229,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Rear door handles hidden in C-pillar."
+     }
+    }
+   }
+  },
+  "4c": {
+   "Mk1 (2013–2020)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 3990,
+      "widthMm": 1865,
+      "heightMm": 1185,
+      "wheelbaseMm": 2380,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 18,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.194,
+      "frontOverhangRatio": 0.21,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.65,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Mid-engined; carbon tub; 18in front / 19in rear."
+     },
+     "roadster": {
+      "lengthMm": 3990,
+      "widthMm": 1865,
+      "heightMm": 1185,
+      "wheelbaseMm": 2380,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 18,
+      "profile": "roadster",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.194,
+      "frontOverhangRatio": 0.21,
+      "glasshouseHeightRatio": 0.24,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "4C Spider: removable fabric roof panel."
+     }
+    }
+   }
+  },
+  "giulia": {
+   "Type 952 (2016–2022)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4645,
+      "widthMm": 1860,
+      "heightMm": 1435,
+      "wheelbaseMm": 2820,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.216,
+      "frontOverhangRatio": 0.177,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield"
+     }
+    }
+   },
+   "Facelift (2023–)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4645,
+      "widthMm": 1860,
+      "heightMm": 1435,
+      "wheelbaseMm": 2820,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.216,
+      "frontOverhangRatio": 0.177,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Facelift: 3+3 matrix LED headlamps."
+     }
+    }
+   }
+  },
+  "stelvio": {
+   "Type 949 (2017–2022)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4690,
+      "widthMm": 1905,
+      "heightMm": 1670,
+      "wheelbaseMm": 2820,
+      "groundClearanceMm": 200,
+      "wheelDiameterIn": 19,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.192,
+      "frontOverhangRatio": 0.207,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield"
+     }
+    }
+   },
+   "Facelift (2023–)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4690,
+      "widthMm": 1905,
+      "heightMm": 1670,
+      "wheelbaseMm": 2820,
+      "groundClearanceMm": 200,
+      "wheelDiameterIn": 19,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.192,
+      "frontOverhangRatio": 0.207,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Facelift: 3+3 matrix LED headlamps."
+     }
+    }
+   }
+  },
+  "tonale": {
+   "Mk1 (2022–)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4530,
+      "widthMm": 1840,
+      "heightMm": 1600,
+      "wheelbaseMm": 2635,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.2,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Three-element headlamp signature."
+     }
+    }
+   }
+  },
+  "junior": {
+   "Mk1 (2024–)": {
+    "bodies": {
+     "crossover": {
+      "lengthMm": 4175,
+      "widthMm": 1780,
+      "heightMm": 1505,
+      "wheelbaseMm": 2560,
+      "groundClearanceMm": 170,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.186,
+      "frontOverhangRatio": 0.201,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "shield",
+      "note": "Kamm-tail rear; Stellantis e-CMP2 platform."
+     }
+    }
+   }
+  }
+ }
+}

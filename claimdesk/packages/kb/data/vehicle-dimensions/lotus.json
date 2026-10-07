@@ -1,0 +1,478 @@
+{
+  "make": "Lotus",
+  "slug": "lotus",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "elise": {
+      "Series 1 (1996–2001)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3725,
+            "widthMm": 1700,
+            "heightMm": 1200,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Mid-engined; covered round headlamps."
+          }
+        }
+      },
+      "Series 2 (2001–2011)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3785,
+            "widthMm": 1720,
+            "heightMm": 1120,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "Series 3 (2011–2021)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3825,
+            "widthMm": 1720,
+            "heightMm": 1120,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 17,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "340r": {
+      "340R (2000)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3620,
+            "widthMm": 1750,
+            "heightMm": 1130,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Open-bodied special edition with exposed wheels; approximate."
+          }
+        }
+      }
+    },
+    "exige": {
+      "Series 1 (2000–2001)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 3765,
+            "widthMm": 1700,
+            "heightMm": 1150,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 16,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "Series 2 (2004–2011)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 3800,
+            "widthMm": 1725,
+            "heightMm": 1165,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 17,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "Series 3 V6 (2012–2021)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4085,
+            "widthMm": 1800,
+            "heightMm": 1130,
+            "wheelbaseMm": 2370,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          },
+          "roadster": {
+            "lengthMm": 4085,
+            "widthMm": 1800,
+            "heightMm": 1130,
+            "wheelbaseMm": 2370,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Exige S Roadster."
+          }
+        }
+      }
+    },
+    "esprit": {
+      "V8 (1996–2004)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4370,
+            "widthMm": 1885,
+            "heightMm": 1150,
+            "wheelbaseMm": 2420,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Mid-engined wedge with pop-up headlamps."
+          }
+        }
+      }
+    },
+    "europa": {
+      "Europa S/SE (2006–2010)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 3900,
+            "widthMm": 1715,
+            "heightMm": 1120,
+            "wheelbaseMm": 2330,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 17,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "2-eleven": {
+      "2-Eleven (2007–2011)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3825,
+            "widthMm": 1770,
+            "heightMm": 1120,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "No windscreen (wind deflector only)."
+          }
+        }
+      }
+    },
+    "evora": {
+      "Evora / Evora S (2009–2014)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4345,
+            "widthMm": 1850,
+            "heightMm": 1230,
+            "wheelbaseMm": 2575,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "Evora 400 / GT410 / GT430 (2015–2021)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4390,
+            "widthMm": 1845,
+            "heightMm": 1240,
+            "wheelbaseMm": 2575,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "3-eleven": {
+      "3-Eleven (2016–2017)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4120,
+            "widthMm": 1960,
+            "heightMm": 1200,
+            "wheelbaseMm": 2500,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Open track car without windscreen; approximate."
+          }
+        }
+      }
+    },
+    "emira": {
+      "Mk1 (2022–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4415,
+            "widthMm": 1895,
+            "heightMm": 1225,
+            "wheelbaseMm": 2575,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "eletre": {
+      "Mk1 (2023–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5105,
+            "widthMm": 2020,
+            "heightMm": 1630,
+            "wheelbaseMm": 3020,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 22,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Electric performance SUV."
+          }
+        }
+      }
+    },
+    "emeya": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 5140,
+            "widthMm": 2005,
+            "heightMm": 1465,
+            "wheelbaseMm": 3070,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 21,
+            "profile": "fastback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Electric four-door GT."
+          }
+        }
+      }
+    }
+  }
+}

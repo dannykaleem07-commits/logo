@@ -1,0 +1,126 @@
+{
+ "make": "Perodua",
+ "slug": "perodua",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "nippa": {
+   "L200 (1997–2001)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3295,
+      "widthMm": 1395,
+      "heightMm": 1420,
+      "wheelbaseMm": 2280,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 12,
+      "profile": "hatch",
+      "bonnetRatio": 0.17,
+      "rearOverhangRatio": 0.129,
+      "frontOverhangRatio": 0.179,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "narrow",
+      "note": "Daihatsu Mira L200-based; dimensions approximate."
+     }
+    }
+   }
+  },
+  "kenari": {
+   "L700 (2000–2006)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3395,
+      "widthMm": 1475,
+      "heightMm": 1655,
+      "wheelbaseMm": 2360,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 13,
+      "profile": "hatch",
+      "bonnetRatio": 0.15,
+      "rearOverhangRatio": 0.128,
+      "frontOverhangRatio": 0.177,
+      "glasshouseHeightRatio": 0.38,
+      "roofTaper": 0.05,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "narrow",
+      "note": "Daihatsu Move L700-based tall-boy."
+     }
+    }
+   }
+  },
+  "kelisa": {
+   "L251 (2002–2007)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3410,
+      "widthMm": 1475,
+      "heightMm": 1425,
+      "wheelbaseMm": 2360,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 13,
+      "profile": "hatch",
+      "bonnetRatio": 0.17,
+      "rearOverhangRatio": 0.129,
+      "frontOverhangRatio": 0.179,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "narrow",
+      "note": "Daihatsu Mira/Cuore-based; dimensions approximate."
+     }
+    }
+   }
+  },
+  "myvi": {
+   "M300 (2006–2010)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 3690,
+      "widthMm": 1665,
+      "heightMm": 1545,
+      "wheelbaseMm": 2440,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 14,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.143,
+      "frontOverhangRatio": 0.196,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.25,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "tall",
+      "grilleStyle": "narrow",
+      "note": "Daihatsu Sirion M300-based."
+     }
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,413 @@
+{
+ "make": "Infiniti",
+ "slug": "infiniti",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "q30": {
+   "H15 (2015–2019)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4425,
+      "widthMm": 1805,
+      "heightMm": 1495,
+      "wheelbaseMm": 2700,
+      "groundClearanceMm": 145,
+      "wheelDiameterIn": 18,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.164,
+      "frontOverhangRatio": 0.226,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Mercedes A-Class (W176)-based."
+     }
+    }
+   }
+  },
+  "qx30": {
+   "H15 (2016–2019)": {
+    "bodies": {
+     "crossover": {
+      "lengthMm": 4425,
+      "widthMm": 1815,
+      "heightMm": 1515,
+      "wheelbaseMm": 2700,
+      "groundClearanceMm": 180,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.187,
+      "frontOverhangRatio": 0.203,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.4,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Raised Q30 with cladding."
+     }
+    }
+   }
+  },
+  "g": {
+   "V36 G37/G25 (2008–2013)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4780,
+      "widthMm": 1775,
+      "heightMm": 1455,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.222,
+      "frontOverhangRatio": 0.182,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     },
+     "coupe": {
+      "lengthMm": 4655,
+      "widthMm": 1820,
+      "heightMm": 1395,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 18,
+      "profile": "coupe",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.214,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.65,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     },
+     "convertible": {
+      "lengthMm": 4655,
+      "widthMm": 1850,
+      "heightMm": 1400,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 18,
+      "profile": "convertible",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.214,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Retractable hard-top."
+     }
+    }
+   }
+  },
+  "q50": {
+   "V37 (2013–2019)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4790,
+      "widthMm": 1820,
+      "heightMm": 1445,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.223,
+      "frontOverhangRatio": 0.182,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   }
+  },
+  "q60": {
+   "V36 Q60 (2014–2015)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4655,
+      "widthMm": 1820,
+      "heightMm": 1395,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 18,
+      "profile": "coupe",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.214,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.65,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     },
+     "convertible": {
+      "lengthMm": 4655,
+      "widthMm": 1850,
+      "heightMm": 1400,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 18,
+      "profile": "convertible",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.214,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Retractable hard-top."
+     }
+    }
+   },
+   "CV37 (2016–2019)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4685,
+      "widthMm": 1850,
+      "heightMm": 1385,
+      "wheelbaseMm": 2850,
+      "groundClearanceMm": 130,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.216,
+      "frontOverhangRatio": 0.176,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.65,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   }
+  },
+  "q70": {
+   "Y51 M (2010–2013)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4945,
+      "widthMm": 1845,
+      "heightMm": 1515,
+      "wheelbaseMm": 2900,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.228,
+      "frontOverhangRatio": 0.186,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Sold as Infiniti M."
+     }
+    }
+   },
+   "Y51 Q70 (2014–2018)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4980,
+      "widthMm": 1845,
+      "heightMm": 1515,
+      "wheelbaseMm": 2900,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.23,
+      "frontOverhangRatio": 0.188,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright"
+     }
+    }
+   }
+  },
+  "qx50": {
+   "J50 EX (2009–2013)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4645,
+      "widthMm": 1800,
+      "heightMm": 1575,
+      "wheelbaseMm": 2800,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 18,
+      "profile": "suv-coupe",
+      "bonnetRatio": 0.27,
+      "rearOverhangRatio": 0.218,
+      "frontOverhangRatio": 0.179,
+      "glasshouseHeightRatio": 0.28,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Sold as Infiniti EX."
+     }
+    }
+   },
+   "J50 QX50 (2014–2016)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4660,
+      "widthMm": 1800,
+      "heightMm": 1575,
+      "wheelbaseMm": 2800,
+      "groundClearanceMm": 165,
+      "wheelDiameterIn": 18,
+      "profile": "suv-coupe",
+      "bonnetRatio": 0.27,
+      "rearOverhangRatio": 0.219,
+      "frontOverhangRatio": 0.18,
+      "glasshouseHeightRatio": 0.28,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "UK retained short-wheelbase body (approx)."
+     }
+    }
+   }
+  },
+  "qx70": {
+   "S51 FX (2009–2013)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4865,
+      "widthMm": 1925,
+      "heightMm": 1650,
+      "wheelbaseMm": 2885,
+      "groundClearanceMm": 185,
+      "wheelDiameterIn": 20,
+      "profile": "suv-coupe",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.224,
+      "frontOverhangRatio": 0.183,
+      "glasshouseHeightRatio": 0.28,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Sold as Infiniti FX."
+     }
+    }
+   },
+   "S51 QX70 (2014–2017)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4865,
+      "widthMm": 1925,
+      "heightMm": 1650,
+      "wheelbaseMm": 2885,
+      "groundClearanceMm": 185,
+      "wheelDiameterIn": 20,
+      "profile": "suv-coupe",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.224,
+      "frontOverhangRatio": 0.183,
+      "glasshouseHeightRatio": 0.28,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "large-upright",
+      "note": "Long-bonnet coupe-SUV."
+     }
+    }
+   }
+  }
+ }
+}

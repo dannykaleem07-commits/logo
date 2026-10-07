@@ -1,0 +1,766 @@
+{
+ "make": "McLaren",
+ "slug": "mclaren",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "12c": {
+   "MP4-12C / 12C (2011–2014)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4510,
+      "widthMm": 1910,
+      "heightMm": 1200,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.192,
+      "frontOverhangRatio": 0.216,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "MP4-12C; mid-engined; dihedral doors."
+     },
+     "convertible": {
+      "lengthMm": 4510,
+      "widthMm": 1910,
+      "heightMm": 1200,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.192,
+      "frontOverhangRatio": 0.216,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Spider: retractable hard-top; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "p1": {
+   "P1 (2013–2015)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4590,
+      "widthMm": 1945,
+      "heightMm": 1190,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 105,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.222,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Hybrid hypercar; active rear wing; dihedral doors."
+     }
+    }
+   }
+  },
+  "650s": {
+   "650S (2014–2017)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4510,
+      "widthMm": 1910,
+      "heightMm": 1200,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.192,
+      "frontOverhangRatio": 0.216,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Mid-engined; dihedral doors."
+     },
+     "convertible": {
+      "lengthMm": 4510,
+      "widthMm": 1910,
+      "heightMm": 1200,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.192,
+      "frontOverhangRatio": 0.216,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Spider: retractable hard-top; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "675lt": {
+   "675LT (2015–2017)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4545,
+      "widthMm": 1915,
+      "heightMm": 1190,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.194,
+      "frontOverhangRatio": 0.219,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Longtail; mid-engined; dihedral doors."
+     },
+     "convertible": {
+      "lengthMm": 4545,
+      "widthMm": 1915,
+      "heightMm": 1190,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.194,
+      "frontOverhangRatio": 0.219,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Spider: retractable hard-top; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "540c": {
+   "540C (2015–2020)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4530,
+      "widthMm": 1930,
+      "heightMm": 1200,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 115,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.193,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Sports Series; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "570s": {
+   "570S (2015–2021)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4530,
+      "widthMm": 1930,
+      "heightMm": 1200,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.193,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Sports Series; mid-engined; dihedral doors."
+     },
+     "convertible": {
+      "lengthMm": 4530,
+      "widthMm": 1930,
+      "heightMm": 1200,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.193,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Spider: retractable hard-top; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "570gt": {
+   "570GT (2016–2021)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4530,
+      "widthMm": 1930,
+      "heightMm": 1200,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 115,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.193,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.55,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Glass side-hinged rear hatch over touring deck; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "600lt": {
+   "600LT (2018–2020)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4605,
+      "widthMm": 1930,
+      "heightMm": 1195,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.197,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Longtail; top-exit exhausts; mid-engined; dihedral doors."
+     },
+     "convertible": {
+      "lengthMm": 4605,
+      "widthMm": 1930,
+      "heightMm": 1195,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.197,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Spider: retractable hard-top; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "620r": {
+   "620R (2020)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4560,
+      "widthMm": 1945,
+      "heightMm": 1195,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 105,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.194,
+      "frontOverhangRatio": 0.22,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Road-legal GT4 derivative with fixed rear wing; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "720s": {
+   "720S (2017–2023)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4545,
+      "widthMm": 1930,
+      "heightMm": 1195,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.194,
+      "frontOverhangRatio": 0.219,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Hollow eye-socket headlamps with intakes; mid-engined; dihedral doors."
+     },
+     "convertible": {
+      "lengthMm": 4545,
+      "widthMm": 1930,
+      "heightMm": 1195,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.194,
+      "frontOverhangRatio": 0.219,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Spider: retractable hard-top; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "765lt": {
+   "765LT (2020–2022)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4600,
+      "widthMm": 1930,
+      "heightMm": 1195,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.198,
+      "frontOverhangRatio": 0.222,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Longtail; mid-engined; dihedral doors."
+     },
+     "convertible": {
+      "lengthMm": 4600,
+      "widthMm": 1930,
+      "heightMm": 1195,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.198,
+      "frontOverhangRatio": 0.222,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Spider: retractable hard-top; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "senna": {
+   "Senna (2018–2019)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4745,
+      "widthMm": 1960,
+      "heightMm": 1230,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 105,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.205,
+      "frontOverhangRatio": 0.232,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Large fixed rear wing; glass door panels; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "speedtail": {
+   "Speedtail (2020–2021)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 5135,
+      "widthMm": 2000,
+      "heightMm": 1120,
+      "wheelbaseMm": 2900,
+      "groundClearanceMm": 105,
+      "wheelDiameterIn": 20,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.261,
+      "frontOverhangRatio": 0.174,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.85,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Three-seat central driving position; elongated tail; wheelbase uncertain (approx)."
+     }
+    }
+   }
+  },
+  "elva": {
+   "Elva (2020–2021)": {
+    "bodies": {
+     "roadster": {
+      "lengthMm": 4610,
+      "widthMm": 1970,
+      "heightMm": 1090,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 105,
+      "wheelDiameterIn": 19,
+      "profile": "roadster",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.198,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.1,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "No roof or windscreen; Active Air Management System."
+     }
+    }
+   }
+  },
+  "gt": {
+   "GT (2019–2023)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4685,
+      "widthMm": 1925,
+      "heightMm": 1215,
+      "wheelbaseMm": 2675,
+      "groundClearanceMm": 120,
+      "wheelDiameterIn": 20,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.202,
+      "frontOverhangRatio": 0.227,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.55,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Grand tourer with glass rear hatch; mid-engined; dihedral doors."
+     }
+    }
+   },
+   "GTS (2023–present)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4685,
+      "widthMm": 1925,
+      "heightMm": 1215,
+      "wheelbaseMm": 2675,
+      "groundClearanceMm": 120,
+      "wheelDiameterIn": 20,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.202,
+      "frontOverhangRatio": 0.227,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.55,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "GTS: revised GT with glass rear hatch; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "artura": {
+   "Artura (2022–present)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4540,
+      "widthMm": 1915,
+      "heightMm": 1195,
+      "wheelbaseMm": 2640,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.197,
+      "frontOverhangRatio": 0.222,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Mid-engined V6 plug-in hybrid; dihedral doors."
+     },
+     "convertible": {
+      "lengthMm": 4540,
+      "widthMm": 1915,
+      "heightMm": 1195,
+      "wheelbaseMm": 2640,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.197,
+      "frontOverhangRatio": 0.222,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Spider: retractable hard-top; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "750s": {
+   "750S (2023–present)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4570,
+      "widthMm": 1930,
+      "heightMm": 1195,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.22,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Mid-engined; dihedral doors."
+     },
+     "convertible": {
+      "lengthMm": 4570,
+      "widthMm": 1930,
+      "heightMm": 1195,
+      "wheelbaseMm": 2670,
+      "groundClearanceMm": 110,
+      "wheelDiameterIn": 19,
+      "profile": "convertible",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.22,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.6,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Spider: retractable hard-top; mid-engined; dihedral doors."
+     }
+    }
+   }
+  },
+  "w1": {
+   "W1 (2025–present)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4635,
+      "widthMm": 2000,
+      "heightMm": 1180,
+      "wheelbaseMm": 2680,
+      "groundClearanceMm": 100,
+      "wheelDiameterIn": 20,
+      "profile": "coupe",
+      "bonnetRatio": 0.2,
+      "rearOverhangRatio": 0.198,
+      "frontOverhangRatio": 0.224,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.7,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "split",
+      "grilleStyle": "wide",
+      "note": "Hybrid hypercar; upward-opening Anhedral doors; dimensions approximate."
+     }
+    }
+   }
+  }
+ }
+}

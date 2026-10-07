@@ -1,0 +1,156 @@
+{
+  "make": "Isuzu",
+  "slug": "isuzu",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "trooper": {
+      "UBS Mk2 (1992–2004)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4795,
+            "widthMm": 1835,
+            "heightMm": 1840,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 225,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.04,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "5-door LWB figures incl. tailgate spare; 3-door SWB about 4320 mm long, 2330 mm wheelbase."
+          }
+        }
+      }
+    },
+    "rodeo": {
+      "TF Pick-up (1997–2003)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 4935,
+            "widthMm": 1690,
+            "heightMm": 1735,
+            "wheelbaseMm": 3025,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 15,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab 4x4 figures; single cab similar length, about 1650 mm high on 4x2."
+          }
+        }
+      },
+      "Rodeo (2003–2012)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5035,
+            "widthMm": 1800,
+            "heightMm": 1735,
+            "wheelbaseMm": 3050,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Denver double cab figures; single cab and extended (space) cab similar length and wheelbase."
+          }
+        }
+      }
+    },
+    "d-max": {
+      "Mk2 (2012–2020)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5295,
+            "widthMm": 1860,
+            "heightMm": 1795,
+            "wheelbaseMm": 3095,
+            "groundClearanceMm": 235,
+            "wheelDiameterIn": 17,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.25,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab figures; single cab about 5190 mm long and 1700 mm high; extended cab similar length."
+          }
+        }
+      },
+      "Mk3 (2021–)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5265,
+            "widthMm": 1870,
+            "heightMm": 1790,
+            "wheelbaseMm": 3125,
+            "groundClearanceMm": 240,
+            "wheelDiameterIn": 18,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab figures; single cab about 5280 mm long and 1700 mm high (4x2); extended cab similar length."
+          }
+        }
+      }
+    }
+  }
+}

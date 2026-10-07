@@ -1,0 +1,39 @@
+{
+  "make": "Great Wall",
+  "slug": "great-wall",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "steed": {
+      "Steed 5 (2012–2017)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5345,
+            "widthMm": 1800,
+            "heightMm": 1810,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.12,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab (4-door) pick-up; single cab not modelled."
+          }
+        }
+      }
+    }
+  }
+}

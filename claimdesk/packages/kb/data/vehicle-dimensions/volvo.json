@@ -1,0 +1,1011 @@
+{
+ "make": "Volvo",
+ "slug": "volvo",
+ "verification": {
+  "status": "approximate",
+  "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+ },
+ "models": {
+  "s40": {
+   "Mk1 (1995–2004)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4480,
+      "widthMm": 1720,
+      "heightMm": 1410,
+      "wheelbaseMm": 2560,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.206,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.45,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Shared platform with Mitsubishi Carisma; facelift approx 4515 mm."
+     }
+    }
+   },
+   "Mk2 (2004–2012)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4470,
+      "widthMm": 1770,
+      "heightMm": 1450,
+      "wheelbaseMm": 2640,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 16,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.213,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "v40": {
+   "Mk1 estate (1995–2004)": {
+    "bodies": {
+     "estate": {
+      "lengthMm": 4480,
+      "widthMm": 1720,
+      "heightMm": 1425,
+      "wheelbaseMm": 2560,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.206,
+      "frontOverhangRatio": 0.223,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.12,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "Mk2 hatchback (2012–2019)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4370,
+      "widthMm": 1800,
+      "heightMm": 1445,
+      "wheelbaseMm": 2645,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.166,
+      "frontOverhangRatio": 0.229,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.45,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Pedestrian airbag; glass tailgate panel; Cross Country variant raised approx 1460 mm."
+     }
+    }
+   }
+  },
+  "v50": {
+   "Mk1 (2004–2012)": {
+    "bodies": {
+     "estate": {
+      "lengthMm": 4515,
+      "widthMm": 1770,
+      "heightMm": 1450,
+      "wheelbaseMm": 2640,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 16,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.199,
+      "frontOverhangRatio": 0.216,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "c30": {
+   "Mk1 (2006–2013)": {
+    "bodies": {
+     "hatchback": {
+      "lengthMm": 4250,
+      "widthMm": 1780,
+      "heightMm": 1445,
+      "wheelbaseMm": 2640,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "hatch",
+      "bonnetRatio": 0.21,
+      "rearOverhangRatio": 0.159,
+      "frontOverhangRatio": 0.22,
+      "glasshouseHeightRatio": 0.34,
+      "roofTaper": 0.45,
+      "doors": [
+       3
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Frameless all-glass tailgate."
+     }
+    }
+   }
+  },
+  "c70": {
+   "Mk1 (1997–2005)": {
+    "bodies": {
+     "coupe": {
+      "lengthMm": 4720,
+      "widthMm": 1815,
+      "heightMm": 1410,
+      "wheelbaseMm": 2665,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 17,
+      "profile": "coupe",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.217,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.29,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Notchback two-door coupe."
+     },
+     "convertible": {
+      "lengthMm": 4720,
+      "widthMm": 1815,
+      "heightMm": 1430,
+      "wheelbaseMm": 2665,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 17,
+      "profile": "convertible",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.217,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Fabric roof."
+     }
+    }
+   },
+   "Mk2 coupe-cabriolet (2006–2013)": {
+    "bodies": {
+     "convertible": {
+      "lengthMm": 4580,
+      "widthMm": 1820,
+      "heightMm": 1400,
+      "wheelbaseMm": 2640,
+      "groundClearanceMm": 135,
+      "wheelDiameterIn": 17,
+      "profile": "convertible",
+      "bonnetRatio": 0.3,
+      "rearOverhangRatio": 0.212,
+      "frontOverhangRatio": 0.212,
+      "glasshouseHeightRatio": 0.27,
+      "roofTaper": 0.5,
+      "doors": [
+       2
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Three-piece retractable hard-top (coupe-cabriolet); facelift approx 4615 mm."
+     }
+    }
+   }
+  },
+  "s60": {
+   "Mk1 (2000–2009)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4580,
+      "widthMm": 1815,
+      "heightMm": 1430,
+      "wheelbaseMm": 2715,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 16,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.195,
+      "frontOverhangRatio": 0.212,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.55,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Coupe-like roofline."
+     }
+    }
+   },
+   "Mk2 (2010–2018)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4630,
+      "widthMm": 1865,
+      "heightMm": 1485,
+      "wheelbaseMm": 2775,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.193,
+      "frontOverhangRatio": 0.208,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.55,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "Mk3 (2019–2024)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4760,
+      "widthMm": 1850,
+      "heightMm": 1430,
+      "wheelbaseMm": 2870,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.28,
+      "rearOverhangRatio": 0.191,
+      "frontOverhangRatio": 0.206,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "'Thor's hammer' LED headlamps."
+     }
+    }
+   }
+  },
+  "s70": {
+   "S70 (1997–2000)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4720,
+      "widthMm": 1760,
+      "heightMm": 1410,
+      "wheelbaseMm": 2665,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.209,
+      "frontOverhangRatio": 0.226,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.3,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Upright boxy saloon (850-derived)."
+     }
+    }
+   }
+  },
+  "v70": {
+   "Mk1 (1996–2000)": {
+    "bodies": {
+     "estate": {
+      "lengthMm": 4720,
+      "widthMm": 1760,
+      "heightMm": 1430,
+      "wheelbaseMm": 2665,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 15,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.209,
+      "frontOverhangRatio": 0.226,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.05,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Upright tailgate (850-derived)."
+     }
+    }
+   },
+   "Mk2 (2000–2007)": {
+    "bodies": {
+     "estate": {
+      "lengthMm": 4710,
+      "widthMm": 1805,
+      "heightMm": 1490,
+      "wheelbaseMm": 2755,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 16,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.199,
+      "frontOverhangRatio": 0.216,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.12,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "Mk3 (2007–2016)": {
+    "bodies": {
+     "estate": {
+      "lengthMm": 4825,
+      "widthMm": 1860,
+      "heightMm": 1545,
+      "wheelbaseMm": 2815,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.2,
+      "frontOverhangRatio": 0.217,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.12,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "xc70": {
+   "Mk1 V70 XC/XC70 (2000–2007)": {
+    "bodies": {
+     "estate": {
+      "lengthMm": 4730,
+      "widthMm": 1860,
+      "heightMm": 1560,
+      "wheelbaseMm": 2765,
+      "groundClearanceMm": 205,
+      "wheelDiameterIn": 16,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.199,
+      "frontOverhangRatio": 0.216,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.12,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Raised AWD estate with body cladding."
+     }
+    }
+   },
+   "Mk2 (2007–2016)": {
+    "bodies": {
+     "estate": {
+      "lengthMm": 4840,
+      "widthMm": 1875,
+      "heightMm": 1605,
+      "wheelbaseMm": 2815,
+      "groundClearanceMm": 210,
+      "wheelDiameterIn": 17,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.2,
+      "frontOverhangRatio": 0.218,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.12,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Raised AWD estate with body cladding."
+     }
+    }
+   }
+  },
+  "s80": {
+   "Mk1 (1998–2006)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4820,
+      "widthMm": 1830,
+      "heightMm": 1435,
+      "wheelbaseMm": 2790,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 16,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.202,
+      "frontOverhangRatio": 0.219,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   },
+   "Mk2 (2006–2016)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4850,
+      "widthMm": 1860,
+      "heightMm": 1495,
+      "wheelbaseMm": 2835,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "notchback",
+      "bonnetRatio": 0.26,
+      "rearOverhangRatio": 0.199,
+      "frontOverhangRatio": 0.216,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "s90": {
+   "Mk1 (2016–2024)": {
+    "bodies": {
+     "saloon": {
+      "lengthMm": 4965,
+      "widthMm": 1880,
+      "heightMm": 1445,
+      "wheelbaseMm": 2940,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "notchback",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.212,
+      "glasshouseHeightRatio": 0.32,
+      "roofTaper": 0.5,
+      "doors": [
+       4
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Concave 'Thor's hammer' headlamps; C-shaped tail lamps."
+     }
+    }
+   }
+  },
+  "v90": {
+   "Mk1 (2016–2025)": {
+    "bodies": {
+     "estate": {
+      "lengthMm": 4935,
+      "widthMm": 1880,
+      "heightMm": 1475,
+      "wheelbaseMm": 2940,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "estate",
+      "bonnetRatio": 0.29,
+      "rearOverhangRatio": 0.194,
+      "frontOverhangRatio": 0.21,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Cross Country raised version approx 1545 mm high, 210 mm clearance."
+     }
+    }
+   }
+  },
+  "v60": {
+   "Mk1 (2010–2018)": {
+    "bodies": {
+     "estate": {
+      "lengthMm": 4630,
+      "widthMm": 1865,
+      "heightMm": 1485,
+      "wheelbaseMm": 2775,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 17,
+      "profile": "estate",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.193,
+      "frontOverhangRatio": 0.208,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Sloping sporty estate tailgate."
+     }
+    }
+   },
+   "Mk2 (2018–present)": {
+    "bodies": {
+     "estate": {
+      "lengthMm": 4760,
+      "widthMm": 1850,
+      "heightMm": 1430,
+      "wheelbaseMm": 2870,
+      "groundClearanceMm": 140,
+      "wheelDiameterIn": 18,
+      "profile": "estate",
+      "bonnetRatio": 0.28,
+      "rearOverhangRatio": 0.191,
+      "frontOverhangRatio": 0.206,
+      "glasshouseHeightRatio": 0.33,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Cross Country raised version approx 1500 mm high."
+     }
+    }
+   }
+  },
+  "xc40": {
+   "Mk1 (2018–2022)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4425,
+      "widthMm": 1865,
+      "heightMm": 1650,
+      "wheelbaseMm": 2700,
+      "groundClearanceMm": 210,
+      "wheelDiameterIn": 19,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.195,
+      "frontOverhangRatio": 0.195,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "'Thor's hammer' LED headlamps; contrast roof common."
+     }
+    }
+   },
+   "Mk1 facelift (2022–present)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4440,
+      "widthMm": 1865,
+      "heightMm": 1650,
+      "wheelbaseMm": 2700,
+      "groundClearanceMm": 210,
+      "wheelDiameterIn": 19,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.196,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "'Thor's hammer' LED headlamps; contrast roof common."
+     }
+    }
+   }
+  },
+  "ex40": {
+   "Mk1 (2024–present)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4440,
+      "widthMm": 1865,
+      "heightMm": 1650,
+      "wheelbaseMm": 2700,
+      "groundClearanceMm": 210,
+      "wheelDiameterIn": 19,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.196,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Electric (formerly XC40 Recharge); closed body-colour grille panel."
+     }
+    }
+   }
+  },
+  "ec40": {
+   "C40/EC40 (2021–present)": {
+    "bodies": {
+     "crossover": {
+      "lengthMm": 4440,
+      "widthMm": 1875,
+      "heightMm": 1590,
+      "wheelbaseMm": 2700,
+      "groundClearanceMm": 175,
+      "wheelDiameterIn": 20,
+      "profile": "suv-coupe",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.188,
+      "frontOverhangRatio": 0.204,
+      "glasshouseHeightRatio": 0.28,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Electric coupe-SUV (formerly C40 Recharge)."
+     }
+    }
+   }
+  },
+  "ex30": {
+   "Mk1 (2024–present)": {
+    "bodies": {
+     "crossover": {
+      "lengthMm": 4235,
+      "widthMm": 1835,
+      "heightMm": 1550,
+      "wheelbaseMm": 2650,
+      "groundClearanceMm": 175,
+      "wheelDiameterIn": 19,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.179,
+      "frontOverhangRatio": 0.195,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.35,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Compact electric SUV with pixel-style headlamps."
+     }
+    }
+   }
+  },
+  "xc60": {
+   "Mk1 (2008–2017)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4630,
+      "widthMm": 1890,
+      "heightMm": 1715,
+      "wheelbaseMm": 2775,
+      "groundClearanceMm": 230,
+      "wheelDiameterIn": 18,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.193,
+      "frontOverhangRatio": 0.208,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.3,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "2013 facelift approx 4645 mm."
+     }
+    }
+   },
+   "Mk2 (2017–present)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4690,
+      "widthMm": 1900,
+      "heightMm": 1660,
+      "wheelbaseMm": 2865,
+      "groundClearanceMm": 215,
+      "wheelDiameterIn": 19,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.187,
+      "frontOverhangRatio": 0.202,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.25,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide"
+     }
+    }
+   }
+  },
+  "xc90": {
+   "Mk1 (2002–2014)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4800,
+      "widthMm": 1900,
+      "heightMm": 1745,
+      "wheelbaseMm": 2855,
+      "groundClearanceMm": 220,
+      "wheelDiameterIn": 18,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.202,
+      "frontOverhangRatio": 0.203,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "7-seat; height without rails."
+     }
+    }
+   },
+   "Mk2 (2015–2024)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4950,
+      "widthMm": 2010,
+      "heightMm": 1775,
+      "wheelbaseMm": 2985,
+      "groundClearanceMm": 235,
+      "wheelDiameterIn": 20,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.199,
+      "frontOverhangRatio": 0.198,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "7-seat; air suspension option."
+     }
+    }
+   },
+   "Mk2 facelift (2025–present)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 4955,
+      "widthMm": 2010,
+      "heightMm": 1775,
+      "wheelbaseMm": 2985,
+      "groundClearanceMm": 235,
+      "wheelDiameterIn": 20,
+      "profile": "suv-boxy",
+      "bonnetRatio": 0.24,
+      "rearOverhangRatio": 0.199,
+      "frontOverhangRatio": 0.199,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.15,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "wide",
+      "note": "Facelift: diagonal-slat grille."
+     }
+    }
+   }
+  },
+  "ex90": {
+   "Mk1 (2024–present)": {
+    "bodies": {
+     "suv": {
+      "lengthMm": 5040,
+      "widthMm": 1965,
+      "heightMm": 1745,
+      "wheelbaseMm": 2985,
+      "groundClearanceMm": 210,
+      "wheelDiameterIn": 21,
+      "profile": "suv-rounded",
+      "bonnetRatio": 0.23,
+      "rearOverhangRatio": 0.196,
+      "frontOverhangRatio": 0.212,
+      "glasshouseHeightRatio": 0.3,
+      "roofTaper": 0.2,
+      "doors": [
+       5
+      ],
+      "roofRails": true,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "7-seat electric; roof-mounted lidar pod."
+     }
+    }
+   }
+  },
+  "es90": {
+   "Mk1 (2025–present)": {
+    "bodies": {
+     "liftback": {
+      "lengthMm": 5000,
+      "widthMm": 1945,
+      "heightMm": 1545,
+      "wheelbaseMm": 3100,
+      "groundClearanceMm": 150,
+      "wheelDiameterIn": 20,
+      "profile": "liftback",
+      "bonnetRatio": 0.25,
+      "rearOverhangRatio": 0.182,
+      "frontOverhangRatio": 0.198,
+      "glasshouseHeightRatio": 0.31,
+      "roofTaper": 0.55,
+      "doors": [
+       5
+      ],
+      "roofRails": false,
+      "spareOnTailgate": false,
+      "slidingSideDoor": false,
+      "lampStyle": "wide-slim",
+      "grilleStyle": "closed-ev",
+      "note": "Electric executive fastback-liftback."
+     }
+    }
+   }
+  }
+ }
+}

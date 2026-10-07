@@ -1,0 +1,613 @@
+{
+  "make": "Chevrolet",
+  "slug": "chevrolet",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "aveo": {
+      "T250 (2008–2011)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3920,
+            "widthMm": 1680,
+            "heightMm": 1505,
+            "wheelbaseMm": 2480,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.154,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "5-door shown; 3-door similar length."
+          }
+        }
+      },
+      "T300 (2011–2015)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4040,
+            "widthMm": 1735,
+            "heightMm": 1515,
+            "wheelbaseMm": 2525,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.158,
+            "frontOverhangRatio": 0.217,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Exposed twin-round headlamps."
+          }
+        }
+      }
+    },
+    "captiva": {
+      "C100 (2006–2011)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4640,
+            "widthMm": 1850,
+            "heightMm": 1730,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.217,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "C140 (2011–2015)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4675,
+            "widthMm": 1870,
+            "heightMm": 1755,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.202,
+            "frontOverhangRatio": 0.219,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "corvette": {
+      "C8 (2022–, first factory RHD Corvette)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4630,
+            "widthMm": 1935,
+            "heightMm": 1235,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.197,
+            "frontOverhangRatio": 0.214,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Mid-engine C8 Stingray; targa roof panel; 19 in front / 20 in rear wheels."
+          },
+          "convertible": {
+            "lengthMm": 4630,
+            "widthMm": 1935,
+            "heightMm": 1235,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.206,
+            "frontOverhangRatio": 0.206,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Retractable hard-top."
+          }
+        }
+      }
+    },
+    "cruze": {
+      "J300 (2009–2015)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4600,
+            "widthMm": 1790,
+            "heightMm": 1475,
+            "wheelbaseMm": 2685,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.221,
+            "frontOverhangRatio": 0.196,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.35,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "hatchback": {
+            "lengthMm": 4510,
+            "widthMm": 1795,
+            "heightMm": 1475,
+            "wheelbaseMm": 2685,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.235,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4675,
+            "widthMm": 1795,
+            "heightMm": 1520,
+            "wheelbaseMm": 2685,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.221,
+            "frontOverhangRatio": 0.204,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Station Wagon from 2012."
+          }
+        }
+      }
+    },
+    "epica": {
+      "V250 (2006–2011)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4805,
+            "widthMm": 1810,
+            "heightMm": 1450,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.232,
+            "frontOverhangRatio": 0.206,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "evanda": {
+      "V200 (2005–2006)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4770,
+            "widthMm": 1815,
+            "heightMm": 1450,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.204,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Daewoo Evanda rebadge."
+          }
+        }
+      }
+    },
+    "kalos": {
+      "T200 (2005–2008)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3880,
+            "widthMm": 1670,
+            "heightMm": 1495,
+            "wheelbaseMm": 2480,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.152,
+            "frontOverhangRatio": 0.209,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Daewoo Kalos carry-over."
+          }
+        }
+      }
+    },
+    "lacetti": {
+      "J200 (2005–2009)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4295,
+            "widthMm": 1725,
+            "heightMm": 1445,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.166,
+            "frontOverhangRatio": 0.229,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Daewoo Lacetti carry-over."
+          }
+        }
+      }
+    },
+    "malibu": {
+      "Mk8 (2012–2015)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4865,
+            "widthMm": 1855,
+            "heightMm": 1465,
+            "wheelbaseMm": 2735,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.232,
+            "frontOverhangRatio": 0.206,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "matiz": {
+      "M200 (2005–2010)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3495,
+            "widthMm": 1495,
+            "heightMm": 1500,
+            "wheelbaseMm": 2340,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 13,
+            "profile": "hatch",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.139,
+            "frontOverhangRatio": 0.192,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Kei-style city car."
+          }
+        }
+      }
+    },
+    "nubira": {
+      "J200 (2005–2009)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4500,
+            "widthMm": 1725,
+            "heightMm": 1445,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.224,
+            "frontOverhangRatio": 0.198,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4580,
+            "widthMm": 1725,
+            "heightMm": 1460,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "estate",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.225,
+            "frontOverhangRatio": 0.208,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "orlando": {
+      "J309 (2011–2015)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4650,
+            "widthMm": 1835,
+            "heightMm": 1635,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.183,
+            "frontOverhangRatio": 0.224,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seven-seat MPV with chunky SUV-style styling."
+          }
+        }
+      }
+    },
+    "spark": {
+      "M300 (2010–2015, facelift 2013)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3640,
+            "widthMm": 1595,
+            "heightMm": 1520,
+            "wheelbaseMm": 2375,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.19,
+            "rearOverhangRatio": 0.146,
+            "frontOverhangRatio": 0.202,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "tacuma": {
+      "U100 (2005–2008)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4350,
+            "widthMm": 1775,
+            "heightMm": 1580,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.181,
+            "frontOverhangRatio": 0.221,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Daewoo Tacuma carry-over."
+          }
+        }
+      }
+    },
+    "trax": {
+      "Mk1 (2013–2015)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4250,
+            "widthMm": 1775,
+            "heightMm": 1675,
+            "wheelbaseMm": 2555,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.187,
+            "frontOverhangRatio": 0.211,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Twin of Vauxhall Mokka A."
+          }
+        }
+      }
+    },
+    "volt": {
+      "Mk1 (2012–2014)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4500,
+            "widthMm": 1790,
+            "heightMm": 1440,
+            "wheelbaseMm": 2685,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 17,
+            "profile": "liftback",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.194,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Range-extended EV; twin of Vauxhall Ampera."
+          }
+        }
+      }
+    }
+  }
+}

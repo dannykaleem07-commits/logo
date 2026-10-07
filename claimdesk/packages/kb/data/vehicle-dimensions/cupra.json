@@ -1,0 +1,231 @@
+{
+  "make": "Cupra",
+  "slug": "cupra",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "ateca": {
+      "KH (2018–present; facelift 2020)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4375,
+            "widthMm": 1840,
+            "heightMm": 1615,
+            "wheelbaseMm": 2630,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "leon": {
+      "KL (2020–present; facelift 2024)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4400,
+            "widthMm": 1800,
+            "heightMm": 1440,
+            "wheelbaseMm": 2685,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "hatch",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4645,
+            "widthMm": 1800,
+            "heightMm": 1450,
+            "wheelbaseMm": 2685,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Sportstourer."
+          }
+        }
+      }
+    },
+    "formentor": {
+      "KM (2020–present; facelift 2024)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4450,
+            "widthMm": 1840,
+            "heightMm": 1510,
+            "wheelbaseMm": 2680,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 19,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "born": {
+      "K1 (2021–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4320,
+            "widthMm": 1810,
+            "heightMm": 1540,
+            "wheelbaseMm": 2770,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "hatch",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Rear-motor electric hatch (VW ID.3 platform)."
+          }
+        }
+      }
+    },
+    "tavascan": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4645,
+            "widthMm": 1860,
+            "heightMm": 1595,
+            "wheelbaseMm": 2765,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "terramar": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4520,
+            "widthMm": 1870,
+            "heightMm": 1585,
+            "wheelbaseMm": 2680,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "raval": {
+      "Mk1 (2026–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4045,
+            "widthMm": 1785,
+            "heightMm": 1520,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Production dimensions provisional."
+          }
+        }
+      }
+    }
+  }
+}

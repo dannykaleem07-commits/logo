@@ -1,0 +1,355 @@
+{
+  "make": "Rover",
+  "slug": "rover",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "25": {
+      "R3 (1999–2004)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3990,
+            "widthMm": 1690,
+            "heightMm": 1420,
+            "wheelbaseMm": 2500,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "3- and 5-door share dimensions."
+          }
+        }
+      },
+      "Facelift (2004–2005)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4005,
+            "widthMm": 1690,
+            "heightMm": 1420,
+            "wheelbaseMm": 2500,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Revised bumpers; 3- and 5-door share dimensions."
+          }
+        }
+      }
+    },
+    "45": {
+      "RT (1999–2004)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4360,
+            "widthMm": 1700,
+            "heightMm": 1395,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          },
+          "saloon": {
+            "lengthMm": 4525,
+            "widthMm": 1700,
+            "heightMm": 1395,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "Facelift (2004–2005)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4375,
+            "widthMm": 1700,
+            "heightMm": 1395,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          },
+          "saloon": {
+            "lengthMm": 4540,
+            "widthMm": 1700,
+            "heightMm": 1395,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "75": {
+      "R40 (1999–2004)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4745,
+            "widthMm": 1780,
+            "heightMm": 1425,
+            "wheelbaseMm": 2745,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.42,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Quad oval headlamps."
+          },
+          "estate": {
+            "lengthMm": 4785,
+            "widthMm": 1780,
+            "heightMm": 1470,
+            "wheelbaseMm": 2745,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "75 Tourer."
+          }
+        }
+      },
+      "Facelift (2004–2005)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4790,
+            "widthMm": 1780,
+            "heightMm": 1425,
+            "wheelbaseMm": 2745,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.42,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright"
+          },
+          "estate": {
+            "lengthMm": 4815,
+            "widthMm": 1780,
+            "heightMm": 1470,
+            "wheelbaseMm": 2745,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.18,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "75 Tourer."
+          }
+        }
+      }
+    },
+    "cityrover": {
+      "Mk1 (2003–2005)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3690,
+            "widthMm": 1665,
+            "heightMm": 1500,
+            "wheelbaseMm": 2400,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Tata Indica based."
+          }
+        }
+      }
+    },
+    "mini": {
+      "Mk VII MPi (1996–2000)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 3075,
+            "widthMm": 1440,
+            "heightMm": 1330,
+            "wheelbaseMm": 2035,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 12,
+            "profile": "notchback",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.1,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Classic two-door Mini; external seams and small boot; 13in wheels with Sportpack/arch extensions."
+          }
+        }
+      }
+    },
+    "streetwise": {
+      "Mk1 (2003–2005)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4055,
+            "widthMm": 1700,
+            "heightMm": 1490,
+            "wheelbaseMm": 2500,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.3,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Rover 25 with raised suspension, plastic body cladding and roof bars; 3- and 5-door."
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "make": "Xpeng",
+  "slug": "xpeng",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "g6": {
+      "Mk1 (2025–2026)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4755,
+            "widthMm": 1920,
+            "heightMm": 1650,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Full-width light bar front."
+          }
+        }
+      },
+      "Facelift (2026–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4760,
+            "widthMm": 1920,
+            "heightMm": 1650,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Full-width light bar front."
+          }
+        }
+      }
+    },
+    "x9": {
+      "Mk1 (2026–present)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 5295,
+            "widthMm": 1990,
+            "heightMm": 1785,
+            "wheelbaseMm": 3160,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 20,
+            "profile": "mpv",
+            "bonnetRatio": 0.18,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Large electric MPV with powered sliding rear doors."
+          }
+        }
+      }
+    }
+  }
+}

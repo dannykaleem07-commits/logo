@@ -1,0 +1,498 @@
+{
+  "make": "Morgan",
+  "slug": "morgan",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "4-4": {
+      "4/4 1.8 (2000–2009)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3890,
+            "widthMm": 1500,
+            "heightMm": 1290,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "roadster",
+            "bonnetRatio": 0.42,
+            "rearOverhangRatio": 0.26,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Traditional ash-framed body with separate wings and running boards."
+          }
+        }
+      },
+      "4/4 1.6 (2009–2018)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4010,
+            "widthMm": 1630,
+            "heightMm": 1220,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "roadster",
+            "bonnetRatio": 0.42,
+            "rearOverhangRatio": 0.28,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "plus-4": {
+      "Plus 4 Rover T16 (1992–2000)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3960,
+            "widthMm": 1630,
+            "heightMm": 1290,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "roadster",
+            "bonnetRatio": 0.42,
+            "rearOverhangRatio": 0.27,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "Plus 4 Ford Duratec (2005–2020)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4010,
+            "widthMm": 1720,
+            "heightMm": 1220,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "roadster",
+            "bonnetRatio": 0.42,
+            "rearOverhangRatio": 0.28,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "Plus Four CX (2020–present)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3830,
+            "widthMm": 1650,
+            "heightMm": 1250,
+            "wheelbaseMm": 2520,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 15,
+            "profile": "roadster",
+            "bonnetRatio": 0.4,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Bonded aluminium CX platform with traditional styling."
+          }
+        }
+      }
+    },
+    "plus-8": {
+      "Plus 8 Rover V8 (1968–2004)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3960,
+            "widthMm": 1630,
+            "heightMm": 1220,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "roadster",
+            "bonnetRatio": 0.42,
+            "rearOverhangRatio": 0.27,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "Plus 8 BMW V8 (2012–2018)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4010,
+            "widthMm": 1750,
+            "heightMm": 1230,
+            "wheelbaseMm": 2530,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.4,
+            "rearOverhangRatio": 0.27,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Aluminium Aero chassis with traditional body."
+          }
+        }
+      }
+    },
+    "aero-8": {
+      "Aero 8 Series 1–4 / AeroMax (2001–2010)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4120,
+            "widthMm": 1770,
+            "heightMm": 1200,
+            "wheelbaseMm": 2530,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.27,
+            "frontOverhangRatio": 0.12,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Aero 8 styling with oval headlamps; AeroMax coupe similar length."
+          },
+          "coupe": {
+            "lengthMm": 4205,
+            "widthMm": 1770,
+            "heightMm": 1240,
+            "wheelbaseMm": 2530,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.28,
+            "frontOverhangRatio": 0.12,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "AeroMax fastback coupe."
+          }
+        }
+      },
+      "Aero SuperSports / Aero Coupe (2010–2015)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4150,
+            "widthMm": 1750,
+            "heightMm": 1250,
+            "wheelbaseMm": 2520,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.27,
+            "frontOverhangRatio": 0.12,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "SuperSports targa."
+          },
+          "coupe": {
+            "lengthMm": 4150,
+            "widthMm": 1750,
+            "heightMm": 1250,
+            "wheelbaseMm": 2520,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.27,
+            "frontOverhangRatio": 0.12,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Aero Coupe."
+          }
+        }
+      },
+      "Aero 8 Series 5 / Aero GT (2015–2018)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4150,
+            "widthMm": 1750,
+            "heightMm": 1200,
+            "wheelbaseMm": 2530,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.27,
+            "frontOverhangRatio": 0.12,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "roadster": {
+      "Roadster 3.0 V6 (2004–2011)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4010,
+            "widthMm": 1720,
+            "heightMm": 1220,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.42,
+            "rearOverhangRatio": 0.28,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow"
+          }
+        }
+      },
+      "Roadster 3.7 V6 (2011–2019)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4010,
+            "widthMm": 1720,
+            "heightMm": 1220,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.42,
+            "rearOverhangRatio": 0.28,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "plus-six": {
+      "Plus Six (2019–2025)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3890,
+            "widthMm": 1755,
+            "heightMm": 1200,
+            "wheelbaseMm": 2520,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.4,
+            "rearOverhangRatio": 0.25,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow"
+          }
+        }
+      }
+    },
+    "supersport": {
+      "Supersport (2025–present)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4000,
+            "widthMm": 1800,
+            "heightMm": 1200,
+            "wheelbaseMm": 2520,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.26,
+            "frontOverhangRatio": 0.11,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "CX platform; dimensions approximate."
+          }
+        }
+      }
+    },
+    "3-wheeler": {
+      "3 Wheeler (2011–2021)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3225,
+            "widthMm": 1720,
+            "heightMm": 1000,
+            "wheelbaseMm": 2425,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.13,
+            "frontOverhangRatio": 0.12,
+            "glasshouseHeightRatio": 0.15,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Three wheels (single rear wheel), exposed front V-twin engine and wheels, no doors (door count is catalogue placeholder)."
+          }
+        }
+      }
+    },
+    "super-3": {
+      "Super 3 (2022–present)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3580,
+            "widthMm": 1720,
+            "heightMm": 1010,
+            "wheelbaseMm": 2510,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 20,
+            "profile": "roadster",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.12,
+            "glasshouseHeightRatio": 0.15,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Three wheels (single rear wheel), exposed front wheels, no doors; approximate."
+          }
+        }
+      }
+    }
+  }
+}
