@@ -147,7 +147,7 @@ export function htmlToText(html: string): string {
   return html
     .replace(/<(script|style|head)[\s\S]*?<\/\1>/gi, ' ')
     .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<\/(p|div|h[1-6]|li|tr)>/gi, '\n')
+    .replace(/<\/?(p|div|h[1-6]|li|tr|table|ul|ol)\b[^>]*>/gi, '\n')
     .replace(/<[^>]+>/g, ' ')
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
@@ -157,7 +157,8 @@ export function htmlToText(html: string): string {
     .replace(/&#39;|&rsquo;|&lsquo;/g, "'")
     .replace(/&pound;/g, '£')
     .replace(/[ \t]+/g, ' ')
-    .replace(/\n\s*\n+/g, '\n\n')
+    .replace(/ *\n */g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
     .trim();
 }
 

@@ -348,10 +348,7 @@
      "adaptive_cruise",
      "adaptive_cruise_stop_go",
      "traffic_jam_assist",
-     "hands_off_highway_assist",
-     "aeb",
-     "aeb_pedestrian_cyclist",
-     "forward_collision_warning"
+     "hands_off_highway_assist"
     ]
    },
    "priority": "required",

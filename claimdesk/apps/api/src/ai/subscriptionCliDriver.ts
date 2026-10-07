@@ -141,7 +141,8 @@ export class SubscriptionCliDriver implements AiDriver {
   }
 
   private cliDeps(): CliDeps {
-    return { ...(this.opts.platform ? { platform: this.opts.platform } : {}), ...(this.opts.run ? { run: this.opts.run } : {}), ...(this.opts.claudeCommand ? { claudeCommand: this.opts.claudeCommand } : {}) };
+    const forbidRealAi = process.env.CLAIMDESK_FORBID_REAL_AI === '1' || this.baseEnv.CLAIMDESK_FORBID_REAL_AI === '1';
+    return { forbidRealAi, ...(this.opts.platform ? { platform: this.opts.platform } : {}), ...(this.opts.run ? { run: this.opts.run } : {}), ...(this.opts.claudeCommand ? { claudeCommand: this.opts.claudeCommand } : {}) };
   }
 
   private mcpUrl(): string {

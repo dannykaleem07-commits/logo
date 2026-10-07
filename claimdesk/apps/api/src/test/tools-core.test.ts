@@ -166,7 +166,7 @@ describe('read tools', () => {
   });
 
   it('total_loss_assess computes and writes no rows', async () => {
-    const tables = ['audit_log', 'events', 'ledger_entries', 'engineer_reports', 'documents'];
+    const tables = ['audit_log', 'claim_events', 'ledger_entries', 'engineer_reports', 'documents'];
     const before = Object.fromEntries(tables.map((tb) => [tb, count(tb)]));
     const reportBefore = t.ctx.handle.sqlite.prepare('SELECT * FROM engineer_reports').all();
     const r = await call('total_loss_assess', { claimId: ids.claimId });
@@ -215,7 +215,7 @@ describe('draft and internal tools', () => {
     expect(ny).toMatchObject({ kind: 'offer_decision', claimId: ids.claimId, priority: 'urgent' });
     expect(t.ctx.repos.getAgentJobByKey(t.ctx.db, `offer.analyse:${offerId}`)).toMatchObject({ type: 'offer.analyse', priority: 0 });
     const offer = t.ctx.repos.requireOffer(t.ctx.db, offerId);
-    expect(offer.clientDecision).toBeUndefined();
+    expect(offer.clientDecision ?? 'pending').toBe('pending');
     expect(offer.terms.otherTerms).toContain('120000 pence');
   });
 

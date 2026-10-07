@@ -1,0 +1,30 @@
+/* owned by runtime — agents control room, daily log and Supreme settings screens (docs/SUPREME-DESIGN.md §L.3, §L.4, §L.7) */
+.agents-overview { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--s-3, 12px); margin-bottom: var(--s-3, 12px); }
+.agents-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: var(--s-3, 12px); margin-bottom: var(--s-3, 12px); }
+.agents-tab { padding-top: var(--s-3, 12px); }
+.agents-filters { flex-wrap: wrap; gap: 8px; }
+.agents-filters .select, .agents-filters .input { width: auto; min-width: 160px; }
+.agents-error { max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
+.meter { margin-bottom: 10px; }
+.meter-bar { height: 8px; border-radius: 999px; background: var(--neutral-bg, #f1f3f6); overflow: hidden; margin-top: 4px; }
+.meter-fill { display: block; height: 100%; border-radius: 999px; }
+.meter-green { background: var(--green, #1a7f45); }
+.meter-amber { background: var(--amber, #a15c07); }
+.meter-red { background: var(--red, #b42318); }
+.run-dots { display: flex; flex-wrap: wrap; gap: 4px; }
+.run-dot { width: 10px; height: 10px; border-radius: 50%; border: none; padding: 0; cursor: pointer; }
+.run-dot-green { background: var(--green, #1a7f45); }
+.run-dot-amber { background: var(--amber, #a15c07); }
+.run-dot-red { background: var(--red, #b42318); }
+.run-dot-grey { background: var(--muted-2, #9aa3b0); }
+.run-dot-blue { background: var(--blue, #1d4f8c); }
+.linklike { background: none; border: none; padding: 0; color: var(--blue, #1d4f8c); cursor: pointer; font: inherit; text-decoration: underline; }
+.timeline { list-style: none; margin: 0; padding: 0 0 0 14px; border-left: 2px solid var(--line-2, #dde1e7); display: flex; flex-direction: column; gap: 10px; }
+.timeline-item { position: relative; }
+.timeline-item::before { content: ''; position: absolute; left: -20px; top: 6px; width: 10px; height: 10px; border-radius: 50%; background: var(--surface, #fff); border: 2px solid var(--blue, #1d4f8c); }
+.timeline pre, .agents-page pre { white-space: pre-wrap; font-size: var(--fs-xs, 12px); background: var(--surface-2, #f9fafb); padding: 8px; border-radius: 6px; max-height: 300px; overflow: auto; }
+.daily-counts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.daily-lines { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.daily-lines li { border-bottom: 1px solid var(--line, #eceef2); padding-bottom: 6px; }
+.settings-checks { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 4px 16px; }
+@media print { .agents-page .btn, .daily-log-page .btn, .daily-log-page .no-print { display: none; } }

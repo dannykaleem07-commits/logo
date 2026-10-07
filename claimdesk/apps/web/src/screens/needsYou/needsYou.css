@@ -1,0 +1,27 @@
+/* owned by runtime — Needs-you inbox (docs/SUPREME-DESIGN.md §L.2) */
+.ny-layout { display: grid; grid-template-columns: minmax(260px, 360px) minmax(0, 1fr); gap: var(--s-3, 12px); align-items: start; }
+.ny-list { padding: var(--s-2, 8px); max-height: calc(100vh - 180px); overflow: auto; }
+.ny-filters { display: flex; gap: 6px; margin-bottom: 8px; }
+.ny-filters .select { flex: 1; min-width: 0; }
+.ny-group-title { margin: 10px 4px 4px; font-size: var(--fs-sm, 13.5px); text-transform: uppercase; letter-spacing: 0.03em; color: var(--ink-2, #3b4656); }
+.ny-items { list-style: none; margin: 0; padding: 0; }
+.ny-item { display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left; border: 1px solid transparent; border-radius: 8px; padding: 8px; background: transparent; cursor: pointer; color: inherit; font: inherit; }
+.ny-item:hover { background: var(--surface-2, #f9fafb); }
+.ny-item.selected { border-color: var(--blue, #1d4f8c); background: var(--blue-50, #f2f5f9); }
+.ny-item-top { display: flex; justify-content: space-between; gap: 6px; align-items: center; }
+.ny-item-title { font-weight: var(--fw-medium, 500); }
+.ny-summary { white-space: pre-wrap; margin: 0; }
+.ny-recommendation { border: 1px solid var(--line-2, #dde1e7); border-left: 4px solid var(--blue, #1d4f8c); border-radius: 8px; padding: 10px 12px; background: var(--blue-50, #f2f5f9); }
+.ny-recommendation p { margin: 6px 0; }
+.ny-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ny-chip { font-size: var(--fs-xs, 12px); border: 1px solid var(--line-2, #dde1e7); background: var(--surface, #fff); border-radius: 999px; padding: 2px 8px; }
+.ny-email { border: 1px solid var(--line-2, #dde1e7); border-radius: 8px; padding: 10px 12px; }
+.ny-email-body { white-space: pre-wrap; font-family: var(--font, sans-serif); background: var(--surface-2, #f9fafb); padding: 10px; border-radius: 6px; max-height: 420px; overflow: auto; }
+.ny-document { display: flex; gap: 12px; align-items: center; }
+.ny-editor { border: 1px dashed var(--line-2, #dde1e7); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+.ny-editor h4 { margin: 0; }
+.ny-edit-text { font-family: var(--font-mono, monospace); }
+.ny-actions { flex-wrap: wrap; gap: 8px; }
+.ny-snooze { width: auto; }
+.ny-generic pre { white-space: pre-wrap; font-size: var(--fs-xs, 12px); background: var(--surface-2, #f9fafb); padding: 8px; border-radius: 6px; max-height: 320px; overflow: auto; }
+@media (max-width: 900px) { .ny-layout { grid-template-columns: 1fr; } .ny-list { max-height: none; } }

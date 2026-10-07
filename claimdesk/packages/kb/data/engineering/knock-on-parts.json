@@ -349,10 +349,7 @@
      "adaptive_cruise",
      "adaptive_cruise_stop_go",
      "traffic_jam_assist",
-     "hands_off_highway_assist",
-     "aeb",
-     "aeb_pedestrian_cyclist",
-     "forward_collision_warning"
+     "hands_off_highway_assist"
     ]
    },
    "items": [
@@ -389,10 +386,7 @@
      "adaptive_cruise",
      "adaptive_cruise_stop_go",
      "traffic_jam_assist",
-     "hands_off_highway_assist",
-     "aeb",
-     "aeb_pedestrian_cyclist",
-     "forward_collision_warning"
+     "hands_off_highway_assist"
     ]
    },
    "items": [
@@ -519,8 +513,7 @@
    "id": "grille.active_shutter",
    "zones": [
     "grille",
-    "front_lower_grille",
-    "front_bumper"
+    "front_lower_grille"
    ],
    "when": {
     "minSeverity": 2,
@@ -604,8 +597,7 @@
   {
    "id": "bonnet.active_bonnet",
    "zones": [
-    "bonnet",
-    "front_bumper"
+    "bonnet"
    ],
    "when": {
     "minSeverity": 2,
@@ -2218,8 +2210,9 @@
     {
      "key": "tpms_sensor_{zone}",
      "label": "Tyre pressure sensor (transfer / replace) and relearn — {zoneLabel}",
-     "category": "parking_sensor",
-     "operation": "r_and_i"
+     "category": "mechanical",
+     "operation": "r_and_i",
+     "genericHours": 0.3
     }
    ],
    "reason": "Direct tyre-pressure systems have a sensor in each wheel that is transferred or replaced, and the system is relearned afterwards."
