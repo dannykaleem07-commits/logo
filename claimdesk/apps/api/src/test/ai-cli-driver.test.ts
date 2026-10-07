@@ -19,7 +19,7 @@ import { classifyFailure, AUTH_PATTERNS, USAGE_LIMIT_PATTERNS } from '../ai/usag
 import { normaliseRateLimit, StreamJsonParser } from '../ai/streamJson.js';
 import { enqueueJob } from '../agent/core.js';
 import { runAgent } from '../agent/runAgent.js';
-import { setDriverOverride } from '../ai/driverFactory.js';
+import { setDriverOptions, setDriverOverride } from '../ai/driverFactory.js';
 import type { AgentSpec } from '../agent/contracts.js';
 import type { AiRunRequest } from '../ai/types.js';
 
@@ -342,5 +342,76 @@ describe('usage-limit and auth patterns (table)', () => {
     for (let i = 0; i < lines.length; i += 7) p.push(lines.slice(i, i + 7));
     p.end();
     expect(p.outcome({ model: 'm', durationMs: 1, exitCode: 0, stderr: '', timedOut: false })).toMatchObject({ kind: 'ok', result: { a: 1 }, usage: { inputTokens: 3, outputTokens: 4 } });
+  });
+});
+
+describe('Settings > AI routes (with the fake CLI)', () => {
+  beforeEach(() => {
+    setDriverOptions(t.ctx, { cli: { claudeCommand: COMMAND, mcpUrl } });
+  });
+
+  it('status reports Claude Code, sign-in, secrets presence (never values), checklist and blockers', async () => {
+    const s = await t.api<Record<string, any>>('GET', '/ai/status'); // eslint-disable-line @typescript-eslint/no-explicit-any
+    expect(s.status).toBe(200);
+    expect(s.body.driver.selected).toBe('off');
+    expect(s.body.cli).toMatchObject({ version: '2.1.300', minVersion: MIN_CLAUDE_CODE_VERSION, minVersionOk: true, authMethod: 'oauth_token', loggedIn: true });
+    expect(s.body.secrets).toEqual({ claudeToken: true, apiKey: false });
+    expect(JSON.stringify(s.body)).not.toContain('sk-ant-oat-invented');
+    expect(s.body.canEnableAgents).toBe(false);
+    expect(s.body.blockers.join(' ')).toMatch(/driver/);
+    expect(s.body.notices.terms).toMatch(/ordinary individual use/);
+    expect(s.body.jobModels.find((j: { jobType: string }) => j.jobType === 'mail.triage').effective).toMatchObject({ model: 'claude-sonnet-5-5', effort: 'low' });
+  });
+
+  it('agents can be switched on only after the checklist and a healthy driver', async () => {
+    expect((await t.api('PATCH', '/ai/settings', { driver: 'subscription_cli' })).status).toBe(200);
+    const refused = await t.api<{ error: { code: string; details: { blockers: string[] } } }>('PATCH', '/ai/settings', { agentsEnabled: true });
+    expect(refused.status).toBe(409);
+    expect(refused.body.error.code).toBe('AGENTS_NOT_READY');
+    expect(refused.body.error.details.blockers.join(' ')).toMatch(/checklist/);
+    for (const item of ['training_opt_out', 'subscription_terms', 'mailbox_connected', 'background_running']) {
+      expect((await t.api('POST', '/ai/checklist', { item, done: true })).status).toBe(200);
+    }
+    const on = await t.api<{ agents: { enabled: boolean }; canEnableAgents: boolean }>('PATCH', '/ai/settings', { agentsEnabled: true });
+    expect(on.status, JSON.stringify(on.body)).toBe(200);
+    expect(on.body.agents.enabled).toBe(true);
+    // Unticking an item switches the agents off again.
+    const off = await t.api<{ agents: { enabled: boolean } }>('POST', '/ai/checklist', { item: 'training_opt_out', done: false });
+    expect(off.body.agents.enabled).toBe(false);
+    const audit = t.ctx.handle.sqlite.prepare("SELECT count(*) AS n FROM audit_log WHERE action = 'ai.settings'").get() as { n: number };
+    expect(audit.n).toBeGreaterThan(3);
+  });
+
+  it('validates settings (lanes on the subscription, job types, effort)', async () => {
+    expect((await t.api('PATCH', '/ai/settings', { driver: 'subscription_cli', lanes: { ai: 5 } })).status).toBe(400);
+    expect((await t.api('PATCH', '/ai/settings', { perJob: { 'mail.sync': { effort: 'low' } } })).status).toBe(400);
+    expect((await t.api('PATCH', '/ai/settings', { perJob: { 'mail.reply': { effort: 'turbo' } } })).status).toBe(400);
+    const ok = await t.api<{ settings: { perJob: Record<string, unknown>; quality: string } }>('PATCH', '/ai/settings', { quality: 'economy', perJob: { 'mail.reply': { effort: 'high' } } });
+    expect(ok.status).toBe(200);
+    expect(ok.body.settings.quality).toBe('economy');
+  });
+
+  it('secrets: PUT stores (presence only), DELETE removes, wrong kind refused, audited by name', async () => {
+    const put = await t.api<Record<string, unknown>>('PUT', '/ai/api-key', { value: 'sk-ant-api03-invented-key-0000000000000000' });
+    expect(put.body).toEqual({ name: 'anthropic_api_key', present: true });
+    expect(t.ctx.secrets.has('anthropic_api_key')).toBe(true);
+    expect((await t.api('PUT', '/ai/token', { value: 'sk-ant-api03-invented-key-0000000000000000' })).status).toBe(400);
+    expect((await t.api('PUT', '/ai/api-key', { value: 'sk-ant-oat01-invented-token-00000000000000' })).status).toBe(400);
+    expect((await t.api('DELETE', '/ai/api-key')).body).toEqual({ name: 'anthropic_api_key', present: false });
+    const rows = t.ctx.handle.sqlite.prepare("SELECT after FROM audit_log WHERE action IN ('secret.set','secret.delete')").all() as Array<{ after: string }>;
+    expect(rows.length).toBe(2);
+    expect(rows.map((r) => r.after).join(' ')).not.toContain('invented-key');
+  });
+
+  it('admin only for changes; test-run refused when real AI is forbidden; setup window only on Windows', async () => {
+    const handler = t.ctx.handle.sqlite.prepare("SELECT id FROM users WHERE role = 'handler' AND id <> 'handler' LIMIT 1").get() as { id: string } | undefined;
+    expect(handler).toBeDefined();
+    expect((await t.api('PATCH', '/ai/settings', { quality: 'best' }, { 'x-user-id': handler!.id })).status).toBe(403);
+    expect((await t.api('PUT', '/ai/token', { value: 'sk-ant-oat01-invented-token-00000000000000' }, { 'x-user-id': handler!.id })).status).toBe(403);
+    const test = await t.api<{ error: { code: string } }>('POST', '/ai/test-run');
+    expect(test.status).toBe(409);
+    expect(test.body.error.code).toBe('REAL_AI_FORBIDDEN');
+    if (process.platform !== 'win32') expect((await t.api('POST', '/ai/open-setup-token')).status).toBe(501);
+    expect((await t.api('POST', '/ai/check')).status).toBe(200);
   });
 });

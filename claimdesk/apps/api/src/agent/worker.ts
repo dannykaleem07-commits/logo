@@ -77,7 +77,8 @@ export interface Worker {
   /** Results of every job settled so far (bounded, newest last). */
   settled(): JobSettled[];
   start(): void;
-  stop(): Promise<void>;
+  /** Stop leasing; wait up to `graceMs` (default 5 s) for running jobs. */
+  stop(graceMs?: number): Promise<void>;
 }
 
 class TimeoutError extends Error {
@@ -295,11 +296,14 @@ export function startWorker(ctx: AppContext, opts: WorkerOptions): Worker {
       timer = setInterval(() => fill(ctx.now()), opts.pollMs ?? 5_000);
       timer.unref?.();
     },
-    async stop() {
+    async stop(graceMs = 5_000) {
       stopped = true;
       if (timer) clearInterval(timer);
       timer = undefined;
-      await worker.idle();
+      // Give running jobs a moment; anything still running keeps its lease and is re-queued when the lease expires.
+      let t: NodeJS.Timeout | undefined;
+      await Promise.race([worker.idle(), new Promise<void>((r) => (t = setTimeout(r, graceMs)))]);
+      if (t) clearTimeout(t);
     },
   };
   return worker;

@@ -1,0 +1,91 @@
+/* Settings > AI (docs/SUPREME-DESIGN.md §L.6) */
+.ai-settings .ai-notice {
+  margin: 0;
+  max-width: 70ch;
+}
+.ai-list {
+  margin: 4px 0 0;
+  padding-left: 18px;
+}
+.ai-usage {
+  display: grid;
+  gap: 8px;
+}
+.ai-usage-row {
+  display: grid;
+  grid-template-columns: 140px minmax(120px, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+}
+.ai-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--neutral-bg);
+  overflow: hidden;
+}
+.ai-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--green);
+}
+.ai-bar-amber > span {
+  background: var(--amber);
+}
+.ai-bar-red > span {
+  background: var(--red);
+}
+.ai-bar-grey > span {
+  background: var(--grey);
+}
+.ai-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.ai-steps > li {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: grid;
+  gap: 6px;
+}
+.ai-steps > li.done {
+  background: var(--green-bg);
+}
+.ai-code {
+  font-family: var(--font-mono);
+  background: var(--neutral-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  user-select: all;
+}
+.ai-secret {
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+.ai-secret .field {
+  min-width: 280px;
+  flex: 1;
+}
+.ai-table-wrap {
+  overflow-x: auto;
+}
+.ai-table .select {
+  min-width: 150px;
+}
+.ai-num {
+  width: 80px;
+}
+.ai-check {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+@media (max-width: 640px) {
+  .ai-usage-row {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
