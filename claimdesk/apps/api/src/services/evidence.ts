@@ -1,15 +1,16 @@
 /**
- * Write-once evidence store (BLUEPRINT §3.8, §6; ARCHITECTURE convention 3).
+ * Write-once evidence store (BLUEPRINT §3.8, §6; ARCHITECTURE convention 3; SUPREME-DESIGN §0.3 point 4).
  *
  *   EVIDENCE_DIR/<claimId>/<sha256[0..2]>/<sha256>.<ext>        the bytes, chmod 0444
  *   EVIDENCE_DIR/<claimId>/<sha256[0..2]>/<sha256>.json         sidecar manifest, written with O_EXCL (never overwritten)
  *
  * The hash is computed while the upload streams to a staging file; the final path is derived from the hash, so the
- * same bytes on the same claim de-duplicate to the existing record. EXIF is read with exifr for images. `verify`
- * re-hashes the stored file and compares it with the row and the manifest (tamper evidence).
+ * same bytes on the same claim de-duplicate to the existing record. EXIF is read with exifr for images up to 64 MiB.
+ * `verify` re-hashes the stored file and compares it with the row and the manifest (tamper evidence). Every read of a
+ * stored file streams (no whole-file buffers), so multi-gigabyte evidence never sits in memory.
  */
 import { createHash, randomUUID } from 'node:crypto';
-import { chmodSync, createReadStream, createWriteStream, existsSync, mkdirSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
+import { chmodSync, closeSync, copyFileSync, createReadStream, createWriteStream, existsSync, mkdirSync, openSync, readFileSync, readSync, renameSync, statSync, unlinkSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import type { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
@@ -80,7 +81,7 @@ function stagingDir(ctx: AppContext): string {
   return dir;
 }
 
-/** Stream an upload to the staging area, hashing as it goes. */
+/** Stream an upload to the staging area, hashing as it goes. A stream that fails part-way deletes its temp file. */
 export async function stageStream(ctx: AppContext, stream: Readable): Promise<StagedUpload> {
   const tempPath = path.join(stagingDir(ctx), randomUUID());
   const hash = createHash('sha256');
@@ -89,8 +90,42 @@ export async function stageStream(ctx: AppContext, stream: Readable): Promise<St
     hash.update(chunk);
     bytes += chunk.length;
   });
-  await pipeline(stream, createWriteStream(tempPath, { flags: 'wx' }));
+  try {
+    await pipeline(stream, createWriteStream(tempPath, { flags: 'wx' }));
+  } catch (err) {
+    removeQuietly(tempPath);
+    throw err;
+  }
   return { tempPath, sha256: hash.digest('hex'), bytes };
+}
+
+/**
+ * Move a file that is already on disk (a finished chunked upload) into the staging area without re-reading it: rename
+ * when on the same volume, copy + unlink across volumes. The caller supplies the hash it computed while receiving.
+ */
+export function stageExistingFile(ctx: AppContext, sourcePath: string, sha256: string, bytes: number): StagedUpload {
+  const tempPath = path.join(stagingDir(ctx), randomUUID());
+  moveFile(sourcePath, tempPath);
+  return { tempPath, sha256, bytes };
+}
+
+/** rename, or copy + unlink when the rename crosses volumes (EXDEV). */
+export function moveFile(from: string, to: string): void {
+  try {
+    renameSync(from, to);
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== 'EXDEV') throw err;
+    copyFileSync(from, to);
+    removeQuietly(from);
+  }
+}
+
+function removeQuietly(p: string): void {
+  try {
+    unlinkSync(p);
+  } catch {
+    /* already gone */
+  }
 }
 
 export function stageBuffer(ctx: AppContext, buffer: Buffer): StagedUpload {
@@ -135,12 +170,12 @@ export function manifestPath(absolutePath: string): string {
  * If the path already holds the same bytes the staged copy is discarded and `created` is false; a different file at
  * the same path is impossible by construction (the path is the hash) and is reported as a conflict.
  */
-export function finaliseStaged(ctx: AppContext, staged: StagedUpload, claimId: Id | undefined, ext: string, manifest: EvidenceManifest): StoredFile {
+export async function finaliseStaged(ctx: AppContext, staged: StagedUpload, claimId: Id | undefined, ext: string, manifest: EvidenceManifest): Promise<StoredFile> {
   const relativePath = relativeStoragePath(claimId, staged.sha256, ext);
   const absolutePath = absoluteEvidencePath(ctx, relativePath);
   mkdirSync(path.dirname(absolutePath), { recursive: true });
   if (existsSync(absolutePath)) {
-    const existingHash = hashFile(absolutePath);
+    const existingHash = await hashFile(absolutePath);
     discardStaged(staged);
     if (existingHash !== staged.sha256) throw conflict('EVIDENCE_WRITE_ONCE', `Refusing to overwrite ${relativePath}: the stored file does not match the upload hash`);
     return { relativePath, absolutePath, created: false };
@@ -154,8 +189,11 @@ export function finaliseStaged(ctx: AppContext, staged: StagedUpload, claimId: I
   return { relativePath, absolutePath, created: true };
 }
 
-export function hashFile(absolutePath: string): string {
-  return createHash('sha256').update(readFileSync(absolutePath)).digest('hex');
+/** Streaming SHA-256 of a file (never the whole file in memory). */
+export async function hashFile(absolutePath: string): Promise<string> {
+  const hash = createHash('sha256');
+  for await (const chunk of createReadStream(absolutePath, { highWaterMark: 1024 * 1024 })) hash.update(chunk as Buffer);
+  return hash.digest('hex');
 }
 
 // ---------------------------------------------------------------------------
@@ -179,12 +217,35 @@ function pngDimensions(buffer: Buffer): { widthPx: number; heightPx: number } | 
   return { widthPx: buffer.readUInt32BE(16), heightPx: buffer.readUInt32BE(20) };
 }
 
-/** EXIF summary for images (exifr); undefined for non-images or when nothing is embedded. PNGs fall back to IHDR dimensions. */
-export async function extractExif(buffer: Buffer, mime: string, logger: AppContext['logger']): Promise<ExifSummary | undefined> {
+/** EXIF is read only for images up to this size (a bigger "image" is not a phone photo; reading it is not worth it). */
+export const EXIF_MAX_BYTES = 64 * 1024 * 1024;
+
+/** True when EXIF is worth reading: image/* and at most EXIF_MAX_BYTES. */
+export function wantsExif(mime: string, bytes: number): boolean {
+  return mime.toLowerCase().startsWith('image/') && bytes <= EXIF_MAX_BYTES;
+}
+
+/** The first bytes of a file (enough for a PNG IHDR), without reading the rest. */
+function readHead(absolutePath: string, n: number): Buffer {
+  const fd = openSync(absolutePath, 'r');
+  try {
+    const buf = Buffer.alloc(n);
+    const read = readSync(fd, buf, 0, n, 0);
+    return buf.subarray(0, read);
+  } finally {
+    closeSync(fd);
+  }
+}
+
+/**
+ * EXIF summary for images (exifr); undefined for non-images or when nothing is embedded. PNGs fall back to IHDR
+ * dimensions. `source` is a buffer or a file path — exifr reads only the chunks it needs from a path.
+ */
+export async function extractExif(source: Buffer | string, mime: string, logger: AppContext['logger']): Promise<ExifSummary | undefined> {
   if (!mime.toLowerCase().startsWith('image/')) return undefined;
   const summary: ExifSummary = {};
   try {
-    const raw = (await exifr.parse(buffer, {
+    const raw = (await exifr.parse(source, {
       pick: ['DateTimeOriginal', 'CreateDate', 'Make', 'Model', 'Software', 'Orientation', 'ExifImageWidth', 'ExifImageHeight', 'ImageWidth', 'ImageHeight', 'GPSAltitude'],
       gps: true,
       translateValues: true,
@@ -211,7 +272,13 @@ export async function extractExif(buffer: Buffer, mime: string, logger: AppConte
     logger.warn('evidence: exif parse failed', { error: String(err) });
   }
   if (summary.widthPx === undefined) {
-    const dims = pngDimensions(buffer);
+    let head: Buffer | undefined;
+    try {
+      head = typeof source === 'string' ? readHead(source, 32) : source;
+    } catch {
+      head = undefined;
+    }
+    const dims = head ? pngDimensions(head) : undefined;
     if (dims) Object.assign(summary, dims);
   }
   return Object.keys(summary).length ? summary : undefined;
@@ -252,8 +319,8 @@ export async function storeEvidence(ctx: AppContext, input: StoreEvidenceInput):
     discardStaged(staged);
     return { evidence: onThisClaim, deduped: true, alsoOnClaims };
   }
-  const buffer = readFileSync(staged.tempPath);
-  const exif = await extractExif(buffer, input.mime, ctx.logger);
+  // EXIF straight from the staged file (exifr reads only the segments it needs), and only for images ≤ 64 MiB.
+  const exif = wantsExif(input.mime, staged.bytes) ? await extractExif(staged.tempPath, input.mime, ctx.logger) : undefined;
   const now = ctx.now();
   const filename = safeFilename(input.filename);
   const capturedAt = fields.capturedAt ?? exif?.dateTimeOriginal;
@@ -270,7 +337,7 @@ export async function storeEvidence(ctx: AppContext, input: StoreEvidenceInput):
     exif,
     writeOnce: true,
   };
-  const stored = finaliseStaged(ctx, staged, input.claimId, extensionFor(filename, input.mime), manifest);
+  const stored = await finaliseStaged(ctx, staged, input.claimId, extensionFor(filename, input.mime), manifest);
   const evidence = ctx.db.transaction((tx) => {
     const e = ctx.repos.insertEvidence(tx, {
       claimId: input.claimId,
@@ -318,15 +385,15 @@ export interface VerifyResult {
 }
 
 /** Re-hash the stored bytes and compare them with the row and the sidecar manifest. Audited as `evidence.verify`. */
-export function verifyEvidence(ctx: AppContext, evidence: Evidence, actor: Actor): VerifyResult {
+export async function verifyEvidence(ctx: AppContext, evidence: Evidence, actor: Actor): Promise<VerifyResult> {
   const abs = absoluteEvidencePath(ctx, evidence.storagePath);
   const checkedAt = ctx.now();
   let result: VerifyResult;
   if (!existsSync(abs)) {
     result = { evidenceId: evidence.id, status: 'missing', recordedSha256: evidence.sha256, manifest: existsSync(manifestPath(abs)) ? 'ok' : 'missing', checkedAt };
   } else {
-    const computed = hashFile(abs);
     const st = statSync(abs);
+    const computed = await hashFile(abs);
     let manifest: VerifyResult['manifest'] = 'missing';
     const mp = manifestPath(abs);
     if (existsSync(mp)) {
@@ -360,17 +427,39 @@ export function openEvidenceStream(ctx: AppContext, evidence: Evidence) {
 }
 
 export interface VerifiedEvidenceRead {
-  buffer: Buffer;
+  absolutePath: string;
+  /** Bytes on disk when the file was verified. */
+  size: number;
   computedSha256: string;
   /** True when the bytes on disk hash to the recorded sha256 and have the recorded length. */
   intact: boolean;
 }
 
-/** Read the stored bytes and re-hash them against the row — the file route never serves bytes that no longer match the record. */
-export function readEvidenceVerified(ctx: AppContext, evidence: Evidence): VerifiedEvidenceRead | undefined {
+/** Files above this size keep their verified result in memory while their path, size and mtime are unchanged. */
+export const VERIFY_CACHE_MIN_BYTES = 256 * 1024 * 1024;
+const verifyCache = new Map<string, { mtimeMs: number; size: number; computedSha256: string }>();
+
+/**
+ * Re-hash the stored bytes against the row (streaming) — the file route never serves bytes that no longer match the
+ * record. Files over 256 MiB reuse a previous result while {path, mtime, size} are unchanged (stored files are 0444
+ * and write-once, so a changed file always shows a new mtime or size).
+ */
+export async function readEvidenceVerified(ctx: AppContext, evidence: Evidence): Promise<VerifiedEvidenceRead | undefined> {
   const abs = absoluteEvidencePath(ctx, evidence.storagePath);
   if (!existsSync(abs)) return undefined;
-  const buffer = readFileSync(abs);
-  const computedSha256 = createHash('sha256').update(buffer).digest('hex');
-  return { buffer, computedSha256, intact: computedSha256 === evidence.sha256.toLowerCase() && buffer.length === evidence.bytes };
+  const st = statSync(abs);
+  const cacheable = st.size > VERIFY_CACHE_MIN_BYTES;
+  const cached = cacheable ? verifyCache.get(abs) : undefined;
+  let computedSha256: string;
+  if (cached && cached.mtimeMs === st.mtimeMs && cached.size === st.size) computedSha256 = cached.computedSha256;
+  else {
+    computedSha256 = await hashFile(abs);
+    if (cacheable) verifyCache.set(abs, { mtimeMs: st.mtimeMs, size: st.size, computedSha256 });
+  }
+  return { absolutePath: abs, size: st.size, computedSha256, intact: computedSha256 === evidence.sha256.toLowerCase() && st.size === evidence.bytes };
+}
+
+/** Test hook: forget cached verification results. */
+export function clearVerifyCache(): void {
+  verifyCache.clear();
 }

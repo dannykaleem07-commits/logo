@@ -15,12 +15,17 @@ export interface AuditEntry {
   before?: unknown;
   after?: unknown;
   ip?: string;
+  /** agent_runs.id when an agent principal acted (SUPREME §B.1). */
+  runId?: string;
 }
 
 /** Who is acting — passed to every audited mutation. */
 export interface Actor {
+  /** A user id, 'system', or 'agent:<name>' for an agent principal (SUPREME §B.1). */
   userId: Id | 'system';
   ip?: string;
+  /** The agent run that acted (agent principals only); written to audit_log.run_id. */
+  runId?: string;
 }
 
 export const SYSTEM_ACTOR: Actor = { userId: 'system' };
@@ -46,6 +51,7 @@ export function appendAudit(db: Db, input: AppendAuditInput): AuditEntry {
     before: input.before ?? null,
     after: input.after ?? null,
     ip: input.actor.ip ?? null,
+    runId: input.actor.runId ?? null,
   };
   db.insert(auditLog).values(row).run();
   return denull(row);
@@ -56,9 +62,15 @@ export interface ListAuditFilter {
   entityId?: Id;
   userId?: Id | 'system';
   action?: string;
+  /** Rows written during one agent run. */
+  runId?: string;
+  /** user_id prefix, e.g. 'agent:' for every agent write (the daily log). */
+  userIdPrefix?: string;
   limit?: number;
   offset?: number;
 }
+
+const likePrefix = (p: string): string => `${p.replace(/[\\%_]/g, (c) => `\\${c}`)}%`;
 
 export function listAudit(db: Db, filter: ListAuditFilter = {}): AuditEntry[] {
   const where: SQL[] = [];
@@ -66,6 +78,8 @@ export function listAudit(db: Db, filter: ListAuditFilter = {}): AuditEntry[] {
   if (filter.entityId) where.push(eq(auditLog.entityId, filter.entityId));
   if (filter.userId) where.push(eq(auditLog.userId, filter.userId));
   if (filter.action) where.push(eq(auditLog.action, filter.action));
+  if (filter.runId) where.push(eq(auditLog.runId, filter.runId));
+  if (filter.userIdPrefix) where.push(sql`${auditLog.userId} like ${likePrefix(filter.userIdPrefix)} escape '\\'`);
   const rows = db
     .select()
     .from(auditLog)

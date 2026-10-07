@@ -6,6 +6,8 @@
  * `missing: string[]` (CHECKLIST_INCOMPLETE, FNOL), `errors|incomplete: Array<{field,message}>` (FNOL),
  * `issues: Array<{code?,message}>` (Word templates, mappings), zod `Array<{path,message}>` (VALIDATION),
  * `overlaps: Array<{agreementNumber,startAt,endAt?,claimReference?}>` (HIRE_OVERLAP), `rules: string[]`.
+ * Upload codes (SUPREME-DESIGN §0.3 point 6): FILE_TOO_LARGE `{limitBytes, useChunked?, useImportFolder?}`,
+ * OFFSET_MISMATCH `{receivedBytes}`, INSUFFICIENT_STORAGE `{needBytes, freeBytes}`, UPLOAD_ABORTED, UPLOAD_INCOMPLETE.
  */
 import { formatDateTime } from './dates';
 
@@ -115,9 +117,49 @@ function overlapLines(v: unknown): string[] {
   return out;
 }
 
+/** "31 MB", "1.6 GB" (binary units, as Windows shows them). */
+function sizeWords(bytes: unknown): string | undefined {
+  if (typeof bytes !== 'number' || !Number.isFinite(bytes) || bytes < 0) return undefined;
+  const mb = bytes / (1024 * 1024);
+  if (mb < 1) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+  if (mb < 1024) return `${mb < 10 ? mb.toFixed(1).replace(/\.0$/, '') : Math.round(mb)} MB`;
+  const gb = mb / 1024;
+  return `${gb < 10 ? gb.toFixed(1).replace(/\.0$/, '') : Math.round(gb)} GB`;
+}
+
+/** Plain-English lines for the upload refusals (the code alone says nothing to the owner). */
+export function uploadErrorLines(code: string, details: unknown): string[] {
+  const d = isObj(details) ? details : {};
+  switch (code) {
+    case 'FILE_TOO_LARGE': {
+      const limit = sizeWords(d.limitBytes);
+      const lines = [limit ? `The file is too large: ${d.chunk === true ? `one part can be at most ${limit}` : `the most one upload can take is ${limit}`}.` : 'The file is too large for one upload.'];
+      if (d.useImportFolder === true) lines.push('Put the file in the ClaimDesk import folder instead (Settings → Import folder) — any size works there.');
+      else if (d.useChunked === true) lines.push('Try again from the Evidence tab: ClaimDesk sends big files in parts. For very large files, use the import folder (Settings → Import folder).');
+      return lines;
+    }
+    case 'OFFSET_MISMATCH': {
+      const got = sizeWords(d.receivedBytes);
+      return [`The upload got out of step with ClaimDesk${got ? ` (it has ${got} so far)` : ''}. Try again — it carries on from where it stopped.`];
+    }
+    case 'INSUFFICIENT_STORAGE': {
+      const need = sizeWords(d.needBytes);
+      const free = sizeWords(d.freeBytes);
+      return [`This computer does not have enough free disk space for the file${need && free ? ` (${need} needed, ${free} free)` : ''}. Free some space and try again.`];
+    }
+    case 'UPLOAD_ABORTED':
+      return ['The connection dropped before the whole file arrived. Nothing was stored — try again.'];
+    case 'UPLOAD_INCOMPLETE':
+      return ['Not all of the file has arrived yet. Try again — it carries on from where it stopped.'];
+    default:
+      return [];
+  }
+}
+
 /** Turn every known detail shape into plain lines. */
 export function describeErrorDetails(code: string, details: unknown): string[] {
-  void code;
+  const upload = uploadErrorLines(code, details);
+  if (upload.length) return upload;
   if (details === undefined || details === null) return [];
   // zod / validation issues sent as a bare array
   if (Array.isArray(details)) {

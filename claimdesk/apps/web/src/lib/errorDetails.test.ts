@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { describeErrorDetails } from './errorDetails';
+import { describeErrorDetails, uploadErrorLines } from './errorDetails';
 
 describe('describeErrorDetails', () => {
   it('lists allocation reasons', () => {
@@ -37,5 +37,27 @@ describe('describeErrorDetails', () => {
   it('de-duplicates and caps the list', () => {
     expect(describeErrorDetails('X', { reasons: ['a', 'a'] })).toEqual(['a']);
     expect(describeErrorDetails('X', { reasons: Array.from({ length: 50 }, (_, i) => `r${i}`) })).toHaveLength(30);
+  });
+});
+
+describe('upload refusals in plain English', () => {
+  it('FILE_TOO_LARGE names the limit and the way round it', () => {
+    const lines = describeErrorDetails('FILE_TOO_LARGE', { limitBytes: 25 * 1024 * 1024, useChunked: true });
+    expect(lines[0]).toBe('The file is too large: the most one upload can take is 25 MB.');
+    expect(lines[1]).toMatch(/sends big files in parts/);
+    expect(describeErrorDetails('FILE_TOO_LARGE', { limitBytes: 2048 * 1024 * 1024, useImportFolder: true })).toEqual([
+      'The file is too large: the most one upload can take is 2 GB.',
+      'Put the file in the ClaimDesk import folder instead (Settings → Import folder) — any size works there.',
+    ]);
+    expect(describeErrorDetails('FILE_TOO_LARGE', undefined)).toEqual(['The file is too large for one upload.']);
+    expect(uploadErrorLines('FILE_TOO_LARGE', { limitBytes: 9 * 1024 * 1024, chunk: true })[0]).toBe('The file is too large: one part can be at most 9 MB.');
+  });
+  it('OFFSET_MISMATCH and INSUFFICIENT_STORAGE', () => {
+    expect(describeErrorDetails('OFFSET_MISMATCH', { receivedBytes: 4 * 1024 * 1024 })).toEqual(['The upload got out of step with ClaimDesk (it has 4 MB so far). Try again — it carries on from where it stopped.']);
+    expect(describeErrorDetails('INSUFFICIENT_STORAGE', { needBytes: 3.3 * 1024 ** 3, freeBytes: 1.2 * 1024 ** 3 })).toEqual(['This computer does not have enough free disk space for the file (3.3 GB needed, 1.2 GB free). Free some space and try again.']);
+  });
+  it('dropped and unfinished uploads', () => {
+    expect(describeErrorDetails('UPLOAD_ABORTED', undefined)[0]).toMatch(/Nothing was stored/);
+    expect(describeErrorDetails('UPLOAD_INCOMPLETE', { receivedBytes: 1, bytes: 2 })[0]).toMatch(/carries on/);
   });
 });

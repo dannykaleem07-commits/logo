@@ -1194,11 +1194,54 @@ export const api = {
   updateOffer: async (claimId: Id, offerId: Id, body: OfferPatchBody) => unwrap<InterventionOffer>(await patch<unknown>(`/claims/${seg(claimId)}/offers/${seg(offerId)}`, body), 'offer'),
 
   // evidence
-  uploadEvidence: (claimId: Id, file: File | Blob, fields: EvidenceUploadFields) => {
+  /**
+   * Multipart evidence upload. With `onProgress` (or `signal`) it is sent with XMLHttpRequest so the dialog can show a
+   * progress bar (fetch has no upload progress); otherwise it goes through request() as before. Files above the
+   * chunk threshold use api/uploads.ts uploadInChunks instead (SUPREME-DESIGN §0.3).
+   */
+  uploadEvidence: (claimId: Id, file: File | Blob, fields: EvidenceUploadFields, onProgress?: (sentBytes: number, totalBytes: number) => void, signal?: AbortSignal) => {
     const fd = new FormData();
     fd.append('file', file, file instanceof File ? file.name : 'upload');
     for (const [k, v] of Object.entries(fields)) if (v !== undefined && v !== null) fd.append(k, String(v));
-    return request<Evidence>(`/claims/${seg(claimId)}/evidence`, { method: 'POST', formData: fd });
+    const path = `/claims/${seg(claimId)}/evidence`;
+    if ((!onProgress && !signal) || typeof XMLHttpRequest === 'undefined') return request<Evidence>(path, { method: 'POST', formData: fd, signal });
+    const url = buildUrl(path);
+    return new Promise<Evidence>((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', url);
+      xhr.withCredentials = true;
+      xhr.setRequestHeader('Accept', 'application/json');
+      if (managerOverrideReason !== null) xhr.setRequestHeader(MANAGER_OVERRIDE_HEADER, encodeURIComponent(managerOverrideReason));
+      if (onProgress) xhr.upload.onprogress = (e) => onProgress(e.loaded, e.lengthComputable ? e.total : file.size);
+      const onAbort = () => xhr.abort();
+      signal?.addEventListener('abort', onAbort, { once: true });
+      xhr.onabort = () => reject(new DOMException('The upload was cancelled', 'AbortError'));
+      xhr.onerror = () => reject(new ApiError(0, 'NETWORK', 'Cannot reach the ClaimDesk API (the upload was interrupted)', url));
+      xhr.onload = () => {
+        signal?.removeEventListener('abort', onAbort);
+        let body: unknown;
+        try {
+          body = xhr.responseText ? JSON.parse(xhr.responseText) : undefined;
+        } catch {
+          body = xhr.responseText;
+        }
+        if (xhr.status >= 200 && xhr.status < 300) return resolve(body as Evidence);
+        const err = (body as Partial<ApiErrorBody> | undefined)?.error;
+        const error = err && typeof err.message === 'string'
+          ? new ApiError(xhr.status, err.code ?? `HTTP_${xhr.status}`, err.message, url, err.details, parseOverrideInfo(err.override))
+          : new ApiError(xhr.status, `HTTP_${xhr.status}`, `${xhr.status} upload failed`, url, body);
+        if (error.status === 401 && unauthorizedHandler) {
+          try {
+            unauthorizedHandler(error);
+          } catch (e) {
+            console.warn('[ClaimDesk] unauthorized handler failed', e);
+          }
+        }
+        reject(error);
+      };
+      if (signal?.aborted) return xhr.abort();
+      xhr.send(fd);
+    });
   },
   getEvidence: (id: Id, signal?: AbortSignal) => get<Evidence>(`/evidence/${seg(id)}`, undefined, signal),
   evidenceFileUrl: (id: Id) => buildUrl(`/evidence/${seg(id)}/file`),
