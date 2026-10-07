@@ -14,3 +14,17 @@ coverage/
 packaging/dist/
 packaging/sea-prep.blob
 packaging/.rcedit/
+# Private data never goes in the repository (docs/SUPREME-DESIGN.md §K.7): Audatex packs, brain packs, the import
+# folder, secrets, agent run folders. The CI "private-data guard" fails the build if any of these is tracked.
+*.cab
+*.ccbrain
+# the private playbook folder at the top or in a data folder — anchored so source folders such as
+# apps/api/src/brain/ and apps/web/src/screens/settings/brain/ (design §E.5, §L.10) stay tracked
+/brain/
+**/data/brain/
+brain-packs/
+engineer-data/
+inbox/
+secrets/
+agent-runs/
+*.dpapi

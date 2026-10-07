@@ -1,4 +1,4 @@
-/* Sign-in screen: full-screen navy backdrop (logo palette), one white card. Phone width first. */
+/* Sign-in screen (0.4 calm pass): quiet light backdrop, one white card, navy primary button. Phone width first. */
 .login-screen {
   min-height: 100vh;
   min-height: 100dvh;
@@ -8,39 +8,36 @@
   justify-content: center;
   gap: var(--s-5);
   padding: var(--s-8) var(--s-4);
-  background:
-    radial-gradient(900px 500px at 0% 0%, rgba(20, 102, 210, 0.4), transparent 60%),
-    radial-gradient(700px 420px at 100% 100%, rgba(20, 102, 210, 0.22), transparent 60%),
-    linear-gradient(160deg, var(--navy) 0%, var(--navy-900) 100%);
+  background: var(--bg);
   overflow-x: hidden;
 }
 
 .login-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 400px;
   background: var(--surface);
-  border-radius: var(--r-lg);
-  box-shadow: var(--shadow-lg);
-  padding: var(--s-8) var(--s-8) var(--s-6);
-  border-top: 4px solid var(--blue);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow-md);
+  padding: var(--s-10) var(--s-8) var(--s-8);
 }
 
 .login-brand {
   display: flex;
   justify-content: center;
-  margin-bottom: var(--s-5);
+  margin-bottom: var(--s-6);
 }
 .login-logo {
   display: block;
   width: 100%;
-  max-width: 260px;
+  max-width: 200px;
   height: auto;
 }
 
 .login-title {
   font-size: var(--fs-xl);
   text-align: center;
-  margin-bottom: var(--s-1);
+  margin-bottom: 6px;
 }
 .login-sub {
   text-align: center;
@@ -78,13 +75,14 @@
   border: none;
   border-radius: var(--r-sm);
   background: transparent;
-  color: var(--blue);
+  color: var(--muted);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: var(--fw-medium);
   cursor: pointer;
 }
 .password-toggle:hover {
-  background: var(--blue-50);
+  background: var(--surface-2);
+  color: var(--ink);
 }
 .password-toggle svg {
   width: 18px;
@@ -96,7 +94,7 @@
   min-height: 1.35em; /* reserved so the button does not jump when an error appears */
   color: var(--red);
   font-size: var(--fs-sm);
-  font-weight: 600;
+  font-weight: var(--fw-medium);
 }
 
 .login-note {
@@ -104,8 +102,7 @@
   padding: var(--s-3);
   border-radius: var(--r-md);
   background: var(--blue-50);
-  border: 1px solid var(--blue-100);
-  color: var(--navy);
+  color: var(--ink-2);
   font-size: var(--fs-xs);
   line-height: 1.5;
 }
@@ -115,10 +112,11 @@
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  max-width: 420px;
+  max-width: 400px;
   text-align: center;
   font-size: var(--fs-xs);
-  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.5;
+  color: var(--muted-2);
 }
 
 @media (max-width: 480px) {
@@ -127,9 +125,10 @@
     padding-top: var(--s-6);
   }
   .login-card {
-    padding: var(--s-6) var(--s-5) var(--s-5);
+    padding: var(--s-8) var(--s-5) var(--s-6);
+    box-shadow: none;
   }
   .login-logo {
-    max-width: 220px;
+    max-width: 180px;
   }
 }

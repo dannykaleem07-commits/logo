@@ -1,0 +1,35 @@
+[
+  {
+    "id": "core-research-smoke",
+    "match": { "jobType": "research.ask", "userContains": ["[gateway-smoke]"] },
+    "steps": [
+      { "tool": "kb_search", "input": { "q": "hire", "type": null, "topic": null, "limit": 3 } },
+      { "tool": "claim_clocks", "input": { "claimId": "$job.claimId" } }
+    ],
+    "outcome": "ok",
+    "result": {
+      "answer": "Invented smoke-test answer: the knowledge base was searched and the claim clocks were read.",
+      "citations": [{ "kind": "kb", "id": "$step[0].items[0].id", "verified": false }],
+      "confidence": 0.6
+    },
+    "usage": { "inputTokens": 1200, "outputTokens": 90 }
+  },
+  {
+    "id": "core-research-usage-limited",
+    "match": { "jobType": "research.ask", "userContains": ["[gateway-usage-limit]"] },
+    "outcome": "usage_limited",
+    "resetsInMinutes": 30
+  },
+  {
+    "id": "core-research-auth-failed",
+    "match": { "jobType": "research.ask", "userContains": ["[gateway-auth-failed]"] },
+    "outcome": "auth_failed",
+    "message": "OAuth token has expired (invented fixture)"
+  },
+  {
+    "id": "core-research-bad-result",
+    "match": { "jobType": "research.ask", "userContains": ["[gateway-bad-result]"] },
+    "outcome": "ok",
+    "result": { "answer": "Invented answer with an out-of-range confidence.", "citations": [], "confidence": 7 }
+  }
+]

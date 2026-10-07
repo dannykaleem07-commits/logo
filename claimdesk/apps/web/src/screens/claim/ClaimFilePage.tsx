@@ -24,6 +24,8 @@ import { EngineeringTab } from './tabs/EngineeringTab';
 import { VehicleTab } from './tabs/VehicleTab';
 import { ActionsTab } from './tabs/ActionsTab';
 import { FlagsTab } from './tabs/FlagsTab';
+import { MailboxTab } from './tabs/MailboxTab';
+import { AgentTab } from './tabs/AgentTab';
 import { isBlocked } from './lib/documents';
 import './claim.css';
 
@@ -75,7 +77,7 @@ export function ClaimFilePage() {
     return n ? { ...t, badge: <Badge tone={tone}>{n}</Badge> } : t;
   });
   // Primary row + "More ▾" (0.3 §E1); the open-flag count shows on More while Flags sits inside it.
-  const { primary, more } = splitClaimTabs(tabs);
+  const { primary, more, agent } = splitClaimTabs(tabs);
   const moreBadge = counts.flags ? <Badge tone="red">{counts.flags}</Badge> : undefined;
   const linked = view.linkedClaims ?? view.claim.linkedClaimIds.map((lid) => ({ id: lid, reference: lid, status: '' }));
 
@@ -128,7 +130,7 @@ export function ClaimFilePage() {
       )}
       <FlagsBanner claimId={view.claim.id} flags={flags} />
       <div className="claim-tabs-wrap">
-        <Tabs items={primary} more={more} moreBadge={moreBadge} narrowPrimary={3} value={current} onChange={(tab) => navigate(`/claims/${id}/${tab}`)} ariaLabel="Claim file sections" />
+        <Tabs items={[...primary, ...agent]} more={more} moreBadge={moreBadge} narrowPrimary={3} value={current} onChange={(tab) => navigate(`/claims/${id}/${tab}`)} ariaLabel="Claim file sections" />
       </div>
       <div style={{ marginTop: 16 }} id={`tabpanel-${current}`} role="tabpanel">
         <Routes>
@@ -147,6 +149,8 @@ export function ClaimFilePage() {
           <Route path="vehicle" element={<VehicleTab view={view} />} />
           <Route path="actions" element={<ActionsTab view={view} />} />
           <Route path="flags" element={<FlagsTab view={view} />} />
+          <Route path="mailbox" element={<MailboxTab view={view} />} />
+          <Route path="agent" element={<AgentTab view={view} />} />
           <Route path="*" element={<Navigate to="overview" replace />} />
         </Routes>
       </div>

@@ -16,8 +16,12 @@ import { assessTotalLoss, engineerReportChecklist, extractLinesProvider, predict
 import { gtaRatesFor } from '../services/kb.js';
 import { gateFor } from '../services/override.js';
 import { applyEventSideEffects } from '../services/sideEffects.js';
+import { assertHuman } from '../services/humanOnly.js';
 import { params, requireClaim } from './helpers.js';
 import { gtaRate } from '@ccguk/domain';
+
+/** Per-route body limit of POST /claims/:id/estimate/import (other JSON routes keep the 2 MiB app limit). */
+export const ESTIMATE_IMPORT_BODY_LIMIT = 16 * 1024 * 1024;
 
 function toLines(ctx: AppContext, inputs: EstimateLineInput[]): EstimateLine[] {
   return inputs.map((l) => ({ ...l, id: l.id ?? ctx.repos.newId() }));
@@ -96,7 +100,8 @@ export function registerEngineeringRoutes(app: FastifyInstance, ctx: AppContext)
     });
   });
 
-  app.post('/claims/:id/estimate/import', async (request, reply) => {
+  /** Estimate text from big Audatex/bodyshop PDFs: per-route body limit 16 MiB (SUPREME §0.3, §R.2 step 1). */
+  app.post('/claims/:id/estimate/import', { bodyLimit: ESTIMATE_IMPORT_BODY_LIMIT }, async (request, reply) => {
     const { id } = params<{ id: string }>(request);
     const claim = requireClaim(ctx, id);
     const body = parse(estimateImportBody, request.body);
@@ -156,6 +161,7 @@ export function registerEngineeringRoutes(app: FastifyInstance, ctx: AppContext)
 
   app.post('/claims/:id/estimate/:eid/approve', async (request) => {
     const { id, eid } = params<{ id: string; eid: string }>(request);
+    assertHuman(request.actor, 'approve an estimate');
     requireClaim(ctx, id);
     const e = ctx.repos.requireEstimate(ctx.db, eid);
     if (e.claimId !== id) throw conflict('WRONG_CLAIM', 'Estimate belongs to another claim');
@@ -260,6 +266,7 @@ export function registerEngineeringRoutes(app: FastifyInstance, ctx: AppContext)
 
   app.post('/claims/:id/pav/:pid/approve', async (request) => {
     const { id, pid } = params<{ id: string; pid: string }>(request);
+    assertHuman(request.actor, 'approve a PAV');
     requireClaim(ctx, id);
     const pav = ctx.repos.requirePav(ctx.db, pid);
     if (pav.claimId !== id) throw conflict('WRONG_CLAIM', 'PAV belongs to another claim');
@@ -358,6 +365,7 @@ export function registerEngineeringRoutes(app: FastifyInstance, ctx: AppContext)
 
   app.post('/claims/:id/engineer-report/:rid/issue', async (request) => {
     const { id, rid } = params<{ id: string; rid: string }>(request);
+    assertHuman(request.actor, "issue an engineer's report");
     requireClaim(ctx, id);
     const report = ctx.repos.requireEngineerReport(ctx.db, rid);
     if (report.claimId !== id) throw conflict('WRONG_CLAIM', 'Report belongs to another claim');

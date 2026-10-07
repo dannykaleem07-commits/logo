@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { NAV_ITEMS } from './nav';
-import { MenuIcon, NavIcon, SearchIcon, ShieldIcon, SignOutIcon } from './Icons';
+import { NAV_ITEMS, NAV_SECTIONS, navItemMatches, navItemsBySection, type NavItem } from './nav';
+import { ChevronIcon, MenuIcon, NavIcon, SearchIcon, ShieldIcon, SignOutIcon } from './Icons';
 import { minutesText, useManagerMode } from './managerMode';
 import { clearSignedInState } from './session';
 import { useDashboardData, useHealth, useLogout, useMe } from '../api/hooks';
@@ -11,9 +11,10 @@ import { ErrorBoundary } from '../components/ErrorBoundary';
 import { LOGIN_PATH } from '../lib/auth';
 import { SHELL_CONTACT_LINE, versionLabel } from '../screens/settings/settings';
 import { UpdateNotice } from '../screens/settings/UpdateNotice';
+import { SupremeTopbar } from './SupremeTopbar';
 
 /**
- * Layout: left nav (drawer on phones), top bar with global search + the two global badges
+ * Layout: left nav (grouped, data-driven from nav.ts; a drawer on phones), top bar with global search + the two global badges
  * (blocked documents, clocks due today / overdue), the signed-in user with "Sign out", and the routed page.
  * Rendered inside <AuthGate>, so `useMe()` already holds the user.
  */
@@ -99,38 +100,96 @@ function UserBox({ user, onSignOut, signingOut, place }: UserProps & { place: 't
   );
 }
 
+const MORE_KEY = 'claimdesk.nav.more';
+
+/** Remembered open/closed state of the "More" group (per browser; null = follow the current page). */
+function readMoreOpen(): boolean | null {
+  try {
+    const v = typeof window !== 'undefined' ? window.localStorage.getItem(MORE_KEY) : null;
+    return v === '1' ? true : v === '0' ? false : null;
+  } catch {
+    return null;
+  }
+}
+function writeMoreOpen(open: boolean) {
+  try {
+    window.localStorage.setItem(MORE_KEY, open ? '1' : '0');
+  } catch {
+    // private window / blocked storage: the group still toggles for this visit
+  }
+}
+
+function NavList({ items, id, hidden, className = '' }: { items: NavItem[]; id?: string; hidden?: boolean; className?: string }) {
+  return (
+    <ul className={`nav-list ${className}`.trim()} id={id} hidden={hidden}>
+      {items.map((item) => (
+        <li key={item.to}>
+          <NavLink to={item.to} end={item.end} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+            <NavIcon name={item.icon} />
+            <span>{item.label}</span>
+          </NavLink>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 function SideNav({ open, ...userProps }: { open: boolean } & UserProps) {
   const health = useHealth();
   const apiState = health.isError ? 'down' : health.data ? 'ok' : 'unknown';
+  const { pathname } = useLocation();
+  const groups = navItemsBySection(NAV_ITEMS);
+  const moreId = useId();
+  const [moreChoice, setMoreChoice] = useState<boolean | null>(readMoreOpen);
+  const moreHasActive = groups.more.some((item) => navItemMatches(item, pathname));
+  const moreOpen = moreChoice ?? moreHasActive;
+  const toggleMore = () => {
+    const next = !moreOpen;
+    setMoreChoice(next);
+    writeMoreOpen(next);
+  };
+  // Opening a page that lives under More always shows where you are.
+  useEffect(() => {
+    if (moreHasActive) setMoreChoice((c) => (c === false ? true : c));
+  }, [moreHasActive]);
+
   return (
     <nav className={`nav ${open ? 'open' : ''}`} aria-label="Main">
       <Link to="/" className="nav-brand">
-        <span className="nav-brand-logo">
-          <img src="/logo.png" alt="Courtesy Cars UK" />
-        </span>
-        <span className="nav-brand-text">
-          <span className="nav-brand-name">ClaimDesk</span>
-          <span className="nav-brand-sub">CCGUK</span>
-        </span>
+        <img className="nav-brand-logo" src="/logo.png" alt="Courtesy Cars UK" />
+        <span className="nav-brand-name">ClaimDesk</span>
       </Link>
-      <ul className="nav-list">
-        {NAV_ITEMS.map((item) => (
-          <li key={item.to}>
-            <NavLink to={item.to} end={item.end} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''} ${item.icon === 'new' ? 'nav-cta' : ''}`}>
-              <NavIcon name={item.icon} />
-              <span>{item.label}</span>
-            </NavLink>
-          </li>
-        ))}
-      </ul>
+      <div className="nav-groups">
+        {NAV_SECTIONS.map((section) => {
+          const items = groups[section.id];
+          if (items.length === 0) return null;
+          if (section.collapsible) {
+            return (
+              <div key={section.id} className={`nav-group nav-group-${section.id} ${moreOpen ? 'is-open' : ''}`}>
+                <button type="button" className="nav-group-toggle" aria-expanded={moreOpen} aria-controls={moreId} onClick={toggleMore}>
+                  <span>{section.label}</span>
+                  <ChevronIcon />
+                </button>
+                <NavList items={items} id={moreId} hidden={!moreOpen} />
+              </div>
+            );
+          }
+          return (
+            <div key={section.id} className={`nav-group nav-group-${section.id}`}>
+              <NavList items={items} />
+            </div>
+          );
+        })}
+      </div>
       <div className="nav-foot">
         <UserBox {...userProps} place="nav" />
-        <div className="status">
+        <div className="status" title={apiState === 'ok' ? 'The ClaimDesk API is answering' : undefined}>
           <span className={`dot ${apiState}`} />
           <span>{apiState === 'ok' ? 'API connected' : apiState === 'down' ? 'API unreachable' : 'Checking API…'}</span>
         </div>
-        <div style={{ marginTop: 6 }}>Courtesy Cars Group UK Ltd · 17430389</div>
-        <div className="xs">{SHELL_CONTACT_LINE}</div>
+        <div className="nav-company" title={SHELL_CONTACT_LINE}>
+          Courtesy Cars Group UK Ltd · 17430389
+        </div>
         <div className="app-version" title={health.data?.version ? `Version ${health.data.version}` : undefined}>
           {versionLabel(health.data?.version)}
         </div>
@@ -175,6 +234,7 @@ function TopBar({ onMenu, ...userProps }: { onMenu: () => void } & UserProps) {
         <input ref={inputRef} type="search" placeholder={narrow ? 'Search' : 'Search registration, claim ref or name'} value={q} onChange={(e) => setQ(e.target.value)} aria-label="Global search" />
       </form>
       <div className="topbar-badges">
+        <SupremeTopbar />
         <Link to="/#blocked-documents" className={`topbar-badge ${blocked > 0 ? 'hot' : ''}`} title="Documents blocked by the consistency engine (need a human to clear each flag)">
           <span className="label-long">Blocked documents</span>
           <span className="label-short">Blocked</span>

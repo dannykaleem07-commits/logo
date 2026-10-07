@@ -1,7 +1,8 @@
 import type { FastifyInstance } from 'fastify';
 import { compareIso, type Clock, type InterventionOffer } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
-import { conflict } from '../errors.js';
+import { conflict, HttpError } from '../errors.js';
+import { isAutomatedActor } from '../services/humanOnly.js';
 import { parse } from '../schemas/common.js';
 import { createOfferBody, patchOfferBody } from '../schemas/offers.js';
 import { recomputeClocks } from '../services/claimView.js';
@@ -50,6 +51,10 @@ export function registerOffersRoutes(app: FastifyInstance, ctx: AppContext): voi
     const { id, oid } = params<{ id: string; oid: string }>(request);
     requireClaim(ctx, id);
     const body = parse(patchOfferBody, request.body);
+    // Offer decisions and replies are the owner's (SUPREME §B.2 rule 4, §D.1): never an agent or the system.
+    if (isAutomatedActor(request.actor) && (body.clientDecision !== undefined || body.replySentAt !== undefined)) {
+      throw new HttpError(403, 'HUMAN_REQUIRED', 'Offer decisions and replies are recorded by a person, never by an agent', { actor: request.actor.userId });
+    }
     const before = ctx.repos.requireOffer(ctx.db, oid);
     if (before.claimId !== id) throw conflict('WRONG_CLAIM', `Offer ${oid} belongs to another claim`);
     const now = ctx.now();

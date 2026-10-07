@@ -10,6 +10,7 @@ import { parse } from '../schemas/common.js';
 import { directoryFailedBody, directoryQuery, directoryVerifyBody, gtaRatesQuery, kbAdviseQuery, kbSearchQuery } from '../schemas/services.js';
 import { adviseTopic, filterDirectory, GET_PAID_FASTER, gtaRatesOn, kbEntries, loadCourtFees, loadDirectory, mergedDirectory, searchKnowledgeBase } from '../services/kb.js';
 import { params } from './helpers.js';
+import { assertHuman } from '../services/humanOnly.js';
 
 export function registerDirectoryRoutes(app: FastifyInstance, ctx: AppContext): void {
   const today = () => ctx.now().slice(0, 10);
@@ -35,6 +36,7 @@ export function registerDirectoryRoutes(app: FastifyInstance, ctx: AppContext): 
 
   app.patch('/directory/:id/verify', async (request) => {
     const { id } = params<{ id: string }>(request);
+    assertHuman(request.actor, 'verify a directory entry');
     requireEntry(id);
     const body = parse(directoryVerifyBody, request.body);
     const actor = { userId: body.verifiedBy, ip: request.ip };

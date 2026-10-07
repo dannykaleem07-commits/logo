@@ -8,6 +8,17 @@
 //   ClaimDesk.exe --stop       stop every running ClaimDesk (your data and the example claims; --demo: example claims only)
 //   --no-browser               start the server only (CI, services); CLAIMDESK_NO_BROWSER=1 does the same
 //   --seed-only                create the example claims and exit
+//
+// 24/7 background mode (docs/SUPREME-DESIGN.md §M.1):
+//   ClaimDesk-Background.exe --background     supervisor: one instance, starts the server as a hidden child process,
+//                                             restarts it (5 s → 5 min backoff), logs to <home>\logs\claimdesk-<date>.log
+//   ... --server-child                        the server itself (started by --background; JOBS_ENABLED=true)
+//   ... --ensure                              start the background server if it is not answering, then exit
+//   ClaimDesk.exe --install-autostart         scheduled tasks ClaimDesk\Background (at sign-in) and ClaimDesk\Watchdog
+//   ClaimDesk.exe --remove-autostart          remove both tasks
+//   ClaimDesk.exe --open claimdesk://needs-you/<id>   open that page (the claimdesk:// link handler)
+// With autostart installed, a normal start makes sure the background server runs and only opens the window; closing
+// the window never stops the server.
 'use strict';
 const path = require('node:path');
 const fs = require('node:fs');
@@ -16,6 +27,7 @@ const http = require('node:http');
 const crypto = require('node:crypto');
 const { spawn, spawnSync, execFileSync } = require('node:child_process');
 const { pathToFileURL } = require('node:url');
+const util = require('node:util');
 
 const LIVE_PORT = 4000;
 const DEMO_PORT = 4001;
@@ -220,6 +232,138 @@ function parseEnvFile(text) {
   return out;
 }
 
+
+// ---------------------------------------------------------------------------
+// Background mode, autostart, links (pure; exported for tests) — docs/SUPREME-DESIGN.md §M.1
+// ---------------------------------------------------------------------------
+
+/** The import folder's subfolders (<home>\inbox\…), one per kind of file (§0.3 point 3). */
+const INBOX_SUBFOLDERS = ['evidence', 'intake', 'mail', 'brain-packs', 'engineer-data'];
+
+const TASK_BACKGROUND = 'ClaimDesk\\Background';
+const TASK_WATCHDOG = 'ClaimDesk\\Watchdog';
+/** Used only if Windows refuses the ClaimDesk task folder for a standard user. */
+const TASK_FALLBACK = { [TASK_BACKGROUND]: 'ClaimDesk Background', [TASK_WATCHDOG]: 'ClaimDesk Watchdog' };
+const BACKGROUND_EXE = 'ClaimDesk-Background.exe';
+
+/** Restart backoff for the server child: 5 s, 10 s, 20 s … capped at 5 minutes. */
+const RESTART_BASE_MS = 5000;
+const RESTART_MAX_MS = 5 * 60 * 1000;
+/** More restarts than this within an hour → stop and tell the owner. */
+const MAX_RESTARTS_PER_HOUR = 20;
+/** A child that ran this long resets the backoff. */
+const STABLE_RUN_MS = 10 * 60 * 1000;
+const LOG_KEEP_DAYS = 14;
+
+function restartDelayMs(consecutiveFailures) {
+  const n = Math.max(0, Number(consecutiveFailures) || 0);
+  return Math.min(RESTART_MAX_MS, RESTART_BASE_MS * 2 ** Math.min(n, 16));
+}
+
+/** The backoff schedule as a list (for the log and the tests). */
+function backoffSchedule(steps = 8) {
+  return Array.from({ length: steps }, (_, i) => restartDelayMs(i));
+}
+
+/** True when there were more than MAX_RESTARTS_PER_HOUR restarts in the hour before `nowMs`. */
+function tooManyRestarts(restartTimesMs, nowMs, max = MAX_RESTARTS_PER_HOUR) {
+  return restartTimesMs.filter((t) => nowMs - t < 60 * 60 * 1000).length > max;
+}
+
+/** background.lock content → stale (safe to take over) unless it names a live process other than us. */
+function lockIsStale(lock, isAlive, selfPid = process.pid) {
+  if (!lock || typeof lock !== 'object') return true;
+  const pid = Number(lock.pid);
+  if (!Number.isInteger(pid) || pid <= 0) return true;
+  if (pid === selfPid) return true;
+  try {
+    return !isAlive(pid);
+  } catch {
+    return true;
+  }
+}
+
+function pad2(n) {
+  return String(n).padStart(2, '0');
+}
+
+/** claimdesk-YYYY-MM-DD.log for the local date. */
+function logFileName(date = new Date()) {
+  return `claimdesk-${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}.log`;
+}
+
+/** Log files older than `keepDays` (by the date in their name). */
+function logsToDelete(names, now = new Date(), keepDays = LOG_KEEP_DAYS) {
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  return names.filter((n) => {
+    const m = /^claimdesk-(\d{4})-(\d{2})-(\d{2})\.log$/.exec(n);
+    if (!m) return false;
+    const day = Date.UTC(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    return (today - day) / 86400000 >= keepDays;
+  });
+}
+
+/** How to start this launcher again in another mode: the exe itself when packaged, else `node launch.cjs`. */
+function childCommand(execPath, scriptPath, isSea, args) {
+  return isSea ? { command: execPath, args: [...args] } : { command: execPath, args: [scriptPath, ...args] };
+}
+
+function xmlEscape(value) {
+  return String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
+/** Fill a task template: {{KEY}} → escaped value; comments removed; a placeholder left over is an error. */
+function buildTaskXml(template, values) {
+  const out = String(template)
+    .replace(/<!--[\s\S]*?-->\s*/g, '')
+    .replace(/\{\{([A-Z_]+)\}\}/g, (all, key) => (values[key] === undefined || values[key] === null ? all : xmlEscape(values[key])));
+  const left = /\{\{([A-Z_]+)\}\}/.exec(out);
+  if (left) throw new Error(`task template value missing: ${left[1]}`);
+  return out;
+}
+
+/** Local time as the task scheduler wants it (no zone): 2026-10-07T18:15:00. */
+function localIsoNoZone(date) {
+  return `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}T${pad2(date.getHours())}:${pad2(date.getMinutes())}:${pad2(date.getSeconds())}`;
+}
+
+/** DOMAIN\user for the task principal. */
+function taskUserId(env, fallbackUser) {
+  const user = envGet(env, 'USERNAME') || fallbackUser;
+  const domain = envGet(env, 'USERDOMAIN');
+  return domain ? `${domain}\\${user}` : user;
+}
+
+/** Values for both templates: the background task runs `--background`, the watchdog `--ensure` every 15 minutes. */
+function taskDefinitions({ exe, workDir, userId, now = new Date() }) {
+  const common = { AUTHOR: 'Courtesy Cars Group UK Ltd - ClaimDesk', USER_ID: userId, COMMAND: exe, WORKING_DIR: workDir };
+  return [
+    { name: TASK_BACKGROUND, template: 'background.xml', values: { ...common, ARGUMENTS: '--background' } },
+    // first check 15 minutes after installing (the logon task or the window starts it before that)
+    { name: TASK_WATCHDOG, template: 'watchdog.xml', values: { ...common, ARGUMENTS: '--ensure', START_BOUNDARY: localIsoNoZone(new Date(now.getTime() + 15 * 60 * 1000)) } },
+  ];
+}
+
+/**
+ * claimdesk:// links (Windows notifications, the daily log) → the app URL. Known pages only; ids are plain;
+ * only `undo=1` survives as a query. Anything else opens the home page.
+ */
+function protocolToUrl(raw, port) {
+  const base = `http://localhost:${port}`;
+  const m = /^claimdesk:\/\/([^?#]*)(?:\?([^#]*))?/i.exec(String(raw || '').trim());
+  if (!m) return `${base}/`;
+  const parts = m[1].split('/').filter(Boolean);
+  const page = (parts[0] || '').toLowerCase();
+  const id = parts[1];
+  const okId = id === undefined || /^[A-Za-z0-9_-]{1,80}$/.test(id);
+  const pages = new Set(['needs-you', 'outbox', 'daily-log', 'agents', 'claims', 'intake']);
+  if (!pages.has(page) || !okId || parts.length > 2) return `${base}/`;
+  let url = `${base}/${page}${id ? `/${id}` : ''}`;
+  const q = new URLSearchParams(m[2] || '');
+  if (q.get('undo') === '1') url += '?undo=1';
+  return url;
+}
+
 // ---------------------------------------------------------------------------
 // Side-effecting pieces
 // ---------------------------------------------------------------------------
@@ -385,6 +529,347 @@ function messageBox(message) {
   } catch {}
 }
 
+
+// ---------------------------------------------------------------------------
+// Background mode: log writer, lock, supervisor, server child, ensure, autostart (§M.1)
+// ---------------------------------------------------------------------------
+
+function runDir(home) {
+  return path.join(home, 'run');
+}
+function lockPath(home) {
+  return path.join(runDir(home), 'background.lock');
+}
+function logsDir(home) {
+  return path.join(home, 'logs');
+}
+
+function isAlive(pid) {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (err) {
+    return Boolean(err && err.code === 'EPERM');
+  }
+}
+
+function readLock(home) {
+  try {
+    return JSON.parse(fs.readFileSync(lockPath(home), 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * A daily log file under <home>\logs (14 days kept). `install()` replaces console.* so nothing is lost in a process
+ * without a console (ClaimDesk-Background.exe is a GUI-subsystem program: stdout and stderr go nowhere).
+ */
+function createLogWriter(home, tag) {
+  const dir = logsDir(home);
+  try {
+    fs.mkdirSync(dir, { recursive: true });
+  } catch {}
+  let currentName = '';
+  const prune = () => {
+    try {
+      for (const n of logsToDelete(fs.readdirSync(dir))) fs.rmSync(path.join(dir, n), { force: true });
+    } catch {}
+  };
+  const file = () => {
+    const name = logFileName();
+    if (name !== currentName) {
+      currentName = name;
+      prune();
+    }
+    return path.join(dir, name);
+  };
+  const write = (level, text) => {
+    const line = `${new Date().toISOString()} [${tag} ${process.pid}] ${level.toUpperCase()} ${text}`.replace(/\r?\n(?!$)/g, '\n    ');
+    try {
+      fs.appendFileSync(file(), `${line}${os.EOL}`);
+    } catch {}
+  };
+  return {
+    write,
+    file,
+    /** Open the current day's file for a child's stdout/stderr. */
+    openFd: () => fs.openSync(file(), 'a'),
+    install() {
+      for (const level of ['log', 'info', 'warn', 'error', 'debug']) {
+        console[level] = (...args) => write(level === 'log' ? 'info' : level, util.format(...args));
+      }
+      process.on('uncaughtException', (err) => {
+        write('error', `uncaught: ${err && err.stack ? err.stack : err}`);
+        process.exit(1);
+      });
+      process.on('unhandledRejection', (err) => write('error', `unhandled rejection: ${err && err.stack ? err.stack : err}`));
+    },
+  };
+}
+
+function isSea() {
+  try {
+    return require('node:sea').isSea();
+  } catch {
+    return false;
+  }
+}
+
+/** How to run this launcher in another mode (the packaged exe, or node + this file from a checkout). */
+function selfCommand(args) {
+  return childCommand(process.execPath, __filename, isSea(), args);
+}
+
+/** ClaimDesk-Background.exe next to ClaimDesk.exe when packaged (no console window), else this program. */
+function backgroundCommand(args) {
+  if (isSea()) {
+    const bg = path.join(path.dirname(process.execPath), BACKGROUND_EXE);
+    if (fs.existsSync(bg)) return { command: bg, args: [...args] };
+  }
+  return selfCommand(args);
+}
+
+/** The live port as a start would choose it (claimdesk.env may move it). */
+function livePort(home) {
+  let fileVars = {};
+  try {
+    fileVars = parseEnvFile(fs.readFileSync(path.join(home, 'claimdesk.env'), 'utf8'));
+  } catch {}
+  return portFor(false, { ...fileVars, ...process.env });
+}
+
+/** Start `--background` detached (it checks itself whether one is already running). */
+function spawnBackground() {
+  const { command, args } = backgroundCommand(['--background']);
+  const child = spawn(command, args, { detached: true, stdio: 'ignore', windowsHide: true, cwd: path.dirname(command) });
+  child.on('error', () => {});
+  child.unref();
+  return child.pid;
+}
+
+async function waitForHealth(port, seconds) {
+  for (let i = 0; i < seconds * 2; i++) {
+    const h = await probeHealth(port);
+    if (h) return h;
+    await new Promise((r) => setTimeout(r, 500));
+  }
+  return null;
+}
+
+/** `--ensure`: health probe; if ClaimDesk is not answering, start the background server. */
+async function ensureBackground({ wait = 0 } = {}) {
+  const home = homeDir();
+  const port = livePort(home);
+  const h = await probeHealth(port);
+  if (h) {
+    console.log(`ClaimDesk is running on port ${port}.`);
+    return 0;
+  }
+  const pid = spawnBackground();
+  console.log(`ClaimDesk was not running: background server started (process ${pid}).`);
+  if (wait > 0 && !(await waitForHealth(port, wait))) return 1;
+  return 0;
+}
+
+/** Is the ClaimDesk\Background scheduled task installed? (schtasks /Query exit code 0) */
+function backgroundTaskInstalled() {
+  if (process.platform !== 'win32') return false;
+  for (const name of [TASK_BACKGROUND, TASK_FALLBACK[TASK_BACKGROUND]]) {
+    try {
+      const r = spawnSync('schtasks.exe', ['/Query', '/TN', name], { stdio: 'ignore', windowsHide: true, timeout: 15000 });
+      if (r.status === 0) return true;
+    } catch {}
+  }
+  return false;
+}
+
+/** packaging/autostart (source checkout) or app/autostart (packaged). */
+function autostartDir() {
+  for (const d of [path.join(__dirname, 'autostart'), path.join(__dirname, 'packaging', 'autostart')]) if (fs.existsSync(path.join(d, 'background.xml'))) return d;
+  throw new Error('the scheduled-task templates (autostart\\background.xml, watchdog.xml) are missing next to launch.cjs');
+}
+
+/** `--install-autostart`: create both scheduled tasks for this user (no administrator rights needed). */
+function installAutostart() {
+  if (process.platform !== 'win32') {
+    console.log('Autostart uses the Windows Task Scheduler: nothing to do on this system.');
+    return 1;
+  }
+  const home = homeDir();
+  fs.mkdirSync(runDir(home), { recursive: true });
+  const { command } = backgroundCommand([]);
+  const defs = taskDefinitions({ exe: command, workDir: path.dirname(command), userId: taskUserId(process.env, os.userInfo().username) });
+  const dir = autostartDir();
+  let failed = 0;
+  for (const def of defs) {
+    const xml = buildTaskXml(fs.readFileSync(path.join(dir, def.template), 'utf8'), def.values);
+    const file = path.join(runDir(home), `task-${def.template}`);
+    // Task Scheduler reads UTF-16 with a byte-order mark
+    fs.writeFileSync(file, Buffer.concat([Buffer.from([0xff, 0xfe]), Buffer.from(xml, 'utf16le')]));
+    let r = spawnSync('schtasks.exe', ['/Create', '/XML', file, '/TN', def.name, '/F'], { encoding: 'utf8', windowsHide: true, timeout: 30000 });
+    if (r.status !== 0) {
+      console.log(`schtasks /Create ${def.name}: ${(r.stderr || r.stdout || '').trim()} — trying "${TASK_FALLBACK[def.name]}"`);
+      r = spawnSync('schtasks.exe', ['/Create', '/XML', file, '/TN', TASK_FALLBACK[def.name], '/F'], { encoding: 'utf8', windowsHide: true, timeout: 30000 });
+    }
+    if (r.status === 0) console.log(`Scheduled task created: ${def.name}`);
+    else {
+      failed += 1;
+      console.error(`Could not create the scheduled task ${def.name}: ${(r.stderr || r.stdout || '').trim()}`);
+    }
+  }
+  return failed ? 1 : 0;
+}
+
+/** `--remove-autostart`: delete both tasks (missing ones are fine). */
+function removeAutostart() {
+  if (process.platform !== 'win32') return 0;
+  for (const name of [TASK_BACKGROUND, TASK_WATCHDOG, TASK_FALLBACK[TASK_BACKGROUND], TASK_FALLBACK[TASK_WATCHDOG]]) {
+    try {
+      const r = spawnSync('schtasks.exe', ['/Delete', '/TN', name, '/F'], { stdio: 'ignore', windowsHide: true, timeout: 30000 });
+      if (r.status === 0) console.log(`Scheduled task removed: ${name}`);
+    } catch {}
+  }
+  return 0;
+}
+
+/** The import folder: <home>\inbox\{evidence,intake,mail,brain-packs,engineer-data}. */
+function ensureInboxFolders(inbox) {
+  for (const sub of INBOX_SUBFOLDERS) {
+    try {
+      fs.mkdirSync(path.join(inbox, sub), { recursive: true });
+    } catch {}
+  }
+}
+
+/**
+ * `--background`: the supervisor. One instance (health probe + run\background.lock), the server as a hidden child
+ * (`--server-child`), restarts with backoff 5 s → 5 min, gives up after more than 20 restarts in an hour.
+ */
+async function runBackground(log) {
+  const APP = appDir();
+  const env = configureEnvironment(APP, { demo: false });
+  process.title = 'ClaimDesk (background)';
+  if (await probeHealth(env.port)) {
+    console.log(`ClaimDesk is already running on port ${env.port}; this background start exits.`);
+    return 0;
+  }
+  const lock = readLock(env.home);
+  if (!lockIsStale(lock, isAlive)) {
+    console.log(`Another ClaimDesk background process (${lock.pid}) is running; this one exits.`);
+    return 0;
+  }
+  fs.mkdirSync(runDir(env.home), { recursive: true });
+  fs.writeFileSync(lockPath(env.home), JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString(), port: env.port }));
+  const releaseLock = () => {
+    const l = readLock(env.home);
+    if (l && Number(l.pid) === process.pid) {
+      try {
+        fs.rmSync(lockPath(env.home), { force: true });
+      } catch {}
+    }
+  };
+  console.log(`Background supervisor started (port ${env.port}, data ${env.dataDir}). Restart backoff: ${backoffSchedule(7).map((ms) => `${ms / 1000}s`).join(', ')}.`);
+
+  let child = null;
+  let stopping = false;
+  let failures = 0;
+  const restarts = [];
+  let startedAt = 0;
+  let healthMisses = 0;
+  let restartTimer = null;
+
+  const startChild = () => {
+    if (stopping) return;
+    const { command, args } = selfCommand(['--server-child', '--no-browser']);
+    let fd;
+    try {
+      fd = log.openFd();
+    } catch {
+      fd = 'ignore';
+    }
+    startedAt = Date.now();
+    healthMisses = 0;
+    child = spawn(command, args, { stdio: ['ignore', fd, fd], windowsHide: true, env: process.env, cwd: path.dirname(command) });
+    if (typeof fd === 'number') {
+      try {
+        fs.closeSync(fd);
+      } catch {}
+    }
+    console.log(`Server started (process ${child.pid}).`);
+    child.on('error', (err) => console.error(`Could not start the server: ${err && err.message ? err.message : err}`));
+    child.on('exit', (code, signal) => {
+      child = null;
+      if (stopping) return;
+      const ran = Date.now() - startedAt;
+      failures = ran >= STABLE_RUN_MS ? 0 : failures + 1;
+      restarts.push(Date.now());
+      while (restarts.length && Date.now() - restarts[0] > 60 * 60 * 1000) restarts.shift();
+      if (tooManyRestarts(restarts, Date.now())) {
+        const msg = `ClaimDesk stopped: the server failed and was restarted more than ${MAX_RESTARTS_PER_HOUR} times in an hour. The log is in ${logsDir(env.home)}. Start ClaimDesk again from the Start menu.`;
+        console.error(msg);
+        stopping = true;
+        clearInterval(healthTimer);
+        releaseLock();
+        messageBox(msg);
+        process.exit(1);
+      }
+      const delay = restartDelayMs(Math.max(0, failures - 1));
+      console.warn(`Server exited (code ${code}${signal ? `, signal ${signal}` : ''}) after ${Math.round(ran / 1000)} s; restarting in ${delay / 1000} s.`);
+      restartTimer = setTimeout(startChild, delay);
+    });
+  };
+
+  // A server that hangs without exiting: three missed health checks in a row (after a 2-minute start-up) → restart it.
+  const healthTimer = setInterval(async () => {
+    if (!child || Date.now() - startedAt < 120000) return;
+    const h = await probeHealth(env.port);
+    healthMisses = h ? 0 : healthMisses + 1;
+    if (healthMisses >= 3 && child) {
+      console.warn(`The server stopped answering (process ${child.pid}); restarting it.`);
+      try {
+        child.kill();
+      } catch {}
+    }
+  }, 60000);
+
+  const stop = (why) => {
+    if (stopping) return;
+    stopping = true;
+    console.log(`Background supervisor stopping (${why}).`);
+    clearInterval(healthTimer);
+    if (restartTimer) clearTimeout(restartTimer);
+    if (child) {
+      try {
+        child.kill();
+      } catch {}
+    }
+    releaseLock();
+    setTimeout(() => process.exit(0), 1500);
+  };
+  for (const sig of ['SIGINT', 'SIGTERM', 'SIGBREAK']) {
+    try {
+      process.on(sig, () => stop(sig));
+    } catch {}
+  }
+  process.on('exit', releaseLock);
+  startChild();
+  return new Promise(() => {}); // runs until stopped
+}
+
+/** `--server-child`: the API in this process, background jobs on, never stopped by a window closing. */
+async function runServerChild() {
+  const APP = appDir();
+  process.env.JOBS_ENABLED = 'true';
+  process.env.CLAIMDESK_STOP_ON_CLOSE = '0';
+  const env = configureEnvironment(APP, { demo: false });
+  process.title = 'ClaimDesk server (background)';
+  process.chdir(path.join(APP, 'apps', 'api'));
+  const server = await importTs(APP, path.join('apps', 'api', 'src', 'server.ts'));
+  await server.start();
+  console.log(`ClaimDesk ${process.env.CLAIMDESK_VERSION || ''} is running in the background at http://localhost:${env.port} (data ${env.dataDir}).`);
+}
+
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
@@ -392,11 +877,19 @@ function messageBox(message) {
 function parseArgs(argvIn) {
   const argv = argvIn.filter((a) => a !== process.execPath);
   const has = (flag) => argv.includes(flag);
+  const openAt = argv.indexOf('--open');
   return {
     demo: has('--demo'),
     stop: has('--stop'),
     seedOnly: has('--seed-only'),
     noBrowser: has('--no-browser') || process.env.CLAIMDESK_NO_BROWSER === '1',
+    background: has('--background'),
+    serverChild: has('--server-child'),
+    ensure: has('--ensure'),
+    installAutostart: has('--install-autostart'),
+    removeAutostart: has('--remove-autostart'),
+    /** claimdesk://… link to open (from the URL protocol handler). */
+    open: openAt >= 0 ? argv[openAt + 1] || 'claimdesk://' : undefined,
   };
 }
 
@@ -466,7 +959,12 @@ function configureEnvironment(APP, opts) {
   // No email/SMS sender is configured: show the one-time signing code to the handler to pass to the signer.
   set('ESIGN_DELIVERY', 'handler');
   set('JOBS_ENABLED', 'true');
-  return { home, dataDir, dataset, port, envFile };
+  // The import folder (§0.3, §K.6): <home>\inbox for your data; the example claims get their own.
+  const inbox = opts.demo ? path.join(home, 'demo-inbox') : path.join(home, 'inbox');
+  set('CLAIMDESK_HOME', home);
+  set('CLAIMDESK_INBOX_DIR', inbox);
+  if (!opts.demo) ensureInboxFolders(process.env.CLAIMDESK_INBOX_DIR || inbox);
+  return { home, dataDir, dataset, port, envFile, inbox };
 }
 
 async function importTs(APP, rel) {
@@ -501,8 +999,26 @@ async function stopDataset(demoFlag, { quietIfNotRunning = false } = {}) {
     fileVars = parseEnvFile(fs.readFileSync(path.join(home, 'claimdesk.env'), 'utf8'));
   } catch {}
   const port = portFor(opts.demo, { ...fileVars, ...process.env });
+  // The background supervisor would restart a stopped server: stop it first (live data only).
+  let supervisorStopped = false;
+  if (!opts.demo) {
+    const lock = readLock(home);
+    if (!lockIsStale(lock, isAlive)) {
+      try {
+        process.kill(Number(lock.pid));
+        supervisorStopped = true;
+        console.log(`ClaimDesk background process ${lock.pid} stopped.`);
+      } catch (err) {
+        console.log(`Could not stop the ClaimDesk background process ${lock.pid}: ${err && err.message ? err.message : err}`);
+      }
+      try {
+        fs.rmSync(lockPath(home), { force: true });
+      } catch {}
+    }
+  }
   const h = await probeHealth(port);
   if (!h) {
+    if (supervisorStopped) return 0;
     if (!quietIfNotRunning) console.log(`ClaimDesk${opts.demo ? ' (example claims)' : ''} is not running.`);
     return 0;
   }
@@ -517,8 +1033,11 @@ async function stopDataset(demoFlag, { quietIfNotRunning = false } = {}) {
   try {
     process.kill(h.pid);
   } catch (err) {
-    console.log(`Could not stop ClaimDesk (process ${h.pid}): ${err && err.message ? err.message : err}`);
-    return 1;
+    // the supervisor may already have taken its server down with it
+    if (!(supervisorStopped && err && err.code === 'ESRCH')) {
+      console.log(`Could not stop ClaimDesk (process ${h.pid}): ${err && err.message ? err.message : err}`);
+      return 1;
+    }
   }
   for (let i = 0; i < 20 && (await probeHealth(port)); i++) await new Promise((r) => setTimeout(r, 250));
   console.log(`ClaimDesk${opts.demo ? ' (example claims)' : ''} stopped.`);
@@ -527,6 +1046,30 @@ async function stopDataset(demoFlag, { quietIfNotRunning = false } = {}) {
 
 async function run(argvIn = process.argv.slice(2)) {
   const opts = parseArgs(argvIn);
+  // Background modes have no console (ClaimDesk-Background.exe): the log file replaces console.* before anything runs.
+  if (opts.background || opts.serverChild) {
+    const log = createLogWriter(homeDir(), opts.background ? 'supervisor' : 'server');
+    log.install();
+    try {
+      if (opts.background) process.exitCode = await runBackground(log);
+      else await runServerChild();
+    } catch (err) {
+      console.error(`ClaimDesk ${opts.background ? 'background supervisor' : 'server'} stopped because of an error: ${err && err.stack ? err.stack : err}`);
+      process.exit(1);
+    }
+    return;
+  }
+  if (opts.ensure || opts.installAutostart || opts.removeAutostart) {
+    try {
+      if (opts.installAutostart) process.exitCode = installAutostart();
+      else if (opts.removeAutostart) process.exitCode = removeAutostart();
+      else process.exitCode = await ensureBackground();
+    } catch (err) {
+      console.error(err && err.stack ? err.stack : err);
+      process.exitCode = 1;
+    }
+    return;
+  }
   const interactive = !opts.noBrowser;
   process.title = opts.demo ? 'ClaimDesk (example claims)' : 'ClaimDesk';
   try {
@@ -555,7 +1098,25 @@ async function start(opts) {
   const APP = appDir();
   const env = configureEnvironment(APP, opts);
   const url = `http://localhost:${env.port}`;
+  // --open claimdesk://needs-you/<id> → that page; otherwise the home page
+  const openUrl = opts.open ? protocolToUrl(opts.open, env.port) : url;
   process.chdir(path.join(APP, 'apps', 'api'));
+
+  // Autostart installed (§M.1): the server lives in the background. Make sure it runs, open the window, leave.
+  if (!opts.demo && !opts.seedOnly && !opts.noBrowser && backgroundTaskInstalled()) {
+    let running = await probeHealth(env.port);
+    if (running && running.dataset !== env.dataset) throw new Error(`Port ${env.port} is used by ClaimDesk with the example claims. Stop it first (Start menu → Stop ClaimDesk).`);
+    if (!running) {
+      console.log('Starting ClaimDesk in the background…');
+      spawnBackground();
+      running = await waitForHealth(env.port, 90);
+      if (!running) throw new Error(`ClaimDesk did not start in the background within 90 seconds. The log is in ${logsDir(env.home)}.`);
+    }
+    console.log(`ClaimDesk is running in the background. Opening ${openUrl}`);
+    openAppWindow(openUrl, env.home, env.dataset);
+    setTimeout(() => process.exit(0), 1500);
+    return;
+  }
 
   if (opts.seedOnly) {
     const mod = await importTs(APP, path.join('apps', 'api', 'src', 'seed.ts'));
@@ -571,8 +1132,8 @@ async function start(opts) {
     if (running.dataset !== env.dataset) {
       throw new Error(`Port ${env.port} is already used by ClaimDesk with the ${running.dataset === 'demo' ? 'example claims' : 'live data'}; it will not be opened as the ${env.dataset === 'demo' ? 'example claims' : 'live data'}. Stop it first (Start menu → Stop ClaimDesk).`);
     }
-    console.log(`ClaimDesk is already running. Opening ${url}`);
-    if (!opts.noBrowser) openAppWindow(url, env.home, env.dataset);
+    console.log(`ClaimDesk is already running. Opening ${openUrl}`);
+    if (!opts.noBrowser) openAppWindow(openUrl, env.home, env.dataset);
     setTimeout(() => process.exit(0), 1500);
     return;
   }
@@ -591,10 +1152,11 @@ async function start(opts) {
   console.log(`ClaimDesk is running at ${url}${opts.demo ? '   (EXAMPLE CLAIMS)' : ''}`);
   console.log(`Your data: ${env.dataDir}`);
   console.log(`Settings and API keys: ${env.envFile}`);
+  if (env.dataset === 'live') console.log(`Import folder (drop big files here): ${env.inbox}`);
   console.log('Close the ClaimDesk window to stop it (or use Start menu → Stop ClaimDesk).');
   console.log('');
   if (opts.noBrowser) return;
-  const opened = openAppWindow(url, env.home, env.dataset, {
+  const opened = openAppWindow(openUrl, env.home, env.dataset, {
     onAllWindowsClosed: () => {
       console.log('The ClaimDesk window was closed: stopping.');
       // server.ts closes Fastify on SIGTERM and exits; the timer covers a server without that handler.
@@ -624,6 +1186,26 @@ module.exports = {
   openAppWindow,
   minimiseOwnConsole,
   run,
+  // background mode, autostart, links (§M.1)
+  INBOX_SUBFOLDERS,
+  TASK_BACKGROUND,
+  TASK_WATCHDOG,
+  BACKGROUND_EXE,
+  MAX_RESTARTS_PER_HOUR,
+  restartDelayMs,
+  backoffSchedule,
+  tooManyRestarts,
+  lockIsStale,
+  logFileName,
+  logsToDelete,
+  childCommand,
+  xmlEscape,
+  buildTaskXml,
+  localIsoNoZone,
+  taskUserId,
+  taskDefinitions,
+  protocolToUrl,
+  createLogWriter,
 };
 
 if (require.main === module) void run();

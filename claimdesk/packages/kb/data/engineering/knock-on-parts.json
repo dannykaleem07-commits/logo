@@ -1,0 +1,2429 @@
+{
+ "schemaVersion": 1,
+ "id": "engineering.knock_on_parts",
+ "version": "2026-10-07.1",
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "ClaimDesk generic guidance compiled from general UK body-repair practice for AI-assisted damage assessment. Not manufacturer data, not Audatex data and not a repair method. Every suggestion is an unverified estimate for the engineer to confirm or delete; follow the manufacturer repair and calibration procedure for the vehicle."
+ },
+ "rules": [
+  {
+   "id": "front_bumper.fixings",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_bumper_clips",
+     "label": "Front bumper clips, screws and fixings kit",
+     "category": "clips",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Bumper clips and plastic fixings are single-use and usually break when the bumper is removed, so a fixings kit is normally needed whenever the bumper comes off."
+  },
+  {
+   "id": "front_bumper.brackets",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_bumper_side_brackets",
+     "label": "Front bumper side guide brackets (pair)",
+     "category": "bracket",
+     "operation": "replace"
+    }
+   ],
+   "reason": "The plastic guide brackets the bumper clips into at the wings commonly crack or distort when a bumper is pushed in hard enough to need replacing."
+  },
+  {
+   "id": "front_bumper.absorber",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "operationsAny": [
+     "replace",
+     "repair"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_bumper_absorber",
+     "label": "Front bumper energy absorber (foam / plastic)",
+     "category": "absorber",
+     "operation": "replace"
+    }
+   ],
+   "reason": "The energy absorber behind the bumper cover crushes to absorb the impact and does not recover its shape; it should be inspected and is often replaced after a medium or heavy frontal impact."
+  },
+  {
+   "id": "front_bumper.reinforcement",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "minSeverity": 3,
+    "impactDirectionsAny": [
+     "front",
+     "front_left",
+     "front_right",
+     "multiple",
+     "rollover"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_bumper_reinforcement",
+     "label": "Front bumper reinforcement (crash beam)",
+     "category": "reinforcement",
+     "operation": "replace"
+    },
+    {
+     "key": "front_crash_boxes",
+     "label": "Front crash boxes / crash cans (inspect, replace if deformed)",
+     "category": "reinforcement",
+     "operation": "check"
+    }
+   ],
+   "reason": "Heavy frontal damage to the bumper usually means the steel or aluminium reinforcement behind it has taken load; the beam and the crash boxes it bolts to are designed to deform once and are replaced if bent."
+  },
+  {
+   "id": "front_bumper.lower_grille",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_lower_grille_transfer",
+     "label": "Front bumper lower grille (transfer to new bumper)",
+     "category": "grille",
+     "operation": "r_and_i",
+     "zoneId": "front_lower_grille",
+     "genericHours": 0.2
+    }
+   ],
+   "reason": "A replacement bumper is normally supplied without its grilles, so the lower grille is transferred (and replaced if its clips break)."
+  },
+  {
+   "id": "front_bumper.mouldings",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_bumper_mouldings",
+     "label": "Front bumper trim mouldings / chrome strips",
+     "category": "moulding",
+     "operation": "r_and_i",
+     "ifFitted": true
+    }
+   ],
+   "reason": "Bright trims and mouldings on the bumper are transferred to the new cover; they are often clipped or bonded and break on removal."
+  },
+  {
+   "id": "front_bumper.number_plate",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "operationsAny": [
+     "replace",
+     "r_and_i",
+     "repair"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_number_plate",
+     "label": "Front number plate and holder",
+     "category": "number_plate",
+     "operation": "replace",
+     "ifFitted": true
+    }
+   ],
+   "reason": "Plates and plate holders on the bumper crack easily and are disturbed by bumper work; a replacement plate must come from a registered number plate supplier."
+  },
+  {
+   "id": "front_bumper.parking_sensors",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ],
+    "featuresAny": [
+     "parking_sensors_front",
+     "park_assist",
+     "remote_park_assist",
+     "aftermarket_parking_sensors"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_pdc_brackets",
+     "label": "Front parking sensor brackets (bonded to bumper)",
+     "category": "sensor_bracket",
+     "operation": "replace"
+    },
+    {
+     "key": "front_pdc_transfer",
+     "label": "Front parking sensors (transfer to new bumper)",
+     "category": "parking_sensor",
+     "operation": "r_and_i",
+     "zoneId": "front_parking_sensors"
+    }
+   ],
+   "reason": "Parking sensor brackets are bonded to the inside of the bumper and do not come with a new cover; the sensors are transferred and their wiring checked."
+  },
+  {
+   "id": "front_bumper.parking_sensors_heavy",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "minSeverity": 3,
+    "featuresAny": [
+     "parking_sensors_front",
+     "park_assist",
+     "remote_park_assist",
+     "aftermarket_parking_sensors"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_pdc_transfer",
+     "label": "Front parking sensors (replace those damaged)",
+     "category": "parking_sensor",
+     "operation": "replace",
+     "zoneId": "front_parking_sensors"
+    }
+   ],
+   "reason": "In a heavy bumper impact the sensors in the impact area are frequently cracked or pushed out of their brackets."
+  },
+  {
+   "id": "front_bumper.headlamp_washers",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ],
+    "featuresAny": [
+     "xenon_headlights",
+     "laser_headlights"
+    ]
+   },
+   "items": [
+    {
+     "key": "headlamp_washer_jets",
+     "label": "Headlamp washer jets and covers",
+     "category": "headlamp_washer",
+     "operation": "r_and_i"
+    }
+   ],
+   "reason": "High-output (xenon / laser) headlamps are fitted with washers; the pop-up jets and their covers sit in the bumper and are transferred, and the covers are usually painted to colour."
+  },
+  {
+   "id": "front_bumper.headlamp_washers_heavy",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "featuresAny": [
+     "xenon_headlights",
+     "laser_headlights"
+    ]
+   },
+   "items": [
+    {
+     "key": "headlamp_washer_jets",
+     "label": "Headlamp washer jets and covers (replace if damaged)",
+     "category": "headlamp_washer",
+     "operation": "replace"
+    },
+    {
+     "key": "headlamp_washer_pipework",
+     "label": "Headlamp washer pump and pipework (check for leaks)",
+     "category": "headlamp_washer",
+     "operation": "check"
+    }
+   ],
+   "reason": "Washer jets and their pipework sit right behind the bumper face and are easily broken or kinked when the bumper is pushed in."
+  },
+  {
+   "id": "front_bumper.fog_lamps",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "fog_lamp_l_transfer",
+     "label": "Front fog lamp N/S (transfer)",
+     "category": "fog_lamp",
+     "operation": "r_and_i",
+     "zoneId": "fog_lamp_l",
+     "ifFitted": true
+    },
+    {
+     "key": "fog_lamp_r_transfer",
+     "label": "Front fog lamp O/S (transfer)",
+     "category": "fog_lamp",
+     "operation": "r_and_i",
+     "zoneId": "fog_lamp_r",
+     "ifFitted": true
+    }
+   ],
+   "reason": "Fog lamps are mounted in the bumper and are removed and refitted when it is replaced; replace a lamp only if its lens, housing or mounting is broken."
+  },
+  {
+   "id": "front_bumper.fog_brackets",
+   "zones": [
+    "front_bumper"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "operationsAny": [
+     "replace",
+     "repair"
+    ]
+   },
+   "items": [
+    {
+     "key": "fog_lamp_brackets",
+     "label": "Fog lamp brackets and surrounds",
+     "category": "bracket",
+     "operation": "replace",
+     "ifFitted": true
+    }
+   ],
+   "reason": "Fog lamp surrounds and their plastic brackets are weak points and commonly break when the bumper is deformed."
+  },
+  {
+   "id": "front_bumper.radar",
+   "zones": [
+    "front_bumper",
+    "grille"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i",
+     "repair",
+     "paint"
+    ],
+    "featuresAny": [
+     "adaptive_cruise",
+     "adaptive_cruise_stop_go",
+     "traffic_jam_assist",
+     "hands_off_highway_assist",
+     "aeb",
+     "aeb_pedestrian_cyclist",
+     "forward_collision_warning"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_radar_transfer",
+     "label": "Front radar sensor (remove and refit)",
+     "category": "radar",
+     "operation": "r_and_i",
+     "zoneId": "front_radar"
+    },
+    {
+     "key": "front_radar_calibration",
+     "label": "Front radar calibration / alignment",
+     "category": "adas_calibration",
+     "operation": "check",
+     "adas": {
+      "system": "front_radar",
+      "method": "static_or_dynamic"
+     }
+    }
+   ],
+   "reason": "Radar-based adaptive cruise and emergency braking sensors sit behind the bumper or badge; removing the bumper, replacing it or adding paint over the radar area can change the sensor aim, so calibration is required following the manufacturer procedure."
+  },
+  {
+   "id": "front_bumper.radar_bracket",
+   "zones": [
+    "front_bumper",
+    "grille",
+    "front_panel"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "featuresAny": [
+     "adaptive_cruise",
+     "adaptive_cruise_stop_go",
+     "traffic_jam_assist",
+     "hands_off_highway_assist",
+     "aeb",
+     "aeb_pedestrian_cyclist",
+     "forward_collision_warning"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_radar_bracket",
+     "label": "Front radar mounting bracket",
+     "category": "sensor_bracket",
+     "operation": "replace"
+    }
+   ],
+   "reason": "The radar bracket is light plastic or pressed metal; even slight distortion moves the sensor aim, so it is normally replaced after a medium or heavy frontal impact."
+  },
+  {
+   "id": "front_bumper.night_vision",
+   "zones": [
+    "front_bumper",
+    "grille"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i"
+    ],
+    "featuresAny": [
+     "night_vision"
+    ]
+   },
+   "items": [
+    {
+     "key": "night_vision_calibration",
+     "label": "Night-vision camera (remove, refit and calibrate)",
+     "category": "camera",
+     "operation": "r_and_i",
+     "adas": {
+      "system": "night_vision",
+      "method": "static"
+     }
+    }
+   ],
+   "reason": "Night-vision cameras are mounted in the grille / bumper area and need re-aiming after removal."
+  },
+  {
+   "id": "front_bumper.surround_camera",
+   "zones": [
+    "front_bumper",
+    "grille"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i"
+    ],
+    "featuresAny": [
+     "360_camera"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_surround_camera",
+     "label": "Front 360° camera (remove and refit)",
+     "category": "camera",
+     "operation": "r_and_i"
+    },
+    {
+     "key": "surround_camera_calibration",
+     "label": "360° camera system calibration",
+     "category": "adas_calibration",
+     "operation": "check",
+     "adas": {
+      "system": "surround_cameras",
+      "method": "static"
+     }
+    }
+   ],
+   "reason": "The front 360° camera is mounted in the grille or bumper; once it is disturbed the surround-view system must be calibrated so the stitched image lines up."
+  },
+  {
+   "id": "front_bumper.undertray",
+   "zones": [
+    "front_bumper",
+    "front_lower_grille"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "items": [
+    {
+     "key": "front_undertray",
+     "label": "Front undertray / splash shield",
+     "category": "splash_shield",
+     "operation": "replace"
+    }
+   ],
+   "reason": "The plastic undertray behind the lower bumper is often torn or pulled from its fixings when the bumper is pushed in or scraped."
+  },
+  {
+   "id": "grille.emblem",
+   "zones": [
+    "grille"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_emblem",
+     "label": "Front badge / emblem",
+     "category": "emblem",
+     "operation": "replace"
+    },
+    {
+     "key": "grille_clips",
+     "label": "Grille clips and fixings",
+     "category": "clips",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Badges are clipped or bonded and are rarely reusable once removed; grille clips are single-use."
+  },
+  {
+   "id": "grille.active_shutter",
+   "zones": [
+    "grille",
+    "front_lower_grille",
+    "front_bumper"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "impactDirectionsAny": [
+     "front",
+     "front_left",
+     "front_right",
+     "multiple",
+     "rollover"
+    ]
+   },
+   "items": [
+    {
+     "key": "active_grille_shutter",
+     "label": "Active grille shutter (check operation)",
+     "category": "cooling_component",
+     "operation": "check",
+     "ifFitted": true
+    }
+   ],
+   "reason": "Where fitted, the motorised shutter behind the grille is easily broken and will set a fault code if it cannot move."
+  },
+  {
+   "id": "bonnet.fittings",
+   "zones": [
+    "bonnet"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "bonnet_emblem",
+     "label": "Bonnet badge / emblem",
+     "category": "emblem",
+     "operation": "replace",
+     "ifFitted": true
+    },
+    {
+     "key": "bonnet_insulation_clips",
+     "label": "Bonnet insulation pad clips (transfer pad)",
+     "category": "clips",
+     "operation": "replace"
+    },
+    {
+     "key": "bonnet_seal",
+     "label": "Bonnet seals and buffers",
+     "category": "moulding",
+     "operation": "r_and_i"
+    },
+    {
+     "key": "bonnet_washer_jets",
+     "label": "Windscreen washer jets and hoses on bonnet (transfer)",
+     "category": "trim",
+     "operation": "r_and_i",
+     "ifFitted": true
+    }
+   ],
+   "reason": "A new bonnet is supplied bare: the insulation, seals, buffers, badges and washer jets are transferred and their clips are usually single-use."
+  },
+  {
+   "id": "bonnet.hinges",
+   "zones": [
+    "bonnet"
+   ],
+   "when": {
+    "minSeverity": 3
+   },
+   "items": [
+    {
+     "key": "bonnet_hinges",
+     "label": "Bonnet hinges (pair)",
+     "category": "bracket",
+     "operation": "replace"
+    }
+   ],
+   "reason": "When a bonnet is pushed back hard the hinges bend and the bonnet will not sit flush or latch safely until new hinges are fitted."
+  },
+  {
+   "id": "bonnet.active_bonnet",
+   "zones": [
+    "bonnet",
+    "front_bumper"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "impactDirectionsAny": [
+     "front",
+     "front_left",
+     "front_right",
+     "multiple",
+     "rollover"
+    ]
+   },
+   "items": [
+    {
+     "key": "active_bonnet_actuators",
+     "label": "Active bonnet (pedestrian protection) actuators — check for deployment",
+     "category": "srs_module",
+     "operation": "check",
+     "ifFitted": true
+    }
+   ],
+   "reason": "Some vehicles have pyrotechnic bonnet lifters for pedestrian protection; if they have fired they must be replaced and the fault cleared."
+  },
+  {
+   "id": "front_panel.fittings",
+   "zones": [
+    "front_panel"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "operationsAny": [
+     "replace",
+     "repair"
+    ]
+   },
+   "items": [
+    {
+     "key": "bonnet_lock",
+     "label": "Bonnet lock / catch and release cable",
+     "category": "mechanical",
+     "operation": "r_and_i"
+    },
+    {
+     "key": "front_panel_deflectors",
+     "label": "Air deflectors and seals on the front panel",
+     "category": "trim",
+     "operation": "r_and_i"
+    },
+    {
+     "key": "headlamp_brackets_front_panel",
+     "label": "Headlamp mounting brackets on the front panel (inspect)",
+     "category": "bracket",
+     "operation": "check"
+    }
+   ],
+   "reason": "The bonnet lock, its cable, the air deflectors and headlamp mountings are carried on the front panel and are disturbed by any work on it."
+  },
+  {
+   "id": "front_panel.cooling",
+   "zones": [
+    "front_panel"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "coolant_refill",
+     "label": "Coolant (drain, refill and bleed)",
+     "category": "coolant",
+     "operation": "replace"
+    },
+    {
+     "key": "ac_regas",
+     "label": "Air-conditioning evacuate and recharge (with leak test)",
+     "category": "air_conditioning",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Replacing the front panel means removing or moving the cooling pack, so the coolant is drained and refilled and the air-conditioning is usually evacuated and recharged."
+  },
+  {
+   "id": "radiator.damaged",
+   "zones": [
+    "radiator"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "items": [
+    {
+     "key": "coolant_refill",
+     "label": "Coolant (drain, refill and bleed)",
+     "category": "coolant",
+     "operation": "replace"
+    },
+    {
+     "key": "radiator_mountings",
+     "label": "Radiator mounting rubbers and brackets",
+     "category": "bracket",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Any work on the radiator / cooling pack loses coolant, and its rubber mountings are commonly split by the impact."
+  },
+  {
+   "id": "radiator.heavy",
+   "zones": [
+    "radiator"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "items": [
+    {
+     "key": "ac_condenser",
+     "label": "Air-conditioning condenser (inspect, replace if damaged)",
+     "category": "cooling_component",
+     "operation": "check"
+    },
+    {
+     "key": "ac_regas",
+     "label": "Air-conditioning evacuate and recharge (with leak test)",
+     "category": "air_conditioning",
+     "operation": "replace"
+    },
+    {
+     "key": "cooling_fan",
+     "label": "Cooling fan and cowl (inspect)",
+     "category": "cooling_component",
+     "operation": "check"
+    },
+    {
+     "key": "intercooler",
+     "label": "Intercooler and charge-air pipes (inspect)",
+     "category": "cooling_component",
+     "operation": "check",
+     "ifFitted": true
+    }
+   ],
+   "reason": "The condenser sits in front of the radiator and is usually the first part of the cooling pack to be damaged; if it is replaced or disconnected the system must be recharged and leak tested."
+  },
+  {
+   "id": "front.heavy_impact",
+   "zones": [
+    "front_bumper",
+    "bonnet",
+    "front_panel",
+    "chassis_leg_l",
+    "chassis_leg_r",
+    "grille"
+   ],
+   "when": {
+    "minSeverity": 3,
+    "impactDirectionsAny": [
+     "front",
+     "front_left",
+     "front_right",
+     "multiple",
+     "rollover"
+    ]
+   },
+   "items": [
+    {
+     "key": "ac_condenser",
+     "label": "Air-conditioning condenser (inspect, replace if damaged)",
+     "category": "cooling_component",
+     "operation": "check"
+    },
+    {
+     "key": "radiator_check",
+     "label": "Radiator (inspect, replace if damaged)",
+     "category": "cooling_component",
+     "operation": "check",
+     "zoneId": "radiator"
+    },
+    {
+     "key": "coolant_refill",
+     "label": "Coolant (drain, refill and bleed)",
+     "category": "coolant",
+     "operation": "replace"
+    },
+    {
+     "key": "ac_regas",
+     "label": "Air-conditioning evacuate and recharge (with leak test)",
+     "category": "air_conditioning",
+     "operation": "replace"
+    },
+    {
+     "key": "cooling_fan",
+     "label": "Cooling fan and cowl (inspect)",
+     "category": "cooling_component",
+     "operation": "check"
+    },
+    {
+     "key": "engine_mounts",
+     "label": "Engine / gearbox mountings (inspect)",
+     "category": "mechanical",
+     "operation": "check"
+    }
+   ],
+   "reason": "A heavy frontal impact usually reaches the cooling pack behind the front panel: the condenser, radiator and fan should be inspected and the coolant and air-conditioning refilled whenever the pack is disturbed."
+  },
+  {
+   "id": "chassis_leg.crash_box",
+   "zones": [
+    "chassis_leg_l",
+    "chassis_leg_r"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "items": [
+    {
+     "key": "crash_box_{side}",
+     "label": "Front crash box / crash can {sideLabel}",
+     "category": "reinforcement",
+     "operation": "replace"
+    },
+    {
+     "key": "front_bumper_reinforcement",
+     "label": "Front bumper reinforcement (crash beam)",
+     "category": "reinforcement",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Damage reaching the chassis leg means the load has gone through the crash box and bumper beam in front of it; these are designed to deform once and are replaced."
+  },
+  {
+   "id": "structural.corrosion_protection",
+   "zones": [
+    "front_panel",
+    "chassis_leg_l",
+    "chassis_leg_r",
+    "a_pillar_l",
+    "a_pillar_r",
+    "b_pillar_l",
+    "b_pillar_r",
+    "rear_panel",
+    "boot_floor",
+    "floor_pan",
+    "quarter_panel_l",
+    "quarter_panel_r",
+    "sill_l",
+    "sill_r",
+    "roof",
+    "load_side_panel_l",
+    "load_side_panel_r"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "operationsAny": [
+     "replace",
+     "repair"
+    ]
+   },
+   "items": [
+    {
+     "key": "seam_sealer_corrosion",
+     "label": "Seam sealer, cavity wax and anti-corrosion materials",
+     "category": "consumable",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Structural or welded repairs remove the factory sealing and corrosion protection, which must be restored to keep the repair durable."
+  },
+  {
+   "id": "headlamp.brackets",
+   "zones": [
+    "headlamp_l",
+    "headlamp_r"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "repair"
+    ]
+   },
+   "items": [
+    {
+     "key": "headlamp_repair_tabs_{side}",
+     "label": "Headlamp mounting tabs / repair kit {sideLabel}",
+     "category": "bracket",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Headlamp mounting lugs break easily; manufacturers sell tab repair kits, and broken tabs on the body side are checked when a lamp is changed."
+  },
+  {
+   "id": "headlamp.adaptive",
+   "zones": [
+    "headlamp_l",
+    "headlamp_r"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ],
+    "featuresAny": [
+     "matrix_led",
+     "adaptive_cornering_lights",
+     "laser_headlights"
+    ]
+   },
+   "items": [
+    {
+     "key": "headlamp_coding_{side}",
+     "label": "Headlamp module coding / initialisation {sideLabel}",
+     "category": "adas_calibration",
+     "operation": "check",
+     "adas": {
+      "system": "headlamps",
+      "method": "coding_or_initialisation"
+     }
+    }
+   ],
+   "reason": "Matrix, laser and adaptive cornering headlamps carry their own control modules that must be coded to the vehicle and initialised after replacement."
+  },
+  {
+   "id": "headlamp.washer",
+   "zones": [
+    "headlamp_l",
+    "headlamp_r"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i"
+    ],
+    "featuresAny": [
+     "xenon_headlights",
+     "laser_headlights"
+    ]
+   },
+   "items": [
+    {
+     "key": "headlamp_washer_jet_{side}",
+     "label": "Headlamp washer jet {sideLabel} (inspect / transfer)",
+     "category": "headlamp_washer",
+     "operation": "check"
+    }
+   ],
+   "reason": "The washer jet sits directly in front of the lamp lens and is often damaged with it."
+  },
+  {
+   "id": "fog_lamp.surround",
+   "zones": [
+    "fog_lamp_l",
+    "fog_lamp_r"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "fog_lamp_surround_{side}",
+     "label": "Fog lamp surround / bezel {sideLabel}",
+     "category": "trim",
+     "operation": "replace"
+    }
+   ],
+   "reason": "The surround holding the fog lamp is usually broken when the lamp itself is broken."
+  },
+  {
+   "id": "front_wing.liner",
+   "zones": [
+    "front_wing_l",
+    "front_wing_r"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_arch_liner_{side}",
+     "label": "Front wheel arch liner {sideLabel} (remove and refit)",
+     "category": "wheel_arch_liner",
+     "operation": "r_and_i"
+    },
+    {
+     "key": "front_wing_brackets_{side}",
+     "label": "Front wing fixings and bumper-to-wing bracket {sideLabel}",
+     "category": "bracket",
+     "operation": "replace"
+    },
+    {
+     "key": "side_repeater_{side}",
+     "label": "Side repeater / indicator {sideLabel} (transfer)",
+     "category": "lamp",
+     "operation": "r_and_i",
+     "ifFitted": true
+    },
+    {
+     "key": "front_wing_moulding_{side}",
+     "label": "Wing badge / moulding {sideLabel}",
+     "category": "moulding",
+     "operation": "replace",
+     "ifFitted": true
+    }
+   ],
+   "reason": "Replacing a front wing means removing the arch liner and the bumper side; the wing fixings and the bumper-to-wing bracket are commonly broken and badges or mouldings are not reusable."
+  },
+  {
+   "id": "front_wing.liner_heavy",
+   "zones": [
+    "front_wing_l",
+    "front_wing_r",
+    "wheel_fl",
+    "wheel_fr"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "items": [
+    {
+     "key": "front_arch_liner_{side}",
+     "label": "Front wheel arch liner {sideLabel} (replace if torn)",
+     "category": "wheel_arch_liner",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Arch liners are thin plastic and tear when the wing or wheel is pushed in."
+  },
+  {
+   "id": "door.fittings",
+   "zones": [
+    "front_door_l",
+    "front_door_r",
+    "rear_door_l",
+    "rear_door_r",
+    "sliding_door_l",
+    "sliding_door_r"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "door_membrane_clips_{zone}",
+     "label": "Door membrane (water shield) and door card clips — {zoneLabel}",
+     "category": "clips",
+     "operation": "replace"
+    },
+    {
+     "key": "door_mouldings_{zone}",
+     "label": "Door mouldings / rubbing strip and badges — {zoneLabel}",
+     "category": "moulding",
+     "operation": "replace",
+     "ifFitted": true
+    },
+    {
+     "key": "door_transfer_{zone}",
+     "label": "Door glass, regulator, lock and wiring (transfer to new shell) — {zoneLabel}",
+     "category": "trim",
+     "operation": "r_and_i"
+    }
+   ],
+   "reason": "New doors are supplied as bare shells: the glass, regulator, lock, wiring and trim are transferred; the water membrane and card clips are single-use and bonded mouldings cannot be refitted."
+  },
+  {
+   "id": "door.keyless",
+   "zones": [
+    "front_door_l",
+    "front_door_r",
+    "rear_door_l",
+    "rear_door_r"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "featuresAny": [
+     "keyless_entry"
+    ]
+   },
+   "items": [
+    {
+     "key": "door_handle_sensor_{zone}",
+     "label": "Door handle with keyless-entry sensor (inspect / transfer) — {zoneLabel}",
+     "category": "trim",
+     "operation": "check"
+    }
+   ],
+   "reason": "Keyless-entry door handles contain an antenna and touch sensor that are easily damaged in a side impact and are model-specific."
+  },
+  {
+   "id": "door.hinges",
+   "zones": [
+    "front_door_l",
+    "front_door_r",
+    "rear_door_l",
+    "rear_door_r"
+   ],
+   "when": {
+    "minSeverity": 3
+   },
+   "items": [
+    {
+     "key": "door_hinges_{zone}",
+     "label": "Door hinges and check strap (inspect, replace if bent) — {zoneLabel}",
+     "category": "bracket",
+     "operation": "check"
+    }
+   ],
+   "reason": "A heavy impact to a door can bend its hinges or check strap, which shows as poor gaps and a door that drops or will not close cleanly."
+  },
+  {
+   "id": "door_mirror.cameras",
+   "zones": [
+    "door_mirror_l",
+    "door_mirror_r"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i"
+    ],
+    "featuresAny": [
+     "360_camera",
+     "camera_door_mirrors"
+    ]
+   },
+   "items": [
+    {
+     "key": "mirror_camera_{side}",
+     "label": "Mirror camera {sideLabel} (transfer / replace)",
+     "category": "camera",
+     "operation": "r_and_i"
+    },
+    {
+     "key": "surround_camera_calibration",
+     "label": "360° camera system calibration",
+     "category": "adas_calibration",
+     "operation": "check",
+     "adas": {
+      "system": "surround_cameras",
+      "method": "static"
+     }
+    }
+   ],
+   "reason": "Surround-view and camera-mirror systems have a camera in the door mirror; a replaced or refitted mirror camera must be calibrated so the images line up."
+  },
+  {
+   "id": "door_mirror.blind_spot",
+   "zones": [
+    "door_mirror_l",
+    "door_mirror_r"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ],
+    "featuresAny": [
+     "blind_spot"
+    ]
+   },
+   "items": [
+    {
+     "key": "mirror_blind_spot_lamp_{side}",
+     "label": "Blind-spot warning lamp in mirror {sideLabel} (transfer / replace)",
+     "category": "lamp",
+     "operation": "r_and_i"
+    }
+   ],
+   "reason": "Blind-spot monitoring shows its warning in the mirror glass or housing, which is model-specific and must be matched on a replacement mirror."
+  },
+  {
+   "id": "quarter_panel.fittings",
+   "zones": [
+    "quarter_panel_l",
+    "quarter_panel_r",
+    "load_side_panel_l",
+    "load_side_panel_r"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_arch_liner_{side}",
+     "label": "Rear wheel arch liner {sideLabel} (remove and refit)",
+     "category": "wheel_arch_liner",
+     "operation": "r_and_i"
+    },
+    {
+     "key": "rear_bumper_side_bracket_{side}",
+     "label": "Rear bumper side bracket {sideLabel}",
+     "category": "bracket",
+     "operation": "replace"
+    },
+    {
+     "key": "fuel_flap_{side}",
+     "label": "Fuel filler / charging flap and housing (if on this side)",
+     "category": "trim",
+     "operation": "r_and_i",
+     "ifFitted": true
+    },
+    {
+     "key": "quarter_glass_transfer_{side}",
+     "label": "Rear quarter glass {sideLabel} (remove and refit / replace if bonded)",
+     "category": "glass",
+     "operation": "r_and_i",
+     "zoneId": "quarter_glass_{side}"
+    }
+   ],
+   "reason": "A quarter panel is a welded section: the arch liner, bumper side bracket, fuel flap and any bonded quarter glass have to come out, and bonded parts are often not reusable."
+  },
+  {
+   "id": "quarter_panel.rear_radar",
+   "zones": [
+    "quarter_panel_l",
+    "quarter_panel_r",
+    "rear_lamp_l",
+    "rear_lamp_r"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "featuresAny": [
+     "blind_spot",
+     "rear_cross_traffic_alert",
+     "exit_warning"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_corner_radar_{side}",
+     "label": "Rear corner radar {sideLabel} (remove and refit / replace if damaged)",
+     "category": "radar",
+     "operation": "r_and_i"
+    },
+    {
+     "key": "rear_radar_calibration",
+     "label": "Rear corner radar calibration (blind spot / cross-traffic)",
+     "category": "adas_calibration",
+     "operation": "check",
+     "adas": {
+      "system": "rear_radar",
+      "method": "static_or_dynamic"
+     }
+    }
+   ],
+   "reason": "Blind-spot and rear cross-traffic radars sit behind the rear bumper corners; damage near the corner can move or break the sensor, and any disturbed sensor needs calibration to the manufacturer procedure."
+  },
+  {
+   "id": "sill.trim",
+   "zones": [
+    "sill_l",
+    "sill_r"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "operationsAny": [
+     "replace",
+     "repair"
+    ]
+   },
+   "items": [
+    {
+     "key": "sill_trim_{side}",
+     "label": "Sill trim / side skirt and clips {sideLabel}",
+     "category": "moulding",
+     "operation": "r_and_i",
+     "ifFitted": true
+    }
+   ],
+   "reason": "Sill covers and side skirts have to come off to repair the sill and their clips usually break."
+  },
+  {
+   "id": "pillar.trims",
+   "zones": [
+    "a_pillar_l",
+    "a_pillar_r",
+    "b_pillar_l",
+    "b_pillar_r"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "operationsAny": [
+     "replace",
+     "repair"
+    ]
+   },
+   "items": [
+    {
+     "key": "pillar_trims_{zone}",
+     "label": "Interior pillar trims and clips — {zoneLabel}",
+     "category": "clips",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Pillar repairs need the interior trims removed; their clips are single-use and some trims cover curtain airbags."
+  },
+  {
+   "id": "b_pillar.seatbelt",
+   "zones": [
+    "b_pillar_l",
+    "b_pillar_r"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "items": [
+    {
+     "key": "seatbelt_height_adjuster_{side}",
+     "label": "Front seatbelt, height adjuster and retractor {sideLabel} (inspect)",
+     "category": "seatbelt_pretensioner",
+     "operation": "check"
+    }
+   ],
+   "reason": "The front seatbelt retractor and height adjuster are mounted on the B-pillar and can be damaged by deformation there."
+  },
+  {
+   "id": "side.deployment",
+   "zones": [
+    "front_door_l",
+    "front_door_r",
+    "rear_door_l",
+    "rear_door_r",
+    "sliding_door_l",
+    "sliding_door_r",
+    "b_pillar_l",
+    "b_pillar_r",
+    "sill_l",
+    "sill_r",
+    "a_pillar_l",
+    "a_pillar_r"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "deploymentIndicated": true
+   },
+   "items": [
+    {
+     "key": "side_airbags_{side}",
+     "label": "Side and curtain airbags {sideLabel} (replace those deployed)",
+     "category": "airbag",
+     "operation": "replace"
+    },
+    {
+     "key": "headlining_curtain",
+     "label": "Headlining (inspect — curtain airbag deployment)",
+     "category": "trim",
+     "operation": "check",
+     "zoneId": "seats"
+    },
+    {
+     "key": "seat_side_trim_{side}",
+     "label": "Front seat side trim / cover {sideLabel} (seat airbag deployment)",
+     "category": "trim",
+     "operation": "check"
+    }
+   ],
+   "reason": "Where deployment is indicated after a side impact, the seat and curtain airbags on that side are likely to have fired; curtain deployment often damages the headlining and seat-mounted airbags split the seat cover."
+  },
+  {
+   "id": "roof.fittings",
+   "zones": [
+    "roof"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "roof_mouldings",
+     "label": "Roof mouldings / drip trims",
+     "category": "moulding",
+     "operation": "replace"
+    },
+    {
+     "key": "headlining_ri",
+     "label": "Headlining (remove and refit)",
+     "category": "trim",
+     "operation": "r_and_i",
+     "genericHours": 2
+    },
+    {
+     "key": "roof_aerial",
+     "label": "Roof aerial (transfer)",
+     "category": "trim",
+     "operation": "r_and_i",
+     "ifFitted": true
+    }
+   ],
+   "reason": "Replacing a roof skin means removing the headlining, aerial and roof mouldings; bonded mouldings are not reusable."
+  },
+  {
+   "id": "roof.sunroof",
+   "zones": [
+    "roof"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ],
+    "featuresAny": [
+     "sunroof",
+     "panoramic_roof",
+     "panoramic_roof_opening",
+     "panoramic_roof_fixed",
+     "electrochromic_roof"
+    ]
+   },
+   "items": [
+    {
+     "key": "sunroof_transfer",
+     "label": "Sunroof / panoramic roof (remove and refit)",
+     "category": "glass",
+     "operation": "r_and_i",
+     "zoneId": "sunroof"
+    }
+   ],
+   "reason": "The sunroof cassette or panoramic glass is removed to replace the roof skin and re-sealed on refit."
+  },
+  {
+   "id": "roof.rails",
+   "zones": [
+    "roof"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "featuresAny": [
+     "roof_rails"
+    ]
+   },
+   "items": [
+    {
+     "key": "roof_rails",
+     "label": "Roof rails (inspect, remove and refit)",
+     "category": "trim",
+     "operation": "r_and_i"
+    }
+   ],
+   "reason": "Roof rails bolt through the roof skin and come off for any roof repair."
+  },
+  {
+   "id": "windscreen.fitting",
+   "zones": [
+    "windscreen"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "windscreen_bonding_kit",
+     "label": "Windscreen bonding kit and mouldings",
+     "category": "consumable",
+     "operation": "replace"
+    },
+    {
+     "key": "windscreen_cowl_clips",
+     "label": "Scuttle panel (cowl) clips",
+     "category": "clips",
+     "operation": "replace"
+    }
+   ],
+   "reason": "A bonded screen needs new adhesive, primer and usually new mouldings; the scuttle panel comes off and its clips break."
+  },
+  {
+   "id": "windscreen.camera",
+   "zones": [
+    "windscreen"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i"
+    ],
+    "featuresAny": [
+     "lane_departure_warning",
+     "lane_keep_assist",
+     "lane_centring",
+     "traffic_sign_recognition",
+     "intelligent_speed_assist",
+     "auto_high_beam",
+     "aeb",
+     "aeb_city",
+     "aeb_pedestrian_cyclist",
+     "forward_collision_warning"
+    ]
+   },
+   "items": [
+    {
+     "key": "windscreen_camera_bracket",
+     "label": "Camera mounting bracket and cover on the windscreen",
+     "category": "sensor_bracket",
+     "operation": "replace"
+    },
+    {
+     "key": "windscreen_camera_calibration",
+     "label": "Windscreen camera calibration",
+     "category": "adas_calibration",
+     "operation": "check",
+     "adas": {
+      "system": "front_camera",
+      "method": "static_or_dynamic"
+     }
+    }
+   ],
+   "reason": "Lane-keeping, sign-recognition and many emergency-braking systems use a camera bonded to the windscreen; after a screen replacement the camera must be calibrated to the manufacturer procedure."
+  },
+  {
+   "id": "windscreen.rain_sensor",
+   "zones": [
+    "windscreen"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ],
+    "featuresAny": [
+     "auto_lights_wipers"
+    ]
+   },
+   "items": [
+    {
+     "key": "rain_sensor_pad",
+     "label": "Rain / light sensor gel pad",
+     "category": "consumable",
+     "operation": "replace"
+    }
+   ],
+   "reason": "The rain and light sensor is coupled to the glass with a gel pad that is single-use."
+  },
+  {
+   "id": "windscreen.specification",
+   "zones": [
+    "windscreen"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ],
+    "featuresAny": [
+     "heated_windscreen",
+     "head_up_display",
+     "ar_head_up_display",
+     "acoustic_glazing"
+    ]
+   },
+   "items": [
+    {
+     "key": "windscreen_specification",
+     "label": "Windscreen specification check (heated / head-up display / acoustic)",
+     "category": "glass",
+     "operation": "check"
+    }
+   ],
+   "reason": "Heated, acoustic and head-up-display screens are different parts; the replacement must match the original specification."
+  },
+  {
+   "id": "rear_screen.fitting",
+   "zones": [
+    "rear_screen"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_screen_bonding_kit",
+     "label": "Rear screen bonding kit / seal",
+     "category": "consumable",
+     "operation": "replace"
+    },
+    {
+     "key": "rear_screen_connections",
+     "label": "Heated rear screen and aerial connections (check)",
+     "category": "glass",
+     "operation": "check"
+    }
+   ],
+   "reason": "Rear screens are bonded or sealed and carry heater and aerial connections that are checked after fitting."
+  },
+  {
+   "id": "rear_bumper.fixings",
+   "zones": [
+    "rear_bumper"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_bumper_clips",
+     "label": "Rear bumper clips, screws and fixings kit",
+     "category": "clips",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Bumper clips and plastic fixings are single-use and usually break when the bumper is removed."
+  },
+  {
+   "id": "rear_bumper.brackets",
+   "zones": [
+    "rear_bumper"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_bumper_side_brackets",
+     "label": "Rear bumper side guide brackets (pair)",
+     "category": "bracket",
+     "operation": "replace"
+    }
+   ],
+   "reason": "The guide brackets at the quarter panels commonly crack when the rear bumper is pushed in."
+  },
+  {
+   "id": "rear_bumper.absorber",
+   "zones": [
+    "rear_bumper"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "operationsAny": [
+     "replace",
+     "repair"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_bumper_absorber",
+     "label": "Rear bumper energy absorber",
+     "category": "absorber",
+     "operation": "replace"
+    }
+   ],
+   "reason": "The rear energy absorber crushes in an impact and does not recover its shape."
+  },
+  {
+   "id": "rear_bumper.reinforcement",
+   "zones": [
+    "rear_bumper"
+   ],
+   "when": {
+    "minSeverity": 3,
+    "impactDirectionsAny": [
+     "rear",
+     "rear_left",
+     "rear_right",
+     "multiple",
+     "rollover"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_bumper_reinforcement",
+     "label": "Rear bumper reinforcement (crash beam)",
+     "category": "reinforcement",
+     "operation": "replace"
+    },
+    {
+     "key": "rear_crash_boxes",
+     "label": "Rear crash boxes (inspect, replace if deformed)",
+     "category": "reinforcement",
+     "operation": "check"
+    }
+   ],
+   "reason": "Heavy rear bumper damage usually means the reinforcement beam behind it has taken load; it is designed to deform once and is replaced if bent."
+  },
+  {
+   "id": "rear_bumper.number_plate",
+   "zones": [
+    "rear_bumper",
+    "tailgate",
+    "boot_lid",
+    "rear_load_door_l",
+    "rear_load_door_r"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "operationsAny": [
+     "replace",
+     "r_and_i",
+     "repair"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_number_plate",
+     "label": "Rear number plate and fixings",
+     "category": "number_plate",
+     "operation": "replace",
+     "ifFitted": true
+    },
+    {
+     "key": "number_plate_lamps",
+     "label": "Number plate lamps (transfer)",
+     "category": "lamp",
+     "operation": "r_and_i"
+    }
+   ],
+   "reason": "The rear plate and its lamps are mounted on the bumper or tailgate and are disturbed by work on it; a replacement plate must come from a registered number plate supplier."
+  },
+  {
+   "id": "rear_bumper.parking_sensors",
+   "zones": [
+    "rear_bumper"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ],
+    "featuresAny": [
+     "parking_sensors_rear",
+     "park_assist",
+     "remote_park_assist",
+     "aftermarket_parking_sensors"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_pdc_brackets",
+     "label": "Rear parking sensor brackets (bonded to bumper)",
+     "category": "sensor_bracket",
+     "operation": "replace"
+    },
+    {
+     "key": "rear_pdc_transfer",
+     "label": "Rear parking sensors (transfer to new bumper)",
+     "category": "parking_sensor",
+     "operation": "r_and_i",
+     "zoneId": "rear_parking_sensors"
+    }
+   ],
+   "reason": "Parking sensor brackets are bonded inside the bumper and do not come with a new cover; the sensors are transferred and their wiring checked."
+  },
+  {
+   "id": "rear_bumper.parking_sensors_heavy",
+   "zones": [
+    "rear_bumper"
+   ],
+   "when": {
+    "minSeverity": 3,
+    "featuresAny": [
+     "parking_sensors_rear",
+     "park_assist",
+     "remote_park_assist",
+     "aftermarket_parking_sensors"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_pdc_transfer",
+     "label": "Rear parking sensors (replace those damaged)",
+     "category": "parking_sensor",
+     "operation": "replace",
+     "zoneId": "rear_parking_sensors"
+    }
+   ],
+   "reason": "In a heavy rear impact the sensors in the impact area are frequently cracked or pushed out of their brackets."
+  },
+  {
+   "id": "rear_bumper.rear_radar",
+   "zones": [
+    "rear_bumper"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i",
+     "repair",
+     "paint"
+    ],
+    "featuresAny": [
+     "blind_spot",
+     "rear_cross_traffic_alert",
+     "exit_warning"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_corner_radars",
+     "label": "Rear corner radar sensors (remove and refit)",
+     "category": "radar",
+     "operation": "r_and_i"
+    },
+    {
+     "key": "rear_radar_calibration",
+     "label": "Rear corner radar calibration (blind spot / cross-traffic)",
+     "category": "adas_calibration",
+     "operation": "check",
+     "adas": {
+      "system": "rear_radar",
+      "method": "static_or_dynamic"
+     }
+    }
+   ],
+   "reason": "Blind-spot and rear cross-traffic radars are mounted behind the rear bumper corners; removal, replacement or paint over the sensor area means they must be calibrated to the manufacturer procedure."
+  },
+  {
+   "id": "rear_bumper.towbar",
+   "zones": [
+    "rear_bumper",
+    "rear_panel"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "featuresAny": [
+     "tow_bar",
+     "tow_bar_fixed",
+     "tow_bar_detachable",
+     "tow_bar_electric",
+     "aftermarket_towbar"
+    ]
+   },
+   "items": [
+    {
+     "key": "tow_bar_check",
+     "label": "Tow bar, mountings and electrics (inspect, remove and refit)",
+     "category": "mechanical",
+     "operation": "check"
+    }
+   ],
+   "reason": "A tow bar transfers impact load straight into the rear floor and chassis members; it and its mountings should be inspected and it has to come off for bumper work."
+  },
+  {
+   "id": "rear_bumper.kick_sensor",
+   "zones": [
+    "rear_bumper"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ],
+    "featuresAny": [
+     "hands_free_tailgate"
+    ]
+   },
+   "items": [
+    {
+     "key": "kick_sensor",
+     "label": "Hands-free tailgate kick sensor (transfer)",
+     "category": "parking_sensor",
+     "operation": "r_and_i"
+    }
+   ],
+   "reason": "The hands-free tailgate sensor is clipped under the rear bumper and transferred to a new bumper."
+  },
+  {
+   "id": "rear_bumper.lower",
+   "zones": [
+    "rear_bumper"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "items": [
+    {
+     "key": "rear_diffuser",
+     "label": "Rear bumper lower section / diffuser and reflectors",
+     "category": "trim",
+     "operation": "replace",
+     "ifFitted": true
+    },
+    {
+     "key": "exhaust_tailpipe_trims",
+     "label": "Exhaust tailpipe trims (inspect)",
+     "category": "trim",
+     "operation": "check",
+     "ifFitted": true
+    }
+   ],
+   "reason": "The lower diffuser, reflectors and tailpipe trims sit at the impact height of most rear shunts and are commonly cracked."
+  },
+  {
+   "id": "tailgate.fittings",
+   "zones": [
+    "tailgate",
+    "boot_lid",
+    "rear_load_door_l",
+    "rear_load_door_r"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_emblems",
+     "label": "Rear badges and emblems",
+     "category": "emblem",
+     "operation": "replace",
+     "ifFitted": true
+    },
+    {
+     "key": "tailgate_trim_clips",
+     "label": "Tailgate / boot lid inner trim clips",
+     "category": "clips",
+     "operation": "replace"
+    },
+    {
+     "key": "tailgate_transfer",
+     "label": "Lock, wiring, wiper and lamps (transfer to new panel)",
+     "category": "trim",
+     "operation": "r_and_i"
+    }
+   ],
+   "reason": "A new tailgate or boot lid is supplied bare; badges are not reusable and the lock, wiring, wiper motor and lamps are transferred."
+  },
+  {
+   "id": "tailgate.camera",
+   "zones": [
+    "tailgate",
+    "boot_lid"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i"
+    ],
+    "featuresAny": [
+     "rear_camera",
+     "360_camera"
+    ]
+   },
+   "items": [
+    {
+     "key": "reversing_camera_transfer",
+     "label": "Reversing camera (transfer)",
+     "category": "camera",
+     "operation": "r_and_i",
+     "zoneId": "reversing_camera"
+    }
+   ],
+   "reason": "The reversing camera is usually mounted in the tailgate handle or boot lid and is transferred to a new panel."
+  },
+  {
+   "id": "tailgate.surround_calibration",
+   "zones": [
+    "tailgate",
+    "boot_lid",
+    "reversing_camera"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace",
+     "r_and_i"
+    ],
+    "featuresAny": [
+     "360_camera"
+    ]
+   },
+   "items": [
+    {
+     "key": "surround_camera_calibration",
+     "label": "360° camera system calibration",
+     "category": "adas_calibration",
+     "operation": "check",
+     "adas": {
+      "system": "surround_cameras",
+      "method": "static"
+     }
+    }
+   ],
+   "reason": "With a 360° system the rear camera is part of the stitched image and the system must be calibrated after the camera is disturbed."
+  },
+  {
+   "id": "tailgate.power",
+   "zones": [
+    "tailgate"
+   ],
+   "when": {
+    "minSeverity": 2,
+    "featuresAny": [
+     "power_tailgate",
+     "hands_free_tailgate"
+    ]
+   },
+   "items": [
+    {
+     "key": "power_tailgate_struts",
+     "label": "Power tailgate spindle drives / struts (inspect)",
+     "category": "mechanical",
+     "operation": "check"
+    }
+   ],
+   "reason": "Power tailgate drives are easily bent when the tailgate is struck, and the system needs re-initialising after work."
+  },
+  {
+   "id": "tailgate.glass",
+   "zones": [
+    "tailgate"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ],
+    "bodyTypesAny": [
+     "hatchback",
+     "estate",
+     "suv",
+     "mpv"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_screen_transfer",
+     "label": "Tailgate glass (remove and refit / replace if bonded)",
+     "category": "glass",
+     "operation": "r_and_i",
+     "zoneId": "rear_screen"
+    }
+   ],
+   "reason": "The tailgate glass is bonded into the tailgate and must be removed for a new tailgate; bonded glass is often damaged on removal."
+  },
+  {
+   "id": "rear_panel.fittings",
+   "zones": [
+    "rear_panel"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "items": [
+    {
+     "key": "rear_lock_striker",
+     "label": "Tailgate / boot lock striker (remove and refit)",
+     "category": "bracket",
+     "operation": "r_and_i"
+    },
+    {
+     "key": "boot_seal",
+     "label": "Boot / tailgate aperture seal",
+     "category": "moulding",
+     "operation": "r_and_i"
+    },
+    {
+     "key": "boot_trim_clips",
+     "label": "Boot trim panels and clips",
+     "category": "clips",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Repairing the rear panel means removing the boot trim, aperture seal and lock striker; trim clips are single-use."
+  },
+  {
+   "id": "rear_lamp.seal",
+   "zones": [
+    "rear_lamp_l",
+    "rear_lamp_r"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_lamp_seal_{side}",
+     "label": "Rear lamp seal / gasket and fixings {sideLabel}",
+     "category": "moulding",
+     "operation": "replace"
+    }
+   ],
+   "reason": "Rear lamp gaskets are compressed in fitting and should be renewed to keep water out of the boot."
+  },
+  {
+   "id": "rear.heavy_impact",
+   "zones": [
+    "rear_bumper",
+    "rear_panel",
+    "boot_floor",
+    "tailgate",
+    "boot_lid"
+   ],
+   "when": {
+    "minSeverity": 3,
+    "impactDirectionsAny": [
+     "rear",
+     "rear_left",
+     "rear_right",
+     "multiple",
+     "rollover"
+    ]
+   },
+   "items": [
+    {
+     "key": "exhaust_rear_check",
+     "label": "Exhaust rear section and hangers (inspect)",
+     "category": "mechanical",
+     "operation": "check",
+     "zoneId": "exhaust"
+    },
+    {
+     "key": "fuel_tank_check",
+     "label": "Fuel tank, filler neck and lines (inspect)",
+     "category": "mechanical",
+     "operation": "check"
+    },
+    {
+     "key": "spare_wheel_well",
+     "label": "Spare wheel well / boot floor (inspect)",
+     "category": "reinforcement",
+     "operation": "check",
+     "zoneId": "boot_floor"
+    }
+   ],
+   "reason": "A heavy rear impact can push the rear panel into the spare wheel well and reach the exhaust and fuel system mounted beneath it."
+  },
+  {
+   "id": "sensors.front_pdc",
+   "zones": [
+    "front_parking_sensors"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "front_pdc_brackets",
+     "label": "Front parking sensor brackets (bonded to bumper)",
+     "category": "sensor_bracket",
+     "operation": "replace"
+    }
+   ],
+   "reason": "A broken sensor usually means its bonded bracket is broken too."
+  },
+  {
+   "id": "sensors.rear_pdc",
+   "zones": [
+    "rear_parking_sensors"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "rear_pdc_brackets",
+     "label": "Rear parking sensor brackets (bonded to bumper)",
+     "category": "sensor_bracket",
+     "operation": "replace"
+    }
+   ],
+   "reason": "A broken sensor usually means its bonded bracket is broken too."
+  },
+  {
+   "id": "sensors.front_radar",
+   "zones": [
+    "front_radar"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "items": [
+    {
+     "key": "front_radar_bracket",
+     "label": "Front radar mounting bracket",
+     "category": "sensor_bracket",
+     "operation": "replace"
+    },
+    {
+     "key": "front_radar_calibration",
+     "label": "Front radar calibration / alignment",
+     "category": "adas_calibration",
+     "operation": "check",
+     "adas": {
+      "system": "front_radar",
+      "method": "static_or_dynamic"
+     }
+    }
+   ],
+   "reason": "Any damage to or replacement of the front radar needs a sound bracket and a calibration to the manufacturer procedure before the system can be relied on."
+  },
+  {
+   "id": "wheel.tpms",
+   "zones": [
+    "wheel_fl",
+    "wheel_fr",
+    "wheel_rl",
+    "wheel_rr"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ],
+    "featuresAny": [
+     "tyre_pressure_monitoring"
+    ]
+   },
+   "items": [
+    {
+     "key": "tpms_sensor_{zone}",
+     "label": "Tyre pressure sensor (transfer / replace) and relearn — {zoneLabel}",
+     "category": "parking_sensor",
+     "operation": "r_and_i"
+    }
+   ],
+   "reason": "Direct tyre-pressure systems have a sensor in each wheel that is transferred or replaced, and the system is relearned afterwards."
+  },
+  {
+   "id": "wheel.fitting",
+   "zones": [
+    "wheel_fl",
+    "wheel_fr",
+    "wheel_rl",
+    "wheel_rr"
+   ],
+   "when": {
+    "operationsAny": [
+     "replace"
+    ]
+   },
+   "items": [
+    {
+     "key": "wheel_fitting_{zone}",
+     "label": "Valve, balance weights and centre cap — {zoneLabel}",
+     "category": "consumable",
+     "operation": "replace"
+    }
+   ],
+   "reason": "A replacement wheel needs a new valve and balancing, and the centre cap is often lost or broken."
+  },
+  {
+   "id": "front_suspension.parts",
+   "zones": [
+    "front_suspension_l",
+    "front_suspension_r",
+    "wheel_fl",
+    "wheel_fr"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "items": [
+    {
+     "key": "track_rod_end_{side}",
+     "label": "Track rod and track rod end {sideLabel} (inspect)",
+     "category": "mechanical",
+     "operation": "check"
+    },
+    {
+     "key": "front_hub_{side}",
+     "label": "Hub, wheel bearing and drive shaft {sideLabel} (inspect)",
+     "category": "mechanical",
+     "operation": "check"
+    },
+    {
+     "key": "front_abs_sensor_{side}",
+     "label": "ABS wheel-speed sensor and wiring {sideLabel} (inspect)",
+     "category": "mechanical",
+     "operation": "check"
+    }
+   ],
+   "reason": "A wheel strike that marks the wheel or suspension commonly bends the track rod or lower arm and can damage the hub, bearing, drive shaft and ABS sensor."
+  },
+  {
+   "id": "rear_suspension.parts",
+   "zones": [
+    "rear_suspension_l",
+    "rear_suspension_r",
+    "wheel_rl",
+    "wheel_rr"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "items": [
+    {
+     "key": "rear_arms_{side}",
+     "label": "Rear suspension arms / beam {sideLabel} (inspect)",
+     "category": "mechanical",
+     "operation": "check"
+    },
+    {
+     "key": "rear_abs_sensor_{side}",
+     "label": "Rear ABS wheel-speed sensor and wiring {sideLabel} (inspect)",
+     "category": "mechanical",
+     "operation": "check"
+    }
+   ],
+   "reason": "A rear wheel strike can bend the rear arms or axle beam and damage the ABS sensor."
+  },
+  {
+   "id": "exhaust.mountings",
+   "zones": [
+    "exhaust"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "items": [
+    {
+     "key": "exhaust_hangers",
+     "label": "Exhaust hangers / mounting rubbers",
+     "category": "bracket",
+     "operation": "replace"
+    },
+    {
+     "key": "exhaust_heat_shields",
+     "label": "Exhaust heat shields (inspect)",
+     "category": "splash_shield",
+     "operation": "check"
+    }
+   ],
+   "reason": "Exhaust damage usually tears or stretches its rubber hangers and can bend the heat shields above it."
+  },
+  {
+   "id": "srs.deployment",
+   "when": {
+    "deploymentIndicated": true
+   },
+   "items": [
+    {
+     "key": "deployed_airbags",
+     "label": "Deployed airbag modules (replace each deployed module)",
+     "category": "airbag",
+     "operation": "replace",
+     "zoneId": "airbags"
+    },
+    {
+     "key": "seatbelt_pretensioners",
+     "label": "Seatbelt pretensioners (replace those fired)",
+     "category": "seatbelt_pretensioner",
+     "operation": "replace"
+    },
+    {
+     "key": "srs_control_unit",
+     "label": "Airbag (SRS) control unit (replace or reset to manufacturer procedure)",
+     "category": "srs_module",
+     "operation": "replace"
+    },
+    {
+     "key": "crash_sensors",
+     "label": "Impact / crash sensors in the impact area (inspect, replace if damaged)",
+     "category": "srs_module",
+     "operation": "check"
+    }
+   ],
+   "reason": "Where an airbag deployment is indicated, every deployed module and fired pretensioner must be replaced and the airbag control unit replaced or reset as the manufacturer requires; nothing can be reused."
+  },
+  {
+   "id": "srs.front_deployment",
+   "when": {
+    "deploymentIndicated": true,
+    "impactDirectionsAny": [
+     "front",
+     "front_left",
+     "front_right",
+     "multiple",
+     "rollover"
+    ]
+   },
+   "items": [
+    {
+     "key": "clock_spring",
+     "label": "Steering wheel clock spring (inspect)",
+     "category": "srs_module",
+     "operation": "check"
+    },
+    {
+     "key": "dashboard_airbag_check",
+     "label": "Dashboard (passenger airbag deployment can split the facia)",
+     "category": "trim",
+     "operation": "check",
+     "zoneId": "dashboard"
+    },
+    {
+     "key": "windscreen_airbag_check",
+     "label": "Windscreen (passenger airbag can strike the screen; inspect)",
+     "category": "glass",
+     "operation": "check",
+     "zoneId": "windscreen"
+    }
+   ],
+   "reason": "A frontal deployment involves the steering-wheel and dashboard airbags; the clock spring, facia and windscreen are commonly affected."
+  },
+  {
+   "id": "srs.airbag_zone",
+   "zones": [
+    "airbags"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "items": [
+    {
+     "key": "seatbelt_pretensioners",
+     "label": "Seatbelt pretensioners (replace those fired)",
+     "category": "seatbelt_pretensioner",
+     "operation": "replace"
+    },
+    {
+     "key": "srs_control_unit",
+     "label": "Airbag (SRS) control unit (replace or reset to manufacturer procedure)",
+     "category": "srs_module",
+     "operation": "replace"
+    }
+   ],
+   "reason": "When airbag damage or deployment is recorded the pretensioners usually fire with the airbags, and the control unit stores a crash record that must be cleared or the unit replaced."
+  }
+ ]
+}

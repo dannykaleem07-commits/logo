@@ -71,3 +71,50 @@ export function clockRowsByClaim(overdue: readonly DashboardClock[], dueToday: r
   }
   return rows.sort((a, b) => (a.tone === b.tone ? byDue(a.worst, b.worst) : a.tone === 'red' ? -1 : 1));
 }
+
+/** Claim statuses that no longer count as "in progress" on the Today overview. */
+export const CLOSED_STATUSES: ReadonlySet<string> = new Set(['settled', 'closed', 'declined']);
+
+export interface TodayInput {
+  clockRows: readonly ClockRow[];
+  actionGroups: readonly ActionGroup[];
+  blockedDocuments: readonly unknown[];
+  claims: readonly { status: string }[];
+}
+
+export interface TodaySummary {
+  /** Overdue clocks (one per claim) + blocked documents + action groups marked "now". */
+  needsYou: number;
+  overdueClaims: number;
+  blocked: number;
+  urgentActions: number;
+  /** Clocks due today (one per claim, not already overdue) + action groups marked "today". */
+  dueToday: number;
+  /** Open claims (anything not settled, closed or declined). */
+  inProgress: number;
+}
+
+/** The four numbers on the Today overview. Pure: the page passes what useDashboardData returned. */
+export function todaySummary({ clockRows, actionGroups, blockedDocuments, claims }: TodayInput): TodaySummary {
+  const overdueClaims = clockRows.filter((r) => r.tone === 'red').length;
+  const todayClaims = clockRows.filter((r) => r.tone === 'amber').length;
+  const urgentActions = actionGroups.filter((g) => g.priority === 'now').length;
+  const todayActions = actionGroups.filter((g) => g.priority === 'today').length;
+  return {
+    needsYou: overdueClaims + blockedDocuments.length + urgentActions,
+    overdueClaims,
+    blocked: blockedDocuments.length,
+    urgentActions,
+    dueToday: todayClaims + todayActions,
+    inProgress: claims.filter((c) => !CLOSED_STATUSES.has(c.status)).length
+  };
+}
+
+/** Action groups split for the Today overview: "now" → Needs you, "today" → Due today, the rest → Coming up. */
+export function splitActionGroups(groups: readonly ActionGroup[]): { now: ActionGroup[]; today: ActionGroup[]; later: ActionGroup[] } {
+  return {
+    now: groups.filter((g) => g.priority === 'now'),
+    today: groups.filter((g) => g.priority === 'today'),
+    later: groups.filter((g) => g.priority !== 'now' && g.priority !== 'today')
+  };
+}

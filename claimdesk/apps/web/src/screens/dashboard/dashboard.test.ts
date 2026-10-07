@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { DashboardAction, DashboardClock } from '../../api/client';
-import { actionGroupTitle, clockRowsByClaim, groupActions } from './dashboard';
+import { actionGroupTitle, clockRowsByClaim, groupActions, splitActionGroups, todaySummary } from './dashboard';
 
 const action = (claimId: string, extra: Partial<DashboardAction> = {}): DashboardAction => ({
   code: 'COLLECT_SOM',
@@ -51,5 +51,22 @@ describe('clocks: one row per claim (0.3 §E11)', () => {
       ['c3', 'e', 1, 'amber']
     ]);
     expect(clockRowsByClaim([], [])).toEqual([]);
+  });
+});
+
+describe('Today overview numbers (0.4 calm pass)', () => {
+  it('counts what needs you, what is due today and the claims in progress', () => {
+    const rows = clockRowsByClaim(
+      [clock('a', 'c1', '2026-10-03T09:00:00.000Z'), clock('b', 'c2', '2026-10-04T09:00:00.000Z')],
+      [clock('c', 'c1', '2026-10-05T12:00:00.000Z'), clock('d', 'c3', '2026-10-05T12:00:00.000Z')]
+    );
+    const groups = groupActions([action('1', { priority: 'now' }), action('2', { code: 'X', title: 'Chase', priority: 'today' }), action('3', { code: 'Y', title: 'Later', priority: 'this_week' })]);
+    const s = todaySummary({ clockRows: rows, actionGroups: groups, blockedDocuments: [{}], claims: [{ status: 'chasing' }, { status: 'settled' }, { status: 'triage' }, { status: 'closed' }] });
+    expect(s).toEqual({ needsYou: 2 + 1 + 1, overdueClaims: 2, blocked: 1, urgentActions: 1, dueToday: 1 + 1, inProgress: 2 });
+    const split = splitActionGroups(groups);
+    expect([split.now.length, split.today.length, split.later.length]).toEqual([1, 1, 1]);
+  });
+  it('is all zeros with nothing loaded', () => {
+    expect(todaySummary({ clockRows: [], actionGroups: [], blockedDocuments: [], claims: [] })).toEqual({ needsYou: 0, overdueClaims: 0, blocked: 0, urgentActions: 0, dueToday: 0, inProgress: 0 });
   });
 });

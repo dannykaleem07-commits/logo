@@ -22,6 +22,8 @@ import { HttpError, type OverrideInfo } from './errors.js';
 import { registerAllRoutes } from './routes/index.js';
 import { readSessionToken, resolveSession } from './services/auth.js';
 import { gateFor, peekGate } from './services/override.js';
+import { agentUserId, bearerRunToken, isLoopback, resolveRunToken } from './agent/principal.js';
+import { agentPerimeter } from './agent/perimeter.js';
 
 /** Inline styles are allowed (React style props, docx-preview's generated CSS); scripts, objects and forms are not. */
 export const CONTENT_SECURITY_POLICY = [
@@ -132,10 +134,28 @@ export async function buildApp(ctx: AppContext, options: BuildAppOptions = {}): 
   await app.register(cors, { origin: ctx.config.corsOrigins, credentials: true, exposedHeaders: ['x-request-id', 'x-sha256', 'x-certificate-id', MANAGER_OVERRIDES_RESPONSE_HEADER] });
   await app.register(multipart, { limits: { fileSize: MAX_UPLOAD_BYTES, files: 10, fields: 50 } });
 
+  app.decorateRequest('agent', undefined);
+
+  // In-process calls into the app's own routes (the agent dispatcher, SUPREME §B.3 step 6).
+  ctx.inject = (opts) => app.inject(opts);
+
   // Request id + identity. Everything downstream reads request.user / request.actor.
   app.addHook('onRequest', async (request, reply) => {
     request.requestId = String(request.id);
     reply.header('x-request-id', request.requestId);
+
+    // Agent principals first (SUPREME §B.1): a per-run bearer token, accepted from this computer only.
+    const runToken = bearerRunToken(request.headers.authorization);
+    if (runToken !== undefined) {
+      if (!isLoopback(request.ip) || !isLoopback(request.socket?.remoteAddress)) throw new HttpError(401, 'UNAUTHENTICATED', 'Agent run tokens are accepted from this computer only');
+      const principal = resolveRunToken(runToken);
+      if (!principal) throw new HttpError(401, 'UNAUTHENTICATED', 'Agent run token is invalid or expired');
+      const id = agentUserId(principal.name);
+      request.agent = principal;
+      request.user = { id, name: `Claims Team agent (${principal.name})`, email: 'agents@claimdesk.local', role: 'handler', mfaEnabled: false, assumed: false };
+      request.actor = { userId: id, ip: request.ip, runId: principal.runId };
+      return;
+    }
 
     if (ctx.config.authMode === 'header') {
       // Test-only identity (config refuses header mode in production): X-User-Id, else the default user.
@@ -181,6 +201,9 @@ export async function buildApp(ctx: AppContext, options: BuildAppOptions = {}): 
     if (!reply.hasHeader('x-content-type-options')) reply.header('x-content-type-options', 'nosniff');
     return payload;
   });
+
+  // Agent perimeter (SUPREME §B.2): agent principals only; registered before every other preHandler.
+  app.addHook('preHandler', agentPerimeter(ctx));
 
   // Manager mode (0.3 §A.4.3): build the override gate up front for any mutation that carries a manager header, so
   // web-only relaxations (X-Manager-Relaxed) are recorded even on routes that never call the gate themselves.

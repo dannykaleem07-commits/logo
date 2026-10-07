@@ -13,7 +13,10 @@ Design reference: `docs/TEMPLATES-VEHICLES-DESKTOP.md` §G (desktop) and §H (co
 
 ```
 ClaimDesk.exe            Node single-executable app (packaging/sea-bootstrap.cjs embedded), with Windows file details
-app/launch.cjs           the launcher (packaging/launch.cjs): data folder, claimdesk.env, server, app window, --stop
+ClaimDesk-Background.exe the same file with the PE Subsystem byte patched 3 → 2 (GUI): runs without a console window
+app/launch.cjs           the launcher (packaging/launch.cjs): data folder, claimdesk.env, server, app window, --stop,
+                         background mode, autostart tasks, claimdesk:// links
+app/autostart/*.xml      scheduled-task templates (packaging/autostart) filled in by --install-autostart
 app/version.json         { version, commit, builtAt } written by build-package.mjs
 app/apps/api, app/apps/web/dist, app/packages/*, app/node_modules   the program itself (plain files)
 ```
@@ -38,6 +41,33 @@ app/apps/api, app/apps/web/dist, app/packages/*, app/node_modules   the program 
   running" check compares the dataset, so the example-claims shortcut can never open live data.
 - **Data** lives in `%LOCALAPPDATA%\ClaimDesk` (`data\`, `demo\`, `claimdesk.env`, `secret.key`, `window\`). Upgrades
   never touch it; uninstalling asks (default **No**), and a silent uninstall never deletes it.
+
+## Background mode, autostart and the import folder (0.4 — docs/SUPREME-DESIGN.md §0.3, §M.1–M.2)
+
+The agents need ClaimDesk running 24/7, so 0.4 runs the server in the background:
+
+| Command | What it does |
+|---|---|
+| `ClaimDesk-Background.exe --background` | Supervisor. Exits at once if ClaimDesk already answers on the port or `<home>\run\background.lock` names a live process. Otherwise writes the lock, starts `--server-child` hidden, logs to `<home>\logs\claimdesk-YYYY-MM-DD.log` (14 days kept) and restarts the server after a crash (5 s, 10 s, 20 s … 5 min). More than 20 restarts in an hour → it stops and shows a message box. A server that stops answering (3 missed health checks a minute apart) is restarted. |
+| `… --server-child` | The API in-process with `JOBS_ENABLED=true`, `CLAIMDESK_STOP_ON_CLOSE=0`. |
+| `… --ensure` | Health probe; if nothing answers, starts `--background` detached. The Watchdog task runs this every 15 minutes. |
+| `ClaimDesk.exe --install-autostart` / `--remove-autostart` | `schtasks /Create /XML` for **ClaimDesk\Background** (at sign-in, InteractiveToken so notifications show, IgnoreNew, no time limit, restart on failure every minute ×999, hidden, runs on battery) and **ClaimDesk\Watchdog** (every 15 minutes → `--ensure`). No administrator rights. If Windows refuses the `ClaimDesk\` task folder the tasks are created as "ClaimDesk Background" / "ClaimDesk Watchdog". |
+| `ClaimDesk.exe --open claimdesk://needs-you/<id>` | Opens that page (`/needs-you/<id>`, `/outbox/<id>?undo=1`, …) — the handler for `claimdesk://` links. Unknown links open the home page. |
+| `ClaimDesk.exe --stop` | Stops the background supervisor (from the lock file) and then the server. |
+
+With autostart installed, the Start-menu ClaimDesk makes sure the background server runs and only opens the window;
+closing the window never stops the server. Without it, 0.3 behaviour is unchanged. The installer ticks "Keep ClaimDesk
+running in the background (needed for the agents)" by default; unticking it on an upgrade removes the tasks.
+
+The launcher creates the **import folder** `<home>\inbox\{evidence,intake,mail,brain-packs,engineer-data}` and passes
+`CLAIMDESK_HOME` and `CLAIMDESK_INBOX_DIR` to the server. A file dropped there is taken once its size has been stable
+for 10 seconds, moved into `DATA_DIR\imports\<purpose>\<id>\` with a `manifest.json`, and listed under Settings →
+Import folder. `inbox\evidence\<CCG-YYYY-NNNNN>\<file>` is added to that claim as evidence. The Start menu has a
+"ClaimDesk import folder" shortcut.
+
+**Upload limits** (environment, `claimdesk.env`): `MAX_EVIDENCE_UPLOAD_MB` (default 2048) for one evidence upload,
+`CHUNK_THRESHOLD_MB` (64) above which the browser sends the file in parts, `CHUNK_MB` (8) per part. Every other upload
+route keeps its own limit (25 MiB default, Word templates 15 MiB).
 
 ## Build it
 
@@ -106,7 +136,9 @@ info → Run anyway). To sign:
 ## Test it
 
 Automated (any OS): `node --check packaging/launch.cjs` and `node packaging/launch.test.cjs` (browser lookup order,
-window arguments, ports, stop-on-close rule, health parsing, `claimdesk.env` template).
+window arguments, ports, stop-on-close rule, health parsing, `claimdesk.env` template; 0.4: restart backoff and the
+20-an-hour limit, lock staleness, log names and rotation, the scheduled-task XML built from `packaging/autostart`,
+`claimdesk://` link mapping).
 
 CI (`claimdesk-windows.yml`, every push to the branch that touches `claimdesk/`):
 
@@ -122,6 +154,13 @@ CI (`claimdesk-windows.yml`, every push to the branch that touches `claimdesk/`)
    corrections, manager mode, `data\backups\claimdesk-before-<version>-*.sqlite`, a back-dated hire start, and a
    silent uninstall that keeps the data.
 
+4. (0.4) Private-data guard (no `*.cab`, `*.ccbrain`, `brain-packs/`, `engineer-data/`, `inbox/`, `secrets/`,
+   `*.dpapi` tracked); big uploads on the portable build (100 MiB multipart and 300 MiB in parts after sign-in);
+   background mode (`ClaimDesk-Background.exe --background` → health → the server process killed → healthy again
+   within 30 s → `--ensure` → `--stop`); the PE Subsystem of `ClaimDesk-Background.exe` is 2; the installer creates
+   both scheduled tasks and the uninstaller removes them; upgrade from the published 0.3.7 Setup (data kept, backup made,
+   agents off); agent smoke with the fake AI driver (an `.eml` in `inbox\mail` → a Needs-you item).
+
 By hand on a Windows 11 PC (not automatable on the runner):
 
 - Start menu → ClaimDesk: the console starts minimised and ClaimDesk opens in its own window titled "ClaimDesk —
@@ -132,3 +171,8 @@ By hand on a Windows 11 PC (not automatable on the runner):
 - ClaimDesk (example claims) opens on port 4001 with the example data while the live one is running.
 - Settings → Apps → Installed apps lists ClaimDesk, publisher Courtesy Cars Group UK Ltd, with the version.
 - Uninstall interactively: the "Also delete your ClaimDesk data?" question defaults to No.
+- (0.4) Sign out and in again: ClaimDesk answers on `http://localhost:4000` without opening it; no console window
+  appears. Task Scheduler shows ClaimDesk\Background and ClaimDesk\Watchdog. Close the window: the server keeps
+  running. Click a `claimdesk://needs-you/…` link in a notification: ClaimDesk opens on that item.
+- (0.4) Drop a large file into Start menu → ClaimDesk import folder → engineer-data: it appears under Settings →
+  Import folder within about a minute.

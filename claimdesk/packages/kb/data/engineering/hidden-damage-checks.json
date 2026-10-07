@@ -1,0 +1,792 @@
+{
+ "schemaVersion": 1,
+ "id": "engineering.hidden_damage_checks",
+ "version": "2026-10-07.1",
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "ClaimDesk generic guidance on hidden-damage checks after a collision, compiled from general UK body-repair practice. Not a manufacturer repair method. Recommendations only: the engineer decides which checks are carried out and follows the manufacturer procedure."
+ },
+ "rules": [
+  {
+   "id": "structural.members_damaged",
+   "check": "structural_measurement",
+   "label": "Structural measurement (jig / 3D measuring system)",
+   "zones": [
+    "front_panel",
+    "chassis_leg_l",
+    "chassis_leg_r",
+    "a_pillar_l",
+    "a_pillar_r",
+    "b_pillar_l",
+    "b_pillar_r",
+    "rear_panel",
+    "boot_floor",
+    "floor_pan",
+    "sill_l",
+    "sill_r",
+    "load_bed_floor"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "priority": "required",
+   "reason": "Damage is recorded on a structural member; the body should be measured against the manufacturer dimensions before and after repair to confirm the shell is straight."
+  },
+  {
+   "id": "structural.heavy_outer",
+   "check": "structural_measurement",
+   "label": "Structural measurement (jig / 3D measuring system)",
+   "zones": [
+    "front_bumper",
+    "rear_bumper",
+    "bonnet",
+    "quarter_panel_l",
+    "quarter_panel_r",
+    "tailgate",
+    "boot_lid",
+    "roof",
+    "front_wing_l",
+    "front_wing_r"
+   ],
+   "when": {
+    "minSeverity": 3
+   },
+   "priority": "recommended",
+   "reason": "Heavy damage to an outer panel often means load has passed into the structure behind it, which cannot be seen in photos."
+  },
+  {
+   "id": "structural.side_impact",
+   "check": "structural_measurement",
+   "label": "Structural measurement (jig / 3D measuring system)",
+   "zones": [
+    "front_door_l",
+    "front_door_r",
+    "rear_door_l",
+    "rear_door_r",
+    "sliding_door_l",
+    "sliding_door_r"
+   ],
+   "when": {
+    "minSeverity": 3
+   },
+   "priority": "recommended",
+   "reason": "A heavy side impact through a door can push in the B-pillar, sill and floor behind it."
+  },
+  {
+   "id": "structural.speed",
+   "check": "structural_measurement",
+   "label": "Structural measurement (jig / 3D measuring system)",
+   "when": {
+    "minSpeedMph": 20,
+    "minSeverity": 2
+   },
+   "priority": "recommended",
+   "reason": "The reported speed and the visible damage together suggest enough energy to reach the structure."
+  },
+  {
+   "id": "structural.deployment",
+   "check": "structural_measurement",
+   "label": "Structural measurement (jig / 3D measuring system)",
+   "when": {
+    "deploymentIndicated": true
+   },
+   "priority": "required",
+   "reason": "An airbag deployment indicates a significant deceleration; the shell should be measured even if the outer damage looks moderate."
+  },
+  {
+   "id": "structural.rollover",
+   "check": "structural_measurement",
+   "label": "Structural measurement (jig / 3D measuring system)",
+   "when": {
+    "impactDirectionsAny": [
+     "rollover",
+     "top"
+    ],
+    "minSeverity": 1
+   },
+   "priority": "required",
+   "reason": "Roof or rollover damage can distort the pillars and roof structure, which needs measuring."
+  },
+  {
+   "id": "alignment.wheel_or_suspension",
+   "check": "wheel_alignment",
+   "label": "Four-wheel alignment / geometry check",
+   "zones": [
+    "wheel_fl",
+    "wheel_fr",
+    "wheel_rl",
+    "wheel_rr",
+    "front_suspension_l",
+    "front_suspension_r",
+    "rear_suspension_l",
+    "rear_suspension_r"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "priority": "required",
+   "reason": "Damage to a wheel or suspension component can alter the steering and suspension geometry; the alignment should be checked and any bent parts found."
+  },
+  {
+   "id": "alignment.corner_impact",
+   "check": "wheel_alignment",
+   "label": "Four-wheel alignment / geometry check",
+   "zones": [
+    "front_wing_l",
+    "front_wing_r",
+    "quarter_panel_l",
+    "quarter_panel_r",
+    "load_side_panel_l",
+    "load_side_panel_r",
+    "load_bed_side_l",
+    "load_bed_side_r",
+    "sill_l",
+    "sill_r",
+    "chassis_leg_l",
+    "chassis_leg_r"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "priority": "recommended",
+   "reason": "An impact to the corner of the vehicle near a wheel often reaches the wheel and suspension even when they look undamaged in photos."
+  },
+  {
+   "id": "suspension.inspect",
+   "check": "suspension_inspection",
+   "key": "suspension_inspection_{side}",
+   "label": "Suspension inspection {sideLabel} (arms, struts, hub, bushes)",
+   "zones": [
+    "wheel_fl",
+    "wheel_fr",
+    "wheel_rl",
+    "wheel_rr",
+    "front_suspension_l",
+    "front_suspension_r",
+    "rear_suspension_l",
+    "rear_suspension_r",
+    "front_wing_l",
+    "front_wing_r",
+    "quarter_panel_l",
+    "quarter_panel_r",
+    "load_side_panel_l",
+    "load_side_panel_r",
+    "load_bed_side_l",
+    "load_bed_side_r",
+    "sill_l",
+    "sill_r"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "priority": "recommended",
+   "reason": "Wheel strikes commonly bend lower arms, struts and hubs; the suspension on the impact side should be inspected on a ramp."
+  },
+  {
+   "id": "suspension.wheel_damaged",
+   "check": "suspension_inspection",
+   "key": "suspension_inspection_{side}",
+   "label": "Suspension inspection {sideLabel} (arms, struts, hub, bushes)",
+   "zones": [
+    "wheel_fl",
+    "wheel_fr",
+    "wheel_rl",
+    "wheel_rr",
+    "front_suspension_l",
+    "front_suspension_r",
+    "rear_suspension_l",
+    "rear_suspension_r"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "priority": "required",
+   "reason": "Visible damage to a wheel or suspension part means the components behind it may also be bent."
+  },
+  {
+   "id": "steering.front",
+   "check": "steering_inspection",
+   "label": "Steering inspection (rack, track rods, steering angle sensor)",
+   "zones": [
+    "wheel_fl",
+    "wheel_fr",
+    "front_suspension_l",
+    "front_suspension_r"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "priority": "recommended",
+   "reason": "A front wheel strike can bend the track rods or damage the steering rack; an off-centre steering wheel after the incident is a typical sign."
+  },
+  {
+   "id": "diagnostics.any_damage",
+   "check": "diagnostics_scan",
+   "label": "Pre- and post-repair diagnostic scan (all modules)",
+   "when": {
+    "minSeverity": 1
+   },
+   "priority": "recommended",
+   "reason": "Modern vehicles store fault and crash codes in many modules; a scan before and after repair shows hidden electrical faults and confirms systems are working."
+  },
+  {
+   "id": "diagnostics.significant",
+   "check": "diagnostics_scan",
+   "label": "Pre- and post-repair diagnostic scan (all modules)",
+   "when": {
+    "minSeverity": 2
+   },
+   "priority": "required",
+   "reason": "Medium or heavy damage usually disturbs sensors, lamps or wiring; a full scan before and after repair is needed."
+  },
+  {
+   "id": "diagnostics.electrical_zones",
+   "check": "diagnostics_scan",
+   "label": "Pre- and post-repair diagnostic scan (all modules)",
+   "zones": [
+    "front_parking_sensors",
+    "rear_parking_sensors",
+    "front_radar",
+    "reversing_camera",
+    "headlamp_l",
+    "headlamp_r",
+    "airbags",
+    "door_mirror_l",
+    "door_mirror_r"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "priority": "required",
+   "reason": "Damage is recorded on an electrical or sensor component, which will log faults that must be read and cleared."
+  },
+  {
+   "id": "adas.alignment_camera",
+   "check": "adas_calibration",
+   "key": "adas_after_alignment",
+   "label": "ADAS camera / radar calibration check after wheel alignment",
+   "zones": [
+    "wheel_fl",
+    "wheel_fr",
+    "wheel_rl",
+    "wheel_rr",
+    "front_suspension_l",
+    "front_suspension_r",
+    "rear_suspension_l",
+    "rear_suspension_r"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "featuresAny": [
+     "lane_departure_warning",
+     "lane_keep_assist",
+     "lane_centring",
+     "traffic_sign_recognition",
+     "intelligent_speed_assist",
+     "auto_high_beam",
+     "aeb",
+     "aeb_city",
+     "aeb_pedestrian_cyclist",
+     "forward_collision_warning",
+     "adaptive_cruise",
+     "adaptive_cruise_stop_go",
+     "traffic_jam_assist",
+     "hands_off_highway_assist"
+    ]
+   },
+   "priority": "recommended",
+   "reason": "Driver-assistance cameras and radars use the vehicle’s thrust line; if the wheel alignment is adjusted the manufacturer may require the systems to be calibrated."
+  },
+  {
+   "id": "adas.windscreen",
+   "check": "adas_calibration",
+   "key": "adas_front_camera",
+   "label": "Windscreen camera calibration",
+   "zones": [
+    "windscreen"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "operationsAny": [
+     "replace",
+     "r_and_i"
+    ],
+    "featuresAny": [
+     "lane_departure_warning",
+     "lane_keep_assist",
+     "lane_centring",
+     "traffic_sign_recognition",
+     "intelligent_speed_assist",
+     "auto_high_beam",
+     "aeb",
+     "aeb_city",
+     "aeb_pedestrian_cyclist",
+     "forward_collision_warning"
+    ]
+   },
+   "priority": "required",
+   "adas": {
+    "system": "front_camera",
+    "method": "static_or_dynamic"
+   },
+   "reason": "Systems using the windscreen camera must be calibrated after the screen is replaced, following the manufacturer procedure."
+  },
+  {
+   "id": "adas.front_radar_area",
+   "check": "adas_calibration",
+   "key": "adas_front_radar",
+   "label": "Front radar calibration / alignment",
+   "zones": [
+    "front_bumper",
+    "grille",
+    "front_panel",
+    "front_radar"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "featuresAny": [
+     "adaptive_cruise",
+     "adaptive_cruise_stop_go",
+     "traffic_jam_assist",
+     "hands_off_highway_assist",
+     "aeb",
+     "aeb_pedestrian_cyclist",
+     "forward_collision_warning"
+    ]
+   },
+   "priority": "required",
+   "adas": {
+    "system": "front_radar",
+    "method": "static_or_dynamic"
+   },
+   "reason": "Damage or repair in the area of the front radar can change its aim; the radar alignment must be checked and calibrated to the manufacturer procedure."
+  },
+  {
+   "id": "adas.rear_radar_area",
+   "check": "adas_calibration",
+   "key": "adas_rear_radar",
+   "label": "Rear corner radar calibration (blind spot / cross-traffic)",
+   "zones": [
+    "rear_bumper",
+    "quarter_panel_l",
+    "quarter_panel_r",
+    "rear_lamp_l",
+    "rear_lamp_r"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "featuresAny": [
+     "blind_spot",
+     "rear_cross_traffic_alert",
+     "exit_warning"
+    ]
+   },
+   "priority": "recommended",
+   "adas": {
+    "system": "rear_radar",
+    "method": "static_or_dynamic"
+   },
+   "reason": "Damage near the rear corners can move the blind-spot radars behind the bumper; they should be checked and calibrated if disturbed."
+  },
+  {
+   "id": "adas.parking_sensors",
+   "check": "adas_calibration",
+   "key": "parking_sensor_function",
+   "label": "Parking sensor function test",
+   "zones": [
+    "front_bumper",
+    "rear_bumper",
+    "front_parking_sensors",
+    "rear_parking_sensors"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "featuresAny": [
+     "parking_sensors_front",
+     "parking_sensors_rear",
+     "park_assist",
+     "remote_park_assist",
+     "aftermarket_parking_sensors"
+    ]
+   },
+   "priority": "recommended",
+   "adas": {
+    "system": "parking_sensors",
+    "method": "static"
+   },
+   "reason": "Bumper damage or repair can leave parking sensors misaligned or painted too thickly; their function should be tested after repair."
+  },
+  {
+   "id": "srs.deployment",
+   "check": "airbag_srs_check",
+   "label": "Airbag / SRS system check and crash data clear",
+   "when": {
+    "deploymentIndicated": true
+   },
+   "priority": "required",
+   "reason": "Deployment is indicated: the SRS system must be diagnosed, deployed parts identified and the crash data cleared or the control unit replaced to the manufacturer procedure."
+  },
+  {
+   "id": "srs.heavy",
+   "check": "airbag_srs_check",
+   "label": "Airbag / SRS system check and crash data clear",
+   "when": {
+    "minSeverity": 3
+   },
+   "priority": "recommended",
+   "reason": "A heavy impact can be recorded by the airbag control unit or trigger pretensioners without visible deployment."
+  },
+  {
+   "id": "srs.side_sensors",
+   "check": "airbag_srs_check",
+   "label": "Airbag / SRS system check and crash data clear",
+   "zones": [
+    "front_door_l",
+    "front_door_r",
+    "rear_door_l",
+    "rear_door_r",
+    "sliding_door_l",
+    "sliding_door_r",
+    "b_pillar_l",
+    "b_pillar_r",
+    "sill_l",
+    "sill_r"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "priority": "recommended",
+   "reason": "Side-impact sensors are mounted in the doors and B-pillars; damage there can affect the sensors or their wiring."
+  },
+  {
+   "id": "seatbelts.deployment",
+   "check": "seatbelt_inspection",
+   "label": "Seatbelt inspection (webbing, buckles, retractors, pretensioners)",
+   "when": {
+    "deploymentIndicated": true
+   },
+   "priority": "required",
+   "reason": "Belts that were worn in a crash with deployment are typically replaced; pretensioners that fired cannot be reused."
+  },
+  {
+   "id": "seatbelts.heavy_or_speed",
+   "check": "seatbelt_inspection",
+   "label": "Seatbelt inspection (webbing, buckles, retractors, pretensioners)",
+   "when": {
+    "minSeverity": 3
+   },
+   "priority": "recommended",
+   "reason": "In a heavy impact the belts and retractors are loaded and should be inspected to the manufacturer guidance."
+  },
+  {
+   "id": "seatbelts.speed",
+   "check": "seatbelt_inspection",
+   "label": "Seatbelt inspection (webbing, buckles, retractors, pretensioners)",
+   "when": {
+    "minSpeedMph": 15,
+    "minSeverity": 1
+   },
+   "priority": "consider",
+   "reason": "The reported speed suggests the occupants’ belts may have been loaded."
+  },
+  {
+   "id": "cooling.front",
+   "check": "cooling_system_check",
+   "label": "Cooling system pressure test",
+   "zones": [
+    "radiator",
+    "front_panel",
+    "chassis_leg_l",
+    "chassis_leg_r"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "priority": "recommended",
+   "reason": "Damage at the front panel or cooling pack can cause slow coolant leaks that only show under pressure."
+  },
+  {
+   "id": "cooling.heavy_front",
+   "check": "cooling_system_check",
+   "label": "Cooling system pressure test",
+   "zones": [
+    "front_bumper",
+    "grille",
+    "bonnet"
+   ],
+   "when": {
+    "minSeverity": 3,
+    "impactDirectionsAny": [
+     "front",
+     "front_left",
+     "front_right",
+     "multiple",
+     "rollover"
+    ]
+   },
+   "priority": "recommended",
+   "reason": "A heavy frontal impact usually reaches the radiator behind the front panel."
+  },
+  {
+   "id": "cooling.leak_seen",
+   "check": "cooling_system_check",
+   "label": "Cooling system pressure test",
+   "when": {
+    "fluidLeakVisible": true
+   },
+   "priority": "required",
+   "reason": "Fluid is visible on the ground or under the vehicle in the photos; its source should be identified."
+  },
+  {
+   "id": "ac.front",
+   "check": "air_conditioning_check",
+   "label": "Air-conditioning pressure / leak test",
+   "zones": [
+    "radiator",
+    "front_panel"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "priority": "recommended",
+   "reason": "The air-conditioning condenser sits at the front of the cooling pack and is easily holed; a leak test confirms whether it is intact."
+  },
+  {
+   "id": "ac.heavy_front",
+   "check": "air_conditioning_check",
+   "label": "Air-conditioning pressure / leak test",
+   "zones": [
+    "front_bumper",
+    "grille",
+    "bonnet",
+    "chassis_leg_l",
+    "chassis_leg_r"
+   ],
+   "when": {
+    "minSeverity": 3,
+    "impactDirectionsAny": [
+     "front",
+     "front_left",
+     "front_right",
+     "multiple",
+     "rollover"
+    ]
+   },
+   "priority": "recommended",
+   "reason": "A heavy frontal impact commonly damages the condenser or its pipes behind the bumper."
+  },
+  {
+   "id": "hv.significant",
+   "check": "high_voltage_system_check",
+   "label": "High-voltage system safety check (isolation, battery housing, cables)",
+   "when": {
+    "minSeverity": 2,
+    "powertrainsAny": [
+     "electric",
+     "phev",
+     "hybrid"
+    ]
+   },
+   "priority": "recommended",
+   "reason": "On an electrified vehicle medium or heavy damage can reach high-voltage cables or the battery; a qualified technician should check isolation before repair."
+  },
+  {
+   "id": "hv.underbody_or_heavy",
+   "check": "high_voltage_system_check",
+   "label": "High-voltage system safety check (isolation, battery housing, cables)",
+   "zones": [
+    "floor_pan",
+    "sill_l",
+    "sill_r",
+    "boot_floor",
+    "rear_suspension_l",
+    "rear_suspension_r",
+    "front_suspension_l",
+    "front_suspension_r",
+    "chassis_leg_l",
+    "chassis_leg_r"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "powertrainsAny": [
+     "electric",
+     "phev",
+     "hybrid"
+    ]
+   },
+   "priority": "required",
+   "reason": "The traction battery and high-voltage cables run under the floor and sills; damage in this area needs a high-voltage safety check before the vehicle is moved into the workshop."
+  },
+  {
+   "id": "hv.deployment",
+   "check": "high_voltage_system_check",
+   "label": "High-voltage system safety check (isolation, battery housing, cables)",
+   "when": {
+    "deploymentIndicated": true,
+    "powertrainsAny": [
+     "electric",
+     "phev",
+     "hybrid"
+    ]
+   },
+   "priority": "required",
+   "reason": "An airbag deployment on an electrified vehicle normally triggers high-voltage disconnection; the system must be checked and reset by a qualified technician."
+  },
+  {
+   "id": "gaps.closures",
+   "check": "panel_gap_check",
+   "label": "Panel gaps and fit of doors, bonnet and tailgate",
+   "zones": [
+    "bonnet",
+    "front_wing_l",
+    "front_wing_r",
+    "front_door_l",
+    "front_door_r",
+    "rear_door_l",
+    "rear_door_r",
+    "sliding_door_l",
+    "sliding_door_r",
+    "tailgate",
+    "boot_lid",
+    "rear_load_door_l",
+    "rear_load_door_r",
+    "quarter_panel_l",
+    "quarter_panel_r"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "priority": "recommended",
+   "reason": "Uneven gaps or doors that bind show hidden distortion of the hinge pillars or apertures."
+  },
+  {
+   "id": "underbody.zones",
+   "check": "underbody_inspection",
+   "label": "Underbody inspection on a ramp",
+   "zones": [
+    "floor_pan",
+    "exhaust",
+    "sill_l",
+    "sill_r",
+    "boot_floor"
+   ],
+   "when": {
+    "minSeverity": 1
+   },
+   "priority": "required",
+   "reason": "Damage is recorded on or near the underbody, which photos rarely show fully."
+  },
+  {
+   "id": "underbody.heavy",
+   "check": "underbody_inspection",
+   "label": "Underbody inspection on a ramp",
+   "when": {
+    "minSeverity": 3
+   },
+   "priority": "recommended",
+   "reason": "Heavy impacts can bend subframes, fuel and brake lines and floor sections that are not visible from above."
+  },
+  {
+   "id": "underbody.leak",
+   "check": "underbody_inspection",
+   "label": "Underbody inspection on a ramp",
+   "when": {
+    "fluidLeakVisible": true
+   },
+   "priority": "required",
+   "reason": "Fluid is visible in the photos; the underside should be inspected to find the source."
+  },
+  {
+   "id": "wheels.corner",
+   "check": "wheel_tyre_inspection",
+   "key": "wheel_tyre_inspection_{side}",
+   "label": "Wheel and tyre inspection {sideLabel} (rim, sidewall)",
+   "zones": [
+    "front_wing_l",
+    "front_wing_r",
+    "quarter_panel_l",
+    "quarter_panel_r",
+    "load_side_panel_l",
+    "load_side_panel_r",
+    "load_bed_side_l",
+    "load_bed_side_r",
+    "sill_l",
+    "sill_r"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "priority": "recommended",
+   "reason": "A corner or side impact at wheel height can crack a rim or damage a tyre sidewall, which is not always visible in photos."
+  },
+  {
+   "id": "headlamp_aim.lamp",
+   "check": "headlamp_aim",
+   "label": "Headlamp aim (beam setting)",
+   "zones": [
+    "headlamp_l",
+    "headlamp_r"
+   ],
+   "when": {
+    "minSeverity": 1,
+    "operationsAny": [
+     "replace",
+     "r_and_i",
+     "repair"
+    ]
+   },
+   "priority": "required",
+   "reason": "A replaced or refitted headlamp must be aimed so it meets MOT beam requirements and does not dazzle."
+  },
+  {
+   "id": "headlamp_aim.front_end",
+   "check": "headlamp_aim",
+   "label": "Headlamp aim (beam setting)",
+   "zones": [
+    "front_panel",
+    "front_bumper",
+    "front_wing_l",
+    "front_wing_r"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "priority": "recommended",
+   "reason": "Work on the front panel, bumper or wings disturbs the headlamp mountings, so the beam aim should be checked."
+  },
+  {
+   "id": "glass.roof_or_pillar",
+   "check": "glass_inspection",
+   "label": "Glass inspection for stress cracks (windscreen, sunroof, side glass)",
+   "zones": [
+    "roof",
+    "a_pillar_l",
+    "a_pillar_r",
+    "b_pillar_l",
+    "b_pillar_r"
+   ],
+   "when": {
+    "minSeverity": 2
+   },
+   "priority": "consider",
+   "reason": "Distortion of the roof or pillars can put the bonded glass under stress and cause cracks to appear later."
+  },
+  {
+   "id": "glass.front_deployment",
+   "check": "glass_inspection",
+   "label": "Glass inspection for stress cracks (windscreen, sunroof, side glass)",
+   "when": {
+    "deploymentIndicated": true,
+    "impactDirectionsAny": [
+     "front",
+     "front_left",
+     "front_right",
+     "multiple",
+     "rollover"
+    ]
+   },
+   "priority": "recommended",
+   "reason": "A passenger airbag deployment can strike and crack the windscreen."
+  }
+ ]
+}

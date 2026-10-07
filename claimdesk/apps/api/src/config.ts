@@ -97,6 +97,38 @@ export interface AppConfig {
   templatesDir: string;
   /** DOCX → PDF converter preference (DOCX_PDF_CONVERTER: auto | word | libreoffice | browser; default auto, §A.11). */
   docxPdfConverter: 'auto' | 'word' | 'libreoffice' | 'browser';
+  /**
+   * `<home>` (SUPREME §K.6): CLAIMDESK_HOME, default dirname(DATA_DIR) — %LOCALAPPDATA%\ClaimDesk on the desktop. Holds
+   * secrets\, agent-runs\, claude-home\, inbox\, logs\ — never inside DATA_DIR, so data backups never contain them.
+   */
+  appHome: string;
+  /** `<appHome>/agent-runs`: per-run working directories (deleted after 7 days). */
+  agentRunsDir: string;
+  /** AI_DRIVER: force a driver (cli | api | fake | off); undefined = Settings > AI decides. */
+  aiDriverOverride?: AiDriverOverride;
+  /** CLAIMDESK_ALLOW_FAKE_AI=1: the FakeDriver (and the fake mail transport) may run in a non-test app (CI smoke tests). */
+  allowFakeAi: boolean;
+  /** CLAIMDESK_FORBID_REAL_AI=1: real drivers throw REAL_AI_FORBIDDEN (set by every vitest config and CI). */
+  forbidRealAi: boolean;
+  /** MAIL_TRANSPORT: 'real' (IONOS IMAP/SMTP) or 'fake' (in-memory FakeMailbox/FakeSmtp; refused in production unless allowFakeAi). */
+  mailTransport: 'real' | 'fake';
+}
+
+export type AiDriverOverride = 'cli' | 'api' | 'fake' | 'off';
+
+/** AI_DRIVER: cli | api | fake | off; anything else (or unset) → undefined (Settings decide). */
+export function parseAiDriverOverride(raw: string | undefined): AiDriverOverride | undefined {
+  const v = raw?.trim().toLowerCase();
+  return v === 'cli' || v === 'api' || v === 'fake' || v === 'off' ? v : undefined;
+}
+
+/** MAIL_TRANSPORT: 'fake' only when asked for, and never in production unless CLAIMDESK_ALLOW_FAKE_AI=1. */
+export function resolveMailTransport(env: AppConfig['env'], raw: string | undefined, allowFake: boolean): AppConfig['mailTransport'] {
+  const v = raw?.trim().toLowerCase();
+  if (v === undefined || v === '' || v === 'real') return 'real';
+  if (v !== 'fake') throw new Error(`MAIL_TRANSPORT must be "real" or "fake" (got "${raw}")`);
+  if (env === 'production' && !allowFake) throw new Error('MAIL_TRANSPORT=fake is not allowed in production (set CLAIMDESK_ALLOW_FAKE_AI=1 only for CI smoke tests)');
+  return 'fake';
 }
 
 export const LOCALHOST_ORIGINS: readonly RegExp[] = [/^https?:\/\/localhost(:\d+)?$/i, /^https?:\/\/127\.0\.0\.1(:\d+)?$/, /^https?:\/\/\[::1\](:\d+)?$/];
@@ -185,6 +217,9 @@ export function loadConfig(overrides: Partial<AppConfig> = {}): AppConfig {
   loadDotenv({ path: path.resolve(process.cwd(), '../../.env') });
   const envName = (str('NODE_ENV', 'development') as AppConfig['env']) ?? 'development';
   const dataDir = str('DATA_DIR', path.resolve(process.cwd(), 'data'))!;
+  const appHome = str('CLAIMDESK_HOME', path.dirname(path.resolve(dataDir)))!;
+  const allowFakeAi = bool('CLAIMDESK_ALLOW_FAKE_AI', false);
+  const envForChecks: AppConfig['env'] = envName === 'test' || envName === 'production' ? envName : 'development';
   const keys: ApiKeys = {
     dvlaVesApiKey: str('DVLA_VES_API_KEY'),
     dvsaMotClientId: str('DVSA_MOT_CLIENT_ID'),
@@ -222,8 +257,15 @@ export function loadConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     dataDir,
     templatesDir: str('TEMPLATES_DIR', path.join(dataDir, 'templates'))!,
     docxPdfConverter: parseDocxPdfConverter(str('DOCX_PDF_CONVERTER')),
+    appHome,
+    agentRunsDir: path.join(appHome, 'agent-runs'),
+    aiDriverOverride: parseAiDriverOverride(str('AI_DRIVER')),
+    allowFakeAi,
+    forbidRealAi: bool('CLAIMDESK_FORBID_REAL_AI', false),
+    mailTransport: resolveMailTransport(envForChecks, str('MAIL_TRANSPORT'), allowFakeAi),
     ...overrides,
   };
+  if (cfg.mailTransport === 'fake' && cfg.env === 'production' && !cfg.allowFakeAi) throw new Error('MAIL_TRANSPORT=fake is not allowed in production');
   if (cfg.authMode === 'header' && cfg.env === 'production') throw new Error('AUTH_MODE=header is not allowed in production: X-User-Id is not authentication');
   if (!(cfg.sessionTtlHours > 0)) throw new Error('SESSION_TTL_HOURS must be a positive number');
   if (cfg.chromiumPath) process.env.CHROMIUM_PATH = cfg.chromiumPath;
@@ -262,6 +304,12 @@ export function testConfig(overrides: Partial<AppConfig> = {}): AppConfig {
     dataDir: scratch,
     templatesDir: path.join(scratch, 'templates'),
     docxPdfConverter: 'auto',
+    // The scratch root doubles as <home> in tests (secrets/, agent-runs/ live beside data, never in the repo).
+    appHome: scratch,
+    agentRunsDir: path.join(scratch, 'agent-runs'),
+    allowFakeAi: false,
+    forbidRealAi: true,
+    mailTransport: 'fake',
     ...overrides,
     // Mirror loadConfig: production defaults to Secure cookies unless the override says otherwise.
     cookieSecure: overrides.cookieSecure ?? overrides.env === 'production',

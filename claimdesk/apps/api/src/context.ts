@@ -13,6 +13,8 @@ import { loadConfig, type AppConfig } from './config.js';
 import { resolveEngines, type DomainEngines } from './engines.js';
 import { syncBuiltinTemplates } from './services/docxTemplates.js';
 import { appVersion } from './routes/health.js';
+import { createSecretStore, type SecretStore } from './services/secrets.js';
+import type { InjectOptions, LightMyRequestResponse } from 'fastify';
 
 export interface Logger {
   info(msg: string, meta?: Record<string, unknown>): void;
@@ -41,6 +43,15 @@ export interface AppContext {
   now(): ISODateTime;
   engines(): DomainEngines;
   logger: Logger;
+  /** DPAPI / AES secret store under <appHome>/secrets (SUPREME §K.2). The API only ever returns presence flags. */
+  secrets: SecretStore;
+  /**
+   * In-process HTTP into the app's own routes (set by buildApp: `ctx.inject = (o) => app.inject(o)`). The agent
+   * dispatcher calls existing routes through it as the agent principal (SUPREME §B.3 step 6).
+   */
+  inject?: (opts: InjectOptions) => Promise<LightMyRequestResponse>;
+  /** Late-bound services (the runtime's supervisor registers itself here at boot). */
+  services: { supervisor?: unknown };
   close(): void;
 }
 
@@ -50,6 +61,8 @@ export interface BuildContextOptions {
   logger?: Logger;
   /** Run migrations on the opened database (default true). */
   migrate?: boolean;
+  /** Secret store override (tests inject a fake DPAPI runner). */
+  secrets?: SecretStore;
 }
 
 export const consoleLogger: Logger = {
@@ -195,6 +208,8 @@ export function buildContext(options: BuildContextOptions = {}): AppContext {
     now: options.now ?? (() => new Date().toISOString()),
     engines: resolveEngines,
     logger,
+    secrets: options.secrets ?? createSecretStore({ appHome: config.appHome }),
+    services: {},
     close: () => db.closeDatabase(handle),
   };
   // Built-in Word templates: cache their scans in document_templates once per boot (never throws; a failure marks the

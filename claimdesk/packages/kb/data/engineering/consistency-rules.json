@@ -1,0 +1,92 @@
+{
+ "schemaVersion": 1,
+ "id": "engineering.consistency_rules",
+ "version": "2026-10-07.1",
+ "verification": {
+  "status": "unverified",
+  "sourceNote": "ClaimDesk generic guidance for comparing reported circumstances with the damage seen in photos. Each finding is a neutral point for the engineer to consider, never a conclusion about the claim or the people involved. Not a substitute for the engineer's own inspection."
+ },
+ "directionRegions": {
+  "front": ["front"],
+  "front_left": ["front", "left"],
+  "front_right": ["front", "right"],
+  "left": ["left"],
+  "right": ["right"],
+  "rear": ["rear"],
+  "rear_left": ["rear", "left"],
+  "rear_right": ["rear", "right"],
+  "top": ["top"],
+  "underside": ["under"],
+  "rollover": ["front", "rear", "left", "right", "top"],
+  "multiple": ["front", "rear", "left", "right", "top", "under"],
+  "unknown": []
+ },
+ "neutralRegions": ["interior", "under"],
+ "rules": [
+  {
+   "id": "consistency.opposite_side",
+   "kind": "opposite_side_damage",
+   "minSeverity": 1,
+   "message": "The reported impact was to the {direction}, but the damage recorded is on the other side of the vehicle ({zones}). For the engineer to consider: the side may have been described from a different viewpoint (nearside and offside are easily confused), or the photos may show a different area."
+  },
+  {
+   "id": "consistency.outside_direction",
+   "kind": "damage_outside_reported_direction",
+   "minSeverity": 2,
+   "message": "Damage is recorded at {zones}, away from the reported {direction} impact. For the engineer to consider whether it relates to this incident, for example a secondary impact, earlier damage or circumstances not yet described."
+  },
+  {
+   "id": "consistency.reported_area_undamaged",
+   "kind": "reported_area_undamaged",
+   "minSeverity": 1,
+   "message": "No damage is recorded at the reported area of impact ({area}) in the photos assessed. For the engineer to consider: the damage may be light, hidden behind a cover, or not shown clearly in the photos."
+  },
+  {
+   "id": "consistency.reported_area_not_photographed",
+   "kind": "reported_area_not_photographed",
+   "message": "The photos supplied do not appear to show the reported area of impact ({area}). Further photos of that area would help the engineer confirm the damage."
+  },
+  {
+   "id": "consistency.low_speed_heavy_damage",
+   "kind": "low_speed_heavy_damage",
+   "maxSpeedMph": 10,
+   "minSeverity": 3,
+   "zoneKinds": ["structural", "panel", "bumper", "mechanical"],
+   "message": "Heavy damage is recorded ({zones}) and the reported speed is {speed} mph. For the engineer to consider whether the damage fits the reported speed; speeds are often hard for those involved to judge, and the other vehicle's speed and mass also matter."
+  },
+  {
+   "id": "consistency.high_speed_light_damage",
+   "kind": "high_speed_light_damage",
+   "minSpeedMph": 30,
+   "maxOverallSeverity": 1,
+   "message": "The reported speed is {speed} mph but only light damage is recorded in the photos. For the engineer to consider: energy-absorbing parts can hide damage behind an intact cover, so the hidden-damage checks may be worthwhile."
+  },
+  {
+   "id": "consistency.deployment_light_damage",
+   "kind": "deployment_with_light_damage",
+   "maxOverallSeverity": 1,
+   "message": "Airbag deployment is indicated but the visible damage is light. For the engineer to consider: deployment depends on deceleration rather than visible damage, and damage may be behind the bumper cover or underneath the vehicle."
+  },
+  {
+   "id": "consistency.deployment_reported_not_seen",
+   "kind": "deployment_reported_not_seen",
+   "message": "Airbag deployment is reported but is not visible in the photos assessed. Photos of the interior would help the engineer confirm which airbags and pretensioners deployed."
+  },
+  {
+   "id": "consistency.deployment_seen_not_reported",
+   "kind": "deployment_seen_not_reported",
+   "message": "The photos appear to show a deployed airbag or pretensioner although the report says none deployed. For the engineer to consider and confirm with the driver."
+  },
+  {
+   "id": "consistency.pre_existing",
+   "kind": "pre_existing_suspected",
+   "minSeverity": 1,
+   "message": "Some recorded damage ({zones}) shows signs that it may predate this incident, such as corrosion, dirt or weathering in the damaged area. For the engineer to consider whether it relates to this incident; any earlier damage is listed separately and not claimed."
+  },
+  {
+   "id": "consistency.photo_quality",
+   "kind": "unusable_photos",
+   "message": "{count} photo(s) have quality issues that limit what can be seen ({photos}). Clearer photos would improve the assessment."
+  }
+ ]
+}

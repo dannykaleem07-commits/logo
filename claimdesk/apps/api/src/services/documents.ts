@@ -7,6 +7,8 @@ import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import {
+  isAlwaysAskTemplate,
+  mayAutoApproveTemplate,
   bannedPhraseCheck,
   buildCertificate,
   canonicalTemplateId,
@@ -41,6 +43,7 @@ import { loadBundle, recomputeClocks } from './claimView.js';
 import { assertInsideStore } from './evidence.js';
 import { supersedeDocxDocument } from './docxDocuments.js';
 import { STRICT_GATE, type OverrideGate, type OverrideTarget } from './override.js';
+import { assertHuman, isAutomatedActor } from './humanOnly.js';
 import type { SlotInput } from '@ccguk/documents';
 
 export interface DocUser {
@@ -412,13 +415,46 @@ export async function renderDocumentPdf(ctx: AppContext, doc: GeneratedDocument)
   return { pdf, sha256: sha256Hex(pdf), pages, relativePath: relative, converter: 'chromium-html' };
 }
 
+export interface ApproveDocumentOptions {
+  /**
+   * The one exception to "approval is human-only" (SUPREME §D.5): an automated actor (`agent:<name>`) may approve only
+   * a document whose template is in `autoApproveTemplates` (and not always-ask), with zero open block/warn consistency
+   * flags (a flag cleared by an agent still counts as open) and a `pass` review of this document. Audited as
+   * `document.approve.auto`.
+   */
+  automated?: { reviewId: string; ruleIds: string[] };
+}
+
+/** Refuse (409 HUMAN_REQUIRED) unless the §D.5 automated-approval conditions hold. */
+function assertAutomatedApprovalAllowed(ctx: AppContext, doc: GeneratedDocument, actor: Actor, automated: ApproveDocumentOptions['automated']): void {
+  if (!automated) return assertHuman(actor, 'approve this document');
+  const refuse = (why: string): never => {
+    throw conflict('HUMAN_REQUIRED', `A person must approve this document: ${why}`, { documentId: doc.id, templateId: doc.templateId, reviewId: automated.reviewId });
+  };
+  const settings = ctx.repos.getAgentSettings(ctx.db).autonomy;
+  const canonical = canonicalTemplateId(doc.templateId);
+  if (!mayAutoApproveTemplate(settings, doc.templateId) || isAlwaysAskTemplate(canonical)) refuse(`template ${doc.templateId} is not allow-listed for automatic approval`);
+  // Open block/warn flags refuse; a flag cleared by an agent still counts as open (only a person or the system's
+  // deterministic reconciliation may clear one).
+  const flags = (doc.consistency?.flags ?? []).filter((f) => (f.severity === 'block' || f.severity === 'warn') && (!f.clearedAt || (f.clearedBy !== 'system' && isAutomatedActor({ userId: f.clearedBy ?? 'agent:unknown' }))));
+  if (flags.length || doc.status === 'blocked' || doc.consistency?.blocked) refuse(`it carries open consistency flags (${flags.map((f) => f.code).join(', ') || 'blocked'})`);
+  const review = ctx.repos.getReview(ctx.db, automated.reviewId);
+  if (!review || review.targetId !== doc.id || (review.targetKind !== 'document' && review.targetKind !== 'docx')) refuse(`review ${automated.reviewId} is not a review of this document`);
+  if (review!.verdict !== 'pass') refuse(`the review verdict is ${review!.verdict}`);
+}
+
 /**
  * Approve a draft (renders and stores the PDF). Uncleared block flags refuse with 409 DOCUMENT_BLOCKED through the
  * override gate (class A, 0.3 §A.6 B18): overridden in manager mode, each open block flag is cleared through the normal
  * flag-clearing path (audited, reason "Manager override: <reason>") and the document is then approved.
+ * Human-only (SUPREME §B.2.5): the system and agents are refused with 409 HUMAN_REQUIRED, except the allow-listed
+ * automated path (`opts.automated`, §D.5).
  */
-export async function approveDocument(ctx: AppContext, id: Id, actor: Actor, note?: string, gate: OverrideGate = STRICT_GATE): Promise<GeneratedDocument> {
+export async function approveDocument(ctx: AppContext, id: Id, actor: Actor, note?: string, gate: OverrideGate = STRICT_GATE, opts: ApproveDocumentOptions = {}): Promise<GeneratedDocument> {
   let doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: true });
+  const automated = isAutomatedActor(actor);
+  // Checked before anything else: an automated actor never reaches the manager-override path below.
+  if (automated) assertAutomatedApprovalAllowed(ctx, doc, actor, opts.automated);
   if (doc.status === 'blocked' || doc.consistency?.blocked) {
     const open = (doc.consistency?.flags ?? []).filter((f) => f.severity === 'block' && !f.clearedAt);
     const target: OverrideTarget = { entity: 'documents', entityId: id };
@@ -433,13 +469,15 @@ export async function approveDocument(ctx: AppContext, id: Id, actor: Actor, not
     }
   }
   if (doc.status !== 'draft') throw conflict('DOCUMENT_STATE', `Only a draft can be approved (status is ${doc.status})`);
-  if (actor.userId === 'system') throw conflict('HUMAN_REQUIRED', 'A human approver is required');
   const pdf = await renderDocumentPdf(ctx, doc);
   const now = ctx.now();
   return ctx.db.transaction((tx) => {
     ctx.repos.setDocumentPdf(tx, id, { pdfPath: pdf.relativePath, sha256: pdf.sha256, pdfConverter: pdf.converter });
     const approved = ctx.repos.approveDocument(tx, id, actor, now);
     ctx.repos.appendAudit(tx, { actor, action: 'document.pdf', entity: 'documents', entityId: id, after: { pdfPath: pdf.relativePath, sha256: pdf.sha256, pages: pdf.pages, converter: pdf.converter, attempts: pdf.attempts, note }, at: now });
+    if (automated && opts.automated) {
+      ctx.repos.appendAudit(tx, { actor, action: 'document.approve.auto', entity: 'documents', entityId: id, after: { claimId: doc.claimId ?? null, templateId: doc.templateId, reviewId: opts.automated.reviewId, ruleIds: opts.automated.ruleIds, sha256: pdf.sha256 }, at: now });
+    }
     return approved;
   });
 }
@@ -620,6 +658,7 @@ function maskContact(c: string): string {
 }
 
 export function startSignature(ctx: AppContext, id: Id, input: { signerPartyId: Id; signerName?: string; contact: string; channel: 'email' | 'sms' }, actor: Actor): SignStartResult {
+  assertHuman(actor, 'start an e-signature');
   const doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: false });
   if (doc.status !== 'approved' && doc.status !== 'sent') throw conflict('DOCUMENT_STATE', `Only an approved document can be put to signature (status is ${doc.status})`);
   if (doc.signature) throw conflict('DOCUMENT_STATE', 'Document already carries a signature');
@@ -653,6 +692,7 @@ export interface SignVerifyResult {
 }
 
 export async function verifySignature(ctx: AppContext, id: Id, input: SignVerifyInput, actor: Actor): Promise<SignVerifyResult> {
+  assertHuman(actor, 'complete an e-signature');
   const doc = ctx.repos.requireDocument(ctx.db, id, { includeHtml: false });
   const challenge = input.challengeId ? challenges.get(input.challengeId) : [...challenges.values()].filter((c) => c.documentId === id).sort((a, b) => b.issuedAt.localeCompare(a.issuedAt))[0];
   if (!challenge || challenge.documentId !== id) throw new HttpError(400, 'OTP_NO_CHALLENGE', 'No open signing challenge for this document — start again');

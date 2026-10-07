@@ -16,6 +16,7 @@ import { useToast } from '../../components/Toast';
 import { ChangePasswordCard } from './ChangePasswordCard';
 import { ManagerModeCard } from './ManagerModeCard';
 import { UpdatesCard } from './UpdatesCard';
+import { ImportFolderCard } from './ImportFolderCard';
 import {
   API_KEYS,
   apiKeyPresent,
@@ -121,6 +122,17 @@ export function SettingsPage() {
         </ul>
       </nav>
 
+      {/* ClaimDesk Supreme (docs/SUPREME-DESIGN.md §L.6–L.10): each screen is built by its own slice. */}
+      <Card title="Agents & AI">
+        <ul className="settings-subnav" aria-label="Agents and AI settings">
+          <li><Link to="/settings/ai">AI (Claude sign-in and models)</Link></li>
+          <li><Link to="/settings/email">Email (IONOS mailbox)</Link></li>
+          <li><Link to="/settings/autonomy">Autonomy</Link></li>
+          <li><Link to="/settings/notifications">Notifications</Link></li>
+          <li><Link to="/settings/brain">Brain packs</Link></li>
+        </ul>
+      </Card>
+
       {settings.isLoading ? (
         <Loading label="Loading settings…" />
       ) : settings.error ? (
@@ -213,6 +225,7 @@ export function SettingsPage() {
       <div className="stack" style={{ marginTop: 'var(--s-4)' }}>
         <ManagerModeCard />
         <UpdatesCard id="updates" />
+        <ImportFolderCard />
 
         <section className="card" id="lookups">
           <details className="settings-lookups" ref={lookupsRef}>

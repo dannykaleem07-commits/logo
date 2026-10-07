@@ -1,18 +1,162 @@
-/* Dashboard (0.3 §E11): one-line actions and clocks; KPI tiles 2×2 on phones. Shared tokens only. */
-@media (max-width: 640px) {
-  .grid-4.kpi-grid {
+/* Dashboard → Today (0.4 calm pass): four big numbers, then short lists. Shared tokens only. */
+.dash-refreshing {
+  margin-left: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.dash-error {
+  margin-bottom: var(--s-3);
+}
+
+/* Big numbers: 4 across → 2 × 2 on tablets and phones */
+.dash-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-4);
+  margin-bottom: var(--s-5);
+}
+.dash-kpi {
+  padding: var(--s-5) var(--s-5) var(--s-4);
+  gap: 6px;
+}
+.dash-kpi .stat-value {
+  font-size: 2.25rem;
+}
+.dash-kpi .stat-value .money {
+  font-size: inherit;
+}
+.dash-kpi .stat-sub {
+  font-size: var(--fs-sm);
+}
+.dash-kpi.is-hot {
+  border-color: #f4c7c3;
+}
+@media (max-width: 1100px) {
+  .dash-kpis {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: var(--s-2);
   }
+}
+@media (max-width: 640px) {
+  .dash-kpis {
+    gap: var(--s-3);
+    margin-bottom: var(--s-4);
+  }
+  .dash-kpi {
+    padding: var(--s-4);
+  }
+  .dash-kpi .stat-value {
+    font-size: 1.75rem;
+  }
+  .dash-kpi .stat-sub {
+    font-size: var(--fs-xs);
+  }
+}
+
+/* Fleet alerts: one quiet line, only when there is something to check */
+.dash-fleet {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 12px var(--s-5);
+  margin-bottom: var(--s-5);
+  border-radius: var(--r-lg);
+  background: var(--amber-bg);
+  color: #6b3d05;
+  font-size: var(--fs-sm);
+}
+.dash-fleet:hover {
+  text-decoration: none;
+  filter: brightness(0.98);
+}
+.dash-fleet strong {
+  font-weight: var(--fw-semi);
+}
+.dash-fleet-dot {
+  flex: 0 0 8px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--amber);
+}
+.dash-fleet-go {
+  margin-left: auto;
+}
+
+.dash-anchor {
+  display: block;
+  position: relative;
+  top: calc(-1 * var(--topbar-h) - 16px);
+  visibility: hidden;
+}
+
+/* Lists: 2 columns on desktop, 1 below */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-5);
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .dash-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-4);
+  }
+}
+.dash .card {
+  scroll-margin-top: calc(var(--topbar-h) + 16px);
+}
+.dash-count {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semi);
+  background: var(--red-bg);
+  color: var(--red);
+}
+.dash-count-amber {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+.dash-list > li.dash-line {
+  align-items: center;
+}
+.dash-line-title {
+  font-weight: var(--fw-medium);
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.dash-line-title a {
+  color: var(--ink);
+}
+.dash-line-title a:hover {
+  color: var(--blue);
+}
+.dash-line .list-sub {
+  margin-top: 2px;
+  font-size: var(--fs-sm);
 }
 .dash-why > summary {
   cursor: pointer;
   font-size: var(--fs-xs);
   color: var(--muted);
-  margin-top: 2px;
+  margin-top: 4px;
+  width: max-content;
+}
+.dash-why > summary:hover {
+  color: var(--ink);
 }
 .dash-why[open] > summary {
   margin-bottom: 4px;
+}
+.dash-why .small {
+  color: var(--ink-2);
+  max-width: 60ch;
 }
 .dash-claims {
   margin: 4px 0 0;
@@ -20,9 +164,9 @@
   font-size: var(--fs-sm);
 }
 
-/* Next actions meta (ref · due · protects): the dots sit between items, never at the start of a wrapped line. */
+/* Action meta (ref · due · protects): the dots sit between items, never at the start of a wrapped line. */
 .dash-meta {
-  display: inline-flex;
+  display: flex;
   flex-wrap: wrap;
   gap: 0 6px;
 }
@@ -31,4 +175,31 @@
 }
 .dash-meta > * + *::before {
   content: '· ';
+}
+
+.dash-debtor-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--s-3);
+  padding: var(--s-2) var(--s-5) var(--s-3);
+  font-size: var(--fs-sm);
+}
+.dash-debtor-total strong {
+  font-weight: var(--fw-semi);
+}
+@media (max-width: 640px) {
+  .dash-debtor-total {
+    padding: var(--s-2) var(--s-4) var(--s-3);
+  }
+}
+/* Phones: the pill drops under the text so the line keeps its full width */
+@media (max-width: 640px) {
+  .dash-list > li.dash-line {
+    flex-wrap: wrap;
+    gap: 6px var(--s-3);
+  }
+  .dash-list > li.dash-line > .list-main {
+    flex: 1 1 100%;
+  }
 }

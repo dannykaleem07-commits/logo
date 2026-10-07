@@ -17,6 +17,17 @@ import { WatchPage } from '../screens/watch/WatchPage';
 import { TemplatesPage } from '../screens/templates/TemplatesPage';
 import { TemplateDetailPage } from '../screens/templates/TemplateDetailPage';
 import { GtaRatesPage } from '../screens/gta/GtaRatesPage';
+// ClaimDesk Supreme phase 1 (docs/SUPREME-DESIGN.md §L, §P): stub pages owned by the runtime, gateway, mail, intake and casework slices.
+import { NeedsYouPage } from '../screens/needsYou/NeedsYouPage';
+import { AgentsPage } from '../screens/agents/AgentsPage';
+import { DailyLogPage } from '../screens/dailyLog/DailyLogPage';
+import { OutboxPage } from '../screens/outbox/OutboxPage';
+import { IntakePage } from '../screens/intake/IntakePage';
+import { AiSettingsPage } from '../screens/settings/ai/AiSettingsPage';
+import { EmailSettingsPage } from '../screens/settings/email/EmailSettingsPage';
+import { AutonomySettingsPage } from '../screens/settings/autonomy/AutonomySettingsPage';
+import { NotificationsSettingsPage } from '../screens/settings/notifications/NotificationsSettingsPage';
+import { BrainSettingsPage } from '../screens/settings/brain/BrainSettingsPage';
 
 function RouteError() {
   const error = useRouteError();
@@ -61,6 +72,17 @@ export const routes: RouteObject[] = [
       { path: 'settings/templates', element: <TemplatesPage /> },
       { path: 'settings/templates/:id', element: <TemplateDetailPage /> },
       { path: 'settings/gta-rates', element: <GtaRatesPage /> },
+      { path: 'needs-you', element: <NeedsYouPage /> },
+      { path: 'needs-you/:id', element: <NeedsYouPage /> },
+      { path: 'agents', element: <AgentsPage /> },
+      { path: 'daily-log', element: <DailyLogPage /> },
+      { path: 'outbox', element: <OutboxPage /> },
+      { path: 'intake', element: <IntakePage /> },
+      { path: 'settings/ai', element: <AiSettingsPage /> },
+      { path: 'settings/email', element: <EmailSettingsPage /> },
+      { path: 'settings/autonomy', element: <AutonomySettingsPage /> },
+      { path: 'settings/notifications', element: <NotificationsSettingsPage /> },
+      { path: 'settings/brain', element: <BrainSettingsPage /> },
       { path: 'watch', element: <WatchPage /> },
       { path: 'capture', element: <CapturePage /> },
       { path: 'capture/:claimId', element: <CapturePage /> },

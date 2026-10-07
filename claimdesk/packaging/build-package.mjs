@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Builds the portable ClaimDesk folder (also the input of the Windows installer, packaging/installer/ClaimDesk.iss):
 //   ClaimDesk/ClaimDesk.exe        Node single-executable app (the launcher), with Courtesy Cars Group UK Ltd file details
+//   ClaimDesk/ClaimDesk-Background.exe   the same program marked as a GUI (no console window) for 24/7 background mode
+//                                  (docs/SUPREME-DESIGN.md §M.1); the PE Subsystem byte is patched 3 → 2 and asserted
 //   ClaimDesk/app/...              the API source, built web app and node_modules (real files, no links), version.json
 //   ClaimDesk/Start with example claims.cmd, Stop ClaimDesk.cmd, README.txt, docs/
 // Requirements: run after `pnpm install --config.node-linker=hoisted` (flat node_modules) and the web build.
@@ -105,6 +107,8 @@ for (const p of readdirSync(join(ROOT, 'packages'))) {
 }
 copy('node_modules');
 copyFileSync(join(HERE, 'launch.cjs'), join(APP, 'launch.cjs'));
+// scheduled-task templates for --install-autostart (launch.cjs autostartDir() looks in app/autostart)
+cpSync(join(HERE, 'autostart'), join(APP, 'autostart'), { recursive: true });
 const versionInfo = { version: VERSION, commit: gitCommit(), builtAt: new Date().toISOString() };
 writeFileSync(join(APP, 'version.json'), `${JSON.stringify(versionInfo, null, 2)}\n`);
 // docs the owner may want next to the program
@@ -123,12 +127,17 @@ writeFileSync(join(OUT, 'README.txt'), [
   'Prefer the installer. To run without installing: unzip, then double-click ClaimDesk.exe; the app',
   'opens in its own window (Microsoft Edge, which every Windows 10/11 PC has). Closing the ClaimDesk',
   'window stops ClaimDesk. "Stop ClaimDesk.cmd" stops it too.',
+  'Installed with "Keep ClaimDesk running in the background" ticked, ClaimDesk starts when you sign in to',
+  'Windows and keeps running when the window is closed (so the agents can work); Start menu > Stop ClaimDesk stops it.',
   '',
   'Sign in: username courtesycars, password CourtesyCars123! (both are filled in for you).',
   'Change the password in Settings before you put real claims in: this password is published.',
   '',
   'To look around with example claims first, use "ClaimDesk (example claims)" in the Start menu or',
   'double-click "Start with example claims.cmd". Example claims are kept separately from your data.',
+  '',
+  'Big files (Audatex data, brain packs, large evidence): drop them into %LOCALAPPDATA%\\ClaimDesk\\inbox',
+  '(Start menu > ClaimDesk import folder). ClaimDesk picks them up by itself.',
   '',
   'Your data is stored in %LOCALAPPDATA%\\ClaimDesk\\data (examples in ...\\demo). Uninstalling keeps it',
   'unless you choose to delete it.',
@@ -171,6 +180,7 @@ step('Checking the package contents');
   check(existsSync(join(APP, 'node_modules', 'fflate')), 'app/node_modules/fflate is missing (DOCX engine)');
   check(existsSync(join(APP, 'node_modules', '@xmldom', 'xmldom')), 'app/node_modules/@xmldom/xmldom is missing (DOCX engine)');
   check(existsSync(join(APP, 'version.json')), 'app/version.json is missing');
+  check(existsSync(join(APP, 'autostart', 'background.xml')) && existsSync(join(APP, 'autostart', 'watchdog.xml')), 'app/autostart/{background,watchdog}.xml are missing (24/7 background mode)');
   if (problems.length) fail(`the package is incomplete:\n  - ${problems.join('\n  - ')}`);
   console.log(`  ok: ${docx} Word templates, ${makes} catalogue makes, DOCX engine and converter files, version ${VERSION}`);
 }
@@ -239,6 +249,31 @@ if (!args.includes('--no-exe')) {
   if (process.platform === 'darwin') postject.push('--macho-segment-name', 'NODE_SEA');
   execFileSync('npx', WIN ? postject.map(shellArg) : postject, { stdio: 'inherit', shell: WIN });
   rmSync(join(HERE, 'sea-prep.blob'), { force: true });
+
+  if (WIN) {
+    // After every resource and blob edit: ClaimDesk-Background.exe = ClaimDesk.exe marked as a Windows GUI program, so
+    // the 24/7 background server (and the 15-minute watchdog) never shows a console window (§M.1).
+    step('Writing ClaimDesk-Background.exe (GUI subsystem)');
+    const bgExe = join(OUT, 'ClaimDesk-Background.exe');
+    const buf = readFileSync(EXE);
+    const sub = peSubsystemOffset(buf);
+    if (buf.readUInt16LE(sub) !== 3) fail(`ClaimDesk.exe: expected PE Subsystem 3 (console) at 0x${sub.toString(16)}, found ${buf.readUInt16LE(sub)}`);
+    buf.writeUInt16LE(2, sub);
+    writeFileSync(bgExe, buf);
+    const check = readFileSync(bgExe);
+    if (check.readUInt16LE(peSubsystemOffset(check)) !== 2) fail('ClaimDesk-Background.exe: the PE Subsystem field is not 2 (GUI) after patching');
+    console.log(`  ClaimDesk-Background.exe: Subsystem byte at 0x${sub.toString(16)} = ${check[sub]} (GUI)`);
+  }
+}
+
+/** Offset of the PE optional header's Subsystem field: e_lfanew (0x3C) + 4 (signature) + 20 (COFF header) + 68. */
+function peSubsystemOffset(buf) {
+  if (buf.length < 0x40 || buf.toString('latin1', 0, 2) !== 'MZ') fail('not a Windows executable (no MZ header)');
+  const eLfanew = buf.readUInt32LE(0x3c);
+  if (buf.toString('latin1', eLfanew, eLfanew + 4) !== 'PE\0\0') fail('not a PE executable (no PE signature)');
+  const magic = buf.readUInt16LE(eLfanew + 24);
+  if (magic !== 0x20b && magic !== 0x10b) fail(`unexpected PE optional header magic 0x${magic.toString(16)}`);
+  return eLfanew + 24 + 68;
 }
 
 step('Done');

@@ -1,4 +1,5 @@
-; ClaimDesk installer (Inno Setup 6) — design doc §G.4.
+; ClaimDesk installer (Inno Setup 6) — design doc §G.4; 0.4 background mode, import folder and claimdesk:// links:
+; docs/SUPREME-DESIGN.md §M.2.
 ; Build (CI does this; see packaging/README-desktop.md):
 ;   iscc /Qp /DAppVersion=0.2.57 /DSourceDir=<abs>\packaging\dist\ClaimDesk /O<abs>\packaging\dist packaging\installer\ClaimDesk.iss
 ; Per-user install, no administrator rights: %LOCALAPPDATA%\Programs\ClaimDesk.
@@ -14,6 +15,7 @@
 #define AppName "ClaimDesk"
 #define Publisher "Courtesy Cars Group UK Ltd"
 #define AppExe "ClaimDesk.exe"
+#define BackgroundExe "ClaimDesk-Background.exe"
 
 [Setup]
 ; NEVER change AppId once released: upgrades find the previous install by it.
@@ -70,6 +72,16 @@ SetupLogging=yes
 
 [Tasks]
 Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription: "Shortcuts:"
+; Checked by default (§M.2): the agents need ClaimDesk running after the window is closed and after a restart.
+Name: "autostart"; Description: "Keep ClaimDesk running in the background (needed for the agents)"; GroupDescription: "Background:"
+
+[Dirs]
+; The import folder (§0.3): drop files of any size here. Never removed by an uninstall (it may hold files).
+Name: "{localappdata}\ClaimDesk\inbox\evidence"; Flags: uninsneveruninstall
+Name: "{localappdata}\ClaimDesk\inbox\intake"; Flags: uninsneveruninstall
+Name: "{localappdata}\ClaimDesk\inbox\mail"; Flags: uninsneveruninstall
+Name: "{localappdata}\ClaimDesk\inbox\brain-packs"; Flags: uninsneveruninstall
+Name: "{localappdata}\ClaimDesk\inbox\engineer-data"; Flags: uninsneveruninstall
 
 [InstallDelete]
 ; Upgrade in place: replace the program folder wholesale so no stale node_modules files survive. Data is elsewhere.
@@ -79,18 +91,34 @@ Type: filesandordirs; Name: "{app}\app"
 Source: "{#SourceDir}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExe}"; WorkingDir: "{app}"; Flags: runminimized; Comment: "Accident claims - {#Publisher}"
+Name: "{autoprograms}\{#AppName}"; Filename: "{app}\{#AppExe}"; WorkingDir: "{app}"; Flags: runminimized; Comment: "Accident claims - {#Publisher}"; AppUserModelID: "CCGUK.ClaimDesk"
+Name: "{autoprograms}\{#AppName} import folder"; Filename: "{localappdata}\ClaimDesk\inbox"; Comment: "Drop big files here (Audatex data, brain packs, large evidence) - ClaimDesk picks them up"
 Name: "{autoprograms}\{#AppName} (example claims)"; Filename: "{app}\{#AppExe}"; Parameters: "--demo"; WorkingDir: "{app}"; Flags: runminimized; Comment: "ClaimDesk with example claims (kept apart from your data)"
 Name: "{autoprograms}\Stop {#AppName}"; Filename: "{app}\{#AppExe}"; Parameters: "--stop"; WorkingDir: "{app}"; Flags: runminimized; Comment: "Stop the running ClaimDesk (your data and the example claims)"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; WorkingDir: "{app}"; Flags: runminimized; Tasks: desktopicon
 
 [Run]
+; Background mode (§M.1): scheduled tasks ClaimDesk\Background (at sign-in) and ClaimDesk\Watchdog (every 15 minutes).
+Filename: "{app}\{#AppExe}"; Parameters: "--install-autostart"; WorkingDir: "{app}"; StatusMsg: "Setting ClaimDesk to run in the background..."; Flags: runhidden waituntilterminated; Tasks: autostart
+; Unticked (e.g. on an upgrade): take the tasks away again.
+Filename: "{app}\{#AppExe}"; Parameters: "--remove-autostart"; WorkingDir: "{app}"; Flags: runhidden waituntilterminated; Tasks: not autostart
 Filename: "{app}\{#AppExe}"; Description: "Start {#AppName} now"; WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent runminimized
 
 [UninstallRun]
+; Remove the scheduled tasks first, so nothing starts ClaimDesk again while it is being removed.
+Filename: "{app}\{#AppExe}"; Parameters: "--remove-autostart"; WorkingDir: "{app}"; Flags: runhidden waituntilterminated; RunOnceId: "RemoveAutostart"
 ; Stop ClaimDesk first: the server keeps ClaimDesk.exe and better_sqlite3.node open.
 ; /T also ends the ClaimDesk app window (Edge started by ClaimDesk), so its profile under the data folder is released.
 Filename: "{sys}\taskkill.exe"; Parameters: "/F /T /IM {#AppExe}"; Flags: runhidden; RunOnceId: "StopClaimDesk"
+; The background supervisor and its server run as ClaimDesk-Background.exe.
+Filename: "{sys}\taskkill.exe"; Parameters: "/F /T /IM {#BackgroundExe}"; Flags: runhidden; RunOnceId: "StopClaimDeskBackground"
+
+[Registry]
+; claimdesk:// links (Windows notifications, the daily log) open that page in ClaimDesk (launch.cjs --open, §M.1).
+Root: HKCU; Subkey: "Software\Classes\claimdesk"; ValueType: string; ValueName: ""; ValueData: "URL:ClaimDesk"; Flags: uninsdeletekey
+Root: HKCU; Subkey: "Software\Classes\claimdesk"; ValueType: string; ValueName: "URL Protocol"; ValueData: ""
+Root: HKCU; Subkey: "Software\Classes\claimdesk\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExe}"",0"
+Root: HKCU; Subkey: "Software\Classes\claimdesk\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#AppExe}"" --open ""%1"""
 
 [UninstallDelete]
 ; The program folder only (files the app may have created next to itself). Never the data folder.
@@ -168,12 +196,18 @@ begin
     'If ClaimDesk is open, you will be asked to close it first.';
 end;
 
-// Is ClaimDesk.exe running for this user? (find.exe answers 0 when tasklist lists it)
-function ClaimDeskRunning(): Boolean;
+// Is this program running for this user? (find.exe answers 0 when tasklist lists it)
+function ImageRunning(Image: String): Boolean;
 var
   Code: Integer;
 begin
-  Result := Exec(ExpandConstant('{cmd}'), '/C ""' + ExpandConstant('{sys}\tasklist.exe') + '" /FI "IMAGENAME eq {#AppExe}" /NH | "' + ExpandConstant('{sys}\find.exe') + '" /I "{#AppExe}""', '', SW_HIDE, ewWaitUntilTerminated, Code) and (Code = 0);
+  Result := Exec(ExpandConstant('{cmd}'), '/C ""' + ExpandConstant('{sys}\tasklist.exe') + '" /FI "IMAGENAME eq ' + Image + '" /NH | "' + ExpandConstant('{sys}\find.exe') + '" /I "' + Image + '""', '', SW_HIDE, ewWaitUntilTerminated, Code) and (Code = 0);
+end;
+
+// ClaimDesk.exe (the window, or a 0.3-style server) or ClaimDesk-Background.exe (the 0.4 background server).
+function ClaimDeskRunning(): Boolean;
+begin
+  Result := ImageRunning('{#AppExe}') or ImageRunning('{#BackgroundExe}');
 end;
 
 // Stop a running ClaimDesk before files are replaced (upgrade in place). Interactive installs ask first, so nothing
@@ -191,6 +225,8 @@ begin
         Result := 'ClaimDesk is still running. Close it (Start menu > Stop ClaimDesk), then run the installer again.';
         exit;
       end;
+    // the background supervisor first, or it would restart the server it watches
+    Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /T /IM {#BackgroundExe}', '', SW_HIDE, ewWaitUntilTerminated, Code);
     Exec(ExpandConstant('{sys}\taskkill.exe'), '/F /T /IM {#AppExe}', '', SW_HIDE, ewWaitUntilTerminated, Code);
     Sleep(800);
   end;

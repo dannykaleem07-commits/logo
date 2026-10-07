@@ -29,7 +29,7 @@ export interface ClaimView extends ClaimBundle {
   linkedClaims?: Array<{ id: Id; reference: string; status: ClaimStatus | string }>;
 }
 
-export type ClaimTabId = 'overview' | 'chronology' | 'ledger' | 'clocks' | 'gates' | 'hire' | 'offers' | 'evidence' | 'documents' | 'engineering' | 'vehicle' | 'actions' | 'flags';
+export type ClaimTabId = 'overview' | 'chronology' | 'ledger' | 'clocks' | 'gates' | 'hire' | 'offers' | 'evidence' | 'documents' | 'engineering' | 'vehicle' | 'actions' | 'flags' | 'mailbox' | 'agent';
 
 /**
  * Claim file tabs (0.3 §E1). The primary row holds the six used every day; the rest sit in the "More ▾" menu. Ids (and
@@ -37,6 +37,8 @@ export type ClaimTabId = 'overview' | 'chronology' | 'ledger' | 'clocks' | 'gate
  */
 export const PRIMARY_TAB_IDS: readonly ClaimTabId[] = ['overview', 'hire', 'documents', 'evidence', 'vehicle', 'actions'];
 export const MORE_TAB_IDS: readonly ClaimTabId[] = ['chronology', 'ledger', 'clocks', 'gates', 'offers', 'engineering', 'flags'];
+/** ClaimDesk Supreme tabs (docs/SUPREME-DESIGN.md §L.5, §L.9): shown after the primary row. */
+export const AGENT_TAB_IDS: readonly ClaimTabId[] = ['mailbox', 'agent'];
 
 export const CLAIM_TABS: Array<TabItem & { id: ClaimTabId }> = [
   { id: 'overview', label: 'Overview' },
@@ -51,14 +53,20 @@ export const CLAIM_TABS: Array<TabItem & { id: ClaimTabId }> = [
   { id: 'gates', label: 'Evidence gates' },
   { id: 'offers', label: 'Offers' },
   { id: 'engineering', label: 'Engineering' },
-  { id: 'flags', label: 'Flags' }
+  { id: 'flags', label: 'Flags' },
+  { id: 'mailbox', label: 'Mailbox' },
+  { id: 'agent', label: 'Agent' }
 ];
 
-/** Split tab items (with their badges) into the primary row and the More menu, keeping CLAIM_TABS order. */
-export function splitClaimTabs<T extends { id: string }>(tabs: readonly T[]): { primary: T[]; more: T[] } {
+/**
+ * Split tab items (with their badges) into the primary row, the More menu and the Supreme agent tabs (Mailbox, Agent),
+ * keeping CLAIM_TABS order. The claim file shows `agent` tabs right after `primary`.
+ */
+export function splitClaimTabs<T extends { id: string }>(tabs: readonly T[]): { primary: T[]; more: T[]; agent: T[] } {
   return {
     primary: tabs.filter((t) => (PRIMARY_TAB_IDS as readonly string[]).includes(t.id)),
-    more: tabs.filter((t) => (MORE_TAB_IDS as readonly string[]).includes(t.id))
+    more: tabs.filter((t) => (MORE_TAB_IDS as readonly string[]).includes(t.id)),
+    agent: tabs.filter((t) => (AGENT_TAB_IDS as readonly string[]).includes(t.id))
   };
 }
 

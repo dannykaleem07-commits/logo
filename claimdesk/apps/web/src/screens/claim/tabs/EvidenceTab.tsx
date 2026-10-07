@@ -1,8 +1,10 @@
 import { useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import type { Evidence, EvidenceKind, GuidedShot } from '@ccguk/domain';
-import { api } from '../../../api/client';
-import { useUploadEvidence } from '../../../api/hooks';
+import { api, type EvidenceUploadFields } from '../../../api/client';
+import { useInvalidateClaim } from '../../../api/hooks';
+import { DEFAULT_LIMITS, getUploadLimits, planUpload, progressText, sizeText, uploadInChunks } from '../../../api/uploads';
 import { Card } from '../../../components/Card';
 import { Table, type Column } from '../../../components/Table';
 import { Badge } from '../../../components/Badge';
@@ -16,7 +18,11 @@ import { useToast } from '../../../components/Toast';
 import type { ClaimView } from '../claimFile';
 import { bytesLabel, emptyUploadForm, EVIDENCE_KIND_OPTIONS, evidenceKindLabel, exifSummary, filterEvidence, GUIDED_SHOT_LABEL, GUIDED_SHOT_OPTIONS, guessKind, isImage, sha256HexOf, shortHash, sortEvidence, uploadFieldsFrom, type EvidenceFilter, type UploadForm } from '../lib/evidence';
 
-/** Write-once evidence: grid or list, filters, multipart upload with a Web Crypto SHA-256 computed before upload. */
+/**
+ * Write-once evidence: grid or list, filters, upload with a progress bar. Files up to the chunk threshold go as one
+ * multipart upload; bigger ones are sent in resumable parts (SUPREME-DESIGN §0.3). A Web Crypto SHA-256 is worked out
+ * before upload for files up to 256 MiB; above that ClaimDesk's own hash is shown after the upload.
+ */
 export function EvidenceTab({ view }: { view: ClaimView }) {
   const claimId = view.claim.id;
   const [mode, setMode] = useState<'grid' | 'list'>('grid');
@@ -153,49 +159,93 @@ function UploadDialog({ claimId, onClose }: { claimId: string; onClose: () => vo
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [hashing, setHashing] = useState(false);
   const [hash, setHash] = useState<string | undefined>();
+  const [progress, setProgress] = useState<{ sent: number; total: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const upload = useUploadEvidence(claimId);
+  const abortRef = useRef<AbortController | null>(null);
+  const pickId = useRef(0);
+  const limitsQuery = useQuery({ queryKey: ['upload-limits'], queryFn: ({ signal }) => getUploadLimits(signal), staleTime: 5 * 60_000 });
+  const limits = limitsQuery.data ?? DEFAULT_LIMITS;
+  const plan = file ? planUpload(file.size, limits) : undefined;
+  const invalidate = useInvalidateClaim();
   const toast = useToast();
 
+  const upload = useMutation({
+    mutationFn: async ({ file: f, fields }: { file: File; fields: EvidenceUploadFields }) => {
+      const ctrl = new AbortController();
+      abortRef.current = ctrl;
+      const onProgress = (sent: number, total: number) => setProgress({ sent, total });
+      setProgress({ sent: 0, total: f.size });
+      if (planUpload(f.size, limits).mode === 'chunked') {
+        const r = await uploadInChunks(f, { purpose: 'evidence', claimId, fields: { ...fields } as Record<string, string | undefined>, onProgress, signal: ctrl.signal });
+        return r.evidence as Evidence;
+      }
+      return api.uploadEvidence(claimId, f, fields, onProgress, ctrl.signal);
+    },
+    onSuccess: () => invalidate(claimId),
+    onSettled: () => {
+      abortRef.current = null;
+    }
+  });
+
   const pick = async (f: File | null) => {
+    const mine = ++pickId.current;
     setFile(f);
     setHash(undefined);
+    setProgress(null);
+    upload.reset();
     if (!f) return;
     setForm((prev) => ({ ...prev, kind: prev.kind || guessKind(f), capturedAt: prev.capturedAt || (f.lastModified ? new Date(f.lastModified).toISOString() : '') }));
+    const p = planUpload(f.size, limits);
+    // Above 256 MiB the browser does not read the whole file to hash it: ClaimDesk's own hash is shown after upload.
+    if (!p.deviceHash || p.mode === 'too-large') return;
     try {
       setHashing(true);
-      setHash(await sha256HexOf(await f.arrayBuffer()));
+      const h = await sha256HexOf(await f.arrayBuffer());
+      if (pickId.current === mine) setHash(h);
     } catch {
-      setHash(undefined);
+      if (pickId.current === mine) setHash(undefined);
     } finally {
-      setHashing(false);
+      if (pickId.current === mine) setHashing(false);
     }
   };
 
   const submit = () => {
     const r = uploadFieldsFrom(form, file, hash);
     if (!r.ok) return setErrors(r.errors);
+    if (plan?.mode === 'too-large') return setErrors({ file: plan.message });
     setErrors({});
     upload.mutate(
       { file: file as File, fields: r.body },
       {
         onSuccess: (ev) => {
-          toast.success(`Stored ${ev.filename} · ${shortHash(ev.sha256)}`);
+          toast.success(`Stored ${ev.filename} · SHA-256 ${shortHash(ev.sha256)}${hash ? '' : ' (worked out by ClaimDesk)'}`);
           onClose();
         }
       }
     );
   };
 
+  const cancel = () => {
+    if (upload.isPending) abortRef.current?.abort();
+    onClose();
+  };
+
+  const fileHint = !file
+    ? `One file per upload. Photos keep their EXIF. Bigger files are sent in parts; anything over ${sizeText(limits.maxEvidenceBytes)} goes in the import folder (Settings → Import folder).`
+    : [plan && plan.mode !== 'too-large' ? plan.message : '', hash ? `SHA-256 ${shortHash(hash, 16)} worked out on this computer; ClaimDesk refuses the upload if the bytes differ.` : hashing ? 'Working out the SHA-256 fingerprint…' : '']
+        .filter(Boolean)
+        .join(' ');
+  const pct = progress && progress.total > 0 ? Math.min(100, Math.floor((progress.sent / progress.total) * 100)) : 0;
+
   return (
     <Modal
       open
       title="Upload evidence"
-      onClose={onClose}
+      onClose={cancel}
       footer={
         <>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button variant="primary" loading={upload.isPending || hashing} onClick={submit} disabled={!file}>
+          <Button onClick={cancel}>{upload.isPending ? 'Stop upload' : 'Cancel'}</Button>
+          <Button variant="primary" loading={upload.isPending || hashing} onClick={submit} disabled={!file || plan?.mode === 'too-large'}>
             Upload
           </Button>
         </>
@@ -208,9 +258,21 @@ function UploadDialog({ claimId, onClose }: { claimId: string; onClose: () => vo
           submit();
         }}
       >
-        <Field label="File" required error={errors.file} hint={hash ? `SHA-256 ${shortHash(hash, 16)} computed on this device; the API refuses the upload if the bytes differ.` : hashing ? 'Hashing…' : 'One file per upload. Photos keep their EXIF.'}>
-          <input ref={inputRef} className="input" type="file" onChange={(e) => void pick(e.target.files?.[0] ?? null)} />
+        <Field label="File" required error={errors.file ?? (plan?.mode === 'too-large' ? plan.message : undefined)} hint={fileHint}>
+          <input ref={inputRef} className="input" type="file" disabled={upload.isPending} onChange={(e) => void pick(e.target.files?.[0] ?? null)} />
         </Field>
+        {progress && (upload.isPending || upload.isSuccess) && (
+          <div className="stack-sm" aria-live="polite">
+            <div role="progressbar" aria-label="Upload progress" aria-valuemin={0} aria-valuemax={100} aria-valuenow={pct} style={{ height: 8, background: 'var(--neutral-bg)', borderRadius: 999, overflow: 'hidden' }}>
+              <div style={{ width: `${pct}%`, height: '100%', background: 'var(--green)', transition: 'width 0.2s ease' }} />
+            </div>
+            <div className="xs muted">
+              {progressText(progress.sent, progress.total)}
+              {plan?.mode === 'chunked' ? ' · sent in parts; a dropped connection carries on where it stopped' : ''}
+              {pct >= 100 && upload.isPending ? ' · checking and storing…' : ''}
+            </div>
+          </div>
+        )}
         <div className="form-grid">
           <Select<EvidenceKind> label="Kind" required value={form.kind} onChange={(v) => setForm((f) => ({ ...f, kind: v }))} options={EVIDENCE_KIND_OPTIONS} placeholder="What is it?" error={errors.kind} />
           <DateTimeInput label="Captured / dated" value={form.capturedAt} onChange={(v) => setForm((f) => ({ ...f, capturedAt: v }))} hint="EXIF time wins where present" />
@@ -218,7 +280,7 @@ function UploadDialog({ claimId, onClose }: { claimId: string; onClose: () => vo
           <TextInput label="Source URL" type="url" value={form.sourceUrl} onChange={(v) => setForm((f) => ({ ...f, sourceUrl: v }))} error={errors.sourceUrl} placeholder="Required for comparable adverts" />
         </div>
         <TextArea label="Description" value={form.description} onChange={(v) => setForm((f) => ({ ...f, description: v }))} rows={2} placeholder="What it shows and why it matters (e.g. odometer at delivery, 41,212 miles)" />
-        <ApiErrorNotice error={upload.error} what="upload the file" />
+        {!(upload.error instanceof DOMException && upload.error.name === 'AbortError') && <ApiErrorNotice error={upload.error} what="upload the file" />}
       </form>
     </Modal>
   );

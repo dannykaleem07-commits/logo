@@ -43,13 +43,13 @@ body.manager-mode::before {
   gap: 6px;
   flex-shrink: 0;
   height: 34px;
-  padding: 0 12px;
-  border-radius: var(--r-pill);
-  border: 1px solid var(--line-2, var(--line));
-  background: var(--surface);
-  color: var(--ink-2, var(--ink));
-  font-size: var(--fs-xs);
-  font-weight: 650;
+  padding: 0 10px;
+  border-radius: var(--r-md);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium, 500);
   white-space: nowrap;
   cursor: pointer;
 }
@@ -59,7 +59,7 @@ body.manager-mode::before {
   flex: 0 0 16px;
 }
 .manager-toggle:hover {
-  border-color: var(--manager-border);
+  background: var(--surface-2);
   color: var(--manager-on);
 }
 .manager-toggle:focus-visible {

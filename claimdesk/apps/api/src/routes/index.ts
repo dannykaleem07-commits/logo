@@ -30,6 +30,20 @@ import { registerGtaRatesRoutes } from './gtaRates.js';
 import { registerDocxTemplatesRoutes } from './docxTemplates.js';
 import { registerUpdatesRoutes } from './updates.js';
 import { registerJobsModule } from '../jobs.js';
+// ClaimDesk Supreme phase 1 (docs/SUPREME-DESIGN.md §N.6, §P): stubs created by foundation, filled by each slice.
+import { registerMcpRoutes } from './mcp.js';
+import { registerAiRoutes } from './ai.js';
+import { registerAgentRoutes } from './agents.js';
+import { registerNeedsYouRoutes } from './needsYou.js';
+import { registerDailyLogRoutes } from './dailyLog.js';
+import { registerNotificationsRoutes } from './notifications.js';
+import { registerAutonomySettingsRoutes } from './autonomySettings.js';
+import { registerTasksRoutes } from './tasks.js';
+import { registerMailRoutes } from './mail.js';
+import { registerOutboxRoutes } from './outbox.js';
+import { registerIntakeRoutes } from './intake.js';
+import { registerCaseworkRoutes } from './casework.js';
+import { registerBrainRoutes } from './brain.js';
 
 export const routeModules: RouteModule[] = [
   registerHealthRoutes,
@@ -56,6 +70,20 @@ export const routeModules: RouteModule[] = [
   registerGtaRatesRoutes,
   registerDocxTemplatesRoutes,
   registerUpdatesRoutes,
+  // Supreme phase 1
+  registerMcpRoutes, // gateway
+  registerAiRoutes, // gateway
+  registerAgentRoutes, // runtime
+  registerNeedsYouRoutes, // runtime
+  registerDailyLogRoutes, // runtime
+  registerNotificationsRoutes, // runtime
+  registerAutonomySettingsRoutes, // runtime
+  registerTasksRoutes, // runtime
+  registerMailRoutes, // mail
+  registerOutboxRoutes, // mail
+  registerIntakeRoutes, // intake
+  registerCaseworkRoutes, // casework
+  registerBrainRoutes, // casework
   registerJobsModule,
 ];
 

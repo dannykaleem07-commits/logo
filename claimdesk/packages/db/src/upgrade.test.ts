@@ -11,7 +11,11 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { backupBeforeMigrate, pendingMigrationCount, readMigrationJournal } from './backup.js';
 import { closeDatabase, createDatabase, type DatabaseHandle } from './client.js';
 import { migrationsFolder, runMigrations } from './migrate.js';
+import { enqueueAgentJob, leaseAgentJob } from './repos/agentJobs.js';
+import { getAgentSettings } from './repos/agentSettings.js';
+import { listAudit } from './repos/audit.js';
 import { getClaim } from './repos/claims.js';
+import { countNeedsYou } from './repos/needsYou.js';
 import { listUserSessions } from './repos/sessions.js';
 import { getSettings } from './repos/settings.js';
 import { getUser } from './repos/users.js';
@@ -29,17 +33,19 @@ function tempDir(prefix: string): string {
   return d;
 }
 
-/** The migrations folder as 0.2.6 shipped it: journal entries idx ≤ 5 (0000_init … 0005_no_default_vat). */
-function migrations026(): string {
-  const dir = tempDir('claimdesk-mig026-');
+/** The migrations folder as an older release shipped it: journal entries idx ≤ maxIdx (0.2.6: 5 → 0005_no_default_vat; 0.3.x: 7 → 0007_hire_pricing). */
+function migrationsUpTo(maxIdx: number, lastTag: string): string {
+  const dir = tempDir(`claimdesk-mig${maxIdx}-`);
   mkdirSync(path.join(dir, 'meta'));
   const journal = JSON.parse(readFileSync(path.join(migrationsFolder, 'meta', '_journal.json'), 'utf8')) as { entries: Array<{ idx: number; tag: string }> };
-  const kept = journal.entries.filter((e) => e.idx <= 5);
-  expect(kept.map((e) => e.tag).at(-1)).toBe('0005_no_default_vat');
+  const kept = journal.entries.filter((e) => e.idx <= maxIdx);
+  expect(kept.map((e) => e.tag).at(-1)).toBe(lastTag);
   writeFileSync(path.join(dir, 'meta', '_journal.json'), JSON.stringify({ ...journal, entries: kept }));
   for (const e of kept) copyFileSync(path.join(migrationsFolder, `${e.tag}.sql`), path.join(dir, `${e.tag}.sql`));
   return dir;
 }
+
+const migrations026 = (): string => migrationsUpTo(5, '0005_no_default_vat');
 
 const T = '2026-09-30T08:00:00.000Z';
 
@@ -145,5 +151,59 @@ describe('upgrade from 0.2.6', () => {
     expect(second.backup).toBeUndefined();
     expect(readdirSync(path.join(dataDir, 'backups'))).toEqual([path.basename(first.backup!)]);
     expect(getClaim(second.handle.db, 'c1')?.reference).toBe('CCG-2026-00001');
+  });
+});
+
+describe('upgrade from 0.3.x to 0.4 (Supreme migrations 0008–0011)', () => {
+  it('backs up, adds the agent, mail, intake and brain tables and keeps every 0.3 row', () => {
+    const dataDir = tempDir('claimdesk-upgrade04-');
+    const file = path.join(dataDir, 'claimdesk.sqlite');
+
+    // 1. The 0.3.x install: migrations 0000–0007, then its rows (incl. an audit row and a 0007 hire pricing column).
+    const old = createDatabase({ path: file });
+    runMigrations(old.db, { migrationsFolder: migrationsUpTo(7, '0007_hire_pricing') });
+    seed026(old);
+    old.sqlite
+      .prepare("insert into audit_log (id, at, user_id, action, entity, entity_id, before, after, ip) values ('a1', ?, 'courtesycars', 'claim.patch', 'claims', 'c1', null, '{\"claimId\":\"c1\"}', '127.0.0.1')")
+      .run(T);
+    old.sqlite.prepare("update sessions set manager_mode_until = ? where user_id = 'courtesycars'").run('2026-09-30T09:00:00.000Z');
+    expect(columns(old, 'audit_log')).not.toContain('run_id');
+    expect((old.sqlite.prepare("select count(*) as n from sqlite_master where name = 'agent_jobs'").get() as { n: number }).n).toBe(0);
+    closeDatabase(old);
+
+    // 2. The 0.4 start-up.
+    const first = startUp(file, '0.4.0');
+    expect(first.pendingBefore).toBe(4);
+    expect(path.basename(first.backup!)).toMatch(/^claimdesk-before-0\.4\.0-\d{8}-\d{6}\.sqlite$/);
+    const h = first.handle;
+    expect(pendingMigrationCount(h)).toBe(0);
+    expect((h.sqlite.prepare('select count(*) as n from __drizzle_migrations').get() as { n: number }).n).toBe(12);
+    const tables = (h.sqlite.prepare("select name from sqlite_master where type = 'table'").all() as Array<{ name: string }>).map((r) => r.name);
+    for (const t of ['agent_jobs', 'needs_you', 'audit_log', 'mail_messages', 'outbox', 'intake_items', 'claim_update_proposals', 'brain_entries', 'brain_fts', 'search_docs', 'memory_items']) expect(tables).toContain(t);
+    expect(columns(h, 'audit_log')).toContain('run_id');
+
+    // 0.3 rows intact.
+    expect(getUser(h.db, 'courtesycars')).toMatchObject({ role: 'admin', username: 'courtesycars' });
+    expect(listUserSessions(h.db, 'courtesycars')[0]!.managerModeUntil).toBe('2026-09-30T09:00:00.000Z');
+    expect(getClaim(h.db, 'c1')).toMatchObject({ reference: 'CCG-2026-00001', status: 'intake' });
+    expect(getSettings(h.db).companyName).toBe('Courtesy Cars Group UK Ltd');
+    const audit = listAudit(h.db, { entityId: 'c1' });
+    expect(audit).toHaveLength(1);
+    expect(audit[0]).toMatchObject({ id: 'a1', userId: 'courtesycars', action: 'claim.patch', after: { claimId: 'c1' } });
+    expect(audit[0]!.runId).toBeUndefined();
+    // The old audit row is still append-only.
+    expect(() => h.sqlite.prepare("update audit_log set action = 'x' where id = 'a1'").run()).toThrow(/append-only/);
+
+    // Agents start switched off with default settings; the new tables work.
+    expect(getAgentSettings(h.db)).toMatchObject({ ai: { driver: 'off' }, agents: { enabled: false }, autonomy: { mode: 'automatic', killSwitch: false } });
+    expect(countNeedsYou(h.db).total).toBe(0);
+    const job = enqueueAgentJob(h.db, { type: 'mail.sync', payload: {}, createdBy: 'system', now: T });
+    expect(leaseAgentJob(h.db, { lane: 'io', maxPriority: 9, now: T, owner: 'boot', leaseMs: 1000 })?.id).toBe(job.id);
+    closeDatabase(h);
+
+    // 3. A second start: nothing to migrate, no new backup.
+    const second = startUp(file, '0.4.0');
+    expect(second.pendingBefore).toBe(0);
+    expect(second.backup).toBeUndefined();
   });
 });
