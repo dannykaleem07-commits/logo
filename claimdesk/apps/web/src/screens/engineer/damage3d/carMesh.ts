@@ -42,6 +42,8 @@ export type { MeshGroup, Tone, V3 };
 
 export interface PlatePlacement {
   kind: 'front' | 'rear';
+  /** The panel the plate is fixed to (picking the plate selects it). */
+  zone: string | null;
   center: V3;
   normal: V3;
   up: V3;
@@ -175,7 +177,11 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
     y <= peakR ? 0.04 * ((peakR - y) / Math.max(0.05, peakR - ybR)) ** 2 : s.tailLean * clamp((y - peakR) / Math.max(0.05, yRearTop - peakR), 0, 1.4);
   const warpLenF = Math.max(0.12, fo - s.archR - 0.03);
   const warpLenR = Math.max(0.1, ro - s.archR - 0.03);
-  const warpX = (xb: number, y: number) => xb - smooth(s.xF - warpLenF, s.xF, xb) * setbackF(y) + smooth(s.xR + warpLenR, s.xR, xb) * setbackR(y);
+  // the end caps bulge forward/back by these amounts at the centre, so the face edges sit that much inside xF/xR
+  const bulgeF = isVan ? 0.012 : 0.035;
+  const bulgeR = isVan ? 0.006 : 0.022;
+  const warpX = (xb: number, y: number) =>
+    xb - smooth(s.xF - warpLenF, s.xF, xb) * (setbackF(y) + bulgeF) + smooth(s.xR + warpLenR, s.xR, xb) * (setbackR(y) + bulgeR);
 
   // ── stations ──
   const stations: number[] = [];
@@ -332,7 +338,7 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
   const tailHalf = isVan ? hw - dzR - 0.13 : body === 'pickup' ? hw - 0.12 : hw - dzR - 0.15;
   for (const side of [1, -1]) {
     const iF = st.length - 1;
-    const PF = capGrid(iF, side, (zE) => [zE, zE * 0.8, zE * 0.55, zE * 0.3, zE * 0.1, 0], isVan ? 0.012 : 0.035, 1);
+    const PF = capGrid(iF, side, (zE) => [zE, zE * 0.8, zE * 0.55, zE * 0.3, zE * 0.1, 0], bulgeF, 1);
     mb.grid(
       PF,
       (k, j) => {
@@ -345,7 +351,7 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
       },
       { shell: true, lines: true }
     );
-    const PR = capGrid(0, side, (zE) => [zE, Math.min(zE - 0.01, tailHalf), tailHalf * 0.66, tailHalf * 0.33, 0], isVan ? 0.006 : 0.022, -1);
+    const PR = capGrid(0, side, (zE) => [zE, Math.min(zE - 0.01, tailHalf), tailHalf * 0.66, tailHalf * 0.33, 0], bulgeR, -1);
     mb.grid(
       PR,
       (k, j) => {
@@ -767,14 +773,14 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
     const mx = doorFront - (isVan ? 0.05 : 0.07);
     const by = beltY(mx);
     const hwB = cabHWB(mx);
-    const r: V3 = isVan ? [0.06, 0.15, 0.11] : [0.06, 0.06, 0.1];
+    const r: V3 = isVan ? [0.06, 0.15, 0.085] : [0.06, 0.058, 0.085];
     const cy = by + (isVan ? 0.2 : 0.085);
-    const cz = side * (hwB + r[2] + (isVan ? 0.06 : 0.035));
+    const cz = side * (hwB + r[2] + (isVan ? 0.015 : 0.02));
     const tone: Tone = isVan || s.profile === 'pickup' ? 'black' : 'body';
     superellipsoid(mb, zone, tone, [mx, cy, cz], r, 0.55, 16, 10, 3);
     superellipsoid(mb, zone, 'glass', [mx - r[0] * 0.92, cy, cz], [0.006, r[1] * 0.82, r[2] * 0.86], 0.4, 12, 6, 4);
     box(mb, zone, 'black', [mx + 0.01, by + 0.03, side * (hwB + 0.025)], [0.035, 0.022, 0.03], 3);
-    if (isVan) box(mb, zone, 'black', [mx, by + 0.03, side * (hwB + 0.07)], [0.012, 0.012, 0.06], 3);
+    
   }
 
   // ── roof rails, spoiler, bed, spare ──
@@ -829,7 +835,7 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
     box(mb, 'load_bed_tailgate', 'body', [x0 + 0.025, (yT + s.bumperTopR) / 2, 0], [0.025, (yT - s.bumperTopR) / 2, hb - 0.12]);
     // step bumper
     const by0 = botY(s.xR) - 0.01;
-    box(mb, 'rear_bumper', 'chrome', [s.xR + 0.06, (by0 + s.bumperTopR - 0.04) / 2, 0], [0.11, (s.bumperTopR - 0.04 - by0) / 2, hw - 0.07], 2);
+    box(mb, 'rear_bumper', 'chrome', [s.xR + 0.11, (by0 + s.bumperTopR - 0.04) / 2, 0], [0.11, (s.bumperTopR - 0.04 - by0) / 2, hw - 0.07], 2);
   }
   if (s.spareOnTailgate && s.rear !== 'bed') {
     const c: V3 = [warpX(s.xR, s.bumperTopR + 0.25) - 0.11, s.bumperTopR + 0.25, 0];
@@ -852,10 +858,11 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
     let n = h.n;
     n = norm([n[0], clamp(n[1], -0.35, 0.35), 0]);
     const up = norm(sub([0, 1, 0], scale(n, n[1])));
-    plates.push({ kind, center: add(h.p, scale(n, 0.012)), normal: n, up, width: PLATE_W, height: PLATE_H });
+    const zone = kind === 'front' ? 'front_bumper' : s.rearPlateLow ? 'rear_bumper' : rearOpening(1);
+    plates.push({ kind, zone, center: add(h.p, scale(n, 0.012)), normal: n, up, width: PLATE_W, height: PLATE_H });
   };
   platePlace('front', s.grilleStyle === 'trapezoid' || s.grilleStyle === 'hexagonal' || s.grilleStyle === 'large' ? s.bumperTopF - 0.1 : (lgTop + s.bumperTopF) / 2 - 0.02);
-  if (s.rear === 'bed') plates.push({ kind: 'rear', center: [s.xR - 0.052, (botY(s.xR) - 0.01 + s.bumperTopR - 0.04) / 2, 0], normal: [-1, 0, 0], up: [0, 1, 0], width: PLATE_W, height: PLATE_H });
+  if (s.rear === 'bed') plates.push({ kind: 'rear', zone: 'rear_bumper', center: [s.xR - 0.006, (botY(s.xR) - 0.01 + s.bumperTopR - 0.04) / 2, 0], normal: [-1, 0, 0], up: [0, 1, 0], width: PLATE_W, height: PLATE_H });
   else platePlace('rear', plateYRear);
 
   // van rear door centre line

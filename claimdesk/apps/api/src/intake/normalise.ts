@@ -117,7 +117,7 @@ const sha = (text: string): string => createHash('sha256').update(text, 'utf8').
 export async function pdfText(bytes: Buffer, maxPages = MAX_TEXT_PAGES): Promise<{ numPages: number; pages: string[] }> {
   const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
   // pdfjs transfers the buffer it is given: hand it a copy.
-  const task = pdfjs.getDocument({ data: new Uint8Array(bytes), isEvalSupported: false, disableFontFace: true, useSystemFonts: false, verbosity: 0 });
+  const task = pdfjs.getDocument({ data: new Uint8Array(bytes), disableFontFace: true, useSystemFonts: false, verbosity: 0 });
   try {
     const doc = await task.promise;
     const pages: string[] = [];

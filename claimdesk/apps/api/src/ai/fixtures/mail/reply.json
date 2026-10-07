@@ -1,0 +1,78 @@
+[
+  {
+    "id": "mail-reply-ack",
+    "match": {
+      "jobType": "mail.reply",
+      "userContains": [
+        "MAILFX-REPLY"
+      ]
+    },
+    "steps": [
+      {
+        "tool": "email_draft",
+        "input": {
+          "claimId": "$job.claimId",
+          "kind": "ack",
+          "to": [
+            "thirdparty.claims@example-insurer.test"
+          ],
+          "cc": null,
+          "subject": "Re: Your client",
+          "bodyText": "Thank you for your email, which we have noted on our file.\n\nClaims Team, Courtesy Cars Group UK Ltd",
+          "attach": [],
+          "inReplyToMessageId": "$job.payload.messageId"
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "drafts": [
+        {
+          "kind": "outbox",
+          "id": "$step[0].outboxId",
+          "templateId": null,
+          "emailKind": "ack",
+          "purpose": "Acknowledge the insurer's email"
+        }
+      ],
+      "missingInfo": [],
+      "notes": "Invented fixture reply.",
+      "confidence": 0.94
+    }
+  },
+  {
+    "id": "mail-reply-figures",
+    "match": {
+      "jobType": "mail.reply",
+      "userContains": [
+        "MAILFX-FIGURES"
+      ]
+    },
+    "steps": [
+      {
+        "tool": "email_draft",
+        "input": {
+          "claimId": "$job.claimId",
+          "kind": "info_provided",
+          "to": [
+            "thirdparty.claims@example-insurer.test"
+          ],
+          "cc": null,
+          "subject": "Re: Your client",
+          "bodyText": "The hire charges are {{fact:ledger.hire.claimedPence}}.\n\nClaims Team, Courtesy Cars Group UK Ltd",
+          "attach": [],
+          "inReplyToMessageId": "$job.payload.messageId"
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "drafts": [],
+      "missingInfo": [
+        "fact resolver"
+      ],
+      "notes": "The draft tool refused placeholders.",
+      "confidence": 0.4
+    }
+  }
+]

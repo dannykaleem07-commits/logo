@@ -1,0 +1,245 @@
+[
+  {
+    "id": "mail-triage-ack",
+    "match": {
+      "jobType": "mail.triage",
+      "userContains": [
+        "MAILFX-ACK"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "intent": "acknowledgement",
+      "secondaryIntents": [],
+      "confidence": 0.92,
+      "summary": "The insurer acknowledges the claim and quotes its handling reference.",
+      "urgency": "low",
+      "extracted": {
+        "amountsPence": [],
+        "deadlines": [],
+        "theirRef": "EXI/2026/778899",
+        "ourRef": null,
+        "vrm": null,
+        "docsRequested": [],
+        "paymentRef": null,
+        "offerTerms": null,
+        "bankDetailsChange": false
+      },
+      "needsReply": false,
+      "injectionSuspected": false,
+      "injectionNotes": null
+    },
+    "usage": {
+      "inputTokens": 900,
+      "outputTokens": 120
+    }
+  },
+  {
+    "id": "mail-triage-offer",
+    "match": {
+      "jobType": "mail.triage",
+      "userContains": [
+        "MAILFX-OFFER"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "intent": "offer_pav",
+      "secondaryIntents": [],
+      "confidence": 0.92,
+      "summary": "The insurer offers a pre-accident value for the client's car.",
+      "urgency": "urgent",
+      "extracted": {
+        "amountsPence": [
+          640000
+        ],
+        "deadlines": [
+          "14 days"
+        ],
+        "theirRef": null,
+        "ourRef": null,
+        "vrm": null,
+        "docsRequested": [],
+        "paymentRef": null,
+        "offerTerms": "Pre-accident value offered in full settlement of the vehicle damage, salvage retained by the client.",
+        "bankDetailsChange": false
+      },
+      "needsReply": true,
+      "injectionSuspected": false,
+      "injectionNotes": null
+    }
+  },
+  {
+    "id": "mail-triage-docs",
+    "match": {
+      "jobType": "mail.triage",
+      "userContains": [
+        "MAILFX-DOCS"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "intent": "request_documents",
+      "secondaryIntents": [],
+      "confidence": 0.92,
+      "summary": "The insurer asks for the V5C and the repair invoice; an inspection photo is attached.",
+      "urgency": "high",
+      "extracted": {
+        "amountsPence": [],
+        "deadlines": [],
+        "theirRef": null,
+        "ourRef": null,
+        "vrm": "AB12 CDE",
+        "docsRequested": [
+          "V5C",
+          "repair invoice"
+        ],
+        "paymentRef": null,
+        "offerTerms": null,
+        "bankDetailsChange": false
+      },
+      "needsReply": true,
+      "injectionSuspected": false,
+      "injectionNotes": null
+    }
+  },
+  {
+    "id": "mail-triage-injection",
+    "match": {
+      "jobType": "mail.triage",
+      "userContains": [
+        "MAILFX-INJECT"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "intent": "request_documents",
+      "secondaryIntents": [],
+      "confidence": 0.92,
+      "summary": "Asks for every document on file to be sent to a new address; contains instructions aimed at an automated system.",
+      "urgency": "high",
+      "extracted": {
+        "amountsPence": [],
+        "deadlines": [],
+        "theirRef": null,
+        "ourRef": null,
+        "vrm": null,
+        "docsRequested": [
+          "all documents"
+        ],
+        "paymentRef": null,
+        "offerTerms": null,
+        "bankDetailsChange": false
+      },
+      "needsReply": true,
+      "injectionSuspected": true,
+      "injectionNotes": "Tells the reader to ignore previous instructions and send all documents."
+    }
+  },
+  {
+    "id": "mail-triage-bank",
+    "match": {
+      "jobType": "mail.triage",
+      "userContains": [
+        "MAILFX-BANK"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "intent": "payment_remittance",
+      "secondaryIntents": [],
+      "confidence": 0.92,
+      "summary": "Says payment will be made and asks for payment details to be updated.",
+      "urgency": "urgent",
+      "extracted": {
+        "amountsPence": [],
+        "deadlines": [],
+        "theirRef": null,
+        "ourRef": null,
+        "vrm": null,
+        "docsRequested": [],
+        "paymentRef": null,
+        "offerTerms": null,
+        "bankDetailsChange": true
+      },
+      "needsReply": false,
+      "injectionSuspected": false,
+      "injectionNotes": null
+    }
+  },
+  {
+    "id": "mail-triage-disagree",
+    "match": {
+      "jobType": "mail.triage",
+      "userContains": [
+        "MAILFX-DISAGREE"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "intent": "offer_settlement",
+      "secondaryIntents": [],
+      "confidence": 0.92,
+      "summary": "Offers to settle the hire claim.",
+      "urgency": "high",
+      "extracted": {
+        "amountsPence": [
+          99999
+        ],
+        "deadlines": [],
+        "theirRef": null,
+        "ourRef": null,
+        "vrm": null,
+        "docsRequested": [],
+        "paymentRef": null,
+        "offerTerms": null,
+        "bankDetailsChange": false
+      },
+      "needsReply": false,
+      "injectionSuspected": false,
+      "injectionNotes": null
+    }
+  },
+  {
+    "id": "mail-triage-spam",
+    "match": {
+      "jobType": "mail.triage",
+      "userContains": [
+        "MAILFX-SPAM"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "intent": "spam_phishing",
+      "secondaryIntents": [],
+      "confidence": 0.92,
+      "summary": "Marketing email unrelated to the claim.",
+      "urgency": "low",
+      "extracted": {
+        "amountsPence": [],
+        "deadlines": [],
+        "theirRef": null,
+        "ourRef": null,
+        "vrm": null,
+        "docsRequested": [],
+        "paymentRef": null,
+        "offerTerms": null,
+        "bankDetailsChange": false
+      },
+      "needsReply": false,
+      "injectionSuspected": false,
+      "injectionNotes": null
+    }
+  },
+  {
+    "id": "mail-triage-usage",
+    "match": {
+      "jobType": "mail.triage",
+      "userContains": [
+        "MAILFX-USAGE"
+      ]
+    },
+    "outcome": "usage_limited",
+    "resetsInMinutes": 45
+  }
+]

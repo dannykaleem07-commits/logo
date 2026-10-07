@@ -66,7 +66,8 @@ describe('ingest order and filing', () => {
     expect(match.score).toBeGreaterThanOrEqual(100);
     expect((match.signals as { because: string[] }).because.join(' ')).toContain(reference);
     expect(t.ctx.repos.listAudit(t.ctx.db, { action: 'mail.ingest' })).toHaveLength(1);
-    expect(seenAtMove).toEqual([{ rows: 1, evidence: 1 }]);
+    // the unassigned raw copy and its claim-side copy both exist before the MOVE
+    expect(seenAtMove).toEqual([{ rows: 1, evidence: 2 }]);
     expect(mailbox.log.filter((l) => l.startsWith('fetch') || l.startsWith('move'))).toEqual(['fetch INBOX:1', 'move INBOX:1->ClaimDesk-Processed']);
     expect(mailbox.messages('INBOX')).toHaveLength(0);
     // \Seen is never set by ClaimDesk
