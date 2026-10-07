@@ -7,12 +7,14 @@
  * Axes (metres): x along the car, front = +x; y up from the ground; z across, right (O/S) = +z, left (N/S) = −z.
  */
 import type { VehicleBodyType } from './zones';
+import { defaultSpec, type CarSpec } from './spec';
+import type { Tone } from './meshKit';
 
 export type Vec3 = [number, number, number];
 type P2 = [number, number];
 
-/** Base finish of a part when undamaged. */
-export type Tone = 'body' | 'frame' | 'trim' | 'glass' | 'lamp' | 'soft' | 'tyre';
+/** Base finish of a part when undamaged (shared with the 3D mesh). */
+export type { Tone };
 
 interface PartBase {
   zone: string | null; // null = non-interactive filler
@@ -48,6 +50,8 @@ export type Part = PolyPart | WheelPart | BoxPart | BeamPart;
 
 export interface VehicleModel {
   body: VehicleBodyType;
+  /** Dimensions-derived stations shared with the 3D mesh (carMesh.ts). */
+  spec: CarSpec;
   parts: Part[];
   length: number;
   width: number;
@@ -222,8 +226,50 @@ export function insetConvex(poly: P2[], d: number): P2[] {
 
 // ── builder ──
 
-export function buildVehicle(body: VehicleBodyType): VehicleModel {
-  const g = LAYOUTS[body];
+/** 2D layout from the same spec the 3D mesh uses, so the SVG views keep the vehicle's real proportions. */
+export function layoutFromSpec(sp: CarSpec): Layout {
+  const base = LAYOUTS[sp.body];
+  const isVan = sp.rear === 'van';
+  const roofTop = sp.roofY + sp.crown;
+  const sill = Math.min(sp.gc + 0.05, sp.sillTop - 0.03);
+  const windows: WindowSpec[] = sp.windows.map((w) => ({ zone: w.zone, x0: w.x0, x1: w.x1 }));
+  const doors: DoorSpec[] = sp.doors.map((d) => ({ zone: d.zone, x0: d.x0, x1: d.x1, ...(d.tall ? { tall: true } : {}) }));
+  return {
+    ...base,
+    L: sp.L,
+    W: sp.W,
+    roofW: Math.min(sp.W - 0.04, 2 * sp.roofHW),
+    sill,
+    belt: sp.belt,
+    roof: roofTop,
+    nose: sp.nose,
+    bumperF: Math.max(sill + 0.12, sp.bumperTopF),
+    bumperR: Math.max(sill + 0.12, sp.bumperTopR),
+    noseSlope: sp.noseSetback * 0.7,
+    tailSlope: sp.tailLean,
+    wheelR: sp.wheelR,
+    wheelFx: sp.axleF,
+    wheelRx: sp.axleR,
+    wsBase: sp.cowlX,
+    wsTop: sp.wsTopX,
+    roofEnd: isVan ? -sp.L / 2 : sp.rear === 'bed' ? sp.cabinRearX : sp.rear === 'boot' ? sp.roofEndX : Math.max(sp.roofEndX, -sp.L / 2 + 0.12),
+    rear: sp.rear,
+    ...(sp.rear === 'boot' ? { deckStart: sp.cabinRearX } : {}),
+    ...(sp.bed ? { bedFloor: sp.bed.floor } : {}),
+    doors,
+    windows,
+    roofRails: sp.roofRails && (sp.body === 'estate' || sp.body === 'suv'),
+    archTrims: sp.body === 'suv' || sp.body === 'pickup',
+    softTop: sp.softTop,
+    spoiler: sp.body !== 'panel-van' && sp.body !== 'pickup',
+    tyreW: sp.tyreW,
+    ...(isVan ? { mirror: [0.12, 0.26, 0.2] as Vec3 } : {})
+  };
+}
+
+export function buildVehicle(body: VehicleBodyType, spec?: CarSpec): VehicleModel {
+  const sp = spec && spec.body === body ? spec : defaultSpec(body);
+  const g = layoutFromSpec(sp);
   const { L, W, roofW, sill, belt, roof, nose, bumperF, bumperR, wheelR } = g;
   const xF = L / 2;
   const xR = -L / 2;
@@ -507,15 +553,18 @@ export function buildVehicle(body: VehicleBodyType): VehicleModel {
 
   const zones = new Set<string>();
   for (const p of parts) if (p.zone) zones.add(p.zone);
-  return { body, parts, length: L, width: W + 2 * (g.mirror ?? [0, 0, 0.17])[2], height: roof + (g.roofRails ? 0.07 : 0), zones };
+  return { body, spec: sp, parts, length: L, width: W + 2 * (g.mirror ?? [0, 0, 0.17])[2], height: roof + (g.roofRails ? 0.07 : 0), zones };
 }
 
-const CACHE = new Map<VehicleBodyType, VehicleModel>();
-export function vehicleModel(body: VehicleBodyType): VehicleModel {
-  let m = CACHE.get(body);
+const CACHE = new Map<string, VehicleModel>();
+/** Cached model for a body type, optionally shaped by a spec (real dimensions). */
+export function vehicleModel(body: VehicleBodyType, spec?: CarSpec): VehicleModel {
+  const key = spec && spec.body === body ? spec.key : body;
+  let m = CACHE.get(key);
   if (!m) {
-    m = buildVehicle(body);
-    CACHE.set(body, m);
+    m = buildVehicle(body, spec);
+    if (CACHE.size > 64) CACHE.clear();
+    CACHE.set(key, m);
   }
   return m;
 }

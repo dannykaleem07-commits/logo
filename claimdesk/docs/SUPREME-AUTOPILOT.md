@@ -44,7 +44,7 @@ person driving two of our cars, a policy that runs out mid-hire.
 
 Autopilot gives ClaimDesk that behaviour with four pieces of new machinery, all on top of phase 1:
 
-1. **Claim Autopilot** (§A): the lifecycle written down as data — 14 stages, ~45 steps with entry/exit criteria,
+1. **Claim Autopilot** (§A): the lifecycle written down as data — 14 stages, 46 steps with entry/exit criteria,
    required facts and documents, and deadlines — plus a pure state machine that says, for every claim at every moment,
    what is done, what is due, what is allowed and who we are waiting on. Code decides what is due and allowed; the
    model only fills judgement (wording, reading replies, choosing between options code has already allowed); every
@@ -55,7 +55,7 @@ Autopilot gives ClaimDesk that behaviour with four pieces of new machinery, all 
    repair, MOT), and an **availability search** that ranks cars for a claim by like-for-like match, needs, readiness,
    insurance cover and class of use, compliance across the whole period, location and cost — reusing `canAllocate`
    and `hirePeriodsOverlap`.
-3. **Clash detection** (§C): a complete catalogue of 34 pure checks, each classified block / warn / info and by
+3. **Clash detection** (§C): a complete catalogue of 44 pure checks, each classified block / warn / info and by
    override class (A manager override with audit, B relaxable, C never), run on every booking/hire/claim change and
    nightly, shown in the booking dialog, on the claim and in the daily log.
 4. **Hire offer → acceptance → paperwork → signing** (§D, §E) and **eligibility** (§F): the autopilot proposes the
@@ -130,6 +130,7 @@ All are additive or optional; phase-1 tests must pass unchanged except where a t
 | §C.7 `NeedsYouKind` | add `choose_car`, `approve_pack`, `confirm_signed`, `clash_review`, `eligibility_review`, `autopilot_step` |
 | §D.2 `EmailKind` | add `hire_offer`, `booking_update`, `signature_request`, `insurer_notice`; default `autoSendEmailKinds` gains `booking_update`, `insurer_notice`, `hire_offer` (the last only passes with a verified commitment, §D.3) |
 | §D.2 `autoSendTemplates` | default gains `letter.hire_start_notice`, `letter.booking_confirmation`, `letter.signature_chase` |
+| §D.2 `limits.perClaimPerDay` | default 3 → **6** (a booking day legitimately sends an acknowledgement, the NCAF, the offer, the delivery confirmation and a reminder); installs with a saved value keep it, and Settings > Autopilot shows a hint when it is below 6 |
 | §D.2 `ActionDescriptor` | optional `step?: { id: string; mode: StepMode; green: boolean }` and `commitment?: { kind: 'hire_offer' \| 'delivery_slot'; refId: string; verified: boolean; reasons: string[] }` — set by code only (dispatcher / outbox decision path), never from model input |
 | §D.2 rules | new rule 4a `step_owner_only` (deny) and 4b `step_confirm` (ask) after `untrusted_source`; rule 13 `touches` ignores `newCommitment` when `commitment.verified && step.mode === 'auto'` |
 | §B.3 `RunContext` | optional `step?: { id: string; mode: StepMode; green: boolean }`; `executeTool` copies it onto the descriptor |
@@ -137,7 +138,7 @@ All are additive or optional; phase-1 tests must pass unchanged except where a t
 | §B.4 tool catalogue | new tools in §H.2; `offer_record` re-pointed to the settlement-offer register (§D.9) |
 | §E.2 Case Brief | optional `autopilot` section and `booking.*`/`offer.*` facts (§A.10) |
 | §J.2 `DailyLog` | optional sections `autopilot`, `fleet`, `clashes` (§I.9) |
-| §N migrations | `0012_autopilot` takes journal `when` 1792250000000; phase 2 and 3 keep their `when` values (1792300000000, 1792400000000) and take the next free file numbers (`0013_engineer_calls_sms`, `0014_learning`) — the `when` values are the contract, tags are file names (§G.1) |
+| §N migrations | `0012_autopilot` takes journal `when` 1792250000000; phase 2 and 3 keep their `when` values (1792300000000, 1792400000000) and take the next free file numbers at build time — with the Knowledge Builder's `0014_knowledge` (1792350000000) that is `0013_engineer_calls_sms` and `0015_learning`; the `when` values are the contract, tags are file names (§G.1) |
 | SD outbox table | `ALTER TABLE outbox ADD autopilot_step_id text` (which step created a draft) |
 
 ---
@@ -280,7 +281,7 @@ Mode column: default / floor (`A` auto, `C` confirm, `O` owner). "Green" (§D.1)
 | `qualify.decline` | qualify · qualification | person | O/O | decision `decline` → status `declined` | owner | Needs-you `autopilot_step` with prepared **new** `letter.decline` |
 | `qualify.driver` | qualify · qualification | code | A/A (refer → C) | driver profile complete → outcome `eligible` (or owner-resolved `refer`) | client (licence, DVLA code) | missing → `doc_request`; refer → Needs-you `eligibility_review` |
 | `qualify.need` | qualify · qualification | code | A/A (weak → C) | needs captured → `NeedAssessment` ≠ unknown | client | weak/none → Needs-you `autopilot_step` |
-| `qualify.means` | qualify · qualification | code | A/C* | impecuniosity relied on → SoM + statements on file | client | `doc_request` for CCGUK-07 + 3 months' statements (*doc_request always asks) |
+| `qualify.means` | qualify · qualification | code | A/A | impecuniosity relied on → SoM + statements on file | client | prepares a `doc_request` for CCGUK-07 + 3 months' statements (that email kind always asks, SD §D.2) |
 | `qualify.roadworthiness` | qualify · qualification | code | A/A | driveable answered → hire-from date set (now / repair start) | — | optional `vehicle_lookup` for client car MOT/tax on accident date |
 | `signup.pack` | signup · sign_up | code | C/C | acceptance accept(/conditions) → pack approved and given | owner | `pack.prepare signup` → `approve_pack` |
 | `signup.signed` | signup · sign_up | person | O/O | pack sent → CCGUK-01 (+09/+02) signed | client; chase 2/5 days | `signing.chase`; on signature code appends `services_agreed` |
@@ -293,9 +294,9 @@ Mode column: default / floor (`A` auto, `C` confirm, `O` owner). "Green" (§D.1)
 | `vehicle.inspection` | vehicle · vehicle_secured | code | A/A | instructed → `inspection` event | engineer; chase 3 WD | chaser email `supplier_instruction` |
 | `vehicle.report` | vehicle · on_hire | person | O/O | inspected → `report_issued` | engineer / owner (issue is human) | Needs-you `autopilot_step` when draft report waits |
 | `vehicle.repair_track` | vehicle · on_hire | ai_judgement | A/A | repair route → `repair_completed` | repairer; 4.10 3 WD, 4.11 5 WD | judge `repair_status_from_message` → `event_append` (repair_started / repair_delay / repair_completed); delay notices `letter.delay_notice_gta_4_10` |
-| `vehicle.total_loss_track` | vehicle · on_hire | code | A/O* | `total_loss_confirmed` → `tl_payment_received` | insurer | chasers; PAV challenge is owner (*) |
+| `vehicle.total_loss_track` | vehicle · on_hire | code | A/A | `total_loss_confirmed` → `tl_payment_received` | insurer | chasers; a PAV challenge (`letter.pav_challenge`, always-ask) is prepared for the owner |
 | `hire.search` | hire · hire_search | code | A/A | qualification exit, hire needed, need date ≤ now + look-ahead → reservation held/confirmed | — | in-process availability search (§B.5) |
-| `hire.choose` | hire · hire_search | ai_judgement | A/A (not green → C) | search done → car chosen | — | clear winner: code picks; else judge `choose_car`; not green → Needs-you `choose_car` |
+| `hire.choose` | hire · hire_search | ai_judgement | A/A (not green → C) | search done → car chosen | — | clear winner: code picks; else judge `choose_car`; not green → protective hold on the top car (setting, default on) + Needs-you `choose_car` |
 | `hire.hold` | hire · hire_search | code | A/A | car chosen → reservation `held` | hold 24 h | tool `booking_hold` |
 | `hire.offer` | hire · hire_offer | ai_wording | A/A (not green → C) | held → offer `sent` | — | tool `hire_offer_prepare` + `email_draft` kind `hire_offer` (`OFFER_HIRE`) |
 | `hire.acceptance` | hire · hire_offer | ai_judgement | A/A | offer sent → offer `accepted` | **client**; reminder 4 h; expiry → Needs-you `question` + task `call` | deterministic reply parse, else `hire_offer.parse_reply`; "accepted by phone" button |
@@ -314,7 +315,7 @@ Mode column: default / floor (`A` auto, `C` confirm, `O` owner). "Green" (§D.1)
 | `money.offer` | money · recovery | person | O/O | settlement offer open → owner decision | owner | `offer_record` → `offer.analyse` → `offer_decision` (existing) |
 | `money.payment` | money · recovery | code | C/C | remittance in → `paid` row (owner) | owner | `payment_received_propose` (existing) |
 | `money.client_payout` | money · recovery | person | O/O | PAV/excess due to client → paid | owner | Needs-you `money` (`PAY_CLIENT`) |
-| `close.readiness` | close · closure | code | C/O* | heads resolved → owner closes | owner | `closureReadiness` → Needs-you `autopilot_step` + **new** `letter.closure` (`CLOSE_FILE`) |
+| `close.readiness` | close · closure | code | O/O | heads resolved → owner closes | owner | `closureReadiness` → Needs-you `autopilot_step` with the prepared **new** `letter.closure` (`CLOSE_FILE`) |
 | `status.sync` | close · (any) | code | A/A | stage changed → claim status matches the stage map | — | tool `claim_status_set` (never `declined/settled/closed/pre_action/litigation`) |
 
 New playbook codes (added to `defaultPlaybookRules` so `PLAYBOOK_ACTION_CODES` accepts them in hand-offs; the
@@ -416,15 +417,20 @@ the new fields are absent on every phase-1 descriptor.
 3. If the kill switch is on, the claim is paused, or `claim_autopilot.mode !== 'on'`: store the plan and stop
    (holds still expire; clash sweeps still run — they are housekeeping, not agent actions).
 4. For up to `settings.maxActionsPerTick` (5) due steps in `plan.due` order, run `executeStep(step)`:
-   * `tool` / `draft` / `pack` actions with effective mode `auto` → mint a run (an `agent_runs` row with
-     `driver:'deterministic'`, `model:'none'`, `prompt_version:'autopilot/1:<planHash>'`) and a claim-scoped run
-     token for `agent:autopilot`, then `executeTool(ctx, rc, tool, input)` — input built by code (`InputBuilders`),
+   * `tool` / `draft` / `pack` actions with effective mode `auto` → `actAsAutopilot(ctx, { claimId, step, tool,
+     input })` (`apps/api/src/autopilot/act.ts`, written by `ap-foundation` and used by every slice that acts without
+     a model): it records a run (an `agent_runs` row with `driver:'deterministic'`, `model:'none'`,
+     `prompt_version:'autopilot/1:<planHash>'`), mints a claim-scoped run token for `agent:autopilot`, builds the
+     `RunContext` with `step`, and calls `executeTool(ctx, rc, tool, input)` — input built by code (`InputBuilders`),
      never by a model. A `draft` action enqueues SD's `draft.compose` hand-off with the step's `actionCode` (same
      idempotency key format, so the case manager and the autopilot can never both draft it).
    * `judge` actions → enqueue `autopilot.judge` with the options code computed; the result comes back as a choice
      that must be one of the offered option ids (else Needs-you `question`), then the runner executes it.
    * effective mode `confirm` → prepare (drafts/pack) and `createNeedsYou` (kind per step; `dedupeKey`
-     `autopilot:<claimId>:<stepId>:<n>`; `resumesJobId` unset — the next tick sees the resolution).
+     `autopilot:<claimId>:<stepId>:<n>`; `resumesJobId` unset — the next tick sees the resolution). For `draft`
+     actions the draft is still composed and reviewed, and the card is SD's own `approve_send` / `approve_document`
+     raised by the send decision (rule 4b), so no second card is created; for `pack` actions the card is
+     `approve_pack`.
    * effective mode `owner` → `createNeedsYou(kind 'autopilot_step')` telling the owner exactly what to do, with
      links; a `task` (`task_schedule`) for the physical job.
 5. Tool errors: `RESERVATION_OVERLAP` on `booking_hold` → re-search excluding that car (max 2 retries in the tick);
@@ -493,6 +499,45 @@ and facts usable as `{{fact:…}}`: `booking.unit.registration`, `booking.unit.m
 `booking.delivery.addressShort`, `booking.collection.window`, `booking.agreementNumber`, `offer.expiresAt`,
 `offer.likeForLike` (code-built sentence), `client.vehicle.gtaGroup`, `hire.offHireDeadline`, `pack.documentList`.
 
+### A.11 Settings (`packages/domain/src/autopilot/settings.ts`, by `ap-foundation`; stored in `agent_settings.autopilot`)
+
+Stored JSON is merged over the defaults (as SD's agent settings), so new keys never need a migration. Floors are
+enforced on read and on `PATCH /settings/autopilot` (a mode below a step's floor is refused with the reason).
+
+```ts
+export interface AutopilotSettings {
+  enabled: boolean; newClaims: 'on' | 'paused';
+  stepModes: Partial<Record<AutopilotStepId, StepMode>>;
+  maxActionsPerTick: number; loopGuard: { repeats: number; hours: number };
+  green: { minLikeForLike: number; clearWinnerGap: number; maxAutoOffersPerDay: number; protectiveHold: boolean };
+  booking: { holdHours: number; offerReminderHours: number; turnaroundMinutes: number; leadMinutes: number; windowMinutes: number;
+    maxPerWindow: number; businessHours: BusinessHours; lookAheadDays: number; reminderAtLocal: string; alternativesShown: number };
+  ranking: RankingWeights;
+  projection: { defaultHireDays: number; partsBufferWorkingDays: number; totalLossDays: number };
+  signing: { otpDelivery: 'email' | 'handler'; chaseAfterDays: number[]; callAfterDays: number; lanKiosk: boolean;
+    kioskTtlMinutes: number; dvlaCheckMaxAgeDays: number };
+  eligibility: { requireMeansBeforeOffer: boolean; defaultCriteria: DriverCriteria; duplicateClaimWindowDays: number };
+  billing: { prepareWithinWorkingDays: number; paymentPackTargetWorkingDays: number };
+  schedules: { sweepEveryMinutes: number; clashSweepAtLocal: string; complianceWatchAtLocal: string; signingChaseAtLocal: string };
+}
+export interface BusinessHours { days: number[] /* 1 = Monday … 7 = Sunday */; start: string; end: string; skipBankHolidays: boolean }
+export const DEFAULT_AUTOPILOT_SETTINGS: AutopilotSettings = {
+  enabled: true, newClaims: 'on', stepModes: {}, maxActionsPerTick: 5, loopGuard: { repeats: 3, hours: 24 },
+  green: { minLikeForLike: 0.8, clearWinnerGap: 8, maxAutoOffersPerDay: 10, protectiveHold: true },
+  booking: { holdHours: 24, offerReminderHours: 4, turnaroundMinutes: 120, leadMinutes: 120, windowMinutes: 120, maxPerWindow: 2,
+    businessHours: { days: [1, 2, 3, 4, 5, 6], start: '08:00', end: '18:00', skipBankHolidays: true }, lookAheadDays: 3,
+    reminderAtLocal: '16:00', alternativesShown: 2 },
+  ranking: DEFAULT_RANKING_WEIGHTS,
+  projection: { defaultHireDays: 14, partsBufferWorkingDays: 2, totalLossDays: 21 },
+  signing: { otpDelivery: 'email', chaseAfterDays: [2, 5], callAfterDays: 7, lanKiosk: false, kioskTtlMinutes: 30, dvlaCheckMaxAgeDays: 14 },
+  eligibility: { requireMeansBeforeOffer: false, defaultCriteria: DEFAULT_DRIVER_CRITERIA, duplicateClaimWindowDays: 30 },
+  billing: { prepareWithinWorkingDays: 1, paymentPackTargetWorkingDays: 2 },
+  schedules: { sweepEveryMinutes: 5, clashSweepAtLocal: '02:30', complianceWatchAtLocal: '06:30', signingChaseAtLocal: '09:15' },
+};
+export const STEP_FLOORS: Readonly<Record<AutopilotStepId, StepMode>>;          // from the catalogue; perimeter, not editable
+export function mergeAutopilotSettings(stored: unknown): AutopilotSettings;      // defaults ← stored, floors enforced
+```
+
 ---
 
 ## B. Fleet booking system
@@ -511,7 +556,7 @@ export const BLOCKING_RESERVATION_STATUSES: readonly ReservationStatus[] = ['hel
 export interface Reservation {
   id: Id; fleetUnitId: Id; claimId: Id; status: ReservationStatus; use: FleetUse;
   startAt: ISODateTime;
-  expectedEndAt: ISODateTime;          // projected end (§B.6); moves as facts arrive
+  expectedEndAt: ISODateTime | null;   // projected end (§B.6); moves as facts arrive; null only for back-filled open hires
   endAt?: ISODateTime;                 // hire end (contractual), set at return
   collectedAt?: ISODateTime;           // car physically back
   holdExpiresAt?: ISODateTime;         // held only
@@ -621,6 +666,15 @@ export interface HireNeeds {                                  // §F.3, stored p
   clientWantsHire: boolean | null; notes: string | null;
   source: Record<string, 'intake_script' | 'intake_extract' | 'handler' | 'client_reply'>;
 }
+export interface FleetLocation { id: Id; name: string; address: Address | null; postcode: string | null; lat: number | null; lon: number | null; isDefault: boolean }
+export interface LikeForLikeResult {
+  score: number;                                                   // 0..1 (formula below)
+  group: { client: string | null; car: string; relation: 'same' | 'lower' | 'higher' | 'unknown'; clientRatePence: Pence | null; carRatePence: Pence | null };
+  parts: { group: number; body: number; seats: number; transmission: number; fuel: number };
+  sentence: string;                                                // "Same hire group as your own car (C2), automatic, 5 seats."
+}
+export function likeForLike(client: AvailabilityQuery['clientVehicle'], clientGroup: string | null, car: Vehicle, carGroup: string,
+  rates: GtaRate[], date: ISODate): LikeForLikeResult;
 export interface AvailabilityQuery {
   claimId: Id | null; use: FleetUse; startAt: ISODateTime; expectedEndAt: ISODateTime;
   needs: HireNeeds; clientVehicle: Pick<Vehicle, 'gtaGroup' | 'bodyType' | 'fuelType' | 'transmission' | 'spec'> | null;
@@ -649,7 +703,7 @@ export interface ExcludedUnit { fleetUnitId: Id; registration: string; reasons: 
 export interface AvailabilityResult {
   period: { startAt: ISODateTime; expectedEndAt: ISODateTime }; use: FleetUse;
   ranked: AvailabilityCandidate[]; excluded: ExcludedUnit[];
-  clearWinner: boolean;              // ranked[0].score − ranked[1].score ≥ settings.clearWinnerGap (8)
+  clearWinner: boolean;              // ranked[0].score − ranked[1].score ≥ settings.green.clearWinnerGap (8); true when only one car ranks
   green: boolean;                    // ranked[0] passes the green test (§D.1)
   explanation: string[];             // plain-English, most important first
 }
@@ -703,7 +757,8 @@ autopilot when the report, repair booking or off-hire trigger arrives (`booking_
 ### B.7 Holds, confirmation and agreement numbers
 
 * `placeHold(ctx, actor, {claimId, fleetUnitId, use, startAt, expectedEndAt, hirerPartyId, driverPartyIds, ranking})`
-  runs **one** `ctx.db.transaction(...).immediate()` with no `await` inside: expire stale holds for that car →
+  runs **one** `ctx.db.transaction(fn, { behavior: 'immediate' })` (drizzle's better-sqlite3 transaction option) with
+  no `await` inside: expire stale holds for that car →
   load the car's blocking reservations → `detectClashes(proposed_booking)` → block findings refuse through
   `gateFor(ctx, request).refuse(conflict(code, …), target)` (manager override for class A only; agents never) →
   insert the row (the trigger in §G.2 is the second line of defence) → `fleet_reservation_events` row → audit
@@ -724,7 +779,8 @@ export interface Movement {
   windowStart: ISODateTime; windowEnd: ISODateTime; address: Address | null; postcode: string | null;
   assignedTo: string | null; status: 'planned' | 'confirmed' | 'done' | 'failed' | 'cancelled';
   doneAt?: ISODateTime; odometer?: number; fuelEighths?: number; conditionDocumentId?: Id; evidenceIds: Id[];
-  clientNotifiedAt?: ISODateTime; notes?: string;
+  clientNotifiedAt?: ISODateTime; noticeOutboxId?: Id;   // the booking_update email that told the client (commitment binding, §D.3)
+  notes?: string;
 }
 export function proposeSlots(input: { earliest: ISODateTime; readyBy: ISODateTime; businessHours: BusinessHours; windowMinutes: number;
   leadMinutes: number; existing: Movement[]; maxPerWindow: number; preferred?: { date: ISODate | null; part: 'morning' | 'afternoon' | 'evening' | null } }, n: number): Array<{ windowStart: ISODateTime; windowEnd: ISODateTime }>;
@@ -745,8 +801,9 @@ The service:
 
 1. Re-runs `detectClashes(reservation)`; enforces `SIGNATURES_MISSING`, `DRIVER_*`, `UNIT_NOT_READY`,
    `LICENCE_CHECK_STALE`, `UNIT_DOUBLE_BOOKED` through the override gate.
-2. Calls `createHireRecord(ctx, request, gate, input)` — the body of today's `POST /claims/:id/hire` extracted into
-   `apps/api/src/services/hireCreate.ts` unchanged in behaviour (hard stop, end before start, `canAllocate`,
+2. Calls `createHireRecord(ctx, tx, request, gate, input)` inside the same transaction as steps 1 and 3 — the body of
+   today's `POST /claims/:id/hire` extracted into `apps/api/src/services/hireCreate.ts` (taking the caller's `tx`),
+   unchanged in behaviour (hard stop, end before start, `canAllocate`,
    `refuseOverlap`, pricing snapshot, `hire_started` event, enforceability flag, audit, clocks) — with the
    reservation's agreement number, `use`, hirer, drivers, rate/groups, `deliveredAt = at`, `odometerOut`,
    `expectedEndAt`, and `signedAt`/`documentId`/`enforceability.*` taken from the signed pack (§E.5).
@@ -773,7 +830,7 @@ search, fixing the today-only `activeHireForFleetUnit` check).
 ### B.11 Race safety
 
 1. **Single writer, synchronous transaction.** better-sqlite3 transactions are synchronous; the hold/confirm/
-   handover services do their read-check-insert inside one `transaction(...).immediate()` with no `await`, so two
+   handover services do their read-check-insert inside one `transaction(fn, { behavior: 'immediate' })` with no `await`, so two
    Fastify requests (two claims, or the agent and the owner) cannot interleave between the check and the insert.
 2. **Database trigger** (§G.2): an INSERT, or an UPDATE into `held`/`confirmed`, whose occupied period overlaps
    another blocking reservation of the same car aborts with `RESERVATION_OVERLAP` unless the row carries
@@ -792,6 +849,8 @@ search, fixing the today-only `activeHireForFleetUnit` check).
 ### C.1 Contract (`packages/domain/src/clash/types.ts` by `ap-foundation`; `clash/catalogue.ts`, `clash/detect.ts`, `clash/identity.ts` by `ap-clash`)
 
 ```ts
+/** The 44 codes of §C.2, in table order, as a const list (CLASH_CODES) and its union. */
+export type ClashCode = (typeof CLASH_CODES)[number];
 export type ClashSeverity = 'block' | 'warn' | 'info';
 export type ClashOverrideClass = 'A' | 'B' | 'C';            // A manager override + reason + audit; B relaxed in manager mode; C never
 export type ClashSubject =
@@ -881,8 +940,7 @@ or wraps. Subjects: P proposed booking / R reservation / H hire / Cl claim / U f
 | 43 | `DELIVERY_CAPACITY` | W | – | – | more movements in a window than `maxPerWindow` | R |
 | 44 | `HOLD_EXPIRED` | B | C | – | confirming or offering a hold that has expired (re-hold instead) | R |
 
-(The table has 44 rows: 34 distinct business checks plus the split start/period variants of policy, MOT and tax and
-the delivery/handover variants.) Labels and override warnings for the new override codes are added to
+Labels and override warnings for the new override codes are added to
 `OVERRIDE_RULES` (class A): `UNIT_NOT_READY`, `POLICY_ENDS_IN_PERIOD` ("the car would be uninsured after <date>"),
 `SAME_REG_ON_HIRE` ("possible double hire for one accident — fraud risk"), `DUPLICATE_CLAIM_OPEN`,
 `CLAIM_SECOND_HIRE`, `HIRER_ON_OTHER_HIRE`, `DRIVER_REFERRAL` ("only with the insurer's written acceptance"),
@@ -956,7 +1014,7 @@ offer sent ─▶ reply "yes" (code) / unclear (hire_offer.parse_reply) / "accep
 
 **Green** (all must hold; `booking/green.ts`, pure, each failure is a plain-English reason on the card):
 
-1. Top candidate `likeForLike.score ≥ settings.booking.minLikeForLike` (0.8) and not above the client's group.
+1. Top candidate `likeForLike.score ≥ settings.green.minLikeForLike` (0.8) and not above the client's group.
 2. Every hard need met (§B.5 filter 5) and no green-blocking warn finding (§C.2 column "green-blocking").
 3. `assessAcceptance().decision === 'accept'`, or `accept_with_conditions` with every condition met.
 4. Driver(s) `eligible` against this car's policy (a `refer` is never green).
@@ -1011,12 +1069,16 @@ Reviewer additions (tier a, `apps/api/src/autopilot/offerChecks.ts`, registered 
 
 A hire offer and a delivery-slot confirmation create a commitment. They may go automatically only when code verifies
 the commitment at decision time. `applyAutopilotCommitment(ctx, outbox, descriptor)` (exported by
-`apps/api/src/autopilot/commitment.ts`) is called by the mail slice's external-send decision path (`outbox.after_review`
-and `send_request`) immediately before `decide()`; it sets `descriptor.step` from `outbox.autopilot_step_id` and,
-for kinds `hire_offer` / `booking_update`, `descriptor.commitment = { kind, refId, verified, reasons }` where
+`apps/api/src/autopilot/commitment.ts`) is called at the end of the mail slice's `describeOutbox(ctx, o, review)`
+(`apps/api/src/mail/outbox.ts`, used by `afterReview` and `send_request` before `decide()`) — one line added by
+`ap-foundation`; it sets `descriptor.step` from `outbox.autopilot_step_id` or,
+when that is empty (a draft written by the drafter after an autopilot hand-off), from the static map
+`STEP_FOR_SEND[kind or templateId]` (e.g. `hire_offer` → `hire.offer`, `letter.ncaf` → `notify.ncaf`) and the
+claim's current plan (effective mode and green); and, for kinds `hire_offer` / `booking_update`, `descriptor.commitment = { kind, refId, verified, reasons }` where
 `verified` requires all of:
 
-* exactly one `hire_offers` row in `draft` (or one `fleet_movements` row in `planned`) bound to this outbox id;
+* exactly one `hire_offers` row in `draft` bound to this outbox id (`hire_offers.outbox_id`), or one
+  `fleet_movements` row in `planned` bound to it (`fleet_movements.notice_outbox_id`);
 * its reservation is `held` (offer) / `confirmed` (slot) for the same claim, hold not expiring within 30 minutes;
 * `termsSha256` equals the hash recomputed from the current reservation and movement (nothing changed since drafting);
 * a fresh `detectClashes(reservation)` has no block and no green-blocking warn;
@@ -1136,7 +1198,14 @@ If, when `ap-autopilot` starts, the gateway tool `offer_record` still posts insu
 `POST /claims/:id/offers` (the **intervention** register — which starts an `intervention_reply_1wd` clock and pollutes
 the mitigation gate), it is re-pointed to a new register: table `settlement_offers` (§G.2), routes
 `GET/POST /claims/:id/settlement-offers`, `PATCH /claims/:id/settlement-offers/:oid` (decision fields human-only);
-`offers_list` returns both registers; `offer.analyse` and Needs-you `offer_decision` read the new register. Triage
+`offers_list` returns both registers; `offer.analyse` and Needs-you `offer_decision` read the new register.
+
+```ts
+export interface SettlementOffer { id: Id; claimId: Id; head: HeadOfLoss | 'global'; amountPence: Pence | null; receivedAt: ISODateTime;
+  offerorName: string; channel: 'email' | 'letter' | 'phone' | 'portal'; terms: string | null; evidenceIds: Id[]; mailMessageId: Id | null;
+  status: 'open' | 'accepted' | 'countered' | 'rejected' | 'lapsed' | 'superseded'; decidedBy?: string; decidedAt?: ISODateTime; decisionNote?: string;
+  createdBy: string; createdAt: ISODateTime }
+``` Triage
 intent `intervention_offer` keeps going to the intervention register. A test asserts that recording a settlement offer
 creates no `intervention_reply_1wd` clock and leaves the mitigation gate unchanged.
 
@@ -1161,17 +1230,25 @@ without a public server; all keep e-signature human-only (`assertHuman`):
    `kiosk_sessions` row: 32 random bytes token (sha256 stored), 30-minute TTL, bound to the pack, the signer party and
    the creating user.
 2. The browser goes full screen at `/sign/kiosk/:token` — a page outside the app shell with no navigation; it calls
-   only `/api/kiosk/:token/*` (token auth, not the session): pack summary (signer name, document list), each document
+   only `/api/kiosk/:token/*` (token auth, not the session — `ap-foundation` adds the `/api/kiosk/` prefix to the
+   public-route list of the `onRequest` auth hook in `app.ts`; the kiosk routes check the token themselves and refuse
+   run tokens): pack summary (signer name, document list), each document
    as PDF (`GET /api/kiosk/:token/documents/:docId/pdf`), "I have read this" per document (scroll to end required),
    typed full name, a drawn signature (canvas → PNG, size-limited 200 KB), and the one-time code.
-3. `POST /api/kiosk/:token/otp/start` → existing `startSignature` per document (actor = the kiosk creator — a human;
-   channel `email` to the signer's email on file). With mail configured the code is emailed immediately through the
-   mail slice's SMTP sender (transactional, not the outbox hold; audited `document.sign.otp_sent`); without, the code
-   is shown on the handler's screen (`esignDelivery: 'handler'` behaviour, audited).
-4. `POST /api/kiosk/:token/sign { typedName, drawnSignaturePngBase64, code, consent: true }` → existing
-   `verifySignature` per document with the drawn signature stored as evidence (`kind: 'signature_image'`) and its
-   sha256 added to the certificate (`SignatureRecord.method: 'kiosk_otp_email' | 'kiosk_handler_code'`,
-   `drawnSignatureSha256`). Each document becomes `signed`; certificates as today.
+3. `POST /api/kiosk/:token/otp/start` → **one code for the whole pack**: `startPackSignature` (`signing/kiosk.ts`)
+   reuses the existing `generateOtp` with `documentId = packId` and `documentSha256 = sha256(sorted member document
+   sha256s)`, with the same `assertHuman` (actor = the kiosk creator), challenge store, TTL and audit as
+   `startSignature`; channel `email` to the signer's email on file. With mail configured the code is emailed
+   immediately through the mail slice's `smtpFor(ctx, account)` (`apps/api/src/mail/transport.ts`; the fake transport
+   in tests) — transactional, not the outbox hold; audited
+   `document.sign.otp_sent`); without, the code is shown on the handler's screen (`esignDelivery: 'handler'`
+   behaviour, audited `document.sign.code_shown_to_handler`).
+4. `POST /api/kiosk/:token/sign { typedName, drawnSignaturePngBase64, code, consent: true }` → `verifyPackSignature`
+   checks the code with `verifyOtp` (attempt limit as today), refuses if any member document changed (pack hash), then
+   gives **each** document its own `SignatureRecord` and certificate through the existing `verifySignature` internals
+   (`attachSignature`, certificate JSON/PDF, `DUPLICATE_SIGNATURE_DATE` check) with `method: 'kiosk_otp_email' |
+   'kiosk_handler_code'`, the pack id and hash, and `drawnSignatureSha256` (the PNG is stored as evidence of kind
+   `signature_image`). Each document becomes `signed`.
 5. **Exit** requires the handler's password (`POST /api/kiosk/:token/close { password }` checks the creator's
    password with the existing auth service); idle 5 minutes → the page blanks and asks for the handler.
 
@@ -1276,15 +1353,27 @@ export interface DriverCriteria {
 }
 ```
 
-Default values (generic UK hire-insurer norms — **the owner must check them against the real policy wording**):
+`DEFAULT_DRIVER_CRITERIA` is exported from `eligibility/types.ts` (by `ap-foundation`) with these values (generic
+UK hire-insurer norms — **the owner must check them against the real policy wording**):
 ages 25–75 eligible, 21–24 and 76–79 refer, under 21 or 80+ ineligible; full licence ≥ 2 years eligible, 1–2 years
 refer, < 1 year ineligible; points 0–6 eligible, 7–9 refer, ≥ 10 ineligible; endorsement codes starting `DR`, `IN`,
-`UT`, `CD4`, `CD7`, `DD`, `BA`, `AC`, `TT99` within 5 years ineligible; `CD1`–`CD3`, `MS`, `SP50`+ refer;
+`UT`, `CD4`–`CD9`, `DD`, `BA`, `AC`, `TT99` within 5 years ineligible; `CD1`–`CD3` and `MS` refer (ordinary `SP`
+speeding codes count only through points);
 disqualification within 5 years ineligible; fault accidents in 3 years 0–1 eligible, 2 refer, ≥ 3 ineligible; GB/NI
 eligible, EU/EEA eligible, other countries refer; provisional never; DVLA check within 14 days of handover; unspent
 motoring or dishonesty convictions refer; young-driver excess not set (owner enters).
 
 ### F.3 Client need (`eligibility/need.ts`)
+
+```ts
+export interface NeedAssessment { level: 'strong' | 'moderate' | 'weak' | 'none' | 'unknown'; reasons: string[]; missing: string[]; mitigationRisks: string[]; automaticOnly: boolean; use: FleetUse }
+export interface MeansAssessment { basis: 'impecunious' | 'not_impecunious' | 'unknown'; readiness: 'ready' | 'partial' | 'none'; missing: string[]; warning: string | null }
+export interface RoadworthinessAssessment { driveable: boolean | null; hireFrom: 'now' | 'repair_start' | 'unknown'; repairStartAt: ISODateTime | null;
+  clientCarOnAccidentDate: { mot: 'valid' | 'expired' | 'unknown'; tax: 'valid' | 'untaxed' | 'unknown' }; warnings: string[] }
+export function assessNeed(needs: HireNeeds | null, bundle: ClaimBundle, driver: DriverEligibility | null): NeedAssessment;
+export function assessMeans(bundle: ClaimBundle, gates: GateResult[]): MeansAssessment;
+export function assessRoadworthiness(bundle: ClaimBundle, needs: HireNeeds | null): RoadworthinessAssessment;
+```
 
 `HireNeeds` (§B.5) is captured from the intake script answers (`need.occupation`, `need.journeys`,
 `need.dependants`, `need.otherVehicles`), intake extraction, client replies and the handler (`claim_hire_needs`).
@@ -1342,10 +1431,12 @@ in `drizzle-orm`'s sqlite dialect (`lastDbMigration.created_at < migration.folde
 |---|---|---|
 | `0012_autopilot.sql` | **1792250000000** | `ap-foundation` |
 | phase 2 `0013_engineer_calls_sms.sql` (renamed from SD's `0012_…`) | 1792300000000 (unchanged) | `p2-foundation` |
-| phase 3 `0014_learning.sql` (renamed from SD's `0013_…`) | 1792400000000 (unchanged) | `p3-foundation` |
+| Knowledge Builder `0014_knowledge.sql` (`docs/SUPREME-KNOWLEDGE-BUILDER.md` §3) | 1792350000000 | `knowledge-core` |
+| phase 3 `0015_learning.sql` (renamed from SD's `0013_…`) | 1792400000000 (unchanged) | `p3-foundation` |
 
-A Knowledge Builder migration landing after Autopilot and before phase 2 takes the next free file number and a `when`
-in 1792260000000–1792290000000. Two guards make a silent skip impossible:
+This matches the Knowledge Builder document's table. Each slice takes the **next free file number** at build time,
+and the journal `idx` order must equal `when` order. Any further migration in this window uses a free `when`
+strictly between its neighbours. Two guards make a silent skip impossible:
 
 1. `packages/db/src/migrationOrder.test.ts`: journal `when` values strictly increase in array order; file numbers are
    unique; every journal tag has a file.
@@ -1435,7 +1526,8 @@ CREATE TABLE `fleet_movements` (`id` text PRIMARY KEY NOT NULL, `reservation_id`
   `kind` text NOT NULL CHECK (`kind` IN ('delivery','collection','swap_out','swap_in','transfer')),
   `window_start` text NOT NULL, `window_end` text NOT NULL, `address` text, `postcode` text, `assigned_to` text,
   `status` text NOT NULL CHECK (`status` IN ('planned','confirmed','done','failed','cancelled')), `done_at` text, `odometer` integer,
-  `fuel_eighths` integer, `condition_document_id` text, `evidence_ids` text NOT NULL DEFAULT '[]', `client_notified_at` text, `notes` text,
+  `fuel_eighths` integer, `condition_document_id` text, `evidence_ids` text NOT NULL DEFAULT '[]', `client_notified_at` text,
+  `notice_outbox_id` text, `notes` text,
   `created_by` text NOT NULL, `created_at` text NOT NULL, `updated_at` text NOT NULL);
 CREATE INDEX `fleet_movements_window_idx` ON `fleet_movements` (`status`, `window_start`);
 
@@ -1496,6 +1588,11 @@ ALTER TABLE `hire_agreements` ADD `driver_party_ids` text;
 ALTER TABLE `hire_agreements` ADD `reservation_id` text;
 ALTER TABLE `hire_agreements` ADD `expected_end_at` text;
 ALTER TABLE `agent_settings` ADD `autopilot` text NOT NULL DEFAULT '{}';
+ALTER TABLE `signatures` ADD `method` text;                 -- NULL = 'otp' (every existing row)
+ALTER TABLE `signatures` ADD `drawn_signature_sha256` text;
+ALTER TABLE `signatures` ADD `evidence_id` text;            -- signature image (kiosk) or returned scan (wet ink)
+ALTER TABLE `signatures` ADD `pack_id` text;
+ALTER TABLE `signatures` ADD `pack_sha256` text;
 ALTER TABLE `outbox` ADD `autopilot_step_id` text;
 
 -- Back-fill: one reservation per existing hire (keeps the diary complete; legacy overlaps are kept, never refused).
@@ -1503,12 +1600,13 @@ INSERT INTO `fleet_reservations` (`id`, `fleet_unit_id`, `claim_id`, `status`, `
   `block_start_ms`, `block_end_ms`, `hirer_party_id`, `driver_party_ids`, `agreement_number`, `hire_agreement_id`, `daily_rate_pence`, `gta_group`,
   `client_gta_group`, `pricing_note`, `source`, `created_by`, `created_at`, `updated_at`)
 SELECT lower(hex(randomblob(16))), h.`fleet_unit_id`, h.`claim_id`,
-  CASE WHEN h.`end_at` IS NULL OR h.`end_at` > strftime('%Y-%m-%dT%H:%M:%fZ','now') THEN 'on_hire' ELSE 'returned' END,
-  COALESCE((SELECT json_extract(e.`data`, '$.use') FROM `events` e WHERE e.`claim_id` = h.`claim_id` AND e.`type` = 'hire_started'
+  CASE WHEN h.`end_at` IS NULL OR unixepoch(h.`end_at`, 'subsec') > unixepoch('now', 'subsec') THEN 'on_hire' ELSE 'returned' END,
+  COALESCE((SELECT json_extract(e.`data`, '$.use') FROM `claim_events` e WHERE e.`claim_id` = h.`claim_id` AND e.`type` = 'hire_started'
             AND json_extract(e.`data`, '$.hireId') = h.`id` ORDER BY e.`recorded_at` LIMIT 1), 'credit_hire'),
   h.`start_at`, h.`end_at`, h.`end_at`, h.`collected_at`,
   CAST(unixepoch(h.`start_at`, 'subsec') * 1000 AS INTEGER),
-  CASE WHEN h.`end_at` IS NULL THEN NULL ELSE CAST(unixepoch(COALESCE(MAX(h.`end_at`, COALESCE(h.`collected_at`, h.`end_at`)), h.`end_at`), 'subsec') * 1000 AS INTEGER) END,
+  CASE WHEN h.`end_at` IS NULL THEN NULL
+       ELSE MAX(CAST(unixepoch(h.`end_at`, 'subsec') * 1000 AS INTEGER), COALESCE(CAST(unixepoch(h.`collected_at`, 'subsec') * 1000 AS INTEGER), 0)) END,
   c.`claimant_id`, '[]', h.`agreement_number`, h.`id`, h.`daily_rate_pence`, h.`gta_group`, h.`client_gta_group`, h.`pricing_note`,
   'backfill', 'system', h.`created_at`, h.`created_at`
 FROM `hire_agreements` h JOIN `claims` c ON c.`id` = h.`claim_id`;
@@ -1518,15 +1616,15 @@ UPDATE `hire_agreements` SET `reservation_id` = (SELECT r.`id` FROM `fleet_reser
 -- BEFORE UPDATE / BEFORE DELETE RAISE(ABORT) triggers on: autopilot_log, fleet_reservation_events, eligibility_assessments, signature_request_events
 ```
 
-`ap-foundation` checks the real column names (`claims.claimant_id`, `events.recorded_at`, `events.data`) against
-`schema.ts` before writing the file and adjusts the back-fill if they differ; `unixepoch(…, 'subsec')` needs SQLite
+Column names were checked against `schema.ts` at `605cfc6` (`claims.claimant_id`, `claim_events.data`,
+`claim_events.recorded_at`, `hire_agreements.*`); `ap-foundation` re-checks them after phase 1 lands; `unixepoch(…, 'subsec')` needs SQLite
 ≥ 3.42 (bundled 3.53.2). Test: a 0.4 database with three hires (one open, one ended, two overlapping under a past
 manager override) migrates; the back-fill creates three reservations; the overlap triggers then refuse a new
 overlapping hold and accept a touching one.
 
 ### G.3 Additions to existing domain types (`packages/domain/src/types.ts`, by `ap-foundation`)
 
-* `EventType` += `services_agreed` (exists) is now appended by code; new: `hire_offered`, `hire_offer_accepted`,
+* `EventType` (the existing `services_agreed` is now appended by code) gains `hire_offered`, `hire_offer_accepted`,
   `hire_offer_declined`, `booking_confirmed`, `booking_cancelled`, `hire_vehicle_delivered`, `hire_vehicle_collected`,
   `hire_start_notice_sent`, `documents_signed`.
 * `HireAgreement` += optional `use?: FleetUse; hirerPartyId?: Id; driverPartyIds?: Id[]; reservationId?: Id;
@@ -1536,9 +1634,11 @@ overlapping hold and accept a touching one.
   renewsPolicyId?: Id`.
 * `EvidenceKind` += `signature_image`, `signed_document`.
 * `SignatureRecord` += optional `method?: 'otp' | 'kiosk_otp_email' | 'kiosk_handler_code' | 'wet_ink' | 'scan';
-  drawnSignatureSha256?: string; evidenceId?: Id` (absent = today's `otp`).
-* No database CHECK constraint exists on `events.type` or `evidence.kind` (verified in `0000_init.sql`), so the unions
-  grow without a table rebuild.
+  drawnSignatureSha256?: string; evidenceId?: Id; packId?: Id; packSha256?: string` (absent = today's `otp`);
+  `otpChannel` widens to `'email' | 'sms' | 'none'` — a wet-ink/scan signature stores `none`, `otpVerifiedAt` = the
+  time the person confirmed the scan, and that person's IP/user agent (the `signatures` columns stay NOT NULL).
+* No database CHECK constraint exists on `claim_events.type`, `evidence.kind` or `signatures.otp_channel` (verified in
+  `0000_init.sql`), so the unions grow without a table rebuild.
 
 ---
 
@@ -1624,7 +1724,7 @@ Existing kinds used: `missing_info`, `approve_send`, `question`, `override_neede
 | ap-autopilot | `GET /claims/:id/autopilot`; `POST /claims/:id/autopilot/evaluate`; `POST /claims/:id/autopilot/pause` (H), `…/resume` (H); `POST /claims/:id/autopilot/steps/:stepId/:action` (H; run/skip/ask/auto/done/snooze); `GET /claims/:id/hire-offers`, `POST /claims/:id/hire-offers`, `POST /hire-offers/:id/response`, `POST /hire-offers/:id/accept` (H, phone/in person), `POST /hire-offers/:id/withdraw`; `GET/POST /claims/:id/settlement-offers`, `PATCH /claims/:id/settlement-offers/:oid` (decision fields H) |
 | ap-booking | `POST /fleet/availability`; `GET /fleet/calendar?from&to&unitIds&group&use`; `GET /claims/:id/bookings`; `POST /claims/:id/bookings`; `GET /bookings/:id`; `PATCH /bookings/:id`; `POST /bookings/:id/confirm`; `POST /bookings/:id/release`; `POST /bookings/:id/handover` (H); `POST /bookings/:id/return` (H); `POST /bookings/:id/movements`; `PATCH /movements/:id`; `GET /fleet/movements?day&range`; `GET/POST /fleet/:id/readiness`, `PATCH /fleet/readiness/:taskId`; `POST /fleet/:id/damage`, `PATCH /fleet/damage/:id`; `GET/POST /fleet/locations`, `PATCH /fleet/locations/:id`; `POST /fleet/:id/allocate-check` (made period-aware) |
 | ap-clash | `POST /clashes/check`; `GET /claims/:id/clashes`; `GET /fleet/clashes`; `POST /clashes/:id/acknowledge` (H), `POST /clashes/:id/resolve` (H); `GET/PUT /parties/:id/driver-profile` (PUT H); `GET/PUT /fleet/policies/:id/criteria` (PUT H); `GET/PUT /claims/:id/hire-needs`; `GET /claims/:id/eligibility`; `POST /claims/:id/eligibility/assess` |
-| ap-paperwork | `GET /claims/:id/packs`; `POST /claims/:id/packs` (prepare); `POST /packs/:id/approve` (H); `POST /packs/:id/send-for-signature` (H); `POST /packs/:id/kiosk` (H); `GET /api/kiosk/:token`, `GET /api/kiosk/:token/documents/:docId/pdf`, `POST /api/kiosk/:token/read`, `POST /api/kiosk/:token/otp/start`, `POST /api/kiosk/:token/sign`, `POST /api/kiosk/:token/close` (token auth, not session; never agent-reachable); `GET /claims/:id/signatures`; `POST /documents/:id/mark-signed` (H); `PATCH /claims/:id/hire/:hireId/paperwork` (H) |
+| ap-paperwork | `GET /claims/:id/packs`; `POST /claims/:id/packs` (prepare); `POST /packs/:id/approve` (H); `POST /packs/:id/send-for-signature` (H); `POST /packs/:id/kiosk` (H); `GET /kiosk/:token`, `GET /kiosk/:token/documents/:docId/pdf`, `POST /kiosk/:token/read`, `POST /kiosk/:token/otp/start`, `POST /kiosk/:token/sign`, `POST /kiosk/:token/close` (token auth, not session; never agent-reachable); `GET /claims/:id/signatures`; `POST /documents/:id/mark-signed` (H); `PATCH /claims/:id/hire/:hireId/paperwork` (H) |
 
 ### H.5 Perimeter additions (`apps/api/src/agent/perimeter.ts`, by `ap-foundation`)
 
@@ -1723,3 +1823,303 @@ and tomorrow's movements, cars returned, readiness tasks due, compliance lapses 
 resolved findings with codes). Every line has the claim reference, the step id or clash code, the rule ids of the
 policy decision, and a link — built from `autopilot_log`, `fleet_reservation_events`, `clash_findings` and audit rows
 by `apps/api/src/autopilot/dailyLog.ts`.
+
+---
+
+## J. Tests
+
+All tests run with `CLAIMDESK_FORBID_REAL_AI=1`, the `FakeDriver` (fixtures under `apps/api/src/test/fixtures/autopilot/`)
+and `MAIL_TRANSPORT=fake` (`FakeMailbox` / `FakeSmtp`, SD §F.2). Time is driven by the app context clock (`ctx.now`)
+that phase-1 tests already inject; the supervisor is driven by `tick(now)` (SD §C.6), never by real timers.
+
+### J.1 Domain (pure) — per owning slice
+
+* **autopilot**: every `StepDef` references existing predicates/requirements/tools/templates/playbook codes (catalogue
+  integrity test); `planAutopilot` on fixture bundles for each of the 14 stages (expected stage, due/waiting/done
+  lists, mode reasons); green-gating raises modes; overrides (skip/done/snooze/ask/auto-below-floor refused); re-open
+  when a signed document is superseded; `planHash` identical for identical facts and different for any changed fact;
+  `closureReadiness` cases.
+* **booking**: `occupiedPeriod` for every status (incl. collectedAt and overdue on-hire); transitions table;
+  `canAllocateForPeriod` (policy chain, policy ending mid-period, MOT/tax lapses, PHV); `likeForLike` (rates not
+  codes — S vs M vs CP families; higher group; transmission/seats/fuel); `searchAvailability` (every exclusion reason,
+  weights, ties, clear winner, green); `projectHirePeriod`; `proposeSlots` (business hours, bank holidays, capacity,
+  preferred part of day).
+* **clash**: one test per code in §C.2 (fires / does not fire / severity / override class / dedupe key stable);
+  identity matching (licence number, name + DOB, different people with the same name); a catalogue test that every
+  `overrideCode` exists in `OVERRIDE_RULES` and every class C code has none.
+* **eligibility**: driver criteria boundaries (ages 20/21/24/25/75/76/80, years 0.9/1/2, points 6/7/9/10, each
+  excluded and refer prefix, lookback window, disqualification, countries, provisional), missing fields → `unknown`,
+  restriction 78 → automatic only; need levels; means mapping; roadworthiness hire-from.
+* **autonomy**: rules 4a/4b and the refined rule 13; all 21 phase-1 rule tests unchanged.
+* **signing**: `STAGE_PACKS` integrity (every template id registered, variants exist); chase schedule.
+
+### J.2 API (Fastify `inject`, fake drivers)
+
+* Bookings: hold → confirm → handover → return happy path; each human-only route refused for a run token
+  (`403 AGENT_FORBIDDEN rule human_only`); manager override of a class A clash writes `override.<CODE>` and the
+  reservation's `overlap_override_audit_id`; class C never overridable; agent refusal → Needs-you `override_needed`;
+  agent error text never names another claim.
+* Hire creation from a reservation produces a hire with the reservation's agreement number, `use`, hirer, drivers and
+  enforceability from the signed pack (no `HIRE_ENFORCEABILITY_GAP`); the manual `POST /claims/:id/hire` still works
+  and creates an `on_hire` reservation.
+* Packs: `pack.prepare` creates every item with values from the docx value resolver; review pass → `approve_pack`;
+  resolver approves as the owner and queues the outbox; agents cannot approve `agreement.*`/`form.*` (SD §D.5 test
+  extended).
+* Kiosk: token auth only; expired/wrong token 401; OTP email via FakeSmtp; handler-code fallback audited; drawn
+  signature stored as `signature_image` evidence and hashed into the certificate; exit needs the password.
+* Wet signature: emailed pack → chase day 2 and 5 (FakeSmtp) → returned scan (`.eml` with PDF) → intake classifies
+  `signed_ccguk_form` (fixture) → `confirm_signed` → mark-signed as owner → enforceability synced.
+* Commitment verification: a hire offer whose reservation changed after drafting → `verified:false` → `approve_send`;
+  an expired hold → refused; owner-chosen car → verified.
+* Settlement offers: `offer_record` writes `settlement_offers`, no `intervention_reply_1wd` clock, mitigation gate
+  unchanged; `intervention_offer` intent still writes the intervention register.
+* Migration: 0.4 database with hires (open, ended, overlapping under a past override) migrates; back-fill; triggers;
+  `MIGRATION_ORDER` guard refuses a journal with a skipped lower `when`.
+
+### J.3 End-to-end lifecycle scenario (`apps/api/src/test/autopilot-e2e.test.ts`, ap-autopilot)
+
+Seed: owner user; autonomy **automatic**, hold 10 minutes, quiet hours off for the test; autopilot on; mail account
+(fake); at-fault insurer in the directory with a verified email; fleet: **A** Ford Focus automatic hatch, group equal
+to the client's car, policy (credit hire) valid 12 months, MOT/tax valid; **B** same group manual; **C** SUV one group
+higher; locations set. Start time Monday 09:00 London. Each numbered step asserts the listed state; "advance" means
+moving `ctx.now` and running `tick(now)` until the queue is idle.
+
+1. **New claim email** — FakeMailbox delivers `new-claim.eml` from the client (no reference; accident details,
+   "my car can't be driven, I need a car for work, and I can only drive automatics"). `mail.ingest` → `mail.triage` fixture
+   (`client_message`) → unmatched → `intake.process/extract/apply` fixture (FNOL-like) → Needs-you `new_claim`.
+   Resolve as the owner (Create, with the prefilled FNOL including hire needs). Assert: claim exists;
+   `claim_autopilot.mode = 'on'`; `autopilot.tick` queued.
+2. **Intake** — tick: `intake.acknowledge` → drafter fixture → review pass → outbox `held` → advance 10 min →
+   `outbox.release` → FakeSmtp message 1 to the client; `intake.complete_fnol` done; `intake.cross_file` done (no
+   findings); status `fnol`.
+3. **Eligibility** — `qualify.acceptance` records `accept` (fixture liability evidence: TP admission in the email);
+   `qualify.driver` blocked (missing full-licence date and points) → prepared `doc_request` → Needs-you `missing_info`;
+   resolve by saving the driver profile as the owner (age 34, full licence 12 years, 3 points SP30, restriction code
+   78, DVLA check today)
+   → next tick `eligible`; `qualify.need` strong; `qualify.roadworthiness` → hire from now; status `triage`.
+4. **Sign-up pack** — `pack.prepare signup` → CCGUK-01 + CCGUK-09 (+ CCGUK-02 instruction) drafted from values →
+   review pass → Needs-you `approve_pack`; resolve **Approve and send** → outbox to the client (FakeSmtp message 2,
+   PDFs attached) → `signature_requests` sent. FakeMailbox delivers `signed-scan.eml` (PDF of the signed CCGUK-01) →
+   intake fixture `signed_ccguk_form` → `signing.match_return` → Needs-you `confirm_signed` → resolve **confirm** →
+   documents `signed`; event `services_agreed`; `notify.ncaf` → `letter.ncaf` auto-sent to the insurer (held →
+   released, FakeSmtp message 3, event `ncaf_sent`); status `accepted`.
+5. **Availability search** — `hire.search`: ranked `[A, C]`; B **excluded** with the reason "manual gearbox; the
+   driver's licence is automatic-only (code 78)"; C ranked lower with a `GROUP_ABOVE_LFL` warn; A green and a clear
+   winner. Assert the `AvailabilityResult` explanation lines and the excluded reasons.
+6. **Hold** — `booking_hold` A → reservation `held`, `hold_expires_at` = +24 h; `fleet_reservation_events` row; audit
+   `booking.hold` by `agent:autopilot` with `run_id`.
+7. **Offer email** — `hire_offer_prepare` + `email_draft` kind `hire_offer` (default wording; judge fixture not needed
+   because clear winner) → review pass (tier a offer checks pass) → `applyAutopilotCommitment` verified →
+   `decide()` → `auto_held` → advance → sent (FakeSmtp message 4 to the client, contains the registration, "reply
+   YES", no "free"); offer `sent`; event `hire_offered`.
+8. **Acceptance reply** — FakeMailbox delivers `reply-yes.eml` (In-Reply-To the offer) → triage fixture
+   `client_message` → tick: deterministic accept (0.95) → `hire_acceptance_record` → offer `accepted`, event
+   `hire_offer_accepted`.
+9. **Confirmed booking** — `booking_confirm` → reservation `confirmed`, agreement number `CCG-H-…` allocated, event
+   `booking_confirmed`; `movement_schedule` delivery Tuesday 10:00–12:00 → `booking_update` email auto (FakeSmtp
+   message 5).
+10. **Paperwork generated** — `pack.prepare hire_start` → CCGUK-03 hirer + office (agreement number printed),
+    `form.cancellation_sch3`, `form.express_request_to_start`, CCGUK-06 release, `form.hire_cover_confirmation` →
+    review pass → `approve_pack` → resolve **Approve and send** → FakeSmtp message 6 (durable medium);
+    `cancellationInfoProvidedAt` recorded.
+11. **Handover signing** — advance to Tuesday 10:00; owner `POST /packs/:id/kiosk` → kiosk API: read each document,
+    OTP start (FakeSmtp message 7 with the code; the test reads it from FakeSmtp), sign with typed name + 1×1 PNG →
+    documents `signed`, certificates written.
+12. **Hire started** — owner `POST /bookings/:id/handover` (odometer, fuel, licence evidence, DVLA check) → hire
+    created with the reservation's agreement number, `signedAt`, all `enforceability.*` set, no
+    `HIRE_ENFORCEABILITY_GAP`; reservation `on_hire`; events `hire_started`, `hire_vehicle_delivered`; status
+    `hire_active`; `hire.start_notice` → `letter.hire_start_notice` auto-sent to the insurer (FakeSmtp message 8, event
+    `hire_start_notice_sent`).
+13. **Repair complete email** — advance 9 days (weekly check-in `client_update` sent once, message 9); FakeMailbox
+    delivers `repair-complete.eml` from the bodyshop → triage fixture `bodyshop_update` → judge fixture
+    `repair_status_from_message` → `repair_completed` (confidence 0.92) → `event_append repair_completed` → side effect
+    sets `repair_complete_24h` → `hire.offhire`: expected end = deadline, collection movement planned, `booking_update`
+    email (message 10).
+14. **Hire end** — advance to the collection slot; owner `POST /bookings/:id/return` (odometer in, no damage, end at
+    the deadline) → hire ended (`endTrigger: repair_complete_24h`), reservation `returned`, valet + inspection tasks
+    on car A, event `hire_vehicle_collected`, no `HIRE_PAST_OFFHIRE`.
+15. **Invoices + payment pack** — `money.invoices`: `pack.prepare billing` (`invoice.hire`,
+    `form.hire_period_validation`, CCGUK-05) + `ledger_propose` → Needs-you `approve_pack` (money) → resolve → ledger
+    `claimed` and `invoiced` rows with `created_by` = the owner (none by `agent:%`); `money.payment_pack` →
+    `pack.gta_payment` + `schedule.loss` → `approve_pack` → resolve **Approve and send** → FakeSmtp message 11 to the
+    insurer, event `payment_pack_sent`; status `payment_pack` then `chasing`.
+16. **Chasers** — advance 7 days → `CHASER_7` → drafter fixture → review pass → auto-held → sent (message 12, event
+    `chaser_sent`).
+17. **Offer** — FakeMailbox delivers `insurer-offer.eml` → triage `offer_settlement` → `offer_record` → row in
+    `settlement_offers` (and **no** `intervention_reply_1wd` clock) → `offer.analyse` fixture → Needs-you
+    `offer_decision` with recommendation; assert no `agent:%` audit row on any decision route; `money.offer` step
+    `waiting` on owner.
+18. **Global assertions** — `autopilot_log` transitions in the expected order; `GET /claims/:id/autopilot` shows the
+    right done/next/waiting lists at steps 7, 12 and 17; daily log compiled for each day lists the hold, offer,
+    booking, packs, sends (with rule ids) and no problems; every outbound message passed review; FakeSmtp holds exactly
+    the expected ordered list of (kind, recipient) — the numbered messages above plus the delivery and collection
+    reminders (`movement.remind`) and the handling-reference request when its clock falls due — and nothing else;
+    reservation history `held → confirmed → on_hire → returned`.
+
+Variants in the same file: **shadow mode** (every internal/external step becomes Needs-you; nothing sent without
+approval); **AI paused** at step 5 with a deadline < 24 h (deterministic fallback, confirm mode, booking path still
+completes); **client declines** ("no thanks, my partner will lend me theirs") → reservation cancelled, need re-assessed
+weak, hire stages not applicable, vehicle and money tracks continue.
+
+### J.4 Clash tests (`apps/api/src/test/clash.test.ts`, ap-clash)
+
+Table-driven over §C.2: for each code a seeded world, the subject, expected severity, override class, the route that
+must refuse (or warn), the Needs-you kind (if any) and the daily-log line. Includes the owner's example explicitly:
+claim X has client car `AB12CDE` on hire with car A; a new claim Y for `AB12CDE` (same accident date) → FNOL raises
+`DUPLICATE_CLAIM_OPEN`; booking any car on Y → `SAME_REG_ON_HIRE` block (class A); manager override with a reason
+succeeds and is audited; the nightly sweep keeps the finding `overridden`, not `open`.
+
+### J.5 Race tests (`apps/api/src/test/booking-race.test.ts`, ap-booking)
+
+1. Two claims, same car, same period: `Promise.all([inject(hold A for claim 1), inject(hold A for claim 2)])` → exactly
+   one 201 and one 409 `RESERVATION_OVERLAP`; one reservation row.
+2. Same with two autopilot ticks (two claims) leased concurrently on the `io` lane → one holds A, the other re-searches
+   and holds B in the same tick; both offers go out; no overlap rows.
+3. Owner books A in the dialog while the autopilot holds A for another claim → the later one gets 409 (agent) or the
+   "taken a moment ago" refresh (person).
+4. Trigger defence: a direct repo insert that bypasses the service → SQLite `RESERVATION_OVERLAP`; an insert with
+   `overlap_override_audit_id` passes; touching periods pass; `source = 'backfill'` passes.
+5. Hold expiry race: acceptance arrives one minute after expiry — car still free → re-held and confirmed; car taken in
+   between → Needs-you `choose_car` with alternatives.
+6. Overdue return: car A on hire past its expected end overlapping claim 2's confirmed booking → `RETURN_OVERDUE` on
+   the hire, `UNIT_DOUBLE_BOOKED` on the booking, autopilot proposes another car for claim 2 (Needs-you `choose_car`
+   because the booking was confirmed with the client).
+
+### J.6 Browser checks (scenario run as SD §R.2)
+
+Autopilot tab (timeline, pause/resume, step menu), Booking dialog (ranked list, excluded list, clash panel, manager
+override prompt), Fleet calendar (bars, markers, click-to-book), Movements board, Handover/Return dialogs, Kiosk (full
+flow at tablet width), Needs-you panels for the six new kinds, Settings > Autopilot and Driver criteria; screenshots
+into the scratch folder.
+
+---
+
+## K. Build slices
+
+Autopilot runs **after Supreme phase 1 has landed and is green**. Five slices in three waves. Shared-file rules as SD
+§P: `ap-foundation` edits every shared registry once and creates stub files that later slices own (each stub starts
+with `// owned by <slice>`); later slices only fill their own files plus the existing files listed as theirs;
+cross-slice calls go through the contracts in this document (domain types, the stubbed functions named below, jobs,
+tables), never through another slice's internals. `ap-foundation` edits the same shared registries as
+`p2-foundation` and the Knowledge Builder's `knowledge-core`, so the orchestrator never runs those three foundation
+slices at the same time (§N); wave-2 slices run in parallel with each other.
+
+| Wave | Key | Title | Depends on |
+|---|---|---|---|
+| 1 | `ap-foundation` | Migration 0012 + guards, domain contracts, SD contract changes (§0.6), perimeter, settings, registries, stubs | phase 1 |
+| 2 | `ap-booking` | Reservations, availability search, readiness, movements, handover/return, calendar, booking dialog, race safety | ap-foundation |
+| 2 | `ap-clash` | Clash catalogue + service + sweep, eligibility (driver/need/means/roadworthiness), driver profiles, criteria, UI | ap-foundation |
+| 2 | `ap-paperwork` | New templates, stage packs, kiosk signing (+LAN), wet signature chase/match, enforceability sync | ap-foundation |
+| 3 | `ap-autopilot` | Lifecycle steps + plan, runner, judge, reply parsing, hire offers + commitment, settlement-offer fix, Case Brief, daily log, Autopilot tab, Settings, E2E | ap-booking, ap-clash, ap-paperwork |
+
+Stub contracts created by `ap-foundation` (exact signatures; behaviour filled by the owner):
+
+| Stub | Signature (stub behaviour) | Owner |
+|---|---|---|
+| `packages/domain/src/clash/detect.ts` | `detectClashes(subject, world, opts): ClashFinding[]` (returns `[]`) | ap-clash |
+| `packages/domain/src/eligibility/driver.ts` | `assessDriver(profile, party, criteria, at): DriverEligibility` (returns `unknown`) | ap-clash |
+| `apps/api/src/clash/service.ts` | `checkClashes(ctx, subject): { findings: ClashFinding[]; blocks: ClashFinding[] }`; `persistFindings(ctx, tx, subject, findings)` (no-ops) | ap-clash |
+| `apps/api/src/eligibility/service.ts` | `eligibilityFor(ctx, claimId): EligibilitySummary`; `driversFor(ctx, claimId)` (unknown) | ap-clash |
+| `apps/api/src/signing/status.ts` | `signedPackStatus(ctx, reservationId): { signed: boolean; missing: string[] }` (`{ signed:false, missing:['paperwork not built'] }`) | ap-paperwork |
+| `apps/api/src/signing/enforceability.ts` | `syncEnforceabilityFromPack(ctx, tx, ref: { reservationId?: Id; hireId?: Id }): Partial<HireAgreement>` (returns `{}`) | ap-paperwork |
+| `apps/api/src/autopilot/commitment.ts` | `applyAutopilotCommitment(ctx, outbox, descriptor): ActionDescriptor` (returns descriptor unchanged) — foundation adds the one call at the end of `describeOutbox` in `apps/api/src/mail/outbox.ts` | ap-autopilot |
+| `apps/api/src/autopilot/nudge.ts` | `nudgeAutopilot(ctx, claimId, reason)` (full implementation: `enqueueJob autopilot.tick`) | ap-foundation |
+| `apps/api/src/autopilot/act.ts` | `actAsAutopilot(ctx, { claimId, step: { id, mode, green } \| null, tool, input, planHash? }): Promise<ToolCallResult>` (full implementation, §A.7) | ap-foundation |
+| `apps/api/src/signing/lanServer.ts` | `startSigningLanServer(ctx): Promise<void>` (no-op) — called from `server.ts` | ap-paperwork |
+| `apps/api/src/agent/tools/{autopilot,booking,clash,signing}.ts` | `<x>Tools: ToolDef[] = []` | per name |
+| `apps/api/src/agent/handlers/{autopilot,booking,clash,signing}.ts` | `<x>JobHandlers = []`, `<x>NeedsYouResolvers = []` | per name |
+| `apps/api/src/routes/{autopilot,bookings,clashes,signing,kiosk}.ts` | `register…Routes(app, ctx)` (no-op) | per name |
+| `packages/db/src/repos/{autopilot,bookings,clashes,eligibility,signing}.ts` | `export {}` | per name |
+| `packages/documents/src/templates/{letters-c,forms-c}.ts` | `export {}` | ap-paperwork |
+| `packages/domain/src/{autopilot,booking,clash,eligibility,signing}/index.ts` | re-export `./types.js` (and the stubs above) | ap-autopilot / ap-booking / ap-clash / ap-clash / ap-paperwork |
+| web stubs (each renders "Coming with Autopilot") | `apps/web/src/screens/claim/tabs/AutopilotTab.tsx`, `screens/settings/autopilot/AutopilotSettingsPage.tsx`, `screens/needsYou/panels/{ChooseCarPanel,AutopilotStepPanel}.tsx` (ap-autopilot); `screens/fleet/{CalendarTab,MovementsTab}.tsx`, `screens/claim/booking/BookingDialog.tsx` (ap-booking); `screens/claim/components/ClashPanel.tsx` (props `{ findings: ClashFinding[]; managerMode: boolean; onAcknowledge(id, reason); onOverride(reason) }`), `screens/fleet/ClashesTab.tsx`, `screens/settings/fleet/DriverCriteriaPage.tsx`, `screens/needsYou/panels/{ClashReviewPanel,EligibilityReviewPanel}.tsx` (ap-clash); `screens/sign/KioskPage.tsx`, `screens/claim/components/PacksPanel.tsx`, `screens/needsYou/panels/{ApprovePackPanel,ConfirmSignedPanel}.tsx` (ap-paperwork) | per name |
+
+Version: Autopilot ships inside the **0.4.x** line (root `package.json` stays `0.4.0`; CI adds the run number) with
+release notes `docs/RELEASE-NOTES-0.4-AUTOPILOT.md`; it is enabled after upgrade with the master switch on and new
+claims `on`, but nothing acts until agents are switched on in Settings > AI (SD §A.7).
+
+Verification for every slice (from `/home/user/logo/claimdesk`): `pnpm install --frozen-lockfile`; `pnpm -r
+typecheck`; `pnpm -r --no-bail test` (counts ≥ the baseline `ap-foundation` records before changing anything, plus
+the new tests); `pnpm --filter @ccguk/web exec vite build --outDir <scratch>/webdist`; `node packaging/launch.test.cjs`.
+No new runtime dependencies are needed (canvas signature pad, calendar grid and the LAN-kiosk QR code are written
+in-repo; the QR encoder is a small pure module `apps/web/src/screens/sign/qr.ts` — byte mode, error correction M,
+≤ 200 characters, tested against known vectors; the short URL is always shown in large type as well).
+
+---
+
+## L. Business defaults (all editable in Settings unless marked "perimeter")
+
+| Area | Default |
+|---|---|
+| Autopilot | master switch **on**; new claims start **on**; ≤ 5 actions per tick; loop guard 3 repeats / 24 h; sweep every 5 min |
+| Automatic sends | per claim per day raised from 3 to 6 (per hour 20, per day 100 unchanged); hold window 10 minutes; quiet hours 20:00–07:30 unchanged |
+| Step modes | as §A.3; floors: agreements/forms/invoices/packs → Ask me (perimeter); money/offers/legal → Ask me or I do it (perimeter); handover, return, signing, decline, close → I do it (perimeter) |
+| Green test | like-for-like ≥ 0.8 and never above the client's group; clear-winner gap 8 points; acceptance `accept` (or all conditions met); driver eligible; need strong/moderate; ≤ 10 automatic offers per day |
+| Like for like | GTA groups compared by benchmark daily rate (never by code); a lower group is offered only with the client's acceptance; a higher group needs a recorded substitution reason and is priced at the like-for-like guide |
+| Ranking weights | like-for-like 35, cost 20, needs 15, readiness 15, compliance 10, location 5 |
+| Hire period | start: now (not driveable) or repair start (driveable); expected end: report repair days + 2 WD, else 14 days; total loss 21 days |
+| Holds and offers | hold 24 h; reminder after 4 h; one car offered (up to 2 alternatives listed, not held); offers by email (SMS in phase 2) |
+| Turnaround | 120 minutes between a return and the next hire (warn, not block); valet + inspection tasks on every return |
+| Deliveries | Mon–Sat 08:00–18:00 London, no bank holidays; 2-hour windows; 2 h lead time; max 2 movements per window; reminder at 16:00 the day before |
+| Compliance | whole-period cover required (policy end inside the period blocks unless a renewal is recorded); MOT/tax/service lapsing inside the period warn and create tasks 30 days ahead |
+| Driver criteria | §F.2 (ages 25–75 eligible, 21–24/76–79 refer; full licence ≥ 2 years; ≤ 6 points eligible, 7–9 refer; DR/IN/UT/CD4–CD9/DD/BA/AC/TT99 within 5 years ineligible; disqualified within 5 years ineligible; ≤ 1 fault accident in 3 years; GB/NI/EU licences; DVLA check ≤ 14 days before handover) — **check against your policy** |
+| Need / means | weak need → Ask me; means not required before the offer (warning about basic-hire-rate recovery instead) |
+| Duplicate claims | same registration/VIN on another open claim within 30 days of the accident → block (class A); otherwise warn |
+| Signing | kiosk with OTP by email when the mailbox is set up, else code shown to the handler (audited); LAN tablet off; wet-signature chase after 2 and 5 days, call task after 7 |
+| Paperwork | packs per §D.6; hire-start pack emailed to the client before handover (CCR durable medium); hire record created only at handover from the confirmed booking |
+| Insurer notices | NCAF auto (1 WD); hire start notice auto within 1 WD, no rates in it; intervention replies always Ask me within 1 WD (perimeter) |
+| Billing | billing pack prepared within 1 WD of hire end; payment pack target 2 WD; ledger rows written only on the owner's approval (perimeter) |
+| Status | autopilot sets fnol/triage/accepted/hire_active/repair/total_loss/payment_pack/chasing; never declined/settled/closed/pre_action/litigation (perimeter); a person's status change wins for 24 h |
+| Clash sweep | nightly 02:30; block findings within 48 h of a start → urgent Needs-you |
+| AI | judge: Sonnet 5.5 medium; reply parsing: Sonnet 5.5 low; deterministic first, deterministic fallback when AI is paused and a deadline is < 24 h |
+
+---
+
+## M. Honest limits and risks
+
+1. **It is a system, not a person.** It cannot see the car, the licence or the client. Handover, collection and
+   signing are done by people; the autopilot makes sure they are scheduled, prepared and recorded.
+2. **Data quality decides clash quality.** Duplicate party records, mistyped registrations or a missing VIN can hide a
+   clash; identity matching uses licence number and name + date of birth, which can still miss or (rarely) over-match.
+   Findings are explained so a person can judge.
+3. **Insurance criteria are defaults.** ClaimDesk does not know the fleet policy wording; the owner must enter the real
+   driver criteria per policy. ClaimDesk cannot query DVLA (no API access) — the check result is recorded by a person.
+4. **No remote signing.** Without a public server the client signs in the office (or on a tablet on the office
+   Wi-Fi) or on paper. Paper signatures are slower; the chase and matching make them reliable, not instant.
+5. **The LAN kiosk uses plain HTTP** on the local network; it is off by default and should be used only on a trusted
+   network or the PC's own hotspot.
+6. **Distance is approximate.** No geocoding is bundled; ranking uses postcode districts unless the owner enters
+   coordinates for locations.
+7. **Reply reading can be wrong.** "Yes" in an odd context, a reply from someone else, or a reply that changes the
+   needs goes to the owner; the code-first parser only accepts a clear first-line yes/no from the client's own address.
+8. **Commitments.** An automatic offer commits a car for 24 h and can block another claim; caps, the green test and
+   the owner's ability to release holds limit this. Legal enforceability still depends on the signed CCR documents
+   (W v Veolia); the autopilot makes that paperwork hard to skip, but does not replace legal advice.
+9. **Everything in SD §T still applies** (model quality, subscription terms, data in prompts, single PC, email
+   quirks).
+
+---
+
+## N. Relationship to the Knowledge Builder
+
+`docs/SUPREME-KNOWLEDGE-BUILDER.md` (written in parallel) is compatible with this design. The autopilot does not
+depend on it: steps, predicates, clash rules, criteria and packs are code and Settings. Learned knowledge may shape
+**wording and judgement** (letter style, insurer profiles, strategy) through the retrieval the judge and drafter
+already use (`brain_search`, and the Knowledge Builder's `knowledge_search` / `insurer_profile` when it lands, which
+the `autopilot.judge` subset then gains); learned `rule` items may later add predicates or raise a step's mode —
+they never relax a perimeter floor or a clash block.
+
+Coordination points, all additive:
+
+* **Migrations**: §G.1 (the same four-file table as the Knowledge Builder's §3).
+* **Shared registries**: `ap-foundation`, `p2-foundation` and `knowledge-core` all edit `schema.ts`, the journal,
+  `agents/types.ts` (`AgentName`, `JOB_TYPES`, `NeedsYouKind`, `EmailKind`), `agents/settings.ts`, `dailyLog.ts`
+  (optional sections `autopilot`, `fleet`, `clashes` here; `knowledge` there), `scheduler.ts`, `router.tsx` and
+  `nav.ts`; the orchestrator runs these foundation slices one at a time, and each rebases on the previous one.
+* **Offers**: the Knowledge Builder's offer observer (its §6.3) reads `intervention_offers` and `offer_decision`
+  payloads. After §D.9 moves settlement offers to `settlement_offers`, that observer also reads `settlement_offers`
+  (and treats `intervention_offers` as courtesy-car offers only); `ap-autopilot` notes this in its report so
+  `knowledge-learners` picks it up.
+* **Corrections**: owner edits made in `approve_pack` (§H.3) are saved the same way as SD `approve_document` edits, so
+  the Knowledge Builder's correction capture sees them.
+* No table is shared; no file is owned by both tracks.

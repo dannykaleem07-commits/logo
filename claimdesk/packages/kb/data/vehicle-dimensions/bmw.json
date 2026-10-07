@@ -1,0 +1,4440 @@
+{
+  "make": "BMW",
+  "slug": "bmw",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "1-series": {
+      "E87 hatchback / E81 3-door (2004–2011; 3-door from 2007)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4240,
+            "widthMm": 1750,
+            "heightMm": 1430,
+            "wheelbaseMm": 2660,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "5-door and 3-door share length."
+          }
+        }
+      },
+      "E82 Coupe / E88 Convertible (2007–2013)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4360,
+            "widthMm": 1750,
+            "heightMm": 1425,
+            "wheelbaseMm": 2660,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4360,
+            "widthMm": 1750,
+            "heightMm": 1410,
+            "wheelbaseMm": 2660,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Fabric roof."
+          }
+        }
+      },
+      "F20 5-door / F21 3-door (2011–2019)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4325,
+            "widthMm": 1765,
+            "heightMm": 1420,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "5-door and 3-door share length."
+          }
+        }
+      },
+      "F40 (2019–2024)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4320,
+            "widthMm": 1800,
+            "heightMm": 1435,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Front-drive platform."
+          }
+        }
+      },
+      "F70 (2024–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4360,
+            "widthMm": 1800,
+            "heightMm": 1460,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "hatch",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "2-series": {
+      "F22 Coupe / F23 Convertible (2014–2021)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4430,
+            "widthMm": 1775,
+            "heightMm": 1420,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4430,
+            "widthMm": 1775,
+            "heightMm": 1415,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Fabric roof."
+          }
+        }
+      },
+      "G42 Coupe (2022–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4535,
+            "widthMm": 1840,
+            "heightMm": 1390,
+            "wheelbaseMm": 2740,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "2-series-active-tourer": {
+      "F45 (2014–2021)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4350,
+            "widthMm": 1800,
+            "heightMm": 1555,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 17,
+            "profile": "mpv",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "U06 (2022–present)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4385,
+            "widthMm": 1825,
+            "heightMm": 1575,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 18,
+            "profile": "mpv",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "2-series-gran-tourer": {
+      "F46 (2015–2022)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4555,
+            "widthMm": 1800,
+            "heightMm": 1610,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 17,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Seven-seat."
+          }
+        }
+      }
+    },
+    "2-series-gran-coupe": {
+      "F44 (2020–2024)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4525,
+            "widthMm": 1800,
+            "heightMm": 1420,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "fastback",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Front-drive four-door coupe with boot lid."
+          }
+        }
+      },
+      "F74 (2025–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4550,
+            "widthMm": 1800,
+            "heightMm": 1435,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "fastback",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Front-drive four-door coupe with boot lid."
+          }
+        }
+      }
+    },
+    "3-series": {
+      "E46 saloon / Touring / Coupe / Convertible (1998–2007; Touring to 2005, Convertible to 2007)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4470,
+            "widthMm": 1740,
+            "heightMm": 1415,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney"
+          },
+          "estate": {
+            "lengthMm": 4480,
+            "widthMm": 1740,
+            "heightMm": 1450,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney",
+            "note": "Touring."
+          },
+          "coupe": {
+            "lengthMm": 4490,
+            "widthMm": 1755,
+            "heightMm": 1370,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4490,
+            "widthMm": 1755,
+            "heightMm": 1370,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney",
+            "note": "Fabric roof."
+          }
+        }
+      },
+      "E46/5 Compact (2001–2004)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4265,
+            "widthMm": 1750,
+            "heightMm": 1410,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "3-door Compact with shortened tail."
+          }
+        }
+      },
+      "E90 saloon / E91 Touring (2005–2012)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4530,
+            "widthMm": 1815,
+            "heightMm": 1420,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "estate": {
+            "lengthMm": 4525,
+            "widthMm": 1815,
+            "heightMm": 1420,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Touring."
+          }
+        }
+      },
+      "E92 Coupe / E93 Convertible (2006–2013)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4580,
+            "widthMm": 1780,
+            "heightMm": 1375,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4580,
+            "widthMm": 1780,
+            "heightMm": 1385,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Folding hard top."
+          }
+        }
+      },
+      "F30 saloon / F31 Touring (2012–2019)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4625,
+            "widthMm": 1810,
+            "heightMm": 1430,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "estate": {
+            "lengthMm": 4625,
+            "widthMm": 1810,
+            "heightMm": 1430,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Touring."
+          }
+        }
+      },
+      "F34 Gran Turismo (2013–2020)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4825,
+            "widthMm": 1830,
+            "heightMm": 1510,
+            "wheelbaseMm": 2920,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "liftback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Gran Turismo with active rear spoiler."
+          }
+        }
+      },
+      "G20 saloon / G21 Touring (2019–present; facelift 2022; manual dropped c.2021)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4710,
+            "widthMm": 1825,
+            "heightMm": 1440,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "estate": {
+            "lengthMm": 4710,
+            "widthMm": 1825,
+            "heightMm": 1445,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Touring."
+          }
+        }
+      }
+    },
+    "4-series": {
+      "F32 Coupe / F33 Convertible / F36 Gran Coupe (2013–2021; Gran Coupe 2014-2021)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4640,
+            "widthMm": 1825,
+            "heightMm": 1375,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4640,
+            "widthMm": 1825,
+            "heightMm": 1385,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Folding hard top."
+          },
+          "liftback": {
+            "lengthMm": 4640,
+            "widthMm": 1825,
+            "heightMm": 1390,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "liftback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Four-door Gran Coupe with liftback tailgate."
+          }
+        }
+      },
+      "G22 Coupe / G23 Convertible / G26 Gran Coupe (2020–present; facelift 2024)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4770,
+            "widthMm": 1850,
+            "heightMm": 1385,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Large vertical kidney grille."
+          },
+          "convertible": {
+            "lengthMm": 4770,
+            "widthMm": 1850,
+            "heightMm": 1385,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Fabric roof; large vertical kidney grille."
+          },
+          "liftback": {
+            "lengthMm": 4785,
+            "widthMm": 1850,
+            "heightMm": 1445,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "liftback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Four-door Gran Coupe with liftback tailgate."
+          }
+        }
+      }
+    },
+    "5-series": {
+      "E39 saloon / Touring (1996–2004; saloon to 2003)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4775,
+            "widthMm": 1800,
+            "heightMm": 1435,
+            "wheelbaseMm": 2830,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney"
+          },
+          "estate": {
+            "lengthMm": 4805,
+            "widthMm": 1800,
+            "heightMm": 1440,
+            "wheelbaseMm": 2830,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney",
+            "note": "Touring."
+          }
+        }
+      },
+      "E60 saloon / E61 Touring (2003–2010)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4840,
+            "widthMm": 1845,
+            "heightMm": 1470,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "estate": {
+            "lengthMm": 4845,
+            "widthMm": 1845,
+            "heightMm": 1490,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Touring."
+          }
+        }
+      },
+      "F07 Gran Turismo (2009–2017)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 5000,
+            "widthMm": 1900,
+            "heightMm": 1560,
+            "wheelbaseMm": 3070,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "liftback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Gran Turismo with two-piece tailgate."
+          }
+        }
+      },
+      "F10 saloon / F11 Touring (2010–2017)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4905,
+            "widthMm": 1860,
+            "heightMm": 1465,
+            "wheelbaseMm": 2970,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "estate": {
+            "lengthMm": 4905,
+            "widthMm": 1860,
+            "heightMm": 1460,
+            "wheelbaseMm": 2970,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Touring."
+          }
+        }
+      },
+      "G30 saloon / G31 Touring (2017–2024; saloon to 2023)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4935,
+            "widthMm": 1870,
+            "heightMm": 1480,
+            "wheelbaseMm": 2975,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "estate": {
+            "lengthMm": 4945,
+            "widthMm": 1870,
+            "heightMm": 1500,
+            "wheelbaseMm": 2975,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Touring."
+          }
+        }
+      },
+      "G60 saloon / G61 Touring (2023–present; Touring from 2024)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5060,
+            "widthMm": 1900,
+            "heightMm": 1515,
+            "wheelbaseMm": 2995,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "estate": {
+            "lengthMm": 5060,
+            "widthMm": 1900,
+            "heightMm": 1515,
+            "wheelbaseMm": 2995,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Touring."
+          }
+        }
+      }
+    },
+    "6-series": {
+      "E63 Coupe / E64 Convertible (2004–2010)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4820,
+            "widthMm": 1855,
+            "heightMm": 1375,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4820,
+            "widthMm": 1855,
+            "heightMm": 1375,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "F13 Coupe / F12 Convertible / F06 Gran Coupe (2011–2018; Gran Coupe from 2012)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4895,
+            "widthMm": 1895,
+            "heightMm": 1370,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4895,
+            "widthMm": 1895,
+            "heightMm": 1365,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "saloon": {
+            "lengthMm": 5010,
+            "widthMm": 1895,
+            "heightMm": 1390,
+            "wheelbaseMm": 2970,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 19,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Four-door Gran Coupe."
+          }
+        }
+      },
+      "G32 6 Series Gran Turismo (2017–2023)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 5090,
+            "widthMm": 1900,
+            "heightMm": 1540,
+            "wheelbaseMm": 3070,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "liftback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Gran Turismo."
+          }
+        }
+      }
+    },
+    "7-series": {
+      "E38 (1994–2001)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4985,
+            "widthMm": 1860,
+            "heightMm": 1435,
+            "wheelbaseMm": 2930,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney",
+            "note": "Long-wheelbase about 5125 mm, 3070 mm wheelbase."
+          }
+        }
+      },
+      "E65 / E66 long-wheelbase (2001–2008)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5030,
+            "widthMm": 1900,
+            "heightMm": 1490,
+            "wheelbaseMm": 2990,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Long-wheelbase (E66) about 5170 mm, 3130 mm wheelbase."
+          }
+        }
+      },
+      "F01 / F02 long-wheelbase (2008–2015)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5070,
+            "widthMm": 1900,
+            "heightMm": 1480,
+            "wheelbaseMm": 3070,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Long-wheelbase (F02) about 5210 mm, 3210 mm wheelbase."
+          }
+        }
+      },
+      "G11 / G12 long-wheelbase (2015–2022; facelift 2019)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5100,
+            "widthMm": 1900,
+            "heightMm": 1480,
+            "wheelbaseMm": 3070,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Long-wheelbase (G12) about 5260 mm, 3210 mm wheelbase."
+          }
+        }
+      },
+      "G70 (2022–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5390,
+            "widthMm": 1950,
+            "heightMm": 1545,
+            "wheelbaseMm": 3215,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "kidney",
+            "note": "Split headlamps; long wheelbase only."
+          }
+        }
+      }
+    },
+    "8-series": {
+      "G15 Coupe / G14 Convertible / G16 Gran Coupe (2018–2025; Convertible/Gran Coupe from 2019; end of production 2025)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4850,
+            "widthMm": 1900,
+            "heightMm": 1345,
+            "wheelbaseMm": 2820,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4850,
+            "widthMm": 1900,
+            "heightMm": 1340,
+            "wheelbaseMm": 2820,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Fabric roof."
+          },
+          "saloon": {
+            "lengthMm": 5080,
+            "widthMm": 1930,
+            "heightMm": 1405,
+            "wheelbaseMm": 3025,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 20,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Four-door Gran Coupe."
+          }
+        }
+      }
+    },
+    "x1": {
+      "E84 (2009–2015)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4455,
+            "widthMm": 1800,
+            "heightMm": 1545,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Rear-drive based, long bonnet."
+          }
+        }
+      },
+      "F48 (2015–2022)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4440,
+            "widthMm": 1820,
+            "heightMm": 1600,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "U11 (2022–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4500,
+            "widthMm": 1845,
+            "heightMm": 1640,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 195,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "ix1": {
+      "U11 electric (2022–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4500,
+            "widthMm": 1845,
+            "heightMm": 1615,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Blanked kidney grille."
+          }
+        }
+      }
+    },
+    "x2": {
+      "F39 (2018–2023)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4360,
+            "widthMm": 1825,
+            "heightMm": 1525,
+            "wheelbaseMm": 2670,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 18,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "U10 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4555,
+            "widthMm": 1845,
+            "heightMm": 1590,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "ix2": {
+      "U10 electric (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4555,
+            "widthMm": 1845,
+            "heightMm": 1560,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 19,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Blanked kidney grille."
+          }
+        }
+      }
+    },
+    "x3": {
+      "E83 (2004–2010)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4565,
+            "widthMm": 1855,
+            "heightMm": 1675,
+            "wheelbaseMm": 2795,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "F25 (2011–2017)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4650,
+            "widthMm": 1880,
+            "heightMm": 1675,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "G01 (2017–2024; facelift 2021)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4710,
+            "widthMm": 1890,
+            "heightMm": 1675,
+            "wheelbaseMm": 2865,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "G45 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4755,
+            "widthMm": 1920,
+            "heightMm": 1660,
+            "wheelbaseMm": 2865,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "ix3": {
+      "G08 (2021–2024; facelift 2022)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4735,
+            "widthMm": 1890,
+            "heightMm": 1670,
+            "wheelbaseMm": 2865,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Blanked kidney grille."
+          }
+        }
+      },
+      "NA5 Neue Klasse (2026–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4780,
+            "widthMm": 1895,
+            "heightMm": 1635,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Neue Klasse electric with slim illuminated kidney."
+          }
+        }
+      }
+    },
+    "x4": {
+      "F26 (2014–2018)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4670,
+            "widthMm": 1880,
+            "heightMm": 1625,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "G02 (2018–2025; facelift 2021)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4750,
+            "widthMm": 1920,
+            "heightMm": 1620,
+            "wheelbaseMm": 2865,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "x5": {
+      "E53 (2000–2006; UK sales from 2000)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4670,
+            "widthMm": 1870,
+            "heightMm": 1705,
+            "wheelbaseMm": 2820,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "E70 (2007–2013)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4855,
+            "widthMm": 1935,
+            "heightMm": 1765,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "F15 (2013–2018)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4885,
+            "widthMm": 1940,
+            "heightMm": 1760,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "G05 (2018–present; facelift 2023)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4935,
+            "widthMm": 2005,
+            "heightMm": 1745,
+            "wheelbaseMm": 2975,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 20,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "x6": {
+      "E71 (2008–2014)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4875,
+            "widthMm": 1985,
+            "heightMm": 1690,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "F16 (2014–2019)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4910,
+            "widthMm": 1990,
+            "heightMm": 1700,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "G06 (2019–present; facelift 2023)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4935,
+            "widthMm": 2005,
+            "heightMm": 1695,
+            "wheelbaseMm": 2975,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 21,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "x7": {
+      "G07 (2019–present; facelift 2022)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5150,
+            "widthMm": 2000,
+            "heightMm": 1805,
+            "wheelbaseMm": 3105,
+            "groundClearanceMm": 220,
+            "wheelDiameterIn": 21,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Seven-seat; 2022 facelift has split headlamps."
+          }
+        }
+      }
+    },
+    "xm": {
+      "G09 (2023–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5110,
+            "widthMm": 2005,
+            "heightMm": 1755,
+            "wheelbaseMm": 3105,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 22,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "kidney",
+            "note": "Split headlamps; octagonal kidney."
+          }
+        }
+      }
+    },
+    "i3": {
+      "I01 (2013–2022; REx range-extender versions to 2018)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4010,
+            "widthMm": 1775,
+            "heightMm": 1580,
+            "wheelbaseMm": 2570,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "hatch",
+            "bonnetRatio": 0.14,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Rear-motor; rear-hinged rear coach doors; narrow tall tyres."
+          }
+        }
+      }
+    },
+    "i4": {
+      "G26 electric (2021–present; facelift 2024)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4785,
+            "widthMm": 1850,
+            "heightMm": 1445,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "liftback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Electric Gran Coupe with blanked kidney."
+          }
+        }
+      }
+    },
+    "i5": {
+      "G60 / G61 Touring electric (2023–present; Touring from 2024)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5060,
+            "widthMm": 1900,
+            "heightMm": 1515,
+            "wheelbaseMm": 2995,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Electric; blanked illuminated kidney."
+          },
+          "estate": {
+            "lengthMm": 5060,
+            "widthMm": 1900,
+            "heightMm": 1515,
+            "wheelbaseMm": 2995,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Electric Touring."
+          }
+        }
+      }
+    },
+    "i7": {
+      "G70 electric (2022–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5390,
+            "widthMm": 1950,
+            "heightMm": 1545,
+            "wheelbaseMm": 3215,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "kidney",
+            "note": "Split headlamps; long wheelbase only."
+          }
+        }
+      }
+    },
+    "i8": {
+      "I12 Coupe / I15 Roadster (2014–2020; Roadster from 2018)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4690,
+            "widthMm": 1940,
+            "heightMm": 1300,
+            "wheelbaseMm": 2800,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Mid-mounted hybrid; butterfly doors."
+          },
+          "roadster": {
+            "lengthMm": 4690,
+            "widthMm": 1940,
+            "heightMm": 1290,
+            "wheelbaseMm": 2800,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 20,
+            "profile": "roadster",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Butterfly doors; fabric roof."
+          }
+        }
+      }
+    },
+    "ix": {
+      "I20 (2021–present; facelift 2025)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4955,
+            "widthMm": 1965,
+            "heightMm": 1695,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 21,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Large closed kidney grille."
+          }
+        }
+      }
+    },
+    "z3": {
+      "E36/7 Roadster / E36/8 Coupe (1996–2002)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4050,
+            "widthMm": 1690,
+            "heightMm": 1290,
+            "wheelbaseMm": 2445,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney"
+          },
+          "coupe": {
+            "lengthMm": 4050,
+            "widthMm": 1690,
+            "heightMm": 1300,
+            "wheelbaseMm": 2460,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney",
+            "note": "Shooting-brake style Z3 Coupe."
+          }
+        }
+      }
+    },
+    "z4": {
+      "E85 Roadster / E86 Coupe (2003–2009; Coupe 2006-2009)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4090,
+            "widthMm": 1780,
+            "heightMm": 1300,
+            "wheelbaseMm": 2495,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "coupe": {
+            "lengthMm": 4115,
+            "widthMm": 1780,
+            "heightMm": 1270,
+            "wheelbaseMm": 2495,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "E89 (2009–2016)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4240,
+            "widthMm": 1790,
+            "heightMm": 1290,
+            "wheelbaseMm": 2495,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.37,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Folding hard top."
+          }
+        }
+      },
+      "G29 (2019–2026; manual M40i from 2024; production ending 2026)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4325,
+            "widthMm": 1865,
+            "heightMm": 1305,
+            "wheelbaseMm": 2470,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Fabric roof."
+          }
+        }
+      }
+    },
+    "m2": {
+      "F87 (2016–2021)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4470,
+            "widthMm": 1855,
+            "heightMm": 1410,
+            "wheelbaseMm": 2695,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "G87 (2023–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4580,
+            "widthMm": 1885,
+            "heightMm": 1405,
+            "wheelbaseMm": 2745,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "m3": {
+      "E46 (2000–2006)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4490,
+            "widthMm": 1780,
+            "heightMm": 1370,
+            "wheelbaseMm": 2730,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4490,
+            "widthMm": 1780,
+            "heightMm": 1370,
+            "wheelbaseMm": 2730,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "E90 / E92 / E93 (2007–2013)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4580,
+            "widthMm": 1815,
+            "heightMm": 1425,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "coupe": {
+            "lengthMm": 4615,
+            "widthMm": 1805,
+            "heightMm": 1425,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4615,
+            "widthMm": 1805,
+            "heightMm": 1390,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Folding hard top."
+          }
+        }
+      },
+      "F80 (2014–2018)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4670,
+            "widthMm": 1875,
+            "heightMm": 1425,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "G80 saloon / G81 Touring (2021–present; Touring from 2023)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4795,
+            "widthMm": 1905,
+            "heightMm": 1435,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Large vertical kidney grille."
+          },
+          "estate": {
+            "lengthMm": 4795,
+            "widthMm": 1905,
+            "heightMm": 1445,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "M3 Touring."
+          }
+        }
+      }
+    },
+    "m4": {
+      "F82 Coupe / F83 Convertible (2014–2020)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4670,
+            "widthMm": 1870,
+            "heightMm": 1385,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4670,
+            "widthMm": 1870,
+            "heightMm": 1385,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Folding hard top."
+          }
+        }
+      },
+      "G82 Coupe / G83 Convertible (2021–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4795,
+            "widthMm": 1885,
+            "heightMm": 1395,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Large vertical kidney grille."
+          },
+          "convertible": {
+            "lengthMm": 4795,
+            "widthMm": 1885,
+            "heightMm": 1395,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Fabric roof."
+          }
+        }
+      }
+    },
+    "m5": {
+      "E39 (1998–2003)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4785,
+            "widthMm": 1800,
+            "heightMm": 1410,
+            "wheelbaseMm": 2830,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "E60 saloon / E61 Touring (2005–2010; SMG automated manual; Touring 2007-2010)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4855,
+            "widthMm": 1845,
+            "heightMm": 1470,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "estate": {
+            "lengthMm": 4855,
+            "widthMm": 1845,
+            "heightMm": 1490,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "M5 Touring."
+          }
+        }
+      },
+      "F10 (2011–2016)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4910,
+            "widthMm": 1890,
+            "heightMm": 1455,
+            "wheelbaseMm": 2965,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "F90 (2018–2024)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4965,
+            "widthMm": 1905,
+            "heightMm": 1470,
+            "wheelbaseMm": 2980,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "G90 saloon / G99 Touring (2024–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5095,
+            "widthMm": 1970,
+            "heightMm": 1510,
+            "wheelbaseMm": 3005,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "estate": {
+            "lengthMm": 5095,
+            "widthMm": 1970,
+            "heightMm": 1520,
+            "wheelbaseMm": 3005,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 20,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "M5 Touring."
+          }
+        }
+      }
+    },
+    "m6": {
+      "E63 Coupe / E64 Convertible (2005–2010)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4870,
+            "widthMm": 1855,
+            "heightMm": 1375,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4870,
+            "widthMm": 1855,
+            "heightMm": 1375,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "F13 Coupe / F12 Convertible / F06 Gran Coupe (2012–2018)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4900,
+            "widthMm": 1895,
+            "heightMm": 1370,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4900,
+            "widthMm": 1895,
+            "heightMm": 1365,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "saloon": {
+            "lengthMm": 5010,
+            "widthMm": 1895,
+            "heightMm": 1390,
+            "wheelbaseMm": 2970,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 20,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Four-door Gran Coupe."
+          }
+        }
+      }
+    },
+    "m8": {
+      "F92 Coupe / F91 Convertible / F93 Gran Coupe (2019–2025)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4870,
+            "widthMm": 1905,
+            "heightMm": 1360,
+            "wheelbaseMm": 2825,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "convertible": {
+            "lengthMm": 4870,
+            "widthMm": 1905,
+            "heightMm": 1355,
+            "wheelbaseMm": 2825,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          },
+          "saloon": {
+            "lengthMm": 5080,
+            "widthMm": 1935,
+            "heightMm": 1415,
+            "wheelbaseMm": 3025,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 20,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Four-door Gran Coupe."
+          }
+        }
+      }
+    },
+    "x3-m": {
+      "F97 (2019–2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4715,
+            "widthMm": 1895,
+            "heightMm": 1675,
+            "wheelbaseMm": 2865,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 21,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "x4-m": {
+      "F98 (2019–2025)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4760,
+            "widthMm": 1925,
+            "heightMm": 1620,
+            "wheelbaseMm": 2865,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 21,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "x5-m": {
+      "E70 (2010–2013)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4850,
+            "widthMm": 1995,
+            "heightMm": 1765,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "F85 (2015–2018)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4880,
+            "widthMm": 1985,
+            "heightMm": 1755,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 21,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "F95 (2020–present; mild-hybrid from 2023 facelift)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4940,
+            "widthMm": 2015,
+            "heightMm": 1745,
+            "wheelbaseMm": 2975,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 21,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "x6-m": {
+      "E71 (2010–2014)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4875,
+            "widthMm": 1985,
+            "heightMm": 1685,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "F86 (2015–2019)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4910,
+            "widthMm": 1990,
+            "heightMm": 1690,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 21,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      },
+      "F96 (2020–present; mild-hybrid from 2023 facelift)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4940,
+            "widthMm": 2020,
+            "heightMm": 1695,
+            "wheelbaseMm": 2975,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 21,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney"
+          }
+        }
+      }
+    },
+    "alpina": {
+      "B3 3.3 / B3 S (E46, 1999–2006)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4470,
+            "widthMm": 1740,
+            "heightMm": 1415,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "estate": {
+            "lengthMm": 4480,
+            "widthMm": 1740,
+            "heightMm": 1450,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "coupe": {
+            "lengthMm": 4490,
+            "widthMm": 1755,
+            "heightMm": 1370,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "convertible": {
+            "lengthMm": 4490,
+            "widthMm": 1755,
+            "heightMm": 1370,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B10 / D10 Biturbo (E39, 1997–2004)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4775,
+            "widthMm": 1800,
+            "heightMm": 1435,
+            "wheelbaseMm": 2830,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "estate": {
+            "lengthMm": 4805,
+            "widthMm": 1800,
+            "heightMm": 1440,
+            "wheelbaseMm": 2830,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "Roadster S (E85, 2004–2006)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4090,
+            "widthMm": 1780,
+            "heightMm": 1300,
+            "wheelbaseMm": 2495,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B7 (E65/E66, 2004–2008)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5030,
+            "widthMm": 1900,
+            "heightMm": 1490,
+            "wheelbaseMm": 2990,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 21,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B5 / B5 S (E60/E61, 2005–2010)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4840,
+            "widthMm": 1845,
+            "heightMm": 1470,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "estate": {
+            "lengthMm": 4845,
+            "widthMm": 1845,
+            "heightMm": 1490,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B6 / B6 S (E63/E64, 2005–2010)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4820,
+            "widthMm": 1855,
+            "heightMm": 1375,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "convertible": {
+            "lengthMm": 4820,
+            "widthMm": 1855,
+            "heightMm": 1375,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "D3 / D3 Bi-Turbo (E90/E91, 2005–2013)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4530,
+            "widthMm": 1815,
+            "heightMm": 1420,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "estate": {
+            "lengthMm": 4525,
+            "widthMm": 1815,
+            "heightMm": 1420,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B3 Biturbo / B3 S Biturbo (E90/E91/E92/E93, 2007–2013)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4530,
+            "widthMm": 1815,
+            "heightMm": 1420,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "estate": {
+            "lengthMm": 4525,
+            "widthMm": 1815,
+            "heightMm": 1420,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "coupe": {
+            "lengthMm": 4580,
+            "widthMm": 1780,
+            "heightMm": 1375,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "convertible": {
+            "lengthMm": 4580,
+            "widthMm": 1780,
+            "heightMm": 1385,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B7 Biturbo (F01/F02, 2009–2015)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5070,
+            "widthMm": 1900,
+            "heightMm": 1480,
+            "wheelbaseMm": 3070,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 21,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B5 Biturbo / D5 Biturbo (F10/F11, 2010–2017)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4905,
+            "widthMm": 1860,
+            "heightMm": 1465,
+            "wheelbaseMm": 2970,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "estate": {
+            "lengthMm": 4905,
+            "widthMm": 1860,
+            "heightMm": 1460,
+            "wheelbaseMm": 2970,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 20,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B6 Biturbo (F12/F13/F06, 2011–2018)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4895,
+            "widthMm": 1895,
+            "heightMm": 1370,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "convertible": {
+            "lengthMm": 4895,
+            "widthMm": 1895,
+            "heightMm": 1365,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "saloon": {
+            "lengthMm": 5010,
+            "widthMm": 1895,
+            "heightMm": 1390,
+            "wheelbaseMm": 2970,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 20,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels. Four-door Gran Coupe."
+          }
+        }
+      },
+      "B3 / D3 Biturbo (F30/F31, 2013–2019)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4625,
+            "widthMm": 1810,
+            "heightMm": 1430,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "estate": {
+            "lengthMm": 4625,
+            "widthMm": 1810,
+            "heightMm": 1430,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "XD3 (F25, 2013–2017)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4650,
+            "widthMm": 1880,
+            "heightMm": 1675,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B4 / D4 Biturbo (F32/F33, 2014–2020)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4640,
+            "widthMm": 1825,
+            "heightMm": 1375,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "convertible": {
+            "lengthMm": 4640,
+            "widthMm": 1825,
+            "heightMm": 1385,
+            "wheelbaseMm": 2810,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B7 (G11/G12, 2016–2022)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5265,
+            "widthMm": 1900,
+            "heightMm": 1480,
+            "wheelbaseMm": 3210,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 21,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels. Long wheelbase."
+          }
+        }
+      },
+      "B5 / D5 S (G30/G31, 2017–2024)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4935,
+            "widthMm": 1870,
+            "heightMm": 1480,
+            "wheelbaseMm": 2975,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "estate": {
+            "lengthMm": 4945,
+            "widthMm": 1870,
+            "heightMm": 1500,
+            "wheelbaseMm": 2975,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 20,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "XD3 / XD4 (G01/G02, 2018–2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4710,
+            "widthMm": 1890,
+            "heightMm": 1675,
+            "wheelbaseMm": 2865,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 21,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels. XD4 has the X4 coupe roofline."
+          }
+        }
+      },
+      "B3 / D3 S (G20/G21, 2019–2025)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4710,
+            "widthMm": 1825,
+            "heightMm": 1440,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          },
+          "estate": {
+            "lengthMm": 4710,
+            "widthMm": 1825,
+            "heightMm": 1445,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "XB7 (G07, 2020–2025)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5150,
+            "widthMm": 2000,
+            "heightMm": 1805,
+            "wheelbaseMm": 3105,
+            "groundClearanceMm": 220,
+            "wheelDiameterIn": 21,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B8 Gran Coupe (G16, 2021–2025)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5080,
+            "widthMm": 1930,
+            "heightMm": 1405,
+            "wheelbaseMm": 3025,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 21,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      },
+      "B4 Gran Coupe (G26, 2022–2025)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4785,
+            "widthMm": 1850,
+            "heightMm": 1445,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "liftback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "kidney",
+            "note": "Alpina conversion of the BMW body; deeper front spoiler and multi-spoke wheels."
+          }
+        }
+      }
+    }
+  }
+}

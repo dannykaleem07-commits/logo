@@ -1,0 +1,979 @@
+/**
+ * Parametric car body for the 3D damage model, built from a CarSpec (real dimensions → stations):
+ *
+ *  - body tub: a smooth loft of cross-sections along the car (sill, tumble-in, shoulder crease, rounded wing tops,
+ *    crowned bonnet/deck), plan-view rounded corners, raked front and rear faces closed by bulged caps, and true wheel
+ *    arches cut into the section (with dark wheel-well liners);
+ *  - cabin: a second loft sitting on the beltline — windscreen at the real rake, roof with taper, and the rear slope
+ *    per silhouette (hatch tailgate, saloon/fastback backlight, vertical van/pick-up back) — with the side glass, pillars
+ *    and frames classified per door/window cut so the daylight openings match the door count;
+ *  - details draped onto the body with a ray projector: headlamps and rear lamps per lamp style, grille per grille
+ *    style, lower grille, fogs, sensors, radar, camera, arch trims, door handles; plus wheels and tyres at the real
+ *    diameter / wheelbase / track, mirrors, roof rails, spoiler, pick-up bed, high roof, number plate placements.
+ *
+ * Every damage zone is its own triangle group (zone id → mesh) aligned to the body; shut lines are drawn along zone
+ * boundaries. Pure data (no three.js), so it is unit-tested in node and only the viewport turns it into BufferGeometry.
+ */
+import { zoneAppliesToBody } from './zones';
+import type { CarSpec } from './spec';
+import {
+  MeshBuilder,
+  Projector,
+  add,
+  bandPatch,
+  box,
+  clamp,
+  drape,
+  lerp,
+  norm,
+  polyPatch,
+  scale,
+  smooth,
+  sub,
+  superellipse,
+  superellipsoid,
+  type MeshGroup,
+  type QuadClass,
+  type Tone,
+  type V3
+} from './meshKit';
+
+export type { MeshGroup, Tone, V3 };
+
+export interface PlatePlacement {
+  kind: 'front' | 'rear';
+  center: V3;
+  normal: V3;
+  up: V3;
+  width: number;
+  height: number;
+}
+
+export interface CarMesh {
+  groups: MeshGroup[];
+  /** Shut lines as segment pairs (x,y,z,x,y,z…). */
+  lines: number[];
+  plates: PlatePlacement[];
+  zones: Set<string>;
+  triangles: number;
+  bounds: { min: V3; max: V3 };
+  spec: CarSpec;
+}
+
+const PLATE_W = 0.52;
+const PLATE_H = 0.111;
+
+type Region = 'bottom' | 'wellWall' | 'wellRoof' | 'botCorner' | 'side' | 'topCorner' | 'top';
+// half-loop layout of the tub (vertex indices); segment j lies between vertex j and j+1
+const TUB_SIDE_N = 15;
+const TUB_REGION: Region[] = (() => {
+  const r: Region[] = [];
+  r.push('bottom', 'bottom'); // 0-1
+  r.push('wellWall'); // 2
+  r.push('wellRoof', 'wellRoof'); // 3-4
+  r.push('botCorner', 'botCorner'); // 5-6
+  for (let k = 0; k < TUB_SIDE_N - 1; k++) r.push('side'); // 7..20
+  r.push('topCorner', 'topCorner', 'topCorner'); // 21-23
+  for (let k = 0; k < 5; k++) r.push('top'); // 24-28
+  return r;
+})();
+const CAB_SIDE_N = 6; // vertices on the cabin side: belt, glass bottom, 2 mid, glass top, frame top
+type CabRegion = 'side' | 'corner' | 'top';
+const CAB_REGION: CabRegion[] = [...Array(CAB_SIDE_N - 1).fill('side'), 'corner', 'corner', 'corner', 'corner', 'top', 'top', 'top', 'top', 'top'] as CabRegion[];
+
+export function buildCarMesh(spec: CarSpec): CarMesh {
+  const s = spec;
+  const body = s.body;
+  const mb = new MeshBuilder();
+  const hw = s.W / 2;
+  const fo = s.xF - s.axleF;
+  const ro = s.axleR - s.xR;
+  const isVan = s.profile === 'van' || s.profile === 'van-high-roof';
+  const rxF = Math.min(s.cornerF[0], fo - s.archR - 0.06);
+  const dzF = s.cornerF[1];
+  const rxR = Math.max(0.03, Math.min(s.cornerR[0], ro - s.archR - 0.06));
+  const dzR = s.cornerR[1];
+  const zoneOk = (id: string | null): string | null => (id && zoneAppliesToBody(id, body) ? id : null);
+  const sided = (base: string, side: number) => zoneOk(`${base}_${side < 0 ? 'l' : 'r'}`);
+  const rearBodyBase = body === 'panel-van' ? 'load_side_panel' : body === 'pickup' ? 'load_bed_side' : 'quarter_panel';
+  const rearOpening = (side: number): string | null =>
+    body === 'panel-van' ? sided('rear_load_door', side) : body === 'pickup' ? 'load_bed_tailgate' : zoneOk('tailgate') ?? zoneOk('boot_lid');
+  const frontDoor = s.doors[0]!;
+  const doorFront = frontDoor.x1;
+  const lastDoorX0 = Math.min(...s.doors.map((d) => d.x0));
+  const doorAt = (x: number) => s.doors.find((d) => x >= d.x0 && x <= d.x1);
+
+  // ── body tub shape functions (xb = station position before the end-face rake) ──
+  const hwPlan = (xb: number) => {
+    let h = hw;
+    if (xb > s.xF - rxF) {
+      const u = clamp((xb - (s.xF - rxF)) / rxF, 0, 1);
+      h -= dzF * (1 - Math.sqrt(1 - u * u));
+    }
+    if (xb < s.xR + rxR) {
+      const u = clamp((s.xR + rxR - xb) / rxR, 0, 1);
+      h -= dzR * (1 - Math.sqrt(1 - u * u));
+    }
+    return h;
+  };
+  const beltY = (xb: number) => s.belt + s.beltRise * clamp((s.cowlX - xb) / (s.cowlX - s.xR), 0, 1);
+  const cowlY = s.belt - 0.012;
+  const topEdge = (xb: number) => {
+    if (xb >= s.cowlX) {
+      const t = clamp((xb - s.cowlX) / (s.xF - s.cowlX), 0, 1);
+      return cowlY - (cowlY - s.nose) * Math.pow(t, 2.2);
+    }
+    if (s.bed && xb < s.bed.x0) return s.bed.floor;
+    let y = beltY(xb);
+    if (s.rear === 'boot' && xb < s.cabinRearX) y += 0.03 * smooth(s.cabinRearX, s.cabinRearX - 0.2, xb) - 0.03 * smooth(s.xR + 0.16, s.xR, xb);
+    return y;
+  };
+  const fA = s.axleF + s.archR;
+  const rA = s.axleR - s.archR;
+  const botY = (xb: number) => {
+    if (xb > fA) return s.gc + s.frontLift * Math.pow(clamp((xb - fA) / (s.xF - fA), 0, 1), 1.4);
+    if (xb < rA) return s.gc + s.rearLift * Math.pow(clamp((rA - xb) / (rA - s.xR), 0, 1), 1.4);
+    return s.gc;
+  };
+  const archTop = (xb: number): number | null => {
+    for (const ax of [s.axleF, s.axleR]) {
+      const dx = xb - ax;
+      if (Math.abs(dx) < s.archR) return s.wheelR + Math.sqrt(s.archR * s.archR - dx * dx);
+    }
+    return null;
+  };
+  const rtAt = (xb: number) => {
+    if (s.bed && xb < s.bed.x0) return 0.014;
+    if (isVan) return lerp(0.014, 0.05, smooth(s.cowlX - 0.05, s.cowlX + 0.1, xb));
+    const under = 0.06;
+    const bonnet = 0.085;
+    return lerp(under, bonnet, smooth(s.cowlX - 0.05, s.cowlX + 0.15, xb));
+  };
+  const tuckIn = isVan ? 0.018 : 0.034;
+  const shoulderIn = isVan ? 0.004 : 0.022;
+  const yCrease = s.belt - (isVan ? 0.2 : 0.11);
+  const crease = isVan ? 0.004 : 0.007;
+  const zSide = (xb: number, y: number, yt: number) => {
+    let z = hwPlan(xb);
+    const t = clamp((y - s.gc) / 0.28, 0, 1);
+    z -= tuckIn * (1 - t) * (1 - t);
+    const u = clamp((y - (yt - 0.16)) / 0.16, 0, 1);
+    z -= shoulderIn * u * u;
+    const endFade = smooth(s.xR + 0.02, s.xR + 0.3, xb) * smooth(s.xF - 0.02, s.xF - 0.35, xb);
+    z += crease * endFade * Math.exp(-(((y - yCrease) / 0.03) ** 2));
+    return z;
+  };
+  // front/rear face rake (x setback by height), blended in over the overhang ahead of/behind the arches
+  const peakF = s.bumperTopF - 0.1;
+  const ybF = s.gc + s.frontLift;
+  const setbackF = (y: number) =>
+    y <= peakF ? 0.05 * ((peakF - y) / Math.max(0.05, peakF - ybF)) ** 2 : s.noseSetback * Math.pow(clamp((y - peakF) / (s.nose - peakF), 0, 1), 1.6);
+  const peakR = s.bumperTopR - 0.08;
+  const ybR = s.gc + s.rearLift;
+  const yRearTop = topEdge(s.xR);
+  const setbackR = (y: number) =>
+    y <= peakR ? 0.04 * ((peakR - y) / Math.max(0.05, peakR - ybR)) ** 2 : s.tailLean * clamp((y - peakR) / Math.max(0.05, yRearTop - peakR), 0, 1.4);
+  const warpLenF = Math.max(0.12, fo - s.archR - 0.03);
+  const warpLenR = Math.max(0.1, ro - s.archR - 0.03);
+  const warpX = (xb: number, y: number) => xb - smooth(s.xF - warpLenF, s.xF, xb) * setbackF(y) + smooth(s.xR + warpLenR, s.xR, xb) * setbackR(y);
+
+  // ── stations ──
+  const stations: number[] = [];
+  const push = (x: number) => {
+    if (x >= s.xR - 1e-9 && x <= s.xF + 1e-9) stations.push(x);
+  };
+  for (let k = 0; k <= 9; k++) push(s.xF - rxF + rxF * Math.sin(((k / 9) * Math.PI) / 2));
+  for (let k = 0; k <= 9; k++) push(s.xR + rxR - rxR * Math.sin(((k / 9) * Math.PI) / 2));
+  for (const ax of [s.axleF, s.axleR]) {
+    for (let k = 0; k <= 16; k++) push(ax + s.archR * Math.cos((k / 16) * Math.PI));
+    push(ax + s.archR + 0.01);
+    push(ax - s.archR - 0.01);
+  }
+  for (const d of s.doors) {
+    push(d.x0);
+    push(d.x1);
+  }
+  push(s.cowlX);
+  push(s.cabinRearX);
+  if (s.bed) {
+    push(s.bed.x0);
+    push(s.bed.x0 - 0.008);
+  }
+  for (let x = s.xR; x <= s.xF; x += 0.085) push(x);
+  stations.sort((a, b) => a - b);
+  const st: number[] = [];
+  for (const x of stations) if (!st.length || x - st[st.length - 1]! > 0.004) st.push(x);
+  if (st[st.length - 1]! < s.xF - 1e-6) st.push(s.xF);
+
+  // ── tub half-loop at a station ──
+  const sideKnotsAbs = [s.sillTop, s.bumperTopR, s.bumperTopF, yCrease - 0.035, yCrease, yCrease + 0.035].sort((a, b) => a - b);
+  interface LoopPt {
+    y: number;
+    z: number;
+  }
+  const tubLoop = (xb: number): LoopPt[] => {
+    const yb = botY(xb);
+    const yt = topEdge(xb);
+    const rt = rtAt(xb);
+    const at = archTop(xb);
+    const yA = Math.max(yb, at ?? yb);
+    const rb = at !== null ? 0.022 : 0.045;
+    const zsb = zSide(xb, yA + rb, yt);
+    const zWell = Math.min(s.wheelZ - s.tyreW / 2 - 0.045, zsb - rb - 0.02);
+    const pts: LoopPt[] = [];
+    pts.push({ y: yb, z: 0 }, { y: yb, z: zWell * 0.5 }, { y: yb, z: zWell }); // 0-2
+    pts.push({ y: yA, z: zWell }); // 3
+    pts.push({ y: yA, z: lerp(zWell, zsb - rb, 0.5) }, { y: yA, z: zsb - rb }); // 4-5
+    const bc = { y: yA + rb, z: zsb - rb };
+    pts.push({ y: bc.y - rb * Math.cos(Math.PI / 4), z: bc.z + rb * Math.sin(Math.PI / 4) }); // 6
+    // side: knots clamped into [yA + rb, yt − rt] with mid-points between
+    const lo = yA + rb;
+    const hi = Math.max(lo, yt - rt);
+    const knots = [lo, ...sideKnotsAbs.map((k) => clamp(k, lo, hi)), hi].sort((a, b) => a - b);
+    const ys: number[] = [];
+    for (let k = 0; k < knots.length - 1; k++) {
+      ys.push(knots[k]!, (knots[k]! + knots[k + 1]!) / 2);
+    }
+    ys.push(hi);
+    // 8 knots → 15 side points
+    for (const y of ys) pts.push({ y, z: zSide(xb, y, yt) }); // 7..21
+    const zst = zSide(xb, hi, yt);
+    for (const a of [30, 60, 90]) {
+      const r = (a * Math.PI) / 180;
+      pts.push({ y: yt - rt + rt * Math.sin(r), z: zst - rt + rt * Math.cos(r) }); // 22-24
+    }
+    const z0 = zst - rt;
+    const crown = xb >= s.cowlX ? 0.03 : 0.018;
+    for (let k = 1; k <= 5; k++) {
+      const z = z0 * (1 - k / 5);
+      pts.push({ y: yt + crown * (1 - (z / Math.max(z0, 1e-6)) ** 2), z }); // 25-29
+    }
+    return pts;
+  };
+
+  const tubSection = st.map((xb) => tubLoop(xb));
+  const tubVert = (i: number, j: number, side: number): V3 => {
+    const p = tubSection[i]![j]!;
+    return [warpX(st[i]!, p.y), p.y, side * p.z];
+  };
+  // zone of the hidden tub top under the cabin etc.
+  const tubTopZone = (xm: number, side: number): { zone: string | null; tone: Tone } => {
+    if (xm >= s.cowlX - 0.004) return { zone: 'bonnet', tone: 'body' };
+    if (s.bed && xm < s.bed.x0) return { zone: zoneOk('load_bed_floor'), tone: 'black' };
+    if (xm > s.cabinRearX) return { zone: null, tone: 'body' };
+    if (s.rear === 'boot' || s.rear === 'hatch') return { zone: rearOpening(side), tone: 'body' };
+    return { zone: null, tone: 'body' };
+  };
+  const sideZone = (xm: number, ym: number, side: number): { zone: string | null; tone: Tone } => {
+    const black = s.cladding;
+    if (xm > fA - s.archR * 0.02 && ym < s.bumperTopF) return { zone: 'front_bumper', tone: black && ym < botY(xm) + 0.1 ? 'black' : 'body' };
+    if (xm < rA + s.archR * 0.02 && ym < s.bumperTopR) return { zone: 'rear_bumper', tone: black && ym < botY(xm) + 0.1 ? 'black' : 'body' };
+    if (ym < s.sillTop && xm > s.axleR + s.archR * 0.9 && xm < s.axleF - s.archR * 0.9) return { zone: sided('sill', side), tone: black ? 'black' : 'body' };
+    if (xm > doorFront) return { zone: sided('front_wing', side), tone: 'body' };
+    const d = doorAt(xm);
+    if (d) return { zone: sided(d.zone, side), tone: 'body' };
+    return { zone: sided(rearBodyBase, side), tone: 'body' };
+  };
+
+  const tubClass = (side: number) => (i: number, j: number): QuadClass | null => {
+    const region = TUB_REGION[j]!;
+    const a = tubSection[i]![j]!;
+    const b = tubSection[i + 1]![j + 1]!;
+    const xm = (st[i]! + st[i + 1]!) / 2;
+    const ym = (a.y + b.y) / 2;
+    const zs = side;
+    switch (region) {
+      case 'bottom':
+        return { zone: null, tone: 'liner', group: 2, hint: [0, -1, 0] };
+      case 'wellWall':
+        return { zone: null, tone: 'liner', group: 3, hint: [0, 0, zs] };
+      case 'wellRoof':
+        return { zone: null, tone: 'liner', group: 4, hint: [0, -1, 0] };
+      case 'top': {
+        const t = tubTopZone(xm, side);
+        return { ...t, group: 1, hint: [0, 1, 0] };
+      }
+      case 'topCorner': {
+        let zone: string | null;
+        if (xm >= s.cowlX) zone = xm > fA && ym < s.bumperTopF ? 'front_bumper' : sided('front_wing', side);
+        else if (s.bed && xm < s.bed.x0) zone = sided(rearBodyBase, side);
+        else if (doorAt(xm)) zone = sided(doorAt(xm)!.zone, side);
+        else if (xm > doorFront) zone = sided('front_wing', side);
+        else zone = sided(rearBodyBase, side);
+        return { zone, tone: 'body', group: 1, hint: [0, 1, zs] };
+      }
+      default: {
+        const zt = sideZone(xm, ym, side);
+        return { ...zt, group: 1, hint: region === 'botCorner' ? [0, -1, zs] : [0, 0, zs] };
+      }
+    }
+  };
+
+  for (const side of [1, -1]) {
+    const P: V3[][] = st.map((_, i) => tubSection[i]!.map((__, j) => tubVert(i, j, side)));
+    mb.grid(P, tubClass(side), { shell: true, lines: true });
+  }
+
+  // ── end caps (front / rear faces) ──
+  const capGrid = (iStation: number, side: number, targets: (zEdge: number) => number[], bulge: number, dirX: number): V3[][] => {
+    const loop = tubSection[iStation]!;
+    const xb = st[iStation]!;
+    const zMax = Math.max(...loop.map((p) => p.z));
+    const t = targets(zMax);
+    return t.map((tz, k) =>
+      loop.map((p) => {
+        const z = k === 0 ? p.z : Math.min(p.z, tz);
+        const rel = p.z > 1e-6 ? z / p.z : 0;
+        const x = warpX(xb, p.y) + dirX * bulge * (1 - rel * rel) * clamp(p.z / zMax, 0, 1);
+        return [x, p.y, side * z] as V3;
+      })
+    );
+  };
+  const tailHalf = isVan ? hw - dzR - 0.13 : body === 'pickup' ? hw - 0.12 : hw - dzR - 0.15;
+  for (const side of [1, -1]) {
+    const iF = st.length - 1;
+    const PF = capGrid(iF, side, (zE) => [zE, zE * 0.8, zE * 0.55, zE * 0.3, zE * 0.1, 0], isVan ? 0.012 : 0.035, 1);
+    mb.grid(
+      PF,
+      (k, j) => {
+        const region = TUB_REGION[j]!;
+        if (region === 'bottom' || region === 'wellRoof' || region === 'wellWall') return { zone: null, tone: 'liner', group: 2, hint: [1, -0.3, 0] };
+        const ym = (PF[k]![j]![1] + PF[k + 1]![j + 1]![1]) / 2;
+        const zone = ym < s.bumperTopF || ym < s.nose - 0.07 ? 'front_bumper' : 'bonnet';
+        const tone: Tone = s.cladding && ym < botY(s.xF) + 0.1 ? 'black' : 'body';
+        return { zone, tone, group: 5, hint: [1, 0, 0] };
+      },
+      { shell: true, lines: true }
+    );
+    const PR = capGrid(0, side, (zE) => [zE, Math.min(zE - 0.01, tailHalf), tailHalf * 0.66, tailHalf * 0.33, 0], isVan ? 0.006 : 0.022, -1);
+    mb.grid(
+      PR,
+      (k, j) => {
+        const region = TUB_REGION[j]!;
+        if (region === 'bottom' || region === 'wellRoof' || region === 'wellWall') return { zone: null, tone: 'liner', group: 2, hint: [-1, -0.3, 0] };
+        const a = PR[k]![j]!;
+        const b = PR[k + 1]![j + 1]!;
+        const ym = (a[1] + b[1]) / 2;
+        const zm = Math.abs((a[2] + b[2]) / 2);
+        let zone: string | null;
+        let tone: Tone = 'body';
+        if (ym < s.bumperTopR) {
+          zone = 'rear_bumper';
+          if (s.cladding && ym < botY(s.xR) + 0.1) tone = 'black';
+        } else if (zm < tailHalf) zone = rearOpening(side);
+        else zone = sided(rearBodyBase, side);
+        return { zone, tone, group: 5, hint: [-1, 0, 0] };
+      },
+      { shell: true, lines: true }
+    );
+  }
+
+  // ── cabin ──
+  const xRearFaceTop = warpX(s.xR, topEdge(s.xR));
+  const cabinRearX = s.cabinCap && isVan ? Math.max(s.cabinRearX, xRearFaceTop) : Math.max(s.cabinRearX, xRearFaceTop + 0.004);
+  const roofEndX = s.cabinCap ? cabinRearX : Math.max(s.roofEndX, cabinRearX + 0.12);
+  const roofArc = s.roofArc;
+  const roofEdge = (xb: number) => {
+    const u = clamp((s.wsTopX - xb) / Math.max(0.1, s.wsTopX - roofEndX), 0, 1);
+    let y = s.roofY - roofArc * (2 * u - 0.8) ** 2;
+    if (s.highRoof) y = lerp(s.highRoof.lowY, s.roofY, smooth(s.wsTopX - 0.05, s.highRoof.x, xb));
+    return y;
+  };
+  const cabY0 = (xb: number) => topEdge(xb) - 0.003;
+  const glassSlopeP = s.rear === 'boot' ? 1.35 : s.profile === 'fastback' || s.profile === 'suv-coupe' ? 1.45 : 1.75;
+  const cabR = (xb: number) => {
+    const y0 = cabY0(xb);
+    if (xb >= s.wsTopX) {
+      const t = clamp((s.cowlX - xb) / (s.cowlX - s.wsTopX), 0, 1);
+      const top = s.highRoof ? s.highRoof.lowY : roofEdge(s.wsTopX);
+      return Math.max(y0, cowlY + (top - cowlY) * t + 0.018 * Math.sin(Math.PI * t));
+    }
+    if (!s.cabinCap && xb < roofEndX) {
+      const t = clamp((roofEndX - xb) / (roofEndX - cabinRearX), 0, 1);
+      const top = roofEdge(roofEndX);
+      return y0 + (top - y0) * (1 - Math.pow(t, glassSlopeP));
+    }
+    return roofEdge(xb);
+  };
+  const cabInset = (xb: number) => Math.max(s.inset, rtAt(xb) + 0.002);
+  const cabHWB = (xb: number) => {
+    const yt = topEdge(xb);
+    return zSide(xb, yt - rtAt(xb), yt) - cabInset(xb);
+  };
+  const cabHWR = (xb: number) => {
+    const hwB = cabHWB(xb);
+    let base = s.roofHW * (1 - (1 - s.roofTaper) * clamp((s.wsTopX - xb) / Math.max(0.1, s.wsTopX - roofEndX), 0, 1));
+    if (xb > s.wsTopX) base = lerp(s.roofHW, hwB - 0.01, clamp((xb - s.wsTopX) / (s.cowlX - s.wsTopX), 0, 1));
+    else if (!s.cabinCap && xb < roofEndX) {
+      const t = clamp((roofEndX - xb) / (roofEndX - cabinRearX), 0, 1);
+      base = lerp(base, hwB - 0.01, Math.pow(t, 2));
+    }
+    return base;
+  };
+  const cabStations: number[] = [];
+  const cpush = (x: number) => {
+    if (x >= cabinRearX - 1e-9 && x <= s.cowlX + 1e-9) cabStations.push(x);
+  };
+  for (let k = 0; k <= 12; k++) cpush(lerp(s.wsTopX, s.cowlX, k / 12));
+  if (!s.cabinCap) for (let k = 0; k <= 16; k++) cpush(lerp(cabinRearX, roofEndX, 1 - Math.pow(1 - k / 16, 1.4)));
+  for (let x = cabinRearX; x <= s.cowlX; x += 0.08) cpush(x);
+  for (const w of s.windows) {
+    cpush(w.x0);
+    cpush(w.x1);
+  }
+  for (const d of s.doors) {
+    cpush(d.x0);
+    cpush(d.x1);
+  }
+  cpush(s.bPillarX - 0.045);
+  cpush(s.bPillarX + 0.045);
+  cpush(s.wsTopX);
+  cpush(roofEndX);
+  cpush(roofEndX - 0.025);
+  if (s.highRoof) for (let k = 0; k <= 6; k++) cpush(lerp(s.highRoof.x, s.wsTopX - 0.05, k / 6));
+  // rear screen bottom edge on a sloping back
+  let glassBottomX = cabinRearX;
+  if (!s.cabinCap) {
+    let lo = cabinRearX;
+    let hi = roofEndX;
+    for (let k = 0; k < 30; k++) {
+      const m = (lo + hi) / 2;
+      if (cabR(m) - cabY0(m) > 0.075) hi = m;
+      else lo = m;
+    }
+    glassBottomX = hi;
+    cpush(glassBottomX);
+  }
+  cabStations.sort((a, b) => a - b);
+  const cs: number[] = [];
+  for (const x of cabStations) if (!cs.length || x - cs[cs.length - 1]! > 0.004) cs.push(x);
+
+  interface CabPt {
+    y: number;
+    z: number;
+  }
+  const cabLoop = (xb: number): CabPt[] => {
+    const y0 = cabY0(xb);
+    const R = cabR(xb);
+    const h = Math.max(0, R - y0);
+    const rc = Math.min(isVan ? 0.06 : 0.075, 0.42 * h);
+    const hwB = cabHWB(xb);
+    let hwr = Math.min(cabHWR(xb), hwB - rc * 0.35);
+    hwr = Math.max(hwr, 0.15);
+    const hs = Math.max(0, R - rc - y0);
+    const fb = hs > 1e-4 ? Math.min(0.035 / hs, 0.45) : 0.45;
+    const ft = hs > 1e-4 ? Math.max(1 - 0.028 / hs, fb) : 0.55;
+    const fr = [0, fb, fb + (ft - fb) / 3, fb + (2 * (ft - fb)) / 3, ft, 1];
+    const z1 = Math.min(hwB, hwr + rc);
+    const pts: CabPt[] = fr.map((f) => ({ y: y0 + hs * f, z: lerp(hwB, z1, f) + 0.012 * Math.sin(Math.PI * f) * Math.min(1, hs / 0.3) }));
+    for (const a of [22.5, 45, 67.5, 90]) {
+      const r = (a * Math.PI) / 180;
+      pts.push({ y: R - rc + rc * Math.sin(r), z: hwr + (z1 - hwr) * Math.cos(r) });
+    }
+    const crown = s.crown * Math.min(1, h / 0.2);
+    for (let k = 1; k <= 5; k++) {
+      const z = hwr * (1 - k / 5);
+      pts.push({ y: R + crown * (1 - (z / hwr) ** 2), z });
+    }
+    return pts;
+  };
+  const cabSection = cs.map(cabLoop);
+  const windowAt = (x: number) => s.windows.find((w) => x >= w.x0 && x <= w.x1);
+  const roofZone = s.softTop ? zoneOk('soft_top') : zoneOk('roof');
+  const roofTone: Tone = s.softTop ? 'soft' : 'body';
+  const cabXC = (s.wsTopX + roofEndX) / 2;
+  const cabClass = (side: number) => (i: number, j: number): QuadClass | null => {
+    const region = CAB_REGION[j]!;
+    const xm = (cs[i]! + cs[i + 1]!) / 2;
+    const a = cabSection[i]![j]!;
+    const b = cabSection[i + 1]![j + 1]!;
+    const ym = (a.y + b.y) / 2;
+    const hint: V3 = region === 'side' ? [0, 0, side] : region === 'corner' ? [0, 1, side] : [xm - cabXC, 0.5, 0];
+    const rearSlope = !s.cabinCap && xm < roofEndX;
+    if (region === 'top') {
+      if (xm > s.wsTopX) return { zone: 'windscreen', tone: 'glass', group: 1, hint };
+      if (rearSlope) {
+        if (s.softTop) return { zone: roofZone, tone: roofTone, group: 1, hint };
+        if (xm > glassBottomX && xm < roofEndX - 0.025) return { zone: zoneOk('rear_screen'), tone: 'glass', group: 1, hint };
+        return { zone: s.rear === 'hatch' ? rearOpening(side) : s.rear === 'boot' ? rearOpening(side) : null, tone: 'body', group: 1, hint };
+      }
+      return { zone: roofZone, tone: roofTone, group: 1, hint };
+    }
+    if (region === 'corner') {
+      if (xm > s.wsTopX) return { zone: sided('a_pillar', side), tone: 'body', group: 1, hint };
+      if (rearSlope) return { zone: s.softTop ? roofZone : s.rear === 'hatch' ? rearOpening(side) : sided(rearBodyBase, side), tone: s.softTop ? roofTone : 'body', group: 1, hint };
+      return { zone: roofZone, tone: roofTone, group: 1, hint };
+    }
+    // side
+    const glassRow = j >= 1 && j <= 3;
+    const w = windowAt(xm);
+    if (glassRow && w) return { zone: w.zone ? sided(w.zone, side) : null, tone: 'glass', group: 1, hint };
+    if (s.softTop && ym > cabY0(xm) + 0.05 && rearSlope) return { zone: roofZone, tone: roofTone, group: 1, hint };
+    if (xm > doorFront) return { zone: sided('a_pillar', side), tone: 'body', group: 1, hint };
+    const d = doorAt(xm);
+    if (!isVan && Math.abs(xm - s.bPillarX) < 0.045 && s.doors.length > 1) return { zone: sided('b_pillar', side), tone: 'black', group: 1, hint };
+    if (d) {
+      if (isVan) return { zone: sided(d.zone, side), tone: d.tall || glassRow || j === 0 ? 'body' : 'body', group: 1, hint };
+      return { zone: sided(d.zone, side), tone: j === 0 || j === 4 || glassRow ? 'black' : 'body', group: 1, hint };
+    }
+    if (!isVan && Math.abs(xm - s.bPillarX) < 0.045) return { zone: sided('b_pillar', side), tone: 'black', group: 1, hint };
+    return { zone: sided(rearBodyBase, side), tone: 'body', group: 1, hint };
+  };
+  for (const side of [1, -1]) {
+    const P: V3[][] = cs.map((x, i) => cabSection[i]!.map((p) => [x, p.y, side * p.z] as V3));
+    mb.grid(P, cabClass(side), { shell: true, lines: true });
+    if (s.cabinCap) {
+      const loop = P[0]!;
+      const zE = cabSection[0]![0]!.z;
+      const tg = [Infinity, zE * 0.9, zE * 0.6, zE * 0.3, 0];
+      const PC: V3[][] = tg.map((t) => loop.map((p) => [p[0], p[1], side * Math.min(Math.abs(p[2]), t)] as V3));
+      mb.grid(
+        PC,
+        (k, j) => {
+          const a = PC[k]![j]!;
+          const b = PC[k + 1]![j + 1]!;
+          const zm = Math.abs((a[2] + b[2]) / 2);
+          if (isVan) return { zone: zm < tailHalf ? rearOpening(side) : sided(rearBodyBase, side), tone: 'body', group: 6, hint: [-1, 0, 0] };
+          return { zone: null, tone: 'body', group: 6, hint: [-1, 0, 0] };
+        },
+        { shell: true, lines: true }
+      );
+    }
+  }
+
+  // ── overlays (draped on the shell) ──
+  const projectors = new Map<string, Projector>();
+  const proj = (D: V3) => {
+    const k = D.map((v) => v.toFixed(3)).join(',');
+    let p = projectors.get(k);
+    if (!p) projectors.set(k, (p = new Projector(mb.shellPos, mb.shellNor, D)));
+    return p;
+  };
+  type P2 = [number, number];
+  /** Front-view shape (z, y) → draped from ahead; `tilt` turns the rays toward the car's side for wrap-round lamps. */
+  const front = (rows: P2[][], zone: string | null, tone: Tone, off: number, layer: number, side = 0, tilt = 0) => {
+    const D: V3 = norm([-1, 0, -side * tilt]);
+    const pr = proj(D);
+    drape(mb, pr, rows.map((r) => r.map(([z, y]) => [s.xF + 0.6, y, z + side * tilt * 0.62] as V3)), zone, tone, off, layer);
+  };
+  const rear = (rows: P2[][], zone: string | null, tone: Tone, off: number, layer: number, side = 0, tilt = 0) => {
+    const D: V3 = norm([1, 0, -side * tilt]);
+    const pr = proj(D);
+    drape(mb, pr, rows.map((r) => r.map(([z, y]) => [s.xR - 0.6, y, z + side * tilt * 0.62] as V3)), zone, tone, off, layer);
+  };
+  const sideOv = (rows: P2[][], zone: string | null, tone: Tone, off: number, layer: number, side: number) => {
+    const pr = proj([0, 0, -side]);
+    drape(mb, pr, rows.map((r) => r.map(([x, y]) => [x, y, side * (hw + 0.6)] as V3)), zone, tone, off, layer);
+  };
+  const mirrorZ = (poly: P2[], side: number): P2[] => (side > 0 ? poly : poly.map(([z, y]) => [-z, y] as P2).reverse());
+
+  // headlamps
+  const hlTop = s.nose - 0.022;
+  const lampOuter = hw - dzF * 0.55;
+  let lampInnerZ = hw - 0.4;
+  for (const side of [1, -1]) {
+    const zone = sided('headlamp', side);
+    let poly: P2[];
+    switch (s.lampStyle) {
+      case 'slim':
+        poly = [[hw - 0.44, hlTop - 0.07], [lampOuter, hlTop - 0.09], [lampOuter + 0.01, hlTop - 0.02], [hw - 0.44, hlTop]];
+        lampInnerZ = hw - 0.44;
+        break;
+      case 'round':
+        poly = superellipse(hw - 0.24, hlTop - 0.1, 0.085, 0.085, 2, 18);
+        lampInnerZ = hw - 0.33;
+        break;
+      case 'square':
+        poly = [[hw - 0.36, hlTop - 0.15], [lampOuter, hlTop - 0.15], [lampOuter, hlTop - 0.01], [hw - 0.36, hlTop]];
+        lampInnerZ = hw - 0.36;
+        break;
+      case 'tall':
+        poly = [[hw - 0.36, hlTop - 0.19], [lampOuter, hlTop - 0.3], [lampOuter + 0.01, hlTop - 0.03], [hw - 0.36, hlTop]];
+        lampInnerZ = hw - 0.36;
+        break;
+      case 'light-bar':
+        poly = [[hw - 0.42, hlTop - 0.06], [lampOuter, hlTop - 0.08], [lampOuter + 0.01, hlTop - 0.015], [hw - 0.42, hlTop]];
+        lampInnerZ = hw - 0.42;
+        break;
+      default: // swept
+        poly = [[hw - 0.41, hlTop - 0.1], [lampOuter, hlTop - 0.16], [lampOuter + 0.012, hlTop - 0.035], [hw - 0.41, hlTop]];
+        lampInnerZ = hw - 0.41;
+    }
+    front(polyPatch(mirrorZ(poly, side), 3, 5), zone, 'lamp', 0.005, 1, side, 0.3);
+    // projector "eye" / DRL accent inside the lamp
+    if (s.lampStyle !== 'round') {
+      const cz = lerp(lampInnerZ, lampOuter, 0.42);
+      const eye = superellipse(cz, hlTop - (s.lampStyle === 'tall' ? 0.09 : 0.05), s.lampStyle === 'slim' || s.lampStyle === 'light-bar' ? 0.09 : 0.06, 0.022, 3, 14);
+      front(polyPatch(mirrorZ(eye, side), 2, 3), zone, 'chrome', 0.008, 2, side, 0.3);
+    } else {
+      front(polyPatch(mirrorZ(superellipse(hw - 0.24, hlTop - 0.1, 0.04, 0.04, 2, 14), side), 2, 3), zone, 'chrome', 0.008, 2, side, 0.3);
+    }
+  }
+  if (s.lampStyle === 'light-bar') {
+    for (const side of [1, -1]) front(polyPatch(mirrorZ([[0, hlTop - 0.035], [lampInnerZ + 0.02, hlTop - 0.035], [lampInnerZ + 0.02, hlTop - 0.018], [0, hlTop - 0.018]], side), 1, 4), sided('headlamp', side), 'lamp', 0.006, 2);
+  }
+
+  // grille
+  const gi = lampInnerZ - 0.035; // half-width available between the lamps
+  const gTop = s.nose - 0.05;
+  const gBot = s.bumperTopF + 0.02;
+  const grille = (poly: P2[], tone: Tone = 'black', off = 0.004, layer = 1) => front(polyPatch(poly, 3, 4), 'grille', tone, off, layer);
+  switch (s.grilleStyle) {
+    case 'kidney':
+      for (const c of [-1, 1]) {
+        const cz = c * Math.min(0.17, gi * 0.5);
+        grille(superellipse(cz, (gTop + gBot - 0.04) / 2, Math.min(0.15, gi * 0.48), (gTop - gBot + 0.04) / 2 + 0.01, 4.5, 24), 'chrome', 0.003, 1);
+        grille(superellipse(cz, (gTop + gBot - 0.04) / 2, Math.min(0.15, gi * 0.48) - 0.018, (gTop - gBot + 0.04) / 2 - 0.008, 4.5, 24), 'black', 0.005, 2);
+      }
+      break;
+    case 'hexagonal': {
+      const yb = s.bumperTopF - 0.17;
+      const hex: P2[] = [[-gi * 0.62, yb], [gi * 0.62, yb], [gi * 0.95, (gTop + yb) / 2 + 0.03], [gi * 0.82, gTop], [-gi * 0.82, gTop], [-gi * 0.95, (gTop + yb) / 2 + 0.03]];
+      grille(hex, 'black', 0.004, 1);
+      break;
+    }
+    case 'trapezoid': {
+      const yb = s.bumperTopF - 0.13;
+      grille([[-gi * 1.05, yb], [gi * 1.05, yb], [gi * 0.86, gTop - 0.02], [-gi * 0.86, gTop - 0.02]], 'black', 0.004, 1);
+      break;
+    }
+    case 'slim':
+      grille([[-gi, gTop - 0.05], [gi, gTop - 0.05], [gi, gTop], [-gi, gTop]], 'black', 0.004, 1);
+      break;
+    case 'closed':
+      grille([[-gi * 0.8, gTop - 0.06], [gi * 0.8, gTop - 0.06], [gi * 0.85, gTop - 0.01], [-gi * 0.85, gTop - 0.01]], 'black', 0.004, 1);
+      break;
+    case 'split':
+      for (const c of [-1, 1]) {
+        const p: P2[] = [[c * 0.05, gBot], [c * gi, gBot], [c * gi, gTop], [c * 0.05, gTop]];
+        grille(c > 0 ? p : p.reverse(), 'black', 0.004, 1);
+      }
+      break;
+    case 'large': {
+      const yb = s.bumperTopF - 0.1;
+      grille(superellipse(0, (gTop + yb) / 2, gi + 0.01, (gTop - yb) / 2 + 0.01, 6, 28), 'chrome', 0.003, 1);
+      grille(superellipse(0, (gTop + yb) / 2, gi - 0.012, (gTop - yb) / 2 - 0.012, 6, 28), 'black', 0.005, 2);
+      break;
+    }
+    default: // wide
+      grille(superellipse(0, (gTop + gBot) / 2, gi, (gTop - gBot) / 2, 5, 28), 'black', 0.004, 1);
+  }
+  // lower grille, fogs, radar, sensors
+  const lgTop = s.bumperTopF - (s.grilleStyle === 'trapezoid' || s.grilleStyle === 'hexagonal' ? 0.2 : 0.14);
+  const lgBot = Math.max(botY(s.xF - 0.05) + 0.05, lgTop - (s.grilleStyle === 'slim' || s.grilleStyle === 'closed' ? 0.17 : 0.11));
+  const lgHalf = s.W * (s.grilleStyle === 'slim' ? 0.29 : 0.25);
+  if (lgTop - lgBot > 0.04) {
+    front(polyPatch([[-lgHalf, lgBot], [lgHalf, lgBot], [lgHalf * 1.06, lgTop], [-lgHalf * 1.06, lgTop]], 2, 4), 'front_lower_grille', 'black', 0.004, 1);
+    front(polyPatch(superellipse(0, (lgTop + lgBot) / 2, 0.055, 0.035, 4, 12), 1, 3), 'front_radar', 'frame', 0.007, 2);
+  }
+  for (const side of [1, -1]) {
+    const fz = side * Math.min(hw - 0.2, lgHalf + 0.14);
+    const fy = Math.max(lgBot + 0.04, (lgTop + lgBot) / 2);
+    front(polyPatch(mirrorZ(superellipse(Math.abs(fz), fy, 0.06, 0.03, 4, 14), side), 2, 3), sided('fog_lamp', side), 'lamp', 0.005, 1, side, 0.15);
+  }
+  for (const zc of [-0.36, -0.15, 0.15, 0.36]) {
+    front(polyPatch(superellipse(zc * s.W, s.bumperTopF - 0.055, 0.013, 0.013, 2, 10), 1, 2), 'front_parking_sensors', 'frame', 0.004, 2);
+    rear(polyPatch(superellipse(zc * s.W, s.bumperTopR - 0.06, 0.013, 0.013, 2, 10), 1, 2), 'rear_parking_sensors', 'frame', 0.004, 2);
+  }
+
+  // rear lamps
+  const yRT = topEdge(s.xR + 0.05);
+  for (const side of [1, -1]) {
+    const zone = sided('rear_lamp', side);
+    const zo = hw - dzR * 0.5 - 0.005;
+    let polys: P2[][];
+    if (s.rear === 'bed') polys = [];
+    else if (isVan) polys = [[[hw - 0.13, s.bumperTopR + 0.04], [zo, s.bumperTopR + 0.04], [zo, s.bumperTopR + 0.62], [hw - 0.13, s.bumperTopR + 0.62]]];
+    else {
+      const top = s.rear === 'boot' ? yRT - 0.02 : yRT + (s.profile === 'estate' || s.profile === 'suv' ? 0.12 : 0.06);
+      switch (s.lampStyle) {
+        case 'tall':
+          polys = [[[hw - 0.17, s.bumperTopR + 0.05], [zo, s.bumperTopR + 0.05], [zo, top + 0.08], [hw - 0.15, top + 0.08]]];
+          break;
+        case 'round':
+          polys = [superellipse(hw - 0.2, top - 0.1, 0.07, 0.07, 2, 16), superellipse(hw - 0.38, top - 0.1, 0.06, 0.06, 2, 16)];
+          break;
+        case 'slim':
+        case 'light-bar':
+          polys = [[[hw - 0.48, top - 0.09], [zo, top - 0.11], [zo, top - 0.02], [hw - 0.48, top - 0.035]]];
+          break;
+        case 'square':
+          polys = [[[hw - 0.34, top - 0.2], [zo, top - 0.2], [zo, top - 0.02], [hw - 0.34, top - 0.02]]];
+          break;
+        default:
+          polys = [[[hw - 0.4, top - 0.12], [zo, top - 0.2], [zo, top], [hw - 0.4, top - 0.03]]];
+      }
+    }
+    for (const p of polys) rear(polyPatch(mirrorZ(p, side), 3, 5), zone, 'rearlamp', 0.005, 1, side, 0.32);
+    if (s.lampStyle === 'light-bar' && !isVan && s.rear !== 'bed') {
+      const top = s.rear === 'boot' ? yRT - 0.02 : yRT + 0.06;
+      rear(polyPatch(mirrorZ([[0, top - 0.06], [hw - 0.46, top - 0.06], [hw - 0.46, top - 0.04], [0, top - 0.04]], side), 1, 4), zone, 'rearlamp', 0.006, 2);
+    }
+  }
+  // camera, high-level brake lamp, sliding door rail, handles
+  const plateYRear = s.rearPlateLow ? (botY(s.xR) + s.bumperTopR) / 2 + 0.01 : s.rear === 'boot' ? Math.min(yRT - 0.15, s.bumperTopR + 0.14) : s.bumperTopR + 0.13;
+  if (s.rear !== 'bed') rear(polyPatch(superellipse(0, plateYRear + PLATE_H / 2 + 0.035, 0.03, 0.016, 4, 12), 1, 3), 'reversing_camera', 'black', 0.006, 2);
+  if (isVan) rear(polyPatch([[-0.13, s.roofY - 0.07], [0.13, s.roofY - 0.07], [0.13, s.roofY - 0.035], [-0.13, s.roofY - 0.035]], 1, 4), 'high_level_brake_lamp', 'rearlamp', 0.005, 1);
+  if (s.rear === 'boot' && !s.softTop) {
+    const pr = proj(norm([1, -0.35, 0]));
+    const yA = cabR(glassBottomX + 0.06);
+    drape(mb, pr, polyPatch([[-0.14, yA - 0.012], [0.14, yA - 0.012], [0.14, yA + 0.012], [-0.14, yA + 0.012]], 1, 4).map((r) => r.map(([z, y]) => [s.xR - 1, y + 0.35 * (glassBottomX + 0.06 - s.xR + 1), z] as V3)), 'high_level_brake_lamp', 'rearlamp', 0.006, 2);
+  }
+  for (const side of [1, -1]) {
+    for (const d of s.doors) {
+      const hx = d.zone === 'sliding_door' && isVan ? d.x1 - 0.12 : d.x0 + 0.11;
+      const hy = beltY(hx) - 0.075;
+      sideOv(polyPatch(superellipse(hx, hy, 0.065, 0.014, 4, 14), 1, 3), sided(d.zone, side), isVan || s.cladding ? 'black' : 'chrome', 0.006, 2, side);
+    }
+    if (s.slidingSideDoor && isVan) {
+      const sd = s.doors.find((d) => d.zone === 'sliding_door');
+      if (sd) {
+        const y = s.belt + 0.06;
+        sideOv(polyPatch([[s.xR + 0.25, y], [sd.x0 + 0.02, y], [sd.x0 + 0.02, y + 0.022], [s.xR + 0.25, y + 0.022]], 1, 8), null, 'black', 0.004, 2, side);
+      }
+    }
+    // arch trims and sill cladding
+    if (s.cladding) {
+      for (const ax of [s.axleF, s.axleR]) {
+        const t0 = Math.asin(clamp((s.gc + 0.03 - s.wheelR) / (s.archR + 0.004), -1, 1));
+        const inner: P2[] = [];
+        const outer: P2[] = [];
+        for (let k = 0; k <= 18; k++) {
+          const th = Math.PI - t0 + ((2 * t0 - Math.PI) * k) / 18;
+          inner.push([ax + (s.archR + 0.006) * Math.cos(th), s.wheelR + (s.archR + 0.006) * Math.sin(th)]);
+          outer.push([ax + (s.archR + 0.065) * Math.cos(th), s.wheelR + (s.archR + 0.065) * Math.sin(th)]);
+        }
+        sideOv(bandPatch(inner, outer, 2), sided('wheel_arch_trim', side), 'black', 0.005, 1, side);
+      }
+    }
+  }
+
+  // ── wheels ──
+  const R = s.wheelR;
+  const rr = s.rimR;
+  const tw = s.tyreW;
+  const spokes = isVan ? 6 : s.profile === 'pickup' ? 6 : 5;
+  for (const [ax, fr] of [[s.axleF, 'f'], [s.axleR, 'r']] as const) {
+    for (const side of [1, -1]) {
+      const zone = `wheel_${fr}${side < 0 ? 'l' : 'r'}`;
+      const c: V3 = [ax, R, side * s.wheelZ];
+      wheel(mb, zone, c, side, R, rr, tw, spokes);
+    }
+  }
+
+  // ── mirrors ──
+  for (const side of [1, -1]) {
+    const zone = sided('door_mirror', side);
+    const mx = doorFront - (isVan ? 0.05 : 0.07);
+    const by = beltY(mx);
+    const hwB = cabHWB(mx);
+    const r: V3 = isVan ? [0.06, 0.15, 0.11] : [0.06, 0.06, 0.1];
+    const cy = by + (isVan ? 0.2 : 0.085);
+    const cz = side * (hwB + r[2] + (isVan ? 0.06 : 0.035));
+    const tone: Tone = isVan || s.profile === 'pickup' ? 'black' : 'body';
+    superellipsoid(mb, zone, tone, [mx, cy, cz], r, 0.55, 16, 10, 3);
+    superellipsoid(mb, zone, 'glass', [mx - r[0] * 0.92, cy, cz], [0.006, r[1] * 0.82, r[2] * 0.86], 0.4, 12, 6, 4);
+    box(mb, zone, 'black', [mx + 0.01, by + 0.03, side * (hwB + 0.025)], [0.035, 0.022, 0.03], 3);
+    if (isVan) box(mb, zone, 'black', [mx, by + 0.03, side * (hwB + 0.07)], [0.012, 0.012, 0.06], 3);
+  }
+
+  // ── roof rails, spoiler, bed, spare ──
+  if (s.roofRails) {
+    for (const side of [1, -1]) {
+      const zone = sided('roof_rail', side);
+      const xs: number[] = [];
+      for (let k = 0; k <= 14; k++) xs.push(lerp(roofEndX + 0.1, s.wsTopX - 0.1, k / 14));
+      const ring: Array<[number, number]> = [];
+      for (let k = 0; k <= 8; k++) {
+        const t = (k / 8) * Math.PI * 2;
+        ring.push([0.016 * Math.sign(Math.cos(t)) * Math.pow(Math.abs(Math.cos(t)), 0.6), 0.018 * Math.sign(Math.sin(t)) * Math.pow(Math.abs(Math.sin(t)), 0.6)]);
+      }
+      const P: V3[][] = xs.map((x) => {
+        const hwr = cabHWR(x);
+        const zr = hwr - 0.075;
+        const yr = cabR(x) + s.crown * (1 - (zr / hwr) ** 2) + 0.032;
+        return ring.map(([dz, dy]) => [x, yr + dy, side * (zr + dz)] as V3);
+      });
+      mb.grid(P, (i, j) => {
+        const p = P[i]![j]!;
+        const ctrY = (P[i]![0]![1] + P[i]![4]![1]) / 2;
+        const ctrZ = (P[i]![0]![2] + P[i]![4]![2]) / 2;
+        return { zone, tone: 'trim', group: 1, hint: [0, p[1] - ctrY, p[2] - ctrZ] };
+      }, { layer: 1 });
+      for (const x of [xs[0]!, xs[xs.length - 1]!]) {
+        const hwr = cabHWR(x);
+        const zr = hwr - 0.075;
+        box(mb, zone, 'black', [x, cabR(x) + s.crown * (1 - (zr / hwr) ** 2) + 0.015, side * zr], [0.035, 0.018, 0.02], 1);
+      }
+    }
+  }
+  if (s.spoiler && !s.cabinCap) {
+    const x = roofEndX - 0.03;
+    const hwr = cabHWR(x);
+    const y = cabR(x) + 0.01;
+    superellipsoid(mb, zoneOk('spoiler'), 'body', [x - 0.03, y, 0], [0.085, 0.02, hwr - 0.02], 0.35, 20, 8, 1);
+    box(mb, 'high_level_brake_lamp', 'rearlamp', [x - 0.112, y - 0.002, 0], [0.004, 0.009, 0.12], 2);
+  }
+  if (s.bed) {
+    const x0 = xRearFaceTop + 0.004;
+    const x1 = s.bed.x0;
+    const yT = s.belt + 0.01;
+    const yF = s.bed.floor - 0.02;
+    const hb = hwPlan((x0 + x1) / 2) - 0.004;
+    for (const side of [1, -1]) {
+      box(mb, sided('load_bed_side', side), 'body', [(x0 + x1) / 2, (yT + yF) / 2, side * (hb - 0.025)], [(x1 - x0) / 2, (yT - yF) / 2, 0.025]);
+      box(mb, sided('load_bed_side', side), 'black', [(x0 + x1) / 2, yT + 0.006, side * (hb - 0.028)], [(x1 - x0) / 2 + 0.002, 0.007, 0.03], 1);
+      box(mb, sided('rear_lamp', side), 'rearlamp', [x0 - 0.002, (s.bumperTopR + yT) / 2 + 0.02, side * (hb - 0.06)], [0.012, (yT - s.bumperTopR) / 2 - 0.06, 0.055], 2);
+    }
+    box(mb, null, 'body', [x1 - 0.03, (yT + yF) / 2, 0], [0.03, (yT - yF) / 2, hb - 0.05]);
+    box(mb, 'load_bed_tailgate', 'body', [x0 + 0.025, (yT + s.bumperTopR) / 2, 0], [0.025, (yT - s.bumperTopR) / 2, hb - 0.12]);
+    // step bumper
+    const by0 = botY(s.xR) - 0.01;
+    box(mb, 'rear_bumper', 'chrome', [s.xR + 0.06, (by0 + s.bumperTopR - 0.04) / 2, 0], [0.11, (s.bumperTopR - 0.04 - by0) / 2, hw - 0.07], 2);
+  }
+  if (s.spareOnTailgate && s.rear !== 'bed') {
+    const c: V3 = [warpX(s.xR, s.bumperTopR + 0.25) - 0.11, s.bumperTopR + 0.25, 0];
+    const prof: Array<[number, number]> = [[0, 0.1], [R * 0.95, 0.095], [R, 0.06], [R, -0.06], [R * 0.9, -0.1]];
+    const P: V3[][] = [];
+    for (let k = 0; k <= 28; k++) {
+      const t = (k / 28) * Math.PI * 2;
+      P.push(prof.map(([rad, dx]) => [c[0] - dx, c[1] + rad * Math.cos(t), c[2] + rad * Math.sin(t)] as V3));
+    }
+    mb.grid(P, (i, j) => ({ zone: rearOpening(1), tone: j === 0 ? 'black' : 'tyre', group: j === 0 ? 2 : 1, hint: j === 0 ? [-1, 0, 0] : sub(P[i]![j]!, c) }), { layer: 1 });
+  }
+
+  // ── plates ──
+  const plates: PlatePlacement[] = [];
+  const platePlace = (kind: 'front' | 'rear', y: number) => {
+    const D: V3 = kind === 'front' ? [-1, 0, 0] : [1, 0, 0];
+    const pr = proj(D);
+    const h = pr.cast([kind === 'front' ? s.xF + 0.6 : s.xR - 0.6, y, 0]);
+    if (!h) return;
+    let n = h.n;
+    n = norm([n[0], clamp(n[1], -0.35, 0.35), 0]);
+    const up = norm(sub([0, 1, 0], scale(n, n[1])));
+    plates.push({ kind, center: add(h.p, scale(n, 0.012)), normal: n, up, width: PLATE_W, height: PLATE_H });
+  };
+  platePlace('front', s.grilleStyle === 'trapezoid' || s.grilleStyle === 'hexagonal' || s.grilleStyle === 'large' ? s.bumperTopF - 0.1 : (lgTop + s.bumperTopF) / 2 - 0.02);
+  if (s.rear === 'bed') plates.push({ kind: 'rear', center: [s.xR - 0.052, (botY(s.xR) - 0.01 + s.bumperTopR - 0.04) / 2, 0], normal: [-1, 0, 0], up: [0, 1, 0], width: PLATE_W, height: PLATE_H });
+  else platePlace('rear', plateYRear);
+
+  // van rear door centre line
+  if (isVan) {
+    for (let y = s.bumperTopR + 0.02; y < s.roofY - 0.04; y += 0.05) {
+      const y2 = Math.min(y + 0.05, s.roofY - 0.04);
+      const xa = y < s.belt ? warpX(s.xR, y) : cabinRearX;
+      const xb2 = y2 < s.belt ? warpX(s.xR, y2) : cabinRearX;
+      mb.line([xa - 0.004, y, 0], [xb2 - 0.004, y2, 0]);
+    }
+  }
+
+  // ── collect ──
+  const groups = [...mb.groups.values()];
+  const zones = new Set<string>();
+  const min: V3 = [Infinity, Infinity, Infinity];
+  const max: V3 = [-Infinity, -Infinity, -Infinity];
+  for (const g of groups) {
+    if (g.zone) zones.add(g.zone);
+    const p = g.positions;
+    for (let k = 0; k < p.length; k += 3) {
+      for (let a = 0; a < 3; a++) {
+        const v = p[k + a]!;
+        if (v < min[a]!) min[a] = v;
+        if (v > max[a]!) max[a] = v;
+      }
+    }
+  }
+  return { groups, lines: mb.lines, plates, zones, triangles: mb.triangles, bounds: { min, max }, spec };
+}
+
+/** Wheel: tyre with rounded shoulders, alloy rim lip, spokes, hub, brake disc and caliper. Outer face toward `side`. */
+function wheel(mb: MeshBuilder, zone: string, c: V3, side: number, R: number, rr: number, tw: number, spokes: number): void {
+  const h = tw / 2;
+  const sw = rr + 0.45 * (R - rr);
+  // tyre profile [radius, axial offset] from the inner bead round the tread to the outer bead
+  const tyre: Array<[number, number]> = [
+    [rr + 0.006, -h + 0.03],
+    [sw, -h - 0.004],
+    [R - 0.032, -h + 0.006],
+    [R - 0.009, -h + 0.02],
+    [R, -h + 0.048],
+    [R, h - 0.048],
+    [R - 0.009, h - 0.02],
+    [R - 0.032, h - 0.006],
+    [sw, h + 0.004],
+    [rr + 0.012, h - 0.008],
+    [rr + 0.004, h - 0.02]
+  ];
+  revolveProfile(mb, zone, 'tyre', c, tyre, 40, side, [(R + rr) / 2, 0]);
+  // rim lip and barrel
+  const lip: Array<[number, number]> = [
+    [rr + 0.004, h - 0.02],
+    [rr - 0.002, h - 0.012],
+    [rr - 0.016, h - 0.014],
+    [rr - 0.026, h - 0.03],
+    [rr - 0.03, h - 0.09]
+  ];
+  revolveProfile(mb, zone, 'rim', c, lip, 40, side, [rr - 0.04, h - 0.1], 1);
+  // brake disc behind the spokes
+  revolveProfile(mb, zone, 'liner', c, [[0.0, h - 0.085], [rr - 0.03, h - 0.088]], 24, side, [0, h - 0.3], 1);
+  // caliper
+  const ang = (125 * Math.PI) / 180;
+  const cr = rr * 0.72;
+  box(mb, zone, 'black', [c[0] + Math.cos(ang) * cr, c[1] + Math.sin(ang) * cr, c[2] + side * (h - 0.075)], [0.035, 0.05, 0.012], 2, (p) => {
+    // rotate about the wheel centre so the caliper follows the disc
+    const dx = p[0] - (c[0] + Math.cos(ang) * cr);
+    const dy = p[1] - (c[1] + Math.sin(ang) * cr);
+    const a = ang - Math.PI / 2;
+    return [c[0] + Math.cos(ang) * cr + dx * Math.cos(a) - dy * Math.sin(a), c[1] + Math.sin(ang) * cr + dx * Math.sin(a) + dy * Math.cos(a), p[2]];
+  });
+  // spokes: tapered, dished bars from the hub to the lip
+  const rh = 0.065;
+  const rs = rr - 0.022;
+  for (let k = 0; k < spokes; k++) {
+    const th = (k / spokes) * Math.PI * 2 + Math.PI / 2;
+    const u: V3 = [Math.cos(th), Math.sin(th), 0];
+    const v: V3 = [-Math.sin(th), Math.cos(th), 0];
+    const pts = (r: number, w: number, dz: number): [V3, V3] => [
+      add(add(c, scale(u, r)), add(scale(v, -w / 2), [0, 0, side * dz])),
+      add(add(c, scale(u, r)), add(scale(v, w / 2), [0, 0, side * dz]))
+    ];
+    const [a0, b0] = pts(rh, 0.06, h - 0.01);
+    const [a1, b1] = pts(rs, 0.04, h - 0.026);
+    const [a0d, b0d] = pts(rh, 0.06, h - 0.04);
+    const [a1d, b1d] = pts(rs, 0.04, h - 0.06);
+    const out: V3 = [0, 0, side];
+    const nTop = norm(add(out, scale(u, 0.15)));
+    mb.tri(zone, 'rim', a0, a1, b1, nTop, nTop, nTop, 2);
+    mb.tri(zone, 'rim', a0, b1, b0, nTop, nTop, nTop, 2);
+    const nv = scale(v, -1);
+    mb.tri(zone, 'rim', a0, a0d, a1d, nv, nv, nv, 2);
+    mb.tri(zone, 'rim', a0, a1d, a1, nv, nv, nv, 2);
+    mb.tri(zone, 'rim', b0, b1, b1d, v, v, v, 2);
+    mb.tri(zone, 'rim', b0, b1d, b0d, v, v, v, 2);
+  }
+  // hub and centre cap
+  revolveProfile(mb, zone, 'rim', c, [[0, h - 0.004], [rh * 0.6, h - 0.006], [rh + 0.004, h - 0.016], [rh + 0.004, h - 0.045]], 20, side, [0, h - 0.2], 2);
+  revolveProfile(mb, zone, 'black', c, [[0, h - 0.0015], [0.028, h - 0.0025]], 16, side, [0, h - 0.2], 3);
+}
+
+/** Revolve a [radius, axial] profile about the wheel axis (z). Normals point away from `centre` in profile space. */
+function revolveProfile(mb: MeshBuilder, zone: string, tone: Tone, c: V3, profile: Array<[number, number]>, segs: number, side: number, centre: [number, number], layer = 0): void {
+  const P: V3[][] = [];
+  for (let k = 0; k <= segs; k++) {
+    const t = (k / segs) * Math.PI * 2;
+    P.push(profile.map(([rad, dz]) => [c[0] + rad * Math.cos(t), c[1] + rad * Math.sin(t), c[2] + side * dz] as V3));
+  }
+  mb.grid(
+    P,
+    (i, j) => {
+      const t = ((i + 0.5) / segs) * Math.PI * 2;
+      const pm = [(profile[j]![0] + profile[j + 1]![0]) / 2, (profile[j]![1] + profile[j + 1]![1]) / 2];
+      const dr = pm[0]! - centre[0];
+      const dz = pm[1]! - centre[1];
+      return { zone, tone, group: 1, hint: [Math.cos(t) * dr, Math.sin(t) * dr, side * dz] };
+    },
+    { layer }
+  );
+}
+

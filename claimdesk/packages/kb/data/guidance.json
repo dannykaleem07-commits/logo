@@ -115,7 +115,7 @@
     "type": "fee",
     "citation": "MIB askMID \"Other Vehicle Look-up\" (to be rebranded \"Check Their Vehicle\")",
     "title": "askMID one-off search for the other vehicle's insurer: £10.00, non-refundable; annual subscription for claims handlers",
-    "principle": "A party involved in an accident can run a one-off askMID search on the other vehicle's registration and accident date for £10.00 (non-refundable); if found, the insurer name, policy number and claims contact details are returned on screen. Organisations such as solicitors and claims handling companies can take an annual subscription. MIB has said askMID is being replatformed and rebranded \"Check Their Vehicle\" — watch the URL. Misuse (searching vehicles not involved in an accident with the enquirer) is prohibited.",
+    "principle": "A party involved in an accident can run a one-off askMID search on the other vehicle's registration and accident date for £10.00 (non-refundable); the enquirer needs the accident date, the other vehicle's registration and their own vehicle details; if found, the insurer name, policy number and claims contact details are returned on screen. Organisations such as solicitors and claims handling companies can take an annual subscription. MIB has said askMID is being replatformed and rebranded \"Check Their Vehicle\" — watch the URL. Misuse (searching vehicles not involved in an accident with the enquirer) is prohibited.",
     "tags": [
       "askMID",
       "MIB",
@@ -129,11 +129,94 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.askmid.com/",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of askmid.com and mib.org.uk: \"This enquiry will be charged at £10 which is non-refundable\"; subscription available for solicitors and claims handling companies; rebrand to Check Their Vehicle. Matches blueprint (£10.00; the £4.50 figure is out of date).",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of askmid.com and mib.org.uk: \"This enquiry will be charged at £10 which is non-refundable\"; subscription available for solicitors and claims handling companies; rebrand to Check Their Vehicle. Matches blueprint (£10.00; the £4.50 figure is out of date). | RECHECK 2026-10-07 — SEARCH-RESULT SNIPPET, NOT A FETCHED PAGE (research 2026-10-07; WebFetch to the host was refused by the egress proxy). MIB page https://mib.org.uk/check-insurance-details/check-a-vehicle-not-at-the-roadside-after-an-accident (titled \"One-off askMID search\") snippet: the one-off search \"provides you with a policy number and the name and contact details for the insurer\", \"can only be used if you have been involved in an accident\", and needs \"the date of the accident, the registration details of the other vehicle, and your own vehicle details\". Search summaries again gave £10.00 (one aggregator mention of £4.50 is the superseded figure). No snippet showed the \"Check Their Vehicle\" rebrand live. Fee unchanged.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "link_only"
+  },
+  {
+    "id": "dvla-vehicle-enquiry-service-api",
+    "type": "guidance",
+    "citation": "DVLA Vehicle Enquiry Service (VES) API v1.2.0 — developer portal description and terms",
+    "title": "DVLA VES API: POST a registration to /vehicle-enquiry/v1/vehicles with an x-api-key; per-client and global requests-per-second limits return HTTP 429",
+    "principle": "The DVLA Vehicle Enquiry Service API returns a vehicle's make, colour, fuel type, CO2, tax status and due date, MOT status and expiry, year of manufacture and first-registration month, marked-for-export and related fields from its registration number. Requests go to https://driver-vehicle-licensing.api.gov.uk/vehicle-enquiry/v1/vehicles (test: https://uat.driver-vehicle-licensing.api.gov.uk/vehicle-enquiry/v1/vehicles, which answers predefined test registrations such as ER19BAD for a 400) with the DVLA-issued key in the x-api-key header. Limits are requests per second per client (set by the usage plan, sized from the monthly volume declared on registration) plus an overall cap across all clients; exceeding either returns 429, so ClaimDesk must back off and retry rather than fail the lookup. It does not return keeper details — those need a V888 request with reasonable cause.",
+    "tags": [
+      "DVLA",
+      "VES",
+      "vehicle enquiry",
+      "API",
+      "x-api-key",
+      "rate limit",
+      "429"
+    ],
+    "topics": [
+      "fleet"
+    ],
+    "url": "https://developer-portal.driver-vehicle-licensing.api.gov.uk/apis/vehicle-enquiry-service/vehicle-enquiry-service-description.html",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://developer-portal.driver-vehicle-licensing.api.gov.uk/apis/vehicle-enquiry-service/vehicle-enquiry-service-description.html",
+      "sourceNote": "SEARCH-RESULT SNIPPET, NOT A FETCHED PAGE (research 2026-10-07; WebFetch to the host was refused by the egress proxy). Snippets of the DVLA developer portal description page and the v1.2.0 spec page (https://developer-portal.driver-vehicle-licensing.api.gov.uk/apis/vehicle-enquiry-service/v1.2.0-vehicle-enquiry-service.html): x-api-key header carries the API key issued by DVLA; limits on requests per second for each client (set by its usage plan) and an overall limit across all clients; exceeding returns HTTP 429; limits based on the estimated monthly volume given at registration; test endpoint https://uat.driver-vehicle-licensing.api.gov.uk/vehicle-enquiry/v1/vehicles with predefined VRNs (ER19BAD -> 400); response fields include motStatus, motExpiryDate, taxStatus, taxDueDate, make, colour, fuelType, co2Emissions, engineCapacity, yearOfManufacture, monthOfFirstRegistration, markedForExport, euroStatus, dateOfLastV5CIssued. Live base URL matches apps/api/src/services/lookup.ts. No numeric rate limit was published in any snippet; technical queries go to the address DVLA names on that page (not copied here). A human must open the page before this is verified.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "dvsa-mot-history-api",
+    "type": "guidance",
+    "citation": "DVSA MOT history API — documentation.history.mot.api.gov.uk (authentication and API specification)",
+    "title": "DVSA MOT history API: OAuth 2.0 client-credentials bearer token (60 minutes, Microsoft Entra ID) plus X-API-Key on every request; key revoked after 90 days unused; secret expires every 2 years",
+    "principle": "The current MOT history API (documentation.history.mot.api.gov.uk) uses OAuth 2.0 client credentials: registration issues a client ID, client secret, scope URL, token URL and API key; each request must carry \"Authorization: Bearer <token>\" and \"X-API-Key: <key>\". Tokens come from Microsoft Entra ID and last 60 minutes, so ClaimDesk must cache and refresh them rather than request one per lookup. An API key unused for 90 days is revoked, and client secrets expire every two years (DVSA emails 30 and 14 days before) — Settings should hold the secret-expiry date and raise an alert. It covers vehicles registered in Great Britain and Northern Ireland; the numeric rate quota was not confirmed.",
+    "tags": [
+      "DVSA",
+      "MOT history",
+      "API",
+      "OAuth",
+      "Entra ID",
+      "X-API-Key",
+      "client secret expiry"
+    ],
+    "topics": [
+      "fleet"
+    ],
+    "url": "https://documentation.history.mot.api.gov.uk/mot-history-api/authentication/",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://documentation.history.mot.api.gov.uk/mot-history-api/authentication/",
+      "sourceNote": "SEARCH-RESULT SNIPPET, NOT A FETCHED PAGE (research 2026-10-07; WebFetch to the host was refused by the egress proxy). Snippets of the DVSA documentation authentication page: \"The API uses OAuth 2.0 with the client credentials flow\"; on registration \"you will receive a client ID, client secret, a scope URL, an access token URL, and an API key\"; headers \"Authorization\": \"Bearer { issued access token }\" and \"X-API-Key\": \"{ issued api key }\"; \"Access tokens are issued by Microsoft Entra ID ... valid for 60 minutes from issue. Cache the access token\"; \"If you do not use your API key for 90 days, it will be revoked\"; \"Client secrets expire every 2 years ... email notification 30 days and 14 days before\". The DfT Find Transport Data listing describes coverage of GB and NI vehicles. The code's endpoint https://history.mot.api.gov.uk/v1/trade/vehicles/registration/ was not confirmed by any snippet (the api-specification page was listed but its text not returned). Rate quota: only a third-party library (MOT.NET on NuGet) said 10 requests/second — not authoritative, not recorded as a figure. A human must open the pages before this is verified.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "companies-house-public-data-api",
+    "type": "guidance",
+    "citation": "Companies House Public Data API — developer guidelines and rate-limiting guide",
+    "title": "Companies House API: 600 requests per five-minute window, then HTTP 429 until the window resets; officer records gain identity-verification fields",
+    "principle": "The Companies House Public Data API allows up to 600 requests in a five-minute window; above that every request returns 429 Too Many Requests until the window resets, and the X-Ratelimit-Limit / -Remain / -Reset / -Window response headers report the position. Companies House may ban applications that regularly exceed or try to bypass the limit; only small increases are granted on request. From 18 November 2025 the officer and PSC resources are being extended with identity-verification details as director ID verification is phased in, so parsers must tolerate new fields. Use it to confirm an insurer, bodyshop or corporate hirer's registered name, number and status.",
+    "tags": [
+      "Companies House",
+      "API",
+      "rate limit",
+      "600 per 5 minutes",
+      "429",
+      "identity verification"
+    ],
+    "topics": [
+      "fleet"
+    ],
+    "url": "https://developer-specs.company-information.service.gov.uk/guides/rateLimiting",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://developer-specs.company-information.service.gov.uk/guides/rateLimiting",
+      "sourceNote": "SEARCH-RESULT SNIPPET, NOT A FETCHED PAGE (research 2026-10-07; WebFetch to the host was refused by the egress proxy). Snippets of the Companies House rate-limiting guide and developer guidelines (https://developer.company-information.service.gov.uk/developer-guidelines): \"You can make up to 600 requests within a five-minute period\"; exceeding returns 429 for the remainder of the window, then resets to 600; headers X-Ratelimit-Limit: 600, X-Ratelimit-Remain, X-Ratelimit-Reset, X-Ratelimit-Window: 5m; Companies House reserves the right to ban applications that regularly exceed or bypass limits; increases possible but small. Identity-verification API change: Companies House developer forum post \"'Officers' and 'Persons with significant control' resource specification update\" (https://forum.companieshouse.gov.uk/t/officers-and-persons-with-significant-control-resource-specification-update/12087) says officerList, officerSummary, appointmentList and PSC/streaming specs gain an identity_verification_details structure; law-firm articles give 18 November 2025 as the start of ID verification. Auth model (API key as HTTP Basic username) is from prior knowledge and was not in any snippet. A human must open the pages before this is verified.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
+    },
+    "licence": "OGL"
   },
   {
     "id": "met-police-collision-report-fees-2026",
@@ -194,7 +277,7 @@
     "type": "guidance",
     "citation": "MIB Uninsured Drivers Agreement 2015 (England, Scotland and Wales) and MIB claims guidance",
     "title": "Uninsured driver claims: limitation-based time limits (3 years personal injury; 6 years property damage), claim via the MIB portal",
-    "principle": "Where the at-fault driver is identified but uninsured, the claim is made to MIB under the 2015 Agreement (new claims via the online portal). MIB states a personal injury claim must be received within three years of the accident and a property damage claim within six years (England and Wales), mirroring the Limitation Act. The Agreement contains conditions precedent (notice of proceedings, cooperation, assignment of judgment) that must be checked against the Agreement text before issuing against an uninsured driver; MIB reports an average claim window of around nine months. Injury elements are referred out.",
+    "principle": "Where the at-fault driver is identified but uninsured, the claim is made to MIB under the 2015 Agreement (new claims via the online portal). MIB states a personal injury claim must be received within three years of the accident and a property damage claim within six years (England and Wales), mirroring the Limitation Act. The Agreement contains conditions precedent (notice of proceedings, cooperation, assignment of judgment) that must be checked against the Agreement text before issuing against an uninsured driver; MIB reports an average claim window of around nine months. Injury elements are referred out. The 2015 Agreement is read with the Supplementary Uninsured Drivers Agreement made on 10 January 2017 (in force 1 March 2017). In June 2025 the government said it will amend the Agreements to reintroduce the exclusion of property damage compensation for uninsured drivers hit by another uninsured or an untraced driver; check whether that amendment is in force before advising a client who was driving uninsured.",
     "tags": [
       "MIB",
       "uninsured driver",
@@ -209,9 +292,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.mib.org.uk/make-a-claim/can-i-claim-with-mib/",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of MIB \"Check your eligibility\" / \"How the claims process works\": PI \"must be received within three years of the date of the accident\"; property damage \"up to six years after the accident\"; average claims window around nine months. The Agreement clauses themselves (notice conditions, exclusions) were not read.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of MIB \"Check your eligibility\" / \"How the claims process works\": PI \"must be received within three years of the date of the accident\"; property damage \"up to six years after the accident\"; average claims window around nine months. The Agreement clauses themselves (notice conditions, exclusions) were not read. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): MIB's '2017 supplementary uninsured drivers agreement' PDF listing was summarised as 'made on 10 January 2017 and is supplementary to the MIB Uninsured Agreement dated 3 July 2015, coming into force on 1 March 2017'; the gov.uk consultation outcome 'Government response to exclusion of uninsured drivers from property damage compensation' (updated 13 June 2025) was summarised: 'The government will now work to reintroduce the exclusions into the agreements with the MIB. This does not require a change to legislation.' Implementation date not seen.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "link_only"
   },

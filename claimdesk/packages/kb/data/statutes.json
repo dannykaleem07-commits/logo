@@ -281,6 +281,25 @@
     "licence": "OGL"
   },
   {
+    "id": "rta-1988-s152",
+    "type": "statute",
+    "citation": "Road Traffic Act 1988, s.152 (as amended by SI 2019/1047, reg 6)",
+    "title": "Road Traffic Act 1988 s.152: exceptions to the s.151 duty — only a pre-accident avoidance declaration now protects the insurer",
+    "principle": "Section 152 sets out when an insurer is relieved of its s.151 duty to satisfy a judgment. Since 1 November 2019 (Motor Vehicles (Compulsory Insurance) (Miscellaneous Amendments) Regulations 2019, reg 6) s.152(2) applies only where, before the accident giving rise to the liability, the insurer had already obtained a declaration that the policy was obtained by non-disclosure of a material fact or by misrepresentation; a declaration obtained after the accident (previously possible within three months of the third party's proceedings) no longer defeats the third party's judgment. CCGUK cites ss.151-152 when an at-fault insurer threatens to 'void' a policy after the accident: it may have recovery rights against its own insured, but it must still meet the client's judgment. Check s.152(1) on the page for the remaining exceptions before relying on them.",
+    "text": "s.152(2) as amended (per snippet): \"No sum is payable by an insurer under section 151 of this Act in connection with any liability if, before the happening of the event which was the cause of the death or bodily injury or damage to property giving rise to the liability, the insurer has obtained a declaration—\"",
+    "tags": ["RTA 1988", "s.152", "s.151", "avoidance", "declaration", "misrepresentation", "non-disclosure", "voided policy", "2019 amendment"],
+    "topics": ["liability", "enforceability"],
+    "url": "https://www.legislation.gov.uk/ukpga/1988/52/section/152",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.legislation.gov.uk/uksi/2019/1047/regulation/6/made",
+      "sourceNote": "SEARCH SNIPPET ONLY 2026-10-07 (not a fetched page; the official site is egress-blocked): Search listings of legislation.gov.uk (RTA 1988 s.152 enacted and 2006 versions; SI 2019/1047 reg 6 'made') with DAC Beachcroft ('The End of the Road for Section 152 Declarations'), Harper Macleod and Crown Office Chambers commentaries. The search summary quoted the amended s.152(2) opening words above and stated that the 2019 Regulations 'came into force on 1 November 2019' and 'require that only pre-accident declarations will relieve an insurer'. The section page itself was not read; the s.152(1) exceptions are deliberately not summarised.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
+    },
+    "licence": "OGL"
+  },
+  {
     "id": "rta-1988-s154",
     "type": "statute",
     "citation": "Road Traffic Act 1988, s.154",
@@ -623,9 +642,10 @@
     "url": "https://www.legislation.gov.uk/ukpga/2000/8/section/19",
     "verification": {
       "status": "unverified",
-      "sourceNote": "NOT CHECKED ONLINE: the session's web-search budget was exhausted before this item and legislation.gov.uk cannot be fetched (egress proxy). Wording and section numbers are from working knowledge; the URL follows the standard legislation.gov.uk pattern. Verify before quoting in any document.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2000/8/section/19",
+      "sourceNote": "SEARCH SNIPPET ONLY 2026-10-07 (not a fetched page; the official site is egress-blocked): Search listings of legislation.gov.uk s.19 (current and 2002/2006 versions) were summarised with the wording quoted in the text field: 'No person may carry on a regulated activity in the United Kingdom, or purport to do so, unless he is (a) an authorised person; or (b) an exempt person', and that the prohibition is referred to as 'the general prohibition'. ss.23 and 26-27 not checked.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "OGL"
   },
@@ -652,16 +672,35 @@
     "type": "statute",
     "citation": "Criminal Justice and Courts Act 2015, s.57",
     "title": "Criminal Justice and Courts Act 2015 s.57: dismissal of personal injury claims for fundamental dishonesty",
-    "principle": "Where a claimant would otherwise be entitled to damages for personal injury but the court finds on the balance of probabilities, on the defendant's application, that the claimant has been fundamentally dishonest in relation to the primary claim or a related claim, the court must dismiss the whole claim including the honest parts, unless the claimant would suffer substantial injustice; a 'related claim' includes a credit hire or vehicle damage claim brought in the same proceedings. Although CCGUK refers injury out, a dishonest hire claim run alongside a client's injury claim can sink the injury claim and expose CCGUK to non-party costs (Kindertons v Murtagh).",
+    "principle": "Where a claimant would otherwise be entitled to damages in proceedings on a claim for personal injury (the 'primary claim') but the court, on the defendant's application, is satisfied on the balance of probabilities that the claimant has been fundamentally dishonest in relation to the primary claim or a related claim, it must dismiss the primary claim unless the claimant would suffer substantial injustice; the duty extends to every element of the primary claim in respect of which the claimant was honest, so credit hire and vehicle-damage heads pleaded in the same proceedings fall with it, and the order must record the damages that would otherwise have been awarded. A 'related claim' is a personal injury claim made by another person in connection with the same incident (for example a passenger). Although CCGUK refers injury out, a dishonest hire claim run alongside a client's injury claim can sink the whole action and expose CCGUK to non-party costs (Kindertons v Murtagh; Tescher).",
     "text": "s.57(2): \"The court must dismiss the primary claim, unless it is satisfied that the claimant would suffer substantial injustice if the claim were dismissed.\"",
     "tags": ["fundamental dishonesty", "personal injury", "dismiss entire claim", "related claim", "substantial injustice", "QOCS", "costs exposure"],
     "topics": ["dishonesty", "costs"],
     "url": "https://www.legislation.gov.uk/ukpga/2015/2/section/57",
     "verification": {
       "status": "unverified",
-      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted before this item and legislation.gov.uk is fetch-blocked. Wording from working knowledge; URL follows the standard pattern. Verify before quoting.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2015/2/section/57",
+      "sourceNote": "SEARCH SNIPPET ONLY 2026-10-07 (not a fetched page; the official site is egress-blocked): Search listings of legislation.gov.uk s.57 (and s.57/4, explanatory notes) were summarised: the section applies 'on an application by the defendant' where the court 'is satisfied on the balance of probabilities that the claimant has been fundamentally dishonest in relation to the primary claim or a related claim'; 'the court must dismiss the primary claim, unless it is satisfied that the claimant would suffer substantial injustice'; the duty 'includes the dismissal of any element of the primary claim in respect of which the claimant has not been dishonest'; the order must 'record the amount of damages that the court would have awarded'; a related claim is one 'made by another person in connection with the same incident or series of incidents'. CORRECTION: the previous principle (from working knowledge) said a 'related claim' includes a credit hire claim in the same proceedings; per the snippet it is another person's injury claim, while the claimant's own hire head falls within the primary claim.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
+    },
+    "licence": "OGL"
+  },
+  {
+    "id": "civil-liability-act-2018-whiplash",
+    "type": "statute",
+    "citation": "Civil Liability Act 2018, Part 1; Whiplash Injury Regulations 2021 as amended by the Whiplash Injury (Amendment) Regulations 2025",
+    "title": "Whiplash reform: statutory tariff damages for road traffic whiplash injuries, uprated for injuries on or after 31 May 2025",
+    "principle": "Part 1 of the Civil Liability Act 2018 replaced common-law general damages for whiplash injuries of up to two years' duration suffered in road traffic accidents with a fixed tariff set by regulations, and bars settlement of such claims without medical evidence. The Whiplash Injury (Amendment) Regulations 2025, approved by both Houses in spring 2025 after the Lord Chancellor's statutory review, raised the tariff by about 15% for injuries on or after 31 May 2025. Together with the £5,000 road traffic injury small claims limit and the Official Injury Claim portal this is why injury and hire claims from the same accident now run on different tracks. PERIMETER: CCGUK never values, advises on or settles an injury claim and never quotes tariff figures to a client; it refers injury out without a fee (LASPO s.56).",
+    "tags": ["whiplash", "tariff", "Civil Liability Act 2018", "Official Injury Claim", "31 May 2025", "15% uplift", "refer out"],
+    "topics": ["injury", "perimeter"],
+    "url": "https://www.officialinjuryclaim.org.uk/news/revised-whiplash-tariff-now-approved/",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.officialinjuryclaim.org.uk/news/revised-whiplash-tariff-now-approved/",
+      "sourceNote": "SEARCH SNIPPET ONLY 2026-10-07 (not a fetched page; the official site is egress-blocked): Official Injury Claim news item 'Revised whiplash tariff now approved' and the Hansard record of the Lords debate on the Whiplash Injury (Amendment) Regulations 2025 (6 May 2025) surfaced, with Keoghs, Pump Court Chambers and Lexology commentaries; the search summary stated 'The Whiplash Tariff will increase by approximately 15% for injuries occurring on or after 31 May 2025', the Regulations were laid on 20 March 2025, approved by the Commons on 2 April and by the Lords after a short debate, following the Lord Chancellor's recommendations of 21 November 2024. The Civil Liability Act 2018 Part 1 description (two-year duration, medical-evidence bar) is from working knowledge; check on legislation.gov.uk. No tariff figures are recorded deliberately.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "OGL"
   },
@@ -772,15 +811,16 @@
     "type": "statute",
     "citation": "UK GDPR, Article 15 (with Article 12(3))",
     "title": "UK GDPR Art 15: right of access by the data subject (DSAR)",
-    "principle": "A data subject is entitled to confirmation whether their personal data are being processed, access to the data and information about purposes, recipients, retention, source and rights, with a free copy; the controller must respond without undue delay and within one month, extendable by two further months for complex or numerous requests (Art 12(3)). CCGUK's letter.dsar template uses Art 15 to obtain call recordings, claim notes, engineer reports and fraud-investigation files from insurers, and its DSAR clock runs one month from receipt.",
+    "principle": "A data subject is entitled to confirmation whether their personal data are being processed, access to the data and information about purposes, recipients, retention, source and rights, with a free copy; the controller must respond without undue delay and within one month, extendable by two further months for complex or numerous requests. Since 5 February 2026 new Article 12A (inserted by the Data (Use and Access) Act 2025) puts the timing on a statutory footing: the month runs from the 'relevant time' (receipt, or later receipt of identity information or a permitted fee), the clock stops while the controller waits for clarification it reasonably needs, and the controller need only make a reasonable and proportionate search. CCGUK's letter.dsar template uses Art 15 to obtain call recordings, claim notes, engineer reports and fraud-investigation files from insurers; it should give enough detail with the request to avoid a clarification pause, and its DSAR clock runs one month from the relevant time.",
     "tags": ["data protection", "subject access", "DSAR", "one month", "call recordings", "letter.dsar", "Art 15"],
     "topics": ["dsar", "data_protection"],
     "url": "https://www.legislation.gov.uk/eur/2016/679/article/15",
     "verification": {
       "status": "unverified",
-      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted; legislation.gov.uk fetch-blocked. From working knowledge; URL follows the standard pattern.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceUrl": "https://ico.org.uk/for-organisations/uk-gdpr-guidance-and-resources/subject-access-requests/a-guide-to-subject-access/",
+      "sourceNote": "SEARCH SNIPPET ONLY 2026-10-07 (not a fetched page; the official site is egress-blocked): ICO 'A guide to subject access' and 'What to expect after making a subject access request' pages were listed; search summaries (ICO pages plus secondary sources: SureCloud, Privacy Core Services, ico.opencourtdata.uk) agreed that organisations must respond 'without undue delay, and within one month of receipt', may extend by two further months for complex or numerous requests, and that 'New Article 12A UK GDPR, inserted by section 76(3) of the Data (Use and Access) Act 2025 and in force from 5 February 2026' changes when the month starts and allows the clock to be stopped while awaiting clarification, with 'reasonable and proportionate search' now statutory. The s.76(3) attribution came from a non-official site and is not recorded in the principle; check Article 12A on legislation.gov.uk.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "OGL"
   },
@@ -932,9 +972,10 @@
     "url": "https://www.legislation.gov.uk/ukpga/2025/18",
     "verification": {
       "status": "unverified",
-      "sourceNote": "NOT CHECKED ONLINE: web-search budget exhausted before this item; legislation.gov.uk fetch-blocked. The chapter number (c. 18), s.103/Schedule 10 attribution and the 2026 commencement dates are taken from the project BLUEPRINT and working knowledge and must be confirmed against the Act and its commencement regulations (the blueprint cites SI 2026/82).",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceUrl": "https://www.legislation.gov.uk/ukpga/2025/18/contents",
+      "sourceNote": "SEARCH SNIPPET ONLY 2026-10-07 (not a fetched page; the official site is egress-blocked): legislation.gov.uk listings for the Act (ukpga/2025/18 contents, introduction and explanatory notes) and a commencement instrument SI 2025/904 surfaced; the search summary stated the Act 'is cited as 2025 c. 18 and received Royal Assent on 19 June 2025, with various commencement dates', confirming the chapter number. The s.103 / Schedule 10 attribution and the 5 February 2026 and 19 June 2026 commencement dates rest on the separate SI 2026/82 entry (duaa-2025-commencement-2026), itself unverified.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "OGL"
   },

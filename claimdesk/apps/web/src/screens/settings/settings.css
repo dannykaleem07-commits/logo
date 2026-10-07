@@ -76,3 +76,7 @@
   text-align: left;
   height: auto;
 }
+/* the Agents & AI card sits directly above the settings form: keep the page's card rhythm */
+.settings-page > .card {
+  margin-bottom: var(--s-4);
+}

@@ -1,0 +1,3625 @@
+{
+  "make": "Mercedes-Benz",
+  "slug": "mercedes-benz",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "a-class": {
+      "W168 (1997–2004; long-wheelbase L from 2001)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3605,
+            "widthMm": 1720,
+            "heightMm": 1575,
+            "wheelbaseMm": 2425,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Tall sandwich-floor mono-box; long-wheelbase (L) about 3775 mm, 2595 mm wheelbase."
+          }
+        }
+      },
+      "W169 (2004–2012)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3840,
+            "widthMm": 1765,
+            "heightMm": 1595,
+            "wheelbaseMm": 2570,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.15,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "5-door; 3-door same length."
+          }
+        }
+      },
+      "W176 (2012–2018; facelift 2015)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4290,
+            "widthMm": 1780,
+            "heightMm": 1435,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "W177 hatchback / V177 saloon (2018–present; saloon from 2019; facelift 2023 (automatic only))": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4420,
+            "widthMm": 1795,
+            "heightMm": 1440,
+            "wheelbaseMm": 2730,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "hatch",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "saloon": {
+            "lengthMm": 4550,
+            "widthMm": 1795,
+            "heightMm": 1445,
+            "wheelbaseMm": 2730,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "A-Class Saloon (V177)."
+          }
+        }
+      }
+    },
+    "vaneo": {
+      "W414 (2002–2005)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4190,
+            "widthMm": 1720,
+            "heightMm": 1800,
+            "wheelbaseMm": 2905,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Sliding rear side doors."
+          }
+        }
+      }
+    },
+    "b-class": {
+      "W245 (2005–2011)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4270,
+            "widthMm": 1780,
+            "heightMm": 1605,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.19,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "W246 (2012–2018; facelift 2015)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4360,
+            "widthMm": 1785,
+            "heightMm": 1555,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 17,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "W247 (2019–2026; facelift 2023; production ending 2026)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4420,
+            "widthMm": 1795,
+            "heightMm": 1560,
+            "wheelbaseMm": 2730,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 18,
+            "profile": "mpv",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "c-class": {
+      "W203 saloon / S203 estate / CL203 Sports Coupe (2000–2007; estate from 2001; Sports Coupe 2001-2008)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4525,
+            "widthMm": 1730,
+            "heightMm": 1425,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4540,
+            "widthMm": 1730,
+            "heightMm": 1465,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "hatchback": {
+            "lengthMm": 4345,
+            "widthMm": 1730,
+            "heightMm": 1405,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.4,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Sports Coupe (CL203) 3-door hatch."
+          }
+        }
+      },
+      "W204 saloon / S204 estate / C204 coupe (2007–2015; estate from 2008; coupe 2011-2015; facelift 2011)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4590,
+            "widthMm": 1770,
+            "heightMm": 1445,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4595,
+            "widthMm": 1770,
+            "heightMm": 1460,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "coupe": {
+            "lengthMm": 4590,
+            "widthMm": 1770,
+            "heightMm": 1405,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "W205 saloon / S205 estate / C205 coupe / A205 cabriolet (2014–2023; saloon/estate to 2021; coupe/cabriolet 2016-2023; facelift 2018)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4685,
+            "widthMm": 1810,
+            "heightMm": 1440,
+            "wheelbaseMm": 2840,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4700,
+            "widthMm": 1810,
+            "heightMm": 1455,
+            "wheelbaseMm": 2840,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "coupe": {
+            "lengthMm": 4685,
+            "widthMm": 1810,
+            "heightMm": 1405,
+            "wheelbaseMm": 2840,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4685,
+            "widthMm": 1810,
+            "heightMm": 1405,
+            "wheelbaseMm": 2840,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fabric roof."
+          }
+        }
+      },
+      "W206 saloon / S206 estate (2021–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4750,
+            "widthMm": 1820,
+            "heightMm": 1440,
+            "wheelbaseMm": 2865,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4750,
+            "widthMm": 1820,
+            "heightMm": 1455,
+            "wheelbaseMm": 2865,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "clc-class": {
+      "CL203 CLC (2008–2011)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4445,
+            "widthMm": 1730,
+            "heightMm": 1410,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.4,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "3-door sports hatch."
+          }
+        }
+      }
+    },
+    "cle": {
+      "C236 coupe / A236 cabriolet (2024–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4850,
+            "widthMm": 1860,
+            "heightMm": 1425,
+            "wheelbaseMm": 2865,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4850,
+            "widthMm": 1860,
+            "heightMm": 1440,
+            "wheelbaseMm": 2865,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fabric roof."
+          }
+        }
+      }
+    },
+    "clk-class": {
+      "C208 coupe / A208 cabriolet (1997–2003; coupe to 2002)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4565,
+            "widthMm": 1720,
+            "heightMm": 1370,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 16,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4565,
+            "widthMm": 1720,
+            "heightMm": 1385,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 16,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "C209 coupe / A209 cabriolet (2002–2010; cabriolet from 2003)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4640,
+            "widthMm": 1740,
+            "heightMm": 1415,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4640,
+            "widthMm": 1740,
+            "heightMm": 1415,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "cla": {
+      "C117 coupe / X117 Shooting Brake (2013–2019; Shooting Brake from 2015)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4630,
+            "widthMm": 1780,
+            "heightMm": 1430,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "fastback",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Four-door coupe with boot lid."
+          },
+          "shooting-brake": {
+            "lengthMm": 4630,
+            "widthMm": 1780,
+            "heightMm": 1435,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Shooting Brake (X117)."
+          }
+        }
+      },
+      "C118 coupe / X118 Shooting Brake (2019–2025)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4690,
+            "widthMm": 1830,
+            "heightMm": 1440,
+            "wheelbaseMm": 2730,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "fastback",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Four-door coupe with boot lid."
+          },
+          "shooting-brake": {
+            "lengthMm": 4690,
+            "widthMm": 1830,
+            "heightMm": 1440,
+            "wheelbaseMm": 2730,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Shooting Brake (X118)."
+          }
+        }
+      },
+      "C178 (CLA with EQ Technology / hybrid) (2025–present; electric from 2025; 48V hybrid and Shooting Brake from 2026)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4725,
+            "widthMm": 1855,
+            "heightMm": 1470,
+            "wheelbaseMm": 2790,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "fastback",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Electric has illuminated closed grille panel; hybrid has open grille."
+          },
+          "shooting-brake": {
+            "lengthMm": 4725,
+            "widthMm": 1855,
+            "heightMm": 1470,
+            "wheelbaseMm": 2790,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Shooting Brake; dimensions provisional."
+          }
+        }
+      }
+    },
+    "cls-class": {
+      "C219 (2004–2010)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4915,
+            "widthMm": 1875,
+            "heightMm": 1405,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Four-door coupe, frameless doors."
+          }
+        }
+      },
+      "C218 / X218 Shooting Brake (2011–2017; Shooting Brake from 2012)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4940,
+            "widthMm": 1880,
+            "heightMm": 1415,
+            "wheelbaseMm": 2875,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 18,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Four-door coupe, frameless doors."
+          },
+          "shooting-brake": {
+            "lengthMm": 4955,
+            "widthMm": 1880,
+            "heightMm": 1415,
+            "wheelbaseMm": 2875,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Shooting Brake (X218)."
+          }
+        }
+      },
+      "C257 (2018–2023)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4990,
+            "widthMm": 1890,
+            "heightMm": 1435,
+            "wheelbaseMm": 2940,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 19,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Four-door coupe, frameless doors."
+          }
+        }
+      }
+    },
+    "e-class": {
+      "W210 saloon / S210 estate (1995–2003; saloon to 2002)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4795,
+            "widthMm": 1800,
+            "heightMm": 1440,
+            "wheelbaseMm": 2835,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4815,
+            "widthMm": 1800,
+            "heightMm": 1500,
+            "wheelbaseMm": 2835,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "W211 saloon / S211 estate (2002–2009; estate from 2003; facelift 2006)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4820,
+            "widthMm": 1820,
+            "heightMm": 1450,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4850,
+            "widthMm": 1820,
+            "heightMm": 1495,
+            "wheelbaseMm": 2855,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "W212 saloon / S212 estate / C207 coupe / A207 cabriolet (2009–2017; saloon/estate to 2016; coupe/cabriolet to 2017; facelift 2013)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4870,
+            "widthMm": 1855,
+            "heightMm": 1470,
+            "wheelbaseMm": 2875,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4895,
+            "widthMm": 1855,
+            "heightMm": 1475,
+            "wheelbaseMm": 2875,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "coupe": {
+            "lengthMm": 4700,
+            "widthMm": 1785,
+            "heightMm": 1400,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "C207 coupe (C-Class based platform)."
+          },
+          "convertible": {
+            "lengthMm": 4700,
+            "widthMm": 1785,
+            "heightMm": 1400,
+            "wheelbaseMm": 2760,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "A207 cabriolet, fabric roof."
+          }
+        }
+      },
+      "W213 saloon / S213 estate / C238 coupe / A238 cabriolet / All-Terrain (2016–2023; coupe/cabriolet from 2017; facelift 2020)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4925,
+            "widthMm": 1850,
+            "heightMm": 1470,
+            "wheelbaseMm": 2940,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4935,
+            "widthMm": 1850,
+            "heightMm": 1475,
+            "wheelbaseMm": 2940,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "All-Terrain about 1495 mm high."
+          },
+          "coupe": {
+            "lengthMm": 4825,
+            "widthMm": 1860,
+            "heightMm": 1430,
+            "wheelbaseMm": 2875,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4825,
+            "widthMm": 1860,
+            "heightMm": 1425,
+            "wheelbaseMm": 2875,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fabric roof."
+          }
+        }
+      },
+      "W214 saloon / S214 estate / All-Terrain (2023–present; estate and All-Terrain from 2024)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4950,
+            "widthMm": 1880,
+            "heightMm": 1470,
+            "wheelbaseMm": 2960,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4950,
+            "widthMm": 1880,
+            "heightMm": 1470,
+            "wheelbaseMm": 2960,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "All-Terrain slightly taller."
+          }
+        }
+      }
+    },
+    "cl-class": {
+      "C215 (1999–2006)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4995,
+            "widthMm": 1855,
+            "heightMm": 1400,
+            "wheelbaseMm": 2885,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Pillarless coupe."
+          }
+        }
+      },
+      "C216 (2006–2014)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 5065,
+            "widthMm": 1870,
+            "heightMm": 1420,
+            "wheelbaseMm": 2955,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Pillarless coupe."
+          }
+        }
+      }
+    },
+    "s-class": {
+      "W220 (1998–2005)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5040,
+            "widthMm": 1855,
+            "heightMm": 1445,
+            "wheelbaseMm": 2965,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Long (L) about 5160 mm, 3085 mm wheelbase."
+          }
+        }
+      },
+      "W221 (2005–2013)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5075,
+            "widthMm": 1870,
+            "heightMm": 1475,
+            "wheelbaseMm": 3035,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long (L) about 5205 mm, 3165 mm wheelbase."
+          }
+        }
+      },
+      "W222 (2013–2020; facelift 2017)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5250,
+            "widthMm": 1900,
+            "heightMm": 1495,
+            "wheelbaseMm": 3165,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long (L) figures, the usual UK version; standard about 5115 mm, 3035 mm wheelbase."
+          }
+        }
+      },
+      "C217 S-Class Coupe / A217 S-Class Cabriolet (2014–2020; Cabriolet from 2016)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 5025,
+            "widthMm": 1900,
+            "heightMm": 1410,
+            "wheelbaseMm": 2945,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 5025,
+            "widthMm": 1900,
+            "heightMm": 1420,
+            "wheelbaseMm": 2945,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fabric roof."
+          }
+        }
+      },
+      "W223 (2021–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5290,
+            "widthMm": 1955,
+            "heightMm": 1505,
+            "wheelbaseMm": 3215,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long (L) figures, the usual UK version; standard about 5180 mm, 3105 mm wheelbase."
+          }
+        }
+      }
+    },
+    "r-class": {
+      "W251 (2006–2013; withdrawn from UK 2013)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 5155,
+            "widthMm": 1920,
+            "heightMm": 1660,
+            "wheelbaseMm": 3215,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 18,
+            "profile": "mpv",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long wheelbase; short version about 4920 mm, 2980 mm wheelbase. Hinged rear doors."
+          }
+        }
+      }
+    },
+    "slk-class": {
+      "R170 (1996–2004)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3995,
+            "widthMm": 1715,
+            "heightMm": 1285,
+            "wheelbaseMm": 2400,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Folding hard top."
+          }
+        }
+      },
+      "R171 (2004–2011)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4090,
+            "widthMm": 1775,
+            "heightMm": 1300,
+            "wheelbaseMm": 2430,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Folding hard top; F1-style nose."
+          }
+        }
+      },
+      "R172 (2011–2016)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4135,
+            "widthMm": 1815,
+            "heightMm": 1300,
+            "wheelbaseMm": 2430,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Folding hard top."
+          }
+        }
+      }
+    },
+    "slc-class": {
+      "R172 SLC (2016–2020)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4145,
+            "widthMm": 1810,
+            "heightMm": 1305,
+            "wheelbaseMm": 2430,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Folding hard top."
+          }
+        }
+      }
+    },
+    "sl": {
+      "R129 (1989–2001)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4500,
+            "widthMm": 1810,
+            "heightMm": 1290,
+            "wheelbaseMm": 2515,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fabric roof with detachable hard top."
+          }
+        }
+      },
+      "R230 (2001–2011)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4535,
+            "widthMm": 1825,
+            "heightMm": 1300,
+            "wheelbaseMm": 2560,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Folding hard top."
+          }
+        }
+      },
+      "R231 (2012–2020; facelift 2016)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4610,
+            "widthMm": 1875,
+            "heightMm": 1315,
+            "wheelbaseMm": 2585,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Folding hard top."
+          }
+        }
+      },
+      "R232 Mercedes-AMG SL (2022–present)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4705,
+            "widthMm": 1915,
+            "heightMm": 1355,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "roadster",
+            "bonnetRatio": 0.29,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Fabric roof; 2+2."
+          }
+        }
+      }
+    },
+    "slr-mclaren": {
+      "C199 coupe / R199 roadster (2004–2009; roadster from 2007)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4655,
+            "widthMm": 1910,
+            "heightMm": 1260,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.4,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Front-mid engine; long bonnet; scissor-swing doors."
+          },
+          "roadster": {
+            "lengthMm": 4655,
+            "widthMm": 1910,
+            "heightMm": 1260,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.4,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fabric roof; scissor-swing doors."
+          }
+        }
+      }
+    },
+    "sls-amg": {
+      "C197 coupe / R197 roadster (2010–2014; roadster from 2011)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4640,
+            "widthMm": 1940,
+            "heightMm": 1260,
+            "wheelbaseMm": 2680,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.4,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Gullwing doors."
+          },
+          "roadster": {
+            "lengthMm": 4640,
+            "widthMm": 1940,
+            "heightMm": 1250,
+            "wheelbaseMm": 2680,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.4,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Fabric roof."
+          }
+        }
+      }
+    },
+    "amg-gt": {
+      "C190 coupe / R190 roadster (2015–2021; roadster from 2017)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4545,
+            "widthMm": 1940,
+            "heightMm": 1290,
+            "wheelbaseMm": 2630,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Front-mid engine; very long bonnet."
+          },
+          "roadster": {
+            "lengthMm": 4545,
+            "widthMm": 1940,
+            "heightMm": 1260,
+            "wheelbaseMm": 2630,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.38,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Fabric roof."
+          }
+        }
+      },
+      "C192 coupe (2024–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4730,
+            "widthMm": 1985,
+            "heightMm": 1355,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "2+2 coupe."
+          }
+        }
+      }
+    },
+    "amg-gt-4-door-coupe": {
+      "X290 (2019–present)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 5055,
+            "widthMm": 1955,
+            "heightMm": 1445,
+            "wheelbaseMm": 2950,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 20,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "gla": {
+      "X156 (2014–2020; facelift 2017)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4415,
+            "widthMm": 1805,
+            "heightMm": 1495,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 18,
+            "profile": "hatch",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Raised A-Class based crossover."
+          }
+        }
+      },
+      "H247 (2020–present; facelift 2023)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4410,
+            "widthMm": 1835,
+            "heightMm": 1615,
+            "wheelbaseMm": 2730,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "glb": {
+      "X247 (2020–2025; facelift 2023)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4635,
+            "widthMm": 1835,
+            "heightMm": 1660,
+            "wheelbaseMm": 2830,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Optional seven seats."
+          }
+        }
+      },
+      "X248 (GLB with EQ Technology) (2026–present; UK sales from 2026; hybrid versions to follow)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4730,
+            "widthMm": 1860,
+            "heightMm": 1685,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 19,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Electric illuminated grille panel; dimensions provisional."
+          }
+        }
+      }
+    },
+    "glc": {
+      "X253 / C253 Coupe (2015–2023; SUV to 2022; Coupe 2016-2023; facelift 2019)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4660,
+            "widthMm": 1890,
+            "heightMm": 1640,
+            "wheelbaseMm": 2875,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "SUV figures; GLC Coupe (C253) about 4730 mm long and 1600 mm high with a sloping roof."
+          }
+        }
+      },
+      "X254 / C254 Coupe (2022–present; Coupe from 2023)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4715,
+            "widthMm": 1890,
+            "heightMm": 1640,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "SUV figures; GLC Coupe (C254) about 4765 mm long and 1605 mm high with a sloping roof."
+          }
+        }
+      },
+      "GLC with EQ Technology (2026–present; UK deliveries from 2026)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4845,
+            "widthMm": 1915,
+            "heightMm": 1645,
+            "wheelbaseMm": 2970,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Electric; large illuminated grille panel. Dimensions provisional."
+          }
+        }
+      }
+    },
+    "m-class": {
+      "W163 (1998–2005)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4590,
+            "widthMm": 1835,
+            "heightMm": 1780,
+            "wheelbaseMm": 2820,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "W164 (2005–2011)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4780,
+            "widthMm": 1910,
+            "heightMm": 1815,
+            "wheelbaseMm": 2915,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "W166 (2011–2015)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4805,
+            "widthMm": 1925,
+            "heightMm": 1795,
+            "wheelbaseMm": 2915,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "gle": {
+      "W166 / C292 Coupe (2015–2019)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4820,
+            "widthMm": 1935,
+            "heightMm": 1795,
+            "wheelbaseMm": 2915,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "SUV figures; GLE Coupe (C292) about 4900 mm long and 1730 mm high."
+          }
+        }
+      },
+      "W167 / C167 Coupe (2019–present; Coupe from 2020; facelift 2023)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4925,
+            "widthMm": 1945,
+            "heightMm": 1770,
+            "wheelbaseMm": 2995,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "SUV figures; GLE Coupe (C167) about 4940 mm long and 1720 mm high."
+          }
+        }
+      }
+    },
+    "gl-class": {
+      "X164 (2006–2012)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5090,
+            "widthMm": 1920,
+            "heightMm": 1840,
+            "wheelbaseMm": 3075,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 19,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seven-seat."
+          }
+        }
+      },
+      "X166 (2012–2015)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5120,
+            "widthMm": 1935,
+            "heightMm": 1850,
+            "wheelbaseMm": 3075,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 20,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seven-seat."
+          }
+        }
+      }
+    },
+    "gls": {
+      "X166 GLS (2016–2019)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5130,
+            "widthMm": 1935,
+            "heightMm": 1850,
+            "wheelbaseMm": 3075,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 20,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seven-seat."
+          }
+        }
+      },
+      "X167 (2019–present; facelift 2023)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5210,
+            "widthMm": 1955,
+            "heightMm": 1825,
+            "wheelbaseMm": 3135,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 21,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seven-seat."
+          }
+        }
+      }
+    },
+    "g-class": {
+      "W463 (UK right-hand drive) (2011–2018; factory RHD reintroduced c.2011)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4765,
+            "widthMm": 1860,
+            "heightMm": 1940,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 18,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.0,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Length includes tailgate-mounted spare; side-hinged rear door."
+          }
+        }
+      },
+      "W463 second generation / W465 (2018–present; update 2024 incl. electric G580)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4865,
+            "widthMm": 1930,
+            "heightMm": 1975,
+            "wheelbaseMm": 2890,
+            "groundClearanceMm": 240,
+            "wheelDiameterIn": 20,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.0,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Length includes tailgate-mounted spare; side-hinged rear door."
+          }
+        }
+      }
+    },
+    "eqa": {
+      "H243 (2021–present; facelift 2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4465,
+            "widthMm": 1835,
+            "heightMm": 1625,
+            "wheelbaseMm": 2730,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "eqb": {
+      "X243 (2022–present; facelift 2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4685,
+            "widthMm": 1835,
+            "heightMm": 1670,
+            "wheelbaseMm": 2830,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 19,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Optional seven seats."
+          }
+        }
+      }
+    },
+    "eqc": {
+      "N293 (2019–2023)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4760,
+            "widthMm": 1885,
+            "heightMm": 1625,
+            "wheelbaseMm": 2875,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "eqe": {
+      "V295 (2022–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4945,
+            "widthMm": 1960,
+            "heightMm": 1510,
+            "wheelbaseMm": 3120,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 20,
+            "profile": "fastback",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Cab-forward \"one-bow\" electric saloon with boot lid."
+          }
+        }
+      }
+    },
+    "eqe-suv": {
+      "X294 (2023–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4865,
+            "widthMm": 1940,
+            "heightMm": 1685,
+            "wheelbaseMm": 3030,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "eqs": {
+      "V297 (2021–present; facelift 2024)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 5215,
+            "widthMm": 1925,
+            "heightMm": 1510,
+            "wheelbaseMm": 3210,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 20,
+            "profile": "fastback",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Cab-forward \"one-bow\" electric liftback."
+          }
+        }
+      }
+    },
+    "eqs-suv": {
+      "X296 (2022–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5125,
+            "widthMm": 1960,
+            "heightMm": 1720,
+            "wheelbaseMm": 3210,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 21,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Seven-seat option."
+          }
+        }
+      }
+    },
+    "v-class": {
+      "W638 V-Class (1996–2003)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4660,
+            "widthMm": 1880,
+            "heightMm": 1885,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "W447 (2015–present; facelifts 2019 and 2024; Long and Extra Long)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 5140,
+            "widthMm": 1930,
+            "heightMm": 1880,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 18,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long figures; Compact about 4895 mm, Extra Long about 5370 mm."
+          }
+        }
+      }
+    },
+    "viano": {
+      "W639 (2004–2014; facelift 2010; Compact, Long and Extra Long)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 5010,
+            "widthMm": 1900,
+            "heightMm": 1875,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long figures; Compact about 4765 mm, Extra Long about 5225 mm."
+          }
+        }
+      }
+    },
+    "eqv": {
+      "W447 electric (2020–present)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 5140,
+            "widthMm": 1930,
+            "heightMm": 1900,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 18,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long figures; Extra Long about 5370 mm."
+          }
+        }
+      }
+    },
+    "t-class": {
+      "W420 (2022–present)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4500,
+            "widthMm": 1860,
+            "heightMm": 1810,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Renault Kangoo based."
+          }
+        }
+      }
+    },
+    "eqt": {
+      "W420 electric (2023–present)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4500,
+            "widthMm": 1860,
+            "heightMm": 1830,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Renault Kangoo E-Tech based."
+          }
+        }
+      }
+    },
+    "marco-polo": {
+      "Viano Marco Polo (W639) (2004–2014)": {
+        "bodies": {
+          "camper": {
+            "lengthMm": 5010,
+            "widthMm": 1905,
+            "heightMm": 1980,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Pop-top camper (roof lowered)."
+          }
+        }
+      },
+      "V-Class Marco Polo (W447) (2015–present; V300d only from 2024)": {
+        "bodies": {
+          "camper": {
+            "lengthMm": 5140,
+            "widthMm": 1930,
+            "heightMm": 1980,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 18,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Pop-top camper (roof lowered)."
+          }
+        }
+      }
+    },
+    "vito-tourer": {
+      "W639 Vito Traveliner (2003–2014)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 5010,
+            "widthMm": 1905,
+            "heightMm": 1905,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long figures; Compact about 4750 mm."
+          }
+        }
+      },
+      "W447 Vito Tourer (2014–present; facelifts 2020 and 2024)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 5140,
+            "widthMm": 1930,
+            "heightMm": 1910,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long figures; Compact about 4895 mm, Extra Long about 5370 mm."
+          }
+        }
+      }
+    },
+    "vito": {
+      "W638 (1996–2003)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4660,
+            "widthMm": 1880,
+            "heightMm": 1880,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide"
+          },
+          "crew-van": {
+            "lengthMm": 4660,
+            "widthMm": 1880,
+            "heightMm": 1880,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Dualiner crew van."
+          }
+        }
+      },
+      "W639 (2003–2014; facelift 2010)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5010,
+            "widthMm": 1905,
+            "heightMm": 1910,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long figures; Compact about 4750 mm, Extra Long about 5225 mm."
+          },
+          "crew-van": {
+            "lengthMm": 5010,
+            "widthMm": 1905,
+            "heightMm": 1910,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Dualiner crew van, Long."
+          },
+          "chassis-cab": {
+            "lengthMm": 5225,
+            "widthMm": 1905,
+            "heightMm": 1900,
+            "wheelbaseMm": 3430,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.12,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Rare chassis cab; approximate."
+          }
+        }
+      },
+      "W447 (2014–present; facelifts 2020 and 2024; eVito from 2019)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5140,
+            "widthMm": 1930,
+            "heightMm": 1910,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long figures; Compact about 4895 mm, Extra Long about 5370 mm."
+          },
+          "crew-van": {
+            "lengthMm": 5140,
+            "widthMm": 1930,
+            "heightMm": 1910,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Dualiner crew van, Long."
+          }
+        }
+      }
+    },
+    "sprinter": {
+      "T1N (901-905) (1995–2006)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5640,
+            "widthMm": 1935,
+            "heightMm": 2575,
+            "wheelbaseMm": 3550,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 15,
+            "profile": "van-high",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "MWB high-roof figures; SWB about 4925 mm long; LWB about 6590 mm; standard roof about 2400 mm."
+          },
+          "crew-van": {
+            "lengthMm": 5640,
+            "widthMm": 1935,
+            "heightMm": 2575,
+            "wheelbaseMm": 3550,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 15,
+            "profile": "van-high",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Crew van, MWB high roof."
+          },
+          "chassis-cab": {
+            "lengthMm": 5600,
+            "widthMm": 1935,
+            "heightMm": 2250,
+            "wheelbaseMm": 3550,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 15,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.25,
+            "frontOverhangRatio": 0.12,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "MWB single-cab chassis; double cab also offered."
+          }
+        }
+      },
+      "NCV3 (906) (2006–2018; facelift 2013)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5910,
+            "widthMm": 1995,
+            "heightMm": 2720,
+            "wheelbaseMm": 3665,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "MWB high-roof figures; standard roof about 2435 mm; LWB about 6945 mm long, 4325 mm wheelbase."
+          },
+          "crew-van": {
+            "lengthMm": 5910,
+            "widthMm": 1995,
+            "heightMm": 2720,
+            "wheelbaseMm": 3665,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Crew van, MWB high roof."
+          },
+          "chassis-cab": {
+            "lengthMm": 5915,
+            "widthMm": 1995,
+            "heightMm": 2280,
+            "wheelbaseMm": 3665,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.27,
+            "frontOverhangRatio": 0.11,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "MWB single-cab chassis; double cab also offered."
+          }
+        }
+      },
+      "VS30 (907/910) (2018–present; 2.0 OM654 diesels from 2023; new eSprinter 2024)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5930,
+            "widthMm": 2020,
+            "heightMm": 2700,
+            "wheelbaseMm": 3665,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "MWB (L2) high-roof figures; LWB (L3) about 6965 mm long, 4325 mm wheelbase."
+          },
+          "crew-van": {
+            "lengthMm": 5930,
+            "widthMm": 2020,
+            "heightMm": 2700,
+            "wheelbaseMm": 3665,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Crew van, MWB high roof."
+          },
+          "chassis-cab": {
+            "lengthMm": 5990,
+            "widthMm": 2020,
+            "heightMm": 2300,
+            "wheelbaseMm": 3665,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.27,
+            "frontOverhangRatio": 0.12,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "MWB single-cab chassis; double cab also offered."
+          }
+        }
+      }
+    },
+    "sprinter-minibus": {
+      "T1N Traveliner (2000–2006)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 6590,
+            "widthMm": 1935,
+            "heightMm": 2650,
+            "wheelbaseMm": 4025,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 15,
+            "profile": "minibus",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.26,
+            "frontOverhangRatio": 0.13,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "LWB high-roof minibus."
+          }
+        }
+      },
+      "NCV3 Traveliner / Transfer (2006–2018)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 6945,
+            "widthMm": 1995,
+            "heightMm": 2720,
+            "wheelbaseMm": 4325,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "minibus",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.26,
+            "frontOverhangRatio": 0.12,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "LWB high-roof minibus."
+          }
+        }
+      },
+      "VS30 Tourer / Transfer (2018–present)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 6970,
+            "widthMm": 2020,
+            "heightMm": 2740,
+            "wheelbaseMm": 4325,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "minibus",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.25,
+            "frontOverhangRatio": 0.13,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "LWB high-roof minibus."
+          }
+        }
+      }
+    },
+    "citan": {
+      "W415 (2012–2021)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4320,
+            "widthMm": 1830,
+            "heightMm": 1810,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Long figures (Renault Kangoo twin); Compact 3940 mm, Extra Long 4705 mm."
+          },
+          "crew-van": {
+            "lengthMm": 4705,
+            "widthMm": 1830,
+            "heightMm": 1840,
+            "wheelbaseMm": 3080,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Extra Long crew van."
+          },
+          "mpv": {
+            "lengthMm": 4320,
+            "widthMm": 1830,
+            "heightMm": 1810,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Citan Kombi / Tourer."
+          }
+        }
+      },
+      "W420 (2021–present; eCitan from 2022)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4500,
+            "widthMm": 1860,
+            "heightMm": 1810,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Standard length (Renault Kangoo based); long about 4910 mm."
+          },
+          "crew-van": {
+            "lengthMm": 4500,
+            "widthMm": 1860,
+            "heightMm": 1810,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Mixto crew van."
+          }
+        }
+      }
+    },
+    "x-class": {
+      "W470 (2018–2020)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5340,
+            "widthMm": 1920,
+            "heightMm": 1820,
+            "wheelbaseMm": 3150,
+            "groundClearanceMm": 220,
+            "wheelDiameterIn": 18,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab (Nissan Navara based)."
+          }
+        }
+      }
+    }
+  }
+}

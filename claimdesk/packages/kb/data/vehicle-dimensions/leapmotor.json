@@ -1,0 +1,96 @@
+{
+  "make": "Leapmotor",
+  "slug": "leapmotor",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "t03": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3620,
+            "widthMm": 1650,
+            "heightMm": 1575,
+            "wheelbaseMm": 2400,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.142,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Small electric city car."
+          }
+        }
+      }
+    },
+    "b10": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4515,
+            "widthMm": 1885,
+            "heightMm": 1655,
+            "wheelbaseMm": 2735,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.185,
+            "frontOverhangRatio": 0.209,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "c10": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4740,
+            "widthMm": 1900,
+            "heightMm": 1680,
+            "wheelbaseMm": 2825,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.214,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Full-width front light bar; REEV version shares the body."
+          }
+        }
+      }
+    }
+  }
+}

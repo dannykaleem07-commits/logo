@@ -1,0 +1,468 @@
+{
+  "make": "Rolls-Royce",
+  "slug": "rolls-royce",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "silver-seraph": {
+      "Silver Seraph / Park Ward (1998–2002)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5390,
+            "widthMm": 1930,
+            "heightMm": 1515,
+            "wheelbaseMm": 3115,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.31,
+            "rearOverhangRatio": 0.224,
+            "frontOverhangRatio": 0.198,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.2,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright",
+            "note": "Park Ward long-wheelbase about 250 mm longer."
+          }
+        }
+      }
+    },
+    "corniche": {
+      "Corniche (2000–2002)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 5400,
+            "widthMm": 2060,
+            "heightMm": 1510,
+            "wheelbaseMm": 3060,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.217,
+            "frontOverhangRatio": 0.217,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "phantom": {
+      "Phantom VII (2003–2012)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5835,
+            "widthMm": 1990,
+            "heightMm": 1630,
+            "wheelbaseMm": 3570,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 21,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.206,
+            "frontOverhangRatio": 0.182,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.15,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "large-upright",
+            "note": "Rear-hinged rear doors; small round main lamps below slim running lamps. Extended wheelbase about 250 mm longer."
+          },
+          "convertible": {
+            "lengthMm": 5610,
+            "widthMm": 1990,
+            "heightMm": 1580,
+            "wheelbaseMm": 3320,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 21,
+            "profile": "convertible",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.204,
+            "frontOverhangRatio": 0.204,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "large-upright",
+            "note": "Phantom Drophead Coupe; rear-hinged doors."
+          },
+          "coupe": {
+            "lengthMm": 5610,
+            "widthMm": 1990,
+            "heightMm": 1600,
+            "wheelbaseMm": 3320,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.196,
+            "frontOverhangRatio": 0.212,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.25,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "large-upright",
+            "note": "Phantom Coupe; rear-hinged doors."
+          }
+        }
+      },
+      "Phantom VII Series II (2012–2017)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5835,
+            "widthMm": 1990,
+            "heightMm": 1640,
+            "wheelbaseMm": 3570,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 21,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.206,
+            "frontOverhangRatio": 0.182,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.15,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Series II rectangular LED lamps; rear-hinged rear doors."
+          },
+          "convertible": {
+            "lengthMm": 5610,
+            "widthMm": 1990,
+            "heightMm": 1580,
+            "wheelbaseMm": 3320,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 21,
+            "profile": "convertible",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.204,
+            "frontOverhangRatio": 0.204,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Phantom Drophead Coupe Series II."
+          },
+          "coupe": {
+            "lengthMm": 5610,
+            "widthMm": 1990,
+            "heightMm": 1600,
+            "wheelbaseMm": 3320,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.196,
+            "frontOverhangRatio": 0.212,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.25,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Phantom Coupe Series II."
+          }
+        }
+      },
+      "Phantom VIII (2018–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5760,
+            "widthMm": 2020,
+            "heightMm": 1645,
+            "wheelbaseMm": 3550,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 22,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.203,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.15,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Rear-hinged rear doors; extended wheelbase about 220 mm longer."
+          }
+        }
+      }
+    },
+    "ghost": {
+      "Ghost Mk1 (2010–2014)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5400,
+            "widthMm": 1950,
+            "heightMm": 1550,
+            "wheelbaseMm": 3295,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.207,
+            "frontOverhangRatio": 0.183,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.2,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Rear-hinged rear doors."
+          }
+        }
+      },
+      "Ghost Mk1 Series II (2014–2020)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5400,
+            "widthMm": 1950,
+            "heightMm": 1550,
+            "wheelbaseMm": 3295,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 20,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.207,
+            "frontOverhangRatio": 0.183,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.2,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Rear-hinged rear doors."
+          }
+        }
+      },
+      "Ghost Mk2 (2020–present)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5545,
+            "widthMm": 1980,
+            "heightMm": 1570,
+            "wheelbaseMm": 3295,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 21,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.215,
+            "frontOverhangRatio": 0.191,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.2,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Rear-hinged rear doors; illuminated grille."
+          }
+        }
+      }
+    },
+    "wraith": {
+      "Wraith (2013–2023)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 5285,
+            "widthMm": 1945,
+            "heightMm": 1505,
+            "wheelbaseMm": 3110,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 21,
+            "profile": "coupe",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.198,
+            "frontOverhangRatio": 0.214,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Fastback coupe with rear-hinged doors."
+          }
+        }
+      }
+    },
+    "dawn": {
+      "Dawn (2016–2023)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 5285,
+            "widthMm": 1945,
+            "heightMm": 1500,
+            "wheelbaseMm": 3110,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 21,
+            "profile": "convertible",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.206,
+            "frontOverhangRatio": 0.206,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Rear-hinged doors."
+          }
+        }
+      }
+    },
+    "cullinan": {
+      "Cullinan (2018–2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5340,
+            "widthMm": 2000,
+            "heightMm": 1835,
+            "wheelbaseMm": 3295,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 22,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.184,
+            "frontOverhangRatio": 0.199,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Rear-hinged rear doors; split tailgate."
+          }
+        }
+      },
+      "Cullinan Series II (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5355,
+            "widthMm": 2000,
+            "heightMm": 1835,
+            "wheelbaseMm": 3295,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 23,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.185,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Series II with revised lamp graphics; rear-hinged rear doors."
+          }
+        }
+      }
+    },
+    "spectre": {
+      "Spectre (2023–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 5475,
+            "widthMm": 2015,
+            "heightMm": 1575,
+            "wheelbaseMm": 3210,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 23,
+            "profile": "coupe",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.199,
+            "frontOverhangRatio": 0.215,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "large-upright",
+            "note": "Electric fastback coupe; split headlamps; rear-hinged doors."
+          }
+        }
+      }
+    }
+  }
+}

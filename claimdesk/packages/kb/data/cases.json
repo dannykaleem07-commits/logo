@@ -153,9 +153,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2011/1384.html",
-      "sourceNote": "Not fetched (egress proxy). Search snippets from BAILII indices and later judgments (Conlon v RSA [2015] EWCA Civ 92; Ali v HSF [2024] EWCA Civ 1479) confirmed 'Pattni v First Leicester Buses Ltd [2011] EWCA Civ 1384, [2012] RTR 17', judgment date 24 November 2011, and Aikens LJ's loss-of-use guidance at [73]. That Bent is conjoined is confirmed by the blueprint via Stevens v Equity [2015] EWCA Civ 93 at [2]; the [2012] Lloyd's Rep IR 577 cite is from the blueprint, not seen. URL follows the BAILII pattern.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "Not fetched (egress proxy). Search snippets from BAILII indices and later judgments (Conlon v RSA [2015] EWCA Civ 92; Ali v HSF [2024] EWCA Civ 1479) confirmed 'Pattni v First Leicester Buses Ltd [2011] EWCA Civ 1384, [2012] RTR 17', judgment date 24 November 2011, and Aikens LJ's loss-of-use guidance at [73]. That Bent is conjoined is confirmed by the blueprint via Stevens v Equity [2015] EWCA Civ 93 at [2]; the [2012] Lloyd's Rep IR 577 cite is from the blueprint, not seen. URL follows the BAILII pattern. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): A search summary of a Law Journals case note stated 'On 24 November 2011, the Court of Appeal handed down judgments in the cases of Pattni v. First Leicester Buses Limited and Bent v. Highways and Utilities Construction and Allianz Insurance: [2011] EWCA Civ 1384', confirming the conjoined judgment. Do not confuse it with a separate, later Find Case Law entry 'Bent v Highways and Utilities Construction & Anor' [2011] EWCA Civ 1539 (13 December 2011; Pill, Moore-Bick and Aikens LJJ, on appeal from Cambridge County Court), apparently a consequential/costs judgment. The '(No 2)' label in the title is not confirmed by any snippet.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "link_only"
   },
@@ -243,9 +243,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2017/144.html",
-      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'McBride v UK Insurance Ltd (Rev 1) [2017] EWCA Civ 144 (15 March 2017)' confirmed the citation and date. That Clayton v EUI Ltd is the conjoined appeal, and the nil-excess / 7-day-rate holdings, are from working knowledge and the blueprint; check against the judgment.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'McBride v UK Insurance Ltd (Rev 1) [2017] EWCA Civ 144 (15 March 2017)' confirmed the citation and date. That Clayton v EUI Ltd is the conjoined appeal, and the nil-excess / 7-day-rate holdings, are from working knowledge and the blueprint; check against the judgment. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): Parklane Plowden's page titled 'McBride & Clayton credit hire rate case: Court of Appeal finds in favour of the Insurers' surfaced, corroborating that Clayton v EUI was the conjoined appeal and that the insurers succeeded. The [2017] RTR 27 report cite was not seen in any snippet.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "link_only"
   },
@@ -360,16 +360,16 @@
     "type": "case",
     "citation": "Zurich Insurance plc v Umerji [2014] EWCA Civ 357",
     "title": "Zurich Insurance plc v Umerji",
-    "principle": "Underhill LJ (25 March 2014) held that reasonableness of hire is assessed by need, rate and duration, and that a claimant who relies on impecuniosity must plead and prove it (para 37); a claimant debarred from relying on impecuniosity after failing to give disclosure must be treated as able to fund a replacement for his written-off car, so a 591-day hire costing about £95,130 was cut to a reasonable period after he knew it was a write-off. On rate, because the insurer adduced no basic hire rate evidence the credit hire rate was recoverable for the allowed period. CCGUK uses it both ways: prove impecuniosity properly, and hold insurers to their burden of producing BHR evidence.",
+    "principle": "Underhill LJ (with Moses LJ and Sir Robin Jacob, 25 March 2014) held that reasonableness of hire is assessed by need, rate and duration, and that a claimant who relies on impecuniosity must plead and prove it (para 37); a claimant debarred from relying on impecuniosity after failing to give disclosure must be treated as able to fund a replacement for his written-off car, so a 591-day hire costing £95,130.14 (about £161 a day) was cut to a reasonable period after he knew it was a write-off. On rate, because the insurer adduced no basic hire rate evidence the credit hire rate was recoverable for the allowed period. CCGUK uses it both ways: prove impecuniosity properly, and hold insurers to their burden of producing BHR evidence.",
     "tags": ["credit hire", "impecuniosity", "plead and prove", "debarring order", "period", "total loss", "591 days", "BHR evidence burden", "Underhill LJ"],
     "topics": ["credit_hire", "impecuniosity", "period", "bhr"],
     "url": "https://www.bailii.org/ew/cases/EWCA/Civ/2014/357.html",
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2014/357.html",
-      "sourceNote": "Not fetched (egress proxy). Search snippets from BAILII indices and from Diriye v Bojaj [2020] EWCA Civ 1400 confirmed the citation, date (25 March 2014), the 'need, rate and duration' framework and Underhill LJ's para 37 ('clearly right that a claimant who needs to rely on his impecuniousness... should plead and prove it'). The 591-day/£95,130 figures are from the blueprint and the BHR-burden point from working knowledge. URL follows the BAILII pattern; not displayed in results.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "Not fetched (egress proxy). Search snippets from BAILII indices and from Diriye v Bojaj [2020] EWCA Civ 1400 confirmed the citation, date (25 March 2014), the 'need, rate and duration' framework and Underhill LJ's para 37 ('clearly right that a claimant who needs to rely on his impecuniousness... should plead and prove it'). The 591-day/£95,130 figures are from the blueprint and the BHR-burden point from working knowledge. URL follows the BAILII pattern; not displayed in results. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): A Find Case Law listing (https://caselaw.nationalarchives.gov.uk/ewca/civ/2014/357, title 'Zurich Insurance Plc v Umerji') surfaced; the search summary gave: 25 March 2014; Moses LJ, Underhill LJ and Sir Robin Jacob; Mercedes worth about £8,000 written off in an accident on 19 October 2010; hire extended to 591 days; 'total rental was £95,130.14 (representing a rate of about £161 per day)'. The 591-day / £95,130 figures previously taken from the blueprint are therefore corroborated (i-law and Keoghs listings agree). The BHR-burden point remains working knowledge.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "link_only"
   },
@@ -403,9 +403,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.bailii.org/ew/cases/EWCA/Civ/2025/733.html",
-      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'Tescher v Direct Accident Management Ltd [2025] EWCA Civ 733 (13 June 2025)' confirmed the citation and date; Park Square, DWF, casemine commentary and Halcyon Chambers snippets agree on Birss LJ's two-stage test, the 'real beneficiary' reasoning, both appeals allowed, 100% order against DAML and 65% against Spectra reinstated. A supremecourt.uk listing 'Tescher (Respondent) v Direct Accident Management Limited (Appellant) - UKSC 2025/0116' surfaced, indicating a pending or decided Supreme Court appeal whose outcome could not be checked.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "Not fetched (egress proxy). Search-engine listing of BAILII 'Tescher v Direct Accident Management Ltd [2025] EWCA Civ 733 (13 June 2025)' confirmed the citation and date; Park Square, DWF, casemine commentary and Halcyon Chambers snippets agree on Birss LJ's two-stage test, the 'real beneficiary' reasoning, both appeals allowed, 100% order against DAML and 65% against Spectra reinstated. A supremecourt.uk listing 'Tescher (Respondent) v Direct Accident Management Limited (Appellant) - UKSC 2025/0116' surfaced, indicating a pending or decided Supreme Court appeal whose outcome could not be checked. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): Search results for 'Tescher Direct Accident Management Supreme Court' listed https://www.supremecourt.uk/cases/uksc-2025-0116 ('Tescher (Respondent) v Direct Accident Management Limited (Appellant)') and https://www.supremecourt.uk/cases/uksc-2025-0117 ('AXA Insurance UK PLC (Respondent) v Spectra Drive Limited (Appellant)'); the search tool's summary of the 0116 page stated 'The Supreme Court refused permission to appeal'. Corroborated only by the headline of DWF's September 2025 insight 'Court of Appeal provides a binding decision on non-party costs orders in Credit Hire'. The refusal wording itself was not seen verbatim, so the earlier 'appeal pending' caution was replaced by a check-before-relying status line. VALIDATOR 2026-10-07: the principle and tags were put back to the earlier 'appeal appears to have been lodged; check its status' caution. The report of a refusal of permission came only from the search tool's own summary of the supremecourt.uk page, not from quoted page text, so it does not meet the evidence rule for changing the principle. Listed as a to-check item in docs/RESEARCH-UPDATE-2026-10.md.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "link_only"
   },
@@ -414,16 +414,18 @@
     "type": "case",
     "citation": "Motor Insurers' Bureau v Houston [2025] EWHC 3178 (KB)",
     "title": "Motor Insurers' Bureau v Houston",
-    "principle": "Cavanagh J, on appeal from Recorder Brown in the County Court at Birmingham, dismissed the MIB's appeal: a case-management order that debarred the claimant from relying on impecuniosity 'for the purpose of the rate of hire' did not stop him relying on his limited means to justify the length of hire (197 days of a Mercedes GLA from Easidrive at £224.29 a day) or the storage charges, so the full period was recoverable. The scope of a debarring order turns on its precise wording, in contrast to Zurich v Umerji where the claimant was treated as pecunious for all purposes. CCGUK must read every debarring or unless order literally and comply with impecuniosity disclosure in full.",
+    "principle": "Cavanagh J (judgment 2 December 2025), on appeal from Recorder Brown in the County Court at Birmingham, dismissed the MIB's appeal: a case-management order that debarred the claimant from relying on impecuniosity 'for the purpose of the rate of hire' did not stop him relying on his limited means to justify the length of hire (197 days of a Mercedes GLA from Easidrive at £224.29 a day) or the storage charges, so the full period was recoverable. The scope of a debarring order turns on its precise wording, in contrast to Zurich v Umerji where the claimant was treated as pecunious for all purposes. CCGUK must read every debarring or unless order literally and comply with impecuniosity disclosure in full.",
     "tags": ["credit hire", "debarring order", "impecuniosity", "rate versus period", "197 days", "storage", "Easidrive", "Cavanagh J", "MIB"],
     "topics": ["credit_hire", "impecuniosity", "period"],
+    "url": "https://caselaw.nationalarchives.gov.uk/ewhc/kb/2025/3178",
     "verification": {
       "status": "unverified",
-      "sourceNote": "Not fetched (egress proxy). No BAILII or Find Case Law listing surfaced in search results; the citation, judge, facts (197 days, £224.29/day, £1,570.03/week, 15 June-28 Dec 2019) and holding were confirmed only from secondary summaries (LexisNexis UK, 5 Pump Court, Insurance Business UK, Solicitors Journal) which agree with the blueprint. No URL recorded; a human should locate the judgment on Find Case Law (ewhc/kb/2025/3178) and record it.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceUrl": "https://caselaw.nationalarchives.gov.uk/ewhc/kb/2025/3178",
+      "sourceNote": "Not fetched (egress proxy). No BAILII or Find Case Law listing surfaced in search results; the citation, judge, facts (197 days, £224.29/day, £1,570.03/week, 15 June-28 Dec 2019) and holding were confirmed only from secondary summaries (LexisNexis UK, 5 Pump Court, Insurance Business UK, Solicitors Journal) which agree with the blueprint. No URL recorded; a human should locate the judgment on Find Case Law (ewhc/kb/2025/3178) and record it. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): A Find Case Law listing at https://caselaw.nationalarchives.gov.uk/ewhc/kb/2025/3178 surfaced for the query '\"Motor Insurers' Bureau v Houston\" \"[2025] EWHC 3178 (KB)\"', so a URL is now recorded. The search summary of that page gave the title 'Motor Insurers Bureau v Drewy Houston [2025] EWHC 3178 (KB)', judgment 2 December 2025 before Cavanagh J, accident 15 June 2019, 2008 Chevrolet Captiva (£2,320) written off, Mercedes GLA from Easidrive at £224.29/day for 197 days, debarring order limited to impecuniosity 'for the purposes of determining the appropriate rate of hire'. LexisNexis, 5 Pump Court, Solicitors Journal and Insurance Business listings agree.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
-    "licence": "link_only"
+    "licence": "Open Justice Licence"
   },
   {
     "id": "summers-v-fairclough-homes-2012",
@@ -581,9 +583,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.bailii.org/uk/cases/UKSC/2024/6.html",
-      "sourceNote": "Not fetched (egress proxy). Search-engine listings of BAILII 'Armstead v Royal & Sun Alliance Insurance Company Ltd [2024] UKSC 6 (14 February 2024)' and the supremecourt.uk press summary (UKSC 2022/0100) confirmed the citation; snippets confirm clause 16 (daily rate up to 30 days; £1,560 = 12 days x £130) and that the liability was recoverable as consequential on physical damage with the burden on the insurer to prove an unreasonable pre-estimate. Report cite from working knowledge.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "Not fetched (egress proxy). Search-engine listings of BAILII 'Armstead v Royal & Sun Alliance Insurance Company Ltd [2024] UKSC 6 (14 February 2024)' and the supremecourt.uk press summary (UKSC 2022/0100) confirmed the citation; snippets confirm clause 16 (daily rate up to 30 days; £1,560 = 12 days x £130) and that the liability was recoverable as consequential on physical damage with the burden on the insurer to prove an unreasonable pre-estimate. Report cite from working knowledge. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): Find Case Law press summary (https://caselaw.nationalarchives.gov.uk/uksc/2024/6/press-summary) and the supremecourt.uk judgment page (uksc-2022-0100) surfaced. A search summary drawn from a Wikipedia list of 2024 UKSC judgments gave the reports as [2025] AC 406, [2024] 2 WLR 632, [2024] 3 All ER 263 and [2024] RTR 19 and the panel as Lord Briggs, Lord Leggatt, Lord Burrows, Lord Richards and Lady Simler; not an authoritative source, so the citation field is unchanged pending a check of the AC report.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "link_only"
   },

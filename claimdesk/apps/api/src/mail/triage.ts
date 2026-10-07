@@ -204,7 +204,7 @@ async function recordOffer(ctx: AppContext, claimId: string, message: MailMessag
  * Turn a classification into events, Needs-you items and follow-up jobs. Idempotent per message: the `email_in`
  * event and the follow-up jobs are keyed on the message id.
  */
-export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c: MailClassificationRecord, job: { id: string; correlationId: string }): Promise<TriageApplied> {
+export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c: MailClassificationRecord, job: { id?: string; correlationId: string }): Promise<TriageApplied> {
   const out: TriageApplied = { events: [], jobs: [], needsYou: [] };
   const claimId = message.claimId;
   if (!claimId || message.status === 'quarantined') return { ...out, deferred: 'no_claim' };
@@ -216,7 +216,7 @@ export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c
   const at = message.sentAt ?? message.receivedAt;
   const injection = result.injectionSuspected || det.injectionFlags.length > 0;
   const bank = result.extracted.bankDetailsChange || det.bankDetailsChange;
-  const base = { createdBy: MAIL_AGENT, parentJobId: job.id, correlationId: job.correlationId };
+  const base = { createdBy: MAIL_AGENT, ...(job.id ? { parentJobId: job.id } : {}), correlationId: job.correlationId };
 
   // email_in (once per message) — spam is not filed in the chronology.
   const already = ctx.repos.listEvents(ctx.db, claimId, { type: 'email_in' }).some((e) => (e.data as { mailMessageId?: string } | undefined)?.mailMessageId === message.id);
@@ -308,7 +308,7 @@ export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c
   // Offers: the register + owner decision; never decided here.
   let offerId: string | undefined;
   if (rule.route === 'offer') {
-    const rec = await recordOffer(ctx, claimId, message, result, rule.head ?? 'misc', evidenceIds, job.id, job.correlationId);
+    const rec = await recordOffer(ctx, claimId, message, result, rule.head ?? 'misc', evidenceIds, job.id ?? `triage:${message.id}`, job.correlationId);
     if (rec.offerId) offerId = rec.offerId;
     if (rec.needsYouId) out.needsYou.push(rec.needsYouId);
     if (!rec.offerId) {

@@ -1,0 +1,3051 @@
+{
+  "make": "Ford",
+  "slug": "ford",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "ka": {
+      "Mk1 (1996–2008)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3620,
+            "widthMm": 1640,
+            "heightMm": 1370,
+            "wheelbaseMm": 2450,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 13,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.3,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk2 (2008–2016)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3620,
+            "widthMm": 1660,
+            "heightMm": 1505,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.2,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fiat 500 based."
+          }
+        }
+      },
+      "Ka+ Mk3 (2016–2020)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3930,
+            "widthMm": 1695,
+            "heightMm": 1525,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "streetka": {
+      "Mk1 (2003–2005)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3650,
+            "widthMm": 1695,
+            "heightMm": 1330,
+            "wheelbaseMm": 2450,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 15,
+            "profile": "roadster",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.15,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Front-drive roadster on Ka platform."
+          }
+        }
+      }
+    },
+    "fiesta": {
+      "Mk5 (1999–2002)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3830,
+            "widthMm": 1635,
+            "heightMm": 1360,
+            "wheelbaseMm": 2445,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk6 (2002–2008)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3915,
+            "widthMm": 1685,
+            "heightMm": 1465,
+            "wheelbaseMm": 2485,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk7 (2008–2017)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3970,
+            "widthMm": 1720,
+            "heightMm": 1480,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Facelift (2013) length; earlier cars about 3950 mm."
+          }
+        }
+      },
+      "Mk8 (2017–2023)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4040,
+            "widthMm": 1735,
+            "heightMm": 1476,
+            "wheelbaseMm": 2493,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "3- and 5-door share length; ST about 4068 mm."
+          },
+          "crossover": {
+            "lengthMm": 4070,
+            "widthMm": 1755,
+            "heightMm": 1500,
+            "wheelbaseMm": 2493,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fiesta Active: raised hatch with cladding."
+          }
+        }
+      }
+    },
+    "fiesta-van": {
+      "Mk6 Van (2004–2008)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 3915,
+            "widthMm": 1685,
+            "heightMm": 1465,
+            "wheelbaseMm": 2485,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.2,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "3-door Fiesta with blanked rear windows."
+          }
+        }
+      },
+      "Mk7 Van (2009–2017)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 3970,
+            "widthMm": 1720,
+            "heightMm": 1480,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.2,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "3-door Fiesta with blanked rear windows."
+          }
+        }
+      },
+      "Mk8 Van (2018–2022)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4040,
+            "widthMm": 1735,
+            "heightMm": 1476,
+            "wheelbaseMm": 2493,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.2,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "3-door Fiesta with blanked rear windows."
+          }
+        }
+      }
+    },
+    "courier": {
+      "Fiesta-based Courier (1991–2002)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4170,
+            "widthMm": 1645,
+            "heightMm": 1825,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 13,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fiesta front with high-cube load box; rear doors only. Approximate."
+          }
+        }
+      }
+    },
+    "fusion": {
+      "Mk1 (2002–2012)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4020,
+            "widthMm": 1710,
+            "heightMm": 1525,
+            "wheelbaseMm": 2485,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Tall supermini-MPV."
+          }
+        }
+      }
+    },
+    "b-max": {
+      "Mk1 (2012–2017)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4075,
+            "widthMm": 1750,
+            "heightMm": 1605,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Pillarless body with sliding rear doors."
+          }
+        }
+      }
+    },
+    "ecosport": {
+      "Mk1 (2014–2017)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4240,
+            "widthMm": 1765,
+            "heightMm": 1655,
+            "wheelbaseMm": 2520,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Length incl. tailgate spare; side-hinged tailgate."
+          }
+        }
+      },
+      "Mk1 facelift (2017–2022)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4095,
+            "widthMm": 1765,
+            "heightMm": 1655,
+            "wheelbaseMm": 2520,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Without tailgate spare (optional; about 4325 mm with it); side-hinged tailgate."
+          }
+        }
+      }
+    },
+    "puma": {
+      "Mk1 (2019–2024)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4185,
+            "widthMm": 1805,
+            "heightMm": 1535,
+            "wheelbaseMm": 2590,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk1 facelift (2024–present)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4215,
+            "widthMm": 1805,
+            "heightMm": 1555,
+            "wheelbaseMm": 2590,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "puma-gen-e": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4215,
+            "widthMm": 1805,
+            "heightMm": 1555,
+            "wheelbaseMm": 2590,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "puma-coupe": {
+      "Coupe (1997–2002)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 3985,
+            "widthMm": 1675,
+            "heightMm": 1345,
+            "wheelbaseMm": 2445,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 15,
+            "profile": "coupe",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "cougar": {
+      "Mk1 (1998–2002)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4700,
+            "widthMm": 1770,
+            "heightMm": 1320,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 16,
+            "profile": "coupe",
+            "bonnetRatio": 0.28,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Three-door liftback coupe."
+          }
+        }
+      }
+    },
+    "escort": {
+      "Mk6 (1995–2000)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4135,
+            "widthMm": 1690,
+            "heightMm": 1395,
+            "wheelbaseMm": 2525,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4265,
+            "widthMm": 1690,
+            "heightMm": 1440,
+            "wheelbaseMm": 2525,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 14,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "escort-van": {
+      "Mk6 Van (1995–2002)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4335,
+            "widthMm": 1690,
+            "heightMm": 1850,
+            "wheelbaseMm": 2595,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 14,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Car-derived high-cube van; approximate."
+          }
+        }
+      }
+    },
+    "focus": {
+      "Mk1 (1998–2005)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4150,
+            "widthMm": 1700,
+            "heightMm": 1440,
+            "wheelbaseMm": 2615,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "saloon": {
+            "lengthMm": 4360,
+            "widthMm": 1700,
+            "heightMm": 1440,
+            "wheelbaseMm": 2615,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4440,
+            "widthMm": 1700,
+            "heightMm": 1455,
+            "wheelbaseMm": 2615,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk2 (2005–2011)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4340,
+            "widthMm": 1840,
+            "heightMm": 1500,
+            "wheelbaseMm": 2640,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "saloon": {
+            "lengthMm": 4480,
+            "widthMm": 1840,
+            "heightMm": 1500,
+            "wheelbaseMm": 2640,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4470,
+            "widthMm": 1840,
+            "heightMm": 1500,
+            "wheelbaseMm": 2640,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 4505,
+            "widthMm": 1840,
+            "heightMm": 1450,
+            "wheelbaseMm": 2640,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Focus CC folding hard top."
+          }
+        }
+      },
+      "Mk3 (2011–2018)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4360,
+            "widthMm": 1825,
+            "heightMm": 1485,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4560,
+            "widthMm": 1825,
+            "heightMm": 1505,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk4 (2018–2025)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4380,
+            "widthMm": 1825,
+            "heightMm": 1455,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4670,
+            "widthMm": 1825,
+            "heightMm": 1480,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Active versions about 30 mm taller."
+          }
+        }
+      }
+    },
+    "c-max": {
+      "Mk1 (2003–2010; Focus C-Max to 2007)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4330,
+            "widthMm": 1825,
+            "heightMm": 1595,
+            "wheelbaseMm": 2640,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk2 (2010–2019)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4380,
+            "widthMm": 1830,
+            "heightMm": 1610,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "grand-c-max": {
+      "Mk1 (2010–2019)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4520,
+            "widthMm": 1830,
+            "heightMm": 1685,
+            "wheelbaseMm": 2790,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.19,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Sliding rear side doors; seven-seat."
+          }
+        }
+      }
+    },
+    "mondeo": {
+      "Mk2 (1996–2000)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4560,
+            "widthMm": 1750,
+            "heightMm": 1430,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 15,
+            "profile": "liftback",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "saloon": {
+            "lengthMm": 4555,
+            "widthMm": 1750,
+            "heightMm": 1430,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4670,
+            "widthMm": 1750,
+            "heightMm": 1480,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk3 (2000–2007)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4730,
+            "widthMm": 1810,
+            "heightMm": 1430,
+            "wheelbaseMm": 2755,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "liftback",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "saloon": {
+            "lengthMm": 4730,
+            "widthMm": 1810,
+            "heightMm": 1430,
+            "wheelbaseMm": 2755,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4805,
+            "widthMm": 1810,
+            "heightMm": 1440,
+            "wheelbaseMm": 2755,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk4 (2007–2014)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4780,
+            "widthMm": 1885,
+            "heightMm": 1500,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "liftback",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "saloon": {
+            "lengthMm": 4845,
+            "widthMm": 1885,
+            "heightMm": 1500,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4830,
+            "widthMm": 1885,
+            "heightMm": 1510,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk5 (2014–2022)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4870,
+            "widthMm": 1850,
+            "heightMm": 1480,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "liftback",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "saloon": {
+            "lengthMm": 4870,
+            "widthMm": 1850,
+            "heightMm": 1480,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4870,
+            "widthMm": 1850,
+            "heightMm": 1500,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "s-max": {
+      "Mk1 (2006–2015)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4770,
+            "widthMm": 1885,
+            "heightMm": 1660,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 17,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Sporty seven-seat MPV, hinged rear doors."
+          }
+        }
+      },
+      "Mk2 (2015–2023)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4795,
+            "widthMm": 1915,
+            "heightMm": 1655,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 18,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Sporty seven-seat MPV, hinged rear doors."
+          }
+        }
+      }
+    },
+    "galaxy": {
+      "Mk1 (1995–2006)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4640,
+            "widthMm": 1810,
+            "heightMm": 1730,
+            "wheelbaseMm": 2835,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "VW Sharan / SEAT Alhambra twin; hinged rear doors."
+          }
+        }
+      },
+      "Mk2 (2006–2015)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4820,
+            "widthMm": 1885,
+            "heightMm": 1725,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Hinged rear doors."
+          }
+        }
+      },
+      "Mk3 (2015–2023)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4850,
+            "widthMm": 1915,
+            "heightMm": 1745,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 17,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Hinged rear doors."
+          }
+        }
+      }
+    },
+    "kuga": {
+      "Mk1 (2008–2012)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4445,
+            "widthMm": 1840,
+            "heightMm": 1710,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk2 (2012–2019)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4525,
+            "widthMm": 1840,
+            "heightMm": 1705,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 195,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk3 (2020–present; facelift 2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4615,
+            "widthMm": 1885,
+            "heightMm": 1680,
+            "wheelbaseMm": 2710,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "edge": {
+      "Mk2 (2016–2019)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4810,
+            "widthMm": 1930,
+            "heightMm": 1705,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 19,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "explorer": {
+      "Mk6 PHEV (2020–2022)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5050,
+            "widthMm": 2005,
+            "heightMm": 1780,
+            "wheelbaseMm": 3025,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 20,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seven-seat plug-in hybrid."
+          }
+        }
+      }
+    },
+    "explorer-ev": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4470,
+            "widthMm": 1870,
+            "heightMm": 1630,
+            "wheelbaseMm": 2770,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 19,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "capri": {
+      "Mk4 electric (2024–present)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4635,
+            "widthMm": 1870,
+            "heightMm": 1625,
+            "wheelbaseMm": 2770,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 20,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "mustang": {
+      "Gen6 (2015–2023)": {
+        "bodies": {
+          "fastback": {
+            "lengthMm": 4785,
+            "widthMm": 1915,
+            "heightMm": 1380,
+            "wheelbaseMm": 2720,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 19,
+            "profile": "fastback",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Two-door fastback coupe."
+          },
+          "convertible": {
+            "lengthMm": 4785,
+            "widthMm": 1915,
+            "heightMm": 1395,
+            "wheelbaseMm": 2720,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "Gen7 (2024–present)": {
+        "bodies": {
+          "fastback": {
+            "lengthMm": 4810,
+            "widthMm": 1915,
+            "heightMm": 1395,
+            "wheelbaseMm": 2720,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 19,
+            "profile": "fastback",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Two-door fastback coupe."
+          },
+          "convertible": {
+            "lengthMm": 4810,
+            "widthMm": 1915,
+            "heightMm": 1395,
+            "wheelbaseMm": 2720,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "convertible",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "mustang-mach-e": {
+      "Mk1 (2021–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4715,
+            "widthMm": 1880,
+            "heightMm": 1625,
+            "wheelbaseMm": 2985,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 19,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.42,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "gt": {
+      "Gen1 (2005–2006)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4645,
+            "widthMm": 1955,
+            "heightMm": 1125,
+            "wheelbaseMm": 2710,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Mid-engined supercar."
+          }
+        }
+      },
+      "Gen2 (2017–2022)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4765,
+            "widthMm": 2005,
+            "heightMm": 1110,
+            "wheelbaseMm": 2710,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.29,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Mid-engined carbon supercar with flying buttresses."
+          }
+        }
+      }
+    },
+    "maverick": {
+      "Mk2 (2001–2004)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4395,
+            "widthMm": 1780,
+            "heightMm": 1770,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Ford Escape / Mazda Tribute twin."
+          }
+        }
+      }
+    },
+    "tourneo-connect": {
+      "Mk1 (2002–2013)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4280,
+            "widthMm": 1795,
+            "heightMm": 1810,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "SWB; LWB about 4515 mm long."
+          }
+        }
+      },
+      "Mk2 (2014–2022)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4420,
+            "widthMm": 1835,
+            "heightMm": 1845,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk3 (2022–present)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4515,
+            "widthMm": 1855,
+            "heightMm": 1830,
+            "wheelbaseMm": 2755,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "VW Caddy based."
+          }
+        }
+      }
+    },
+    "grand-tourneo-connect": {
+      "Mk2 (2014–2022)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4820,
+            "widthMm": 1835,
+            "heightMm": 1850,
+            "wheelbaseMm": 3060,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seven-seat long wheelbase."
+          }
+        }
+      },
+      "Mk3 (2022–present)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4855,
+            "widthMm": 1855,
+            "heightMm": 1830,
+            "wheelbaseMm": 2970,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Seven-seat long wheelbase; VW Caddy Maxi based."
+          }
+        }
+      }
+    },
+    "tourneo-courier": {
+      "Mk1 (2014–2023)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4155,
+            "widthMm": 1765,
+            "heightMm": 1725,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk2 (2024–present)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4335,
+            "widthMm": 1800,
+            "heightMm": 1815,
+            "wheelbaseMm": 2685,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.37,
+            "roofTaper": 0.1,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "tourneo": {
+      "Transit Mk6-based (2000–2006)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4835,
+            "widthMm": 1975,
+            "heightMm": 1990,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Glazed Transit people carrier, SWB low roof."
+          }
+        }
+      },
+      "Transit Mk7-based (2006–2013)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4835,
+            "widthMm": 1975,
+            "heightMm": 1990,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Glazed Transit people carrier, SWB low roof."
+          }
+        }
+      }
+    },
+    "tourneo-custom": {
+      "Gen1 (2013–2023)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4970,
+            "widthMm": 1985,
+            "heightMm": 1975,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L1 figures; L2 about 5340 mm long, 3300 mm wheelbase."
+          }
+        }
+      },
+      "Gen2 (2023–present)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 5050,
+            "widthMm": 2030,
+            "heightMm": 1970,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L1 figures; L2 about 5450 mm long, 3500 mm wheelbase."
+          }
+        }
+      }
+    },
+    "transit": {
+      "Mk6 (2000–2006)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5200,
+            "widthMm": 1975,
+            "heightMm": 2345,
+            "wheelbaseMm": 3300,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "MWB medium-roof figures; SWB low roof about 4835 mm long, 1990 mm high, 2935 mm wheelbase; LWB high roof about 5650 mm long, 2600 mm high."
+          },
+          "crew-van": {
+            "lengthMm": 5200,
+            "widthMm": 1975,
+            "heightMm": 2345,
+            "wheelbaseMm": 3300,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Double-cab-in-van, MWB medium roof."
+          },
+          "chassis-cab": {
+            "lengthMm": 5650,
+            "widthMm": 1975,
+            "heightMm": 2180,
+            "wheelbaseMm": 3570,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.26,
+            "frontOverhangRatio": 0.11,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "LWB single-cab chassis; double cab also offered. Approximate."
+          },
+          "pickup": {
+            "lengthMm": 5700,
+            "widthMm": 1975,
+            "heightMm": 2180,
+            "wheelbaseMm": 3570,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.26,
+            "frontOverhangRatio": 0.11,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Dropside / tipper, single cab figures; double cab also offered. Approximate."
+          }
+        }
+      },
+      "Mk7 (2006–2014)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5200,
+            "widthMm": 1975,
+            "heightMm": 2360,
+            "wheelbaseMm": 3300,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "MWB medium-roof figures; SWB low roof about 4835 mm long, 1990 mm high, 2935 mm wheelbase; LWB high roof about 5680 mm long, 2600 mm high."
+          },
+          "crew-van": {
+            "lengthMm": 5200,
+            "widthMm": 1975,
+            "heightMm": 2360,
+            "wheelbaseMm": 3300,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.22,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Double-cab-in-van, MWB medium roof."
+          },
+          "chassis-cab": {
+            "lengthMm": 5680,
+            "widthMm": 1975,
+            "heightMm": 2190,
+            "wheelbaseMm": 3750,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "LWB single-cab chassis; double cab also offered. Approximate."
+          },
+          "pickup": {
+            "lengthMm": 5700,
+            "widthMm": 1975,
+            "heightMm": 2190,
+            "wheelbaseMm": 3750,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.1,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Dropside / tipper, single cab figures; double cab also offered. Approximate."
+          }
+        }
+      },
+      "Mk8 (2014–present; facelift 2019; E-Transit 2022)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5530,
+            "widthMm": 2060,
+            "heightMm": 2525,
+            "wheelbaseMm": 3300,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.16,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.24,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L2H2 figures; L3H2 about 5980 mm long, 3750 mm wheelbase; L3H3 about 2780 mm high."
+          },
+          "crew-van": {
+            "lengthMm": 5530,
+            "widthMm": 2060,
+            "heightMm": 2525,
+            "wheelbaseMm": 3300,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.16,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double-cab-in-van, L2H2."
+          },
+          "chassis-cab": {
+            "lengthMm": 5950,
+            "widthMm": 2060,
+            "heightMm": 2250,
+            "wheelbaseMm": 3750,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.16,
+            "rearOverhangRatio": 0.26,
+            "frontOverhangRatio": 0.11,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L3 single-cab chassis; double cab also offered. Approximate."
+          },
+          "pickup": {
+            "lengthMm": 5980,
+            "widthMm": 2060,
+            "heightMm": 2250,
+            "wheelbaseMm": 3750,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.16,
+            "rearOverhangRatio": 0.26,
+            "frontOverhangRatio": 0.11,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Dropside / tipper, single cab; double cab also offered. Approximate."
+          }
+        }
+      }
+    },
+    "transit-minibus": {
+      "Mk6 (2000–2006)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 5650,
+            "widthMm": 1975,
+            "heightMm": 2575,
+            "wheelbaseMm": 3750,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "minibus",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.14,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "LWB high-roof 15/17-seat."
+          }
+        }
+      },
+      "Mk7 (2006–2014)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 5680,
+            "widthMm": 1975,
+            "heightMm": 2580,
+            "wheelbaseMm": 3750,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "minibus",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.14,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "LWB high-roof 15/17-seat."
+          }
+        }
+      },
+      "Mk8 (2014–present)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 6705,
+            "widthMm": 2060,
+            "heightMm": 2780,
+            "wheelbaseMm": 3750,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 16,
+            "profile": "minibus",
+            "bonnetRatio": 0.16,
+            "rearOverhangRatio": 0.28,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.03,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L4 Jumbo high-roof 17-seat; 12/15-seat L3 about 5980 mm long."
+          }
+        }
+      }
+    },
+    "transit-custom": {
+      "Gen1 (2012–2023)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4970,
+            "widthMm": 1985,
+            "heightMm": 2000,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L1H1 figures; L2 about 5340 mm long, 3300 mm wheelbase; H2 about 2290 mm high."
+          },
+          "crew-van": {
+            "lengthMm": 4970,
+            "widthMm": 1985,
+            "heightMm": 2000,
+            "wheelbaseMm": 2935,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double-cab-in-van, L1H1."
+          }
+        }
+      },
+      "Gen2 (2023–present)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5050,
+            "widthMm": 2030,
+            "heightMm": 1970,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L1H1 figures; L2 about 5450 mm long, 3500 mm wheelbase."
+          },
+          "crew-van": {
+            "lengthMm": 5050,
+            "widthMm": 2030,
+            "heightMm": 1970,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double-cab-in-van, L1H1."
+          }
+        }
+      }
+    },
+    "transit-connect": {
+      "Mk1 (2002–2013)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4280,
+            "widthMm": 1795,
+            "heightMm": 1810,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "SWB; LWB about 4515 mm long, 2910 mm wheelbase, high roof about 2010 mm."
+          },
+          "crew-van": {
+            "lengthMm": 4515,
+            "widthMm": 1795,
+            "heightMm": 1820,
+            "wheelbaseMm": 2910,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "LWB double-cab-in-van."
+          }
+        }
+      },
+      "Mk2 (2013–2022)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4420,
+            "widthMm": 1835,
+            "heightMm": 1830,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L1; L2 about 4820 mm long, 3060 mm wheelbase."
+          },
+          "crew-van": {
+            "lengthMm": 4820,
+            "widthMm": 1835,
+            "heightMm": 1830,
+            "wheelbaseMm": 3060,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.18,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L2 double-cab-in-van."
+          }
+        }
+      },
+      "Mk3 (2022–present)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4500,
+            "widthMm": 1855,
+            "heightMm": 1800,
+            "wheelbaseMm": 2755,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L1 (VW Caddy based); L2 about 4855 mm long, 2970 mm wheelbase."
+          },
+          "crew-van": {
+            "lengthMm": 4855,
+            "widthMm": 1855,
+            "heightMm": 1800,
+            "wheelbaseMm": 2970,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L2 double-cab-in-van."
+          }
+        }
+      }
+    },
+    "transit-courier": {
+      "Mk1 (2014–2023)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4160,
+            "widthMm": 1765,
+            "heightMm": 1745,
+            "wheelbaseMm": 2490,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk2 (2024–present)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4335,
+            "widthMm": 1800,
+            "heightMm": 1825,
+            "wheelbaseMm": 2685,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "ranger": {
+      "Mk1 (1999–2006)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5000,
+            "widthMm": 1755,
+            "heightMm": 1760,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 15,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab 4x4 figures; Regular and Super Cab similar length. Approximate."
+          }
+        }
+      },
+      "Mk2 (2006–2012)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5075,
+            "widthMm": 1805,
+            "heightMm": 1745,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab figures; Regular and Super Cab similar length."
+          }
+        }
+      },
+      "T6 (2012–2022)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5360,
+            "widthMm": 1860,
+            "heightMm": 1815,
+            "wheelbaseMm": 3220,
+            "groundClearanceMm": 230,
+            "wheelDiameterIn": 17,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Double cab figures; Super Cab same length; Regular cab about 5275 mm."
+          },
+          "chassis-cab": {
+            "lengthMm": 5275,
+            "widthMm": 1860,
+            "heightMm": 1790,
+            "wheelbaseMm": 3220,
+            "groundClearanceMm": 230,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Regular cab chassis; approximate."
+          }
+        }
+      },
+      "Gen4 (2022–present)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5370,
+            "widthMm": 1920,
+            "heightMm": 1885,
+            "wheelbaseMm": 3270,
+            "groundClearanceMm": 235,
+            "wheelDiameterIn": 18,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.23,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.08,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Double cab figures; Super Cab same length; Raptor about 5380 mm long, 2030 mm wide."
+          },
+          "chassis-cab": {
+            "lengthMm": 5280,
+            "widthMm": 1920,
+            "heightMm": 1820,
+            "wheelbaseMm": 3270,
+            "groundClearanceMm": 235,
+            "wheelDiameterIn": 17,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.14,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.06,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Regular cab chassis; approximate."
+          }
+        }
+      }
+    }
+  }
+}

@@ -230,9 +230,9 @@
     "verification": {
       "status": "failed",
       "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part25",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. BLUEPRINT CONTRADICTED: blueprint cites rr.25.6–25.9 / 25.7; snippets of the current Part 25 and of SI 2025/106 show the interim payment rules at 25.20 (court's powers), 25.21 (application timing) and 25.23 (conditions), in force 6 April 2025. Exact rule-to-content mapping to be confirmed on the page.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. BLUEPRINT CONTRADICTED: blueprint cites rr.25.6–25.9 / 25.7; snippets of the current Part 25 and of SI 2025/106 show the interim payment rules at 25.20 (court's powers), 25.21 (application timing) and 25.23 (conditions), in force 6 April 2025. Exact rule-to-content mapping to be confirmed on the page. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): A legislation.gov.uk listing of SI 2025/106 (Civil Procedure (Amendment) Rules 2025) and LexisNexis guidance summarised: CPR 25 was replaced in its entirety with effect from 6 April 2025, PD 25A and PD 25B were revoked and PD 25B's interim-payment content absorbed into the rules; the changes were not intended to alter substantive law. The text of r.25.20 itself was not shown.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "quote_only"
   },
@@ -256,9 +256,41 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part26",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the 26.9 limits for all four tracks (post-1 October 2023 numbering). Matches blueprint.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the 26.9 limits for all four tracks (post-1 October 2023 numbering). Matches blueprint. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): Search summaries (Kerry Underwood blog 23 June 2026 'Track limits to be reviewed: fixed recoverable costs likely to be extended'; Law Society and Hill Dickinson FRC pages) describe the current bands as small claims up to £10,000, fast track £10,000-£25,000, intermediate £25,000-£100,000 and report the June 2026 CJC review. No official CJC or MoJ page was seen; values unchanged. VALIDATOR 2026-10-07: the sentence about the June 2026 Civil Justice Council track-limit review was taken out of the principle because its only source is one blog post (Kerry Underwood, 23 June 2026), which is neither official nor corroborated by a second independent source. It is a to-check item in docs/RESEARCH-UPDATE-2026-10.md.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "cpr-26-9-rta-pi-small-claims",
+    "type": "cpr",
+    "citation": "CPR 26.9 and 26.10 (road traffic personal injury limits); Pre-Action Protocol for Personal Injury Claims below the Small Claims Limit in Road Traffic Accidents (RTA Small Claims Protocol)",
+    "title": "Road traffic injury claims: £5,000 small claims limit for pain, suffering and loss of amenity (£1,000 for excepted claimants) and the Official Injury Claim portal",
+    "principle": "For road traffic accidents on or after 31 May 2021 the small claims track is the normal track for a personal injury claim where damages for pain, suffering and loss of amenity are not more than £5,000 and the whole claim is not more than £10,000; where the CPR 26.10 exceptions apply (including vulnerable road users such as motorcyclists, cyclists and pedestrians, and child claimants) the injury limit stays at £1,000. Such claims start under the RTA Small Claims Protocol through the Official Injury Claim portal, where the compensator has 30 days to respond on liability, and whiplash injuries are valued on the statutory tariff (raised by about 15% for injuries on or after 31 May 2025). PERIMETER: CCGUK refers every injury element out, takes and pays no referral fee (LASPO s.56) and must not advise on injury value or on which track or portal applies; it records only that an injury was mentioned and that the referral was made.",
+    "tags": [
+      "personal injury",
+      "whiplash",
+      "Official Injury Claim",
+      "OIC portal",
+      "RTA Small Claims Protocol",
+      "small claims limit",
+      "£5,000",
+      "vulnerable road user",
+      "refer out"
+    ],
+    "topics": [
+      "injury",
+      "perimeter",
+      "costs"
+    ],
+    "url": "https://www.justice.gov.uk/courts/procedure-rules/civil/protocol/pre-action-protocol-for-personal-injury-claims-below-the-small-claims-limit-in-road-traffic-accidents-the-rta-small-claims-protocol",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/protocol/pre-action-protocol-for-personal-injury-claims-below-the-small-claims-limit-in-road-traffic-accidents-the-rta-small-claims-protocol",
+      "sourceNote": "SEARCH SNIPPET ONLY 2026-10-07 (not a fetched page; the official site is egress-blocked): justice.gov.uk listings for the RTA Small Claims Protocol page and the 'cpr-pap-update-feb-2021.pdf' surfaced; the search summary stated the protocol came into force on 31 May 2021, 'a new protocol and new small claims limit for injury of £5,000 applies' with 'a total limit of £10,000', that it does not apply where 'a vulnerable user is involved (such as motor cycle riders, cyclists, pedestrians)' or the claimant is a child, and that the compensator has 30 days to respond. A legislation.gov.uk listing of CPR r.26.9 (version 2023-10-01) and Trethowans summarised r.26.9 as PSLA not more than £5,000 for RTA personal injury, or £1,000 'in circumstances specified in rule 26.10'. The 15% tariff uplift for injuries on or after 31 May 2025 is from Official Injury Claim's news item 'Revised whiplash tariff now approved' and the Hansard (Lords, 6 May 2025) debate on the Whiplash Injury (Amendment) Regulations 2025. The precise rule numbering (26.9/26.10) must be checked on the CPR page.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "quote_only"
   },
@@ -361,9 +393,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part27/pd_part27",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned both figures (£95 per day; £750 per expert). Matches blueprint.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned both figures (£95 per day; £750 per expert). Matches blueprint. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): A justice.gov.uk listing of 'PRACTICE DIRECTION 27A – SMALL CLAIMS TRACK' was summarised as allowing up to £95 per day for loss of earnings or leave per party or witness and up to £750 per expert (para 7.3). No later change was seen.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "quote_only"
   },
@@ -533,7 +565,7 @@
     "type": "cpr",
     "citation": "CPR Part 45 Sections VI–VII (rr.45.44, 45.50; PD 45 Tables 12 and 14)",
     "title": "Fixed recoverable costs across the fast track and the new intermediate track from 1 October 2023",
-    "principle": "For claims issued from 1 October 2023 the only costs allowed on the fast track are the fixed costs in Table 12 (by complexity band and stage) plus Section IX disbursements (45.44); on the intermediate track Table 14 applies for as long as the claim is not allocated to the multi-track (45.50). Small claims are governed by 27.14 instead. The costs an insurer can recover against a losing credit hire claimant on the fast track are therefore predictable — model them in the acceptance (run/do not run) decision.",
+    "principle": "For claims issued from 1 October 2023 the only costs allowed on the fast track are the fixed costs in Table 12 (by complexity band and stage) plus Section IX disbursements (45.44); on the intermediate track Table 14 applies for as long as the claim is not allocated to the multi-track (45.50). Small claims are governed by 27.14 instead. The costs an insurer can recover against a losing credit hire claimant on the fast track are therefore predictable — model them in the acceptance (run/do not run) decision. The table figures were uprated (reported as 3.2%) from 6 April 2024 and an MoJ review of the regime is reported for October 2026; a claim stays on the table in force at its issue date, so always read the version current at issue.",
     "text": "the only costs allowed are (a) the fixed costs in Table 12; and (b) the disbursements set out in Section IX ... the only costs allowed in any claim which would normally be or is allocated to the intermediate track are (a) the fixed costs in Table 14; and (b) the disbursements set out in Section IX.",
     "tags": [
       "fixed recoverable costs",
@@ -549,9 +581,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part45-fixed-costs",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 45.44 (Table 12, fast track) and 45.50 (Table 14, intermediate) and the 1 October 2023 commencement. Matches blueprint.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned 45.44 (Table 12, fast track) and 45.50 (Table 14, intermediate) and the 1 October 2023 commencement. Matches blueprint. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): Search summaries of DWF ('Fixed Costs Transitional Provisions', June 2025), TMC Legal ('18 months on') and a 39 Essex Chambers seminar paper reported that 'from 6 April 2024, all costs in Tables 12, 14 and 15 were uprated by 3.2%', that 'a claim remains subject to the FRC table in place on its issue date', and that the MoJ plans to review the regime and tables in October 2026. Secondary sources only; check PD 45 on the official page.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "quote_only"
   },
@@ -575,9 +607,9 @@
     "verification": {
       "status": "failed",
       "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part-46-costs-special-cases/practice-direction-46-costs-special-cases",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. BLUEPRINT CONTRADICTED: blueprint queried £19/hr; snippet of PD 46 para 3.4 states £24 per hour, amended from £19 by the 186th Practice Direction Update in force 1 October 2025. The two-thirds cap (46.5(2)) was also returned.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. BLUEPRINT CONTRADICTED: blueprint queried £19/hr; snippet of PD 46 para 3.4 states £24 per hour, amended from £19 by the 186th Practice Direction Update in force 1 October 2025. The two-thirds cap (46.5(2)) was also returned. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): LexisNexis guidance and Law Gazette ('LiPs set for uplift on £19 hourly rate') listings summarised: the PD 46 para 3.4 rate rose from £19 to £24 per hour, applying to time reasonably spent on work done on or after 1 October 2025. Consistent with the entry.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "quote_only"
   },
@@ -629,9 +661,9 @@
     "verification": {
       "status": "failed",
       "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/part51/practice-direction-51ze-small-claims-track-automatic-referral-to-mediation-pilot-scheme",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. BLUEPRINT OUTDATED: blueprint said the pilot \"ran to 21 May 2026\". Snippets of PD 51ZE and the 193rd/196th PD Update documents: extended to 6 April 2027; 196th Update (in force 1 October 2026 \"or as set out in the instrument\") amends PD 51ZE \"to include non-personal injury RTA Bent Metal claims in the mandatory mediation scheme, aligning it with the pilot under PD 51R\". Confirm the commencement wording for RTA claims (issue date trigger) on the PD text.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. BLUEPRINT OUTDATED: blueprint said the pilot \"ran to 21 May 2026\". Snippets of PD 51ZE and the 193rd/196th PD Update documents: extended to 6 April 2027; 196th Update (in force 1 October 2026 \"or as set out in the instrument\") amends PD 51ZE \"to include non-personal injury RTA Bent Metal claims in the mandatory mediation scheme, aligning it with the pilot under PD 51R\". Confirm the commencement wording for RTA claims (issue date trigger) on the PD text. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): Search summaries of the justice.gov.uk '196 PD making document' and LexisNexis news 16/07/2026 ('196th Practice Direction Update: Business and Property Division, other procedural amendments in force') again reported that the 196th Update 'amends PD 51ZE to include non-personal injury RTA \"Bent Metal\" claims in the mandatory mediation scheme, aligning it with the pilot under PD 51R', sharing the 1 October 2026 date of the High Court reorganisation.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "quote_only"
   },
@@ -639,8 +671,8 @@
     "id": "pd-51r-ocmc-rta",
     "type": "practice_direction",
     "citation": "PD 51R – Online Civil Money Claims Pilot (RTA provisions; 187th, 190th and 193rd PD Updates)",
-    "title": "OCMC pilot: road traffic accident claims and mediation within the online process",
-    "principle": "The 187th PD Update (in force 28 July 2025) removed the \"not a road traffic accident claim\" exclusions from the headings above PD 51R paras 6.2 and 6.3, opening those OCMC steps to RTA money claims; the OCMC pilot itself was extended to 1 October 2026 (190th Update) and then to April 2027 (193rd Update). From 5 November 2024 defended OCMC claims are automatically opted in to mediation. The HMCTS \"RTA mediation pilot\" referred to in the blueprint is best read as this PD 51R change plus the 196th Update to PD 51ZE; confirm scope on the PD text before relying on it in a client letter.",
+    "title": "OCMC mandation and the non-injury road traffic mediation pilot (from 28 July 2025)",
+    "principle": "From 28 July 2025 eligible money claims must be issued online (OCMC or MCOL), and HMCTS began a 12-month pilot under PD 51R automatically referring defended OCMC claims worth under £10,000 that arise from a road traffic accident and include no personal injury element to free mediation; the 187th PD Update (in force 28 July 2025) removed the 'not a road traffic accident claim' exclusions from the headings above PD 51R paras 6.2 and 6.3 to make this possible. The OCMC pilot was extended to 1 October 2026 (190th Update) and then to April 2027 (193rd Update), and from 1 October 2026 PD 51ZE (196th Update) brings non-injury 'bent metal' RTA claims into the small claims mandatory mediation scheme as well. CCGUK should issue vehicle-damage and hire claims online on the client's behalf only as drafts for the client to submit (Legal Services Act 2007), and prepare every defended small claim for a one-hour telephone mediation with a single evidenced settlement figure.",
     "tags": [
       "OCMC",
       "PD 51R",
@@ -656,9 +688,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.justice.gov.uk/courts/procedure-rules/civil/rules/practice-direction-51r-online-court-pilot",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of the 187th PD Update (\"omitting 'and not a road traffic accident claim' from the heading above paragraph 6.2 ... in force 28th July 2025\"), 190th Update (pilot to 1 October 2026) and 193rd Update (aligned end date April 2027). The blueprint's \"July 2025 HMCTS pilot\" is consistent with the 187th Update but was not independently confirmed.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets of the 187th PD Update (\"omitting 'and not a road traffic accident claim' from the heading above paragraph 6.2 ... in force 28th July 2025\"), 190th Update (pilot to 1 October 2026) and 193rd Update (aligned end date April 2027). The blueprint's \"July 2025 HMCTS pilot\" is consistent with the 187th Update but was not independently confirmed. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): Search summaries of LexisNexis news ('HMCTS announces mandation of the OCMC pilot and automatic referral to mediation for non-injury RTA claims'), DWF ('Compulsory mediation and OCMC expansion', August 2025), DAC Beachcroft ('Changes to low-value claims: digitisation and mediation') and an HMCTS letter of 25 July 2025 hosted by CCUA ('OCMC-mandation-letter-Update-to-PD51R58.pdf') agree: from 28 July 2025 'eligible money claims must be made online, using OCMC or MCOL' and 'a 12-month pilot of mandatory mediation will apply to all defended claims progressing via the OCMC portal that are under £10,000 in value and do not include any element of personal injury'. The earlier hedge ('best read as') is replaced by this description; confirm the PD 51R paragraph numbers on the page.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "quote_only"
   }

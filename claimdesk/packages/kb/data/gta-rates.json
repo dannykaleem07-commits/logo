@@ -31,7 +31,7 @@
   },
   {
     "group": "S3",
-    "description": "Standard group S3 (e.g. Toyota Corolla; Vauxhall Astra 1.4 per a search snippet). 2026-27 maximum daily settlement rate, ex VAT.",
+    "description": "Standard group S3 (e.g. Toyota Corolla). 2026-27 maximum daily settlement rate, ex VAT.",
     "dailyRatePence": 5118,
     "period": "2026-27",
     "effectiveFrom": "2026-07-01",
@@ -39,7 +39,7 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.gtacredithire.com/rates/car-hire/",
-      "sourceNote": "Search-engine snippet of the gtacredithire.com page titled 'Car Hire Rates 2026': 'Group S3 vehicles like the Toyota Corolla, the GTA Rate is £51.18'. Period inferred from the page title (2026-27 table); page not fetched directly (egress proxy policy denial). Confirm period and figure. 2026-10-07: a further search-engine result summary (search snippet, not a fetched page) for the 2026-27 table (new hires 1 July 2026 to 30 June 2027) gave 'Vauxhall Astra (1.4): £51.18', agreeing with the held S3 figure; the snippet did not print the group code next to the Astra, so the Astra example is inferred from the matching rate.",
+      "sourceNote": "Search-engine snippet of the gtacredithire.com page titled 'Car Hire Rates 2026': 'Group S3 vehicles like the Toyota Corolla, the GTA Rate is £51.18'. Period inferred from the page title (2026-27 table); page not fetched directly (egress proxy policy denial). Confirm period and figure. 2026-10-07: a further search-engine result summary (search snippet, not a fetched page) for the 2026-27 table (new hires 1 July 2026 to 30 June 2027) gave 'Vauxhall Astra (1.4): £51.18', agreeing with the held S3 figure; the snippet did not print the group code next to the Astra, so the Astra example is inferred from the matching rate. VALIDATOR 2026-10-07: the 'Vauxhall Astra 1.4' example was taken out of the description because the snippet did not print a group code beside the Astra; it was placed in S3 only because its £51.18 matches the S3 rate. Confirm the Astra's group on the GTA car-hire rates page.",
       "verifiedAt": "2026-10-07",
       "verifiedBy": "research-agent (search snippet)"
     }

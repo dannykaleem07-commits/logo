@@ -59,14 +59,14 @@ describe('gtaRateFor', () => {
 describe('periods and groups', () => {
   it('lists periods latest first and groups per period', () => {
     expect(listPeriods()).toEqual(['2026-27', '2025-26']);
-    expect(listGroups('2026-27')).toEqual(['S1', 'S2', 'S3', 'S6', 'M', 'M1', 'M2', 'M3', 'F6']);
+    expect(listGroups('2026-27')).toEqual(['S1', 'S2', 'S3', 'S4', 'S6', 'M', 'M1', 'M2', 'M3', 'F6']);
     expect(listGroups('2025-26')).toEqual(['M', 'M1', 'CP1', 'CP2', 'PV2']);
     expect(listGroups()).toContain('CP1');
     expect(listGroups('2019-20')).toEqual([]);
   });
 
   it('ratesForPeriod and periodFor', () => {
-    expect(ratesForPeriod('2026-27')).toHaveLength(9);
+    expect(ratesForPeriod('2026-27')).toHaveLength(10);
     expect(ratesForPeriod('2026-27')[0]!.group).toBe('S1');
     expect(periodFor('2026-08-01')).toBe('2026-27');
     expect(periodFor('2026-03-01')).toBe('2025-26');

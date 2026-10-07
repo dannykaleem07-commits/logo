@@ -82,6 +82,11 @@ body.manager-mode::before {
 .manager-toggle-short {
   display: none;
 }
+/* Settings → Manager mode uses the same toggle inside a card: there it reads as an outlined button. */
+.card .manager-toggle:not(.on) {
+  border-color: var(--line-2);
+  color: var(--ink-2);
+}
 
 /* ON banner, sticky under the top bar */
 .manager-banner {

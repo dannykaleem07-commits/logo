@@ -1,0 +1,828 @@
+{
+  "make": "Iveco",
+  "slug": "iveco",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "daily": {
+      "Daily III (1999–2006)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5440,
+            "widthMm": 2000,
+            "heightMm": 2600,
+            "wheelbaseMm": 3300,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.205,
+            "frontOverhangRatio": 0.189,
+            "glasshouseHeightRatio": 0.22,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "3300 mm wheelbase H2 panel van; other wheelbases and roof heights differ."
+          },
+          "chassis-cab": {
+            "lengthMm": 5840,
+            "widthMm": 2000,
+            "heightMm": 2300,
+            "wheelbaseMm": 3530,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.237,
+            "frontOverhangRatio": 0.158,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.05,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Single cab with typical dropside/tipper body; double cab and Luton/box bodies vary."
+          },
+          "camper": {
+            "lengthMm": 6600,
+            "widthMm": 2300,
+            "heightMm": 2950,
+            "wheelbaseMm": 3950,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.209,
+            "frontOverhangRatio": 0.193,
+            "glasshouseHeightRatio": 0.2,
+            "roofTaper": 0.05,
+            "doors": [
+              3,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical coachbuilt motorhome on a Daily base; varies widely by converter."
+          }
+        }
+      },
+      "Daily IV (2006–2011)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5560,
+            "widthMm": 2000,
+            "heightMm": 2600,
+            "wheelbaseMm": 3300,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.22,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "3300 mm wheelbase H2 panel van; other wheelbases and roof heights differ."
+          },
+          "crew-van": {
+            "lengthMm": 5560,
+            "widthMm": 2000,
+            "heightMm": 2600,
+            "wheelbaseMm": 3300,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Crew van with second-row glazing; 3300 mm wheelbase H2 figures."
+          },
+          "chassis-cab": {
+            "lengthMm": 5960,
+            "widthMm": 2000,
+            "heightMm": 2300,
+            "wheelbaseMm": 3530,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.245,
+            "frontOverhangRatio": 0.163,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.05,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Single cab with typical dropside/tipper body; double cab and Luton/box bodies vary."
+          },
+          "camper": {
+            "lengthMm": 6600,
+            "widthMm": 2300,
+            "heightMm": 2950,
+            "wheelbaseMm": 3950,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.209,
+            "frontOverhangRatio": 0.193,
+            "glasshouseHeightRatio": 0.2,
+            "roofTaper": 0.05,
+            "doors": [
+              3,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical coachbuilt motorhome on a Daily base; varies widely by converter."
+          }
+        }
+      },
+      "Daily 2011 update (2011–2014)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5600,
+            "widthMm": 2000,
+            "heightMm": 2600,
+            "wheelbaseMm": 3520,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.178,
+            "glasshouseHeightRatio": 0.22,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "3520 mm wheelbase H2 panel van; other wheelbases and roof heights differ."
+          },
+          "crew-van": {
+            "lengthMm": 5600,
+            "widthMm": 2000,
+            "heightMm": 2600,
+            "wheelbaseMm": 3520,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.178,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Crew van with second-row glazing; 3520 mm wheelbase H2 figures."
+          },
+          "chassis-cab": {
+            "lengthMm": 6000,
+            "widthMm": 2000,
+            "heightMm": 2300,
+            "wheelbaseMm": 3750,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.225,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.05,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Single cab with typical dropside/tipper body; double cab and Luton/box bodies vary."
+          },
+          "camper": {
+            "lengthMm": 6600,
+            "widthMm": 2300,
+            "heightMm": 2950,
+            "wheelbaseMm": 3950,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.209,
+            "frontOverhangRatio": 0.193,
+            "glasshouseHeightRatio": 0.2,
+            "roofTaper": 0.05,
+            "doors": [
+              3,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical coachbuilt motorhome on a Daily base; varies widely by converter."
+          }
+        }
+      },
+      "Daily 2014 (2014–2019)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5600,
+            "widthMm": 2000,
+            "heightMm": 2600,
+            "wheelbaseMm": 3520,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.178,
+            "glasshouseHeightRatio": 0.22,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "3520 mm wheelbase H2 panel van; other wheelbases and roof heights differ."
+          },
+          "crew-van": {
+            "lengthMm": 5600,
+            "widthMm": 2000,
+            "heightMm": 2600,
+            "wheelbaseMm": 3520,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.178,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Crew van with second-row glazing; 3520 mm wheelbase H2 figures."
+          },
+          "chassis-cab": {
+            "lengthMm": 6000,
+            "widthMm": 2000,
+            "heightMm": 2300,
+            "wheelbaseMm": 3750,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.225,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.05,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Single cab with typical dropside/tipper body; double cab and Luton/box bodies vary."
+          },
+          "camper": {
+            "lengthMm": 6600,
+            "widthMm": 2300,
+            "heightMm": 2950,
+            "wheelbaseMm": 3950,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.209,
+            "frontOverhangRatio": 0.193,
+            "glasshouseHeightRatio": 0.2,
+            "roofTaper": 0.05,
+            "doors": [
+              3,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical coachbuilt motorhome on a Daily base; varies widely by converter."
+          }
+        }
+      },
+      "Daily 2019 (2019–2024)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5600,
+            "widthMm": 2000,
+            "heightMm": 2600,
+            "wheelbaseMm": 3520,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.178,
+            "glasshouseHeightRatio": 0.22,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "3520 mm wheelbase H2 panel van; other wheelbases and roof heights differ."
+          },
+          "crew-van": {
+            "lengthMm": 5600,
+            "widthMm": 2000,
+            "heightMm": 2600,
+            "wheelbaseMm": 3520,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.178,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Crew van with second-row glazing; 3520 mm wheelbase H2 figures."
+          },
+          "chassis-cab": {
+            "lengthMm": 6000,
+            "widthMm": 2000,
+            "heightMm": 2300,
+            "wheelbaseMm": 3750,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.225,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.05,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Single cab with typical dropside/tipper body; double cab and Luton/box bodies vary."
+          },
+          "camper": {
+            "lengthMm": 6600,
+            "widthMm": 2300,
+            "heightMm": 2950,
+            "wheelbaseMm": 3950,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.209,
+            "frontOverhangRatio": 0.193,
+            "glasshouseHeightRatio": 0.2,
+            "roofTaper": 0.05,
+            "doors": [
+              3,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical coachbuilt motorhome on a Daily base; varies widely by converter."
+          }
+        }
+      },
+      "Daily 2024 (2024–)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5600,
+            "widthMm": 2000,
+            "heightMm": 2600,
+            "wheelbaseMm": 3520,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.178,
+            "glasshouseHeightRatio": 0.22,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "3520 mm wheelbase H2 panel van; other wheelbases and roof heights differ."
+          },
+          "crew-van": {
+            "lengthMm": 5600,
+            "widthMm": 2000,
+            "heightMm": 2600,
+            "wheelbaseMm": 3520,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.178,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Crew van with second-row glazing; 3520 mm wheelbase H2 figures."
+          },
+          "chassis-cab": {
+            "lengthMm": 6000,
+            "widthMm": 2000,
+            "heightMm": 2300,
+            "wheelbaseMm": 3750,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.225,
+            "frontOverhangRatio": 0.15,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.05,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Single cab with typical dropside/tipper body; double cab and Luton/box bodies vary."
+          },
+          "camper": {
+            "lengthMm": 6600,
+            "widthMm": 2300,
+            "heightMm": 2950,
+            "wheelbaseMm": 3950,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.209,
+            "frontOverhangRatio": 0.193,
+            "glasshouseHeightRatio": 0.2,
+            "roofTaper": 0.05,
+            "doors": [
+              3,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical coachbuilt motorhome on a Daily base; varies widely by converter."
+          }
+        }
+      }
+    },
+    "daily-minibus": {
+      "Daily III (1999–2006)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 6600,
+            "widthMm": 2000,
+            "heightMm": 2750,
+            "wheelbaseMm": 3950,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "minibus",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.209,
+            "frontOverhangRatio": 0.193,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical 16-seat high-roof minibus; lengths vary."
+          }
+        }
+      },
+      "Daily IV (2006–2011)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 6900,
+            "widthMm": 2000,
+            "heightMm": 2800,
+            "wheelbaseMm": 4100,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "minibus",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical 16-seat high-roof minibus; lengths vary."
+          }
+        }
+      },
+      "Daily 2011 update (2011–2014)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 6900,
+            "widthMm": 2000,
+            "heightMm": 2800,
+            "wheelbaseMm": 4100,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "minibus",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical 16-seat high-roof minibus; lengths vary."
+          }
+        }
+      },
+      "Daily 2014 (2014–2019)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 6900,
+            "widthMm": 2000,
+            "heightMm": 2800,
+            "wheelbaseMm": 4100,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "minibus",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical 16-seat high-roof minibus; lengths vary."
+          }
+        }
+      },
+      "Daily 2019 (2019–2024)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 6900,
+            "widthMm": 2000,
+            "heightMm": 2800,
+            "wheelbaseMm": 4100,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "minibus",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical 16-seat high-roof minibus; lengths vary."
+          }
+        }
+      },
+      "Daily 2024 (2024–)": {
+        "bodies": {
+          "minibus": {
+            "lengthMm": 6900,
+            "widthMm": 2000,
+            "heightMm": 2800,
+            "wheelbaseMm": 4100,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 16,
+            "profile": "minibus",
+            "bonnetRatio": 0.1,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Typical 16-seat high-roof minibus; lengths vary."
+          }
+        }
+      }
+    },
+    "massif": {
+      "Mk1 (2008–2011)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4650,
+            "widthMm": 1775,
+            "heightMm": 1975,
+            "wheelbaseMm": 2770,
+            "groundClearanceMm": 220,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.194,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.0,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Five-door station wagon; Santana PS-10 based; rare."
+          },
+          "suv-3-door": {
+            "lengthMm": 4190,
+            "widthMm": 1775,
+            "heightMm": 1975,
+            "wheelbaseMm": 2450,
+            "groundClearanceMm": 220,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.199,
+            "frontOverhangRatio": 0.216,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.0,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Three-door short-wheelbase station wagon."
+          },
+          "pickup": {
+            "lengthMm": 5185,
+            "widthMm": 1775,
+            "heightMm": 1975,
+            "wheelbaseMm": 3020,
+            "groundClearanceMm": 220,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.251,
+            "frontOverhangRatio": 0.167,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Single-cab pickup; rare."
+          }
+        }
+      }
+    }
+  }
+}

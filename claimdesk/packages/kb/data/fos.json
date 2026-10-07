@@ -30,7 +30,7 @@
     "type": "fos",
     "citation": "FOS \"Time limits\" (DISP 1.6 and DISP 2.8)",
     "title": "Complaint clocks: 8 weeks for the firm; 6 months to refer; 6 years from the event or 3 years from awareness",
-    "principle": "A business has 8 weeks to issue a final response. The complainant then has 6 months from the date of the final response to refer to FOS; a complaint must also be made within 6 years of the event or, if later, 3 years from when the complainant knew or ought to have known of cause for complaint. FOS may extend the 6-month limit only for exceptional circumstances (e.g. serious illness), where no valid final response was sent, or where the business consents. Diarise the 6-month date on the day the final response arrives.",
+    "principle": "A business has 8 weeks to issue a final response. The complainant then has 6 months from the date of the final response to refer to FOS; a complaint must also be made within 6 years of the event or, if later, 3 years from when the complainant knew or ought to have known of cause for complaint. FOS may extend the 6-month limit only for exceptional circumstances (e.g. serious illness), where no valid final response was sent, or where the business consents. Diarise the 6-month date on the day the final response arrives. Reform pending: HM Treasury's consultation response of 16 March 2026 says the government will legislate for an absolute 10-year longstop (from the conduct complained of) on FOS complaints, with limited FCA-defined exceptions; until that legislation and any DISP change are in force the limits above apply.",
     "tags": [
       "FOS",
       "time limits",
@@ -47,9 +47,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.financial-ombudsman.org.uk/consumers/complaints-can-help/expect/time-limits",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the 8-week, 6-month, 6-year and 3-year limits and the exceptions list.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the 8-week, 6-month, 6-year and 3-year limits and the exceptions list. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): Search summaries of HM Treasury's 'Consultation Response FOS Reform March 2026' (https://assets.publishing.service.gov.uk/media/69b4301efdbfc4d58fc8cf64/Consultation_Response_FOS_Reform_March_2026.pdf) and of Osborne Clarke / Lewis Silkin commentaries: 'The government will legislate to introduce an absolute 10-year longstop for complaints brought to the FOS', alongside a parallel FCA/FOS consultation CP26/9. No commencement date was seen; current DISP 2.8 limits are unchanged.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "link_only"
   },
@@ -71,10 +71,10 @@
     "url": "https://www.financial-ombudsman.org.uk/consumers/expect/compensation",
     "verification": {
       "status": "unverified",
-      "sourceUrl": "https://www.financial-ombudsman.org.uk/consumers/expect/compensation",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the FOS compensation page and award-limit news items returned £455,000 (from 1 April 2026), £445,000 (2025), £430,000 (2024) and £205,000 (pre-April 2019 acts).",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceUrl": "https://www.financial-ombudsman.org.uk/news/fca-confirms-increase-award-limits-2",
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet of the FOS compensation page and award-limit news items returned £455,000 (from 1 April 2026), £445,000 (2025), £430,000 (2024) and £205,000 (pre-April 2019 acts). RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): FOS news item 'FCA confirms increase to award limits' (https://www.financial-ombudsman.org.uk/news/fca-confirms-increase-award-limits-2) was summarised: for complaints referred on or after 1 April 2026 about acts or omissions on or after 1 April 2019 the limit is £455,000 ('an increase of £10,000 on the previous year'); for earlier acts or omissions £205,000; adjusted annually by CPI. Values unchanged.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "link_only"
   },
@@ -184,5 +184,34 @@
       "verifiedBy": "research-agent"
     },
     "licence": "quote_only"
+  },
+  {
+    "id": "fos-professional-representative-case-fee",
+    "type": "fos",
+    "citation": "FOS case fee for professional representatives (from 1 April 2025)",
+    "title": "FOS charges professional representatives £250 per referred case after ten free cases a year",
+    "principle": "Since 1 April 2025 the Financial Ombudsman Service charges professional representatives (claims management companies and law firms that refer complaints for customers) a £250 case fee for each case after the first ten in a financial year, refunding £175 where the outcome is in the consumer's favour. Consumers can still complain to FOS free of charge. For CCGUK this is a perimeter point: a client's complaint about their own insurer (courtesy car, valuation, referral to credit hire) should be made by the client directly; CCGUK must not refer or represent such complaints for a fee, which would be regulated claims management activity (RAO art 89I, PERG 2.7), and FOS is never a route against the at-fault insurer.",
+    "tags": [
+      "FOS",
+      "case fee",
+      "professional representative",
+      "claims management company",
+      "£250",
+      "free cases",
+      "perimeter"
+    ],
+    "topics": [
+      "complaints",
+      "perimeter"
+    ],
+    "url": "https://www.financial-ombudsman.org.uk/news/financial-ombudsman-service-start-charging-professional-representatives-refer-cases",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.financial-ombudsman.org.uk/news/financial-ombudsman-service-start-charging-professional-representatives-refer-cases",
+      "sourceNote": "SEARCH SNIPPET ONLY 2026-10-07 (not a fetched page; the official site is egress-blocked): FOS news page 'Financial Ombudsman Service to start charging professional representatives to refer cases' and the FOS paper 'Charging professional representatives one year on' surfaced; the search summary stated FOS 'will charge professional representatives £250 to refer a case to their service from 1 April 2025', with 'ten cases ... for free each financial year' and '£175 back if the case outcome is in favour of the consumer'. It also reported that where a professionally represented complaint is not upheld or is withdrawn the business pays a reduced case fee of £475 instead of £650 (not recorded in the principle; confirm before use).",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
+    },
+    "licence": "link_only"
   }
 ]

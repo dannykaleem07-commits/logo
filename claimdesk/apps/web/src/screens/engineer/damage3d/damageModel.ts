@@ -45,7 +45,12 @@ export const TONE_COLOURS: Record<Tone, string> = {
   glass: '#b7cde6',
   lamp: '#f7f9fc',
   soft: '#59606b',
-  tyre: '#3b414b'
+  tyre: '#3b414b',
+  rearlamp: '#e8a3a3',
+  chrome: '#c9d1dc',
+  black: '#5b6370',
+  rim: '#c3cad4',
+  liner: '#4a515c'
 };
 
 export const HOVER_COLOUR = '#1466d2';

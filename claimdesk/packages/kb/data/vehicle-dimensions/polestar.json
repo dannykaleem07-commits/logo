@@ -1,0 +1,124 @@
+{
+  "make": "Polestar",
+  "slug": "polestar",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "polestar-2": {
+      "Mk1 (2020–2023)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4605,
+            "widthMm": 1860,
+            "heightMm": 1480,
+            "wheelbaseMm": 2735,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 19,
+            "profile": "liftback",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Raised fastback with body-colour grille panel; width excludes mirrors."
+          }
+        }
+      },
+      "MY24 update (2023–present)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4605,
+            "widthMm": 1860,
+            "heightMm": 1475,
+            "wheelbaseMm": 2735,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 19,
+            "profile": "liftback",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "MY24 update with SmartZone front panel."
+          }
+        }
+      }
+    },
+    "polestar-3": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4900,
+            "widthMm": 1970,
+            "heightMm": 1615,
+            "wheelbaseMm": 2985,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 22,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.184,
+            "frontOverhangRatio": 0.207,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Roof-mounted aero wing above the windscreen."
+          }
+        }
+      }
+    },
+    "polestar-4": {
+      "Mk1 (2024–present)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4840,
+            "widthMm": 2010,
+            "heightMm": 1535,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 21,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.182,
+            "frontOverhangRatio": 0.198,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "No rear window; camera rear-view mirror."
+          }
+        }
+      }
+    }
+  }
+}

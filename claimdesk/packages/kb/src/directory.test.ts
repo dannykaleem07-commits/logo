@@ -125,8 +125,8 @@ describe('copycat detection', () => {
 describe('shipped directory content', () => {
   it('merges the three research parts with unique ids and the maintenance fields unset', () => {
     const dir = loadDirectory();
-    expect(dir).toHaveLength(49);
-    expect(new Set(dir.map((e) => e.id)).size).toBe(49);
+    expect(dir).toHaveLength(55);
+    expect(new Set(dir.map((e) => e.id)).size).toBe(55);
     for (const e of dir) {
       expect(e.lastUsedOk).toBeUndefined();
       expect(e.lastFailed).toBeUndefined();

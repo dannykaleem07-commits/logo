@@ -8,7 +8,7 @@
  *
  * Axes (metres): x along the car, front = +x; y up from the ground; z across, right (O/S) = +z, left (N/S) = −z.
  */
-import type { VehicleBodyType } from './zones';
+import { zoneAppliesToBody, type VehicleBodyType } from './zones';
 
 export const PROFILES = ['hatch', 'saloon', 'fastback', 'estate', 'coupe', 'convertible', 'suv', 'suv-coupe', 'mpv', 'van', 'van-high-roof', 'pickup'] as const;
 export type Profile = (typeof PROFILES)[number];
@@ -390,8 +390,8 @@ export function resolveSpec(body: VehicleBodyType, dims?: VehicleDims | null, id
   let rear: RearKind;
   if (body === 'panel-van') rear = 'van';
   else if (body === 'pickup') rear = 'bed';
-  else if (profile === 'saloon' || profile === 'coupe' || profile === 'convertible' || (profile === 'fastback' && (body === 'saloon' || body === 'coupe'))) rear = 'boot';
-  else rear = 'hatch';
+  else if (body === 'saloon' || body === 'coupe' || body === 'convertible') rear = 'boot';
+  else rear = 'hatch'; // tailgate bodies, whatever the silhouette (a liftback "hatchback" can look like a saloon)
 
   const wR = wheelR;
   let roofEndX: number;
@@ -440,12 +440,9 @@ export function resolveSpec(body: VehicleBodyType, dims?: VehicleDims | null, id
       cabinCap = true;
       break;
     default: // vans
-      roofEndX = xR + s.tailLean + 0.01;
+      roofEndX = xR + s.tailLean;
       cabinRearX = roofEndX;
       cabinCap = true;
-  }
-  if (rear === 'hatch' && (profile === 'saloon' || profile === 'coupe')) {
-    // a tailgate body drawn with a notchback profile: keep the shape
   }
 
   // doors
@@ -501,6 +498,8 @@ export function resolveSpec(body: VehicleBodyType, dims?: VehicleDims | null, id
       if (rdEnd - 0.05 - qEnd > 0.1) windows.push({ zone: 'quarter_glass', x0: qEnd, x1: rdEnd - 0.05 });
     }
   }
+  // zone names the taxonomy does not have on this body (e.g. rear door glass on an MPV) stay drawn but unselectable
+  for (const w of windows) if (w.zone && !zoneAppliesToBody(`${w.zone}_l`, body)) w.zone = null;
   const doorCount = doors.length * 2 + (rear === 'hatch' ? 1 : 0);
 
   const roofHW = clamp(W / 2 - s.inset - glassH * Math.tan((s.tumble * Math.PI) / 180), W * 0.3, W / 2 - 0.02);

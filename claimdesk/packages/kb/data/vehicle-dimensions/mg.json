@@ -1,0 +1,862 @@
+{
+  "make": "MG",
+  "slug": "mg",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "mgf": {
+      "Mk1 (1995–2002)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3915,
+            "widthMm": 1630,
+            "heightMm": 1265,
+            "wheelbaseMm": 2375,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 15,
+            "profile": "roadster",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.208,
+            "frontOverhangRatio": 0.185,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Mid-engine roadster; Hydragas suspension."
+          }
+        }
+      }
+    },
+    "tf": {
+      "MG Rover TF (2002–2005)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3945,
+            "widthMm": 1630,
+            "heightMm": 1260,
+            "wheelbaseMm": 2375,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.187,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Mid-engine roadster."
+          }
+        }
+      },
+      "NAC / MG Motor UK TF (2008–2011)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 3945,
+            "widthMm": 1630,
+            "heightMm": 1260,
+            "wheelbaseMm": 2375,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 16,
+            "profile": "roadster",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.187,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Chinese-built revival of the TF; rare."
+          }
+        }
+      }
+    },
+    "zr": {
+      "Mk1 (2001–2005, facelift 2004)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4000,
+            "widthMm": 1690,
+            "heightMm": 1410,
+            "wheelbaseMm": 2505,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.157,
+            "frontOverhangRatio": 0.217,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Sporting Rover 25; 5-door shown, 3-door same length."
+          }
+        }
+      }
+    },
+    "zs-mg-rover": {
+      "MG Rover ZS (2001–2005, facelift 2004)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4365,
+            "widthMm": 1700,
+            "heightMm": 1390,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "liftback",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.208,
+            "frontOverhangRatio": 0.192,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Sporting Rover 45 hatch."
+          },
+          "saloon": {
+            "lengthMm": 4370,
+            "widthMm": 1700,
+            "heightMm": 1390,
+            "wheelbaseMm": 2620,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.212,
+            "frontOverhangRatio": 0.188,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "narrow",
+            "note": "Saloon with boot spoiler."
+          }
+        }
+      }
+    },
+    "zt": {
+      "Mk1 (2001–2005, facelift 2004)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4790,
+            "widthMm": 1780,
+            "heightMm": 1420,
+            "wheelbaseMm": 2745,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.226,
+            "frontOverhangRatio": 0.201,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "Rover 75-based; twin round headlamps."
+          },
+          "estate": {
+            "lengthMm": 4810,
+            "widthMm": 1780,
+            "heightMm": 1460,
+            "wheelbaseMm": 2745,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "estate",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.223,
+            "frontOverhangRatio": 0.206,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "narrow",
+            "note": "ZT-T."
+          }
+        }
+      }
+    },
+    "xpower-sv": {
+      "Mk1 (2003–2005)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4500,
+            "widthMm": 1900,
+            "heightMm": 1320,
+            "wheelbaseMm": 2630,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.199,
+            "frontOverhangRatio": 0.216,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Carbon-bodied V8 coupe; very rare."
+          }
+        }
+      }
+    },
+    "mg3": {
+      "Mk1 (2013–2018)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4020,
+            "widthMm": 1730,
+            "heightMm": 1505,
+            "wheelbaseMm": 2520,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.157,
+            "frontOverhangRatio": 0.216,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk1 facelift (2018–2024)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4055,
+            "widthMm": 1730,
+            "heightMm": 1515,
+            "wheelbaseMm": 2520,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.159,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Mk2 Hybrid+ (2024–)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4115,
+            "widthMm": 1795,
+            "heightMm": 1500,
+            "wheelbaseMm": 2570,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.158,
+            "frontOverhangRatio": 0.218,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "mg6": {
+      "Mk1 (2011–2016)": {
+        "bodies": {
+          "liftback": {
+            "lengthMm": 4650,
+            "widthMm": 1830,
+            "heightMm": 1470,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "liftback",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.218,
+            "frontOverhangRatio": 0.201,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "MG6 GT five-door."
+          },
+          "saloon": {
+            "lengthMm": 4650,
+            "widthMm": 1830,
+            "heightMm": 1480,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.222,
+            "frontOverhangRatio": 0.197,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "MG6 Magnette."
+          }
+        }
+      }
+    },
+    "zs": {
+      "Mk1 petrol (2017–2020)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4315,
+            "widthMm": 1810,
+            "heightMm": 1645,
+            "wheelbaseMm": 2585,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.188,
+            "frontOverhangRatio": 0.212,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Height includes roof rails."
+          }
+        }
+      },
+      "ZS EV Mk1 (2019–2021)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4315,
+            "widthMm": 1810,
+            "heightMm": 1645,
+            "wheelbaseMm": 2585,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.188,
+            "frontOverhangRatio": 0.212,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Original ZS EV kept a grille-style nose."
+          }
+        }
+      },
+      "Mk1 facelift petrol (2020–2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4325,
+            "widthMm": 1810,
+            "heightMm": 1655,
+            "wheelbaseMm": 2585,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.189,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "ZS EV facelift (2021–2025)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4325,
+            "widthMm": 1810,
+            "heightMm": 1650,
+            "wheelbaseMm": 2585,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.189,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      },
+      "Mk2 Hybrid+ (2024–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4430,
+            "widthMm": 1820,
+            "heightMm": 1635,
+            "wheelbaseMm": 2610,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.218,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "gs": {
+      "Mk1 (2016–2019)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4500,
+            "widthMm": 1855,
+            "heightMm": 1675,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.218,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "hs": {
+      "Mk1 (2019–2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4575,
+            "widthMm": 1875,
+            "heightMm": 1685,
+            "wheelbaseMm": 2720,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.191,
+            "frontOverhangRatio": 0.215,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Height includes roof rails."
+          }
+        }
+      },
+      "Mk2 (2025–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4655,
+            "widthMm": 1890,
+            "heightMm": 1685,
+            "wheelbaseMm": 2765,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.191,
+            "frontOverhangRatio": 0.215,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "mg5": {
+      "Mk1 EV (2020–2021)": {
+        "bodies": {
+          "estate": {
+            "lengthMm": 4545,
+            "widthMm": 1820,
+            "heightMm": 1545,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.215,
+            "frontOverhangRatio": 0.199,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Electric estate; grille-style nose on the early car."
+          }
+        }
+      },
+      "EV facelift (2021–)": {
+        "bodies": {
+          "estate": {
+            "lengthMm": 4600,
+            "widthMm": 1820,
+            "heightMm": 1545,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 17,
+            "profile": "estate",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.219,
+            "frontOverhangRatio": 0.202,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "mg4": {
+      "Mk1 EV (2022–)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4285,
+            "widthMm": 1835,
+            "heightMm": 1505,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 18,
+            "profile": "hatch",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.155,
+            "frontOverhangRatio": 0.214,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Low-slung electric hatch with twin rear spoiler."
+          }
+        }
+      }
+    },
+    "marvel-r": {
+      "Mk1 (2021–2023)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4675,
+            "widthMm": 1920,
+            "heightMm": 1620,
+            "wheelbaseMm": 2800,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.189,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "cyberster": {
+      "Mk1 (2025–)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4535,
+            "widthMm": 1915,
+            "heightMm": 1330,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "roadster",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.203,
+            "frontOverhangRatio": 0.203,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Electric roadster with scissor doors."
+          }
+        }
+      }
+    },
+    "mgs5-ev": {
+      "Mk1 (2025–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4475,
+            "widthMm": 1850,
+            "heightMm": 1620,
+            "wheelbaseMm": 2730,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.183,
+            "frontOverhangRatio": 0.207,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    },
+    "mgs6-ev": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4710,
+            "widthMm": 1900,
+            "heightMm": 1660,
+            "wheelbaseMm": 2860,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.185,
+            "frontOverhangRatio": 0.208,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "New model; dimensions approximate and uncertain."
+          }
+        }
+      }
+    },
+    "im5": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "fastback": {
+            "lengthMm": 4930,
+            "widthMm": 1960,
+            "heightMm": 1475,
+            "wheelbaseMm": 2950,
+            "groundClearanceMm": 130,
+            "wheelDiameterIn": 20,
+            "profile": "fastback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.209,
+            "frontOverhangRatio": 0.193,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.45,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Four-door fastback saloon with boot lid."
+          }
+        }
+      }
+    },
+    "im6": {
+      "Mk1 (2025–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4905,
+            "widthMm": 1990,
+            "heightMm": 1670,
+            "wheelbaseMm": 2950,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 21,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.191,
+            "frontOverhangRatio": 0.207,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev"
+          }
+        }
+      }
+    }
+  }
+}

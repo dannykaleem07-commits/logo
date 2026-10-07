@@ -212,9 +212,9 @@
     "verification": {
       "status": "unverified",
       "sourceUrl": "https://www.handbook.fca.org.uk/handbook/DISP/1/6.html",
-      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the eight-week final-response and holding-response limbs and the FOS leaflet/website requirement. Wording above is the snippet rendering.",
-      "verifiedAt": "2026-10-04",
-      "verifiedBy": "research-agent"
+      "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippet returned the eight-week final-response and holding-response limbs and the FOS leaflet/website requirement. Wording above is the snippet rendering. RE-CHECK 2026-10-07 (search-result snippets/summaries only, NOT fetched pages; official sites remain egress-blocked): Secondary snippets (Osborne Clarke's Regulation Tomorrow, ABCUL members' briefing, RPC) on FCA PS25/18 report that from 1 June 2026 firms must tell complainants, when acknowledging a complaint, the date by which they will receive a final response within the eight-week period; other DISP 1 amendments took effect on 17 March 2026. Not seen on the Handbook page, so the principle is unchanged; check DISP 1.6 before relying on it.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "quote_only"
   },
@@ -322,6 +322,36 @@
       "sourceNote": "FETCH BLOCKED 2026-10-04: the network egress proxy refused every WebFetch to this host, so the page itself was not read. Evidence is a domain-restricted WebSearch snippet of the cited page. A human must open the URL and confirm before this is upgraded to verified. Snippets returned PERG 2.7.20M (s.22(1B); arts 89G–89M; exclusions 89N–89W) and 2.7.20N (the six kinds of claim). The Glossary/RAO definition of \"financial services or financial product claim\" was NOT retrieved (only that it includes CCA 1974 s.75 claims); the analysis of own-insurer complaints is the agent's reasoning, not a sourced statement.",
       "verifiedAt": "2026-10-04",
       "verifiedBy": "research-agent"
+    },
+    "licence": "quote_only"
+  },
+  {
+    "id": "fca-cmcob-4-pre-contract",
+    "type": "fca_handbook",
+    "citation": "CMCOB 4 (Claims Management: Conduct of Business sourcebook — pre-contractual requirements)",
+    "title": "CMCOB applies only to authorised claims management firms; before contracting they must point customers to other ways of pursuing the claim",
+    "principle": "CMCOB governs firms authorised to carry on regulated claims management activity. CMCOB 4 (pre-contractual requirements) applies to regulated claims management activities other than seeking out, referral and identification of claims, and requires the firm, before entering an agreement, to take reasonable steps to find out whether the customer has other ways of pursuing the claim, make sure the customer understands them, and obtain and record written confirmation and reasons if the customer chooses not to use them; for a personal injury claim, legal expenses cover in the customer's motor or home policy that includes advice and representation counts as such an alternative. CCGUK is not an authorised claims management firm: credit hire and vehicle-damage recovery are outside the six regulated kinds of claim, injury is referred out without a fee, and CCGUK must not advise on, investigate or represent injury claims or own-insurer financial-product complaints for reward. If that perimeter ever moves, CMCOB (including CMCOB 6 post-contract and fee rules) applies in full.",
+    "tags": [
+      "CMCOB",
+      "claims management",
+      "pre-contract",
+      "alternative methods",
+      "legal expenses insurance",
+      "perimeter",
+      "personal injury"
+    ],
+    "topics": [
+      "perimeter",
+      "injury",
+      "complaints"
+    ],
+    "url": "https://www.handbook.fca.org.uk/handbook/CMCOB.pdf",
+    "verification": {
+      "status": "unverified",
+      "sourceUrl": "https://www.handbook.fca.org.uk/handbook/CMCOB.pdf",
+      "sourceNote": "SEARCH SNIPPET ONLY 2026-10-07 (not a fetched page; the official site is egress-blocked): FCA Handbook listings for CMCOB (whole sourcebook PDF), CMCOB 2, CMCOB 4/1, 4/2 and 4/3 surfaced; the search summary stated that 'CMCOB 4 (Pre-contractual requirements) applies to a firm in relation to regulated claims management activities other than seeking out, referrals and identification of claims or potential claims', that before entering an agreement the firm 'must take reasonable steps to ascertain whether the customer has other methods for pursuing the claim' and must 'seek confirmation in writing ... and record the customer's confirmation and reasons', and that for personal injury, motor or home legal expenses cover including legal advice, assistance and representation is an alternative method; CMCOB 6 covers post-contractual requirements including fees. The exact rule number for the alternative-methods duty was not shown; check CMCOB 4 on the page.",
+      "verifiedAt": "2026-10-07",
+      "verifiedBy": "research-agent (search snippet)"
     },
     "licence": "quote_only"
   }

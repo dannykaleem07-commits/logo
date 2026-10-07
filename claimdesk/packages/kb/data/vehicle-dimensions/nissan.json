@@ -1,0 +1,2219 @@
+{
+  "make": "Nissan",
+  "slug": "nissan",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "pixo": {
+      "UA0 (2009–2013)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3565,
+            "widthMm": 1600,
+            "heightMm": 1470,
+            "wheelbaseMm": 2360,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 14,
+            "profile": "hatch",
+            "bonnetRatio": 0.18,
+            "rearOverhangRatio": 0.142,
+            "frontOverhangRatio": 0.196,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Twin of Suzuki Alto HA25."
+          }
+        }
+      }
+    },
+    "micra": {
+      "K11 (1992–2003)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3720,
+            "widthMm": 1585,
+            "heightMm": 1440,
+            "wheelbaseMm": 2360,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 13,
+            "profile": "hatch",
+            "bonnetRatio": 0.19,
+            "rearOverhangRatio": 0.154,
+            "frontOverhangRatio": 0.212,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.3,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Oval lamps; 3- and 5-door same length."
+          }
+        }
+      },
+      "K12 (2003–2010)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3720,
+            "widthMm": 1660,
+            "heightMm": 1540,
+            "wheelbaseMm": 2430,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.18,
+            "rearOverhangRatio": 0.146,
+            "frontOverhangRatio": 0.201,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.35,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Bug-eye lamps on the wings."
+          },
+          "convertible": {
+            "lengthMm": 3810,
+            "widthMm": 1670,
+            "heightMm": 1445,
+            "wheelbaseMm": 2430,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "convertible",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.181,
+            "frontOverhangRatio": 0.181,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Micra C+C folding glass hard-top."
+          }
+        }
+      },
+      "K13 (2010–2017)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3780,
+            "widthMm": 1665,
+            "heightMm": 1525,
+            "wheelbaseMm": 2450,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.19,
+            "rearOverhangRatio": 0.148,
+            "frontOverhangRatio": 0.204,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "K14 (2017–2023)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3995,
+            "widthMm": 1745,
+            "heightMm": 1455,
+            "wheelbaseMm": 2525,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.155,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Hidden rear door handles in the C-pillar."
+          }
+        }
+      },
+      "Mk6 electric (2025–)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3975,
+            "widthMm": 1770,
+            "heightMm": 1500,
+            "wheelbaseMm": 2540,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 18,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.152,
+            "frontOverhangRatio": 0.209,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "closed-ev",
+            "note": "Renault 5-based electric Micra with circular lamps."
+          }
+        }
+      }
+    },
+    "note": {
+      "E11 (2006–2013)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4085,
+            "widthMm": 1690,
+            "heightMm": 1550,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.19,
+            "rearOverhangRatio": 0.164,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "E12 (2013–2017)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4100,
+            "widthMm": 1695,
+            "heightMm": 1530,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.19,
+            "rearOverhangRatio": 0.154,
+            "frontOverhangRatio": 0.212,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Tall hatch styling."
+          }
+        }
+      }
+    },
+    "cube": {
+      "Z12 (2010–2011)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3980,
+            "widthMm": 1695,
+            "heightMm": 1650,
+            "wheelbaseMm": 2530,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.164,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.4,
+            "roofTaper": 0.0,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Asymmetric wrap-around rear glazing; side-hinged tailgate."
+          }
+        }
+      }
+    },
+    "almera": {
+      "N16 (2000–2006)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4185,
+            "widthMm": 1705,
+            "heightMm": 1445,
+            "wheelbaseMm": 2535,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.166,
+            "frontOverhangRatio": 0.229,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "5-door shown; 3-door same length."
+          },
+          "saloon": {
+            "lengthMm": 4435,
+            "widthMm": 1705,
+            "heightMm": 1445,
+            "wheelbaseMm": 2535,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.227,
+            "frontOverhangRatio": 0.201,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "almera-tino": {
+      "V10 (2000–2006)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4270,
+            "widthMm": 1760,
+            "heightMm": 1610,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.17,
+            "rearOverhangRatio": 0.164,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "pulsar": {
+      "C13 (2014–2018)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4385,
+            "widthMm": 1770,
+            "heightMm": 1520,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.161,
+            "frontOverhangRatio": 0.223,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "primera": {
+      "P11 (1996–2002)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4430,
+            "widthMm": 1715,
+            "heightMm": 1410,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "liftback",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.215,
+            "frontOverhangRatio": 0.198,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "saloon": {
+            "lengthMm": 4430,
+            "widthMm": 1715,
+            "heightMm": 1410,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 15,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.219,
+            "frontOverhangRatio": 0.194,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4580,
+            "widthMm": 1715,
+            "heightMm": 1450,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 15,
+            "profile": "estate",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.225,
+            "frontOverhangRatio": 0.208,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "P12 (2002–2007)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4565,
+            "widthMm": 1760,
+            "heightMm": 1480,
+            "wheelbaseMm": 2680,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "liftback",
+            "bonnetRatio": 0.26,
+            "rearOverhangRatio": 0.215,
+            "frontOverhangRatio": 0.198,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.35,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Arched one-bow roofline."
+          },
+          "saloon": {
+            "lengthMm": 4565,
+            "widthMm": 1760,
+            "heightMm": 1480,
+            "wheelbaseMm": 2680,
+            "groundClearanceMm": 140,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.219,
+            "frontOverhangRatio": 0.194,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.35,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "estate": {
+            "lengthMm": 4675,
+            "widthMm": 1760,
+            "heightMm": 1495,
+            "wheelbaseMm": 2680,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "estate",
+            "bonnetRatio": 0.25,
+            "rearOverhangRatio": 0.222,
+            "frontOverhangRatio": 0.205,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.15,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "maxima-qx": {
+      "A33 (2000–2004)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4920,
+            "widthMm": 1780,
+            "heightMm": 1440,
+            "wheelbaseMm": 2750,
+            "groundClearanceMm": 145,
+            "wheelDiameterIn": 16,
+            "profile": "notchback",
+            "bonnetRatio": 0.27,
+            "rearOverhangRatio": 0.234,
+            "frontOverhangRatio": 0.207,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "juke": {
+      "F15 (2010–2019)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4135,
+            "widthMm": 1765,
+            "heightMm": 1565,
+            "wheelbaseMm": 2530,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 17,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.186,
+            "frontOverhangRatio": 0.202,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "wide",
+            "note": "Round main lamps low in the bumper with bonnet-top indicators; hidden rear door handles."
+          }
+        }
+      },
+      "F16 (2019–)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4210,
+            "widthMm": 1800,
+            "heightMm": 1595,
+            "wheelbaseMm": 2635,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 19,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "large-upright",
+            "note": "Split lamps with V-motion grille; hidden rear door handles."
+          }
+        }
+      }
+    },
+    "qashqai": {
+      "J10 (2007–2014)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4315,
+            "widthMm": 1780,
+            "heightMm": 1615,
+            "wheelbaseMm": 2630,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 17,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.184,
+            "frontOverhangRatio": 0.207,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "J11 (2014–2021)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4395,
+            "widthMm": 1805,
+            "heightMm": 1590,
+            "wheelbaseMm": 2645,
+            "groundClearanceMm": 170,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.187,
+            "frontOverhangRatio": 0.211,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "J12 (2021–)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4425,
+            "widthMm": 1835,
+            "heightMm": 1625,
+            "wheelbaseMm": 2665,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.187,
+            "frontOverhangRatio": 0.211,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "2024 facelift with chequered grille."
+          }
+        }
+      }
+    },
+    "x-trail": {
+      "T30 (2001–2007)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4510,
+            "widthMm": 1765,
+            "heightMm": 1765,
+            "wheelbaseMm": 2625,
+            "groundClearanceMm": 200,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.201,
+            "frontOverhangRatio": 0.217,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.0,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Height includes roof rails."
+          }
+        }
+      },
+      "T31 (2007–2014)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4635,
+            "widthMm": 1785,
+            "heightMm": 1700,
+            "wheelbaseMm": 2630,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.208,
+            "frontOverhangRatio": 0.225,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "T32 (2014–2022)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4640,
+            "widthMm": 1820,
+            "heightMm": 1715,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.196,
+            "frontOverhangRatio": 0.221,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "T33 (2022–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4680,
+            "widthMm": 1840,
+            "heightMm": 1725,
+            "wheelbaseMm": 2705,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.198,
+            "frontOverhangRatio": 0.224,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.2,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "split",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "murano": {
+      "Z50 (2005–2008)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4770,
+            "widthMm": 1880,
+            "heightMm": 1705,
+            "wheelbaseMm": 2825,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.192,
+            "frontOverhangRatio": 0.216,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.38,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Z51 (2008–2011)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4835,
+            "widthMm": 1885,
+            "heightMm": 1730,
+            "wheelbaseMm": 2825,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 18,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.195,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.38,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "pathfinder": {
+      "R51 (2005–2014)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4815,
+            "widthMm": 1850,
+            "heightMm": 1780,
+            "wheelbaseMm": 2850,
+            "groundClearanceMm": 220,
+            "wheelDiameterIn": 17,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.196,
+            "frontOverhangRatio": 0.212,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.0,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Ladder-frame seven-seater; height includes roof rails."
+          }
+        }
+      }
+    },
+    "terrano-ii": {
+      "R20 (1993–2006)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4535,
+            "widthMm": 1755,
+            "heightMm": 1830,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 15,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.216,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.0,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Five-door long-wheelbase; spare on rear door."
+          },
+          "suv-3-door": {
+            "lengthMm": 4105,
+            "widthMm": 1755,
+            "heightMm": 1810,
+            "wheelbaseMm": 2450,
+            "groundClearanceMm": 210,
+            "wheelDiameterIn": 15,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.194,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.0,
+            "doors": [
+              3
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Three-door short-wheelbase."
+          }
+        }
+      }
+    },
+    "patrol": {
+      "Y61 Patrol GR (1997–2007)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5050,
+            "widthMm": 1940,
+            "heightMm": 1855,
+            "wheelbaseMm": 2970,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.198,
+            "frontOverhangRatio": 0.214,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.0,
+            "doors": [
+              3,
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Five-door long-wheelbase; side-hinged rear doors with spare."
+          },
+          "suv-3-door": {
+            "lengthMm": 4500,
+            "widthMm": 1940,
+            "heightMm": 1840,
+            "wheelbaseMm": 2400,
+            "groundClearanceMm": 215,
+            "wheelDiameterIn": 16,
+            "profile": "suv-boxy",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.224,
+            "frontOverhangRatio": 0.243,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.0,
+            "doors": [
+              3
+            ],
+            "roofRails": true,
+            "spareOnTailgate": true,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Three-door short-wheelbase."
+          }
+        }
+      }
+    },
+    "350z": {
+      "Z33 (2003–2009)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4315,
+            "widthMm": 1815,
+            "heightMm": 1325,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.185,
+            "frontOverhangRatio": 0.201,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "roadster": {
+            "lengthMm": 4315,
+            "widthMm": 1815,
+            "heightMm": 1335,
+            "wheelbaseMm": 2650,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "roadster",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.193,
+            "frontOverhangRatio": 0.193,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Fabric-roof Roadster."
+          }
+        }
+      }
+    },
+    "370z": {
+      "Z34 (2009–2020)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4250,
+            "widthMm": 1845,
+            "heightMm": 1315,
+            "wheelbaseMm": 2550,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.192,
+            "frontOverhangRatio": 0.208,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.45,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Boomerang lamps."
+          },
+          "roadster": {
+            "lengthMm": 4250,
+            "widthMm": 1845,
+            "heightMm": 1325,
+            "wheelbaseMm": 2550,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 19,
+            "profile": "roadster",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.2,
+            "frontOverhangRatio": 0.2,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "gt-r": {
+      "R35 (2009–2022)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4710,
+            "widthMm": 1895,
+            "heightMm": 1370,
+            "wheelbaseMm": 2780,
+            "groundClearanceMm": 110,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.33,
+            "rearOverhangRatio": 0.197,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Four-seat coupe; quad round tail lamps."
+          }
+        }
+      }
+    },
+    "leaf": {
+      "Mk1 ZE0/AZE0 (2011–2017)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4445,
+            "widthMm": 1770,
+            "heightMm": 1550,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.165,
+            "frontOverhangRatio": 0.228,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "closed-ev",
+            "note": "Tall lamps running up the wings; charge flap in the nose."
+          }
+        }
+      },
+      "Mk2 ZE1 (2018–2024)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4490,
+            "widthMm": 1790,
+            "heightMm": 1540,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 155,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.2,
+            "rearOverhangRatio": 0.167,
+            "frontOverhangRatio": 0.231,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.25,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Closed V-motion nose with charge flap."
+          }
+        }
+      },
+      "Mk3 (2025–)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4350,
+            "widthMm": 1810,
+            "heightMm": 1550,
+            "wheelbaseMm": 2690,
+            "groundClearanceMm": 150,
+            "wheelDiameterIn": 19,
+            "profile": "suv-coupe",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.183,
+            "frontOverhangRatio": 0.198,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.4,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Third-generation Leaf; electric crossover on CMF-EV."
+          }
+        }
+      }
+    },
+    "ariya": {
+      "FE0 (2022–)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4595,
+            "widthMm": 1850,
+            "heightMm": 1660,
+            "wheelbaseMm": 2775,
+            "groundClearanceMm": 180,
+            "wheelDiameterIn": 19,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.186,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.38,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Shield-like closed nose; coupe-like roofline."
+          }
+        }
+      }
+    },
+    "evalia": {
+      "M20 NV200 / e-NV200 Evalia (2010–2021)": {
+        "bodies": {
+          "mpv": {
+            "lengthMm": 4400,
+            "widthMm": 1695,
+            "heightMm": 1860,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 15,
+            "profile": "mpv",
+            "bonnetRatio": 0.14,
+            "rearOverhangRatio": 0.171,
+            "frontOverhangRatio": 0.209,
+            "glasshouseHeightRatio": 0.38,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "NV200-based seven-seater with sliding doors; e-NV200 Evalia about 4560 mm."
+          }
+        }
+      }
+    },
+    "nv200": {
+      "M20 (2009–2021)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4400,
+            "widthMm": 1695,
+            "heightMm": 1860,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "e-nv200": {
+      "ME0 (2014–2021)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4560,
+            "widthMm": 1755,
+            "heightMm": 1860,
+            "wheelbaseMm": 2725,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.201,
+            "frontOverhangRatio": 0.201,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Electric; charge flap in the nose."
+          }
+        }
+      }
+    },
+    "kubistar": {
+      "X76 (2003–2009)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 3995,
+            "widthMm": 1675,
+            "heightMm": 1825,
+            "wheelbaseMm": 2600,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 14,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.175,
+            "frontOverhangRatio": 0.175,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Renault Kangoo Mk1 twin."
+          }
+        }
+      }
+    },
+    "nv250": {
+      "X61 (2019–2021)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4280,
+            "widthMm": 1830,
+            "heightMm": 1805,
+            "wheelbaseMm": 2695,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.185,
+            "frontOverhangRatio": 0.185,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Renault Kangoo Mk2 twin; L1 shown, L2 about 4665 mm."
+          },
+          "crew-van": {
+            "lengthMm": 4665,
+            "widthMm": 1830,
+            "heightMm": 1810,
+            "wheelbaseMm": 3080,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 15,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.17,
+            "frontOverhangRatio": 0.17,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "L2 crew van."
+          }
+        }
+      }
+    },
+    "townstar": {
+      "XFK (2022–)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4485,
+            "widthMm": 1860,
+            "heightMm": 1865,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.197,
+            "frontOverhangRatio": 0.197,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Renault Kangoo Mk3 twin; L1 shown; EV has a closed nose."
+          },
+          "mpv": {
+            "lengthMm": 4485,
+            "widthMm": 1860,
+            "heightMm": 1840,
+            "wheelbaseMm": 2715,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 16,
+            "profile": "mpv",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.178,
+            "frontOverhangRatio": 0.217,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Townstar Combi passenger version."
+          }
+        }
+      }
+    },
+    "primastar": {
+      "X83 (2002–2016)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 4780,
+            "widthMm": 1905,
+            "heightMm": 1960,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.176,
+            "frontOverhangRatio": 0.176,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Renault Trafic II twin; SWB low roof shown, LWB about 5180 mm."
+          },
+          "crew-van": {
+            "lengthMm": 4780,
+            "widthMm": 1905,
+            "heightMm": 1960,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.176,
+            "frontOverhangRatio": 0.176,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "minibus": {
+            "lengthMm": 4780,
+            "widthMm": 1905,
+            "heightMm": 1960,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 160,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.176,
+            "frontOverhangRatio": 0.176,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Primastar Combi; side glazing."
+          }
+        }
+      },
+      "X82 Primastar (2022–)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5080,
+            "widthMm": 1955,
+            "heightMm": 1970,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.195,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Renault Trafic III-based; L1H1 shown, L2 about 5480 mm."
+          },
+          "crew-van": {
+            "lengthMm": 5080,
+            "widthMm": 1955,
+            "heightMm": 1970,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.195,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          },
+          "minibus": {
+            "lengthMm": 5080,
+            "widthMm": 1955,
+            "heightMm": 1970,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 17,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.195,
+            "frontOverhangRatio": 0.195,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Primastar Combi; side glazing."
+          }
+        }
+      }
+    },
+    "nv300": {
+      "X82 NV300 (2016–2021)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5000,
+            "widthMm": 1955,
+            "heightMm": 1970,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Renault Trafic III twin; L1H1 shown, L2 about 5400 mm."
+          },
+          "crew-van": {
+            "lengthMm": 5000,
+            "widthMm": 1955,
+            "heightMm": 1970,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "minibus": {
+            "lengthMm": 5000,
+            "widthMm": 1955,
+            "heightMm": 1970,
+            "wheelbaseMm": 3100,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 16,
+            "profile": "van-low",
+            "bonnetRatio": 0.15,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.19,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "NV300 Combi; side glazing."
+          }
+        }
+      }
+    },
+    "interstar": {
+      "X70 (2003–2010)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5400,
+            "widthMm": 1990,
+            "heightMm": 2480,
+            "wheelbaseMm": 3580,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.175,
+            "frontOverhangRatio": 0.162,
+            "glasshouseHeightRatio": 0.22,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Renault Master II twin; MWB medium roof shown."
+          },
+          "crew-van": {
+            "lengthMm": 5400,
+            "widthMm": 1990,
+            "heightMm": 2480,
+            "wheelbaseMm": 3580,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.175,
+            "frontOverhangRatio": 0.162,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "chassis-cab": {
+            "lengthMm": 5900,
+            "widthMm": 1990,
+            "heightMm": 2280,
+            "wheelbaseMm": 3580,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.236,
+            "frontOverhangRatio": 0.157,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.05,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Single cab with typical dropside/tipper body."
+          }
+        }
+      },
+      "X62 Interstar (2022–2024)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5550,
+            "widthMm": 2070,
+            "heightMm": 2490,
+            "wheelbaseMm": 3680,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.175,
+            "frontOverhangRatio": 0.162,
+            "glasshouseHeightRatio": 0.22,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Renault Master III twin; L2H2 shown."
+          },
+          "crew-van": {
+            "lengthMm": 5550,
+            "widthMm": 2070,
+            "heightMm": 2490,
+            "wheelbaseMm": 3680,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.175,
+            "frontOverhangRatio": 0.162,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "chassis-cab": {
+            "lengthMm": 6200,
+            "widthMm": 2070,
+            "heightMm": 2300,
+            "wheelbaseMm": 3680,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.244,
+            "frontOverhangRatio": 0.163,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.05,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Single cab with typical dropside/tipper body."
+          }
+        }
+      },
+      "Mk3 (2024–)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5650,
+            "widthMm": 2080,
+            "heightMm": 2500,
+            "wheelbaseMm": 3685,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 17,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.181,
+            "frontOverhangRatio": 0.167,
+            "glasshouseHeightRatio": 0.22,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Renault Master IV twin; L2H2 shown; more aerodynamic raked nose."
+          },
+          "chassis-cab": {
+            "lengthMm": 6200,
+            "widthMm": 2080,
+            "heightMm": 2300,
+            "wheelbaseMm": 3685,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 17,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.243,
+            "frontOverhangRatio": 0.162,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.05,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Single cab with typical dropside/tipper body."
+          }
+        }
+      }
+    },
+    "nv400": {
+      "X62 NV400 (2011–2021)": {
+        "bodies": {
+          "panel-van": {
+            "lengthMm": 5550,
+            "widthMm": 2070,
+            "heightMm": 2490,
+            "wheelbaseMm": 3680,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.175,
+            "frontOverhangRatio": 0.162,
+            "glasshouseHeightRatio": 0.22,
+            "roofTaper": 0.05,
+            "doors": [
+              4,
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Renault Master III twin; L2H2 shown."
+          },
+          "crew-van": {
+            "lengthMm": 5550,
+            "widthMm": 2070,
+            "heightMm": 2490,
+            "wheelbaseMm": 3680,
+            "groundClearanceMm": 175,
+            "wheelDiameterIn": 16,
+            "profile": "van-high",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.175,
+            "frontOverhangRatio": 0.162,
+            "glasshouseHeightRatio": 0.26,
+            "roofTaper": 0.05,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": true,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          },
+          "chassis-cab": {
+            "lengthMm": 6200,
+            "widthMm": 2070,
+            "heightMm": 2300,
+            "wheelbaseMm": 3680,
+            "groundClearanceMm": 185,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.12,
+            "rearOverhangRatio": 0.244,
+            "frontOverhangRatio": 0.163,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.05,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "tall",
+            "grilleStyle": "wide",
+            "note": "Single cab with typical dropside/tipper body."
+          }
+        }
+      }
+    },
+    "cabstar": {
+      "F24 Cabstar (2006–2013)": {
+        "bodies": {
+          "chassis-cab": {
+            "lengthMm": 5600,
+            "widthMm": 1870,
+            "heightMm": 2200,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.04,
+            "rearOverhangRatio": 0.313,
+            "frontOverhangRatio": 0.169,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.0,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Forward-control (cab-over) light truck with dropside/tipper body; lengths vary by wheelbase."
+          },
+          "chassis-cab-4-door": {
+            "lengthMm": 5600,
+            "widthMm": 1870,
+            "heightMm": 2200,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.04,
+            "rearOverhangRatio": 0.313,
+            "frontOverhangRatio": 0.169,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.0,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double-cab (crew) cab-over."
+          }
+        }
+      },
+      "NT400 Cabstar (2014–2019)": {
+        "bodies": {
+          "chassis-cab": {
+            "lengthMm": 5600,
+            "widthMm": 1870,
+            "heightMm": 2200,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.04,
+            "rearOverhangRatio": 0.313,
+            "frontOverhangRatio": 0.169,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.0,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Forward-control (cab-over) light truck with dropside/tipper body; lengths vary by wheelbase."
+          },
+          "chassis-cab-4-door": {
+            "lengthMm": 5600,
+            "widthMm": 1870,
+            "heightMm": 2200,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 16,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.04,
+            "rearOverhangRatio": 0.313,
+            "frontOverhangRatio": 0.169,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.0,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double-cab (crew) cab-over."
+          }
+        }
+      }
+    },
+    "navara": {
+      "D22 (1998–2005)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 4900,
+            "widthMm": 1780,
+            "heightMm": 1700,
+            "wheelbaseMm": 2950,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 15,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.239,
+            "frontOverhangRatio": 0.159,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.05,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab shown."
+          },
+          "pickup-2-door": {
+            "lengthMm": 4900,
+            "widthMm": 1780,
+            "heightMm": 1650,
+            "wheelbaseMm": 2950,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 15,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.239,
+            "frontOverhangRatio": 0.159,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "King cab (2-door with small rear-hinged access doors) or single cab."
+          }
+        }
+      },
+      "D40 (2005–2015)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5220,
+            "widthMm": 1850,
+            "heightMm": 1780,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 230,
+            "wheelDiameterIn": 17,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.232,
+            "frontOverhangRatio": 0.155,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.05,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab shown."
+          },
+          "pickup-2-door": {
+            "lengthMm": 5220,
+            "widthMm": 1850,
+            "heightMm": 1760,
+            "wheelbaseMm": 3200,
+            "groundClearanceMm": 230,
+            "wheelDiameterIn": 17,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.232,
+            "frontOverhangRatio": 0.155,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "King cab (2-door with small rear-hinged access doors) or single cab."
+          }
+        }
+      },
+      "D23 NP300 (2016–2022)": {
+        "bodies": {
+          "pickup": {
+            "lengthMm": 5255,
+            "widthMm": 1850,
+            "heightMm": 1840,
+            "wheelbaseMm": 3150,
+            "groundClearanceMm": 225,
+            "wheelDiameterIn": 18,
+            "profile": "pickup-double",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.05,
+            "doors": [
+              2,
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Double cab shown."
+          },
+          "pickup-2-door": {
+            "lengthMm": 5255,
+            "widthMm": 1850,
+            "heightMm": 1790,
+            "wheelbaseMm": 3150,
+            "groundClearanceMm": 225,
+            "wheelDiameterIn": 18,
+            "profile": "pickup-single",
+            "bonnetRatio": 0.24,
+            "rearOverhangRatio": 0.24,
+            "frontOverhangRatio": 0.16,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.05,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "King cab (2-door with small rear-hinged access doors) or single cab."
+          }
+        }
+      }
+    }
+  }
+}

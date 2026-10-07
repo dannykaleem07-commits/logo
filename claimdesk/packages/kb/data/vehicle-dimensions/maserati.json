@@ -1,0 +1,466 @@
+{
+  "make": "Maserati",
+  "slug": "maserati",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "3200-gt": {
+      "3200 GT (1998–2002)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4510,
+            "widthMm": 1820,
+            "heightMm": 1305,
+            "wheelbaseMm": 2660,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.34,
+            "rearOverhangRatio": 0.197,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Boomerang LED tail lamps."
+          }
+        }
+      }
+    },
+    "coupe": {
+      "Coupé / GranSport (2002–2007)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4520,
+            "widthMm": 1820,
+            "heightMm": 1305,
+            "wheelbaseMm": 2660,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "coupe",
+            "bonnetRatio": 0.34,
+            "rearOverhangRatio": 0.198,
+            "frontOverhangRatio": 0.214,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "spyder": {
+      "Spyder / GranSport Spyder (2002–2007)": {
+        "bodies": {
+          "convertible": {
+            "lengthMm": 4305,
+            "widthMm": 1820,
+            "heightMm": 1300,
+            "wheelbaseMm": 2440,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.217,
+            "frontOverhangRatio": 0.217,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide",
+            "note": "Shorter wheelbase than the Coupe."
+          }
+        }
+      }
+    },
+    "quattroporte": {
+      "Quattroporte V (2004–2012)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5050,
+            "widthMm": 1895,
+            "heightMm": 1440,
+            "wheelbaseMm": 3065,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.208,
+            "frontOverhangRatio": 0.185,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.3,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "Quattroporte VI (2013–2023)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 5260,
+            "widthMm": 1950,
+            "heightMm": 1480,
+            "wheelbaseMm": 3170,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.211,
+            "frontOverhangRatio": 0.187,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.35,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      }
+    },
+    "granturismo": {
+      "GranTurismo / GranCabrio Mk1 (2007–2019)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4880,
+            "widthMm": 1915,
+            "heightMm": 1355,
+            "wheelbaseMm": 2940,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.191,
+            "frontOverhangRatio": 0.207,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          },
+          "convertible": {
+            "lengthMm": 4880,
+            "widthMm": 1915,
+            "heightMm": 1380,
+            "wheelbaseMm": 2940,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.35,
+            "rearOverhangRatio": 0.199,
+            "frontOverhangRatio": 0.199,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "GranCabrio."
+          }
+        }
+      },
+      "GranTurismo / GranCabrio Mk2 (2023–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4965,
+            "widthMm": 1955,
+            "heightMm": 1355,
+            "wheelbaseMm": 2930,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.197,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.31,
+            "roofTaper": 0.4,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Folgore electric version shares the body."
+          },
+          "convertible": {
+            "lengthMm": 4965,
+            "widthMm": 1955,
+            "heightMm": 1365,
+            "wheelbaseMm": 2930,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.205,
+            "frontOverhangRatio": 0.205,
+            "glasshouseHeightRatio": 0.27,
+            "roofTaper": 0.3,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "GranCabrio."
+          }
+        }
+      }
+    },
+    "ghibli": {
+      "Ghibli (2013–2020)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4970,
+            "widthMm": 1945,
+            "heightMm": 1460,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 19,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.186,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.38,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright"
+          }
+        }
+      },
+      "Ghibli facelift (2020–2024)": {
+        "bodies": {
+          "saloon": {
+            "lengthMm": 4970,
+            "widthMm": 1945,
+            "heightMm": 1460,
+            "wheelbaseMm": 3000,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 20,
+            "profile": "notchback",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.21,
+            "frontOverhangRatio": 0.186,
+            "glasshouseHeightRatio": 0.33,
+            "roofTaper": 0.38,
+            "doors": [
+              4
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Boomerang-style tail lamps from 2020."
+          }
+        }
+      }
+    },
+    "levante": {
+      "Levante (2016–2024)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 5005,
+            "widthMm": 1980,
+            "heightMm": 1680,
+            "wheelbaseMm": 3005,
+            "groundClearanceMm": 205,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.188,
+            "frontOverhangRatio": 0.212,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.38,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Frameless doors; coupe-like roofline."
+          }
+        }
+      }
+    },
+    "mc20": {
+      "MC20 / MC20 Cielo (2021–2024)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4670,
+            "widthMm": 1965,
+            "heightMm": 1220,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 105,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.219,
+            "frontOverhangRatio": 0.202,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.42,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Mid-engine; butterfly doors."
+          },
+          "convertible": {
+            "lengthMm": 4670,
+            "widthMm": 1965,
+            "heightMm": 1220,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 105,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.219,
+            "frontOverhangRatio": 0.202,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.42,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "MC20 Cielo retractable glass roof."
+          }
+        }
+      },
+      "MCPura / MCPura Cielo (2025–present)": {
+        "bodies": {
+          "coupe": {
+            "lengthMm": 4670,
+            "widthMm": 1965,
+            "heightMm": 1220,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 105,
+            "wheelDiameterIn": 20,
+            "profile": "coupe",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.219,
+            "frontOverhangRatio": 0.202,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.42,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "MCPura: MC20 update; mid-engine, butterfly doors."
+          },
+          "convertible": {
+            "lengthMm": 4670,
+            "widthMm": 1965,
+            "heightMm": 1220,
+            "wheelbaseMm": 2700,
+            "groundClearanceMm": 105,
+            "wheelDiameterIn": 20,
+            "profile": "convertible",
+            "bonnetRatio": 0.3,
+            "rearOverhangRatio": 0.219,
+            "frontOverhangRatio": 0.202,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.42,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "MCPura Cielo."
+          }
+        }
+      }
+    },
+    "grecale": {
+      "Grecale (2022–present)": {
+        "bodies": {
+          "suv": {
+            "lengthMm": 4845,
+            "widthMm": 1980,
+            "heightMm": 1665,
+            "wheelbaseMm": 2900,
+            "groundClearanceMm": 190,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.189,
+            "frontOverhangRatio": 0.213,
+            "glasshouseHeightRatio": 0.34,
+            "roofTaper": 0.3,
+            "doors": [
+              5
+            ],
+            "roofRails": true,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "large-upright",
+            "note": "Folgore electric version about 4860 mm long."
+          }
+        }
+      }
+    }
+  }
+}
