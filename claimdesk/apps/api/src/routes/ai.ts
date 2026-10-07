@@ -26,6 +26,7 @@ import type { DriverHealth } from '../ai/types.js';
 import { buildCliEnv, claudeAuthStatus, detectClaudeCli, MIN_CLAUDE_CODE_VERSION, type CliDetection } from '../ai/cliDetect.js';
 import { cliOptionsFor, getDriver, selectedDriver, type DriverChoice } from '../ai/driverFactory.js';
 import type { SecretName } from '../services/secrets.js';
+import { ApiKeyDriver } from '../ai/apiKeyDriver.js';
 
 export const TERMS_NOTICE =
   'Subscription sign-in (Claude Code with your Claude Max account) is meant for ordinary individual use. Running ClaimDesk’s agents around the clock for the business is heavy automation: Anthropic’s API (a paid API key) is the intended route for that, and you can switch to it here at any time. Usage on the subscription is shared with your own Claude use, and the five-hour and weekly limits pause the agents until they reset (work is queued, never lost).';
@@ -84,7 +85,7 @@ export async function cliStatus(ctx: AppContext, refresh = false): Promise<CliSt
 }
 
 /** Health of the selected driver (no model call). Real drivers that cannot be built here report why. */
-export async function driverHealth(ctx: AppContext, choice: DriverChoice, cli: CliStatus): Promise<DriverHealth> {
+export async function driverHealth(ctx: AppContext, choice: DriverChoice, cli: CliStatus, refresh = false): Promise<DriverHealth> {
   if (choice === 'off') return { kind: 'fake', ready: false, problems: ['AI is switched off: choose a driver'] };
   try {
     if (choice === 'subscription_cli') {
@@ -95,7 +96,9 @@ export async function driverHealth(ctx: AppContext, choice: DriverChoice, cli: C
       const ready = Boolean(cli.path && cli.version && cli.minVersionOk && token && cli.authMethod === 'oauth_token' && cli.loggedIn !== false);
       return { kind: 'subscription_cli', ready, problems, cli: { minVersionOk: cli.minVersionOk, ...(cli.path ? { path: cli.path } : {}), ...(cli.version ? { version: cli.version } : {}), ...(cli.authMethod ? { authMethod: cli.authMethod } : {}), ...(cli.loggedIn !== null ? { loggedIn: cli.loggedIn } : {}) } };
     }
-    return await getDriver(ctx).health();
+    const driver = getDriver(ctx);
+    if (refresh && driver instanceof ApiKeyDriver) return await driver.checkKey();
+    return await driver.health();
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     return { kind: choice, ready: false, problems: [message], ...(choice === 'api_key' ? { apiKeyPresent: ctx.secrets.has('anthropic_api_key') } : {}) };
@@ -111,7 +114,7 @@ async function buildStatus(ctx: AppContext, refresh = false) {
   const settings = ctx.repos.getAgentSettings(ctx.db);
   const choice = selectedDriver(ctx);
   const cli = await cliStatus(ctx, refresh);
-  const health = await driverHealth(ctx, choice, cli);
+  const health = await driverHealth(ctx, choice, cli, refresh);
   const usage = ctx.repos.getAiUsageState(ctx.db);
   const now = ctx.now();
   const complete = CHECKLIST_ITEM_IDS.every((id) => settings.checklist[id]?.done);

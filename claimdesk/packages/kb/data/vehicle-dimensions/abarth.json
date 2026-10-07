@@ -1,0 +1,401 @@
+{
+  "make": "Abarth",
+  "slug": "abarth",
+  "verification": {
+    "status": "approximate",
+    "sourceNote": "Approximate exterior dimensions from general knowledge of manufacturer specifications; for the 3D damage model only, not for valuation or engineering measurements."
+  },
+  "models": {
+    "500": {
+      "Abarth 500 (2008–2016)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3655,
+            "widthMm": 1625,
+            "heightMm": 1485,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.32,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 3655,
+            "widthMm": 1625,
+            "heightMm": 1485,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 16,
+            "profile": "convertible",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.32,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "500C-style fabric roll-back roof; fixed side frames and pillars."
+          }
+        }
+      }
+    },
+    "595": {
+      "Series 3 (2013–2016)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3655,
+            "widthMm": 1625,
+            "heightMm": 1485,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 16,
+            "profile": "hatch",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.32,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 3655,
+            "widthMm": 1625,
+            "heightMm": 1485,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 16,
+            "profile": "convertible",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.32,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "500C-style fabric roll-back roof; fixed side frames and pillars."
+          }
+        }
+      },
+      "Series 4 (2016–2024)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3660,
+            "widthMm": 1625,
+            "heightMm": 1485,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.32,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide"
+          },
+          "convertible": {
+            "lengthMm": 3660,
+            "widthMm": 1625,
+            "heightMm": 1485,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 120,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.32,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "500C-style fabric roll-back roof; fixed side frames and pillars."
+          }
+        }
+      }
+    },
+    "695": {
+      "695 limited/special editions (2009–2024)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3660,
+            "widthMm": 1625,
+            "heightMm": 1480,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.32,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "Limited/special editions share the 595 body; Biposto and some editions differ in trim and wheels."
+          },
+          "convertible": {
+            "lengthMm": 3660,
+            "widthMm": 1625,
+            "heightMm": 1480,
+            "wheelbaseMm": 2300,
+            "groundClearanceMm": 115,
+            "wheelDiameterIn": 17,
+            "profile": "convertible",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.32,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "wide",
+            "note": "500C-style fabric roll-back roof; fixed side frames and pillars."
+          }
+        }
+      }
+    },
+    "punto": {
+      "Grande Punto Abarth (2008–2010)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4035,
+            "widthMm": 1725,
+            "heightMm": 1480,
+            "wheelbaseMm": 2510,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.35,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Punto Evo Abarth (2010–2012)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4065,
+            "widthMm": 1725,
+            "heightMm": 1490,
+            "wheelbaseMm": 2510,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.35,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      },
+      "Abarth Punto (2014–2015)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 4065,
+            "widthMm": 1725,
+            "heightMm": 1490,
+            "wheelbaseMm": 2510,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 17,
+            "profile": "hatch",
+            "bonnetRatio": 0.23,
+            "rearOverhangRatio": 0.16,
+            "frontOverhangRatio": 0.22,
+            "glasshouseHeightRatio": 0.35,
+            "roofTaper": 0.35,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "124-spider": {
+      "Mk1 (2016–2019)": {
+        "bodies": {
+          "roadster": {
+            "lengthMm": 4060,
+            "widthMm": 1740,
+            "heightMm": 1235,
+            "wheelbaseMm": 2310,
+            "groundClearanceMm": 135,
+            "wheelDiameterIn": 17,
+            "profile": "roadster",
+            "bonnetRatio": 0.36,
+            "rearOverhangRatio": 0.19,
+            "frontOverhangRatio": 0.24,
+            "glasshouseHeightRatio": 0.25,
+            "roofTaper": 0.55,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "wide"
+          }
+        }
+      }
+    },
+    "500e": {
+      "Mk1 (2023–)": {
+        "bodies": {
+          "hatchback": {
+            "lengthMm": 3675,
+            "widthMm": 1685,
+            "heightMm": 1520,
+            "wheelbaseMm": 2320,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "hatch",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.36,
+            "roofTaper": 0.32,
+            "doors": [
+              3
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "closed-ev"
+          },
+          "convertible": {
+            "lengthMm": 3675,
+            "widthMm": 1685,
+            "heightMm": 1520,
+            "wheelbaseMm": 2320,
+            "groundClearanceMm": 125,
+            "wheelDiameterIn": 18,
+            "profile": "convertible",
+            "bonnetRatio": 0.21,
+            "rearOverhangRatio": 0.14,
+            "frontOverhangRatio": 0.23,
+            "glasshouseHeightRatio": 0.3,
+            "roofTaper": 0.32,
+            "doors": [
+              2
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "round",
+            "grilleStyle": "closed-ev",
+            "note": "500C-style fabric roll-back roof; fixed side frames and pillars."
+          }
+        }
+      }
+    },
+    "600e": {
+      "Mk1 (2025–)": {
+        "bodies": {
+          "crossover": {
+            "lengthMm": 4185,
+            "widthMm": 1780,
+            "heightMm": 1525,
+            "wheelbaseMm": 2560,
+            "groundClearanceMm": 165,
+            "wheelDiameterIn": 20,
+            "profile": "suv-rounded",
+            "bonnetRatio": 0.22,
+            "rearOverhangRatio": 0.18,
+            "frontOverhangRatio": 0.21,
+            "glasshouseHeightRatio": 0.32,
+            "roofTaper": 0.38,
+            "doors": [
+              5
+            ],
+            "roofRails": false,
+            "spareOnTailgate": false,
+            "slidingSideDoor": false,
+            "lampStyle": "wide-slim",
+            "grilleStyle": "closed-ev",
+            "note": "Stellantis e-CMP2 crossover (Fiat 600 based); lowered Abarth suspension."
+          }
+        }
+      }
+    }
+  }
+}

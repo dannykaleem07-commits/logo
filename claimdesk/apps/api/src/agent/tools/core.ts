@@ -27,6 +27,7 @@ import { toolInputSchema } from '../../ai/strictSchema.js';
 import { loadBundle } from '../../services/claimView.js';
 import { readEvidenceVerified } from '../../services/evidence.js';
 import { listTemplateSummaries } from '../../services/docxTemplates.js';
+import { listClaimsResponse } from '../../services/claimList.js';
 import { assessTotalLoss } from '../../services/engineeringFallbacks.js';
 import { gtaRatesFor } from '../../services/kb.js';
 
@@ -291,16 +292,21 @@ const claimsSearch = tool({
     limit: z.int().min(1).max(50).nullable(),
     offset: z.int().min(0).nullable(),
   }),
-  http: (i: { q: string | null; status: string[] | null; flagged: boolean | null; limit: number | null; offset: number | null }) => ({
-    method: 'GET',
-    url: `/claims${qs({ q: i.q, status: i.status, flagged: i.flagged === null ? null : String(i.flagged), limit: i.limit ?? 20, offset: i.offset })}`,
-  }),
-  httpRoute: { method: 'GET', pattern: '/claims' },
-  describe: readDescribe('claims_search'),
-  shapeWith: (raw: unknown, _i: unknown, rc: RunContext) => {
-    const items = arr(obj(raw).items).filter((c) => !rc.claimScope || c.id === rc.claimScope);
-    return { items: items.map(shapeClaimListItem), total: rc.claimScope ? items.length : (obj(raw).total ?? items.length) };
+  // In-process read with the same repository query and summary as GET /claims, so the agents' route allow-list never
+  // needs the unscoped claim list; a claim-scoped run only ever sees its own claim.
+  run: async (i: { q: string | null; status: ClaimStatus[] | null; flagged: boolean | null; limit: number | null; offset: number | null }, rc: RunContext, ctx: AppContext) => {
+    const items = ctx.repos.listClaims(ctx.db, {
+      ...(i.status?.length ? { status: i.status.length === 1 ? i.status[0]! : i.status } : {}),
+      ...(i.q ? { search: i.q } : {}),
+      ...(i.flagged ? { flagged: true } : {}),
+      limit: i.limit ?? 20,
+      offset: i.offset ?? 0,
+    });
+    const scoped = rc.claimScope ? items.filter((c) => c.id === rc.claimScope) : items;
+    const res = listClaimsResponse(ctx, scoped, []) as unknown as { items: unknown[] };
+    return { items: arr(res.items).map(shapeClaimListItem), total: scoped.length };
   },
+  describe: readDescribe('claims_search'),
 });
 
 const claimGet = claimRead('claim_get', 'Get a claim', 'The claim summary: status, liability, accident, parties (personal data masked), vehicles, open flags and the money position. Use the narrower tools for events, ledger, offers, hire, clocks and documents.', '', shapeClaimView);

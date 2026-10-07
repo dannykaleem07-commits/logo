@@ -125,22 +125,35 @@ export class ApiKeyDriver implements AiDriver {
     });
   }
 
+  /** Result of the last `checkKey()` (metadata call), kept so status reads stay offline and fast. */
+  private lastKeyProblem: string | null | undefined;
+
+  /** Presence of the key plus the last key check's result (no network). */
   async health(): Promise<DriverHealth> {
     const present = this.ctx.secrets.has('anthropic_api_key') || Boolean(this.opts.apiKey);
     const problems: string[] = [];
     if (!present) problems.push('No Anthropic API key saved: paste a key from console.anthropic.com in Settings > AI');
-    if (present && (this.opts.fetch || process.env.CLAIMDESK_FORBID_REAL_AI !== '1')) {
-      // Metadata only (no model call): confirms the key works and the default model is available.
+    else if (this.lastKeyProblem) problems.push(this.lastKeyProblem);
+    return { kind: this.kind, ready: present && !problems.length, problems, apiKeyPresent: present };
+  }
+
+  /**
+   * Check the key with `models.retrieve` (metadata only — no model call), then report health. Used by POST /ai/check.
+   * Refused (no network) while the process forbids real AI unless a fetch was injected.
+   */
+  async checkKey(model = 'claude-opus-5-5'): Promise<DriverHealth> {
+    const key = await this.apiKey();
+    if (key && (this.opts.fetch || process.env.CLAIMDESK_FORBID_REAL_AI !== '1')) {
       try {
-        const key = await this.apiKey();
-        if (key) await this.client(key, 10_000).models.retrieve('claude-opus-5-5');
+        await this.client(key, 10_000).models.retrieve(model);
+        this.lastKeyProblem = null;
       } catch (err) {
-        if (err instanceof AuthenticationError || err instanceof PermissionDeniedError) problems.push('The Anthropic API key was refused: check or replace it');
-        else if (err instanceof APIError) problems.push(`Anthropic API check failed (${err.status ?? 'network'})`);
-        else problems.push('Anthropic API could not be reached');
+        if (err instanceof AuthenticationError || err instanceof PermissionDeniedError) this.lastKeyProblem = 'The Anthropic API key was refused: check or replace it';
+        else if (err instanceof APIError) this.lastKeyProblem = `Anthropic API check failed (${err.status ?? 'network'})`;
+        else this.lastKeyProblem = 'Anthropic API could not be reached';
       }
     }
-    return { kind: this.kind, ready: present && !problems.length, problems, apiKeyPresent: present };
+    return this.health();
   }
 
   async run(req: AiRunRequest, tools: ToolExecutor, signal: AbortSignal): Promise<AiRunOutcome> {

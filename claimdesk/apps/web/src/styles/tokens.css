@@ -1,23 +1,37 @@
-/* ClaimDesk design tokens (calm pass, 0.4).
- * One accent: CCGUK navy. Everything that used the old bright blue (--blue) now resolves to a navy-blue tint of the
- * same hue, so links, focus rings, active tabs and primary buttons read as one colour.
- * Document previews keep the letterhead palette from packages/documents/src/brand.ts (--doc-*).
+/* ClaimDesk design tokens (calm pass 0.4 + light / dark themes).
+ * One accent: CCGUK navy. Links, focus rings, active tabs and primary buttons read as one colour.
+ * Document previews keep the letterhead palette from packages/documents/src/brand.ts (--doc-*) in BOTH themes:
+ * documents and PDFs are always shown as printed paper.
  * Status colours (green / amber / red) are kept for verification, gates, clocks and document state only.
+ *
+ * Themes (lib/theme.ts): <html data-theme="light|dark"> is set before first paint by /theme-init.js. Without it
+ * (script blocked or not loaded yet) the dark palette follows the operating system through prefers-color-scheme.
+ * The dark palette is written twice below (explicit choice, and system preference); styles/tokens.test.ts checks
+ * the two copies are identical, that every colour token has a dark value and that text pairs meet WCAG AA.
+ *
+ * Token roles:
+ *   --navy / --blue      accent used as TEXT, icons, borders and underlines (light navy text on dark surfaces in dark)
+ *   --accent             accent used as a FILL behind --on-accent text (primary buttons, selected pills, toasts)
+ *   --{status}           status text / icons;  --{status}-bg tinted background;  --{status}-ink strong text on the tint
+ *   --{status}-line      border around a tinted box;  --{status}-solid fill behind --on-solid text (counts, toasts)
  */
 :root {
+  color-scheme: light;
+
   /* brand / accent */
   --navy: #0a2a4f;
   --navy-700: #12385f;
   --navy-900: #061c36;
-  --accent: var(--navy);
+  --accent: #0a2a4f;
   --accent-hover: #12385f;
+  --on-accent: #ffffff;
   --blue: #1d4f8c; /* links and selected states: the navy accent, lifted just enough to read as a link */
   --blue-600: #163f71;
   --blue-100: #e3e9f2;
   --blue-50: #f2f5f9;
   --grey: #a9a9a9;
 
-  /* document palette (brand.ts) — previews only */
+  /* document palette (brand.ts) — previews only, identical in both themes */
   --doc-navy: #0d1c50;
   --doc-accent: #04347f;
   --doc-gold: #b8901f;
@@ -25,29 +39,57 @@
   --doc-tint: #f4f6fa;
   --doc-ink: #111111;
   --doc-rule: #d9dce3;
+  --doc-paper: #ffffff;
+
+  /* fixed real-world colours, identical in both themes */
+  --plate-bg: #f9d648; /* UK rear number plate */
+  --plate-ink: #111111;
+  --media-bg: #000000; /* camera viewfinder */
+  --media-fg: #ffffff;
+  --on-solid: #ffffff;
 
   /* neutrals */
   --bg: #f6f7f9;
   --surface: #ffffff;
   --surface-2: #f9fafb;
+  --surface-hover: #eceff3;
+  --topbar-bg: rgba(255, 255, 255, 0.92);
+  --backdrop: rgba(6, 28, 54, 0.4);
   --ink: #18212f;
   --ink-2: #3b4656;
-  --muted: #6b7686;
-  --muted-2: #9aa3b0;
+  --muted: #616c7c;
+  --muted-2: #868f9c;
   --line: #eceef2;
   --line-2: #dde1e7;
+  --logo-plate: transparent;
 
   /* status (green / amber / red + info) — softer backgrounds */
-  --green: #1a7f45;
+  --green: #177a41;
   --green-bg: #e8f5ed;
+  --green-ink: #145232;
+  --green-line: #bfe3cc;
+  --green-solid: #1a7f45;
   --amber: #a15c07;
   --amber-bg: #fdf3e1;
+  --amber-ink: #6b3d05;
+  --amber-line: #f1d4a3;
+  --amber-solid: #a15c07;
   --red: #b42318;
   --red-bg: #fdecea;
+  --red-ink: #7a1a12;
+  --red-line: #f4c7c3;
+  --red-solid: #b42318;
   --info: #1d4f8c;
   --info-bg: #eaf0f8;
+  --info-ink: #173f70;
+  --info-line: #c9d7ea;
   --neutral: #4b5565;
   --neutral-bg: #f1f3f6;
+
+  /* 3D damage model stage */
+  --viewer-top: #fbfcfe;
+  --viewer-bottom: #f1f4f8;
+  --viewer-chip: rgba(255, 255, 255, 0.9);
 
   /* type: Inter when installed, otherwise the system UI font */
   --font: Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -87,4 +129,120 @@
   --topbar-h: 60px;
   --content-max: 1280px;
   --focus: 0 0 0 3px rgba(29, 79, 140, 0.25);
+}
+
+/* ---- Dark palette: the user chose Dark ---- */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --navy: #9cc2f5;
+  --navy-700: #b3d0f7;
+  --navy-900: #cfe1fa;
+  --accent: #2c66b8;
+  --accent-hover: #3573c9;
+  --on-accent: #ffffff;
+  --blue: #8fbaf3;
+  --blue-600: #a9caf6;
+  --blue-100: #233a59;
+  --blue-50: #18263a;
+  --grey: #6b7480;
+  --bg: #0e1319;
+  --surface: #161c24;
+  --surface-2: #1b222c;
+  --surface-hover: #242d38;
+  --topbar-bg: rgba(22, 28, 36, 0.92);
+  --backdrop: rgba(0, 0, 0, 0.62);
+  --ink: #e8edf4;
+  --ink-2: #c5cedb;
+  --muted: #9aa6b6;
+  --muted-2: #6e7a8a;
+  --line: #252e3a;
+  --line-2: #344050;
+  --logo-plate: #ffffff;
+  --green: #5fcb92;
+  --green-bg: #13291e;
+  --green-ink: #a9e5c4;
+  --green-line: #24543a;
+  --green-solid: #1d7f47;
+  --amber: #e9b35e;
+  --amber-bg: #2d2213;
+  --amber-ink: #f4d6a2;
+  --amber-line: #5e4622;
+  --amber-solid: #9a5a0a;
+  --red: #f4918a;
+  --red-bg: #351b1b;
+  --red-ink: #f9c0bb;
+  --red-line: #65302d;
+  --red-solid: #c0352a;
+  --info: #8fbaf3;
+  --info-bg: #18263a;
+  --info-ink: #c0d7f7;
+  --info-line: #2b4567;
+  --neutral: #b4bdca;
+  --neutral-bg: #212833;
+  --viewer-top: #1d2631;
+  --viewer-bottom: #12181f;
+  --viewer-chip: rgba(22, 28, 36, 0.9);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+  --focus: 0 0 0 3px rgba(143, 186, 243, 0.45);
+}
+
+/* ---- Dark palette: no explicit choice yet (or the pre-paint script did not run) and the OS is dark ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --navy: #9cc2f5;
+    --navy-700: #b3d0f7;
+    --navy-900: #cfe1fa;
+    --accent: #2c66b8;
+    --accent-hover: #3573c9;
+    --on-accent: #ffffff;
+    --blue: #8fbaf3;
+    --blue-600: #a9caf6;
+    --blue-100: #233a59;
+    --blue-50: #18263a;
+    --grey: #6b7480;
+    --bg: #0e1319;
+    --surface: #161c24;
+    --surface-2: #1b222c;
+    --surface-hover: #242d38;
+    --topbar-bg: rgba(22, 28, 36, 0.92);
+    --backdrop: rgba(0, 0, 0, 0.62);
+    --ink: #e8edf4;
+    --ink-2: #c5cedb;
+    --muted: #9aa6b6;
+    --muted-2: #6e7a8a;
+    --line: #252e3a;
+    --line-2: #344050;
+    --logo-plate: #ffffff;
+    --green: #5fcb92;
+    --green-bg: #13291e;
+    --green-ink: #a9e5c4;
+    --green-line: #24543a;
+    --green-solid: #1d7f47;
+    --amber: #e9b35e;
+    --amber-bg: #2d2213;
+    --amber-ink: #f4d6a2;
+    --amber-line: #5e4622;
+    --amber-solid: #9a5a0a;
+    --red: #f4918a;
+    --red-bg: #351b1b;
+    --red-ink: #f9c0bb;
+    --red-line: #65302d;
+    --red-solid: #c0352a;
+    --info: #8fbaf3;
+    --info-bg: #18263a;
+    --info-ink: #c0d7f7;
+    --info-line: #2b4567;
+    --neutral: #b4bdca;
+    --neutral-bg: #212833;
+    --viewer-top: #1d2631;
+    --viewer-bottom: #12181f;
+    --viewer-chip: rgba(22, 28, 36, 0.9);
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.55);
+    --focus: 0 0 0 3px rgba(143, 186, 243, 0.45);
+  }
 }
