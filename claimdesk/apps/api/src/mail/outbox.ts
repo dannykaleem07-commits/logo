@@ -49,6 +49,11 @@ export const SEND_BACKOFF_MS = [60_000, 5 * 60_000] as const;
 export const KILL_SWITCH_RECHECK_MS = 5 * 60_000;
 export const SENT_FOLDER = 'Sent';
 
+/** transitionOutbox stamped with the app clock (tests freeze it). */
+function transition(ctx: AppContext, id: string, to: Parameters<AppContext['repos']['transitionOutbox']>[2], actor: string, reason: string, opts: Parameters<AppContext['repos']['transitionOutbox']>[5] = {}): OutboxRecord {
+  return ctx.repos.transitionOutbox(ctx.db, id, to, actor, reason, { now: ctx.now(), ...opts });
+}
+
 const isEmailKind = (k: string): k is EmailKind => (EMAIL_KINDS as readonly string[]).includes(k);
 
 // ---------------------------------------------------------------------------
@@ -235,7 +240,7 @@ export function createEmailDraft(ctx: AppContext, input: EmailDraftInput, actor:
       reason: 'drafted',
       now: ctx.now(),
     });
-    return ctx.repos.transitionOutbox(ctx.db, o.id, 'reviewing', actor, 'sent to the reviewer', { patch: { policy: { draftMeta: { ...meta, ...(input.inReplyToMessageId ? { sourceMessageId: input.inReplyToMessageId } : {}) } } }, now: ctx.now() });
+    return transition(ctx, o.id, 'reviewing', actor, 'sent to the reviewer', { patch: { policy: { draftMeta: { ...meta, ...(input.inReplyToMessageId ? { sourceMessageId: input.inReplyToMessageId } : {}) } } }, now: ctx.now() });
   });
   ctx.repos.appendAudit(ctx.db, { actor: { userId: actor }, action: 'outbox.draft', entity: 'outbox', entityId: outbox.id, after: { claimId: claim.id, kind: input.kind, to: outbox.toJson, attachments: attachments.length, attachmentsAllowed: check.allowed }, at: ctx.now() });
   const review = enqueueJob(ctx, {
@@ -355,7 +360,7 @@ export async function afterReview(ctx: AppContext, outboxId: string, reviewId: s
   const critic = criticOf(review);
   if (review.verdict === 'repair') {
     if (loop < MAX_REPAIR_LOOPS && meta.sourceMessageId && o.claimId) {
-      ctx.repos.transitionOutbox(ctx.db, o.id, 'cancelled', MAIL_AGENT, `reviewer asked for a repair (loop ${loop + 1})`, { from: 'reviewing', patch: { reviewId: review.id } });
+      transition(ctx, o.id, 'cancelled', MAIL_AGENT, `reviewer asked for a repair (loop ${loop + 1})`, { from: 'reviewing', patch: { reviewId: review.id } });
       const original = meta.jobId ? ctx.repos.getAgentJob(ctx.db, meta.jobId) : undefined;
       const p = (original?.payload ?? {}) as { plan?: string; keyPoints?: string[] };
       const j = enqueueJob(ctx, {
@@ -368,12 +373,12 @@ export async function afterReview(ctx: AppContext, outboxId: string, reviewId: s
       return { outcome: 'repair', outboxId, jobs: [j.id] };
     }
     const ny = askOwner(ctx, o, { outcome: 'ask', reasons: [`The reviewer still wants changes after ${loop} repair loop(s)`], ruleIds: ['repair_limit'] }, 'question', job, { title: `Email needs your help: ${o.subject}`, issues: critic.issues });
-    ctx.repos.transitionOutbox(ctx.db, o.id, 'awaiting_approval', MAIL_AGENT, 'repair limit reached', { from: 'reviewing', patch: { reviewId: review.id, policy: { ...keepMeta, outcome: 'ask', ruleIds: ['repair_limit'] } } });
+    transition(ctx, o.id, 'awaiting_approval', MAIL_AGENT, 'repair limit reached', { from: 'reviewing', patch: { reviewId: review.id, policy: { ...keepMeta, outcome: 'ask', ruleIds: ['repair_limit'] } } });
     return { outcome: 'escalated', outboxId, needsYouId: ny.id, jobs: [] };
   }
   if (review.verdict === 'escalate') {
     const ny = askOwner(ctx, o, { outcome: 'ask', reasons: ['The reviewer escalated this email to you'], ruleIds: ['review_escalate'] }, 'question', job, { title: `Reviewer escalated an email: ${o.subject}`, issues: critic.issues });
-    ctx.repos.transitionOutbox(ctx.db, o.id, 'awaiting_approval', MAIL_AGENT, 'reviewer escalated', { from: 'reviewing', patch: { reviewId: review.id, policy: { ...keepMeta, outcome: 'ask', ruleIds: ['review_escalate'] } } });
+    transition(ctx, o.id, 'awaiting_approval', MAIL_AGENT, 'reviewer escalated', { from: 'reviewing', patch: { reviewId: review.id, policy: { ...keepMeta, outcome: 'ask', ruleIds: ['review_escalate'] } } });
     return { outcome: 'escalated', outboxId, needsYouId: ny.id, jobs: [] };
   }
 
@@ -395,12 +400,12 @@ export async function afterReview(ctx: AppContext, outboxId: string, reviewId: s
         const why = err instanceof Error ? err.message : String(err);
         const asked: Decision = { outcome: 'ask', reasons: [`The attached ${doc.title} needs your approval: ${why}`], ruleIds: ['attachments'] };
         const ny = askOwner(ctx, o, asked, 'approve_send', job);
-        ctx.repos.transitionOutbox(ctx.db, o.id, 'awaiting_approval', MAIL_AGENT, asked.reasons[0]!, { from: 'reviewing', patch: { reviewId: review.id, policy: { ...keepMeta, ...asked } } });
+        transition(ctx, o.id, 'awaiting_approval', MAIL_AGENT, asked.reasons[0]!, { from: 'reviewing', patch: { reviewId: review.id, policy: { ...keepMeta, ...asked } } });
         return { outcome: 'asked', outboxId, needsYouId: ny.id, jobs: [] };
       }
     }
     const holdUntil = new Date(Date.parse(ctx.now()) + (decision.holdMinutes ?? getAutonomy(ctx).holdMinutes) * 60_000).toISOString();
-    const held = ctx.repos.transitionOutbox(ctx.db, o.id, 'held', MAIL_AGENT, decision.reasons.join('; ') || 'allowed', { from: 'reviewing', patch: { reviewId: review.id, holdUntil, policy: { ...keepMeta, ...decision } } });
+    const held = transition(ctx, o.id, 'held', MAIL_AGENT, decision.reasons.join('; ') || 'allowed', { from: 'reviewing', patch: { reviewId: review.id, holdUntil, policy: { ...keepMeta, ...decision } } });
     const minutes = Math.round((Date.parse(holdUntil) - Date.parse(ctx.now())) / 60_000);
     const reference = held.claimId ? ctx.repos.getClaim(ctx.db, held.claimId)?.reference : undefined;
     try {
@@ -424,7 +429,7 @@ export async function afterReview(ctx: AppContext, outboxId: string, reviewId: s
 
   if (decision.outcome === 'deny' && meta.sourceMessageId && loop < MAX_REPAIR_LOOPS && o.claimId) {
     // not_reviewed / consistency_blocked: back to the drafter with the reasons.
-    ctx.repos.transitionOutbox(ctx.db, o.id, 'cancelled', MAIL_AGENT, `policy: ${decision.reasons.join('; ')}`, { from: 'reviewing', patch: { reviewId: review.id } });
+    transition(ctx, o.id, 'cancelled', MAIL_AGENT, `policy: ${decision.reasons.join('; ')}`, { from: 'reviewing', patch: { reviewId: review.id } });
     const j = enqueueJob(ctx, {
       type: 'mail.reply',
       payload: { claimId: o.claimId, messageId: meta.sourceMessageId, plan: `Redraft the reply "${o.subject}"`, keyPoints: [], repairOf: o.id, issues: [...decision.reasons.map((r) => ({ code: decision.ruleIds[0] ?? 'policy', severity: 'block', message: r })), ...critic.issues].slice(0, 30), loop: loop + 1 },
@@ -438,7 +443,7 @@ export async function afterReview(ctx: AppContext, outboxId: string, reviewId: s
   // ask (or a deny that cannot be repaired): the owner gets the prepared email.
   const kind = decision.outcome === 'deny' ? 'question' : descriptor.missingInfo ? 'missing_info' : 'approve_send';
   const ny = askOwner(ctx, o, decision, kind, job);
-  ctx.repos.transitionOutbox(ctx.db, o.id, 'awaiting_approval', MAIL_AGENT, decision.reasons.join('; ') || 'owner approval needed', { from: 'reviewing', patch: { reviewId: review.id, policy: { ...keepMeta, ...decision } } });
+  transition(ctx, o.id, 'awaiting_approval', MAIL_AGENT, decision.reasons.join('; ') || 'owner approval needed', { from: 'reviewing', patch: { reviewId: review.id, policy: { ...keepMeta, ...decision } } });
   return { outcome: 'asked', outboxId, needsYouId: ny.id, jobs: [] };
 }
 
@@ -477,7 +482,7 @@ function assertPerson(actor: Actor, what: string): void {
 export function approveOutbox(ctx: AppContext, id: string, actor: Actor, edits?: OwnerEdits, note?: string): OutboxRecord {
   assertPerson(actor, 'approve an email');
   const now = ctx.now();
-  const o = ctx.repos.transitionOutbox(ctx.db, id, 'queued', actor.userId, note ? `approved: ${note}` : edits ? 'approved with edits' : 'approved', {
+  const o = transition(ctx, id, 'queued', actor.userId, note ? `approved: ${note}` : edits ? 'approved with edits' : 'approved', {
     from: ['awaiting_approval', 'held', 'draft'],
     patch: { ...editPatch(edits), approvedBy: actor.userId, approvedAt: now, holdUntil: null },
     now,
@@ -491,7 +496,7 @@ export function approveOutbox(ctx: AppContext, id: string, actor: Actor, edits?:
 export function undoOutbox(ctx: AppContext, id: string, actor: Actor): OutboxRecord {
   const cur = ctx.repos.requireOutbox(ctx.db, id);
   if (cur.status === 'sending' || cur.status === 'sent') throw conflict('OUTBOX_SENT', 'This email has already gone to the mail server; it cannot be undone');
-  const o = ctx.repos.transitionOutbox(ctx.db, id, 'cancelled', actor.userId, 'undo', { from: ['held', 'queued', 'awaiting_approval'], now: ctx.now() });
+  const o = transition(ctx, id, 'cancelled', actor.userId, 'undo', { from: ['held', 'queued', 'awaiting_approval'], now: ctx.now() });
   ctx.repos.appendAudit(ctx.db, { actor, action: 'outbox.undo', entity: 'outbox', entityId: id, after: { claimId: o.claimId ?? null, subject: o.subject }, at: ctx.now() });
   return o;
 }
@@ -504,14 +509,14 @@ export function sendNowOutbox(ctx: AppContext, id: string, actor: Actor): Outbox
 /** Owner: retry a failed email. */
 export function retryOutbox(ctx: AppContext, id: string, actor: Actor): OutboxRecord {
   assertPerson(actor, 'retry an email');
-  const o = ctx.repos.transitionOutbox(ctx.db, id, 'queued', actor.userId, 'retry', { from: 'failed', patch: { attempts: 0, lastError: null, approvedBy: actor.userId, approvedAt: ctx.now() } });
+  const o = transition(ctx, id, 'queued', actor.userId, 'retry', { from: 'failed', patch: { attempts: 0, lastError: null, approvedBy: actor.userId, approvedAt: ctx.now() } });
   enqueueJob(ctx, { type: 'outbox.release', payload: { outboxId: id }, ...(o.claimId ? { claimId: o.claimId } : {}), idempotencyKey: `outbox.release:${id}:retry:${ctx.now()}`, createdBy: actor.userId });
   return o;
 }
 
 export function rejectOutbox(ctx: AppContext, id: string, actor: Actor, reason: string): OutboxRecord {
   assertPerson(actor, 'reject an email');
-  const o = ctx.repos.transitionOutbox(ctx.db, id, 'cancelled', actor.userId, `rejected: ${reason}`, { from: ['awaiting_approval', 'held', 'draft', 'reviewing'] });
+  const o = transition(ctx, id, 'cancelled', actor.userId, `rejected: ${reason}`, { from: ['awaiting_approval', 'held', 'draft', 'reviewing'] });
   ctx.repos.appendAudit(ctx.db, { actor, action: 'outbox.reject', entity: 'outbox', entityId: id, after: { reason }, at: ctx.now() });
   return o;
 }
@@ -582,12 +587,12 @@ export function ownerCompose(ctx: AppContext, input: OwnerComposeInput, actor: A
   });
   ctx.repos.appendAudit(ctx.db, { actor, action: 'outbox.compose', entity: 'outbox', entityId: created.id, after: { claimId: claim?.id ?? null, to: created.toJson, check: Boolean(input.checkBeforeSending) }, at: now });
   if (input.checkBeforeSending && claim) {
-    const o = ctx.repos.transitionOutbox(ctx.db, created.id, 'reviewing', actor.userId, 'owner asked for a check before sending', { patch: { policy: { draftMeta: { loop: 0 }, owner: true } }, now });
+    const o = transition(ctx, created.id, 'reviewing', actor.userId, 'owner asked for a check before sending', { patch: { policy: { draftMeta: { loop: 0 }, owner: true } }, now });
     enqueueJob(ctx, { type: 'review.check', payload: { targetKind: 'outbox', targetId: o.id, claimId: claim.id, loop: 0 }, claimId: claim.id, idempotencyKey: `review.check:outbox:${o.id}:0`, createdBy: actor.userId });
     return o;
   }
   const holdUntil = new Date(Date.parse(now) + OWNER_UNDO_SECONDS * 1000).toISOString();
-  const o = ctx.repos.transitionOutbox(ctx.db, created.id, 'held', actor.userId, `owner compose: ${OWNER_UNDO_SECONDS}-second undo`, { patch: { holdUntil, approvedBy: actor.userId, approvedAt: now, policy: { outcome: 'owner', ruleIds: ['owner_compose'], reasons: ['Written by the owner'] } }, now });
+  const o = transition(ctx, created.id, 'held', actor.userId, `owner compose: ${OWNER_UNDO_SECONDS}-second undo`, { patch: { holdUntil, approvedBy: actor.userId, approvedAt: now, policy: { outcome: 'owner', ruleIds: ['owner_compose'], reasons: ['Written by the owner'] } }, now });
   enqueueJob(ctx, { type: 'outbox.release', payload: { outboxId: o.id }, ...(o.claimId ? { claimId: o.claimId } : {}), runAfter: holdUntil, idempotencyKey: `outbox.release:${o.id}:${holdUntil}`, createdBy: actor.userId });
   return o;
 }
@@ -645,7 +650,7 @@ export async function releaseOutbox(ctx: AppContext, outboxId: string, job: Pick
   const res = (r: Omit<ReleaseResult, 'outboxId' | 'followUps'> & { followUps?: ReleaseResult['followUps'] }): ReleaseResult => ({ outboxId, followUps: [], ...r });
   if (o.status !== 'held' && o.status !== 'queued') return res({ outcome: 'skipped', reason: `status ${o.status}` });
   if (o.status === 'held' && o.holdUntil && Date.parse(o.holdUntil) > Date.parse(ctx.now())) {
-    return res({ outcome: 'deferred', reason: 'hold not over', followUps: [{ type: 'outbox.release', runAfter: o.holdUntil, key: `outbox.release:${o.id}:${o.holdUntil}` }] });
+    return res({ outcome: 'deferred', reason: 'hold not over', followUps: [{ type: 'outbox.release', runAfter: o.holdUntil, key: `outbox.release:${o.id}:${o.holdUntil}:early:${ctx.now()}` }] });
   }
   const automatic = !isOwnerApproved(o);
   if (automatic) {
@@ -659,14 +664,14 @@ export async function releaseOutbox(ctx: AppContext, outboxId: string, job: Pick
     const why = st.claimPaused ? 'Agents are paused on this claim' : st.agentPaused ? 'The mail agent is paused' : overRateLimit(ctx, o);
     if (why) {
       const decision: Decision = { outcome: 'ask', reasons: [why], ruleIds: [st.claimPaused || st.agentPaused ? 'paused' : 'rate_limits'] };
-      o = ctx.repos.transitionOutbox(ctx.db, o.id, 'awaiting_approval', MAIL_AGENT, why, { from: ['held', 'queued'], patch: { policy: { ...(o.policy as object), released: decision } } });
+      o = transition(ctx, o.id, 'awaiting_approval', MAIL_AGENT, why, { from: ['held', 'queued'], patch: { policy: { ...(o.policy as object), released: decision } } });
       const ny = askOwner(ctx, o, decision, 'approve_send', job);
       return res({ outcome: 'asked', reason: why, needsYouId: ny.id });
     }
   }
-  if (o.status === 'held') o = ctx.repos.transitionOutbox(ctx.db, o.id, 'queued', MAIL_AGENT, 'hold over', { from: 'held' });
+  if (o.status === 'held') o = transition(ctx, o.id, 'queued', MAIL_AGENT, 'hold over', { from: 'held' });
   const attempt = o.attempts + 1;
-  o = ctx.repos.transitionOutbox(ctx.db, o.id, 'sending', MAIL_AGENT, `SMTP attempt ${attempt}`, { from: 'queued', patch: { attempts: attempt } });
+  o = transition(ctx, o.id, 'sending', MAIL_AGENT, `SMTP attempt ${attempt}`, { from: 'queued', patch: { attempts: attempt } });
 
   const account = ctx.repos.getMailAccount(ctx.db, o.accountId) ?? mailAccount(ctx);
   let accepted: { messageId: string; accepted: string[]; rejected: string[]; raw: Buffer };
@@ -691,11 +696,11 @@ export async function releaseOutbox(ctx: AppContext, outboxId: string, job: Pick
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     if (attempt < SEND_MAX_ATTEMPTS) {
-      ctx.repos.transitionOutbox(ctx.db, o.id, 'queued', MAIL_AGENT, `SMTP attempt ${attempt} failed: ${message}`, { from: 'sending', patch: { lastError: message.slice(0, 1000) } });
+      transition(ctx, o.id, 'queued', MAIL_AGENT, `SMTP attempt ${attempt} failed: ${message}`, { from: 'sending', patch: { lastError: message.slice(0, 1000) } });
       const at = new Date(Date.parse(ctx.now()) + SEND_BACKOFF_MS[attempt - 1]!).toISOString();
       return res({ outcome: 'retrying', reason: message, followUps: [{ type: 'outbox.release', runAfter: at, key: `outbox.release:${o.id}:attempt:${attempt + 1}` }] });
     }
-    ctx.repos.transitionOutbox(ctx.db, o.id, 'failed', MAIL_AGENT, `SMTP failed ${attempt} times: ${message}`, { from: 'sending', patch: { lastError: message.slice(0, 1000) } });
+    transition(ctx, o.id, 'failed', MAIL_AGENT, `SMTP failed ${attempt} times: ${message}`, { from: 'sending', patch: { lastError: message.slice(0, 1000) } });
     const ny = createNeedsYou(ctx, {
       kind: 'failure',
       ...(o.claimId ? { claimId: o.claimId } : {}),
@@ -728,7 +733,7 @@ export async function releaseOutbox(ctx: AppContext, outboxId: string, job: Pick
   } catch (err) {
     ctx.logger.error('could not store the sent copy as evidence', { outboxId: o.id, error: String(err) });
   }
-  o = ctx.repos.transitionOutbox(ctx.db, o.id, 'sent', actor.userId, `accepted by SMTP for ${accepted.accepted.join(', ')}`, { from: 'sending', patch: { smtpMessageId: accepted.messageId, ...(rawEvidenceId ? { rawSentEvidenceId: rawEvidenceId } : {}), lastError: accepted.rejected.length ? `rejected: ${accepted.rejected.join(', ')}` : null } });
+  o = transition(ctx, o.id, 'sent', actor.userId, `accepted by SMTP for ${accepted.accepted.join(', ')}`, { from: 'sending', patch: { smtpMessageId: accepted.messageId, ...(rawEvidenceId ? { rawSentEvidenceId: rawEvidenceId } : {}), lastError: accepted.rejected.length ? `rejected: ${accepted.rejected.join(', ')}` : null } });
   ctx.repos.appendAudit(ctx.db, { actor, action: 'email.send', entity: 'outbox', entityId: o.id, after: { smtpMessageId: accepted.messageId, claimId: o.claimId ?? null, to: o.toJson, cc: o.ccJson, accepted: accepted.accepted, rejected: accepted.rejected, rawEvidenceId: rawEvidenceId ?? null, automatic, policy: (o.policy as { ruleIds?: unknown } | undefined)?.ruleIds ?? null }, at: now });
 
   // The sent copy in the thread (Mailbox tab) and in IONOS "Sent" (IONOS SMTP does not reliably keep one).

@@ -227,9 +227,14 @@ export function startIdleLoop(ctx: AppContext, opts: IdleLoopOptions = {}): Idle
         recordConnectionOk(ctx, account.id);
         backoff = 0;
         queueSyncNow(ctx, account.id);
+        let fastReturns = 0;
         while (!stopper.signal.aborted) {
           const renew = AbortSignal.any([stopper.signal, AbortSignal.timeout(opts.renewMs ?? IDLE_RENEW_MS)]);
+          const started = Date.now();
           await mailbox.idle(() => queueSyncNow(ctx, account.id), renew);
+          // A dead connection can make IDLE return at once, over and over: reconnect instead of spinning.
+          fastReturns = !renew.aborted && Date.now() - started < 1000 ? fastReturns + 1 : 0;
+          if (fastReturns >= 5) throw new Error('IDLE keeps ending immediately; reconnecting');
         }
       } catch (err) {
         if (stopper.signal.aborted) break;

@@ -20,6 +20,8 @@ export interface Applier {
   kind: 'agent' | 'owner';
   actor: Actor;
   headers: Record<string, string>;
+  /** Agents only: the one claim this applier may write to. */
+  claimScope?: string;
   release(): void;
 }
 
@@ -31,6 +33,7 @@ export function agentApplier(ctx: AppContext, input: { claimId: string; jobId: s
     kind: 'agent',
     actor: { userId: agentUserId('intake'), runId },
     headers: { authorization: `Bearer ${token}` },
+    claimScope: input.claimId,
     release: () => revokeRunToken(token),
   };
 }
@@ -76,6 +79,7 @@ export async function applyProposal(ctx: AppContext, proposal: ClaimUpdatePropos
   if (proposal.status !== 'pending') return fail('PROPOSAL_DECIDED', `This proposal is already ${proposal.status}`);
   if (proposal.policyDecision === 'never') return fail('PROPOSAL_NEVER', 'This field cannot be applied on this claim');
   if (applier.kind === 'agent' && proposal.policyDecision !== 'auto') return fail('NEEDS_OWNER', 'Only the owner can apply a field that needs confirmation');
+  if (applier.kind === 'agent' && proposal.claimId !== applier.claimScope) return fail('CLAIM_SCOPE', 'An agent applies proposals only on the claim of its run');
   const def = targetDef(proposal.target);
   if (!def) return fail('UNKNOWN_TARGET', `${proposal.target} is not a known field`);
   const now = ctx.now();

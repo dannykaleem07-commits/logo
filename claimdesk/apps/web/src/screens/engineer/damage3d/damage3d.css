@@ -70,7 +70,7 @@
   position: relative;
   border: 1px solid var(--line, #e5e7eb);
   border-radius: var(--r-lg, 12px);
-  background: linear-gradient(180deg, #fbfcfe 0%, #f1f4f8 100%);
+  background: var(--dm3-stage, radial-gradient(ellipse 80% 70% at 50% 38%, #ffffff 0%, #eef1f5 62%, #e2e7ee 100%));
   overflow: hidden;
 }
 .dm3-area-2d {
@@ -385,4 +385,79 @@ button.dm3-row-main:hover .dm3-row-title {
 .dm3 select:focus-visible {
   outline: 2px solid var(--blue, #1466d2);
   outline-offset: 1px;
+}
+
+/* vehicle identity chip (make / model / colour / plate / dimensions source) */
+.dm3-ident {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  pointer-events: none;
+  font-size: var(--fs-xs, 0.75rem);
+  color: var(--ink-2, #374151);
+}
+.dm3-ident strong {
+  font-size: var(--fs-sm, 0.8125rem);
+  color: var(--ink, #111827);
+}
+.dm3-ident-paint {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.dm3-ident-plate {
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: #f5c518;
+  color: #111;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
+}
+
+/* dark theme: follows the app's data-theme, else the OS preference */
+:root[data-theme='dark'] .dm3 {
+  --dm3-stage: radial-gradient(ellipse 80% 70% at 50% 38%, #2b3442 0%, #19202a 60%, #11161d 100%);
+}
+:root[data-theme='dark'] .dm3-area,
+:root[data-theme='dark'] .dm3-panel {
+  border-color: var(--line, #2a3240);
+}
+:root[data-theme='dark'] .dm3-legend {
+  background: rgba(17, 22, 29, 0.82);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #d5dbe4;
+}
+:root[data-theme='dark'] .dm3-ident,
+:root[data-theme='dark'] .dm3-ident strong {
+  color: #e6ebf2;
+}
+:root[data-theme='dark'] .dm3-swatch {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .dm3 {
+    --dm3-stage: radial-gradient(ellipse 80% 70% at 50% 38%, #2b3442 0%, #19202a 60%, #11161d 100%);
+  }
+  :root:not([data-theme='light']) .dm3-area,
+  :root:not([data-theme='light']) .dm3-panel {
+    border-color: var(--line, #2a3240);
+  }
+  :root:not([data-theme='light']) .dm3-legend {
+    background: rgba(17, 22, 29, 0.82);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: #d5dbe4;
+  }
+  :root:not([data-theme='light']) .dm3-ident,
+  :root:not([data-theme='light']) .dm3-ident strong {
+    color: #e6ebf2;
+  }
+  :root:not([data-theme='light']) .dm3-swatch {
+    border-color: rgba(255, 255, 255, 0.25);
+  }
 }

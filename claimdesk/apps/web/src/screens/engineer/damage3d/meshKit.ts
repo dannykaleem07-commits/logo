@@ -16,7 +16,9 @@ export type Tone =
   | 'chrome'
   | 'black'
   | 'rim'
-  | 'liner';
+  | 'liner'
+  | 'redglow'
+  | 'drl';
 
 export interface MeshGroup {
   zone: string | null;
@@ -184,47 +186,55 @@ export class MeshBuilder {
   }
 }
 
-// ── ray projector (drapes overlays onto the shell) ──
+// ── ray caster (drapes overlays onto the shell) ──
 
 export interface Hit {
   p: V3;
   n: V3;
 }
 
-export class Projector {
-  private readonly U: V3;
-  private readonly V: V3;
+/**
+ * Casts rays parameterised by two coordinates (a, b) — e.g. (x, y) for a side view, (z, y) for a front view, or
+ * (angle round a vertical axis, y) for lamps that wrap round a corner. Shell triangles are binned in (a, b) so each
+ * cast only tests the few triangles under it.
+ */
+export class Caster {
   private readonly bins = new Map<number, number[]>();
-  private readonly cell: number;
   constructor(
     private readonly pos: readonly number[],
     private readonly nor: readonly number[],
-    readonly D: V3
+    private readonly toAB: (p: V3) => [number, number] | null,
+    private readonly ray: (a: number, b: number) => { o: V3; d: V3 },
+    private readonly cellA = 0.04,
+    private readonly cellB = 0.04
   ) {
-    const d = norm(D);
-    this.D = d;
-    const up: V3 = Math.abs(d[1]) > 0.9 ? [1, 0, 0] : [0, 1, 0];
-    this.U = norm(cross(up, d));
-    this.V = cross(d, this.U);
-    this.cell = 0.05;
     const triCount = pos.length / 9;
     for (let t = 0; t < triCount; t++) {
       let a0 = Infinity;
       let a1 = -Infinity;
       let b0 = Infinity;
       let b1 = -Infinity;
-      for (let k = 0; k < 3; k++) {
+      let ok = true;
+      for (let k = 0; k < 3 && ok; k++) {
         const o = t * 9 + k * 3;
-        const p: V3 = [pos[o]!, pos[o + 1]!, pos[o + 2]!];
-        const a = dot(p, this.U);
-        const b = dot(p, this.V);
-        if (a < a0) a0 = a;
-        if (a > a1) a1 = a;
-        if (b < b0) b0 = b;
-        if (b > b1) b1 = b;
+        const ab = toAB([pos[o]!, pos[o + 1]!, pos[o + 2]!]);
+        if (!ab) {
+          ok = false;
+          break;
+        }
+        if (ab[0] < a0) a0 = ab[0];
+        if (ab[0] > a1) a1 = ab[0];
+        if (ab[1] < b0) b0 = ab[1];
+        if (ab[1] > b1) b1 = ab[1];
       }
-      for (let ia = Math.floor(a0 / this.cell); ia <= Math.floor(a1 / this.cell); ia++) {
-        for (let ib = Math.floor(b0 / this.cell); ib <= Math.floor(b1 / this.cell); ib++) {
+      if (!ok) continue;
+      const ia0 = Math.floor(a0 / cellA);
+      const ia1 = Math.floor(a1 / cellA);
+      const ib0 = Math.floor(b0 / cellB);
+      const ib1 = Math.floor(b1 / cellB);
+      if ((ia1 - ia0 + 1) * (ib1 - ib0 + 1) > 400) continue; // degenerate wrap-round: not something we drape onto
+      for (let ia = ia0; ia <= ia1; ia++) {
+        for (let ib = ib0; ib <= ib1; ib++) {
           const k = ia * 100003 + ib;
           let list = this.bins.get(k);
           if (!list) this.bins.set(k, (list = []));
@@ -234,13 +244,11 @@ export class Projector {
     }
   }
 
-  /** Nearest surface point along D from `origin` (a point outside the car). */
-  cast(origin: V3): Hit | null {
-    const a = dot(origin, this.U);
-    const b = dot(origin, this.V);
-    const list = this.bins.get(Math.floor(a / this.cell) * 100003 + Math.floor(b / this.cell));
+  /** Nearest surface hit for coordinates (a, b); the normal faces back along the ray. */
+  cast(a: number, b: number): Hit | null {
+    const list = this.bins.get(Math.floor(a / this.cellA) * 100003 + Math.floor(b / this.cellB));
     if (!list) return null;
-    const D = this.D;
+    const { o: origin, d: D } = this.ray(a, b);
     let best = Infinity;
     let hit: Hit | null = null;
     const pos = this.pos;
@@ -277,11 +285,11 @@ export class Projector {
 }
 
 /**
- * Drape a patch onto the shell: `pts[i][j]` are ray origins (outside the car) cast along the projector direction;
- * hits are lifted by `offset` along the surface normal. Quads with a missed corner are dropped.
+ * Drape a patch onto the shell: `rows[i][j]` are (a, b) caster coordinates; hits are lifted by `offset` along the
+ * surface normal. Quads with a missed corner are dropped. Returns the number of quads emitted.
  */
-export function drape(mb: MeshBuilder, pr: Projector, origins: V3[][], zone: string | null, tone: Tone, offset: number, layer: number): number {
-  const P: Array<Array<Hit | null>> = origins.map((row) => row.map((o) => pr.cast(o)));
+export function drape(mb: MeshBuilder, caster: Caster, rows: Array<Array<[number, number]>>, zone: string | null, tone: Tone, offset: number, layer: number): number {
+  const P: Array<Array<Hit | null>> = rows.map((row) => row.map(([a, b]) => caster.cast(a, b)));
   let n = 0;
   for (let i = 0; i < P.length - 1; i++) {
     for (let j = 0; j < P[i]!.length - 1; j++) {

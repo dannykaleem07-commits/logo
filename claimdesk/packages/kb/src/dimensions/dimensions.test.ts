@@ -66,12 +66,34 @@ describe('normalisers', () => {
   });
 
   it('rejects out-of-range values instead of trusting them', () => {
-    const { dims, filled } = normaliseBodyDimensions({ lengthMm: 40, heightMm: 99999, wheelbaseMm: 9000, doors: 9, roofTaper: 0.1, profile: 'suv' });
+    const { dims, filled } = normaliseBodyDimensions({ lengthMm: 40, heightMm: 99999, wheelbaseMm: 9000, doors: 9, roofTaper: 1.5, profile: 'suv' });
     expect(dims.lengthMm).toBe(PROFILE_DEFAULTS.suv.lengthMm);
     expect(dims.heightMm).toBe(PROFILE_DEFAULTS.suv.heightMm);
     expect(dims.doors).toBe(PROFILE_DEFAULTS.suv.doors);
-    expect(dims.roofTaper).toBeCloseTo(0.9); // ≤ 0.5 is a fractional narrowing
-    expect(filled).toEqual(expect.arrayContaining(['lengthMm', 'heightMm', 'wheelbaseMm', 'doors']));
+    expect(dims.roofTaper).toBe(PROFILE_DEFAULTS.suv.roofTaper);
+    expect(filled).toEqual(expect.arrayContaining(['lengthMm', 'heightMm', 'wheelbaseMm', 'doors', 'roofTaper']));
+  });
+
+  it('reads the data job vocabulary (door lists, wide-slim, notchback, suv-boxy, shield, taper index)', () => {
+    const g20 = normaliseBodyDimensions({ profile: 'notchback', lampStyle: 'wide-slim', grilleStyle: 'kidney', doors: [4], roofTaper: 0.3 }, 'saloon').dims;
+    expect(g20).toMatchObject({ profile: 'saloon', lampStyle: 'slim', grilleStyle: 'kidney', doors: 4, doorOptions: [4], roofTaper: 0.3 });
+    const fiesta = normaliseBodyDimensions({ profile: 'hatch', doors: [3, 5] }, 'hatchback').dims;
+    expect(fiesta.doors).toBe(5);
+    expect(fiesta.doorOptions).toEqual([3, 5]);
+    expect(normaliseProfile('suv-boxy')).toBe('suv-boxy');
+    expect(normaliseProfile('suv-rounded')).toBe('suv');
+    expect(normaliseProfile('van-low')).toBe('van');
+    expect(normaliseProfile('van-high')).toBe('van-high-roof');
+    expect(normaliseProfile('minibus')).toBe('van-high-roof');
+    expect(normaliseProfile('liftback')).toBe('fastback');
+    expect(normaliseProfile('roadster')).toBe('convertible');
+    expect(normaliseProfile('taxi')).toBe('mpv');
+    expect(normaliseBodyDimensions({ profile: 'pickup-single' }).dims).toMatchObject({ profile: 'pickup', doors: 2 });
+    expect(normaliseGrilleStyle('shield')).toBe('shield');
+    expect(normaliseGrilleStyle('large-upright')).toBe('large');
+    expect(normaliseGrilleStyle('narrow')).toBe('slim');
+    expect(normaliseGrilleStyle('closed-ev')).toBe('closed');
+    expect(normaliseLampStyle('split')).toBe('split');
   });
 
   it('treats a 2.2 m+ "van" as a high-roof van', () => {
@@ -122,6 +144,11 @@ describe('loader', () => {
     expect(r.model).toBe('fiesta');
     expect(r.body).toBe('hatchback-3-door');
     expect(r.dims.doors).toBe(3);
+    // a door list in the file: the query picks one of them
+    const mk7 = findVehicleDimensions({ make: 'ford', model: 'fiesta', generation: 'Mk7', doors: 3 })!;
+    expect(mk7.dims.doorOptions).toEqual([3, 5]);
+    expect(mk7.dims.doors).toBe(3);
+    expect(findVehicleDimensions({ make: 'ford', model: 'fiesta', generation: 'Mk7' })!.dims.doors).toBe(5);
   });
 
   it('picks a generation by year, else the newest', () => {

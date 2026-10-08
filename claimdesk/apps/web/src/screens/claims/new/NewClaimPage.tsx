@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { flagName } from '../../../lib/flagNames';
 import { plainText } from '../../../lib/plainText';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import type { ClaimFlag } from '@ccguk/domain';
 import { api, fnolErrorLines, withRelaxed } from '../../../api/client';
 import { useInvalidateClaim, useMe } from '../../../api/hooks';
@@ -17,6 +17,9 @@ import { StepParties } from './StepParties';
 import { StepVehicle } from './StepVehicle';
 import { StepAccident } from './StepAccident';
 import { StepReview } from './StepReview';
+import { Badge } from '../../../components/Badge';
+import { useIntakeDraft } from '../../../api/intakeApi';
+import { intakeDraftIdFrom, prefillFromDraft, type PrefillBadge } from './intakePrefill';
 
 export interface StepProps {
   state: FnolState;
@@ -62,6 +65,16 @@ export function NewClaimPage() {
   const [touched, setTouched] = useState<Set<Step>>(new Set());
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  // Intake (SUPREME §G.3): ?intakeDraft=<id> prefills the wizard from documents, with "from V5C, page 1" badges.
+  const intakeDraft = useIntakeDraft(intakeDraftIdFrom(useLocation().search)).data;
+  const [prefillBadges, setPrefillBadges] = useState<PrefillBadge[]>([]);
+  useEffect(() => {
+    if (!intakeDraft) return;
+    const p = prefillFromDraft(initialFnolState(), intakeDraft);
+    setState((s) => ({ ...p.state, handlerId: s.handlerId || p.state.handlerId }));
+    setPrefillBadges([...p.badges, ...p.notInWizard]);
+  }, [intakeDraft]);
 
   const update = useCallback<StepProps['update']>((patch) => {
     setState((s) => (typeof patch === 'function' ? patch(s) : { ...s, ...patch }));
@@ -178,6 +191,18 @@ export function NewClaimPage() {
     <div className="page">
       <PageHeader title="New claim" subtitle="First notification of loss" crumbs={[{ label: 'Claims', to: '/claims' }, { label: 'New claim' }]} />
       <Card>
+        {prefillBadges.length > 0 && (
+          <div className="notice notice-info" style={{ marginBottom: 16 }} aria-label="Prefilled from documents">
+            <strong>Prefilled from documents.</strong> Check each value with the client; the disclosure, the client’s own account and the script questions are still yours.
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 8 }}>
+              {prefillBadges.map((b) => (
+                <Badge key={b.field} tone="blue" title={`${b.value} (${Math.round(b.confidence * 100)}%)`}>
+                  {b.label}: {b.source}
+                </Badge>
+              ))}
+            </div>
+          </div>
+        )}
         <ol className="wizard-steps" aria-label="Steps">
           {STEPS.map((s) => {
             const cls = s.n === step ? 'current' : s.n < maxReached ? 'done' : '';

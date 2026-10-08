@@ -44,6 +44,7 @@ import { registerOutboxRoutes } from './outbox.js';
 import { registerIntakeRoutes } from './intake.js';
 import { registerCaseworkRoutes } from './casework.js';
 import { registerBrainRoutes } from './brain.js';
+import { registerModels3dRoutes } from './models3d.js';
 
 export const routeModules: RouteModule[] = [
   registerHealthRoutes,
@@ -84,6 +85,7 @@ export const routeModules: RouteModule[] = [
   registerIntakeRoutes, // intake
   registerCaseworkRoutes, // casework
   registerBrainRoutes, // casework
+  registerModels3dRoutes, // exact-models (licensed 3D models)
   registerJobsModule,
 ];
 

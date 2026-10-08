@@ -92,6 +92,37 @@ describe('DamageModel3D (2D fallback)', () => {
     expect(within(screen.getByRole('complementary', { name: 'Damaged parts' })).getByText('Sliding side door (O/S, right)')).toBeTruthy();
   });
 
+  it('shapes the model from the vehicle: dimensions, colour and registration', () => {
+    const fiesta = { lengthMm: 4040, widthMm: 1735, heightMm: 1476, wheelbaseMm: 2493, profile: 'hatch', doors: [3, 5] };
+    render(<DamageModel3D bodyType="hatchback" damage={{}} vehicle={{ make: 'Ford', model: 'Fiesta', generation: 'Mk8', colour: 'Race Red', registration: 'rx19fkd' }} dims={fiesta} />);
+    const chip = screen.getByTestId('dm3-ident');
+    expect(chip.textContent).toContain('Ford Fiesta Mk8');
+    expect(chip.textContent).toContain('Race Red');
+    expect(chip.textContent).toContain('RX19 FKD');
+    expect(chip.textContent).toContain('4040 × 1735 × 1476 mm');
+    // the 2D side view follows the real length (viewBox in cm, plus padding)
+    const side = screen.getByRole('img', { name: 'Left side (N/S) view' });
+    const w = Number(side.getAttribute('viewBox')!.split(' ')[2]);
+    expect(w).toBeGreaterThan(404);
+    expect(w).toBeLessThan(404 + 40);
+    cleanup();
+    const golf = { ...fiesta, lengthMm: 4284 };
+    render(<DamageModel3D bodyType="hatchback" damage={{}} vehicle={{ make: 'Volkswagen', model: 'Golf' }} dims={golf} />);
+    const w2 = Number(screen.getByRole('img', { name: 'Left side (N/S) view' }).getAttribute('viewBox')!.split(' ')[2]);
+    expect(w2 - w).toBeCloseTo(24.4, 0);
+  });
+
+  it('fetches dimensions for a make and model, falling back to body-type proportions', async () => {
+    const load = vi.fn(async () => ({ lengthMm: 4394, widthMm: 1806, heightMm: 1590, wheelbaseMm: 2646, profile: 'suv-rounded' }));
+    render(<DamageModel3D bodyType="suv" damage={{}} vehicle={{ make: 'Nissan', model: 'Qashqai', generation: 'J11' }} loadDimensions={load} />);
+    expect(screen.getByTestId('dm3-ident').textContent).toContain('Loading dimensions');
+    await waitFor(() => expect(screen.getByTestId('dm3-ident').textContent).toContain('4394 × 1806 × 1590 mm'));
+    expect(load).toHaveBeenCalledWith(expect.objectContaining({ make: 'Nissan', model: 'Qashqai' }), expect.anything());
+    cleanup();
+    render(<DamageModel3D bodyType="suv" damage={{}} vehicle={{ make: 'Nobody', model: 'X' }} loadDimensions={async () => null} />);
+    await waitFor(() => expect(screen.getByTestId('dm3-ident').textContent).toContain('Typical SUV / 4x4 proportions'));
+  });
+
   it('the lazy public wrapper loads the component', async () => {
     await act(async () => {
       render(<LazyDamageModel3D bodyType="suv" damage={{}} forceFallback />);

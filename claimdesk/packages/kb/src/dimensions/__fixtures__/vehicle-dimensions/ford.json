@@ -5,7 +5,7 @@
   "models": {
     "fiesta": {
       "Mk7 (2008–2017)": {
-        "bodies": { "hatchback": { "lengthMm": 3950, "widthMm": 1722, "heightMm": 1481, "wheelbaseMm": 2489, "profile": "hatch" } }
+        "bodies": { "hatchback": { "lengthMm": 3950, "widthMm": 1722, "heightMm": 1481, "wheelbaseMm": 2489, "profile": "hatch", "doors": [3, 5], "lampStyle": "wide-slim" } }
       },
       "Mk8 (2017–2023)": {
         "bodies": {

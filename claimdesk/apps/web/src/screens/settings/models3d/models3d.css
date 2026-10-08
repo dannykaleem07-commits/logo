@@ -1,0 +1,403 @@
+/* Settings → 3D models. Theme tokens only (light and dark), 8 px spacing scale, works down to phone width. */
+
+.m3d-manager {
+  gap: var(--s-4);
+}
+.m3d-intro p {
+  margin: 0 0 var(--s-2);
+  max-width: 72ch;
+}
+
+/* list */
+.m3d-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s-2);
+}
+.m3d-list > li {
+  display: grid;
+  grid-template-columns: 112px 1fr auto;
+  gap: var(--s-3);
+  align-items: center;
+  padding: var(--s-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.m3d-list > li.is-off {
+  opacity: 0.7;
+}
+.m3d-thumb {
+  width: 112px;
+  height: 70px;
+  border-radius: var(--r-sm);
+  background: linear-gradient(180deg, var(--viewer-top), var(--viewer-bottom));
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  color: var(--muted-2);
+  font-weight: var(--fw-semi);
+  font-size: var(--fs-xs);
+}
+.m3d-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.m3d-item-title {
+  font-weight: var(--fw-semi);
+  color: var(--ink);
+}
+@media (max-width: 640px) {
+  .m3d-list > li {
+    grid-template-columns: 72px 1fr;
+  }
+  .m3d-list > li > .row {
+    grid-column: 1 / -1;
+  }
+  .m3d-thumb {
+    width: 72px;
+    height: 48px;
+  }
+}
+
+/* upload */
+.m3d-upload {
+  gap: var(--s-3);
+}
+.m3d-drop {
+  position: relative;
+  display: grid;
+  gap: 2px;
+  place-items: center;
+  text-align: center;
+  padding: var(--s-5) var(--s-4);
+  border: 1.5px dashed var(--line-2);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.m3d-drop:hover,
+.m3d-drop:focus-within {
+  border-color: var(--blue);
+  background: var(--surface-hover);
+}
+.m3d-drop.has-file {
+  border-style: solid;
+  border-color: var(--green-line);
+}
+.m3d-drop input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.m3d-drop-title {
+  font-weight: var(--fw-semi);
+  color: var(--ink);
+  word-break: break-all;
+}
+.m3d-drop-sub {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+.m3d-progress {
+  position: relative;
+  height: 28px;
+  border-radius: var(--r-pill);
+  background: var(--neutral-bg);
+  overflow: hidden;
+}
+.m3d-progress > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--blue);
+  opacity: 0.25;
+  transition: width 0.2s;
+}
+.m3d-progress > em {
+  position: relative;
+  display: block;
+  line-height: 28px;
+  text-align: center;
+  font-style: normal;
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+}
+.m3d-actions {
+  justify-content: flex-end;
+}
+
+/* segmented buttons, swatches and links (own copies so this screen does not depend on the damage model's CSS) */
+.m3d-seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--line-2);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+  background: var(--surface);
+}
+.m3d-seg > button {
+  border: 0;
+  background: transparent;
+  color: var(--ink-2);
+  padding: 4px 10px;
+  font: inherit;
+  font-size: var(--fs-xs);
+  cursor: pointer;
+}
+.m3d-seg > button + button {
+  border-left: 1px solid var(--line-2);
+}
+.m3d-seg > button[aria-pressed='true'] {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.m3d-seg > button:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: -2px;
+}
+.m3d-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  margin-right: 5px;
+  vertical-align: -1px;
+}
+.m3d-link {
+  border: 0;
+  background: none;
+  padding: 0 4px;
+  color: var(--blue);
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.m3d-link[aria-pressed='true'] {
+  font-weight: var(--fw-semi);
+}
+
+/* editor */
+.m3d-editor {
+  display: grid;
+  gap: var(--s-3);
+}
+.m3d-editor-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.m3d-title {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+.m3d-editor-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr);
+  gap: var(--s-4);
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .m3d-editor-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.m3d-stage {
+  display: grid;
+  gap: var(--s-2);
+  min-width: 0;
+}
+.m3d-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  justify-content: space-between;
+  align-items: center;
+}
+.m3d-viewport {
+  height: 440px;
+}
+@media (max-width: 640px) {
+  .m3d-viewport {
+    height: 300px;
+  }
+}
+.m3d-hover {
+  left: auto;
+  right: var(--s-2);
+  bottom: auto;
+  top: var(--s-2);
+}
+.m3d-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+.m3d-preview {
+  margin-top: var(--s-1);
+}
+
+.m3d-parts {
+  display: grid;
+  gap: var(--s-2);
+  min-width: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: var(--s-3);
+  background: var(--surface);
+}
+.m3d-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  font-size: var(--fs-sm);
+}
+.m3d-selected {
+  display: grid;
+  gap: 4px;
+  padding: var(--s-2);
+  border-radius: var(--r-sm);
+  background: var(--info-bg);
+  border: 1px solid var(--info-line);
+}
+.m3d-selected-name {
+  font-weight: var(--fw-semi);
+  color: var(--ink);
+  word-break: break-word;
+}
+.m3d-zone-pick select {
+  width: 100%;
+}
+.m3d-filters {
+  display: grid;
+  gap: 6px;
+}
+.m3d-filters .input {
+  width: 100%;
+}
+.m3d-rows {
+  max-height: 340px;
+  overflow: auto;
+  border-top: 1px solid var(--line);
+}
+.m3d-rows ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.m3d-rows li > button {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 8px;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  padding: 6px 4px;
+  font: inherit;
+  color: var(--ink);
+  cursor: pointer;
+}
+.m3d-rows li > button:hover,
+.m3d-rows li.is-active > button {
+  background: var(--surface-hover);
+}
+.m3d-rows li.is-active > button {
+  box-shadow: inset 3px 0 0 var(--blue);
+}
+.m3d-row-name {
+  font-size: var(--fs-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.m3d-row-zone {
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+  text-align: right;
+}
+.m3d-row-src {
+  grid-column: 1 / -1;
+  font-size: 11px;
+  color: var(--muted-2);
+}
+.m3d-src-none .m3d-row-zone {
+  color: var(--red);
+}
+.m3d-src-position .m3d-row-src,
+.m3d-src-name-position .m3d-row-src {
+  color: var(--amber);
+}
+.m3d-src-tag .m3d-row-src {
+  color: var(--blue);
+}
+.m3d-pending {
+  color: var(--amber);
+  font-weight: var(--fw-semi);
+}
+.m3d-empty {
+  padding: var(--s-3) 0;
+}
+.m3d-more {
+  margin: var(--s-2) 0;
+}
+.m3d-savebar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--s-2);
+  border-top: 1px solid var(--line);
+}
+
+.m3d-advanced {
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  background: var(--surface);
+}
+.m3d-advanced > summary {
+  padding: var(--s-3);
+  cursor: pointer;
+  font-weight: var(--fw-semi);
+  color: var(--ink-2);
+}
+.m3d-advanced-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--s-4);
+  padding: 0 var(--s-3) var(--s-3);
+}
+.m3d-advanced h4 {
+  margin: 0 0 var(--s-1);
+  font-size: var(--fs-sm);
+}
+.m3d-materials {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+  font-size: var(--fs-sm);
+  max-height: 200px;
+  overflow: auto;
+}
+.m3d-materials label {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}

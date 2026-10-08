@@ -7,7 +7,7 @@
  *    (`{importId}`, or the 60-second scan of staged imports with purpose `intake`), and email attachments (the mail
  *    slice queues `intake.process {evidenceId, claimId, source:'email'}`; the item is created when that job runs).
  */
-import { existsSync, readFileSync } from 'node:fs';
+import { closeSync, existsSync, openSync, readFileSync, readSync } from 'node:fs';
 import path from 'node:path';
 import type { Actor, IntakeItemRecord, IntakeSource } from '@ccguk/db';
 import type { EvidenceKind } from '@ccguk/domain';
@@ -17,6 +17,7 @@ import { enqueueJob } from '../agent/core.js';
 import { stageExistingFile, storeEvidence, type StagedUpload } from '../services/evidence.js';
 import { getStagedImport, kindFromMime, listStagedImports, markImportConsumed, markImportFailed, stagedImportPath, type StagedImport } from '../services/imports.js';
 import { uploadsRoot } from '../services/uploads.js';
+import { sniff } from './sniff.js';
 
 /** Evidence kind for an intake file before it is classified (the owner can re-file it). */
 export function intakeEvidenceKind(mime: string): EvidenceKind {
@@ -45,15 +46,62 @@ export interface NewItemInput {
   description?: string;
 }
 
+/** Top-level ISO-BMFF boxes in `head` all have a sane size (a zero or tiny box size makes EXIF readers spin). */
+export function isoBmffBoxesSane(head: Buffer, total: number): boolean {
+  let off = 0;
+  while (off + 8 <= head.length) {
+    let size = head.readUInt32BE(off);
+    if (size === 1) {
+      if (off + 16 > head.length) return true;
+      const big = head.readBigUInt64BE(off + 8);
+      if (big > BigInt(Number.MAX_SAFE_INTEGER)) return false;
+      size = Number(big);
+    }
+    if (size < 8 || off + size > total) return false;
+    off += size;
+  }
+  return off === total || off >= head.length - 7;
+}
+
+/**
+ * The MIME type to store: the client's, unless the bytes contradict it. An "image/*" that is not an image, or a
+ * HEIC whose box structure is broken, is stored as application/octet-stream so the evidence store never runs its EXIF
+ * reader over it (a malformed HEIC box can make that reader loop). The bytes and their hash are unchanged.
+ */
+export function storageMime(staged: StagedUpload, declared: string): string {
+  const mime = (declared || 'application/octet-stream').toLowerCase();
+  let head: Buffer;
+  try {
+    const fd = openSync(staged.tempPath, 'r');
+    try {
+      head = Buffer.alloc(Math.min(staged.bytes, 64 * 1024));
+      readSync(fd, head, 0, head.length, 0);
+    } finally {
+      closeSync(fd);
+    }
+  } catch {
+    return mime;
+  }
+  const s = sniff(head);
+  if (s.kind === 'heic' || s.kind === 'm4a' || s.kind === 'mp4') {
+    if (!isoBmffBoxesSane(head, staged.bytes)) return 'application/octet-stream';
+    return s.kind === 'heic' ? 'image/heic' : mime;
+  }
+  if (mime.startsWith('image/') && s.family !== 'image') return s.kind === 'unknown' ? 'application/octet-stream' : s.mime;
+  if (mime === 'application/octet-stream' && s.kind !== 'unknown') return s.mime;
+  return mime;
+}
+
 /** Store the bytes as evidence (deduped by hash on the same claim) and create the item (one per evidence row). */
 export async function createItemFromStaged(ctx: AppContext, input: NewItemInput): Promise<{ item: IntakeItemRecord; created: boolean; evidenceId: string }> {
   if (input.claimId) ctx.repos.requireClaim(ctx.db, input.claimId);
+  const mime = storageMime(input.staged, input.mime);
   const stored = await storeEvidence(ctx, {
     ...(input.claimId ? { claimId: input.claimId } : {}),
     staged: input.staged,
     filename: input.filename,
-    mime: input.mime || 'application/octet-stream',
-    fields: { kind: intakeEvidenceKind(input.mime), description: input.description ?? 'Added for intake (read by the agents)' },
+    mime,
+    fields: { kind: intakeEvidenceKind(mime), description: input.description ?? 'Added for intake (read by the agents)' },
     actor: input.actor,
   });
   const existing = ctx.repos.findIntakeItemByEvidence(ctx.db, stored.evidence.id, { parentItemId: input.parentItemId ?? null });

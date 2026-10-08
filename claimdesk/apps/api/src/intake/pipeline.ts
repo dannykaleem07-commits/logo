@@ -132,7 +132,7 @@ export async function processItem(ctx: AppContext, item: IntakeItemRecord, job: 
     return { kind: 'done', result: { status: 'skipped', reason: 'no text', children } };
   }
   setStatus(ctx, item.id, 'extracting', base);
-  return { kind: 'done', result: { status: 'extracting', sniffed: sniffed.kind, children }, followUps: [followUp('intake.extract', item, job)] };
+  return { kind: 'done', result: { status: 'extracting', sniffed: sniffed.kind, children }, followUps: [followUp('intake.extract', item, job, { evidenceId: item.evidenceId })] };
 }
 
 // ---------------------------------------------------------------------------
@@ -295,7 +295,7 @@ export async function applyItem(ctx: AppContext, item: IntakeItemRecord, job: Jo
 
   const { proposals, skipped } = proposeFromFields(ctx, { claimId: item.claimId, intakeItemId: item.id, evidenceId: item.evidenceId, ...(extraction ? { extractionId: extraction.id } : {}), ...(extraction?.runId ? { runId: extraction.runId } : {}), fields });
   // Tool-made proposals for the item count too.
-  const pendingAuto = ctx.repos.listClaimUpdateProposals(ctx.db, { intakeItemId: item.id, status: 'pending', policyDecision: 'auto' });
+  const pendingAuto = ctx.repos.listClaimUpdateProposals(ctx.db, { intakeItemId: item.id, status: 'pending', policyDecision: 'auto' }).filter((p) => p.claimId === item.claimId);
   const outcomes = pendingAuto.length ? await applyProposals(ctx, pendingAuto, agentApplier(ctx, { claimId: item.claimId, jobId: job.id, ...(extraction?.runId ? { runId: extraction.runId } : {}) })) : [];
   // An automatic apply the claim no longer allows becomes a confirmation (never a silent overwrite).
   for (const o of outcomes) {

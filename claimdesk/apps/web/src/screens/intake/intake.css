@@ -1,0 +1,38 @@
+/* owned by intake — Intake screen (docs/SUPREME-DESIGN.md §L.8) */
+.intake-layout { display: grid; grid-template-columns: minmax(280px, 380px) minmax(0, 1fr); gap: var(--s-3, 12px); align-items: start; }
+.intake-layout > div { display: flex; flex-direction: column; gap: var(--s-3, 12px); min-width: 0; }
+.intake-drop { border: 2px dashed var(--line-2, #dde1e7); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; margin-top: 8px; }
+.intake-drop.over { border-color: var(--blue, #1d4f8c); background: var(--blue-50, #f2f5f9); }
+.intake-drop-title { font-weight: var(--fw-medium, 500); }
+.intake-progress { font-variant-numeric: tabular-nums; }
+.intake-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.intake-filters .chip { font: inherit; font-size: var(--fs-xs, 12px); border: 1px solid var(--line-2, #dde1e7); background: var(--surface, #fff); color: inherit; border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+.intake-filters .chip-on { border-color: var(--blue, #1d4f8c); background: var(--blue-50, #f2f5f9); }
+.intake-items { list-style: none; margin: 0; padding: 0; max-height: calc(100vh - 360px); overflow: auto; }
+.intake-item { display: flex; gap: 6px; align-items: flex-start; border: 1px solid transparent; border-radius: 8px; padding: 4px; }
+.intake-item.selected { border-color: var(--blue, #1d4f8c); background: var(--blue-50, #f2f5f9); }
+.intake-item input[type='checkbox'] { margin-top: 8px; }
+.intake-item-button { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; text-align: left; background: transparent; border: 0; padding: 4px; cursor: pointer; color: inherit; font: inherit; }
+.intake-item-top { display: flex; justify-content: space-between; gap: 6px; align-items: center; }
+.intake-item-title { font-weight: var(--fw-medium, 500); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.intake-detail { display: flex; flex-direction: column; gap: 10px; }
+.intake-columns { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 12px; align-items: start; }
+.intake-preview { border: 1px solid var(--line-2, #dde1e7); border-radius: 8px; padding: 6px; background: var(--surface-2, #f9fafb); }
+.intake-preview-img { max-width: 100%; height: auto; display: block; }
+.intake-preview-pdf { width: 100%; height: 560px; border: 0; background: var(--surface, #fff); }
+.intake-preview-text { white-space: pre-wrap; font-family: var(--font, sans-serif); font-size: var(--fs-sm, 13.5px); max-height: 560px; overflow: auto; margin: 0; }
+.intake-fields td { vertical-align: top; }
+.intake-value { font-weight: var(--fw-medium, 500); word-break: break-word; }
+.intake-quote { font-style: italic; color: var(--ink-2, #3b4656); }
+.intake-conf { display: inline-flex; align-items: center; gap: 6px; }
+.intake-conf-track { display: inline-block; width: 60px; height: 6px; border-radius: 3px; background: var(--line-2, #dde1e7); overflow: hidden; }
+.intake-conf-bar { display: block; height: 100%; min-width: 2px; }
+.intake-conf-green { background: var(--green, #1f7a4d); }
+.intake-conf-amber { background: var(--amber, #b7791f); }
+.intake-conf-red { background: var(--red, #b42318); }
+.intake-conf-text { font-size: var(--fs-xs, 12px); font-variant-numeric: tabular-nums; }
+.intake-actions { gap: 8px; flex-wrap: wrap; align-items: flex-end; }
+.intake-meta { display: flex; flex-wrap: wrap; gap: 4px; }
+.link-button { background: none; border: 0; padding: 0; color: var(--blue, #1d4f8c); text-decoration: underline; cursor: pointer; font: inherit; }
+@media (max-width: 1100px) { .intake-columns { grid-template-columns: 1fr; } }
+@media (max-width: 900px) { .intake-layout { grid-template-columns: 1fr; } .intake-items { max-height: none; } }

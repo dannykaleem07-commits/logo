@@ -11,8 +11,12 @@
  *  - frontOverhangRatio / rearOverhangRatio: overhang (bumper face to wheel centre) ÷ overall length.
  *  - bonnetRatio: nose to windscreen base (along the car) ÷ overall length.
  *  - glasshouseHeightRatio: beltline-to-roof height ÷ overall height.
- *  - roofTaper: roof width at its rear ÷ roof width at the windscreen (0.8–1). A value ≤ 0.5 is read as a fractional
- *    narrowing (1 − value).
+ *  - roofTaper: 0–1 index of how much the glasshouse tapers toward the rear (0 = boxy, roof runs straight back, e.g.
+ *    vans and estates ≈ 0.05–0.12; 0.25 hatch; 0.3 saloon; 0.45 coupe / fastback).
+ *  - doors: the door counts the body is sold with ([3, 5]); a single number is accepted too.
+ *
+ * Profiles seen in the data: hatch, notchback, liftback, fastback, estate, coupe, convertible, roadster, suv-rounded,
+ * suv-boxy, suv-coupe, mpv, taxi, van-low, van-high, minibus, pickup-single, pickup-double — normalised below.
  */
 
 /** Silhouette family. Free text in the data; normalised to one of these. */
@@ -24,6 +28,7 @@ export const DIMENSION_PROFILES = [
   'coupe',
   'convertible',
   'suv',
+  'suv-boxy',
   'suv-coupe',
   'mpv',
   'van',
@@ -32,10 +37,10 @@ export const DIMENSION_PROFILES = [
 ] as const;
 export type DimensionProfile = (typeof DIMENSION_PROFILES)[number];
 
-export const LAMP_STYLES = ['slim', 'swept', 'round', 'square', 'tall', 'light-bar'] as const;
+export const LAMP_STYLES = ['slim', 'swept', 'round', 'square', 'tall', 'light-bar', 'split'] as const;
 export type LampStyle = (typeof LAMP_STYLES)[number];
 
-export const GRILLE_STYLES = ['wide', 'trapezoid', 'hexagonal', 'kidney', 'slim', 'large', 'closed', 'split'] as const;
+export const GRILLE_STYLES = ['wide', 'trapezoid', 'hexagonal', 'kidney', 'slim', 'large', 'closed', 'split', 'shield'] as const;
 export type GrilleStyle = (typeof GRILLE_STYLES)[number];
 
 /** As written in a data file (anything may be missing). */
@@ -52,7 +57,7 @@ export interface BodyDimensionsInput {
   frontOverhangRatio?: number;
   glasshouseHeightRatio?: number;
   roofTaper?: number;
-  doors?: number;
+  doors?: number | number[];
   roofRails?: boolean;
   spareOnTailgate?: boolean;
   slidingSideDoor?: boolean;
@@ -75,7 +80,10 @@ export interface BodyDimensions {
   frontOverhangRatio: number;
   glasshouseHeightRatio: number;
   roofTaper: number;
+  /** The door count drawn (the query's when it is one of `doorOptions`, else the largest). */
   doors: number;
+  /** Every door count the body is sold with. */
+  doorOptions: number[];
   roofRails: boolean;
   spareOnTailgate: boolean;
   slidingSideDoor: boolean;

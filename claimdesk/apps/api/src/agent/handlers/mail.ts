@@ -85,7 +85,7 @@ const syncHandler: JobHandler<{ accountId?: string }> = {
   mutatesClaim: false,
   payload: z.object({ accountId: z.string().optional() }).passthrough(),
   defaultPriority: 2,
-  maxAttempts: 1,
+  maxAttempts: 3,
   timeoutMs: 15 * 60_000,
   async run({ ctx, job, payload }) {
     const account = payload.accountId ? ctx.repos.getMailAccount(ctx.db, payload.accountId) : mailAccount(ctx);
@@ -349,7 +349,7 @@ const releaseHandler: JobHandler<{ outboxId: string }> = {
   mutatesClaim: true,
   payload: z.object({ outboxId: z.string().min(1) }).passthrough(),
   defaultPriority: 0,
-  maxAttempts: 1,
+  maxAttempts: 3,
   timeoutMs: 5 * 60_000,
   async run({ ctx, job, payload }) {
     const r = await releaseOutbox(ctx, payload.outboxId, job);

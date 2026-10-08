@@ -230,10 +230,11 @@ export function registerIntakeRoutes(app: FastifyInstance, ctx: AppContext): voi
     if (request.agent) {
       // An agent run (claim_field_apply): automatic proposals on its own claim only, with the same run token.
       const scope = request.agent.claimScope;
-      const bad = proposals.find((p) => p.policyDecision !== 'auto' || (scope && p.claimId !== scope));
+      if (!scope) throw new HttpError(403, 'AGENT_FORBIDDEN', 'Only a run scoped to one claim can apply proposals', { rule: 'claim_scope' });
+      const bad = proposals.find((p) => p.policyDecision !== 'auto' || p.claimId !== scope);
       if (bad) throw new HttpError(403, 'AGENT_FORBIDDEN', 'Agents apply only automatic proposals on their own claim; the rest wait for the owner', { rule: 'intake_confirm', proposalId: bad.id });
       if (body.values && Object.keys(body.values).length) throw new HttpError(403, 'AGENT_FORBIDDEN', 'Agents cannot change a proposed value', { rule: 'intake_confirm' });
-      applier = { kind: 'agent', actor: request.actor, headers: { authorization: String(request.headers.authorization ?? '') }, release: () => undefined };
+      applier = { kind: 'agent', actor: request.actor, headers: { authorization: String(request.headers.authorization ?? '') }, claimScope: scope, release: () => undefined };
     } else {
       applier = ownerApplier(ctx, request.actor);
     }

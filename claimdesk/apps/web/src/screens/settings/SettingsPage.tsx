@@ -18,6 +18,7 @@ import { ManagerModeCard } from './ManagerModeCard';
 import { UpdatesCard } from './UpdatesCard';
 import { ImportFolderCard } from './ImportFolderCard';
 import { AppearanceCard } from './AppearanceCard';
+import { Models3dCard } from './models3d/Models3dCard';
 import {
   API_KEYS,
   apiKeyPresent,
@@ -225,6 +226,7 @@ export function SettingsPage() {
       {/* Outside the settings <form> (forms cannot nest; these cards save themselves) and shown even when settings fail to load. */}
       <div className="stack" style={{ marginTop: 'var(--s-4)' }}>
         <AppearanceCard />
+        <Models3dCard />
         <ManagerModeCard />
         <UpdatesCard id="updates" />
         <ImportFolderCard />

@@ -244,3 +244,24 @@ describe('IDLE loop and connection health', () => {
     expect(mailbox instanceof FakeMailbox).toBe(true);
   });
 });
+
+describe('account routes', () => {
+  it('PUT /mail/account keeps the password write-only in the secret store; POST /mail/test logs in, lists folders and verifies SMTP without sending', async () => {
+    t.ctx.kb.directory = () => [];
+    const put = await t.api<{ account: Record<string, unknown>; passwordSaved: { imap: boolean } }>('PUT', '/mail/account', { username: 'claims@ccguk-test.example', fromAddress: 'claims@ccguk-test.example', password: 'invented-secret-123', smtpPort: 587, smtpSecurity: 'starttls', enabled: true });
+    expect(put.status).toBe(200);
+    expect(put.body.passwordSaved.imap).toBe(true);
+    expect(JSON.stringify(put.body)).not.toContain('invented-secret-123');
+    expect(put.body.account).toMatchObject({ fromName: 'Claims Team, Courtesy Cars Group UK Ltd', imapHost: 'imap.ionos.co.uk', imapPort: 993, smtpPort: 587, smtpSecurity: 'starttls' });
+    expect(await t.ctx.secrets.get('imap_password')).toBe('invented-secret-123');
+    expect(JSON.stringify(t.ctx.handle.sqlite.prepare('select * from mail_accounts').all())).not.toContain('invented-secret-123');
+    expect(JSON.stringify(t.ctx.handle.sqlite.prepare("select after from audit_log where action in ('mail.account','secret.set')").all())).not.toContain('invented-secret-123');
+    const test = await t.api<{ imap: { ok: boolean; folders: string[] }; smtp: { ok: boolean }; sent: boolean }>('POST', '/mail/test');
+    expect(test.body).toMatchObject({ imap: { ok: true }, smtp: { ok: true }, sent: false });
+    expect(test.body.imap.folders).toContain('INBOX');
+    const { fakeTransports } = await import('../mail/transport.js');
+    expect(fakeTransports(t.ctx).smtp.sent).toHaveLength(0);
+    const bad = await t.api('PUT', '/mail/account', { username: 'x', fromAddress: 'not-an-address' });
+    expect(bad.status).toBe(400);
+  });
+});

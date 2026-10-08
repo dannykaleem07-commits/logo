@@ -1,11 +1,20 @@
 /**
- * ClaimDesk's own vehicle damage model: a procedurally generated low-poly body per body type, one selectable zone per
- * part, coloured by severity. 3D (three.js, lazy chunk) with orbit controls and preset views; 2D SVG views when WebGL is
- * unavailable; an accessible list of damaged parts beside it. Controlled: `damage` in, `onChange` out.
+ * ClaimDesk's own vehicle damage model: a parametric 3D body built from the vehicle's real dimensions (make / model /
+ * generation / body: length, width, height, wheelbase, overhangs, wheel size, roof and glass proportions, lamp and
+ * grille style), painted in its colour and wearing its registration — one selectable zone per part, coloured by
+ * severity. 3D (three.js, lazy chunk) with orbit controls and preset views; 2D SVG views (same proportions) when WebGL
+ * is unavailable; an accessible list of damaged parts beside it. Controlled: `damage` in, `onChange` out.
+ *
+ * Exact manufacturer meshes are licensed assets, so the model is generated, not copied: it is recognisable by
+ * silhouette and proportions, not a scan.
  */
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type Ref } from 'react';
+import { request } from '../../../api/client';
 import { DamageSvg } from './DamageSvg';
 import { vehicleModel } from './geometry';
+import { paintFor } from './paint';
+import { formatRegistration } from './plate';
+import { resolveSpec, type VehicleDims, type VehicleIdentity } from './spec';
 import {
   SEVERITY_COLOURS,
   SEVERITY_LEGEND,
@@ -44,6 +53,59 @@ export interface DamageModel3DProps {
   /** Always use the 2D views (print, tests, low-power devices). */
   forceFallback?: boolean;
   className?: string;
+  /**
+   * The actual vehicle: make / model / generation pick its dimensions, `colour` paints it ("Magnetic Grey", "BLUE"),
+   * `registration` goes on the plates, `body` / `doors` refine the body style. All optional.
+   */
+  vehicle?: VehicleIdentity;
+  /**
+   * Dimensions for this vehicle (a packages/kb vehicle-dimensions body record). When omitted and `vehicle` names a
+   * make and model, they are fetched from /api/catalogue/dimensions; without either, body-type proportions are used.
+   */
+  dims?: VehicleDims | null;
+  /** Override how dimensions are fetched (tests, offline). Return null when none are on file. */
+  loadDimensions?: (vehicle: VehicleIdentity, signal: AbortSignal) => Promise<VehicleDims | null>;
+}
+
+/** GET /api/catalogue/dimensions — accepts a resolved record ({ dims }) or a bare body record; null when absent. */
+export async function fetchDimensions(v: VehicleIdentity, signal: AbortSignal): Promise<VehicleDims | null> {
+  const query: Record<string, string> = {};
+  for (const k of ['make', 'model', 'generation', 'body'] as const) if (v[k]) query[k] = String(v[k]);
+  if (v.doors) query.doors = String(v.doors);
+  try {
+    const res = await request<unknown>('/catalogue/dimensions', { method: 'GET', query, signal });
+    return asDims(res);
+  } catch {
+    return null;
+  }
+}
+
+function asDims(res: unknown): VehicleDims | null {
+  if (!res || typeof res !== 'object') return null;
+  const r = res as Record<string, unknown>;
+  const cand = (r.dims && typeof r.dims === 'object' ? r.dims : r) as Record<string, unknown>;
+  return typeof cand.lengthMm === 'number' || typeof cand.wheelbaseMm === 'number' ? (cand as VehicleDims) : null;
+}
+
+function useVehicleDims(vehicle: VehicleIdentity | undefined, dims: VehicleDims | null | undefined, load: DamageModel3DProps['loadDimensions']) {
+  const [fetched, setFetched] = useState<{ key: string; dims: VehicleDims | null } | null>(null);
+  const key = vehicle?.make && vehicle.model ? [vehicle.make, vehicle.model, vehicle.generation ?? '', vehicle.body ?? '', vehicle.doors ?? ''].join('|').toLowerCase() : '';
+  const wanted = dims === undefined && !!key;
+  useEffect(() => {
+    if (!wanted || !vehicle) return;
+    const ctl = new AbortController();
+    (load ?? fetchDimensions)(vehicle, ctl.signal)
+      .then((d) => {
+        if (!ctl.signal.aborted) setFetched({ key, dims: d });
+      })
+      .catch(() => {
+        if (!ctl.signal.aborted) setFetched({ key, dims: null });
+      });
+    return () => ctl.abort();
+  }, [key, wanted]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (dims !== undefined) return { dims, source: dims ? ('given' as const) : ('default' as const) };
+  if (wanted && fetched?.key === key) return { dims: fetched.dims, source: fetched.dims ? ('file' as const) : ('default' as const) };
+  return { dims: null, source: wanted ? ('loading' as const) : ('default' as const) };
 }
 
 const VIEW_BUTTONS: Array<{ id: ViewPreset; label: string }> = [
@@ -71,9 +133,14 @@ interface Pop {
   y: number;
 }
 
-export default function DamageModel3D({ bodyType, damage, onChange, selectable, height = 400, forceFallback = false, className = '' }: DamageModel3DProps) {
-  const body = resolveBody(bodyType);
-  const model = useMemo(() => vehicleModel(body), [body]);
+export default function DamageModel3D({ bodyType, damage, onChange, selectable, height = 400, forceFallback = false, className = '', vehicle, dims, loadDimensions }: DamageModel3DProps) {
+  const body = resolveBody(bodyType || vehicle?.body);
+  const vd = useVehicleDims(vehicle, dims, loadDimensions);
+  const spec = useMemo(() => resolveSpec(body, vd.dims, vehicle), [body, vd.dims, vehicle?.body, vehicle?.doors]); // eslint-disable-line react-hooks/exhaustive-deps
+  const model = useMemo(() => vehicleModel(body, spec), [body, spec]);
+  const paint = useMemo(() => paintFor(vehicle?.colour), [vehicle?.colour]);
+  const reg = vehicle?.registration ? formatRegistration(vehicle.registration) : '';
+  const title = [vehicle?.make, vehicle?.model, vehicle?.generation].filter(Boolean).join(' ');
   const editable = (selectable ?? !!onChange) && !!onChange;
   const [webgl, setWebgl] = useState<boolean>(() => !forceFallback && detectWebGL());
   const [mode, setMode] = useState<'3d' | '2d'>(webgl ? '3d' : '2d');
@@ -196,6 +263,8 @@ export default function DamageModel3D({ bodyType, damage, onChange, selectable, 
             <Suspense fallback={<div className="dm3-loading">Loading 3D model…</div>}>
               <ThreeViewport
                 model={model}
+                paint={paint}
+                registration={reg || undefined}
                 damage={damage}
                 hovered={hover?.zone ?? null}
                 selected={highlighted}
@@ -211,6 +280,21 @@ export default function DamageModel3D({ bodyType, damage, onChange, selectable, 
             </Suspense>
           ) : (
             <DamageSvg model={model} damage={damage} hovered={hover?.zone ?? null} selected={highlighted} onHover={onHover} onPick={openAt} />
+          )}
+          {(title || reg || vehicle?.colour) && (
+            <div className="dm3-ident" data-testid="dm3-ident">
+              {title && <strong>{title}</strong>}
+              {vehicle?.colour && (
+                <span className="dm3-ident-paint">
+                  <span className="dm3-swatch" style={{ background: paint.hex }} aria-hidden="true" />
+                  {vehicle.colour}
+                </span>
+              )}
+              {reg && <span className="dm3-ident-plate">{reg}</span>}
+              <span className="dm3-muted" title={vd.source === 'default' ? 'No dimensions on file for this vehicle: typical proportions for the body type are used.' : undefined}>
+                {vd.source === 'loading' ? 'Loading dimensions…' : vd.source === 'default' ? `Typical ${VEHICLE_BODY_LABELS[body]} proportions` : `${(spec.L * 1000).toFixed(0)} × ${(spec.W * 1000).toFixed(0)} × ${(spec.H * 1000).toFixed(0)} mm`}
+              </span>
+            </div>
           )}
           <ul className="dm3-legend" aria-label="Severity colours">
             {SEVERITY_LEGEND.map((l) => (

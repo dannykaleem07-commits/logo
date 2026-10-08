@@ -13,22 +13,23 @@ import {
   type LampStyle
 } from './types.js';
 
-type Defaults = Omit<BodyDimensions, 'note'>;
+type Defaults = Omit<BodyDimensions, 'note' | 'doorOptions'>;
 
 /** Typical UK-market proportions per silhouette. Used only when a file lacks a value. */
 export const PROFILE_DEFAULTS: Record<DimensionProfile, Defaults> = {
-  hatch: d(4100, 1780, 1460, 2560, 140, 16, 'hatch', 0.215, 0.165, 0.205, 0.33, 0.9, 5, false, false, false, 'swept', 'wide'),
-  saloon: d(4700, 1820, 1440, 2820, 140, 17, 'saloon', 0.235, 0.215, 0.185, 0.31, 0.92, 4, false, false, false, 'slim', 'wide'),
-  fastback: d(4760, 1840, 1430, 2840, 140, 18, 'fastback', 0.235, 0.21, 0.19, 0.3, 0.9, 5, false, false, false, 'slim', 'wide'),
-  estate: d(4700, 1820, 1480, 2780, 140, 17, 'estate', 0.225, 0.215, 0.195, 0.33, 0.95, 5, true, false, false, 'swept', 'wide'),
-  coupe: d(4500, 1830, 1380, 2700, 130, 18, 'coupe', 0.26, 0.2, 0.2, 0.3, 0.88, 2, false, false, false, 'slim', 'wide'),
-  convertible: d(4450, 1830, 1350, 2680, 130, 18, 'convertible', 0.26, 0.2, 0.2, 0.28, 0.88, 2, false, false, false, 'slim', 'wide'),
-  suv: d(4450, 1840, 1630, 2660, 185, 18, 'suv', 0.23, 0.19, 0.21, 0.31, 0.92, 5, true, false, false, 'swept', 'large'),
-  'suv-coupe': d(4370, 1900, 1610, 2680, 200, 19, 'suv-coupe', 0.24, 0.175, 0.21, 0.29, 0.85, 5, false, false, false, 'slim', 'large'),
-  mpv: d(4560, 1830, 1700, 2790, 150, 16, 'mpv', 0.165, 0.19, 0.2, 0.36, 0.95, 5, true, false, false, 'swept', 'wide'),
-  van: d(4970, 1990, 1990, 2930, 170, 16, 'van', 0.13, 0.215, 0.195, 0.4, 1, 4, false, false, true, 'tall', 'large'),
-  'van-high-roof': d(4970, 1990, 2280, 2930, 170, 16, 'van-high-roof', 0.13, 0.215, 0.195, 0.48, 1, 4, false, false, true, 'tall', 'large'),
-  pickup: d(5330, 1855, 1815, 3085, 225, 17, 'pickup', 0.2, 0.25, 0.17, 0.33, 0.95, 4, false, false, false, 'swept', 'large')
+  hatch: d(4100, 1780, 1460, 2560, 140, 16, 'hatch', 0.22, 0.165, 0.205, 0.34, 0.25, 5, false, false, false, 'slim', 'wide'),
+  saloon: d(4700, 1820, 1440, 2820, 135, 17, 'saloon', 0.27, 0.215, 0.19, 0.32, 0.3, 4, false, false, false, 'slim', 'wide'),
+  fastback: d(4760, 1840, 1430, 2840, 135, 18, 'fastback', 0.27, 0.21, 0.195, 0.3, 0.45, 5, false, false, false, 'slim', 'wide'),
+  estate: d(4700, 1820, 1480, 2780, 140, 17, 'estate', 0.25, 0.22, 0.2, 0.33, 0.12, 5, true, false, false, 'slim', 'wide'),
+  coupe: d(4500, 1830, 1380, 2700, 125, 19, 'coupe', 0.29, 0.21, 0.21, 0.29, 0.45, 2, false, false, false, 'slim', 'wide'),
+  convertible: d(4450, 1830, 1350, 2680, 125, 18, 'convertible', 0.29, 0.21, 0.206, 0.27, 0.42, 2, false, false, false, 'slim', 'wide'),
+  suv: d(4450, 1840, 1630, 2660, 185, 18, 'suv', 0.23, 0.19, 0.21, 0.31, 0.25, 5, true, false, false, 'slim', 'large'),
+  'suv-boxy': d(4600, 1900, 1750, 2740, 200, 17, 'suv-boxy', 0.24, 0.2, 0.2, 0.32, 0.08, 5, true, false, false, 'slim', 'large'),
+  'suv-coupe': d(4370, 1900, 1610, 2680, 175, 20, 'suv-coupe', 0.24, 0.19, 0.209, 0.29, 0.42, 5, false, false, false, 'slim', 'large'),
+  mpv: d(4560, 1830, 1700, 2790, 145, 16, 'mpv', 0.17, 0.18, 0.21, 0.37, 0.1, 5, true, false, false, 'slim', 'wide'),
+  van: d(4970, 1990, 1990, 2930, 165, 16, 'van', 0.16, 0.19, 0.19, 0.3, 0.05, 4, false, false, true, 'tall', 'large'),
+  'van-high-roof': d(4970, 1990, 2280, 2930, 175, 16, 'van-high-roof', 0.12, 0.2, 0.171, 0.24, 0.04, 4, false, false, true, 'tall', 'large'),
+  pickup: d(5330, 1855, 1815, 3085, 215, 17, 'pickup', 0.22, 0.24, 0.17, 0.31, 0.08, 4, false, false, false, 'slim', 'large')
 };
 
 function d(
@@ -84,7 +85,9 @@ export function normaliseProfile(text: unknown): DimensionProfile | undefined {
   if (/(pick-?up|double-?cab|crew-?cab|single-?cab|king-?cab|ute)/.test(t)) return 'pickup';
   if (/(panel|van|chassis|camper|luton|minibus)/.test(t)) return /minibus/.test(t) ? 'van-high-roof' : 'van';
   if (/(suv-?coupe|coupe-?suv|crossover-?coupe)/.test(t)) return 'suv-coupe';
+  if (/(boxy|square|upright)/.test(t) && /(suv|4x4|off-?road)/.test(t)) return 'suv-boxy';
   if (/(suv|crossover|4x4|off-?road)/.test(t)) return 'suv';
+  if (/taxi/.test(t)) return 'mpv';
   if (/(mpv|people|carrier|multi-?purpose)/.test(t)) return 'mpv';
   if (/(estate|wagon|touring|tourer|avant|shooting|sportbrake|sports-?tourer|variant|kombi)/.test(t)) return 'estate';
   if (/(fastback|liftback|sportback|gran-?coupe|five-?door-?coupe)/.test(t)) return 'fastback';
@@ -100,9 +103,10 @@ export function normaliseLampStyle(text: unknown): LampStyle | undefined {
   const t = lc(text);
   if (!t) return undefined;
   if ((LAMP_STYLES as readonly string[]).includes(t)) return t as LampStyle;
+  if (/split|stacked|two-?tier|separate drl/.test(t)) return 'split';
   if (/(light-?bar|lightbar|full-?width|connected|bar)/.test(t)) return 'light-bar';
   if (/(round|circular|oval|bug)/.test(t)) return 'round';
-  if (/(tall|vertical|upright|stacked)/.test(t)) return 'tall';
+  if (/(tall|vertical|upright)/.test(t)) return 'tall';
   if (/(swept|angular|sharp|wrap|boomerang|hawk)/.test(t)) return 'swept';
   if (/(slim|thin|narrow|strip|led|blade)/.test(t)) return 'slim';
   if (/(square|rect|box|block)/.test(t)) return 'square';
@@ -114,6 +118,7 @@ export function normaliseGrilleStyle(text: unknown): GrilleStyle | undefined {
   if (!t) return undefined;
   if ((GRILLE_STYLES as readonly string[]).includes(t)) return t as GrilleStyle;
   if (/kidney/.test(t)) return 'kidney';
+  if (/(shield|trilobo|scudetto)/.test(t)) return 'shield';
   if (/(hex|honeycomb)/.test(t)) return 'hexagonal';
   if (/trapez/.test(t)) return 'trapezoid';
   if (/(closed|blank|ev|none|smooth)/.test(t)) return 'closed';
@@ -186,9 +191,14 @@ export function normaliseBodyDimensions(input: unknown, bodyKey = ''): { dims: B
     rear *= k;
   }
 
-  let roofTaper = num(raw.roofTaper, 0, 1.05);
-  if (roofTaper !== undefined && roofTaper <= 0.5) roofTaper = 1 - roofTaper;
-  const doorsRaw = typeof raw.doors === 'number' && Number.isFinite(raw.doors) ? Math.round(raw.doors) : undefined;
+  const roofTaper = num(raw.roofTaper, 0, 1);
+  const doorOptions = (Array.isArray(raw.doors) ? raw.doors : [raw.doors])
+    .filter((x): x is number => typeof x === 'number' && Number.isFinite(x))
+    .map((x) => Math.round(x))
+    .filter((x) => x >= 2 && x <= 5);
+  const doorsRaw = doorOptions.length ? Math.max(...doorOptions) : undefined;
+  // a single-cab pick-up has two doors
+  const doorDefault = /single/.test(String(raw.profile ?? '')) ? 2 : undefined;
 
   const dims: BodyDimensions = {
     lengthMm,
@@ -202,14 +212,16 @@ export function normaliseBodyDimensions(input: unknown, bodyKey = ''): { dims: B
     rearOverhangRatio: round4(rear!),
     frontOverhangRatio: round4(front!),
     glasshouseHeightRatio: take('glasshouseHeightRatio', num(raw.glasshouseHeightRatio, 0.15, 0.62)),
-    roofTaper: take('roofTaper', roofTaper === undefined ? undefined : Math.max(0.6, Math.min(1, roofTaper))),
-    doors: take('doors', doorsRaw !== undefined && doorsRaw >= 2 && doorsRaw <= 5 ? doorsRaw : undefined),
+    roofTaper: take('roofTaper', roofTaper),
+    doors: take('doors', doorsRaw ?? doorDefault),
+    doorOptions: [],
     roofRails: take('roofRails', bool(raw.roofRails)),
     spareOnTailgate: take('spareOnTailgate', bool(raw.spareOnTailgate)),
     slidingSideDoor: take('slidingSideDoor', bool(raw.slidingSideDoor)),
     lampStyle: take('lampStyle', normaliseLampStyle(raw.lampStyle)),
     grilleStyle: take('grilleStyle', normaliseGrilleStyle(raw.grilleStyle))
   };
+  dims.doorOptions = doorOptions.length ? [...new Set(doorOptions)].sort() : [dims.doors];
   if (typeof raw.note === 'string' && raw.note.trim()) dims.note = raw.note.trim();
   return { dims, filled };
 }
@@ -221,7 +233,7 @@ function round4(n: number): number {
 /** Body-type defaults as a resolved record (for a vehicle with no dimensions file). */
 export function defaultBodyDimensions(bodyOrProfile: string): BodyDimensions {
   const profile = normaliseProfile(bodyOrProfile) ?? 'hatch';
-  return { ...PROFILE_DEFAULTS[profile] };
+  return { ...PROFILE_DEFAULTS[profile], doorOptions: [PROFILE_DEFAULTS[profile].doors] };
 }
 
 // ── matching helpers ──
@@ -285,11 +297,12 @@ export function bodyCandidates(body: string | undefined): string[] {
     coupe: ['coupe', 'fastback'],
     convertible: ['convertible', 'cabriolet', 'roadster'],
     suv: ['suv', 'crossover', '4x4', 'suv-coupe'],
+    'suv-boxy': ['suv', 'suv-3-door', '4x4', 'crossover'],
     'suv-coupe': ['suv-coupe', 'coupe-suv', 'suv', 'crossover'],
     mpv: ['mpv', 'people-carrier', 'minibus'],
     van: ['panel-van', 'van', 'crew-van', 'combi', 'kombi', 'chassis-cab'],
     'van-high-roof': ['panel-van-high-roof', 'high-roof', 'panel-van', 'van', 'crew-van', 'minibus'],
-    pickup: ['pickup', 'pick-up', 'double-cab', 'crew-cab', 'single-cab', 'king-cab']
+    pickup: ['pickup', 'pick-up', 'double-cab', 'crew-cab', 'pickup-2-door', 'single-cab', 'king-cab']
   };
   const out = b ? [b] : [];
   if (p) for (const k of map[p]) if (!out.includes(k)) out.push(k);

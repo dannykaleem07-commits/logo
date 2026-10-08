@@ -1,12 +1,17 @@
 /**
  * three.js viewport for the damage model. Loaded lazily (React.lazy) so three.js lives in its own chunk.
- * One mesh group per zone (raycast → zone id); renders on demand, not every frame.
+ * Builds the parametric car (carMesh.ts) from the model's spec: one mesh per zone + finish (raycast → zone id), paint
+ * with clear coat under a studio environment, UK plates as canvas textures, shut lines. Renders on demand.
  */
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { outwardNormal, type Part, type PolyPart, type Tone, type VehicleModel } from './geometry';
-import { HOVER_COLOUR, TONE_COLOURS, zoneFill, type DamageMap } from './damageModel';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import type { VehicleModel } from './geometry';
+import { buildCarMesh, type CarMesh, type Tone } from './carMesh';
+import { HOVER_COLOUR, SEVERITY_COLOURS, type DamageMap } from './damageModel';
+import { DEFAULT_PAINT, type Paint } from './paint';
+import { drawPlate, type PlateKind } from './plate';
 
 export type ViewPreset = 'iso' | 'front' | 'rear' | 'left' | 'right' | 'top';
 
@@ -21,53 +26,56 @@ export interface ThreeViewportProps {
   onHover: (zone: string | null, clientX: number, clientY: number) => void;
   onPick: (zone: string, clientX: number, clientY: number) => void;
   onContextLost?: () => void;
+  /** Body paint (defaults to a neutral silver). */
+  paint?: Paint;
+  /** Registration shown on the plates. */
+  registration?: string;
+  /** Called once the scene is built (tests / screenshots): triangle count. */
+  onReady?: (info: { triangles: number }) => void;
 }
 
-const LAYER_EPS = 0.004;
-const EDGE = new THREE.Color('#6b7a8f');
-const EDGE_SELECTED = new THREE.Color(HOVER_COLOUR);
+interface Finish {
+  color: string;
+  metalness: number;
+  roughness: number;
+  clearcoat?: number;
+  clearcoatRoughness?: number;
+  emissive?: string;
+  emissiveIntensity?: number;
+}
 
-interface ZoneEntry {
-  zone: string;
+/** Undamaged finishes per tone ('body' comes from the paint). */
+const FINISH: Record<Exclude<Tone, 'body'>, Finish> = {
+  glass: { color: '#16202b', metalness: 0.2, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.03 },
+  lamp: { color: '#3a424c', metalness: 0.7, roughness: 0.08, clearcoat: 1, clearcoatRoughness: 0.03 },
+  drl: { color: '#f4f8ff', metalness: 0, roughness: 0.3, emissive: '#e8f1ff', emissiveIntensity: 0.9 },
+  rearlamp: { color: '#4d0910', metalness: 0.3, roughness: 0.1, clearcoat: 1, clearcoatRoughness: 0.03 },
+  redglow: { color: '#e3202c', metalness: 0, roughness: 0.25, emissive: '#c4101b', emissiveIntensity: 0.65 },
+  chrome: { color: '#e2e6eb', metalness: 1, roughness: 0.1 },
+  black: { color: '#15171a', metalness: 0.15, roughness: 0.42, clearcoat: 0.6, clearcoatRoughness: 0.2 },
+  trim: { color: '#24272b', metalness: 0.3, roughness: 0.5 },
+  frame: { color: '#3b4047', metalness: 0.3, roughness: 0.45 },
+  soft: { color: '#26282c', metalness: 0, roughness: 0.92 },
+  tyre: { color: '#1a1b1d', metalness: 0, roughness: 0.88 },
+  rim: { color: '#c9ced5', metalness: 0.9, roughness: 0.24 },
+  liner: { color: '#0f1012', metalness: 0, roughness: 0.95 }
+};
+
+function paintFinish(p: Paint): Finish {
+  const metallic = p.finish === 'metallic' || p.finish === 'pearl';
+  return {
+    color: p.hex,
+    metalness: metallic ? 0.55 : 0.05,
+    roughness: p.finish === 'matte' ? 0.6 : metallic ? 0.32 : 0.36,
+    clearcoat: p.finish === 'matte' ? 0.1 : 1,
+    clearcoatRoughness: p.finish === 'matte' ? 0.5 : 0.06
+  };
+}
+
+interface GroupEntry {
+  zone: string | null;
   tone: Tone;
-  material: THREE.MeshLambertMaterial;
-  edges: THREE.LineBasicMaterial;
-}
-
-function polyGeometry(part: PolyPart): THREE.BufferGeometry {
-  const n = outwardNormal(part);
-  const off = part.layer * LAYER_EPS;
-  const pts = part.pts.map((p) => new THREE.Vector3(p[0] + n[0] * off, p[1] + n[1] * off, p[2] + n[2] * off));
-  // triangulate in the plane that drops the dominant normal axis
-  const ax = Math.abs(n[0]) >= Math.abs(n[1]) && Math.abs(n[0]) >= Math.abs(n[2]) ? 0 : Math.abs(n[1]) >= Math.abs(n[2]) ? 1 : 2;
-  const flat = pts.map((p) => (ax === 0 ? new THREE.Vector2(p.z, p.y) : ax === 1 ? new THREE.Vector2(p.x, p.z) : new THREE.Vector2(p.x, p.y)));
-  const tris = THREE.ShapeUtils.triangulateShape(flat, []);
-  const pos: number[] = [];
-  const nv = new THREE.Vector3(n[0], n[1], n[2]);
-  const e1 = new THREE.Vector3();
-  const e2 = new THREE.Vector3();
-  for (const tri of tris) {
-    const [a, b, c] = tri as [number, number, number];
-    const A = pts[a]!;
-    let B = pts[b]!;
-    let C = pts[c]!;
-    e1.subVectors(B, A);
-    e2.subVectors(C, A);
-    if (e1.cross(e2).dot(nv) < 0) [B, C] = [C, B];
-    pos.push(A.x, A.y, A.z, B.x, B.y, B.z, C.x, C.y, C.z);
-  }
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
-  geo.computeVertexNormals();
-  return geo;
-}
-
-function beamGeometry(a: THREE.Vector3, b: THREE.Vector3, t: number): { geo: THREE.BufferGeometry; pos: THREE.Vector3; quat: THREE.Quaternion } {
-  const len = a.distanceTo(b);
-  const geo = new THREE.BoxGeometry(t, len, t);
-  const dir = new THREE.Vector3().subVectors(b, a).normalize();
-  const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
-  return { geo, pos: new THREE.Vector3().addVectors(a, b).multiplyScalar(0.5), quat };
+  material: THREE.MeshPhysicalMaterial;
 }
 
 function shadowTexture(): THREE.Texture | null {
@@ -77,12 +85,29 @@ function shadowTexture(): THREE.Texture | null {
     const ctx = c.getContext('2d');
     if (!ctx) return null;
     const g = ctx.createRadialGradient(64, 64, 4, 64, 64, 64);
-    g.addColorStop(0, 'rgba(7,38,71,0.30)');
-    g.addColorStop(0.6, 'rgba(7,38,71,0.10)');
-    g.addColorStop(1, 'rgba(7,38,71,0)');
+    g.addColorStop(0, 'rgba(0,0,0,0.55)');
+    g.addColorStop(0.55, 'rgba(0,0,0,0.22)');
+    g.addColorStop(1, 'rgba(0,0,0,0)');
     ctx.fillStyle = g;
     ctx.fillRect(0, 0, 128, 128);
     return new THREE.CanvasTexture(c);
+  } catch {
+    return null;
+  }
+}
+
+function plateTexture(reg: string | undefined, kind: PlateKind, aniso: number): THREE.Texture | null {
+  try {
+    const c = document.createElement('canvas');
+    c.width = 1040;
+    c.height = 222;
+    const ctx = c.getContext('2d');
+    if (!ctx) return null;
+    drawPlate(ctx, reg, kind, c.width, c.height);
+    const t = new THREE.CanvasTexture(c);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.anisotropy = aniso;
+    return t;
   } catch {
     return null;
   }
@@ -101,8 +126,19 @@ export function cameraOffset(view: ViewPreset, d: number): THREE.Vector3 {
     case 'top':
       return new THREE.Vector3(0, d, d * 0.001);
     default:
-      return new THREE.Vector3(d * 0.66, d * 0.42, -d * 0.62);
+      return new THREE.Vector3(d * 0.68, d * 0.34, -d * 0.66);
   }
+}
+
+const MESH_CACHE = new Map<string, CarMesh>();
+function meshFor(model: VehicleModel): CarMesh {
+  let m = MESH_CACHE.get(model.spec.key);
+  if (!m) {
+    m = buildCarMesh(model.spec);
+    if (MESH_CACHE.size > 12) MESH_CACHE.clear();
+    MESH_CACHE.set(model.spec.key, m);
+  }
+  return m;
 }
 
 export default function ThreeViewport(props: ThreeViewportProps) {
@@ -110,9 +146,10 @@ export default function ThreeViewport(props: ThreeViewportProps) {
   const propsRef = useRef(props);
   propsRef.current = props;
   const api = useRef<{
-    zones: Map<string, ZoneEntry>;
+    groups: GroupEntry[];
     render: () => void;
     goTo: (view: ViewPreset, animate: boolean) => void;
+    setPlates: (reg: string | undefined) => void;
   } | null>(null);
 
   // scene setup per model
@@ -122,7 +159,7 @@ export default function ThreeViewport(props: ThreeViewportProps) {
     const { model } = propsRef.current;
     let renderer: THREE.WebGLRenderer;
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: false });
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: false, powerPreference: 'high-performance' });
     } catch {
       propsRef.current.onContextLost?.();
       return;
@@ -130,118 +167,121 @@ export default function ThreeViewport(props: ThreeViewportProps) {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.setClearColor(0x000000, 0);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
     host.appendChild(renderer.domElement);
     renderer.domElement.className = 'dm3-canvas';
     renderer.domElement.setAttribute('aria-hidden', 'true');
 
+    const car = meshFor(model);
     const scene = new THREE.Scene();
-    scene.add(new THREE.HemisphereLight(0xffffff, 0xaab4c3, 1.5));
-    const key = new THREE.DirectionalLight(0xffffff, 1.25);
-    key.position.set(4, 6, -3);
+    const disposables: Array<{ dispose: () => void }> = [];
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const room = new RoomEnvironment();
+    const env = pmrem.fromScene(room, 0.035).texture;
+    scene.environment = env;
+    disposables.push(env, pmrem, room);
+    scene.add(new THREE.HemisphereLight(0xffffff, 0x8a8f99, 0.55));
+    const key = new THREE.DirectionalLight(0xffffff, 1.2);
+    key.position.set(3, 6, -4);
     scene.add(key);
-    const fill = new THREE.DirectionalLight(0xffffff, 0.6);
-    fill.position.set(-4, 3, 4);
+    const fill = new THREE.DirectionalLight(0xffffff, 0.35);
+    fill.position.set(-4, 2.5, 4);
     scene.add(fill);
 
-    const disposables: Array<{ dispose: () => void }> = [];
-    const car = new THREE.Group();
-    scene.add(car);
-    const zones = new Map<string, ZoneEntry>();
-    const fillers = new Map<Tone, THREE.MeshLambertMaterial>();
-    const fillerEdges = new THREE.LineBasicMaterial({ color: EDGE, transparent: true, opacity: 0.45 });
-    disposables.push(fillerEdges);
-
-    const materialFor = (part: Part): { mat: THREE.MeshLambertMaterial; edges: THREE.LineBasicMaterial } => {
-      if (!part.zone) {
-        let m = fillers.get(part.tone);
-        if (!m) {
-          m = new THREE.MeshLambertMaterial({ color: TONE_COLOURS[part.tone], side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
-          fillers.set(part.tone, m);
-          disposables.push(m);
-        }
-        return { mat: m, edges: fillerEdges };
+    const root = new THREE.Group();
+    scene.add(root);
+    const groups: GroupEntry[] = [];
+    for (const g of car.groups) {
+      if (!g.positions.length) continue;
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(g.positions, 3));
+      geo.setAttribute('normal', new THREE.Float32BufferAttribute(g.normals, 3));
+      geo.computeBoundingSphere();
+      const material = new THREE.MeshPhysicalMaterial({ side: THREE.DoubleSide });
+      if (g.layer > 0) {
+        material.polygonOffset = true;
+        material.polygonOffsetFactor = -g.layer;
+        material.polygonOffsetUnits = -g.layer * 2;
       }
-      const k = `${part.zone}|${part.tone}`;
-      let z = zones.get(k);
-      if (!z) {
-        z = {
-          zone: part.zone,
-          tone: part.tone,
-          material: new THREE.MeshLambertMaterial({ color: TONE_COLOURS[part.tone], side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
-          edges: new THREE.LineBasicMaterial({ color: EDGE, transparent: true, opacity: 0.55 })
-        };
-        zones.set(k, z);
-        disposables.push(z.material, z.edges);
-      }
-      return { mat: z.material, edges: z.edges };
-    };
-
-    const add = (geo: THREE.BufferGeometry, part: Part, place?: (o: THREE.Object3D) => void, edgeAngle = 25) => {
-      const { mat, edges } = materialFor(part);
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.userData.zone = part.zone;
-      const lines = new THREE.LineSegments(new THREE.EdgesGeometry(geo, edgeAngle), edges);
-      lines.raycast = () => {};
-      mesh.add(lines);
-      place?.(mesh);
-      car.add(mesh);
-      disposables.push(geo, lines.geometry);
-    };
-
-    for (const part of model.parts) {
-      if (part.type === 'poly') add(polyGeometry(part), part);
-      else if (part.type === 'box') {
-        add(new THREE.BoxGeometry(part.size[0], part.size[1], part.size[2]), part, (o) => o.position.set(...part.center));
-      } else if (part.type === 'beam') {
-        const b = beamGeometry(new THREE.Vector3(...part.a), new THREE.Vector3(...part.b), part.thickness);
-        add(b.geo, part, (o) => {
-          o.position.copy(b.pos);
-          o.quaternion.copy(b.quat);
-        });
-      } else {
-        const tyre = new THREE.CylinderGeometry(part.radius, part.radius, part.width, 28, 1);
-        add(tyre, part, (o) => {
-          o.position.set(...part.center);
-          o.rotation.x = Math.PI / 2;
-        }, 40);
-        const rim = new THREE.CylinderGeometry(part.radius * 0.6, part.radius * 0.6, part.width + 0.012, 28, 1);
-        add(rim, { ...part, tone: 'frame' }, (o) => {
-          o.position.set(...part.center);
-          o.rotation.x = Math.PI / 2;
-        }, 40);
-      }
+      const mesh = new THREE.Mesh(geo, material);
+      mesh.userData.zone = g.zone;
+      root.add(mesh);
+      groups.push({ zone: g.zone, tone: g.tone, material });
+      disposables.push(geo, material);
     }
+    // shut lines
+    if (car.lines.length) {
+      const lg = new THREE.BufferGeometry();
+      lg.setAttribute('position', new THREE.Float32BufferAttribute(car.lines, 3));
+      const lm = new THREE.LineBasicMaterial({ color: 0x07090c, transparent: true, opacity: 0.55 });
+      const lines = new THREE.LineSegments(lg, lm);
+      lines.raycast = () => {};
+      root.add(lines);
+      disposables.push(lg, lm);
+    }
+    // plates
+    const plateMeshes: Array<{ mesh: THREE.Mesh; kind: PlateKind }> = [];
+    const plateGeo = new THREE.PlaneGeometry(1, 1);
+    disposables.push(plateGeo);
+    const aniso = renderer.capabilities.getMaxAnisotropy();
+    for (const p of car.plates) {
+      const mat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.38, metalness: 0, polygonOffset: true, polygonOffsetFactor: -4, polygonOffsetUnits: -8 });
+      const mesh = new THREE.Mesh(plateGeo, mat);
+      const n = new THREE.Vector3(...p.normal);
+      const up = new THREE.Vector3(...p.up);
+      const right = new THREE.Vector3().crossVectors(up, n).normalize();
+      mesh.matrixAutoUpdate = false;
+      mesh.matrix.makeBasis(right.multiplyScalar(p.width), up.multiplyScalar(p.height), n);
+      mesh.matrix.setPosition(new THREE.Vector3(...p.center));
+      mesh.userData.zone = p.zone;
+      root.add(mesh);
+      plateMeshes.push({ mesh, kind: p.kind });
+      disposables.push(mat);
+    }
+    const plateTextures: THREE.Texture[] = [];
+    const setPlates = (reg: string | undefined) => {
+      for (const t of plateTextures.splice(0)) t.dispose();
+      for (const { mesh, kind } of plateMeshes) {
+        const tex = plateTexture(reg, kind, aniso);
+        const mat = mesh.material as THREE.MeshStandardMaterial;
+        mat.map = tex;
+        if (!tex) mat.color.set(kind === 'rear' ? '#f5c518' : '#f7f7f2');
+        mat.needsUpdate = true;
+        if (tex) plateTextures.push(tex);
+      }
+    };
+    setPlates(propsRef.current.registration);
 
-    // soft contact shadow + floor disc
+    // soft contact shadow
+    const L = car.bounds.max[0] - car.bounds.min[0];
+    const Wd = car.bounds.max[2] - car.bounds.min[2];
+    const H = car.bounds.max[1];
     const tex = shadowTexture();
     if (tex) {
-      const shadow = new THREE.Mesh(
-        new THREE.PlaneGeometry(model.length * 1.25, model.width * 1.5),
-        new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false })
-      );
+      const shadow = new THREE.Mesh(new THREE.PlaneGeometry(L * 1.18, Wd * 1.35), new THREE.MeshBasicMaterial({ map: tex, transparent: true, depthWrite: false, opacity: 0.85 }));
       shadow.rotation.x = -Math.PI / 2;
       shadow.position.y = 0.002;
       scene.add(shadow);
       disposables.push(tex, shadow.geometry, shadow.material as THREE.Material);
     }
 
-    const camera = new THREE.PerspectiveCamera(28, 1, 0.1, 100);
-    const target = new THREE.Vector3(0, model.height * 0.42, 0);
-    const baseDist = Math.max(model.length, model.height * 1.8) * 1.85;
+    const camera = new THREE.PerspectiveCamera(26, 1, 0.1, 100);
+    const target = new THREE.Vector3((car.bounds.max[0] + car.bounds.min[0]) / 2, H * 0.4, 0);
+    const baseDist = Math.max(L, H * 1.8) * 1.9;
     let dist = baseDist;
-    // keep the whole vehicle in frame on narrow (portrait) viewports
     const fitDist = (aspect: number) => {
       const halfV = THREE.MathUtils.degToRad(camera.fov / 2);
       const halfH = Math.atan(Math.tan(halfV) * aspect);
-      return Math.max(baseDist, (model.length * 0.62) / Math.tan(halfH) + model.width / 2);
+      return Math.max(baseDist, (L * 0.62) / Math.tan(halfH) + Wd / 2);
     };
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.target.copy(target);
     controls.enablePan = false;
     controls.enableDamping = false;
-    controls.minDistance = dist * 0.45;
+    controls.minDistance = dist * 0.4;
     controls.maxDistance = dist * 1.8;
-    controls.maxPolarAngle = Math.PI / 2 - 0.04;
+    controls.maxPolarAngle = Math.PI / 2 - 0.03;
     controls.rotateSpeed = 0.8;
 
     let raf = 0;
@@ -291,11 +331,11 @@ export default function ThreeViewport(props: ThreeViewportProps) {
       camera.updateProjectionMatrix();
       const next = fitDist(camera.aspect);
       if (Math.abs(next - dist) > 0.01) {
-        const scale = next / dist;
+        const k = next / dist;
         dist = next;
-        controls.minDistance = dist * 0.45;
+        controls.minDistance = dist * 0.4;
         controls.maxDistance = dist * 1.8;
-        camera.position.sub(target).multiplyScalar(scale).add(target);
+        camera.position.sub(target).multiplyScalar(k).add(target);
         controls.update();
       }
       render();
@@ -312,9 +352,9 @@ export default function ThreeViewport(props: ThreeViewportProps) {
       const r = renderer.domElement.getBoundingClientRect();
       ndc.set(((cx - r.left) / r.width) * 2 - 1, -((cy - r.top) / r.height) * 2 + 1);
       ray.setFromCamera(ndc, camera);
-      for (const hit of ray.intersectObjects(car.children, false)) {
+      for (const hit of ray.intersectObjects(root.children, false)) {
         const z = hit.object.userData.zone as string | null | undefined;
-        return z ?? null; // nearest surface wins; filler blocks what is behind it
+        return z ?? null; // nearest surface wins; unselectable parts block what is behind them
       }
       return null;
     };
@@ -352,7 +392,8 @@ export default function ThreeViewport(props: ThreeViewportProps) {
     el.addEventListener('pointerleave', onLeave);
     el.addEventListener('webglcontextlost', onLost);
 
-    api.current = { zones, render, goTo };
+    api.current = { groups, render, goTo, setPlates };
+    propsRef.current.onReady?.({ triangles: car.triangles });
     return () => {
       api.current = null;
       cancelAnimationFrame(raf);
@@ -365,34 +406,58 @@ export default function ThreeViewport(props: ThreeViewportProps) {
       el.removeEventListener('pointerleave', onLeave);
       el.removeEventListener('webglcontextlost', onLost);
       controls.dispose();
+      for (const t of plateTextures) t.dispose();
       for (const d of disposables) d.dispose();
       renderer.dispose();
       el.remove();
     };
   }, [props.model]);
 
-  // colours / hover / selection
+  // finishes, damage, hover / selection
+  const paint = props.paint ?? DEFAULT_PAINT;
   useEffect(() => {
     const a = api.current;
     if (!a) return;
-    for (const z of a.zones.values()) {
-      const id = z.zone;
-      const d = props.damage[id];
-      z.material.color.set(zoneFill(z.tone, d));
-      // highlight without changing the hue: blue tint on bare parts, a lighter shade on coloured (damaged) ones
+    const body = paintFinish(paint);
+    for (const g of a.groups) {
+      const base = g.tone === 'body' ? body : FINISH[g.tone];
+      const d = g.zone ? props.damage[g.zone] : undefined;
       const damaged = !!d && d.severity > 0;
-      const hot = id === props.selected ? (damaged ? 0.12 : 0.22) : id === props.hovered ? (damaged ? 0.08 : 0.14) : 0;
-      z.material.emissive.set(damaged ? '#ffffff' : HOVER_COLOUR);
-      z.material.emissiveIntensity = hot;
-      const sel = id === props.selected || id === props.hovered;
-      z.edges.color.copy(sel ? EDGE_SELECTED : EDGE);
-      z.edges.opacity = sel ? 1 : 0.55;
+      const m = g.material;
+      if (damaged) {
+        m.color.set(SEVERITY_COLOURS[d!.severity]);
+        m.metalness = 0.1;
+        m.roughness = 0.45;
+        m.clearcoat = 0.6;
+        m.clearcoatRoughness = 0.2;
+      } else {
+        m.color.set(base.color);
+        m.metalness = base.metalness;
+        m.roughness = base.roughness;
+        m.clearcoat = base.clearcoat ?? 0;
+        m.clearcoatRoughness = base.clearcoatRoughness ?? 0;
+      }
+      const id = g.zone;
+      const hot = id && id === props.selected ? 0.35 : id && id === props.hovered ? 0.22 : 0;
+      if (hot) {
+        m.emissive.set(damaged ? '#ffffff' : HOVER_COLOUR);
+        m.emissiveIntensity = damaged ? hot * 0.4 : hot;
+      } else {
+        m.emissive.set(base.emissive ?? '#000000');
+        m.emissiveIntensity = base.emissiveIntensity ?? 0;
+      }
     }
     a.render();
-  }, [props.damage, props.hovered, props.selected, props.model]);
+  }, [props.damage, props.hovered, props.selected, props.model, paint.hex, paint.finish]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // plates
+  const first = useRef(true);
+  useEffect(() => {
+    api.current?.setPlates(props.registration);
+    api.current?.render();
+  }, [props.registration]);
 
   // preset views
-  const first = useRef(true);
   useEffect(() => {
     if (first.current) {
       first.current = false;

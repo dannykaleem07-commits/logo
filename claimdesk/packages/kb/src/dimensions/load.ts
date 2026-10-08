@@ -181,8 +181,9 @@ function findBodyKey(bodies: Record<string, BodyDimensionsInput>, body: string |
     if (idx >= 0) score += 100 - idx;
     else if (body && normaliseProfile(k) && normaliseProfile(k) === normaliseProfile(body)) score += 50;
     const kd = /(\d)-?door|door-?(\d)|(?:^|-)(\d)(?:-|$)/.exec(s);
-    const keyDoors = kd ? Number(kd[1] ?? kd[2] ?? kd[3]) : typeof bodies[k]!.doors === 'number' ? bodies[k]!.doors : undefined;
-    if (doors && keyDoors === doors) score += 10;
+    const rawDoors = bodies[k]!.doors;
+    const keyDoors = kd ? [Number(kd[1] ?? kd[2] ?? kd[3])] : Array.isArray(rawDoors) ? rawDoors : typeof rawDoors === 'number' ? [rawDoors] : [];
+    if (doors && keyDoors.includes(doors)) score += 10;
     return { k, score };
   });
   scored.sort((a, b) => b.score - a.score);
@@ -207,9 +208,12 @@ export function findVehicleDimensions(q: DimensionsQuery): ResolvedDimensions | 
   if (!Object.keys(bodies).length) return undefined;
   const body = findBodyKey(bodies, q.body, q.doors);
   const { dims, filled } = normaliseBodyDimensions(bodies[body.key], body.key);
-  if (q.doors && q.doors >= 2 && q.doors <= 5 && filled.includes('doors')) {
-    dims.doors = q.doors;
-    filled.splice(filled.indexOf('doors'), 1);
+  if (q.doors && q.doors >= 2 && q.doors <= 5) {
+    if (filled.includes('doors')) {
+      dims.doors = q.doors;
+      dims.doorOptions = [q.doors];
+      filled.splice(filled.indexOf('doors'), 1);
+    } else if (dims.doorOptions.includes(q.doors)) dims.doors = q.doors;
   }
   const v = file.verification;
   return {
@@ -231,7 +235,10 @@ export function vehicleDimensionsOrDefault(q: DimensionsQuery): ResolvedDimensio
   if (hit) return { ...hit, source: 'file' };
   const body = q?.body ?? 'hatchback';
   const dims = defaultBodyDimensions(body);
-  if (q?.doors && q.doors >= 2 && q.doors <= 5) dims.doors = q.doors;
+  if (q?.doors && q.doors >= 2 && q.doors <= 5) {
+    dims.doors = q.doors;
+    dims.doorOptions = [q.doors];
+  }
   return {
     make: q?.make ?? '',
     makeSlug: makeSlug(q?.make ?? ''),

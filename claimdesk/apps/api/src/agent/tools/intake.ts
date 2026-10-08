@@ -55,15 +55,18 @@ const claimFieldPropose: ToolDef<ClaimFieldProposeInput, unknown> = {
     if (!ev) throw Object.assign(new Error(`Evidence ${input.source.evidenceId} not found`), { code: 'NOT_FOUND' });
     const itemId = itemIdOfRun(ctx, rc);
     const item = itemId ? ctx.repos.getIntakeItem(ctx.db, itemId) : undefined;
+    // Only the claim the document is filed on — never another one (a document cannot steer another claim).
+    if (!item || !item.claimId) throw Object.assign(new Error('This document is not linked to a claim yet; do not propose fields — the owner links it first'), { code: 'NO_CLAIM' });
+    if (item.claimId !== claim.id || (rc.claimScope && rc.claimScope !== claim.id)) throw Object.assign(new Error('Fields can be proposed only for the claim this document is on'), { code: 'CLAIM_SCOPE' });
     if (ev.claimId && ev.claimId !== claim.id) throw Object.assign(new Error('That evidence is on another claim'), { code: 'CLAIM_SCOPE' });
-    if (!ev.claimId && item?.evidenceId !== ev.id) throw Object.assign(new Error('That evidence is not the document of this run'), { code: 'CLAIM_SCOPE' });
+    if (!ev.claimId && item.evidenceId !== ev.id) throw Object.assign(new Error('That evidence is not the document of this run'), { code: 'CLAIM_SCOPE' });
     const r = proposeField(ctx, {
       claimId: claim.id,
-      ...(item ? { intakeItemId: item.id } : {}),
+      intakeItemId: item.id,
       target: input.target,
       value: input.value,
       confidence: input.confidence,
-      source: { ...(item ? { intakeItemId: item.id } : {}), evidenceId: ev.id, page: input.source.page, quote: input.source.quote, via: 'tool', runId: rc.runId },
+      source: { intakeItemId: item.id, evidenceId: ev.id, page: input.source.page, quote: input.source.quote, via: 'tool', runId: rc.runId },
     });
     if (r.kind === 'skipped') return { status: 'skipped', target: input.target, reason: r.reason };
     const p = r.proposal;

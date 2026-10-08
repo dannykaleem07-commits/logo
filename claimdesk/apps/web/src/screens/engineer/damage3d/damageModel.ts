@@ -50,7 +50,9 @@ export const TONE_COLOURS: Record<Tone, string> = {
   chrome: '#c9d1dc',
   black: '#5b6370',
   rim: '#c3cad4',
-  liner: '#4a515c'
+  liner: '#4a515c',
+  redglow: '#e8a3a3',
+  drl: '#f7f9fc'
 };
 
 export const HOVER_COLOUR = '#1466d2';

@@ -1,0 +1,35 @@
+/* owned by mail — Outbox, held countdown, mailbox tab and email settings (docs/SUPREME-DESIGN.md §L.5) */
+.ob-sections { display: flex; flex-direction: column; gap: var(--s-3, 12px); }
+.ob-list { list-style: none; margin: 0; padding: 0; }
+.ob-item { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; padding: 10px 12px; border-bottom: 1px solid var(--line, #eceef2); }
+.ob-item:last-child { border-bottom: 0; }
+.ob-item.focus { background: var(--blue-50, #f2f5f9); }
+.ob-item-main { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.ob-item-top { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.ob-subject { font-weight: var(--fw-medium, 500); overflow-wrap: anywhere; }
+.ob-meta { font-size: var(--fs-sm, 13.5px); color: var(--muted, #616c7c); overflow-wrap: anywhere; }
+.ob-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-end; }
+.ob-body { white-space: pre-wrap; background: var(--surface-2, #f9fafb); border-radius: 6px; padding: 8px 10px; margin: 4px 0 0; max-height: 260px; overflow: auto; font: inherit; }
+.ob-countdown { font-variant-numeric: tabular-nums; font-weight: var(--fw-medium, 500); color: var(--amber-ink, #7a4b00); }
+.ob-undo-banner { border: 1px solid var(--line-2, #dde1e7); border-left: 4px solid var(--amber, #b26a00); border-radius: 8px; padding: 12px; background: var(--surface, #fff); display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+.ob-reasons { margin: 2px 0 0; padding-left: 18px; font-size: var(--fs-sm, 13.5px); color: var(--ink-2, #3b4656); }
+.ob-edit { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.mb-layout { display: grid; grid-template-columns: minmax(240px, 340px) minmax(0, 1fr); gap: var(--s-3, 12px); align-items: start; }
+.mb-threads { list-style: none; margin: 0; padding: 0; }
+.mb-thread { display: flex; flex-direction: column; gap: 2px; width: 100%; text-align: left; border: 1px solid transparent; border-radius: 8px; padding: 8px; background: transparent; cursor: pointer; color: inherit; font: inherit; }
+.mb-thread:hover { background: var(--surface-2, #f9fafb); }
+.mb-thread.selected { border-color: var(--blue, #1d4f8c); background: var(--blue-50, #f2f5f9); }
+.mb-thread-top { display: flex; justify-content: space-between; gap: 6px; }
+.mb-snippet { font-size: var(--fs-sm, 13.5px); color: var(--muted, #616c7c); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mb-message { border: 1px solid var(--line-2, #dde1e7); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.mb-message.out { border-left: 4px solid var(--green, #177a41); }
+.mb-message-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px; }
+.mb-body { white-space: pre-wrap; background: var(--surface-2, #f9fafb); border-radius: 6px; padding: 8px 10px; margin: 0; max-height: 480px; overflow: auto; font: inherit; overflow-wrap: anywhere; }
+.mb-because { font-size: var(--fs-sm, 13.5px); color: var(--ink-2, #3b4656); }
+.mb-attachments { display: flex; flex-wrap: wrap; gap: 6px; }
+.mb-chip { font-size: var(--fs-xs, 12px); border: 1px solid var(--line-2, #dde1e7); background: var(--surface, #fff); border-radius: 999px; padding: 2px 8px; }
+.mb-stack { display: flex; flex-direction: column; gap: var(--s-3, 12px); }
+.es-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px 14px; }
+.es-result { margin: 0; padding-left: 18px; }
+.es-fixed { padding: 8px 10px; background: var(--surface-2, #f9fafb); border-radius: 6px; }
+@media (max-width: 900px) { .mb-layout { grid-template-columns: 1fr; } .ob-item { grid-template-columns: 1fr; } .ob-actions { justify-content: flex-start; } }
