@@ -239,6 +239,10 @@ class RuleCtx {
   namedPos(): PartPos | undefined {
     return this.quals.pos ?? (this.quals.bareR && !this.rTaken && !this.quals.side ? 'rear' : undefined);
   }
+  /** Side from the name only (L / RH / FL / nearside …; a bare R is not read here). */
+  namedSide(): PartSide | undefined {
+    return this.quals.side;
+  }
   sided(base: string): string | null {
     const s = this.side();
     return s ? `${base}_${s}` : null;
@@ -322,6 +326,8 @@ export const PART_RULES: readonly PartRule[] = [
     build: (c) => {
       const named = c.namedPos();
       if (c.has('side')) return c.sided(named === 'rear' ? 'rear_door_glass' : 'front_door_glass');
+      // a screen has no side: "Window_FL" / "Glass_RR" / "window_left" is a side window
+      if (c.namedSide()) return c.sided((named ?? c.pos()) === 'rear' ? 'rear_door_glass' : 'front_door_glass');
       if (named === 'front') return 'windscreen';
       if (named === 'rear') return 'rear_screen';
       const g = c.geo;

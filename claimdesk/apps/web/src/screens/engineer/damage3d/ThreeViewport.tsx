@@ -46,20 +46,23 @@ interface Finish {
 
 /** Undamaged finishes per tone ('body' comes from the paint). */
 const FINISH: Record<Exclude<Tone, 'body'>, Finish> = {
-  glass: { color: '#16202b', metalness: 0.2, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.03 },
+  glass: { color: '#16202b', metalness: 0.2, roughness: 0.06, clearcoat: 0.7, clearcoatRoughness: 0.05 },
   lamp: { color: '#3a424c', metalness: 0.7, roughness: 0.08, clearcoat: 1, clearcoatRoughness: 0.03 },
   drl: { color: '#f4f8ff', metalness: 0, roughness: 0.3, emissive: '#e8f1ff', emissiveIntensity: 0.9 },
   rearlamp: { color: '#4d0910', metalness: 0.3, roughness: 0.1, clearcoat: 1, clearcoatRoughness: 0.03 },
   redglow: { color: '#e3202c', metalness: 0, roughness: 0.25, emissive: '#c4101b', emissiveIntensity: 0.65 },
   chrome: { color: '#e2e6eb', metalness: 1, roughness: 0.1 },
-  black: { color: '#15171a', metalness: 0.15, roughness: 0.42, clearcoat: 0.6, clearcoatRoughness: 0.2 },
+  black: { color: '#121316', metalness: 0.1, roughness: 0.5, clearcoat: 0.3, clearcoatRoughness: 0.35 },
   trim: { color: '#24272b', metalness: 0.3, roughness: 0.5 },
   frame: { color: '#3b4047', metalness: 0.3, roughness: 0.45 },
   soft: { color: '#26282c', metalness: 0, roughness: 0.92 },
   tyre: { color: '#1a1b1d', metalness: 0, roughness: 0.88 },
-  rim: { color: '#c9ced5', metalness: 0.9, roughness: 0.24 },
+  rim: { color: '#b4bac2', metalness: 0.85, roughness: 0.3, clearcoat: 0.6, clearcoatRoughness: 0.15 },
   liner: { color: '#0f1012', metalness: 0, roughness: 0.95 }
 };
+
+/** Studio reflection strength per finish: gloss black trim and tinted glass would otherwise mirror the bright ceiling. */
+const ENV_INTENSITY: Partial<Record<Tone, number>> = { glass: 0.45, black: 0.35, lamp: 0.6, frame: 0.6, trim: 0.7 };
 
 function paintFinish(p: Paint): Finish {
   const metallic = p.finish === 'metallic' || p.finish === 'pearl';
@@ -437,6 +440,8 @@ export default function ThreeViewport(props: ThreeViewportProps) {
         m.clearcoat = base.clearcoat ?? 0;
         m.clearcoatRoughness = base.clearcoatRoughness ?? 0;
       }
+      // tinted glass reflects the studio less, so the cabin reads through it
+      m.envMapIntensity = damaged ? 1 : ENV_INTENSITY[g.tone] ?? 1;
       const id = g.zone;
       const hot = id && id === props.selected ? 0.35 : id && id === props.hovered ? 0.22 : 0;
       if (hot) {

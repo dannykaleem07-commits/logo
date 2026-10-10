@@ -23,6 +23,7 @@ import {
   bandPatch,
   box,
   clamp,
+  dot,
   drape,
   lerp,
   norm,
@@ -32,6 +33,9 @@ import {
   sub,
   superellipse,
   superellipsoid,
+  dedupePoly,
+  filletPoly,
+  offsetPoly,
   type MeshGroup,
   type QuadClass,
   type Tone,
@@ -96,6 +100,8 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
   // unpainted lower bumpers: SUV / pick-up cladding, van bumpers
   const lowBlack = s.cladding || isVan;
   const lowBand = isVan ? 0.24 : 0.1;
+  // black diffuser along the bottom of a car's rear bumper
+  const diffuser = 0.075;
   const rxF = Math.min(s.cornerF[0], fo - s.archR - 0.06);
   const dzF = s.cornerF[1];
   const rxR = Math.max(0.03, Math.min(s.cornerR[0], ro - s.archR - 0.06));
@@ -154,16 +160,32 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
   const rtAt = (xb: number) => {
     if (s.bed && xb < s.bed.x0) return 0.014;
     if (isVan) return lerp(0.014, 0.05, smooth(s.cowlX - 0.05, s.cowlX + 0.1, xb));
-    const under = 0.06;
+    const under = 0.04;
     const bonnet = 0.085;
     return lerp(under, bonnet, smooth(s.cowlX - 0.05, s.cowlX + 0.15, xb));
   };
   const tuckIn = isVan ? 0.018 : 0.045;
-  const shoulderIn = isVan ? 0.004 : 0.022;
+  const shoulderIn = isVan ? 0.004 : 0.034;
   const yCrease = s.belt - (isVan ? 0.2 : 0.11);
   const crease = isVan ? 0.004 : 0.009;
+  // wheel-arch haunches: the side is pinched between the arches and swells round them (widest point = the record's width)
+  const flareAmt = isVan ? 0.008 : s.profile === 'pickup' || s.profile === 'suv-boxy' ? 0.03 : s.cladding ? 0.024 : 0.02;
+  const flare = (xb: number, y: number) => {
+    let f = 0;
+    for (const ax of [s.axleF, s.axleR]) {
+      const dx = xb - ax;
+      const dy = y - s.wheelR;
+      const d = Math.hypot(dx, dy) - s.archR;
+      // strongest just outside the arch lip, fading out over ~0.25 m; only on the upper half of the arch circle
+      const radial = Math.exp(-(((d - 0.05) / 0.11) ** 2));
+      const upper = smooth(-0.12, 0.08, dy);
+      f = Math.max(f, radial * upper);
+    }
+    // die out under the shoulder so the beltline stays straight
+    return f * smooth(s.belt - 0.02, s.belt - 0.16, y);
+  };
   const zSide = (xb: number, y: number, yt: number) => {
-    let z = hwPlan(xb);
+    let z = hwPlan(xb) - flareAmt + flareAmt * flare(xb, y);
     const t = clamp((y - s.gc) / 0.28, 0, 1);
     z -= tuckIn * (1 - t) * (1 - t);
     const u = clamp((y - (yt - 0.16)) / 0.16, 0, 1);
@@ -280,7 +302,7 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
   const sideZone = (xm: number, ym: number, side: number): { zone: string | null; tone: Tone } => {
     const black = s.cladding;
     if (xm > fA - s.archR * 0.02 && ym < s.bumperTopF) return { zone: 'front_bumper', tone: lowBlack && ym < botY(xm) + lowBand ? 'black' : 'body' };
-    if (xm < rA + s.archR * 0.02 && ym < s.bumperTopR) return { zone: 'rear_bumper', tone: lowBlack && ym < botY(xm) + lowBand ? 'black' : 'body' };
+    if (xm < rA + s.archR * 0.02 && ym < s.bumperTopR) return { zone: 'rear_bumper', tone: ym < botY(xm) + (lowBlack ? lowBand : diffuser) ? 'black' : 'body' };
     if (ym < s.sillTop && xm > s.axleR + s.archR * 0.9 && xm < s.axleF - s.archR * 0.9) return { zone: sided('sill', side), tone: black ? 'black' : 'body' };
     if (xm > doorFront) return { zone: sided('front_wing', side), tone: 'body' };
     const d = doorAt(xm);
@@ -372,7 +394,7 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
         let tone: Tone = 'body';
         if (ym < s.bumperTopR) {
           zone = 'rear_bumper';
-          if (lowBlack && ym < botY(s.xR) + lowBand) tone = 'black';
+          if (ym < botY(s.xR) + (lowBlack ? lowBand : diffuser)) tone = 'black';
         } else if (zm < tailHalf) zone = rearOpening(side);
         else zone = sided(rearBodyBase, side);
         return { zone, tone, group: 5, hint: [-1, 0, 0] };
@@ -388,7 +410,7 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
   const roofArc = s.roofArc;
   const roofEdge = (xb: number) => {
     const u = clamp((s.wsTopX - xb) / Math.max(0.1, s.wsTopX - roofEndX), 0, 1);
-    let y = s.roofY - roofArc * (2 * u - 0.8) ** 2 - (0.025 + 0.16 * s.roofTaper) * u * u * (isVan || s.profile === 'pickup' ? 0 : 1);
+    let y = s.roofY - roofArc * (2 * u - 0.8) ** 2 - (0.025 + (s.profile === 'suv' || s.profile === 'suv-coupe' ? 0.24 : 0.16) * s.roofTaper) * u * u * (isVan || s.profile === 'pickup' ? 0 : 1);
     if (s.highRoof) y = lerp(s.highRoof.lowY, s.roofY, smooth(s.wsTopX + 0.02, s.highRoof.x, xb));
     return y;
   };
@@ -495,11 +517,6 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
     return pts;
   };
   const cabSection = cs.map(cabLoop);
-  const windowAt = (x: number, y = 0, y0 = 0) =>
-    s.windows.find((w) => {
-      const x0 = w === rearWin ? Math.min(w.x0 + pillarLean * Math.max(0, y - y0), w.x1 - 0.08) : w.x0;
-      return x >= x0 && x <= w.x1;
-    });
   const roofZone = s.softTop ? zoneOk('soft_top') : zoneOk('roof');
   const roofTone: Tone = s.softTop ? 'soft' : 'body';
   const cabXC = (s.wsTopX + roofEndX) / 2;
@@ -525,16 +542,14 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
       if (rearSlope) return { zone: s.softTop ? roofZone : s.rear === 'hatch' ? rearOpening(side) : sided(rearBodyBase, side), tone: s.softTop ? roofTone : 'body', group: 1, hint };
       return { zone: roofZone, tone: roofTone, group: 1, hint };
     }
-    // side
+    // side (the side glass is draped on top with smooth outlines; under it is the black door frame)
     const glassRow = j >= 1 && j <= CAB_GLASS_SEGS;
-    const w = windowAt(xm, ym, cabY0(xm));
-    if (glassRow && w) return { zone: w.zone ? sided(w.zone, side) : null, tone: 'glass', group: 1, hint };
     if (s.softTop && ym > cabY0(xm) + 0.05 && rearSlope) return { zone: roofZone, tone: roofTone, group: 1, hint };
     if (xm > doorFront) return { zone: sided('a_pillar', side), tone: 'body', group: 1, hint };
     const d = doorAt(xm);
     if (!isVan && Math.abs(xm - s.bPillarX) < 0.045 && s.doors.length > 1) return { zone: sided('b_pillar', side), tone: 'black', group: 1, hint };
     if (d) {
-      if (isVan) return { zone: sided(d.zone, side), tone: d.tall || glassRow || j === 0 ? 'body' : 'body', group: 1, hint };
+      if (isVan) return { zone: sided(d.zone, side), tone: !d.tall && d.zone === 'front_door' && (glassRow || j === 0) ? 'black' : 'body', group: 1, hint };
       return { zone: sided(d.zone, side), tone: j === 0 || j === CAB_SIDE_N - 2 || glassRow ? 'black' : 'body', group: 1, hint };
     }
     if (!isVan && Math.abs(xm - s.bPillarX) < 0.045) return { zone: sided('b_pillar', side), tone: 'black', group: 1, hint };
@@ -625,71 +640,179 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
     return poly.map(([a, b]) => [ca + (a - ca) * ka, cb + (b - cb) * kb + db] as P2);
   };
 
-  // headlamps (front radial)
+  // ── side glass: smooth daylight openings draped on the cabin side ──
+  // envelope: above the belt seal, below the roof rail, behind the A-pillar (parallel to the windscreen) and, for the
+  // rearmost window, ahead of a C/D-pillar leaning with the rear screen; B-pillar gaps come from the door cuts.
+  const roofAtWs = s.highRoof ? s.highRoof.lowY : roofEdge(s.wsTopX);
+  const aW = isVan ? 0.1 : 0.085;
+  const glassBot = (x: number) => cabY0(x) + 0.028;
+  const glassTop = (x: number) => {
+    const y0 = cabY0(x);
+    const R = cabR(x);
+    const h = Math.max(0, R - y0);
+    const rc = Math.min(isVan ? 0.06 : 0.05, 0.42 * h);
+    const t = y0 + Math.max(0, R - rc - y0 - 0.02) - 0.006;
+    // a high-roof van's raised roof is panel, not glass
+    return s.highRoof ? Math.min(t, s.highRoof.lowY - 0.09) : t;
+  };
+  const aLineY = (x: number) => cowlY + ((s.cowlX - aW - x) * (roofAtWs - cowlY)) / Math.max(0.05, s.cowlX - s.wsTopX);
+  const frontWin = s.windows.reduce<(typeof s.windows)[number] | undefined>((m, w) => (!m || w.x1 > m.x1 ? w : m), undefined);
+  const windowOutline = (win: (typeof s.windows)[number]): P2[] | null => {
+    // the front window runs forward to the A-pillar (quarter-light / mirror sail), clipped by the A-line
+    const w = win === frontWin ? { ...win, x1: Math.max(win.x1, s.cowlX) } : win;
+    const yb0 = glassBot(w.x0);
+    const topAt = (x: number) => {
+      let t = glassTop(x);
+      if (win === frontWin) t = Math.min(t, aLineY(x));
+      if (win === rearWin && pillarLean > 0) t = Math.min(t, yb0 + (x - w.x0) / pillarLean);
+      return t;
+    };
+    const f = (x: number) => topAt(x) - glassBot(x);
+    // tallest point, then the exact ends where the opening closes up
+    let xm = w.x0;
+    let fm = -Infinity;
+    for (let k = 0; k <= 40; k++) {
+      const x = lerp(w.x0, w.x1, k / 40);
+      const v = f(x);
+      if (v > fm) {
+        fm = v;
+        xm = x;
+      }
+    }
+    if (fm < 0.06) return null;
+    const MIN = 0.012;
+    // bisect between a point outside the opening and one inside it
+    const crossing = (outside: number, inside: number) => {
+      for (let k = 0; k < 30; k++) {
+        const m = (outside + inside) / 2;
+        if (f(m) >= MIN) inside = m;
+        else outside = m;
+      }
+      return inside;
+    };
+    const xa = f(w.x0) >= MIN ? w.x0 : crossing(w.x0, xm);
+    const xb = f(w.x1) >= MIN ? w.x1 : crossing(w.x1, xm);
+    const n = 22;
+    const bot: P2[] = [];
+    const top: P2[] = [];
+    for (let k = 0; k <= n; k++) {
+      const x = lerp(xa, xb, k / n);
+      const yb = glassBot(x);
+      bot.push([x, yb]);
+      top.push([x, Math.max(yb + MIN * 0.5, topAt(x))]);
+    }
+    const poly = dedupePoly([...bot, ...top.reverse()], 0.004);
+    return poly.length >= 4 ? filletPoly(poly, 0.05, 5) : null;
+  };
+  for (const side of [1, -1]) {
+    const sc = sidePlanar(side);
+    for (const w of s.windows) {
+      const outline = windowOutline(w);
+      if (!outline) continue;
+      const xc = (w.x0 + w.x1) / 2;
+      const d = doorAt(xc);
+      const frameZone = d ? sided(d.zone, side) : sided(rearBodyBase, side);
+      const poly = side > 0 ? outline : outline.slice().reverse();
+      // black seal / frame round the glass, then the glass
+      drape(mb, sc, polyPatch(offsetPoly(poly, 0.016), 2, 1), frameZone, 'black', 0.003, 1);
+      drape(mb, sc, polyPatch(poly, 3, 1), w.zone ? sided(w.zone, side) : null, 'glass', 0.006, 2);
+    }
+  }
+
+  // ── front: headlamps (front radial), grille per style / brand face (front planar) ──
   const fr = frontRadial();
+  const fp = frontPlanar();
   const nose = topEdge(s.xF);
-  const aFace = angAtX(s.xF, true);
-  let lampInnerZ = hw - 0.42;
+  const accent: Tone = s.chrome ? 'chrome' : 'black';
+  const bigGrille = s.grilleStyle === 'bars' || s.grilleStyle === 'large' || s.grilleStyle === 'vmotion';
+  let lampInnerZ = hw - (s.lampStyle === 'round' ? 0.37 : s.grilleStyle === 'vizor' || s.grilleStyle === 'slim' || s.grilleStyle === 'closed' ? 0.5 : bigGrille ? 0.4 : 0.45);
+  lampInnerZ = Math.max(lampInnerZ, 0.2);
+  const aIn = angAtZ(lampInnerZ, true);
+  const aBack = (dx: number) => angAtX(s.xF - dx, true);
+  if (s.grilleStyle === 'vizor') {
+    // full-width gloss black visor carrying the lamps and the badge (lamps drawn over it)
+    const aw = aBack(0.4);
+    put(fr, edgeBand(-aw, aw, true, () => 0.026, (t) => 0.13 - 0.03 * Math.abs(2 * t - 1), 24), 'grille', 'black', 0.004, 1, 2, 1);
+  }
   for (const side of [1, -1]) {
     const zone = sided('headlamp', side);
     let lens: P2[];
-    let drl: P2[] | null = null;
+    const drls: P2[][] = [];
+    let reflector = true;
     switch (s.lampStyle) {
       case 'round': {
-        const ac = angAtZ(hw - 0.27, true);
-        lens = superellipse(ac, nose - 0.11, 0.085 / 1.05, 0.085, 2, 20);
-        lampInnerZ = hw - 0.36;
-        put(fr, mirrorA(lens, side), zone, 'lamp', 0.005, 1);
-        put(fr, mirrorA(superellipse(ac, nose - 0.11, 0.04 / 1.05, 0.04, 2, 14), side), zone, 'chrome', 0.008, 2, 2);
+        const ac = angAtZ(hw - 0.25, true);
+        put(fr, mirrorA(superellipse(ac, nose - 0.115, 0.095 / 1.05, 0.095, 2, 24), side), zone, 'lamp', 0.005, 1);
+        put(fr, mirrorA(superellipse(ac, nose - 0.115, 0.07 / 1.05, 0.07, 2, 20), side), zone, 'drl', 0.007, 2, 1, 2);
+        put(fr, mirrorA(superellipse(ac, nose - 0.115, 0.055 / 1.05, 0.055, 2, 18), side), zone, 'lamp', 0.009, 3, 2, 2);
+        put(fr, mirrorA(superellipse(ac, nose - 0.115, 0.03 / 1.05, 0.03, 2, 14), side), zone, 'chrome', 0.011, 4, 1, 2);
         continue;
       }
       case 'tall':
-        lampInnerZ = hw - 0.36;
-        lens = edgeBand(angAtZ(lampInnerZ, true), angAtX(s.xF - 0.34, true), true, () => 0.02, (t) => lerp(0.2, 0.3, t));
-        drl = edgeBand(angAtZ(lampInnerZ + 0.03, true), angAtX(s.xF - 0.3, true), true, () => 0.035, () => 0.03);
+        lens = edgeBand(aIn, aBack(0.34), true, () => 0.02, (t) => lerp(0.22, 0.32, t));
+        drls.push(edgeBand(angAtZ(lampInnerZ + 0.03, true), aBack(0.3), true, () => 0.035, () => 0.03));
         break;
       case 'square':
-        lampInnerZ = hw - 0.36;
-        lens = edgeBand(angAtZ(lampInnerZ, true), angAtX(s.xF - 0.22, true), true, () => 0.025, () => 0.15);
+        lens = edgeBand(aIn, aBack(0.24), true, () => 0.042, () => 0.165);
+        drls.push(edgeBand(angAtZ(lampInnerZ + 0.02, true), aBack(0.22), true, () => 0.03, () => 0.018));
         break;
       case 'swept':
-        lampInnerZ = hw - 0.42;
-        lens = edgeBand(angAtZ(lampInnerZ, true), angAtX(s.xF - 0.5, true), true, () => 0.016, (t) => lerp(0.13, 0.05, t));
-        drl = edgeBand(angAtZ(lampInnerZ + 0.04, true), angAtX(s.xF - 0.4, true), true, () => 0.03, () => 0.022);
+        lens = edgeBand(aIn, aBack(0.62), true, () => 0.032, (t) => lerp(0.145, 0.05, Math.pow(t, 0.8)), 8);
+        drls.push(edgeBand(angAtZ(lampInnerZ + 0.035, true), aBack(0.55), true, () => 0.044, () => 0.02, 8));
         break;
+      case 'boomerang': {
+        lens = edgeBand(aIn, aBack(0.6), true, () => 0.032, (t) => lerp(0.13, 0.05, Math.pow(t, 0.8)), 8);
+        drls.push(edgeBand(angAtZ(lampInnerZ + 0.03, true), aBack(0.52), true, () => 0.042, () => 0.018, 8));
+        // the DRL turns down the inner edge of the lamp: the "boomerang"
+        const a0 = angAtZ(lampInnerZ + 0.03, true);
+        const a1 = angAtZ(lampInnerZ + 0.06, true);
+        const yt = topEdge(planXAt(a0, true)) - 0.044;
+        drls.push([[a0, yt - 0.16], [a1, yt - 0.15], [a1, yt], [a0, yt]]);
+        break;
+      }
       case 'split':
-        lampInnerZ = hw - 0.4;
-        lens = edgeBand(angAtZ(lampInnerZ, true), angAtX(s.xF - 0.42, true), true, () => 0.016, (t) => lerp(0.04, 0.03, t));
-        put(fr, mirrorA(superellipse(angAtZ(hw - 0.25, true), s.bumperTopF + 0.05, 0.1 / 1.05, 0.055, 4, 18), side), zone, 'lamp', 0.005, 1);
-        put(fr, mirrorA(superellipse(angAtZ(hw - 0.25, true), s.bumperTopF + 0.05, 0.05 / 1.05, 0.03, 2.5, 14), side), zone, 'chrome', 0.008, 2, 2);
+        lens = edgeBand(aIn, aBack(0.45), true, () => 0.032, (t) => lerp(0.04, 0.03, t));
+        put(fr, mirrorA(superellipse(angAtZ(hw - 0.26, true), s.bumperTopF + 0.05, 0.1 / 1.05, 0.06, 4, 18), side), zone, 'lamp', 0.005, 1);
+        put(fr, mirrorA(superellipse(angAtZ(hw - 0.26, true), s.bumperTopF + 0.05, 0.05 / 1.05, 0.032, 2.5, 14), side), zone, 'chrome', 0.008, 2, 2);
+        reflector = false;
+        drls.push(inset(lens, 0.9, 0.4));
         break;
       default: // slim / light-bar
-        lampInnerZ = hw - 0.44;
-        lens = edgeBand(angAtZ(lampInnerZ, true), angAtX(s.xF - 0.42, true), true, () => 0.016, (t) => lerp(0.085, 0.05, t));
-        drl = edgeBand(angAtZ(lampInnerZ + 0.03, true), angAtX(s.xF - 0.36, true), true, () => 0.026, () => 0.016);
+        lens = edgeBand(aIn, aBack(0.46), true, () => 0.032, (t) => lerp(0.105, 0.062, t), 8);
+        drls.push(edgeBand(angAtZ(lampInnerZ + 0.03, true), aBack(0.4), true, () => 0.042, () => 0.016, 8));
     }
     put(fr, mirrorA(lens, side), zone, 'lamp', 0.005, 1, 3, 3);
-    if (s.lampStyle !== 'split') put(fr, mirrorA(inset(lens, 0.4, 0.45, -0.005), side), zone, 'chrome', 0.008, 2, 2, 2);
-    if (drl) put(fr, mirrorA(drl, side), zone, 'drl', 0.009, 3, 2, 2);
+    if (reflector) {
+      if (s.grilleStyle === 'kidney') {
+        // twin round projectors under one lens
+        const yc = lens.reduce((v, p) => v + p[1], 0) / lens.length - 0.005;
+        for (const z of [lampInnerZ + 0.07, lampInnerZ + 0.19]) put(fr, mirrorA(superellipse(angAtZ(z, true), yc, 0.042 / 1.05, 0.04, 2, 16), side), zone, 'drl', 0.008, 2, 1, 2);
+      } else put(fr, mirrorA(inset(lens, 0.42, 0.42, -0.006), side), zone, 'chrome', 0.008, 2, 2, 2);
+    }
+    for (const d of drls) put(fr, mirrorA(d, side), zone, 'drl', 0.01, 3, 1, 2);
   }
-  void aFace;
-  const fp = frontPlanar();
   if (s.lampStyle === 'light-bar') {
     for (const side of [1, -1]) put(fp, mirrorA([[0, nose - 0.04], [lampInnerZ + 0.02, nose - 0.04], [lampInnerZ + 0.02, nose - 0.024], [0, nose - 0.024]], side), sided('headlamp', side), 'drl', 0.007, 2, 1, 4);
   }
 
-  // grille (front planar)
+  // grille (front planar, (z, y))
   const gi = lampInnerZ - 0.03;
-  const gTop = nose - 0.04;
+  const gTop = nose - 0.035;
   const gBot = Math.max(s.bumperTopF - 0.03, gTop - 0.2);
   const grille = (poly: P2[], tone: Tone = 'black', off = 0.004, layer = 1) => put(fp, poly, 'grille', tone, off, layer, 3, 4);
-  const bars = (half: number, y0: number, y1: number, n: number) => {
+  /** Grille opening with a chrome (brand) or gloss-black surround. */
+  const framed = (poly: P2[], rim = 0.018) => {
+    grille(offsetPoly(poly, rim), accent, 0.003, 1);
+    grille(poly, 'black', 0.005, 2);
+  };
+  const bars = (half: number, y0: number, y1: number, n: number, tone: Tone = 'chrome', t = 0.006) => {
     for (let k = 1; k <= n; k++) {
       const y = lerp(y0, y1, k / (n + 1));
-      grille([[-half, y - 0.006], [half, y - 0.006], [half, y + 0.006], [-half, y + 0.006]], 'chrome', 0.007, 3);
+      grille([[-half, y - t], [half, y - t], [half, y + t], [-half, y + t]], tone, 0.007, 3);
     }
   };
   let grilleLow = gBot;
+  let badgeY: number | null = (gTop + gBot) / 2;
   switch (s.grilleStyle) {
     case 'kidney':
       for (const c of [-1, 1]) {
@@ -699,35 +822,77 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
         const hh = (gTop - s.bumperTopF + 0.04) / 2;
         grille(superellipse(cz, yc, half, hh, 4.5, 24), 'chrome', 0.003, 1);
         grille(superellipse(cz, yc, half - 0.016, hh - 0.016, 4.5, 24), 'black', 0.005, 2);
+        for (let k = 1; k <= 6; k++) {
+          const z = cz - half + (2 * half * k) / 7;
+          grille([[z - 0.004, yc - hh + 0.03], [z + 0.004, yc - hh + 0.03], [z + 0.004, yc + hh - 0.03], [z - 0.004, yc + hh - 0.03]], 'chrome', 0.007, 3);
+        }
       }
       grilleLow = s.bumperTopF - 0.04;
+      badgeY = null;
       break;
     case 'hexagonal': {
       const yb = s.bumperTopF - 0.17;
-      grille([[-gi * 0.62, yb], [gi * 0.62, yb], [gi * 0.95, (gTop + yb) / 2 + 0.03], [gi * 0.82, gTop], [-gi * 0.82, gTop], [-gi * 0.95, (gTop + yb) / 2 + 0.03]]);
+      framed([[-gi * 0.62, yb], [gi * 0.62, yb], [gi * 0.95, (gTop + yb) / 2 + 0.03], [gi * 0.82, gTop], [-gi * 0.82, gTop], [-gi * 0.95, (gTop + yb) / 2 + 0.03]], 0.014);
       grilleLow = yb;
+      badgeY = gTop - 0.06;
       break;
     }
     case 'trapezoid': {
-      const yb = s.bumperTopF - 0.13;
-      grille([[-gi * 1.02, yb], [gi * 1.02, yb], [gi * 0.84, gTop - 0.02], [-gi * 0.84, gTop - 0.02]]);
-      bars(gi * 0.8, yb, gTop - 0.02, 2);
+      // wider at the bottom (Ford / Toyota family)
+      const yb = s.bumperTopF - 0.12;
+      const poly = filletPoly([[-gi * 1.04, yb], [gi * 1.04, yb], [gi * 0.8, gTop - 0.015], [-gi * 0.8, gTop - 0.015]], 0.04, 4);
+      if (s.chrome) framed(poly, 0.014);
+      else grille(poly);
+      bars(gi * 0.78, yb, gTop - 0.015, 2, 'frame', 0.004);
       grilleLow = yb;
+      badgeY = (gTop + yb) / 2 + 0.01;
+      break;
+    }
+    case 'vmotion': {
+      // black trapezoid with a chrome V running down to the bumper
+      const yb = s.bumperTopF - 0.15;
+      grille(filletPoly([[-gi * 0.42, yb], [gi * 0.42, yb], [gi * 0.95, gTop], [-gi * 0.95, gTop]], 0.03, 3));
+      for (const c of [-1, 1]) {
+        const band: P2[] = [[c * gi * 0.99, gTop + 0.004], [c * (gi * 0.99 - 0.05), gTop + 0.004], [c * 0.0, yb - 0.005], [c * 0.0, yb - 0.055]];
+        grille(c > 0 ? band : band.reverse(), 'chrome', 0.007, 3);
+      }
+      bars(gi * 0.7, yb + 0.05, gTop, 2, 'frame', 0.004);
+      grilleLow = yb - 0.05;
+      badgeY = gTop - 0.05;
+      break;
+    }
+    case 'vizor':
+      // the visor is the grille; a slim intake below it
+      grille([[-gi * 0.7, s.bumperTopF - 0.02], [gi * 0.7, s.bumperTopF - 0.02], [gi * 0.75, s.bumperTopF + 0.02], [-gi * 0.75, s.bumperTopF + 0.02]], 'black', 0.004, 1);
+      grilleLow = s.bumperTopF - 0.02;
+      badgeY = nose - 0.07;
+      break;
+    case 'bars': {
+      // tall commercial grille with thick horizontal bars
+      const yb = s.bumperTopF - 0.06;
+      const poly = superellipse(0, (gTop + yb) / 2, gi, (gTop - yb) / 2, 6, 28);
+      framed(poly, 0.016);
+      bars(gi - 0.02, yb, gTop, 3, s.chrome ? 'chrome' : 'frame', 0.014);
+      grilleLow = yb;
+      badgeY = (gTop + yb) / 2 + (gTop - yb) / 8;
       break;
     }
     case 'slim':
       grille([[-gi, gTop - 0.055], [gi, gTop - 0.055], [gi, gTop], [-gi, gTop]], 'black', 0.004, 1);
       grilleLow = gTop - 0.055;
+      badgeY = gTop - 0.028;
       break;
     case 'closed':
       grille([[-gi * 0.8, gTop - 0.05], [gi * 0.8, gTop - 0.05], [gi * 0.85, gTop - 0.012], [-gi * 0.85, gTop - 0.012]], 'black', 0.004, 1);
       grilleLow = gTop - 0.05;
+      badgeY = gTop - 0.09;
       break;
     case 'split':
       for (const c of [-1, 1]) {
         const p: P2[] = [[c * 0.05, gBot], [c * gi, gBot], [c * gi, gTop], [c * 0.05, gTop]];
         grille(c > 0 ? p : p.reverse());
       }
+      if (s.chrome) bars(gi, gBot, gTop, 1, 'chrome', 0.008);
       break;
     case 'shield': {
       const yb = s.bumperTopF - 0.17;
@@ -735,27 +900,29 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
       grille(sh, 'chrome', 0.003, 1);
       grille(inset(sh, 0.8, 0.85, 0.006), 'black', 0.005, 2);
       grilleLow = yb;
+      badgeY = null;
       break;
     }
     case 'large': {
       const yb = s.bumperTopF - 0.1;
-      grille(superellipse(0, (gTop + yb) / 2, gi + 0.015, (gTop - yb) / 2 + 0.012, 6, 28), 'chrome', 0.003, 1);
-      grille(superellipse(0, (gTop + yb) / 2, gi - 0.01, (gTop - yb) / 2 - 0.01, 6, 28), 'black', 0.005, 2);
-      bars(gi - 0.03, yb, gTop, 3);
+      framed(superellipse(0, (gTop + yb) / 2, gi - 0.004, (gTop - yb) / 2, 6, 28), 0.016);
+      bars(gi - 0.03, yb, gTop, 3, s.chrome ? 'chrome' : 'frame');
       grilleLow = yb;
       break;
     }
     default: // wide
       grille(superellipse(0, (gTop + gBot) / 2, gi, (gTop - gBot) / 2, 5, 28), 'black', 0.004, 1);
-      bars(gi - 0.04, gBot, gTop, 1);
+      bars(gi - 0.04, gBot, gTop, 1, s.chrome ? 'chrome' : 'frame');
   }
+  if (badgeY !== null) put(fp, superellipse(0, badgeY, 0.052, 0.03, 2.4, 16), 'grille', 'chrome', 0.011, 4, 1, 2);
+
   // lower grille, fogs, radar, sensors
   const ybF0 = botY(s.xF - 0.05);
   const lgTop = Math.min(grilleLow - 0.05, s.bumperTopF - 0.12);
-  const lgBot = Math.max(ybF0 + 0.05, lgTop - (s.grilleStyle === 'slim' || s.grilleStyle === 'closed' ? 0.17 : 0.12));
-  const lgHalf = s.W * (s.grilleStyle === 'slim' ? 0.29 : 0.25);
+  const lgBot = Math.max(ybF0 + 0.05, lgTop - (s.grilleStyle === 'slim' || s.grilleStyle === 'closed' || s.grilleStyle === 'vizor' ? 0.17 : 0.12));
+  const lgHalf = s.W * (s.grilleStyle === 'slim' || s.grilleStyle === 'vizor' ? 0.29 : 0.25);
   if (lgTop - lgBot > 0.04) {
-    put(fp, [[-lgHalf, lgBot], [lgHalf, lgBot], [lgHalf * 1.05, lgTop], [-lgHalf * 1.05, lgTop]], 'front_lower_grille', 'black', 0.004, 1, 2, 4);
+    put(fp, filletPoly([[-lgHalf, lgBot], [lgHalf, lgBot], [lgHalf * 1.05, lgTop], [-lgHalf * 1.05, lgTop]], 0.03, 3), 'front_lower_grille', 'black', 0.004, 1, 2, 4);
     put(fp, superellipse(0, (lgTop + lgBot) / 2, 0.055, 0.032, 4, 12), 'front_radar', 'frame', 0.007, 2, 1, 3);
   }
   for (const side of [1, -1]) {
@@ -768,49 +935,69 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
     put(rp, superellipse(zc * s.W, s.bumperTopR - 0.06, 0.013, 0.013, 2, 10), 'rear_parking_sensors', 'frame', 0.004, 2, 1, 2);
   }
 
-  // rear lamps (rear radial): smoked lens + bright light element + reversing segment
+  // ── rear lamps (rear radial): smoked lens + lit element + reversing segment, per rear lamp style ──
   const rr2 = rearRadial();
   const yRT = topEdge(s.xR + 0.05);
+  const aZR = (z: number) => angAtZ(z, false);
+  const aBackR = (dx: number) => angAtX(s.xR + dx, false);
   for (const side of [1, -1]) {
     const zone = sided('rear_lamp', side);
     if (s.rear === 'bed') continue;
     let lens: P2[];
     if (isVan) {
-      const a0 = angAtZ(hw - 0.12, false);
-      const a1 = angAtX(s.xR + 0.06, false);
+      const a0 = aZR(hw - 0.12);
+      const a1 = aBackR(0.06);
       lens = [[a0, s.bumperTopR + 0.04], [a1, s.bumperTopR + 0.04], [a1, s.bumperTopR + 0.6], [a0, s.bumperTopR + 0.6]];
     } else {
-      const tall = s.lampStyle === 'tall' || s.profile === 'estate' || s.profile === 'mpv' || s.profile === 'suv-boxy';
-      const top = s.rear === 'boot' ? yRT - 0.015 : yRT + (tall ? 0.16 : 0.07);
-      const aOut = angAtX(s.xR + (s.rear === 'boot' ? 0.3 : 0.2), false);
-      if (s.lampStyle === 'round') {
-        const ac = angAtZ(hw - 0.22, false);
+      // top of the lamp: the boot deck on a saloon, just above the belt on a tailgate
+      // on a steep tailgate the lamps climb into the D-pillar; on a sloping one (coupe SUV, fastback) they stay at the shoulder
+      const top = s.rear === 'boot' ? yRT - 0.012 : yRT + (s.profile === 'suv-coupe' || s.profile === 'fastback' ? 0.025 : 0.1);
+      const st = s.rearLampStyle;
+      if (st === 'round') {
+        const ac = aZR(hw - 0.22);
         put(rr2, mirrorA(superellipse(ac, top - 0.09, 0.07 / 1.05, 0.07, 2, 16), side), zone, 'rearlamp', 0.005, 1, 2, 3);
-        put(rr2, mirrorA(superellipse(angAtZ(hw - 0.4, false), top - 0.09, 0.06 / 1.05, 0.06, 2, 16), side), zone, 'rearlamp', 0.005, 1, 2, 3);
+        put(rr2, mirrorA(superellipse(aZR(hw - 0.4), top - 0.09, 0.06 / 1.05, 0.06, 2, 16), side), zone, 'rearlamp', 0.005, 1, 2, 3);
         put(rr2, mirrorA(superellipse(ac, top - 0.09, 0.035 / 1.05, 0.035, 2, 12), side), zone, 'redglow', 0.008, 2, 1, 3);
         continue;
       }
-      if (tall) lens = [[angAtZ(hw - 0.17, false), s.bumperTopR + 0.05], [aOut, s.bumperTopR + 0.05], [aOut, top], [angAtZ(hw - 0.17, false), top]];
-      else if (s.lampStyle === 'square') lens = [[angAtZ(hw - 0.34, false), top - 0.2], [aOut, top - 0.2], [aOut, top - 0.02], [angAtZ(hw - 0.34, false), top - 0.02]];
-      else if (s.lampStyle === 'swept') lens = [[angAtZ(hw - 0.4, false), top - 0.1], [aOut, top - 0.2], [aOut, top], [angAtZ(hw - 0.4, false), top - 0.03]];
-      else lens = [[angAtZ(hw - 0.46, false), top - 0.08], [aOut, top - 0.11], [aOut, top - 0.005], [angAtZ(hw - 0.46, false), top - 0.02]];
+      if (st === 'tall') {
+        const a0 = aZR(hw - 0.2);
+        const y0 = s.bumperTopR + 0.06;
+        const y1 = top + (s.rear === 'boot' ? 0 : 0.2);
+        lens = [[a0, y0], [aBackR(0.1), y0 + 0.02], [aBackR(0.07), y1], [a0, y1 - 0.02]];
+      } else {
+        const h = st === 'bar' ? 0.1 : s.rear === 'boot' ? 0.13 : 0.23;
+        const inZ = hw - (st === 'split' ? 0.6 : st === 'bar' ? 0.42 : 0.5);
+        const wrap = s.rear === 'boot' ? 0.36 : 0.3;
+        lens = [
+          [aZR(inZ), top - h * 0.62],
+          [aZR(hw - 0.14), top - h],
+          [aBackR(wrap - 0.02), top - h * 0.62],
+          [aBackR(wrap), top - 0.006],
+          [aZR(inZ), top - 0.006]
+        ];
+      }
+      if (st === 'split') put(rr2, mirrorA([[aZR(hw - 0.335), top - 0.17], [aZR(hw - 0.345), top - 0.17], [aZR(hw - 0.345), top + 0.006], [aZR(hw - 0.335), top + 0.006]], side), null, 'black', 0.012, 4, 1, 2);
+      if (st === 'bar') put(rp, mirrorA([[0, top - 0.058], [hw - 0.44, top - 0.058], [hw - 0.44, top - 0.04], [0, top - 0.04]], side), zone, 'redglow', 0.006, 2, 1, 6);
     }
     put(rr2, mirrorA(lens, side), zone, 'rearlamp', 0.005, 1, 3, 3);
-    put(rr2, mirrorA(inset(lens, 0.82, 0.32, 0.01), side), zone, 'redglow', 0.008, 2, 2, 2);
+    put(rr2, mirrorA(inset(lens, 0.84, 0.34, 0.006), side), zone, 'redglow', 0.008, 2, 2, 2);
     if (!isVan) {
       const ca = lens.reduce((v, p) => v + p[0], 0) / lens.length;
       const cb = lens.reduce((v, p) => v + p[1], 0) / lens.length;
       const inner = Math.min(...lens.map((p) => p[0]));
-      put(rr2, mirrorA(superellipse(lerp(inner, ca, 0.45), cb - 0.02, 0.03, 0.016, 4, 10), side), zone, 'chrome', 0.01, 3, 1, 3);
-    }
-    if (s.lampStyle === 'light-bar' && !isVan) {
-      const top = s.rear === 'boot' ? yRT - 0.015 : yRT + 0.07;
-      put(rp, mirrorA([[0, top - 0.06], [hw - 0.46, top - 0.06], [hw - 0.46, top - 0.042], [0, top - 0.042]], side), zone, 'redglow', 0.006, 2, 1, 4);
+      put(rr2, mirrorA(superellipse(lerp(inner, ca, 0.45), cb - 0.02, 0.03, 0.014, 4, 10), side), zone, 'chrome', 0.01, 3, 1, 3);
     }
   }
+
   // camera, high-level brake lamp
   const plateYRear = s.rearPlateLow ? (botY(s.xR) + s.bumperTopR) / 2 + 0.01 : s.rear === 'boot' ? Math.min(yRT - 0.15, s.bumperTopR + 0.14) : s.bumperTopR + 0.13;
-  if (s.rear !== 'bed') put(rp, superellipse(0, plateYRear + PLATE_H / 2 + 0.035, 0.03, 0.016, 4, 12), 'reversing_camera', 'black', 0.006, 2, 1, 3);
+  if (s.rear !== 'bed') {
+    put(rp, superellipse(0, plateYRear + PLATE_H / 2 + 0.035, 0.03, 0.016, 4, 12), 'reversing_camera', 'black', 0.006, 2, 1, 3);
+    // maker's badge on the tailgate / boot lid / van door
+    const by = isVan ? s.belt - 0.05 : s.rear === 'boot' ? (plateYRear + PLATE_H / 2 + yRT) / 2 + 0.01 : Math.min(yRT - 0.05, plateYRear + PLATE_H / 2 + 0.13);
+    put(rp, superellipse(isVan ? -0.28 : 0, by, 0.05, 0.028, 2.4, 16), rearOpening(isVan ? -1 : 1), 'chrome', 0.008, 2, 1, 2);
+  }
   else {
     box(mb, 'reversing_camera', 'black', [xRearFaceTop - 0.003, s.belt - 0.05, 0], [0.006, 0.014, 0.03], 3);
     box(mb, 'high_level_brake_lamp', 'redglow', [cabinRearX - 0.005, s.roofY - 0.035, 0], [0.006, 0.012, 0.12], 2);
@@ -869,12 +1056,14 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
   const R = s.wheelR;
   const rr = s.rimR;
   const tw = s.tyreW;
-  const spokes = isVan ? 6 : s.profile === 'pickup' ? 6 : 5;
+  // vans / pick-ups: six broad spokes; cars: five twin spokes (ten), the commonest alloy pattern
+  const spokes = isVan || s.profile === 'pickup' ? 6 : 5;
+  const twin = !(isVan || s.profile === 'pickup');
   for (const [ax, fr] of [[s.axleF, 'f'], [s.axleR, 'r']] as const) {
     for (const side of [1, -1]) {
       const zone = `wheel_${fr}${side < 0 ? 'l' : 'r'}`;
       const c: V3 = [ax, R, side * s.wheelZ];
-      wheel(mb, zone, c, side, R, rr, tw, spokes);
+      wheel(mb, zone, c, side, R, rr, tw, spokes, twin);
     }
   }
 
@@ -962,15 +1151,25 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
   // ── plates ──
   const plates: PlatePlacement[] = [];
   const platePlace = (kind: 'front' | 'rear', y: number) => {
-    const h = (kind === 'front' ? fp : rp).cast(0, y);
+    const c = kind === 'front' ? fp : rp;
+    const h = c.cast(0, y);
     if (!h) return;
-    let n = h.n;
-    n = norm([n[0], clamp(n[1], -0.35, 0.35), 0]);
+    // a flat plate on a curved bumper: mild tilt only, and stood off so no corner sinks into the panel
+    const n = norm([h.n[0], clamp(h.n[1], -0.2, 0.2), 0]);
     const up = norm(sub([0, 1, 0], scale(n, n[1])));
+    let off = 0;
+    for (const dz of [-PLATE_W / 2, 0, PLATE_W / 2]) {
+      for (const dy of [-PLATE_H / 2, PLATE_H / 2]) {
+        const hc = c.cast(dz, y + dy);
+        if (hc) off = Math.max(off, dot(sub(hc.p, h.p), n));
+      }
+    }
     const zone = kind === 'front' ? 'front_bumper' : s.rearPlateLow ? 'rear_bumper' : rearOpening(1);
-    plates.push({ kind, zone, center: add(h.p, scale(n, 0.012)), normal: n, up, width: PLATE_W, height: PLATE_H });
+    plates.push({ kind, zone, center: add(h.p, scale(n, off + 0.01)), normal: n, up, width: PLATE_W, height: PLATE_H });
   };
-  platePlace('front', grilleLow < s.bumperTopF - 0.08 ? Math.max(lgTop + 0.02, grilleLow + 0.07) : (lgTop + s.bumperTopF) / 2);
+  // front plate: over the lower grille / bumper, clear of a V-motion grille's point
+  const plateYF = s.grilleStyle === 'vmotion' ? Math.max(lgBot + PLATE_H / 2, grilleLow - PLATE_H / 2 - 0.01) : grilleLow < s.bumperTopF - 0.08 ? Math.max(lgTop + 0.02, grilleLow + 0.07) : (lgTop + s.bumperTopF) / 2;
+  platePlace('front', plateYF);
   if (s.rear === 'bed') plates.push({ kind: 'rear', zone: 'rear_bumper', center: [s.xR - 0.006, (botY(s.xR) - 0.01 + s.bumperTopR - 0.04) / 2, 0], normal: [-1, 0, 0], up: [0, 1, 0], width: PLATE_W, height: PLATE_H });
   else platePlace('rear', plateYRear);
 
@@ -1004,7 +1203,7 @@ export function buildCarMesh(spec: CarSpec): CarMesh {
 }
 
 /** Wheel: tyre with rounded shoulders, alloy rim lip, spokes, hub, brake disc and caliper. Outer face toward `side`. */
-function wheel(mb: MeshBuilder, zone: string, c: V3, side: number, R: number, rr: number, tw: number, spokes: number): void {
+function wheel(mb: MeshBuilder, zone: string, c: V3, side: number, R: number, rr: number, tw: number, spokes: number, twin = false): void {
   const h = tw / 2;
   const sw = rr + 0.45 * (R - rr);
   // tyre profile [radius, axial offset] from the inner bead round the tread to the outer bead
@@ -1046,18 +1245,25 @@ function wheel(mb: MeshBuilder, zone: string, c: V3, side: number, R: number, rr
   // spokes: tapered, dished bars from the hub to the lip
   const rh = 0.065;
   const rs = rr - 0.022;
+  const arms: number[] = [];
   for (let k = 0; k < spokes; k++) {
     const th = (k / spokes) * Math.PI * 2 + Math.PI / 2;
+    if (twin) arms.push(th - 0.13, th + 0.13);
+    else arms.push(th);
+  }
+  const wHub = twin ? 0.034 : 0.06;
+  const wLip = twin ? 0.024 : 0.04;
+  for (const th of arms) {
     const u: V3 = [Math.cos(th), Math.sin(th), 0];
     const v: V3 = [-Math.sin(th), Math.cos(th), 0];
     const pts = (r: number, w: number, dz: number): [V3, V3] => [
       add(add(c, scale(u, r)), add(scale(v, -w / 2), [0, 0, side * dz])),
       add(add(c, scale(u, r)), add(scale(v, w / 2), [0, 0, side * dz]))
     ];
-    const [a0, b0] = pts(rh, 0.06, h - 0.01);
-    const [a1, b1] = pts(rs, 0.04, h - 0.026);
-    const [a0d, b0d] = pts(rh, 0.06, h - 0.04);
-    const [a1d, b1d] = pts(rs, 0.04, h - 0.06);
+    const [a0, b0] = pts(rh, wHub, h - 0.01);
+    const [a1, b1] = pts(rs, wLip, h - 0.026);
+    const [a0d, b0d] = pts(rh, wHub, h - 0.04);
+    const [a1d, b1d] = pts(rs, wLip, h - 0.06);
     const out: V3 = [0, 0, side];
     const nTop = norm(add(out, scale(u, 0.15)));
     mb.tri(zone, 'rim', a0, a1, b1, nTop, nTop, nTop, 2);

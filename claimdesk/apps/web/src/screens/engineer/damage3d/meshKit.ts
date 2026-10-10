@@ -407,3 +407,94 @@ export function box(mb: MeshBuilder, zone: string | null, tone: Tone, c: V3, hal
     mb.tri(zone, tone, a, cc, d, n, n, n, layer);
   }
 }
+
+// ── 2D polygon helpers (outlines draped onto the body: windows, lamps) ──
+
+type P2 = [number, number];
+
+function signedArea2(poly: readonly P2[]): number {
+  let a = 0;
+  for (let k = 0; k < poly.length; k++) {
+    const p = poly[k]!;
+    const q = poly[(k + 1) % poly.length]!;
+    a += p[0] * q[1] - q[0] * p[1];
+  }
+  return a / 2;
+}
+
+/** Drop points closer than `eps` to the previous one (closed polygon). */
+export function dedupePoly(poly: readonly P2[], eps = 0.004): P2[] {
+  const out: P2[] = [];
+  for (const p of poly) {
+    const q = out[out.length - 1];
+    if (!q || Math.hypot(p[0] - q[0], p[1] - q[1]) > eps) out.push(p);
+  }
+  while (out.length > 2 && Math.hypot(out[0]![0] - out[out.length - 1]![0], out[0]![1] - out[out.length - 1]![1]) <= eps) out.pop();
+  return out;
+}
+
+/**
+ * Round every corner of a closed polygon with an arc of radius `r`, limited to 45% of the adjacent edges so short
+ * (already-curved) runs are left alone. Nearly straight vertices are kept as they are.
+ */
+export function filletPoly(poly: readonly P2[], r: number, seg = 4): P2[] {
+  const n = poly.length;
+  if (n < 3 || r <= 0) return poly.slice();
+  const out: P2[] = [];
+  for (let k = 0; k < n; k++) {
+    const p = poly[k]!;
+    const a = poly[(k + n - 1) % n]!;
+    const b = poly[(k + 1) % n]!;
+    const la = Math.hypot(a[0] - p[0], a[1] - p[1]);
+    const lb = Math.hypot(b[0] - p[0], b[1] - p[1]);
+    if (la < 1e-6 || lb < 1e-6) continue;
+    const u: P2 = [(a[0] - p[0]) / la, (a[1] - p[1]) / la];
+    const v: P2 = [(b[0] - p[0]) / lb, (b[1] - p[1]) / lb];
+    const cos = clamp(u[0] * v[0] + u[1] * v[1], -1, 1);
+    const th = Math.acos(cos); // interior angle between the two edges
+    if (th > Math.PI - 0.12) {
+      out.push(p);
+      continue;
+    }
+    let t = r / Math.tan(th / 2);
+    t = Math.min(t, 0.45 * la, 0.45 * lb);
+    const rr = t * Math.tan(th / 2);
+    const p0: P2 = [p[0] + u[0] * t, p[1] + u[1] * t];
+    const p1: P2 = [p[0] + v[0] * t, p[1] + v[1] * t];
+    const bis = norm([u[0] + v[0], u[1] + v[1], 0]);
+    const dc = rr / Math.sin(th / 2);
+    const c: P2 = [p[0] + bis[0] * dc, p[1] + bis[1] * dc];
+    const a0 = Math.atan2(p0[1] - c[1], p0[0] - c[0]);
+    const a1 = Math.atan2(p1[1] - c[1], p1[0] - c[0]);
+    let da = a1 - a0;
+    while (da > Math.PI) da -= 2 * Math.PI;
+    while (da < -Math.PI) da += 2 * Math.PI;
+    for (let i = 0; i <= seg; i++) {
+      const ang = a0 + (da * i) / seg;
+      out.push([c[0] + rr * Math.cos(ang), c[1] + rr * Math.sin(ang)]);
+    }
+  }
+  return dedupePoly(out, 0.0015);
+}
+
+/** Offset a closed, roughly convex polygon outward by `d` (negative = inward), along the averaged edge normals. */
+export function offsetPoly(poly: readonly P2[], d: number): P2[] {
+  const n = poly.length;
+  if (n < 3) return poly.slice();
+  const ccw = signedArea2(poly) > 0;
+  const edgeN = (p: P2, q: P2): P2 => {
+    const ex = q[0] - p[0];
+    const ey = q[1] - p[1];
+    const l = Math.hypot(ex, ey) || 1;
+    return ccw ? [ey / l, -ex / l] : [-ey / l, ex / l];
+  };
+  return poly.map((p, k) => {
+    const a = poly[(k + n - 1) % n]!;
+    const b = poly[(k + 1) % n]!;
+    const n1 = edgeN(a, p);
+    const n2 = edgeN(p, b);
+    const m = norm([n1[0] + n2[0], n1[1] + n2[1], 0]);
+    const cosHalf = Math.max(0.35, m[0] * n1[0] + m[1] * n1[1]);
+    return [p[0] + (m[0] * d) / cosHalf, p[1] + (m[1] * d) / cosHalf] as P2;
+  });
+}

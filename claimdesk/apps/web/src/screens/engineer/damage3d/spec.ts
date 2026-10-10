@@ -9,11 +9,15 @@
  * Axes (metres): x along the car, front = +x; y up from the ground; z across, right (O/S) = +z, left (N/S) = −z.
  */
 import { zoneAppliesToBody, type VehicleBodyType } from './zones';
+import { brandFace, type RearLampStyle } from './brand';
+
+export type { RearLampStyle };
 
 export const PROFILES = ['hatch', 'saloon', 'fastback', 'estate', 'coupe', 'convertible', 'suv', 'suv-boxy', 'suv-coupe', 'mpv', 'van', 'van-high-roof', 'pickup'] as const;
 export type Profile = (typeof PROFILES)[number];
-export type LampStyle = 'slim' | 'swept' | 'round' | 'square' | 'tall' | 'light-bar' | 'split';
-export type GrilleStyle = 'wide' | 'trapezoid' | 'hexagonal' | 'kidney' | 'slim' | 'large' | 'closed' | 'split' | 'shield';
+export type LampStyle = 'slim' | 'swept' | 'round' | 'square' | 'tall' | 'light-bar' | 'split' | 'boomerang';
+/** Data vocabulary (wide … shield) plus brand families used by brand faces (vmotion, vizor, bars). */
+export type GrilleStyle = 'wide' | 'trapezoid' | 'hexagonal' | 'kidney' | 'slim' | 'large' | 'closed' | 'split' | 'shield' | 'vmotion' | 'vizor' | 'bars';
 
 /** One body record from a dimensions file (copy of @ccguk/kb BodyDimensions; everything optional). */
 export interface VehicleDims {
@@ -268,18 +272,18 @@ interface Shape {
 }
 // prettier-ignore
 const SHAPES: Record<Profile, Shape> = {
-  hatch:          { noseDrop: 0.21, noseSetback: 0.15, rake: 28, tumble: 21, inset: 0.075, cornerF: [0.4, 0.21], cornerR: [0.3, 0.12], beltRise: 0.07, frontLift: 0.13, rearLift: 0.17, tailLean: 0.09, crown: 0.03, roofArc: 0.015 },
-  saloon:         { noseDrop: 0.22, noseSetback: 0.18, rake: 25, tumble: 22, inset: 0.08, cornerF: [0.45, 0.27], cornerR: [0.36, 0.16], beltRise: 0.05, frontLift: 0.12, rearLift: 0.16, tailLean: 0.08, crown: 0.03, roofArc: 0.025 },
-  fastback:       { noseDrop: 0.22, noseSetback: 0.18, rake: 25, tumble: 22, inset: 0.08, cornerF: [0.45, 0.27], cornerR: [0.36, 0.16], beltRise: 0.05, frontLift: 0.12, rearLift: 0.16, tailLean: 0.08, crown: 0.03, roofArc: 0.03 },
-  estate:         { noseDrop: 0.21, noseSetback: 0.18, rake: 26, tumble: 20, inset: 0.075, cornerF: [0.45, 0.27], cornerR: [0.28, 0.12], beltRise: 0.05, frontLift: 0.12, rearLift: 0.16, tailLean: 0.07, crown: 0.03, roofArc: 0.012 },
-  coupe:          { noseDrop: 0.24, noseSetback: 0.2, rake: 23, tumble: 24, inset: 0.085, cornerF: [0.45, 0.28], cornerR: [0.36, 0.16], beltRise: 0.05, frontLift: 0.11, rearLift: 0.15, tailLean: 0.08, crown: 0.03, roofArc: 0.03 },
-  convertible:    { noseDrop: 0.24, noseSetback: 0.2, rake: 24, tumble: 22, inset: 0.085, cornerF: [0.45, 0.28], cornerR: [0.36, 0.16], beltRise: 0.04, frontLift: 0.11, rearLift: 0.15, tailLean: 0.08, crown: 0.04, roofArc: 0.03 },
-  suv:            { noseDrop: 0.17, noseSetback: 0.15, rake: 29, tumble: 15, inset: 0.07, cornerF: [0.4, 0.22], cornerR: [0.26, 0.1], beltRise: 0.07, frontLift: 0.14, rearLift: 0.18, tailLean: 0.06, crown: 0.03, roofArc: 0.01 },
+  hatch:          { noseDrop: 0.18, noseSetback: 0.11, rake: 28, tumble: 21, inset: 0.05, cornerF: [0.4, 0.21], cornerR: [0.3, 0.12], beltRise: 0.07, frontLift: 0.13, rearLift: 0.17, tailLean: 0.09, crown: 0.03, roofArc: 0.015 },
+  saloon:         { noseDrop: 0.19, noseSetback: 0.14, rake: 25, tumble: 22, inset: 0.052, cornerF: [0.45, 0.27], cornerR: [0.36, 0.16], beltRise: 0.05, frontLift: 0.12, rearLift: 0.16, tailLean: 0.08, crown: 0.03, roofArc: 0.025 },
+  fastback:       { noseDrop: 0.19, noseSetback: 0.14, rake: 25, tumble: 22, inset: 0.052, cornerF: [0.45, 0.27], cornerR: [0.36, 0.16], beltRise: 0.05, frontLift: 0.12, rearLift: 0.16, tailLean: 0.08, crown: 0.03, roofArc: 0.03 },
+  estate:         { noseDrop: 0.18, noseSetback: 0.13, rake: 26, tumble: 20, inset: 0.05, cornerF: [0.45, 0.27], cornerR: [0.28, 0.12], beltRise: 0.05, frontLift: 0.12, rearLift: 0.16, tailLean: 0.07, crown: 0.03, roofArc: 0.012 },
+  coupe:          { noseDrop: 0.22, noseSetback: 0.16, rake: 23, tumble: 24, inset: 0.055, cornerF: [0.45, 0.28], cornerR: [0.36, 0.16], beltRise: 0.05, frontLift: 0.11, rearLift: 0.15, tailLean: 0.08, crown: 0.03, roofArc: 0.03 },
+  convertible:    { noseDrop: 0.22, noseSetback: 0.16, rake: 24, tumble: 22, inset: 0.055, cornerF: [0.45, 0.28], cornerR: [0.36, 0.16], beltRise: 0.04, frontLift: 0.11, rearLift: 0.15, tailLean: 0.08, crown: 0.04, roofArc: 0.03 },
+  suv:            { noseDrop: 0.125, noseSetback: 0.15, rake: 29, tumble: 15, inset: 0.05, cornerF: [0.4, 0.22], cornerR: [0.26, 0.1], beltRise: 0.07, frontLift: 0.14, rearLift: 0.18, tailLean: 0.06, crown: 0.03, roofArc: 0.01 },
   'suv-boxy':     { noseDrop: 0.14, noseSetback: 0.1, rake: 33, tumble: 8, inset: 0.06, cornerF: [0.3, 0.15], cornerR: [0.16, 0.06], beltRise: 0.02, frontLift: 0.16, rearLift: 0.2, tailLean: 0.025, crown: 0.02, roofArc: 0.0 },
-  'suv-coupe':    { noseDrop: 0.17, noseSetback: 0.16, rake: 27, tumble: 18, inset: 0.075, cornerF: [0.4, 0.23], cornerR: [0.3, 0.12], beltRise: 0.11, frontLift: 0.14, rearLift: 0.18, tailLean: 0.08, crown: 0.03, roofArc: 0.02 },
-  mpv:            { noseDrop: 0.22, noseSetback: 0.13, rake: 24, tumble: 14, inset: 0.06, cornerF: [0.4, 0.23], cornerR: [0.22, 0.09], beltRise: 0.04, frontLift: 0.13, rearLift: 0.16, tailLean: 0.05, crown: 0.03, roofArc: 0.01 },
-  van:            { noseDrop: 0.13, noseSetback: 0.1, rake: 37, tumble: 4, inset: 0.012, cornerF: [0.36, 0.2], cornerR: [0.06, 0.03], beltRise: 0.0, frontLift: 0.12, rearLift: 0.1, tailLean: 0.015, crown: 0.025, roofArc: 0.0 },
-  'van-high-roof':{ noseDrop: 0.13, noseSetback: 0.1, rake: 37, tumble: 4, inset: 0.012, cornerF: [0.36, 0.2], cornerR: [0.06, 0.03], beltRise: 0.0, frontLift: 0.12, rearLift: 0.1, tailLean: 0.015, crown: 0.03, roofArc: 0.0 },
+  'suv-coupe':    { noseDrop: 0.13, noseSetback: 0.16, rake: 27, tumble: 18, inset: 0.05, cornerF: [0.4, 0.23], cornerR: [0.3, 0.12], beltRise: 0.11, frontLift: 0.14, rearLift: 0.18, tailLean: 0.08, crown: 0.03, roofArc: 0.02 },
+  mpv:            { noseDrop: 0.19, noseSetback: 0.13, rake: 24, tumble: 14, inset: 0.045, cornerF: [0.4, 0.23], cornerR: [0.22, 0.09], beltRise: 0.04, frontLift: 0.13, rearLift: 0.16, tailLean: 0.05, crown: 0.03, roofArc: 0.01 },
+  van:            { noseDrop: 0.1, noseSetback: 0.1, rake: 41, tumble: 4, inset: 0.012, cornerF: [0.36, 0.2], cornerR: [0.06, 0.03], beltRise: 0.0, frontLift: 0.12, rearLift: 0.1, tailLean: 0.015, crown: 0.025, roofArc: 0.0 },
+  'van-high-roof':{ noseDrop: 0.1, noseSetback: 0.1, rake: 41, tumble: 4, inset: 0.012, cornerF: [0.36, 0.2], cornerR: [0.06, 0.03], beltRise: 0.0, frontLift: 0.12, rearLift: 0.1, tailLean: 0.015, crown: 0.03, roofArc: 0.0 },
   pickup:         { noseDrop: 0.09, noseSetback: 0.06, rake: 31, tumble: 12, inset: 0.05, cornerF: [0.34, 0.17], cornerR: [0.08, 0.04], beltRise: 0.0, frontLift: 0.16, rearLift: 0.14, tailLean: 0.0, crown: 0.02, roofArc: 0.0 }
 };
 
@@ -344,6 +348,10 @@ export interface CarSpec {
   slidingSideDoor: boolean;
   lampStyle: LampStyle;
   grilleStyle: GrilleStyle;
+  /** Rear lamp design family (brand face, else by silhouette). */
+  rearLampStyle: RearLampStyle;
+  /** Chrome grille surround / bars rather than gloss black (brand face). */
+  chrome: boolean;
   spoiler: boolean;
   softTop: boolean;
   /** Black plastic lower cladding and arch trims (SUV / pick-up look). */
@@ -360,6 +368,14 @@ export function resolveSpec(body: VehicleBodyType, dims?: VehicleDims | null, id
   const profile = resolveProfile(body, dims, identity);
   const d = resolveDims(profile, dims, identity);
   const s = SHAPES[profile];
+  // the face: a specific style in the data wins; the generic ones ("wide" grille, "slim" lamps) give way to the brand
+  const face = brandFace(identity?.make, identity?.model);
+  const dataGrille = normaliseGrilleStyle(dims?.grilleStyle);
+  const dataLamp = normaliseLampStyle(dims?.lampStyle);
+  const grilleStyle: GrilleStyle = dataGrille && dataGrille !== 'wide' && dataGrille !== 'large' ? dataGrille : face.grille ?? d.grilleStyle;
+  const lampStyle: LampStyle = dataLamp && dataLamp !== 'slim' ? dataLamp : face.lamp ?? d.lampStyle;
+  const boxyRear = profile === 'estate' || profile === 'mpv' || profile === 'suv-boxy' || profile === 'van' || profile === 'van-high-roof';
+  const rearLampStyle: RearLampStyle = lampStyle === 'round' && !face.rear ? 'round' : face.rear ?? (boxyRear ? 'tall' : 'wrap');
   const L = d.lengthMm / 1000;
   const W = d.widthMm / 1000;
   const H = d.heightMm / 1000;
@@ -522,7 +538,7 @@ export function resolveSpec(body: VehicleBodyType, dims?: VehicleDims | null, id
 
   const roofHW = clamp(W / 2 - s.inset - glassH * Math.tan((s.tumble * Math.PI) / 180), W * 0.3, W / 2 - 0.02);
   const bed = rear === 'bed' ? { x0: cabinRearX - 0.02, floor: belt - 0.42 } : undefined;
-  const key = [body, profile, d.lengthMm, d.widthMm, d.heightMm, d.wheelbaseMm, d.groundClearanceMm, d.wheelDiameterIn, d.bonnetRatio, d.frontOverhangRatio.toFixed(4), d.glasshouseHeightRatio, d.roofTaper, d.doors, d.roofRails, d.spareOnTailgate, d.slidingSideDoor, d.lampStyle, d.grilleStyle].join('|');
+  const key = [body, profile, d.lengthMm, d.widthMm, d.heightMm, d.wheelbaseMm, d.groundClearanceMm, d.wheelDiameterIn, d.bonnetRatio, d.frontOverhangRatio.toFixed(4), d.glasshouseHeightRatio, d.roofTaper, d.doors, d.roofRails, d.spareOnTailgate, d.slidingSideDoor, lampStyle, grilleStyle, rearLampStyle, face.chrome ? 1 : 0].join('|');
 
   return {
     body,
@@ -576,8 +592,10 @@ export function resolveSpec(body: VehicleBodyType, dims?: VehicleDims | null, id
     roofRails: d.roofRails,
     spareOnTailgate: d.spareOnTailgate,
     slidingSideDoor: d.slidingSideDoor || body === 'panel-van',
-    lampStyle: d.lampStyle,
-    grilleStyle: d.grilleStyle,
+    lampStyle,
+    grilleStyle,
+    rearLampStyle,
+    chrome: !!face.chrome,
     spoiler: rear === 'hatch' && !isVan,
     softTop: profile === 'convertible',
     cladding: profile === 'suv' || profile === 'suv-boxy' || profile === 'pickup' || profile === 'suv-coupe',

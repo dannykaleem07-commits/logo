@@ -76,6 +76,16 @@
 .dm3-area-2d {
   padding: var(--s-3, 12px) var(--s-3, 12px) 44px;
 }
+/* in the 2D views the vehicle line sits above the drawings rather than over them */
+.dm3-area-2d:has(> .dm3-ident) {
+  display: flex;
+  flex-direction: column;
+}
+.dm3-area-2d > .dm3-ident {
+  position: static;
+  order: -1;
+  margin-bottom: var(--s-2, 8px);
+}
 .dm3-viewport {
   position: absolute;
   inset: 0;

@@ -136,7 +136,7 @@ interface Pop {
 export default function DamageModel3D({ bodyType, damage, onChange, selectable, height = 400, forceFallback = false, className = '', vehicle, dims, loadDimensions }: DamageModel3DProps) {
   const body = resolveBody(bodyType || vehicle?.body);
   const vd = useVehicleDims(vehicle, dims, loadDimensions);
-  const spec = useMemo(() => resolveSpec(body, vd.dims, vehicle), [body, vd.dims, vehicle?.body, vehicle?.doors]); // eslint-disable-line react-hooks/exhaustive-deps
+  const spec = useMemo(() => resolveSpec(body, vd.dims, vehicle), [body, vd.dims, vehicle?.body, vehicle?.doors, vehicle?.make, vehicle?.model]); // eslint-disable-line react-hooks/exhaustive-deps
   const model = useMemo(() => vehicleModel(body, spec), [body, spec]);
   const paint = useMemo(() => paintFor(vehicle?.colour), [vehicle?.colour]);
   const reg = vehicle?.registration ? formatRegistration(vehicle.registration) : '';

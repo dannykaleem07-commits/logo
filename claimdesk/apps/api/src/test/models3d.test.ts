@@ -461,6 +461,12 @@ describe('zone mapping dictionary', () => {
     ['rear_window', 'rear_screen'],
     ['door_fl_glass', 'front_door_glass_l'],
     ['Window_Door_RR', 'rear_door_glass_r'],
+    // glass with a side is a side window, never a screen
+    ['Window_FL', 'front_door_glass_l'],
+    ['Window_RR', 'rear_door_glass_r'],
+    ['Glass_Rear_LH', 'rear_door_glass_l'],
+    ['window_front', 'windscreen'],
+    ['Glass_Rear', 'rear_screen'],
     ['sunroof_glass', 'sunroof'],
     ['quarter_glass_l', 'quarter_glass_l'],
     ['wheel_fl', 'wheel_fl'],
