@@ -1,38 +1,21 @@
 import type { FastifyInstance } from 'fastify';
-import { calculateHire, formatGBP, HIRE_END_TRIGGER_TEXT, offHireDeadline, type HireAgreement, type HireCalculation } from '@ccguk/domain';
+import { calculateHire, type HireAgreement, type HireCalculation } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
-import { conflict } from '../errors.js';
 import { parse } from '../schemas/common.js';
 import { correctHireBody, createHireBody, endHireBody, pricingGuideQuery } from '../schemas/hire.js';
 import { recomputeClocks } from '../services/claimView.js';
-import { canAllocateFor } from '../engines.js';
 import { gtaRatesFor } from '../services/kb.js';
-import { gateFor, type OverrideTarget } from '../services/override.js';
-import { hirePricingFor, hirePricingSnapshot, pricingColumns, type HirePricingSnapshot } from '../services/hirePricing.js';
-import {
-  correctHireDates,
-  endsBeforeStart,
-  hireCostedTo,
-  hireDateWarnings,
-  isLateEntry,
-  refuseEndBeforeStart,
-  refuseOverlap,
-  registrationOf,
-  syncDatesInvalidFlag,
-  syncFleetStatus,
-} from '../services/hireCorrection.js';
+import { gateFor } from '../services/override.js';
+import { hirePricingFor, hirePricingSnapshot, type HirePricingSnapshot } from '../services/hirePricing.js';
+import { correctHireDates, hireCostedTo, isLateEntry } from '../services/hireCorrection.js';
+import { createHireRecord, enforceabilityGaps } from '../services/hireCreate.js';
+import { endHireRecord } from '../services/hireEnd.js';
+import { syncReservationFromHire } from '../booking/service.js';
+import { nudgeAutopilot } from '../autopilot/nudge.js';
 import { assertNoHardStop, params, requireClaim } from './helpers.js';
 
-export function enforceabilityGaps(h: HireAgreement): string[] {
-  const gaps: string[] = [];
-  const e = h.enforceability;
-  if (!e.cancellationInfoProvidedAt) gaps.push('CCR 2013 Sch 2 cancellation information not recorded');
-  if (!e.schedule3FormProvidedAt) gaps.push('CCR 2013 Sch 3 cancellation form not recorded');
-  if (!e.expressRequestToStartAt) gaps.push('Express request to start within the cancellation period (reg 36) not recorded');
-  if (!e.cca60fCompliant) gaps.push('RAO art 60F exemption not confirmed (≤12 payments within 12 months, no interest or charges)');
-  if (!h.signedAt) gaps.push('Agreement not signed');
-  return gaps;
-}
+/** Moved to services/hireCreate.ts (SUPREME-AUTOPILOT §B.9); re-exported for existing importers. */
+export { enforceabilityGaps };
 
 /** One correction of a hire, read back from its `hire.correct` audit row. */
 export interface HireCorrectionView {
@@ -118,119 +101,22 @@ export function registerHireRoutes(app: FastifyInstance, ctx: AppContext): void 
     const gate = gateFor(ctx, request);
     assertNoHardStop(claim, gate);
     const body = parse(createHireBody, request.body);
-    const unit = ctx.repos.requireFleetUnit(ctx.db, body.fleetUnitId);
-    const target: OverrideTarget = { claimId: id, entity: 'fleet_units', entityId: unit.id };
-    const endAt = body.endAt;
-    const endTrigger = endAt ? (body.endTrigger ?? 'manual') : undefined;
-    // 2. End before start.
-    const invalid = endsBeforeStart(body.startAt, endAt);
-    if (invalid) refuseEndBeforeStart(gate, body.startAt, endAt!, target);
-    // 3. Allocation with an on-hire unit treated as available: the period overlap decides that case.
-    const policies = ctx.repos.listPolicies(ctx.db);
-    const allocation = canAllocateFor({ ...unit, status: unit.status === 'on_hire' ? 'available' : unit.status }, body.use, policies, body.startAt, ctx.repos.getVehicle(ctx.db, unit.vehicleId));
-    // 4. Period overlap with the car's other hires.
-    refuseOverlap(ctx, gate, unit, { startAt: body.startAt, endAt: endAt ?? null }, target);
-    // 5. Allocation refused (status, use, policy, MOT, tax).
-    if (!allocation.ok) gate.refuse(conflict('ALLOCATION_REFUSED', `${registrationOf(ctx, unit)} cannot be allocated for ${body.use}: ${allocation.reasons.join('; ')}`, { reasons: allocation.reasons }), target);
-
-    const settings = ctx.settings();
-    const now = ctx.now();
-    const hireGroup = body.gtaGroup?.trim().toUpperCase() || unit.gtaGroup;
-    const pricing = hirePricingFor(ctx, id, { ...unit, gtaGroup: hireGroup }, body.startAt, body.clientGtaGroup);
-    const cols = pricingColumns(pricing);
-    const lateEntry = isLateEntry(body.startAt, now);
-    const rates = gtaRatesFor(ctx);
-    // 6. One transaction.
-    const hire = ctx.db.transaction((tx) => {
-      const h = ctx.repos.createHire(
-        tx,
-        {
-          claimId: id,
-          fleetUnitId: unit.id,
-          startAt: body.startAt,
-          ...(endAt ? { endAt, endTrigger } : {}),
-          dailyRatePence: body.dailyRatePence ?? unit.dailyRatePence,
-          vatRate: body.vatRate ?? settings.rateCard.vatRate,
-          gtaGroup: hireGroup,
-          excessPence: body.excessPence,
-          excessWaiverDailyPence: body.excessWaiverDailyPence,
-          additionalDrivers: body.additionalDrivers,
-          deliveredAt: body.deliveredAt,
-          odometerOut: body.odometerOut,
-          signedAt: body.signedAt,
-          enforceability: body.enforceability,
-          needStatementEvidenceId: body.needStatementEvidenceId,
-          fleetDailyRatePence: cols.fleetDailyRatePence,
-          ...(cols.clientGtaGroup ? { clientGtaGroup: cols.clientGtaGroup } : {}),
-          ...(cols.clientGtaDailyRatePence !== null ? { clientGtaDailyRatePence: cols.clientGtaDailyRatePence } : {}),
-          ...(cols.hireGtaDailyRatePence !== null ? { hireGtaDailyRatePence: cols.hireGtaDailyRatePence } : {}),
-          ...(cols.pricingNote ? { pricingNote: cols.pricingNote } : {}),
-        },
-        { allowEndBeforeStart: invalid },
-      );
-      syncFleetStatus(ctx, tx, unit.id, now);
-      ctx.repos.appendEvent(tx, {
+    ctx.repos.requireFleetUnit(ctx.db, body.fleetUnitId);
+    // 2–6 in one transaction (services/hireCreate.ts, SUPREME-AUTOPILOT §B.9): the hire and its on-hire diary row.
+    const created = ctx.db.transaction((tx) =>
+      createHireRecord(ctx, tx, request, gate, {
+        ...body,
         claimId: id,
-        type: 'hire_started',
-        at: body.startAt,
-        summary: `Hire ${h.agreementNumber} started on ${registrationOf(ctx, unit)} (group ${h.gtaGroup}, ${formatGBP(h.dailyRatePence)}/day ex VAT)${lateEntry ? ' — entered late' : ''}`,
-        data: { hireId: h.id, fleetUnitId: unit.id, use: body.use, allocation, lateEntry },
-        attributableTo: 'ccguk',
-        createdBy: request.user.id,
-        recordedAt: now,
-      });
-      if (h.endAt && h.endTrigger) {
-        const deadline = offHireDeadline(h.endTrigger, h.endAt);
-        const calc = calculateHire(h, h.endAt, { rates });
-        ctx.repos.appendEvent(tx, {
-          claimId: id,
-          type: 'hire_ended',
-          at: h.endAt,
-          summary: `Hire ${h.agreementNumber} ended — ${HIRE_END_TRIGGER_TEXT[h.endTrigger]}${body.endReason ? `: ${body.endReason}` : ''}`,
-          data: { hireId: h.id, endTrigger: h.endTrigger, basis: deadline.basis, days: calc.days, netPence: calc.netPence, grossPence: calc.grossPence, lateEntry: isLateEntry(h.endAt, now) },
-          attributableTo: 'ccguk',
-          createdBy: request.user.id,
-          recordedAt: now,
-        });
-      }
-      const gaps = enforceabilityGaps(h);
-      if (gaps.length) {
-        ctx.repos.addClaimFlag(tx, id, { code: 'HIRE_ENFORCEABILITY_GAP', severity: 'warn', message: `Hire ${h.agreementNumber}: ${gaps.join('; ')}`, raisedBy: 'system' });
-      }
-      if (invalid) syncDatesInvalidFlag(ctx, tx, id, h.agreementNumber);
-      ctx.repos.appendAudit(tx, {
-        actor: request.actor,
-        action: 'hire.create',
-        entity: 'hire_agreements',
-        entityId: h.id,
-        after: {
-          claimId: id,
-          fleetUnitId: unit.id,
-          use: body.use,
-          allocation,
-          override: body.overrideAllocation ?? null,
-          enforceabilityGaps: gaps,
-          lateEntry,
-          ...(h.endAt ? { endAt: h.endAt, endTrigger: h.endTrigger, endReason: body.endReason ?? null } : {}),
-          pricing: {
-            hireGroup: h.gtaGroup,
-            hireGtaDailyRatePence: cols.hireGtaDailyRatePence,
-            clientGtaGroup: cols.clientGtaGroup,
-            clientGroupSource: pricing.clientCar.source,
-            clientGtaDailyRatePence: cols.clientGtaDailyRatePence,
-            fleetDailyRatePence: cols.fleetDailyRatePence,
-            agreedDailyRatePence: h.dailyRatePence,
-            differencePerDayPence: pricing.differencePerDayPence,
-            higherGroup: pricing.higherGroup,
-          },
-        },
-        at: now,
-      });
-      return h;
-    });
+        excessPence: body.excessPence,
+        ...(body.enforceability ? { enforceability: body.enforceability } : {}),
+        reservation: 'create',
+        userId: request.user.id,
+      }),
+    );
     // 7. Clocks and the answer.
     recomputeClocks(ctx, id);
-    const warnings = [...hireDateWarnings(claim, hire.startAt, hire.endAt, now), ...allocation.warnings];
+    nudgeAutopilot(ctx, id, 'hire recorded');
+    const { hire, allocation, pricing, warnings } = created;
     return reply.status(201).send({ hire, allocation, enforceabilityGaps: enforceabilityGaps(hire), pricing, warnings });
   });
 
@@ -238,35 +124,11 @@ export function registerHireRoutes(app: FastifyInstance, ctx: AppContext): void 
     const { id, hireId } = params<{ id: string; hireId: string }>(request);
     requireClaim(ctx, id);
     const body = parse(endHireBody, request.body);
-    const current = ctx.repos.requireHire(ctx.db, hireId);
-    if (current.claimId !== id) throw conflict('WRONG_CLAIM', `Hire ${hireId} belongs to another claim`);
-    if (current.endAt) throw conflict('HIRE_ALREADY_ENDED', 'Use Edit dates to change the end', { endAt: current.endAt });
     const gate = gateFor(ctx, request);
-    const invalid = endsBeforeStart(current.startAt, body.endAt);
-    if (invalid) refuseEndBeforeStart(gate, current.startAt, body.endAt, { claimId: id, entity: 'hire_agreements', entityId: hireId });
-    const now = ctx.now();
     const rates = gtaRatesFor(ctx);
-    const lateEntry = isLateEntry(body.endAt, now);
-    const hire = ctx.db.transaction((tx) => {
-      const h = ctx.repos.endHire(tx, hireId, { endAt: body.endAt, endTrigger: body.endTrigger, collectedAt: body.collectedAt, odometerIn: body.odometerIn }, { allowEndBeforeStart: invalid });
-      syncFleetStatus(ctx, tx, h.fleetUnitId, now);
-      const deadline = offHireDeadline(body.endTrigger, body.endAt);
-      const calc = calculateHire(h, h.endAt, { rates });
-      ctx.repos.appendEvent(tx, {
-        claimId: id,
-        type: 'hire_ended',
-        at: body.endAt,
-        summary: `Hire ${h.agreementNumber} ended — ${HIRE_END_TRIGGER_TEXT[body.endTrigger]}${body.reason ? `: ${body.reason}` : ''}${lateEntry ? ' — entered late' : ''}`,
-        data: { hireId: h.id, endTrigger: body.endTrigger, basis: deadline.basis, days: calc.days, netPence: calc.netPence, grossPence: calc.grossPence, odometerIn: body.odometerIn, lateEntry },
-        attributableTo: 'ccguk',
-        createdBy: request.user.id,
-        recordedAt: now,
-      });
-      if (invalid) syncDatesInvalidFlag(ctx, tx, id, h.agreementNumber);
-      ctx.repos.appendAudit(tx, { actor: request.actor, action: 'hire.end', entity: 'hire_agreements', entityId: h.id, before: { endAt: current.endAt ?? null }, after: { endAt: h.endAt, endTrigger: body.endTrigger, reason: body.reason ?? null, lateEntry }, at: now });
-      return h;
-    });
+    const hire = ctx.db.transaction((tx) => endHireRecord(ctx, tx, request, gate, { claimId: id, hireId, endAt: body.endAt, endTrigger: body.endTrigger, collectedAt: body.collectedAt, odometerIn: body.odometerIn, reason: body.reason, userId: request.user.id }));
     const clocks = recomputeClocks(ctx, id);
+    nudgeAutopilot(ctx, id, 'hire ended');
     return { hire, calculation: calculateHire(hire, hire.endAt, { rates, ...(hire.clientGtaGroup ? { likeForLikeGroup: hire.clientGtaGroup } : {}) }), clocks };
   });
 
@@ -275,7 +137,9 @@ export function registerHireRoutes(app: FastifyInstance, ctx: AppContext): void 
     const { id, hireId } = params<{ id: string; hireId: string }>(request);
     requireClaim(ctx, id);
     const body = parse(correctHireBody, request.body);
-    return correctHireDates(ctx, request, id, hireId, body);
+    const result = await correctHireDates(ctx, request, id, hireId, body);
+    syncReservationFromHire(ctx, hireId);
+    return result;
   });
 }
 

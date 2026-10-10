@@ -14,18 +14,11 @@
  * facts (3, 5, 6) the autopilot assembles.
  */
 import type { ClashFinding } from '../clash/types.js';
+import { GREEN_BLOCKING_CLASH_CODES } from '../clash/catalogue.js';
 import type { AvailabilityCandidate } from './types.js';
 
-/** §C.2 warn codes marked "green-blocking": they stop the autopilot acting alone (→ confirm). */
-export const GREEN_BLOCKING_WARN_CODES: readonly string[] = [
-  'MOT_LAPSES_IN_PERIOD',
-  'DRIVER_ON_OTHER_HIRE',
-  'HIRE_PAST_OFFHIRE',
-  'GROUP_ABOVE_LFL',
-  'NEED_WEAK',
-  'INTERVENTION_UNANSWERED',
-  'CLIENT_CAR_NOT_LEGAL',
-];
+/** §C.2 warn codes marked "green-blocking" in the clash catalogue: they stop the autopilot acting alone (→ confirm). */
+export const GREEN_BLOCKING_WARN_CODES: readonly string[] = GREEN_BLOCKING_CLASH_CODES;
 
 export const DEFAULT_MIN_LIKE_FOR_LIKE = 0.8;
 

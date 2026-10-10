@@ -17,6 +17,8 @@ import { differsFromVerified, sourceLookupRecord } from '../services/lookup.js';
 import { canAllocateFor } from '../engines.js';
 import { allowedStages, complianceAlerts, liabilityTransferParticulars, penaltyTransition, s172ResponseData, S172RefusalError } from '../services/fleetFallbacks.js';
 import { params } from './helpers.js';
+import { periodAllocateBody } from '../schemas/bookings.js';
+import { allocateCheckForPeriod } from '../booking/service.js';
 
 /** GTA group stored on a fleet unit saved in manager mode without a group (0.3 §A.6 B09). */
 export const UNGROUPED = 'UNGROUPED';
@@ -375,11 +377,14 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
     const policies = ctx.repos.listPolicies(ctx.db);
     const at = body.at ?? ctx.now();
     const vehicle = ctx.repos.getVehicle(ctx.db, unit.vehicleId);
-    const result = canAllocateFor(unit, body.use, policies, at, vehicle);
-    if (ctx.repos.activeHireForFleetUnit(ctx.db, id)) {
-      result.ok = false;
-      result.reasons.push('Unit is currently on hire');
-    }
+    // Period-aware (SUPREME-AUTOPILOT §B.10, ap-booking): the diary decides "on hire", not today's open hire.
+    const period = parse(periodAllocateBody, request.body);
+    const startAt = period.startAt ?? at;
+    const result = canAllocateFor({ ...unit, status: unit.status === 'on_hire' ? 'available' : unit.status }, body.use, policies, startAt, vehicle);
+    const forPeriod = allocateCheckForPeriod(ctx, id, { use: body.use, ...(body.claimId ? { claimId: body.claimId } : {}), startAt, expectedEndAt: period.expectedEndAt ?? new Date(Date.parse(startAt) + 60_000).toISOString() });
+    for (const r of forPeriod.reasons) if (!result.reasons.includes(r)) result.reasons.push(r);
+    for (const w of forPeriod.warnings) if (!result.warnings.includes(w)) result.warnings.push(w);
+    result.ok = result.reasons.length === 0;
     if (body.claimId) {
       const claim = ctx.repos.requireClaim(ctx.db, body.claimId);
       if (vehicle && claim.clientVehicleId === vehicle.id) {

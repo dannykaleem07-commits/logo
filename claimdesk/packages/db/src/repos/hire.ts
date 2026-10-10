@@ -2,7 +2,7 @@ import { asc, eq, sql } from 'drizzle-orm';
 import type { HireAgreement, HireEndTrigger, Id, ISODateTime, Pence } from '@ccguk/domain';
 import type { Db } from '../client.js';
 import { NotFoundError, ValidationError } from '../errors.js';
-import { hireAgreements, type HireAgreementRow } from '../schema.js';
+import { fleetReservations, hireAgreements, type HireAgreementRow } from '../schema.js';
 import { compact, denull, newId, nowIso } from '../util.js';
 
 export type CreateHireInput = Omit<HireAgreement, 'id' | 'additionalDrivers' | 'enforceability' | 'agreementNumber'> & {
@@ -20,13 +20,19 @@ function toHire(row: HireAgreementRow): HireAgreement {
   return denull(rest);
 }
 
-function nextAgreementNumber(db: Db): string {
+/**
+ * The next agreement number CCG-H-NNNNNN — one sequence for hire agreements and confirmed bookings (SUPREME-AUTOPILOT
+ * §B.7: a booking's number is allocated at confirmation so the CCGUK-03 printed before handover carries it). Skips any
+ * number already used by either table (imported numbers, gaps). Call inside the writing transaction.
+ */
+export function nextAgreementNumber(db: Db): string {
   const row = db.select({ n: sql<number>`count(*)`.mapWith(Number) }).from(hireAgreements).get();
   let seq = (row?.n ?? 0) + 1;
-  // guard against gaps/collisions from imported numbers
   for (;;) {
     const candidate = `CCG-H-${String(seq).padStart(6, '0')}`;
-    const clash = db.select({ id: hireAgreements.id }).from(hireAgreements).where(eq(hireAgreements.agreementNumber, candidate)).get();
+    const clash =
+      db.select({ id: hireAgreements.id }).from(hireAgreements).where(eq(hireAgreements.agreementNumber, candidate)).get() ??
+      db.select({ id: fleetReservations.id }).from(fleetReservations).where(eq(fleetReservations.agreementNumber, candidate)).get();
     if (!clash) return candidate;
     seq += 1;
   }

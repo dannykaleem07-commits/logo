@@ -10,7 +10,8 @@
  * Scores (each 0..1) are weighted (weights normalised to 100) and summed to 0..100. Ties: earlier `readyBy`, then
  * lower mileage, then registration. Distance is "if known": no geocoding is bundled.
  */
-import type { ClashCode, ClashFinding, ClashOverrideClass, ClashSeverity } from '../clash/types.js';
+import type { ClashCode, ClashFinding, ClashSeverity } from '../clash/types.js';
+import { CLASH_CATALOGUE } from '../clash/catalogue.js';
 import { assessDriver } from '../eligibility/driver.js';
 import type { DriverCriteria, EligibilityOutcome } from '../eligibility/types.js';
 import { ELIGIBILITY_OUTCOME_RANK } from '../eligibility/types.js';
@@ -91,7 +92,7 @@ function features(v: Vehicle): string[] {
 }
 
 function finding(code: ClashCode, severity: ClashSeverity, message: string, snap: UnitSnapshot, claimId: Id | null, extra: Partial<ClashFinding['related']> = {}, data?: Record<string, unknown>): ClashFinding {
-  const overrideClass: ClashOverrideClass = severity === 'block' ? 'A' : 'B';
+  const overrideClass = CLASH_CATALOGUE[code]?.overrideClass ?? (severity === 'block' ? 'A' : 'C');
   const related = { claimIds: [], reservationIds: [], hireIds: [], fleetUnitIds: [snap.unit.id], partyIds: [], ...extra };
   return {
     code,

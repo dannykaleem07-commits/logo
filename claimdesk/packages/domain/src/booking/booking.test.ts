@@ -176,6 +176,9 @@ describe('readiness', () => {
     expect(unitReadiness([valet], [], NOW)).toMatchObject({ state: 'ready_by', at: '2026-10-12T10:00:00.000Z' });
     expect(unitReadiness([valet], [], '2026-10-12T10:00:00.000Z')).toEqual({ state: 'ready' });
     expect(unitReadiness([task({ kind: 'mot', blocksHire: true })], [], NOW)).toEqual({ state: 'not_ready', blocking: ['t1'] });
+    // a compliance task due later does not block before its due date
+    expect(unitReadiness([task({ kind: 'mot', blocksHire: true, dueAt: '2026-11-01T09:00:00.000Z' })], [], NOW)).toEqual({ state: 'ready' });
+    expect(unitReadiness([task({ kind: 'mot', blocksHire: true, dueAt: '2026-11-01T09:00:00.000Z' })], [], '2026-11-02T09:00:00.000Z').state).toBe('not_ready');
     const dmg: FleetDamage = { id: 'd1', fleetUnitId: 'u-a', panel: 'front bumper', description: 'split', severity: 'major', foundAt: NOW, foundBy: 'u', evidenceIds: [], chargeable: 'tbc' };
     expect(unitReadiness([], [dmg], NOW)).toEqual({ state: 'not_ready', blocking: ['d1'] });
     expect(unitReadiness([], [{ ...dmg, severity: 'cosmetic' }], NOW)).toEqual({ state: 'ready' });

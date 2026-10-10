@@ -34,6 +34,8 @@ export function unitReadiness(tasks: readonly ReadinessTask[], damage: readonly 
   const blocking: Id[] = [];
   const later: Array<{ id: Id; ms: number }> = [];
   for (const t of open) {
+    // A compliance task created ahead of its due date (fleet.compliance_watch, 30 days early) blocks only from then.
+    if (t.blocksHire && !t.readyByAt && t.dueAt && isoToMs(t.dueAt) > atMs) continue;
     if (!t.readyByAt) {
       if (t.blocksHire) blocking.push(t.id);
       continue;

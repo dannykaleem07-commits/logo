@@ -36,8 +36,11 @@ export function wholeYearsBetween(from: ISODate, at: ISODate): number {
 
 /** Fractional years between two ISO dates (365.25-day years), for licence length. */
 export function fractionalYearsBetween(from: ISODate, at: ISODate): number {
-  const ms = Date.parse(`${dateOnly(at)}T00:00:00Z`) - Date.parse(`${dateOnly(from)}T00:00:00Z`);
-  return ms / (365.25 * 86_400_000);
+  // Whole years by anniversary (so exactly one year is 1, not 0.999), plus the part-year since the last anniversary.
+  const whole = wholeYearsBetween(from, at);
+  const anniversary = Date.parse(`${yearsBefore(dateOnly(from), -whole)}T00:00:00Z`);
+  const rest = (Date.parse(`${dateOnly(at)}T00:00:00Z`) - anniversary) / (365.25 * 86_400_000);
+  return whole + (Number.isFinite(rest) ? Math.max(0, Math.min(rest, 0.999)) : 0);
 }
 
 /** `at` minus `years` whole years (same month and day), as an ISO date. */

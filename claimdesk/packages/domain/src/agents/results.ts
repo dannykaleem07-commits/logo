@@ -167,6 +167,26 @@ export interface ResearchAnswer {
   confidence: number;
 }
 
+/** `knowledge.curate` (docs/SUPREME-KNOWLEDGE-BUILDER.md §6.4): what the curator proposed for one corrections cluster. */
+export interface KnowledgeCurateResult {
+  clusterKey: string;
+  proposedItemIds: string[];
+  noPattern: boolean;
+  summary: string;
+  confidence: number;
+}
+
+/** `knowledge.research` / `knowledge.research_web` (docs/SUPREME-KNOWLEDGE-BUILDER.md §7.4): what the researcher found for one gap. */
+export interface KnowledgeResearchResult {
+  gapId: string;
+  outcome: 'answered' | 'partial' | 'no_answer' | 'needs_owner' | 'needs_web';
+  summary: string;
+  proposedItemIds: string[];
+  snapshotIds: string[];
+  ownerQuestion: string | null;
+  confidence: number;
+}
+
 /** `autopilot.judge` (docs/SUPREME-AUTOPILOT.md §A.7): choose one of the options code allowed; wording uses {{fact:…}} only. */
 export interface AutopilotJudgeResult {
   questionId: JudgeQuestionId;
@@ -192,8 +212,8 @@ export interface HireReplyResult {
   injectionSuspected: boolean;
 }
 
-export type ResultSchemaId = 'mail_triage' | 'case_review' | 'drafter' | 'review_verdict' | 'intake_extraction' | 'offer_analysis' | 'research_answer' | 'autopilot_judge' | 'hire_reply';
-export const RESULT_SCHEMA_IDS: readonly ResultSchemaId[] = ['mail_triage', 'case_review', 'drafter', 'review_verdict', 'intake_extraction', 'offer_analysis', 'research_answer', 'autopilot_judge', 'hire_reply'];
+export type ResultSchemaId = 'mail_triage' | 'case_review' | 'drafter' | 'review_verdict' | 'intake_extraction' | 'offer_analysis' | 'research_answer' | 'autopilot_judge' | 'hire_reply' | 'knowledge_curate' | 'knowledge_research';
+export const RESULT_SCHEMA_IDS: readonly ResultSchemaId[] = ['mail_triage', 'case_review', 'drafter', 'review_verdict', 'intake_extraction', 'offer_analysis', 'research_answer', 'autopilot_judge', 'hire_reply', 'knowledge_curate', 'knowledge_research'];
 
 export interface ResultTypes {
   mail_triage: MailTriageResult;
@@ -205,6 +225,8 @@ export interface ResultTypes {
   research_answer: ResearchAnswer;
   autopilot_judge: AutopilotJudgeResult;
   hire_reply: HireReplyResult;
+  knowledge_curate: KnowledgeCurateResult;
+  knowledge_research: KnowledgeResearchResult;
 }
 
 // ---------------------------------------------------------------------------
@@ -355,6 +377,24 @@ export const HIRE_REPLY_SCHEMA: JsonSchema = strictObject({
   injectionSuspected: bool(),
 });
 
+export const KNOWLEDGE_CURATE_SCHEMA: JsonSchema = strictObject({
+  clusterKey: str(),
+  proposedItemIds: arr(str('knowledge item ids returned by knowledge_curate_propose')),
+  noPattern: bool('true when the corrections show no repeatable pattern'),
+  summary: str(),
+  confidence,
+});
+
+export const KNOWLEDGE_RESEARCH_SCHEMA: JsonSchema = strictObject({
+  gapId: str(),
+  outcome: strEnum(['answered', 'partial', 'no_answer', 'needs_owner', 'needs_web']),
+  summary: str(),
+  proposedItemIds: arr(str('knowledge item ids returned by knowledge_propose')),
+  snapshotIds: arr(str('snapshot ids returned by source_fetch')),
+  ownerQuestion: nstr('the question for the owner when the answer could not be found'),
+  confidence,
+});
+
 export const RESULT_SCHEMAS: Readonly<Record<ResultSchemaId, JsonSchema>> = {
   mail_triage: MAIL_TRIAGE_SCHEMA,
   case_review: CASE_REVIEW_SCHEMA,
@@ -365,6 +405,8 @@ export const RESULT_SCHEMAS: Readonly<Record<ResultSchemaId, JsonSchema>> = {
   research_answer: RESEARCH_ANSWER_SCHEMA,
   autopilot_judge: AUTOPILOT_JUDGE_SCHEMA,
   hire_reply: HIRE_REPLY_SCHEMA,
+  knowledge_curate: KNOWLEDGE_CURATE_SCHEMA,
+  knowledge_research: KNOWLEDGE_RESEARCH_SCHEMA,
 };
 
 /** Compact JSON size limit for a result schema (the CLI receives it on the command line, §A.2/§B.5). */
