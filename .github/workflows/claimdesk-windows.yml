@@ -493,6 +493,7 @@ jobs:
           Remove-Item $pfx -Force
 
       - name: Installed-app smoke test — install, publisher and version, start, upgrade keeps data, silent uninstall keeps data
+        timeout-minutes: 15
         run: |
           Remove-Item Env:CLAIMDESK_VERSION -ErrorAction SilentlyContinue   # the installed app reports its own version
           $setup = Resolve-Path "packaging\dist\ClaimDesk-Setup-$env:VER.exe"
@@ -504,7 +505,10 @@ jobs:
           $env:CLAIMDESK_HOME = "$env:RUNNER_TEMP\installed-home"
           $env:CLAIMDESK_NO_BROWSER = '1'
           function Install([string]$log, [string]$file = $setup) {
-            $p = Start-Process -FilePath $file -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CURRENTUSER', "/LOG=`"$log`"" -PassThru -Wait
+            # not -Wait: that also waits for every process setup starts, and the 0.4 setup leaves the background server running
+            $p = Start-Process -FilePath $file -ArgumentList '/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CURRENTUSER', "/LOG=`"$log`"" -PassThru
+            $null = $p.Handle
+            $p.WaitForExit()
             if ($p.ExitCode -ne 0) { Get-Content $log -Tail 60; throw "setup exited with $($p.ExitCode)" }
           }
           function Wait-Health([int]$port) {
@@ -632,7 +636,9 @@ jobs:
             # this build's Setup without the background tasks (they are tested in the installed-app step)
             $a = @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CURRENTUSER', "/LOG=`"$log`"")
             if ($file -eq "$setup") { $a += '/MERGETASKS="!autostart"' }
-            $p = Start-Process -FilePath $file -ArgumentList $a -PassThru -Wait
+            $p = Start-Process -FilePath $file -ArgumentList $a -PassThru
+            $null = $p.Handle
+            $p.WaitForExit()
             if ($p.ExitCode -ne 0) { Get-Content $log -Tail 60; throw "setup $file exited with $($p.ExitCode)" }
           }
           function Wait-Health {
@@ -798,7 +804,9 @@ jobs:
           function Install([string]$log, [string]$file) {
             $a = @('/VERYSILENT', '/SUPPRESSMSGBOXES', '/NORESTART', '/CURRENTUSER', "/LOG=`"$log`"")
             if ($file -eq "$setup") { $a += '/MERGETASKS="!autostart"' }
-            $p = Start-Process -FilePath $file -ArgumentList $a -PassThru -Wait
+            $p = Start-Process -FilePath $file -ArgumentList $a -PassThru
+            $null = $p.Handle
+            $p.WaitForExit()
             if ($p.ExitCode -ne 0) { Get-Content $log -Tail 60; throw "setup $file exited with $($p.ExitCode)" }
           }
           function Wait-Health {
