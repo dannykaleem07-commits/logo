@@ -70,3 +70,12 @@ by surprise.
 - Windows may still say "Unknown publisher" until the installer is code-signed.
 - Your existing data, templates and settings are untouched. To go back, run the 0.3.7 Setup (it asks first) — the
   backup made before the upgrade is in `%LOCALAPPDATA%\ClaimDesk\data\backups`.
+
+## Also in 0.4
+
+- **Light, dark or system theme.** Use the sun/moon button in the top bar, or Settings → Appearance.
+- **3D damage model.** Claim → Engineering → *Damage model* shows a 3D car shaped for the claim vehicle's make and
+  model, in its colour and with its number plate. You can upload a licensed exact 3D model (`.glb`/`.gltf`) under
+  Settings → 3D models; ClaimDesk then uses it instead.
+- **Settlement offers have their own register.** Offers from insurers to settle are no longer mixed in with hire
+  intervention offers. Only you can accept, counter or reject an offer; the agents only record and analyse it.

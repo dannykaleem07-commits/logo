@@ -60,7 +60,7 @@ describe('migrations 0008–0011', () => {
     ]) expect(names, t).toContain(t);
     const cols = (h.sqlite.prepare('pragma table_info(audit_log)').all() as Array<{ name: string }>).map((c) => c.name);
     expect(cols).toContain('run_id');
-    expect((h.sqlite.prepare('select count(*) as n from __drizzle_migrations').get() as { n: number }).n).toBe(12);
+    expect((h.sqlite.prepare('select count(*) as n from __drizzle_migrations').get() as { n: number }).n).toBe(13); // 0000–0012 (0012_settlement_offers)
   });
 
   it('keeps brain_fts in sync with brain_entries (insert, update, delete)', () => {

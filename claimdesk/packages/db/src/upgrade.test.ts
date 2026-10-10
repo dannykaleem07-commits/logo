@@ -173,13 +173,13 @@ describe('upgrade from 0.3.x to 0.4 (Supreme migrations 0008–0011)', () => {
 
     // 2. The 0.4 start-up.
     const first = startUp(file, '0.4.0');
-    expect(first.pendingBefore).toBe(4);
+    expect(first.pendingBefore).toBe(5); // 0008–0011 plus 0012_settlement_offers
     expect(path.basename(first.backup!)).toMatch(/^claimdesk-before-0\.4\.0-\d{8}-\d{6}\.sqlite$/);
     const h = first.handle;
     expect(pendingMigrationCount(h)).toBe(0);
-    expect((h.sqlite.prepare('select count(*) as n from __drizzle_migrations').get() as { n: number }).n).toBe(12);
+    expect((h.sqlite.prepare('select count(*) as n from __drizzle_migrations').get() as { n: number }).n).toBe(13);
     const tables = (h.sqlite.prepare("select name from sqlite_master where type = 'table'").all() as Array<{ name: string }>).map((r) => r.name);
-    for (const t of ['agent_jobs', 'needs_you', 'audit_log', 'mail_messages', 'outbox', 'intake_items', 'claim_update_proposals', 'brain_entries', 'brain_fts', 'search_docs', 'memory_items']) expect(tables).toContain(t);
+    for (const t of ['agent_jobs', 'needs_you', 'audit_log', 'mail_messages', 'outbox', 'intake_items', 'claim_update_proposals', 'brain_entries', 'brain_fts', 'search_docs', 'memory_items', 'settlement_offers']) expect(tables).toContain(t);
     expect(columns(h, 'audit_log')).toContain('run_id');
 
     // 0.3 rows intact.
