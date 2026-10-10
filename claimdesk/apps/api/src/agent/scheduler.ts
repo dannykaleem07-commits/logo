@@ -43,19 +43,7 @@ export const DEFAULT_SCHEDULES: readonly ScheduleDef[] = [
   { id: 'watch.poll', jobType: 'watch.poll', atLocal: '02:15' },
   { id: 'retention.cleanup', jobType: 'retention.cleanup', atLocal: '03:00' },
   { id: 'index.fts', jobType: 'index.fts', everyMinutes: 10, payload: { sourceKind: 'sweep' } },
-  // Autopilot (docs/SUPREME-AUTOPILOT.md §H.1). A schedule whose job type has no handler yet is advanced without a job.
-  { id: 'autopilot.sweep', jobType: 'autopilot.sweep', everyMinutes: 5 },
-  { id: 'booking.expire_holds', jobType: 'booking.expire_holds', everyMinutes: 5 },
-  { id: 'fleet.status_sync', jobType: 'fleet.status_sync', everyMinutes: 60 },
-  { id: 'fleet.compliance_watch', jobType: 'fleet.compliance_watch', atLocal: '06:30' },
-  { id: 'clash.sweep', jobType: 'clash.sweep', atLocal: '02:30' },
-  { id: 'signing.chase', jobType: 'signing.chase', atLocal: '09:15', weekdays: WEEKDAYS },
-  { id: 'signing.match_return', jobType: 'signing.match_return', everyMinutes: 15 },
-  { id: 'movement.remind', jobType: 'movement.remind', atLocal: '16:00' },
 ];
-
-/** The Autopilot schedule ids (§H.1), seeded with the Phase 1 ones. */
-export const AUTOPILOT_SCHEDULE_IDS: readonly string[] = ['autopilot.sweep', 'booking.expire_holds', 'fleet.status_sync', 'fleet.compliance_watch', 'clash.sweep', 'signing.chase', 'signing.match_return', 'movement.remind'];
 
 const HHMM = /^([01]\d|2[0-3]):([0-5]\d)$/;
 export const isHhmm = (s: unknown): s is string => typeof s === 'string' && HHMM.test(s);
@@ -107,18 +95,6 @@ export function scheduleIdempotencyKey(def: Pick<ScheduleDef, 'id' | 'jobType' |
       return `retention:${day}`;
     case 'index.fts':
       return `index.fts:sweep:${minute}`;
-    // Autopilot (§H.1)
-    case 'autopilot.sweep':
-    case 'booking.expire_holds':
-    case 'signing.match_return':
-      return `${def.jobType}:${minute}`;
-    case 'fleet.status_sync':
-      return `fleet.status_sync:${slot.slice(0, 13)}`;
-    case 'fleet.compliance_watch':
-    case 'clash.sweep':
-    case 'signing.chase':
-    case 'movement.remind':
-      return `${def.jobType}:${day}`;
     default:
       return `${def.jobType}:${def.id}:${minute}`;
   }

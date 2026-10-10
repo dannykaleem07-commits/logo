@@ -11,12 +11,6 @@
  *                        supersedesId, status → settled | closed | declined | pre_action | litigation (rule 4);
  *  - `claim_scope`       a run scoped to one claim naming another claim in params, query or body (rule 3);
  *  - `route_allowlist`   anything not declared by a registered tool, except /api/mcp (rule 1).
- *
- * Autopilot additions (docs/SUPREME-AUTOPILOT.md §H.5): more human-only routes (handover, return, mark-signed, pack
- * approval/sending/kiosk, accepted-by-phone, clash acknowledge/resolve, driver profiles, policy criteria, autopilot
- * pause/resume and step overrides, hire paperwork); `/api/kiosk/*` refuses every run token outright; claim scope
- * resolves the claim of `/api/bookings/:id`, `/api/hire-offers/:id`, `/api/packs/:id`, `/api/movements/:id` and
- * `/api/clashes/:id`; fleet-wide routes (`/fleet/availability`, `/fleet/calendar`) need the run's own claimId.
  */
 import type { FastifyRequest } from 'fastify';
 import { MANAGER_OVERRIDE_HEADER, MANAGER_RELAXED_HEADER } from '@ccguk/domain';
@@ -38,39 +32,7 @@ export const HUMAN_ONLY_ROUTES: ReadonlySet<string> = new Set([
   'POST /api/claims/:id/pav/:pid/approve',
   'POST /api/claims/:id/engineer-report/:rid/issue',
   'PATCH /api/directory/:id/verify',
-  // Autopilot (SUPREME-AUTOPILOT §H.5)
-  'POST /api/bookings/:id/handover',
-  'POST /api/bookings/:id/return',
-  'POST /api/documents/:id/mark-signed',
-  'POST /api/packs/:id/approve',
-  'POST /api/packs/:id/send-for-signature',
-  'POST /api/packs/:id/kiosk',
-  'POST /api/hire-offers/:id/accept',
-  'POST /api/clashes/:id/acknowledge',
-  'POST /api/clashes/:id/resolve',
-  'PUT /api/parties/:id/driver-profile',
-  'PUT /api/fleet/policies/:id/criteria',
-  'POST /api/claims/:id/autopilot/pause',
-  'POST /api/claims/:id/autopilot/resume',
-  'POST /api/claims/:id/autopilot/steps/:stepId/:action',
-  'PATCH /api/claims/:id/hire/:hireId/paperwork',
-  'PATCH /api/settings/autopilot',
 ]);
-
-/** Token-authenticated kiosk routes (§E.2): never reachable with a run token. */
-export const KIOSK_ROUTE_PREFIX = '/api/kiosk/';
-
-/** Fleet-wide routes a claim-scoped run may call only for its own claim (§H.5). */
-export const CLAIM_BOUND_FLEET_ROUTES: ReadonlySet<string> = new Set(['/api/fleet/availability', '/api/fleet/calendar']);
-
-/** Routes naming an Autopilot record by id: the table and column holding its claim (§H.5 claim scope). */
-const RECORD_CLAIM_LOOKUP: ReadonlyArray<{ prefix: string; table: string }> = [
-  { prefix: '/api/bookings/:id', table: 'fleet_reservations' },
-  { prefix: '/api/hire-offers/:id', table: 'hire_offers' },
-  { prefix: '/api/packs/:id', table: 'document_packs' },
-  { prefix: '/api/movements/:id', table: 'fleet_movements' },
-  { prefix: '/api/clashes/:id', table: 'clash_findings' },
-];
 
 export interface PerimeterVerdict {
   rule: PerimeterRule;
@@ -112,14 +74,6 @@ function namedClaimIds(ctx: AppContext, route: string, request: FastifyRequest):
     const doc = ctx.repos.getDocument(ctx.db, params.id, { includeHtml: false });
     if (doc?.claimId) out.push({ where: 'document.claimId', id: doc.claimId });
   }
-  // Autopilot records (bookings, hire offers, packs, movements, clash findings) carry their claim.
-  if (typeof params.id === 'string') {
-    const lookup = RECORD_CLAIM_LOOKUP.find((l) => route === l.prefix || route.startsWith(`${l.prefix}/`));
-    if (lookup) {
-      const row = ctx.handle.sqlite.prepare(`SELECT claim_id AS claimId FROM ${lookup.table} WHERE id = ?`).get(params.id) as { claimId: string | null } | undefined;
-      if (row?.claimId) out.push({ where: `${lookup.table}.claim_id`, id: row.claimId });
-    }
-  }
   return out;
 }
 
@@ -136,8 +90,7 @@ export function perimeterVerdict(ctx: AppContext, request: FastifyRequest, allow
   }
   // Rule 6: nothing destructive.
   if (method === 'DELETE' && !MCP_ROUTE_PATTERNS.includes(route)) return { rule: 'destructive', message: 'Agents cannot delete anything' };
-  // Rule 5: human-only steps (the kiosk is the client's and the handler's, never an agent's).
-  if (route.startsWith(KIOSK_ROUTE_PREFIX)) return { rule: 'human_only', message: 'The signing kiosk is never available to agents' };
+  // Rule 5: human-only steps.
   if (HUMAN_ONLY_ROUTES.has(key) || (method === 'POST' && route.startsWith('/api/documents/:id/sign/'))) {
     return { rule: 'human_only', message: `${key} is a human-only step` };
   }
@@ -161,12 +114,8 @@ export function perimeterVerdict(ctx: AppContext, request: FastifyRequest, allow
   // Rule 3: claim scope.
   const scope = request.agent?.claimScope;
   if (scope) {
-    const named = namedClaimIds(ctx, route, request);
-    const other = named.find((c) => c.id !== scope);
+    const other = namedClaimIds(ctx, route, request).find((c) => c.id !== scope);
     if (other) return { rule: 'claim_scope', message: `This run is limited to claim ${scope}; ${other.where} names another claim` };
-    if (CLAIM_BOUND_FLEET_ROUTES.has(route) && !named.some((c) => c.id === scope)) {
-      return { rule: 'claim_scope', message: `This run is limited to claim ${scope}; ${route} must name that claim (claimId)` };
-    }
     // A party or vehicle written by a claim-scoped run must belong to that claim.
     const params = obj(request.params);
     if (method !== 'GET' && (route === '/api/parties/:id' || route === '/api/vehicles/:id') && typeof params.id === 'string') {

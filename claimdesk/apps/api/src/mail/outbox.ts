@@ -43,7 +43,6 @@ import { MAIL_ACTOR, MAIL_AGENT, appendClaimEvent, fromHeader, mailAccount } fro
 import { INTENT_RULES } from './intents.js';
 import { directoryDomains } from './parse.js';
 import { mailboxFor, newMessageId, smtpFor, MailTransportError } from './transport.js';
-import { applyAutopilotCommitment } from '../autopilot/commitment.js';
 
 export const OWNER_UNDO_SECONDS = 30;
 export const SEND_MAX_ATTEMPTS = 3;
@@ -336,8 +335,7 @@ export function describeOutbox(ctx: AppContext, o: OutboxRecord, review: ReviewR
     missingInfo,
     attachmentsAllowed: attachments.allowed,
   };
-  // Autopilot (SUPREME-AUTOPILOT §D.3): the step and any code-verified commitment reach the policy.
-  return { descriptor: applyAutopilotCommitment(ctx, o, descriptor), recipients, attachments };
+  return { descriptor, recipients, attachments };
 }
 
 // ---------------------------------------------------------------------------

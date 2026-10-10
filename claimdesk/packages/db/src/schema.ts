@@ -86,41 +86,6 @@ import type {
   ReviewTargetKind,
   TaskStatus,
 } from '@ccguk/domain';
-import type {
-  AutopilotOverride,
-  AutopilotPlan,
-  AutopilotSettings,
-  AvailabilityCandidate,
-  ClaimAutopilotMode,
-  ClashFinding,
-  ClashFindingStatus,
-  ClashOverrideClass,
-  ClashSeverity,
-  DamageSeverity,
-  DocumentPack,
-  DocumentPackStatus,
-  DriverCriteria,
-  DriverProfile,
-  EligibilityAssessmentKind,
-  FleetDamage,
-  HireNeeds,
-  HireOfferChannel,
-  HireOfferResponse,
-  HireOfferStatus,
-  HireOfferTerms,
-  MovementKind,
-  MovementStatus,
-  PackStage,
-  ReadinessKind,
-  ReadinessTask,
-  ReservationSource,
-  ReservationStatus,
-  SignatureRequestMethod,
-  SignatureRequestStatus,
-  StageId,
-  StepRefs,
-  TerminalStage,
-} from '@ccguk/domain';
 
 // ---------------------------------------------------------------------------
 // Persistence-only value types (no domain equivalent)
@@ -272,9 +237,6 @@ export const insurancePolicies = sqliteTable('insurance_policies', {
   endDate: text('end_date').notNull(),
   evidenceId: text('evidence_id'),
   createdAt: text('created_at').notNull(),
-  // Autopilot (migration 0013_autopilot, SUPREME-AUTOPILOT §B.3)
-  driverCriteria: text('driver_criteria', { mode: 'json' }).$type<DriverCriteria>(),
-  renewsPolicyId: text('renews_policy_id'),
 });
 
 export const fleetUnits = sqliteTable(
@@ -293,14 +255,6 @@ export const fleetUnits = sqliteTable(
     phvLicensed: integer('phv_licensed', { mode: 'boolean' }),
     createdAt: text('created_at').notNull(),
     updatedAt: text('updated_at').notNull(),
-    // Autopilot (migration 0013_autopilot, SUPREME-AUTOPILOT §B.3)
-    locationId: text('location_id'),
-    currentMileage: integer('current_mileage'),
-    mileageAt: text('mileage_at'),
-    serviceDueMiles: integer('service_due_miles'),
-    phvLicenceNumber: text('phv_licence_number'),
-    phvLicenceExpiry: text('phv_licence_expiry'),
-    turnaroundMinutes: integer('turnaround_minutes'),
   },
   (t) => [index('fleet_units_vehicle_idx').on(t.vehicleId), index('fleet_units_status_idx').on(t.status)],
 );
@@ -463,12 +417,6 @@ export const hireAgreements = sqliteTable(
     hireGtaDailyRatePence: integer('hire_gta_daily_rate_pence'),
     fleetDailyRatePence: integer('fleet_daily_rate_pence'),
     pricingNote: text('pricing_note'),
-    // Autopilot (migration 0013_autopilot, SUPREME-AUTOPILOT §G.3)
-    use: text('use').$type<FleetUse>(),
-    hirerPartyId: text('hirer_party_id'),
-    driverPartyIds: text('driver_party_ids', { mode: 'json' }).$type<string[]>(),
-    reservationId: text('reservation_id'),
-    expectedEndAt: text('expected_end_at'),
   },
   (t) => [
     index('hire_agreements_claim_idx').on(t.claimId),
@@ -678,12 +626,6 @@ export const signatures = sqliteTable(
     documentSha256: text('document_sha256').notNull(),
     certificatePdfPath: text('certificate_pdf_path'),
     createdAt: text('created_at').notNull(),
-    // Autopilot signing (migration 0013_autopilot, SUPREME-AUTOPILOT §E, §G.3); NULL method = 'otp'.
-    method: text('method').$type<NonNullable<SignatureRecord['method']>>(),
-    drawnSignatureSha256: text('drawn_signature_sha256'),
-    evidenceId: text('evidence_id'),
-    packId: text('pack_id'),
-    packSha256: text('pack_sha256'),
   },
   (t) => [index('signatures_document_idx').on(t.documentId), index('signatures_signer_idx').on(t.signerPartyId)],
 );
@@ -1198,8 +1140,6 @@ export const agentSettings = sqliteTable('agent_settings', {
   notifications: text('notifications', { mode: 'json' }).$type<Partial<NotificationSettings>>().notNull(),
   agents: text('agents', { mode: 'json' }).$type<Partial<AgentsSettings>>().notNull(),
   checklist: text('checklist', { mode: 'json' }).$type<Partial<ChecklistState>>().notNull(),
-  /** Autopilot settings (migration 0013_autopilot): merged over DEFAULT_AUTOPILOT_SETTINGS on read. */
-  autopilot: text('autopilot', { mode: 'json' }).$type<Partial<AutopilotSettings>>().notNull().default({}),
   updatedAt: text('updated_at').notNull(),
   updatedBy: text('updated_by').notNull(),
 });
@@ -1510,8 +1450,6 @@ export const outbox = sqliteTable(
     createdBy: text('created_by').notNull(),
     createdAt: text('created_at').notNull(),
     updatedAt: text('updated_at').notNull(),
-    /** Autopilot step that created the draft (migration 0013_autopilot, SUPREME-AUTOPILOT §0.6). */
-    autopilotStepId: text('autopilot_step_id'),
   },
   (t) => [index('outbox_status_idx').on(t.status, t.holdUntil), index('outbox_claim_idx').on(t.claimId, t.createdAt)],
 );
@@ -1721,386 +1659,3 @@ export type BrainEntryRow = typeof brainEntries.$inferSelect;
 export type BrainEntryInsert = typeof brainEntries.$inferInsert;
 export type MemoryItemRow = typeof memoryItems.$inferSelect;
 export type MemoryItemInsert = typeof memoryItems.$inferInsert;
-
-// ---------------------------------------------------------------------------
-// ClaimDesk Supreme Autopilot (docs/SUPREME-AUTOPILOT.md §G.2; migration 0013_autopilot). Tables are created by
-// ap-foundation; each repo (repos/{autopilot,bookings,clashes,eligibility,signing}.ts) belongs to its owning slice.
-// Append-only (BEFORE UPDATE / DELETE triggers): autopilot_log, fleet_reservation_events, eligibility_assessments,
-// signature_request_events. fleet_reservations carries the overlap triggers (RESERVATION_OVERLAP).
-// ---------------------------------------------------------------------------
-
-export const claimAutopilot = sqliteTable(
-  'claim_autopilot',
-  {
-    claimId: text('claim_id').primaryKey(),
-    mode: text('mode').$type<ClaimAutopilotMode>().notNull().default('on'),
-    pausedBy: text('paused_by'),
-    pausedReason: text('paused_reason'),
-    pausedAt: text('paused_at'),
-    stepOverrides: text('step_overrides', { mode: 'json' }).$type<Record<string, AutopilotOverride>>().notNull().default({}),
-    stage: text('stage').$type<StageId | TerminalStage>(),
-    plan: text('plan', { mode: 'json' }).$type<AutopilotPlan>(),
-    planHash: text('plan_hash'),
-    planVersion: text('plan_version'),
-    lastEvaluatedAt: text('last_evaluated_at'),
-    nextCheckAt: text('next_check_at'),
-    updatedAt: text('updated_at').notNull(),
-  },
-  (t) => [index('claim_autopilot_next_idx').on(t.mode, t.nextCheckAt)],
-);
-
-/** Append-only. */
-export const autopilotLog = sqliteTable(
-  'autopilot_log',
-  {
-    id: text('id').primaryKey(),
-    claimId: text('claim_id').notNull(),
-    stepId: text('step_id').notNull(),
-    fromStatus: text('from_status'),
-    toStatus: text('to_status').notNull(),
-    action: text('action'),
-    actor: text('actor').notNull(),
-    decision: text('decision', { mode: 'json' }).$type<unknown>(),
-    jobId: text('job_id'),
-    runId: text('run_id'),
-    needsYouId: text('needs_you_id'),
-    refs: text('refs', { mode: 'json' }).$type<StepRefs>().notNull().default({}),
-    note: text('note'),
-    at: text('at').notNull(),
-  },
-  (t) => [index('autopilot_log_claim_idx').on(t.claimId, t.at)],
-);
-
-export const fleetLocations = sqliteTable('fleet_locations', {
-  id: text('id').primaryKey(),
-  name: text('name').notNull(),
-  address: text('address', { mode: 'json' }).$type<Address>(),
-  postcode: text('postcode'),
-  lat: real('lat'),
-  lon: real('lon'),
-  isDefault: integer('is_default', { mode: 'boolean' }).notNull().default(false),
-  createdAt: text('created_at').notNull(),
-  updatedAt: text('updated_at').notNull(),
-});
-
-export const fleetReadinessTasks = sqliteTable(
-  'fleet_readiness_tasks',
-  {
-    id: text('id').primaryKey(),
-    fleetUnitId: text('fleet_unit_id').notNull(),
-    kind: text('kind').$type<ReadinessKind>().notNull(),
-    status: text('status').$type<ReadinessTask['status']>().notNull(),
-    blocksHire: integer('blocks_hire', { mode: 'boolean' }).notNull().default(false),
-    dueAt: text('due_at'),
-    readyByAt: text('ready_by_at'),
-    reservationId: text('reservation_id'),
-    damageId: text('damage_id'),
-    note: text('note'),
-    createdBy: text('created_by').notNull(),
-    createdAt: text('created_at').notNull(),
-    doneBy: text('done_by'),
-    doneAt: text('done_at'),
-  },
-  (t) => [index('fleet_readiness_unit_idx').on(t.fleetUnitId, t.status)],
-);
-
-export const fleetDamage = sqliteTable(
-  'fleet_damage',
-  {
-    id: text('id').primaryKey(),
-    fleetUnitId: text('fleet_unit_id').notNull(),
-    panel: text('panel').notNull(),
-    description: text('description').notNull(),
-    severity: text('severity').$type<DamageSeverity>().notNull(),
-    foundAt: text('found_at').notNull(),
-    foundBy: text('found_by').notNull(),
-    reservationId: text('reservation_id'),
-    movementId: text('movement_id'),
-    evidenceIds: text('evidence_ids', { mode: 'json' }).$type<string[]>().notNull().default([]),
-    repairedAt: text('repaired_at'),
-    repairTaskId: text('repair_task_id'),
-    chargeable: text('chargeable').$type<FleetDamage['chargeable']>().notNull().default('tbc'),
-    createdAt: text('created_at').notNull(),
-  },
-  (t) => [index('fleet_damage_unit_idx').on(t.fleetUnitId, t.repairedAt)],
-);
-
-export const fleetReservations = sqliteTable(
-  'fleet_reservations',
-  {
-    id: text('id').primaryKey(),
-    fleetUnitId: text('fleet_unit_id').notNull(),
-    claimId: text('claim_id').notNull(),
-    status: text('status').$type<ReservationStatus>().notNull(),
-    use: text('use').$type<FleetUse>().notNull(),
-    startAt: text('start_at').notNull(),
-    expectedEndAt: text('expected_end_at'),
-    endAt: text('end_at'),
-    collectedAt: text('collected_at'),
-    /** Occupied period in epoch ms (compared by the overlap triggers; never compare the ISO text). */
-    blockStartMs: integer('block_start_ms').notNull(),
-    /** NULL = open-ended (legacy hire with no end). */
-    blockEndMs: integer('block_end_ms'),
-    holdExpiresAt: text('hold_expires_at'),
-    holdExpiresMs: integer('hold_expires_ms'),
-    hirerPartyId: text('hirer_party_id').notNull(),
-    driverPartyIds: text('driver_party_ids', { mode: 'json' }).$type<string[]>().notNull().default([]),
-    agreementNumber: text('agreement_number'),
-    hireAgreementId: text('hire_agreement_id'),
-    hireOfferId: text('hire_offer_id'),
-    dailyRatePence: integer('daily_rate_pence').notNull(),
-    gtaGroup: text('gta_group').notNull(),
-    clientGtaGroup: text('client_gta_group'),
-    pricingNote: text('pricing_note'),
-    substitutionReason: text('substitution_reason'),
-    ranking: text('ranking', { mode: 'json' }).$type<AvailabilityCandidate>(),
-    clashReport: text('clash_report', { mode: 'json' }).$type<ClashFinding[]>(),
-    overlapOverrideAuditId: text('overlap_override_audit_id'),
-    source: text('source').$type<ReservationSource>().notNull(),
-    createdBy: text('created_by').notNull(),
-    createdAt: text('created_at').notNull(),
-    updatedAt: text('updated_at').notNull(),
-    cancelledReason: text('cancelled_reason'),
-  },
-  (t) => [
-    index('fleet_reservations_unit_idx').on(t.fleetUnitId, t.status, t.blockStartMs),
-    index('fleet_reservations_claim_idx').on(t.claimId, t.status),
-  ],
-);
-
-/** Append-only. */
-export const fleetReservationEvents = sqliteTable(
-  'fleet_reservation_events',
-  {
-    id: text('id').primaryKey(),
-    reservationId: text('reservation_id').notNull(),
-    fromStatus: text('from_status').$type<ReservationStatus>(),
-    toStatus: text('to_status').$type<ReservationStatus>().notNull(),
-    actor: text('actor').notNull(),
-    reason: text('reason'),
-    data: text('data', { mode: 'json' }).$type<Record<string, unknown>>(),
-    at: text('at').notNull(),
-  },
-  (t) => [index('fleet_reservation_events_res_idx').on(t.reservationId, t.at)],
-);
-
-export const fleetMovements = sqliteTable(
-  'fleet_movements',
-  {
-    id: text('id').primaryKey(),
-    reservationId: text('reservation_id').notNull(),
-    claimId: text('claim_id').notNull(),
-    fleetUnitId: text('fleet_unit_id').notNull(),
-    kind: text('kind').$type<MovementKind>().notNull(),
-    windowStart: text('window_start').notNull(),
-    windowEnd: text('window_end').notNull(),
-    address: text('address', { mode: 'json' }).$type<Address>(),
-    postcode: text('postcode'),
-    assignedTo: text('assigned_to'),
-    status: text('status').$type<MovementStatus>().notNull(),
-    doneAt: text('done_at'),
-    odometer: integer('odometer'),
-    fuelEighths: integer('fuel_eighths'),
-    conditionDocumentId: text('condition_document_id'),
-    evidenceIds: text('evidence_ids', { mode: 'json' }).$type<string[]>().notNull().default([]),
-    clientNotifiedAt: text('client_notified_at'),
-    noticeOutboxId: text('notice_outbox_id'),
-    notes: text('notes'),
-    createdBy: text('created_by').notNull(),
-    createdAt: text('created_at').notNull(),
-    updatedAt: text('updated_at').notNull(),
-  },
-  (t) => [index('fleet_movements_window_idx').on(t.status, t.windowStart), index('fleet_movements_reservation_idx').on(t.reservationId)],
-);
-
-export const hireOffers = sqliteTable(
-  'hire_offers',
-  {
-    id: text('id').primaryKey(),
-    claimId: text('claim_id').notNull(),
-    reservationId: text('reservation_id').notNull(),
-    status: text('status').$type<HireOfferStatus>().notNull(),
-    channel: text('channel').$type<HireOfferChannel>().notNull(),
-    terms: text('terms', { mode: 'json' }).$type<HireOfferTerms>().notNull(),
-    termsSha256: text('terms_sha256').notNull(),
-    outboxId: text('outbox_id'),
-    authorisedBy: text('authorised_by').notNull(),
-    sentAt: text('sent_at'),
-    expiresAt: text('expires_at').notNull(),
-    response: text('response', { mode: 'json' }).$type<HireOfferResponse>(),
-    respondedAt: text('responded_at'),
-    createdBy: text('created_by').notNull(),
-    createdAt: text('created_at').notNull(),
-    updatedAt: text('updated_at').notNull(),
-  },
-  (t) => [index('hire_offers_claim_idx').on(t.claimId, t.status)],
-);
-
-export const driverProfiles = sqliteTable('driver_profiles', {
-  partyId: text('party_id').primaryKey(),
-  profile: text('profile', { mode: 'json' }).$type<DriverProfile>().notNull(),
-  source: text('source').$type<DriverProfile['source']>().notNull(),
-  updatedBy: text('updated_by').notNull(),
-  updatedAt: text('updated_at').notNull(),
-});
-
-export const claimHireNeeds = sqliteTable('claim_hire_needs', {
-  claimId: text('claim_id').primaryKey(),
-  needs: text('needs', { mode: 'json' }).$type<HireNeeds>().notNull(),
-  updatedBy: text('updated_by').notNull(),
-  updatedAt: text('updated_at').notNull(),
-});
-
-/** Append-only. */
-export const eligibilityAssessments = sqliteTable(
-  'eligibility_assessments',
-  {
-    id: text('id').primaryKey(),
-    claimId: text('claim_id').notNull(),
-    partyId: text('party_id'),
-    policyId: text('policy_id'),
-    kind: text('kind').$type<EligibilityAssessmentKind>().notNull(),
-    outcome: text('outcome').notNull(),
-    reasons: text('reasons', { mode: 'json' }).$type<unknown>().notNull(),
-    inputsSha256: text('inputs_sha256').notNull(),
-    createdBy: text('created_by').notNull(),
-    createdAt: text('created_at').notNull(),
-  },
-  (t) => [index('eligibility_claim_idx').on(t.claimId, t.kind, t.createdAt)],
-);
-
-export const clashFindings = sqliteTable(
-  'clash_findings',
-  {
-    id: text('id').primaryKey(),
-    code: text('code').notNull(),
-    severity: text('severity').$type<ClashSeverity>().notNull(),
-    overrideClass: text('override_class').$type<ClashOverrideClass>(),
-    claimId: text('claim_id'),
-    fleetUnitId: text('fleet_unit_id'),
-    reservationId: text('reservation_id'),
-    hireId: text('hire_id'),
-    related: text('related', { mode: 'json' }).$type<ClashFinding['related']>().notNull(),
-    message: text('message').notNull(),
-    data: text('data', { mode: 'json' }).$type<Record<string, unknown>>(),
-    dedupeKey: text('dedupe_key').notNull(),
-    status: text('status').$type<ClashFindingStatus>().notNull(),
-    firstSeenAt: text('first_seen_at').notNull(),
-    lastSeenAt: text('last_seen_at').notNull(),
-    resolvedAt: text('resolved_at'),
-    resolvedBy: text('resolved_by'),
-    resolutionNote: text('resolution_note'),
-    overrideAuditId: text('override_audit_id'),
-  },
-  (t) => [index('clash_findings_claim_idx').on(t.claimId, t.status), index('clash_findings_unit_idx').on(t.fleetUnitId, t.status)],
-);
-
-export const documentPacks = sqliteTable(
-  'document_packs',
-  {
-    id: text('id').primaryKey(),
-    claimId: text('claim_id').notNull(),
-    stage: text('stage').$type<PackStage>().notNull(),
-    reservationId: text('reservation_id'),
-    items: text('items', { mode: 'json' }).$type<DocumentPack['items']>().notNull(),
-    status: text('status').$type<DocumentPackStatus>().notNull(),
-    approvedBy: text('approved_by'),
-    approvedAt: text('approved_at'),
-    sentAt: text('sent_at'),
-    outboxId: text('outbox_id'),
-    createdBy: text('created_by').notNull(),
-    createdAt: text('created_at').notNull(),
-    updatedAt: text('updated_at').notNull(),
-  },
-  (t) => [index('document_packs_claim_idx').on(t.claimId, t.stage, t.status)],
-);
-
-export const signatureRequests = sqliteTable(
-  'signature_requests',
-  {
-    id: text('id').primaryKey(),
-    packId: text('pack_id'),
-    documentId: text('document_id').notNull(),
-    claimId: text('claim_id').notNull(),
-    signerPartyId: text('signer_party_id').notNull(),
-    method: text('method').$type<SignatureRequestMethod>().notNull(),
-    status: text('status').$type<SignatureRequestStatus>().notNull(),
-    sentAt: text('sent_at'),
-    chaseCount: integer('chase_count').notNull().default(0),
-    lastChasedAt: text('last_chased_at'),
-    nextChaseAt: text('next_chase_at'),
-    returnedEvidenceId: text('returned_evidence_id'),
-    signedAt: text('signed_at'),
-    confirmedBy: text('confirmed_by'),
-    createdAt: text('created_at').notNull(),
-    updatedAt: text('updated_at').notNull(),
-  },
-  (t) => [index('signature_requests_open_idx').on(t.status, t.nextChaseAt), index('signature_requests_claim_idx').on(t.claimId, t.status)],
-);
-
-/** Append-only. */
-export const signatureRequestEvents = sqliteTable('signature_request_events', {
-  id: text('id').primaryKey(),
-  signatureRequestId: text('signature_request_id').notNull(),
-  fromStatus: text('from_status').$type<SignatureRequestStatus>(),
-  toStatus: text('to_status').$type<SignatureRequestStatus>().notNull(),
-  actor: text('actor').notNull(),
-  note: text('note'),
-  at: text('at').notNull(),
-});
-
-export const kioskSessions = sqliteTable(
-  'kiosk_sessions',
-  {
-    id: text('id').primaryKey(),
-    packId: text('pack_id').notNull(),
-    claimId: text('claim_id').notNull(),
-    signerPartyId: text('signer_party_id').notNull(),
-    tokenSha256: text('token_sha256').notNull(),
-    lan: integer('lan', { mode: 'boolean' }).notNull().default(false),
-    createdBy: text('created_by').notNull(),
-    createdAt: text('created_at').notNull(),
-    expiresAt: text('expires_at').notNull(),
-    openedAt: text('opened_at'),
-    openedIp: text('opened_ip'),
-    openedUserAgent: text('opened_user_agent'),
-    completedAt: text('completed_at'),
-    closedReason: text('closed_reason'),
-  },
-  (t) => [uniqueIndex('kiosk_sessions_token_uq').on(t.tokenSha256)],
-);
-
-export type ClaimAutopilotRow = typeof claimAutopilot.$inferSelect;
-export type ClaimAutopilotInsert = typeof claimAutopilot.$inferInsert;
-export type AutopilotLogRow = typeof autopilotLog.$inferSelect;
-export type AutopilotLogInsert = typeof autopilotLog.$inferInsert;
-export type FleetLocationRow = typeof fleetLocations.$inferSelect;
-export type FleetLocationInsert = typeof fleetLocations.$inferInsert;
-export type FleetReadinessTaskRow = typeof fleetReadinessTasks.$inferSelect;
-export type FleetReadinessTaskInsert = typeof fleetReadinessTasks.$inferInsert;
-export type FleetDamageRow = typeof fleetDamage.$inferSelect;
-export type FleetDamageInsert = typeof fleetDamage.$inferInsert;
-export type FleetReservationRow = typeof fleetReservations.$inferSelect;
-export type FleetReservationInsert = typeof fleetReservations.$inferInsert;
-export type FleetReservationEventRow = typeof fleetReservationEvents.$inferSelect;
-export type FleetReservationEventInsert = typeof fleetReservationEvents.$inferInsert;
-export type FleetMovementRow = typeof fleetMovements.$inferSelect;
-export type FleetMovementInsert = typeof fleetMovements.$inferInsert;
-export type HireOfferRow = typeof hireOffers.$inferSelect;
-export type HireOfferInsert = typeof hireOffers.$inferInsert;
-export type DriverProfileRow = typeof driverProfiles.$inferSelect;
-export type DriverProfileInsert = typeof driverProfiles.$inferInsert;
-export type ClaimHireNeedsRow = typeof claimHireNeeds.$inferSelect;
-export type ClaimHireNeedsInsert = typeof claimHireNeeds.$inferInsert;
-export type EligibilityAssessmentRow = typeof eligibilityAssessments.$inferSelect;
-export type EligibilityAssessmentInsert = typeof eligibilityAssessments.$inferInsert;
-export type ClashFindingRow = typeof clashFindings.$inferSelect;
-export type ClashFindingInsert = typeof clashFindings.$inferInsert;
-export type DocumentPackRow = typeof documentPacks.$inferSelect;
-export type DocumentPackInsert = typeof documentPacks.$inferInsert;
-export type SignatureRequestRow = typeof signatureRequests.$inferSelect;
-export type SignatureRequestInsert = typeof signatureRequests.$inferInsert;
-export type SignatureRequestEventRow = typeof signatureRequestEvents.$inferSelect;
-export type SignatureRequestEventInsert = typeof signatureRequestEvents.$inferInsert;
-export type KioskSessionRow = typeof kioskSessions.$inferSelect;
-export type KioskSessionInsert = typeof kioskSessions.$inferInsert;

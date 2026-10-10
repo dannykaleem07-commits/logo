@@ -9,7 +9,6 @@ import { buildApp } from './app.js';
 import { ensureDefaultLogin, prefillExposureWarning } from './services/auth.js';
 import { lookupModeFor } from './services/lookup.js';
 import { neutraliseAnthropicEnv } from './ai/apiKeyDriver.js';
-import { startSigningLanServer } from './signing/lanServer.js';
 
 export async function start(): Promise<void> {
   // No ANTHROPIC_* variable may steer the AI drivers (§A.2, §K.2): the key and host come from ClaimDesk only.
@@ -30,8 +29,6 @@ export async function start(): Promise<void> {
   process.once('SIGINT', () => void shutdown('SIGINT'));
   process.once('SIGTERM', () => void shutdown('SIGTERM'));
   await app.listen({ port: config.port, host: config.host });
-  // Optional LAN signing kiosk (SUPREME-AUTOPILOT §E.3; off by default). Never stops the main app from running.
-  await startSigningLanServer(ctx).catch((err: unknown) => ctx.logger.warn('signing LAN listener did not start', { error: String(err) }));
   ctx.logger.info('ClaimDesk API listening', {
     port: config.port,
     database: config.databasePath,

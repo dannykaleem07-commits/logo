@@ -22,7 +22,6 @@ import {
   type MailIntent,
   type TaskKind,
 } from './types.js';
-import { JUDGE_QUESTION_IDS, type JudgeQuestionId } from '../autopilot/types.js';
 
 // ---------------------------------------------------------------------------
 // Result types
@@ -167,33 +166,8 @@ export interface ResearchAnswer {
   confidence: number;
 }
 
-/** `autopilot.judge` (docs/SUPREME-AUTOPILOT.md §A.7): choose one of the options code allowed; wording uses {{fact:…}} only. */
-export interface AutopilotJudgeResult {
-  questionId: JudgeQuestionId;
-  stepId: string;
-  /** Must equal one of the offered option ids, or 'ask_owner'. */
-  choice: string;
-  why: string;
-  basis: Basis[];
-  confidence: number;
-  /** {{fact:…}} placeholders only. */
-  wording: { offerIntro: string | null; clientNote: string | null };
-}
-
-/** `hire_offer.parse_reply` (§D.4): the client's reply to a hire offer (untrusted email; no tools). */
-export interface HireReplyResult {
-  decision: 'accept' | 'decline' | 'question' | 'change_request' | 'unclear';
-  /** Which car, when alternatives were listed. */
-  chosenOptionId: string | null;
-  preferredDelivery: { date: string | null; part: 'morning' | 'afternoon' | 'evening' | null; text: string | null };
-  needsChanged: string[];
-  questions: string[];
-  confidence: number;
-  injectionSuspected: boolean;
-}
-
-export type ResultSchemaId = 'mail_triage' | 'case_review' | 'drafter' | 'review_verdict' | 'intake_extraction' | 'offer_analysis' | 'research_answer' | 'autopilot_judge' | 'hire_reply';
-export const RESULT_SCHEMA_IDS: readonly ResultSchemaId[] = ['mail_triage', 'case_review', 'drafter', 'review_verdict', 'intake_extraction', 'offer_analysis', 'research_answer', 'autopilot_judge', 'hire_reply'];
+export type ResultSchemaId = 'mail_triage' | 'case_review' | 'drafter' | 'review_verdict' | 'intake_extraction' | 'offer_analysis' | 'research_answer';
+export const RESULT_SCHEMA_IDS: readonly ResultSchemaId[] = ['mail_triage', 'case_review', 'drafter', 'review_verdict', 'intake_extraction', 'offer_analysis', 'research_answer'];
 
 export interface ResultTypes {
   mail_triage: MailTriageResult;
@@ -203,8 +177,6 @@ export interface ResultTypes {
   intake_extraction: IntakeExtraction;
   offer_analysis: OfferAnalysis;
   research_answer: ResearchAnswer;
-  autopilot_judge: AutopilotJudgeResult;
-  hire_reply: HireReplyResult;
 }
 
 // ---------------------------------------------------------------------------
@@ -335,26 +307,6 @@ export const RESEARCH_ANSWER_SCHEMA: JsonSchema = strictObject({
   confidence,
 });
 
-export const AUTOPILOT_JUDGE_SCHEMA: JsonSchema = strictObject({
-  questionId: strEnum(JUDGE_QUESTION_IDS),
-  stepId: str(),
-  choice: str('One of the offered option ids, or ask_owner'),
-  why: str(),
-  basis: arr(basis),
-  confidence,
-  wording: strictObject({ offerIntro: nstr('{{fact:…}} placeholders only'), clientNote: nstr('{{fact:…}} placeholders only') }),
-});
-
-export const HIRE_REPLY_SCHEMA: JsonSchema = strictObject({
-  decision: strEnum(['accept', 'decline', 'question', 'change_request', 'unclear']),
-  chosenOptionId: nstr(),
-  preferredDelivery: strictObject({ date: nstr('YYYY-MM-DD or null'), part: nEnum(['morning', 'afternoon', 'evening']), text: nstr() }),
-  needsChanged: arr(str()),
-  questions: arr(str()),
-  confidence,
-  injectionSuspected: bool(),
-});
-
 export const RESULT_SCHEMAS: Readonly<Record<ResultSchemaId, JsonSchema>> = {
   mail_triage: MAIL_TRIAGE_SCHEMA,
   case_review: CASE_REVIEW_SCHEMA,
@@ -363,8 +315,6 @@ export const RESULT_SCHEMAS: Readonly<Record<ResultSchemaId, JsonSchema>> = {
   intake_extraction: INTAKE_EXTRACTION_SCHEMA,
   offer_analysis: OFFER_ANALYSIS_SCHEMA,
   research_answer: RESEARCH_ANSWER_SCHEMA,
-  autopilot_judge: AUTOPILOT_JUDGE_SCHEMA,
-  hire_reply: HIRE_REPLY_SCHEMA,
 };
 
 /** Compact JSON size limit for a result schema (the CLI receives it on the command line, §A.2/§B.5). */

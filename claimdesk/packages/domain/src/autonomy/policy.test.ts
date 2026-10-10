@@ -99,12 +99,11 @@ describe('decide() — one test per rule (§D.2)', () => {
     expect(d({ confidence: 0.89 })).toMatchObject({ outcome: 'ask', ruleIds: ['external_confidence'] });
     expect(d({ confidence: 0.9 })).toMatchObject({ outcome: 'auto_held', ruleIds: ['external_ok'] });
   });
-  it('18 rate_limits → ask at 6 per claim per day (Autopilot raised the default from 3), 20 per hour, 100 per day', () => {
-    expect(d({}, {}, { sends: { claimToday: 6, lastHour: 0, today: 0 } })).toMatchObject({ outcome: 'ask', ruleIds: ['rate_limits'] });
-    expect(d({}, { limits: { perClaimPerDay: 3, perHour: 20, perDay: 100 } }, { sends: { claimToday: 3, lastHour: 0, today: 0 } })).toMatchObject({ outcome: 'ask', ruleIds: ['rate_limits'] });
+  it('18 rate_limits → ask at 3 per claim per day, 20 per hour, 100 per day', () => {
+    expect(d({}, {}, { sends: { claimToday: 3, lastHour: 0, today: 0 } })).toMatchObject({ outcome: 'ask', ruleIds: ['rate_limits'] });
     expect(d({}, {}, { sends: { claimToday: 0, lastHour: 20, today: 0 } })).toMatchObject({ outcome: 'ask', ruleIds: ['rate_limits'] });
     expect(d({}, {}, { sends: { claimToday: 0, lastHour: 0, today: 100 } })).toMatchObject({ outcome: 'ask', ruleIds: ['rate_limits'] });
-    expect(d({}, {}, { sends: { claimToday: 5, lastHour: 19, today: 99 } })).toMatchObject({ outcome: 'auto_held', ruleIds: ['external_ok'] });
+    expect(d({}, {}, { sends: { claimToday: 2, lastHour: 19, today: 99 } })).toMatchObject({ outcome: 'auto_held', ruleIds: ['external_ok'] });
   });
   it('19 quiet_hours → auto_held until the end of quiet hours', () => {
     expect(d({}, {}, { nowLocal: '21:00' })).toMatchObject({ outcome: 'auto_held', ruleIds: ['quiet_hours'], holdUntilLocal: '07:30', holdMinutes: 630 });
@@ -122,50 +121,11 @@ describe('decide() — one test per rule (§D.2)', () => {
   });
 });
 
-describe('decide() — Autopilot step rules (SUPREME-AUTOPILOT §A.6)', () => {
-  const auto = { id: 'hire.offer', mode: 'auto' as const, green: true };
-  it('4a step_owner_only → deny anything but read/draft on an owner step', () => {
-    expect(d({ step: { ...auto, mode: 'owner' } })).toMatchObject({ outcome: 'deny', ruleIds: ['step_owner_only'] });
-    expect(di({ step: { ...auto, mode: 'owner' } })).toMatchObject({ outcome: 'deny', ruleIds: ['step_owner_only'] });
-    expect(d({ class: 'draft', step: { ...auto, mode: 'owner' } })).toMatchObject({ outcome: 'auto', ruleIds: ['read_draft'] });
-  });
-  it('4b step_confirm → ask on a confirm step; read/draft still run', () => {
-    expect(d({ step: { ...auto, mode: 'confirm' } })).toMatchObject({ outcome: 'ask', ruleIds: ['step_confirm'] });
-    expect(di({ step: { ...auto, mode: 'confirm' } })).toMatchObject({ outcome: 'ask', ruleIds: ['step_confirm'] });
-    expect(d({ class: 'read', step: { ...auto, mode: 'confirm' } })).toMatchObject({ outcome: 'auto', ruleIds: ['read_draft'] });
-  });
-  it('the kill switch, pauses and untrusted sources still win over the step rules', () => {
-    expect(d({ step: { ...auto, mode: 'owner' } }, {}, { killSwitch: true })).toMatchObject({ ruleIds: ['kill_switch'] });
-    expect(d({ step: { ...auto, mode: 'confirm' } }, {}, { claimPaused: true })).toMatchObject({ ruleIds: ['paused'] });
-    expect(d({ step: { ...auto, mode: 'owner' }, injectionSuspected: true })).toMatchObject({ ruleIds: ['untrusted_source'] });
-  });
-  it('an auto step still meets every SD rule (money always asks)', () => {
-    expect(d({ class: 'money', step: auto })).toMatchObject({ outcome: 'ask', ruleIds: ['always_ask_classes'] });
-    expect(d({ step: auto }, { mode: 'shadow' })).toMatchObject({ outcome: 'ask', ruleIds: ['shadow'] });
-  });
-  it('13 touches (refined) ignores newCommitment only for a verified commitment on an auto step', () => {
-    const touches = { money: false, liability: false, settlement: false, legal: false, newCommitment: true };
-    const review = { verdict: 'pass' as const, touches };
-    const verified = { kind: 'hire_offer' as const, refId: 'o1', verified: true, reasons: [] };
-    expect(d({ review })).toMatchObject({ outcome: 'ask', ruleIds: ['touches'] });
-    expect(d({ review, step: auto, commitment: verified })).toMatchObject({ outcome: 'auto_held', ruleIds: ['external_ok'] });
-    expect(d({ review, step: auto, commitment: { ...verified, verified: false } })).toMatchObject({ outcome: 'ask', ruleIds: ['touches'] });
-    expect(d({ review, commitment: verified })).toMatchObject({ outcome: 'ask', ruleIds: ['touches'] });
-    // other touches still ask
-    expect(d({ review: { verdict: 'pass', touches: { ...touches, money: true } }, step: auto, commitment: verified })).toMatchObject({ outcome: 'ask', ruleIds: ['touches'] });
-  });
-  it('phase-1 descriptors (no step, no commitment) decide exactly as before', () => {
-    expect(d({})).toMatchObject({ ruleIds: ['external_ok'] });
-    expect(di({})).toMatchObject({ ruleIds: ['internal_ok'] });
-  });
-});
-
 describe('decide() — ordering', () => {
-  it('lists the 21 phase-1 rule ids plus Autopilot 4a/4b, in order', () => {
-    expect(AUTONOMY_RULE_IDS).toHaveLength(23);
+  it('lists exactly 21 rule ids in order', () => {
+    expect(AUTONOMY_RULE_IDS).toHaveLength(21);
     expect(AUTONOMY_RULE_IDS[0]).toBe('destructive');
-    expect(AUTONOMY_RULE_IDS.slice(3, 7)).toEqual(['untrusted_source', 'step_owner_only', 'step_confirm', 'always_ask_classes']);
-    expect(AUTONOMY_RULE_IDS[22]).toBe('read_draft');
+    expect(AUTONOMY_RULE_IDS[20]).toBe('read_draft');
   });
   it('destructive wins over the kill switch', () => {
     expect(d({ class: 'destructive' }, {}, { killSwitch: true })).toMatchObject({ ruleIds: ['destructive'] });
@@ -237,9 +197,6 @@ describe('autonomy defaults and lists', () => {
           "letter.client_update",
           "letter.delay_notice_gta_4_10",
           "letter.supplier_instruction_engineer",
-          "letter.hire_start_notice",
-          "letter.booking_confirmation",
-          "letter.signature_chase",
         ],
         "autoSendEmailKinds": [
           "ack",
@@ -252,9 +209,6 @@ describe('autonomy defaults and lists', () => {
           "client_update",
           "supplier_instruction",
           "reply_general",
-          "booking_update",
-          "insurer_notice",
-          "hire_offer",
         ],
         "autoSendTemplates": [
           "letter.ncaf",
@@ -266,14 +220,11 @@ describe('autonomy defaults and lists', () => {
           "letter.client_update",
           "letter.delay_notice_gta_4_10",
           "letter.supplier_instruction_engineer",
-          "letter.hire_start_notice",
-          "letter.booking_confirmation",
-          "letter.signature_chase",
         ],
         "holdMinutes": 10,
         "killSwitch": false,
         "limits": {
-          "perClaimPerDay": 6,
+          "perClaimPerDay": 3,
           "perDay": 100,
           "perHour": 20,
         },

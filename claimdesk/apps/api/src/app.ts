@@ -63,15 +63,6 @@ declare module 'fastify' {
 /** /api routes reachable without a session (matched against the route pattern, not the raw URL). */
 export const PUBLIC_API_ROUTES: ReadonlySet<string> = new Set(['/api/health', '/api/auth/login', '/api/auth/logout', '/api/auth/me', '/api/auth/login-defaults']);
 
-/**
- * /api route prefixes reachable without a session (SUPREME-AUTOPILOT §E.2): the signing kiosk authenticates with its own
- * one-pack token and refuses run tokens (the perimeter refuses every agent principal there too).
- */
-export const PUBLIC_API_PREFIXES: readonly string[] = ['/api/kiosk/'];
-
-/** Is this matched route pattern public (no session needed)? */
-export const isPublicApiRoute = (routeUrl: string): boolean => PUBLIC_API_ROUTES.has(routeUrl) || PUBLIC_API_PREFIXES.some((p) => routeUrl.startsWith(p));
-
 /** Anything under /api (including the bare prefix and a query string). */
 export const isApiUrl = (url: string): boolean => url === '/api' || url.startsWith('/api/') || url.startsWith('/api?');
 
@@ -198,7 +189,7 @@ export async function buildApp(ctx: AppContext, options: BuildAppOptions = {}): 
       request.actor = { userId: resolved.user.id, ip: request.ip };
       return;
     }
-    if (routeUrl !== undefined && isPublicApiRoute(routeUrl)) return;
+    if (routeUrl !== undefined && PUBLIC_API_ROUTES.has(routeUrl)) return;
     throw new HttpError(401, 'UNAUTHENTICATED', 'Sign in required');
   });
 

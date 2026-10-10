@@ -550,8 +550,11 @@ jobs:
 
           # --- 0.4 (§M.2): the "background" task (ticked by default) created both scheduled tasks; claimdesk:// is registered
           foreach ($task in 'ClaimDesk\Background', 'ClaimDesk\Watchdog') {
-            schtasks.exe /Query /TN $task /V /FO LIST | Select-Object -First 12
-            if ($LASTEXITCODE -ne 0) { throw "scheduled task $task was not created" }
+            # keep the exit code before trimming the output: Select-Object -First stops schtasks early and spoils it
+            $out = schtasks.exe /Query /TN $task /V /FO LIST
+            $code = $LASTEXITCODE
+            $out | Select-Object -First 12
+            if ($code -ne 0) { throw "scheduled task $task was not created" }
           }
           $xml = [xml](schtasks.exe /Query /TN 'ClaimDesk\Background' /XML | Out-String)
           if ($xml.Task.Principals.Principal.LogonType -ne 'InteractiveToken') { throw 'Background task: LogonType is not InteractiveToken' }

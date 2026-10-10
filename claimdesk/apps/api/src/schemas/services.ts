@@ -13,8 +13,6 @@ import { vehiclePatchFields, vehicleSourceSchema, vehicleSpecSchema } from './ve
 export const evidenceKind = z.enum([
   'photo', 'video', 'audio', 'document', 'pdf', 'screenshot', 'advert', 'bank_statement', 'payslip', 'licence', 'v5c', 'mot_certificate',
   'insurance_certificate', 'estimate', 'invoice', 'engineer_report', 'correspondence', 'call_recording', 'cctv', 'dashcam', 'witness_statement', 'other',
-  // Autopilot signing (SUPREME-AUTOPILOT §G.3): kiosk signature image, returned signed document (wet ink / scan).
-  'signature_image', 'signed_document',
 ]);
 export const guidedShot = z.enum([
   'front_left', 'front_right', 'rear_left', 'rear_right', 'damage_close_1', 'damage_close_2', 'damage_close_3', 'odometer', 'vin_plate',

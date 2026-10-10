@@ -13,7 +13,6 @@
  *     Needs-you `override_needed` — agents never override);
  *   7 `agent_tool_calls` row (input masked, output summary, decision, status, duration);
  *   8 `shape` + truncate to `maxOutputChars` with `"truncated": true` and a hint to paginate.
- * Autopilot (SUPREME-AUTOPILOT §0.6): `rc.step` (set by code only) is copied onto the descriptor before `decide()`.
  *
  * Gateway extensions (optional fields on gateway tools; other slices' tools never need them): `shapeWith` (shape with
  * the input and run context), `afterHttp` (follow-ups after a successful route call), `dailyLimit` (successful calls per
@@ -202,9 +201,7 @@ export async function executeTool(ctx: AppContext, rc: RunContext, name: ToolNam
 
   try {
     // 4 policy
-    // §0.6 (SUPREME-AUTOPILOT): the run's step (set by code only) reaches the policy on every descriptor.
-    const described = def.describe(input, rc, ctx);
-    const descriptor = rc.step ? { ...described, step: { id: rc.step.id, mode: rc.step.mode, green: rc.step.green } } : described;
+    const descriptor = def.describe(input, rc, ctx);
     const claimId = descriptor.claimId ?? rc.claimScope;
     const decision = decide(descriptor, getAutonomy(ctx), autonomyState(ctx, { ...(claimId ? { claimId } : {}), agent: rc.agent }));
     if (descriptor.class !== 'read') auditPolicy(ctx, rc, name, decision);

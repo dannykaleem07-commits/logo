@@ -3,7 +3,6 @@
  * reaches the `agent.policy` audit row and the daily log, so ids never change.
  */
 import type { ActionClass, EmailKind, RecipientRole } from '../agents/types.js';
-import type { CommitmentContext, StepContext } from '../autopilot/types.js';
 import { isAlwaysAskEmailKind, isAlwaysAskTemplate, type AutonomySettings } from './settings.js';
 
 export interface ReviewTouches {
@@ -32,13 +31,6 @@ export interface ActionDescriptor {
   injectionSuspected?: boolean;
   spoofSuspected?: boolean;
   attachmentsAllowed?: boolean;
-  /**
-   * Autopilot (SUPREME-AUTOPILOT §0.6, §A.6): the step this action is taken for, with its effective mode and whether it
-   * is green. Set by code only (dispatcher from `RunContext.step`, outbox decision path) — never from model input.
-   */
-  step?: StepContext;
-  /** A hire offer / delivery slot commitment verified by code (§D.3). Set by code only. */
-  commitment?: CommitmentContext;
 }
 
 export interface AutonomyState {
@@ -65,8 +57,6 @@ export type AutonomyRuleId =
   | 'kill_switch'
   | 'paused'
   | 'untrusted_source'
-  | 'step_owner_only'
-  | 'step_confirm'
   | 'always_ask_classes'
   | 'shadow'
   | 'internal_sensitive'
@@ -85,14 +75,12 @@ export type AutonomyRuleId =
   | 'external_ok'
   | 'read_draft';
 
-/** The rules in evaluation order: SD §D.2's 21 plus Autopilot's 4a/4b (SUPREME-AUTOPILOT §A.6) after untrusted_source. */
+/** The 21 rules in evaluation order (§D.2). */
 export const AUTONOMY_RULE_IDS: readonly AutonomyRuleId[] = [
   'destructive',
   'kill_switch',
   'paused',
   'untrusted_source',
-  'step_owner_only',
-  'step_confirm',
   'always_ask_classes',
   'shadow',
   'internal_sensitive',
@@ -153,9 +141,6 @@ const RULES: ReadonlyArray<readonly [AutonomyRuleId, Rule]> = [
         ? ask(a.spoofSuspected ? 'The source message may be spoofed' : 'The source message may contain instructions aimed at the agent')
         : undefined,
   ],
-  // 4a / 4b (SUPREME-AUTOPILOT §A.6): an `owner` step is never attempted by an agent; a `confirm` step never acts alone.
-  ['step_owner_only', (a) => (a.step?.mode === 'owner' && !isReadOrDraft(a.class) ? deny('A person does this step') : undefined)],
-  ['step_confirm', (a) => (a.step?.mode === 'confirm' && !isReadOrDraft(a.class) ? ask('This step is set to ask you first') : undefined)],
   [
     'always_ask_classes',
     (a) => (a.class === 'money' || a.class === 'settlement' || a.class === 'legal' ? ask(`${a.class === 'money' ? 'Money' : a.class === 'settlement' ? 'Offers and settlements' : 'Legal matters'} always need the owner`) : undefined),
@@ -174,9 +159,7 @@ const RULES: ReadonlyArray<readonly [AutonomyRuleId, Rule]> = [
     'touches',
     (a) => {
       if (a.class !== 'external_send' || !a.review) return undefined;
-      // Refined (SUPREME-AUTOPILOT §A.6, §D.3): a commitment verified by code on an `auto` step is not a new commitment.
-      const verifiedCommitment = a.commitment?.verified === true && a.step?.mode === 'auto';
-      const hit = (Object.keys(a.review.touches) as Array<keyof ReviewTouches>).filter((k) => a.review!.touches[k] && !(k === 'newCommitment' && verifiedCommitment));
+      const hit = (Object.keys(a.review.touches) as Array<keyof ReviewTouches>).filter((k) => a.review!.touches[k]);
       return hit.length ? ask(`The draft touches ${hit.join(', ')}`) : undefined;
     },
   ],
