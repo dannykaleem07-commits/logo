@@ -38,6 +38,7 @@ import { insertedDisplays, londonIsoDate, PLACEHOLDER_RE } from './facts.js';
 import { REVIEWER_SPEC } from './specs.js';
 import { aiFailure, isAiOff } from './ai.js';
 import { onPackDocumentReviewed } from '../signing/packs.js';
+import { autopilotReviewIssues } from '../autopilot/offerChecks.js';
 
 export const REVIEWER = agentUserId('reviewer');
 export const SIGN_OFF = 'Claims Team, Courtesy Cars Group UK Ltd';
@@ -199,6 +200,8 @@ export function rulesTier(ctx: AppContext, t: ReviewTarget): { issues: ReviewIss
     issues.push(issue(r.action === 'escalate' ? 'RED_LINE_ESCALATE' : 'RED_LINE', r.action === 'escalate' ? 'warn' : 'block', m[0].slice(0, 120), `${r.message} (${r.ref})`, r.action === 'block' ? 'Remove or reword this passage' : null));
   }
   if (t.missingInfo) issues.push(issue('MISSING_INFO_REQUEST', 'info', 'draft', 'Prepared because information is missing: the owner confirms before it is sent'));
+  // SUPREME-AUTOPILOT §D.2: the hire offer's own tier-a checks (free wording, script guard, bound terms, rates).
+  for (const i of autopilotReviewIssues(ctx, t)) issues.push(issue(i.code, i.severity, i.excerpt, i.message));
   // Knowledge Builder §8.3 (knowledge-use): may this draft cite / state the knowledge it rests on?
   for (const f of knowledgeReviewFlags(ctx, { kind: t.kind, id: t.id, claimId: t.claimId, text: t.text, ...(t.recipientRole ? { recipientRole: t.recipientRole } : {}) })) issues.push(issue(f.code, f.severity, f.excerpt ?? 'knowledge', f.message));
   return { issues, redLines };

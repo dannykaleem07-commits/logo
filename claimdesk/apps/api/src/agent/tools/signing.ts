@@ -7,7 +7,8 @@
  * Outputs carry ids, titles and statuses only (no document text, no other claim).
  */
 import { z } from 'zod/v4';
-import { PACK_STAGES, type ActionDescriptor } from '@ccguk/domain';
+import { PACK_STAGES, type ActionDescriptor, type PackStage } from '@ccguk/domain';
+import type { AppContext } from '../../context.js';
 import type { RunContext, ToolDef } from '../contracts.js';
 import { DEFAULT_MAX_OUTPUT_CHARS } from '../contracts.js';
 import { toolInputSchema } from '../../ai/strictSchema.js';
@@ -46,6 +47,19 @@ const signaturesList = tool({
   },
 });
 
+/**
+ * Idempotency key for `pack.prepare`. One preparation per pack generation (a superseded or cancelled pack lets the next
+ * one be prepared), and while the open pack is still `preparing` (an item failed — e.g. a template's wording was not
+ * acknowledged yet or a value is missing) one retry per hour, so the step recovers once the owner has fixed the cause
+ * instead of stalling on the first attempt's key.
+ */
+export function packPrepareKey(ctx: AppContext, claimId: string, stage: string, reservationId: string | null): string {
+  const packs = ctx.repos.listDocumentPacks(ctx.db, { claimId, stage: stage as PackStage }).filter((p) => (p.reservationId ?? null) === (reservationId ?? null));
+  const generation = packs.filter((p) => p.status === 'superseded' || p.status === 'cancelled').length;
+  const retry = packs.some((p) => p.status === 'preparing') ? `:retry:${ctx.now().slice(0, 13)}` : '';
+  return `pack.prepare:${claimId}:${stage}:${reservationId ?? '-'}:${generation}${retry}`;
+}
+
 const packPrepare = tool({
   name: 'pack_prepare',
   title: 'Prepare a paperwork pack',
@@ -62,7 +76,7 @@ const packPrepare = tool({
       type: 'pack.prepare',
       payload: { claimId: i.claimId, stage: i.stage, ...(i.reservationId ? { reservationId: i.reservationId } : {}) },
       claimId: i.claimId,
-      idempotencyKey: `pack.prepare:${i.claimId}:${i.stage}:${i.reservationId ?? '-'}:0`,
+      idempotencyKey: packPrepareKey(ctx, i.claimId, i.stage, i.reservationId),
       ...(rc.jobId.startsWith('autopilot:') ? {} : { parentJobId: rc.jobId }),
       correlationId: rc.correlationId,
       createdBy: agentUserId(rc.agent),

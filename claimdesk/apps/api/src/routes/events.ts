@@ -7,6 +7,7 @@ import { eventBody, eventListQuery } from '../schemas/events.js';
 import { recomputeClocks } from '../services/claimView.js';
 import { applyEventSideEffects } from '../services/sideEffects.js';
 import { requireClaim, params } from './helpers.js';
+import { claimChanged, isClashRelevantEvent } from '../autopilot/claimChanged.js';
 
 /** Chronology — append-only. Certain event types trigger side effects (see services/sideEffects.ts). */
 export function registerEventsRoutes(app: FastifyInstance, ctx: AppContext): void {
@@ -31,6 +32,7 @@ export function registerEventsRoutes(app: FastifyInstance, ctx: AppContext): voi
       return { event: e, effects: fx };
     });
     const clocks = recomputeClocks(ctx, id);
+    if (isClashRelevantEvent(event.type)) claimChanged(ctx, [id], request.actor.userId, `event ${event.type}`);
     return reply.status(201).send({ event, effects, clocks });
   });
 

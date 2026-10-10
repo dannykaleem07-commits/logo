@@ -4,6 +4,7 @@ import type { AppContext } from '../context.js';
 import { parse } from '../schemas/common.js';
 import { connectionsQuery, partyInput, partyListQuery, partyPatch } from '../schemas/parties.js';
 import { params } from './helpers.js';
+import { claimChanged, claimsForParty } from '../autopilot/claimChanged.js';
 
 const SUPPLIER_ROLES = new Set<Party['roles'][number]>(['supplier', 'repairer', 'recovery_agent', 'storage_yard', 'engineer', 'salvage_buyer', 'solicitor']);
 
@@ -44,12 +45,15 @@ export function registerPartiesRoutes(app: FastifyInstance, ctx: AppContext): vo
   app.patch('/parties/:id', async (request) => {
     const { id } = params<{ id: string }>(request);
     const body = parse(partyPatch, request.body);
-    return ctx.db.transaction((tx) => {
+    const updated = ctx.db.transaction((tx) => {
       const before = ctx.repos.requireParty(tx, id);
       const after = ctx.repos.updateParty(tx, id, body);
       ctx.repos.appendAudit(tx, { actor: request.actor, action: 'party.patch', entity: 'parties', entityId: id, before: { name: before.name, phone: before.phone, email: before.email }, after: body, at: ctx.now() });
       return after;
     });
+    // §C.3: identity fields feed the same-person clash checks.
+    if (body.dateOfBirth !== undefined || body.drivingLicenceNumber !== undefined || body.name !== undefined) claimChanged(ctx, claimsForParty(ctx, id), request.actor.userId, 'party details changed');
+    return updated;
   });
 
   /** Connected-party check (lesson g): subject vs staff (users), suppliers and previous clients, plus witness independence. */

@@ -168,8 +168,24 @@ export function launchArgs(): string[] {
   return noSandbox ? ['--no-sandbox', '--disable-dev-shm-usage'] : [];
 }
 
+/**
+ * The renderer never needs the network (documents are rendered from local HTML): keep Chromium's own background
+ * traffic (component updates, field trials, safe-browsing and optimisation lookups) switched off, so rendering — and
+ * every test that renders — makes no outbound connection.
+ */
+export const QUIET_NETWORK_ARGS: readonly string[] = [
+  '--disable-background-networking',
+  '--disable-component-update',
+  '--disable-domain-reliability',
+  '--disable-client-side-phishing-detection',
+  '--disable-sync',
+  '--no-pings',
+  '--metrics-recording-only',
+  // (no --disable-features here: Chromium keeps only the last one, which would drop Playwright's own list)
+];
+
 export function launchOptions(): LaunchOptions {
-  const opts: LaunchOptions = { headless: true, args: launchArgs() };
+  const opts: LaunchOptions = { headless: true, args: [...launchArgs(), ...QUIET_NETWORK_ARGS] };
   const exe = resolveChromium();
   if (exe) opts.executablePath = exe;
   return opts;

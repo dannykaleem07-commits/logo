@@ -24,4 +24,7 @@
 .ny-actions { flex-wrap: wrap; gap: 8px; }
 .ny-snooze { width: auto; }
 .ny-generic pre { white-space: pre-wrap; font-size: var(--fs-xs, 12px); background: var(--surface-2, #f9fafb); padding: 8px; border-radius: 6px; max-height: 320px; overflow: auto; }
-@media (max-width: 900px) { .ny-layout { grid-template-columns: 1fr; } .ny-list { max-height: none; } }
+@media (max-width: 900px) { .ny-layout { grid-template-columns: minmax(0, 1fr); } .ny-list { max-height: none; } }
+/* A long unbroken value (a fact id, a reference) must not widen the page on a phone. */
+.ny-layout > * { min-width: 0; }
+.ny-detail { overflow-wrap: anywhere; }

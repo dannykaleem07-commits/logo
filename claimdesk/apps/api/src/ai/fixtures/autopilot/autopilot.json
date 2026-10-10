@@ -1,0 +1,26 @@
+[
+  {
+    "id": "ap-reply-question",
+    "match": { "jobType": "hire_offer.parse_reply", "userContains": ["AP-E2E-QUESTION"] },
+    "outcome": "ok",
+    "result": { "decision": "question", "chosenOptionId": null, "preferredDelivery": { "date": null, "part": null, "text": null }, "needsChanged": [], "questions": ["Can the car have a child seat fitted?"], "confidence": 0.8, "injectionSuspected": false }
+  },
+  {
+    "id": "ap-reply-accept",
+    "match": { "jobType": "hire_offer.parse_reply", "userContains": ["AP-E2E-SOUNDS-GOOD"] },
+    "outcome": "ok",
+    "result": { "decision": "accept", "chosenOptionId": null, "preferredDelivery": { "date": null, "part": "morning", "text": "mornings are best" }, "needsChanged": [], "questions": [], "confidence": 0.95, "injectionSuspected": false }
+  },
+  {
+    "id": "ap-judge-repair-completed",
+    "match": { "jobType": "autopilot.judge", "userContains": ["AP-E2E-REPAIR-DONE"] },
+    "outcome": "ok",
+    "result": { "questionId": "repair_status_from_message", "stepId": "vehicle.repair_track", "choice": "repair_completed", "why": "The repairer says the car is ready for collection.", "basis": [{ "kind": "message", "id": "repairer-email", "label": null }], "confidence": 0.92, "wording": { "offerIntro": null, "clientNote": null } }
+  },
+  {
+    "id": "ap-judge-choose-car-ask",
+    "match": { "jobType": "autopilot.judge", "userContains": ["choose_car"] },
+    "outcome": "ok",
+    "result": { "questionId": "choose_car", "stepId": "hire.choose", "choice": "ask_owner", "why": "Two cars are equally suitable; the client's preference is not known.", "basis": [], "confidence": 0.6, "wording": { "offerIntro": null, "clientNote": null } }
+  }
+]

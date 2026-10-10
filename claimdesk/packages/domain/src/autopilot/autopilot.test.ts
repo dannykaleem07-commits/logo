@@ -353,3 +353,59 @@ describe('hire offers', () => {
     expect(firstReplyLine('\n\n  Hello  \n')).toBe('Hello');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Integration fixes (ap-verifier): acceptance conditions met later in the lifecycle do not stop the offer; a pack step
+// waits only on its own pack's Needs-you card.
+// ---------------------------------------------------------------------------
+import { ACCEPTANCE_CONDITIONS, conditionsGatingHireOffer } from '../acceptance/index.js';
+
+describe('acceptance conditions that gate the hire offer (§D.1 criterion 3, §L)', () => {
+  const C = ACCEPTANCE_CONDITIONS;
+  it('the CCR agreement, CCTV and injury referral never gate the offer; means only when Settings require them; others gate', () => {
+    expect(conditionsGatingHireOffer([C.enforceability, C.cctv, C.injury], { requireMeansBeforeOffer: true })).toEqual([]);
+    expect(conditionsGatingHireOffer([C.impecuniosity], { requireMeansBeforeOffer: false })).toEqual([]);
+    expect(conditionsGatingHireOffer([C.impecuniosity], { requireMeansBeforeOffer: true })).toEqual([C.impecuniosity]);
+    expect(conditionsGatingHireOffer([C.noHireUntilLiability, C.interventionReply, 'some new condition'], { requireMeansBeforeOffer: false })).toEqual([C.noHireUntilLiability, C.interventionReply, 'some new condition']);
+  });
+
+  it('a claim accepted with the standard sign-up conditions (means + CCR agreement) is green for the offer', () => {
+    const a = availability([candidate('unit-a', 'AB12 CDE', 92)]);
+    const standard = facts({ availability: a, recordedAcceptance: { decision: 'accept_with_conditions', conditions: [C.impecuniosity, C.enforceability], at: NOW } });
+    expect(step(planAutopilot(standard), 'hire.choose').green).toBe(true);
+    const liability = facts({ availability: a, recordedAcceptance: { decision: 'accept_with_conditions', conditions: [C.noHireUntilLiability], at: NOW } });
+    const st = step(planAutopilot(liability), 'hire.choose');
+    expect(st.green).toBe(false);
+    expect(st.modeReasons.join(' ')).toMatch(/conditions that are not met/);
+    const meansRequired = facts({ availability: a, settings: { ...DEFAULT_AUTOPILOT_SETTINGS, eligibility: { ...DEFAULT_AUTOPILOT_SETTINGS.eligibility, requireMeansBeforeOffer: true } }, recordedAcceptance: { decision: 'accept_with_conditions', conditions: [C.impecuniosity], at: NOW } });
+    expect(step(planAutopilot(meansRequired), 'hire.choose').green).toBe(false);
+  });
+});
+
+describe('a pack step waits only on its own pack (no cross-stage blocking)', () => {
+  const pack = (id: string, stage: 'signup' | 'hire_start', status: 'awaiting_approval' | 'reviewing', reservationId?: string) => ({ id, claimId: 'claim-1', stage, ...(reservationId ? { reservationId } : {}), items: [], status, createdBy: 'agent:autopilot', createdAt: NOW, updatedAt: NOW });
+  const confirmed = [reservation({ status: 'confirmed', agreementNumber: 'CCG-H-000001', holdExpiresAt: undefined })];
+  const offers = [offer({ status: 'accepted' })];
+
+  it("the sign-up pack's open approve_pack card does not hold up the hire-start pack", () => {
+    const f = facts({ reservations: confirmed, hireOffers: offers, packs: [pack('pk-signup', 'signup', 'awaiting_approval')], openNeedsYou: [{ id: 'ny-signup', kind: 'approve_pack', dedupeKey: 'approve_pack:pk-signup' }] });
+    const plan = planAutopilot(f);
+    expect(step(plan, 'signup.pack').status).toBe('waiting');
+    expect(step(plan, 'hire.pack').status).toBe('due');
+    expect(step(plan, 'hire.pack').refs.needsYouId).toBeUndefined();
+  });
+
+  it("the hire-start pack's own approve_pack card makes it wait on the owner", () => {
+    const f = facts({ reservations: confirmed, hireOffers: offers, packs: [pack('pk-signup', 'signup', 'awaiting_approval'), pack('pk-hs', 'hire_start', 'awaiting_approval', 'res-1')], openNeedsYou: [{ id: 'ny-signup', kind: 'approve_pack', dedupeKey: 'approve_pack:pk-signup' }, { id: 'ny-hs', kind: 'approve_pack', dedupeKey: 'approve_pack:pk-hs' }] });
+    const st = step(planAutopilot(f), 'hire.pack');
+    expect(st.status).toBe('waiting');
+    expect(st.refs.needsYouId).toBe('ny-hs');
+  });
+
+  it('an unrelated question card does not make the acceptance step wait on the owner', () => {
+    const f = facts({ reservations: [reservation()], hireOffers: [offer()], openNeedsYou: [{ id: 'q-1', kind: 'question', dedupeKey: 'pack_missing:pk-other' }] });
+    const st = step(planAutopilot(f), 'hire.acceptance');
+    expect(st.refs.needsYouId).toBeUndefined();
+    expect(st.waitingOn).toBe('client');
+  });
+});

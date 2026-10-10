@@ -22,16 +22,8 @@ import { agentsStatus } from '../routes/agents.js';
  * (docs/SUPREME-AUTOPILOT.md §K: ap-foundation adds the vocabulary, each wave-2/3 slice registers its own). Each slice
  * removes its entries here when it registers them; after wave 3 both maps must be empty.
  */
-const AWAITING_SLICE_JOB_TYPES: Readonly<Record<string, string>> = {
-  'autopilot.tick': 'ap-autopilot',
-  'autopilot.sweep': 'ap-autopilot',
-  'autopilot.judge': 'ap-autopilot',
-  'hire_offer.parse_reply': 'ap-autopilot',
-};
-const AWAITING_SLICE_NEEDS_YOU_KINDS: Readonly<Record<string, string>> = {
-  choose_car: 'ap-autopilot',
-  autopilot_step: 'ap-autopilot',
-};
+const AWAITING_SLICE_JOB_TYPES: Readonly<Record<string, string>> = {};
+const AWAITING_SLICE_NEEDS_YOU_KINDS: Readonly<Record<string, string>> = {};
 /** Knowledge Builder job types whose handler their slice has not registered yet (KB §13; same rule as above). */
 const AWAITING_KNOWLEDGE_JOB_TYPES: Readonly<Record<string, string>> = {};
 const awaitingHandler = (type: string): boolean => (type in AWAITING_SLICE_JOB_TYPES || type in AWAITING_KNOWLEDGE_JOB_TYPES) && !getJobHandler(type as never);

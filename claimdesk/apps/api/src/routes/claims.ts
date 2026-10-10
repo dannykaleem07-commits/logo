@@ -18,6 +18,7 @@ import { FNOL_DEFAULT_ROLES, isIndependentRelationship, normaliseFnol, toFnolInp
 import { manualLookupRecord, sourceLookupRecord } from '../services/lookup.js';
 import { gateFor, NEW_ENTITY, STRICT_GATE, type OverrideGate } from '../services/override.js';
 import { assertNoHardStop, params, requireClaim } from './helpers.js';
+import { claimChanged } from '../autopilot/claimChanged.js';
 
 const STATUS_RANK: Record<ClaimStatus, number> = {
   fnol: 0, triage: 1, declined: 1, accepted: 2, hire_active: 3, repair: 3, total_loss: 3, payment_pack: 4, chasing: 5, disputed: 5, complaint: 6, pre_action: 7, litigation: 8, settled: 9, closed: 10,
@@ -302,6 +303,7 @@ export function registerClaimsRoutes(app: FastifyInstance, ctx: AppContext): voi
     const gate = gateFor(ctx, request);
     const created = createClaimFromFnol(ctx, body, request.actor, gate);
     gate.bindClaim(created.id);
+    claimChanged(ctx, [created.id], request.actor.userId, 'claim created');
     return reply.status(201).send(created);
   });
 
@@ -331,6 +333,7 @@ export function registerClaimsRoutes(app: FastifyInstance, ctx: AppContext): voi
       ctx.repos.appendAudit(tx, { actor: request.actor, action: 'claim.patch', entity: 'claims', entityId: id, before: pick(before, Object.keys(patch)), after: patch, at: ctx.now() });
       return updated;
     });
+    claimChanged(ctx, [id], request.actor.userId, 'claim edited');
     return claim;
   });
 
@@ -348,7 +351,9 @@ export function registerClaimsRoutes(app: FastifyInstance, ctx: AppContext): voi
       if (gate.active) reason = gate.reason;
       else throw badRequest('A reason is required when moving to pre_action or litigation (litigation documents are drafts for the claimant to sign)');
     }
-    return ctx.repos.setClaimStatus(ctx.db, id, body.status, request.actor, reason);
+    const updated = ctx.repos.setClaimStatus(ctx.db, id, body.status, request.actor, reason);
+    claimChanged(ctx, [id], request.actor.userId, `status ${body.status}`);
+    return updated;
   });
 
   app.post('/claims/:id/flags/:code/clear', async (request) => {

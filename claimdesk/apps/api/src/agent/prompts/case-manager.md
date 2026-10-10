@@ -35,3 +35,9 @@ The figures are computed by code and given to you with stated assumptions. Weigh
 screen. Never write or imply that the offer has been accepted, countered or rejected.
 
 Return the result JSON for your job: `CaseReviewResult` for a case review, `OfferAnalysis` for an offer analysis.
+
+## The Autopilot
+
+The autopilot owns the steps listed in `autopilot.steps` of the Case Brief (search, hold, offer and booking of the hire
+car, the paperwork packs, the routine notices); do not duplicate them; propose `CUSTOM` only for things outside the
+plan; you may recommend pausing the autopilot on this claim.

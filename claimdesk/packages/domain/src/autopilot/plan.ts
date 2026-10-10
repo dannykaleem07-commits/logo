@@ -20,6 +20,7 @@
  */
 import { addWorkingDays } from '../calendar/calendar.js';
 import { greenTest, type GreenResult } from '../booking/green.js';
+import { conditionsGatingHireOffer } from '../acceptance/assess.js';
 import { sha256Hex } from '../evidence/hash.js';
 import type { ISODateTime } from '../types.js';
 import { configuredStepMode, floorReason } from './settings.js';
@@ -81,7 +82,7 @@ export function greenFor(f: AutopilotFacts, id: AutopilotStepId): GreenResult {
         candidate,
         minLikeForLike: f.settings.green.minLikeForLike,
         findings: f.clashes,
-        acceptance: { decision: ra?.decision ?? null, conditionsMet: (ra?.conditions.length ?? 0) === 0 },
+        acceptance: { decision: ra?.decision ?? null, conditionsMet: conditionsGatingHireOffer(ra?.conditions ?? [], { requireMeansBeforeOffer: f.settings.eligibility.requireMeansBeforeOffer }).length === 0 },
         need: f.eligibility?.need.level ?? 'unknown',
         interventionUnanswered: f.bundle.offers.some((o) => !o.replySentAt),
         clientWantsHire: f.needs?.clientWantsHire ?? null,
@@ -185,9 +186,16 @@ function needsYouFor(def: StepDef, f: AutopilotFacts): { id: string } | undefine
   const prefix = `autopilot:${f.bundle.claim.id}:${def.id}:`;
   const own = f.openNeedsYou.find((n) => n.dedupeKey?.startsWith(prefix));
   if (own) return own;
+  // A pack step waits only on its own pack's cards (approve_pack:<packId>, pack_missing:<packId>) — an open card for
+  // another stage's pack (e.g. the sign-up pack) must not hold up this one.
+  const pack = def.action.kind === 'pack' ? packOf(f, def.action.stage) : undefined;
+  if (pack) {
+    const mine = f.openNeedsYou.find((n) => n.dedupeKey === `approve_pack:${pack.id}` || n.dedupeKey === `pack_missing:${pack.id}`);
+    if (mine) return mine;
+  }
   const kinds = STEP_RELATED_NEEDS_YOU[def.id];
   if (!kinds) return undefined;
-  return f.openNeedsYou.find((n) => kinds.includes(n.kind));
+  return f.openNeedsYou.find((n) => kinds.includes(n.kind) && n.kind !== 'approve_pack');
 }
 
 function jobFor(def: StepDef, f: AutopilotFacts): { id: string } | undefined {

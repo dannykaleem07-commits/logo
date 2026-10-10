@@ -93,10 +93,14 @@ interface PromptState {
   resolve: (d: OverrideDecision) => void;
 }
 
+const onKioskPage = (): boolean => typeof window !== 'undefined' && window.location.pathname.startsWith('/sign/kiosk/');
+
 export function ManagerModeProvider({ children }: { children: ReactNode }): JSX.Element {
   const qc = useQueryClient();
   const toast = useToast();
-  const me = useMe();
+  // The client-facing signing kiosk (/sign/kiosk/:token) has no owner session and never uses manager mode: do not ask
+  // who is signed in there (a 401 in the client's tablet console otherwise).
+  const me = useMe({ enabled: !onKioskPage() });
   const user = me.data ?? null;
   const userId = user?.id ?? null;
 

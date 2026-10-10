@@ -99,6 +99,9 @@ describe('notification dispatch', () => {
 
   it('a Needs-you toast says kind + reference only, never the personal data in the item', async () => {
     const res = await t.api<{ claim: { id: string; reference: string } }>('POST', '/claims', FNOL);
+    // The new claim also queued its autopilot tick and clash check (SUPREME-AUTOPILOT §C.3); the worker below runs the
+    // system jobs only, so those are set aside to keep this test about the one toast.
+    for (const j of t.ctx.repos.listAgentJobs(t.ctx.db, { claimId: res.body.claim.id, limit: 50 })) if (j.status === 'queued' && (j.type === 'autopilot.tick' || j.type === 'clash.check')) t.ctx.repos.cancelAgentJob(t.ctx.db, j.id, { reason: 'not under test', now: t.ctx.now() });
     const item = createNeedsYou(t.ctx, {
       kind: 'offer_decision',
       claimId: res.body.claim.id,

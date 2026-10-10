@@ -89,7 +89,9 @@ describe('automatic fills', () => {
     const allow = agentRouteAllowlist();
     for (const r of ['PATCH /api/claims/:id', 'PATCH /api/vehicles/:id', 'PATCH /api/parties/:id', 'POST /api/vehicles', 'POST /api/parties', 'POST /api/claims/:id/events', 'POST /api/proposals/apply']) expect(allow.has(r), r).toBe(true);
     expect(allow.has('POST /api/proposals/reject')).toBe(false);
-    expect(allow.has('POST /api/claims/:id/status')).toBe(false);
+    // The status route is on the allow-list only for the Autopilot's claim_status_set (docs/SUPREME-AUTOPILOT.md §L,
+    // final statuses refused by the perimeter); no intake tool may set the claim status.
+    expect(intakeTools.flatMap((x) => (x.httpRoute ? (Array.isArray(x.httpRoute) ? x.httpRoute : [x.httpRoute]) : [])).some((r) => r.pattern === '/claims/:id/status')).toBe(false);
   });
 });
 

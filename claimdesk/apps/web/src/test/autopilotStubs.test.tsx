@@ -36,10 +36,10 @@ describe('Autopilot wiring', () => {
     expect(paths).toEqual(expect.arrayContaining(['settings/autopilot', 'settings/fleet/criteria']));
   });
 
-  it('renders a stub panel and the clash panel placeholder', () => {
+  it('renders the choose_car panel (built by ap-autopilot)', () => {
     const Panel = panelFor('choose_car')!;
-    renderWithProviders(<Panel item={{ id: 'n1', kind: 'choose_car' } as unknown as NeedsYouItem} closed={false} />);
-    expect(screen.getByText(/coming with Autopilot/i)).toBeTruthy();
+    renderWithProviders(<Panel item={{ id: 'n1', kind: 'choose_car', options: [] } as unknown as NeedsYouItem} closed={false} />);
+    expect(screen.getByTestId('choose-car-panel')).toBeTruthy();
   });
 
   it('the clash panel accepts the agreed props (built by ap-clash)', () => {

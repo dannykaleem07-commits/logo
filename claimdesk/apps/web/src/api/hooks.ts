@@ -114,8 +114,8 @@ export async function fetchCurrentUser(signal?: AbortSignal): Promise<AuthUser |
   }
 }
 
-export function useMe() {
-  return useQuery({ queryKey: qk.me, queryFn: ({ signal }) => fetchCurrentUser(signal), staleTime: 60_000, retry: (n, e) => !(isApiError(e) && e.status >= 400 && e.status < 500) && n < 1 });
+export function useMe(opts: { enabled?: boolean } = {}) {
+  return useQuery({ queryKey: qk.me, queryFn: ({ signal }) => fetchCurrentUser(signal), staleTime: 60_000, retry: (n, e) => !(isApiError(e) && e.status >= 400 && e.status < 500) && n < 1, enabled: opts.enabled ?? true });
 }
 
 /** What the sign-in screen pre-fills. Always re-read when the screen opens (the password stops once it is changed). */

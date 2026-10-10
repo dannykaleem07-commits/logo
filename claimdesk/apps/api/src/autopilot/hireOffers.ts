@@ -124,7 +124,9 @@ export function prepareHireOffer(ctx: AppContext, actor: Actor, input: PrepareOf
     });
   const terms = buildHireOfferTerms(ctx, r, alternatives);
   const ownerHold = isPerson(r.createdBy);
-  const authorisedBy = isPerson(actor.userId) ? actor.userId : ownerHold ? r.createdBy : 'autopilot_green';
+  // The owner chose this car on a choose_car card (the hold may have been placed by the Autopilot or moved for them).
+  const ownerChoice = ctx.repos.listAutopilotLog(ctx.db, { claimId: input.claimId, action: 'owner_choice' }).filter((e) => e.refs.reservationId === r.id).pop();
+  const authorisedBy = isPerson(actor.userId) ? actor.userId : ownerHold ? r.createdBy : ownerChoice ? ownerChoice.actor : 'autopilot_green';
   // Earlier drafts on this claim are superseded (one live offer per claim).
   for (const old of ctx.repos.listHireOffers(ctx.db, { claimId: input.claimId, status: 'draft' })) ctx.repos.updateHireOffer(ctx.db, old.id, { status: 'superseded' }, now);
   const offer = ctx.repos.createHireOffer(ctx.db, {
@@ -273,11 +275,4 @@ export function claimHireOffers(ctx: AppContext, claimId: Id): Array<HireOffer &
     .listHireOffers(ctx.db, { claimId })
     .reverse()
     .map((o) => ({ ...o, reservationStatus: ctx.repos.getReservation(ctx.db, o.reservationId)?.status ?? null }));
-}
-
-/** Delivery / collection window in owner and client words: "Tuesday 13 October 2026, 10:00–12:00". */
-export function windowDisplay(startIso: ISODateTime, endIso: ISODateTime): string {
-  const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-  const time = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit', hour12: false });
-  return `${fmt.format(new Date(startIso))}, ${time.format(new Date(startIso))}–${time.format(new Date(endIso))}`;
 }

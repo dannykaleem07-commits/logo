@@ -19,6 +19,7 @@ import { allowedStages, complianceAlerts, liabilityTransferParticulars, penaltyT
 import { params } from './helpers.js';
 import { periodAllocateBody } from '../schemas/bookings.js';
 import { allocateCheckForPeriod } from '../booking/service.js';
+import { queueClashCheck } from '../clash/service.js';
 
 /** GTA group stored on a fleet unit saved in manager mode without a group (0.3 §A.6 B09). */
 export const UNGROUPED = 'UNGROUPED';
@@ -341,6 +342,8 @@ export function registerFleetRoutes(app: FastifyInstance, ctx: AppContext): void
       }
       return u;
     });
+    // §C.3: the car's status, policy, uses and MOT/tax decide its bookings' clash findings.
+    queueClashCheck(ctx, { kind: 'fleet_unit', fleetUnitId: id }, request.actor.userId);
     return { ...unitRow(unit, allAlerts()), ...(vehiclePatch ? { warnings } : {}) };
   });
 

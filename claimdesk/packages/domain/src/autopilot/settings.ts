@@ -39,6 +39,12 @@ export interface AutopilotSettings {
     lanKiosk: boolean;
     kioskTtlMinutes: number;
     dvlaCheckMaxAgeDays: number;
+    /**
+     * Agreement templates the owner has confirmed fit the RAO art 60F exemption by their own terms (≤ 12 payments within
+     * 12 months, no interest or charges), e.g. `agreement.ccguk_03_credit_hire`. Owner-entered; empty by default, so a
+     * hire signed on an unconfirmed template keeps the HIRE_ENFORCEABILITY_GAP warning until the owner confirms it.
+     */
+    art60fTemplates: string[];
   };
   eligibility: { requireMeansBeforeOffer: boolean; defaultCriteria: DriverCriteria; duplicateClaimWindowDays: number };
   billing: { prepareWithinWorkingDays: number; paymentPackTargetWorkingDays: number };
@@ -66,7 +72,7 @@ export const DEFAULT_AUTOPILOT_SETTINGS: AutopilotSettings = {
   },
   ranking: DEFAULT_RANKING_WEIGHTS,
   projection: { defaultHireDays: 14, partsBufferWorkingDays: 2, totalLossDays: 21 },
-  signing: { otpDelivery: 'email', chaseAfterDays: [2, 5], callAfterDays: 7, lanKiosk: false, kioskTtlMinutes: 30, dvlaCheckMaxAgeDays: 14 },
+  signing: { otpDelivery: 'email', chaseAfterDays: [2, 5], callAfterDays: 7, lanKiosk: false, kioskTtlMinutes: 30, dvlaCheckMaxAgeDays: 14, art60fTemplates: [] },
   eligibility: { requireMeansBeforeOffer: false, defaultCriteria: DEFAULT_DRIVER_CRITERIA, duplicateClaimWindowDays: 30 },
   billing: { prepareWithinWorkingDays: 1, paymentPackTargetWorkingDays: 2 },
   schedules: { sweepEveryMinutes: 5, clashSweepAtLocal: '02:30', complianceWatchAtLocal: '06:30', signingChaseAtLocal: '09:15' },

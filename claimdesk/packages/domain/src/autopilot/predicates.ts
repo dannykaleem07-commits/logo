@@ -49,7 +49,7 @@ const hireStarted = (f: AutopilotFacts): boolean => statusIn(activeReservation(f
 const hireActive = (f: AutopilotFacts): boolean => f.bundle.hire.some((h) => !h.endAt) || activeReservation(f)?.status === 'on_hire';
 const hireEnded = (f: AutopilotFacts): boolean => hireStarted(f) && !hireActive(f);
 
-const OFF_HIRE_EVENTS: ReadonlyArray<[EventType, HireEndTrigger]> = [
+export const OFF_HIRE_EVENTS: ReadonlyArray<[EventType, HireEndTrigger]> = [
   ['repair_completed', 'repair_complete_24h'],
   ['tl_payment_received', 'tl_payment_5wd'],
   ['insurer_termination_notice', 'insurer_termination_1wd'],
@@ -207,7 +207,11 @@ const base: Record<PredicateId, Predicate> = {
   'offer.made': (f) => statusIn(currentOffer(f)?.status, ['sent', 'accepted'] as const) || confirmedOrLater(f),
   'offer.sent': (f) => statusIn(currentOffer(f)?.status, ['sent', 'accepted'] as const) || confirmedOrLater(f),
   'offer.accepted': (f) => currentOffer(f)?.status === 'accepted' || confirmedOrLater(f),
-  'offer.notExpired': (f) => currentOffer(f)?.status !== 'expired',
+  /** No offer is still in play without a live hold (an expired one waits for the owner's call; an accepted one is re-held at confirmation). */
+  'offer.notExpired': (f) => {
+    const o = currentOffer(f);
+    return !(o && !liveReservation(f) && (o.status === 'expired' || o.status === 'accepted' || o.status === 'sent'));
+  },
   'choice.noneOpen': (f) => !f.openNeedsYou.some((n) => n.kind === 'choose_car'),
   'offer.awaitingReply': (f) => {
     const o = currentOffer(f);

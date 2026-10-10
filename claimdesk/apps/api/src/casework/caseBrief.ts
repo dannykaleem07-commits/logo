@@ -14,6 +14,7 @@ import { actionsFor, deriveClocksFor, gatesFor, loadBundle } from '../services/c
 import { htmlToText } from '../agent/tools/core.js';
 import { dateFact, moneyFact, numberFact, textFact, type FactId, type FactValue } from './facts.js';
 import { fullAddress, maskAddress, maskEmail, maskPhone, maskText } from './mask.js';
+import { autopilotBriefParts, type AutopilotBriefSection } from '../autopilot/brief.js';
 
 export interface CaseBrief {
   version: 'brief/1';
@@ -36,6 +37,8 @@ export interface CaseBrief {
   openTasks: { id: string; kind: string; dueAt: string; note: string }[];
   openNeedsYou: { id: string; kind: string; title: string }[];
   memory: { id: string; text: string }[];
+  /** SUPREME-AUTOPILOT §A.10 (optional): the stored Autopilot plan — the steps the autopilot owns on this claim. */
+  autopilot?: AutopilotBriefSection;
 }
 
 export interface CaseBriefOptions {
@@ -266,6 +269,10 @@ export function buildCaseBrief(ctx: AppContext, claimId: string, opts: CaseBrief
     .sort(byStr((f) => `${f.raisedAt}|${f.code}`))
     .map((f) => ({ code: f.code, severity: f.severity, message: f.message }));
 
+  // SUPREME-AUTOPILOT §A.10: booking / offer facts and the plan section.
+  const ap = autopilotBriefParts(ctx, bundle, { mask });
+  for (const [k, v] of Object.entries(ap.facts)) put(k, v);
+
   const sortedFacts: Record<FactId, FactValue> = {};
   for (const k of Object.keys(facts).sort()) sortedFacts[k] = facts[k]!;
 
@@ -294,6 +301,7 @@ export function buildCaseBrief(ctx: AppContext, claimId: string, opts: CaseBrief
     openTasks,
     openNeedsYou,
     memory,
+    ...(ap.section ? { autopilot: ap.section } : {}),
   };
 }
 

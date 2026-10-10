@@ -15,6 +15,7 @@ export type { LiabilityExtras, LiabilityFactor, LiabilityScore } from './liabili
 
 export {
   assessAcceptance,
+  conditionsGatingHireOffer,
   hireFigure,
   otherHeadsFigure,
   acceptanceHireProjection,

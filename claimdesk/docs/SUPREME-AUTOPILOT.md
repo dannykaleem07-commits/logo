@@ -881,6 +881,8 @@ export interface ClashWorld { /* the rows detectClashes needs, assembled by the 
   readiness: ReadinessTask[]; damage: FleetDamage[]; penalties: PenaltyNotice[];
   eventsByClaim: Record<Id, ClaimEvent[]>; acceptanceByClaim: Record<Id, AcceptanceAssessment>;
   interventionOffers: InterventionOffer[]; signedPackByReservation: Record<Id, { signed: boolean; missing: string[] }>;
+  // as built (ap-clash), optional: without them NEED_WEAK, DELIVERY_* and GROUP_ABOVE_LFL do not fire
+  needsByClaim?: Record<Id, HireNeeds>; movements?: Movement[]; gtaRates?: GtaRateRow[];
 }
 export function detectClashes(subject: ClashSubject, world: ClashWorld, opts: { now: ISODateTime; settings: AutopilotSettings }): ClashFinding[];
 ```
@@ -958,6 +960,11 @@ Veolia"); class B: `HIRE_BEFORE_ACCIDENT`.
 | Every autopilot step that holds, offers, confirms, schedules or hands over | reservation | fresh check inside the step; findings decide green |
 | Nightly `clash.sweep` 02:30 London | every open claim with a reservation or hire, every fleet unit | findings upserted; resolved ones closed; daily-log lines; new **block** findings within 48 h of a start → urgent Needs-you |
 
+As built, the claim-change triggers go through `claimChanged()` (`apps/api/src/autopilot/claimChanged.ts`): `POST
+/claims`, `PATCH /claims/:id`, `POST /claims/:id/status`, `PATCH /vehicles/:id`, `PATCH /parties/:id` (name, date of
+birth, licence number) and `POST /claims/:id/events` for the off-hire triggers each queue a `clash.check` for every open
+claim concerned and nudge its autopilot; `PATCH /fleet/:id` queues a `clash.check` for the car.
+
 `crossFileRegistrationCheck` now also runs on `PATCH /vehicles/:id` when the registration or VIN changes (gap:
 today it runs only at FNOL), and `DUPLICATE_CLAIM_OPEN` compares open claims and accident dates (today all claims,
 including closed ones, count the same).
@@ -1017,7 +1024,10 @@ offer sent ─▶ reply "yes" (code) / unclear (hire_offer.parse_reply) / "accep
 
 1. Top candidate `likeForLike.score ≥ settings.green.minLikeForLike` (0.8) and not above the client's group.
 2. Every hard need met (§B.5 filter 5) and no green-blocking warn finding (§C.2 column "green-blocking").
-3. `assessAcceptance().decision === 'accept'`, or `accept_with_conditions` with every condition met.
+3. `assessAcceptance().decision === 'accept'`, or `accept_with_conditions` with every condition **that gates the
+   offer** met (`conditionsGatingHireOffer`, `@ccguk/domain` acceptance): the CCR 2013 agreement condition is met later
+   by the hire-start pack and the handover guard (`SIGNATURES_MISSING`), CCTV and the injury referral run alongside, and
+   the means condition gates only when Settings require means before an offer (§L); any other condition gates.
 4. Driver(s) `eligible` against this car's policy (a `refer` is never green).
 5. Need `strong` or `moderate`; no intervention offer unanswered; client wants hire.
 6. Client email on file and not bounced; the claim is not paused; daily auto-offer cap not reached.
@@ -1294,6 +1304,7 @@ pack document is signed/sent and at handover:
 | `form.cancellation_sch3` given (sent or kiosk-read) | `enforceability.schedule3FormProvidedAt` |
 | `form.express_request_to_start` signed | `enforceability.expressRequestToStartAt`, `expressRequestEvidenceId` |
 | CCGUK-03 template marked art 60F-compliant in its built-in metadata (≤ 12 payments within 12 months, no interest or charges) | `enforceability.cca60fCompliant = true` (otherwise the owner confirms) |
+| As built: the owner confirms once, in Settings > Autopilot > Signing, that the CCGUK-03 agreement's own terms fit art 60F (`autopilot.signing.art60fTemplates`, owner-entered, empty by default) | `enforceability.cca60fCompliant = true` for hires signed on it |
 
 A hire created from a reservation therefore starts with no `HIRE_ENFORCEABILITY_GAP` when the pack was done properly;
 for existing hires a new human route `PATCH /claims/:id/hire/:hireId/paperwork` lets the owner link signed documents
@@ -1751,7 +1762,8 @@ Existing kinds used: `missing_info`, `approve_send`, `question`, `override_neede
 
 ### I.1 Claim tab **Autopilot** (`screens/claim/tabs/AutopilotTab.tsx`, ap-autopilot)
 
-Placed after Overview. Top: a 14-stage progress bar with the current stage; mode chip (**On** / **Paused** /
+Placed first in the Supreme group right after the primary row (Autopilot, Mailbox, Agent) — as built, so the 0.3 primary
+row of six daily tabs is unchanged. Top: a 14-stage progress bar with the current stage; mode chip (**On** / **Paused** /
 **Off**) and one-click **Pause autopilot on this claim** (reason prompt) / **Resume**; a **Next** card ("Next: send the
 hire offer for AB12 CDE — automatic, held 10 minutes for Undo") and **Waiting on** chips (client since 2 h, insurer
 since 3 days). Clash card (open block/warn findings). Then the timeline: one lane per track (Intake, Qualify, Sign-up,

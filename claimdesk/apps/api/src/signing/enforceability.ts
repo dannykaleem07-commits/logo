@@ -24,6 +24,12 @@ import { enforceabilityGaps } from '../services/hireCreate.js';
  */
 export const ART_60F_COMPLIANT_TEMPLATES: ReadonlySet<string> = new Set(['agreement.credit_hire']);
 
+/** Templates the owner confirmed in Settings > Autopilot > Signing as fitting art 60F (owner-entered data, audited). */
+function ownerConfirmed60F(ctx: AppContext): ReadonlySet<string> {
+  const list = (ctx.repos.getAgentSettings(ctx.db).autopilot?.signing as { art60fTemplates?: unknown } | undefined)?.art60fTemplates;
+  return new Set(Array.isArray(list) ? list.filter((x): x is string => typeof x === 'string') : []);
+}
+
 const later = (a?: string, b?: string): string | undefined => (!a ? b : !b ? a : Date.parse(a) >= Date.parse(b) ? a : b);
 
 export interface ProvenPaperwork {
@@ -54,7 +60,7 @@ export function provenFromPack(ctx: AppContext, tx: Db, reservationId: Id): Prov
   if (agreement?.doc?.status === 'signed' && agreement.doc.signature?.signedAt) {
     out.signedAt = agreement.doc.signature.signedAt;
     out.documentId = agreement.doc.id;
-    if (ART_60F_COMPLIANT_TEMPLATES.has(agreement.doc.templateId)) e.cca60fCompliant = true;
+    if (ART_60F_COMPLIANT_TEMPLATES.has(agreement.doc.templateId) || ownerConfirmed60F(ctx).has(agreement.doc.templateId)) e.cca60fCompliant = true;
   }
   const agreementGiven = given(agreement);
   const sch3Given = given(sch3);

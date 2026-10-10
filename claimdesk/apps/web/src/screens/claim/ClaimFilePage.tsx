@@ -1,4 +1,4 @@
-import { Link, Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { formatRegistration } from '@ccguk/domain';
 import { useClaim, useUserName } from '../../api/hooks';
 import { PageHeader } from '../../components/PageHeader';
@@ -7,7 +7,7 @@ import { Loading } from '../../components/Spinner';
 import { ApiErrorNotice } from '../../components/ApiErrorNotice';
 import { Badge } from '../../components/Badge';
 import { isOverdue } from '../../lib/clocks';
-import { CLAIM_TABS, hasHardStop, openFlags, splitClaimTabs, type ClaimView } from './claimFile';
+import { CLAIM_TABS, hasHardStop, isClaimTab, openFlags, splitClaimTabs, type ClaimView } from './claimFile';
 import { StatusControl } from './components/StatusControl';
 import { FlagsBanner } from './components/FlagsBanner';
 import { OverviewTab } from './tabs/OverviewTab';
@@ -135,7 +135,7 @@ export function ClaimFilePage() {
       </div>
       <div style={{ marginTop: 16 }} id={`tabpanel-${current}`} role="tabpanel">
         <Routes>
-          <Route index element={<Navigate to="overview" replace />} />
+          <Route index element={<TabFromQuery />} />
           <Route path="overview" element={<OverviewTab view={view} />} />
           <Route path="chronology" element={<ChronologyTab view={view} />} />
           <Route path="ledger" element={<LedgerTab view={view} />} />
@@ -158,4 +158,14 @@ export function ClaimFilePage() {
       </div>
     </div>
   );
+}
+
+/**
+ * /claims/:id?tab=<tab> (links from Needs-you cards, the Autopilot tab and the daily log) opens that tab; anything else
+ * opens Overview.
+ */
+export function TabFromQuery() {
+  const [search] = useSearchParams();
+  const tab = search.get('tab');
+  return <Navigate to={tab && isClaimTab(tab) ? tab : 'overview'} replace />;
 }

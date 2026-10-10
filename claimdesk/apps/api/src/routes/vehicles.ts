@@ -8,6 +8,7 @@ import { createLookupClients, differsFromVerified, lookupVehicle, manualLookupRe
 import { gateFor } from '../services/override.js';
 import { onFileMatches } from '../services/vehicleSearch.js';
 import { params } from './helpers.js';
+import { claimChanged, claimsForVehicle } from '../autopilot/claimChanged.js';
 
 /** 400 REGISTRATION_FORMAT (overridable, class B). */
 function registrationFormatError(raw: string): HttpError {
@@ -88,6 +89,7 @@ export function registerVehiclesRoutes(app: FastifyInstance, ctx: AppContext, op
       });
       return { vehicle: ctx.repos.requireVehicle(tx, id), lookupId: lookup.id };
     });
+    if (changed.length) claimChanged(ctx, claimsForVehicle(ctx, id), request.actor.userId, 'vehicle details changed');
     return { ...result.vehicle, vehicle: result.vehicle, lookupId: result.lookupId, warnings };
   });
 

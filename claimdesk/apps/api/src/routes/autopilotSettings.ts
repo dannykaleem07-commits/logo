@@ -63,6 +63,7 @@ export const autopilotSettingsSchema = z
         lanKiosk: z.boolean(),
         kioskTtlMinutes: int(5, 240),
         dvlaCheckMaxAgeDays: int(1, 90),
+        art60fTemplates: z.array(z.string().min(1).max(120)).max(20),
       })
       .strict(),
     eligibility: z

@@ -1,0 +1,39 @@
+/* owned by ap-autopilot — Autopilot tab (docs/SUPREME-AUTOPILOT.md §I.1) */
+.ap-tab { display: flex; flex-direction: column; gap: 1rem; }
+.ap-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+.ap-muted { color: var(--muted, #5b6472); font-size: 0.875rem; }
+.ap-notice { background: var(--amber-bg, #fff7e6); border: 1px solid var(--amber-border, #f0c36d); padding: 0.5rem 0.75rem; border-radius: 6px; margin: 0 0 0.75rem; }
+.ap-stages { display: flex; flex-wrap: wrap; gap: 2px; list-style: none; padding: 0; margin: 0 0 0.75rem; }
+.ap-stage { flex: 1 1 5.5rem; text-align: center; font-size: 0.75rem; padding: 0.35rem 0.25rem; background: var(--surface-2, #eef1f5); color: var(--muted, #5b6472); }
+.ap-stage:first-child { border-radius: 6px 0 0 6px; }
+.ap-stage:last-child { border-radius: 0 6px 6px 0; }
+.ap-stage-done { background: var(--green-bg, #e3f4e8); color: var(--green-fg, #1d6b3a); }
+.ap-stage-current { background: var(--navy, #1f3a5f); color: #fff; font-weight: 600; }
+.ap-next { padding: 0.6rem 0.75rem; border-left: 4px solid var(--navy, #1f3a5f); background: var(--surface-2, #f4f6f9); margin-bottom: 0.5rem; }
+.ap-chips { margin-top: 0.25rem; }
+.ap-steps { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.ap-step { display: flex; gap: 0.75rem; align-items: flex-start; padding: 0.5rem 0; border-bottom: 1px solid var(--border, #e2e6eb); }
+.ap-step:last-child { border-bottom: 0; }
+.ap-step-body { flex: 1 1 auto; min-width: 0; }
+.ap-icon { width: 1.5rem; text-align: center; font-size: 1.1rem; line-height: 1.5rem; }
+.ap-step-due .ap-icon { color: var(--navy, #1f3a5f); }
+.ap-step-blocked .ap-icon, .ap-step-failed .ap-icon { color: var(--red, #b42318); }
+.ap-step-waiting .ap-icon, .ap-step-in_progress .ap-icon { color: var(--blue, #1d5fbf); }
+.ap-step-done { opacity: 0.8; }
+.ap-overdue { color: var(--red, #b42318); font-weight: 600; font-size: 0.875rem; }
+.ap-reasons { font-size: 0.8rem; color: var(--amber-fg, #8a5a00); margin-top: 0.2rem; }
+.ap-links { margin-top: 0.25rem; font-size: 0.85rem; }
+.ap-menu { display: flex; flex-wrap: wrap; gap: 0.25rem; justify-content: flex-end; max-width: 22rem; }
+.ap-link { background: none; border: 0; padding: 0; color: var(--link, #1d5fbf); cursor: pointer; text-decoration: underline; font: inherit; }
+.ap-done { margin-top: 0.5rem; }
+.ap-modes { width: 100%; border-collapse: collapse; }
+.ap-modes th, .ap-modes td { text-align: left; padding: 0.35rem 0.5rem; border-bottom: 1px solid var(--border, #e2e6eb); vertical-align: middle; }
+.ap-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: 0.75rem; }
+.ap-cars { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+.ap-car { border: 1px solid var(--border, #e2e6eb); border-radius: 6px; padding: 0.5rem 0.75rem; }
+.ap-car-recommended { border-color: var(--navy, #1f3a5f); }
+@media (max-width: 640px) {
+  .ap-step { flex-direction: column; }
+  .ap-menu { justify-content: flex-start; max-width: none; }
+  .ap-stage { flex-basis: 4.5rem; }
+}

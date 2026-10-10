@@ -348,7 +348,6 @@ export const STEP_RELATED_NEEDS_YOU: Readonly<Partial<Record<AutopilotStepId, re
   'signup.signed': ['confirm_signed'],
   'hire.search': ['choose_car'],
   'hire.choose': ['choose_car'],
-  'hire.acceptance': ['question'],
   'hire.pack': ['approve_pack'],
   'money.invoices': ['approve_pack', 'money'],
   'money.payment_pack': ['approve_pack'],

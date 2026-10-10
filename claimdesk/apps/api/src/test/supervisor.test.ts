@@ -297,7 +297,8 @@ describe('control-room and settings routes', () => {
     expect(detail.body.job.id).toBe(review.body.id);
     const agentView = await t.api<{ jobs: JobRecord[]; state: { paused: boolean } }>('GET', `/claims/${claimId}/agent`);
     expect(agentView.body.state.paused).toBe(false);
-    expect(agentView.body.jobs.length).toBe(2);
+    // A new claim also queues its autopilot tick and clash check (SUPREME-AUTOPILOT §C.3); the two reviews are here.
+    expect(agentView.body.jobs.filter((j) => j.type === 'case.review')).toHaveLength(2);
     const schedules = await t.api<{ items: Array<{ id: string; enabled: boolean }> }>('GET', '/agents/schedules');
     // The 9 Phase 1 schedules plus those later foundations add (Autopilot §H.1, …).
     expect(schedules.body.items.length).toBe(DEFAULT_SCHEDULES.length);

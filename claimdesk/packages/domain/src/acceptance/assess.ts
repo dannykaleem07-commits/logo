@@ -44,6 +44,21 @@ export const CONDITIONS = {
   injury: 'refer the personal injury element to a PI solicitor; no referral fee (LASPO 2012 ss.56–60)',
 } as const;
 
+/**
+ * The recorded acceptance conditions that stand between a claim and a hire offer (SUPREME-AUTOPILOT §D.1 criterion 3,
+ * §L). Conditions met later in the lifecycle do not gate the offer: the CCR 2013 agreement is prepared in the hire-start
+ * pack and the handover is refused until it is signed (SIGNATURES_MISSING); CCTV and the injury referral run alongside.
+ * Means gate the offer only when Settings > Autopilot require them before an offer. Any other or unknown condition gates.
+ */
+export function conditionsGatingHireOffer(conditions: readonly string[], opts: { requireMeansBeforeOffer: boolean }): string[] {
+  const later = new Set<string>([CONDITIONS.enforceability, CONDITIONS.cctv, CONDITIONS.injury]);
+  return conditions.filter((c) => {
+    if (later.has(c)) return false;
+    if (c === CONDITIONS.impecuniosity) return opts.requireMeansBeforeOffer;
+    return true;
+  });
+}
+
 export interface AcceptanceOptions {
   /** Evidence-gate results from the evidence module (impecuniosity and enforceability are read). */
   gates?: GateResult[];
