@@ -12,9 +12,10 @@ export type { RecipientRole };
 // Agents, job types, lanes (§C.1, §C.2, §C.3)
 // ---------------------------------------------------------------------------
 
-export type AgentName = 'intake' | 'mail' | 'case_manager' | 'drafter' | 'reviewer' | 'researcher' | 'supervisor' | 'engineer' | 'calls' | 'critic' | 'judge';
+/** `autopilot` (SUPREME-AUTOPILOT §0.6) is the deterministic Autopilot principal: it never runs a model. */
+export type AgentName = 'intake' | 'mail' | 'case_manager' | 'drafter' | 'reviewer' | 'researcher' | 'supervisor' | 'engineer' | 'calls' | 'critic' | 'judge' | 'autopilot';
 
-export const AGENT_NAMES: readonly AgentName[] = ['intake', 'mail', 'case_manager', 'drafter', 'reviewer', 'researcher', 'supervisor', 'engineer', 'calls', 'critic', 'judge'];
+export const AGENT_NAMES: readonly AgentName[] = ['intake', 'mail', 'case_manager', 'drafter', 'reviewer', 'researcher', 'supervisor', 'engineer', 'calls', 'critic', 'judge', 'autopilot'];
 
 /** Phase 1 job types (§C.2). Phase 2/3 types are added by their foundation slices. */
 export const JOB_TYPES = [
@@ -43,8 +44,39 @@ export const JOB_TYPES = [
   'index.fts',
   'brain.import',
   'retention.cleanup',
+  // Autopilot (docs/SUPREME-AUTOPILOT.md §H.1)
+  'autopilot.tick',
+  'autopilot.sweep',
+  'autopilot.judge',
+  'hire_offer.parse_reply',
+  'pack.prepare',
+  'booking.expire_holds',
+  'fleet.status_sync',
+  'fleet.compliance_watch',
+  'clash.check',
+  'clash.sweep',
+  'signing.chase',
+  'signing.match_return',
+  'movement.remind',
 ] as const;
 export type JobType = (typeof JOB_TYPES)[number];
+
+/** The Autopilot job types (§H.1), each handled by its owning ap-* slice. */
+export const AUTOPILOT_JOB_TYPES: readonly JobType[] = [
+  'autopilot.tick',
+  'autopilot.sweep',
+  'autopilot.judge',
+  'hire_offer.parse_reply',
+  'pack.prepare',
+  'booking.expire_holds',
+  'fleet.status_sync',
+  'fleet.compliance_watch',
+  'clash.check',
+  'clash.sweep',
+  'signing.chase',
+  'signing.match_return',
+  'movement.remind',
+];
 
 export const isJobType = (v: unknown): v is JobType => typeof v === 'string' && (JOB_TYPES as readonly string[]).includes(v);
 
@@ -89,6 +121,20 @@ export const JOB_TYPE_INFO: Readonly<Record<JobType, JobTypeInfo>> = {
   'index.fts': { lane: 'cpu', usesAi: false, mutatesClaim: false, defaultPriority: 7, agent: 'researcher' },
   'brain.import': { lane: 'cpu', usesAi: false, mutatesClaim: false, defaultPriority: 4, agent: 'researcher' },
   'retention.cleanup': { lane: 'io', usesAi: false, mutatesClaim: false, defaultPriority: 8, agent: 'supervisor' },
+  // Autopilot (§H.1 of docs/SUPREME-AUTOPILOT.md)
+  'autopilot.tick': { lane: 'io', usesAi: false, mutatesClaim: true, defaultPriority: 2, agent: 'autopilot' },
+  'autopilot.sweep': { lane: 'io', usesAi: false, mutatesClaim: false, defaultPriority: 4, agent: 'autopilot' },
+  'autopilot.judge': { lane: 'ai', usesAi: true, mutatesClaim: false, defaultPriority: 2, agent: 'case_manager' },
+  'hire_offer.parse_reply': { lane: 'ai', usesAi: true, mutatesClaim: false, defaultPriority: 1, agent: 'mail' },
+  'pack.prepare': { lane: 'cpu', usesAi: false, mutatesClaim: true, defaultPriority: 3, agent: 'autopilot' },
+  'booking.expire_holds': { lane: 'io', usesAi: false, mutatesClaim: true, defaultPriority: 1, agent: 'autopilot' },
+  'fleet.status_sync': { lane: 'io', usesAi: false, mutatesClaim: false, defaultPriority: 5, agent: 'autopilot' },
+  'fleet.compliance_watch': { lane: 'io', usesAi: false, mutatesClaim: false, defaultPriority: 5, agent: 'autopilot' },
+  'clash.check': { lane: 'io', usesAi: false, mutatesClaim: false, defaultPriority: 2, agent: 'autopilot' },
+  'clash.sweep': { lane: 'io', usesAi: false, mutatesClaim: false, defaultPriority: 6, agent: 'autopilot' },
+  'signing.chase': { lane: 'io', usesAi: false, mutatesClaim: true, defaultPriority: 4, agent: 'autopilot' },
+  'signing.match_return': { lane: 'io', usesAi: false, mutatesClaim: false, defaultPriority: 3, agent: 'autopilot' },
+  'movement.remind': { lane: 'io', usesAi: false, mutatesClaim: false, defaultPriority: 4, agent: 'autopilot' },
 };
 
 // ---------------------------------------------------------------------------
@@ -112,6 +158,24 @@ export const PHASE1_TOOL_NAMES = [
 export type Phase1ToolName = (typeof PHASE1_TOOL_NAMES)[number];
 export type ToolName = Phase1ToolName | (string & {});
 
+/** Autopilot tools (docs/SUPREME-AUTOPILOT.md §H.2), registered by their owning ap-* slices. */
+export const AUTOPILOT_TOOL_NAMES = [
+  'autopilot_plan', 'fleet_search', 'fleet_unit_get', 'fleet_calendar', 'bookings_list', 'clash_check', 'eligibility_get', 'hire_offers_list', 'signatures_list',
+  'eligibility_assess', 'booking_hold', 'booking_release', 'booking_confirm', 'booking_update_period', 'movement_schedule', 'readiness_task_create',
+  'hire_offer_prepare', 'hire_acceptance_record', 'claim_status_set', 'pack_prepare',
+] as const;
+export type AutopilotToolName = (typeof AUTOPILOT_TOOL_NAMES)[number];
+
+/**
+ * The deterministic `autopilot` principal's tool subset (§H.2): every Autopilot tool plus these existing ones. It never
+ * runs a model; code builds every input (`actAsAutopilot`, apps/api/src/autopilot/act.ts).
+ */
+export const AUTOPILOT_PRINCIPAL_TOOLS: readonly ToolName[] = [
+  ...AUTOPILOT_TOOL_NAMES,
+  'email_draft', 'document_draft', 'docx_document_draft', 'event_append', 'send_request', 'ledger_propose', 'payment_received_propose', 'task_schedule',
+  'needs_you_create', 'legal_escalate', 'vehicle_lookup', 'claim_brief', 'claim_get',
+];
+
 // ---------------------------------------------------------------------------
 // Email (§F.5, §D.2)
 // ---------------------------------------------------------------------------
@@ -130,8 +194,16 @@ export type EmailKind =
   | 'reply_general'
   | 'offer_response'
   | 'complaint'
-  | 'legal';
-export const EMAIL_KINDS: readonly EmailKind[] = ['ack', 'info_provided', 'doc_request_fulfil', 'doc_request', 'chaser', 'handling_ref_request', 'ncaf_cover', 'cctv_request', 'client_update', 'supplier_instruction', 'reply_general', 'offer_response', 'complaint', 'legal'];
+  | 'legal'
+  // Autopilot (SUPREME-AUTOPILOT §0.6)
+  | 'hire_offer'
+  | 'booking_update'
+  | 'signature_request'
+  | 'insurer_notice';
+export const EMAIL_KINDS: readonly EmailKind[] = [
+  'ack', 'info_provided', 'doc_request_fulfil', 'doc_request', 'chaser', 'handling_ref_request', 'ncaf_cover', 'cctv_request', 'client_update', 'supplier_instruction', 'reply_general', 'offer_response', 'complaint', 'legal',
+  'hire_offer', 'booking_update', 'signature_request', 'insurer_notice',
+];
 
 export type MailIntent =
   | 'offer_settlement'
@@ -190,8 +262,20 @@ export type NeedsYouKind =
   | 'spoof_warning'
   | 'ai_paused'
   | 'setup'
-  | 'failure';
-export const NEEDS_YOU_KINDS: readonly NeedsYouKind[] = ['approve_send', 'approve_document', 'missing_info', 'confirm_fields', 'offer_decision', 'money', 'legal_review', 'which_claim', 'new_claim', 'override_needed', 'question', 'spoof_warning', 'ai_paused', 'setup', 'failure'];
+  | 'failure'
+  // Autopilot (SUPREME-AUTOPILOT §0.6, §H.3)
+  | 'choose_car'
+  | 'approve_pack'
+  | 'confirm_signed'
+  | 'clash_review'
+  | 'eligibility_review'
+  | 'autopilot_step';
+export const NEEDS_YOU_KINDS: readonly NeedsYouKind[] = [
+  'approve_send', 'approve_document', 'missing_info', 'confirm_fields', 'offer_decision', 'money', 'legal_review', 'which_claim', 'new_claim', 'override_needed', 'question', 'spoof_warning', 'ai_paused', 'setup', 'failure',
+  'choose_car', 'approve_pack', 'confirm_signed', 'clash_review', 'eligibility_review', 'autopilot_step',
+];
+/** The Autopilot Needs-you kinds (§H.3), each resolved by its owning ap-* slice. */
+export const AUTOPILOT_NEEDS_YOU_KINDS: readonly NeedsYouKind[] = ['choose_car', 'approve_pack', 'confirm_signed', 'clash_review', 'eligibility_review', 'autopilot_step'];
 
 export type NeedsYouPriority = 'urgent' | 'high' | 'normal' | 'low';
 export const NEEDS_YOU_PRIORITIES: readonly NeedsYouPriority[] = ['urgent', 'high', 'normal', 'low'];

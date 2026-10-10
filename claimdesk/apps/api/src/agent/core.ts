@@ -167,6 +167,17 @@ export function londonDayWindow(iso: ISODateTime): { dayStart: ISODateTime; dayE
   return { dayStart, dayEnd };
 }
 
+/**
+ * Is the Autopilot stopped for this claim (SUPREME-AUTOPILOT §A.8)? True when the Settings > Autopilot master switch is
+ * off or the claim's `claim_autopilot.mode` is `paused` / `off`. Only the `autopilot` principal is affected.
+ */
+export function autopilotPausedFor(ctx: AppContext, claimId: string | undefined): boolean {
+  if (!ctx.repos.getAgentSettings(ctx.db).autopilot.enabled) return true;
+  if (!claimId) return false;
+  const row = ctx.handle.sqlite.prepare('SELECT mode FROM claim_autopilot WHERE claim_id = ?').get(claimId) as { mode: string } | undefined;
+  return row !== undefined && row.mode !== 'on';
+}
+
 /** The runtime state `decide()` needs for an action by `agent` on `claimId`. */
 export function autonomyState(ctx: AppContext, input: { claimId?: string; agent: AgentName }): AutonomyState {
   const settings = ctx.repos.getAgentSettings(ctx.db);
@@ -174,7 +185,8 @@ export function autonomyState(ctx: AppContext, input: { claimId?: string; agent:
   return {
     killSwitch: settings.autonomy.killSwitch,
     agentPaused: settings.agents.paused.includes(input.agent),
-    claimPaused: input.claimId ? ctx.repos.getClaimAgentState(ctx.db, input.claimId).paused : false,
+    // "Pause all agents on this claim" also pauses the Autopilot; the Autopilot's own pause affects only its principal.
+    claimPaused: (input.claimId ? ctx.repos.getClaimAgentState(ctx.db, input.claimId).paused : false) || (input.agent === 'autopilot' && autopilotPausedFor(ctx, input.claimId)),
     sends: automaticSendCounts(ctx, input.claimId, now),
     nowLocal: londonHhmm(now),
   };

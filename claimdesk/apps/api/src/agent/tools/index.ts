@@ -8,6 +8,11 @@ import { needsYouTools } from './needsYou.js';
 import { mailTools } from './mail.js';
 import { intakeTools } from './intake.js';
 import { caseworkTools } from './casework.js';
+// Autopilot (docs/SUPREME-AUTOPILOT.md §H.2): stubs by ap-foundation, filled by each owning slice.
+import { autopilotTools } from './autopilot.js';
+import { bookingTools } from './booking.js';
+import { clashTools } from './clash.js';
+import { signingTools } from './signing.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- heterogeneous registry
 type AnyToolDef = ToolDef<any, any>;
@@ -17,7 +22,7 @@ const extraTools: AnyToolDef[] = [];
 
 /** Every registered tool (slice arrays + runtime registrations). */
 export function allTools(): AnyToolDef[] {
-  return [...coreTools, ...needsYouTools, ...mailTools, ...intakeTools, ...caseworkTools, ...extraTools];
+  return [...coreTools, ...needsYouTools, ...mailTools, ...intakeTools, ...caseworkTools, ...autopilotTools, ...bookingTools, ...clashTools, ...signingTools, ...extraTools];
 }
 
 export function getTool(name: ToolName): AnyToolDef | undefined {
