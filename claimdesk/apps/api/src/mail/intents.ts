@@ -7,7 +7,7 @@
 import type { EventType, HeadOfLoss, MailIntent } from '@ccguk/domain';
 
 export type IntentRoute =
-  /** Record in the offers register (offer_record as agent:mail) → Needs-you offer_decision + offer.analyse. */
+  /** Record the offer (offer_record as agent:mail: intervention offers → intervention register, others → settlement-offer register) → Needs-you offer_decision + offer.analyse. */
   | 'offer'
   /** Legal / complaint matter: always the owner (Needs-you legal_review) plus a case review. */
   | 'legal'

@@ -23,8 +23,23 @@ export interface OfferRecommendationInput {
 
 const ACTION_LABEL: Record<OfferAction, string> = { accept: 'Accept the offer', counter: 'Counter-offer', reject: 'Reject the offer', hold: 'Hold — gather more before deciding' };
 
+/** An offer in either register (settlement-offer register first, then the intervention register — §D.9). */
+export interface OfferRef {
+  id: string;
+  claimId: string;
+  offerorName: string;
+  register: 'settlement' | 'intervention';
+}
+
+export function findOffer(ctx: AppContext, offerId: string): OfferRef | undefined {
+  const s = ctx.repos.getSettlementOffer(ctx.db, offerId);
+  if (s) return { id: s.id, claimId: s.claimId, offerorName: s.offerorName, register: 'settlement' };
+  const o = ctx.repos.getOffer(ctx.db, offerId);
+  return o ? { id: o.id, claimId: o.claimId, offerorName: o.offerorName, register: 'intervention' } : undefined;
+}
+
 export function offerClaimId(ctx: AppContext, offerId: string): string | undefined {
-  return ctx.repos.getOffer(ctx.db, offerId)?.claimId;
+  return findOffer(ctx, offerId)?.claimId;
 }
 
 export interface RecommendationCheck {
@@ -81,7 +96,7 @@ export function checkRecommendation(input: Pick<OfferRecommendationInput, 'recom
  * offer, so the owner sees one). `dedupeKey` stays `offer_decision:<offerId>`.
  */
 export function offerDecisionItem(ctx: AppContext, input: OfferRecommendationInput, meta: { createdBy: string; correlationId?: string; runId?: string }): NeedsYouInput {
-  const offer = ctx.repos.getOffer(ctx.db, input.offerId);
+  const offer = findOffer(ctx, input.offerId);
   if (!offer) throw Object.assign(new Error(`Offer ${input.offerId} not found`), { code: 'NOT_FOUND' });
   const figures: SettlementFigures = settlementFigures(ctx, { claimId: offer.claimId, offerId: offer.id });
   const existing = ctx.repos.findOpenNeedsYouByDedupeKey(ctx.db, `offer_decision:${offer.id}`);
@@ -114,6 +129,7 @@ export function offerDecisionItem(ctx: AppContext, input: OfferRecommendationInp
       ...prev,
       recorded: true,
       offerId: offer.id,
+      register: offer.register,
       head: figures.head,
       amountPence: figures.offerPence,
       perDay: figures.perDay,

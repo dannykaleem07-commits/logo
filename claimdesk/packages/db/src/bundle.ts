@@ -9,6 +9,7 @@ import { listEvidenceForClaim } from './repos/evidence.js';
 import { listHire } from './repos/hire.js';
 import { listLedger } from './repos/ledger.js';
 import { listOffers } from './repos/offers.js';
+import { listSettlementOffers } from './repos/settlementOffers.js';
 import { getParties, requireParty } from './repos/parties.js';
 import { listRecovery } from './repos/recovery.js';
 import { listStorage } from './repos/storage.js';
@@ -49,6 +50,7 @@ export function loadClaimBundle(db: Db, claimId: Id, options: LoadClaimBundleOpt
     events: options.includeSupersededEvents ? listEvents(db, claimId) : liveEvents(listEvents(db, claimId)),
     ledger: listLedger(db, claimId, { includeSuperseded: options.includeSupersededLedger ?? false }),
     offers: listOffers(db, claimId),
+    settlementOffers: listSettlementOffers(db, claimId),
     hire: listHire(db, claimId),
     storage: listStorage(db, claimId),
     recovery: listRecovery(db, claimId),

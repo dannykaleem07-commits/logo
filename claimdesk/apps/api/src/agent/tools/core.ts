@@ -319,7 +319,7 @@ const ledgerGet = claimRead('ledger_get', 'Ledger', 'The money ledger (integer p
   const r = obj(raw);
   return { ...r, entries: arr(r.entries).map((e) => pick(e, ['id', 'head', 'kind', 'amountPence', 'vatPence', 'date', 'description', 'supersedesId'])) };
 });
-const offersList = claimRead('offers_list', 'Offers register', 'Intervention / settlement offers recorded on the claim with the client decision and the reply clocks. Read-only: decisions are the owner’s.', '/offers');
+const offersList = claimRead('offers_list', 'Offers register', 'Both offer registers on the claim: `offers` (intervention register, with the client decision and the 1-WD reply clocks) and `settlementOffers` (settlement-offer register, with the owner’s decision status). Read-only: decisions are the owner’s.', '/offers');
 const hireGet = claimRead('hire_get', 'Hire', 'Hire agreements on the claim (dates, group, daily rate in pence, charges).', '/hire');
 const storageGet = claimRead('storage_get', 'Storage', 'Storage records with the computed charges.', '/storage');
 const recoveryGet = claimRead('recovery_get', 'Recovery', 'Recovery records with the computed charges.', '/recovery');
@@ -745,14 +745,23 @@ const eventAppend = tool({
   },
 });
 
+/**
+ * offer_record writes to one of two registers (docs/SUPREME-AUTOPILOT.md §D.9):
+ *  - `settlement`: an offer to settle a head of loss → POST /claims/:id/settlement-offers (no reply clock, no mitigation
+ *    gate);
+ *  - `intervention`: an insurer's offer of a replacement vehicle / repair (GTA intervention) → POST /claims/:id/offers,
+ *    which starts the 1-WD intervention reply clock and feeds the mitigation gate.
+ */
+type OfferRecordInput = { claimId: string; kind: 'settlement' | 'intervention'; head: string; amountPence: number | null; receivedAt: string; from: string; channel: string | null; terms: string | null; evidenceIds: string[] };
 const offerRecord = tool({
   name: 'offer_record',
   title: 'Record an offer',
   description:
-    'Record an offer received from an insurer in the offers register (starts the reply clock) and raise an offer_decision item for the owner; an offer analysis is queued. You never accept, counter or reject: the owner decides.',
+    'Record an offer received from an insurer and raise an offer_decision item for the owner; an offer analysis is queued. kind "settlement" = an offer of money to settle a head of loss (settlement-offer register); kind "intervention" = an offer to provide a replacement vehicle or arrange the repair (intervention register: starts the 1-working-day reply clock). You never accept, counter or reject: the owner decides.',
   class: 'internal',
   input: z.strictObject({
     claimId: claimIdField(),
+    kind: z.enum(['settlement', 'intervention']).describe('settlement = money to settle a head of loss; intervention = an offer of a replacement vehicle / repair'),
     head: z.enum(HEADS),
     amountPence: z.int().min(0).nullable(),
     receivedAt: z.string().min(10).max(40).describe('ISO 8601 date-time'),
@@ -761,41 +770,63 @@ const offerRecord = tool({
     terms: z.string().max(4000).nullable(),
     evidenceIds: z.array(id()).max(50),
   }),
-  http: (i: { claimId: string; head: string; amountPence: number | null; receivedAt: string; from: string; channel: string | null; terms: string | null; evidenceIds: string[] }) => ({
-    method: 'POST',
-    url: `/claims/${enc(i.claimId)}/offers`,
-    body: {
-      receivedAt: i.receivedAt,
-      channel: i.channel ?? 'email',
-      offerorName: i.from,
-      terms: { otherTerms: [`Offer on ${i.head}${i.amountPence !== null ? ` of ${i.amountPence} pence` : ''}`, i.terms].filter(Boolean).join('. ') },
-      ...(i.evidenceIds.length ? { evidenceIds: i.evidenceIds } : {}),
-    },
-  }),
-  httpRoute: { method: 'POST', pattern: '/claims/:id/offers' },
+  http: (i: OfferRecordInput) =>
+    i.kind === 'settlement'
+      ? {
+          method: 'POST',
+          url: `/claims/${enc(i.claimId)}/settlement-offers`,
+          body: {
+            head: i.head,
+            amountPence: i.amountPence,
+            receivedAt: i.receivedAt,
+            channel: i.channel ?? 'email',
+            offerorName: i.from,
+            terms: i.terms,
+            ...(i.evidenceIds.length ? { evidenceIds: i.evidenceIds } : {}),
+          },
+        }
+      : {
+          method: 'POST',
+          url: `/claims/${enc(i.claimId)}/offers`,
+          body: {
+            receivedAt: i.receivedAt,
+            channel: i.channel ?? 'email',
+            offerorName: i.from,
+            terms: { otherTerms: [`Offer on ${i.head}${i.amountPence !== null ? ` of ${i.amountPence} pence` : ''}`, i.terms].filter(Boolean).join('. ') },
+            ...(i.evidenceIds.length ? { evidenceIds: i.evidenceIds } : {}),
+          },
+        },
+  httpRoute: [
+    { method: 'POST', pattern: '/claims/:id/settlement-offers' },
+    { method: 'POST', pattern: '/claims/:id/offers' },
+  ],
   describe: (i: { claimId: string; head: string }) => ({ class: 'internal', kind: `offer.record.${i.head}`, claimId: i.claimId, confidence: 1 }),
   onAsk: (i: Record<string, unknown>, rc: RunContext, _ctx: AppContext, d: Decision): NeedsYouInput => ({
     kind: 'offer_decision',
     claimId: String(i.claimId),
-    title: `Offer received from ${String(i.from)} (${String(i.head)}) — not yet recorded`,
-    summary: `An offer${i.amountPence !== null ? ` of £${(Number(i.amountPence) / 100).toFixed(2)}` : ''} on ${String(i.head)} was received on ${String(i.receivedAt).slice(0, 10)}. The policy asked you before recording it (${d.reasons.join('; ') || d.ruleIds.join(', ')}). Record it in the offers register and decide; agents never decide offers.`,
-    payload: { recorded: false, input: maskPii(i), runId: rc.runId },
+    title: `${i.kind === 'intervention' ? 'Intervention offer' : 'Offer'} received from ${String(i.from)} (${String(i.head)}) — not yet recorded`,
+    summary: `An offer${i.amountPence !== null ? ` of £${(Number(i.amountPence) / 100).toFixed(2)}` : ''} on ${String(i.head)} was received on ${String(i.receivedAt).slice(0, 10)}. The policy asked you before recording it (${d.reasons.join('; ') || d.ruleIds.join(', ')}). Record it in the ${i.kind === 'intervention' ? 'intervention' : 'settlement-offer'} register and decide; agents never decide offers.`,
+    payload: { recorded: false, register: i.kind === 'intervention' ? 'intervention' : 'settlement', input: maskPii(i), runId: rc.runId },
     priority: 'urgent',
     createdBy: agentUserId(rc.agent),
     correlationId: rc.correlationId,
   }),
-  afterHttp: (i: { claimId: string; head: string; amountPence: number | null; receivedAt: string; from: string; terms: string | null; evidenceIds: string[] }, body: unknown, rc: RunContext, ctx: AppContext) => {
+  afterHttp: (i: OfferRecordInput, body: unknown, rc: RunContext, ctx: AppContext) => {
     const offer = obj(obj(body).offer);
     const offerId = String(offer.id ?? '');
     const replyClock = obj(obj(body).replyClock);
+    const settlement = i.kind === 'settlement';
+    const replyDueAt = !settlement && typeof replyClock.dueAt === 'string' ? replyClock.dueAt : null;
     const ny = createNeedsYou(ctx, {
       kind: 'offer_decision',
       claimId: i.claimId,
-      title: `Offer from ${i.from} (${i.head})${i.amountPence !== null ? `: £${(i.amountPence / 100).toFixed(2)}` : ''}`,
-      summary: `Recorded in the offers register; the written reply is due ${typeof replyClock.dueAt === 'string' ? replyClock.dueAt : 'within 1 working day'}. An analysis with a recommendation follows. You decide — agents never accept, counter or reject.`,
-      payload: { recorded: true, offerId, head: i.head, amountPence: i.amountPence, receivedAt: i.receivedAt, from: i.from, terms: i.terms, evidenceIds: i.evidenceIds, replyDueAt: replyClock.dueAt ?? null },
+      title: `${settlement ? 'Offer' : 'Intervention offer'} from ${i.from} (${i.head})${i.amountPence !== null ? `: £${(i.amountPence / 100).toFixed(2)}` : ''}`,
+      summary: settlement
+        ? 'Recorded in the settlement-offer register. An analysis with a recommendation follows. You decide — agents never accept, counter or reject.'
+        : `Recorded in the intervention register; the written reply is due ${replyDueAt ?? 'within 1 working day'}. An analysis with a recommendation follows. You decide — agents never accept, counter or reject.`,
+      payload: { recorded: true, register: i.kind, offerId, head: i.head, amountPence: i.amountPence, receivedAt: i.receivedAt, from: i.from, terms: i.terms, evidenceIds: i.evidenceIds, replyDueAt },
       priority: 'urgent',
-      ...(typeof replyClock.dueAt === 'string' ? { dueAt: replyClock.dueAt } : {}),
+      ...(replyDueAt ? { dueAt: replyDueAt } : {}),
       createdBy: agentUserId(rc.agent),
       correlationId: rc.correlationId,
       dedupeKey: `offer_decision:${offerId}`,
@@ -820,7 +851,8 @@ const offerRecord = tool({
   },
   shape: (raw) => {
     const r = obj(raw);
-    return { offerId: obj(r.offer).id ?? null, replyDueAt: obj(r.replyClock).dueAt ?? null, needsYouId: r.needsYouId ?? null, analyseJobId: r.analyseJobId ?? null, status: 'recorded; the owner decides' };
+    // only settlement-register rows carry a head
+    return { offerId: obj(r.offer).id ?? null, register: obj(r.offer).head !== undefined ? 'settlement' : 'intervention', replyDueAt: obj(r.replyClock).dueAt ?? null, needsYouId: r.needsYouId ?? null, analyseJobId: r.analyseJobId ?? null, status: 'recorded; the owner decides' };
   },
 });
 

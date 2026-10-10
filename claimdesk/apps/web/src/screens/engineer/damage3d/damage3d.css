@@ -57,8 +57,9 @@
 }
 .dm3-seg button[aria-pressed='true'],
 .dm3-seg button[aria-pressed='true']:hover:not(:disabled) {
-  background: var(--navy, #072647);
-  color: #fff;
+  border-color: var(--accent, #0a2a4f);
+  background: var(--accent, #0a2a4f);
+  color: var(--on-accent, #fff);
 }
 .dm3-seg button:disabled {
   color: var(--muted-2, #9ca3af);
@@ -70,7 +71,7 @@
   position: relative;
   border: 1px solid var(--line, #e5e7eb);
   border-radius: var(--r-lg, 12px);
-  background: var(--dm3-stage, radial-gradient(ellipse 80% 70% at 50% 38%, #ffffff 0%, #eef1f5 62%, #e2e7ee 100%));
+  background: linear-gradient(180deg, var(--viewer-top, #fbfcfe) 0%, var(--viewer-bottom, #f1f4f8) 100%);
   overflow: hidden;
 }
 .dm3-area-2d {
@@ -116,7 +117,7 @@
   margin: 0;
   padding: 4px 10px;
   list-style: none;
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--viewer-chip, rgba(255, 255, 255, 0.9));
   border: 1px solid var(--line, #e5e7eb);
   border-radius: var(--r-pill, 999px);
   font-size: var(--fs-xs, 0.75rem);
@@ -134,7 +135,7 @@
   height: 10px;
   flex: none;
   border-radius: 3px;
-  border: 1px solid rgba(7, 38, 71, 0.25);
+  border: 1px solid var(--viewer-swatch-edge, rgba(7, 38, 71, 0.25));
 }
 
 .dm3-tip {
@@ -145,8 +146,8 @@
   gap: 1px;
   max-width: 240px;
   padding: 6px 9px;
-  background: var(--navy, #072647);
-  color: #fff;
+  background: var(--accent, #0a2a4f);
+  color: var(--on-accent, #fff);
   border-radius: var(--r-sm, 4px);
   font-size: var(--fs-xs, 0.75rem);
   pointer-events: none;
@@ -365,9 +366,9 @@ button.dm3-row-main:hover .dm3-row-title {
 .dm3-sev button[aria-pressed='true'],
 .dm3-ops button[aria-pressed='true'],
 .dm3-ops button[aria-pressed='true']:hover:not(:disabled) {
-  border-color: var(--navy, #072647);
-  background: var(--navy, #072647);
-  color: #fff;
+  border-color: var(--accent, #0a2a4f);
+  background: var(--accent, #0a2a4f);
+  color: var(--on-accent, #fff);
 }
 .dm3-ops {
   display: flex;
@@ -428,46 +429,4 @@ button.dm3-row-main:hover .dm3-row-title {
   font-weight: 700;
   letter-spacing: 0.04em;
   font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
-}
-
-/* dark theme: follows the app's data-theme, else the OS preference */
-:root[data-theme='dark'] .dm3 {
-  --dm3-stage: radial-gradient(ellipse 80% 70% at 50% 38%, #2b3442 0%, #19202a 60%, #11161d 100%);
-}
-:root[data-theme='dark'] .dm3-area,
-:root[data-theme='dark'] .dm3-panel {
-  border-color: var(--line, #2a3240);
-}
-:root[data-theme='dark'] .dm3-legend {
-  background: rgba(17, 22, 29, 0.82);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: #d5dbe4;
-}
-:root[data-theme='dark'] .dm3-ident,
-:root[data-theme='dark'] .dm3-ident strong {
-  color: #e6ebf2;
-}
-:root[data-theme='dark'] .dm3-swatch {
-  border-color: rgba(255, 255, 255, 0.25);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) .dm3 {
-    --dm3-stage: radial-gradient(ellipse 80% 70% at 50% 38%, #2b3442 0%, #19202a 60%, #11161d 100%);
-  }
-  :root:not([data-theme='light']) .dm3-area,
-  :root:not([data-theme='light']) .dm3-panel {
-    border-color: var(--line, #2a3240);
-  }
-  :root:not([data-theme='light']) .dm3-legend {
-    background: rgba(17, 22, 29, 0.82);
-    border-color: rgba(255, 255, 255, 0.12);
-    color: #d5dbe4;
-  }
-  :root:not([data-theme='light']) .dm3-ident,
-  :root:not([data-theme='light']) .dm3-ident strong {
-    color: #e6ebf2;
-  }
-  :root:not([data-theme='light']) .dm3-swatch {
-    border-color: rgba(255, 255, 255, 0.25);
-  }
 }

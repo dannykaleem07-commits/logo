@@ -13,7 +13,7 @@ const Impl = lazy(() => import('./DamageModel3D'));
 
 export function DamageModel3D(props: DamageModel3DProps) {
   return (
-    <Suspense fallback={<div style={{ minHeight: props.height ?? 400, display: 'grid', placeItems: 'center', color: '#6b7280' }}>Loading damage model…</div>}>
+    <Suspense fallback={<div style={{ minHeight: props.height ?? 400, display: 'grid', placeItems: 'center', color: 'var(--muted)' }}>Loading damage model…</div>}>
       <Impl {...props} />
     </Suspense>
   );

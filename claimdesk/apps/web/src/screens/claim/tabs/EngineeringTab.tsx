@@ -4,17 +4,19 @@ import { EstimateEditor } from './engineering/EstimateEditor';
 import { PavWorkbench } from './engineering/PavWorkbench';
 import { TotalLossPanel } from './engineering/TotalLossPanel';
 import { EngineerReportForm } from './engineering/EngineerReportForm';
+import { DamageModelPanel } from './engineering/DamageModelPanel';
 
 const SECTIONS = [
   { id: 'estimate', label: 'Estimate' },
   { id: 'pav', label: 'PAV workbench' },
   { id: 'total-loss', label: 'Total loss' },
-  { id: 'report', label: "Engineer's report" }
+  { id: 'report', label: "Engineer's report" },
+  { id: 'damage', label: 'Damage model' }
 ] as const;
 
 type Section = (typeof SECTIONS)[number]['id'];
 
-/** Engineering: estimate editor, PAV workbench, total-loss panel and the engineer's report (BLUEPRINT §4). */
+/** Engineering: estimate editor, PAV workbench, total-loss panel, the engineer's report (BLUEPRINT §4) and the 3D damage model. */
 export function EngineeringTab({ view }: { view: ClaimView }) {
   const { '*': rest } = useParams();
   const navigate = useNavigate();
@@ -33,6 +35,7 @@ export function EngineeringTab({ view }: { view: ClaimView }) {
       {section === 'pav' && <PavWorkbench view={view} />}
       {section === 'total-loss' && <TotalLossPanel view={view} />}
       {section === 'report' && <EngineerReportForm view={view} />}
+      {section === 'damage' && <DamageModelPanel view={view} />}
     </div>
   );
 }

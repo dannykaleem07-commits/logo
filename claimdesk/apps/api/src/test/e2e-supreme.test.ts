@@ -144,9 +144,11 @@ describe.skipIf(STUBS)('Supreme phase 1 loop (§R.2)', () => {
   it('WP offer: recorded, analysed and put to the owner with figures — no agent decision, no ledger row; the perimeter refuses a decision', async () => {
     const ledgerBefore = t.ctx.repos.listLedger(t.ctx.db, claimId).length;
     await deliver('MAILFX-OFFER E2E-OFFER Without prejudice, we offer £6,400.00 in full and final settlement of the PAV.');
-    const offers = t.ctx.repos.listOffers(t.ctx.db, claimId).filter((o) => o.id !== ids.offerId);
+    // a settlement offer: the settlement-offer register, not the intervention register (§D.9)
+    expect(t.ctx.repos.listOffers(t.ctx.db, claimId).filter((o) => o.id !== ids.offerId)).toEqual([]);
+    const offers = t.ctx.repos.listSettlementOffers(t.ctx.db, claimId);
     expect(offers).toHaveLength(1);
-    expect(offers[0]!.clientDecision).toBe('pending');
+    expect(offers[0]!).toMatchObject({ status: 'open', amountPence: 640000 });
     expect(jobs('offer.analyse').map((j) => j.status)).toEqual(['succeeded']);
     const [card] = openItems('offer_decision');
     expect(card).toBeDefined();
@@ -161,13 +163,13 @@ describe.skipIf(STUBS)('Supreme phase 1 loop (§R.2)', () => {
     const runId = randomUUID();
     const token = mintRunToken({ name: 'case_manager', runId, jobId: 'scripted', claimScope: claimId }, 60_000);
     try {
-      const res = await t.app.inject({ method: 'PATCH', url: `/api/claims/${claimId}/offers/${offers[0]!.id}`, headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' }, payload: JSON.stringify({ clientDecision: 'accepted' }) });
+      const res = await t.app.inject({ method: 'PATCH', url: `/api/claims/${claimId}/settlement-offers/${offers[0]!.id}`, headers: { authorization: `Bearer ${token}`, 'content-type': 'application/json' }, payload: JSON.stringify({ status: 'accepted' }) });
       expect(res.statusCode).toBe(403);
       expect(JSON.parse(res.body).error.code).toBe('AGENT_FORBIDDEN');
     } finally {
       revokeRunToken(token);
     }
-    expect(t.ctx.repos.requireOffer(t.ctx.db, offers[0]!.id).clientDecision).toBe('pending');
+    expect(t.ctx.repos.requireSettlementOffer(t.ctx.db, offers[0]!.id).status).toBe('open');
   });
 
   it('injection: filed and flagged; no email to the foreign address; a scripted draft to it only asks', async () => {

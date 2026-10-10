@@ -427,6 +427,7 @@ export type EventType =
   | 'insurer_termination_notice'
   | 'intervention_offer'
   | 'intervention_reply_sent'
+  | 'settlement_offer_received'
   | 'payment_pack_sent'
   | 'payment_received'
   | 'reduction_received'
@@ -587,6 +588,34 @@ export interface InterventionOffer {
   replySentAt?: ISODateTime; // must be within 1 working day
   replyDocumentId?: Id;
   evidenceIds: Id[];
+}
+
+/** Settlement-offer register status (SUPREME-AUTOPILOT §D.9). Decisions are the owner's only. */
+export type SettlementOfferStatus = 'open' | 'accepted' | 'countered' | 'rejected' | 'lapsed' | 'superseded';
+export const SETTLEMENT_OFFER_STATUSES: readonly SettlementOfferStatus[] = ['open', 'accepted', 'countered', 'rejected', 'lapsed', 'superseded'];
+
+/**
+ * An insurer's offer to settle a head of loss (or the whole claim, `global`) — the settlement-offer register
+ * (SUPREME-AUTOPILOT §D.9). Not an intervention offer: it starts no `intervention_reply_1wd` clock and plays no part in
+ * the mitigation gate. `amountPence` is null when the offer states no figure.
+ */
+export interface SettlementOffer {
+  id: Id;
+  claimId: Id;
+  head: HeadOfLoss | 'global';
+  amountPence: Pence | null;
+  receivedAt: ISODateTime;
+  offerorName: string;
+  channel: InterventionOffer['channel'];
+  terms: string | null;
+  evidenceIds: Id[];
+  mailMessageId: Id | null;
+  status: SettlementOfferStatus;
+  decidedBy?: string;
+  decidedAt?: ISODateTime;
+  decisionNote?: string;
+  createdBy: string;
+  createdAt: ISODateTime;
 }
 
 // ---------------------------------------------------------------------------
@@ -1157,7 +1186,10 @@ export interface ClaimBundle {
   atFaultInsurer?: Party;
   events: ClaimEvent[];
   ledger: LedgerEntry[];
+  /** Intervention register (insurer offers of a replacement vehicle / repair). */
   offers: InterventionOffer[];
+  /** Settlement-offer register (§D.9). Optional so hand-built bundles need not carry it. */
+  settlementOffers?: SettlementOffer[];
   hire: HireAgreement[];
   storage: StorageRecord[];
   recovery: RecoveryRecord[];

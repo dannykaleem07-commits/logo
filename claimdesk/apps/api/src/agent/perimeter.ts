@@ -98,6 +98,9 @@ export function perimeterVerdict(ctx: AppContext, request: FastifyRequest, allow
   if (method === 'PATCH' && route === '/api/claims/:id/offers/:oid' && (present(body.clientDecision) || present(body.replySentAt))) {
     return { rule: 'money_settlement', message: 'Offer decisions and replies are recorded by the owner only' };
   }
+  if (method === 'PATCH' && route === '/api/claims/:id/settlement-offers/:oid' && (present(body.status) || present(body.decisionNote) || present(body.decidedAt))) {
+    return { rule: 'money_settlement', message: 'Settlement offer decisions are recorded by the owner only' };
+  }
   if (method === 'POST' && route === '/api/claims/:id/ledger' && ((typeof body.kind === 'string' && FORBIDDEN_LEDGER_KINDS.has(body.kind)) || present(body.supersedesId))) {
     return { rule: 'money_settlement', message: `Agents cannot write ledger entries of kind ${String(body.kind)}${present(body.supersedesId) ? ' or supersede entries' : ''} — propose them to the owner` };
   }

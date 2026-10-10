@@ -8,7 +8,7 @@
  */
 import type { FastifyInstance, FastifyReply } from 'fastify';
 import { londonDate } from '@ccguk/domain';
-import { CATALOGUE_SEGMENTS, CATALOGUE_VEHICLE_TYPES, loadFeatureVocabulary, slugify } from '@ccguk/kb';
+import { CATALOGUE_SEGMENTS, CATALOGUE_VEHICLE_TYPES, loadFeatureVocabulary, slugify, vehicleDimensionsOrDefault } from '@ccguk/kb';
 import { z } from 'zod';
 import type { AppContext } from '../context.js';
 import { badRequest, notFound } from '../errors.js';
@@ -29,6 +29,16 @@ const modelsQuery = z.object({
 });
 const matchQuery = z.object({ make: z.string().trim().min(1).max(80), model: z.string().trim().max(160).optional(), v: z.string().optional() });
 const searchQuery = z.object({ q: z.string().max(200).default(''), limit: z.coerce.number().int().min(1).max(100).optional(), v: z.string().optional() });
+
+const dimensionsQuery = z.object({
+  make: z.string().trim().max(80).default(''),
+  model: z.string().trim().max(160).default(''),
+  generation: z.string().trim().max(160).optional(),
+  body: z.string().trim().max(60).optional(),
+  doors: z.coerce.number().int().min(2).max(5).optional(),
+  year: z.coerce.number().int().min(1900).max(2100).optional(),
+  v: z.string().optional(),
+});
 
 const GROUP = /^[A-Z]{1,3}\d{0,2}$/;
 const customBody = z.object({
@@ -99,6 +109,17 @@ export function registerCatalogueRoutes(app: FastifyInstance, ctx: AppContext): 
   app.get('/catalogue/features', async (_request, reply) => {
     cached(reply);
     return loadFeatureVocabulary();
+  });
+
+  /**
+   * Exterior dimensions for the 3D damage model (packages/kb vehicle-dimensions). `dims` is the resolved body record;
+   * `source: 'default'` means nothing is on file and body-type proportions were used. Unverified reference data.
+   */
+  app.get('/catalogue/dimensions', async (request, reply) => {
+    const q = parse(dimensionsQuery, request.query);
+    const { v: _v, ...query } = q;
+    cached(reply);
+    return vehicleDimensionsOrDefault(query);
   });
 
   app.get('/catalogue/custom', async () => ({ items: ctx.repos.listCustomCatalogueEntries(ctx.db) }));

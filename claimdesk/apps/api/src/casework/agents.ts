@@ -23,7 +23,7 @@ import { buildCaseBrief } from './caseBrief.js';
 import { aiFailure, checkClaimBudget, countClaimRun, isAiOff } from './ai.js';
 import { breachesLoopGuard, isPlaybookCode, validateHandoff, type HandoffDecision } from './handoffs.js';
 import { CASE_REVIEW_SPEC, DRAFTER_SPEC, OFFER_ANALYSE_SPEC, RESEARCHER_SPEC } from './specs.js';
-import { offerDecisionItem } from './offers.js';
+import { findOffer, offerDecisionItem } from './offers.js';
 import { settlementFigures } from './quantum.js';
 import { maskText } from './mask.js';
 
@@ -309,7 +309,7 @@ export async function runDraftCompose(ctx: AppContext, job: JobRecord, p: DraftC
 // ---------------------------------------------------------------------------
 
 export async function runOfferAnalyse(ctx: AppContext, job: JobRecord, p: { offerId: string; claimId?: string }): Promise<JobOutcome> {
-  const offer = ctx.repos.getOffer(ctx.db, p.offerId);
+  const offer = findOffer(ctx, p.offerId);
   if (!offer) return { kind: 'fail', reason: `offer ${p.offerId} not found` };
   if (job.claimId && job.claimId !== offer.claimId) return { kind: 'fail', reason: 'offer.analyse must run scoped to the offer’s claim' };
   const claim = ctx.repos.requireClaim(ctx.db, offer.claimId);

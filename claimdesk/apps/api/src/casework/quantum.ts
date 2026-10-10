@@ -40,14 +40,22 @@ export const DEFAULT_ASSUMPTIONS = { pBetter: 0.6, pWorse: 0.1, delayMonths: 3, 
 
 export function settlementFigures(ctx: AppContext, input: { claimId: string; offerId?: string | null; offerPence?: number | null; head?: string | null }): SettlementFigures {
   const bundle = loadBundle(ctx, input.claimId);
-  const offer = input.offerId ? bundle.offers.find((o) => o.id === input.offerId) : undefined;
+  // the settlement-offer register first (§D.9), then the intervention register (a per-day hire offer)
+  const settlementOffer = input.offerId ? (bundle.settlementOffers ?? []).find((o) => o.id === input.offerId) : undefined;
+  const interventionOffer = input.offerId && !settlementOffer ? bundle.offers.find((o) => o.id === input.offerId) : undefined;
+  const offer = settlementOffer ?? interventionOffer;
   if (input.offerId && !offer) throw Object.assign(new Error(`Offer ${input.offerId} is not on this claim`), { code: 'WRONG_CLAIM' });
-  const of = offer ? offerFigures(offer) : undefined;
+  const of: { head: string; amountPence: number | null; perDay: boolean } | undefined = settlementOffer
+    ? { head: settlementOffer.head, amountPence: settlementOffer.amountPence, perDay: false }
+    : interventionOffer
+      ? offerFigures(interventionOffer)
+      : undefined;
   const head = input.head ?? of?.head ?? 'hire';
   const perDay = Boolean(of?.perDay && input.offerPence == null);
   const offerPence = input.offerPence ?? of?.amountPence ?? null;
   const position = ctx.repos.ledgerPosition(ctx.db, input.claimId);
-  const hp = position.heads.find((h) => h.head === head);
+  // a whole-claim ('global') offer is measured against the claim totals
+  const hp = head === 'global' ? position.totals : position.heads.find((h) => h.head === head);
   const pos = { claimedPence: hp?.claimedPence ?? 0, paidPence: hp?.paidPence ?? 0, outstandingPence: hp?.outstandingPence ?? 0 };
   const hires = [...bundle.hire].sort((a, b) => a.startAt.localeCompare(b.startAt));
   const hire = hires[hires.length - 1];
@@ -76,9 +84,9 @@ export function settlementFigures(ctx: AppContext, input: { claimId: string; off
   const offerFact = offer ? `offer.${offer.id}.amountPence` : null;
   const figures: FigureRow[] = [
     { label: perDay ? 'Offer (per day)' : 'Offer', factId: offerFact, pence: offerPence },
-    { label: `Claimed (${head})`, factId: `ledger.${head}.claimedPence`, pence: pos.claimedPence },
-    { label: `Paid (${head})`, factId: `ledger.${head}.paidPence`, pence: pos.paidPence },
-    { label: `Outstanding (${head})`, factId: `ledger.${head}.outstandingPence`, pence: pos.outstandingPence },
+    { label: `Claimed (${head})`, factId: head === 'global' ? null : `ledger.${head}.claimedPence`, pence: pos.claimedPence },
+    { label: `Paid (${head})`, factId: head === 'global' ? null : `ledger.${head}.paidPence`, pence: pos.paidPence },
+    { label: `Outstanding (${head})`, factId: head === 'global' ? null : `ledger.${head}.outstandingPence`, pence: pos.outstandingPence },
     ...(offerPence !== null && !perDay ? [{ label: 'Shortfall against outstanding', factId: null, pence: pos.outstandingPence - offerPence }] : []),
     ...(settlement
       ? [

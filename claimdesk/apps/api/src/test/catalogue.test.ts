@@ -4,7 +4,7 @@
  */
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import type { GtaSuggestion } from '@ccguk/domain';
-import { setCatalogueDataDir, type CatalogueMakeSummary, type CatalogueModelSummary, type CatalogueSearchHit, type FeatureVocabulary, type NormalisedModel } from '@ccguk/kb';
+import { setCatalogueDataDir, setDimensionsDataDir, type CatalogueMakeSummary, type CatalogueModelSummary, type CatalogueSearchHit, type FeatureVocabulary, type NormalisedModel } from '@ccguk/kb';
 import { createTestApp, type TestApp } from './helpers.js';
 
 const FIXTURES = new URL('../../../../packages/kb/src/catalogue/__fixtures__/vehicle-catalogue/', import.meta.url);
@@ -122,5 +122,30 @@ describe('GET /gta/suggest', () => {
     expect(van.body).toMatchObject({ group: 'CP1', basis: 'segment_default', rate: null });
     expect(van.body.reason).toContain('No benchmark rate is loaded for group CP1 on 2026-10-05 — add it in Settings → GTA benchmark rates');
     expect((await t.api('GET', '/gta/suggest?date=05/10/2026')).status).toBe(400);
+  });
+});
+
+describe('GET /catalogue/dimensions', () => {
+  const DIMS = new URL('../../../../packages/kb/src/dimensions/__fixtures__/vehicle-dimensions/', import.meta.url);
+  beforeAll(() => setDimensionsDataDir(DIMS));
+  afterAll(() => setDimensionsDataDir(undefined));
+  type Resolved = { dims: { lengthMm: number; doors: number; profile: string }; source: 'file' | 'default'; match: string; generation: string; body: string };
+
+  it('returns the dimensions on file for a make / model / generation / body', async () => {
+    const r = await t.api<Resolved>('GET', `/catalogue/dimensions?make=Ford&model=Fiesta&generation=${encodeURIComponent('Mk8 (2017–2023)')}&body=hatchback&doors=3`);
+    expect(r.status).toBe(200);
+    expect(r.body.source).toBe('file');
+    expect(r.body.generation).toBe('Mk8 (2017–2023)');
+    expect(r.body.body).toBe('hatchback-3-door');
+    expect(r.body.dims).toMatchObject({ lengthMm: 4040, doors: 3, profile: 'hatch' });
+  });
+
+  it('falls back to body-type defaults when nothing is on file, and rejects bad door counts', async () => {
+    const r = await t.api<Resolved>('GET', '/catalogue/dimensions?make=Nonesuch&model=Phantom&body=estate&doors=5');
+    expect(r.status).toBe(200);
+    expect(r.body.source).toBe('default');
+    expect(r.body.dims.doors).toBe(5);
+    expect(typeof r.body.dims.lengthMm).toBe('number');
+    expect((await t.api('GET', '/catalogue/dimensions?make=Ford&model=Fiesta&doors=9')).status).toBe(400);
   });
 });

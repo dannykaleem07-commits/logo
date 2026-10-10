@@ -217,25 +217,3 @@
   color: var(--doc-ink);
   background: var(--doc-paper);
 }
-
-/* 3D / 2D damage model (screens/engineer/damage3d, owned by the 3D slice): dark stage and readable selected states.
- * Kept here so that slice's file does not need theme edits; move into damage3d.css when it is next touched. */
-:root .dm3-area {
-  background: linear-gradient(180deg, var(--viewer-top) 0%, var(--viewer-bottom) 100%);
-}
-:root .dm3-legend {
-  background: var(--viewer-chip);
-}
-:root .dm3-seg button[aria-pressed='true'],
-:root .dm3-seg button[aria-pressed='true']:hover:not(:disabled),
-:root .dm3-sev button[aria-pressed='true'],
-:root .dm3-ops button[aria-pressed='true'],
-:root .dm3-ops button[aria-pressed='true']:hover:not(:disabled) {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--on-accent);
-}
-:root .dm3-tip {
-  background: var(--accent);
-  color: var(--on-accent);
-}

@@ -11,6 +11,7 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type ChangeEvent, type Ref } from 'react';
 import { request } from '../../../api/client';
 import { DamageSvg } from './DamageSvg';
+import { useExactModel, ExactModelView } from './exact';
 import { vehicleModel } from './geometry';
 import { paintFor } from './paint';
 import { formatRegistration } from './plate';
@@ -72,6 +73,7 @@ export async function fetchDimensions(v: VehicleIdentity, signal: AbortSignal): 
   const query: Record<string, string> = {};
   for (const k of ['make', 'model', 'generation', 'body'] as const) if (v[k]) query[k] = String(v[k]);
   if (v.doors) query.doors = String(v.doors);
+  if (v.year) query.year = String(v.year);
   try {
     const res = await request<unknown>('/catalogue/dimensions', { method: 'GET', query, signal });
     return asDims(res);
@@ -83,13 +85,14 @@ export async function fetchDimensions(v: VehicleIdentity, signal: AbortSignal): 
 function asDims(res: unknown): VehicleDims | null {
   if (!res || typeof res !== 'object') return null;
   const r = res as Record<string, unknown>;
+  if (r.source === 'default') return null; // nothing on file: the model uses its own body-type proportions
   const cand = (r.dims && typeof r.dims === 'object' ? r.dims : r) as Record<string, unknown>;
   return typeof cand.lengthMm === 'number' || typeof cand.wheelbaseMm === 'number' ? (cand as VehicleDims) : null;
 }
 
 function useVehicleDims(vehicle: VehicleIdentity | undefined, dims: VehicleDims | null | undefined, load: DamageModel3DProps['loadDimensions']) {
   const [fetched, setFetched] = useState<{ key: string; dims: VehicleDims | null } | null>(null);
-  const key = vehicle?.make && vehicle.model ? [vehicle.make, vehicle.model, vehicle.generation ?? '', vehicle.body ?? '', vehicle.doors ?? ''].join('|').toLowerCase() : '';
+  const key = vehicle?.make && vehicle.model ? [vehicle.make, vehicle.model, vehicle.generation ?? '', vehicle.body ?? '', vehicle.doors ?? '', vehicle.year ?? ''].join('|').toLowerCase() : '';
   const wanted = dims === undefined && !!key;
   useEffect(() => {
     if (!wanted || !vehicle) return;
@@ -145,6 +148,11 @@ export default function DamageModel3D({ bodyType, damage, onChange, selectable, 
   const [webgl, setWebgl] = useState<boolean>(() => !forceFallback && detectWebGL());
   const [mode, setMode] = useState<'3d' | '2d'>(webgl ? '3d' : '2d');
   const use3d = mode === '3d' && webgl && !forceFallback;
+  // an imported, licensed model for this exact vehicle replaces the generated body (3D only); a file that fails to
+  // load falls back to the generated model
+  const exact = useExactModel(vehicle, { enabled: use3d });
+  const [exactFailedUrl, setExactFailedUrl] = useState<string | null>(null);
+  const useExact = use3d && exact.status === 'ready' && !!exact.url && exact.url !== exactFailedUrl;
   const [view, setView] = useState<ViewPreset>('iso');
   const [viewNonce, setViewNonce] = useState(0);
   const [hover, setHover] = useState<{ zone: string; x: number; y: number } | null>(null);
@@ -259,7 +267,25 @@ export default function DamageModel3D({ bodyType, damage, onChange, selectable, 
         </div>
 
         <div className={`dm3-area ${use3d ? 'dm3-area-3d' : 'dm3-area-2d'}`} style={use3d ? { height } : undefined}>
-          {use3d ? (
+          {use3d && useExact ? (
+            <ExactModelView
+              exact={exact}
+              damage={damage}
+              hovered={hover?.zone ?? null}
+              selected={highlighted}
+              view={view}
+              viewNonce={viewNonce}
+              paint={paint}
+              {...(reg ? { registration: reg } : {})}
+              onHover={onHover}
+              onPick={openAt}
+              onContextLost={() => {
+                setWebgl(false);
+                setMode('2d');
+              }}
+              onLoadError={() => setExactFailedUrl(exact.url)}
+            />
+          ) : use3d ? (
             <Suspense fallback={<div className="dm3-loading">Loading 3D model…</div>}>
               <ThreeViewport
                 model={model}

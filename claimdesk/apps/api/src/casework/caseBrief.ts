@@ -28,7 +28,8 @@ export interface CaseBrief {
   gates: { id: string; met: boolean; missing: string[] }[];
   nextActions: { code: string; title: string; why: string; dueAt: string | null; blockedBy: string[]; templateId: string | null }[];
   money: { heads: { head: string; claimedPence: number; paidPence: number; outstandingPence: number }[] };
-  offers: { id: string; head: string; amountPence: number; receivedAt: string; replyDueAt: string | null; clientDecision: string | null }[];
+  /** Intervention register offers (`register: 'intervention'`) and settlement-offer register offers (`'settlement'`, §D.9). */
+  offers: { id: string; register: 'intervention' | 'settlement'; head: string; amountPence: number | null; receivedAt: string; replyDueAt: string | null; clientDecision: string | null }[];
   hire?: { id: string; start: string; end: string | null; dailyRatePence: number; group: string | null };
   correspondence: { lastInbound?: { at: string; from: string; intent: string; summary: string }; priorLetters: { templateId: string; sentAt: string; keyFacts: FactId[] }[] };
   recipients: { partyId: string; role: RecipientRole; email: string | null; directoryId: string | null; verification: string; verifiedAt: string | null }[];
@@ -51,7 +52,7 @@ const byStr = <T>(key: (x: T) => string) => (a: T, b: T): number => {
 /** Stable fact-id segment from free text ("Example Insurance Ltd" → "example_insurance_ltd"). */
 export const slug = (s: string): string => s.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '') || 'x';
 
-/** Offers recorded through `offer_record` carry their head and amount in the terms text ("Offer on hire of 640000 pence"). */
+/** Intervention offers recorded through `offer_record` carry their head and amount in the terms text ("Offer on hire of 640000 pence"). */
 export function offerFigures(o: ClaimBundle['offers'][number]): { head: string; amountPence: number; perDay: boolean } {
   const terms = o.terms?.otherTerms ?? '';
   const head = /Offer on ([a-z_]+)/.exec(terms)?.[1] ?? 'hire';
@@ -180,15 +181,21 @@ export function buildCaseBrief(ctx: AppContext, claimId: string, opts: CaseBrief
 
   // --- offers --------------------------------------------------------------
   const replyClocks = clocks.filter((c) => c.kind === 'intervention_reply_1wd');
-  const offers = [...bundle.offers].sort(byStr((o) => `${o.receivedAt}|${o.id}`)).map((o) => {
+  const offers: CaseBrief['offers'] = [...bundle.offers].sort(byStr((o) => `${o.receivedAt}|${o.id}`)).map((o) => {
     const f = offerFigures(o);
     const clock = o.replySentAt ? undefined : replyClocks.find((c) => c.startsAt >= o.receivedAt.slice(0, 10) || c.startsAt === o.receivedAt) ?? replyClocks.find((c) => c.status === 'running');
     put(`offer.${o.id}.amountPence`, moneyFact(f.amountPence, `offer:${o.id}`));
     put(`offer.${o.id}.receivedAt`, dateFact(o.receivedAt, `offer:${o.id}`));
     put(`offer.${o.id}.offeror`, textFact(o.offerorName, `offer:${o.id}`));
     if (clock) put(`offer.${o.id}.replyDueAt`, dateFact(clock.dueAt, `clock:${clock.kind}`));
-    return { id: o.id, head: f.head, amountPence: f.amountPence, receivedAt: o.receivedAt, replyDueAt: clock?.dueAt ?? null, clientDecision: o.clientDecision === 'pending' ? null : o.clientDecision };
+    return { id: o.id, register: 'intervention', head: f.head, amountPence: f.amountPence, receivedAt: o.receivedAt, replyDueAt: clock?.dueAt ?? null, clientDecision: o.clientDecision === 'pending' ? null : o.clientDecision };
   });
+  for (const o of [...(bundle.settlementOffers ?? [])].sort(byStr((x) => `${x.receivedAt}|${x.id}`))) {
+    if (o.amountPence !== null) put(`offer.${o.id}.amountPence`, moneyFact(o.amountPence, `settlement_offer:${o.id}`));
+    put(`offer.${o.id}.receivedAt`, dateFact(o.receivedAt, `settlement_offer:${o.id}`));
+    put(`offer.${o.id}.offeror`, textFact(o.offerorName, `settlement_offer:${o.id}`));
+    offers.push({ id: o.id, register: 'settlement', head: o.head, amountPence: o.amountPence, receivedAt: o.receivedAt, replyDueAt: null, clientDecision: o.status === 'open' ? null : o.status });
+  }
 
   // --- hire ----------------------------------------------------------------
   const hires = [...bundle.hire].sort(byStr((h) => `${h.startAt}|${h.id}`));

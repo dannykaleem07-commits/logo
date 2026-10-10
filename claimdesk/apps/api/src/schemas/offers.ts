@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { id, isoDateTime, pence } from './common.js';
 import { offerChannel } from './claims.js';
+import { headOfLoss } from './ledger.js';
 
 export const offerTerms = z.object({
   excessPence: pence.optional(),
@@ -35,6 +36,32 @@ export const patchOfferBody = z
     replySentAt: isoDateTime,
     replyDocumentId: id,
     evidenceIds: z.array(id),
+  })
+  .partial()
+  .strict();
+
+/** Settlement-offer register (docs/SUPREME-AUTOPILOT.md §D.9). */
+export const createSettlementOfferBody = z
+  .object({
+    head: z.union([headOfLoss, z.literal('global')]),
+    amountPence: pence.nullable().optional(),
+    receivedAt: isoDateTime,
+    channel: offerChannel.default('email'),
+    offerorName: z.string().trim().min(1).max(200),
+    terms: z.string().trim().max(4000).nullable().optional(),
+    evidenceIds: z.array(id).max(50).optional(),
+    mailMessageId: id.nullable().optional(),
+  })
+  .strict();
+
+/** The owner's decision on a settlement offer (human-only), or evidence / terms (anyone). */
+export const patchSettlementOfferBody = z
+  .object({
+    status: z.enum(['accepted', 'countered', 'rejected', 'lapsed', 'superseded']),
+    decisionNote: z.string().trim().min(1).max(4000),
+    decidedAt: isoDateTime,
+    terms: z.string().trim().max(4000).nullable(),
+    evidenceIds: z.array(id).max(50),
   })
   .partial()
   .strict();

@@ -182,6 +182,8 @@ async function recordOffer(ctx: AppContext, claimId: string, message: MailMessag
     const amount = result.extracted.amountsPence[0] ?? null;
     const res = await executeTool(ctx, rc, 'offer_record', {
       claimId,
+      // an intervention (hire) offer goes to the intervention register; every other offer is a settlement offer (§D.9)
+      kind: result.intent === 'intervention_offer' ? 'intervention' : 'settlement',
       head,
       amountPence: amount,
       receivedAt: message.sentAt ?? message.receivedAt,

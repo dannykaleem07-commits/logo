@@ -43,6 +43,7 @@ import type {
   HireAgreement,
   HireEndTrigger,
   InterventionOffer,
+  SettlementOffer,
   LedgerKind,
   LiabilityPosition,
   LookupRecord,
@@ -492,6 +493,33 @@ export const interventionOffers = sqliteTable(
 );
 
 // ---------------------------------------------------------------------------
+// Settlement-offer register (SUPREME-AUTOPILOT §D.9; migration 0012_settlement_offers)
+// ---------------------------------------------------------------------------
+
+export const settlementOffers = sqliteTable(
+  'settlement_offers',
+  {
+    id: text('id').primaryKey(),
+    claimId: text('claim_id').notNull(),
+    head: text('head').$type<SettlementOffer['head']>().notNull(),
+    amountPence: integer('amount_pence'),
+    receivedAt: text('received_at').notNull(),
+    offerorName: text('offeror_name').notNull(),
+    channel: text('channel').$type<SettlementOffer['channel']>().notNull(),
+    terms: text('terms'),
+    evidenceIds: text('evidence_ids', { mode: 'json' }).$type<string[]>().notNull(),
+    mailMessageId: text('mail_message_id'),
+    status: text('status').$type<SettlementOffer['status']>().notNull(),
+    decidedBy: text('decided_by'),
+    decidedAt: text('decided_at'),
+    decisionNote: text('decision_note'),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+  },
+  (t) => [index('settlement_offers_claim_idx').on(t.claimId, t.status)],
+);
+
+// ---------------------------------------------------------------------------
 // Clocks (materialised cache of `deriveClocks` output — optional, rebuilt by the API)
 // ---------------------------------------------------------------------------
 
@@ -815,6 +843,7 @@ export type RecoveryRecordRow = typeof recoveryRecords.$inferSelect;
 export type RecoveryRecordInsert = typeof recoveryRecords.$inferInsert;
 export type InterventionOfferRow = typeof interventionOffers.$inferSelect;
 export type InterventionOfferInsert = typeof interventionOffers.$inferInsert;
+export type SettlementOfferRow = typeof settlementOffers.$inferSelect;
 export type ClockRow = typeof clocks.$inferSelect;
 export type ClockInsert = typeof clocks.$inferInsert;
 export type EvidenceRow = typeof evidence.$inferSelect;

@@ -29,7 +29,7 @@ export const EVENT_GROUPS: EventGroup[] = [
   {
     id: 'payment',
     label: 'Payment, chasing & complaint',
-    types: ['payment_pack_sent', 'payment_received', 'reduction_received', 'chaser_sent', 'complaint_sent', 'final_response_received', 'dsar_sent', 'dsar_response', 'cctv_request_sent']
+    types: ['payment_pack_sent', 'settlement_offer_received', 'payment_received', 'reduction_received', 'chaser_sent', 'complaint_sent', 'final_response_received', 'dsar_sent', 'dsar_response', 'cctv_request_sent']
   },
   { id: 'litigation', label: 'Pre-action & litigation', types: ['letter_before_claim_sent', 'part36_sent', 'part36_received', 'proceedings_issued', 'defence_received', 'judgment', 'settled'] },
   { id: 'penalties', label: 'PCN / NIP', types: ['pcn_received', 'nip_received', 's172_response_sent', 'pcn_liability_transferred'] },
@@ -66,6 +66,7 @@ export const EVENT_LABEL: Record<EventType, string> = {
   cash_in_lieu_received: 'Cash in lieu received',
   insurer_termination_notice: 'Insurer termination notice',
   intervention_offer: 'Intervention offer',
+  settlement_offer_received: 'Settlement offer received',
   intervention_reply_sent: 'Intervention reply sent',
   payment_pack_sent: 'Payment pack sent',
   payment_received: 'Payment received',
@@ -128,6 +129,7 @@ export function defaultAttribution(type: EventType | ''): Attributable | '' {
     case 'cash_in_lieu_received':
     case 'insurer_termination_notice':
     case 'intervention_offer':
+    case 'settlement_offer_received':
     case 'payment_received':
     case 'reduction_received':
     case 'final_response_received':

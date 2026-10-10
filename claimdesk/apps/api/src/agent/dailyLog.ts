@@ -120,7 +120,7 @@ export function compileDailyLog(ctx: AppContext, day: string): DailyLog {
   // --- agent audit rows -------------------------------------------------------------------------
   const audit = sqlite.prepare(`SELECT id, at, user_id, action, entity, entity_id, before, after, run_id FROM audit_log WHERE user_id LIKE 'agent:%' AND at >= ? AND at < ? ORDER BY at, rowid`).all(start, end) as AuditRow[];
   // Tables whose rows carry claim_id: an audit row about one of them belongs to that claim.
-  const CLAIM_TABLES = new Set(['claim_events', 'evidence', 'documents', 'outbox', 'tasks', 'ledger_entries', 'hire_agreements', 'storage_records', 'recovery_records', 'intervention_offers', 'estimates', 'engineer_reports', 'pav_assessments', 'intake_items', 'mail_messages', 'needs_you']);
+  const CLAIM_TABLES = new Set(['claim_events', 'evidence', 'documents', 'outbox', 'tasks', 'ledger_entries', 'hire_agreements', 'storage_records', 'recovery_records', 'intervention_offers', 'settlement_offers', 'estimates', 'engineer_reports', 'pav_assessments', 'intake_items', 'mail_messages', 'needs_you']);
   const claimByRow = new Map<string, string | undefined>();
   const claimOfAudit = (r: AuditRow): string | undefined => {
     const after = parse(r.after) as { claimId?: unknown } | undefined;

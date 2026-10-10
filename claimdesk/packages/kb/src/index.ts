@@ -148,3 +148,6 @@ export {
 
 // Vehicle catalogue (TEMPLATES-VEHICLES-DESKTOP §D)
 export * from './catalogue/index.js';
+
+// Vehicle dimensions for the parametric 3D damage model
+export * from './dimensions/index.js';

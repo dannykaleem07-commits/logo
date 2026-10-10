@@ -8,6 +8,7 @@ export * from './ledger.js';
 export * from './events.js';
 export * from './clocks.js';
 export * from './offers.js';
+export * from './settlementOffers.js';
 export * from './hire.js';
 export * from './storage.js';
 export * from './recovery.js';

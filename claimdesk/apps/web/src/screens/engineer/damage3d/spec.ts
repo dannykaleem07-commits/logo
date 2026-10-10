@@ -53,6 +53,8 @@ export interface VehicleIdentity {
   colour?: string;
   registration?: string;
   doors?: number;
+  /** Model year: picks the generation when `generation` is not given. */
+  year?: number;
 }
 
 interface Resolved {

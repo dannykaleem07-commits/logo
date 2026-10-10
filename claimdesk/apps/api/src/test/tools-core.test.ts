@@ -207,16 +207,33 @@ describe('draft and internal tools', () => {
     expect(ok.body.eventId).toBeTruthy();
   });
 
-  it('offer_record records the offer, raises offer_decision and queues offer.analyse — never a decision', async () => {
-    const r = await call('offer_record', { claimId: ids.claimId, head: 'hire', amountPence: 120000, receivedAt: '2026-10-07T08:00:00.000Z', from: 'Example Insurance Ltd', channel: 'email', terms: 'Without prejudice, full and final.', evidenceIds: [] });
+  it('offer_record records a settlement offer in the settlement-offer register, raises offer_decision and queues offer.analyse — never a decision', async () => {
+    const interventionBefore = t.ctx.repos.listOffers(t.ctx.db, ids.claimId).length;
+    const clocksBefore = t.ctx.repos.listClocks(t.ctx.db, ids.claimId).filter((c) => c.kind === 'intervention_reply_1wd').length;
+    const r = await call('offer_record', { claimId: ids.claimId, kind: 'settlement', head: 'hire', amountPence: 120000, receivedAt: '2026-10-07T08:00:00.000Z', from: 'Example Insurance Ltd', channel: 'email', terms: 'Without prejudice, full and final.', evidenceIds: [] });
     expect(r.ok, r.content).toBe(true);
+    expect(r.body).toMatchObject({ register: 'settlement', replyDueAt: null });
     const offerId = String(r.body.offerId);
     const ny = t.ctx.repos.getNeedsYouItem(t.ctx.db, String(r.body.needsYouId));
-    expect(ny).toMatchObject({ kind: 'offer_decision', claimId: ids.claimId, priority: 'urgent' });
+    expect(ny).toMatchObject({ kind: 'offer_decision', claimId: ids.claimId, priority: 'urgent', payload: { register: 'settlement', offerId } });
     expect(t.ctx.repos.getAgentJobByKey(t.ctx.db, `offer.analyse:${offerId}`)).toMatchObject({ type: 'offer.analyse', priority: 0 });
+    expect(t.ctx.repos.requireSettlementOffer(t.ctx.db, offerId)).toMatchObject({ claimId: ids.claimId, head: 'hire', amountPence: 120000, status: 'open', terms: 'Without prejudice, full and final.' });
+    // not in the intervention register, and no intervention reply clock
+    expect(t.ctx.repos.getOffer(t.ctx.db, offerId)).toBeUndefined();
+    expect(t.ctx.repos.listOffers(t.ctx.db, ids.claimId)).toHaveLength(interventionBefore);
+    expect(recomputeClocks(t.ctx, ids.claimId).filter((c) => c.kind === 'intervention_reply_1wd')).toHaveLength(clocksBefore);
+  });
+
+  it('offer_record with kind intervention still writes the intervention register (and its 1-WD reply clock)', async () => {
+    const r = await call('offer_record', { claimId: ids.claimId, kind: 'intervention', head: 'hire', amountPence: null, receivedAt: '2026-10-07T08:00:00.000Z', from: 'Example Insurance Ltd', channel: 'phone', terms: 'Courtesy car offered.', evidenceIds: [] });
+    expect(r.ok, r.content).toBe(true);
+    expect(r.body.register).toBe('intervention');
+    const offerId = String(r.body.offerId);
     const offer = t.ctx.repos.requireOffer(t.ctx.db, offerId);
     expect(offer.clientDecision ?? 'pending').toBe('pending');
-    expect(offer.terms.otherTerms).toContain('120000 pence');
+    expect(offer.terms.otherTerms).toContain('Courtesy car offered.');
+    expect(t.ctx.repos.getSettlementOffer(t.ctx.db, offerId)).toBeUndefined();
+    expect(r.body.replyDueAt).toBeTruthy();
   });
 
   it('directory reports work and never verify', async () => {

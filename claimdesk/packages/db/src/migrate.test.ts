@@ -25,6 +25,7 @@ const EXPECTED_TABLES = [
   'storage_records',
   'recovery_records',
   'intervention_offers',
+  'settlement_offers',
   'clocks',
   'evidence',
   'documents',

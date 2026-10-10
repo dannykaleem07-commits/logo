@@ -12,6 +12,7 @@ import type { AppContext } from '../context.js';
 import type { EnqueueInput } from '../agent/contracts.js';
 import { defaultRecipientRole } from '../services/documentData.js';
 import { londonDay } from '../agent/core.js';
+import { findOffer } from './offers.js';
 
 /** Codes the playbook engine can raise (engine triggers + the kb rule list) — the only codes agents may plan with. */
 export const PLAYBOOK_ACTION_CODES: readonly string[] = [
@@ -121,7 +122,7 @@ export function validateHandoff(ctx: AppContext, claimId: string, h: Handoff, op
       return { handoff: h, ok: true, job: { type: 'research.ask', payload: { claimId, question: q.slice(0, 2000), scope: 'claim' }, claimId, idempotencyKey: `research.ask:${createHash('sha256').update(q).digest('hex')}:${claimId}`, createdBy: opts.createdBy } };
     }
     case 'offer_analyst': {
-      const o = ctx.repos.getOffer(ctx.db, h.offerId);
+      const o = findOffer(ctx, h.offerId);
       if (!o || o.claimId !== claimId) return { handoff: h, ok: false, reason: `offer ${h.offerId} is not on this claim` };
       return { handoff: h, ok: true, job: { type: 'offer.analyse', payload: { offerId: o.id, claimId }, claimId, priority: 0, idempotencyKey: `offer.analyse:${o.id}`, createdBy: opts.createdBy } };
     }

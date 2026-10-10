@@ -97,15 +97,15 @@ describe('triage outcomes', () => {
     expect(emailIn(message.id)).toHaveLength(1);
   });
 
-  it('offer: recorded in the offers register through offer_record as agent:mail → offer_decision + offer.analyse; never decided', async () => {
-    const before = t.ctx.repos.listOffers(t.ctx.db, claimId).length;
+  it('offer: recorded in the settlement-offer register through offer_record as agent:mail → offer_decision + offer.analyse; never decided', async () => {
+    const interventionBefore = t.ctx.repos.listOffers(t.ctx.db, claimId).length;
     const { message, result } = await triage({ body: 'MAILFX-OFFER We offer £6,400.00 as the pre-accident value in full settlement of the vehicle damage. Please reply within 14 days.' });
     expect(result).toMatchObject({ intent: 'offer_pav' });
     expect(result.offerId).toBeTruthy();
-    const offers = t.ctx.repos.listOffers(t.ctx.db, claimId);
-    expect(offers).toHaveLength(before + 1);
-    const offer = offers.find((o) => o.id === result.offerId)!;
-    expect(offer.clientDecision ?? 'pending').toBe('pending');
+    // a settlement offer never lands in the intervention register (§D.9)
+    expect(t.ctx.repos.listOffers(t.ctx.db, claimId)).toHaveLength(interventionBefore);
+    const offer = t.ctx.repos.listSettlementOffers(t.ctx.db, claimId).find((o) => o.id === result.offerId)!;
+    expect(offer).toMatchObject({ head: 'pav', amountPence: 640000, status: 'open', createdBy: 'agent:mail' });
     const ny = t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'offer_decision' });
     expect(ny).toHaveLength(1);
     expect(ny[0]).toMatchObject({ priority: 'urgent', claimId, createdBy: 'agent:mail' });

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import type { InterventionOffer } from '@ccguk/domain';
+import type { InterventionOffer, SettlementOffer } from '@ccguk/domain';
 import { formatGBP } from '@ccguk/domain';
 import { useCreateDocument, useOffers, usePostOffer, useUpdateOffer } from '../../../api/hooks';
 import { Card } from '../../../components/Card';
@@ -25,6 +25,16 @@ const REPLY_TONE: Record<ReplyState, 'green' | 'red' | 'amber' | 'grey'> = { sen
 const REPLY_WORD: Record<ReplyState, string> = { sent: 'replied in time', late: 'replied late', overdue: 'reply overdue', due: 'reply due', none: 'no reply clock' };
 
 type Dialog = { kind: 'add' } | { kind: 'edit'; offer: InterventionOffer } | { kind: 'decision'; offer: InterventionOffer } | { kind: 'reply'; offer: InterventionOffer } | { kind: 'draftReply'; offer: InterventionOffer } | null;
+
+const SETTLEMENT_STATUS_TONE: Record<SettlementOffer['status'], 'amber' | 'blue' | 'grey' | 'green'> = { open: 'amber', accepted: 'green', countered: 'blue', rejected: 'grey', lapsed: 'grey', superseded: 'grey' };
+const settlementColumns: Column<SettlementOffer>[] = [
+  { key: 'received', header: 'Received', render: (o) => <DateText value={o.receivedAt} time /> },
+  { key: 'offeror', header: 'Offeror', render: (o) => o.offerorName },
+  { key: 'head', header: 'Head', render: (o) => (o.head === 'global' ? 'whole claim' : o.head.replace(/_/g, ' ')) },
+  { key: 'amount', header: 'Amount', numeric: true, render: (o) => (o.amountPence !== null ? <Money pence={o.amountPence} /> : <span className="muted">not stated</span>) },
+  { key: 'terms', header: 'Terms', className: 'wrap', render: (o) => (o.terms ? <span className="xs">{o.terms}</span> : <span className="muted">none recorded</span>) },
+  { key: 'status', header: 'Decision', render: (o) => <Badge tone={SETTLEMENT_STATUS_TONE[o.status]}>{o.status}</Badge> }
+];
 
 /** Lesson c: the intervention register. Every offer, the client's decision in their words, and the written reply within 1 working day. */
 export function OffersTab({ view }: { view: ClaimView }) {
@@ -173,6 +183,7 @@ export function OffersTab({ view }: { view: ClaimView }) {
   ];
 
   const replyClockDef = clocks.find((c) => c.kind === 'intervention_reply_1wd');
+  const settlement = [...(view.settlementOffers ?? [])].sort((a, b) => b.receivedAt.localeCompare(a.receivedAt));
 
   return (
     <div className="stack">
@@ -197,6 +208,13 @@ export function OffersTab({ view }: { view: ClaimView }) {
         <ApiErrorNotice error={create.error} what="draft the reply" />
         <Table columns={columns} rows={sorted} rowKey={(o) => o.id} caption="Offers" empty={<EmptyState title="No offers logged">When the client reports an offer — what exactly, by whom, when — log it here. The 1-working-day reply clock starts from the time received.</EmptyState>} />
       </Card>
+
+      {settlement.length > 0 && (
+        <Card title="Settlement offers" flush>
+          <div className="card-body xs muted">Offers to settle a head of loss. They are not intervention offers: no 1-working-day reply clock, no part in the mitigation gate. The owner decides.</div>
+          <Table columns={settlementColumns} rows={settlement} rowKey={(o) => o.id} caption="Settlement offers" />
+        </Card>
+      )}
 
       {(dialog?.kind === 'add' || dialog?.kind === 'edit') && <OfferDialog claimId={claimId} view={view} offer={dialog.kind === 'edit' ? dialog.offer : undefined} onClose={() => setDialog(null)} />}
       {dialog?.kind === 'decision' && <DecisionDialog claimId={claimId} offer={dialog.offer} onClose={() => setDialog(null)} />}
