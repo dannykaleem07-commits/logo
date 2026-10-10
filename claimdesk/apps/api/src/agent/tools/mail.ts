@@ -106,7 +106,7 @@ export const emailDraft = tool({
       ctx,
       { claimId: i.claimId, kind: i.kind as EmailKind, to: i.to, cc: i.cc ?? [], subject: i.subject, bodyText: i.bodyText, attach: i.attach, inReplyToMessageId: i.inReplyToMessageId },
       agentUserId(rc.agent),
-      { loop, jobId: rc.jobId, correlationId: rc.correlationId, ...(job ? { parentJobId: job.id } : {}) },
+      { loop, jobId: rc.jobId, runId: rc.runId, correlationId: rc.correlationId, ...(job ? { parentJobId: job.id } : {}) },
     );
     return {
       outboxId: r.outbox.id,

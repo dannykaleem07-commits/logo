@@ -211,7 +211,10 @@ export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c
   const { result, det } = payload(c);
   const rule = INTENT_RULES[result.intent] ?? INTENT_RULES.other;
   const claim = ctx.repos.requireClaim(ctx.db, claimId);
-  const filed = await fileMessageEvidence(ctx, message, claimId);
+  // §K.5: writes made from the triage run's result carry that run id.
+  const actor = c.runId ? { ...MAIL_ACTOR, runId: c.runId } : MAIL_ACTOR;
+  const runRef = c.runId ? { runId: c.runId } : {};
+  const filed = await fileMessageEvidence(ctx, message, claimId, actor);
   const evidenceIds = [filed.rawEvidenceId, ...filed.attachments.map((a) => a.evidenceId)];
   const at = message.sentAt ?? message.receivedAt;
   const injection = result.injectionSuspected || det.injectionFlags.length > 0;
@@ -231,7 +234,7 @@ export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c
         data: { mailMessageId: message.id, intent: result.intent, from: message.fromAddr ?? null, subject: message.subject ?? null, classificationId: c.id, ...(injection || bank ? { flagged: true } : {}) },
         evidenceIds,
       },
-      MAIL_ACTOR,
+      actor,
     );
     out.events.push(e.id);
   }
@@ -254,6 +257,7 @@ export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c
       createdBy: MAIL_AGENT,
       dedupeKey: `spoof_warning:${message.id}`,
       correlationId: job.correlationId,
+      ...runRef,
     });
     out.needsYou.push(ny.id);
     ctx.repos.updateMailMessageRouting(ctx.db, message.id, { status: 'processed' });
@@ -271,6 +275,7 @@ export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c
       createdBy: MAIL_AGENT,
       dedupeKey: `mail.disagreement:${message.id}`,
       correlationId: job.correlationId,
+      ...runRef,
     });
     out.needsYou.push(ny.id);
     ctx.repos.updateMailMessageRouting(ctx.db, message.id, { status: 'processed' });
@@ -294,6 +299,7 @@ export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c
         createdBy: MAIL_AGENT,
         dedupeKey: `mail.bounce:${message.id}`,
         correlationId: job.correlationId,
+        ...runRef,
       }).id,
     );
     ctx.repos.updateMailMessageRouting(ctx.db, message.id, { status: 'processed' });
@@ -302,7 +308,7 @@ export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c
 
   // GTA 4.2 handling reference.
   if (isHandlingRef(result.intent, result.extracted.theirRef) && !ctx.repos.latestEventOfType(ctx.db, claimId, 'handling_ref_received')) {
-    out.events.push(appendClaimEvent(ctx, claimId, { type: 'handling_ref_received', at, summary: `Handling reference ${result.extracted.theirRef} received by email`, data: { reference: result.extracted.theirRef, mailMessageId: message.id }, evidenceIds: [filed.rawEvidenceId], attributableTo: 'insurer' }, MAIL_ACTOR).id);
+    out.events.push(appendClaimEvent(ctx, claimId, { type: 'handling_ref_received', at, summary: `Handling reference ${result.extracted.theirRef} received by email`, data: { reference: result.extracted.theirRef, mailMessageId: message.id }, evidenceIds: [filed.rawEvidenceId], attributableTo: 'insurer' }, actor).id);
   }
 
   // Offers: the register + owner decision; never decided here.
@@ -317,7 +323,7 @@ export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c
   }
   if (rule.event && (rule.event !== 'intervention_offer' || offerId)) {
     out.events.push(
-      appendClaimEvent(ctx, claimId, { type: rule.event, at, summary: `${rule.label} received by email: ${result.summary}`.slice(0, 2000), data: { mailMessageId: message.id, ...(offerId ? { offerId } : {}), ...(result.extracted.amountsPence.length ? { amountsPence: result.extracted.amountsPence } : {}) }, evidenceIds: [filed.rawEvidenceId], attributableTo: 'insurer' }, MAIL_ACTOR).id,
+      appendClaimEvent(ctx, claimId, { type: rule.event, at, summary: `${rule.label} received by email: ${result.summary}`.slice(0, 2000), data: { mailMessageId: message.id, ...(offerId ? { offerId } : {}), ...(result.extracted.amountsPence.length ? { amountsPence: result.extracted.amountsPence } : {}) }, evidenceIds: [filed.rawEvidenceId], attributableTo: 'insurer' }, actor).id,
     );
   }
   if (offerId) out.offerId = offerId;
@@ -335,6 +341,7 @@ export async function applyTriage(ctx: AppContext, message: MailMessageRecord, c
         createdBy: MAIL_AGENT,
         dedupeKey: `legal_review:${message.id}`,
         correlationId: job.correlationId,
+        ...runRef,
       }).id,
     );
   }

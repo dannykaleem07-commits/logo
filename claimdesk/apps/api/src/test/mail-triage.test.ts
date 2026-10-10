@@ -135,6 +135,15 @@ describe('triage outcomes', () => {
     expect(queued(t.ctx, 'intake.process')).toHaveLength(0);
     expect(t.ctx.repos.listOutbox(t.ctx.db, {})).toHaveLength(0);
     expect((t.ctx.repos.latestMailClassification(t.ctx.db, message.id)!.injection as { flags: string[] }).flags).toEqual(expect.arrayContaining(['ignore_previous', 'send_all_documents']));
+    // §K.5: the writes made from the triage run's result carry its run id.
+    const runId = t.ctx.repos.latestMailClassification(t.ctx.db, message.id)!.runId;
+    const rows = t.ctx.repos.listAudit(t.ctx.db, {}).filter((a) => a.userId === 'agent:mail' && ['event.append', 'needs_you.create'].includes(a.action));
+    expect(rows.map((a) => a.action)).toEqual(expect.arrayContaining(['event.append', 'needs_you.create']));
+    expect(rows.every((a) => a.runId === runId)).toBe(true);
+    // The Mailbox shows the warning and links the Needs-you item.
+    const box = (await t.api('GET', `/claims/${claimId}/mailbox`)).body as { threads: Array<{ messages: Array<{ id: string; warning: { injection: boolean; needsYouId: string | null } | null }> }> };
+    const shown = box.threads.flatMap((th) => th.messages).find((m) => m.id === message.id)!;
+    expect(shown.warning).toMatchObject({ injection: true, needsYouId: ny!.id });
   });
 
   it('a bank-detail change is always a payment-diversion warning', async () => {
@@ -143,6 +152,8 @@ describe('triage outcomes', () => {
     const [ny] = t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'spoof_warning' });
     expect(ny!.title).toMatch(/Payment-diversion/);
     expect(queued(t.ctx, 'case.review')).toHaveLength(0);
+    const box = (await t.api('GET', `/claims/${claimId}/mailbox`)).body as { threads: Array<{ messages: Array<{ warning: { bankDetailsChange: boolean } | null }> }> };
+    expect(box.threads.flatMap((th) => th.messages).some((m) => m.warning?.bankDetailsChange)).toBe(true);
   });
 
   it('when code cannot confirm the model’s figures, the owner is asked instead of acting', async () => {

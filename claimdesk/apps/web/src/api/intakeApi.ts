@@ -62,6 +62,8 @@ export interface IntakeItemRow {
   extraction: { id: Id; runId: string | null; summary: string | null; fields: number; warnings: string[]; createdAt: string } | null;
   proposals: { pending: number; applied: number; rejected: number; superseded: number };
   children: number;
+  /** Set when the item is being read but the agents cannot run (switched off, stopped, paused). */
+  waiting?: { reason: 'agents_off' | 'kill_switch' | 'usage' | 'sign_in'; until?: string } | null;
 }
 
 export interface ProposalSource {
@@ -169,6 +171,8 @@ export const intakeApi = {
     return request<{ items: IntakeItemRow[] }>('/intake', { method: 'POST', formData: fd });
   },
   fromUpload: (uploadId: string, claimId?: Id) => request<{ items: IntakeItemRow[] }>('/intake', { method: 'POST', body: { uploadId, ...(claimId ? { claimId } : {}) } }),
+  /** "Also read this file": an evidence row already stored on the claim. */
+  fromEvidence: (evidenceId: Id, claimId?: Id) => request<{ items: IntakeItemRow[] }>('/intake', { method: 'POST', body: { evidenceId, ...(claimId ? { claimId } : {}) } }),
   fromImport: (importId: string, claimId?: Id) => request<{ items: IntakeItemRow[] }>('/intake', { method: 'POST', body: { importId, ...(claimId ? { claimId } : {}) } }),
   retry: (id: Id, body: { from?: 'process' | 'extract' | 'apply'; claimId?: Id } = {}) => request<{ item: IntakeItemRow; queued: string }>(`/intake/${seg(id)}/retry`, { method: 'POST', body }),
   newClaimDraft: (itemIds: Id[]) => request<NewClaimDraft>('/intake/new-claim-draft', { method: 'POST', body: { itemIds } }),

@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { IntakeItemDetail, IntakeItemRow, NewClaimDraft, Proposal } from '../../api/intakeApi';
 import { initialFnolState } from '../claims/new/fnol';
 import { intakeDraftIdFrom, prefillFromDraft } from '../claims/new/intakePrefill';
-import { canStartClaim, confidenceTone, evidenceFileUrl, fieldRows, filterItems, pct, previewKind, proposalNote } from './intakeModel';
+import { waitingText, canStartClaim, confidenceTone, evidenceFileUrl, fieldRows, filterItems, pct, previewKind, proposalNote } from './intakeModel';
 
 const row = (over: Partial<IntakeItemRow>): IntakeItemRow => ({
   id: 'i1',
@@ -37,6 +37,15 @@ const proposal = (over: Partial<Proposal>): Proposal => ({
   status: 'pending',
   createdAt: '2026-10-07T09:00:00.000Z',
   ...over,
+});
+
+describe('intake waiting reason', () => {
+  it('says why a document is not being read instead of "Reading…"', () => {
+    expect(waitingText(null)).toBeUndefined();
+    expect(waitingText({ reason: 'agents_off' })).toMatchObject({ text: 'Waiting — agents are switched off (Settings > AI)', link: '/settings/ai' });
+    expect(waitingText({ reason: 'kill_switch' })?.link).toBe('/agents');
+    expect(waitingText({ reason: 'usage', until: '2026-10-10T16:05:00.000Z' })?.text).toBe('Waiting — the AI usage limit resets at 17:05');
+  });
 });
 
 describe('intake model', () => {

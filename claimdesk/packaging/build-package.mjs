@@ -179,6 +179,17 @@ step('Checking the package contents');
   check(existsSync(join(APP, 'node_modules', 'jszip', 'dist', 'jszip.min.js')), 'app/node_modules/jszip/dist/jszip.min.js is missing (DOCX → PDF in the browser)', true);
   check(existsSync(join(APP, 'node_modules', 'fflate')), 'app/node_modules/fflate is missing (DOCX engine)');
   check(existsSync(join(APP, 'node_modules', '@xmldom', 'xmldom')), 'app/node_modules/@xmldom/xmldom is missing (DOCX engine)');
+  // 0.4 (Supreme phase 1) runtime dependencies of the API: hoisted to app/node_modules or kept in app/apps/api/node_modules
+  const apiDep = (...p) => existsSync(join(APP, 'node_modules', ...p)) || existsSync(join(APP, 'apps', 'api', 'node_modules', ...p));
+  check(apiDep('imapflow', 'package.json'), 'imapflow is missing (IONOS IMAP)');
+  check(apiDep('nodemailer', 'package.json'), 'nodemailer is missing (IONOS SMTP)');
+  check(apiDep('mailparser', 'package.json'), 'mailparser is missing (email ingest)');
+  check(apiDep('pdfjs-dist', 'legacy', 'build', 'pdf.mjs') && apiDep('pdfjs-dist', 'legacy', 'build', 'pdf.worker.mjs'), 'pdfjs-dist/legacy/build/pdf{,.worker}.mjs is missing (intake PDF text)');
+  check(apiDep('@modelcontextprotocol', 'sdk', 'package.json'), '@modelcontextprotocol/sdk is missing (agent tools over MCP)');
+  check(apiDep('@anthropic-ai', 'sdk', 'package.json'), '@anthropic-ai/sdk is missing (API-key AI driver)');
+  check(existsSync(join(APP, 'apps', 'api', 'src', 'agent', 'prompts', '_base')), 'app/apps/api/src/agent/prompts/_base is missing (agent prompts)');
+  check(existsSync(join(APP, 'apps', 'api', 'src', 'ai', 'fixtures')), 'app/apps/api/src/ai/fixtures is missing (fake AI driver for the CI agent smoke)');
+  check(!existsSync(join(APP, 'apps', 'api', 'src', 'test')), 'app/apps/api/src/test must not be shipped');
   check(existsSync(join(APP, 'version.json')), 'app/version.json is missing');
   check(existsSync(join(APP, 'autostart', 'background.xml')) && existsSync(join(APP, 'autostart', 'watchdog.xml')), 'app/autostart/{background,watchdog}.xml are missing (24/7 background mode)');
   if (problems.length) fail(`the package is incomplete:\n  - ${problems.join('\n  - ')}`);

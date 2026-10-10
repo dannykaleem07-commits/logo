@@ -17,7 +17,7 @@ import type { ClockKind, ISODateTime, Lane } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
 import { enqueueJob, londonDay, londonDayStart } from './core.js';
 import { aiGate, ALL_PRIORITIES, NO_PRIORITY, type AiGate, type LaneLimits } from './budgets.js';
-import { openGates, raiseJobFailure, type LaneGates, type AnyJobHandler } from './queue.js';
+import { effectiveAgentSettings, openGates, raiseJobFailure, type LaneGates, type AnyJobHandler } from './queue.js';
 import { runDueSchedules, seedSchedules, type MaterialisedRun } from './scheduler.js';
 import { startWorker, workerOwnerId, type RunningJob, type Worker } from './worker.js';
 import { allJobHandlers, registryProblems } from './handlers/index.js';
@@ -73,7 +73,7 @@ export interface Supervisor {
 }
 
 export function computeGates(ctx: AppContext, now: ISODateTime): { gates: LaneGates; ai: Heartbeat['ai'] } {
-  const settings = ctx.repos.getAgentSettings(ctx.db);
+  const settings = effectiveAgentSettings(ctx);
   const usage = ctx.repos.getAiUsageState(ctx.db);
   const today = londonDay(now);
   const nextDayStart = londonDayStart(new Date(Date.parse(londonDayStart(now)) + 36 * 3_600_000).toISOString());
@@ -89,7 +89,7 @@ export function computeGates(ctx: AppContext, now: ISODateTime): { gates: LaneGa
   else if (!enabled) Object.assign(aiLane, { open: false, maxPriority: NO_PRIORITY, reason: 'agents_off' });
   else Object.assign(aiLane, { open: g.maxPriority >= 0, maxPriority: g.maxPriority, reason: g.reason });
   for (const lane of ['io', 'cpu'] as Lane[]) gates.lanes[lane] = { open: true, maxPriority: ALL_PRIORITIES };
-  return { gates, ai: { ...g, enabled, driver: settings.ai.driver } };
+  return { gates, ai: { ...g, enabled, driver: settings.driverChoice } };
 }
 
 /** Did the claim's most recent case review fail (dead/failed job or a non-ok run)? */

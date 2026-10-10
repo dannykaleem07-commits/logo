@@ -15,6 +15,7 @@ import { Checkbox, DateTimeInput, Field, Select, TextArea, TextInput } from '../
 import { EmptyState } from '../../../components/EmptyState';
 import { ApiErrorNotice } from '../../../components/ApiErrorNotice';
 import { useToast } from '../../../components/Toast';
+import { intakeApi } from '../../../api/intakeApi';
 import type { ClaimView } from '../claimFile';
 import { bytesLabel, emptyUploadForm, EVIDENCE_KIND_OPTIONS, evidenceKindLabel, exifSummary, filterEvidence, GUIDED_SHOT_LABEL, GUIDED_SHOT_OPTIONS, guessKind, isImage, sha256HexOf, shortHash, sortEvidence, uploadFieldsFrom, type EvidenceFilter, type UploadForm } from '../lib/evidence';
 
@@ -160,6 +161,8 @@ function UploadDialog({ claimId, onClose }: { claimId: string; onClose: () => vo
   const [hashing, setHashing] = useState(false);
   const [hash, setHash] = useState<string | undefined>();
   const [progress, setProgress] = useState<{ sent: number; total: number } | null>(null);
+  // §G.1: "also read this file" — the agents read the stored file and propose details for the claim (Intake).
+  const [alsoRead, setAlsoRead] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
   const pickId = useRef(0);
@@ -219,6 +222,12 @@ function UploadDialog({ claimId, onClose }: { claimId: string; onClose: () => vo
       {
         onSuccess: (ev) => {
           toast.success(`Stored ${ev.filename} · SHA-256 ${shortHash(ev.sha256)}${hash ? '' : ' (worked out by ClaimDesk)'}`);
+          if (alsoRead) {
+            intakeApi
+              .fromEvidence(ev.id, claimId)
+              .then(() => toast.success(`${ev.filename} is queued for reading — see Intake`))
+              .catch((e: unknown) => toast.error(`Stored, but it could not be queued for reading: ${e instanceof Error ? e.message : String(e)}`));
+          }
           onClose();
         }
       }
@@ -280,6 +289,7 @@ function UploadDialog({ claimId, onClose }: { claimId: string; onClose: () => vo
           <TextInput label="Source URL" type="url" value={form.sourceUrl} onChange={(v) => setForm((f) => ({ ...f, sourceUrl: v }))} error={errors.sourceUrl} placeholder="Required for comparable adverts" />
         </div>
         <TextArea label="Description" value={form.description} onChange={(v) => setForm((f) => ({ ...f, description: v }))} rows={2} placeholder="What it shows and why it matters (e.g. odometer at delivery, 41,212 miles)" />
+        <Checkbox label="Also read this file" checked={alsoRead} onChange={setAlsoRead} disabled={upload.isPending} hint="The agents read it and propose details for this claim; you confirm anything they are not sure of (Intake)." />
         {!(upload.error instanceof DOMException && upload.error.name === 'AbortError') && <ApiErrorNotice error={upload.error} what="upload the file" />}
       </form>
     </Modal>

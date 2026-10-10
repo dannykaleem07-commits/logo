@@ -1,7 +1,7 @@
 // owned by mail
 import { describe, expect, it } from 'vitest';
 import { composeProblems, SIGN_OFF } from './ComposeDialog';
-import { matchedBecause } from './MessageView';
+import { matchedBecause, warningChips } from './MessageView';
 import { pickThread } from '../MailboxTab';
 import type { MailboxThread } from '../../../../api/mailApi';
 
@@ -19,6 +19,10 @@ describe('mailbox', () => {
     expect(matchedBecause({ match: { decidedBy: 'auto', score: 100, because: ['our reference CCG-2026-00012 is quoted'], decision: 'auto', candidates: [] } })).toBe('Matched because our reference CCG-2026-00012 is quoted');
     expect(matchedBecause({ match: { decidedBy: 'owner', score: 0, because: ['chosen by the owner'], decision: 'linked', candidates: [] } })).toBe('You filed it because chosen by the owner');
     expect(matchedBecause({ match: null })).toBeNull();
+  });
+  it('flags an email that was not acted on (injection, bank details change)', () => {
+    expect(warningChips(null)).toEqual([]);
+    expect(warningChips({ injection: true, injectionNotes: 'ignore_previous', bankDetailsChange: true, spoofSuspect: false, needsYouId: 'n1' }).map((c) => c.label)).toEqual(['Bank details change — phone to verify', 'Suspicious — not acted on']);
   });
   it('selects the newest thread by default', () => {
     const t = (k: string): MailboxThread => ({ threadKey: k, subject: k, lastAt: '', count: 1, messages: [] });

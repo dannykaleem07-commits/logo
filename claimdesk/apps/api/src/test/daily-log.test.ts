@@ -98,6 +98,7 @@ describe('daily log', () => {
     const updated = log.sections.updatedRecords;
     expect(updated.map((u) => u.agent).sort()).toEqual(['drafter', 'intake', 'mail']);
     expect(updated.find((u) => u.agent === 'mail')).toMatchObject({ ruleIds: ['external_ok'], why: 'allow-listed ack to a verified handler', reference });
+    expect(updated.find((u) => u.agent === 'mail')!.text).toBe(`chronology event on ${reference}`);
     expect(log.sections.waitingForYou.map((w) => w.text)).toContain('V5C needed');
     expect(log.sections.deadlines.map((d) => d.text)).toEqual(['Met: NCAF within 1 working day', 'Due soon: Chaser 1 (day 7)']);
     const problems = log.sections.problems.map((p) => p.text);

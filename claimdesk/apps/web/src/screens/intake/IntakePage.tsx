@@ -17,7 +17,7 @@ import { useToast } from '../../components/Toast';
 import { useClaims } from '../../api/hooks';
 import { addIntakeFiles, IN_PROGRESS, useIntakeItem, useIntakeList, useIntakeMutations, type IntakeItemDetail, type IntakeItemRow, type Proposal } from '../../api/intakeApi';
 import { sizeText } from '../../api/uploads';
-import { canStartClaim, confidenceTone, evidenceFileUrl, fieldRows, FILTERS, filterItems, pct, previewKind, PROPOSAL_STATUS_LABEL, proposalNote, STATUS_LABEL, STATUS_TONE, type FieldRow, type IntakeFilter } from './intakeModel';
+import { waitingText, canStartClaim, confidenceTone, evidenceFileUrl, fieldRows, FILTERS, filterItems, pct, previewKind, PROPOSAL_STATUS_LABEL, proposalNote, STATUS_LABEL, STATUS_TONE, type FieldRow, type IntakeFilter } from './intakeModel';
 import './intake.css';
 
 function ConfidenceBar({ value }: { value: number }) {
@@ -119,6 +119,7 @@ function ProposalActions({ p, onApply, onReject, busy }: { p: Proposal; onApply:
 function FieldsTable({ rows, onPage, onApply, onReject, busy }: { rows: FieldRow[]; onPage: (n: number) => void; onApply: (p: Proposal) => void; onReject: (p: Proposal) => void; busy: boolean }) {
   if (!rows.length) return <div className="small">No fields were read from this document.</div>;
   return (
+    <div className="table-wrap">
     <table className="table intake-fields">
       <thead>
         <tr>
@@ -156,6 +157,7 @@ function FieldsTable({ rows, onPage, onApply, onReject, busy }: { rows: FieldRow
         ))}
       </tbody>
     </table>
+    </div>
   );
 }
 
@@ -201,6 +203,11 @@ function ItemDetail({ id, claims }: { id: string; claims: Array<{ value: string;
       }
     >
       <div className="intake-detail">
+        {waitingText(item.waiting) && (
+          <div className="notice notice-warn" role="status">
+            {waitingText(item.waiting)!.text} — <Link to={waitingText(item.waiting)!.link}>open</Link>
+          </div>
+        )}
         <div className="intake-meta small">
           {item.claimId ? (
             <span>
@@ -226,7 +233,7 @@ function ItemDetail({ id, claims }: { id: string; claims: Array<{ value: string;
           <div className="notice notice-info">
             {item.needsYou.map((n) => (
               <div key={n.id}>
-                Waiting in <Link to={`/needs-you?item=${n.id}`}>Needs you</Link>: {n.title}
+                Waiting in <Link to={`/needs-you/${n.id}`}>Needs you</Link>: {n.title}
               </div>
             ))}
           </div>
@@ -301,7 +308,13 @@ function ItemList({ items, selected, onSelect, checked, onCheck }: { items: Inta
           <button type="button" className="intake-item-button" onClick={() => onSelect(i.id)}>
             <span className="intake-item-top">
               <span className="intake-item-title">{i.evidence?.filename ?? i.id}</span>
-              <Badge tone={STATUS_TONE[i.status]}>{IN_PROGRESS.has(i.status) ? `${STATUS_LABEL[i.status]}…` : STATUS_LABEL[i.status]}</Badge>
+              {waitingText(i.waiting) ? (
+                <Badge tone="amber" title={waitingText(i.waiting)!.text}>
+                  {waitingText(i.waiting)!.badge}
+                </Badge>
+              ) : (
+                <Badge tone={STATUS_TONE[i.status]}>{IN_PROGRESS.has(i.status) ? `${STATUS_LABEL[i.status]}…` : STATUS_LABEL[i.status]}</Badge>
+              )}
             </span>
             <span className="small">
               {i.docTypeLabel ?? (i.sniffedType ? i.sniffedType.toUpperCase() : '—')}

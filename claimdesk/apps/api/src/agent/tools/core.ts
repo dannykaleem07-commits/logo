@@ -11,7 +11,8 @@
  *
  * `maskPii` is a minimal local masker (§K.3); the casework slice's `casework/mask.ts` supersedes it later.
  */
-import { copyFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync } from 'node:fs';
+import { open, readFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { z } from 'zod/v4';
@@ -25,7 +26,7 @@ import { enqueueJob, createNeedsYou } from '../core.js';
 import { agentUserId } from '../principal.js';
 import { toolInputSchema } from '../../ai/strictSchema.js';
 import { loadBundle } from '../../services/claimView.js';
-import { readEvidenceVerified } from '../../services/evidence.js';
+import { hashFile, readEvidenceVerified } from '../../services/evidence.js';
 import { listTemplateSummaries } from '../../services/docxTemplates.js';
 import { listClaimsResponse } from '../../services/claimList.js';
 import { assessTotalLoss } from '../../services/engineeringFallbacks.js';
@@ -440,11 +441,17 @@ const evidenceRead = tool({
     const safe = ev.filename.replace(/[^A-Za-z0-9._-]+/g, '_').slice(-80) || 'file';
     const target = path.join(inputDir, `${ev.id.slice(0, 8)}-${safe}`);
     copyFileSync(verified.absolutePath, target);
-    const bytes = readFileSync(target);
-    const sha = createHash('sha256').update(bytes).digest('hex');
+    // The copy is hashed as a stream; only files small enough to hand the model inline are ever read into memory.
+    const sha = await hashFile(target);
     if (sha !== ev.sha256.toLowerCase()) throw Object.assign(new Error('The copy did not match the recorded hash'), { code: 'EVIDENCE_TAMPERED' });
     const out: Record<string, unknown> = { evidenceId: ev.id, path: path.relative(rc.runDir, target).split(path.sep).join('/'), absolutePath: target, mime: ev.mime, bytes: ev.bytes, sha256: ev.sha256, filename: ev.filename };
     const blocks: unknown[] = [];
+    if (ev.bytes > EVIDENCE_READ_INLINE_MAX_BYTES) {
+      out.note = `This file is ${Math.round(ev.bytes / 1048576)} MB — too large to give you inline; only its path and details are returned.`;
+      Object.defineProperty(out, Symbol.for('claimdesk.tool.blocks'), { value: blocks, enumerable: false });
+      return out;
+    }
+    const bytes = ev.mime.startsWith('text/') ? await readHead(target, 64 * 1024) : await readFile(target);
     if (ev.mime === 'application/pdf') blocks.push({ type: 'document', source: { type: 'base64', media_type: 'application/pdf', data: bytes.toString('base64') }, title: ev.filename });
     else if (['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(ev.mime)) blocks.push({ type: 'image', source: { type: 'base64', media_type: ev.mime, data: bytes.toString('base64') } });
     else if (ev.mime.startsWith('text/')) out.text = bytes.toString('utf8').slice(0, 15_000);
@@ -452,6 +459,20 @@ const evidenceRead = tool({
     return out;
   },
 });
+
+/** Above this size evidence_read returns the path and details only (no base64 blocks): the model image/PDF limits. */
+export const EVIDENCE_READ_INLINE_MAX_BYTES = 20 * 1024 * 1024;
+
+async function readHead(file: string, max: number): Promise<Buffer> {
+  const fh = await open(file, 'r');
+  try {
+    const buf = Buffer.alloc(max);
+    const { bytesRead } = await fh.read(buf, 0, max, 0);
+    return buf.subarray(0, bytesRead);
+  } finally {
+    await fh.close();
+  }
+}
 
 const documentsList = tool({
   name: 'documents_list',
@@ -778,6 +799,7 @@ const offerRecord = tool({
       createdBy: agentUserId(rc.agent),
       correlationId: rc.correlationId,
       dedupeKey: `offer_decision:${offerId}`,
+      runId: rc.runId,
     });
     let analyseJobId: string | undefined;
     try {

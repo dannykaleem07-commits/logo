@@ -119,6 +119,46 @@ describe('confirmations', () => {
     expect(t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'confirm_fields' })).toHaveLength(1);
   });
 
+  it('a V5C for a DIFFERENT registration applies nothing to the claim vehicle; the card names the mismatch', async () => {
+    t.ctx.handle.sqlite.prepare("UPDATE vehicles SET registration = 'DK18WRE' WHERE id = ?").run(claimVehicle().id);
+    const before = claimVehicle();
+    const itemId = await v5cOnClaim();
+    await drainIntake(t.ctx, NOW);
+    const after = claimVehicle();
+    expect(after.vin ?? null).toBe(before.vin ?? null);
+    expect(after.colour ?? null).toBe(before.colour ?? null);
+    expect(auditRows(t.ctx, 'intake.apply').filter((a) => String(a.after.target).startsWith('vehicle:'))).toEqual([]);
+    const [card] = t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'confirm_fields' });
+    const payload = card!.payload as { itemId: string; warnings: string[]; proposals: Array<{ target: string; ruleIds: string[]; reasons: string[] }> };
+    expect(payload.itemId).toBe(itemId);
+    expect(payload.warnings.join(' ')).toMatch(/KX21 ?ABC/);
+    expect(card!.summary).toMatch(/^Warning: /);
+    const vin = payload.proposals.find((p) => p.target === 'vehicle:client.vin')!;
+    expect(vin.ruleIds).toContain('intake_vehicle_mismatch');
+    expect(vin.reasons.join(' ')).toMatch(/This document is for KX21 ?ABC; the claim vehicle is DK18 ?WRE/);
+  });
+
+  it('a VIN already on another vehicle is never filled automatically', async () => {
+    const other = await t.api<{ id: string }>('POST', '/vehicles', { registration: 'KR20VXA', vin: 'WVWZZZ1JZXW000001', ownership: 'client' });
+    expect(other.status).toBe(201);
+    await v5cOnClaim();
+    await drainIntake(t.ctx, NOW);
+    expect(claimVehicle().vin ?? null).toBeNull();
+    const [card] = t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'confirm_fields' });
+    const vin = (card!.payload as { proposals: Array<{ target: string; reasons: string[] }> }).proposals.find((p) => p.target === 'vehicle:client.vin')!;
+    expect(vin.reasons.join(' ')).toMatch(/VIN already on KR20VXA/);
+  });
+
+  it('a sensitive value that would overwrite keeps the "sensitive" reason on the card', async () => {
+    t.ctx.handle.sqlite.prepare("UPDATE parties SET date_of_birth = '1985-06-30' WHERE id = ?").run(claimant().id);
+    await v5cOnClaim();
+    await drainIntake(t.ctx, NOW);
+    const [card] = t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'confirm_fields' });
+    const dob = (card!.payload as { proposals: Array<{ target: string; reasons: string[] }> }).proposals.find((p) => p.target === 'party:client.dateOfBirth')!;
+    expect(dob.reasons.join(' ')).toMatch(/sensitive field \(personal details\)/);
+    expect(dob.reasons.join(' ')).toMatch(/overwrite/i);
+  });
+
   it('the resolver applies the ticked values AS THE OWNER through the routes and rejects the rest with the reason', async () => {
     const itemId = await v5cOnClaim();
     await drainIntake(t.ctx, NOW);

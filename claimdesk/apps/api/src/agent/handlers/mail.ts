@@ -21,7 +21,7 @@ import type { Actor, MailClassificationRecord } from '@ccguk/db';
 import type { AppContext } from '../../context.js';
 import type { AiRunOutcome } from '../../ai/types.js';
 import type { AgentSpec, JobHandler, JobOutcome, JobRecord, NeedsYouResolver } from '../contracts.js';
-import { createNeedsYou, enqueueJob } from '../core.js';
+import { authFailedWait, createNeedsYou, enqueueJob } from '../core.js';
 import { runAgent } from '../runAgent.js';
 import { getStagedImport, markImportConsumed, markImportFailed, stagedImportPath } from '../../services/imports.js';
 import { MAIL_ACTOR, MAIL_AGENT, appendClaimEvent, fileMessageEvidence, mailAccount } from '../../mail/common.js';
@@ -59,7 +59,7 @@ export function aiFailureOutcome(ctx: AppContext, o: AiRunOutcome): JobOutcome |
     case 'usage_limited':
       return { kind: 'wait_usage', until: o.resetsAt ?? new Date(Date.parse(ctx.now()) + 15 * 60_000).toISOString() };
     case 'auth_failed':
-      return { kind: 'fail', reason: `AI sign-in failed: ${o.message}` };
+      return authFailedWait(ctx, o.message);
     case 'refused':
       return { kind: 'fail', reason: `The model refused: ${o.explanation ?? o.category ?? 'no reason given'}` };
     case 'invalid_output':
@@ -314,6 +314,7 @@ const replyHandler: JobHandler<ReplyPayload> = {
         createdBy: MAIL_AGENT,
         dedupeKey: `mail.reply.none:${message.id}:${payload.loop ?? 0}`,
         correlationId: job.correlationId,
+        runId: run.runId,
       });
       return { kind: 'done', result: { drafts: 0, needsYouId: ny.id } };
     }

@@ -99,6 +99,7 @@ export function MailboxTab({ view }: { view: ClaimView }) {
                           <DateText value={t.lastAt} />
                         </span>
                         <span className="ob-item-top">
+                          {t.messages.some((m) => m.warning?.injection || m.warning?.bankDetailsChange) && <Badge tone="red">Suspicious — not acted on</Badge>}
                           {last.intent && <Badge tone="blue">{last.intent.label}</Badge>}
                           {t.count > 1 && <Badge>{t.count}</Badge>}
                           {t.messages.some((m) => m.hasAttachments) && <Badge tone="grey">attachments</Badge>}
@@ -141,7 +142,7 @@ export function MailboxTab({ view }: { view: ClaimView }) {
                       </div>
                       <div className="ob-actions">
                         {o.status === 'held' && <HeldCountdown holdUntil={o.holdUntil} serverNow={new Date().toISOString()} />}
-                        {(o.status === 'held' || o.status === 'awaiting_approval' || o.status === 'failed') && <Link to={`/outbox?focus=${o.id}`}>Open</Link>}
+                        {(o.status === 'held' || o.status === 'awaiting_approval' || o.status === 'failed') && <Link to={`/outbox/${o.id}`}>Open</Link>}
                       </div>
                     </li>
                   ))}

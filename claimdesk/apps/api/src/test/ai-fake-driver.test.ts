@@ -12,6 +12,7 @@ import { createTestApp, type TestApp } from './helpers.js';
 import { recomputeClocks } from '../services/claimView.js';
 import { enqueueJob } from '../agent/core.js';
 import { runAgent } from '../agent/runAgent.js';
+import { resolveNeedsYouItem } from '../agent/needsYou.js';
 import { getRunContext } from '../agent/dispatcher.js';
 import type { AgentSpec, JobRecord } from '../agent/contracts.js';
 import { FakeAiNotAllowedError, FakeDriver, findFixture, loadFixtures, substitute, FIXTURES_DIR, type FakeFixture } from '../ai/fakeDriver.js';
@@ -112,6 +113,15 @@ describe('runAgent with the FakeDriver', () => {
 
   it('auth_failed, and a result outside the schema becomes invalid_output', async () => {
     expect((await runAgent(t.ctx, spec, job(), { task: '[gateway-auth-failed]' })).outcome.kind).toBe('auth_failed');
+    // A sign-in failure pauses AI and asks the owner once (setup card); a second failure the same day does not repeat it.
+    expect(t.ctx.repos.getAiUsageState(t.ctx.db).pauseReason).toBe('auth_failed');
+    await runAgent(t.ctx, spec, job(), { task: '[gateway-auth-failed]' });
+    const setup = t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'setup' });
+    expect(setup).toHaveLength(1);
+    expect(setup[0]).toMatchObject({ priority: 'urgent', createdBy: 'system' });
+    // "I've fixed it" (runtime's setup resolver, as the owner) lifts the pause.
+    await resolveNeedsYouItem(t.ctx, setup[0]!.id, { optionId: 'fixed' }, { userId: 'courtesycars' });
+    expect(t.ctx.repos.getAiUsageState(t.ctx.db).pausedUntil ?? null).toBeNull();
     const bad = await runAgent(t.ctx, spec, job(), { task: '[gateway-bad-result]' });
     expect(bad.outcome.kind).toBe('invalid_output');
     expect(bad.result).toBeUndefined();

@@ -85,10 +85,11 @@ export function enqueueJob(ctx: AppContext, input: EnqueueInput): JobRecord {
 export function createNeedsYou(ctx: AppContext, input: NeedsYouInput): NeedsYouItem {
   const now = ctx.now();
   return ctx.db.transaction((tx) => {
-    const { item, created } = ctx.repos.createNeedsYouItem(tx, { ...input, now });
+    const { runId, ...row } = input;
+    const { item, created } = ctx.repos.createNeedsYouItem(tx, { ...row, now });
     if (!created) return item;
     ctx.repos.appendAudit(tx, {
-      actor: { userId: input.createdBy },
+      actor: { userId: input.createdBy, ...(runId && input.createdBy.startsWith('agent:') ? { runId } : {}) },
       action: 'needs_you.create',
       entity: 'needs_you',
       entityId: item.id,
@@ -112,6 +113,19 @@ export function createNeedsYou(ctx: AppContext, input: NeedsYouInput): NeedsYouI
   });
 }
 
+/** A sign-in failure pause without a stored end (fallback): a day, as runAgent sets it. */
+const AUTH_WAIT_FALLBACK_MS = 24 * 60 * 60_000;
+
+/**
+ * auth_failed (§A.7) as a job outcome: the job waits with the AI pause (no attempt used) instead of failing for good, so
+ * "I've fixed it" on the setup item (or the pause lapsing) runs it again.
+ */
+export function authFailedWait(ctx: AppContext, message: string): { kind: 'wait_usage'; until: ISODateTime; reason: string } {
+  const pausedUntil = ctx.repos.getAiUsageState(ctx.db).pausedUntil;
+  const until = pausedUntil && Date.parse(pausedUntil) > Date.parse(ctx.now()) ? pausedUntil : new Date(Date.parse(ctx.now()) + AUTH_WAIT_FALLBACK_MS).toISOString();
+  return { kind: 'wait_usage', until, reason: `AI sign-in failed: ${message}`.slice(0, 1000) };
+}
+
 /** The owner's autonomy settings (stored, merged over DEFAULT_AUTONOMY). */
 export function getAutonomy(ctx: AppContext): AutonomySettings {
   return ctx.repos.getAgentSettings(ctx.db).autonomy;
@@ -120,21 +134,37 @@ export function getAutonomy(ctx: AppContext): AutonomySettings {
 /**
  * Automatic sends counted for the rate limits (§D.2 rule 18, §F.8): outbox rows whose stored policy decision was
  * `auto_held` and that were not cancelled (undone). The mail slice stores the `Decision` JSON in `outbox.policy`.
+ * Each row counts at the time it goes out — when it was sent, else when its hold ends, else when it was created — so a
+ * quiet-hours email drafted last night and released at 07:30 counts towards today, and one held until tomorrow does
+ * not count today.
  */
 export function automaticSendCounts(ctx: AppContext, claimId: string | undefined, now: ISODateTime): AutonomyState['sends'] {
-  const dayStart = londonDayStart(now);
+  const { dayStart, dayEnd } = londonDayWindow(now);
   const hourAgo = new Date(Date.parse(now) - 3_600_000).toISOString();
   const row = ctx.handle.sqlite
     .prepare(
-      `SELECT
-         sum(CASE WHEN created_at >= @dayStart THEN 1 ELSE 0 END) AS today,
-         sum(CASE WHEN created_at >= @hourAgo THEN 1 ELSE 0 END) AS hour,
-         sum(CASE WHEN created_at >= @dayStart AND claim_id = @claimId THEN 1 ELSE 0 END) AS claim
-       FROM outbox
-       WHERE status <> 'cancelled' AND json_valid(policy) AND json_extract(policy, '$.outcome') = 'auto_held'`,
+      `WITH auto AS (
+         SELECT o.claim_id AS claim_id,
+                COALESCE((SELECT min(e.at) FROM outbox_events e WHERE e.outbox_id = o.id AND e.to_status = 'sent'), o.hold_until, o.created_at) AS out_at
+         FROM outbox o
+         WHERE o.status <> 'cancelled' AND json_valid(o.policy) AND json_extract(o.policy, '$.outcome') = 'auto_held'
+       )
+       SELECT
+         sum(CASE WHEN out_at >= @dayStart AND out_at < @dayEnd THEN 1 ELSE 0 END) AS today,
+         sum(CASE WHEN out_at >= @hourAgo THEN 1 ELSE 0 END) AS hour,
+         sum(CASE WHEN out_at >= @dayStart AND out_at < @dayEnd AND claim_id = @claimId THEN 1 ELSE 0 END) AS claim
+       FROM auto`,
     )
-    .get({ dayStart, hourAgo, claimId: claimId ?? '' }) as { today: number | null; hour: number | null; claim: number | null } | undefined;
+    .get({ dayStart, dayEnd, hourAgo, claimId: claimId ?? '' }) as { today: number | null; hour: number | null; claim: number | null } | undefined;
   return { claimToday: Number(row?.claim ?? 0), lastHour: Number(row?.hour ?? 0), today: Number(row?.today ?? 0) };
+}
+
+/** [start, end) of the Europe/London day containing `iso`, as UTC instants. */
+export function londonDayWindow(iso: ISODateTime): { dayStart: ISODateTime; dayEnd: ISODateTime } {
+  const dayStart = londonDayStart(iso);
+  // 26 h after the start is always inside the next London day (23/25-hour days included).
+  const dayEnd = londonDayStart(new Date(Date.parse(dayStart) + 26 * 3_600_000).toISOString());
+  return { dayStart, dayEnd };
 }
 
 /** The runtime state `decide()` needs for an action by `agent` on `claimId`. */

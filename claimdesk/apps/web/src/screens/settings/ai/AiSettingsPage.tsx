@@ -376,10 +376,10 @@ function ModelsCard({ s }: { s: AiStatus }) {
                       </select>
                     </td>
                     <td>
-                      <input className="input ai-num" type="number" min={1} max={50} aria-label={`${r.label} max turns`} value={v.maxTurns} onChange={(e) => setEdit(r.jobType, { maxTurns: Math.max(1, Math.min(50, Number(e.target.value) || 1)) })} />
+                      <ClampedNumberInput min={1} max={50} label={`${r.label} max turns`} value={v.maxTurns} onCommit={(n) => setEdit(r.jobType, { maxTurns: n })} />
                     </td>
                     <td>
-                      <input className="input ai-num" type="number" min={1} max={60} aria-label={`${r.label} time limit`} value={msToMinutes(v.timeoutMs)} onChange={(e) => setEdit(r.jobType, { timeoutMs: minutesToMs(Math.min(60, Number(e.target.value) || 1)) })} />
+                      <ClampedNumberInput min={1} max={60} label={`${r.label} time limit`} value={msToMinutes(v.timeoutMs)} onCommit={(n) => setEdit(r.jobType, { timeoutMs: minutesToMs(n) })} />
                     </td>
                   </tr>
                 );
@@ -399,6 +399,43 @@ function ModelsCard({ s }: { s: AiStatus }) {
         </div>
       </div>
     </Card>
+  );
+}
+
+/** A whole number typed by the owner, clamped to [min, max]; undefined when it is not a number (keep the old value). */
+export function clampInt(text: string, min: number, max: number): number | undefined {
+  const t = text.trim();
+  if (!/^-?\d+$/.test(t)) return undefined;
+  return Math.min(max, Math.max(min, Number(t)));
+}
+
+/**
+ * A number field that keeps what is typed as text and clamps only when the field is left (blur) or Enter is pressed —
+ * clamping on every keystroke turned "8" typed into a cleared field into "18".
+ */
+export function ClampedNumberInput({ value, min, max, label, onCommit }: { value: number; min: number; max: number; label: string; onCommit: (n: number) => void }) {
+  const [draft, setDraft] = useState<string | undefined>();
+  const commit = () => {
+    if (draft === undefined) return;
+    const n = clampInt(draft, min, max);
+    if (n !== undefined && n !== value) onCommit(n);
+    setDraft(undefined);
+  };
+  return (
+    <input
+      className="input ai-num"
+      type="number"
+      inputMode="numeric"
+      min={min}
+      max={max}
+      aria-label={label}
+      value={draft ?? String(value)}
+      onChange={(e) => setDraft(e.target.value)}
+      onBlur={commit}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') commit();
+      }}
+    />
   );
 }
 

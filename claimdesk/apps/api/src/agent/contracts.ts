@@ -48,7 +48,7 @@ export interface JobRecord extends Required<Pick<EnqueueInput, 'type' | 'payload
 export type JobOutcome<R = unknown> =
   | { kind: 'done'; result: R; followUps?: EnqueueInput[] }
   | { kind: 'retry'; afterMs: number; reason: string }
-  | { kind: 'wait_usage'; until: ISODateTime }              // does not consume an attempt
+  | { kind: 'wait_usage'; until: ISODateTime; reason?: string } // does not consume an attempt (usage window or AI sign-in pause)
   | { kind: 'wait_user'; needsYouId: string }               // resumed by the Needs-you resolver
   | { kind: 'fail'; reason: string; deadLetter?: boolean };
 
@@ -107,6 +107,8 @@ export interface NeedsYouInput {
   kind: NeedsYouKind; claimId?: string; title: string; summary: string; recommendation?: Recommendation;
   options?: NeedsYouOption[]; payload: unknown; priority: NeedsYouPriority; dueAt?: ISODateTime;
   createdBy: string; dedupeKey?: string; correlationId?: string; resumesJobId?: string;
+  /** The agent run that raised it (§K.5): written to the needs_you.create audit row's run_id. */
+  runId?: string;
 }
 /** A stored Needs-you item (the `needs_you` row, JSON parsed). */
 export type NeedsYouItem = NeedsYouRecord;

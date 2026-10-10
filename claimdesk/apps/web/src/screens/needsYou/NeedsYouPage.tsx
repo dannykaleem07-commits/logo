@@ -20,11 +20,16 @@ import { ApiErrorNotice } from '../../components/ApiErrorNotice';
 import { useToast } from '../../components/Toast';
 import { useNeedsYouDetail, useNeedsYouList, useResolveNeedsYou, useSnoozeNeedsYou, type NeedsYouItem } from '../../api/needsYouApi';
 import {
+  confirmFieldEdits,
+  payloadLink,
   documentRef,
   emailPreview,
   fieldDiff,
   groupNeedsYou,
   inboxKey,
+  canEditThenApprove,
+  cardWarnings,
+  isTicked,
   initialEdits,
   KIND_LABEL,
   moveSelection,
@@ -160,19 +165,31 @@ function NeedsYouDetailPane({ id, command, onDone }: { id: string; command?: { k
   const toast = useToast();
   const [editing, setEditing] = useState<NeedsYouOption | undefined>();
   const [rejecting, setRejecting] = useState<NeedsYouOption | undefined>();
+  // "Add a note" for items that are not edited (questions, warnings, offers): the note goes with the chosen option.
+  const [noting, setNoting] = useState(false);
   const [note, setNote] = useState('');
   const [editText, setEditText] = useState('');
   const [editFields, setEditFields] = useState<Record<string, string>>({});
+  // confirm_fields: which proposals the owner ticks (all by default)
+  const [ticked, setTicked] = useState<Record<string, boolean>>({});
   const item = detail.data?.item;
 
   useEffect(() => {
     setEditing(undefined);
     setRejecting(undefined);
+    setNoting(false);
     setNote('');
+    setTicked({});
   }, [id]);
 
   const startEdit = (o: NeedsYouOption) => {
     if (!item) return;
+    if (!canEditThenApprove(item)) {
+      // Nothing editable here (no raw JSON editor): add a note instead.
+      setRejecting(undefined);
+      setNoting(true);
+      return;
+    }
     const init = initialEdits(item);
     setEditText(init.text);
     setEditFields(init.fields ?? {});
@@ -187,10 +204,13 @@ function NeedsYouDetailPane({ id, command, onDone }: { id: string; command?: { k
       return;
     }
     let edits: unknown;
+    // confirm_fields: the primary option applies only the ticked proposals (the resolver's {apply, values} shape)
+    // (always the explicit list: some rows start unticked — personal details, low confidence, another vehicle)
+    if (!withEdits && item.kind === 'confirm_fields' && o.tone === 'primary') edits = confirmFieldEdits(item.payload, ticked, {});
     if (withEdits) {
       const init = initialEdits(item);
       if (init.mode === 'email') edits = { bodyText: editText };
-      else if (init.mode === 'fields') edits = { fields: editFields };
+      else if (init.mode === 'fields') edits = item.kind === 'confirm_fields' ? confirmFieldEdits(item.payload, ticked, editFields) : { fields: editFields };
       else {
         try {
           edits = JSON.parse(editText);
@@ -270,7 +290,7 @@ function NeedsYouDetailPane({ id, command, onDone }: { id: string; command?: { k
             )}
           </div>
         )}
-        <PreparedItem item={item} />
+        <PreparedItem item={item} {...(item.kind === 'confirm_fields' && !closed ? { ticked, onTick: (key: string, on: boolean) => setTicked((x) => ({ ...x, [key]: on })) } : {})} />
         {editing && (
           <div className="ny-editor">
             <h4>Edit then approve</h4>
@@ -296,6 +316,26 @@ function NeedsYouDetailPane({ id, command, onDone }: { id: string; command?: { k
                 {editing.label}
               </Button>
               <Button variant="ghost" onClick={() => setEditing(undefined)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+        {noting && !rejecting && !closed && (
+          <div className="ny-editor">
+            <label className="field-label" htmlFor="ny-note">
+              Your note (kept with your answer)
+            </label>
+            <textarea id="ny-note" className="textarea" value={note} onChange={(e) => setNote(e.target.value)} rows={3} autoFocus />
+            <div className="row">
+              {options
+                .filter((o) => !o.requiresEdit)
+                .map((o) => (
+                  <Button key={o.id} variant={o.tone === 'primary' ? 'primary' : o.tone === 'danger' ? 'danger' : 'secondary'} disabled={!note.trim()} loading={resolve.isPending && resolve.variables?.body.optionId === o.id} onClick={() => submit(o)}>
+                    {o.label} with this note
+                  </Button>
+                ))}
+              <Button variant="ghost" onClick={() => (setNoting(false), setNote(''))}>
                 Cancel
               </Button>
             </div>
@@ -331,9 +371,14 @@ function NeedsYouDetailPane({ id, command, onDone }: { id: string; command?: { k
                 {o.label}
               </Button>
             ))}
-            {!options.some((o) => o.requiresEdit) && item.kind !== 'failure' && item.kind !== 'setup' && (
+            {!options.some((o) => o.requiresEdit) && canEditThenApprove(item) && (
               <Button variant="ghost" onClick={() => startEdit({ id: options.find((o) => o.tone === 'primary')?.id ?? 'acknowledge', label: 'Approve with my edits', tone: 'primary' })}>
                 Edit then approve
+              </Button>
+            )}
+            {!canEditThenApprove(item) && !noting && (
+              <Button variant="ghost" onClick={() => (setRejecting(undefined), setNoting(true))}>
+                Add a note
               </Button>
             )}
             <select
@@ -374,7 +419,31 @@ function NeedsYouDetailPane({ id, command, onDone }: { id: string; command?: { k
 }
 
 /** The prepared item, by kind (§L.2). */
-export function PreparedItem({ item }: { item: NeedsYouItem }) {
+export function PreparedItem({ item, ticked, onTick }: { item: NeedsYouItem; ticked?: Record<string, boolean>; onTick?: (key: string, on: boolean) => void }) {
+  const link = payloadLink(item.payload);
+  return (
+    <>
+      <PreparedBody item={item} {...(ticked && onTick ? { ticked, onTick } : {})} />
+      {link && (
+        <p className="small">
+          <Link to={link}>Open {linkLabel(link)}</Link>
+        </p>
+      )}
+    </>
+  );
+}
+
+function linkLabel(link: string): string {
+  if (/\/ledger$/.test(link)) return 'the ledger';
+  if (/\/offers$/.test(link)) return 'the offers screen';
+  if (link.startsWith('/settings/ai')) return 'Settings > AI';
+  if (link.startsWith('/settings/email')) return 'Settings > Email';
+  if (link.startsWith('/outbox')) return 'the outbox';
+  if (link.startsWith('/intake')) return 'Intake';
+  return 'the page';
+}
+
+function PreparedBody({ item, ticked, onTick }: { item: NeedsYouItem; ticked?: Record<string, boolean>; onTick?: (key: string, on: boolean) => void }) {
   const kind = rendererFor(item.kind, item.payload);
   if (kind === 'email') {
     const e = emailPreview(item.payload)!;
@@ -397,7 +466,7 @@ export function PreparedItem({ item }: { item: NeedsYouItem }) {
         {e.attachments.length > 0 && <div className="small">Attachments: {e.attachments.join(', ')}</div>}
         {e.outboxId && (
           <div className="small">
-            <Link to={`/outbox`}>Open the outbox</Link>
+            <Link to={`/outbox/${encodeURIComponent(e.outboxId)}`}>Open in the outbox</Link>
           </div>
         )}
       </div>
@@ -419,11 +488,20 @@ export function PreparedItem({ item }: { item: NeedsYouItem }) {
     );
   }
   if (kind === 'fields') {
+    const warnings = cardWarnings(item.payload);
     return (
       <div className="table-wrap">
+        {warnings.length > 0 && (
+          <div className="notice notice-danger" role="alert">
+            {warnings.map((w) => (
+              <div key={w}>{w}</div>
+            ))}
+          </div>
+        )}
         <table className="table" aria-label="Field changes">
           <thead>
             <tr>
+              {onTick && <th scope="col">Apply</th>}
               <th scope="col">Field</th>
               <th scope="col">On file</th>
               <th scope="col">Proposed</th>
@@ -434,6 +512,11 @@ export function PreparedItem({ item }: { item: NeedsYouItem }) {
           <tbody>
             {fieldDiff(item.payload).map((f) => (
               <tr key={f.key}>
+                {onTick && (
+                  <td>
+                    <input type="checkbox" aria-label={`Apply ${f.label}`} checked={isTicked(f, ticked ?? {})} onChange={(e) => onTick(f.key, e.target.checked)} />
+                  </td>
+                )}
                 <td>{f.label}</td>
                 <td>{f.current}</td>
                 <td>
@@ -461,7 +544,7 @@ export function PreparedItem({ item }: { item: NeedsYouItem }) {
             ))}
           </tbody>
         </table>
-        {item.claimId && (
+        {item.claimId && !payloadLink(item.payload) && (
           <p className="small">
             The decision is recorded on the claim’s <Link to={`/claims/${encodeURIComponent(item.claimId)}/offers`}>offers screen</Link>.
           </p>

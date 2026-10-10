@@ -14,7 +14,7 @@ import { executeTool } from '../agent/dispatcher.js';
 import type { JobRecord, RunContext } from '../agent/contracts.js';
 import { PLAYBOOK_ACTION_CODES, templateAllowedFor, templateInfo, validateHandoff } from '../casework/handoffs.js';
 import { CASE_MANAGER_TOOLS, CASE_REVIEW_SPEC, DRAFTER_SPEC, OFFER_ANALYSE_SPEC, RESEARCHER_SPEC, REVIEWER_SPEC } from '../casework/specs.js';
-import { sweepCandidates } from '../casework/agents.js';
+import { sameNeed, sweepCandidates } from '../casework/agents.js';
 import { caseworkTools } from '../agent/tools/casework.js';
 import { registryProblems } from '../agent/handlers/index.js';
 import { queued, run, runJob, setUpMail } from './fixtures/mail/helpers.js';
@@ -116,6 +116,13 @@ describe('hand-off validation (§C.4)', () => {
   });
 });
 
+describe('one Needs-you item per need', () => {
+  it('sameNeed matches a custom step and a missing-information question about the same thing', () => {
+    expect(sameNeed('Get the V5C from the client', 'V5C not on file V5C registration document')).toBe(true);
+    expect(sameNeed('Chase the engineer for the report', 'V5C not on file V5C registration document')).toBe(false);
+  });
+});
+
 describe('offer.analyse never decides (§D.1 settlement)', () => {
   it('the recommendation becomes the offer_decision card with code figures; no decision, reply or ledger row is written', async () => {
     const offerBefore = t.ctx.repos.requireOffer(t.ctx.db, ids.offerId);
@@ -125,7 +132,7 @@ describe('offer.analyse never decides (§D.1 settlement)', () => {
     expect(r.outcome).toMatchObject({ kind: 'done', result: { recommendation: 'counter' } });
     const open = t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'offer_decision', claimId, status: 'open' });
     expect(open).toHaveLength(1);
-    expect(open[0]!.recommendation).toMatchObject({ action: 'Counter-offer at £1,200.00', confidence: 0.72 });
+    expect(open[0]!.recommendation).toMatchObject({ action: 'Counter-offer at £1,000.00', confidence: 0.72 });
     const payload = open[0]!.payload as { figures: Array<{ label: string; factId: string | null }>; assumptions: { note: string }; recommended: { action: string } };
     expect(payload.recommended.action).toBe('counter');
     expect(payload.figures.map((f) => f.label)).toEqual(expect.arrayContaining([expect.stringMatching(/^Offer/), 'Claimed (hire)', 'Outstanding (hire)']));

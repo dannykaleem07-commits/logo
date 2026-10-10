@@ -1,6 +1,6 @@
 // owned by mail
 import { describe, expect, it } from 'vitest';
-import { emptyForm, formFromView, smtpPresetId, toInput, validateForm } from './emailSettings';
+import { emptyForm, formFromView, parsePort, smtpPresetId, toInput, validateForm } from './emailSettings';
 import type { MailAccountView } from '../../../api/mailApi';
 
 describe('Settings > Email form', () => {
@@ -26,5 +26,12 @@ describe('Settings > Email form', () => {
     expect(f.password).toBe('');
     expect(toInput(f)).not.toHaveProperty('password');
     expect(toInput({ ...f, password: 'typed' })).toMatchObject({ password: 'typed', moveAfterIngest: false, enabled: true });
+  });
+  it('ports are parsed on save, not coerced while typing', () => {
+    expect(parsePort('993')).toBe(993);
+    expect(parsePort('')).toBe(0);
+    expect(parsePort('Ab1 9.5x')).toBe(0);
+    expect(parsePort('70000')).toBe(0);
+    expect(validateForm({ ...emptyForm(), fromAddress: 'claims@x.test', username: 'u', password: 'p', imapPort: parsePort('') }, false)).toContain('Check the IMAP server and port.');
   });
 });

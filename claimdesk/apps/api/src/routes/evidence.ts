@@ -16,7 +16,7 @@ import { parse } from '../schemas/common.js';
 import { evidenceFields, evidenceFileQuery, evidenceKind } from '../schemas/services.js';
 import { attachEvidenceBody, chunkQuery, completeUploadBody, createUploadBody, listImportsQuery } from '../schemas/uploads.js';
 import { discardStaged, readEvidenceVerified, stageStream, storeEvidence, verifyEvidence, type StagedUpload } from '../services/evidence.js';
-import { attachImportAsEvidence, ensureInbox, getStagedImport, inboxDir, listStagedImports, startImportWatcher, type ImportWatcher } from '../services/imports.js';
+import { attachImportAsEvidence, ensureInbox, getStagedImport, inboxDir, listStagedImports, startImportWatcher, unreadInboxFolders, type ImportWatcher } from '../services/imports.js';
 import { appendChunk, completeUpload, createUpload, deleteUpload, getUpload, uploadLimits } from '../services/uploads.js';
 import { params, requireClaim } from './helpers.js';
 import { z } from 'zod';
@@ -24,9 +24,13 @@ import { z } from 'zod';
 /** Multipart framing around the file (boundaries, part headers, text fields) allowed on top of the file limit. */
 const MULTIPART_OVERHEAD_BYTES = 1024 * 1024;
 
+/**
+ * Over the evidence limit. The chunked upload has the same limit (uploads.ts), so the hint is the import folder, which
+ * takes files of any size — never "use chunked", which would fail the same way.
+ */
 function fileTooLarge(limitBytes: number): HttpError {
   const mb = Math.round(limitBytes / (1024 * 1024));
-  return new HttpError(413, 'FILE_TOO_LARGE', `This file is larger than the ${mb} MB limit for one upload`, { limitBytes, useChunked: true });
+  return new HttpError(413, 'FILE_TOO_LARGE', `This file is larger than the ${mb} MB evidence limit; put it in the ClaimDesk import folder (evidence\\<claim reference>\\) instead`, { limitBytes, useImportFolder: true });
 }
 
 function contentLengthOf(request: FastifyRequest): number | undefined {
@@ -217,7 +221,7 @@ function registerImportRoutes(app: FastifyInstance, ctx: AppContext): void {
 
   app.get('/imports/folder', async () => {
     const subfolders = ensureInbox(ctx);
-    return { path: inboxDir(ctx), subfolders, watching: importWatcherEnabled(ctx) };
+    return { path: inboxDir(ctx), subfolders, watching: importWatcherEnabled(ctx), notRead: unreadInboxFolders(ctx).map((p) => ({ path: p, reason: 'not read: files must be directly in the folder (intake also reads claim-reference folders such as CCG-2026-00001)' })) };
   });
 
   app.post('/imports/folder/open', async () => {

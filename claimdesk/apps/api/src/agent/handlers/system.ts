@@ -253,14 +253,30 @@ export const systemJobHandlers: JobHandler<any, any>[] = [clocksRefresh, watchPo
 
 const setupResolver: NeedsYouResolver<{ resumeAi?: boolean }> = {
   kind: 'setup',
-  async resolve(ctx, _item, choice, actor) {
+  async resolve(ctx, item, choice, actor) {
     if (choice.optionId === 'dismiss') return;
     // "I've fixed it": lift a sign-in / setup pause so the next tick tries again.
     const usage = ctx.repos.getAiUsageState(ctx.db);
+    const now = ctx.now();
     if (usage.pausedUntil && /auth|setup|sign/i.test(usage.pauseReason ?? '')) {
-      ctx.repos.unpauseAi(ctx.db, ctx.now());
-      ctx.repos.appendAudit(ctx.db, { actor, action: 'ai.resume', entity: 'ai_usage_state', entityId: 'default', before: { pausedUntil: usage.pausedUntil, pauseReason: usage.pauseReason ?? null }, at: ctx.now() });
+      ctx.repos.unpauseAi(ctx.db, now);
+      ctx.repos.appendAudit(ctx.db, { actor, action: 'ai.resume', entity: 'ai_usage_state', entityId: 'default', before: { pausedUntil: usage.pausedUntil, pauseReason: usage.pauseReason ?? null }, at: now });
     }
+    // The jobs the sign-in failure stopped run again now: those waiting on the pause, and (belt and braces) any that
+    // failed with a sign-in error since the item was raised.
+    const since = item.createdAt ? new Date(Date.parse(item.createdAt) - 24 * 60 * 60_000).toISOString() : undefined;
+    const resumed: string[] = [];
+    for (const j of ctx.repos.listAgentJobs(ctx.db, { status: 'waiting_usage', limit: 1000 })) {
+      if (!/sign-in/i.test(j.error ?? '')) continue;
+      ctx.repos.resumeAgentJob(ctx.db, j.id, { now });
+      resumed.push(j.id);
+    }
+    for (const j of ctx.repos.listAgentJobs(ctx.db, { status: 'failed', limit: 1000 })) {
+      if (!(j.error ?? '').startsWith('AI sign-in failed') || (since && j.updatedAt < since)) continue;
+      ctx.repos.resumeAgentJob(ctx.db, j.id, { resetAttempts: true, now });
+      resumed.push(j.id);
+    }
+    if (resumed.length) ctx.repos.appendAudit(ctx.db, { actor, action: 'agents.job.retry', entity: 'agent_jobs', entityId: resumed[0]!, after: { jobIds: resumed, reason: 'AI sign-in fixed', needsYouId: item.id }, at: now });
   },
 };
 

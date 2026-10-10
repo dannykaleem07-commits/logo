@@ -81,7 +81,24 @@ interface AuditRow {
 /** Audit actions that are bookkeeping, not record updates. */
 const NOT_RECORD_UPDATE = /^(agent\.|needs_you\.|ai\.|job\.|email\.send|notifications?\.)/;
 const DRAFT_ACTION = /(^document\.(create|generate|draft)|^docx[._-]?document\.(create|generate)|^outbox\.(draft|create)|^email\.draft)/;
-const PREFILL_ACTION = /(proposal\.apply|^vehicle\.update|^party\.update|^claim\.update|field\.apply|^intake\.apply)/;
+// One count per field: intake writes `intake.apply` for every field it fills (the route it goes through writes its own
+// claim.patch / vehicle.update / party.patch row too, which would double the count), so only the apply rows count.
+const PREFILL_ACTION = /^(intake\.apply|proposal\.apply|field\.apply)$/;
+
+/** Plain words for the record updates the owner reads in the daily log. */
+const RECORD_LABEL: Record<string, string> = {
+  'evidence.upload': 'file stored as evidence',
+  'evidence.import_attach': 'file attached from the import folder',
+  'evidence.import_folder': 'file attached from the import folder',
+  'event.append': 'chronology event',
+  'intake.apply': 'field filled from a document',
+  'vehicle.update': 'vehicle details updated',
+  'party.patch': 'contact details updated',
+  'claim.patch': 'claim details updated',
+  'task.create': 'task scheduled',
+  'offer.create': 'offer recorded',
+  'mail.link': 'email filed on the claim',
+};
 
 export function compileDailyLog(ctx: AppContext, day: string): DailyLog {
   const { start, end } = londonDayBounds(day);
@@ -102,11 +119,24 @@ export function compileDailyLog(ctx: AppContext, day: string): DailyLog {
 
   // --- agent audit rows -------------------------------------------------------------------------
   const audit = sqlite.prepare(`SELECT id, at, user_id, action, entity, entity_id, before, after, run_id FROM audit_log WHERE user_id LIKE 'agent:%' AND at >= ? AND at < ? ORDER BY at, rowid`).all(start, end) as AuditRow[];
+  // Tables whose rows carry claim_id: an audit row about one of them belongs to that claim.
+  const CLAIM_TABLES = new Set(['claim_events', 'evidence', 'documents', 'outbox', 'tasks', 'ledger_entries', 'hire_agreements', 'storage_records', 'recovery_records', 'intervention_offers', 'estimates', 'engineer_reports', 'pav_assessments', 'intake_items', 'mail_messages', 'needs_you']);
+  const claimByRow = new Map<string, string | undefined>();
   const claimOfAudit = (r: AuditRow): string | undefined => {
     const after = parse(r.after) as { claimId?: unknown } | undefined;
     if (after && typeof after.claimId === 'string') return after.claimId;
     if (r.entity === 'claims') return r.entity_id;
-    return undefined;
+    if (!CLAIM_TABLES.has(r.entity) || !r.entity_id || !hasTable(r.entity)) return undefined;
+    const key = `${r.entity}:${r.entity_id}`;
+    if (!claimByRow.has(key)) {
+      try {
+        const row = sqlite.prepare(`SELECT claim_id FROM "${r.entity}" WHERE id = ?`).get(r.entity_id) as { claim_id: string | null } | undefined;
+        claimByRow.set(key, row?.claim_id ?? undefined);
+      } catch {
+        claimByRow.set(key, undefined);
+      }
+    }
+    return claimByRow.get(key);
   };
   const policyByRun = new Map<string, { ruleIds: string[]; reasons: string[] }>();
   for (const r of audit) {
@@ -117,21 +147,39 @@ export function compileDailyLog(ctx: AppContext, day: string): DailyLog {
   const updatedRecords: LogLine[] = [];
   let drafts = 0;
   let fieldsPrefilled = 0;
+  // One line per agent run and claim (e.g. one per filed email), not one per audit row.
+  const groups = new Map<string, { at: string; claimId?: string; userId: string; runId: string | null; actions: Map<string, number> }>();
   for (const r of audit) {
     if (DRAFT_ACTION.test(r.action)) drafts += 1;
     if (PREFILL_ACTION.test(r.action)) fieldsPrefilled += 1;
     if (NOT_RECORD_UPDATE.test(r.action)) continue;
-    const policy = r.run_id ? policyByRun.get(r.run_id) : undefined;
     const claimId = claimOfAudit(r);
+    const key = `${r.run_id ?? `row:${r.id}`}|${claimId ?? ''}|${r.user_id}`;
+    const g = groups.get(key) ?? { at: r.at, ...(claimId ? { claimId } : {}), userId: r.user_id, runId: r.run_id, actions: new Map<string, number>() };
+    const label = RECORD_LABEL[r.action] ?? r.action.replace(/[._]/g, ' ');
+    g.actions.set(label, (g.actions.get(label) ?? 0) + 1);
+    groups.set(key, g);
+  }
+  const subjectOfRun = (runId: string | null): string | undefined => {
+    if (!runId || !hasTable('mail_classifications')) return undefined;
+    const row = sqlite.prepare(`SELECT m.subject AS subject FROM mail_classifications c JOIN mail_messages m ON m.id = c.mail_message_id WHERE c.run_id = ? LIMIT 1`).get(runId) as { subject: string | null } | undefined;
+    return row ? (row.subject ?? '(no subject)') : undefined;
+  };
+  for (const g of groups.values()) {
+    const policy = g.runId ? policyByRun.get(g.runId) : undefined;
+    const parts = [...g.actions.entries()].map(([label, count]) => (count > 1 ? `${count} × ${label}` : label));
+    const subject = subjectOfRun(g.runId);
+    const reference = refOf(g.claimId);
+    const text = subject !== undefined ? `Filed email "${subject.slice(0, 120)}"${reference ? ` on ${reference}` : ''}: ${parts.join(', ')}` : `${parts.join(', ')}${reference ? ` on ${reference}` : ''}`;
     updatedRecords.push(
       line({
-        at: r.at,
-        claimId,
-        agent: agentOf(r.user_id),
-        text: `${r.action.replace(/[._]/g, ' ')} (${r.entity})`,
+        at: g.at,
+        claimId: g.claimId,
+        agent: agentOf(g.userId),
+        text,
         ...(policy?.reasons.length ? { why: policy.reasons.join('; ') } : {}),
         ...(policy?.ruleIds.length ? { ruleIds: policy.ruleIds } : {}),
-        link: claimId ? `/claims/${claimId}` : r.run_id ? `/agents?run=${r.run_id}` : '/agents',
+        link: g.claimId ? `/claims/${g.claimId}` : g.runId ? `/agents?run=${g.runId}` : '/agents',
       }),
     );
   }
@@ -248,13 +296,16 @@ export function compileDailyLog(ctx: AppContext, day: string): DailyLog {
 
   // --- usage pauses (audited by the supervisor/worker as ai.pause) ------------------------------------------
   const pauses = sqlite.prepare(`SELECT at, after FROM audit_log WHERE action = 'ai.pause' AND at < ? ORDER BY at`).all(end) as Array<{ at: string; after: string | null }>;
+  // An owner's resume (ai.resume, e.g. "I've fixed it" after a sign-in pause) ends a pause early.
+  const resumes = (sqlite.prepare(`SELECT at FROM audit_log WHERE action = 'ai.resume' AND at < ? ORDER BY at`).all(end) as Array<{ at: string }>).map((r) => Date.parse(r.at));
   let pausedMs = 0;
   let coveredUntil = Date.parse(start);
   for (const p of pauses) {
     const until = (parse(p.after) as { until?: string } | undefined)?.until;
     if (!until) continue;
+    const resumedAt = resumes.find((r) => r > Date.parse(p.at)) ?? Infinity;
     const from = Math.max(Date.parse(p.at), coveredUntil, Date.parse(start));
-    const to = Math.min(Date.parse(until), Date.parse(end), Date.parse(now));
+    const to = Math.min(Date.parse(until), resumedAt, Date.parse(end), Date.parse(now));
     if (to > from) {
       pausedMs += to - from;
       coveredUntil = to;

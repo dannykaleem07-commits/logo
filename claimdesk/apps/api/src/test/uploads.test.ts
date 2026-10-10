@@ -4,13 +4,14 @@
  * (abort at 40 % → resume → evidence), offset mismatch, staged imports from an upload, GET /limits.
  */
 import { createHash, randomBytes } from 'node:crypto';
-import { existsSync, readdirSync } from 'node:fs';
+import { chmodSync, existsSync, readdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { Readable } from 'node:stream';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createTestApp, type TestApp } from './helpers.js';
 import { recomputeClocks } from '../services/claimView.js';
 import { forgetLiveUploadHashes, uploadLimits, uploadsRoot } from '../services/uploads.js';
+import { absoluteEvidencePath, clearVerifyCache, isoBmffSafeForExif } from '../services/evidence.js';
 import { makePng } from '../seed/png.js';
 
 type ErrorBody = { error: { code: string; message: string; details?: Record<string, unknown> } };
@@ -140,7 +141,7 @@ describe('multipart evidence upload (per-route limit)', () => {
     expect((res.json() as { exif?: { widthPx?: number } }).exif?.widthPx).toBe(64);
   });
 
-  it('refuses a body over the evidence limit at once from Content-Length (413 FILE_TOO_LARGE, useChunked)', async () => {
+  it('refuses a body over the evidence limit at once from Content-Length (413 FILE_TOO_LARGE, useImportFolder — chunked has the same limit)', async () => {
     const claimId = seedClaim();
     setEnv('MAX_EVIDENCE_UPLOAD_MB', '1');
     const before = t.ctx.repos.listEvidenceForClaim(t.ctx.db, claimId, {}).length;
@@ -150,7 +151,8 @@ describe('multipart evidence upload (per-route limit)', () => {
     expect(res.statusCode).toBe(413);
     const err = (res.json() as ErrorBody).error;
     expect(err.code).toBe('FILE_TOO_LARGE');
-    expect(err.details).toMatchObject({ limitBytes: MIB, useChunked: true });
+    expect(err.details).toMatchObject({ limitBytes: MIB, useImportFolder: true });
+    expect(err.details).not.toHaveProperty('useChunked');
     expect(t.ctx.repos.listEvidenceForClaim(t.ctx.db, claimId, {}).length).toBe(before);
   });
 
@@ -162,7 +164,7 @@ describe('multipart evidence upload (per-route limit)', () => {
     const res = await t.app.inject({ method: 'POST', url: `/api/claims/${claimId}/evidence`, payload: body.stream, headers: { 'content-type': `multipart/form-data; boundary=${body.boundary}` } });
     expect(res.statusCode).toBe(413);
     expect((res.json() as ErrorBody).error.code).toBe('FILE_TOO_LARGE');
-    expect((res.json() as ErrorBody).error.details).toMatchObject({ limitBytes: MIB, useChunked: true });
+    expect((res.json() as ErrorBody).error.details).toMatchObject({ limitBytes: MIB, useImportFolder: true });
     expect(t.ctx.repos.listEvidenceForClaim(t.ctx.db, claimId, {}).length).toBe(before);
     expect(incomingFiles()).toEqual([]);
   });
@@ -188,6 +190,88 @@ describe('multipart evidence upload (per-route limit)', () => {
     const res = await t.app.inject({ method: 'POST', url: '/api/docx-templates', payload, headers: { 'content-type': `multipart/form-data; boundary=${boundary}` } });
     expect(res.statusCode).toBe(413);
   }, 60_000);
+});
+
+describe('estimate import from a stored text evidence (16 MiB, verified, async)', () => {
+  async function textEvidence(claimId: string, bytes: number, content?: string): Promise<{ id: string; storagePath: string }> {
+    const body = content !== undefined
+      ? (() => {
+          const boundary = '----est-boundary';
+          const payload = Buffer.concat([Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="kind"\r\n\r\nestimate\r\n--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="est.txt"\r\nContent-Type: text/plain\r\n\r\n`), Buffer.from(content), Buffer.from(`\r\n--${boundary}--\r\n`)]);
+          return { payload, boundary };
+        })()
+      : (() => {
+          const m = multipartStream({ fields: { kind: 'estimate' }, filename: 'est.txt', mime: 'text/plain', fileBytes: bytes });
+          return { payload: m.stream, boundary: m.boundary };
+        })();
+    const res = await t.app.inject({ method: 'POST', url: `/api/claims/${claimId}/evidence`, payload: body.payload, headers: { 'content-type': `multipart/form-data; boundary=${body.boundary}` } });
+    expect(res.statusCode, res.body).toBe(201);
+    const ev = res.json() as { id: string };
+    return { id: ev.id, storagePath: t.ctx.repos.requireEvidence(t.ctx.db, ev.id).storagePath };
+  }
+
+  it('a 17 MiB text evidence is refused with 413 before it is read', async () => {
+    const claimId = seedClaim();
+    const ev = await textEvidence(claimId, 17 * MIB);
+    const res = await t.api<{ error: { code: string } }>('POST', `/claims/${claimId}/estimate/import`, { evidenceId: ev.id });
+    expect(res.status).toBe(413);
+    expect(res.body.error.code).toBe('FILE_TOO_LARGE');
+  }, 60_000);
+
+  it('a tampered text evidence is refused with 409; an intact one imports', async () => {
+    const claimId = seedClaim();
+    const ok = await textEvidence(claimId, 0, 'PANEL REPAIR 1.0 hrs @ 45.00\nBUMPER 1 x 120.00\n');
+    const good = await t.api('POST', `/claims/${claimId}/estimate/import`, { evidenceId: ok.id });
+    expect(good.status, JSON.stringify(good.body)).toBe(201);
+    const bad = await textEvidence(claimId, 0, 'PANEL REPAIR 2.0 hrs @ 45.00\n');
+    const abs = absoluteEvidencePath(t.ctx, bad.storagePath);
+    chmodSync(abs, 0o644);
+    writeFileSync(abs, 'PANEL REPAIR 9.0 hrs @ 45.00\n');
+    clearVerifyCache();
+    const res = await t.api<{ error: { code: string } }>('POST', `/claims/${claimId}/estimate/import`, { evidenceId: bad.id });
+    expect(res.status).toBe(409);
+    expect(res.body.error.code).toBe('EVIDENCE_TAMPERED');
+  });
+});
+
+describe('malformed HEIC (EXIF reader guard)', () => {
+  /** ftyp(heic) then one more top-level box of the given size; `meta` optional. */
+  function heic(next: { size: number; kind: string } | null, total = 32): Buffer {
+    const b = Buffer.alloc(total);
+    b.writeUInt32BE(24, 0);
+    b.write('ftyp', 4, 'latin1');
+    b.write('heic', 8, 'latin1');
+    b.write('mif1', 16, 'latin1');
+    b.write('heic', 20, 'latin1');
+    if (next) {
+      b.writeUInt32BE(next.size, 24);
+      b.write(next.kind, 28, 'latin1');
+    }
+    return b;
+  }
+
+  it('isoBmffSafeForExif refuses box chains the EXIF reader would loop on, and accepts a reachable meta box', () => {
+    expect(isoBmffSafeForExif(heic({ size: 0, kind: 'free' }))).toBe(false); // size 0
+    expect(isoBmffSafeForExif(heic({ size: 4, kind: 'free' }))).toBe(false); // size < 8
+    expect(isoBmffSafeForExif(heic({ size: 8, kind: 'free' }))).toBe(false); // no meta before the end
+    expect(isoBmffSafeForExif(heic({ size: 99, kind: 'meta' }))).toBe(false); // meta runs past the end
+    expect(isoBmffSafeForExif(heic({ size: 8, kind: 'meta' }))).toBe(true);
+    expect(isoBmffSafeForExif(makePng({ seed: 1 }))).toBe(true); // not ISO-BMFF: unaffected
+  });
+
+  it('a 32-byte HEIC with a zero-size box uploads without hanging the server', async () => {
+    const claimId = seedClaim();
+    const boundary = '----claimdeskheic';
+    const payload = Buffer.concat([
+      Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="kind"\r\n\r\nphoto\r\n--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="IMG_0001.HEIC"\r\nContent-Type: image/heic\r\n\r\n`),
+      heic({ size: 0, kind: 'free' }),
+      Buffer.from(`\r\n--${boundary}--\r\n`),
+    ]);
+    const res = await t.app.inject({ method: 'POST', url: `/api/claims/${claimId}/evidence`, payload, headers: { 'content-type': `multipart/form-data; boundary=${boundary}` } });
+    expect(res.statusCode, res.body).toBe(201);
+    expect((res.json() as { bytes: number; exif?: unknown })).toMatchObject({ bytes: 32 });
+    expect((res.json() as { exif?: unknown }).exif).toBeUndefined();
+  });
 });
 
 describe('chunked uploads', () => {

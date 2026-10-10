@@ -5,6 +5,14 @@
 .agents-filters { flex-wrap: wrap; gap: 8px; }
 .agents-filters .select, .agents-filters .input { width: auto; min-width: 160px; }
 .agents-error { max-width: 320px; overflow: hidden; text-overflow: ellipsis; }
+/* The full error stays in the job detail: one line here so a phone list does not grow 500 px rows. */
+.ag-err { max-width: 24ch; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.agents-overview > * { min-width: 0; }
+.ag-lane-state { min-width: 0; overflow-wrap: break-word; }
+.ag-lanes { width: 100%; }
+/* break-word (not anywhere): long reasons wrap, but a short badge such as "open" is never squeezed to one letter per line */
+.ag-lanes th, .ag-lanes td { white-space: normal; overflow-wrap: break-word; }
+.ag-lane-state .badge { white-space: normal; overflow-wrap: break-word; max-width: 100%; }
 .meter { margin-bottom: 10px; }
 .meter-bar { height: 8px; border-radius: 999px; background: var(--neutral-bg, #f1f3f6); overflow: hidden; margin-top: 4px; }
 .meter-fill { display: block; height: 100%; border-radius: 999px; }

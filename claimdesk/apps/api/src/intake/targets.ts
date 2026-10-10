@@ -214,7 +214,7 @@ const claimTargets: TargetDef[] = [
 
 // ----- vehicle targets ------------------------------------------------------
 
-function vehicleOf(s: ClaimSnapshot, role: FieldRole): Vehicle | undefined {
+export function vehicleOf(s: ClaimSnapshot, role: FieldRole): Vehicle | undefined {
   return role === 'third_party' ? s.thirdPartyVehicle : s.clientVehicle;
 }
 

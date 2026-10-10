@@ -111,9 +111,17 @@ export function registerEngineeringRoutes(app: FastifyInstance, ctx: AppContext)
       if (!ev.mime.startsWith('text/')) {
         throw new HttpError(422, 'PDF_TEXT_REQUIRED', 'PDF → text is not performed server-side: extract the text in the browser (pdf.js) or through the optional extraction provider and import the text, keeping the PDF as evidence.', { evidenceId: ev.id, mime: ev.mime, provider: extractLinesProvider().name });
       }
-      const { absoluteEvidencePath } = await import('../services/evidence.js');
-      const { readFileSync } = await import('node:fs');
-      text = readFileSync(absoluteEvidencePath(ctx, ev.storagePath), 'utf8');
+      if (ev.claimId && ev.claimId !== claim.id) throw conflict('WRONG_CLAIM', 'That evidence is not on this claim', { evidenceId: ev.id });
+      // The same 16 MiB ceiling as a pasted body, checked before anything is read; then the write-once hash is
+      // verified and the file read without blocking the server.
+      if (ev.bytes > ESTIMATE_IMPORT_BODY_LIMIT) throw new HttpError(413, 'FILE_TOO_LARGE', 'Estimate text can be up to 16 MB; import the relevant pages', { limitBytes: ESTIMATE_IMPORT_BODY_LIMIT, bytes: ev.bytes });
+      const { readEvidenceVerified } = await import('../services/evidence.js');
+      const { readFile } = await import('node:fs/promises');
+      const read = await readEvidenceVerified(ctx, ev);
+      if (!read) throw conflict('EVIDENCE_MISSING', 'The evidence file is missing from the store', { evidenceId: ev.id });
+      if (!read.intact) throw conflict('EVIDENCE_TAMPERED', 'The evidence file no longer matches its recorded hash; it was not imported', { evidenceId: ev.id });
+      if (read.size > ESTIMATE_IMPORT_BODY_LIMIT) throw new HttpError(413, 'FILE_TOO_LARGE', 'Estimate text can be up to 16 MB; import the relevant pages', { limitBytes: ESTIMATE_IMPORT_BODY_LIMIT, bytes: read.size });
+      text = await readFile(read.absolutePath, 'utf8');
     }
     const extracted = await extractLinesProvider().extract({ text });
     if (!extracted.lines.length) throw badRequest('No estimate lines could be parsed from the text', { note: extracted.note });

@@ -299,6 +299,8 @@ export interface ImportFolderInfo {
   path: string;
   subfolders: Array<{ purpose: ImportPurpose; path: string }>;
   watching?: boolean;
+  /** Subfolders the import folder does not read (files must be directly in the purpose folder). */
+  notRead?: Array<{ path: string; reason: string }>;
 }
 
 export const IMPORT_PURPOSE_LABEL: Record<ImportPurpose, string> = {

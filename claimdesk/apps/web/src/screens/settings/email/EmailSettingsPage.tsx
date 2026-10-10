@@ -10,7 +10,7 @@ import { Checkbox, Select, TextArea, TextInput } from '../../../components/Form'
 import { DateText } from '../../../components/DateText';
 import { useToast } from '../../../components/Toast';
 import { mailApi, useMailAccount, useMailMutation, type MailAccountInput, type MailAccountView, type MailTestResult } from '../../../api/mailApi';
-import { emptyForm, formFromView, smtpPresetId, toInput, validateForm, SMTP_PRESETS, type EmailForm } from './emailSettings';
+import { emptyForm, formFromView, parsePort, smtpPresetId, toInput, validateForm, SMTP_PRESETS, type EmailForm } from './emailSettings';
 import '../../outbox/outbox.css';
 
 /**
@@ -18,6 +18,25 @@ import '../../outbox/outbox.css';
  * mailbox address, password (write-only — saved in the Windows-protected secret store, never shown again), From name
  * (fixed), signature, folders, "move processed mail", Test connection (no email is sent) and Send test to myself.
  */
+/** A port field: shows exactly what is typed (no coercion per keystroke); the number is checked on Save. */
+function PortInput({ label, value, onChange, hint }: { label: string; value: number; onChange: (n: number) => void; hint?: string }) {
+  const [draft, setDraft] = useState<string | undefined>();
+  return (
+    <TextInput
+      label={label}
+      value={draft ?? (value ? String(value) : '')}
+      inputMode="numeric"
+      onChange={(v) => {
+        setDraft(v);
+        onChange(parsePort(v));
+      }}
+      // An invalid port stays as typed so the owner sees what to fix; a valid one shows the stored number.
+      onBlur={() => setDraft((d) => (d !== undefined && d.trim() && parsePort(d) === 0 ? d : undefined))}
+      {...(hint ? { hint } : {})}
+    />
+  );
+}
+
 export function EmailSettingsPage() {
   const toast = useToast();
   const q = useMailAccount();
@@ -79,7 +98,7 @@ export function EmailSettingsPage() {
           <Card title="Servers (IONOS)">
             <div className="es-grid">
               <TextInput label="IMAP server" value={form.imapHost} onChange={set('imapHost')} />
-              <TextInput label="IMAP port" value={String(form.imapPort)} onChange={(v) => set('imapPort')(Number(v.replace(/\D/g, '')) || 0)} hint="993 with TLS" />
+              <PortInput label="IMAP port" value={form.imapPort} onChange={set('imapPort')} hint="993 with TLS" />
               <Select
                 label="SMTP"
                 value={smtpPresetId(form)}
@@ -90,7 +109,7 @@ export function EmailSettingsPage() {
                 options={[...SMTP_PRESETS.map((p) => ({ value: p.id, label: p.label })), { value: 'custom', label: 'Custom' }]}
               />
               <TextInput label="SMTP server" value={form.smtpHost} onChange={set('smtpHost')} />
-              <TextInput label="SMTP port" value={String(form.smtpPort)} onChange={(v) => set('smtpPort')(Number(v.replace(/\D/g, '')) || 0)} />
+              <PortInput label="SMTP port" value={form.smtpPort} onChange={set('smtpPort')} />
               <TextInput label="SMTP password (only if different)" type="password" value={form.smtpPassword} onChange={set('smtpPassword')} autoComplete="new-password" />
             </div>
           </Card>

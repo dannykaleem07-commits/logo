@@ -64,8 +64,9 @@ mkdirSync(opts.out, { recursive: true });
 // What to sweep
 // ---------------------------------------------------------------------------
 
-const CLAIM_TAB_IDS = ['overview', 'chronology', 'ledger', 'clocks', 'gates', 'hire', 'offers', 'evidence', 'documents', 'engineering', 'vehicle', 'actions', 'flags'];
-const STATIC_ROUTES = ['/', '/claims', '/claims/new', '/fleet', '/fleet/penalties', '/directory', '/kb', '/analytics', '/watch', '/settings', '/settings/templates', '/settings/gta-rates', '/capture'];
+const CLAIM_TAB_IDS = ['overview', 'chronology', 'ledger', 'clocks', 'gates', 'hire', 'offers', 'evidence', 'documents', 'engineering', 'vehicle', 'actions', 'flags', 'mailbox', 'agent'];
+// Phase 1 (Supreme) screens are swept too: the typing guard covers every screen the owner types into.
+const STATIC_ROUTES = ['/', '/claims', '/claims/new', '/fleet', '/fleet/penalties', '/directory', '/kb', '/analytics', '/watch', '/settings', '/settings/templates', '/settings/gta-rates', '/capture', '/needs-you', '/agents', '/daily-log', '/outbox', '/intake', '/settings/ai', '/settings/email', '/settings/autonomy', '/settings/notifications', '/settings/brain'];
 
 /** Buttons that open a dialog or a form (§D.3). */
 const OPENER = /^(Start hire|End hire|Edit dates|Add storage|End storage|Add recovery|Add unit|Edit|Allocation check|Add penalty|Log a notice|New document|Fill a|Upload|Add offer|Record|Log|Add comparable|Import|Edit vehicle|Add reading|Clear|Verify|Report|Add rate|Add)/;

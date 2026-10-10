@@ -10,7 +10,7 @@
  *   5 return { outcome, result, runId } — the job handler turns it into follow-ups (never the driver).
  */
 import { randomUUID, createHash } from 'node:crypto';
-import { copyFileSync, mkdirSync, readFileSync } from 'node:fs';
+import { copyFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { RESULT_SCHEMAS, type ResultSchemaId } from '@ccguk/domain';
 import type { z } from 'zod/v4';
@@ -23,6 +23,8 @@ import { assemblePrompts } from '../ai/prompts.js';
 import { getDriver, isOffDriver } from '../ai/driverFactory.js';
 import { validateWithTwin, zodFromJsonSchema } from '../ai/strictSchema.js';
 import { recordApiCost } from '../ai/pricing.js';
+import { createNeedsYou } from './core.js';
+import { hashFile } from '../services/evidence.js';
 
 /** Grace added to the run token's lifetime beyond the run timeout (§A.1: timeout + 2 min). */
 export const RUN_TOKEN_GRACE_MS = 2 * 60_000;
@@ -31,6 +33,8 @@ export const ABORT_GRACE_MS = 5_000;
 /** A usage limit pauses AI until its reset plus this margin (§A.5); an unknown reset waits 15 minutes. */
 export const USAGE_RESUME_MARGIN_MS = 2 * 60_000;
 export const USAGE_UNKNOWN_RESET_MS = 15 * 60_000;
+/** A sign-in / key failure pauses AI this long unless the owner says it is fixed first (§A.7). */
+export const AUTH_FAILED_PAUSE_MS = 24 * 60 * 60_000;
 
 const twins = new Map<ResultSchemaId, z.ZodType>();
 /** The zod twin of a result schema (cached). */
@@ -62,19 +66,21 @@ class AttachmentError extends Error {
   readonly code = 'ATTACHMENT_TAMPERED';
 }
 
-/** Copy attachments into `<runDir>/input`, re-hashing each copy against its recorded sha256. */
-export function copyAttachments(runDir: string, attachments: AiAttachment[]): AiAttachment[] {
+/** Copy attachments into `<runDir>/input`, re-hashing each copy (streamed, never loaded whole) against its recorded sha256. */
+export async function copyAttachments(runDir: string, attachments: AiAttachment[]): Promise<AiAttachment[]> {
   if (!attachments.length) return [];
   const inputDir = path.join(runDir, 'input');
   mkdirSync(inputDir, { recursive: true });
-  return attachments.map((a, i) => {
+  const out: AiAttachment[] = [];
+  for (const [i, a] of attachments.entries()) {
     const safe = path.basename(a.path).replace(/[^A-Za-z0-9._-]+/g, '_').slice(-80) || `file${i}`;
     const target = path.join(inputDir, `${String(i + 1).padStart(2, '0')}-${safe}`);
     copyFileSync(a.path, target);
-    const sha = createHash('sha256').update(readFileSync(target)).digest('hex');
+    const sha = await hashFile(target);
     if (sha !== a.sha256.toLowerCase()) throw new AttachmentError(`Attachment ${a.label} does not match its recorded hash; it was not given to the agent`);
-    return { ...a, path: target };
-  });
+    out.push({ ...a, path: target });
+  }
+  return out;
 }
 
 function audit(ctx: AppContext, rc: Pick<RunContext, 'agent' | 'runId'>, action: 'agent.run.start' | 'agent.run.end', after: Record<string, unknown>): void {
@@ -111,7 +117,7 @@ export async function runAgent(ctx: AppContext, spec: AgentSpec, job: JobRecord,
   let rowStarted = false;
   try {
     mkdirSync(path.join(runDir, 'input'), { recursive: true });
-    const attachments = copyAttachments(runDir, input.attachments ?? []);
+    const attachments = await copyAttachments(runDir, input.attachments ?? []);
     const prompts = assemblePrompts(spec, { ...input, attachments }, ctx);
     const resultSchema = RESULT_SCHEMAS[spec.resultSchemaId];
     const req: AiRunRequest = {
@@ -182,9 +188,41 @@ export async function runAgent(ctx: AppContext, spec: AgentSpec, job: JobRecord,
     const now = ctx.now();
     const reset = outcome.resetsAt ? Date.parse(outcome.resetsAt) + USAGE_RESUME_MARGIN_MS : Date.parse(now) + USAGE_UNKNOWN_RESET_MS;
     try {
-      ctx.repos.pauseAi(ctx.db, { until: new Date(Math.max(reset, Date.parse(now) + 60_000)).toISOString(), reason: `usage_limited${outcome.limitType ? `:${outcome.limitType}` : ''}`, now });
+      const until = new Date(Math.max(reset, Date.parse(now) + 60_000)).toISOString();
+      const reason = `usage_limited${outcome.limitType ? `:${outcome.limitType}` : ''}`;
+      ctx.repos.pauseAi(ctx.db, { until, reason, now });
+      // The daily log's "Minutes AI was paused" reads these rows.
+      ctx.repos.appendAudit(ctx.db, { actor: { userId: 'agent:supervisor', runId }, action: 'ai.pause', entity: 'ai_usage_state', entityId: 'default', after: { until, reason, jobId: job.id }, at: now });
     } catch (err) {
       ctx.logger.warn('could not pause AI after a usage limit', { error: String(err) });
+    }
+  }
+  if (outcome.kind === 'auth_failed') {
+    // §A.7: a sign-in / key failure stops every AI run until the owner fixes it. Pause AI (the setup resolver's "I've
+    // fixed it" lifts the pause; it also lapses after a day so a fixed sign-in is picked up) and ask once per day.
+    const now = ctx.now();
+    try {
+      const until = new Date(Date.parse(now) + AUTH_FAILED_PAUSE_MS).toISOString();
+      ctx.repos.pauseAi(ctx.db, { until, reason: 'auth_failed', now });
+      ctx.repos.appendAudit(ctx.db, { actor: { userId: 'agent:supervisor', runId }, action: 'ai.pause', entity: 'ai_usage_state', entityId: 'default', after: { until, reason: 'auth_failed', jobId: job.id }, at: now });
+      createNeedsYou(ctx, {
+        kind: 'setup',
+        title: driver.kind === 'api_key' ? 'AI paused: the Anthropic API key was refused' : 'AI paused: Claude Code needs signing in again',
+        summary:
+          driver.kind === 'api_key'
+            ? 'The Anthropic API refused the stored key, so every AI job is paused. Open Settings > AI, check or replace the key, then choose "I\'ve fixed it". Mail, sends already approved, clocks and the daily log carry on.'
+            : 'The Claude Code CLI reported that it is not signed in (or the sign-in expired), so every AI job is paused. Open Settings > AI and follow the sign-in steps, then choose "I\'ve fixed it". Mail, sends already approved, clocks and the daily log carry on.',
+        options: [
+          { id: 'fixed', label: "I've fixed it", tone: 'primary' },
+          { id: 'dismiss', label: 'Dismiss', tone: 'neutral' },
+        ],
+        payload: { reason: 'auth_failed', driver: driver.kind, message: outcome.message.slice(0, 500), link: '/settings/ai' },
+        priority: 'urgent',
+        createdBy: 'system',
+        dedupeKey: `setup:ai_auth:${now.slice(0, 10)}`,
+      });
+    } catch (err) {
+      ctx.logger.warn('could not pause AI after a sign-in failure', { error: String(err) });
     }
   }
   if (rowStarted) {

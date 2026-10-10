@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { decisionTone, formatDuration, percent, pillTone, scheduleCadence } from '../../api/agentsApi';
 import { describeToastTest } from '../settings/notifications/NotificationsSettingsPage';
 import { COUNT_LABELS, londonToday } from '../dailyLog/DailyLogPage';
+import { laneReasonLabel } from './AgentsPage';
 
 describe('agents control-room helpers', () => {
   it('pill tones follow §L.1', () => {
@@ -9,6 +10,14 @@ describe('agents control-room helpers', () => {
     expect(pillTone('paused')).toBe('amber');
     expect(pillTone('stopped')).toBe('red');
     expect(pillTone('off')).toBe('grey');
+  });
+
+  it('lane gate reasons read as words, not codes', () => {
+    expect(laneReasonLabel('paused:usage_limited:five_hour')).toBe('Paused — usage limit');
+    expect(laneReasonLabel('paused:auth_failed')).toBe('Paused — sign-in needed');
+    expect(laneReasonLabel('kill_switch')).toBe('Stopped');
+    expect(laneReasonLabel('agents_off')).toBe('Agents off');
+    expect(laneReasonLabel(undefined)).toBe('Closed');
   });
 
   it('formats durations, percentages and schedules', () => {

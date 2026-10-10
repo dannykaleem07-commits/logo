@@ -90,6 +90,7 @@ const needsYouCreate: ToolDef<NeedsYouCreateInput, { status: 'created' | 'existi
       createdBy: `agent:${rc.agent}`,
       dedupeKey: `agent:${rc.correlationId}:${hash}`,
       correlationId: rc.correlationId,
+      runId: rc.runId,
     });
     return { status: created ? 'existing' : 'created', needsYouId: item.id };
   },

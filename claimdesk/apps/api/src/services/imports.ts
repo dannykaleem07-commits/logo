@@ -19,6 +19,7 @@ import { SYSTEM_ACTOR, type Actor } from '@ccguk/db';
 import type { EvidenceKind, Id } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
 import { conflict, notFound } from '../errors.js';
+import { enqueueJob } from '../agent/core.js';
 import { hashFile, moveFile, safeFilename, stageExistingFile, storeEvidence, type StoreEvidenceResult } from './evidence.js';
 
 export type ImportPurpose = 'evidence' | 'intake' | 'mail' | 'brain-packs' | 'engineer-data';
@@ -315,7 +316,7 @@ interface Candidate {
   claimRef?: string;
 }
 
-function candidates(root: string): Candidate[] {
+function candidates(root: string, onUnread?: (abs: string, hint: string) => void): Candidate[] {
   const out: Candidate[] = [];
   for (const purpose of IMPORT_PURPOSES) {
     const dir = path.join(root, purpose);
@@ -329,8 +330,8 @@ function candidates(root: string): Candidate[] {
       if (ignoredInboxName(e.name)) continue;
       const abs = path.join(dir, e.name);
       if (e.isFile()) out.push({ abs, purpose });
-      else if (e.isDirectory() && purpose === 'evidence') {
-        // inbox\evidence\<CCG-YYYY-NNNNN>\<file>: attach to that claim
+      else if (e.isDirectory() && (purpose === 'evidence' || (purpose === 'intake' && CLAIM_REF.test(e.name)))) {
+        // inbox\evidence\<CCG-YYYY-NNNNN>\<file>: attach to that claim; inbox\intake\<CCG-YYYY-NNNNN>\<file>: read for that claim
         const ref = CLAIM_REF.test(e.name) ? e.name.toUpperCase() : undefined;
         let inner: import('node:fs').Dirent[];
         try {
@@ -339,10 +340,24 @@ function candidates(root: string): Candidate[] {
           continue;
         }
         for (const f of inner) if (f.isFile() && !ignoredInboxName(f.name)) out.push({ abs: path.join(abs, f.name), purpose, claimRef: ref });
+      } else if (e.isDirectory()) {
+        // Any other subfolder is not read: say so once (log + GET /imports/folder) instead of ignoring it silently.
+        if (!unreadFolders.has(abs)) {
+          unreadFolders.add(abs);
+          onUnread?.(abs, `files must be directly in ${dir}${purpose === 'intake' ? ' (or in a folder named after a claim reference, e.g. CCG-2026-00001)' : ''}`);
+        }
       }
     }
   }
   return out;
+}
+
+/** Subfolders of the inbox that are not read (shown on Settings > Import folder). */
+const unreadFolders = new Set<string>();
+
+export function unreadInboxFolders(ctx: AppContext): string[] {
+  const root = inboxDir(ctx);
+  return [...unreadFolders].filter((p) => p.startsWith(root + path.sep) && existsSync(p)).sort();
 }
 
 /**
@@ -352,7 +367,7 @@ function candidates(root: string): Candidate[] {
 export async function scanInboxOnce(ctx: AppContext, nowMs: number = Date.now()): Promise<StagedImport[]> {
   const root = inboxDir(ctx);
   ensureInbox(ctx);
-  const found = candidates(root);
+  const found = candidates(root, (abs, hint) => ctx.logger.warn('imports: a folder in the inbox is not read', { folder: abs, hint }));
   const present = new Set(found.map((c) => c.abs));
   for (const k of [...seen.keys()]) if (k.startsWith(root + path.sep) && !present.has(k)) seen.delete(k);
   const staged: StagedImport[] = [];
@@ -380,6 +395,15 @@ export async function scanInboxOnce(ctx: AppContext, nowMs: number = Date.now())
       continue;
     }
     seen.delete(c.abs);
+    if (c.purpose === 'mail') {
+      // §C.2: an .eml dropped in inbox\mail is ingested straight away (the 5-minute mail.sync sweep is the fallback);
+      // the key is the one mail.sync uses, so the file is never queued twice.
+      try {
+        enqueueJob(ctx, { type: 'mail.ingest_file', payload: { importId: imp.id }, idempotencyKey: `mail.ingest_file:${imp.sha256}`, createdBy: 'agent:mail' });
+      } catch (err) {
+        ctx.logger.warn('imports: could not queue an inbox email for ingest; mail.sync will pick it up', { importId: imp.id, error: String(err) });
+      }
+    }
     if (c.purpose === 'evidence' && c.claimRef) {
       const claim = ctx.repos.getClaimByReference(ctx.db, c.claimRef);
       if (claim) {

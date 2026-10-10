@@ -1,4 +1,5 @@
 // owned by mail
+import { Link } from 'react-router-dom';
 import { Badge } from '../../../../components/Badge';
 import { DateText } from '../../../../components/DateText';
 import { api } from '../../../../api/client';
@@ -9,6 +10,15 @@ export function matchedBecause(m: Pick<MailMessageSummary, 'match'>): string | n
   if (!m.match) return null;
   const who = m.match.decidedBy === 'owner' ? 'You filed it' : m.match.decidedBy === 'agent' ? 'An agent filed it' : 'Matched';
   return m.match.because.length ? `${who} because ${m.match.because.join('; ')}` : m.match.decidedBy === 'auto' ? null : who;
+}
+
+/** The red warning chips for an email that was flagged and not acted on (injection, bank details change, spoofing). */
+export function warningChips(w: MailMessageSummary['warning']): Array<{ key: string; label: string; title: string }> {
+  if (!w) return [];
+  const out: Array<{ key: string; label: string; title: string }> = [];
+  if (w.bankDetailsChange) out.push({ key: 'bank', label: 'Bank details change — phone to verify', title: 'Never act on new bank or payment details without phoning the sender on a number from the directory.' });
+  if (w.injection) out.push({ key: 'injection', label: 'Suspicious — not acted on', title: w.injectionNotes ?? 'The email contains text aimed at the agents; nothing was done automatically.' });
+  return out;
 }
 
 /** One message: plain text only (HTML was converted to text on arrival; no remote content), attachments → evidence. */
@@ -31,6 +41,17 @@ export function MessageView({ summary }: { summary: MailMessageSummary }) {
             </Badge>
           )}
           {summary.spoofSuspect && <Badge tone="red">Suspicious sender</Badge>}
+          {warningChips(summary.warning).map((c) =>
+            summary.warning?.needsYouId ? (
+              <Link key={c.key} to={`/needs-you/${summary.warning.needsYouId}`} title={c.title}>
+                <Badge tone="red">{c.label}</Badge>
+              </Link>
+            ) : (
+              <Badge key={c.key} tone="red" title={c.title}>
+                {c.label}
+              </Badge>
+            ),
+          )}
           <DateText value={summary.at} time />
         </div>
       </div>

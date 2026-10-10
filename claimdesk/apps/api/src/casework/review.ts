@@ -275,7 +275,9 @@ export function detTouches(text: string): Touches {
     money: /£\s?\d/.test(text) || /\b(payment|paid|invoice|remittance|balance)\b/i.test(text),
     liability: /\bliabilit(y|ies)\b|\bat fault\b|\bfault\b/i.test(text),
     settlement: /\b(offer|settle(ment)?|without prejudice|full and final|accept(ed|ance)?|counter[- ]?offer|part 36)\b/i.test(text),
-    legal: /\b(proceedings|court|claim form|solicitor|letter before (claim|action)|litigation|pre-action|ombudsman|complaint|data subject access|dsar|injur(y|ies))\b/i.test(text),
+    legal:
+      /\b(proceedings|court|claim form|solicitor|letter before (claim|action)|litigation|pre-action|ombudsman|complaint|data subject access|dsar|injur(y|ies)|fraud(ulent)?|staged|induced|dishonest(y)?|fundamental dishonesty|insurance fraud bureau|investigators?|police)\b/i.test(text) ||
+      /\b(IFB|CUE)\b/.test(text),
     newCommitment: /\b(we will|we undertake|we agree|we guarantee|we promise|we shall)\b/i.test(text),
   };
 }
@@ -458,7 +460,7 @@ export async function documentAfterReview(ctx: AppContext, job: JobRecord, paylo
   if (!reasons.length && review.verdict === 'pass') {
     try {
       await approveDocument(ctx, doc.id, { userId: REVIEWER, ...(review.runId ? { runId: review.runId } : {}) }, 'Approved automatically: allow-listed template, zero flags, reviewer pass', undefined, { automated: { reviewId: review.id, ruleIds: ['allowlist', 'review_pass'] } });
-      ctx.repos.appendAudit(ctx.db, { actor: { userId: REVIEWER }, action: 'agent.policy', entity: 'documents', entityId: doc.id, after: { tool: 'document.approve', outcome: 'auto', ruleIds: ['allowlist', 'review_pass'], reviewId: review.id }, at: ctx.now() });
+      ctx.repos.appendAudit(ctx.db, { actor: { userId: REVIEWER, ...(review.runId ? { runId: review.runId } : {}) }, action: 'agent.policy', entity: 'documents', entityId: doc.id, after: { tool: 'document.approve', outcome: 'auto', ruleIds: ['allowlist', 'review_pass'], reviewId: review.id }, at: ctx.now() });
       return { kind: 'done', result: { outcome: 'approved' } };
     } catch (err) {
       reasons.push(`automatic approval refused: ${err instanceof Error ? err.message : String(err)}`);
@@ -485,6 +487,7 @@ export async function documentAfterReview(ctx: AppContext, job: JobRecord, paylo
     createdBy: REVIEWER,
     dedupeKey: `approve_document:${doc.id}`,
     correlationId: job.correlationId,
+    ...(review.runId ? { runId: review.runId } : {}),
   });
   return { kind: 'done', result: { outcome: 'asked', needsYouId: ny.id, reason: reasons.join('; ') } };
 }

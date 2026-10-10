@@ -194,7 +194,7 @@ function Overview({ s }: { s: AgentsStatus }) {
         )}
       </Card>
       <Card title="Lanes">
-        <table className="table">
+        <table className="table ag-lanes">
           <tbody>
             {(['ai', 'io', 'cpu'] as const).map((l) => (
               <tr key={l}>
@@ -202,7 +202,15 @@ function Overview({ s }: { s: AgentsStatus }) {
                 <td>
                   {s.lanes[l].busy} / {s.lanes[l].limit} busy
                 </td>
-                <td>{s.lanes[l].open ? <Badge tone="green">open</Badge> : <Badge tone="amber">{s.lanes[l].reason ?? 'closed'}</Badge>}</td>
+                <td className="ag-lane-state">
+                  {s.lanes[l].open ? (
+                    <Badge tone="green">open</Badge>
+                  ) : (
+                    <Badge tone="amber" title={s.lanes[l].reason ?? undefined}>
+                      {laneReasonLabel(s.lanes[l].reason)}
+                    </Badge>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -210,6 +218,20 @@ function Overview({ s }: { s: AgentsStatus }) {
       </Card>
     </div>
   );
+}
+
+/** A closed lane's gate reason in plain words ("paused:usage_limited:five_hour" → "Paused — usage limit"). */
+export function laneReasonLabel(reason: string | null | undefined): string {
+  const r = reason ?? '';
+  if (!r) return 'Closed';
+  if (r === 'kill_switch') return 'Stopped';
+  if (r === 'agents_off') return 'Agents off';
+  if (/^paused:auth/.test(r)) return 'Paused — sign-in needed';
+  if (/daily_cap/.test(r)) return 'Paused — daily limit';
+  if (/^paused:usage|_rejected$/.test(r)) return 'Paused — usage limit';
+  if (r.startsWith('paused')) return 'Paused';
+  if (/^(five_hour|seven_day)/.test(r)) return 'Urgent work only — usage';
+  return r.replace(/[_:]+/g, ' ');
 }
 
 function AgentCard({ a, onRun }: { a: AgentCardData; onRun: (id: string) => void }) {
@@ -334,7 +356,9 @@ function JobsTab({ onOpen }: { onOpen: (id: string) => void }) {
                     {j.attempts}/{j.maxAttempts}
                   </td>
                   <td className="small">{j.finishedAt ? time(j.finishedAt) : time(j.runAfter)}</td>
-                  <td className="small agents-error">{j.error ?? ''}</td>
+                  <td className="small agents-error ag-err" title={j.error ?? undefined}>
+                    {j.error ?? ''}
+                  </td>
                   <td className="row">
                     {['failed', 'dead', 'cancelled', 'waiting_usage', 'waiting_user'].includes(j.status) && (
                       <Button size="sm" onClick={() => retry.mutate(j.id, { onSuccess: () => toast.success('Queued again'), onError: (e) => toast.error((e as Error).message) })}>

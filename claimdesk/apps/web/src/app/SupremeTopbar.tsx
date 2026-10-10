@@ -28,8 +28,23 @@ export function SupremeTopbar() {
       {count.data && (
         <Link to="/needs-you" className={`topbar-badge ${urgent > 0 ? 'hot' : total > 0 ? 'warm' : ''}`} title={urgent > 0 ? `${total} items need you (${urgent} urgent)` : `${total} items need you`} data-testid="needs-you-badge">
           <span className="label-long">Needs you</span>
-          <span className="label-short">You</span>
-          <span className="count">{urgent > 0 ? `${total} · ${urgent} urgent` : total}</span>
+          <span className="label-short" aria-label="Needs you">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ verticalAlign: '-3px' }}>
+              <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+              <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+            </svg>
+          </span>
+          <span className="count">
+            {total}
+            {urgent > 0 && (
+              <>
+                {' · '}
+                {urgent}
+                <span className="label-long"> urgent</span>
+                <span className="label-short">!</span>
+              </>
+            )}
+          </span>
         </Link>
       )}
     </>

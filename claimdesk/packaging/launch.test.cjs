@@ -1,5 +1,7 @@
 // Unit tests for the launcher's pure helpers (design doc §G.3, §K "Desktop"). Run: node packaging/launch.test.cjs
 'use strict';
+// No test ever calls a real model (docs/SUPREME-DESIGN.md §P.6).
+process.env.CLAIMDESK_FORBID_REAL_AI = '1';
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const path = require('node:path');
@@ -184,6 +186,33 @@ test('background.lock: stale unless it names another live process', () => {
   assert.equal(launch.lockIsStale({ pid: 4242 }, () => { throw new Error('no'); }), true);
 });
 
+test('background.lock is taken atomically: a second supervisor loses; a stale lock is replaced once', () => {
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'cd-lock-'));
+  try {
+    const alive = (pid) => pid === 4242;
+    assert.equal(launch.acquireLock(home, { pid: 4242 }, alive), true);
+    assert.equal(launch.acquireLock(home, { pid: 5000 }, alive), false); // 4242 is alive
+    fs.writeFileSync(path.join(home, 'run', 'background.lock'), JSON.stringify({ pid: 999 })); // gone
+    assert.equal(launch.acquireLock(home, { pid: 5000 }, alive), true);
+    assert.equal(JSON.parse(fs.readFileSync(path.join(home, 'run', 'background.lock'), 'utf8')).pid, 5000);
+  } finally {
+    fs.rmSync(home, { recursive: true, force: true });
+  }
+});
+
+test('"Stop ClaimDesk" leaves a flag the Watchdog respects; a start clears it', () => {
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'cd-flag-'));
+  try {
+    assert.equal(launch.stoppedByOwner(home), false);
+    launch.setStoppedFlag(home, true);
+    assert.equal(launch.stoppedByOwner(home), true);
+    launch.setStoppedFlag(home, false);
+    assert.equal(launch.stoppedByOwner(home), false);
+  } finally {
+    fs.rmSync(home, { recursive: true, force: true });
+  }
+});
+
 test('logs: one file per local day, 14 days kept', () => {
   assert.equal(launch.logFileName(new Date(2026, 9, 7, 23, 59)), 'claimdesk-2026-10-07.log');
   assert.equal(launch.logFileName(new Date(2026, 0, 3)), 'claimdesk-2026-01-03.log');
@@ -242,7 +271,7 @@ test('task XML: the Background task (logon, InteractiveToken, IgnoreNew, no time
     /<Hidden>true<\/Hidden>/,
     /<RestartOnFailure>\s*<Interval>PT1M<\/Interval>\s*<Count>999<\/Count>\s*<\/RestartOnFailure>/,
     /<Command>C:\\Users\\danny\\AppData\\Local\\Programs\\ClaimDesk\\ClaimDesk-Background\.exe<\/Command>/,
-    /<Arguments>--background<\/Arguments>/,
+    /<Arguments>--background --at-logon<\/Arguments>/,
   ]) assert.match(bg, re);
   assert.match(bg, /^<\?xml version="1\.0" encoding="UTF-16"\?>/);
 });

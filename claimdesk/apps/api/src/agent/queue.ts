@@ -10,6 +10,8 @@ import type { AppContext } from '../context.js';
 import type { EnqueueInput, JobHandler, JobRecord, NeedsYouItem } from './contracts.js';
 import { createNeedsYou, enqueueJob } from './core.js';
 import { ALL_PRIORITIES, laneLimits, type LaneLimits } from './budgets.js';
+import type { AgentSettingsRecord } from '@ccguk/db';
+import { selectedDriver, type DriverChoice } from '../ai/driverFactory.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- heterogeneous handler registry
 export type AnyJobHandler = JobHandler<any, any>;
@@ -41,8 +43,20 @@ export function openGates(): LaneGates {
 }
 
 /** Effective lane concurrency and per-agent caps from agent_settings. */
+/**
+ * Agent settings with `ai.driver` as this process actually runs it. AI_DRIVER (config.aiDriverOverride) wins over
+ * Settings > AI — the rule the gateway uses to pick the driver (driverFactory.selectedDriver) — so the lanes, gates and
+ * status agree with the driver runAgent will use. The fake driver (CI, scenario runs) runs like the subscription.
+ */
+export function effectiveAgentSettings(ctx: AppContext): AgentSettingsRecord & { driverChoice: DriverChoice } {
+  const s = ctx.repos.getAgentSettings(ctx.db);
+  const driverChoice = selectedDriver(ctx);
+  const driver = driverChoice === 'fake' ? 'subscription_cli' : driverChoice;
+  return { ...s, ai: { ...s.ai, driver }, driverChoice };
+}
+
 export function currentLaneLimits(ctx: AppContext): LaneLimits {
-  return laneLimits(ctx.repos.getAgentSettings(ctx.db));
+  return laneLimits(effectiveAgentSettings(ctx));
 }
 
 /** Default handler timeout when a job type has no handler (lease length only). */

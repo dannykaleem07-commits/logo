@@ -83,6 +83,18 @@ export function ImportFolderCard({ id = 'import-folder' }: { id?: string }) {
                 </li>
               ))}
             </ul>
+            {(folder.data.notRead ?? []).length > 0 && (
+              <div className="notice notice-warn" role="status">
+                <strong>Not read:</strong> files must be directly in the folder (intake also reads claim-reference folders such as CCG-2026-00001).
+                <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+                  {folder.data.notRead!.map((n) => (
+                    <li key={n.path} className="xs" style={{ overflowWrap: 'anywhere' }}>
+                      {n.path}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
             {folder.data.watching === false && <p className="xs muted" style={{ margin: 0 }}>The folder is checked while ClaimDesk runs in the background (installed version).</p>}
           </>
         ) : (
@@ -106,39 +118,41 @@ export function ImportFolderCard({ id = 'import-folder' }: { id?: string }) {
               Nothing yet.
             </p>
           ) : (
-            <table className="table" aria-label="Recently imported files">
-              <thead>
-                <tr>
-                  <th>File</th>
-                  <th>For</th>
-                  <th>Size</th>
-                  <th>Received</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((i) => (
-                  <tr key={i.id}>
-                    <td className="wrap">
-                      <div className="strong">{i.filename}</div>
-                      <div className="xs muted">
-                        {i.claimRef ? `${i.claimRef} · ` : ''}
-                        {i.source === 'upload' ? 'uploaded' : 'from the folder'} · <span className="hash" title={i.sha256}>{i.sha256.slice(0, 10)}…</span>
-                      </div>
-                      {i.error && <div className="xs" style={{ color: 'var(--red)' }}>{i.error}</div>}
-                    </td>
-                    <td>{IMPORT_PURPOSE_LABEL[i.purpose] ?? i.purpose}</td>
-                    <td>{sizeText(i.bytes)}</td>
-                    <td>
-                      <DateText value={i.receivedAt} time />
-                    </td>
-                    <td>
-                      <Badge tone={statusTone(i.status)}>{IMPORT_STATUS_LABEL[i.status] ?? i.status}</Badge>
-                    </td>
+            <div className="table-wrap">
+              <table className="table" aria-label="Recently imported files">
+                <thead>
+                  <tr>
+                    <th>File</th>
+                    <th>For</th>
+                    <th>Size</th>
+                    <th>Received</th>
+                    <th>Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {items.map((i) => (
+                    <tr key={i.id}>
+                      <td className="wrap">
+                        <div className="strong">{i.filename}</div>
+                        <div className="xs muted">
+                          {i.claimRef ? `${i.claimRef} · ` : ''}
+                          {i.source === 'upload' ? 'uploaded' : 'from the folder'} · <span className="hash" title={i.sha256}>{i.sha256.slice(0, 10)}…</span>
+                        </div>
+                        {i.error && <div className="xs" style={{ color: 'var(--red)' }}>{i.error}</div>}
+                      </td>
+                      <td>{IMPORT_PURPOSE_LABEL[i.purpose] ?? i.purpose}</td>
+                      <td>{sizeText(i.bytes)}</td>
+                      <td>
+                        <DateText value={i.receivedAt} time />
+                      </td>
+                      <td>
+                        <Badge tone={statusTone(i.status)}>{IMPORT_STATUS_LABEL[i.status] ?? i.status}</Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>

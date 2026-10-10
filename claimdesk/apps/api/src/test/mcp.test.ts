@@ -100,7 +100,12 @@ describe('/api/mcp', () => {
   it('a tool outside the allow-list cannot be called; dispatcher errors come back as isError', async () => {
     const r = await rpc('tools/call', { name: 'event_append', arguments: { claimId } });
     const result = r.body.result as { isError?: boolean } | undefined;
-    expect(result?.isError === true || r.body.error !== undefined).toBe(true);
+    expect(result?.isError).toBe(true);
+    // §B.3 step 1: the refusal is recorded like the API driver's (not swallowed inside the MCP SDK).
+    expect(t.ctx.repos.listAgentToolCalls(t.ctx.db, rc.runId).find((c) => c.tool === 'event_append')).toMatchObject({ decision: 'denied' });
+    const unknown = await rpc('tools/call', { name: 'offer_recommend', arguments: {} });
+    expect((unknown.body.result as { isError?: boolean }).isError).toBe(true);
+    expect(t.ctx.repos.listAgentToolCalls(t.ctx.db, rc.runId).find((c) => c.tool === 'offer_recommend')).toMatchObject({ decision: 'denied' });
     const scope = await rpc('tools/call', { name: 'claim_get', arguments: { claimId: 'another-claim' } });
     const sr = scope.body.result as { content: Array<{ text: string }>; isError: boolean };
     expect(sr.isError).toBe(true);
@@ -110,5 +115,6 @@ describe('/api/mcp', () => {
   it('invalid arguments are refused', async () => {
     const r = await rpc('tools/call', { name: 'claim_clocks', arguments: { claimId: 5 } });
     expect((r.body.result as { isError: boolean }).isError).toBe(true);
+    expect(t.ctx.repos.listAgentToolCalls(t.ctx.db, rc.runId).find((c) => c.tool === 'claim_clocks')?.decision).toMatch(/invalid|denied/);
   });
 });

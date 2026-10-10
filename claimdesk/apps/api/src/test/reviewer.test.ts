@@ -124,6 +124,10 @@ describe('review.check — tiers together', () => {
     const run = t.ctx.repos.getAgentRun(t.ctx.db, review.runId!)!;
     expect(run).toMatchObject({ agent: 'reviewer', jobType: 'review.check', model: 'claude-opus-5-5', effort: 'high' });
     expect(detTouches('We will pay you £10 and accept your offer.')).toMatchObject({ money: true, settlement: true, newCommitment: true });
+    expect(detTouches('Our client firmly rejects any suggestion that the accident was staged.').legal).toBe(true);
+    expect(detTouches('We note the referral to the IFB and your investigator.').legal).toBe(true);
+    expect(detTouches('There is no fundamental dishonesty here.').legal).toBe(true);
+    expect(detTouches('Thank you for your email, which we have noted on our file.').legal).toBe(false);
   });
 
   it('the critic can ask for a repair; the repair loop is capped at 2 then escalates', async () => {

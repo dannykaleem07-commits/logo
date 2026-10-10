@@ -16,6 +16,16 @@ export const STATUS_LABEL: Record<IntakeStatus, string> = {
   skipped: 'Not read',
 };
 
+/** "Waiting — agents are switched off (Settings > AI)" instead of an endless "Reading…". */
+export function waitingText(w: { reason: 'agents_off' | 'kill_switch' | 'usage' | 'sign_in'; until?: string } | null | undefined): { badge: string; text: string; link: string } | undefined {
+  if (!w) return undefined;
+  if (w.reason === 'agents_off') return { badge: 'Waiting', text: 'Waiting — agents are switched off (Settings > AI)', link: '/settings/ai' };
+  if (w.reason === 'kill_switch') return { badge: 'Waiting', text: 'Waiting — agents are stopped (the Agents page can start them again)', link: '/agents' };
+  if (w.reason === 'sign_in') return { badge: 'Waiting', text: 'Waiting — Claude Code needs signing in again (Settings > AI)', link: '/settings/ai' };
+  const until = w.until ? new Date(w.until).toLocaleTimeString('en-GB', { timeZone: 'Europe/London', hour: '2-digit', minute: '2-digit' }) : undefined;
+  return { badge: 'Waiting', text: `Waiting — the AI usage limit${until ? ` resets at ${until}` : ' is reached'}`, link: '/agents' };
+}
+
 export const STATUS_TONE: Record<IntakeStatus, Tone> = {
   queued: 'grey',
   normalising: 'blue',

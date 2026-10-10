@@ -126,6 +126,16 @@ export interface FieldDiffRow {
   proposed: string;
   confidence?: number;
   source?: string;
+  /** Not ticked until the owner ticks it: personal details, below 90 % confidence, or from a document for another vehicle. */
+  defaultOff?: true;
+}
+
+/** Rule ids that mean "check this one yourself" on an intake confirm card. */
+const UNTICKED_RULES = ['intake_vehicle_mismatch', 'intake_vin_elsewhere'];
+
+/** Is this row ticked (the owner's choice, else its default)? */
+export function isTicked(row: Pick<FieldDiffRow, 'key' | 'defaultOff'>, ticked: Record<string, boolean>): boolean {
+  return ticked[row.key] ?? !row.defaultOff;
 }
 
 const show = (v: unknown): string => (v === null || v === undefined || v === '' ? '—' : typeof v === 'object' ? JSON.stringify(v) : String(v));
@@ -140,10 +150,28 @@ export function fieldDiff(payload: unknown): FieldDiffRow[] {
     if (!f) return;
     const key = str(f.id) ?? str(f.target) ?? str(f.field) ?? String(i);
     const confidence = typeof f.confidence === 'number' ? f.confidence : undefined;
-    const source = str(obj(f.source)?.quote) ?? str(f.source) ?? str(f.sourceLabel);
-    out.push({ key, label: str(f.label) ?? str(f.target) ?? str(f.field) ?? key, current: show(f.current ?? f.before ?? f.existing), proposed: show(f.proposed ?? f.value ?? f.after), ...(confidence !== undefined ? { confidence } : {}), ...(source ? { source } : {}) });
+    // intake's card: {id, target, label, currentValue, proposedValue, confidence, quote, page}
+    const quote = str(obj(f.source)?.quote) ?? str(f.quote) ?? str(f.source) ?? str(f.sourceLabel);
+    const page = typeof f.page === 'number' ? f.page : typeof obj(f.source)?.page === 'number' ? (obj(f.source)!.page as number) : undefined;
+    const source = quote ? (page !== undefined ? `p.${page}: ${quote}` : quote) : page !== undefined ? `page ${page}` : undefined;
+    const ruleIds = Array.isArray(f.ruleIds) ? f.ruleIds.filter((x): x is string => typeof x === 'string') : [];
+    const defaultOff = f.sensitive === true || (confidence !== undefined && confidence < 0.9) || ruleIds.some((r) => UNTICKED_RULES.includes(r));
+    out.push({
+      key,
+      label: str(f.label) ?? str(f.target) ?? str(f.field) ?? key,
+      current: show(f.currentValue ?? f.current ?? f.before ?? f.existing),
+      proposed: show(f.proposedValue ?? f.proposed ?? f.value ?? f.after),
+      ...(confidence !== undefined ? { confidence } : {}),
+      ...(source ? { source } : {}),
+      ...(defaultOff ? { defaultOff: true as const } : {}),
+    });
   });
   return out;
+}
+
+/** Warnings a confirm card carries (values from the document that were refused, e.g. another vehicle's registration). */
+export function cardWarnings(payload: unknown): string[] {
+  return strList(obj(payload)?.warnings);
 }
 
 export interface OfferRow {
@@ -153,10 +181,60 @@ export interface OfferRow {
 
 const gbp = (pence: number): string => new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP' }).format(pence / 100);
 
-/** Offer analysis rows from `payload.analysis` / `payload.offer` (casework's offer_decision). Keys ending in Pence are money. */
+/** "12 Oct 2026, 15:58" in Europe/London (the raw ISO string when it does not parse). */
+export function londonDateTime(iso: string): string {
+  const t = Date.parse(iso);
+  if (!Number.isFinite(t)) return iso;
+  return new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(new Date(t));
+}
+
+const num = (v: unknown): number | undefined => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
+
+/**
+ * Offer analysis rows. casework's offer_decision card carries the offer at the top level (`head`, `amountPence`,
+ * `perDay`, `recommended`, `figures[{label, pence}]`, `settlement{acceptNowPence, fightOnPence, walkAwayPence}`,
+ * `gtaBenchmark{group, dailyRatePence}`, `assumptions.note`); the recorded-offer card has `head`/`amountPence`/`from`.
+ * An older shape nests the figures in `payload.analysis` / `payload.offer` (keys ending in Pence are money).
+ */
 export function offerRows(payload: unknown): OfferRow[] {
   const p = obj(payload);
   if (!p) return [];
+  if (str(p.head) || num(p.amountPence) !== undefined || Array.isArray(p.figures)) {
+    const rows: OfferRow[] = [];
+    const amount = num(p.amountPence);
+    if (str(p.from)) rows.push({ label: 'From', value: str(p.from)! });
+    if (str(p.head)) rows.push({ label: 'Head', value: str(p.head)! });
+    const figureLabels = (Array.isArray(p.figures) ? p.figures : []).map((f) => str(obj(f)?.label) ?? '');
+    const inFigures = (re: RegExp): boolean => figureLabels.some((l) => re.test(l));
+    // The code-computed figures table is the source when present; the top-level fields only fill what it lacks.
+    if (!inFigures(/^Offer/)) rows.push({ label: 'Offer', value: amount !== undefined ? `${gbp(amount)}${p.perDay === true ? ' a day' : ''}` : 'amount not stated' });
+    const rec = obj(p.recommended);
+    if (rec && str(rec.action)) {
+      const counter = num(rec.counterPence);
+      const conf = num(rec.confidence);
+      rows.push({ label: 'Recommended', value: `${str(rec.action)}${counter !== undefined ? ` at ${gbp(counter)}` : ''}${conf !== undefined ? ` (confidence ${Math.round(conf * 100)} %)` : ''}` });
+    }
+    for (const raw of Array.isArray(p.figures) ? p.figures : []) {
+      const f = obj(raw);
+      const label = str(f?.label);
+      if (!f || !label) continue;
+      const pence = num(f.pence);
+      rows.push({ label, value: pence !== undefined ? gbp(pence) : '—' });
+    }
+    const st = inFigures(/^(Accept now|Fight on|Walk-away)/) ? undefined : obj(p.settlement);
+    if (st) {
+      for (const [k, label] of [['acceptNowPence', 'Accept now (net)'], ['fightOnPence', 'Fight on (expected, net)'], ['walkAwayPence', 'Walk-away figure']] as const) {
+        const v = num(st[k]);
+        if (v !== undefined) rows.push({ label, value: gbp(v) });
+      }
+    }
+    const gta = obj(p.gtaBenchmark);
+    if (gta && num(gta.dailyRatePence) !== undefined && !inFigures(/^GTA benchmark/)) rows.push({ label: `GTA benchmark${str(gta.group) ? ` (group ${str(gta.group)})` : ''}`, value: `${gbp(num(gta.dailyRatePence)!)} a day — a benchmark only` });
+    const note = str(obj(p.assumptions)?.note);
+    if (note) rows.push({ label: 'Assumptions', value: note });
+    if (str(p.replyDueAt)) rows.push({ label: 'Written reply due', value: londonDateTime(str(p.replyDueAt)!) });
+    return rows;
+  }
   const src = obj(p.analysis) ?? obj(p.offer) ?? undefined;
   if (!src) return [];
   const rows: OfferRow[] = [];
@@ -168,6 +246,24 @@ export function offerRows(payload: unknown): OfferRow[] {
   return rows;
 }
 
+/** An in-app link a card carries (`payload.link`, e.g. the ledger form for a money card or Settings > AI). */
+export function payloadLink(payload: unknown): string | undefined {
+  const l = str(obj(payload)?.link);
+  return l && l.startsWith('/') && !l.startsWith('//') ? l : undefined;
+}
+
+/** The edits a confirm_fields resolver expects: the ticked proposal ids and the values the owner changed. */
+export function confirmFieldEdits(payload: unknown, ticked: Record<string, boolean>, values: Record<string, string>): { apply: string[]; values?: Record<string, string> } {
+  const rows = fieldDiff(payload);
+  const apply = rows.filter((r) => isTicked(r, ticked)).map((r) => r.key);
+  const changed: Record<string, string> = {};
+  for (const r of rows) {
+    const v = values[r.key];
+    if (v !== undefined && v.trim() && v !== (r.proposed === '—' ? '' : r.proposed)) changed[r.key] = v.trim();
+  }
+  return { apply, ...(Object.keys(changed).length ? { values: changed } : {}) };
+}
+
 /** Which renderer shows the prepared item. */
 export function rendererFor(kind: NeedsYouKind, payload: unknown): RendererKind {
   if (kind === 'confirm_fields' && fieldDiff(payload).length) return 'fields';
@@ -177,6 +273,14 @@ export function rendererFor(kind: NeedsYouKind, payload: unknown): RendererKind 
   if (emailPreview(payload)) return 'email';
   if (fieldDiff(payload).length) return 'fields';
   return 'generic';
+}
+
+/**
+ * Can the owner edit this item before approving it? Only a prepared email or field values are editable; other items
+ * (questions, suspicious-email warnings, offers, new claims) take a note instead of edits.
+ */
+export function canEditThenApprove(item: Pick<NeedsYouItem, 'kind' | 'payload'>): boolean {
+  return ['approve_send', 'approve_document', 'missing_info', 'confirm_fields'].includes(item.kind) && initialEdits(item).mode !== 'json';
 }
 
 /** Initial edit text for "Edit then approve": the email body, the proposed field values, or the payload JSON. */

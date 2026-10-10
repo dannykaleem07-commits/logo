@@ -69,6 +69,14 @@ export function formFromView(v: MailAccountView): EmailForm {
   };
 }
 
+/** A port typed by the owner: 1–65535, else 0 (validateForm then asks to check the port). Nothing is coerced. */
+export function parsePort(text: string): number {
+  const t = text.trim();
+  if (!/^\d{1,5}$/.test(t)) return 0;
+  const n = Number(t);
+  return n >= 1 && n <= 65535 ? n : 0;
+}
+
 export function smtpPresetId(f: Pick<EmailForm, 'smtpHost' | 'smtpPort' | 'smtpSecurity'>): string {
   return SMTP_PRESETS.find((p) => p.host === f.smtpHost && p.port === f.smtpPort && p.security === f.smtpSecurity)?.id ?? 'custom';
 }

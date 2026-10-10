@@ -113,6 +113,14 @@ describe.skipIf(STUBS)('Supreme phase 1 loop (§R.2)', () => {
     expect(smtp.sent[0]!.to).toEqual([INSURER_EMAIL]);
     expect(t.ctx.repos.listEvents(t.ctx.db, claimId, { type: 'email_out' })).toHaveLength(1);
     expect(t.ctx.repos.listAudit(t.ctx.db, { action: 'email.send' }).map((a) => a.userId)).toEqual(['agent:mail']);
+    // §K.5: the automatic send, its policy decision and the draft carry the run that drafted the reply.
+    const [sendAudit] = t.ctx.repos.listAudit(t.ctx.db, { action: 'email.send' });
+    expect(sendAudit!.runId).toBeTruthy();
+    const replyRun = t.ctx.repos.listAgentRuns(t.ctx.db, { claimId, limit: 50 }).find((r) => r.id === sendAudit!.runId);
+    expect(replyRun?.jobType).toBe('mail.reply');
+    const agentRows = t.ctx.repos.listAudit(t.ctx.db, {}).filter((a) => a.userId.startsWith('agent:') && ['email.send', 'outbox.draft', 'needs_you.create', 'event.append'].includes(a.action));
+    expect(agentRows.filter((a) => !a.runId).map((a) => `${a.userId} ${a.action}`)).toEqual([]);
+    expect(t.ctx.repos.listAudit(t.ctx.db, { action: 'agent.policy' }).filter((a) => a.entity === 'outbox').every((a) => Boolean(a.runId))).toBe(true);
     expect(t.ctx.repos.listAgentRuns(t.ctx.db, { claimId, limit: 50 }).map((r) => r.jobType)).toEqual(expect.arrayContaining(['mail.triage', 'case.review', 'mail.reply', 'review.check']));
   });
 
@@ -123,6 +131,8 @@ describe.skipIf(STUBS)('Supreme phase 1 loop (§R.2)', () => {
     expect(request!.subject).toContain(reference);
     const [item] = openItems('missing_info');
     expect(item).toBeDefined();
+    // One item for the one need: no second "step outside the playbook" question about the same V5C.
+    expect(openItems('question')).toEqual([]);
     expect((item!.payload as { outboxId: string }).outboxId).toBe(request!.id);
     expect(smtp.sent).toHaveLength(0);
     await resolveNeedsYouItem(t.ctx, item!.id, { optionId: 'approve' }, OWNER);
@@ -175,6 +185,89 @@ describe.skipIf(STUBS)('Supreme phase 1 loop (§R.2)', () => {
     expect(openItems('approve_send').map((n) => (n.payload as { outboxId?: string }).outboxId)).toContain(outboxId);
     await settle(at(30));
     expect(smtp.sent.filter((m) => m.to.some((a) => a.endsWith('@evil.example')))).toEqual([]);
+  });
+
+  describe('more intents (§F.5): legal and offers always ask, money goes to the owner, unknown recipients ask', () => {
+    const replyTo = () => outboxes().find((o) => o.kind === 'reply_general');
+
+    it('fraud allegation: legal_review, and the neutral holding reply asks (never held), whatever its wording', async () => {
+      await deliver('MAILFX-FRAUD E2E-FRAUD Our investigators believe this accident was staged. The claim has been referred.');
+      expect(openItems('legal_review').map((n) => n.title)).toEqual([`Fraud allegation received on ${reference}`]);
+      const reply = replyTo();
+      expect(reply, JSON.stringify(outboxes())).toBeDefined();
+      expect(reply!.bodyText).not.toMatch(/staged|fraud/i);
+      expect(reply!.status).toBe('awaiting_approval');
+      expect((reply!.policy as { outcome: string; ruleIds: string[] }).outcome).toBe('ask');
+      expect((reply!.policy as { ruleIds: string[] }).ruleIds).toEqual(['touches']);
+      expect(openItems('approve_send').map((n) => (n.payload as { outboxId: string }).outboxId)).toContain(reply!.id);
+      await settle(at(30));
+      expect(smtp.sent).toHaveLength(0);
+    });
+
+    it('interim payment offer: recorded for the owner, and the holding reply asks (settlement)', async () => {
+      const ledgerBefore = t.ctx.repos.listLedger(t.ctx.db, claimId).length;
+      await deliver('MAILFX-INTERIM E2E-INTERIM We can make an interim payment of £500.00 on account.');
+      expect(openItems('offer_decision')).toHaveLength(1);
+      const reply = replyTo();
+      expect(reply).toBeDefined();
+      expect(reply!.status).toBe('awaiting_approval');
+      expect((reply!.policy as { reasons: string[] }).reasons.join(' ')).toMatch(/settlement/);
+      expect(t.ctx.repos.listLedger(t.ctx.db, claimId)).toHaveLength(ledgerBefore);
+      await settle(at(30));
+      expect(smtp.sent).toHaveLength(0);
+    });
+
+    it('chaser: a plain reply to the verified handler is held for Undo', async () => {
+      await deliver('MAILFX-CHASER E2E-CHASER Please could you let us have a reply to our earlier email.');
+      const reply = replyTo();
+      expect(reply).toMatchObject({ status: 'held', toJson: [INSURER_EMAIL] });
+      expect((reply!.policy as { ruleIds: string[] }).ruleIds).toEqual(['external_ok']);
+    });
+
+    it('liability denied: the reply touches liability and asks', async () => {
+      await deliver('MAILFX-LIABDENY E2E-LIABDENY Our insured denies liability for this accident.');
+      const reply = replyTo();
+      expect(reply).toMatchObject({ status: 'awaiting_approval' });
+      expect((reply!.policy as { ruleIds: string[] }).ruleIds).toEqual(['touches']);
+    });
+
+    it('remittance: Needs-you money for the owner; no ledger row and no email', async () => {
+      const ledgerBefore = t.ctx.repos.listLedger(t.ctx.db, claimId).length;
+      await deliver('MAILFX-REMIT E2E-REMIT We have paid £1,112.00 towards the hire charges, remittance REM-55120.');
+      const [money] = openItems('money');
+      expect(money, JSON.stringify(t.ctx.repos.listNeedsYou(t.ctx.db, { claimId }).map((n) => n.title))).toBeDefined();
+      expect(money!.title).toBe('Payment received? £1,112.00 (hire)');
+      expect(t.ctx.repos.listLedger(t.ctx.db, claimId)).toHaveLength(ledgerBefore);
+      expect(outboxes()).toEqual([]);
+    });
+
+    it('unknown sender quoting our reference: filed, and the reply to them asks (recipient)', async () => {
+      await deliver('MAILFX-UNKNOWN E2E-UNKNOWN Could you give me an update on this claim please?', T0, { from: 'someone@unknown-sender.test' });
+      const reply = replyTo();
+      expect(reply).toMatchObject({ status: 'awaiting_approval', toJson: ['someone@unknown-sender.test'] });
+      expect((reply!.policy as { ruleIds: string[] }).ruleIds).toEqual(['recipient']);
+    });
+  });
+
+  it('sign-in failure: the review waits (no attempt used); "I\'ve fixed it" resumes it and the reply follows', async () => {
+    setDriverOptions(t.ctx, { fake: { fixtures: [{ id: 'e2e-auth', match: { jobType: 'case.review', userContains: ['E2E-AUTH'] }, outcome: 'auth_failed' }] } });
+    await deliver('MAILFX-ACK E2E-ACK E2E-AUTH We acknowledge your claim. Our reference is EXI/2026/778899.');
+    const [review] = jobs('case.review');
+    expect(review).toMatchObject({ status: 'waiting_usage', attempts: 0 });
+    expect(review!.error).toMatch(/sign-in failed/);
+    expect(t.ctx.repos.getAiUsageState(t.ctx.db).pauseReason).toBe('auth_failed');
+    const [setup] = t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'setup' as never, status: 'open' });
+    expect(setup).toBeDefined();
+    await settle(at(10));
+    expect(t.ctx.repos.getAgentJob(t.ctx.db, review!.id)!.status).toBe('waiting_usage');
+
+    setDriverOptions(t.ctx, { fake: { fixtures: [] } });
+    await resolveNeedsYouItem(t.ctx, setup!.id, { optionId: 'fixed' }, OWNER);
+    await settle(at(11));
+    expect(t.ctx.repos.getAgentJob(t.ctx.db, review!.id)).toMatchObject({ status: 'succeeded', attempts: 1 });
+    expect(outboxes().map((o) => o.status)).toEqual(['held']);
+    // The daily log counts the pause only until the owner's resume.
+    expect(t.ctx.repos.listAudit(t.ctx.db, { action: 'ai.pause' }).some((a) => (a.after as { reason?: string }).reason === 'auth_failed')).toBe(true);
   });
 
   it('usage limit: the review waits without using an attempt, AI pauses, deterministic work continues, then it resumes', async () => {

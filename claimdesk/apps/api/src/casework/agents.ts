@@ -82,6 +82,15 @@ export interface CaseReviewOutcome {
   questions: string[];
 }
 
+const NEED_STOPWORDS = new Set(['the', 'and', 'from', 'with', 'this', 'that', 'client', 'insurer', 'claim', 'file', 'send', 'request', 'get', 'ask', 'for', 'our', 'their', 'not', 'will', 'without', 'document', 'documents', 'information', 'missing', 'need', 'needs']);
+const needWords = (text: string): Set<string> => new Set((text.toLowerCase().match(/[a-z0-9]{3,}/g) ?? []).filter((w) => !NEED_STOPWORDS.has(w)));
+
+/** Do two descriptions name the same missing thing (a shared significant word such as "v5c" or "invoice")? */
+export function sameNeed(a: string, b: string): boolean {
+  const wb = needWords(b);
+  return [...needWords(a)].some((w) => wb.has(w));
+}
+
 /** Turn a validated CaseReviewResult into tasks, Needs-you items and follow-up jobs (§C.4). Pure of the model. */
 export function applyCaseReview(ctx: AppContext, job: JobRecord, claimId: string, result: CaseReviewResult, runId: string): { outcome: CaseReviewOutcome; followUps: EnqueueInput[] } {
   const out: CaseReviewOutcome = { runId, nextBestAction: result.nextBestAction, accepted: [], rejected: [], asked: [], tasks: [], questions: [] };
@@ -105,11 +114,14 @@ export function applyCaseReview(ctx: AppContext, job: JobRecord, claimId: string
       createdBy: CASE_MANAGER,
       dedupeKey: `custom_action:${claimId}:${title.slice(0, 80)}`,
       correlationId: job.correlationId,
+      runId,
     }).id;
 
-  // Next best action outside the playbook → the owner confirms.
+  // Next best action outside the playbook → the owner confirms — unless it is the same need as a missing-information
+  // question whose prepared request already goes to the owner (one Needs-you item per need, not two).
   const nba = result.nextBestAction;
-  if (nba.code === CUSTOM_ACTION_CODE) out.asked.push(askCustom(nba.title, nba.why, nba));
+  const coveredByPrepared = nba.code === CUSTOM_ACTION_CODE && result.questionsForOwner.slice(0, 5).some((q) => q.prepareDraft && sameNeed(`${nba.title} ${nba.why}`, `${q.title} ${q.detail} ${q.missing.join(' ')}`));
+  if (nba.code === CUSTOM_ACTION_CODE && !coveredByPrepared) out.asked.push(askCustom(nba.title, nba.why, nba));
   else if (!isPlaybookCode(nba.code)) out.rejected.push({ to: 'next_best_action', reason: `action code ${nba.code} is not a playbook code` });
 
   const consider = (d: HandoffDecision): void => {
@@ -154,6 +166,7 @@ export function applyCaseReview(ctx: AppContext, job: JobRecord, claimId: string
           createdBy: CASE_MANAGER,
           dedupeKey: `case_question:${claimId}:${q.title.slice(0, 80)}`,
           correlationId: job.correlationId,
+          runId,
         }).id,
       );
     }
@@ -186,6 +199,7 @@ export function applyCaseReview(ctx: AppContext, job: JobRecord, claimId: string
       createdBy: CASE_MANAGER,
       dedupeKey: `loop_guard:${job.correlationId}`,
       correlationId: job.correlationId,
+      runId,
     });
   }
   const nextReview = ctx.repos.listTasks(ctx.db, { claimId, status: 'open', limit: 1 })[0]?.dueAt;
@@ -282,6 +296,7 @@ export async function runDraftCompose(ctx: AppContext, job: JobRecord, p: DraftC
       createdBy: DRAFTER,
       dedupeKey: `draft_none:${job.id}`,
       correlationId: job.correlationId,
+      runId: run.runId,
     });
     return { kind: 'done', result: { drafts: [], needsYouId: ny.id, runId: run.runId } };
   }

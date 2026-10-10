@@ -67,8 +67,12 @@
   flex-wrap: wrap;
 }
 .ai-secret .field {
-  min-width: 280px;
-  flex: 1;
+  /* min-width 0 so the Sign-in token row fits a 390 px phone (it wrapped 19 px past the edge) */
+  min-width: 0;
+  flex: 1 1 220px;
+}
+.ai-steps > li {
+  min-width: 0;
 }
 .ai-table-wrap {
   overflow-x: auto;

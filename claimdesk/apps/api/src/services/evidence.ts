@@ -217,6 +217,57 @@ function pngDimensions(buffer: Buffer): { widthPx: number; heightPx: number } | 
   return { widthPx: buffer.readUInt32BE(16), heightPx: buffer.readUInt32BE(20) };
 }
 
+/**
+ * Can the EXIF reader walk this ISO-BMFF (HEIC/HEIF/AVIF) file safely? exifr's HEIF parser follows top-level box sizes
+ * from the end of `ftyp` until it meets `meta`, with no guard: a box of size 0 (or 2–7), or a file with no `meta` box,
+ * makes it loop forever and hangs the server's event loop. This walks the same chain by reading box headers only and
+ * says yes only when every box is well formed and a `meta` box lies wholly inside the file. Files that do not start
+ * with two zero bytes are not ISO-BMFF for exifr, so they are not affected and return true.
+ */
+export function isoBmffSafeForExif(source: Buffer | string): boolean {
+  let fd: number | undefined;
+  try {
+    let size: number;
+    let read: (pos: number, n: number) => Buffer;
+    if (typeof source === 'string') {
+      fd = openSync(source, 'r');
+      size = statSync(source).size;
+      const handle = fd;
+      read = (pos, n) => {
+        const buf = Buffer.alloc(n);
+        const got = readSync(handle, buf, 0, n, pos);
+        return buf.subarray(0, got);
+      };
+    } else {
+      size = source.length;
+      read = (pos, n) => source.subarray(pos, pos + n);
+    }
+    const first = read(0, 4);
+    if (first.length < 4 || first[0] !== 0 || first[1] !== 0) return true;
+    let offset = first.readUInt32BE(0);
+    for (let guard = 0; guard < 100_000; guard++) {
+      if (offset < 8 || offset + 8 > size) return false;
+      const head = read(offset, 16);
+      if (head.length < 8) return false;
+      let length = head.readUInt32BE(0);
+      if (length === 1) {
+        if (head.length < 16) return false;
+        const big = head.readBigUInt64BE(8);
+        if (big > BigInt(size)) return false;
+        length = Number(big);
+      }
+      if (length < 8 || offset + length > size) return false;
+      if (head.toString('latin1', 4, 8) === 'meta') return true;
+      offset += length;
+    }
+    return false;
+  } catch {
+    return false;
+  } finally {
+    if (fd !== undefined) closeSync(fd);
+  }
+}
+
 /** EXIF is read only for images up to this size (a bigger "image" is not a phone photo; reading it is not worth it). */
 export const EXIF_MAX_BYTES = 64 * 1024 * 1024;
 
@@ -245,6 +296,10 @@ export async function extractExif(source: Buffer | string, mime: string, logger:
   if (!mime.toLowerCase().startsWith('image/')) return undefined;
   const summary: ExifSummary = {};
   try {
+    if (!isoBmffSafeForExif(source)) {
+      logger.warn('evidence: exif skipped — malformed ISO-BMFF (HEIC/AVIF) box structure');
+      return undefined;
+    }
     const raw = (await exifr.parse(source, {
       pick: ['DateTimeOriginal', 'CreateDate', 'Make', 'Model', 'Software', 'Orientation', 'ExifImageWidth', 'ExifImageHeight', 'ImageWidth', 'ImageHeight', 'GPSAltitude'],
       gps: true,

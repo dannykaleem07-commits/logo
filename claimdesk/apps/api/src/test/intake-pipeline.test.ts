@@ -10,6 +10,7 @@ import path from 'node:path';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { builtinAssetBytes } from '@ccguk/documents';
 import { createTestApp, FNOL, type TestApp } from './helpers.js';
+import { queued, runJob } from './fixtures/mail/helpers.js';
 import { auditRows, drainIntake, jobsOf, makeBlankPdf, makeEml, makeHeicHeader, makeTextPdf } from './fixtures/intake/helpers.js';
 import { sniff, SNIFF_TABLE } from '../intake/sniff.js';
 import { normalise, pdfText } from '../intake/normalise.js';
@@ -249,6 +250,64 @@ describe('entry points and the FakeDriver extraction', () => {
     expect(t.ctx.repos.requireIntakeItem(t.ctx.db, cab.body.items[0]!.id)).toMatchObject({ status: 'skipped', sniffedType: 'cab', error: expect.stringMatching(/engineer data/) });
     expect(t.ctx.repos.requireIntakeItem(t.ctx.db, quota.body.items[0]!.id).status).toBe('quota_wait');
     expect(jobsOf(t.ctx, 'intake.extract').find((j) => (j.payload as { itemId: string }).itemId === quota.body.items[0]!.id)?.status).toBe('waiting_usage');
+  });
+
+  it('a driving licence photo: driving_licence, the personal details on ONE confirm card (unticked: sensitive)', async () => {
+    const jpeg = Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00, 0x01, 0x01, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00]), Buffer.alloc(64), Buffer.from([0xff, 0xd9])]);
+    const up = await upload([{ filename: 'INTAKE-FIXTURE-LICENCE.jpg', mime: 'image/jpeg', content: jpeg }], { claimId });
+    expect(up.status).toBe(201);
+    await drainIntake(t.ctx, NOW);
+    const item = t.ctx.repos.requireIntakeItem(t.ctx.db, up.body.items[0]!.id);
+    expect(item).toMatchObject({ docType: 'driving_licence', sniffedType: 'jpeg', status: 'needs_you' });
+    const cards = t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'confirm_fields', claimId });
+    expect(cards).toHaveLength(1);
+    const targets = (cards[0]!.payload as { proposals: Array<{ target: string; sensitive: boolean }> }).proposals;
+    expect(targets.filter((p) => p.sensitive).map((p) => p.target).sort()).toEqual(['party:client.dateOfBirth', 'party:client.drivingLicenceNumber']);
+  });
+
+  it('a bodyshop estimate PDF: bodyshop_estimate; the same registration is skipped and nothing needs the owner', async () => {
+    const pdf = await makeTextPdf([['INTAKE-FIXTURE-ESTIMATE', 'Reg: KX21 ABC', 'Labour total 420.00', 'Parts total 1,180.00', 'TOTAL INC VAT 1,920.00']]);
+    const up = await upload([{ filename: 'bodyshop-estimate.pdf', mime: 'application/pdf', content: pdf }], { claimId });
+    await drainIntake(t.ctx, NOW);
+    expect(t.ctx.repos.requireIntakeItem(t.ctx.db, up.body.items[0]!.id)).toMatchObject({ docType: 'bodyshop_estimate', status: 'applied' });
+    expect(t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'confirm_fields', claimId })).toEqual([]);
+  });
+
+  it('an extraction that keeps failing ends dead with ONE Needs-you failure on the claim (§C.3)', async () => {
+    const pdf = await makeTextPdf([['A letter that no fixture matches (INTAKE-NO-FIXTURE).']]);
+    const up = await upload([{ filename: 'letter.pdf', mime: 'application/pdf', content: pdf }], { claimId });
+    let now = NOW;
+    for (let i = 0; i < 4; i += 1) {
+      await drainIntake(t.ctx, now);
+      now = new Date(Date.parse(now) + 2 * 60_000).toISOString();
+    }
+    const job = jobsOf(t.ctx, 'intake.extract').find((j) => (j.payload as { itemId: string }).itemId === up.body.items[0]!.id)!;
+    expect(job.status).toBe('dead');
+    const failures = t.ctx.repos.listNeedsYou(t.ctx.db, { kind: 'failure', claimId });
+    expect(failures).toHaveLength(1);
+  });
+
+  it('large files are never parsed whole: a 70 MiB text is skipped before it is read; a 25 MiB photo is kept but not given to the model', async () => {
+    const big = Buffer.alloc(70 * 1024 * 1024, 0x61);
+    const text = await upload([{ filename: 'big.txt', mime: 'text/plain', content: big }], { claimId });
+    const photo = await upload([{ filename: 'big.jpg', mime: 'image/jpeg', content: Buffer.concat([Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10, 0x4a, 0x46, 0x49, 0x46, 0x00]), Buffer.alloc(25 * 1024 * 1024)]) }], { claimId });
+    await drainIntake(t.ctx, NOW);
+    expect(t.ctx.repos.requireIntakeItem(t.ctx.db, text.body.items[0]!.id)).toMatchObject({ status: 'skipped', sniffedType: 'text', error: expect.stringMatching(/too large for intake to read/) });
+    expect(t.ctx.repos.requireIntakeItem(t.ctx.db, photo.body.items[0]!.id)).toMatchObject({ status: 'skipped', sniffedType: 'jpeg', error: expect.stringMatching(/too large to give the agents/) });
+    expect(jobsOf(t.ctx, 'intake.extract')).toEqual([]);
+  }, 60_000);
+
+  it('while the agents are switched off, a document being read says why it is waiting', async () => {
+    t.ctx.repos.patchAgentSettings(t.ctx.db, { agents: { enabled: false } }, { userId: 'owner' });
+    const pdf = await makeTextPdf([['INTAKE-FIXTURE-V5C', 'Registration mark KX21 ABC']]);
+    const up = await upload([{ filename: 'V5C.pdf', mime: 'application/pdf', content: pdf }], { claimId });
+    const [proc] = queued(t.ctx, 'intake.process');
+    await runJob(t.ctx, proc!);
+    const row = await t.api<{ status: string; waiting: { reason: string } | null }>('GET', `/intake/${up.body.items[0]!.id}`);
+    expect(row.body.status).toBe('extracting');
+    expect(row.body.waiting).toEqual({ reason: 'agents_off' });
+    t.ctx.repos.patchAgentSettings(t.ctx.db, { agents: { enabled: true } }, { userId: 'owner' });
+    expect((await t.api<{ waiting: unknown }>('GET', `/intake/${up.body.items[0]!.id}`)).body.waiting).toBeNull();
   });
 
   it('refuses an upload with no file and a JSON body naming nothing', async () => {

@@ -1,6 +1,6 @@
 ---
 name: Synthetic Playbook
-description: An invented test playbook (no real content). Used only by brain-packs.test.ts.
+description: An invented test playbook (no real content). Used only by brain-library.test.ts.
 version: 0.1.0
 ---
 

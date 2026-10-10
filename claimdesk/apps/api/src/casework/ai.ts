@@ -4,7 +4,7 @@ import { DEFAULT_CLAIM_RUNS_PER_DAY, type ISODateTime } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
 import type { AiRunOutcome } from '../ai/types.js';
 import type { JobOutcome } from '../agent/contracts.js';
-import { londonDay } from '../agent/core.js';
+import { authFailedWait, londonDay } from '../agent/core.js';
 
 /** AI switched off / forbidden / fake not allowed: not a failure worth retrying. */
 export const isAiOff = (o: AiRunOutcome): boolean => o.kind === 'error' && (o.code === 'AI_OFF' || o.code === 'REAL_AI_FORBIDDEN' || o.code === 'FAKE_AI_NOT_ALLOWED' || o.code === 'DRIVER_UNAVAILABLE');
@@ -17,7 +17,7 @@ export function aiFailure(ctx: AppContext, o: AiRunOutcome): JobOutcome | null {
     case 'usage_limited':
       return { kind: 'wait_usage', until: o.resetsAt ?? new Date(Date.parse(ctx.now()) + 15 * 60_000).toISOString() };
     case 'auth_failed':
-      return { kind: 'fail', reason: `AI sign-in failed: ${o.message}` };
+      return authFailedWait(ctx, o.message);
     case 'refused':
       return { kind: 'fail', reason: `The model refused: ${o.explanation ?? o.category ?? 'no reason given'}` };
     case 'invalid_output':

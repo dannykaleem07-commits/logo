@@ -19,7 +19,7 @@ import { parse } from '../schemas/common.js';
 import { params, requireClaim, requireRole } from './helpers.js';
 import { enqueueJob, londonHhmm } from '../agent/core.js';
 import { computeGates, getSupervisor } from '../agent/supervisor.js';
-import { currentLaneLimits } from '../agent/queue.js';
+import { currentLaneLimits, effectiveAgentSettings } from '../agent/queue.js';
 import { getSchedule, isHhmm, listSchedules, runScheduleNow, updateSchedule } from '../agent/scheduler.js';
 import { jobsEnabled } from '../jobs.js';
 
@@ -37,7 +37,7 @@ function humanOnly(request: FastifyRequest): void {
 
 export function agentsStatus(ctx: AppContext) {
   const now = ctx.now();
-  const settings = ctx.repos.getAgentSettings(ctx.db);
+  const settings = effectiveAgentSettings(ctx);
   const usage = ctx.repos.getAiUsageState(ctx.db);
   const supervisor = getSupervisor(ctx);
   const heartbeat = supervisor?.heartbeat();
@@ -89,7 +89,7 @@ export function agentsStatus(ctx: AppContext) {
     pill: { state, label },
     jobsEnabled: background,
     enabled: settings.agents.enabled,
-    driver: settings.ai.driver,
+    driver: settings.driverChoice,
     killSwitch: settings.autonomy.killSwitch,
     usage: {
       pausedUntil: paused ? usage.pausedUntil! : null,

@@ -42,6 +42,23 @@ export interface PerimeterVerdict {
 const present = (v: unknown): boolean => v !== undefined && v !== null;
 const obj = (v: unknown): Record<string, unknown> => (v && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : {});
 
+/** Body keys that carry bank or payment details. */
+const BANK_KEY = /bank|sort_?code|account_?number|iban|payee/i;
+
+function claimsReferencingParty(ctx: AppContext, partyId: string): string[] {
+  const rows = ctx.handle.sqlite
+    .prepare(
+      `SELECT id FROM claims WHERE claimant_id = @p OR driver_id = @p OR at_fault_insurer_id = @p OR client_insurer_id = @p
+         OR EXISTS (SELECT 1 FROM json_each(claims.third_party_ids) WHERE json_each.value = @p)`,
+    )
+    .all({ p: partyId }) as Array<{ id: string }>;
+  return rows.map((r) => r.id);
+}
+
+function claimsReferencingVehicle(ctx: AppContext, vehicleId: string): string[] {
+  return (ctx.handle.sqlite.prepare('SELECT id FROM claims WHERE client_vehicle_id = ? OR third_party_vehicle_id = ?').all(vehicleId, vehicleId) as Array<{ id: string }>).map((r) => r.id);
+}
+
 /** The claim ids a request names (params, query, body), with where each came from. */
 function namedClaimIds(ctx: AppContext, route: string, request: FastifyRequest): Array<{ where: string; id: string }> {
   const out: Array<{ where: string; id: string }> = [];
@@ -60,7 +77,7 @@ function namedClaimIds(ctx: AppContext, route: string, request: FastifyRequest):
   return out;
 }
 
-/** Decide whether an agent request may proceed (undefined = allowed). Pure apart from the document lookup. */
+/** Decide whether an agent request may proceed (undefined = allowed). Pure apart from the document, party and vehicle lookups. */
 export function perimeterVerdict(ctx: AppContext, request: FastifyRequest, allowlist: ReadonlySet<string> = agentRouteAllowlist()): PerimeterVerdict | undefined {
   const method = request.method.toUpperCase();
   const route = request.routeOptions.url ?? '';
@@ -87,11 +104,21 @@ export function perimeterVerdict(ctx: AppContext, request: FastifyRequest, allow
   if ((route === '/api/claims/:id/status' || route === '/api/claims/:id') && typeof body.status === 'string' && FORBIDDEN_STATUSES.has(body.status)) {
     return { rule: 'money_settlement', message: `Agents cannot move a claim to ${body.status}` };
   }
+  // Bank or payment details on a party are the owner's to change (payment diversion risk).
+  if ((method === 'PATCH' || method === 'POST' || method === 'PUT') && (route === '/api/parties' || route === '/api/parties/:id') && Object.keys(body).some((k) => BANK_KEY.test(k))) {
+    return { rule: 'money_settlement', message: 'Agents cannot write bank or payment details — the owner checks and records them' };
+  }
   // Rule 3: claim scope.
   const scope = request.agent?.claimScope;
   if (scope) {
     const other = namedClaimIds(ctx, route, request).find((c) => c.id !== scope);
     if (other) return { rule: 'claim_scope', message: `This run is limited to claim ${scope}; ${other.where} names another claim` };
+    // A party or vehicle written by a claim-scoped run must belong to that claim.
+    const params = obj(request.params);
+    if (method !== 'GET' && (route === '/api/parties/:id' || route === '/api/vehicles/:id') && typeof params.id === 'string') {
+      const claims = route === '/api/parties/:id' ? claimsReferencingParty(ctx, params.id) : claimsReferencingVehicle(ctx, params.id);
+      if (!claims.includes(scope)) return { rule: 'claim_scope', message: `This run is limited to claim ${scope}; that ${route === '/api/parties/:id' ? 'party' : 'vehicle'} is not on it` };
+    }
   }
   // Rule 1: the route allow-list.
   if (!route || !allowlist.has(key)) return { rule: 'route_allowlist', message: `${method} ${route || request.url} is not available to agents` };

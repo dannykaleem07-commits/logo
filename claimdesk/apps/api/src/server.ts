@@ -8,14 +8,18 @@ import { buildContext, ensureDataDirs } from './context.js';
 import { buildApp } from './app.js';
 import { ensureDefaultLogin, prefillExposureWarning } from './services/auth.js';
 import { lookupModeFor } from './services/lookup.js';
+import { neutraliseAnthropicEnv } from './ai/apiKeyDriver.js';
 
 export async function start(): Promise<void> {
+  // No ANTHROPIC_* variable may steer the AI drivers (§A.2, §K.2): the key and host come from ClaimDesk only.
+  const removedEnv = neutraliseAnthropicEnv();
   const config = loadConfig();
   ensureDataDirs(config);
   const ctx = buildContext({ config });
   const login = await ensureDefaultLogin(ctx);
   const exposure = prefillExposureWarning(ctx);
   if (exposure) ctx.logger.warn(exposure, { host: config.host, env: config.env });
+  if (removedEnv.length) ctx.logger.warn('ignored ANTHROPIC_* environment variables (ClaimDesk sets the AI host and key itself)', { removed: removedEnv });
   const app = await buildApp(ctx);
   const shutdown = async (signal: string) => {
     ctx.logger.info('shutting down', { signal });

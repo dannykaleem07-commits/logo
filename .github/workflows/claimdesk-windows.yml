@@ -30,6 +30,10 @@ jobs:
     timeout-minutes: 100
     outputs:
       ver: ${{ steps.version.outputs.ver }}
+    # §1.1(6): no CI step can ever build a real AI driver (FakeDriver, the fake mail transport and the launcher are
+    # unaffected; /ai/test-run and the real drivers refuse in every step).
+    env:
+      CLAIMDESK_FORBID_REAL_AI: '1'
     defaults:
       run:
         working-directory: claimdesk
@@ -43,13 +47,14 @@ jobs:
       # on the owner's PC. Fail the build if any of it is tracked. Add the private playbook folder name to $private.
       - name: Private-data guard
         run: |
-          $private = @()   # e.g. the owner's private playbook folder name (case-insensitive substring)
+          $private = @('danny-brain', 'danny brain', 'danny_brain')   # the owner's private playbook (case-insensitive substring)
           $files = @(git -C .. ls-files)
           if ($LASTEXITCODE -ne 0) { throw 'git ls-files failed' }
           $bad = @($files | Where-Object {
             $p = $_.ToLowerInvariant()
             $p -match '\.(cab|ccbrain|dpapi)$' -or
             $p -match '(^|/)(brain-packs|engineer-data|inbox|secrets|agent-runs)/' -or
+            $p -match '^claimdesk/brain/|(^|/)data/brain/' -or
             $p.Contains('brain-pack') -or $p.Contains('engineer-data') -or
             ($private | Where-Object { $_ -and $p.Contains($_.ToLowerInvariant()) })
           })
@@ -85,6 +90,24 @@ jobs:
 
       - name: Build the web app
         run: pnpm --filter @ccguk/web build
+
+      # §R.3: the Windows toast script runs with exit code 0 (whether the toast is seen cannot be checked in CI). Runs
+      # before the development packages (tsx) are removed.
+      - name: Toast script runs (exit code 0; visual check impossible in CI)
+        run: |
+          $s = Join-Path $env:RUNNER_TEMP 'toast-ci.mts'
+          $toast = (Resolve-Path apps\api\src\notify\toast.ts).Path -replace '\\', '/'
+          @"
+          import { buildToastXml, buildToastScript, POWERSHELL_ARGS } from 'file:///$toast';
+          import { spawnSync } from 'node:child_process';
+          const xml = buildToastXml({ title: 'ClaimDesk CI', body: 'Synthetic toast from the CI build', launch: 'claimdesk://needs-you' });
+          const r = spawnSync('powershell.exe', [...POWERSHELL_ARGS], { input: buildToastScript(xml), encoding: 'utf8' });
+          console.log(r.stdout ?? '', r.stderr ?? '');
+          process.exit(r.status ?? 1);
+          "@ | Set-Content -Path $s -Encoding utf8
+          pnpm --filter @ccguk/api exec tsx $s
+          if ($LASTEXITCODE -ne 0) { throw "toast script failed (exit $LASTEXITCODE)" }
+          Write-Host 'Toast script passed'
 
       - name: Remove development-only packages
         run: pnpm install --prod --frozen-lockfile --config.node-linker=hoisted
@@ -881,6 +904,20 @@ jobs:
           Set-Content -Path $login -Value '{"username":"courtesycars","password":"CourtesyCars123!"}' -NoNewline -Encoding utf8NoBOM
           $code = curl.exe -s -o NUL -w '%{http_code}' -c $jar -H 'content-type: application/json' --data-binary "@$login" "$base/api/auth/login"
           if ($code -ne '200') { throw "sign-in failed: $code" }
+          # The owner's switch-on (Settings > AI): tick the setup checklist, then turn the agents on. AI_DRIVER=fake is
+          # the driver the gateway runs; agents stay off after install until this is done (§A.7).
+          $body = Join-Path $env:RUNNER_TEMP 'agent-body.json'
+          foreach ($item in @('training_opt_out', 'subscription_terms', 'mailbox_connected', 'background_running')) {
+            Set-Content -Path $body -Value "{`"item`":`"$item`",`"done`":true}" -NoNewline -Encoding utf8NoBOM
+            $code = curl.exe -s -o NUL -w '%{http_code}' -b $jar -c $jar -X POST -H 'content-type: application/json' --data-binary "@$body" "$base/api/ai/checklist"
+            if ($code -ne '200') { throw "checklist $item failed: $code" }
+          }
+          Set-Content -Path $body -Value '{"agentsEnabled":true}' -NoNewline -Encoding utf8NoBOM
+          $resp = curl.exe -s -w "`n%{http_code}" -b $jar -c $jar -X PATCH -H 'content-type: application/json' --data-binary "@$body" "$base/api/ai/settings"
+          if (-not ($resp -match '200$')) { throw "switching the agents on failed: $resp" }
+          $status = curl.exe -s -b $jar "$base/api/agents/status" | ConvertFrom-Json -Depth 50
+          Write-Host "agents: enabled=$($status.enabled) driver=$($status.driver) pill=$($status.pill.label)"
+          if ($status.enabled -ne $true -or $status.driver -ne 'fake') { throw 'the agents did not switch on with the fake driver' }
           $eml = @"
           From: Claims Handler <handler@insurer.example>
           To: claims@courtesycars.net

@@ -36,6 +36,22 @@ function docSummary(doc: NormalisedDoc | undefined) {
   };
 }
 
+/**
+ * Why an item that is being read is not moving: its intake.extract job is queued (or waiting) while the AI lane is
+ * closed — agents switched off (the post-install default), the kill switch, or a usage / sign-in pause.
+ */
+export function itemWaiting(ctx: AppContext, item: IntakeItemRecord): { reason: 'agents_off' | 'kill_switch' | 'usage' | 'sign_in'; until?: string } | undefined {
+  if (!['queued', 'normalising', 'extracting', 'quota_wait'].includes(item.status)) return undefined;
+  const job = ctx.repos.listAgentJobs(ctx.db, { type: 'intake.extract', status: ['queued', 'waiting_usage'], limit: 1000 }).find((j) => (j.payload as { itemId?: string } | undefined)?.itemId === item.id);
+  if (!job) return undefined;
+  const settings = ctx.repos.getAgentSettings(ctx.db);
+  if (settings.autonomy.killSwitch) return { reason: 'kill_switch' };
+  if (!settings.agents.enabled) return { reason: 'agents_off' };
+  const usage = ctx.repos.getAiUsageState(ctx.db);
+  if (usage.pausedUntil && usage.pausedUntil > ctx.now()) return { reason: /auth|sign/i.test(usage.pauseReason ?? '') ? 'sign_in' : 'usage', until: usage.pausedUntil };
+  return undefined;
+}
+
 export function itemRow(ctx: AppContext, item: IntakeItemRecord) {
   const ev = ctx.repos.getEvidence(ctx.db, item.evidenceId);
   const claim = item.claimId ? ctx.repos.getClaim(ctx.db, item.claimId) : undefined;
@@ -52,6 +68,7 @@ export function itemRow(ctx: AppContext, item: IntakeItemRecord) {
     extraction: latest ? { id: latest.id, runId: latest.runId ?? null, summary: latest.summary ?? null, fields: Array.isArray(latest.fields) ? latest.fields.length : 0, warnings: latest.warnings, createdAt: latest.createdAt } : null,
     proposals: { pending: count('pending'), applied: count('applied'), rejected: count('rejected'), superseded: count('superseded') },
     children: ctx.repos.listIntakeItems(ctx.db, { parentItemId: item.id }).length,
+    waiting: itemWaiting(ctx, item) ?? null,
   };
 }
 

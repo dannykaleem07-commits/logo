@@ -77,6 +77,7 @@ export const routes: RouteObject[] = [
       { path: 'agents', element: <AgentsPage /> },
       { path: 'daily-log', element: <DailyLogPage /> },
       { path: 'outbox', element: <OutboxPage /> },
+      { path: 'outbox/:id', element: <OutboxPage /> },
       { path: 'intake', element: <IntakePage /> },
       { path: 'settings/ai', element: <AiSettingsPage /> },
       { path: 'settings/email', element: <EmailSettingsPage /> },

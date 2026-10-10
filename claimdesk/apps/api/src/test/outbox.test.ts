@@ -12,8 +12,9 @@ import type { GeneratedDocument } from '@ccguk/domain';
 import { createTestApp, type TestApp } from './helpers.js';
 import { recomputeClocks } from '../services/claimView.js';
 import { resolveNeedsYouItem } from '../agent/needsYou.js';
+import { automaticSendCounts } from '../agent/core.js';
 import { registerPlaceholderResolver } from '../ai/prompts.js';
-import { createEmailDraft, recipientInfo } from '../mail/outbox.js';
+import { createEmailDraft, recipientInfo, tagSubject } from '../mail/outbox.js';
 import type { FakeMailbox, FakeSmtp } from '../mail/transport.js';
 import { INSURER_EMAIL, MAILBOX, TOUCHES_NONE, eml, queued, run, runJob, setUpMail } from './fixtures/mail/helpers.js';
 
@@ -87,7 +88,7 @@ describe('draft → review → hold → undo', () => {
     expect(res).toMatchObject({ outcome: 'held', holdUntil: at(10) });
     expect(outbox(id)).toMatchObject({ status: 'held', holdUntil: at(10), policy: { outcome: 'auto_held', ruleIds: ['external_ok'] } });
     const [n] = t.ctx.repos.listNotifications(t.ctx.db, { limit: 5 });
-    expect(n).toMatchObject({ title: 'Sending in 10 min — Undo', link: `/outbox?focus=${id}` });
+    expect(n).toMatchObject({ title: 'Sending in 10 min — Undo', link: `/outbox/${id}` });
     expect(n!.channels.join(' ')).toContain(`"undoOutboxId":"${id}"`);
     expect(releaseJobs().map((j) => j.runAfter)).toEqual([at(10)]);
 
@@ -180,6 +181,28 @@ describe('policy at review time', () => {
     const res = await afterReview(id, review(id).id);
     expect(res).toMatchObject({ outcome: 'held', holdUntil: '2026-10-08T06:30:00.000Z' });
     expect((outbox(id).policy as { ruleIds: string[] }).ruleIds).toEqual(['quiet_hours']);
+  });
+
+  it('rate limits count each send on the day it goes out: a quiet-hours send released this morning counts today', async () => {
+    // Drafted 21:30 London yesterday, held by quiet hours, sent at 07:30 today.
+    const night = t.ctx.repos.createOutbox(t.ctx.db, { claimId, accountId, kind: 'ack', to: [INSURER_EMAIL], subject: 'night', bodyText: 'x', createdBy: 'agent:mail', now: '2026-10-06T20:30:00.000Z' });
+    t.ctx.repos.transitionOutbox(t.ctx.db, night.id, 'held', 'agent:mail', 'quiet', { patch: { policy: { outcome: 'auto_held', ruleIds: ['quiet_hours'] }, holdUntil: '2026-10-07T06:30:00.000Z' }, now: '2026-10-06T20:30:00.000Z' });
+    t.ctx.repos.transitionOutbox(t.ctx.db, night.id, 'queued', 'agent:mail', 'hold over', { now: '2026-10-07T06:30:00.000Z' });
+    t.ctx.repos.transitionOutbox(t.ctx.db, night.id, 'sending', 'agent:mail', 'smtp', { now: '2026-10-07T06:30:00.000Z' });
+    t.ctx.repos.transitionOutbox(t.ctx.db, night.id, 'sent', 'agent:mail', 'ok', { now: '2026-10-07T06:30:00.000Z' });
+    // One held tonight until tomorrow morning does not count today.
+    const tomorrow = t.ctx.repos.createOutbox(t.ctx.db, { claimId, accountId, kind: 'ack', to: [INSURER_EMAIL], subject: 'tomorrow', bodyText: 'x', createdBy: 'agent:mail', now: T0 });
+    t.ctx.repos.transitionOutbox(t.ctx.db, tomorrow.id, 'held', 'agent:mail', 'quiet', { patch: { policy: { outcome: 'auto_held', ruleIds: ['quiet_hours'] }, holdUntil: '2026-10-08T06:30:00.000Z' }, now: T0 });
+    expect(automaticSendCounts(t.ctx, claimId, T0)).toMatchObject({ claimToday: 1, today: 1 });
+    for (let i = 0; i < 2; i++) {
+      const o = t.ctx.repos.createOutbox(t.ctx.db, { claimId, accountId, kind: 'ack', to: [INSURER_EMAIL], subject: `auto ${i}`, bodyText: 'x', createdBy: 'agent:mail', now: T0 });
+      t.ctx.repos.transitionOutbox(t.ctx.db, o.id, 'held', 'agent:mail', 'auto', { patch: { policy: { outcome: 'auto_held', ruleIds: ['external_ok'] }, holdUntil: at(10) }, now: T0 });
+    }
+    expect(automaticSendCounts(t.ctx, claimId, T0)).toMatchObject({ claimToday: 3 });
+    const id = await draftReply();
+    const res = await afterReview(id, review(id).id);
+    expect(res.outcome).toBe('asked');
+    expect(outbox(id).policy).toMatchObject({ outcome: 'ask', ruleIds: ['rate_limits'] });
   });
 
   it('rate limits ask the owner; the owner’s edited approval sends at once (owner-approved sends skip the automatic limits)', async () => {
@@ -299,6 +322,8 @@ describe('attached documents (§D.5, §F.7)', () => {
 
 describe('placeholders', () => {
   it('without a fact resolver a draft with {{fact:}} is refused; with one, code fills it', async () => {
+    // Casework registers its Case Brief resolver at boot; take it away for the "no resolver yet" half.
+    registerPlaceholderResolver(t.ctx, undefined);
     const r = await run(t.ctx, 'mail.reply', { claimId, messageId: inboundId, plan: 'MAILFX-FIGURES state the hire charges', keyPoints: [] }, { claimId });
     expect(r.outcome.result).toMatchObject({ drafts: 0 });
     const call = t.ctx.handle.sqlite.prepare("select decision, output_summary from agent_tool_calls where tool = 'email_draft'").get() as { decision: string; output_summary: string };
@@ -309,6 +334,8 @@ describe('placeholders', () => {
     registerPlaceholderResolver(t.ctx, (_ctx, _claimId, text) => text.replace(/\{\{fact:ledger\.hire\.claimedPence\}\}/g, '£1,145.40'));
     const d = createEmailDraft(t.ctx, { claimId, kind: 'info_provided', to: [INSURER_EMAIL], cc: [], subject: 'Hire', bodyText: 'The hire charges are {{fact:ledger.hire.claimedPence}}.', attach: [], inReplyToMessageId: null }, 'agent:mail', { loop: 0 });
     expect(d.outbox.bodyText).toContain('£1,145.40');
+    // A fact the resolver does not know stays a placeholder, and the draft is refused.
+    expect(() => createEmailDraft(t.ctx, { claimId, kind: 'info_provided', to: [INSURER_EMAIL], cc: [], subject: 'Hire', bodyText: 'Owed: {{fact:no.such.fact}}.', attach: [], inReplyToMessageId: null }, 'agent:mail', { loop: 0 })).toThrow(/placeholders could not be resolved/);
   });
 });
 
@@ -331,5 +358,12 @@ describe('owner compose', () => {
     const list = await t.api<{ items: Array<{ id: string }>; counts: Record<string, number> }>('GET', '/outbox?status=reviewing');
     expect(list.body.items.map((i) => i.id)).toEqual([res.body.item.id]);
     expect(list.body.counts.reviewing).toBe(1);
+  });
+});
+
+describe('subject tag (§F.4)', () => {
+  it('a bare reference still gets the bracketed tag; an existing tag is kept once', () => {
+    expect(tagSubject('Information we need for your claim CCG-2026-00001', 'CCG-2026-00001')).toBe('Information we need for your claim CCG-2026-00001 [CCG-2026-00001]');
+    expect(tagSubject('Re: Your client [ccg-2026-00001]', 'CCG-2026-00001')).toBe('Re: Your client [ccg-2026-00001]');
   });
 });

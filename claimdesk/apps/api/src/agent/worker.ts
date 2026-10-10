@@ -145,13 +145,15 @@ export function startWorker(ctx: AppContext, opts: WorkerOptions): Worker {
       case 'wait_usage': {
         attemptRow(job, startedAt, 'wait_usage');
         const until = addMs(outcome.until, USAGE_RESUME_MARGIN_MS);
-        const next = ctx.repos.waitAgentJobUsage(ctx.db, job.id, { until, reason: 'usage window closed', now }) as JobRecord;
+        const next = ctx.repos.waitAgentJobUsage(ctx.db, job.id, { until, reason: outcome.reason ?? 'usage window closed', now }) as JobRecord;
         // The window is closed for every AI job, not just this one (§A.5).
         if (job.lane === 'ai') {
           const usage = ctx.repos.getAiUsageState(ctx.db);
           if (!usage.pausedUntil || usage.pausedUntil < until) {
-            ctx.repos.pauseAi(ctx.db, { until, reason: 'usage_limited', now });
-            ctx.repos.appendAudit(ctx.db, { actor: { userId: 'agent:supervisor' }, action: 'ai.pause', entity: 'ai_usage_state', entityId: 'default', after: { until, reason: 'usage_limited', jobId: job.id }, at: now });
+            // Keep a sign-in pause's reason (the setup item's "I've fixed it" looks for it).
+            const reason = usage.pausedUntil && usage.pauseReason && !usage.pauseReason.startsWith('usage_limited') ? usage.pauseReason : 'usage_limited';
+            ctx.repos.pauseAi(ctx.db, { until, reason, now });
+            ctx.repos.appendAudit(ctx.db, { actor: { userId: 'agent:supervisor' }, action: 'ai.pause', entity: 'ai_usage_state', entityId: 'default', after: { until, reason, jobId: job.id }, at: now });
           }
         }
         return { jobId: job.id, type: job.type, outcome: 'wait_usage', status: next.status };

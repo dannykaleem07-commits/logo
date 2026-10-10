@@ -115,6 +115,12 @@ describe('stability window', () => {
     expect(listStagedImports(t.ctx, { purpose: 'mail' })[0]?.mime).toBe('message/rfc822');
     expect(listStagedImports(t.ctx, { purpose: 'engineer-data' })[0]?.mime).toBe('application/vnd.ms-cab-compressed');
     expect(listStagedImports(t.ctx, { status: 'staged' })).toHaveLength(3);
+    // the .eml is queued for ingest at once (same idempotency key as the mail.sync sweep, so never twice)
+    const mailImport = listStagedImports(t.ctx, { purpose: 'mail' })[0]!;
+    const jobs = t.ctx.handle.sqlite.prepare("SELECT payload, idempotency_key AS k FROM agent_jobs WHERE type = 'mail.ingest_file'").all() as Array<{ payload: string; k: string }>;
+    expect(jobs).toHaveLength(1);
+    expect(jobs[0]!.k).toBe(`mail.ingest_file:${mailImport.sha256}`);
+    expect(JSON.parse(jobs[0]!.payload)).toEqual({ importId: mailImport.id });
   });
 });
 
@@ -146,6 +152,18 @@ describe('evidence by claim reference', () => {
     // GET /imports shows it as consumed
     const list = await t.api<{ items: Array<{ id: string; status: string }> }>('GET', '/imports?purpose=evidence&status=consumed');
     expect(list.body.items.map((i) => i.id)).toContain(imp.id);
+  });
+
+  it('inbox\\intake\\<CCG-ref>\\ is read for that claim; any other subfolder is reported as not read', async () => {
+    const ids = t.ctx.repos.seedFileOne(t.ctx.db);
+    const claim = t.ctx.repos.requireClaim(t.ctx.db, ids.claimId);
+    drop(`intake/${claim.reference}/letter-in-ref-folder.txt`, Buffer.from('A letter about the claim.'));
+    drop('intake/misc/stray.txt', Buffer.from('stray'));
+    await scanInboxOnce(t.ctx, T0);
+    const taken = await scanInboxOnce(t.ctx, T0 + 10_000);
+    expect(taken.map((i) => [i.purpose, i.claimRef ?? null, i.filename])).toEqual([['intake', claim.reference, 'letter-in-ref-folder.txt']]);
+    const folder = await t.api<{ notRead: Array<{ path: string; reason: string }> }>('GET', '/imports/folder');
+    expect(folder.body.notRead.map((n) => n.path.split(/[\\/]/).slice(-2).join('/'))).toEqual(['intake/misc']);
   });
 
   it('an unknown reference stays staged; attaching it by hand stores it on the chosen claim', async () => {

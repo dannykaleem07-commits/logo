@@ -219,7 +219,7 @@ export async function executeTool(ctx: AppContext, rc: RunContext, name: ToolNam
         return res;
       }
       const ny: NeedsYouInput = def.onAsk(input, rc, ctx, decision);
-      const item = createNeedsYou(ctx, { ...ny, createdBy: ny.createdBy || agentUserId(rc.agent), correlationId: ny.correlationId ?? rc.correlationId });
+      const item = createNeedsYou(ctx, { ...ny, createdBy: ny.createdBy || agentUserId(rc.agent), correlationId: ny.correlationId ?? rc.correlationId, runId: ny.runId ?? rc.runId });
       const content = JSON.stringify({ status: 'awaiting_owner', needsYouId: item.id });
       record(ctx, rc, { tool: name, actionClass: def.class, decision: 'asked', ruleIds: decision.ruleIds, input, output: content, needsYouId: item.id, started });
       return { ok: true, content, needsYouId: item.id };
@@ -266,6 +266,7 @@ export async function executeTool(ctx: AppContext, rc: RunContext, name: ToolNam
             createdBy: agentUserId(rc.agent),
             correlationId: rc.correlationId,
             dedupeKey: `override_needed:${rc.runId}:${name}:${String(err.code ?? '')}`,
+            runId: rc.runId,
           }).id;
         }
         const out = errorResult(String(err.code ?? `HTTP_${res.statusCode}`), String(err.message ?? `The route answered ${res.statusCode}`), {

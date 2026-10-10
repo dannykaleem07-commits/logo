@@ -33,7 +33,7 @@ function PackRow({ pack }: { pack: BrainPack }) {
         </div>
         {open && (
           <div className="stack-sm">
-            {pack.preview && <PackPreviewView preview={pack.preview} />}
+            {pack.preview && <PackPreviewView preview={pack.business.length ? { ...pack.preview, warnings: pack.preview.warnings.filter((w) => !w.startsWith('Skill folder: choose')) } : pack.preview} />}
             <table className="table small">
               <thead>
                 <tr>

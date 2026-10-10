@@ -1,0 +1,18 @@
+[
+  {
+    "id": "intake-ci-smoke-new-claim-email",
+    "match": { "jobType": "intake.extract", "agent": "intake", "userContains": ["ClaimDesk CI smoke test"] },
+    "outcome": "ok",
+    "result": {
+      "docType": "fnol_form",
+      "docTypeConfidence": 0.8,
+      "summary": "Synthetic CI email: an insurer's notification of a new claim about third-party vehicle LM19 XYZ, asking for the client's details and our reference. No claim on file matches it.",
+      "formTemplateId": null,
+      "fields": [
+        { "name": "Other vehicle registration", "target": "vehicle:third_party.registration", "value": "LM19 XYZ", "confidence": 0.9, "page": 1, "quote": "third party vehicle LM19 XYZ" }
+      ],
+      "warnings": ["Synthetic CI smoke-test message (fake AI driver only)"]
+    },
+    "usage": { "inputTokens": 900, "outputTokens": 160 }
+  }
+]

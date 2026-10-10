@@ -15,7 +15,7 @@ import { decide, isFieldTarget, type DocType, type ExtractedField, type FieldTar
 import type { ClaimUpdateProposalRecord, ProposalChecks, ProposalPolicy, ProposalSource } from '@ccguk/db';
 import type { AppContext } from '../context.js';
 import { autonomyState, getAutonomy } from '../agent/core.js';
-import { loadClaimSnapshot, sameValue, targetDef, type ClaimSnapshot, type ValidationHints } from './targets.js';
+import { loadClaimSnapshot, sameValue, targetDef, vehicleOf, type ClaimSnapshot, type ValidationHints } from './targets.js';
 
 /** §G.2 step 5: automatic only at or above this confidence (stricter than the policy's internal 0.85). */
 export const AUTO_APPLY_CONFIDENCE = 0.9;
@@ -29,6 +29,8 @@ export interface PolicyInput {
   confidence: number;
   validatorOk: boolean;
   unavailable?: string;
+  /** Code-found reasons that force the owner's confirmation (a document for another vehicle, a VIN already elsewhere). */
+  forceConfirm?: Array<{ ruleId: string; reason: string }>;
 }
 
 export interface PolicyResult {
@@ -48,9 +50,10 @@ export function proposalPolicy(ctx: AppContext, i: PolicyInput): PolicyResult {
   const ruleIds = [...d.ruleIds];
   const reasons = [...d.reasons];
   let policy: ProposalPolicy = d.outcome === 'auto' || d.outcome === 'auto_held' ? 'auto' : 'confirm';
-  if (i.sensitive && !ruleIds.includes('internal_sensitive')) {
-    ruleIds.push('intake_sensitive');
-    reasons.push('sensitive field');
+  if (i.sensitive) {
+    // The reason is always shown (decide() may already have asked for another reason, e.g. an overwrite).
+    if (!ruleIds.includes('internal_sensitive')) ruleIds.push('intake_sensitive');
+    reasons.push('sensitive field (personal details)');
     policy = 'confirm';
   }
   if (i.overwrites && !ruleIds.includes('internal_sensitive')) {
@@ -66,6 +69,11 @@ export function proposalPolicy(ctx: AppContext, i: PolicyInput): PolicyResult {
   if (!i.validatorOk) {
     ruleIds.push('intake_validator');
     reasons.push('the value failed its check');
+    policy = 'confirm';
+  }
+  for (const f of i.forceConfirm ?? []) {
+    ruleIds.push(f.ruleId);
+    reasons.push(f.reason);
     policy = 'confirm';
   }
   if (i.confidence < AUTO_APPLY_CONFIDENCE) {
@@ -86,6 +94,8 @@ export interface ProposeFieldInput {
   hints?: Omit<ValidationHints, 'now'>;
   /** Reuse a snapshot across many fields of one document. */
   snapshot?: ClaimSnapshot;
+  /** Set when this document's registration for the field's vehicle role differs from the claim's ("KX21ABC vs DK18WRE"). */
+  vehicleMismatch?: { document: string; claim: string };
 }
 
 export type ProposeFieldResult =
@@ -106,7 +116,15 @@ export function proposeField(ctx: AppContext, input: ProposeFieldInput): Propose
   const insp = def.inspect(snapshot, value);
   if (insp.current && sameValue(insp.current, value) && !insp.unavailable) return { kind: 'skipped', reason: 'already on the claim' };
   const confidence = Math.max(0, Math.min(1, Number.isFinite(input.confidence) ? input.confidence : 0));
-  const pol = proposalPolicy(ctx, { claimId: input.claimId, target: def.target, sensitive: def.sensitive, overwrites: Boolean(insp.current), createsRecord: insp.createsRecord, confidence, validatorOk: v.ok, ...(insp.unavailable ? { unavailable: insp.unavailable } : {}) });
+  const forceConfirm: Array<{ ruleId: string; reason: string }> = [];
+  if (def.kind === 'vehicle' && def.field !== 'registration' && input.vehicleMismatch) {
+    forceConfirm.push({ ruleId: 'intake_vehicle_mismatch', reason: `This document is for ${input.vehicleMismatch.document}; the claim vehicle is ${input.vehicleMismatch.claim}` });
+  }
+  if (def.kind === 'vehicle' && def.field === 'vin') {
+    const elsewhere = vinElsewhere(ctx, vehicleOf(snapshot, def.role as never)?.id, value);
+    if (elsewhere) forceConfirm.push({ ruleId: 'intake_vin_elsewhere', reason: `VIN already on ${elsewhere}` });
+  }
+  const pol = proposalPolicy(ctx, { claimId: input.claimId, target: def.target, sensitive: def.sensitive, overwrites: Boolean(insp.current), createsRecord: insp.createsRecord, confidence, validatorOk: v.ok, ...(insp.unavailable ? { unavailable: insp.unavailable } : {}), ...(forceConfirm.length ? { forceConfirm } : {}) });
   const checks: ProposalChecks = {
     validator: { name: def.field, ok: v.ok, ...(v.errors.length ? { message: v.errors.join('; ') } : v.notes?.length ? { message: v.notes.join('; ') } : {}), ...(v.value !== undefined ? { normalised: value } : {}) },
     policy: { ruleIds: pol.ruleIds, reasons: pol.reasons },
@@ -132,6 +150,20 @@ export function proposeField(ctx: AppContext, input: ProposeFieldInput): Propose
   return { kind: 'proposed', proposal, created };
 }
 
+/** Another vehicle that already carries this VIN ("KR20VXA / CCG-2026-00003"), else undefined. */
+export function vinElsewhere(ctx: AppContext, ownVehicleId: string | undefined, vin: string): string | undefined {
+  const norm = vin.replace(/\s+/g, '').toUpperCase();
+  if (norm.length < 5) return undefined;
+  const row = ctx.handle.sqlite
+    .prepare(
+      `SELECT v.registration AS registration,
+              (SELECT c.reference FROM claims c WHERE c.client_vehicle_id = v.id OR c.third_party_vehicle_id = v.id ORDER BY c.created_at LIMIT 1) AS reference
+       FROM vehicles v WHERE upper(replace(coalesce(v.vin, ''), ' ', '')) = ? AND v.id <> ? LIMIT 1`,
+    )
+    .get(norm, ownVehicleId ?? '') as { registration: string; reference: string | null } | undefined;
+  return row ? `${row.registration}${row.reference ? ` / ${row.reference}` : ''}` : undefined;
+}
+
 /** Holder hints for licence cross-checks: the same role's name / DOB in this document, else what the claim holds. */
 export function holderHints(fields: ExtractedField[], snapshot: ClaimSnapshot | undefined, target: string): ValidationHints['holder'] | undefined {
   const m = /^party:(client|claimant|driver|third_party)\.drivingLicenceNumber$/.exec(target);
@@ -154,6 +186,15 @@ export function proposeFromFields(
   const skipped: Array<{ name: string; target: string | null; reason: string }> = [];
   // Highest confidence first per target, so a duplicate field never wins over a better reading.
   const sorted = [...input.fields].sort((a, b) => b.confidence - a.confidence);
+  // A document for a different registration than the claim's vehicle: none of its vehicle fields apply automatically.
+  const mismatch = new Map<string, { document: string; claim: string }>();
+  for (const f of sorted) {
+    const m = f.target ? /^vehicle:([a-z_]+)\.registration$/.exec(f.target) : null;
+    if (!m || !f.value || mismatch.has(m[1]!)) continue;
+    const def = targetDef(f.target!);
+    const insp = def?.inspect(snapshot, String(f.value).trim());
+    if (insp?.unavailable && insp.current) mismatch.set(m[1]!, { document: String(f.value).trim().toUpperCase(), claim: insp.current });
+  }
   const seen = new Set<string>();
   for (const f of sorted) {
     if (!f.target || f.value === null || f.value === undefined || !String(f.value).trim()) {
@@ -166,6 +207,8 @@ export function proposeFromFields(
     }
     seen.add(f.target);
     const holder = holderHints(input.fields, snapshot, f.target);
+    const role = /^vehicle:([a-z_]+)\./.exec(f.target)?.[1];
+    const vehicleMismatch = role ? mismatch.get(role) : undefined;
     const r = proposeField(ctx, {
       claimId: input.claimId,
       intakeItemId: input.intakeItemId,
@@ -174,6 +217,7 @@ export function proposeFromFields(
       confidence: f.confidence,
       source: { intakeItemId: input.intakeItemId, evidenceId: input.evidenceId, page: f.page, quote: f.quote, label: f.name, via: 'extraction', ...(input.extractionId ? { extractionId: input.extractionId } : {}), ...(input.runId ? { runId: input.runId } : {}) },
       ...(holder ? { hints: { holder } } : {}),
+      ...(vehicleMismatch ? { vehicleMismatch } : {}),
       snapshot,
     });
     if (r.kind === 'proposed') proposals.push(r.proposal);

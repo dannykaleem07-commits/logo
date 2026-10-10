@@ -338,7 +338,7 @@ function taskUserId(env, fallbackUser) {
 function taskDefinitions({ exe, workDir, userId, now = new Date() }) {
   const common = { AUTHOR: 'Courtesy Cars Group UK Ltd - ClaimDesk', USER_ID: userId, COMMAND: exe, WORKING_DIR: workDir };
   return [
-    { name: TASK_BACKGROUND, template: 'background.xml', values: { ...common, ARGUMENTS: '--background' } },
+    { name: TASK_BACKGROUND, template: 'background.xml', values: { ...common, ARGUMENTS: '--background --at-logon' } },
     // first check 15 minutes after installing (the logon task or the window starts it before that)
     { name: TASK_WATCHDOG, template: 'watchdog.xml', values: { ...common, ARGUMENTS: '--ensure', START_BOUNDARY: localIsoNoZone(new Date(now.getTime() + 15 * 60 * 1000)) } },
   ];
@@ -543,6 +543,47 @@ function lockPath(home) {
 function logsDir(home) {
   return path.join(home, 'logs');
 }
+/** Written by "Stop ClaimDesk": the Watchdog's --ensure leaves ClaimDesk stopped until it is started again. */
+function stoppedFlagPath(home) {
+  return path.join(runDir(home), 'stopped.flag');
+}
+function setStoppedFlag(home, on) {
+  try {
+    if (on) {
+      fs.mkdirSync(runDir(home), { recursive: true });
+      fs.writeFileSync(stoppedFlagPath(home), `${new Date().toISOString()}\n`);
+    } else fs.rmSync(stoppedFlagPath(home), { force: true });
+  } catch {}
+}
+function stoppedByOwner(home) {
+  return fs.existsSync(stoppedFlagPath(home));
+}
+
+/**
+ * Take run\background.lock atomically (open 'wx'): two supervisors started at the same moment cannot both win.
+ * A stale lock (its process is gone) is replaced once. Returns false when another live supervisor holds it.
+ */
+function acquireLock(home, content, isAliveFn = isAlive) {
+  fs.mkdirSync(runDir(home), { recursive: true });
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const fd = fs.openSync(lockPath(home), 'wx');
+      try {
+        fs.writeSync(fd, JSON.stringify(content));
+      } finally {
+        fs.closeSync(fd);
+      }
+      return true;
+    } catch (err) {
+      if (!err || err.code !== 'EEXIST') throw err;
+      if (!lockIsStale(readLock(home), isAliveFn)) return false;
+      try {
+        fs.rmSync(lockPath(home), { force: true });
+      } catch {}
+    }
+  }
+  return false;
+}
 
 function isAlive(pid) {
   try {
@@ -666,6 +707,10 @@ async function ensureBackground({ wait = 0 } = {}) {
     console.log(`ClaimDesk is running on port ${port}.`);
     return 0;
   }
+  if (stoppedByOwner(home)) {
+    console.log('ClaimDesk was stopped with "Stop ClaimDesk"; it stays stopped until it is started again.');
+    return 0;
+  }
   const pid = spawnBackground();
   console.log(`ClaimDesk was not running: background server started (process ${pid}).`);
   if (wait > 0 && !(await waitForHealth(port, wait))) return 1;
@@ -746,7 +791,7 @@ function ensureInboxFolders(inbox) {
  * `--background`: the supervisor. One instance (health probe + run\background.lock), the server as a hidden child
  * (`--server-child`), restarts with backoff 5 s → 5 min, gives up after more than 20 restarts in an hour.
  */
-async function runBackground(log) {
+async function runBackground(log, { atLogon = false } = {}) {
   const APP = appDir();
   const env = configureEnvironment(APP, { demo: false });
   process.title = 'ClaimDesk (background)';
@@ -754,13 +799,13 @@ async function runBackground(log) {
     console.log(`ClaimDesk is already running on port ${env.port}; this background start exits.`);
     return 0;
   }
-  const lock = readLock(env.home);
-  if (!lockIsStale(lock, isAlive)) {
-    console.log(`Another ClaimDesk background process (${lock.pid}) is running; this one exits.`);
+  if (!acquireLock(env.home, { pid: process.pid, startedAt: new Date().toISOString(), port: env.port })) {
+    const lock = readLock(env.home);
+    console.log(`Another ClaimDesk background process (${lock && lock.pid}) is running; this one exits.`);
     return 0;
   }
-  fs.mkdirSync(runDir(env.home), { recursive: true });
-  fs.writeFileSync(lockPath(env.home), JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString(), port: env.port }));
+  // Started at sign-in (the Background task) or by a normal start: the owner's earlier "Stop ClaimDesk" is over.
+  if (atLogon) setStoppedFlag(env.home, false);
   const releaseLock = () => {
     const l = readLock(env.home);
     if (l && Number(l.pid) === process.pid) {
@@ -782,24 +827,32 @@ async function runBackground(log) {
   const startChild = () => {
     if (stopping) return;
     const { command, args } = selfCommand(['--server-child', '--no-browser']);
-    let fd;
-    try {
-      fd = log.openFd();
-    } catch {
-      fd = 'ignore';
-    }
     startedAt = Date.now();
     healthMisses = 0;
-    child = spawn(command, args, { stdio: ['ignore', fd, fd], windowsHide: true, env: process.env, cwd: path.dirname(command) });
-    if (typeof fd === 'number') {
-      try {
-        fs.closeSync(fd);
-      } catch {}
+    // The server's stdout/stderr come through here line by line: each line goes to that day's log file (the file
+    // rotates at midnight and old files can be pruned — a long-lived fd would keep writing to the first day's file).
+    child = spawn(command, args, { stdio: ['ignore', 'pipe', 'pipe'], windowsHide: true, env: process.env, cwd: path.dirname(command) });
+    for (const [stream, level] of [[child.stdout, 'info'], [child.stderr, 'warn']]) {
+      if (!stream) continue;
+      stream.setEncoding('utf8');
+      require('node:readline').createInterface({ input: stream }).on('line', (l) => log.write(level, `[server ${child ? child.pid : '?'}] ${l}`));
     }
     console.log(`Server started (process ${child.pid}).`);
     child.on('error', (err) => console.error(`Could not start the server: ${err && err.message ? err.message : err}`));
-    child.on('exit', (code, signal) => {
+    child.on('exit', async (code, signal) => {
+      const exitedPid = child ? child.pid : undefined;
       child = null;
+      if (stopping) return;
+      // Another ClaimDesk answering on the port (a second supervisor won the race, or one started by hand): do not
+      // restart a server that can never bind — this supervisor steps aside.
+      const other = await probeHealth(env.port);
+      if (other && other.pid && other.pid !== exitedPid) {
+        console.log(`Another ClaimDesk (process ${other.pid}) is answering on port ${env.port}; this background supervisor stops.`);
+        stopping = true;
+        clearInterval(healthTimer);
+        releaseLock();
+        process.exit(0);
+      }
       if (stopping) return;
       const ran = Date.now() - startedAt;
       failures = ran >= STABLE_RUN_MS ? 0 : failures + 1;
@@ -886,6 +939,8 @@ function parseArgs(argvIn) {
     background: has('--background'),
     serverChild: has('--server-child'),
     ensure: has('--ensure'),
+    /** --background started by the sign-in task: clears an earlier "Stop ClaimDesk". */
+    atLogon: has('--at-logon'),
     installAutostart: has('--install-autostart'),
     removeAutostart: has('--remove-autostart'),
     /** claimdesk://… link to open (from the URL protocol handler). */
@@ -999,9 +1054,11 @@ async function stopDataset(demoFlag, { quietIfNotRunning = false } = {}) {
     fileVars = parseEnvFile(fs.readFileSync(path.join(home, 'claimdesk.env'), 'utf8'));
   } catch {}
   const port = portFor(opts.demo, { ...fileVars, ...process.env });
-  // The background supervisor would restart a stopped server: stop it first (live data only).
+  // The background supervisor would restart a stopped server: stop it first (live data only). The Watchdog's
+  // --ensure must not undo the owner's stop either: the flag keeps ClaimDesk stopped until it is started again.
   let supervisorStopped = false;
   if (!opts.demo) {
+    setStoppedFlag(home, true);
     const lock = readLock(home);
     if (!lockIsStale(lock, isAlive)) {
       try {
@@ -1051,7 +1108,7 @@ async function run(argvIn = process.argv.slice(2)) {
     const log = createLogWriter(homeDir(), opts.background ? 'supervisor' : 'server');
     log.install();
     try {
-      if (opts.background) process.exitCode = await runBackground(log);
+      if (opts.background) process.exitCode = await runBackground(log, { atLogon: opts.atLogon });
       else await runServerChild();
     } catch (err) {
       console.error(`ClaimDesk ${opts.background ? 'background supervisor' : 'server'} stopped because of an error: ${err && err.stack ? err.stack : err}`);
@@ -1101,6 +1158,8 @@ async function start(opts) {
   // --open claimdesk://needs-you/<id> → that page; otherwise the home page
   const openUrl = opts.open ? protocolToUrl(opts.open, env.port) : url;
   process.chdir(path.join(APP, 'apps', 'api'));
+  // Starting ClaimDesk ends an earlier "Stop ClaimDesk" (the Watchdog may keep it running again).
+  if (!opts.demo && !opts.seedOnly) setStoppedFlag(env.home, false);
 
   // Autostart installed (§M.1): the server lives in the background. Make sure it runs, open the window, leave.
   if (!opts.demo && !opts.seedOnly && !opts.noBrowser && backgroundTaskInstalled()) {
@@ -1196,6 +1255,9 @@ module.exports = {
   backoffSchedule,
   tooManyRestarts,
   lockIsStale,
+  acquireLock,
+  setStoppedFlag,
+  stoppedByOwner,
   logFileName,
   logsToDelete,
   childCommand,

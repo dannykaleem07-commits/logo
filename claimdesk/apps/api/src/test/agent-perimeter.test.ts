@@ -165,6 +165,19 @@ describe('perimeter (§B.2)', () => {
     }
   });
 
+  it('parties and vehicles: bank details are never written by an agent; a scoped run writes only its own claim\'s', async () => {
+    const mine = t.ctx.repos.requireClaim(t.ctx.db, claimId);
+    const theirs = t.ctx.repos.requireClaim(t.ctx.db, otherClaimId);
+    const tok = token({ claimScope: claimId });
+    await expectForbidden(await asAgent<ErrorBody>(tok, 'PATCH', `/parties/${mine.claimantId}`, { bank: { sortCode: '12-34-56', accountNumber: '12345678' } }), 'money_settlement');
+    await expectForbidden(await asAgent<ErrorBody>(token(), 'POST', '/parties', { kind: 'individual', name: 'X', roles: ['witness'], bank: { sortCode: '12-34-56' } }), 'money_settlement');
+    await expectForbidden(await asAgent<ErrorBody>(tok, 'PATCH', `/parties/${theirs.claimantId}`, { phone: '07700 900999' }), 'claim_scope');
+    await expectForbidden(await asAgent<ErrorBody>(tok, 'PATCH', `/vehicles/${theirs.clientVehicleId}`, { colour: 'Red' }), 'claim_scope');
+    // the perimeter lets its own claim's party and vehicle through (the routes then validate the bodies)
+    expect((await asAgent(tok, 'PATCH', `/parties/${mine.claimantId}`, { phone: '07700 900111' })).status).not.toBe(403);
+    expect((await asAgent(tok, 'PATCH', `/vehicles/${mine.clientVehicleId}`, { colour: 'Silver' })).status).not.toBe(403);
+  });
+
   it('rule 5: human-only routes are refused even if a tool declared them', async () => {
     const doc = await t.api<{ id: string }>('POST', `/claims/${claimId}/documents`, { templateId: 'letter.chaser_7' });
     const unreg = registerTool(testTool('test_doc_approve', 'POST', '/documents/:id/approve'));

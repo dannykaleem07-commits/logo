@@ -83,6 +83,23 @@ function accountView(ctx: AppContext, a: MailAccountRecord | undefined) {
   };
 }
 
+/**
+ * Why an email was not acted on: instructions aimed at the agents (injection) or a bank / payment details change.
+ * Links to the Needs-you spoof warning raised for it.
+ */
+function messageWarning(ctx: AppContext, m: MailMessageRecord, c: ReturnType<AppContext['repos']['latestMailClassification']>) {
+  if (!c) return m.spoofSuspect ? { injection: false, injectionNotes: null, bankDetailsChange: false, spoofSuspect: true, needsYouId: null } : null;
+  const inj = (c.injection ?? {}) as { suspected?: boolean; notes?: string | null; flags?: string[] };
+  const det = (c.deterministic ?? {}) as { bankDetailsChange?: boolean };
+  const ext = (c.extracted ?? {}) as { bankDetailsChange?: boolean };
+  const injection = Boolean(inj.suspected || inj.flags?.length);
+  const bankDetailsChange = Boolean(ext.bankDetailsChange || det.bankDetailsChange);
+  if (!injection && !bankDetailsChange && !m.spoofSuspect) return null;
+  const ny = ctx.handle.sqlite.prepare('SELECT id FROM needs_you WHERE dedupe_key = ? ORDER BY created_at DESC LIMIT 1').get(`spoof_warning:${m.id}`) as { id: string } | undefined;
+  const notes = [inj.notes, ...(inj.flags ?? [])].filter((x): x is string => Boolean(x));
+  return { injection, injectionNotes: notes.length ? notes.join('; ').slice(0, 500) : null, bankDetailsChange, spoofSuspect: m.spoofSuspect, needsYouId: ny?.id ?? null };
+}
+
 /** A message for lists: intent chip and "matched because". */
 export function messageSummary(ctx: AppContext, m: MailMessageRecord) {
   const c = ctx.repos.latestMailClassification(ctx.db, m.id);
@@ -107,6 +124,7 @@ export function messageSummary(ctx: AppContext, m: MailMessageRecord) {
     source: m.source,
     snippet: (m.bodyText ?? '').replace(/\s+/g, ' ').slice(0, 240),
     intent: c ? { intent: c.intent, label: INTENT_RULES[c.intent as MailIntent]?.label ?? c.intent, confidence: c.confidence, summary: c.summary } : null,
+    warning: messageWarning(ctx, m, c),
     match: match ? { decidedBy: match.decidedBy, score: match.score, because: sig.because ?? (sig.reason ? [sig.reason] : []), decision: sig.decision ?? null, candidates: (sig.candidates ?? []).slice(0, 3) } : null,
   };
 }

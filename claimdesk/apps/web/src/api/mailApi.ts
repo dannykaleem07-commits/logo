@@ -104,6 +104,8 @@ export interface MailMessageSummary {
   source: 'imap' | 'file' | 'smtp';
   snippet: string;
   intent: { intent: string; label: string; confidence: number; summary: string } | null;
+  /** Set when the email was flagged and not acted on (instructions aimed at the agents, bank details change, spoofing). */
+  warning?: { injection: boolean; injectionNotes: string | null; bankDetailsChange: boolean; spoofSuspect: boolean; needsYouId: string | null } | null;
   match: { decidedBy: 'auto' | 'agent' | 'owner'; score: number; because: string[]; decision: string | null; candidates: Array<{ claimId: string; reference: string; score: number }> } | null;
 }
 

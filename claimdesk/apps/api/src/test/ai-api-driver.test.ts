@@ -11,7 +11,7 @@ import path from 'node:path';
 import { RESULT_SCHEMAS } from '@ccguk/domain';
 import { createTestApp, type TestApp } from './helpers.js';
 import { recomputeClocks } from '../services/claimView.js';
-import { ApiKeyDriver, FALLBACK_BETA, SUBMIT_RESULT_TOOL, type ApiKeyDriverOptions } from '../ai/apiKeyDriver.js';
+import { ApiKeyDriver, FALLBACK_BETA, neutraliseAnthropicEnv, SUBMIT_RESULT_TOOL, type ApiKeyDriverOptions } from '../ai/apiKeyDriver.js';
 import { RealAiForbiddenError } from '../ai/subscriptionCliDriver.js';
 import { assemblePrompts } from '../ai/prompts.js';
 import { costUsd } from '../ai/pricing.js';
@@ -127,6 +127,32 @@ describe('guards', () => {
     const d = new ApiKeyDriver(t.ctx, { fetch: f.fn });
     expect((await go(d)).kind).toBe('auth_failed');
     expect(f.captured).toHaveLength(0);
+  });
+});
+
+describe('no ANTHROPIC_* variable steers the driver (§A.2, §K.2)', () => {
+  it('ANTHROPIC_BASE_URL / ANTHROPIC_AUTH_TOKEN in the environment are ignored: the key goes only to api.anthropic.com', async () => {
+    const saved = { base: process.env.ANTHROPIC_BASE_URL, auth: process.env.ANTHROPIC_AUTH_TOKEN };
+    process.env.ANTHROPIC_BASE_URL = 'https://evil.invalid';
+    process.env.ANTHROPIC_AUTH_TOKEN = 'parent-auth-token-should-not-be-sent';
+    try {
+      const { d, captured } = driverWith([final()]);
+      expect((await go(d)).kind).toBe('ok');
+      expect(captured[0]!.url.startsWith('https://api.anthropic.com/')).toBe(true);
+      expect(captured[0]!.headers.authorization).toBeUndefined();
+      expect(captured[0]!.headers['x-api-key']).toBe('sk-ant-api-invented');
+    } finally {
+      if (saved.base === undefined) delete process.env.ANTHROPIC_BASE_URL;
+      else process.env.ANTHROPIC_BASE_URL = saved.base;
+      if (saved.auth === undefined) delete process.env.ANTHROPIC_AUTH_TOKEN;
+      else process.env.ANTHROPIC_AUTH_TOKEN = saved.auth;
+    }
+  });
+
+  it('neutraliseAnthropicEnv removes the SDK-steering variables at start-up', () => {
+    const env: NodeJS.ProcessEnv = { ANTHROPIC_BASE_URL: 'x', ANTHROPIC_CUSTOM_HEADERS: 'X-Leak: 1', ANTHROPIC_LOG: 'debug', PATH: '/bin' };
+    expect(neutraliseAnthropicEnv(env).sort()).toEqual(['ANTHROPIC_BASE_URL', 'ANTHROPIC_CUSTOM_HEADERS', 'ANTHROPIC_LOG']);
+    expect(env).toEqual({ PATH: '/bin' });
   });
 });
 

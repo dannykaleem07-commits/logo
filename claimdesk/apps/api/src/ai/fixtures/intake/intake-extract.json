@@ -1,7 +1,13 @@
 [
   {
     "id": "intake-v5c-on-claim",
-    "match": { "jobType": "intake.extract", "agent": "intake", "userContains": ["INTAKE-FIXTURE-V5C"] },
+    "match": {
+      "jobType": "intake.extract",
+      "agent": "intake",
+      "userContains": [
+        "INTAKE-FIXTURE-V5C"
+      ]
+    },
     "steps": [
       {
         "tool": "claim_field_propose",
@@ -10,7 +16,11 @@
           "target": "party:client.dateOfBirth",
           "value": "12/04/1990",
           "confidence": 0.96,
-          "source": { "evidenceId": "$job.payload.evidenceId", "page": 1, "quote": "Date of birth 12/04/1990 (invented fixture)" }
+          "source": {
+            "evidenceId": "$job.payload.evidenceId",
+            "page": 1,
+            "quote": "Date of birth 12/04/1990 (invented fixture)"
+          }
         }
       }
     ],
@@ -21,22 +31,87 @@
       "summary": "Invented V5C registration certificate for a blue Toyota Yaris (synthetic test fixture).",
       "formTemplateId": null,
       "fields": [
-        { "name": "Registration mark", "target": "vehicle:client.registration", "value": "KX21 ABC", "confidence": 0.99, "page": 1, "quote": "Registration mark KX21 ABC" },
-        { "name": "Vehicle Identification Number", "target": "vehicle:client.vin", "value": "WVWZZZ1JZXW000001", "confidence": 0.97, "page": 1, "quote": "VIN WVWZZZ1JZXW000001" },
-        { "name": "Colour", "target": "vehicle:client.colour", "value": "Blue", "confidence": 0.96, "page": 1, "quote": "Colour BLUE" },
-        { "name": "Date of first registration", "target": "vehicle:client.firstRegistered", "value": "12/03/2021", "confidence": 0.95, "page": 1, "quote": "Date of first registration 12/03/2021" },
-        { "name": "Model", "target": "vehicle:client.model", "value": "Yaris Icon", "confidence": 0.93, "page": 1, "quote": "Model YARIS ICON" },
-        { "name": "Make", "target": "vehicle:client.make", "value": "Toyota", "confidence": 0.99, "page": 1, "quote": "Make TOYOTA" },
-        { "name": "Registered keeper address", "target": "party:client.address", "value": "12A High Street, Reading, RG1 1AA", "confidence": 0.7, "page": 1, "quote": "12A HIGH STREET READING RG1 1AA" },
-        { "name": "Taxation class", "target": null, "value": "Petrol car", "confidence": 0.9, "page": 1, "quote": "Taxation class PETROL CAR" }
+        {
+          "name": "Registration mark",
+          "target": "vehicle:client.registration",
+          "value": "KX21 ABC",
+          "confidence": 0.99,
+          "page": 1,
+          "quote": "Registration mark KX21 ABC"
+        },
+        {
+          "name": "Vehicle Identification Number",
+          "target": "vehicle:client.vin",
+          "value": "WVWZZZ1JZXW000001",
+          "confidence": 0.97,
+          "page": 1,
+          "quote": "VIN WVWZZZ1JZXW000001"
+        },
+        {
+          "name": "Colour",
+          "target": "vehicle:client.colour",
+          "value": "Blue",
+          "confidence": 0.96,
+          "page": 1,
+          "quote": "Colour BLUE"
+        },
+        {
+          "name": "Date of first registration",
+          "target": "vehicle:client.firstRegistered",
+          "value": "12/03/2021",
+          "confidence": 0.95,
+          "page": 1,
+          "quote": "Date of first registration 12/03/2021"
+        },
+        {
+          "name": "Model",
+          "target": "vehicle:client.model",
+          "value": "Yaris Icon",
+          "confidence": 0.93,
+          "page": 1,
+          "quote": "Model YARIS ICON"
+        },
+        {
+          "name": "Make",
+          "target": "vehicle:client.make",
+          "value": "Toyota",
+          "confidence": 0.99,
+          "page": 1,
+          "quote": "Make TOYOTA"
+        },
+        {
+          "name": "Registered keeper address",
+          "target": "party:client.address",
+          "value": "12A High Street, Reading, RG1 1AA",
+          "confidence": 0.7,
+          "page": 1,
+          "quote": "12A HIGH STREET READING RG1 1AA"
+        },
+        {
+          "name": "Taxation class",
+          "target": null,
+          "value": "Petrol car",
+          "confidence": 0.9,
+          "page": 1,
+          "quote": "Taxation class PETROL CAR"
+        }
       ],
       "warnings": []
     },
-    "usage": { "inputTokens": 2400, "outputTokens": 420 }
+    "usage": {
+      "inputTokens": 2400,
+      "outputTokens": 420
+    }
   },
   {
     "id": "intake-fnol-no-claim",
-    "match": { "jobType": "intake.extract", "agent": "intake", "userContains": ["INTAKE-FIXTURE-FNOL"] },
+    "match": {
+      "jobType": "intake.extract",
+      "agent": "intake",
+      "userContains": [
+        "INTAKE-FIXTURE-FNOL"
+      ]
+    },
     "outcome": "ok",
     "result": {
       "docType": "fnol_form",
@@ -44,28 +119,139 @@
       "summary": "Invented accident report form completed by a new client (synthetic test fixture).",
       "formTemplateId": null,
       "fields": [
-        { "name": "Full name", "target": "party:client.name", "value": "Daniel Okafor", "confidence": 0.97, "page": 1, "quote": "Full name: Daniel Okafor" },
-        { "name": "Telephone", "target": "party:client.phone", "value": "07700 900456", "confidence": 0.95, "page": 1, "quote": "Telephone: 07700 900456" },
-        { "name": "Email", "target": "party:client.email", "value": "d.okafor@example.test", "confidence": 0.95, "page": 1, "quote": "Email: d.okafor@example.test" },
-        { "name": "Date of birth", "target": "party:client.dateOfBirth", "value": "30/07/1985", "confidence": 0.92, "page": 1, "quote": "Date of birth: 30/07/1985" },
-        { "name": "Address", "target": "party:client.address", "value": "4 Mill Lane, Bristol, BS1 4XY", "confidence": 0.93, "page": 1, "quote": "Address: 4 Mill Lane, Bristol, BS1 4XY" },
-        { "name": "Driving licence number", "target": "party:client.drivingLicenceNumber", "value": "OKAFO807305D99XY", "confidence": 0.9, "page": 1, "quote": "Licence: OKAFO807305D99XY" },
-        { "name": "Vehicle registration", "target": "vehicle:client.registration", "value": "AB19 CDE", "confidence": 0.98, "page": 1, "quote": "Your vehicle: AB19 CDE" },
-        { "name": "Make", "target": "vehicle:client.make", "value": "Ford", "confidence": 0.95, "page": 1, "quote": "Make: Ford" },
-        { "name": "Model", "target": "vehicle:client.model", "value": "Focus", "confidence": 0.95, "page": 1, "quote": "Model: Focus" },
-        { "name": "Date and time of accident", "target": "claim.accident.occurredAt", "value": "05/10/2026 14:30", "confidence": 0.91, "page": 1, "quote": "When: 05/10/2026 at 14:30" },
-        { "name": "Location", "target": "claim.accident.location", "value": "Station Road, Bristol", "confidence": 0.9, "page": 1, "quote": "Where: Station Road, Bristol" },
-        { "name": "Other vehicle registration", "target": "vehicle:third_party.registration", "value": "GH70 JKL", "confidence": 0.88, "page": 2, "quote": "Other vehicle: GH70 JKL" },
-        { "name": "Other driver", "target": "party:third_party.name", "value": "Peter Lane", "confidence": 0.85, "page": 2, "quote": "Other driver: Peter Lane" },
-        { "name": "Other driver's policy number", "target": "claim.thirdPartyPolicyNumber", "value": "POL12345678", "confidence": 0.8, "page": 2, "quote": "Their policy: POL12345678" },
-        { "name": "What happened", "target": null, "value": "Invented account text", "confidence": 0.9, "page": 2, "quote": "I was waiting at the lights" }
+        {
+          "name": "Full name",
+          "target": "party:client.name",
+          "value": "Daniel Okafor",
+          "confidence": 0.97,
+          "page": 1,
+          "quote": "Full name: Daniel Okafor"
+        },
+        {
+          "name": "Telephone",
+          "target": "party:client.phone",
+          "value": "07700 900456",
+          "confidence": 0.95,
+          "page": 1,
+          "quote": "Telephone: 07700 900456"
+        },
+        {
+          "name": "Email",
+          "target": "party:client.email",
+          "value": "d.okafor@example.test",
+          "confidence": 0.95,
+          "page": 1,
+          "quote": "Email: d.okafor@example.test"
+        },
+        {
+          "name": "Date of birth",
+          "target": "party:client.dateOfBirth",
+          "value": "30/07/1985",
+          "confidence": 0.92,
+          "page": 1,
+          "quote": "Date of birth: 30/07/1985"
+        },
+        {
+          "name": "Address",
+          "target": "party:client.address",
+          "value": "4 Mill Lane, Bristol, BS1 4XY",
+          "confidence": 0.93,
+          "page": 1,
+          "quote": "Address: 4 Mill Lane, Bristol, BS1 4XY"
+        },
+        {
+          "name": "Driving licence number",
+          "target": "party:client.drivingLicenceNumber",
+          "value": "OKAFO807305D99XY",
+          "confidence": 0.9,
+          "page": 1,
+          "quote": "Licence: OKAFO807305D99XY"
+        },
+        {
+          "name": "Vehicle registration",
+          "target": "vehicle:client.registration",
+          "value": "AB19 CDE",
+          "confidence": 0.98,
+          "page": 1,
+          "quote": "Your vehicle: AB19 CDE"
+        },
+        {
+          "name": "Make",
+          "target": "vehicle:client.make",
+          "value": "Ford",
+          "confidence": 0.95,
+          "page": 1,
+          "quote": "Make: Ford"
+        },
+        {
+          "name": "Model",
+          "target": "vehicle:client.model",
+          "value": "Focus",
+          "confidence": 0.95,
+          "page": 1,
+          "quote": "Model: Focus"
+        },
+        {
+          "name": "Date and time of accident",
+          "target": "claim.accident.occurredAt",
+          "value": "05/10/2026 14:30",
+          "confidence": 0.91,
+          "page": 1,
+          "quote": "When: 05/10/2026 at 14:30"
+        },
+        {
+          "name": "Location",
+          "target": "claim.accident.location",
+          "value": "Station Road, Bristol",
+          "confidence": 0.9,
+          "page": 1,
+          "quote": "Where: Station Road, Bristol"
+        },
+        {
+          "name": "Other vehicle registration",
+          "target": "vehicle:third_party.registration",
+          "value": "GH70 JKL",
+          "confidence": 0.88,
+          "page": 2,
+          "quote": "Other vehicle: GH70 JKL"
+        },
+        {
+          "name": "Other driver",
+          "target": "party:third_party.name",
+          "value": "Peter Lane",
+          "confidence": 0.85,
+          "page": 2,
+          "quote": "Other driver: Peter Lane"
+        },
+        {
+          "name": "Other driver's policy number",
+          "target": "claim.thirdPartyPolicyNumber",
+          "value": "POL12345678",
+          "confidence": 0.8,
+          "page": 2,
+          "quote": "Their policy: POL12345678"
+        },
+        {
+          "name": "What happened",
+          "target": null,
+          "value": "Invented account text",
+          "confidence": 0.9,
+          "page": 2,
+          "quote": "I was waiting at the lights"
+        }
       ],
       "warnings": []
     }
   },
   {
     "id": "intake-email-correspondence",
-    "match": { "jobType": "intake.extract", "agent": "intake", "userContains": ["INTAKE-FIXTURE-EMAIL"] },
+    "match": {
+      "jobType": "intake.extract",
+      "agent": "intake",
+      "userContains": [
+        "INTAKE-FIXTURE-EMAIL"
+      ]
+    },
     "outcome": "ok",
     "result": {
       "docType": "insurer_letter",
@@ -73,14 +259,139 @@
       "summary": "Invented insurer acknowledgement giving their claim reference (synthetic test fixture).",
       "formTemplateId": null,
       "fields": [
-        { "name": "Our reference", "target": "claim.atFaultInsurerRef", "value": "EXI/2026/0042", "confidence": 0.95, "page": 1, "quote": "Our ref: EXI/2026/0042" }
+        {
+          "name": "Our reference",
+          "target": "claim.atFaultInsurerRef",
+          "value": "EXI/2026/0042",
+          "confidence": 0.95,
+          "page": 1,
+          "quote": "Our ref: EXI/2026/0042"
+        }
       ],
       "warnings": []
     }
   },
   {
+    "id": "intake-driving-licence",
+    "match": {
+      "jobType": "intake.extract",
+      "agent": "intake",
+      "userContains": [
+        "INTAKE-FIXTURE-LICENCE"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "docType": "driving_licence",
+      "docTypeConfidence": 0.95,
+      "summary": "Invented UK photocard driving licence (synthetic test fixture).",
+      "formTemplateId": null,
+      "fields": [
+        {
+          "name": "Name",
+          "target": "party:client.name",
+          "value": "Amina Yusuf",
+          "confidence": 0.97,
+          "page": 1,
+          "quote": "1. YUSUF 2. AMINA"
+        },
+        {
+          "name": "Date of birth",
+          "target": "party:client.dateOfBirth",
+          "value": "12/04/1990",
+          "confidence": 0.96,
+          "page": 1,
+          "quote": "3. 12.04.1990 UNITED KINGDOM"
+        },
+        {
+          "name": "Driving licence number",
+          "target": "party:client.drivingLicenceNumber",
+          "value": "YUSUF904120A99AB",
+          "confidence": 0.95,
+          "page": 1,
+          "quote": "5. YUSUF904120A99AB"
+        },
+        {
+          "name": "Address",
+          "target": "party:client.address",
+          "value": "12 High Street, Reading, RG1 1AA",
+          "confidence": 0.92,
+          "page": 1,
+          "quote": "8. 12 HIGH STREET, READING RG1 1AA"
+        }
+      ],
+      "warnings": []
+    },
+    "usage": {
+      "inputTokens": 1600,
+      "outputTokens": 300
+    }
+  },
+  {
+    "id": "intake-bodyshop-estimate",
+    "match": {
+      "jobType": "intake.extract",
+      "agent": "intake",
+      "userContains": [
+        "INTAKE-FIXTURE-ESTIMATE"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "docType": "bodyshop_estimate",
+      "docTypeConfidence": 0.93,
+      "summary": "Invented bodyshop repair estimate (synthetic test fixture).",
+      "formTemplateId": null,
+      "fields": [
+        {
+          "name": "Registration",
+          "target": "vehicle:client.registration",
+          "value": "KX21 ABC",
+          "confidence": 0.98,
+          "page": 1,
+          "quote": "Reg: KX21 ABC"
+        },
+        {
+          "name": "Labour total",
+          "target": null,
+          "value": "£420.00",
+          "confidence": 0.9,
+          "page": 1,
+          "quote": "Labour total 420.00"
+        },
+        {
+          "name": "Parts total",
+          "target": null,
+          "value": "£1,180.00",
+          "confidence": 0.9,
+          "page": 1,
+          "quote": "Parts total 1,180.00"
+        },
+        {
+          "name": "Estimate total (inc VAT)",
+          "target": null,
+          "value": "£1,920.00",
+          "confidence": 0.9,
+          "page": 1,
+          "quote": "TOTAL INC VAT 1,920.00"
+        }
+      ],
+      "warnings": []
+    },
+    "usage": {
+      "inputTokens": 2200,
+      "outputTokens": 280
+    }
+  },
+  {
     "id": "intake-attachment-image",
-    "match": { "jobType": "intake.extract", "agent": "intake", "userContains": ["[intake:image]"] },
+    "match": {
+      "jobType": "intake.extract",
+      "agent": "intake",
+      "userContains": [
+        "[intake:image]"
+      ]
+    },
     "outcome": "ok",
     "result": {
       "docType": "damage_photo",
@@ -93,7 +404,13 @@
   },
   {
     "id": "intake-quota",
-    "match": { "jobType": "intake.extract", "agent": "intake", "userContains": ["INTAKE-FIXTURE-QUOTA"] },
+    "match": {
+      "jobType": "intake.extract",
+      "agent": "intake",
+      "userContains": [
+        "INTAKE-FIXTURE-QUOTA"
+      ]
+    },
     "outcome": "usage_limited",
     "resetsInMinutes": 45
   }

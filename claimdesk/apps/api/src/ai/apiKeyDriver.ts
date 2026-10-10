@@ -101,6 +101,24 @@ function addUsage(total: AiUsage, u: unknown): void {
 
 class FirstRequestRejected extends Error {}
 
+/** The only host the stored API key is sent to (unless a test injects another through the driver options). */
+export const ANTHROPIC_API_BASE_URL = 'https://api.anthropic.com';
+
+/** Environment variables the Anthropic SDK reads by itself; removed at API start so none can steer a driver. */
+export const SDK_STEERING_ENV = ['ANTHROPIC_BASE_URL', 'ANTHROPIC_AUTH_TOKEN', 'ANTHROPIC_CUSTOM_HEADERS', 'ANTHROPIC_PROFILE', 'ANTHROPIC_CONFIG_DIR', 'ANTHROPIC_LOG', 'ANTHROPIC_WEBHOOK_SIGNING_KEY'] as const;
+
+/** Delete the SDK-steering ANTHROPIC_* variables from this process (server start, before any driver exists). */
+export function neutraliseAnthropicEnv(env: NodeJS.ProcessEnv = process.env): string[] {
+  const removed: string[] = [];
+  for (const k of SDK_STEERING_ENV) {
+    if (env[k] !== undefined) {
+      delete env[k];
+      removed.push(k);
+    }
+  }
+  return removed;
+}
+
 export class ApiKeyDriver implements AiDriver {
   readonly kind = 'api_key' as const;
 
@@ -116,12 +134,17 @@ export class ApiKeyDriver implements AiDriver {
   }
 
   private client(apiKey: string, timeoutMs: number): Anthropic {
+    // §A.2/§K.2: the key comes only from the secret store, and no ANTHROPIC_* variable steers this client — the SDK
+    // would otherwise take ANTHROPIC_BASE_URL (send the key elsewhere), ANTHROPIC_AUTH_TOKEN (an extra bearer header),
+    // ANTHROPIC_CUSTOM_HEADERS and ANTHROPIC_LOG from the environment (see also neutraliseAnthropicEnv at start-up).
     return new Anthropic({
       apiKey,
+      authToken: null,
+      baseURL: this.opts.baseURL ?? ANTHROPIC_API_BASE_URL,
+      logLevel: 'off',
       maxRetries: this.opts.maxRetries ?? 2,
       timeout: timeoutMs,
       ...(this.opts.fetch ? { fetch: this.opts.fetch } : {}),
-      ...(this.opts.baseURL ? { baseURL: this.opts.baseURL } : {}),
     });
   }
 

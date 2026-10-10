@@ -589,3 +589,57 @@
     gap: 6px;
   }
 }
+
+/* ---- Top bar fit (Supreme pass): the Agents pill and the Needs-you badge pushed Manager mode, the avatar and Sign out
+ * off-screen at 920–1280 px (1280 px is a 1600 px screen at 125 % scaling), at 1600–1660 px and on small phones. The
+ * search box may shrink to its icon, the pill keeps its coloured dot (the label is in its tooltip), quiet badges step
+ * aside, and the long labels only show when there is room for them. ---- */
+@media (min-width: 901px) and (max-width: 1365px) {
+  .topbar-search {
+    flex: 1 1 140px;
+    width: auto;
+    min-width: 38px;
+  }
+  [data-testid='agents-pill'] .label-short {
+    display: none;
+  }
+  .topbar-badges .topbar-badge:not(.hot):not(.warm):not([data-testid]) {
+    display: none;
+  }
+}
+@media (min-width: 1600px) and (max-width: 1799px) {
+  .topbar-badge .label-long {
+    display: none;
+  }
+  .topbar-badge .label-short {
+    display: inline;
+  }
+  .topbar-user .user-text {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  [data-testid='agents-pill'] .label-short {
+    display: none;
+  }
+  .topbar-badges .topbar-badge:not(.hot):not(.warm):not([data-testid]) {
+    display: none;
+  }
+}
+.topbar-badge .count .label-short {
+  display: none;
+}
+@media (max-width: 1799px) {
+  .topbar-badge .count .label-long {
+    display: none;
+  }
+  .topbar-badge .count .label-short {
+    display: inline;
+  }
+}
+/* Small phones: the attention badges keep their counts (the words are in their tooltips); the Needs-you bell stays. */
+@media (max-width: 380px) {
+  .topbar-badges .topbar-badge:not([data-testid='needs-you-badge']) .label-short {
+    display: none;
+  }
+}

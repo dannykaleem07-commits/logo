@@ -5,6 +5,7 @@
  * subscription CLI's tool calls meet exactly the same dispatcher, policy, perimeter and routes as the API driver's.
  */
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { CallToolRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import type { AppContext } from '../context.js';
 import { appVersion } from '../routes/health.js';
 import type { RunContext } from './contracts.js';
@@ -29,5 +30,12 @@ export function buildMcpServer(ctx: AppContext, rc: RunContext): McpServer {
       },
     );
   }
+  // tools/call goes straight to executeTool for EVERY name: a tool outside the allow-list, or arguments that fail the
+  // schema, are refused and recorded by the dispatcher (agent_tool_calls 'denied' / 'invalid', §B.3 step 1) instead of
+  // being rejected inside the MCP SDK with no record. tools/list stays limited to rc.allowedTools.
+  server.server.setRequestHandler(CallToolRequestSchema, async (req) => {
+    const r = await executeTool(ctx, rc, req.params.name, req.params.arguments ?? {});
+    return { content: [{ type: 'text' as const, text: r.content }], ...(r.ok ? {} : { isError: true }) };
+  });
   return server;
 }

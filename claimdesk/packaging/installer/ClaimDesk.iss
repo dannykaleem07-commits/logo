@@ -100,6 +100,8 @@ Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExe}"; WorkingDir: "{app
 [Run]
 ; Background mode (§M.1): scheduled tasks ClaimDesk\Background (at sign-in) and ClaimDesk\Watchdog (every 15 minutes).
 Filename: "{app}\{#AppExe}"; Parameters: "--install-autostart"; WorkingDir: "{app}"; StatusMsg: "Setting ClaimDesk to run in the background..."; Flags: runhidden waituntilterminated; Tasks: autostart
+; Start the background server again now (a silent update stopped it; otherwise the Watchdog waits up to 15 minutes).
+Filename: "{app}\{#AppExe}"; Parameters: "--ensure"; WorkingDir: "{app}"; Flags: runhidden nowait; Tasks: autostart
 ; Unticked (e.g. on an upgrade): take the tasks away again.
 Filename: "{app}\{#AppExe}"; Parameters: "--remove-autostart"; WorkingDir: "{app}"; Flags: runhidden waituntilterminated; Tasks: not autostart
 Filename: "{app}\{#AppExe}"; Description: "Start {#AppName} now"; WorkingDir: "{app}"; Flags: nowait postinstall skipifsilent runminimized

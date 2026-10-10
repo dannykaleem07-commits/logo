@@ -25,12 +25,13 @@ import {
   type Decision,
   type EmailKind,
   type EvidenceKind,
+  type MailIntent,
   type RecipientRole,
 } from '@ccguk/domain';
 import type { Actor, MailAccountRecord, OutboxAttachmentRef, OutboxRecord, ReviewRecord } from '@ccguk/db';
 import type { AppContext } from '../context.js';
 import type { JobRecord } from '../agent/contracts.js';
-import { autonomyState, createNeedsYou, enqueueJob, getAutonomy, londonHhmm } from '../agent/core.js';
+import { autonomyState, createNeedsYou, enqueueJob, getAutonomy, londonDayWindow, londonHhmm } from '../agent/core.js';
 import { gatewayServices } from '../ai/prompts.js';
 import { notifyOwner } from '../notify/index.js';
 import { absoluteEvidencePath, stageBuffer, storeEvidence } from '../services/evidence.js';
@@ -39,6 +40,7 @@ import { STRICT_GATE } from '../services/override.js';
 import { isAutomatedActor } from '../services/humanOnly.js';
 import { badRequest, conflict } from '../errors.js';
 import { MAIL_ACTOR, MAIL_AGENT, appendClaimEvent, fromHeader, mailAccount } from './common.js';
+import { INTENT_RULES } from './intents.js';
 import { directoryDomains } from './parse.js';
 import { mailboxFor, newMessageId, smtpFor, MailTransportError } from './transport.js';
 
@@ -172,13 +174,16 @@ export interface DraftMeta {
   loop: number;
   jobId?: string;
   sourceMessageId?: string;
+  /** The agent run that drafted it (mail.reply / draft.compose): later agent audits on this outbox carry it (§K.5). */
+  runId?: string;
 }
 
 const PLACEHOLDER_RE = /\{\{\s*fact:[^}]+\}\}/;
 
+/** §F.4: every outbound subject carries the bracketed reference " [CCG-YYYY-NNNNN]" (a bare mention is not enough). */
 export function tagSubject(subject: string, reference: string): string {
   const s = subject.trim();
-  return s.toUpperCase().includes(reference.toUpperCase()) ? s : `${s} [${reference}]`;
+  return s.toUpperCase().includes(`[${reference.toUpperCase()}]`) ? s : `${s} [${reference}]`;
 }
 
 /** Create an outbox draft from an agent (email_draft) and send it to review. */
@@ -242,7 +247,7 @@ export function createEmailDraft(ctx: AppContext, input: EmailDraftInput, actor:
     });
     return transition(ctx, o.id, 'reviewing', actor, 'sent to the reviewer', { patch: { policy: { draftMeta: { ...meta, ...(input.inReplyToMessageId ? { sourceMessageId: input.inReplyToMessageId } : {}) } } }, now: ctx.now() });
   });
-  ctx.repos.appendAudit(ctx.db, { actor: { userId: actor }, action: 'outbox.draft', entity: 'outbox', entityId: outbox.id, after: { claimId: claim.id, kind: input.kind, to: outbox.toJson, attachments: attachments.length, attachmentsAllowed: check.allowed }, at: ctx.now() });
+  ctx.repos.appendAudit(ctx.db, { actor: { userId: actor, ...(meta.runId ? { runId: meta.runId } : {}) }, action: 'outbox.draft', entity: 'outbox', entityId: outbox.id, after: { claimId: claim.id, kind: input.kind, to: outbox.toJson, attachments: attachments.length, attachmentsAllowed: check.allowed }, at: ctx.now() });
   const review = enqueueJob(ctx, {
     type: 'review.check',
     payload: { targetKind: 'outbox', targetId: outbox.id, claimId: claim.id, loop: meta.loop },
@@ -261,7 +266,13 @@ export function createEmailDraft(ctx: AppContext, input: EmailDraftInput, actor:
 
 export function draftMetaOf(o: OutboxRecord): DraftMeta {
   const m = (o.policy as { draftMeta?: DraftMeta } | undefined)?.draftMeta;
-  return { loop: Number(m?.loop ?? 0), ...(m?.jobId ? { jobId: m.jobId } : {}), ...(m?.sourceMessageId ? { sourceMessageId: m.sourceMessageId } : {}) };
+  return { loop: Number(m?.loop ?? 0), ...(m?.jobId ? { jobId: m.jobId } : {}), ...(m?.sourceMessageId ? { sourceMessageId: m.sourceMessageId } : {}), ...(m?.runId ? { runId: m.runId } : {}) };
+}
+
+/** The mail agent as the actor of a write about this outbox row, with the run that drafted it (§K.5). */
+function mailActorFor(o: OutboxRecord): Actor {
+  const runId = draftMetaOf(o).runId;
+  return runId ? { ...MAIL_ACTOR, runId } : MAIL_ACTOR;
 }
 
 function criticOf(review: ReviewRecord | undefined): { confidence?: number; issues: Array<{ code?: string; severity?: string; message?: string }> } {
@@ -270,6 +281,26 @@ function criticOf(review: ReviewRecord | undefined): { confidence?: number; issu
   const facts = (review?.facts ?? {}) as { issues?: unknown };
   const issues = [c.issues, rules.issues, facts.issues].flatMap((x) => (Array.isArray(x) ? (x as Array<Record<string, string>>) : []));
   return { ...(typeof c.confidence === 'number' ? { confidence: c.confidence } : {}), issues };
+}
+
+/**
+ * What the email being answered was about (its latest triage): a legal-route intent (fraud allegation, complaint,
+ * solicitor, court…) makes the reply touch `legal`; an offer-route intent (settlement, PAV, interim payment,
+ * intervention offer) makes it touch `settlement`. `ref` is a mail_messages id (draftMeta.sourceMessageId) or, as a
+ * fallback, the RFC Message-ID the outbox replies to.
+ */
+export function sourceIntentTouches(ctx: AppContext, ref: string | undefined | null): { legal: boolean; settlement: boolean; intent?: string } {
+  if (!ref) return { legal: false, settlement: false };
+  let message = ctx.repos.getMailMessage(ctx.db, ref);
+  if (!message && ref.includes('@')) {
+    const row = ctx.handle.sqlite.prepare("SELECT id FROM mail_messages WHERE message_id = ? AND direction = 'in' ORDER BY received_at DESC LIMIT 1").get(ref) as { id: string } | undefined;
+    if (row) message = ctx.repos.getMailMessage(ctx.db, row.id);
+  }
+  if (!message) return { legal: false, settlement: false };
+  const c = ctx.repos.latestMailClassification(ctx.db, message.id);
+  const intents = c ? [c.intent, ...(c.secondary ?? [])] : [];
+  const routes = intents.map((i) => INTENT_RULES[i as MailIntent]?.route).filter(Boolean);
+  return { legal: routes.includes('legal'), settlement: routes.includes('offer'), ...(c ? { intent: c.intent } : {}) };
 }
 
 /** The ActionDescriptor for sending an outbox row (§D.2). */
@@ -288,6 +319,9 @@ export function describeOutbox(ctx: AppContext, o: OutboxRecord, review: ReviewR
   const hasConfidence = typeof o.confidence === 'number' || typeof critic.confidence === 'number';
   const missingInfo = o.kind === 'doc_request' || critic.issues.some((i) => /MISSING/i.test(i.code ?? ''));
   const consistencyBlocked = docs.some((d) => d.status === 'blocked' || Boolean(d.consistency?.blocked)) || critic.issues.some((i) => i.severity === 'block');
+  // §D.1: a reply to a legal matter or an offer always asks, whatever the wording of the reply.
+  const sourceTouches = sourceIntentTouches(ctx, draftMetaOf(o).sourceMessageId ?? o.inReplyTo);
+  const touches = review ? { ...review.touches, ...(sourceTouches.legal ? { legal: true } : {}), ...(sourceTouches.settlement ? { settlement: true } : {}) } : undefined;
   const descriptor: ActionDescriptor = {
     class: 'external_send',
     kind: `email.${o.kind}`,
@@ -296,7 +330,7 @@ export function describeOutbox(ctx: AppContext, o: OutboxRecord, review: ReviewR
     ...(templateId ? { templateId } : {}),
     ...(worst ? { recipient: { address: worst.address, role: worst.role, verified: worst.verified, firstContact: worst.firstContact, onClaim: worst.onClaim } } : {}),
     confidence: hasConfidence ? confidence : 0,
-    ...(review ? { review: { verdict: review.verdict, touches: review.touches } } : {}),
+    ...(review && touches ? { review: { verdict: review.verdict, touches } } : {}),
     consistencyBlocked,
     missingInfo,
     attachmentsAllowed: attachments.allowed,
@@ -334,6 +368,7 @@ function askOwner(ctx: AppContext, o: OutboxRecord, decision: Decision, kind: 'a
     createdBy: MAIL_AGENT,
     dedupeKey: `${kind}:outbox:${o.id}`,
     correlationId: job.correlationId,
+    ...(draftMetaOf(o).runId ? { runId: draftMetaOf(o).runId } : {}),
   });
 }
 
@@ -384,7 +419,7 @@ export async function afterReview(ctx: AppContext, outboxId: string, reviewId: s
 
   const { descriptor } = describeOutbox(ctx, o, review);
   const decision = decide(descriptor, getAutonomy(ctx), autonomyState(ctx, { ...(o.claimId ? { claimId: o.claimId } : {}), agent: 'mail' }));
-  ctx.repos.appendAudit(ctx.db, { actor: MAIL_ACTOR, action: 'agent.policy', entity: 'outbox', entityId: o.id, after: { tool: 'send_request', outcome: decision.outcome, ruleIds: decision.ruleIds, reasons: decision.reasons, reviewId: review.id }, at: ctx.now() });
+  ctx.repos.appendAudit(ctx.db, { actor: mailActorFor(o), action: 'agent.policy', entity: 'outbox', entityId: o.id, after: { tool: 'send_request', outcome: decision.outcome, ruleIds: decision.ruleIds, reasons: decision.reasons, reviewId: review.id }, at: ctx.now() });
 
   if (decision.outcome === 'auto_held') {
     // §D.5: attached allow-listed draft letters are approved by the agent on the strength of their own pass review.
@@ -414,7 +449,7 @@ export async function afterReview(ctx: AppContext, outboxId: string, reviewId: s
         kind: 'held_send',
         title: `Sending in ${minutes} min — Undo`,
         body: `"${held.subject}" to ${held.toJson.join(', ')} is held until ${londonHhmm(holdUntil)}. Undo stops it; after it is sent it cannot be undone.`,
-        link: `/outbox?focus=${held.id}`,
+        link: `/outbox/${held.id}`,
         undoOutboxId: held.id,
         toastTitle: `Sending in ${minutes} min — Undo`,
         toastBody: `${reference ?? 'Email'} · ${held.kind.replace(/_/g, ' ')}`,
@@ -616,8 +651,13 @@ const isOwnerApproved = (o: OutboxRecord): boolean => Boolean(o.approvedBy && !i
 function overRateLimit(ctx: AppContext, o: OutboxRecord): string | undefined {
   const s = getAutonomy(ctx);
   const st = autonomyState(ctx, { ...(o.claimId ? { claimId: o.claimId } : {}), agent: 'mail' });
-  const selfToday = (o.policy as { outcome?: string } | undefined)?.outcome === 'auto_held' ? 1 : 0;
-  const selfHour = selfToday && Date.parse(o.createdAt) >= Date.parse(ctx.now()) - 3_600_000 ? 1 : 0;
+  // This row is counted at the time it goes out (its hold end, else its creation) — subtract it only from the
+  // windows that time falls in (automaticSendCounts).
+  const auto = (o.policy as { outcome?: string } | undefined)?.outcome === 'auto_held';
+  const outAt = Date.parse(o.holdUntil ?? o.createdAt);
+  const { dayStart, dayEnd } = londonDayWindow(ctx.now());
+  const selfToday = auto && outAt >= Date.parse(dayStart) && outAt < Date.parse(dayEnd) ? 1 : 0;
+  const selfHour = auto && outAt >= Date.parse(ctx.now()) - 3_600_000 ? 1 : 0;
   if (st.sends.claimToday - selfToday >= s.limits.perClaimPerDay) return `${st.sends.claimToday - selfToday} automatic sends on this claim today (limit ${s.limits.perClaimPerDay})`;
   if (st.sends.lastHour - selfHour >= s.limits.perHour) return `${st.sends.lastHour - selfHour} automatic sends in the last hour (limit ${s.limits.perHour})`;
   if (st.sends.today - selfToday >= s.limits.perDay) return `${st.sends.today - selfToday} automatic sends today (limit ${s.limits.perDay})`;
@@ -717,7 +757,7 @@ export async function releaseOutbox(ctx: AppContext, outboxId: string, job: Pick
   }
 
   // ---- accepted by SMTP: only now is anything recorded as sent ----
-  const actor: Actor = o.approvedBy && isOwnerApproved(o) ? { userId: o.approvedBy } : MAIL_ACTOR;
+  const actor: Actor = o.approvedBy && isOwnerApproved(o) ? { userId: o.approvedBy } : mailActorFor(o);
   const now = ctx.now();
   let rawEvidenceId: string | undefined;
   try {
