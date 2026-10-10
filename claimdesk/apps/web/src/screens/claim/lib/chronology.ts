@@ -17,13 +17,13 @@ export interface EventGroup {
 }
 
 export const EVENT_GROUPS: EventGroup[] = [
-  { id: 'intake', label: 'Intake & notification', types: ['fnol', 'services_agreed', 'ncaf_sent', 'handling_ref_received', 'first_notification_dispute', 'documents_signed', 'hire_start_notice_sent'] },
+  { id: 'intake', label: 'Intake & notification', types: ['fnol', 'services_agreed', 'ncaf_sent', 'handling_ref_received', 'first_notification_dispute'] },
   {
     id: 'engineering',
     label: 'Engineering & repair',
     types: ['engineer_instructed', 'inspection', 'report_issued', 'estimate_received', 'repair_authorised', 'parts_ordered', 'parts_arrived', 'repair_started', 'repair_delay', 'repair_completed', 'vehicle_returned']
   },
-  { id: 'hire', label: 'Hire, storage & recovery', types: ['hire_offered', 'hire_offer_accepted', 'hire_offer_declined', 'booking_confirmed', 'booking_cancelled', 'hire_vehicle_delivered', 'hire_started', 'hire_vehicle_collected', 'hire_ended', 'storage_started', 'storage_ended', 'recovery', 'collect_or_pay_notice_sent', 'vehicle_collected', 'salvage_released'] },
+  { id: 'hire', label: 'Hire, storage & recovery', types: ['hire_started', 'hire_ended', 'storage_started', 'storage_ended', 'recovery', 'collect_or_pay_notice_sent', 'vehicle_collected', 'salvage_released'] },
   { id: 'total_loss', label: 'Total loss & PAV', types: ['total_loss_confirmed', 'pav_offer_received', 'pav_agreed', 'tl_payment_received', 'cash_in_lieu_received', 'insurer_termination_notice'] },
   { id: 'intervention', label: 'Intervention', types: ['intervention_offer', 'intervention_reply_sent'] },
   {
@@ -95,17 +95,7 @@ export const EVENT_LABEL: Record<EventType, string> = {
   email_out: 'Email out',
   letter_in: 'Letter in',
   letter_out: 'Letter out',
-  note: 'Note',
-  // Autopilot (SUPREME-AUTOPILOT §G.3)
-  hire_offered: 'Hire car offered',
-  hire_offer_accepted: 'Hire offer accepted',
-  hire_offer_declined: 'Hire offer declined',
-  booking_confirmed: 'Hire booking confirmed',
-  booking_cancelled: 'Hire booking cancelled',
-  hire_vehicle_delivered: 'Hire car delivered',
-  hire_vehicle_collected: 'Hire car collected',
-  hire_start_notice_sent: 'Hire start notice sent',
-  documents_signed: 'Documents signed'
+  note: 'Note'
 };
 
 export const ATTRIBUTABLE_LABEL: Record<Attributable, string> = {

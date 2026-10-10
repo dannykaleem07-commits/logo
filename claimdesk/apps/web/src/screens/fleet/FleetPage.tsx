@@ -8,10 +8,6 @@ import { isTerminalStage, type FleetUnitView } from './fleet';
 import { UnitsTab } from './UnitsTab';
 import { PenaltiesTab } from './PenaltiesTab';
 import { PenaltyDialog } from './PenaltyDialog';
-// Autopilot (docs/SUPREME-AUTOPILOT.md §I.3, §I.4, §C.5): built by ap-booking (calendar, movements) and ap-clash (clashes).
-import { CalendarTab } from './CalendarTab';
-import { MovementsTab } from './MovementsTab';
-import { ClashesTab } from './ClashesTab';
 
 /**
  * Fleet (BLUEPRINT §3.12, lesson l): /fleet → units + alerts; /fleet/penalties → PCN / NIP workflow.
@@ -39,22 +35,10 @@ export function FleetPage() {
         <NavLink to="/fleet/penalties" className={({ isActive }) => (isActive ? 'active' : '')}>
           Penalties {openPenalties > 0 && <Badge tone="amber">{openPenalties}</Badge>}
         </NavLink>
-        <NavLink to="/fleet/calendar" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Calendar
-        </NavLink>
-        <NavLink to="/fleet/movements" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Movements
-        </NavLink>
-        <NavLink to="/fleet/clashes" className={({ isActive }) => (isActive ? 'active' : '')}>
-          Clashes
-        </NavLink>
       </nav>
       <Routes>
         <Route index element={<UnitsTab onLogNotice={(unitId) => setNotice({ unitId })} />} />
         <Route path="penalties" element={<PenaltiesTab onLogNotice={() => setNotice({})} />} />
-        <Route path="calendar" element={<CalendarTab />} />
-        <Route path="movements" element={<MovementsTab />} />
-        <Route path="clashes" element={<ClashesTab />} />
         <Route path="*" element={<Navigate to="/fleet" replace />} />
       </Routes>
       <PenaltyDialog open={notice !== null} units={units} initialUnitId={notice?.unitId} onClose={() => setNotice(null)} />

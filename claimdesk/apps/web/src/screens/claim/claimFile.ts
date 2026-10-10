@@ -29,7 +29,7 @@ export interface ClaimView extends ClaimBundle {
   linkedClaims?: Array<{ id: Id; reference: string; status: ClaimStatus | string }>;
 }
 
-export type ClaimTabId = 'overview' | 'chronology' | 'ledger' | 'clocks' | 'gates' | 'hire' | 'offers' | 'evidence' | 'documents' | 'engineering' | 'vehicle' | 'actions' | 'flags' | 'mailbox' | 'agent' | 'autopilot';
+export type ClaimTabId = 'overview' | 'chronology' | 'ledger' | 'clocks' | 'gates' | 'hire' | 'offers' | 'evidence' | 'documents' | 'engineering' | 'vehicle' | 'actions' | 'flags' | 'mailbox' | 'agent';
 
 /**
  * Claim file tabs (0.3 §E1). The primary row holds the six used every day; the rest sit in the "More ▾" menu. Ids (and
@@ -38,8 +38,7 @@ export type ClaimTabId = 'overview' | 'chronology' | 'ledger' | 'clocks' | 'gate
 export const PRIMARY_TAB_IDS: readonly ClaimTabId[] = ['overview', 'hire', 'documents', 'evidence', 'vehicle', 'actions'];
 export const MORE_TAB_IDS: readonly ClaimTabId[] = ['chronology', 'ledger', 'clocks', 'gates', 'offers', 'engineering', 'flags'];
 /** ClaimDesk Supreme tabs (docs/SUPREME-DESIGN.md §L.5, §L.9): shown after the primary row. */
-/** Autopilot (docs/SUPREME-AUTOPILOT.md §I.1) leads the group; the tab itself is built by ap-autopilot. */
-export const AGENT_TAB_IDS: readonly ClaimTabId[] = ['autopilot', 'mailbox', 'agent'];
+export const AGENT_TAB_IDS: readonly ClaimTabId[] = ['mailbox', 'agent'];
 
 export const CLAIM_TABS: Array<TabItem & { id: ClaimTabId }> = [
   { id: 'overview', label: 'Overview' },
@@ -55,7 +54,6 @@ export const CLAIM_TABS: Array<TabItem & { id: ClaimTabId }> = [
   { id: 'offers', label: 'Offers' },
   { id: 'engineering', label: 'Engineering' },
   { id: 'flags', label: 'Flags' },
-  { id: 'autopilot', label: 'Autopilot' },
   { id: 'mailbox', label: 'Mailbox' },
   { id: 'agent', label: 'Agent' }
 ];

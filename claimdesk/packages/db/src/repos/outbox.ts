@@ -87,8 +87,6 @@ export interface OutboxRecord {
   createdBy: string;
   createdAt: ISODateTime;
   updatedAt: ISODateTime;
-  /** The Autopilot step that created this draft (SUPREME-AUTOPILOT §0.6, §D.3). */
-  autopilotStepId?: string;
 }
 
 export interface OutboxEventRecord {
@@ -123,8 +121,6 @@ export interface CreateOutboxInput {
   createdBy: string;
   reason?: string;
   now?: ISODateTime;
-  /** Set by code only: the Autopilot step that created this draft. */
-  autopilotStepId?: string | null;
 }
 
 /** A new outbox row in `draft`, with its first outbox_events row (null → draft). */
@@ -155,7 +151,6 @@ export function createOutbox(db: Db, input: CreateOutboxInput): OutboxRecord {
       confidence: input.confidence ?? null,
       status: 'draft',
       attempts: 0,
-      autopilotStepId: input.autopilotStepId ?? null,
       createdBy: input.createdBy,
       createdAt: now,
       updatedAt: now,

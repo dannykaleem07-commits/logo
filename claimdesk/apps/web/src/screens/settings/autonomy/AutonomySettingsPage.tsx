@@ -32,11 +32,6 @@ const EMAIL_KIND_LABEL: Record<EmailKind, string> = {
   offer_response: 'Offer response',
   complaint: 'Complaint',
   legal: 'Legal',
-  // Autopilot (SUPREME-AUTOPILOT §0.6)
-  hire_offer: 'Hire car offer (only with a verified booking)',
-  booking_update: 'Booking update (delivery / collection)',
-  signature_request: 'Paperwork to sign',
-  insurer_notice: 'Notice to the insurer (hire start)',
 };
 
 export function AutonomySettingsPage() {

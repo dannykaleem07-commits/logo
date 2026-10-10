@@ -10,7 +10,7 @@ export * as schema from './schema.js';
 export type * from './schema.js';
 export { createDatabase, closeDatabase } from './client.js';
 export type { Db, DbClient, DatabaseHandle, CreateDatabaseOptions } from './client.js';
-export { runMigrations, migrationsFolder, skippedMigrations, MigrationOrderError } from './migrate.js';
+export { runMigrations, migrationsFolder } from './migrate.js';
 export { pendingMigrationCount, backupDatabase, backupBeforeMigrate, backupFileName, pruneBackups, readMigrationJournal, BACKUP_PREFIX, BACKUPS_KEPT } from './backup.js';
 export type { BackupBeforeMigrateOptions, BackupBeforeMigrateResult } from './backup.js';
 export * from './errors.js';

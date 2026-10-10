@@ -53,7 +53,7 @@ jobs:
           $bad = @($files | Where-Object {
             $p = $_.ToLowerInvariant()
             $p -match '\.(cab|ccbrain|dpapi)$' -or
-            $p -match '(^|/)(brain-packs|engineer-data|inbox|secrets|agent-runs)/' -or
+            $p -match '(^|/)(brain-packs|engineer-data|inbox|secrets|agent-runs|knowledge-store)/' -or
             $p -match '^claimdesk/brain/|(^|/)data/brain/' -or
             $p.Contains('brain-pack') -or $p.Contains('engineer-data') -or
             ($private | Where-Object { $_ -and $p.Contains($_.ToLowerInvariant()) })
@@ -559,7 +559,7 @@ jobs:
           $xml = [xml](schtasks.exe /Query /TN 'ClaimDesk\Background' /XML | Out-String)
           if ($xml.Task.Principals.Principal.LogonType -ne 'InteractiveToken') { throw 'Background task: LogonType is not InteractiveToken' }
           if ($xml.Task.Settings.MultipleInstancesPolicy -ne 'IgnoreNew') { throw 'Background task: MultipleInstancesPolicy is not IgnoreNew' }
-          if ($xml.Task.Actions.Exec.Arguments -ne '--background') { throw "Background task: arguments '$($xml.Task.Actions.Exec.Arguments)'" }
+          if ($xml.Task.Actions.Exec.Arguments -ne '--background --at-logon') { throw "Background task: arguments '$($xml.Task.Actions.Exec.Arguments)'" }
           $proto = (Get-ItemProperty 'HKCU:\Software\Classes\claimdesk\shell\open\command').'(default)'
           Write-Host "claimdesk:// → $proto"
           if ($proto -notmatch 'ClaimDesk\.exe" --open "%1"') { throw 'the claimdesk:// protocol is not registered' }

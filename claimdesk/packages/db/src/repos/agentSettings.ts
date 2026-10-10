@@ -1,8 +1,7 @@
 /**
  * Agent settings (one row, id 'default'): stored JSON is merged over the @ccguk/domain defaults on every read, so new
  * keys never need a migration. Patches are audited: autonomy → 'autonomy.settings', notifications →
- * 'notifications.settings', AI / agents / checklist → 'ai.settings' (§K.5), autopilot → 'autopilot.settings'
- * (SUPREME-AUTOPILOT §A.11: merged by mergeAutopilotSettings, which raises any step mode below its floor).
+ * 'notifications.settings', AI / agents / checklist → 'ai.settings' (§K.5).
  */
 import { eq } from 'drizzle-orm';
 import {
@@ -11,10 +10,8 @@ import {
   DEFAULT_AUTONOMY,
   DEFAULT_CHECKLIST,
   DEFAULT_NOTIFICATION_SETTINGS,
-  mergeAutopilotSettings,
   mergeDefaults,
   type AgentsSettings,
-  type AutopilotSettings,
   type AiSettings,
   type AutonomySettings,
   type ChecklistState,
@@ -34,7 +31,6 @@ export interface AgentSettingsRecord {
   notifications: NotificationSettings;
   agents: AgentsSettings;
   checklist: ChecklistState;
-  autopilot: AutopilotSettings;
   updatedAt?: ISODateTime;
   updatedBy?: string;
 }
@@ -48,19 +44,11 @@ export interface AgentSettingsPatch {
   notifications?: DeepPartial<NotificationSettings>;
   agents?: DeepPartial<AgentsSettings>;
   checklist?: DeepPartial<ChecklistState>;
-  autopilot?: DeepPartial<AutopilotSettings>;
 }
 
 type Section = keyof AgentSettingsPatch;
-const SECTIONS: readonly Section[] = ['ai', 'autonomy', 'notifications', 'agents', 'checklist', 'autopilot'];
-const AUDIT_ACTION: Record<Section, string> = {
-  ai: 'ai.settings',
-  agents: 'ai.settings',
-  checklist: 'ai.settings',
-  autonomy: 'autonomy.settings',
-  notifications: 'notifications.settings',
-  autopilot: 'autopilot.settings',
-};
+const SECTIONS: readonly Section[] = ['ai', 'autonomy', 'notifications', 'agents', 'checklist'];
+const AUDIT_ACTION: Record<Section, string> = { ai: 'ai.settings', agents: 'ai.settings', checklist: 'ai.settings', autonomy: 'autonomy.settings', notifications: 'notifications.settings' };
 
 const DEFAULTS: Omit<AgentSettingsRecord, 'updatedAt' | 'updatedBy'> = {
   ai: DEFAULT_AI_SETTINGS,
@@ -68,7 +56,6 @@ const DEFAULTS: Omit<AgentSettingsRecord, 'updatedAt' | 'updatedBy'> = {
   notifications: DEFAULT_NOTIFICATION_SETTINGS,
   agents: DEFAULT_AGENTS_SETTINGS,
   checklist: DEFAULT_CHECKLIST,
-  autopilot: mergeAutopilotSettings(undefined),
 };
 
 /** Current settings (defaults when no row exists yet). */
@@ -80,7 +67,6 @@ export function getAgentSettings(db: Db): AgentSettingsRecord {
     notifications: mergeDefaults(DEFAULTS.notifications, row?.notifications),
     agents: mergeDefaults(DEFAULTS.agents, row?.agents),
     checklist: mergeDefaults(DEFAULTS.checklist, row?.checklist),
-    autopilot: mergeAutopilotSettings(row?.autopilot),
   };
   if (row) {
     out.updatedAt = row.updatedAt;
@@ -96,14 +82,14 @@ export function patchAgentSettings(db: Db, patch: AgentSettingsPatch, actor: Act
   const changed: Section[] = [];
   for (const s of SECTIONS) {
     if (patch[s] === undefined) continue;
-    const merged = s === 'autopilot' ? mergeAutopilotSettings(mergeDefaults(before.autopilot, patch.autopilot)) : mergeDefaults(before[s] as unknown, patch[s]);
+    const merged = mergeDefaults(before[s] as unknown, patch[s]);
     if (JSON.stringify(merged) !== JSON.stringify(before[s])) {
       (next as unknown as Record<Section, unknown>)[s] = merged;
       changed.push(s);
     }
   }
   if (!changed.length) return before;
-  const values = { ai: next.ai, autonomy: next.autonomy, notifications: next.notifications, agents: next.agents, checklist: next.checklist, autopilot: next.autopilot, updatedAt: at, updatedBy: actor.userId };
+  const values = { ai: next.ai, autonomy: next.autonomy, notifications: next.notifications, agents: next.agents, checklist: next.checklist, updatedAt: at, updatedBy: actor.userId };
   db.insert(agentSettings)
     .values({ id: AGENT_SETTINGS_ID, ...values })
     .onConflictDoUpdate({ target: agentSettings.id, set: values })

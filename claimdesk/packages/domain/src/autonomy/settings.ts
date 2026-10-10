@@ -29,10 +29,6 @@ export const DEFAULT_AUTO_SEND_EMAIL_KINDS: readonly EmailKind[] = [
   'client_update',
   'supplier_instruction',
   'reply_general',
-  // Autopilot (SUPREME-AUTOPILOT §0.6): hire_offer passes only with a commitment verified by code (§D.3).
-  'booking_update',
-  'insurer_notice',
-  'hire_offer',
 ];
 
 export const DEFAULT_AUTO_SEND_TEMPLATES: readonly string[] = [
@@ -45,10 +41,6 @@ export const DEFAULT_AUTO_SEND_TEMPLATES: readonly string[] = [
   'letter.client_update',
   'letter.delay_notice_gta_4_10',
   'letter.supplier_instruction_engineer',
-  // Autopilot (SUPREME-AUTOPILOT §0.6); the templates are added by ap-paperwork.
-  'letter.hire_start_notice',
-  'letter.booking_confirmation',
-  'letter.signature_chase',
 ];
 
 /** The owner's choices (§D.1): fully automatic + daily log; everything sensitive asks. */
@@ -59,9 +51,7 @@ export const DEFAULT_AUTONOMY: AutonomySettings = {
   autoSendEmailKinds: [...DEFAULT_AUTO_SEND_EMAIL_KINDS],
   autoSendTemplates: [...DEFAULT_AUTO_SEND_TEMPLATES],
   autoApproveTemplates: [...DEFAULT_AUTO_SEND_TEMPLATES],
-  // 3 → 6 (SUPREME-AUTOPILOT §0.6): a booking day legitimately sends an acknowledgement, the NCAF, the offer, the
-  // delivery confirmation and a reminder. Installs with a saved value keep it.
-  limits: { perClaimPerDay: 6, perHour: 20, perDay: 100 },
+  limits: { perClaimPerDay: 3, perHour: 20, perDay: 100 },
   quietHours: { start: '20:00', end: '07:30' },
   killSwitch: false,
 };

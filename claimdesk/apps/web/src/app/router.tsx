@@ -28,10 +28,6 @@ import { EmailSettingsPage } from '../screens/settings/email/EmailSettingsPage';
 import { AutonomySettingsPage } from '../screens/settings/autonomy/AutonomySettingsPage';
 import { NotificationsSettingsPage } from '../screens/settings/notifications/NotificationsSettingsPage';
 import { BrainSettingsPage } from '../screens/settings/brain/BrainSettingsPage';
-// ClaimDesk Supreme Autopilot (docs/SUPREME-AUTOPILOT.md §I, §K): stub screens by ap-foundation, built by their slices.
-import { AutopilotSettingsPage } from '../screens/settings/autopilot/AutopilotSettingsPage';
-import { DriverCriteriaPage } from '../screens/settings/fleet/DriverCriteriaPage';
-import { KioskPage } from '../screens/sign/KioskPage';
 
 function RouteError() {
   const error = useRouteError();
@@ -55,8 +51,6 @@ function RouteError() {
  */
 export const routes: RouteObject[] = [
   { path: '/login', element: <LoginPage />, errorElement: <RouteError /> },
-  // Signing kiosk (SUPREME-AUTOPILOT §E.2): full screen outside the app shell; it authenticates with its own token.
-  { path: '/sign/kiosk/:token', element: <KioskPage />, errorElement: <RouteError /> },
   {
     path: '/',
     element: (
@@ -90,8 +84,6 @@ export const routes: RouteObject[] = [
       { path: 'settings/autonomy', element: <AutonomySettingsPage /> },
       { path: 'settings/notifications', element: <NotificationsSettingsPage /> },
       { path: 'settings/brain', element: <BrainSettingsPage /> },
-      { path: 'settings/autopilot', element: <AutopilotSettingsPage /> },
-      { path: 'settings/fleet/criteria', element: <DriverCriteriaPage /> },
       { path: 'watch', element: <WatchPage /> },
       { path: 'capture', element: <CapturePage /> },
       { path: 'capture/:claimId', element: <CapturePage /> },

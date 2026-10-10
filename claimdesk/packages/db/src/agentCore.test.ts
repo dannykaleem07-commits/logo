@@ -7,7 +7,6 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { DEFAULT_AUTONOMY } from '@ccguk/domain';
 import { closeDatabase, type DatabaseHandle } from './client.js';
 import { createTestDatabase } from './testing.js';
-import { readMigrationJournal } from './backup.js';
 import { appendAudit, listAudit } from './repos/audit.js';
 import {
   appendAgentJobAttempt,
@@ -61,8 +60,7 @@ describe('migrations 0008–0011', () => {
     ]) expect(names, t).toContain(t);
     const cols = (h.sqlite.prepare('pragma table_info(audit_log)').all() as Array<{ name: string }>).map((c) => c.name);
     expect(cols).toContain('run_id');
-    // Every journal entry is applied (0000–0012, 0013_autopilot, and any later foundation migration).
-    expect((h.sqlite.prepare('select count(*) as n from __drizzle_migrations').get() as { n: number }).n).toBe(readMigrationJournal().length);
+    expect((h.sqlite.prepare('select count(*) as n from __drizzle_migrations').get() as { n: number }).n).toBe(13); // 0000–0012 (0012_settlement_offers)
   });
 
   it('keeps brain_fts in sync with brain_entries (insert, update, delete)', () => {
@@ -319,8 +317,7 @@ describe('settings, claim state, AI usage', () => {
     expect(s.ai.driver).toBe('off');
     expect(s.agents.enabled).toBe(false);
     const p = patchAgentSettings(h.db, { autonomy: { killSwitch: true, limits: { perHour: 5 } }, ai: { driver: 'subscription_cli' } }, OWNER, T0);
-    // perClaimPerDay default 3 → 6 (SUPREME-AUTOPILOT §0.6).
-    expect(p.autonomy).toMatchObject({ killSwitch: true, limits: { perClaimPerDay: 6, perHour: 5, perDay: 100 }, holdMinutes: 10 });
+    expect(p.autonomy).toMatchObject({ killSwitch: true, limits: { perClaimPerDay: 3, perHour: 5, perDay: 100 }, holdMinutes: 10 });
     expect(getAgentSettings(h.db)).toMatchObject({ ai: { driver: 'subscription_cli', lanes: { ai: 1 } }, autonomy: { killSwitch: true }, updatedBy: 'courtesycars' });
     patchAgentSettings(h.db, { autonomy: { quietHours: null } }, OWNER, at(1));
     expect(getAgentSettings(h.db).autonomy.quietHours).toBeNull();
