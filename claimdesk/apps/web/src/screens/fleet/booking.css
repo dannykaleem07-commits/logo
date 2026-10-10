@@ -1,0 +1,320 @@
+/* owned by ap-booking — booking dialog, fleet calendar, movements board, handover/return (SUPREME-AUTOPILOT §I.2–I.5) */
+
+.bk-plate {
+  display: inline-block;
+  background: var(--plate-bg);
+  color: var(--plate-ink);
+  font-weight: var(--fw-semi);
+  font-family: ui-monospace, 'Consolas', monospace;
+  padding: 0 6px;
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* ---- Booking dialog ---- */
+.booking-dialog {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: var(--s-4);
+}
+@media (max-width: 760px) {
+  .booking-dialog {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.booking-needs {
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  padding: var(--s-2) var(--s-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+.booking-explain {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--ink-2);
+}
+.booking-ranked {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+.booking-car {
+  display: flex;
+  gap: var(--s-2);
+  align-items: flex-start;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  padding: var(--s-2) var(--s-3);
+  cursor: pointer;
+  background: var(--surface);
+}
+.booking-car.selected {
+  border-color: var(--blue);
+  background: var(--blue-50);
+}
+.booking-car input {
+  margin-top: 4px;
+}
+.booking-car-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.booking-score {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  width: 110px;
+  height: 18px;
+  background: var(--surface-hover);
+  border-radius: 9px;
+  overflow: hidden;
+}
+.booking-score-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--green-line);
+}
+.booking-score-num {
+  position: relative;
+  margin-left: auto;
+  padding-right: 8px;
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semi);
+}
+.booking-chip {
+  font-size: var(--fs-xs);
+  border: 1px solid var(--line-2);
+  border-radius: 10px;
+  padding: 1px 8px;
+  color: var(--ink-2);
+  background: var(--surface-2);
+}
+.booking-chip.good {
+  border-color: var(--green-line);
+  background: var(--green-bg);
+  color: var(--green-ink);
+}
+.booking-chip.poor {
+  border-color: var(--amber-line);
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+}
+.booking-warnings {
+  margin: 0;
+  padding-left: 4px;
+  list-style: none;
+  color: var(--amber-ink);
+}
+.booking-excluded summary {
+  cursor: pointer;
+  font-weight: var(--fw-semi);
+}
+.booking-excluded ul {
+  margin: var(--s-2) 0 0;
+  padding-left: 18px;
+}
+.booking-notice {
+  margin: 0;
+  padding: var(--s-2) var(--s-3);
+  border-radius: 6px;
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+}
+
+/* ---- Fleet calendar ---- */
+.cal-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  align-items: flex-end;
+  margin-bottom: var(--s-3);
+}
+.cal-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.cal-grid {
+  min-width: 720px;
+}
+.cal-head,
+.cal-row {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  border-bottom: 1px solid var(--line);
+}
+.cal-unit {
+  padding: 6px 8px;
+  font-size: var(--fs-sm);
+  border-right: 1px solid var(--line);
+  background: var(--surface-2);
+}
+.cal-days {
+  display: grid;
+  position: relative;
+}
+.cal-day {
+  font-size: var(--fs-xs);
+  text-align: center;
+  padding: 4px 0;
+  border-right: 1px solid var(--line);
+  color: var(--muted);
+}
+.cal-day.weekend {
+  background: var(--surface-2);
+}
+.cal-lane {
+  position: relative;
+  min-height: 46px;
+}
+.cal-cell {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+  border-top: 0;
+  border-bottom: 0;
+  border-left: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.cal-cell:hover,
+.cal-cell:focus-visible {
+  background: var(--blue-50);
+}
+.cal-bar {
+  position: absolute;
+  top: 6px;
+  height: 20px;
+  border-radius: 4px;
+  font-size: var(--fs-xs);
+  line-height: 20px;
+  padding: 0 6px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-align: left;
+  color: var(--on-solid);
+}
+.cal-bar.held {
+  background: repeating-linear-gradient(45deg, var(--blue), var(--blue) 6px, var(--blue-600) 6px, var(--blue-600) 12px);
+}
+.cal-bar.confirmed {
+  background: var(--blue);
+}
+.cal-bar.on_hire {
+  background: var(--navy-900);
+}
+.cal-bar.returned {
+  background: var(--grey);
+  color: var(--ink);
+}
+.cal-bar.clash {
+  outline: 2px solid var(--red);
+  outline-offset: 1px;
+}
+.cal-ready {
+  position: absolute;
+  bottom: 4px;
+  height: 10px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(-45deg, var(--amber-line), var(--amber-line) 4px, transparent 4px, transparent 8px);
+  border: 1px solid var(--amber-line);
+}
+.cal-ready.blocks {
+  border-color: var(--red);
+}
+.cal-marker {
+  position: absolute;
+  bottom: 2px;
+  font-size: 11px;
+  transform: translateX(-50%);
+  color: var(--muted);
+}
+.cal-marker.inside {
+  color: var(--amber);
+  font-weight: var(--fw-semi);
+}
+.cal-move {
+  position: absolute;
+  top: 27px;
+  font-size: 12px;
+  transform: translateX(-50%);
+  color: var(--green);
+}
+.cal-today {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--red);
+  pointer-events: none;
+}
+.cal-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  font-size: var(--fs-xs);
+  color: var(--muted);
+  margin-top: var(--s-2);
+}
+.cal-legend .cal-bar {
+  position: static;
+  display: inline-block;
+  width: 26px;
+  height: 12px;
+  vertical-align: middle;
+}
+
+/* ---- Movements board ---- */
+.mv-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+@media print {
+  .no-print,
+  .subnav,
+  .mv-actions {
+    display: none !important;
+  }
+}
+
+/* ---- Handover / return ---- */
+.check-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.check-list .ok {
+  color: var(--green);
+}
+.check-list .no {
+  color: var(--red);
+}
+.damage-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr auto;
+  gap: var(--s-2);
+  align-items: end;
+}
+@media (max-width: 640px) {
+  .damage-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

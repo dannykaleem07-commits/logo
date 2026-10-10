@@ -22,6 +22,7 @@ import { approveKnowledge, proposeKnowledge, recordCheck, activeLearnedRules } f
 import { publishLearnedPack } from '../knowledge/publish.js';
 import { registerKnowledgeHooks } from '../knowledge/hooks.js';
 import { getKnowledgeSettings } from '../knowledge/settings.js';
+import { runReplayGate } from '../knowledge/evals/replay.js';
 
 const NOW = '2026-10-10T10:00:00.000Z';
 let t: TestApp;
@@ -110,8 +111,12 @@ describe('registries and vocabulary', () => {
   it('the schedules of slices not built yet are advanced without a job; publish runs', () => {
     seedSchedules(t.ctx, '2026-10-09T00:00:00.000Z');
     const runs = runDueSchedules(t.ctx, NOW);
-    const observe = runs.find((r) => r.scheduleId === 'knowledge.observe')!;
-    expect(observe).toMatchObject({ jobs: [], skipped: 'no handler registered' });
+    // knowledge-learners registered knowledge.observe; any knowledge schedule still without a handler is skipped.
+    for (const r of runs.filter((x) => x.scheduleId.startsWith('knowledge.'))) {
+      const type = DEFAULT_SCHEDULES.find((s) => s.id === r.scheduleId)!.jobType;
+      if (!getJobHandler(type)) expect(r).toMatchObject({ jobs: [], skipped: 'no handler registered' });
+    }
+    expect(runs.find((r) => r.scheduleId === 'knowledge.observe')!.jobs[0]).toMatchObject({ type: 'knowledge.observe' });
     const publish = runs.find((r) => r.scheduleId === 'knowledge.publish')!;
     expect(publish.jobs[0]).toMatchObject({ type: 'knowledge.publish', idempotencyKey: 'knowledge.publish:nightly:2026-10-09' }); // the missed 02:30 slot of the 9th
   });
@@ -301,9 +306,35 @@ describe('the learned pack: publish, rollback, digest, Undo', () => {
     const rule = proposeKnowledge(t.ctx, { ...procedure('Avoid an opening'), kind: 'rule', area: 'style', origin: 'curated', supportN: 3, data: { when: { '==': [{ var: 'insurer.slug' }, 'example-insurer'] }, then: [{ kind: 'avoid_phrase', phrase: 'trust you are well' }], why: 'invented', severity: 'info' } });
     expect(rule.decision.ruleIds).toEqual(['KN-07']);
     expect(activeLearnedRules(t.ctx)).toEqual([]);
-    await t.api('POST', `/knowledge/items/${rule.item.id}/approve`, {});
+    // §12.1: activation waits for the gate replay (queued when the rule started waiting).
+    const pending = await t.api<{ code: string }>('POST', `/knowledge/items/${rule.item.id}/approve`, {});
+    expect(pending.status).toBe(409);
+    expect(JSON.stringify(pending.body)).toContain('KNOWLEDGE_REPLAY_PENDING');
+    expect(t.ctx.repos.getKnowledgeItem(t.ctx.db, rule.item.id)!.status).toBe('proposed');
+    expect(t.ctx.repos.listAgentJobs(t.ctx.db, { type: 'knowledge.replay' }).length).toBeGreaterThan(0);
+    runReplayGate(t.ctx, [rule.item.id]);
+    expect((await t.api('POST', `/knowledge/items/${rule.item.id}/approve`, {})).status).toBe(200);
     publishLearnedPack(t.ctx, { reason: 'test', actor: { userId: 'handler' } });
     expect(activeLearnedRules(t.ctx).map((r) => r.itemId)).toEqual([rule.item.id]);
+  });
+
+  it('edit-approve of a rule: a wording edit after the replay applies at once; a logic edit waits for its own replay', async () => {
+    const data = { when: { '==': [{ var: 'insurer.slug' }, 'example-insurer'] }, then: [{ kind: 'avoid_phrase', phrase: 'trust you are well' }], why: 'invented', severity: 'info' };
+    const rule = proposeKnowledge(t.ctx, { ...procedure('Avoid an opening'), kind: 'rule', area: 'style', origin: 'curated', supportN: 3, data: data as never });
+    const edit = (id: string, over: Record<string, unknown>) => t.api<{ item: { id: string; status: string }; waitingForReplay: boolean; check?: unknown }>('POST', `/knowledge/items/${id}/edit-approve`, { title: 'Avoid an opening', body: 'Do not open with that phrase.', data, scope: { kind: 'insurer', slug: 'example-insurer' }, ...over });
+    // Logic changed (and no replay yet): stored as proposed, its own replay queued, no check recorded.
+    const logic = await edit(rule.item.id, { data: { ...data, then: [{ kind: 'avoid_phrase', phrase: 'hope you are well' }] } });
+    expect(logic.status).toBe(200);
+    expect(logic.body).toMatchObject({ waitingForReplay: true, item: { status: 'proposed' } });
+    expect(logic.body.check).toBeUndefined();
+    expect(t.ctx.repos.getKnowledgeItem(t.ctx.db, rule.item.id)!.status).toBe('rejected');
+    const v2 = logic.body.item.id;
+    expect((await t.api('POST', `/knowledge/items/${v2}/approve`, {})).status).toBe(409);
+    runReplayGate(t.ctx, [v2]);
+    // Wording-only edit of the replayed version: approved at once with the owner's check.
+    const wording = await edit(v2, { title: 'Avoid a stock opening', data: { ...data, then: [{ kind: 'avoid_phrase', phrase: 'hope you are well' }] } });
+    expect(wording.body).toMatchObject({ waitingForReplay: false, item: { status: 'active' } });
+    expect(wording.body.check).toBeTruthy();
   });
 });
 

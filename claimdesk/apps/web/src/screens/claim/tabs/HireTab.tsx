@@ -24,6 +24,8 @@ import { EndHireDialog } from './hire/EndHireDialog';
 import { RecoveryCard, StorageCard } from './hire/ServiceCards';
 import { AddRecoveryDialog, AddStorageDialog, EndStorageDialog } from './hire/ServiceDialogs';
 import './hire/hire.css';
+// Autopilot fleet bookings (docs/SUPREME-AUTOPILOT.md §I.2, ap-booking)
+import { BookingsCard } from '../booking/BookingsCard';
 
 export function HireTab({ view }: { view: ClaimView }) {
   const claimId = view.claim.id;
@@ -58,6 +60,8 @@ export function HireTab({ view }: { view: ClaimView }) {
           Hire past the trigger is hard to recover: end the agreement with its trigger.
         </div>
       )}
+
+      <BookingsCard claimId={claimId} />
 
       <Card
         title="Hire agreements"

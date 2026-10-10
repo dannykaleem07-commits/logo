@@ -20,6 +20,8 @@ import { ApiErrorNotice } from '../../components/ApiErrorNotice';
 import { useToast } from '../../components/Toast';
 import { useNeedsYouDetail, useNeedsYouList, useResolveNeedsYou, useSnoozeNeedsYou, type NeedsYouItem } from '../../api/needsYouApi';
 import { panelFor } from './kindPanels';
+import { KnowledgeReviewPanel } from '../knowledge/KnowledgeReviewPanel'; // knowledge-ui
+import { KnowledgeUsedPanel } from '../knowledge/KnowledgeUsedPanel'; // knowledge-ui
 import {
   confirmFieldEdits,
   payloadLink,
@@ -173,6 +175,8 @@ function NeedsYouDetailPane({ id, command, onDone }: { id: string; command?: { k
   const [editFields, setEditFields] = useState<Record<string, string>>({});
   // confirm_fields: which proposals the owner ticks (all by default)
   const [ticked, setTicked] = useState<Record<string, boolean>>({});
+  // knowledge-ui: "Edit then approve" / "I know the answer" on a knowledge card open the editor inside KnowledgeReviewPanel.
+  const [knowledgeEdit, setKnowledgeEdit] = useState(0);
   const item = detail.data?.item;
 
   useEffect(() => {
@@ -185,6 +189,11 @@ function NeedsYouDetailPane({ id, command, onDone }: { id: string; command?: { k
 
   const startEdit = (o: NeedsYouOption) => {
     if (!item) return;
+    if (item.kind === 'knowledge_review') {
+      setRejecting(undefined);
+      setKnowledgeEdit((n) => n + 1);
+      return;
+    }
     if (!canEditThenApprove(item)) {
       // Nothing editable here (no raw JSON editor): add a note instead.
       setRejecting(undefined);
@@ -294,7 +303,10 @@ function NeedsYouDetailPane({ id, command, onDone }: { id: string; command?: { k
           </div>
         )}
         {KindPanel && <KindPanel item={item} closed={closed} />}
+        {item.kind === 'knowledge_review' && <KnowledgeReviewPanel key={item.id} item={item} closed={closed} editRequest={knowledgeEdit} onResolved={onDone} />}
         <PreparedItem item={item} {...(item.kind === 'confirm_fields' && !closed ? { ticked, onTick: (key: string, on: boolean) => setTicked((x) => ({ ...x, [key]: on })) } : {})} />
+        {item.kind === 'approve_send' && <KnowledgeUsedPanel targetKind="outbox" targetId={emailPreview(item.payload)?.outboxId} />}
+        {item.kind === 'approve_document' && <KnowledgeUsedPanel targetKind="document" targetId={documentRef(item.payload)} />}
         {editing && (
           <div className="ny-editor">
             <h4>Edit then approve</h4>
@@ -449,6 +461,7 @@ function linkLabel(link: string): string {
 
 function PreparedBody({ item, ticked, onTick }: { item: NeedsYouItem; ticked?: Record<string, boolean>; onTick?: (key: string, on: boolean) => void }) {
   const kind = rendererFor(item.kind, item.payload);
+  if (kind === 'knowledge') return null; // knowledge-ui: KnowledgeReviewPanel above shows it
   if (kind === 'email') {
     const e = emailPreview(item.payload)!;
     return (

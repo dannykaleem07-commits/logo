@@ -151,12 +151,16 @@ interface GuardInput {
   subject: ClashSubject;
   /** Skip the start-time checks that only apply to new bookings (an on-hire period change). */
   physical?: boolean;
+  /** Clash codes the caller checks itself with data the clash world does not have (the handover's licence and paperwork). */
+  checkedByCaller?: string[];
 }
 
 interface GuardResult {
   warnings: ClashFinding[];
   overlapOverrideAuditId?: Id;
   findings: ClashFinding[];
+  /** Dedupe keys of clash-service block findings a manager overrode in this request (stored as `overridden`). */
+  overriddenKeys: string[];
 }
 
 /** Codes this service checks itself; the clash service's findings for them are not enforced twice. */
@@ -269,13 +273,23 @@ function bookingGuards(ctx: AppContext, tx: Db, request: FastifyRequest | null, 
 
   // 6. Everything else from the clash catalogue (ap-clash).
   const clash = checkClashes(ctx, g.subject);
+  const clashBlocks: ClashFinding[] = [];
   for (const f of clash.findings) {
-    if (CHECKED_HERE.has(f.code)) continue;
-    if (f.severity === 'block' && !g.physical) blocks.push({ code: f.code, message: f.message });
-    else warnings.push(f.severity === 'block' ? { ...f, severity: 'warn' } : f);
+    if (CHECKED_HERE.has(f.code) || g.checkedByCaller?.includes(f.code)) continue;
+    if (f.severity === 'block' && !g.physical) {
+      blocks.push({ code: f.code, message: f.message });
+      clashBlocks.push(f);
+    } else warnings.push(f); // on-hire changes are physical reality: blocks are reported, never refused
   }
   refuseFindings(gate, blocks, target);
-  return { warnings, findings: clash.findings, ...(overlapOverrideAuditId ? { overlapOverrideAuditId } : {}) };
+  // Reaching here with clash blocks means a manager overrode them (class A/B, gate active).
+  const overriddenKeys = clashBlocks.map((f) => f.dedupeKey);
+  return { warnings, findings: clash.findings, overriddenKeys, ...(overlapOverrideAuditId ? { overlapOverrideAuditId } : {}) };
+}
+
+function persistOpts(request: FastifyRequest | null, gate: OverrideGate, g: GuardResult): { overriddenKeys?: string[]; reason?: string; by?: string; overrideAuditId?: string } {
+  if (!g.overriddenKeys.length) return {};
+  return { overriddenKeys: g.overriddenKeys, reason: gate.reason, by: actorId(request), ...(g.overlapOverrideAuditId ? { overrideAuditId: g.overlapOverrideAuditId } : {}) };
 }
 
 // ---------------------------------------------------------------------------
@@ -548,7 +562,7 @@ export function placeHold(ctx: AppContext, request: FastifyRequest | null, gate:
       ctx.repos.appendReservationEvent(tx, { reservationId: r.id, fromStatus: 'held', toStatus: 'confirmed', actor: actorId(request), reason: 'Client present: booked now', data: { agreementNumber }, at: now });
       appendConfirmedEvent(ctx, tx, request, r, vehicle, now);
     }
-    persistFindings(ctx, tx, { kind: 'reservation', reservationId: r.id, stage: subject.stage }, guards.findings);
+    persistFindings(ctx, tx, { kind: 'reservation', reservationId: r.id, stage: subject.stage }, guards.findings, persistOpts(request, gate, guards));
     ctx.repos.appendAudit(tx, {
       actor: actorOf(request),
       action: input.confirm ? 'booking.book_now' : 'booking.hold',
@@ -626,7 +640,7 @@ export function confirmBooking(ctx: AppContext, request: FastifyRequest | null, 
       ctx.repos.appendReservationEvent(tx, { reservationId: r.id, fromStatus: 'held', toStatus: 'confirmed', actor: actorId(request), reason: input.hireOfferId ? 'Offer accepted' : 'Confirmed', data: { agreementNumber, hireOfferId: input.hireOfferId ?? null }, at: now });
     }
     appendConfirmedEvent(ctx, tx, request, confirmed, vehicle, now);
-    persistFindings(ctx, tx, { kind: 'reservation', reservationId: confirmed.id, stage: 'confirm' }, guards.findings);
+    persistFindings(ctx, tx, { kind: 'reservation', reservationId: confirmed.id, stage: 'confirm' }, guards.findings, persistOpts(request, gate, guards));
     ctx.repos.appendAudit(tx, { actor: actorOf(request), action: 'booking.confirm', entity: 'fleet_reservations', entityId: confirmed.id, after: { claimId: r.claimId, agreementNumber, hireOfferId: input.hireOfferId ?? null, reheldFrom: expiredHold ? r.id : null, warnings: guards.warnings.map((w) => w.code) }, at: now });
     return { confirmed, warnings: guards.warnings };
   }, IMMEDIATE);
@@ -685,7 +699,7 @@ export function updateBookingPeriod(ctx: AppContext, request: FastifyRequest | n
     );
     if (physical && r.hireAgreementId) ctx.repos.updateHire(tx, r.hireAgreementId, { expectedEndAt });
     ctx.repos.appendReservationEvent(tx, { reservationId: id, fromStatus: r.status, toStatus: r.status, actor: actorId(request), reason: patch.reason, data: { startAt: { from: r.startAt, to: startAt }, expectedEndAt: { from: r.expectedEndAt, to: expectedEndAt } }, at: now });
-    persistFindings(ctx, tx, { kind: 'reservation', reservationId: id, stage: 'period_change' }, guards.findings);
+    persistFindings(ctx, tx, { kind: 'reservation', reservationId: id, stage: 'period_change' }, guards.findings, persistOpts(request, gate, guards));
     ctx.repos.appendAudit(tx, { actor: actorOf(request), action: 'booking.update', entity: 'fleet_reservations', entityId: id, before: { startAt: r.startAt, expectedEndAt: r.expectedEndAt }, after: { startAt, expectedEndAt, reason: patch.reason, warnings: guards.warnings.map((w) => w.code) }, at: now });
     return { next, warnings: guards.warnings };
   }, IMMEDIATE);
@@ -884,7 +898,7 @@ export function handover(ctx: AppContext, request: FastifyRequest, gate: Overrid
     const target: OverrideTarget = { claimId: r.claimId, entity: 'fleet_reservations', entityId: id };
     const expectedEndAt = r.expectedEndAt && isoToMs(r.expectedEndAt) > isoToMs(input.at) ? r.expectedEndAt : msToUtcIso(isoToMs(input.at) + settings.projection.defaultHireDays * DAY_MS);
     // 1. Clash re-check at handover: core guards plus the handover-only checks.
-    const guards = bookingGuards(ctx, tx, request, gate, { claimId: r.claimId, unit, use: r.use, startAt: input.at, expectedEndAt, excludeIds: [r.id], stage: 'handover', subject: { kind: 'reservation', reservationId: r.id, stage: 'handover' } });
+    const guards = bookingGuards(ctx, tx, request, gate, { claimId: r.claimId, unit, use: r.use, startAt: input.at, expectedEndAt, excludeIds: [r.id], stage: 'handover', subject: { kind: 'reservation', reservationId: r.id, stage: 'handover' }, checkedByCaller: ['SIGNATURES_MISSING', 'LICENCE_CHECK_STALE'] });
     const handoverBlocks: Array<{ code: string; message: string }> = [];
     const pack = signedPackStatus(ctx, r.id);
     if (!pack.signed) handoverBlocks.push({ code: 'SIGNATURES_MISSING', message: `The hire paperwork is not signed: ${pack.missing.join(', ') || 'hire-start pack'}.` });
@@ -934,7 +948,7 @@ export function handover(ctx: AppContext, request: FastifyRequest, gate: Overrid
       createdBy: request.user.id,
       recordedAt: now,
     });
-    persistFindings(ctx, tx, { kind: 'reservation', reservationId: r.id, stage: 'handover' }, guards.findings);
+    persistFindings(ctx, tx, { kind: 'reservation', reservationId: r.id, stage: 'handover' }, guards.findings, persistOpts(request, gate, guards));
     ctx.repos.appendAudit(tx, { actor: request.actor, action: 'booking.handover', entity: 'fleet_reservations', entityId: r.id, after: { hireId: created.hire.id, agreementNumber: created.hire.agreementNumber, at: input.at, odometerOut: input.odometerOut, fuelEighths: input.fuelEighths, keys: input.keys, signedPack: pack, dvlaCheck: input.dvlaCheck }, at: now });
     return { onHire, created };
   }, IMMEDIATE);

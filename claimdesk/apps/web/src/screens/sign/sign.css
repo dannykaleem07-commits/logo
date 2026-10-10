@@ -1,0 +1,188 @@
+/* owned by ap-paperwork — signing kiosk (SUPREME-AUTOPILOT §E.2, §I.6), packs panel and the kiosk QR (§E.3) */
+
+.kiosk {
+  min-height: 100vh;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: var(--s-4) var(--s-4) var(--s-6);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+.kiosk-centre {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--s-3);
+  min-height: 60vh;
+}
+.kiosk-idle {
+  background: var(--surface);
+}
+.kiosk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--s-3);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-4);
+}
+.kiosk-brand {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.kiosk-heading {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--navy);
+}
+.kiosk-title {
+  margin: 0 0 var(--s-2);
+  font-size: 1.5rem;
+  color: var(--navy);
+}
+.kiosk-progress {
+  margin: 0;
+  color: var(--muted);
+  font-weight: var(--fw-semi);
+}
+.kiosk-hint {
+  margin: 0 0 var(--s-3);
+}
+.kiosk-doc-scroll {
+  max-height: 72vh;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  margin-bottom: var(--s-3);
+}
+.kiosk-pdf {
+  display: block;
+  width: 100%;
+  height: 120vh;
+  border: 0;
+}
+.kiosk-doc-end {
+  padding: var(--s-3);
+  text-align: center;
+  color: var(--muted);
+}
+.kiosk-label {
+  display: block;
+  margin: var(--s-3) 0 var(--s-1);
+  font-weight: var(--fw-semi);
+}
+.kiosk-input {
+  font-size: 1.3rem;
+  padding: 0.6rem 0.8rem;
+  width: 100%;
+  max-width: 560px;
+}
+.kiosk-code {
+  letter-spacing: 0.3em;
+  max-width: 240px;
+}
+.kiosk-list {
+  margin: 0 0 var(--s-3);
+}
+.kiosk-consent {
+  display: flex;
+  gap: var(--s-2);
+  align-items: flex-start;
+  margin: var(--s-3) 0;
+}
+.kiosk-consent input {
+  width: 1.4rem;
+  height: 1.4rem;
+  flex: 0 0 auto;
+  margin-top: 0.2rem;
+}
+.kiosk-signature {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-1);
+}
+.kiosk-signature-canvas {
+  width: 100%;
+  max-width: 640px;
+  height: 200px;
+  background: #fff;
+  border: 2px dashed var(--line);
+  border-radius: var(--r-md);
+  touch-action: none;
+  cursor: crosshair;
+}
+.kiosk-error {
+  color: var(--red);
+  font-weight: var(--fw-semi);
+}
+.kiosk-blocker {
+  text-align: center;
+}
+.kiosk-handback {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  max-width: 380px;
+}
+.kiosk-handler-code {
+  margin: var(--s-2) 0;
+  font-size: var(--fs-sm);
+}
+.kiosk-qr {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0;
+}
+.kiosk-qr-url {
+  font-size: 1.25rem;
+  font-family: ui-monospace, 'Consolas', monospace;
+  word-break: break-all;
+  text-align: center;
+}
+
+/* Packs panel (claim) */
+.packs-item-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  align-items: center;
+}
+.packs-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-top: var(--s-2);
+}
+
+/* confirm_signed: the returned copy beside the document we sent */
+.packs-compare {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--s-3);
+}
+.packs-compare-frame {
+  width: 100%;
+  height: 60vh;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+}
+
+@media (max-width: 640px) {
+  .kiosk {
+    font-size: 1.05rem;
+    padding: var(--s-3);
+  }
+  .kiosk-header {
+    flex-direction: column;
+  }
+}

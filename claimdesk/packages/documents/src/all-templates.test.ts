@@ -65,7 +65,18 @@ const ARCHITECTURE_TEMPLATE_IDS: readonly string[] = [
 /** Registered templates that go beyond the ARCHITECTURE minimum. Fine to have; list them so the coverage test is explicit. */
 const KNOWN_EXTRA_TEMPLATE_IDS: readonly string[] = [
   'letter.client_update', // progress letter to the claimant
-  'letter.supplier_instruction_engineer' // instruction to the independent engineer
+  'letter.supplier_instruction_engineer', // instruction to the independent engineer
+  // Autopilot (docs/SUPREME-AUTOPILOT.md §D.6, ap-paperwork): templates/letters-c.ts and templates/forms-c.ts
+  'letter.hire_offer',
+  'letter.booking_confirmation',
+  'letter.hire_start_notice',
+  'letter.signature_request',
+  'letter.signature_chase',
+  'letter.recovery_storage_instruction',
+  'letter.decline',
+  'letter.closure',
+  'form.hire_period_validation',
+  'form.hire_cover_confirmation'
 ];
 
 const TEMPLATE_KINDS: readonly TemplateKind[] = [

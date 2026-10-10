@@ -27,39 +27,13 @@ const AWAITING_SLICE_JOB_TYPES: Readonly<Record<string, string>> = {
   'autopilot.sweep': 'ap-autopilot',
   'autopilot.judge': 'ap-autopilot',
   'hire_offer.parse_reply': 'ap-autopilot',
-  'pack.prepare': 'ap-paperwork',
-  'signing.chase': 'ap-paperwork',
-  'signing.match_return': 'ap-paperwork',
-  'booking.expire_holds': 'ap-booking',
-  'fleet.status_sync': 'ap-booking',
-  'fleet.compliance_watch': 'ap-booking',
-  'movement.remind': 'ap-booking',
-  'clash.check': 'ap-clash',
-  'clash.sweep': 'ap-clash',
 };
 const AWAITING_SLICE_NEEDS_YOU_KINDS: Readonly<Record<string, string>> = {
   choose_car: 'ap-autopilot',
   autopilot_step: 'ap-autopilot',
-  approve_pack: 'ap-paperwork',
-  confirm_signed: 'ap-paperwork',
-  clash_review: 'ap-clash',
-  eligibility_review: 'ap-clash',
 };
 /** Knowledge Builder job types whose handler their slice has not registered yet (KB §13; same rule as above). */
-const AWAITING_KNOWLEDGE_JOB_TYPES: Readonly<Record<string, string>> = {
-  'knowledge.observe': 'knowledge-learners',
-  'knowledge.consolidate': 'knowledge-learners',
-  'knowledge.learn_stats': 'knowledge-learners',
-  'knowledge.curate': 'knowledge-learners',
-  'knowledge.gap_scan': 'knowledge-research',
-  'knowledge.research': 'knowledge-research',
-  'knowledge.research_web': 'knowledge-research',
-  'knowledge.fetch': 'knowledge-research',
-  'knowledge.watch': 'knowledge-research',
-  'knowledge.replay': 'knowledge-use',
-  'knowledge.replay_drafts': 'knowledge-use',
-  'knowledge.drift': 'knowledge-use',
-};
+const AWAITING_KNOWLEDGE_JOB_TYPES: Readonly<Record<string, string>> = {};
 const awaitingHandler = (type: string): boolean => (type in AWAITING_SLICE_JOB_TYPES || type in AWAITING_KNOWLEDGE_JOB_TYPES) && !getJobHandler(type as never);
 
 let t: TestApp;

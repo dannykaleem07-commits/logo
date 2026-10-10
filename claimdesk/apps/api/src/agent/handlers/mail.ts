@@ -41,7 +41,8 @@ export const MAIL_REPLY_SPEC: AgentSpec = {
   jobType: 'mail.reply',
   title: 'Mail reply',
   promptFiles: ['mail-reply.md'],
-  tools: [...MAIL_REPLY_TOOLS],
+  // Knowledge Builder §3.6 (knowledge-use): knowledge_search, knowledge_gap_report and insurer_profile for the reply
+  tools: [...MAIL_REPLY_TOOLS, 'knowledge_search', 'knowledge_gap_report', 'insurer_profile'],
   allowRead: false,
   resultSchemaId: 'drafter',
   defaults: { model: 'claude-opus-5-5', effort: 'medium', maxTurns: 12, timeoutMs: 8 * 60_000 },

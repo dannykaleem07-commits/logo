@@ -39,6 +39,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import type { Evidence } from '@ccguk/domain';
 import { litigationBuilders } from './builders/litigation.js';
 import { correspondenceBuilders } from './builders/correspondence.js';
+import { reservationHireData } from '../signing/reservationData.js';
 
 export type RecipientRole = 'at_fault_insurer' | 'client' | 'own_insurer' | 'court' | 'supplier' | 'other';
 
@@ -835,13 +836,22 @@ const builders: Record<string, Builder> = {
 
   'form.cancellation_sch3': (b, base) => {
     const hire = hireBlock(b.ctx, b.bundle, b.now);
-    if (!hire) throw conflict('NO_HIRE', 'No hire agreement on this claim');
     const c = b.bundle.claimant;
+    // Hire-start pack before the handover (SUPREME-AUTOPILOT §D.6, ap-paperwork): the confirmed booking fixes these facts.
+    const booked = hire ? undefined : reservationHireData(b.ctx, b.extra?.reservationId, b.bundle.claim.id);
+    if (booked) return { ...base, recipient: recipientBlock(c), agreementNumber: booked.agreementNumber, agreementDate: datePart(b.now), hirer: { name: c.name, addressLines: addressLines(c) }, vehicle: { registration: booked.vehicleRegistration, makeModel: booked.vehicleDescription } };
+    if (!hire) throw conflict('NO_HIRE', 'No hire agreement on this claim');
     return { ...base, recipient: recipientBlock(c), agreementNumber: hire.agreementNumber, agreementDate: datePart(hire.signedAt ?? hire.startAt), hirer: { name: c.name, addressLines: addressLines(c) }, vehicle: { registration: hire.vehicleRegistration ?? '[fleet vehicle]', makeModel: hire.vehicleDescription } };
   },
 
   'form.express_request_to_start': (b, base) => {
     const hire = hireBlock(b.ctx, b.bundle, b.now);
+    // Hire-start pack before the handover (SUPREME-AUTOPILOT §D.6, ap-paperwork): the confirmed booking fixes these facts.
+    const booked = hire ? undefined : reservationHireData(b.ctx, b.extra?.reservationId, b.bundle.claim.id);
+    if (booked) {
+      const c = b.bundle.claimant;
+      return { ...base, recipient: recipientBlock(c), agreementNumber: booked.agreementNumber, createdAt: b.now, hirer: { name: c.name, addressLines: addressLines(c) }, vehicle: { registration: booked.vehicleRegistration, makeModel: booked.vehicleDescription }, hire: { startAt: booked.startAt }, charges: { dailyRatePence: booked.dailyRatePence, vatRate: booked.vatRate }, cancellationInfoProvidedAt: b.now };
+    }
     if (!hire) throw conflict('NO_HIRE', 'No hire agreement on this claim');
     const h = latestHire(b.bundle)!;
     const c = b.bundle.claimant;

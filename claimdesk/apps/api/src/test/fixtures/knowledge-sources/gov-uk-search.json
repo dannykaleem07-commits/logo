@@ -1,0 +1,6 @@
+{
+  "results": [
+    { "title": "Zephyr portal uploads for motor claims (invented)", "link": "/guidance/zephyr-portal-uploads", "description": "How to upload a payment pack through an insurer portal (invented test page)." },
+    { "title": "An advert page", "link": "https://adverts.example.com/cheap-cars", "description": "Not an allowed source." }
+  ]
+}

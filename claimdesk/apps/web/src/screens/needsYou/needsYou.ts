@@ -75,7 +75,7 @@ export function optionForKey(item: Pick<NeedsYouItem, 'options'>, key: 'approve'
 // Renderers
 // ---------------------------------------------------------------------------
 
-export type RendererKind = 'email' | 'document' | 'fields' | 'offer' | 'generic';
+export type RendererKind = 'email' | 'document' | 'fields' | 'offer' | 'knowledge' | 'generic';
 
 const obj = (v: unknown): Record<string, unknown> | undefined => (v && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, unknown>) : undefined);
 const str = (v: unknown): string | undefined => (typeof v === 'string' && v.trim() ? v : undefined);
@@ -266,6 +266,8 @@ export function confirmFieldEdits(payload: unknown, ticked: Record<string, boole
 
 /** Which renderer shows the prepared item. */
 export function rendererFor(kind: NeedsYouKind, payload: unknown): RendererKind {
+  // Knowledge Builder (SUPREME-KNOWLEDGE-BUILDER §11): knowledge_review cards render KnowledgeReviewPanel instead.
+  if (kind === 'knowledge_review') return 'knowledge';
   if (kind === 'confirm_fields' && fieldDiff(payload).length) return 'fields';
   if (kind === 'offer_decision' && offerRows(payload).length) return 'offer';
   if ((kind === 'approve_send' || kind === 'missing_info' || kind === 'spoof_warning' || kind === 'which_claim') && emailPreview(payload)) return 'email';

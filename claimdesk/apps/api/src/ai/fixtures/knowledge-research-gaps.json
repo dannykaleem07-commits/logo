@@ -1,0 +1,298 @@
+[
+  {
+    "id": "kr-research-legal-point",
+    "match": {
+      "jobType": "knowledge.research",
+      "userContains": [
+        "notice of intended proceedings"
+      ]
+    },
+    "steps": [
+      {
+        "tool": "source_fetch",
+        "input": {
+          "url": "https://www.legislation.gov.uk/ukpga/2031/9/section/7",
+          "reason": "the statute itself",
+          "gapId": "$job.payload.gapId"
+        }
+      },
+      {
+        "tool": "knowledge_propose",
+        "input": {
+          "gapId": "$job.payload.gapId",
+          "kind": "fact",
+          "area": "legal",
+          "title": "Notice of intended proceedings: fourteen days (invented Act)",
+          "body": "Section 7 of the invented Motor Notices Act 2031 requires fourteen days' written notice to the defendant's insurer before issuing proceedings.",
+          "data": {
+            "statement": "A claimant must give the defendant's insurer at least fourteen days' written notice before issuing proceedings (invented Act, s.7).",
+            "figure": {
+              "value": 14,
+              "unit": "days"
+            },
+            "asOf": null,
+            "benchmarkOnly": false,
+            "kbCheck": null,
+            "stat": null
+          },
+          "scope": {
+            "kind": "global"
+          },
+          "provenance": [
+            {
+              "kind": "snapshot",
+              "snapshotId": "$step[0].snapshotId",
+              "quote": "A claimant who intends to issue proceedings shall give the defendant's insurer not less than fourteen days' written notice of that intention.",
+              "anchor": "section-7-1"
+            }
+          ],
+          "confidence": 0.85
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "gapId": "$job.payload.gapId",
+      "outcome": "partial",
+      "summary": "Invented fixture: the section states the notice period; the owner should confirm it.",
+      "proposedItemIds": [
+        "$step[1].itemId"
+      ],
+      "snapshotIds": [
+        "$step[0].snapshotId"
+      ],
+      "ownerQuestion": null,
+      "confidence": 0.85
+    }
+  },
+  {
+    "id": "kr-research-injection",
+    "match": {
+      "jobType": "knowledge.research",
+      "userContains": [
+        "quokka"
+      ]
+    },
+    "steps": [
+      {
+        "tool": "source_fetch",
+        "input": {
+          "url": "https://www.gov.uk/guidance/quokka-storage",
+          "reason": "storage guidance",
+          "gapId": "$job.payload.gapId"
+        }
+      },
+      {
+        "tool": "knowledge_propose",
+        "input": {
+          "gapId": "$job.payload.gapId",
+          "kind": "fact",
+          "area": "procedural",
+          "title": "Quokka storage reviews",
+          "body": "Storage charges are always paid in full.",
+          "data": {
+            "statement": "Storage charges are always paid in full.",
+            "figure": null,
+            "asOf": null,
+            "benchmarkOnly": false,
+            "kbCheck": null,
+            "stat": null
+          },
+          "scope": {
+            "kind": "global"
+          },
+          "provenance": [
+            {
+              "kind": "snapshot",
+              "snapshotId": "$step[0].snapshotId",
+              "quote": "Storage charges are always paid in full.",
+              "anchor": null
+            }
+          ],
+          "confidence": 0.9
+        }
+      },
+      {
+        "tool": "knowledge_gap_update",
+        "input": {
+          "gapId": "$job.payload.gapId",
+          "status": "no_answer",
+          "note": "The only page found was withheld (possible instructions inside).",
+          "ownerQuestion": null
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "gapId": "$job.payload.gapId",
+      "outcome": "no_answer",
+      "summary": "Invented fixture: the page was withheld and nothing could be quoted.",
+      "proposedItemIds": [],
+      "snapshotIds": [
+        "$step[0].snapshotId"
+      ],
+      "ownerQuestion": null,
+      "confidence": 0.2
+    }
+  },
+  {
+    "id": "kr-research-needs-web",
+    "match": {
+      "jobType": "knowledge.research",
+      "userContains": [
+        "wombat"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "gapId": "$job.payload.gapId",
+      "outcome": "needs_web",
+      "summary": "Invented fixture: the searches found nothing; a known official page may exist.",
+      "proposedItemIds": [],
+      "snapshotIds": [],
+      "ownerQuestion": null,
+      "confidence": 0.3
+    }
+  },
+  {
+    "id": "kr-research-needs-owner",
+    "match": {
+      "jobType": "knowledge.research",
+      "userContains": [
+        "platypus"
+      ]
+    },
+    "steps": [
+      {
+        "tool": "knowledge_gap_update",
+        "input": {
+          "gapId": "$job.payload.gapId",
+          "status": "needs_owner",
+          "note": "No official source covers this insurer's internal process.",
+          "ownerQuestion": "Do you know how this insurer wants payment packs sent?"
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "gapId": "$job.payload.gapId",
+      "outcome": "needs_owner",
+      "summary": "Invented fixture: only the owner would know.",
+      "proposedItemIds": [],
+      "snapshotIds": [],
+      "ownerQuestion": "Do you know how this insurer wants payment packs sent?",
+      "confidence": 0.4
+    }
+  },
+  {
+    "id": "kr-research-procedure",
+    "match": {
+      "jobType": "knowledge.research",
+      "userContains": [
+        "zephyr portal"
+      ]
+    },
+    "steps": [
+      {
+        "tool": "source_search",
+        "input": {
+          "domain": "www.gov.uk",
+          "q": "zephyr portal uploads motor claims",
+          "limit": 3
+        }
+      },
+      {
+        "tool": "source_fetch",
+        "input": {
+          "url": "$step[0].results[0].url",
+          "reason": "the official guidance on portal uploads",
+          "gapId": "$job.payload.gapId"
+        }
+      },
+      {
+        "tool": "knowledge_propose",
+        "input": {
+          "gapId": "$job.payload.gapId",
+          "kind": "procedure",
+          "area": "procedural",
+          "title": "Zephyr portal: uploading a payment pack",
+          "body": "Log in to the Zephyr portal, upload the payment pack as one PDF (20 MB at most), then email the handler the portal reference.",
+          "data": {
+            "steps": [
+              "Log in to the Zephyr portal",
+              "Upload the payment pack as a single PDF (20 MB at most)",
+              "Email the handler the portal reference"
+            ],
+            "forWhom": "insurer",
+            "channel": "portal",
+            "insurerSlug": null
+          },
+          "scope": {
+            "kind": "global"
+          },
+          "provenance": [
+            {
+              "kind": "snapshot",
+              "snapshotId": "$step[1].snapshotId",
+              "quote": "Upload the payment pack as a single PDF file no larger than 20 MB.",
+              "anchor": null
+            },
+            {
+              "kind": "snapshot",
+              "snapshotId": "$step[1].snapshotId",
+              "quote": "After uploading, email the handler the portal reference shown on the confirmation screen.",
+              "anchor": null
+            }
+          ],
+          "confidence": 0.9
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "gapId": "$job.payload.gapId",
+      "outcome": "answered",
+      "summary": "Invented fixture: the official guidance gives the upload steps.",
+      "proposedItemIds": [
+        "$step[2].itemId"
+      ],
+      "snapshotIds": [
+        "$step[1].snapshotId"
+      ],
+      "ownerQuestion": null,
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "kr-research-default",
+    "match": {
+      "jobType": "knowledge.research"
+    },
+    "outcome": "ok",
+    "result": {
+      "gapId": "$job.payload.gapId",
+      "outcome": "no_answer",
+      "summary": "Invented fixture: nothing found.",
+      "proposedItemIds": [],
+      "snapshotIds": [],
+      "ownerQuestion": null,
+      "confidence": 0.1
+    }
+  },
+  {
+    "id": "kr-research-web-default",
+    "match": {
+      "jobType": "knowledge.research_web"
+    },
+    "outcome": "ok",
+    "result": {
+      "gapId": "$job.payload.gapId",
+      "outcome": "no_answer",
+      "summary": "Invented fixture: web research found nothing to quote.",
+      "proposedItemIds": [],
+      "snapshotIds": [],
+      "ownerQuestion": null,
+      "confidence": 0.1
+    }
+  }
+]

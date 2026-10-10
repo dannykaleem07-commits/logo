@@ -119,7 +119,8 @@ export function upsertClashFindings(db: Db, scope: ClashScope, findings: readonl
       continue;
     }
     const pastOverride = typeof f.data?.overrideAuditId === 'string' ? (f.data.overrideAuditId as string) : undefined;
-    const status: ClashFindingStatus = overrideNow || pastOverride ? 'overridden' : 'open';
+    const carried = !overrideNow && !pastOverride ? overrideFromProposal(db, f, at) : undefined;
+    const status: ClashFindingStatus = overrideNow || pastOverride || carried ? 'overridden' : 'open';
     const id = newId();
     db.insert(clashFindings)
       .values({
@@ -132,9 +133,9 @@ export function upsertClashFindings(db: Db, scope: ClashScope, findings: readonl
         ...(status === 'overridden'
           ? {
               resolvedAt: at,
-              resolvedBy: overrideNow ? opts.overridden!.by : 'system',
-              resolutionNote: overrideNow ? opts.overridden!.reason : 'Overridden before (the booking carries a manager override)',
-              overrideAuditId: overrideNow ? (opts.overridden!.auditId ?? null) : pastOverride!,
+              resolvedBy: overrideNow ? opts.overridden!.by : carried ? (carried.resolvedBy ?? 'system') : 'system',
+              resolutionNote: overrideNow ? opts.overridden!.reason : carried ? `Overridden when the car was booked: ${carried.resolutionNote ?? ''}`.trim() : 'Overridden before (the booking carries a manager override)',
+              overrideAuditId: overrideNow ? (opts.overridden!.auditId ?? null) : carried ? (carried.overrideAuditId ?? null) : pastOverride!,
             }
           : {}),
       })
@@ -152,6 +153,23 @@ export function upsertClashFindings(db: Db, scope: ClashScope, findings: readonl
     result.resolved.push(requireClashFinding(db, r.id));
   }
   return result;
+}
+
+/**
+ * A manager's override of a proposed booking carries over to the booking it became: the same code on the same claim and
+ * car, overridden on the proposal within the last day (the booking routes check the proposal, then store the booking).
+ */
+function overrideFromProposal(db: Db, f: ClashFinding, at: ISODateTime): ClashFindingRecord | undefined {
+  if (!f.reservationId || !f.claimId || !f.fleetUnitId || f.severity !== 'block') return undefined;
+  const since = Date.parse(at) - 86_400_000;
+  return db
+    .select()
+    .from(clashFindings)
+    .where(and(eq(clashFindings.code, f.code), eq(clashFindings.claimId, f.claimId), eq(clashFindings.fleetUnitId, f.fleetUnitId), isNull(clashFindings.reservationId), eq(clashFindings.status, 'overridden')))
+    .orderBy(desc(clashFindings.lastSeenAt))
+    .all()
+    .map(toClashFindingRecord)
+    .find((r) => Date.parse(r.lastSeenAt) >= since);
 }
 
 export function getClashFinding(db: Db, id: Id): ClashFindingRecord | undefined {

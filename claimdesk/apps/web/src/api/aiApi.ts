@@ -5,7 +5,7 @@
  *   GET    /ai/status             → AiStatus
  *   POST   /ai/check              → AiStatus (re-detects Claude Code, re-checks the sign-in; no model call)
  *   PATCH  /ai/settings           → AiStatus (admin; agentsEnabled only when the checklist is done and the driver is ready)
- *   PUT    /ai/token|/ai/api-key  {value} → {name, present}   (the value is never returned)
+ *   PUT    /ai/token|/ai/api-key|/ai/fca-key  {value} → {name, present}   (the value is never returned)
  *   DELETE /ai/token|/ai/api-key  → {name, present:false}
  *   POST   /ai/open-setup-token   → {opened, instructions}  (Windows only; 501 elsewhere)
  *   POST   /ai/test-run           → {driver, outcome, …}     (refused while real AI is forbidden)
@@ -56,7 +56,7 @@ export interface DriverHealth {
 export interface AiStatus {
   driver: { selected: AiDriverChoice | 'fake'; override: string | null; health: DriverHealth };
   cli: { path: string | null; version: string | null; minVersion: string; minVersionOk: boolean; authMethod: string | null; loggedIn: boolean | null; problems: string[]; checkedAt: string };
-  secrets: { claudeToken: boolean; apiKey: boolean };
+  secrets: { claudeToken: boolean; apiKey: boolean; fcaHandbookKey?: boolean };
   settings: AiSettings;
   jobModels: Array<{ jobType: string; agent: string; defaults: AiJobModel; effective: AiJobModel }>;
   agents: { enabled: boolean };
@@ -83,7 +83,7 @@ export interface AiSettingsPatch {
   agentsEnabled?: boolean;
 }
 
-export type SecretKind = 'token' | 'api-key';
+export type SecretKind = 'token' | 'api-key' | 'fca-key';
 
 export interface TestRunResult {
   driver: string;

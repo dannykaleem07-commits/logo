@@ -33,7 +33,7 @@ import {
   type KnowledgeStatus,
   type RuleData,
 } from '@ccguk/domain';
-import type { Actor, Db } from '@ccguk/db';
+import type { Actor, Db, EvalRunRecord } from '@ccguk/db';
 import type { AppContext } from '../context.js';
 import { HttpError, badRequest, conflict, notFound } from '../errors.js';
 import { assertHuman } from '../services/humanOnly.js';
@@ -255,8 +255,9 @@ function redecideHeld(ctx: AppContext, held: KnowledgeItem, proposal: KnowledgeP
   if (item.status === 'active') {
     if (item.origin !== 'computed') publishJobId = schedulePublish(ctx, { reason: `auto-applied ${item.itemKey}`, createdBy: actor.userId })?.id ?? null;
     notifyStatus(ctx, item, 'proposed');
-  } else if (decision.outcome === 'queue' && !opts.noCard) {
-    needsYouId = raiseItemsCard(ctx, item, decision, { createdBy: actor.userId, group: opts.group })?.id ?? needsYouId;
+  } else if (decision.outcome === 'queue') {
+    if (!opts.noCard) needsYouId = raiseItemsCard(ctx, item, decision, { createdBy: actor.userId, group: opts.group })?.id ?? needsYouId;
+    if (item.kind === 'rule' && settings.replay.gateRules) enqueueReplayGate(ctx, item, actor.userId);
   }
   return { item: ctx.repos.getKnowledgeItem(ctx.db, item.id) ?? item, decision, created: false, conflicts: [], publishJobId, needsYouId };
 }
@@ -268,6 +269,34 @@ function enqueueReplayGate(ctx: AppContext, item: KnowledgeItem, createdBy: stri
   } catch (err) {
     ctx.logger.warn('could not queue the replay gate', { error: String(err), itemId: item.id });
   }
+}
+
+/** The newest gate replay run that covered `item` (§12.1), if any. */
+export function replayGateRunFor(ctx: AppContext, item: Pick<KnowledgeItem, 'id'>): EvalRunRecord | undefined {
+  return ctx.repos.listEvalRuns(ctx.db, { mode: 'gate', itemId: item.id, limit: 1 })[0];
+}
+
+/** Whether `item` must still wait for its gate replay before it can be switched on (§12.1: rules only, gate on). */
+export function awaitsReplay(ctx: AppContext, item: KnowledgeItem): boolean {
+  return item.kind === 'rule' && getKnowledgeSettings(ctx).replay.gateRules && !replayGateRunFor(ctx, item);
+}
+
+/**
+ * §12.1 "Activation waits for the replay": a rule cannot be approved until its gate replay has run (the verdict is
+ * shown and the owner still decides, whatever it says). The gate is (re)queued — idempotently — and the approval is
+ * refused with KNOWLEDGE_REPLAY_PENDING.
+ */
+export function assertReplayDone(ctx: AppContext, item: KnowledgeItem): void {
+  if (!awaitsReplay(ctx, item)) return;
+  enqueueReplayGate(ctx, item, 'agent:supervisor');
+  throw conflict('KNOWLEDGE_REPLAY_PENDING', 'This rule is still being replayed against past claims (it takes a few minutes). Approve it once the replay verdict shows.', { itemId: item.id });
+}
+
+/** JSON with sorted keys, so two equal rule definitions compare equal whatever their key order. */
+function stableJson(v: unknown): string {
+  if (Array.isArray(v)) return `[${v.map(stableJson).join(',')}]`;
+  if (v && typeof v === 'object') return `{${Object.keys(v as object).sort().map((k) => `${JSON.stringify(k)}:${stableJson((v as Record<string, unknown>)[k])}`).join(',')}}`;
+  return JSON.stringify(v ?? null);
 }
 
 // ---------------------------------------------------------------------------
@@ -327,6 +356,7 @@ export function approveKnowledge(ctx: AppContext, id: string, input: ApproveInpu
   if (item.autonomy.outcome === 'reject') throw conflict('KNOWLEDGE_REJECTED_BY_POLICY', 'The policy rejected this item', { reasons: item.autonomy.reasons });
   assertActivatable(item);
   if (input.verification === 'source_verified' && !input.sourceUrl && !input.snapshotId) throw badRequest('Source-verified needs the source: a snapshot or a URL you compared it against');
+  assertReplayDone(ctx, item);
   const now = ctx.now();
   const result = ctx.db.transaction((tx) => activateWithCheck(ctx, tx, item, input, actor, now, 'knowledge.item.approve'));
   const publishJobId = result.item.origin !== 'computed' ? (schedulePublish(ctx, { reason: `approved ${result.item.itemKey}`, createdBy: actor.userId })?.id ?? null) : null;
@@ -343,8 +373,15 @@ export interface EditApproveInput {
   needsYouId?: string | null;
 }
 
-/** Edit then approve: the content never changes, so the edit is version + 1 with the owner's check on it. */
-export function editApproveKnowledge(ctx: AppContext, id: string, input: EditApproveInput, actor: Actor): { item: KnowledgeItem; check: KnowledgeCheck; replaced: KnowledgeItem; publishJobId: string | null } {
+/**
+ * Edit then approve: the content never changes, so the edit is version + 1 with the owner's check on it.
+ *
+ * A `rule` whose logic (`data`) the owner changed — or whose replay has not run yet — is a new candidate: §12.1 says
+ * activation waits for the replay, so the new version is stored as proposed (on the same card), its gate replay is
+ * queued, and the owner approves it once the verdict shows (`waitingForReplay: true`, no check yet). A wording-only edit
+ * of an already-replayed rule is approved at once.
+ */
+export function editApproveKnowledge(ctx: AppContext, id: string, input: EditApproveInput, actor: Actor): { item: KnowledgeItem; check: KnowledgeCheck | null; replaced: KnowledgeItem; publishJobId: string | null; waitingForReplay: boolean } {
   assertHuman(actor, 'edit and approve knowledge');
   const old = requireItem(ctx, id);
   if (old.status !== 'proposed' && old.status !== 'active') throw conflict('KNOWLEDGE_NOT_EDITABLE', `This item is ${old.status}; only a proposed or active item can be edited`);
@@ -380,6 +417,7 @@ export function editApproveKnowledge(ctx: AppContext, id: string, input: EditApp
   const sha = contentShaOf(proposal);
   const latest = ctx.repos.latestKnowledgeVersion(ctx.db, old.itemKey);
   const ownerDecision: KnowledgeDecision = { outcome: 'queue', ruleIds: decision.ruleIds, reasons: ['edited and approved by the owner'], priority: 'low' };
+  const waitingForReplay = old.kind === 'rule' && getKnowledgeSettings(ctx).replay.gateRules && !(stableJson(old.data) === stableJson(input.data) && replayGateRunFor(ctx, old));
   const result = ctx.db.transaction((tx) => {
     const fresh = ctx.repos.insertKnowledgeItem(tx, {
       id: randomUUID(),
@@ -423,13 +461,18 @@ export function editApproveKnowledge(ctx: AppContext, id: string, input: EditApp
       replaced = ctx.repos.updateKnowledgeItemState(tx, old.id, { status: 'rejected', decidedBy: actor.userId, decidedAt: now, decisionNote: `replaced by the owner's edit (v${fresh.version})`, updatedAt: now });
       recordKnowledgeChange(ctx, tx, actor, now, { action: 'knowledge.item.reject', item: old, before: { status: 'proposed' }, after: { status: 'rejected' }, reason: `replaced by the owner's edit (v${fresh.version})` });
     }
+    if (waitingForReplay) return { item: fresh, check: null, replaced };
     const activated = activateWithCheck(ctx, tx, fresh, { note: input.note ?? null, needsYouId: input.needsYouId ?? null }, actor, now, 'knowledge.item.edit_approve');
     if (old.status === 'active') replaced = ctx.repos.getKnowledgeItem(tx, old.id) ?? old;
     return { ...activated, replaced };
   });
+  if (waitingForReplay) {
+    enqueueReplayGate(ctx, result.item, actor.userId);
+    return { ...result, publishJobId: null, waitingForReplay };
+  }
   const publishJobId = schedulePublish(ctx, { reason: `edited ${result.item.itemKey}`, createdBy: actor.userId })?.id ?? null;
   notifyStatus(ctx, result.item, 'proposed');
-  return { ...result, publishJobId };
+  return { ...result, publishJobId, waitingForReplay };
 }
 
 export function rejectKnowledge(ctx: AppContext, id: string, reason: string, actor: Actor, opts: { needsYouId?: string | null } = {}): KnowledgeItem {

@@ -13,22 +13,24 @@ export const READ_TOOLS: readonly ToolName[] = [
   'hire_get', 'storage_get', 'recovery_get', 'hire_pricing_guide', 'party_get', 'party_search', 'vehicle_get', 'vehicle_on_file', 'evidence_list',
   'evidence_read', 'documents_list', 'document_get', 'templates_list', 'docx_template_values', 'kb_search', 'kb_entry', 'kb_advise', 'directory_search',
   'directory_get', 'total_loss_assess', 'quantum_settlement', 'mail_thread_get', 'brain_search', 'memory_recall',
+  // Knowledge Builder §3.6 (knowledge-use): knowledge_search for every agent with tools; insurer_profile (read)
+  'knowledge_search', 'insurer_profile',
 ];
 
 /** §B.4 case_manager: all read tools + task_schedule, needs_you_create, event_append (note only), memory_note, offer_recommend, payment_received_propose, ledger_propose, legal_escalate. */
-export const CASE_MANAGER_TOOLS: readonly ToolName[] = [...READ_TOOLS, 'task_schedule', 'needs_you_create', 'event_append', 'memory_note', 'offer_recommend', 'payment_received_propose', 'ledger_propose', 'legal_escalate'];
+export const CASE_MANAGER_TOOLS: readonly ToolName[] = [...READ_TOOLS, 'task_schedule', 'needs_you_create', 'event_append', 'memory_note', 'offer_recommend', 'payment_received_propose', 'ledger_propose', 'legal_escalate', 'knowledge_gap_report'];
 
 /** offer.analyse: read + quantum + offer_recommend (§A.6). */
-export const OFFER_ANALYST_TOOLS: readonly ToolName[] = [...READ_TOOLS, 'offer_recommend'];
+export const OFFER_ANALYST_TOOLS: readonly ToolName[] = [...READ_TOOLS, 'offer_recommend', 'knowledge_gap_report'];
 
 /** §B.4 drafter. */
-export const DRAFTER_TOOLS: readonly ToolName[] = ['claim_brief', 'templates_list', 'docx_template_values', 'documents_list', 'document_get', 'evidence_list', 'kb_search', 'kb_entry', 'brain_search', 'memory_recall', 'document_draft', 'docx_document_draft', 'email_draft'];
+export const DRAFTER_TOOLS: readonly ToolName[] = ['claim_brief', 'templates_list', 'docx_template_values', 'documents_list', 'document_get', 'evidence_list', 'kb_search', 'kb_entry', 'brain_search', 'memory_recall', 'document_draft', 'docx_document_draft', 'email_draft', 'knowledge_search', 'knowledge_gap_report', 'insurer_profile'];
 
 /** §B.4 reviewer (critic): read-only, never the drafter's reasoning. */
 export const REVIEWER_TOOLS: readonly ToolName[] = ['claim_brief', 'document_get', 'mail_thread_get', 'kb_entry', 'brain_search'];
 
 /** §B.4 researcher. */
-export const RESEARCHER_TOOLS: readonly ToolName[] = ['kb_search', 'kb_entry', 'kb_advise', 'brain_search', 'memory_recall', 'claim_brief'];
+export const RESEARCHER_TOOLS: readonly ToolName[] = ['kb_search', 'kb_entry', 'kb_advise', 'brain_search', 'memory_recall', 'claim_brief', 'knowledge_search', 'knowledge_gap_report', 'insurer_profile'];
 
 export const CASE_REVIEW_SPEC: AgentSpec = {
   name: 'case_manager',

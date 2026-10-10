@@ -32,10 +32,12 @@ import { loadBundle } from '../services/claimView.js';
 import { approveDocument } from '../services/documents.js';
 import { kbCitations } from '../services/kb.js';
 import { activeRedLines } from '../brain/search.js';
+import { knowledgeReviewFlags } from '../knowledge/use/review.js';
 import { buildCaseBrief, type CaseBrief } from './caseBrief.js';
 import { insertedDisplays, londonIsoDate, PLACEHOLDER_RE } from './facts.js';
 import { REVIEWER_SPEC } from './specs.js';
 import { aiFailure, isAiOff } from './ai.js';
+import { onPackDocumentReviewed } from '../signing/packs.js';
 
 export const REVIEWER = agentUserId('reviewer');
 export const SIGN_OFF = 'Claims Team, Courtesy Cars Group UK Ltd';
@@ -197,6 +199,8 @@ export function rulesTier(ctx: AppContext, t: ReviewTarget): { issues: ReviewIss
     issues.push(issue(r.action === 'escalate' ? 'RED_LINE_ESCALATE' : 'RED_LINE', r.action === 'escalate' ? 'warn' : 'block', m[0].slice(0, 120), `${r.message} (${r.ref})`, r.action === 'block' ? 'Remove or reword this passage' : null));
   }
   if (t.missingInfo) issues.push(issue('MISSING_INFO_REQUEST', 'info', 'draft', 'Prepared because information is missing: the owner confirms before it is sent'));
+  // Knowledge Builder §8.3 (knowledge-use): may this draft cite / state the knowledge it rests on?
+  for (const f of knowledgeReviewFlags(ctx, { kind: t.kind, id: t.id, claimId: t.claimId, text: t.text, ...(t.recipientRole ? { recipientRole: t.recipientRole } : {}) })) issues.push(issue(f.code, f.severity, f.excerpt ?? 'knowledge', f.message));
   return { issues, redLines };
 }
 
@@ -299,7 +303,7 @@ export function combineVerdict(det: Verdict, critic: Verdict | undefined, loop: 
 }
 
 export function detVerdict(issues: ReviewIssue[]): Verdict {
-  if (issues.some((i) => i.code === 'RED_LINE_ESCALATE')) return 'escalate';
+  if (issues.some((i) => i.code === 'RED_LINE_ESCALATE' || i.code === 'KNOWLEDGE_CONFLICTED')) return 'escalate';
   if (issues.some((i) => i.severity === 'block')) return 'repair';
   return 'pass';
 }
@@ -420,6 +424,8 @@ export async function documentAfterReview(ctx: AppContext, job: JobRecord, paylo
   const doc = ctx.repos.getDocument(ctx.db, payload.documentId);
   if (!doc) return { kind: 'fail', reason: `document ${payload.documentId} not found` };
   if (doc.status !== 'draft' && doc.status !== 'blocked') return { kind: 'done', result: { outcome: 'skipped', reason: `document is ${doc.status}` } };
+  // Autopilot stage packs (SUPREME-AUTOPILOT §D.6, ap-paperwork): a pack member is approved with its pack (approve_pack).
+  if (onPackDocumentReviewed(ctx, doc, review)) return { kind: 'done', result: { outcome: 'skipped', reason: 'reviewed with its paperwork pack' } };
   const claimId = doc.claimId!;
   const issues = allIssues(review);
   const missingInfo = Boolean((review.rules as { missingInfo?: boolean } | undefined)?.missingInfo);

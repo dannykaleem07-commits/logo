@@ -17,3 +17,6 @@ export * from './agreements-forms.js';
 export * from './packs-bundles.js';
 export * from './notices.js';
 export * from './certificate.js';
+// Autopilot letters and forms (docs/SUPREME-AUTOPILOT.md §D.6; ap-paperwork)
+export * from './letters-c.js';
+export * from './forms-c.js';

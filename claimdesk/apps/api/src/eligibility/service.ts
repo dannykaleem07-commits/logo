@@ -28,6 +28,7 @@ import {
 import type { AppContext } from '../context.js';
 import { loadBundle, gatesFor } from '../services/claimView.js';
 import { autopilotSettingsOf, insurerAcceptance } from '../clash/service.js';
+import { createNeedsYou } from '../agent/core.js';
 
 const LIVE = ['held', 'confirmed', 'on_hire'] as const;
 
@@ -153,7 +154,41 @@ export function recordEligibility(ctx: AppContext, claimId: Id, createdBy: strin
     write('injury', summary.injury.referralNeeded && !summary.injury.referred ? 'not_referred' : summary.injury.referralNeeded ? 'referred' : 'none', summary.injury, summary.injury);
     write('overall', summary.overall, { green: summary.green, reasons: summary.reasons }, { summary });
   });
+  raiseEligibilityReviews(ctx, claimId, summary, written, dc);
   return { summary, written };
+}
+
+/**
+ * Needs-you `eligibility_review` (§H.3) for what the owner must decide: a driver who needs referral to the fleet
+ * insurer, a weak need, or means not evidenced when Settings require them before an offer. Raised only when the
+ * assessment row was newly written (an input changed); deduplicated per claim and subject.
+ */
+export function raiseEligibilityReviews(ctx: AppContext, claimId: Id, summary: EligibilitySummary, written: Array<{ kind: EligibilityAssessmentKind; partyId?: Id; outcome: string }>, dc?: DriverContext): void {
+  const claim = ctx.repos.getClaim(ctx.db, claimId);
+  if (!claim || ['declined', 'settled', 'closed'].includes(claim.status)) return;
+  const options = [
+    { id: 'insurer_accepted', label: 'The insurer accepted in writing', tone: 'primary' as const, requiresEdit: true },
+    { id: 'request_info', label: 'Ask the client for more', tone: 'neutral' as const },
+    { id: 'decline_hire', label: 'Decline hire', tone: 'danger' as const, requiresReason: true },
+  ];
+  const raise = (key: string, title: string, text: string, payload: Record<string, unknown>, opts = options): void => {
+    try {
+      createNeedsYou(ctx, { kind: 'eligibility_review', claimId, title, summary: text, payload: { claimId, ...payload, criteria: dc?.criteria ?? null, criteriaSource: dc?.criteriaSource ?? 'settings_default', policyId: dc?.policy?.id ?? null }, options: opts, priority: 'high', createdBy: 'agent:autopilot', dedupeKey: `eligibility_review:${claimId}:${key}` });
+    } catch (err) {
+      ctx.logger.warn('could not raise eligibility_review', { claimId, key, error: String(err) });
+    }
+  };
+  for (const w of written) {
+    if (w.kind === 'driver' && w.outcome === 'refer' && w.partyId) {
+      const d = [summary.driver, ...summary.additionalDrivers].find((x) => x.partyId === w.partyId);
+      const why = d?.reasons.filter((r) => r.outcome === 'refer').map((r) => r.message).join(' ') ?? '';
+      raise(`driver:${w.partyId}`, `Driver needs referral to the fleet insurer (${claim.reference})`, `${why} Book only with the insurer's written acceptance.`, { partyId: w.partyId, outcome: 'refer', reasons: d?.reasons ?? [] });
+    }
+    if (w.kind === 'need' && w.outcome === 'weak')
+      raise('need', `Weak need for a hire car (${claim.reference})`, `${summary.need.reasons.join(' ')} ${summary.need.mitigationRisks.join(' ')} The hire offer will ask you first.`.trim(), { subject: 'need', need: summary.need }, options.filter((o) => o.id !== 'insurer_accepted'));
+  }
+  if (autopilotSettingsOf(ctx).eligibility.requireMeansBeforeOffer && summary.means.basis !== 'impecunious' && written.some((w) => w.kind === 'means'))
+    raise('means', `Means not evidenced before the offer (${claim.reference})`, summary.means.warning ?? 'Means are required before an offer.', { subject: 'means', means: summary.means }, options.filter((o) => o.id !== 'insurer_accepted'));
 }
 
 /** Record the case-acceptance assessment (kind 'acceptance'; reasons = the AcceptanceAssessment the clash detector reads). */

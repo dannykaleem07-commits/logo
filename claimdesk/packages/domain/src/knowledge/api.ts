@@ -143,6 +143,8 @@ export interface KnowledgeItemMutationResponse {
   check?: KnowledgeCheck;
   /** a learned-pack publish queued for this change */
   publishJobId?: string | null;
+  /** edit-approve of a rule whose logic changed: stored as proposed until its replay verdict shows (§12.1) */
+  waitingForReplay?: boolean;
 }
 
 // ----- versions (knowledge-core) -----

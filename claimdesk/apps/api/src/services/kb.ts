@@ -315,13 +315,30 @@ const TOPIC_SUMMARY: Record<string, string> = {
   limitation: 'Six years for the tort and contract claims (Limitation Act 1980 ss.2, 5); three years where personal injury is involved (s.11) — injury is referred out, no fee.',
 };
 
+/**
+ * KB verification overlay for the ranked search (docs/SUPREME-KNOWLEDGE-BUILDER.md §4.5): knowledge-use registers it at
+ * boot (`ctx.kb.entries` is wrapped directly); it applies the owner's recorded checks to every hit. Absent = static data.
+ */
+let kbSearchOverlay: ((entries: KbEntry[]) => KbEntry[]) | undefined;
+export function setKbSearchOverlay(fn: ((entries: KbEntry[]) => KbEntry[]) | undefined): void {
+  kbSearchOverlay = fn;
+}
+
 /** Ranked search over the whole knowledge base via @ccguk/kb (paragraph-aware BM25 with topic tags). */
 export function searchKnowledgeBase(query: string, opts: KbSearchOptions = {}): Array<KbSearchHit & { highlights: string[] }> {
-  return kbSearch(query, {
+  const hits = kbSearch(query, {
     ...(opts.type ? { types: [opts.type as KbEntry['type']] } : {}),
     ...(opts.topic ? { topics: [opts.topic] } : {}),
     limit: opts.limit ?? 20,
   }).map((h) => ({ entry: h.entry, score: Math.round(h.score * 1000) / 1000, highlights: h.highlights }));
+  if (!kbSearchOverlay || !hits.length) return hits;
+  let overlaid: KbEntry[];
+  try {
+    overlaid = kbSearchOverlay(hits.map((h) => h.entry));
+  } catch {
+    return hits;
+  }
+  return hits.map((h, i) => ({ ...h, entry: overlaid[i] ?? h.entry }));
 }
 
 /** Cited guidance for a topic from the @ccguk/kb advisor. Human-approved before use; nothing here is sent automatically. */

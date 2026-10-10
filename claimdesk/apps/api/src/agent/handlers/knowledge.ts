@@ -21,7 +21,7 @@ import { HttpError, badRequest, conflict } from '../../errors.js';
 import { isAutomatedActor } from '../../services/humanOnly.js';
 import { knowledgeHandler, learningOff } from '../../knowledge/jobs.js';
 import { activateVersion, publishLearnedPack } from '../../knowledge/publish.js';
-import { approveKnowledge, editApproveKnowledge, rejectKnowledge, resolveConflict, type ConflictKeep } from '../../knowledge/store.js';
+import { approveKnowledge, assertReplayDone, editApproveKnowledge, rejectKnowledge, resolveConflict, type ConflictKeep } from '../../knowledge/store.js';
 import { knowledgeHooks } from '../../knowledge/hooks.js';
 
 const SUPERVISOR: Actor = { userId: 'agent:supervisor' };
@@ -76,6 +76,8 @@ const firstSnapshot = (i: KnowledgeItem): { snapshotId: string; url: string } | 
 async function resolveItems(ctx: AppContext, card: NeedsYouItem, payload: Extract<KnowledgeReviewPayload, { variant: 'items' }>, choice: { optionId: string; edits?: unknown; note?: string }, actor: Actor): Promise<void> {
   const items = pendingItemsOf(ctx, card, payload);
   const note = choice.note?.trim() || null;
+  // §12.1: every rule on the card must have its replay verdict before any item is approved (all or nothing).
+  if (choice.optionId === 'approve' || choice.optionId === 'approve_source_verified') for (const i of items) assertReplayDone(ctx, i);
   switch (choice.optionId) {
     case 'approve':
       for (const i of items) approveKnowledge(ctx, i.id, { note, needsYouId: card.id }, actor);

@@ -93,7 +93,7 @@ export function listOfferObservations(db: Db, f: { claimId?: string; insurerSlug
     .select()
     .from(offerObservations)
     .where(conds.length ? and(...conds) : undefined)
-    .orderBy(asc(offerObservations.receivedAt), asc(offerObservations.createdAt), asc(offerObservations.id))
+    .orderBy(asc(offerObservations.receivedAt), asc(offerObservations.source), asc(offerObservations.sourceId), sql`coalesce(${offerObservations.decision}, '')`, asc(offerObservations.id))
     .limit(Math.max(1, Math.min(f.limit ?? 10_000, 100_000)))
     .all() as OfferObservationRecord[];
 }

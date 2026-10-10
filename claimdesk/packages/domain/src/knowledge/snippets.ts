@@ -40,6 +40,8 @@ const escapeRe = (s: string): string => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 /** amounts → [amount], dates → [date], references → [ref], party names → [name]. */
 export function generaliseSnippet(text: string, names: readonly string[]): { text: string; tokens: string[]; literalsRemain: boolean } {
   let out = text ?? '';
+  // Email addresses and links are literals whatever the reference pattern does to them (never generalised away).
+  const contactLiteral = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|https?:\/\/\S+|\bwww\.\S+/i.test(out);
   const used = new Map<string, number>();
   const sub = (re: RegExp, token: string): void => {
     out = out.replace(re, (m, ...rest) => {
@@ -56,7 +58,7 @@ export function generaliseSnippet(text: string, names: readonly string[]): { tex
   // Order tokens by first appearance in the generalised text.
   const tokens = [...used.keys()].sort((a, b) => out.indexOf(a) - out.indexOf(b));
   const stripped = out.replace(/\[(?:amount|date|ref|name)\]/g, ' ');
-  const literalsRemain = LITERAL_RES.some((re) => re.test(stripped));
+  const literalsRemain = contactLiteral || LITERAL_RES.some((re) => re.test(stripped));
   return { text: out, tokens, literalsRemain };
 }
 

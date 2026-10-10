@@ -23,6 +23,7 @@ import { templatesApi } from '../../../api/templatesApi';
 import { DocxPreview } from '../components/DocxPreview';
 import { useManagerMode } from '../../../app/managerMode';
 import { GTA_BENCHMARK_CAVEAT, originLabel } from '../lib/fillValues';
+import { KnowledgeUsedPanel } from '../../knowledge/KnowledgeUsedPanel'; // knowledge-ui
 
 type Dialog = 'send' | 'sign' | 'supersede' | null;
 
@@ -264,6 +265,8 @@ export function DocumentView({ view }: { view: ClaimView }) {
           </Card>
 
           {docx && <ValuesUsedCard doc={doc} />}
+
+          <KnowledgeUsedPanel targetKind={docx ? 'docx' : 'document'} targetId={doc.id} card />
 
           <Card title="Record">
             <KeyValue

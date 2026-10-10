@@ -18,7 +18,7 @@ export const INTAKE_SPEC: AgentSpec = {
   jobType: 'intake.extract',
   title: 'Intake: classify and extract',
   promptFiles: ['intake.md'],
-  tools: ['claim_get', 'claims_search', 'evidence_read', 'vehicle_get', 'party_get', 'claim_field_propose', 'needs_you_create'],
+  tools: ['claim_get', 'claims_search', 'evidence_read', 'vehicle_get', 'party_get', 'claim_field_propose', 'needs_you_create', 'knowledge_search', 'knowledge_gap_report'],
   allowRead: true,
   resultSchemaId: 'intake_extraction',
   defaults: { model: 'claude-sonnet-5-5', effort: 'medium', maxTurns: 6, timeoutMs: 5 * 60_000 },

@@ -54,7 +54,7 @@ describe('detectConflicts', () => {
   });
   it('duplicate only against the owner’s, a verified or another origin’s version', () => {
     const p = contact({ role: 'Team Leader' } as never);
-    const base = { id: 'old', itemKey: itemKeyFor(p), kind: 'contact' as const, area: 'contact' as const, title: 'old', body: '', data: {}, scope: p.scope, contentSha256: 'different' };
+    const base = { id: 'old', itemKey: itemKeyFor(p), kind: 'contact' as const, area: 'contact' as const, title: 'old', body: '', data: p.data, scope: p.scope, contentSha256: 'different' };
     expect(detectConflicts(p, { ...empty, active: [{ ...base, verification: 'unverified', origin: 'observed' }] })).toEqual([]);
     expect(detectConflicts(p, { ...empty, active: [{ ...base, verification: 'owner_confirmed', origin: 'observed' }] })[0]).toMatchObject({ kind: 'duplicate', rightRef: 'ki:old' });
     expect(detectConflicts(p, { ...empty, active: [{ ...base, contentSha256: contentShaOf(p), verification: 'owner_confirmed', origin: 'owner' }] })).toEqual([]);

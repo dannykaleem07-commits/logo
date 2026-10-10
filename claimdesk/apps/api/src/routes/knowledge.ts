@@ -264,7 +264,7 @@ export function registerKnowledgeRoutes(app: FastifyInstance, ctx: AppContext): 
     const { id } = params<{ id: string }>(request);
     const body = editApproveBody.parse(request.body);
     const r = editApproveKnowledge(ctx, id, { title: body.title, body: body.body, data: body.data as unknown as KnowledgeData, scope: body.scope as KnowledgeScope, note: body.note ?? null }, request.actor);
-    return { item: view(r.item), check: r.check, publishJobId: r.publishJobId };
+    return { item: view(r.item), ...(r.check ? { check: r.check } : {}), publishJobId: r.publishJobId, waitingForReplay: r.waitingForReplay };
   });
 
   app.post('/knowledge/items/:id/reject', async (request) => {

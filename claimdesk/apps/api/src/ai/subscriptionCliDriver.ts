@@ -36,13 +36,29 @@ export interface TokenCarrier {
 /** `mcp__claimdesk__<tool>` — how a ClaimDesk tool appears to the CLI. */
 export const mcpToolName = (tool: string): string => `mcp__${MCP_SERVER_NAME}__${tool}`;
 
+/** `WebFetch(domain:<d>)` permission rules for plain host names (KB §7.8); anything that is not a host name is dropped. */
+export function webFetchRules(domains: readonly string[]): string[] {
+  const ok = /^(?:\*\.)?[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,62}[a-z0-9])?)+$/;
+  return [...new Set(domains.map((d) => d.trim().toLowerCase()).filter((d) => ok.test(d)))].map((d) => `WebFetch(domain:${d})`);
+}
+
 /** The exact argument list (§A.2), after the executable. `files.mcpConfig` is omitted when the run has no tools. */
 export function buildCliArgs(req: AiRunRequest, files: { mcpConfig?: string; systemPrompt: string }): string[] {
   const args = ['-p', '--restricted', '--strict-mcp-config'];
   if (files.mcpConfig && req.tools.length) args.push('--mcp-config', files.mcpConfig);
-  args.push('--tools', req.allowRead ? 'Read' : '');
-  const allowed = [...req.tools.map(mcpToolName), ...(req.allowRead ? ['Read'] : [])];
-  if (allowed.length) args.push('--allowedTools', ...allowed);
+  if (req.web) {
+    // Knowledge Builder web research (KB §7.8): WebFetch only, restricted to the allow-list; never WebSearch, Read,
+    // Write or Bash. Deny and copycat domains are also listed in --disallowedTools.
+    args.push('--tools', 'WebFetch');
+    const allowed = [...req.tools.map(mcpToolName), ...webFetchRules(req.web.fetchDomains)];
+    if (allowed.length) args.push('--allowedTools', ...allowed);
+    const denied = webFetchRules(req.web.denyDomains);
+    if (denied.length) args.push('--disallowedTools', ...denied);
+  } else {
+    args.push('--tools', req.allowRead ? 'Read' : '');
+    const allowed = [...req.tools.map(mcpToolName), ...(req.allowRead ? ['Read'] : [])];
+    if (allowed.length) args.push('--allowedTools', ...allowed);
+  }
   args.push(
     '--permission-mode',
     'dontAsk',

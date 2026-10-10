@@ -5,7 +5,7 @@
  */
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import type { InjectOptions } from 'fastify';
-import { PUBLIC_API_ROUTES } from '../app.js';
+import { isPublicApiRoute, PUBLIC_API_ROUTES } from '../app.js';
 import { DEFAULT_LOGIN } from '../config.js';
 import { ensureDefaultLogin, LoginRateLimiter, SESSION_COOKIE } from '../services/auth.js';
 import { createTestApp, type TestApp } from './helpers.js';
@@ -71,7 +71,8 @@ describe('every non-public /api route requires a session', () => {
   });
 
   it('401 UNAUTHENTICATED for every protected route: no cookie, a forged cookie, or X-User-Id', async () => {
-    const protectedRoutes = routes.filter((r) => r.path.startsWith('/api') && !PUBLIC_API_ROUTES.has(r.path));
+    // The signing kiosk (/api/kiosk/*, SUPREME-AUTOPILOT §E.2) is a public prefix: it authenticates with its own one-pack token.
+    const protectedRoutes = routes.filter((r) => r.path.startsWith('/api') && !isPublicApiRoute(r.path));
     expect(protectedRoutes.length).toBeGreaterThan(140);
     const variants: Array<{ label: string; headers: Record<string, string> }> = [
       { label: 'no cookie', headers: {} },

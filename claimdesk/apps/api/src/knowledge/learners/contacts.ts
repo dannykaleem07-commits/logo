@@ -10,6 +10,9 @@
  *                        independent threads, own domain, DMARC pass, that agree → a `contact` item (internal,
  *                        unverified; KN-15 auto-applies it). Anything less waits as observations. A difference from
  *                        the directory becomes a directory_mismatch conflict (conflictsFor) and is queued.
+ *   markFailedContacts   (knowledge.consolidate) a learned contact whose email or phone was named in two or more
+ *                        `directory_report_failed` reports for its insurer (after it was learned) becomes `stale`, which
+ *                        drops it out of retrieval (§6.2). Health is display/retrieval only: verification is untouched.
  */
 import { createHash } from 'node:crypto';
 import { isCopycat } from '@ccguk/kb';
@@ -18,7 +21,7 @@ import type { ContactObservationRecord } from '@ccguk/db';
 import type { AppContext } from '../../context.js';
 import { createNeedsYou } from '../../agent/core.js';
 import { getKnowledgeSettings } from '../settings.js';
-import { proposeKnowledge } from '../store.js';
+import { proposeKnowledge, setHealth } from '../store.js';
 import { LEARNER, advanceWatermark, all, directoryEntry, entryForDomain, insurerSlugsByClaim, json, ownDomainsOf, watermark } from './common.js';
 
 const PHONE_PREFERENCE: Record<string, number> = { direct: 0, mobile: 1, team: 2, switchboard: 3, null: 4 };
@@ -215,6 +218,46 @@ export function consolidateContacts(ctx: AppContext): ConsolidateResult {
     if (latest && IDENTITY_FIELDS.every((f) => JSON.stringify((latest.data as unknown as ContactData)[f] ?? null) === JSON.stringify(data[f] ?? null))) continue;
     const r = proposeKnowledge(ctx, proposal, { contact: { domainCheck: 'own_domain', dmarc: 'pass', independentThreads: threads.size } });
     if (r.created) out.proposed.push({ itemId: r.item.id, outcome: r.decision.outcome });
+  }
+  return out;
+}
+
+/** Digits of a UK phone number in a comparable form (leading 44 → 0). */
+const phoneDigits = (s: string): string => {
+  const d = s.replace(/\D+/g, '');
+  return d.startsWith('44') ? `0${d.slice(2)}` : d;
+};
+
+/** Whether a failure report's text names this contact's email or phone. */
+export function reportNamesContact(text: string, c: Pick<ContactData, 'email' | 'phone'>): boolean {
+  const lower = text.toLowerCase();
+  if (c.email && lower.includes(c.email.toLowerCase())) return true;
+  if (c.phone) {
+    const want = phoneDigits(c.phone);
+    if (want.length >= 10) for (const m of text.match(/\+?\d[\d\s()-]{8,}\d/g) ?? []) if (phoneDigits(m) === want) return true;
+  }
+  return false;
+}
+
+export interface FailedContactsResult {
+  checked: number;
+  staled: string[];
+}
+
+/** §6.2: a learned contact reported failed twice (directory_report_failed naming its email or phone) becomes stale. */
+export function markFailedContacts(ctx: AppContext, minReports = 2): FailedContactsResult {
+  const out: FailedContactsResult = { checked: 0, staled: [] };
+  const contacts = ctx.repos.listKnowledgeItems(ctx.db, { kind: 'contact', status: 'active', limit: 5000 }).items.filter((i) => i.health === 'ok' || i.health === 'conflicted');
+  if (!contacts.length) return out;
+  const reports = ctx.repos.listAudit(ctx.db, { action: 'directory.report_failed', limit: 5000 });
+  for (const item of contacts) {
+    const data = item.data as unknown as ContactData;
+    if (!data.email && !data.phone) continue;
+    out.checked += 1;
+    const hits = reports.filter((r) => r.entityId === data.insurerSlug && r.at >= item.createdAt && reportNamesContact(JSON.stringify(r.after ?? {}), data));
+    if (hits.length < minReports) continue;
+    setHealth(ctx, item.id, 'stale', `reported failed ${hits.length} times (directory_report_failed)`);
+    out.staled.push(item.id);
   }
   return out;
 }

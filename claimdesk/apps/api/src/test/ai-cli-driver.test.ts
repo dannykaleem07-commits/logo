@@ -355,7 +355,7 @@ describe('Settings > AI routes (with the fake CLI)', () => {
     expect(s.status).toBe(200);
     expect(s.body.driver.selected).toBe('off');
     expect(s.body.cli).toMatchObject({ version: '2.1.300', minVersion: MIN_CLAUDE_CODE_VERSION, minVersionOk: true, authMethod: 'oauth_token', loggedIn: true });
-    expect(s.body.secrets).toEqual({ claudeToken: true, apiKey: false });
+    expect(s.body.secrets).toEqual({ claudeToken: true, apiKey: false, fcaHandbookKey: false });
     expect(JSON.stringify(s.body)).not.toContain('sk-ant-oat-invented');
     expect(s.body.canEnableAgents).toBe(false);
     expect(s.body.blockers.join(' ')).toMatch(/driver/);

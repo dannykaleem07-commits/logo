@@ -5,7 +5,7 @@
  * dailyLog,autonomySettings,notifications,tasks}.ts; web code never imports API code.
  */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { AgentName, AutonomySettings, EmailKind, JobStatus, JobType, Lane, NotificationSettings } from '@ccguk/domain';
+import type { AgentName, AutonomySettings, EmailKind, JobStatus, JobType, KnowledgeDigest, Lane, NotificationSettings } from '@ccguk/domain';
 import { request, seg } from './client';
 
 // ---------------------------------------------------------------------------
@@ -188,6 +188,8 @@ export interface DailyLog {
     deadlines: LogLine[];
     problems: LogLine[];
     usage: { driver: string; fiveHourPeak?: number; sevenDay?: number; costUsd?: number };
+    /** Knowledge Builder §9.4 (optional; absent on logs compiled before 0.5) */
+    knowledge?: KnowledgeDigest;
   };
 }
 

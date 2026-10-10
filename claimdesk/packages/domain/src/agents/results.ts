@@ -187,6 +187,15 @@ export interface KnowledgeResearchResult {
   confidence: number;
 }
 
+/** `knowledge.replay_drafts` (docs/SUPREME-KNOWLEDGE-BUILDER.md §12.1): one re-drafted email, read-only; nothing is created. */
+export interface DraftReplayResult {
+  subject: string | null;
+  /** the full email body, figures as {{fact:<id>}} placeholders */
+  body: string;
+  citations: Array<{ kind: 'kb' | 'pack' | 'memory' | 'knowledge'; id: string }>;
+  confidence: number;
+}
+
 /** `autopilot.judge` (docs/SUPREME-AUTOPILOT.md §A.7): choose one of the options code allowed; wording uses {{fact:…}} only. */
 export interface AutopilotJudgeResult {
   questionId: JudgeQuestionId;
@@ -212,8 +221,8 @@ export interface HireReplyResult {
   injectionSuspected: boolean;
 }
 
-export type ResultSchemaId = 'mail_triage' | 'case_review' | 'drafter' | 'review_verdict' | 'intake_extraction' | 'offer_analysis' | 'research_answer' | 'autopilot_judge' | 'hire_reply' | 'knowledge_curate' | 'knowledge_research';
-export const RESULT_SCHEMA_IDS: readonly ResultSchemaId[] = ['mail_triage', 'case_review', 'drafter', 'review_verdict', 'intake_extraction', 'offer_analysis', 'research_answer', 'autopilot_judge', 'hire_reply', 'knowledge_curate', 'knowledge_research'];
+export type ResultSchemaId = 'mail_triage' | 'case_review' | 'drafter' | 'review_verdict' | 'intake_extraction' | 'offer_analysis' | 'research_answer' | 'autopilot_judge' | 'hire_reply' | 'knowledge_curate' | 'knowledge_research' | 'draft_replay';
+export const RESULT_SCHEMA_IDS: readonly ResultSchemaId[] = ['mail_triage', 'case_review', 'drafter', 'review_verdict', 'intake_extraction', 'offer_analysis', 'research_answer', 'autopilot_judge', 'hire_reply', 'knowledge_curate', 'knowledge_research', 'draft_replay'];
 
 export interface ResultTypes {
   mail_triage: MailTriageResult;
@@ -227,6 +236,7 @@ export interface ResultTypes {
   hire_reply: HireReplyResult;
   knowledge_curate: KnowledgeCurateResult;
   knowledge_research: KnowledgeResearchResult;
+  draft_replay: DraftReplayResult;
 }
 
 // ---------------------------------------------------------------------------
@@ -395,6 +405,13 @@ export const KNOWLEDGE_RESEARCH_SCHEMA: JsonSchema = strictObject({
   confidence,
 });
 
+export const DRAFT_REPLAY_SCHEMA: JsonSchema = strictObject({
+  subject: nstr(),
+  body: str('the full email body; figures as {{fact:<id>}} placeholders'),
+  citations: arr(strictObject({ kind: strEnum(['kb', 'pack', 'memory', 'knowledge']), id: str() })),
+  confidence,
+});
+
 export const RESULT_SCHEMAS: Readonly<Record<ResultSchemaId, JsonSchema>> = {
   mail_triage: MAIL_TRIAGE_SCHEMA,
   case_review: CASE_REVIEW_SCHEMA,
@@ -407,6 +424,7 @@ export const RESULT_SCHEMAS: Readonly<Record<ResultSchemaId, JsonSchema>> = {
   hire_reply: HIRE_REPLY_SCHEMA,
   knowledge_curate: KNOWLEDGE_CURATE_SCHEMA,
   knowledge_research: KNOWLEDGE_RESEARCH_SCHEMA,
+  draft_replay: DRAFT_REPLAY_SCHEMA,
 };
 
 /** Compact JSON size limit for a result schema (the CLI receives it on the command line, §A.2/§B.5). */

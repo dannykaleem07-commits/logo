@@ -86,3 +86,16 @@ describe('driver profiles and assessments', () => {
     expect(() => h.sqlite.prepare('DELETE FROM eligibility_assessments WHERE id = ?').run(a.id)).toThrow();
   });
 });
+
+describe('override carried from the proposal to the booking', () => {
+  it('a block overridden on the proposed booking is stored overridden for the reservation it became', () => {
+    const at = '2026-10-12T09:00:00.000Z';
+    upsertClashFindings(h.db, { proposed: { claimId: 'c1', fleetUnitId: 'u1' } }, [finding('UNIT_NOT_READY:c1:u1', { code: 'UNIT_NOT_READY' })], { at, overridden: { keys: ['UNIT_NOT_READY:c1:u1'], reason: 'valet done', by: 'boss' } });
+    const r = upsertClashFindings(h.db, { reservationId: 'r1' }, [finding('UNIT_NOT_READY:r1', { code: 'UNIT_NOT_READY', reservationId: 'r1' })], { at: '2026-10-12T10:00:00.000Z' });
+    expect(r.inserted[0]).toMatchObject({ status: 'overridden', resolvedBy: 'boss' });
+    expect(r.inserted[0]!.resolutionNote).toContain('valet done');
+    // another car is not covered
+    const other = upsertClashFindings(h.db, { reservationId: 'r2' }, [finding('UNIT_NOT_READY:r2', { code: 'UNIT_NOT_READY', reservationId: 'r2', fleetUnitId: 'u9' })], { at });
+    expect(other.inserted[0]!.status).toBe('open');
+  });
+});

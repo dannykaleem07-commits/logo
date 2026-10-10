@@ -7,7 +7,7 @@
  * `blockColumns`) so the overlap triggers compare integers, never ISO text. A trigger refusal surfaces as
  * `ReservationOverlapError` (code RESERVATION_OVERLAP). `fleet_reservation_events` is append-only (0013 triggers).
  */
-import { and, asc, eq, gt, inArray, isNull, lt, lte, or, type SQL } from 'drizzle-orm';
+import { and, asc, eq, gt, inArray, isNull, lt, lte, or, sql, type SQL } from 'drizzle-orm';
 import { blockColumns, isoToMs, type FleetDamage, type FleetLocation, type HireNeeds, type Id, type ISODateTime, type Movement, type MovementStatus, type ReadinessTask, type Reservation, type ReservationEvent, type ReservationStatus } from '@ccguk/domain';
 import type { Db } from '../client.js';
 import { DbError, NotFoundError, ValidationError } from '../errors.js';
@@ -168,7 +168,7 @@ export function appendReservationEvent(db: Db, input: Omit<ReservationEvent, 'id
 }
 
 export function listReservationEvents(db: Db, reservationId: Id): ReservationEvent[] {
-  return db.select().from(fleetReservationEvents).where(eq(fleetReservationEvents.reservationId, reservationId)).orderBy(asc(fleetReservationEvents.at), asc(fleetReservationEvents.id)).all().map(toEvent);
+  return db.select().from(fleetReservationEvents).where(eq(fleetReservationEvents.reservationId, reservationId)).orderBy(asc(fleetReservationEvents.at), sql`rowid`).all().map(toEvent);
 }
 
 /** The stored block columns of a reservation (tests and diagnostics). */

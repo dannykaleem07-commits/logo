@@ -562,7 +562,8 @@ export const KNOWLEDGE_AUDIT_ACTIONS = [
   'knowledge.gap.open', 'knowledge.gap.close',
   'knowledge.source.fetch', 'knowledge.source.refused', 'knowledge.source.prune', 'knowledge.source.add', 'knowledge.source.toggle',
   'knowledge.settings', 'knowledge.learning.pause', 'knowledge.learning.resume',
-  'knowledge.alarm.raise', 'knowledge.replay.run',
+  'knowledge.alarm.raise', 'knowledge.alarm.ack', 'knowledge.alarm.resolve', 'knowledge.replay.run',
+  'knowledge.learn.run',
   'knowledge.link.set',
   'knowledge.conflict.open', 'knowledge.conflict.resolve',
 ] as const;

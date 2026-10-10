@@ -517,6 +517,9 @@ const SEMANTIC_SEND_EVENT: Record<string, EventType> = {
   'letter.collect_or_pay': 'collect_or_pay_notice_sent',
   'notice.s172_response': 's172_response_sent',
   'notice.pcn_liability_transfer': 'pcn_liability_transferred',
+  // Autopilot (SUPREME-AUTOPILOT §D.7, ap-paperwork)
+  'letter.hire_start_notice': 'hire_start_notice_sent',
+  'letter.supplier_instruction_engineer': 'engineer_instructed',
 };
 
 export interface SendResult {

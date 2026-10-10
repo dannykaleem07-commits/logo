@@ -14,6 +14,7 @@ import { useToast } from '../../components/Toast';
 import { api } from '../../api/client';
 import { OUTBOX_STATUS_LABEL, OUTBOX_STATUS_TONE, mailApi, parseAddresses, useMailMutation, useOutbox, type OutboxItem, type OutboxStatus } from '../../api/mailApi';
 import { HeldCountdown } from './HeldCountdown';
+import { KnowledgeUsedPanel } from '../knowledge/KnowledgeUsedPanel'; // knowledge-ui
 import './outbox.css';
 
 /** Which item a deep link names: `/outbox/<id>?undo=1`, `/outbox?focus=<id>&undo=1` or `/outbox?undo=<id>` (toasts). */
@@ -74,6 +75,7 @@ function OutboxRow({ item, serverNow, focused }: { item: OutboxItem; serverNow: 
         )}
         {item.lastError && item.status !== 'sent' && <div className="ob-meta">Last error: {item.lastError}</div>}
         {open && !editing && <pre className="ob-body">{item.bodyText}</pre>}
+        {open && !editing && <KnowledgeUsedPanel targetKind="outbox" targetId={item.id} />}
         {editing && (
           <div className="ob-edit">
             <TextInput label="To" value={to} onChange={setTo} />

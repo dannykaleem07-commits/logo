@@ -1,0 +1,14 @@
+[
+  {
+    "id": "knowledge-replay-drafts-default",
+    "match": { "jobType": "knowledge.replay_drafts", "userContains": ["[knowledge-replay:"] },
+    "steps": [{ "tool": "knowledge_search", "input": { "q": "payment pack chaser reply", "kinds": null, "insurerSlug": null, "claimId": null, "limit": 4 } }],
+    "outcome": "ok",
+    "result": {
+      "subject": null,
+      "body": "Dear Sirs,\n\nThank you for your email. Please find our payment pack attached and let us know if anything further is needed.\n\nClaims Team, Courtesy Cars Group UK Ltd",
+      "citations": [],
+      "confidence": 0.7
+    }
+  }
+]

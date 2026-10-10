@@ -14,6 +14,7 @@ import { EmptyState } from '../../components/EmptyState';
 import { ApiErrorNotice } from '../../components/ApiErrorNotice';
 import { useToast } from '../../components/Toast';
 import { AGENT_LABEL, agentsApi, percent, useAgentsMutation, useDailyLog, type DailyLog, type LogLine } from '../../api/agentsApi';
+import { KnowledgeDigestSection } from '../knowledge/KnowledgeDigestSection'; // knowledge-ui
 import '../agents/agents.css';
 
 export function londonToday(now: Date = new Date()): string {
@@ -138,6 +139,7 @@ export function DailyLogPage() {
           <Card title={`Problems (${log.sections.problems.length})`}>
             <Lines lines={log.sections.problems} empty="No problems." />
           </Card>
+          <KnowledgeDigestSection sections={log.sections} />
         </div>
       )}
       {!q.isLoading && !q.error && !log && <EmptyState title="No log">Nothing recorded for this day.</EmptyState>}

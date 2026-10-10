@@ -16,6 +16,7 @@ import { setOwnerInsurerLink, upsertInsurerLink } from '../insurerLinks.js';
 import { LEARNER, LEARNER_ACTOR, all, entryForDomain, isPerson, json } from './common.js';
 
 export const LINK_QUESTION_PREFIX = 'knowledge.link:';
+const GENERIC_WORDS = new Set(['insurance', 'insurer', 'insurers', 'services', 'motor', 'claims', 'group', 'direct', 'underwriting', 'mutual', 'company', 'europe']);
 
 const fold = (s: string): string =>
   s
@@ -23,7 +24,7 @@ const fold = (s: string): string =>
     .normalize('NFD')
     .replace(/[̀-ͯ]/g, '')
     .replace(/[‘’'`]/g, '')
-    .replace(/\b(?:limited|ltd|plc|uk|insurance\s+services|insurance|insurers?|company|co|the|group)\b/g, ' ')
+    .replace(/\b(?:limited|ltd|plc|company|co|the)\b/g, ' ')
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 
@@ -107,7 +108,9 @@ export function linkInsurerParties(ctx: AppContext, opts: { ask?: boolean } = {}
     }
     out.unlinked += 1;
     if (opts.ask === false) continue;
-    const candidates = [...new Set([...slugs, ...searchDirectory(p.name, directory).filter((h) => h.score >= 30).map((h) => h.entry.id)])].slice(0, 5);
+    const words = fold(p.name).split(' ').filter((w) => w.length >= 4 && !GENERIC_WORDS.has(w));
+    const hits = [p.name, ...words].flatMap((q) => searchDirectory(q, directory).filter((h) => h.score >= 30).map((h) => h.entry.id));
+    const candidates = [...new Set([...slugs, ...hits])].slice(0, 5);
     if (!candidates.length) continue;
     const dedupeKey = `${LINK_QUESTION_PREFIX}${p.party_id}`;
     if (ctx.repos.findOpenNeedsYouByDedupeKey(ctx.db, dedupeKey)) continue;

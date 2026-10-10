@@ -45,6 +45,7 @@ export function AiSettingsPage() {
           {s.settings.driver === 'api_key' || s.settings.driver === 'off' ? <ApiKeyCard s={s} /> : null}
           <ModelsCard s={s} />
           <CapacityCard s={s} />
+          <FcaKeyCard s={s} />
           <ChecklistCard s={s} />
         </div>
       )}
@@ -306,6 +307,18 @@ function ApiKeyCard({ s }: { s: AiStatus }) {
             Save cap
           </Button>
         </div>
+      </div>
+    </Card>
+  );
+}
+
+/** Knowledge Builder §15: the optional FCA Handbook API key (Knowledge ▸ Sources shows whether it is saved). */
+function FcaKeyCard({ s }: { s: AiStatus }) {
+  return (
+    <Card title="FCA Handbook API key (optional)">
+      <div className="stack">
+        <p className="xs muted ai-notice">For Knowledge research. Register for a free key on the FCA developer portal and paste it here. Without it, Handbook pages can still be fetched directly by their address.</p>
+        <SecretField kind="fca-key" present={Boolean(s.secrets.fcaHandbookKey)} label="FCA Handbook API key" placeholder="Paste the key from the FCA developer portal" />
       </div>
     </Card>
   );

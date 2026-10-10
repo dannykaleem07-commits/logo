@@ -20,6 +20,7 @@ import { GroupedSelect } from '../components/GroupedSelect';
 import { extraDataBody, extraDataFields, flagCounts, isDocx, sortDocuments } from '../lib/documents';
 import { chooserGroups, recipientOptions, userLabel, wordTemplateOf } from '../lib/documentChooser';
 import { FillTemplateDialog } from './FillTemplateDialog';
+import { PacksPanel } from '../components/PacksPanel';
 
 /**
  * Generated documents: draft → consistency check → approve (human) → send. Nothing leaves without a person.
@@ -95,6 +96,10 @@ export function DocumentsTab({ view }: { view: ClaimView }) {
         <div className="card-footer xs muted">
           New document → Fill a CCGUK template (Word), or draft a letter, invoice, form or report. Every document goes draft → consistency check → approved by a person → sent. A block flag stops approval until someone clears it with a reason, and the reason is logged.
         </div>
+      </Card>
+      {/* Autopilot stage packs (SUPREME-AUTOPILOT §D.6, ap-paperwork): prepare, approve, send and sign in person. */}
+      <Card title="Paperwork packs">
+        <PacksPanel claimId={view.claim.id} />
       </Card>
       {creating && (
         <NewDocumentDialog

@@ -14,6 +14,7 @@ import { BasisChips } from './agent/BasisChips';
 import { TasksCard } from './agent/TasksCard';
 import { AskBrainCard } from './agent/AskBrainCard';
 import { confidenceLabel, confidenceTone, historyRows, nextBest, outcomeTone } from './agent/agentView';
+import { InsurerProfileCard } from '../../knowledge/InsurerProfileCard'; // knowledge-ui
 import './agent/agent.css';
 
 /**
@@ -156,6 +157,7 @@ export function AgentTab({ view }: { view: ClaimView }) {
                 </ul>
               </Card>
             )}
+            <InsurerProfileCard partyId={view.atFaultInsurer?.id} partyName={view.atFaultInsurer?.name} />
             <AskBrainCard claimId={claimId} notes={brief.data.notes} />
             <Card title="Agent history" flush>
               {history.length ? (

@@ -42,8 +42,8 @@ describe('Autopilot wiring', () => {
     expect(screen.getByText(/coming with Autopilot/i)).toBeTruthy();
   });
 
-  it('the clash panel stub accepts the agreed props', () => {
+  it('the clash panel accepts the agreed props (built by ap-clash)', () => {
     renderWithProviders(<ClashPanel findings={[]} managerMode={false} onAcknowledge={() => undefined} onOverride={() => undefined} />);
-    expect(screen.getByText(/Clash checks: coming with Autopilot/)).toBeTruthy();
+    expect(screen.getByText(/No clashes found/)).toBeTruthy();
   });
 });

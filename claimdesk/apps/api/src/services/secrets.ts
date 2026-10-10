@@ -15,8 +15,9 @@ import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:
 import { chmodSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
-export type SecretName = 'claude_oauth_token' | 'anthropic_api_key' | 'imap_password' | 'smtp_password' | 'twilio_auth_token';
-export const SECRET_NAMES: readonly SecretName[] = ['claude_oauth_token', 'anthropic_api_key', 'imap_password', 'smtp_password', 'twilio_auth_token'];
+/** `fca_handbook_api_key`: the owner's FCA Handbook API key (Knowledge Builder §7.2; optional, DPAPI-encrypted like the rest). */
+export type SecretName = 'claude_oauth_token' | 'anthropic_api_key' | 'imap_password' | 'smtp_password' | 'twilio_auth_token' | 'fca_handbook_api_key';
+export const SECRET_NAMES: readonly SecretName[] = ['claude_oauth_token', 'anthropic_api_key', 'imap_password', 'smtp_password', 'twilio_auth_token', 'fca_handbook_api_key'];
 
 export interface SecretStore {
   has(n: SecretName): boolean;

@@ -1,0 +1,52 @@
+[
+  {
+    "id": "knowledge-curate-opening-phrase",
+    "match": { "jobType": "knowledge.curate", "userContains": ["i hope this email finds you well"] },
+    "steps": [
+      { "tool": "corrections_get", "input": { "clusterKey": "$job.payload.clusterKey" } },
+      {
+        "tool": "knowledge_curate_propose",
+        "input": {
+          "clusterKey": "$job.payload.clusterKey",
+          "kind": "fact",
+          "area": "style",
+          "title": "Do not open emails with \"I hope this email finds you well\"",
+          "body": "The owner removes the opening line \"I hope this email finds you well\" from prepared emails. Start with the point of the email instead.",
+          "data": "{\"statement\":\"Do not open emails with 'I hope this email finds you well'; start with the point of the email.\",\"figure\":null,\"asOf\":null,\"benchmarkOnly\":false,\"kbCheck\":null,\"stat\":null}",
+          "scope": { "kind": "global", "value": null },
+          "correctionIds": "$step[0].correctionIds",
+          "confidence": 0.9
+        }
+      },
+      {
+        "tool": "knowledge_curate_propose",
+        "input": {
+          "clusterKey": "$job.payload.clusterKey",
+          "kind": "rule",
+          "area": "style",
+          "title": "Flag the opening \"I hope this email finds you well\"",
+          "body": "The reviewer flags drafts that open with \"I hope this email finds you well\", which the owner always removes.",
+          "data": "{\"when\":true,\"then\":[{\"kind\":\"avoid_phrase\",\"phrase\":\"I hope this email finds you well\"}],\"why\":\"The owner removed this opening in every prepared email of this kind.\",\"severity\":\"warn\"}",
+          "scope": { "kind": "global", "value": null },
+          "correctionIds": "$step[0].correctionIds",
+          "confidence": 0.85
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "clusterKey": "$job.payload.clusterKey",
+      "proposedItemIds": ["$step[1].itemId", "$step[2].itemId"],
+      "noPattern": false,
+      "summary": "The owner always removes the opening pleasantry; proposed a style note and an avoid-phrase rule.",
+      "confidence": 0.85
+    }
+  },
+  {
+    "id": "knowledge-curate-no-pattern",
+    "match": { "jobType": "knowledge.curate" },
+    "steps": [{ "tool": "corrections_get", "input": { "clusterKey": "$job.payload.clusterKey" } }],
+    "outcome": "ok",
+    "result": { "clusterKey": "$job.payload.clusterKey", "proposedItemIds": [], "noPattern": true, "summary": "No repeated pattern in these corrections.", "confidence": 0.6 }
+  }
+]

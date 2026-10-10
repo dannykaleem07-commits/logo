@@ -94,9 +94,18 @@ export function publishLearnedPack(ctx: AppContext, opts: { reason: string; acto
     const previous = active ? ctx.repos.getKnowledgeItems(tx, ctx.repos.listKnowledgePackMembers(tx, active.version)) : [];
     const diff = diffMembers(previous, members);
     const version = ctx.repos.latestKnowledgePackVersion(tx) + 1;
+    // §11 Versions: link the version to the gate replay of the newest rule it adds (when the caller did not name one).
+    const replayRunId =
+      opts.replayRunId !== undefined
+        ? opts.replayRunId
+        : (diff.added
+            .filter((a) => a.kind === 'rule')
+            .map((a) => ctx.repos.listEvalRuns(tx, { mode: 'gate', itemId: a.id, limit: 1 })[0])
+            .filter((r): r is NonNullable<typeof r> => Boolean(r))
+            .sort((x, y) => y.startedAt.localeCompare(x.startedAt))[0]?.id ?? null);
     ctx.repos.insertKnowledgePackVersion(
       tx,
-      { version, label: learnedPackLabel(version), itemsSha256: sha, itemCount: members.length, diff, reason: opts.reason.slice(0, 500), basedOnVersion: active?.version ?? null, rollbackOf: null, replayRunId: opts.replayRunId ?? null, createdBy: opts.actor.userId, createdAt: now },
+      { version, label: learnedPackLabel(version), itemsSha256: sha, itemCount: members.length, diff, reason: opts.reason.slice(0, 500), basedOnVersion: active?.version ?? null, rollbackOf: null, replayRunId, createdBy: opts.actor.userId, createdAt: now },
       members.map((m) => m.id),
     );
     ctx.repos.setKnowledgePackState(tx, { activeVersion: version, activatedBy: opts.actor.userId, activatedAt: now });

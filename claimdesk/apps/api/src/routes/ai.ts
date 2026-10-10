@@ -7,6 +7,7 @@
  *                                 when every checklist item is ticked and the selected driver is healthy
  *   PUT/DELETE /ai/token         (admin) the Claude Code setup token (secret store; never returned)
  *   PUT/DELETE /ai/api-key       (admin) the Anthropic API key (secret store; never returned)
+ *   PUT/DELETE /ai/fca-key       (admin) the optional FCA Handbook API key (Knowledge research; never returned)
  *   POST   /ai/open-setup-token  (admin) Windows: a visible console running `claude.exe setup-token`; elsewhere 501
  *   POST   /ai/check             re-run detection + `claude auth status` / key check (no model call)
  *   POST   /ai/test-run          (admin) one tiny real call — refused when real AI is forbidden in this process
@@ -129,7 +130,7 @@ async function buildStatus(ctx: AppContext, refresh = false) {
   return {
     driver: { selected: choice, override: ctx.config.aiDriverOverride ?? null, health },
     cli,
-    secrets: { claudeToken: ctx.secrets.has('claude_oauth_token'), apiKey: ctx.secrets.has('anthropic_api_key') },
+    secrets: { claudeToken: ctx.secrets.has('claude_oauth_token'), apiKey: ctx.secrets.has('anthropic_api_key'), fcaHandbookKey: ctx.secrets.has('fca_handbook_api_key') },
     settings: settings.ai,
     jobModels,
     agents: { enabled: settings.agents.enabled },
@@ -201,6 +202,8 @@ export function registerAiRoutes(app: FastifyInstance, ctx: AppContext): void {
   const secretRoutes: Array<{ url: string; name: SecretName; wrongPrefix: RegExp; wrongMessage: string }> = [
     { url: '/ai/token', name: 'claude_oauth_token', wrongPrefix: /^sk-ant-api/i, wrongMessage: 'That looks like an Anthropic API key — paste it under “API key” instead' },
     { url: '/ai/api-key', name: 'anthropic_api_key', wrongPrefix: /^sk-ant-oat/i, wrongMessage: 'That looks like a Claude Code sign-in token — paste it under “Sign-in token” instead' },
+    // Knowledge Builder §15: the optional FCA Handbook API key (DPAPI-encrypted like the others; never returned).
+    { url: '/ai/fca-key', name: 'fca_handbook_api_key', wrongPrefix: /^sk-ant-/i, wrongMessage: 'That looks like an Anthropic key or token — the FCA Handbook key comes from the FCA developer portal' },
   ];
   for (const s of secretRoutes) {
     app.put(s.url, async (request) => {

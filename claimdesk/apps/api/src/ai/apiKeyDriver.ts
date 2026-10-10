@@ -61,6 +61,21 @@ export function attachmentBlocks(attachments: AiAttachment[]): Json[] {
   return out;
 }
 
+/**
+ * Knowledge Builder web research (KB §7.8): server tools for `req.web` only — `web_fetch` restricted with
+ * `allowed_domains` (never also `blocked_domains`), and `web_search` only when the policy allows search. No citations
+ * (they are incompatible with output_config.format; quotes are checked against ClaimDesk's own snapshot anyway).
+ * Server-tool errors arrive as result blocks, not exceptions; `pause_turn` is already continued by the loop.
+ */
+export function webServerTools(req: Pick<AiRunRequest, 'web'>): Json[] {
+  if (!req.web) return [];
+  const domains = [...new Set(req.web.fetchDomains.map((d) => d.trim().toLowerCase().replace(/^\*\./, '')).filter((d) => /^[a-z0-9.-]+\.[a-z]{2,}$/.test(d)))].slice(0, 64);
+  if (!domains.length) return [];
+  const out: Json[] = [{ type: 'web_fetch_20260209', name: 'web_fetch', allowed_domains: domains, max_uses: Math.max(1, Math.min(req.web.maxFetches, 20)) }];
+  if (req.web.allowSearch) out.push({ type: 'web_search_20260209', name: 'web_search', allowed_domains: domains, max_uses: 3 });
+  return out;
+}
+
 /** The tool list: registry definitions (strict), plus `submit_result` in submit mode, sorted by name. */
 export function buildTools(req: AiRunRequest, mode: ResultMode): Json[] {
   const tools: Json[] = [];
@@ -72,6 +87,7 @@ export function buildTools(req: AiRunRequest, mode: ResultMode): Json[] {
   if (mode === 'submit_tool') {
     tools.push({ name: SUBMIT_RESULT_TOOL, description: 'Submit your final result. Call exactly once, at the end.', input_schema: req.resultSchema, strict: true });
   }
+  tools.push(...webServerTools(req));
   return tools.sort((a, b) => String(a.name).localeCompare(String(b.name)));
 }
 

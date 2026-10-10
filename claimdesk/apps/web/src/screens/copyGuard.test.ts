@@ -1,6 +1,6 @@
 /**
  * Perimeter and script-guard copy check for the Fleet / Directory / KB / Analytics / Settings / Capture / Watch / Login /
- * Templates / Vehicles / GTA rates screens (README convention 9; extends the guard in claims/new/fnol.test.ts). No screen copy may advise a client
+ * Templates / Vehicles / GTA rates / Knowledge screens (README convention 9; extends the guard in claims/new/fnol.test.ts). No screen copy may advise a client
  * to ignore or decline an insurer's offer, imply regulated status, or carry legacy details. The legacy list itself
  * lives in lib/legacy.ts, which is deliberately outside the scanned folders.
  */
@@ -14,7 +14,7 @@ const ADVICE_PATTERNS = [/(?<!not )regulated by the sra/i, /ignore (the|their|an
 /** The legacy supplier name may appear only in the exact registered style CARFLEX LTD (the watch-list seed). */
 const CARFLEX_PATTERNS = [/car ?flex/i];
 
-const FOLDERS = ['fleet', 'directory', 'kb', 'analytics', 'settings', 'capture', 'watch', 'login', 'templates', 'vehicles', 'gta'];
+const FOLDERS = ['fleet', 'directory', 'kb', 'analytics', 'settings', 'capture', 'watch', 'login', 'templates', 'vehicles', 'gta', 'knowledge'];
 const root = dirname(fileURLToPath(import.meta.url));
 
 function sources(dir: string): string[] {

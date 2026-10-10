@@ -12,6 +12,7 @@ import { PenaltyDialog } from './PenaltyDialog';
 import { CalendarTab } from './CalendarTab';
 import { MovementsTab } from './MovementsTab';
 import { ClashesTab } from './ClashesTab';
+import { LocationsTab } from './LocationsTab';
 
 /**
  * Fleet (BLUEPRINT §3.12, lesson l): /fleet → units + alerts; /fleet/penalties → PCN / NIP workflow.
@@ -48,6 +49,9 @@ export function FleetPage() {
         <NavLink to="/fleet/clashes" className={({ isActive }) => (isActive ? 'active' : '')}>
           Clashes
         </NavLink>
+        <NavLink to="/fleet/locations" className={({ isActive }) => (isActive ? 'active' : '')}>
+          Locations
+        </NavLink>
       </nav>
       <Routes>
         <Route index element={<UnitsTab onLogNotice={(unitId) => setNotice({ unitId })} />} />
@@ -55,6 +59,7 @@ export function FleetPage() {
         <Route path="calendar" element={<CalendarTab />} />
         <Route path="movements" element={<MovementsTab />} />
         <Route path="clashes" element={<ClashesTab />} />
+        <Route path="locations" element={<LocationsTab />} />
         <Route path="*" element={<Navigate to="/fleet" replace />} />
       </Routes>
       <PenaltyDialog open={notice !== null} units={units} initialUnitId={notice?.unitId} onClose={() => setNotice(null)} />
