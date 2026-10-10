@@ -8,6 +8,7 @@
  *  - The ledger, events and evidence are APPEND-ONLY. Corrections are new entries that reference the old one.
  *  - Anything the brief marks "verify" carries a `Verification` block; code must never upgrade it silently.
  */
+import type { DriverCriteria } from './eligibility/types.js';
 
 export type Pence = number;
 export type ISODate = string;
@@ -245,6 +246,10 @@ export interface InsurancePolicy {
   startDate: ISODate;
   endDate: ISODate;
   evidenceId?: Id;
+  /** Autopilot (SUPREME-AUTOPILOT §B.3, §F.2): driver criteria for this policy (absent = Settings default). */
+  driverCriteria?: DriverCriteria;
+  /** The policy that continues cover after this one ends (whole-period cover can chain). */
+  renewsPolicyId?: Id;
 }
 
 export interface FleetUnit {
@@ -259,6 +264,15 @@ export interface FleetUnit {
   serviceDueDate?: ISODate;
   status: 'available' | 'on_hire' | 'off_road' | 'disposed';
   phvLicensed?: boolean;
+  // Autopilot (SUPREME-AUTOPILOT §B.3; migration 0013_autopilot)
+  locationId?: Id;
+  currentMileage?: number;
+  mileageAt?: ISODateTime;
+  serviceDueMiles?: number;
+  phvLicenceNumber?: string;
+  phvLicenceExpiry?: ISODate;
+  /** Override of the turnaround between a return and the next start (minutes). */
+  turnaroundMinutes?: number;
 }
 
 // ---------------------------------------------------------------------------
@@ -455,7 +469,17 @@ export type EventType =
   | 'email_out'
   | 'letter_in'
   | 'letter_out'
-  | 'note';
+  | 'note'
+  // Autopilot (SUPREME-AUTOPILOT §G.3)
+  | 'hire_offered'
+  | 'hire_offer_accepted'
+  | 'hire_offer_declined'
+  | 'booking_confirmed'
+  | 'booking_cancelled'
+  | 'hire_vehicle_delivered'
+  | 'hire_vehicle_collected'
+  | 'hire_start_notice_sent'
+  | 'documents_signed';
 
 export interface ClaimEvent {
   id: Id;
@@ -522,6 +546,12 @@ export interface HireAgreement {
   /** The fleet car's own daily rate when the hire was set up. */
   fleetDailyRatePence?: Pence;
   pricingNote?: string;
+  // Autopilot (SUPREME-AUTOPILOT §G.3; migration 0013_autopilot). Absent on hires created before it.
+  use?: FleetUse;
+  hirerPartyId?: Id;
+  driverPartyIds?: Id[];
+  reservationId?: Id;
+  expectedEndAt?: ISODateTime;
 }
 
 export type HireEndTrigger =
@@ -699,6 +729,9 @@ export type EvidenceKind =
   | 'cctv'
   | 'dashcam'
   | 'witness_statement'
+  // Autopilot signing (SUPREME-AUTOPILOT §G.3)
+  | 'signature_image'
+  | 'signed_document'
   | 'other';
 
 export interface ExifSummary {
@@ -786,7 +819,8 @@ export interface SignatureRecord {
   signerPartyId: Id;
   signerName: string;
   signerContact: string; // email or phone used for OTP
-  otpChannel: 'email' | 'sms';
+  /** 'none' for a wet-ink / scanned signature (SUPREME-AUTOPILOT §G.3). */
+  otpChannel: 'email' | 'sms' | 'none';
   otpVerifiedAt: ISODateTime;
   ipAddress: string;
   userAgent: string;
@@ -794,6 +828,12 @@ export interface SignatureRecord {
   documentSha256: string;
   certificateId: Id;
   certificatePdfPath?: string;
+  // Autopilot signing (SUPREME-AUTOPILOT §E, §G.3). Absent method = 'otp' (every signature before 0013).
+  method?: 'otp' | 'kiosk_otp_email' | 'kiosk_handler_code' | 'wet_ink' | 'scan';
+  drawnSignatureSha256?: string;
+  evidenceId?: Id;
+  packId?: Id;
+  packSha256?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -818,7 +858,15 @@ export type ConsistencyCode =
   | 'UNVERIFIED_CITATION'
   | 'FORUM_NOT_OPEN'
   | 'GTA_CITED_AS_LAW'
-  | 'UNKNOWN_REFERENCE';
+  | 'UNKNOWN_REFERENCE'
+  // Knowledge Builder reviewer check (docs/SUPREME-KNOWLEDGE-BUILDER.md §8.3)
+  | 'KNOWLEDGE_REF_UNKNOWN'
+  | 'KNOWLEDGE_NOT_CITABLE'
+  | 'KNOWLEDGE_LEGAL_UNCONFIRMED'
+  | 'KNOWLEDGE_INTERNAL_LEAK'
+  | 'KNOWLEDGE_STALE'
+  | 'KNOWLEDGE_CONFLICTED'
+  | 'KNOWLEDGE_UNVERIFIED_STATED_AS_FACT';
 
 export interface ConsistencyFlag {
   code: ConsistencyCode;

@@ -25,3 +25,11 @@ export * from './events/index.js';
 export * from './override/index.js';
 export * from './agents/index.js';
 export * from './autonomy/index.js';
+// ClaimDesk Supreme Autopilot (docs/SUPREME-AUTOPILOT.md): contracts by ap-foundation, behaviour by the owning slices.
+export * from './autopilot/index.js';
+export * from './booking/index.js';
+export * from './clash/index.js';
+export * from './eligibility/index.js';
+export * from './signing/index.js';
+// Knowledge Builder (docs/SUPREME-KNOWLEDGE-BUILDER.md): contracts by knowledge-core, behaviour by the owning slices.
+export * from './knowledge/index.js';

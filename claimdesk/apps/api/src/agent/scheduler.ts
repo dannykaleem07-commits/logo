@@ -4,7 +4,7 @@
  * materialised by the supervisor tick into queue jobs with the §C.2 idempotency keys. Times of day are Europe/London
  * wall-clock times (BST/GMT handled by the domain calendar helpers), so 18:00 stays 18:00 across a clock change.
  */
-import { londonWallToUtc, utcToLondonWall, type ISODateTime, type JobType } from '@ccguk/domain';
+import { isoWeekOf, londonWallToUtc, utcToLondonWall, type ISODateTime, type JobType } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
 import type { JobRecord } from './contracts.js';
 import { enqueueJob, londonDay } from './core.js';
@@ -43,7 +43,36 @@ export const DEFAULT_SCHEDULES: readonly ScheduleDef[] = [
   { id: 'watch.poll', jobType: 'watch.poll', atLocal: '02:15' },
   { id: 'retention.cleanup', jobType: 'retention.cleanup', atLocal: '03:00' },
   { id: 'index.fts', jobType: 'index.fts', everyMinutes: 10, payload: { sourceKind: 'sweep' } },
+  // Autopilot (docs/SUPREME-AUTOPILOT.md §H.1). A schedule whose job type has no handler yet is advanced without a job.
+  { id: 'autopilot.sweep', jobType: 'autopilot.sweep', everyMinutes: 5 },
+  { id: 'booking.expire_holds', jobType: 'booking.expire_holds', everyMinutes: 5 },
+  { id: 'fleet.status_sync', jobType: 'fleet.status_sync', everyMinutes: 60 },
+  { id: 'fleet.compliance_watch', jobType: 'fleet.compliance_watch', atLocal: '06:30' },
+  { id: 'clash.sweep', jobType: 'clash.sweep', atLocal: '02:30' },
+  { id: 'signing.chase', jobType: 'signing.chase', atLocal: '09:15', weekdays: WEEKDAYS },
+  { id: 'signing.match_return', jobType: 'signing.match_return', everyMinutes: 15 },
+  { id: 'movement.remind', jobType: 'movement.remind', atLocal: '16:00' },
+  // Knowledge Builder (docs/SUPREME-KNOWLEDGE-BUILDER.md §10.1). Until a slice registers its handler, its schedule is
+  // advanced without a job.
+  { id: 'knowledge.observe', jobType: 'knowledge.observe', everyMinutes: 30, payload: { source: 'all' } },
+  { id: 'knowledge.gap_scan', jobType: 'knowledge.gap_scan', everyMinutes: 240 },
+  { id: 'knowledge.gap_scan.nightly', jobType: 'knowledge.gap_scan', atLocal: '01:00' },
+  { id: 'knowledge.learn_stats', jobType: 'knowledge.learn_stats', atLocal: '01:30' },
+  { id: 'knowledge.consolidate', jobType: 'knowledge.consolidate', atLocal: '02:00' },
+  { id: 'knowledge.publish', jobType: 'knowledge.publish', atLocal: '02:30', payload: { nightly: true, reason: 'nightly publish' } },
+  { id: 'knowledge.replay', jobType: 'knowledge.replay', atLocal: '03:00', payload: { mode: 'nightly' } },
+  { id: 'knowledge.fetch.selftest', jobType: 'knowledge.fetch', atLocal: '03:15', weekdays: [7], payload: { selftest: true } },
+  { id: 'knowledge.watch', jobType: 'knowledge.watch', atLocal: '03:30', weekdays: [7] },
+  { id: 'knowledge.curate', jobType: 'knowledge.curate', atLocal: '04:00', weekdays: [7], payload: { weekly: true } },
+  { id: 'knowledge.drift', jobType: 'knowledge.drift', atLocal: '05:00' },
+  { id: 'knowledge.replay_drafts', jobType: 'knowledge.replay_drafts', atLocal: '05:30', weekdays: [7], payload: { mode: 'drafts' } },
 ];
+
+/** The Knowledge Builder schedule ids (KB §10.1), seeded with the others. */
+export const KNOWLEDGE_SCHEDULE_IDS: readonly string[] = ['knowledge.observe', 'knowledge.gap_scan', 'knowledge.gap_scan.nightly', 'knowledge.learn_stats', 'knowledge.consolidate', 'knowledge.publish', 'knowledge.replay', 'knowledge.fetch.selftest', 'knowledge.watch', 'knowledge.curate', 'knowledge.drift', 'knowledge.replay_drafts'];
+
+/** The Autopilot schedule ids (§H.1), seeded with the Phase 1 ones. */
+export const AUTOPILOT_SCHEDULE_IDS: readonly string[] = ['autopilot.sweep', 'booking.expire_holds', 'fleet.status_sync', 'fleet.compliance_watch', 'clash.sweep', 'signing.chase', 'signing.match_return', 'movement.remind'];
 
 const HHMM = /^([01]\d|2[0-3]):([0-5]\d)$/;
 export const isHhmm = (s: unknown): s is string => typeof s === 'string' && HHMM.test(s);
@@ -95,6 +124,41 @@ export function scheduleIdempotencyKey(def: Pick<ScheduleDef, 'id' | 'jobType' |
       return `retention:${day}`;
     case 'index.fts':
       return `index.fts:sweep:${minute}`;
+    // Autopilot (§H.1)
+    case 'autopilot.sweep':
+    case 'booking.expire_holds':
+    case 'signing.match_return':
+      return `${def.jobType}:${minute}`;
+    case 'fleet.status_sync':
+      return `fleet.status_sync:${slot.slice(0, 13)}`;
+    case 'fleet.compliance_watch':
+    case 'clash.sweep':
+    case 'signing.chase':
+    case 'movement.remind':
+      return `${def.jobType}:${day}`;
+    // Knowledge Builder (KB §10.1)
+    case 'knowledge.observe': {
+      const source = typeof (def.payload as { source?: unknown } | undefined)?.source === 'string' ? (def.payload as { source: string }).source : 'all';
+      const half = new Date(Math.floor(Date.parse(slot) / 1_800_000) * 1_800_000).toISOString().slice(0, 16);
+      return `knowledge.observe:${source}:${half}`;
+    }
+    case 'knowledge.gap_scan':
+      return `knowledge.gap_scan:${day}:${minute.slice(11)}`;
+    case 'knowledge.consolidate':
+    case 'knowledge.learn_stats':
+    case 'knowledge.drift':
+      return `${def.jobType}:${day}`;
+    case 'knowledge.publish':
+    case 'knowledge.replay':
+      return `${def.jobType}:nightly:${day}`;
+    case 'knowledge.fetch':
+      return `knowledge.fetch:selftest:${day}`;
+    case 'knowledge.watch':
+      return `knowledge.watch:${isoWeekOf(day)}`;
+    case 'knowledge.curate':
+      return `knowledge.curate:weekly:${isoWeekOf(day)}`;
+    case 'knowledge.replay_drafts':
+      return `knowledge.replay_drafts:${isoWeekOf(day)}:scheduled`;
     default:
       return `${def.jobType}:${def.id}:${minute}`;
   }

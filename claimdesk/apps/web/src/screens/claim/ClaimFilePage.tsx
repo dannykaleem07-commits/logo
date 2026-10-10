@@ -26,6 +26,7 @@ import { ActionsTab } from './tabs/ActionsTab';
 import { FlagsTab } from './tabs/FlagsTab';
 import { MailboxTab } from './tabs/MailboxTab';
 import { AgentTab } from './tabs/AgentTab';
+import { AutopilotTab } from './tabs/AutopilotTab';
 import { isBlocked } from './lib/documents';
 import './claim.css';
 
@@ -151,6 +152,7 @@ export function ClaimFilePage() {
           <Route path="flags" element={<FlagsTab view={view} />} />
           <Route path="mailbox" element={<MailboxTab view={view} />} />
           <Route path="agent" element={<AgentTab view={view} />} />
+          <Route path="autopilot" element={<AutopilotTab view={view} />} />
           <Route path="*" element={<Navigate to="overview" replace />} />
         </Routes>
       </div>

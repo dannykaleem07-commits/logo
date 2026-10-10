@@ -12,7 +12,7 @@ import { enqueueJob } from '../agent/core.js';
 import { createSupervisor, getSupervisor, type Supervisor } from '../agent/supervisor.js';
 import { aiGate, fiveHourCeiling, sevenDayCeiling, ALL_PRIORITIES, NO_PRIORITY } from '../agent/budgets.js';
 import { systemJobHandlers } from '../agent/handlers/system.js';
-import { listSchedules, nextRunAfter, scheduleIdempotencyKey, seedSchedules } from '../agent/scheduler.js';
+import { DEFAULT_SCHEDULES, listSchedules, nextRunAfter, scheduleIdempotencyKey, seedSchedules } from '../agent/scheduler.js';
 
 const T0 = '2026-10-05T09:00:00.000Z'; // Monday, BST
 
@@ -299,7 +299,9 @@ describe('control-room and settings routes', () => {
     expect(agentView.body.state.paused).toBe(false);
     expect(agentView.body.jobs.length).toBe(2);
     const schedules = await t.api<{ items: Array<{ id: string; enabled: boolean }> }>('GET', '/agents/schedules');
-    expect(schedules.body.items.length).toBe(9);
+    // The 9 Phase 1 schedules plus those later foundations add (Autopilot §H.1, …).
+    expect(schedules.body.items.length).toBe(DEFAULT_SCHEDULES.length);
+    expect(DEFAULT_SCHEDULES.length).toBeGreaterThanOrEqual(9);
     const off = await t.api<{ enabled: boolean }>('PATCH', '/agents/schedules/watch.poll', { enabled: false });
     expect(off.body.enabled).toBe(false);
     const moved = await t.api<{ atLocal: string; nextRunAt: string }>('PATCH', '/agents/schedules/dailylog.compile', { atLocal: '17:30' });

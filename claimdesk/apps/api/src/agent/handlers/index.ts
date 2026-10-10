@@ -8,6 +8,16 @@ import { systemJobHandlers, systemNeedsYouResolvers } from './system.js';
 import { mailJobHandlers, mailNeedsYouResolvers } from './mail.js';
 import { intakeJobHandlers, intakeNeedsYouResolvers } from './intake.js';
 import { caseworkJobHandlers, caseworkNeedsYouResolvers } from './casework.js';
+// Autopilot (docs/SUPREME-AUTOPILOT.md §K): stubs by ap-foundation, filled by each owning slice.
+import { autopilotJobHandlers, autopilotNeedsYouResolvers } from './autopilot.js';
+import { bookingJobHandlers, bookingNeedsYouResolvers } from './booking.js';
+import { clashJobHandlers, clashNeedsYouResolvers } from './clash.js';
+import { signingJobHandlers, signingNeedsYouResolvers } from './signing.js';
+// Knowledge Builder (docs/SUPREME-KNOWLEDGE-BUILDER.md §13): core by knowledge-core, the rest stubs filled by each slice.
+import { knowledgeJobHandlers, knowledgeNeedsYouResolvers } from './knowledge.js';
+import { knowledgeLearningJobHandlers, knowledgeLearningNeedsYouResolvers } from './knowledgeLearning.js';
+import { knowledgeResearchJobHandlers, knowledgeResearchNeedsYouResolvers } from './knowledgeResearch.js';
+import { knowledgeEvalsJobHandlers, knowledgeEvalsNeedsYouResolvers } from './knowledgeEvals.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- heterogeneous registry
 type AnyHandler = JobHandler<any, any>;
@@ -15,11 +25,37 @@ type AnyHandler = JobHandler<any, any>;
 type AnyResolver = NeedsYouResolver<any>;
 
 export function allJobHandlers(): AnyHandler[] {
-  return [...systemJobHandlers, ...mailJobHandlers, ...intakeJobHandlers, ...caseworkJobHandlers];
+  return [
+    ...systemJobHandlers,
+    ...mailJobHandlers,
+    ...intakeJobHandlers,
+    ...caseworkJobHandlers,
+    ...autopilotJobHandlers,
+    ...bookingJobHandlers,
+    ...clashJobHandlers,
+    ...signingJobHandlers,
+    ...knowledgeJobHandlers,
+    ...knowledgeLearningJobHandlers,
+    ...knowledgeResearchJobHandlers,
+    ...knowledgeEvalsJobHandlers,
+  ];
 }
 
 export function allNeedsYouResolvers(): AnyResolver[] {
-  return [...systemNeedsYouResolvers, ...mailNeedsYouResolvers, ...intakeNeedsYouResolvers, ...caseworkNeedsYouResolvers];
+  return [
+    ...systemNeedsYouResolvers,
+    ...mailNeedsYouResolvers,
+    ...intakeNeedsYouResolvers,
+    ...caseworkNeedsYouResolvers,
+    ...autopilotNeedsYouResolvers,
+    ...bookingNeedsYouResolvers,
+    ...clashNeedsYouResolvers,
+    ...signingNeedsYouResolvers,
+    ...knowledgeNeedsYouResolvers,
+    ...knowledgeLearningNeedsYouResolvers,
+    ...knowledgeResearchNeedsYouResolvers,
+    ...knowledgeEvalsNeedsYouResolvers,
+  ];
 }
 
 export function getJobHandler(type: JobType): AnyHandler | undefined {

@@ -40,6 +40,15 @@ export const NEEDS_YOU_KIND_LABEL: Record<NeedsYouKind, string> = {
   ai_paused: 'AI paused — deadline due',
   setup: 'Setup needed',
   failure: 'Agent problem',
+  // Autopilot (SUPREME-AUTOPILOT §H.3)
+  choose_car: 'Choose a car for the client',
+  approve_pack: 'Paperwork pack to approve',
+  confirm_signed: 'Signed paperwork to confirm',
+  clash_review: 'Booking clash to review',
+  eligibility_review: 'Driver or need to review',
+  autopilot_step: 'Autopilot step for you',
+  // Knowledge Builder (KB §9.3)
+  knowledge_review: 'Knowledge to check',
 };
 
 // ---------------------------------------------------------------------------

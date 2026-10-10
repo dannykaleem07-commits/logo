@@ -30,6 +30,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: '/fleet', label: 'Fleet', icon: 'fleet' },
   { to: '/intake', label: 'Intake', icon: 'intake' },
   { to: '/outbox', label: 'Outbox', icon: 'outbox' },
+  { to: '/knowledge', label: 'Knowledge', icon: 'kb' },
   { to: '/daily-log', label: 'Daily log', icon: 'dailyLog', section: 'more' },
   { to: '/directory', label: 'Directory', icon: 'directory', section: 'more' },
   { to: '/kb', label: 'Knowledge base', icon: 'kb', section: 'more' },

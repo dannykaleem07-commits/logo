@@ -27,6 +27,8 @@ export const EVIDENCE_KIND_LABEL: Record<EvidenceKind, string> = {
   cctv: 'CCTV',
   dashcam: 'Dashcam',
   witness_statement: 'Witness statement',
+  signature_image: 'Signature (kiosk)',
+  signed_document: 'Signed document',
   other: 'Other'
 };
 

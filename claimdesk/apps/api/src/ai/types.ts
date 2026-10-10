@@ -13,6 +13,12 @@ export type ModelId = 'claude-opus-5-5' | 'claude-sonnet-5-5' | 'claude-haiku-4-
 export interface PromptBlock { id: string; text: string; /** stable across runs → cacheable prefix */ stable: boolean }
 export interface AiAttachment { kind: 'pdf' | 'image' | 'text'; path: string; mime: string; sha256: string; label: string; bytes: number }
 
+/**
+ * Knowledge Builder web research (docs/SUPREME-KNOWLEDGE-BUILDER.md §7.8, KR-8): only `knowledge.research_web`, only when
+ * the owner switched it on (runAgent refuses it otherwise). knowledge-research implements it in the drivers.
+ */
+export interface WebResearchPolicy { fetchDomains: string[]; denyDomains: string[]; maxFetches: number; allowSearch: boolean /* API driver only */ }
+
 export interface AiRunRequest {
   runId: string; jobId: string; agent: AgentName; jobType: JobType; claimId?: string;
   model: ModelId; effort: Effort; maxTurns: number; timeoutMs: number;
@@ -25,6 +31,7 @@ export interface AiRunRequest {
   resultSchemaId: ResultSchemaId;
   runDir: string;                   // empty per-run directory under <home>\agent-runs\<runId>
   promptVersion: string;            // sha256 of the assembled stable blocks + schema id
+  web?: WebResearchPolicy;          // knowledge.research_web only (KB §7.8); absent = no web tools
 }
 
 export interface RateLimitSnapshot {

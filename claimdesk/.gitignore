@@ -27,4 +27,6 @@ engineer-data/
 inbox/
 secrets/
 agent-runs/
+# Knowledge Builder: learned knowledge, fetched source copies and exports (docs/SUPREME-KNOWLEDGE-BUILDER.md §5)
+knowledge-store/
 *.dpapi

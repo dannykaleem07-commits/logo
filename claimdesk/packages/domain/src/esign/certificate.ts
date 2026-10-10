@@ -34,7 +34,8 @@ export interface CertificateJson {
     partyId: string;
     name: string;
     contact: string;
-    otpChannel: 'email' | 'sms';
+    /** 'none' = wet-ink / scanned signature confirmed by a person (SUPREME-AUTOPILOT §E.4). */
+    otpChannel: 'email' | 'sms' | 'none';
     otpVerifiedAt: ISODateTime;
     otpTokenSha256: string; // the token itself is never printed
     ipAddress: string;
@@ -106,7 +107,9 @@ export function buildCertificate(input: BuildCertificateInput): Certificate {
     `Document SHA-256: ${document.sha256}`,
     ...(document.supersedesId ? [`Supersedes document ${document.supersedesId}${document.reExecutedOn ? `; re-executed on ${formatLongDate(document.reExecutedOn)}` : ''}`] : []),
     `Signer: ${signature.signerName} (party ${signature.signerPartyId})`,
-    `Identity verified by one-time passcode sent by ${signature.otpChannel === 'sms' ? 'SMS' : 'email'} to ${signature.signerContact}, verified ${formatLongDateTime(signature.otpVerifiedAt)}`,
+    signature.otpChannel === 'none'
+      ? `Wet-ink signature: the returned copy was checked and confirmed by a person on ${formatLongDateTime(signature.otpVerifiedAt)} (contact on file ${signature.signerContact})`
+      : `Identity verified by one-time passcode sent by ${signature.otpChannel === 'sms' ? 'SMS' : 'email'} to ${signature.signerContact}, verified ${formatLongDateTime(signature.otpVerifiedAt)}`,
     `Signed: ${formatLongDateTime(signature.signedAt)}`,
     `IP address: ${signature.ipAddress}`,
     `User agent: ${signature.userAgent}`,

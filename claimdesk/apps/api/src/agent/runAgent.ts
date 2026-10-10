@@ -25,6 +25,7 @@ import { validateWithTwin, zodFromJsonSchema } from '../ai/strictSchema.js';
 import { recordApiCost } from '../ai/pricing.js';
 import { createNeedsYou } from './core.js';
 import { hashFile } from '../services/evidence.js';
+import { notifyRunAssembled, webPolicyForRun } from '../knowledge/hooks.js';
 
 /** Grace added to the run token's lifetime beyond the run timeout (§A.1: timeout + 2 min). */
 export const RUN_TOKEN_GRACE_MS = 2 * 60_000;
@@ -116,6 +117,8 @@ export async function runAgent(ctx: AppContext, spec: AgentSpec, job: JobRecord,
   let result: unknown;
   let rowStarted = false;
   try {
+    // Web tools only for knowledge.research_web with the owner's switch on (KB §7.8); anything else is refused.
+    const web = webPolicyForRun(ctx, spec, job);
     mkdirSync(path.join(runDir, 'input'), { recursive: true });
     const attachments = await copyAttachments(runDir, input.attachments ?? []);
     const prompts = assemblePrompts(spec, { ...input, attachments }, ctx);
@@ -139,6 +142,7 @@ export async function runAgent(ctx: AppContext, spec: AgentSpec, job: JobRecord,
       resultSchemaId: spec.resultSchemaId,
       runDir,
       promptVersion: prompts.promptVersion,
+      ...(web ? { web } : {}),
     };
     const inputSha256 = createHash('sha256')
       .update(prompts.system.map((b) => b.text).join('\n\u0000'))
@@ -150,6 +154,7 @@ export async function runAgent(ctx: AppContext, spec: AgentSpec, job: JobRecord,
     rowStarted = true;
     audit(ctx, rc, 'agent.run.start', { jobId: job.id, jobType: spec.jobType, claimId: claimScope ?? null, driver: driver.kind, model: m.model, effort: m.effort, promptVersion: prompts.promptVersion, tools: spec.tools });
     registerRun(rc);
+    notifyRunAssembled(ctx, runId, prompts.knowledgeRefs);
 
     const ac = new AbortController();
     const timer = setTimeout(() => ac.abort(), m.timeoutMs + ABORT_GRACE_MS);
@@ -168,7 +173,7 @@ export async function runAgent(ctx: AppContext, spec: AgentSpec, job: JobRecord,
     }
   } catch (err) {
     const code = (err as { code?: string }).code ?? 'RUN_SETUP_FAILED';
-    outcome = { kind: 'error', retryable: code !== 'ATTACHMENT_TAMPERED' && code !== 'PROMPT_FILE_MISSING', code, message: err instanceof Error ? err.message : String(err) };
+    outcome = { kind: 'error', retryable: code !== 'ATTACHMENT_TAMPERED' && code !== 'PROMPT_FILE_MISSING' && code !== 'WEB_RESEARCH_REFUSED', code, message: err instanceof Error ? err.message : String(err) };
   } finally {
     revokeRunToken(token);
     unregisterRun(runId);

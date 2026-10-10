@@ -9,6 +9,9 @@ import { londonWallToUtc, type AgentName, type ISODateTime } from '@ccguk/domain
 import type { AppContext } from '../context.js';
 import type { DriverKind } from '../ai/types.js';
 import { londonDay } from './core.js';
+import { autopilotDailyLogSections } from '../autopilot/dailyLog.js';
+import { knowledgeDailyLogSection } from '../knowledge/digest.js';
+import type { KnowledgeDigest } from '@ccguk/domain';
 
 export interface LogLine {
   at: ISODateTime;
@@ -37,6 +40,12 @@ export interface DailyLog {
     deadlines: LogLine[];
     problems: LogLine[];
     usage: { driver: DriverKind | 'off'; fiveHourPeak?: number; sevenDay?: number; costUsd?: number };
+    // Autopilot (docs/SUPREME-AUTOPILOT.md §I.9), built by apps/api/src/autopilot/dailyLog.ts; absent when empty.
+    autopilot?: LogLine[];
+    fleet?: LogLine[];
+    clashes?: LogLine[];
+    // Knowledge Builder (docs/SUPREME-KNOWLEDGE-BUILDER.md §9.4), built by apps/api/src/knowledge/digest.ts.
+    knowledge?: KnowledgeDigest;
   };
 }
 
@@ -49,7 +58,7 @@ export function londonDayBounds(day: string): { start: ISODateTime; end: ISODate
   return { start, end };
 }
 
-const AGENT_NAMES = new Set<string>(['intake', 'mail', 'case_manager', 'drafter', 'reviewer', 'researcher', 'supervisor', 'engineer', 'calls', 'critic', 'judge']);
+const AGENT_NAMES = new Set<string>(['intake', 'mail', 'case_manager', 'drafter', 'reviewer', 'researcher', 'supervisor', 'engineer', 'calls', 'critic', 'judge', 'autopilot']);
 const agentOf = (userId: string | null | undefined): AgentName => {
   const n = (userId ?? '').replace(/^agent:/, '');
   return (AGENT_NAMES.has(n) ? n : 'supervisor') as AgentName;
@@ -79,7 +88,7 @@ interface AuditRow {
 }
 
 /** Audit actions that are bookkeeping, not record updates. */
-const NOT_RECORD_UPDATE = /^(agent\.|needs_you\.|ai\.|job\.|email\.send|notifications?\.)/;
+const NOT_RECORD_UPDATE = /^(agent\.|needs_you\.|ai\.|job\.|email\.send|notifications?\.|knowledge\.)/;
 const DRAFT_ACTION = /(^document\.(create|generate|draft)|^docx[._-]?document\.(create|generate)|^outbox\.(draft|create)|^email\.draft)/;
 // One count per field: intake writes `intake.apply` for every field it fills (the route it goes through writes its own
 // claim.patch / vehicle.update / party.patch row too, which would double the count), so only the apply rows count.
@@ -184,8 +193,8 @@ export function compileDailyLog(ctx: AppContext, day: string): DailyLog {
     );
   }
 
-  // --- runs ---------------------------------------------------------------------------------------
-  const runs = sqlite.prepare(`SELECT id, agent, job_type, claim_id, driver, outcome, cost_usd, rate_limit, error, started_at FROM agent_runs WHERE started_at >= ? AND started_at < ? ORDER BY started_at`).all(start, end) as Array<{
+  // --- runs (AI runs only: the Autopilot's deterministic runs never use a model, SUPREME-AUTOPILOT §A.7) ---------------
+  const runs = sqlite.prepare(`SELECT id, agent, job_type, claim_id, driver, outcome, cost_usd, rate_limit, error, started_at FROM agent_runs WHERE started_at >= ? AND started_at < ? AND driver <> 'deterministic' ORDER BY started_at`).all(start, end) as Array<{
     id: string; agent: string; job_type: string; claim_id: string | null; driver: string; outcome: string | null; cost_usd: number | null; rate_limit: string | null; error: string | null; started_at: string;
   }>;
   const failedRuns = runs.filter((r) => r.outcome !== null && r.outcome !== 'ok');
@@ -344,6 +353,8 @@ export function compileDailyLog(ctx: AppContext, day: string): DailyLog {
       updatedRecords,
       deadlines,
       problems,
+      ...autopilotDailyLogSections(ctx, day, { start, end }),
+      ...knowledgeDailyLogSection(ctx, day),
       usage: { driver, ...(fiveHourPeak !== undefined ? { fiveHourPeak } : {}), ...(typeof seven?.utilization === 'number' ? { sevenDay: seven.utilization } : {}), ...(costUsd > 0 ? { costUsd: Math.round(costUsd * 100) / 100 } : {}) },
     },
   };

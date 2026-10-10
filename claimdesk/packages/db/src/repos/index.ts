@@ -39,3 +39,14 @@ export * from './outbox.js';
 export * from './intake.js';
 export * from './brain.js';
 export * from './memory.js';
+// ClaimDesk Supreme Autopilot (docs/SUPREME-AUTOPILOT.md §K): stubs by ap-foundation, each filled by its owning slice.
+export * from './autopilot.js';
+export * from './bookings.js';
+export * from './clashes.js';
+export * from './eligibility.js';
+export * from './signing.js';
+// Knowledge Builder (docs/SUPREME-KNOWLEDGE-BUILDER.md §13): core by knowledge-core, the rest stubs filled by each slice.
+export * from './knowledge.js';
+export * from './knowledgeLearning.js';
+export * from './knowledgeResearch.js';
+export * from './knowledgeUse.js';

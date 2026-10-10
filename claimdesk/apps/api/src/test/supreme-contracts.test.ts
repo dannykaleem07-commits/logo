@@ -8,7 +8,7 @@
  *  - real AI is forbidden for the whole test process.
  */
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { JOB_TYPES, JOB_TYPE_INFO, NEEDS_YOU_KINDS, PHASE1_TOOL_NAMES } from '@ccguk/domain';
+import { KNOWLEDGE_JOB_TYPES, AUTOPILOT_JOB_TYPES, AUTOPILOT_NEEDS_YOU_KINDS, JOB_TYPES, JOB_TYPE_INFO, NEEDS_YOU_KINDS, PHASE1_TOOL_NAMES } from '@ccguk/domain';
 import { createTestApp, type TestApp } from './helpers.js';
 import { allJobHandlers, allNeedsYouResolvers, getJobHandler, registryProblems } from '../agent/handlers/index.js';
 import { agentRouteAllowlist, allTools } from '../agent/tools/index.js';
@@ -16,6 +16,51 @@ import { seedSchedules } from '../agent/scheduler.js';
 import { computeGates } from '../agent/supervisor.js';
 import { currentLaneLimits } from '../agent/queue.js';
 import { agentsStatus } from '../routes/agents.js';
+
+/**
+ * Autopilot job types, Needs-you kinds and schedules whose handler / resolver its owning slice has not registered yet
+ * (docs/SUPREME-AUTOPILOT.md §K: ap-foundation adds the vocabulary, each wave-2/3 slice registers its own). Each slice
+ * removes its entries here when it registers them; after wave 3 both maps must be empty.
+ */
+const AWAITING_SLICE_JOB_TYPES: Readonly<Record<string, string>> = {
+  'autopilot.tick': 'ap-autopilot',
+  'autopilot.sweep': 'ap-autopilot',
+  'autopilot.judge': 'ap-autopilot',
+  'hire_offer.parse_reply': 'ap-autopilot',
+  'pack.prepare': 'ap-paperwork',
+  'signing.chase': 'ap-paperwork',
+  'signing.match_return': 'ap-paperwork',
+  'booking.expire_holds': 'ap-booking',
+  'fleet.status_sync': 'ap-booking',
+  'fleet.compliance_watch': 'ap-booking',
+  'movement.remind': 'ap-booking',
+  'clash.check': 'ap-clash',
+  'clash.sweep': 'ap-clash',
+};
+const AWAITING_SLICE_NEEDS_YOU_KINDS: Readonly<Record<string, string>> = {
+  choose_car: 'ap-autopilot',
+  autopilot_step: 'ap-autopilot',
+  approve_pack: 'ap-paperwork',
+  confirm_signed: 'ap-paperwork',
+  clash_review: 'ap-clash',
+  eligibility_review: 'ap-clash',
+};
+/** Knowledge Builder job types whose handler their slice has not registered yet (KB §13; same rule as above). */
+const AWAITING_KNOWLEDGE_JOB_TYPES: Readonly<Record<string, string>> = {
+  'knowledge.observe': 'knowledge-learners',
+  'knowledge.consolidate': 'knowledge-learners',
+  'knowledge.learn_stats': 'knowledge-learners',
+  'knowledge.curate': 'knowledge-learners',
+  'knowledge.gap_scan': 'knowledge-research',
+  'knowledge.research': 'knowledge-research',
+  'knowledge.research_web': 'knowledge-research',
+  'knowledge.fetch': 'knowledge-research',
+  'knowledge.watch': 'knowledge-research',
+  'knowledge.replay': 'knowledge-use',
+  'knowledge.replay_drafts': 'knowledge-use',
+  'knowledge.drift': 'knowledge-use',
+};
+const awaitingHandler = (type: string): boolean => (type in AWAITING_SLICE_JOB_TYPES || type in AWAITING_KNOWLEDGE_JOB_TYPES) && !getJobHandler(type as never);
 
 let t: TestApp;
 beforeAll(async () => {
@@ -68,7 +113,7 @@ describe('job handlers vs job types', () => {
       const h = getJobHandler(type);
       const info = JOB_TYPE_INFO[type];
       if (!h) {
-        problems.push(`${type}: no handler`);
+        if (!(type in AWAITING_SLICE_JOB_TYPES) && !(type in AWAITING_KNOWLEDGE_JOB_TYPES)) problems.push(`${type}: no handler`);
         continue;
       }
       if (h.lane !== info.lane) problems.push(`${type}: lane ${h.lane} ≠ ${info.lane}`);
@@ -83,14 +128,32 @@ describe('job handlers vs job types', () => {
   it('every seeded schedule names a job type with a handler', () => {
     const rows = seedSchedules(t.ctx);
     expect(rows.length).toBeGreaterThan(0);
-    expect(rows.filter((r) => !getJobHandler(r.jobType)).map((r) => r.jobType)).toEqual([]);
+    expect(rows.filter((r) => !getJobHandler(r.jobType) && !awaitingHandler(r.jobType)).map((r) => r.jobType)).toEqual([]);
+  });
+});
+
+describe('Autopilot vocabulary awaiting its slices', () => {
+  it('lists only Autopilot types and kinds, and drops an entry once its handler or resolver is registered', () => {
+    expect(Object.keys(AWAITING_SLICE_JOB_TYPES).every((k) => (AUTOPILOT_JOB_TYPES as readonly string[]).includes(k))).toBe(true);
+    expect(Object.keys(AWAITING_SLICE_NEEDS_YOU_KINDS).every((k) => (AUTOPILOT_NEEDS_YOU_KINDS as readonly string[]).includes(k))).toBe(true);
+    // A registered handler / resolver must be removed from the waiting list (keeps the contract strict).
+    expect(Object.keys(AWAITING_SLICE_JOB_TYPES).filter((k) => getJobHandler(k as never))).toEqual([]);
+    const kinds = new Set(allNeedsYouResolvers().map((r) => r.kind));
+    expect(Object.keys(AWAITING_SLICE_NEEDS_YOU_KINDS).filter((k) => kinds.has(k as never))).toEqual([]);
+  });
+});
+
+describe('Knowledge Builder vocabulary awaiting its slices', () => {
+  it('lists only knowledge job types and drops an entry once its handler is registered', () => {
+    expect(Object.keys(AWAITING_KNOWLEDGE_JOB_TYPES).every((k) => (KNOWLEDGE_JOB_TYPES as readonly string[]).includes(k))).toBe(true);
+    expect(Object.keys(AWAITING_KNOWLEDGE_JOB_TYPES).filter((k) => getJobHandler(k as never))).toEqual([]);
   });
 });
 
 describe('Needs-you kinds vs resolvers', () => {
   it('every kind a slice acts on has a resolver (override_needed is answered by the generic record only)', () => {
     const kinds = new Set(allNeedsYouResolvers().map((r) => r.kind));
-    expect(NEEDS_YOU_KINDS.filter((k) => k !== 'override_needed' && !kinds.has(k))).toEqual([]);
+    expect(NEEDS_YOU_KINDS.filter((k) => k !== 'override_needed' && !kinds.has(k) && !(k in AWAITING_SLICE_NEEDS_YOU_KINDS))).toEqual([]);
   });
 });
 

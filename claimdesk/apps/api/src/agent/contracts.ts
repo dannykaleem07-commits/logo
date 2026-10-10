@@ -25,11 +25,12 @@ import type {
   ToolName,
   ActionDescriptor,
   Decision,
+  StepContext,
 } from '@ccguk/domain';
 import type { AppContext, Logger } from '../context.js';
 import type { AiAttachment, AiRunOutcome, Effort, ModelId } from '../ai/types.js';
 
-export type { ActionClass, AgentName, Basis, JobStatus, JobType, JsonSchema, Lane, NeedsYouKind, NeedsYouOption, Recommendation, ResultSchemaId, ToolName, ActionDescriptor, Decision, ISODateTime };
+export type { ActionClass, AgentName, Basis, JobStatus, JobType, JsonSchema, Lane, NeedsYouKind, NeedsYouOption, Recommendation, ResultSchemaId, ToolName, ActionDescriptor, Decision, ISODateTime, StepContext };
 
 // ---------------------------------------------------------------------------
 // Queue (§C.3)
@@ -72,7 +73,12 @@ export interface JobHandler<P = unknown, R = unknown> {
 export type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'PUT';
 
 export interface RunContext { runId: string; jobId: string; agent: AgentName; claimScope?: string; token: string;
-  allowedTools: ReadonlySet<ToolName>; runDir: string; correlationId: string }
+  allowedTools: ReadonlySet<ToolName>; runDir: string; correlationId: string;
+  /**
+   * Autopilot (SUPREME-AUTOPILOT §0.6): the step this run acts for. Set by code only (`actAsAutopilot`); `executeTool`
+   * copies it onto every ActionDescriptor so rules 4a/4b and the refined rule 13 see it. Never set from model input.
+   */
+  step?: StepContext }
 
 export interface ToolDef<I = unknown, O = unknown> {
   name: ToolName;                       // snake_case; appears to the CLI as mcp__claimdesk__<name>
@@ -137,7 +143,7 @@ export interface AgentInput {
   /** Case Brief (§E.2) or other structured context, serialised by the gateway. */
   brief?: unknown;
   /** Untrusted content, wrapped in <untrusted_* id=…> blocks with delimiters escaped (§K.1). */
-  untrusted?: Array<{ kind: 'email' | 'document' | 'transcript' | 'note'; id: string; text: string }>;
+  untrusted?: Array<{ kind: 'email' | 'document' | 'transcript' | 'note' | 'source' | 'knowledge'; id: string; text: string }>;
   /** Files copied (verified) into runDir/input. */
   attachments?: AiAttachment[];
   /** The job's question / instructions after the context. */

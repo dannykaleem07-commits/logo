@@ -86,6 +86,41 @@ import type {
   ReviewTargetKind,
   TaskStatus,
 } from '@ccguk/domain';
+import type {
+  AutopilotOverride,
+  AutopilotPlan,
+  AutopilotSettings,
+  AvailabilityCandidate,
+  ClaimAutopilotMode,
+  ClashFinding,
+  ClashFindingStatus,
+  ClashOverrideClass,
+  ClashSeverity,
+  DamageSeverity,
+  DocumentPack,
+  DocumentPackStatus,
+  DriverCriteria,
+  DriverProfile,
+  EligibilityAssessmentKind,
+  FleetDamage,
+  HireNeeds,
+  HireOfferChannel,
+  HireOfferResponse,
+  HireOfferStatus,
+  HireOfferTerms,
+  MovementKind,
+  MovementStatus,
+  PackStage,
+  ReadinessKind,
+  ReadinessTask,
+  ReservationSource,
+  ReservationStatus,
+  SignatureRequestMethod,
+  SignatureRequestStatus,
+  StageId,
+  StepRefs,
+  TerminalStage,
+} from '@ccguk/domain';
 
 // ---------------------------------------------------------------------------
 // Persistence-only value types (no domain equivalent)
@@ -237,6 +272,9 @@ export const insurancePolicies = sqliteTable('insurance_policies', {
   endDate: text('end_date').notNull(),
   evidenceId: text('evidence_id'),
   createdAt: text('created_at').notNull(),
+  // Autopilot (migration 0013_autopilot, SUPREME-AUTOPILOT §B.3)
+  driverCriteria: text('driver_criteria', { mode: 'json' }).$type<DriverCriteria>(),
+  renewsPolicyId: text('renews_policy_id'),
 });
 
 export const fleetUnits = sqliteTable(
@@ -255,6 +293,14 @@ export const fleetUnits = sqliteTable(
     phvLicensed: integer('phv_licensed', { mode: 'boolean' }),
     createdAt: text('created_at').notNull(),
     updatedAt: text('updated_at').notNull(),
+    // Autopilot (migration 0013_autopilot, SUPREME-AUTOPILOT §B.3)
+    locationId: text('location_id'),
+    currentMileage: integer('current_mileage'),
+    mileageAt: text('mileage_at'),
+    serviceDueMiles: integer('service_due_miles'),
+    phvLicenceNumber: text('phv_licence_number'),
+    phvLicenceExpiry: text('phv_licence_expiry'),
+    turnaroundMinutes: integer('turnaround_minutes'),
   },
   (t) => [index('fleet_units_vehicle_idx').on(t.vehicleId), index('fleet_units_status_idx').on(t.status)],
 );
@@ -417,6 +463,12 @@ export const hireAgreements = sqliteTable(
     hireGtaDailyRatePence: integer('hire_gta_daily_rate_pence'),
     fleetDailyRatePence: integer('fleet_daily_rate_pence'),
     pricingNote: text('pricing_note'),
+    // Autopilot (migration 0013_autopilot, SUPREME-AUTOPILOT §G.3)
+    use: text('use').$type<FleetUse>(),
+    hirerPartyId: text('hirer_party_id'),
+    driverPartyIds: text('driver_party_ids', { mode: 'json' }).$type<string[]>(),
+    reservationId: text('reservation_id'),
+    expectedEndAt: text('expected_end_at'),
   },
   (t) => [
     index('hire_agreements_claim_idx').on(t.claimId),
@@ -626,6 +678,12 @@ export const signatures = sqliteTable(
     documentSha256: text('document_sha256').notNull(),
     certificatePdfPath: text('certificate_pdf_path'),
     createdAt: text('created_at').notNull(),
+    // Autopilot signing (migration 0013_autopilot, SUPREME-AUTOPILOT §E, §G.3); NULL method = 'otp'.
+    method: text('method').$type<NonNullable<SignatureRecord['method']>>(),
+    drawnSignatureSha256: text('drawn_signature_sha256'),
+    evidenceId: text('evidence_id'),
+    packId: text('pack_id'),
+    packSha256: text('pack_sha256'),
   },
   (t) => [index('signatures_document_idx').on(t.documentId), index('signatures_signer_idx').on(t.signerPartyId)],
 );
@@ -1140,6 +1198,8 @@ export const agentSettings = sqliteTable('agent_settings', {
   notifications: text('notifications', { mode: 'json' }).$type<Partial<NotificationSettings>>().notNull(),
   agents: text('agents', { mode: 'json' }).$type<Partial<AgentsSettings>>().notNull(),
   checklist: text('checklist', { mode: 'json' }).$type<Partial<ChecklistState>>().notNull(),
+  /** Autopilot settings (migration 0013_autopilot): merged over DEFAULT_AUTOPILOT_SETTINGS on read. */
+  autopilot: text('autopilot', { mode: 'json' }).$type<Partial<AutopilotSettings>>().notNull().default({}),
   updatedAt: text('updated_at').notNull(),
   updatedBy: text('updated_by').notNull(),
 });
@@ -1450,6 +1510,8 @@ export const outbox = sqliteTable(
     createdBy: text('created_by').notNull(),
     createdAt: text('created_at').notNull(),
     updatedAt: text('updated_at').notNull(),
+    /** Autopilot step that created the draft (migration 0013_autopilot, SUPREME-AUTOPILOT §0.6). */
+    autopilotStepId: text('autopilot_step_id'),
   },
   (t) => [index('outbox_status_idx').on(t.status, t.holdUntil), index('outbox_claim_idx').on(t.claimId, t.createdAt)],
 );
@@ -1659,3 +1721,824 @@ export type BrainEntryRow = typeof brainEntries.$inferSelect;
 export type BrainEntryInsert = typeof brainEntries.$inferInsert;
 export type MemoryItemRow = typeof memoryItems.$inferSelect;
 export type MemoryItemInsert = typeof memoryItems.$inferInsert;
+
+// ---------------------------------------------------------------------------
+// ClaimDesk Supreme Autopilot (docs/SUPREME-AUTOPILOT.md §G.2; migration 0013_autopilot). Tables are created by
+// ap-foundation; each repo (repos/{autopilot,bookings,clashes,eligibility,signing}.ts) belongs to its owning slice.
+// Append-only (BEFORE UPDATE / DELETE triggers): autopilot_log, fleet_reservation_events, eligibility_assessments,
+// signature_request_events. fleet_reservations carries the overlap triggers (RESERVATION_OVERLAP).
+// ---------------------------------------------------------------------------
+
+export const claimAutopilot = sqliteTable(
+  'claim_autopilot',
+  {
+    claimId: text('claim_id').primaryKey(),
+    mode: text('mode').$type<ClaimAutopilotMode>().notNull().default('on'),
+    pausedBy: text('paused_by'),
+    pausedReason: text('paused_reason'),
+    pausedAt: text('paused_at'),
+    stepOverrides: text('step_overrides', { mode: 'json' }).$type<Record<string, AutopilotOverride>>().notNull().default({}),
+    stage: text('stage').$type<StageId | TerminalStage>(),
+    plan: text('plan', { mode: 'json' }).$type<AutopilotPlan>(),
+    planHash: text('plan_hash'),
+    planVersion: text('plan_version'),
+    lastEvaluatedAt: text('last_evaluated_at'),
+    nextCheckAt: text('next_check_at'),
+    updatedAt: text('updated_at').notNull(),
+  },
+  (t) => [index('claim_autopilot_next_idx').on(t.mode, t.nextCheckAt)],
+);
+
+/** Append-only. */
+export const autopilotLog = sqliteTable(
+  'autopilot_log',
+  {
+    id: text('id').primaryKey(),
+    claimId: text('claim_id').notNull(),
+    stepId: text('step_id').notNull(),
+    fromStatus: text('from_status'),
+    toStatus: text('to_status').notNull(),
+    action: text('action'),
+    actor: text('actor').notNull(),
+    decision: text('decision', { mode: 'json' }).$type<unknown>(),
+    jobId: text('job_id'),
+    runId: text('run_id'),
+    needsYouId: text('needs_you_id'),
+    refs: text('refs', { mode: 'json' }).$type<StepRefs>().notNull().default({}),
+    note: text('note'),
+    at: text('at').notNull(),
+  },
+  (t) => [index('autopilot_log_claim_idx').on(t.claimId, t.at)],
+);
+
+export const fleetLocations = sqliteTable('fleet_locations', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  address: text('address', { mode: 'json' }).$type<Address>(),
+  postcode: text('postcode'),
+  lat: real('lat'),
+  lon: real('lon'),
+  isDefault: integer('is_default', { mode: 'boolean' }).notNull().default(false),
+  createdAt: text('created_at').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
+export const fleetReadinessTasks = sqliteTable(
+  'fleet_readiness_tasks',
+  {
+    id: text('id').primaryKey(),
+    fleetUnitId: text('fleet_unit_id').notNull(),
+    kind: text('kind').$type<ReadinessKind>().notNull(),
+    status: text('status').$type<ReadinessTask['status']>().notNull(),
+    blocksHire: integer('blocks_hire', { mode: 'boolean' }).notNull().default(false),
+    dueAt: text('due_at'),
+    readyByAt: text('ready_by_at'),
+    reservationId: text('reservation_id'),
+    damageId: text('damage_id'),
+    note: text('note'),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+    doneBy: text('done_by'),
+    doneAt: text('done_at'),
+  },
+  (t) => [index('fleet_readiness_unit_idx').on(t.fleetUnitId, t.status)],
+);
+
+export const fleetDamage = sqliteTable(
+  'fleet_damage',
+  {
+    id: text('id').primaryKey(),
+    fleetUnitId: text('fleet_unit_id').notNull(),
+    panel: text('panel').notNull(),
+    description: text('description').notNull(),
+    severity: text('severity').$type<DamageSeverity>().notNull(),
+    foundAt: text('found_at').notNull(),
+    foundBy: text('found_by').notNull(),
+    reservationId: text('reservation_id'),
+    movementId: text('movement_id'),
+    evidenceIds: text('evidence_ids', { mode: 'json' }).$type<string[]>().notNull().default([]),
+    repairedAt: text('repaired_at'),
+    repairTaskId: text('repair_task_id'),
+    chargeable: text('chargeable').$type<FleetDamage['chargeable']>().notNull().default('tbc'),
+    createdAt: text('created_at').notNull(),
+  },
+  (t) => [index('fleet_damage_unit_idx').on(t.fleetUnitId, t.repairedAt)],
+);
+
+export const fleetReservations = sqliteTable(
+  'fleet_reservations',
+  {
+    id: text('id').primaryKey(),
+    fleetUnitId: text('fleet_unit_id').notNull(),
+    claimId: text('claim_id').notNull(),
+    status: text('status').$type<ReservationStatus>().notNull(),
+    use: text('use').$type<FleetUse>().notNull(),
+    startAt: text('start_at').notNull(),
+    expectedEndAt: text('expected_end_at'),
+    endAt: text('end_at'),
+    collectedAt: text('collected_at'),
+    /** Occupied period in epoch ms (compared by the overlap triggers; never compare the ISO text). */
+    blockStartMs: integer('block_start_ms').notNull(),
+    /** NULL = open-ended (legacy hire with no end). */
+    blockEndMs: integer('block_end_ms'),
+    holdExpiresAt: text('hold_expires_at'),
+    holdExpiresMs: integer('hold_expires_ms'),
+    hirerPartyId: text('hirer_party_id').notNull(),
+    driverPartyIds: text('driver_party_ids', { mode: 'json' }).$type<string[]>().notNull().default([]),
+    agreementNumber: text('agreement_number'),
+    hireAgreementId: text('hire_agreement_id'),
+    hireOfferId: text('hire_offer_id'),
+    dailyRatePence: integer('daily_rate_pence').notNull(),
+    gtaGroup: text('gta_group').notNull(),
+    clientGtaGroup: text('client_gta_group'),
+    pricingNote: text('pricing_note'),
+    substitutionReason: text('substitution_reason'),
+    ranking: text('ranking', { mode: 'json' }).$type<AvailabilityCandidate>(),
+    clashReport: text('clash_report', { mode: 'json' }).$type<ClashFinding[]>(),
+    overlapOverrideAuditId: text('overlap_override_audit_id'),
+    source: text('source').$type<ReservationSource>().notNull(),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+    updatedAt: text('updated_at').notNull(),
+    cancelledReason: text('cancelled_reason'),
+  },
+  (t) => [
+    index('fleet_reservations_unit_idx').on(t.fleetUnitId, t.status, t.blockStartMs),
+    index('fleet_reservations_claim_idx').on(t.claimId, t.status),
+  ],
+);
+
+/** Append-only. */
+export const fleetReservationEvents = sqliteTable(
+  'fleet_reservation_events',
+  {
+    id: text('id').primaryKey(),
+    reservationId: text('reservation_id').notNull(),
+    fromStatus: text('from_status').$type<ReservationStatus>(),
+    toStatus: text('to_status').$type<ReservationStatus>().notNull(),
+    actor: text('actor').notNull(),
+    reason: text('reason'),
+    data: text('data', { mode: 'json' }).$type<Record<string, unknown>>(),
+    at: text('at').notNull(),
+  },
+  (t) => [index('fleet_reservation_events_res_idx').on(t.reservationId, t.at)],
+);
+
+export const fleetMovements = sqliteTable(
+  'fleet_movements',
+  {
+    id: text('id').primaryKey(),
+    reservationId: text('reservation_id').notNull(),
+    claimId: text('claim_id').notNull(),
+    fleetUnitId: text('fleet_unit_id').notNull(),
+    kind: text('kind').$type<MovementKind>().notNull(),
+    windowStart: text('window_start').notNull(),
+    windowEnd: text('window_end').notNull(),
+    address: text('address', { mode: 'json' }).$type<Address>(),
+    postcode: text('postcode'),
+    assignedTo: text('assigned_to'),
+    status: text('status').$type<MovementStatus>().notNull(),
+    doneAt: text('done_at'),
+    odometer: integer('odometer'),
+    fuelEighths: integer('fuel_eighths'),
+    conditionDocumentId: text('condition_document_id'),
+    evidenceIds: text('evidence_ids', { mode: 'json' }).$type<string[]>().notNull().default([]),
+    clientNotifiedAt: text('client_notified_at'),
+    noticeOutboxId: text('notice_outbox_id'),
+    notes: text('notes'),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+    updatedAt: text('updated_at').notNull(),
+  },
+  (t) => [index('fleet_movements_window_idx').on(t.status, t.windowStart), index('fleet_movements_reservation_idx').on(t.reservationId)],
+);
+
+export const hireOffers = sqliteTable(
+  'hire_offers',
+  {
+    id: text('id').primaryKey(),
+    claimId: text('claim_id').notNull(),
+    reservationId: text('reservation_id').notNull(),
+    status: text('status').$type<HireOfferStatus>().notNull(),
+    channel: text('channel').$type<HireOfferChannel>().notNull(),
+    terms: text('terms', { mode: 'json' }).$type<HireOfferTerms>().notNull(),
+    termsSha256: text('terms_sha256').notNull(),
+    outboxId: text('outbox_id'),
+    authorisedBy: text('authorised_by').notNull(),
+    sentAt: text('sent_at'),
+    expiresAt: text('expires_at').notNull(),
+    response: text('response', { mode: 'json' }).$type<HireOfferResponse>(),
+    respondedAt: text('responded_at'),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+    updatedAt: text('updated_at').notNull(),
+  },
+  (t) => [index('hire_offers_claim_idx').on(t.claimId, t.status)],
+);
+
+export const driverProfiles = sqliteTable('driver_profiles', {
+  partyId: text('party_id').primaryKey(),
+  profile: text('profile', { mode: 'json' }).$type<DriverProfile>().notNull(),
+  source: text('source').$type<DriverProfile['source']>().notNull(),
+  updatedBy: text('updated_by').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
+export const claimHireNeeds = sqliteTable('claim_hire_needs', {
+  claimId: text('claim_id').primaryKey(),
+  needs: text('needs', { mode: 'json' }).$type<HireNeeds>().notNull(),
+  updatedBy: text('updated_by').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
+/** Append-only. */
+export const eligibilityAssessments = sqliteTable(
+  'eligibility_assessments',
+  {
+    id: text('id').primaryKey(),
+    claimId: text('claim_id').notNull(),
+    partyId: text('party_id'),
+    policyId: text('policy_id'),
+    kind: text('kind').$type<EligibilityAssessmentKind>().notNull(),
+    outcome: text('outcome').notNull(),
+    reasons: text('reasons', { mode: 'json' }).$type<unknown>().notNull(),
+    inputsSha256: text('inputs_sha256').notNull(),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+  },
+  (t) => [index('eligibility_claim_idx').on(t.claimId, t.kind, t.createdAt)],
+);
+
+export const clashFindings = sqliteTable(
+  'clash_findings',
+  {
+    id: text('id').primaryKey(),
+    code: text('code').notNull(),
+    severity: text('severity').$type<ClashSeverity>().notNull(),
+    overrideClass: text('override_class').$type<ClashOverrideClass>(),
+    claimId: text('claim_id'),
+    fleetUnitId: text('fleet_unit_id'),
+    reservationId: text('reservation_id'),
+    hireId: text('hire_id'),
+    related: text('related', { mode: 'json' }).$type<ClashFinding['related']>().notNull(),
+    message: text('message').notNull(),
+    data: text('data', { mode: 'json' }).$type<Record<string, unknown>>(),
+    dedupeKey: text('dedupe_key').notNull(),
+    status: text('status').$type<ClashFindingStatus>().notNull(),
+    firstSeenAt: text('first_seen_at').notNull(),
+    lastSeenAt: text('last_seen_at').notNull(),
+    resolvedAt: text('resolved_at'),
+    resolvedBy: text('resolved_by'),
+    resolutionNote: text('resolution_note'),
+    overrideAuditId: text('override_audit_id'),
+  },
+  (t) => [index('clash_findings_claim_idx').on(t.claimId, t.status), index('clash_findings_unit_idx').on(t.fleetUnitId, t.status)],
+);
+
+export const documentPacks = sqliteTable(
+  'document_packs',
+  {
+    id: text('id').primaryKey(),
+    claimId: text('claim_id').notNull(),
+    stage: text('stage').$type<PackStage>().notNull(),
+    reservationId: text('reservation_id'),
+    items: text('items', { mode: 'json' }).$type<DocumentPack['items']>().notNull(),
+    status: text('status').$type<DocumentPackStatus>().notNull(),
+    approvedBy: text('approved_by'),
+    approvedAt: text('approved_at'),
+    sentAt: text('sent_at'),
+    outboxId: text('outbox_id'),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+    updatedAt: text('updated_at').notNull(),
+  },
+  (t) => [index('document_packs_claim_idx').on(t.claimId, t.stage, t.status)],
+);
+
+export const signatureRequests = sqliteTable(
+  'signature_requests',
+  {
+    id: text('id').primaryKey(),
+    packId: text('pack_id'),
+    documentId: text('document_id').notNull(),
+    claimId: text('claim_id').notNull(),
+    signerPartyId: text('signer_party_id').notNull(),
+    method: text('method').$type<SignatureRequestMethod>().notNull(),
+    status: text('status').$type<SignatureRequestStatus>().notNull(),
+    sentAt: text('sent_at'),
+    chaseCount: integer('chase_count').notNull().default(0),
+    lastChasedAt: text('last_chased_at'),
+    nextChaseAt: text('next_chase_at'),
+    returnedEvidenceId: text('returned_evidence_id'),
+    signedAt: text('signed_at'),
+    confirmedBy: text('confirmed_by'),
+    createdAt: text('created_at').notNull(),
+    updatedAt: text('updated_at').notNull(),
+  },
+  (t) => [index('signature_requests_open_idx').on(t.status, t.nextChaseAt), index('signature_requests_claim_idx').on(t.claimId, t.status)],
+);
+
+/** Append-only. */
+export const signatureRequestEvents = sqliteTable('signature_request_events', {
+  id: text('id').primaryKey(),
+  signatureRequestId: text('signature_request_id').notNull(),
+  fromStatus: text('from_status').$type<SignatureRequestStatus>(),
+  toStatus: text('to_status').$type<SignatureRequestStatus>().notNull(),
+  actor: text('actor').notNull(),
+  note: text('note'),
+  at: text('at').notNull(),
+});
+
+export const kioskSessions = sqliteTable(
+  'kiosk_sessions',
+  {
+    id: text('id').primaryKey(),
+    packId: text('pack_id').notNull(),
+    claimId: text('claim_id').notNull(),
+    signerPartyId: text('signer_party_id').notNull(),
+    tokenSha256: text('token_sha256').notNull(),
+    lan: integer('lan', { mode: 'boolean' }).notNull().default(false),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+    expiresAt: text('expires_at').notNull(),
+    openedAt: text('opened_at'),
+    openedIp: text('opened_ip'),
+    openedUserAgent: text('opened_user_agent'),
+    completedAt: text('completed_at'),
+    closedReason: text('closed_reason'),
+  },
+  (t) => [uniqueIndex('kiosk_sessions_token_uq').on(t.tokenSha256)],
+);
+
+export type ClaimAutopilotRow = typeof claimAutopilot.$inferSelect;
+export type ClaimAutopilotInsert = typeof claimAutopilot.$inferInsert;
+export type AutopilotLogRow = typeof autopilotLog.$inferSelect;
+export type AutopilotLogInsert = typeof autopilotLog.$inferInsert;
+export type FleetLocationRow = typeof fleetLocations.$inferSelect;
+export type FleetLocationInsert = typeof fleetLocations.$inferInsert;
+export type FleetReadinessTaskRow = typeof fleetReadinessTasks.$inferSelect;
+export type FleetReadinessTaskInsert = typeof fleetReadinessTasks.$inferInsert;
+export type FleetDamageRow = typeof fleetDamage.$inferSelect;
+export type FleetDamageInsert = typeof fleetDamage.$inferInsert;
+export type FleetReservationRow = typeof fleetReservations.$inferSelect;
+export type FleetReservationInsert = typeof fleetReservations.$inferInsert;
+export type FleetReservationEventRow = typeof fleetReservationEvents.$inferSelect;
+export type FleetReservationEventInsert = typeof fleetReservationEvents.$inferInsert;
+export type FleetMovementRow = typeof fleetMovements.$inferSelect;
+export type FleetMovementInsert = typeof fleetMovements.$inferInsert;
+export type HireOfferRow = typeof hireOffers.$inferSelect;
+export type HireOfferInsert = typeof hireOffers.$inferInsert;
+export type DriverProfileRow = typeof driverProfiles.$inferSelect;
+export type DriverProfileInsert = typeof driverProfiles.$inferInsert;
+export type ClaimHireNeedsRow = typeof claimHireNeeds.$inferSelect;
+export type ClaimHireNeedsInsert = typeof claimHireNeeds.$inferInsert;
+export type EligibilityAssessmentRow = typeof eligibilityAssessments.$inferSelect;
+export type EligibilityAssessmentInsert = typeof eligibilityAssessments.$inferInsert;
+export type ClashFindingRow = typeof clashFindings.$inferSelect;
+export type ClashFindingInsert = typeof clashFindings.$inferInsert;
+export type DocumentPackRow = typeof documentPacks.$inferSelect;
+export type DocumentPackInsert = typeof documentPacks.$inferInsert;
+export type SignatureRequestRow = typeof signatureRequests.$inferSelect;
+export type SignatureRequestInsert = typeof signatureRequests.$inferInsert;
+export type SignatureRequestEventRow = typeof signatureRequestEvents.$inferSelect;
+export type SignatureRequestEventInsert = typeof signatureRequestEvents.$inferInsert;
+export type KioskSessionRow = typeof kioskSessions.$inferSelect;
+export type KioskSessionInsert = typeof kioskSessions.$inferInsert;
+
+// --- 0014 knowledge (docs/SUPREME-KNOWLEDGE-BUILDER.md §5; owned by knowledge-core) -----------------------------
+// FTS5 (`knowledge_fts`) is read with raw SQL in repos/knowledge.ts. Append-only tables carry 0001-form triggers;
+// knowledge_items content is immutable and its verification only changes through a person's recorded check (triggers).
+
+/** Content table of the external-content FTS5 index `knowledge_fts` (sync triggers in 0014). */
+export const knowledgeItems = sqliteTable(
+  'knowledge_items',
+  {
+    rowidKey: integer('rowid_key').primaryKey({ autoIncrement: true }),
+    id: text('id').notNull(),
+    itemKey: text('item_key').notNull(),
+    version: integer('version').notNull(),
+    kind: text('kind').notNull(),
+    area: text('area').notNull(),
+    title: text('title').notNull(),
+    body: text('body').notNull(),
+    data: text('data', { mode: 'json' }).$type<unknown>().notNull(),
+    tags: text('tags', { mode: 'json' }).$type<string[]>().notNull().default([]),
+    scopeKind: text('scope_kind').notNull(),
+    scopeValue: text('scope_value'),
+    business: text('business', { mode: 'json' }).$type<string[]>().notNull().default(['ccguk']),
+    useLimit: text('use_limit').notNull(),
+    origin: text('origin').notNull(),
+    verification: text('verification').notNull().default('unverified'),
+    lastCheckId: text('last_check_id'),
+    confidence: real('confidence').notNull(),
+    supportN: integer('support_n').notNull().default(1),
+    status: text('status').notNull(),
+    health: text('health').notNull().default('ok'),
+    validFrom: text('valid_from'),
+    validTo: text('valid_to'),
+    reviewBy: text('review_by'),
+    provenance: text('provenance', { mode: 'json' }).$type<unknown[]>().notNull(),
+    supersedesId: text('supersedes_id'),
+    gapId: text('gap_id'),
+    contentSha256: text('content_sha256').notNull(),
+    autonomy: text('autonomy', { mode: 'json' }).$type<unknown>().notNull(),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+    originJobId: text('origin_job_id'),
+    originRunId: text('origin_run_id'),
+    decidedBy: text('decided_by'),
+    decidedAt: text('decided_at'),
+    decisionNote: text('decision_note'),
+    needsYouId: text('needs_you_id'),
+    updatedAt: text('updated_at').notNull(),
+  },
+  (t) => [
+    uniqueIndex('knowledge_items_id_uq').on(t.id),
+    uniqueIndex('knowledge_items_key_ver_uq').on(t.itemKey, t.version),
+    index('knowledge_items_status_idx').on(t.status, t.kind, t.area),
+    index('knowledge_items_scope_idx').on(t.scopeKind, t.scopeValue, t.status),
+    index('knowledge_items_sha_idx').on(t.contentSha256),
+    index('knowledge_items_needs_you_idx').on(t.needsYouId),
+  ],
+);
+
+export const knowledgeChecks = sqliteTable(
+  'knowledge_checks',
+  {
+    id: text('id').primaryKey(),
+    target: text('target').notNull(),
+    result: text('result').notNull(),
+    method: text('method').notNull(),
+    snapshotId: text('snapshot_id'),
+    sourceUrl: text('source_url'),
+    quote: text('quote'),
+    quoteMatch: text('quote_match').notNull(),
+    note: text('note'),
+    checkedBy: text('checked_by').notNull(),
+    checkedAt: text('checked_at').notNull(),
+    needsYouId: text('needs_you_id'),
+  },
+  (t) => [index('knowledge_checks_target_idx').on(t.target, t.checkedAt)],
+);
+
+export const knowledgeChanges = sqliteTable(
+  'knowledge_changes',
+  {
+    id: text('id').primaryKey(),
+    at: text('at').notNull(),
+    actor: text('actor').notNull(),
+    action: text('action').notNull(),
+    itemId: text('item_id'),
+    itemKey: text('item_key'),
+    gapId: text('gap_id'),
+    packVersion: integer('pack_version'),
+    before: text('before', { mode: 'json' }).$type<unknown>(),
+    after: text('after', { mode: 'json' }).$type<unknown>(),
+    reason: text('reason'),
+    ruleIds: text('rule_ids', { mode: 'json' }).$type<string[]>(),
+    runId: text('run_id'),
+    jobId: text('job_id'),
+    needsYouId: text('needs_you_id'),
+  },
+  (t) => [index('knowledge_changes_at_idx').on(t.at), index('knowledge_changes_item_idx').on(t.itemKey, t.at)],
+);
+
+export const knowledgePackVersions = sqliteTable('knowledge_pack_versions', {
+  version: integer('version').primaryKey(),
+  label: text('label').notNull(),
+  itemsSha256: text('items_sha256').notNull(),
+  itemCount: integer('item_count').notNull(),
+  diff: text('diff', { mode: 'json' }).$type<unknown>().notNull(),
+  reason: text('reason').notNull(),
+  basedOnVersion: integer('based_on_version'),
+  rollbackOf: integer('rollback_of'),
+  replayRunId: text('replay_run_id'),
+  createdBy: text('created_by').notNull(),
+  createdAt: text('created_at').notNull(),
+});
+
+export const knowledgePackMembers = sqliteTable(
+  'knowledge_pack_members',
+  {
+    version: integer('version').notNull(),
+    itemId: text('item_id').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.version, t.itemId] })],
+);
+
+export const knowledgePackState = sqliteTable('knowledge_pack_state', {
+  id: text('id').primaryKey(),
+  activeVersion: integer('active_version'),
+  activatedBy: text('activated_by'),
+  activatedAt: text('activated_at'),
+});
+
+export const knowledgeConflicts = sqliteTable('knowledge_conflicts', {
+  id: text('id').primaryKey(),
+  kind: text('kind').notNull(),
+  leftRef: text('left_ref').notNull(),
+  rightRef: text('right_ref').notNull(),
+  detail: text('detail').notNull(),
+  detectedBy: text('detected_by').notNull(),
+  status: text('status').notNull(),
+  resolution: text('resolution'),
+  needsYouId: text('needs_you_id'),
+  createdAt: text('created_at').notNull(),
+  resolvedBy: text('resolved_by'),
+  resolvedAt: text('resolved_at'),
+});
+
+export const insurerLinks = sqliteTable(
+  'insurer_links',
+  {
+    partyId: text('party_id').primaryKey(),
+    insurerSlug: text('insurer_slug').notNull(),
+    method: text('method').notNull(),
+    confidence: real('confidence').notNull(),
+    decidedBy: text('decided_by').notNull(),
+    decidedAt: text('decided_at').notNull(),
+  },
+  (t) => [index('insurer_links_slug_idx').on(t.insurerSlug)],
+);
+
+export const knowledgeSettings = sqliteTable('knowledge_settings', {
+  id: text('id').primaryKey(),
+  settings: text('settings', { mode: 'json' }).$type<unknown>().notNull(),
+  updatedAt: text('updated_at').notNull(),
+  updatedBy: text('updated_by').notNull(),
+});
+
+// learners (knowledge-learners)
+export const contactObservations = sqliteTable(
+  'contact_observations',
+  {
+    id: text('id').primaryKey(),
+    mailMessageId: text('mail_message_id').notNull(),
+    threadKey: text('thread_key'),
+    insurerSlug: text('insurer_slug'),
+    fromDomain: text('from_domain').notNull(),
+    dmarc: text('dmarc').notNull(),
+    domainCheck: text('domain_check').notNull(),
+    name: text('name'),
+    role: text('role'),
+    phoneNorm: text('phone_norm'),
+    phoneKind: text('phone_kind'),
+    email: text('email'),
+    ivrText: text('ivr_text'),
+    hoursText: text('hours_text'),
+    copycat: text('copycat'),
+    signatureSha256: text('signature_sha256').notNull(),
+    observedAt: text('observed_at').notNull(),
+    createdAt: text('created_at').notNull(),
+  },
+  (t) => [uniqueIndex('contact_obs_uq').on(t.mailMessageId, t.signatureSha256), index('contact_obs_insurer_idx').on(t.insurerSlug, t.observedAt)],
+);
+
+export const offerObservations = sqliteTable('offer_observations', {
+  id: text('id').primaryKey(),
+  claimId: text('claim_id').notNull(),
+  insurerSlug: text('insurer_slug'),
+  offerKind: text('offer_kind').notNull(),
+  head: text('head'),
+  amountPence: integer('amount_pence'),
+  claimedPence: integer('claimed_pence'),
+  receivedAt: text('received_at').notNull(),
+  source: text('source').notNull(),
+  sourceId: text('source_id').notNull(),
+  decision: text('decision'),
+  decidedAt: text('decided_at'),
+  createdAt: text('created_at').notNull(),
+});
+
+export const claimOutcomes = sqliteTable(
+  'claim_outcomes',
+  {
+    claimId: text('claim_id').notNull(),
+    head: text('head').notNull(),
+    insurerSlug: text('insurer_slug'),
+    claimTypes: text('claim_types', { mode: 'json' }).$type<string[]>().notNull(),
+    gtaSubscriber: integer('gta_subscriber', { mode: 'boolean' }),
+    claimedPence: integer('claimed_pence').notNull().default(0),
+    firstOfferPence: integer('first_offer_pence'),
+    paidPence: integer('paid_pence').notNull().default(0),
+    reducedPence: integer('reduced_pence').notNull().default(0),
+    packSentAt: text('pack_sent_at'),
+    firstPaidAt: text('first_paid_at'),
+    fullyPaidAt: text('fully_paid_at'),
+    workingDaysToPay: integer('working_days_to_pay'),
+    chasersBeforePay: integer('chasers_before_pay').notNull().default(0),
+    objections: text('objections', { mode: 'json' }).$type<string[]>().notNull().default([]),
+    docsRequested: text('docs_requested', { mode: 'json' }).$type<string[]>().notNull().default([]),
+    steps: text('steps', { mode: 'json' }).$type<unknown[]>().notNull().default([]),
+    status: text('status').notNull(),
+    computedAt: text('computed_at').notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.claimId, t.head] }), index('claim_outcomes_insurer_idx').on(t.insurerSlug)],
+);
+
+export const corrections = sqliteTable(
+  'corrections',
+  {
+    id: text('id').primaryKey(),
+    source: text('source').notNull(),
+    sourceId: text('source_id').notNull(),
+    needsYouId: text('needs_you_id'),
+    claimId: text('claim_id'),
+    targetKind: text('target_kind'),
+    targetId: text('target_id'),
+    agent: text('agent'),
+    templateId: text('template_id'),
+    emailKind: text('email_kind'),
+    insurerSlug: text('insurer_slug'),
+    beforeText: text('before_text').notNull(),
+    afterText: text('after_text').notNull(),
+    diff: text('diff', { mode: 'json' }).$type<unknown>().notNull(),
+    stats: text('stats', { mode: 'json' }).$type<unknown>().notNull(),
+    categories: text('categories', { mode: 'json' }).$type<string[]>().notNull(),
+    clusterKey: text('cluster_key'),
+    ownerNote: text('owner_note'),
+    capturedAt: text('captured_at').notNull(),
+  },
+  (t) => [uniqueIndex('corrections_src_uq').on(t.source, t.sourceId), index('corrections_cluster_idx').on(t.clusterKey, t.capturedAt)],
+);
+
+export const knowledgeWatermarks = sqliteTable('knowledge_watermarks', {
+  source: text('source').primaryKey(),
+  lastAt: text('last_at').notNull(),
+  lastId: text('last_id'),
+  updatedAt: text('updated_at').notNull(),
+});
+
+// research (knowledge-research)
+export const knowledgeGaps = sqliteTable(
+  'knowledge_gaps',
+  {
+    id: text('id').primaryKey(),
+    gapKey: text('gap_key').notNull(),
+    kind: text('kind').notNull(),
+    question: text('question').notNull(),
+    area: text('area').notNull(),
+    scopeKind: text('scope_kind').notNull(),
+    scopeValue: text('scope_value'),
+    origin: text('origin').notNull(),
+    originRef: text('origin_ref'),
+    claimIds: text('claim_ids', { mode: 'json' }).$type<string[]>().notNull().default([]),
+    blocking: integer('blocking', { mode: 'boolean' }).notNull().default(false),
+    occurrences: integer('occurrences').notNull().default(1),
+    priority: integer('priority').notNull(),
+    status: text('status').notNull(),
+    attempts: integer('attempts').notNull().default(0),
+    nextAttemptAt: text('next_attempt_at'),
+    answerItemIds: text('answer_item_ids', { mode: 'json' }).$type<string[]>().notNull().default([]),
+    spend: text('spend', { mode: 'json' }).$type<unknown>().notNull().default({}),
+    raisedBy: text('raised_by').notNull(),
+    createdAt: text('created_at').notNull(),
+    lastSeenAt: text('last_seen_at').notNull(),
+    closedBy: text('closed_by'),
+    closedAt: text('closed_at'),
+    closeNote: text('close_note'),
+    needsYouId: text('needs_you_id'),
+    updatedAt: text('updated_at').notNull(),
+  },
+  (t) => [index('knowledge_gaps_queue_idx').on(t.status, t.priority, t.nextAttemptAt)],
+);
+
+export const knowledgeSources = sqliteTable('knowledge_sources', {
+  domain: text('domain').primaryKey(),
+  policy: text('policy').notNull(),
+  access: text('access').notNull(),
+  licence: text('licence').notNull(),
+  extractAllowed: integer('extract_allowed', { mode: 'boolean' }).notNull(),
+  maxQuoteWords: integer('max_quote_words').notNull(),
+  tags: text('tags', { mode: 'json' }).$type<string[]>().notNull().default([]),
+  perMinute: integer('per_minute').notNull(),
+  perDay: integer('per_day').notNull(),
+  enabled: integer('enabled', { mode: 'boolean' }).notNull().default(true),
+  origin: text('origin').notNull(),
+  robots: text('robots'),
+  robotsCheckedAt: text('robots_checked_at'),
+  selftest: text('selftest', { mode: 'json' }).$type<unknown>(),
+  lastFetchAt: text('last_fetch_at'),
+  lastStatus: integer('last_status'),
+  fetchesToday: integer('fetches_today').notNull().default(0),
+  fetchDay: text('fetch_day'),
+  updatedBy: text('updated_by').notNull(),
+  updatedAt: text('updated_at').notNull(),
+});
+
+export const sourceSnapshots = sqliteTable(
+  'source_snapshots',
+  {
+    id: text('id').primaryKey(),
+    url: text('url').notNull(),
+    finalUrl: text('final_url').notNull(),
+    domain: text('domain').notNull(),
+    fetchedAt: text('fetched_at').notNull(),
+    httpStatus: integer('http_status').notNull(),
+    contentType: text('content_type'),
+    bytes: integer('bytes').notNull(),
+    sha256: text('sha256').notNull(),
+    storagePath: text('storage_path').notNull(),
+    textPath: text('text_path'),
+    textSha256: text('text_sha256'),
+    title: text('title'),
+    licence: text('licence').notNull(),
+    extractAllowed: integer('extract_allowed', { mode: 'boolean' }).notNull(),
+    previousId: text('previous_id'),
+    changed: integer('changed', { mode: 'boolean' }).notNull().default(false),
+    injectionFlags: text('injection_flags', { mode: 'json' }).$type<string[]>().notNull().default([]),
+    reason: text('reason').notNull(),
+    gapId: text('gap_id'),
+    jobId: text('job_id'),
+    runId: text('run_id'),
+    createdBy: text('created_by').notNull(),
+  },
+  (t) => [index('source_snapshots_url_idx').on(t.url, t.fetchedAt)],
+);
+
+// use + evals (knowledge-use)
+export const knowledgeUsage = sqliteTable(
+  'knowledge_usage',
+  {
+    id: text('id').primaryKey(),
+    runId: text('run_id').notNull(),
+    claimId: text('claim_id'),
+    ref: text('ref').notNull(),
+    badges: text('badges', { mode: 'json' }).$type<string[]>().notNull(),
+    rank: integer('rank').notNull(),
+    injected: integer('injected', { mode: 'boolean' }).notNull(),
+    cited: integer('cited', { mode: 'boolean' }).notNull().default(false),
+    targetKind: text('target_kind'),
+    targetId: text('target_id'),
+    at: text('at').notNull(),
+  },
+  (t) => [index('knowledge_usage_run_idx').on(t.runId), index('knowledge_usage_ref_idx').on(t.ref, t.at), index('knowledge_usage_target_idx').on(t.targetKind, t.targetId)],
+);
+
+export const evalCases = sqliteTable(
+  'eval_cases',
+  {
+    id: text('id').primaryKey(),
+    claimId: text('claim_id').notNull(),
+    decisionPoint: text('decision_point').notNull(),
+    at: text('at').notNull(),
+    facts: text('facts', { mode: 'json' }).$type<unknown>().notNull(),
+    historic: text('historic', { mode: 'json' }).$type<unknown>().notNull(),
+    outcome: text('outcome', { mode: 'json' }).$type<unknown>().notNull(),
+    insurerSlug: text('insurer_slug'),
+    outcomeQuartile: integer('outcome_quartile'),
+    createdAt: text('created_at').notNull(),
+  },
+  (t) => [uniqueIndex('eval_cases_uq').on(t.claimId, t.decisionPoint, t.at)],
+);
+
+export const evalRuns = sqliteTable('eval_runs', {
+  id: text('id').primaryKey(),
+  mode: text('mode').notNull(),
+  baselineVersion: integer('baseline_version'),
+  candidate: text('candidate', { mode: 'json' }).$type<unknown>().notNull(),
+  cases: integer('cases').notNull(),
+  metrics: text('metrics', { mode: 'json' }).$type<unknown>().notNull(),
+  verdict: text('verdict').notNull(),
+  details: text('details', { mode: 'json' }).$type<unknown>().notNull(),
+  startedAt: text('started_at').notNull(),
+  finishedAt: text('finished_at'),
+  jobId: text('job_id'),
+  createdBy: text('created_by').notNull(),
+});
+
+export const knowledgeAlarms = sqliteTable('knowledge_alarms', {
+  id: text('id').primaryKey(),
+  metric: text('metric').notNull(),
+  packVersion: integer('pack_version'),
+  baseline: real('baseline'),
+  current: real('current'),
+  n: integer('n').notNull(),
+  threshold: real('threshold').notNull(),
+  severity: text('severity').notNull(),
+  status: text('status').notNull(),
+  actionTaken: text('action_taken'),
+  needsYouId: text('needs_you_id'),
+  raisedAt: text('raised_at').notNull(),
+  resolvedBy: text('resolved_by'),
+  resolvedAt: text('resolved_at'),
+});
+
+export type KnowledgeItemRow = typeof knowledgeItems.$inferSelect;
+export type KnowledgeItemInsert = typeof knowledgeItems.$inferInsert;
+export type KnowledgeCheckRow = typeof knowledgeChecks.$inferSelect;
+export type KnowledgeChangeRow = typeof knowledgeChanges.$inferSelect;
+export type KnowledgePackVersionRow = typeof knowledgePackVersions.$inferSelect;
+export type KnowledgeConflictRow = typeof knowledgeConflicts.$inferSelect;
+export type InsurerLinkRow = typeof insurerLinks.$inferSelect;
+export type ContactObservationRow = typeof contactObservations.$inferSelect;
+export type OfferObservationRow = typeof offerObservations.$inferSelect;
+export type ClaimOutcomeRow = typeof claimOutcomes.$inferSelect;
+export type CorrectionRow = typeof corrections.$inferSelect;
+export type KnowledgeGapRow = typeof knowledgeGaps.$inferSelect;
+export type KnowledgeSourceRow = typeof knowledgeSources.$inferSelect;
+export type SourceSnapshotRow = typeof sourceSnapshots.$inferSelect;
+export type KnowledgeUsageRowDb = typeof knowledgeUsage.$inferSelect;
+export type EvalCaseRow = typeof evalCases.$inferSelect;
+export type EvalRunRow = typeof evalRuns.$inferSelect;
+export type KnowledgeAlarmRow = typeof knowledgeAlarms.$inferSelect;

@@ -26,6 +26,14 @@ export const AI_JOB_DEFAULTS: Readonly<Partial<Record<JobType, AiJobModel & { ag
   'review.check': { agent: 'reviewer', model: 'claude-opus-5-5', effort: 'high', maxTurns: 6, timeoutMs: 8 * 60_000 },
   'research.ask': { agent: 'researcher', model: 'claude-sonnet-5-5', effort: 'medium', maxTurns: 10, timeoutMs: 6 * 60_000 },
   'dailylog.compile': { agent: 'supervisor', model: 'claude-sonnet-5-5', effort: 'low', maxTurns: 1, timeoutMs: 2 * 60_000 },
+  // Autopilot (docs/SUPREME-AUTOPILOT.md §H.1)
+  'autopilot.judge': { agent: 'case_manager', model: 'claude-sonnet-5-5', effort: 'medium', maxTurns: 6, timeoutMs: 5 * 60_000 },
+  'hire_offer.parse_reply': { agent: 'mail', model: 'claude-sonnet-5-5', effort: 'low', maxTurns: 1, timeoutMs: 2 * 60_000 },
+  // Knowledge Builder (docs/SUPREME-KNOWLEDGE-BUILDER.md §10.1)
+  'knowledge.research': { agent: 'researcher', model: 'claude-sonnet-5-5', effort: 'medium', maxTurns: 12, timeoutMs: 8 * 60_000 },
+  'knowledge.research_web': { agent: 'researcher', model: 'claude-sonnet-5-5', effort: 'medium', maxTurns: 12, timeoutMs: 10 * 60_000 },
+  'knowledge.curate': { agent: 'researcher', model: 'claude-opus-5-5', effort: 'medium', maxTurns: 6, timeoutMs: 8 * 60_000 },
+  'knowledge.replay_drafts': { agent: 'drafter', model: 'claude-opus-5-5', effort: 'medium', maxTurns: 8, timeoutMs: 10 * 60_000 },
 };
 
 export interface ModelPrice {
