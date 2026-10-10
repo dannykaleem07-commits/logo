@@ -1,0 +1,15 @@
+[
+  {
+    "id": "cw-review-critic-repair",
+    "match": { "jobType": "review.check", "userContains": ["CW-CRITIC-REPAIR"] },
+    "outcome": "ok",
+    "result": { "verdict": "repair", "issues": [{ "code": "UNCLEAR", "severity": "warn", "where": "second paragraph", "message": "The request is unclear.", "fix": "Say exactly what is needed." }], "answersIncoming": null, "tone": "unclear", "touches": { "money": false, "liability": false, "settlement": false, "legal": false, "newCommitment": false }, "confidence": 0.8 }
+  },
+  {
+    "id": "cw-review-critic-pass",
+    "match": { "jobType": "review.check", "userContains": ["You did not write it and you do not see how it was written"] },
+    "outcome": "ok",
+    "result": { "verdict": "pass", "issues": [], "answersIncoming": null, "tone": "professional", "touches": { "money": false, "liability": false, "settlement": false, "legal": false, "newCommitment": false }, "confidence": 0.95 },
+    "usage": { "inputTokens": 2500, "outputTokens": 120, "numTurns": 1 }
+  }
+]

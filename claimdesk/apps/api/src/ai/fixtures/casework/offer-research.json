@@ -1,0 +1,26 @@
+[
+  {
+    "id": "cw-offer-no-tool",
+    "match": { "jobType": "offer.analyse", "payload": { "marker": "CW-OFFER-NO-TOOL" } },
+    "outcome": "ok",
+    "result": { "recommendation": "hold", "counterPence": null, "reasoning": "Invented fixture: wait for the engineer's report.", "basis": [], "confidence": 0.55, "figures": [] }
+  },
+  {
+    "id": "cw-offer-analyse",
+    "match": { "jobType": "offer.analyse" },
+    "steps": [
+      {
+        "tool": "offer_recommend",
+        "input": { "offerId": "$job.payload.offerId", "recommendation": "counter", "counterPence": 120000, "reasoning": "Invented fixture: the offer is below the outstanding figure; counter at the walk-away number.", "basis": [{ "kind": "fact", "id": "ledger.hire.outstandingPence", "label": null }], "confidence": 0.72 }
+      }
+    ],
+    "outcome": "ok",
+    "result": { "recommendation": "counter", "counterPence": 120000, "reasoning": "Invented fixture: counter at the walk-away number.", "basis": [{ "kind": "fact", "id": "ledger.hire.outstandingPence", "label": null }], "confidence": 0.72, "figures": [{ "label": "Outstanding (hire)", "factId": "ledger.hire.outstandingPence", "pence": null }] }
+  },
+  {
+    "id": "cw-research",
+    "match": { "jobType": "research.ask", "userContains": ["CW-RESEARCH"] },
+    "outcome": "ok",
+    "result": { "answer": "Invented fixture answer: storage remains recoverable while the delay is the insurer's, if mitigation is shown.", "citations": [{ "kind": "pack", "id": "pack:synthetic-ccguk@1.0.0#storage-delay", "verified": false }], "confidence": 0.7 }
+  }
+]

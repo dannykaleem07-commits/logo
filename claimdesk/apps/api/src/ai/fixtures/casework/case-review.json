@@ -1,0 +1,101 @@
+[
+  {
+    "id": "cw-case-review-handoffs",
+    "match": { "jobType": "case.review", "payload": { "marker": "CW-HANDOFFS" } },
+    "outcome": "ok",
+    "result": {
+      "situation": "Payment pack sent; the insurer has paid part and gone quiet. Invented fixture.",
+      "nextBestAction": { "code": "CHASER_7", "title": "Send the 7-day chaser", "why": "No reply since the payment pack.", "basis": [{ "kind": "rule", "id": "CHASER_7", "label": null }], "confidence": 0.86, "dueAt": null },
+      "actions": [],
+      "handoffs": [
+        { "to": "drafter", "templateId": "letter.chaser_7", "emailKind": null, "purpose": "Chase the outstanding balance", "recipientPartyId": null, "replyToMessageId": null, "actionCode": "CHASER_7", "dueAt": null },
+        { "to": "drafter", "templateId": "letter.no_such_template", "emailKind": null, "purpose": "Invented template", "recipientPartyId": null, "replyToMessageId": null, "actionCode": null, "dueAt": null },
+        { "to": "drafter", "templateId": null, "emailKind": "chaser", "purpose": "Made-up code", "recipientPartyId": null, "replyToMessageId": null, "actionCode": "MADE_UP_CODE", "dueAt": null },
+        { "to": "drafter", "templateId": "letter.client_update", "emailKind": null, "purpose": "Wrong recipient role", "recipientPartyId": "$job.payload.insurerPartyId", "replyToMessageId": null, "actionCode": null, "dueAt": null },
+        { "to": "researcher", "question": "Is storage recoverable while the insurer delays inspection?" },
+        { "to": "offer_analyst", "offerId": "no-such-offer" },
+        { "to": "mail_reply", "messageId": "no-such-message", "plan": "Reply", "keyPoints": [] }
+      ],
+      "tasks": [{ "kind": "payment_check", "dueAt": "2026-10-14T09:00:00.000Z", "note": "Check whether the balance has been paid", "actionCode": null }],
+      "questionsForOwner": [{ "title": "Client's V5C is missing", "detail": "The insurer will ask for the V5C before paying the PAV.", "missing": ["V5C registration document"], "prepareDraft": true }],
+      "risks": [{ "severity": "medium", "text": "Partial payment may be presented as full and final." }],
+      "confidence": 0.81
+    },
+    "usage": { "inputTokens": 3000, "outputTokens": 600, "numTurns": 2 }
+  },
+  {
+    "id": "cw-case-review-custom",
+    "match": { "jobType": "case.review", "payload": { "marker": "CW-CUSTOM" } },
+    "outcome": "ok",
+    "result": {
+      "situation": "Invented fixture: a step outside the playbook.",
+      "nextBestAction": { "code": "CUSTOM", "title": "Phone the insurer's team leader", "why": "Three chasers unanswered.", "basis": [], "confidence": 0.6, "dueAt": null },
+      "actions": [],
+      "handoffs": [{ "to": "drafter", "templateId": null, "emailKind": "chaser", "purpose": "Escalation email to the team leader", "recipientPartyId": null, "replyToMessageId": null, "actionCode": "CUSTOM", "dueAt": null }],
+      "tasks": [],
+      "questionsForOwner": [],
+      "risks": [],
+      "confidence": 0.6
+    }
+  },
+  {
+    "id": "cw-case-review-research-only",
+    "match": { "jobType": "case.review", "payload": { "marker": "CW-RESEARCH-ONLY" } },
+    "outcome": "ok",
+    "result": {
+      "situation": "Invented fixture: one research hand-off.",
+      "nextBestAction": { "code": "SEND_PAYMENT_PACK", "title": "Payment pack", "why": "Hire ended.", "basis": [], "confidence": 0.8, "dueAt": null },
+      "actions": [],
+      "handoffs": [{ "to": "researcher", "question": "What does the benchmark say about storage after a total loss?" }],
+      "tasks": [],
+      "questionsForOwner": [],
+      "risks": [],
+      "confidence": 0.8
+    }
+  },
+  {
+    "id": "cw-case-review-e2e-ack",
+    "match": { "jobType": "case.review", "userContains": ["E2E-ACK"] },
+    "outcome": "ok",
+    "result": {
+      "situation": "The insurer acknowledged the claim and gave its handling reference. Invented fixture.",
+      "nextBestAction": { "code": "REQUEST_HANDLING_REF", "title": "Acknowledge the insurer's email", "why": "A short acknowledgement keeps the file moving.", "basis": [{ "kind": "message", "id": "$job.payload.messageId", "label": "insurer email" }], "confidence": 0.93, "dueAt": null },
+      "actions": [],
+      "handoffs": [{ "to": "mail_reply", "messageId": "$job.payload.messageId", "plan": "MAILFX-REPLY Acknowledge the insurer's email and note their reference.", "keyPoints": ["Thank them", "Note the reference"] }],
+      "tasks": [],
+      "questionsForOwner": [],
+      "risks": [],
+      "confidence": 0.93
+    }
+  },
+  {
+    "id": "cw-case-review-e2e-v5c",
+    "match": { "jobType": "case.review", "userContains": ["E2E-V5C"] },
+    "outcome": "ok",
+    "result": {
+      "situation": "The insurer asks for the V5C, which is not on file. Invented fixture.",
+      "nextBestAction": { "code": "CUSTOM", "title": "Get the V5C from the client", "why": "The insurer will not progress without it.", "basis": [{ "kind": "message", "id": "$job.payload.messageId", "label": "insurer request" }], "confidence": 0.9, "dueAt": null },
+      "actions": [],
+      "handoffs": [],
+      "tasks": [],
+      "questionsForOwner": [{ "title": "V5C not on file", "detail": "The insurer asked for the V5C registration document; it is not in the evidence.", "missing": ["V5C registration document"], "prepareDraft": true }],
+      "risks": [],
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "cw-case-review-e2e-offer",
+    "match": { "jobType": "case.review", "userContains": ["E2E-OFFER"] },
+    "outcome": "ok",
+    "result": {
+      "situation": "A without-prejudice offer arrived; it is analysed for the owner. Invented fixture.",
+      "nextBestAction": { "code": "REPLY_TO_INTERVENTION_OFFER", "title": "Owner to decide on the offer", "why": "Offers are the owner's decision.", "basis": [], "confidence": 0.9, "dueAt": null },
+      "actions": [],
+      "handoffs": [],
+      "tasks": [],
+      "questionsForOwner": [],
+      "risks": [],
+      "confidence": 0.9
+    }
+  }
+]

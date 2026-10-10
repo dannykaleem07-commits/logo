@@ -1,0 +1,139 @@
+[
+  {
+    "id": "cw-draft-unsourced",
+    "match": {
+      "jobType": "draft.compose",
+      "userContains": [
+        "CW-UNSOURCED"
+      ]
+    },
+    "steps": [
+      {
+        "tool": "email_draft",
+        "input": {
+          "claimId": "$job.claimId",
+          "kind": "chaser",
+          "to": [
+            "thirdparty.claims@example-insurer.test"
+          ],
+          "cc": null,
+          "subject": "Outstanding balance {{fact:claim.reference}}",
+          "bodyText": "Dear Sirs,\n\nThe balance of \u00a3999.99 remains outstanding on this claim. Please let us have your payment.\n\nClaims Team, Courtesy Cars Group UK Ltd",
+          "attach": [],
+          "inReplyToMessageId": null
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "drafts": [
+        {
+          "kind": "outbox",
+          "id": "$step[0].outboxId",
+          "templateId": null,
+          "emailKind": "chaser",
+          "purpose": "Typed figure"
+        }
+      ],
+      "missingInfo": [],
+      "notes": "Invented fixture.",
+      "confidence": 0.8
+    }
+  },
+  {
+    "id": "cw-draft-chaser",
+    "match": {
+      "jobType": "draft.compose",
+      "payload": {
+        "actionCode": "CHASER_7"
+      }
+    },
+    "steps": [
+      {
+        "tool": "document_draft",
+        "input": {
+          "claimId": "$job.claimId",
+          "templateId": "letter.chaser_7",
+          "extras": null,
+          "recipientPartyId": null
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "drafts": [
+        {
+          "kind": "document",
+          "id": "$step[0].documentId",
+          "templateId": "letter.chaser_7",
+          "emailKind": null,
+          "purpose": "7-day chaser"
+        }
+      ],
+      "missingInfo": [],
+      "notes": "Invented fixture.",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "cw-draft-missing-info",
+    "match": {
+      "jobType": "draft.compose",
+      "payload": {
+        "missingInfo": true
+      }
+    },
+    "steps": [
+      {
+        "tool": "email_draft",
+        "input": {
+          "claimId": "$job.claimId",
+          "kind": "doc_request",
+          "to": [
+            "jane.doe@example.test"
+          ],
+          "cc": null,
+          "subject": "Information we need for your claim {{fact:claim.reference}}",
+          "bodyText": "Dear {{fact:party.claimant.name}},\n\nTo move your claim forward we need a clear copy of your V5C registration document. Please reply to this email with a photo or scan of it.\n\nClaims Team, Courtesy Cars Group UK Ltd",
+          "attach": [],
+          "inReplyToMessageId": null
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "drafts": [
+        {
+          "kind": "outbox",
+          "id": "$step[0].outboxId",
+          "templateId": null,
+          "emailKind": "doc_request",
+          "purpose": "Ask the client for the V5C"
+        }
+      ],
+      "missingInfo": [
+        "V5C registration document"
+      ],
+      "notes": "Invented fixture.",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "cw-draft-nothing",
+    "match": {
+      "jobType": "draft.compose",
+      "userContains": [
+        "CW-NOTHING"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "drafts": [],
+      "missingInfo": [
+        "the client's new address"
+      ],
+      "notes": "Cannot write without the address. Invented fixture.",
+      "confidence": 0.3
+    }
+  }
+]

@@ -1,0 +1,60 @@
+/* owned by casework — Agent tab of the claim file (docs/SUPREME-DESIGN.md §L.9) */
+.ag-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: var(--s-4);
+  align-items: start;
+}
+@media (max-width: 960px) {
+  .ag-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.ag-nba-title {
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-medium);
+  color: var(--ink);
+}
+.ag-why {
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+}
+.ag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-1);
+}
+.ag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-1);
+  padding: 2px var(--s-2);
+  border: 1px solid var(--line-2);
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--ink-2);
+  font-size: var(--fs-xs);
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.ag-chip-kind {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.ag-meta {
+  font-size: var(--fs-xs);
+  color: var(--muted);
+}
+.ag-answer {
+  white-space: pre-wrap;
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+.ag-paused {
+  border: 1px solid var(--amber-line);
+  background: var(--amber-bg);
+  color: var(--amber-ink);
+  border-radius: var(--radius, 8px);
+  padding: var(--s-3);
+}
