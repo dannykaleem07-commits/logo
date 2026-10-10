@@ -132,6 +132,8 @@ export function SettingsPage() {
           <li><Link to="/settings/autonomy">Autonomy</Link></li>
           <li><Link to="/settings/notifications">Notifications</Link></li>
           <li><Link to="/settings/brain">Brain packs</Link></li>
+          <li><Link to="/settings/autopilot">Autopilot</Link></li>
+          <li><Link to="/settings/fleet/criteria">Driver criteria (fleet insurance)</Link></li>
         </ul>
       </Card>
 

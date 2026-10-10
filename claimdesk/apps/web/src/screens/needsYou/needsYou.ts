@@ -314,6 +314,13 @@ export const KIND_LABEL: Record<NeedsYouKind, string> = {
   ai_paused: 'AI paused',
   setup: 'Setup',
   failure: 'Problem',
+  // Autopilot (SUPREME-AUTOPILOT §H.3)
+  choose_car: 'Choose a car',
+  approve_pack: 'Approve paperwork',
+  confirm_signed: 'Confirm signed',
+  clash_review: 'Booking clash',
+  eligibility_review: 'Eligibility review',
+  autopilot_step: 'Autopilot step',
 };
 
 export const SNOOZE_CHOICES: Array<{ minutes: number; label: string }> = [

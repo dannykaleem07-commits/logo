@@ -53,6 +53,17 @@ export const OVERRIDE_RULES: Readonly<Record<string, OverrideRule>> = Object.fre
   EXTRA_OVERRIDES_LEDGER: r('EXTRA_OVERRIDES_LEDGER', 'A', 'Typed figure replaces the ledger figure'),
   LEGACY_DETAIL: r('LEGACY_DETAIL', 'A', 'Old company details', 'Old company details on letters and forms are a misrepresentation and fraud risk.'),
   COMPANY_NAME_NOT_REGISTERED: r('COMPANY_NAME_NOT_REGISTERED', 'A', 'Company name is not the registered name', 'Letters must show the registered name Courtesy Cars Group UK Ltd.'),
+  // ---- class A: Autopilot clash codes (docs/SUPREME-AUTOPILOT.md §C.2)
+  UNIT_NOT_READY: r('UNIT_NOT_READY', 'A', 'Fleet car not ready at the start (open blocking task or unrepaired damage)', 'Check the car is safe and roadworthy before it goes out.'),
+  POLICY_ENDS_IN_PERIOD: r('POLICY_ENDS_IN_PERIOD', 'A', 'Fleet insurance ends before the expected end of the hire', 'The car would be uninsured after the policy end date unless a renewal is recorded.'),
+  SAME_REG_ON_HIRE: r('SAME_REG_ON_HIRE', 'A', "The client's car is already on another claim with a hire or booking", 'Possible double hire for one accident — fraud risk.'),
+  DUPLICATE_CLAIM_OPEN: r('DUPLICATE_CLAIM_OPEN', 'A', 'Same client car on another open claim with a close accident date', 'Possible double recovery for one accident.'),
+  CLAIM_SECOND_HIRE: r('CLAIM_SECOND_HIRE', 'A', 'This claim already has another booking or hire for part of this period'),
+  HIRER_ON_OTHER_HIRE: r('HIRER_ON_OTHER_HIRE', 'A', 'The hirer already has a booking or hire on another claim for part of this period'),
+  DRIVER_REFERRAL: r('DRIVER_REFERRAL', 'A', 'Driver needs referral to the fleet insurer', "Only with the insurer's written acceptance on file."),
+  LICENCE_CHECK_STALE: r('LICENCE_CHECK_STALE', 'A', 'No licence evidence, or the DVLA check is older than allowed'),
+  ACCEPTANCE_CONDITIONS_UNMET: r('ACCEPTANCE_CONDITIONS_UNMET', 'A', 'Claim declined or its acceptance conditions are not met'),
+  SIGNATURES_MISSING: r('SIGNATURES_MISSING', 'A', 'Hire paperwork not signed or not provided', 'An unsigned hire is unenforceable (W v Veolia).'),
   // ---- class B: data shape / required answers
   FNOL_INCOMPLETE: r('FNOL_INCOMPLETE', 'B', 'New claim is missing intake answers', 'The claim opens with an "intake incomplete" flag listing what is missing. Call-recording disclosure is a legal duty: record it as soon as it is given.'),
   REGISTRATION_FORMAT: r('REGISTRATION_FORMAT', 'B', 'Registration is not a UK format'),
@@ -60,6 +71,7 @@ export const OVERRIDE_RULES: Readonly<Record<string, OverrideRule>> = Object.fre
   VALUES_REQUIRED: r('VALUES_REQUIRED', 'B', 'Word template has blank required values (left blank to complete by hand)'),
   HIRE_END_BEFORE_START: r('HIRE_END_BEFORE_START', 'B', 'Hire ends before it starts', 'Charged as 0 days and flagged on the claim until the dates are corrected.'),
   WEB_VALIDATION: r('WEB_VALIDATION', 'B', 'On-screen checks relaxed'),
+  HIRE_BEFORE_ACCIDENT: r('HIRE_BEFORE_ACCIDENT', 'B', 'Hire starts before the accident'),
 });
 
 export function overrideRule(code: string): OverrideRule | undefined {

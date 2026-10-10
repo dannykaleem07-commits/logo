@@ -12,6 +12,7 @@ import {
   ALWAYS_ASK_EMAIL_KINDS,
   ALWAYS_ASK_TEMPLATES,
   DEFAULT_AUTONOMY,
+  DEFAULT_AUTO_SEND_TEMPLATES,
   EMAIL_KINDS,
   isAlwaysAskEmailKind,
   isAlwaysAskTemplate,
@@ -56,7 +57,9 @@ export function autonomyProblems(s: AutonomySettings, knownTemplates: ReadonlySe
   for (const list of ['autoSendTemplates', 'autoApproveTemplates'] as const) {
     for (const t of s[list]) {
       if (isAlwaysAskTemplate(t)) out.push(`Template "${t}" always asks the owner and cannot be added to ${list}.`);
-      else if (knownTemplates.size && !knownTemplates.has(t)) out.push(`Unknown template "${t}".`);
+      // The built-in defaults are trusted even before their template lands (SUPREME-AUTOPILOT §0.6 adds three that
+      // ap-paperwork registers), so an unrelated PATCH never fails on them.
+      else if (knownTemplates.size && !knownTemplates.has(t) && !DEFAULT_AUTO_SEND_TEMPLATES.includes(t)) out.push(`Unknown template "${t}".`);
     }
   }
   for (const t of s.autoApproveTemplates) if (!s.autoSendTemplates.includes(t)) out.push(`Template "${t}" can only be auto-approved when it is also allowed to be sent automatically.`);

@@ -184,6 +184,8 @@ describe('policy at review time', () => {
   });
 
   it('rate limits count each send on the day it goes out: a quiet-hours send released this morning counts today', async () => {
+    // The per-claim limit is pinned at 3 here (the Autopilot raised the default to 6, SUPREME-AUTOPILOT §0.6).
+    t.ctx.repos.patchAgentSettings(t.ctx.db, { autonomy: { limits: { perClaimPerDay: 3 } } }, { userId: 'test' });
     // Drafted 21:30 London yesterday, held by quiet hours, sent at 07:30 today.
     const night = t.ctx.repos.createOutbox(t.ctx.db, { claimId, accountId, kind: 'ack', to: [INSURER_EMAIL], subject: 'night', bodyText: 'x', createdBy: 'agent:mail', now: '2026-10-06T20:30:00.000Z' });
     t.ctx.repos.transitionOutbox(t.ctx.db, night.id, 'held', 'agent:mail', 'quiet', { patch: { policy: { outcome: 'auto_held', ruleIds: ['quiet_hours'] }, holdUntil: '2026-10-07T06:30:00.000Z' }, now: '2026-10-06T20:30:00.000Z' });
@@ -206,6 +208,8 @@ describe('policy at review time', () => {
   });
 
   it('rate limits ask the owner; the owner’s edited approval sends at once (owner-approved sends skip the automatic limits)', async () => {
+    // The per-claim limit is pinned at 3 here (the Autopilot raised the default to 6, SUPREME-AUTOPILOT §0.6).
+    t.ctx.repos.patchAgentSettings(t.ctx.db, { autonomy: { limits: { perClaimPerDay: 3 } } }, { userId: 'test' });
     for (let i = 0; i < 3; i++) {
       const o = t.ctx.repos.createOutbox(t.ctx.db, { claimId, accountId, kind: 'ack', to: [INSURER_EMAIL], subject: `auto ${i}`, bodyText: 'x', createdBy: 'agent:mail', now: T0 });
       t.ctx.repos.transitionOutbox(t.ctx.db, o.id, 'held', 'agent:mail', 'auto', { patch: { policy: { outcome: 'auto_held', ruleIds: ['external_ok'] }, holdUntil: at(60) }, now: T0 });

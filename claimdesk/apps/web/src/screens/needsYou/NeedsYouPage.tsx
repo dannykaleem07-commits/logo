@@ -19,6 +19,7 @@ import { Loading } from '../../components/Spinner';
 import { ApiErrorNotice } from '../../components/ApiErrorNotice';
 import { useToast } from '../../components/Toast';
 import { useNeedsYouDetail, useNeedsYouList, useResolveNeedsYou, useSnoozeNeedsYou, type NeedsYouItem } from '../../api/needsYouApi';
+import { panelFor } from './kindPanels';
 import {
   confirmFieldEdits,
   payloadLink,
@@ -246,6 +247,8 @@ function NeedsYouDetailPane({ id, command, onDone }: { id: string; command?: { k
   if (detail.error) return <ApiErrorNotice error={detail.error} />;
   if (!item) return null;
   const closed = item.status !== 'open' && item.status !== 'snoozed';
+  // Autopilot kinds bring their own panel (kindPanels.ts, SUPREME-AUTOPILOT §I.7).
+  const KindPanel = panelFor(item.kind);
   const options = optionsOf(item);
 
   return (
@@ -290,6 +293,7 @@ function NeedsYouDetailPane({ id, command, onDone }: { id: string; command?: { k
             )}
           </div>
         )}
+        {KindPanel && <KindPanel item={item} closed={closed} />}
         <PreparedItem item={item} {...(item.kind === 'confirm_fields' && !closed ? { ticked, onTick: (key: string, on: boolean) => setTicked((x) => ({ ...x, [key]: on })) } : {})} />
         {editing && (
           <div className="ny-editor">

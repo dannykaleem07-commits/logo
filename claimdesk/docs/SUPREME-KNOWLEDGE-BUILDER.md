@@ -138,28 +138,30 @@ convenient. Until then they apply as written here.
 1. **Migrations (SD §N).** The knowledge migration's **journal `when` is `1792350000000`**. That value is the
    contract. The file number is just a name.
    - Why `1792350000000`: the drizzle migrator only applies a migration whose `when` is greater than the last one
-     applied. This value sits after Phase 2's `1792300000000` and before Phase 3's `1792400000000`, so landing the
-     knowledge migration before Phase 3 can never make Phase 3's migration unreachable.
-   - **File number.** The parallel Autopilot design (`docs/SUPREME-AUTOPILOT.md`, uncommitted at the time of writing)
-     already claims `0012_autopilot` (`when` `1792250000000`). It renames Phase 2's migration to
-     `0013_engineer_calls_sms` (`1792300000000`) and Phase 3's to `0014_learning`. With both plans, the files are:
+     applied. This value sits after `0013_autopilot`'s `1792250000000`; later migrations (Phase 2, Phase 3) take a
+     larger `when` when they are built, so none can become unreachable.
+   - **File number (as built).** ClaimDesk 0.4 landed `0012_settlement_offers` (`when` `1792210000000`) and the
+     Autopilot foundation landed `0013_autopilot` (`1792250000000`), so the knowledge migration is `0014_knowledge`:
 
-     | File | Journal `when` |
-     |---|---|
-     | `0012_autopilot` | `1792250000000` |
-     | `0013_engineer_calls_sms` | `1792300000000` |
-     | **`0014_knowledge`** | **`1792350000000`** |
-     | **`0015_learning`** | `1792400000000` |
+     | File | Journal `when` | State |
+     |---|---|---|
+     | `0012_settlement_offers` | `1792210000000` | landed (ClaimDesk 0.4) |
+     | `0013_autopilot` | `1792250000000` | landed (`ap-foundation`) |
+     | **`0014_knowledge`** | **`1792350000000`** | `knowledge-core` |
+     | Phase 2 `00NN_engineer_calls_sms` | **greater than every applied `when`** when built | not built |
+     | Phase 3 `00NN_learning` | greater than every applied `when` when built | not built |
 
-     If Autopilot does not land, the knowledge file is `0013_knowledge` and Phase 3's is `0014_learning`.
-     `knowledge-core` takes the **next free file number** at build time, and the journal `idx` order must equal `when`
-     order. This document calls it "the knowledge migration".
+     Phase 2 (`p2-foundation`) is not built and is not a prerequisite. Its old reserved value `1792300000000` is now
+     below `0014_knowledge`, so it must not be used: Phase 2 and Phase 3 each take the **next free file number** and a
+     `when` strictly greater than the largest `when` already in the journal when they are built. The journal `idx`
+     order must equal `when` order; `packages/db/src/migrationOrder.test.ts` and the `MIGRATION_ORDER` boot guard in
+     `runMigrations` (docs/SUPREME-AUTOPILOT.md §G.1) refuse anything else. This document calls it "the knowledge
+     migration".
    - **Phase 3's learning migration loses tables.** It no longer creates `corrections`, `outcomes`, `rule_candidates`,
      `eval_cases` or `eval_runs`. The knowledge migration creates `corrections`, `claim_outcomes` (replacing
      `outcomes`), `eval_cases` and `eval_runs`. Rule candidates are `knowledge_items(kind:'rule', status:'proposed')`.
      The learning migration keeps `deliberations` and anything new.
-   - **Any further Phase-2-timeline migration** (for example fleet booking) uses another free `when` strictly between
-     `1792300000000` and `1792400000000`.
+   - **Any further migration** uses the next free file number and a `when` strictly greater than every applied one.
    - **Foundation slices that edit shared registries run one at a time.** `ap-foundation` (Autopilot),
      `p2-foundation` and `knowledge-core` all edit `schema.ts`, the journal, `agents/types.ts` (`JOB_TYPES`,
      `NeedsYouKind`), `agents/settings.ts`, `dailyLog.ts`, `scheduler.ts`, `router.tsx` and `nav.ts`. The orchestrator

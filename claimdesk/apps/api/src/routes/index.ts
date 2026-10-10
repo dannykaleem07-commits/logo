@@ -45,6 +45,13 @@ import { registerIntakeRoutes } from './intake.js';
 import { registerCaseworkRoutes } from './casework.js';
 import { registerBrainRoutes } from './brain.js';
 import { registerModels3dRoutes } from './models3d.js';
+// ClaimDesk Supreme Autopilot (docs/SUPREME-AUTOPILOT.md §H.4): stubs by ap-foundation, filled by each owning slice.
+import { registerAutopilotSettingsRoutes } from './autopilotSettings.js';
+import { registerAutopilotRoutes } from './autopilot.js';
+import { registerBookingsRoutes } from './bookings.js';
+import { registerClashesRoutes } from './clashes.js';
+import { registerSigningRoutes } from './signing.js';
+import { registerKioskRoutes } from './kiosk.js';
 
 export const routeModules: RouteModule[] = [
   registerHealthRoutes,
@@ -86,6 +93,13 @@ export const routeModules: RouteModule[] = [
   registerCaseworkRoutes, // casework
   registerBrainRoutes, // casework
   registerModels3dRoutes, // exact-models (licensed 3D models)
+  // Autopilot
+  registerAutopilotSettingsRoutes, // ap-foundation
+  registerAutopilotRoutes, // ap-autopilot
+  registerBookingsRoutes, // ap-booking
+  registerClashesRoutes, // ap-clash
+  registerSigningRoutes, // ap-paperwork
+  registerKioskRoutes, // ap-paperwork (token auth, /api/kiosk/*)
   registerJobsModule,
 ];
 
