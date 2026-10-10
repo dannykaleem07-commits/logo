@@ -260,7 +260,7 @@ describe('likeForLike (rates, never codes)', () => {
     const higher = likeForLike(client, 'C2', car('D1').v, 'D1', RATES, '2026-10-13');
     expect(higher.group.relation).toBe('higher');
     expect(higher.parts.group).toBe(0.4);
-    expect(likeForLike(client, null, car('C2').v, 'C2', RATES, '2026-10-13').parts.group).toBe(0.5);
+    expect(likeForLike({ ...client!, gtaGroup: undefined }, null, car('C2').v, 'C2', RATES, '2026-10-13').parts.group).toBe(0.5);
   });
   it('S vs M vs CP families compare by rate: CP1 is higher than M even though "C" < "M"', () => {
     const cp = likeForLike({ ...client!, gtaGroup: 'M' }, 'M', car('CP1').v, 'CP1', RATES, '2026-10-13');
@@ -342,8 +342,8 @@ describe('searchAvailability', () => {
   it('weights are normalised; ties go to the earlier readyBy, then lower mileage, then registration', () => {
     expect(Object.values(normaliseWeights({ likeForLike: 70, needsFit: 30, readiness: 30, compliance: 20, cost: 40, location: 10 })).reduce((a, b) => a + b, 0)).toBeCloseTo(100);
     const twin = (id: string, reg: string, mileage?: number) => snap(unit(id, `v-${id}`, mileage === undefined ? {} : { currentMileage: mileage }), vehicle(`v-${id}`, reg));
-    const r = searchAvailability(query(), [twin('z', 'ZZ11ZZZ', 5000), twin('y', 'YY11YYY', 9000), twin('x', 'XX11XXX')], ENV);
-    expect(r.ranked.map((c) => c.registration)).toEqual(['ZZ11 ZZZ', 'YY11 YYY', 'XX11 XXX']);
+    const r = searchAvailability(query(), [twin('h', 'HH11HHH', 5000), twin('y', 'YY11YYY', 9000), twin('x', 'XX11XXX')], ENV);
+    expect(r.ranked.map((c) => c.registration)).toEqual(['HH11 HHH', 'YY11 YYY', 'XX11 XXX']);
     expect(r.clearWinner).toBe(false); // identical scores
     const sameMiles = searchAvailability(query(), [twin('b', 'BB11BBB', 100), twin('a', 'AA11AAA', 100)], ENV);
     expect(sameMiles.ranked.map((c) => c.registration)).toEqual(['AA11 AAA', 'BB11 BBB']);
@@ -431,9 +431,10 @@ describe('proposeSlots', () => {
     expect(late[0]!.windowStart).toBe('2026-10-13T07:00:00.000Z'); // next morning 08:00 London
   });
   it('skips Sundays and bank holidays', () => {
-    const sat = '2026-12-26T15:00:00.000Z'; // Saturday 26 Dec (Boxing Day; substitute bank holiday Mon 28 Dec)
-    const s = proposeSlots({ ...base, earliest: sat, readyBy: sat, leadMinutes: 0 }, 1)[0]!;
-    expect(s.windowStart).toBe('2026-12-29T08:00:00.000Z'); // Tue 29 Dec 08:00 GMT
+    const thu = '2026-12-24T17:00:00.000Z'; // Thursday evening; Fri 25 Dec is a bank holiday; Saturday is a business day
+    expect(proposeSlots({ ...base, earliest: thu, readyBy: thu, leadMinutes: 0 }, 1)[0]!.windowStart).toBe('2026-12-26T08:00:00.000Z');
+    const sat = '2026-12-26T17:00:00.000Z'; // Saturday evening; Sunday closed; Mon 28 Dec is the Boxing Day substitute
+    expect(proposeSlots({ ...base, earliest: sat, readyBy: sat, leadMinutes: 0 }, 1)[0]!.windowStart).toBe('2026-12-29T08:00:00.000Z');
   });
   it('capacity: a window with maxPerWindow movements is skipped', () => {
     const mv = (id: string): Movement => ({ id, reservationId: 'r', claimId: 'c', fleetUnitId: 'u', kind: 'delivery', windowStart: '2026-10-12T11:00:00.000Z', windowEnd: '2026-10-12T13:00:00.000Z', address: null, postcode: null, assignedTo: null, status: 'planned', evidenceIds: [] });
