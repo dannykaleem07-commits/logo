@@ -155,6 +155,8 @@ describe('evidence by claim reference', () => {
   });
 
   it('inbox\\intake\\<CCG-ref>\\ is read for that claim; any other subfolder is reported as not read', async () => {
+    // with folder bundles off (Settings > Intake; on by default since smart intake, see smart-intake-folder.test.ts)
+    expect((await t.api('PATCH', '/settings/intake', { bundles: { folderBundles: false } })).status).toBe(200);
     const ids = t.ctx.repos.seedFileOne(t.ctx.db);
     const claim = t.ctx.repos.requireClaim(t.ctx.db, ids.claimId);
     drop(`intake/${claim.reference}/letter-in-ref-folder.txt`, Buffer.from('A letter about the claim.'));

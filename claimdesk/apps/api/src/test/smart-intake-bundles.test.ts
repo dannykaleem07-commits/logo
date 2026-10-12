@@ -129,4 +129,23 @@ describe('bundles', () => {
     const ok = await t.api<Any>('PATCH', '/settings/intake', { bundles: { quietSeconds: 5 } });
     expect(ok.body.settings.bundles.quietSeconds).toBe(5);
   });
+
+  it('think again re-queues the AI check for the owner; the wizard draft is prepared from the case', async () => {
+    const b = await create('Jane Doe – Corsa crash');
+    await uploadToBundle(t, b.id, [await v5cA(), await claimFormA()]);
+    await drain(t);
+    const r = await t.api<Any>('POST', `/intake/bundles/${b.id}/think-again`, {});
+    expect(r.status).toBe(202);
+    expect(r.body.reasoning.status).toMatch(/queued|waiting_ai/);
+    const jobs = t.ctx.repos.listAgentJobs(t.ctx.db, { type: 'intake.bundle_reason', limit: 10 });
+    expect(jobs.some((j) => (j.payload as Any).owner === true)).toBe(true);
+    const draft = await t.api<Any>('POST', `/intake/bundles/${b.id}/wizard-draft`, {});
+    expect(draft.status).toBe(201);
+    expect(draft.body.itemIds.length).toBe(2);
+    const moved = await t.api<Any>('POST', `/intake/bundles/${b.id}/files/${(await t.api<Any>('GET', `/intake/bundles/${b.id}`)).body.files[1].id}/move`, { groupKey: 'new' });
+    expect(moved.status).toBe(200);
+    expect(moved.body.groups.some((g: Any) => g.key.startsWith('case:') && g.reasons.some((x: Any) => x.code === 'moved_by_owner'))).toBe(true);
+    expect((await t.api<Any>('POST', `/intake/bundles/${b.id}/files/${moved.body.files[1].id}/move`, { groupKey: 'nowhere' })).status).toBe(400);
+  });
 });
+

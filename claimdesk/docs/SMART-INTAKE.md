@@ -1,6 +1,7 @@
 # ClaimDesk Smart Intake — case bundles (design and build spec)
 
-Status: design, ready to build in two parallel slices (§17). Builds on Supreme phase 1, Autopilot and the Knowledge
+Status: server slice (intake-server: domain, db, api) built and tested; web slice (intake-web) built in parallel — see
+`docs/RELEASE-NOTES-0.5-SMART-INTAKE.md`. Originally: design, ready to build in two parallel slices (§17). Builds on Supreme phase 1, Autopilot and the Knowledge
 Builder, all green. Read with `docs/SUPREME-DESIGN.md` (SD, especially §C, §D, §G), `docs/SUPREME-AUTOPILOT.md` (AP)
 and `docs/SUPREME-KNOWLEDGE-BUILDER.md` (KB). Where this document names an existing function, file or table, that is
 what the code holds today (checked against the code, not only the docs).

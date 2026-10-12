@@ -124,3 +124,15 @@ describe('daily log', () => {
     expect(other.body.log.headline).toMatch(/nothing to do automatically/);
   });
 });
+
+describe('daily log — smart intake section (docs/SMART-INTAKE.md §12)', () => {
+  it('is absent on a day without intake bundles and lists bundle events plainly', async () => {
+    expect(compileDailyLog(t.ctx, '2026-10-05').sections.intake).toBeUndefined();
+    const b = await t.api<{ id: string }>('POST', '/intake/bundles', { name: 'Log Test' });
+    t.ctx.repos.appendAudit(t.ctx.db, { actor: { userId: 'agent:intake' }, action: 'intake.bundle.reconcile', entity: 'intake_bundles', entityId: b.body.id, after: { files: 3 }, at: '2026-10-05T17:30:00.000Z' });
+    const log = compileDailyLog(t.ctx, '2026-10-05');
+    expect(log.sections.intake?.[0]).toMatchObject({ agent: 'intake', text: "Read 3 files for bundle 'Log Test': 1 case found.", link: `/intake/bundles/${b.body.id}` });
+    // bundle bookkeeping is not counted as a record update
+    expect(log.sections.updatedRecords.some((l) => /bundle/.test(l.text))).toBe(false);
+  });
+});
