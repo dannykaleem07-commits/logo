@@ -23,6 +23,8 @@ import {
   type TaskKind,
 } from './types.js';
 import { JUDGE_QUESTION_IDS, type JudgeQuestionId } from '../autopilot/types.js';
+import { BUNDLE_FIELD_KEYS, PHOTO_SCENES, type BundleFieldKey, type PhotoScene } from '../intake/smart/types.js';
+import { TIMELINE_EVENT_TYPES } from '../intake/smart/timeline.js';
 
 // ---------------------------------------------------------------------------
 // Result types
@@ -145,6 +147,34 @@ export interface IntakeExtraction {
   formTemplateId: string | null;
   fields: ExtractedField[];
   warnings: string[];
+  /** Smart intake (docs/SMART-INTAKE.md §5.1): the date printed on the document (ISO date), or null. */
+  documentDate: string | null;
+  /** Licences and cards: which side this is. */
+  docSide: 'front' | 'back' | null;
+  /** Photos: scene, plates read exactly as printed, damage zones (ids from VEHICLE_ZONES), notes. */
+  photo: {
+    scene: PhotoScene;
+    plates: Array<{ text: string; confidence: number }>;
+    damageZones: Array<{ zoneId: string; severity: number; confidence: number }>;
+    notes: string | null;
+  } | null;
+  /** [] unless the file holds several documents (a scanned pack): page ranges, each classified. */
+  segments: Array<{ fromPage: number; toPage: number; docType: DocType; confidence: number; title: string }>;
+}
+
+/** `intake.bundle_reason` (docs/SMART-INTAKE.md §7.1): every document of a case bundle read together. Code checks every value. */
+export interface IntakeBundleReasoning {
+  caseSummary: string;
+  fieldChoices: Array<{ key: BundleFieldKey; value: string | null; fileId: string | null; page: number | null; quote: string | null; confidence: number; why: string }>;
+  fileAdvice: Array<{ fileId: string; group: 'main' | 'other_case' | 'existing_claim' | 'unsure' | 'not_relevant'; otherCaseLabel: string | null; claimReference: string | null; why: string; confidence: number }>;
+  circumstances: { text: string | null; fileId: string | null; page: number | null; authoredBy: 'client' | 'police' | 'insurer' | 'witness' | 'other' | null };
+  witnesses: Array<{ name: string; phone: string | null; relationship: string | null; fileId: string | null; page: number | null; quote: string | null }>;
+  witnessesAnswered: boolean;
+  hireNeed: { needed: 'yes' | 'no' | 'unknown'; why: string; fileId: string | null; page: number | null; quote: string | null };
+  liabilityStatements: Array<{ text: string; party: 'insurer' | 'client' | 'third_party' | 'police' | 'other'; fileId: string; page: number | null; quote: string }>;
+  timeline: Array<{ at: string; eventType: string; summary: string; fileId: string; page: number | null; quote: string | null; confidence: number }>;
+  warnings: string[];
+  injectionSuspected: boolean;
 }
 
 export type OfferRecommendationKind = 'accept' | 'counter' | 'reject' | 'hold';
@@ -221,8 +251,8 @@ export interface HireReplyResult {
   injectionSuspected: boolean;
 }
 
-export type ResultSchemaId = 'mail_triage' | 'case_review' | 'drafter' | 'review_verdict' | 'intake_extraction' | 'offer_analysis' | 'research_answer' | 'autopilot_judge' | 'hire_reply' | 'knowledge_curate' | 'knowledge_research' | 'draft_replay';
-export const RESULT_SCHEMA_IDS: readonly ResultSchemaId[] = ['mail_triage', 'case_review', 'drafter', 'review_verdict', 'intake_extraction', 'offer_analysis', 'research_answer', 'autopilot_judge', 'hire_reply', 'knowledge_curate', 'knowledge_research', 'draft_replay'];
+export type ResultSchemaId = 'mail_triage' | 'case_review' | 'drafter' | 'review_verdict' | 'intake_extraction' | 'offer_analysis' | 'research_answer' | 'autopilot_judge' | 'hire_reply' | 'knowledge_curate' | 'knowledge_research' | 'draft_replay' | 'intake_bundle_reasoning';
+export const RESULT_SCHEMA_IDS: readonly ResultSchemaId[] = ['mail_triage', 'case_review', 'drafter', 'review_verdict', 'intake_extraction', 'offer_analysis', 'research_answer', 'autopilot_judge', 'hire_reply', 'knowledge_curate', 'knowledge_research', 'draft_replay', 'intake_bundle_reasoning'];
 
 export interface ResultTypes {
   mail_triage: MailTriageResult;
@@ -237,6 +267,7 @@ export interface ResultTypes {
   knowledge_curate: KnowledgeCurateResult;
   knowledge_research: KnowledgeResearchResult;
   draft_replay: DraftReplayResult;
+  intake_bundle_reasoning: IntakeBundleReasoning;
 }
 
 // ---------------------------------------------------------------------------
@@ -350,6 +381,35 @@ export const INTAKE_EXTRACTION_SCHEMA: JsonSchema = strictObject({
   formTemplateId: nstr(),
   fields: arr(strictObject({ name: str(), target: nEnum(FIELD_TARGETS), value: nstr(), confidence, page: nint('1-based page'), quote: nstr() })),
   warnings: arr(str()),
+  documentDate: nstr('date printed on the document, YYYY-MM-DD, or null'),
+  docSide: nEnum(['front', 'back']),
+  photo: {
+    anyOf: [
+      strictObject({
+        scene: strEnum(PHOTO_SCENES),
+        plates: arr(strictObject({ text: str('exactly as printed'), confidence })),
+        damageZones: arr(strictObject({ zoneId: str('an id from allowedZoneIds'), severity: num('1..3'), confidence })),
+        notes: nstr(),
+      }),
+      { type: 'null' },
+    ],
+  },
+  segments: arr(strictObject({ fromPage: int(), toPage: int(), docType: strEnum(DOC_TYPES), confidence, title: str() }), '[] unless several documents'),
+});
+
+const fileRef = nstr('fileId or fileRef from the brief');
+export const INTAKE_BUNDLE_REASONING_SCHEMA: JsonSchema = strictObject({
+  caseSummary: str('3-6 plain sentences from the documents only'),
+  fieldChoices: arr(strictObject({ key: strEnum(BUNDLE_FIELD_KEYS), value: nstr(), fileId: fileRef, page: nint(), quote: nstr('exact words'), confidence, why: str() })),
+  fileAdvice: arr(strictObject({ fileId: str(), group: strEnum(['main', 'other_case', 'existing_claim', 'unsure', 'not_relevant']), otherCaseLabel: nstr(), claimReference: nstr(), why: str(), confidence })),
+  circumstances: strictObject({ text: nstr(), fileId: fileRef, page: nint(), authoredBy: nEnum(['client', 'police', 'insurer', 'witness', 'other']) }),
+  witnesses: arr(strictObject({ name: str(), phone: nstr(), relationship: nstr(), fileId: fileRef, page: nint(), quote: nstr() })),
+  witnessesAnswered: bool(),
+  hireNeed: strictObject({ needed: strEnum(['yes', 'no', 'unknown']), why: str(), fileId: fileRef, page: nint(), quote: nstr() }),
+  liabilityStatements: arr(strictObject({ text: str(), party: strEnum(['insurer', 'client', 'third_party', 'police', 'other']), fileId: str(), page: nint(), quote: str() })),
+  timeline: arr(strictObject({ at: str('ISO date or date-time'), eventType: strEnum(TIMELINE_EVENT_TYPES), summary: str(), fileId: str(), page: nint(), quote: nstr(), confidence })),
+  warnings: arr(str()),
+  injectionSuspected: bool(),
 });
 
 export const OFFER_ANALYSIS_SCHEMA: JsonSchema = strictObject({
@@ -425,6 +485,7 @@ export const RESULT_SCHEMAS: Readonly<Record<ResultSchemaId, JsonSchema>> = {
   knowledge_curate: KNOWLEDGE_CURATE_SCHEMA,
   knowledge_research: KNOWLEDGE_RESEARCH_SCHEMA,
   draft_replay: DRAFT_REPLAY_SCHEMA,
+  intake_bundle_reasoning: INTAKE_BUNDLE_REASONING_SCHEMA,
 };
 
 /** Compact JSON size limit for a result schema (the CLI receives it on the command line, §A.2/§B.5). */

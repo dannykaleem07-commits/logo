@@ -96,7 +96,11 @@
           "quote": "Taxation class PETROL CAR"
         }
       ],
-      "warnings": []
+      "warnings": [],
+      "documentDate": null,
+      "docSide": null,
+      "photo": null,
+      "segments": []
     },
     "usage": {
       "inputTokens": 2400,
@@ -240,7 +244,11 @@
           "quote": "I was waiting at the lights"
         }
       ],
-      "warnings": []
+      "warnings": [],
+      "documentDate": null,
+      "docSide": null,
+      "photo": null,
+      "segments": []
     }
   },
   {
@@ -268,7 +276,11 @@
           "quote": "Our ref: EXI/2026/0042"
         }
       ],
-      "warnings": []
+      "warnings": [],
+      "documentDate": null,
+      "docSide": null,
+      "photo": null,
+      "segments": []
     }
   },
   {
@@ -320,7 +332,11 @@
           "quote": "8. 12 HIGH STREET, READING RG1 1AA"
         }
       ],
-      "warnings": []
+      "warnings": [],
+      "documentDate": null,
+      "docSide": null,
+      "photo": null,
+      "segments": []
     },
     "usage": {
       "inputTokens": 1600,
@@ -376,7 +392,11 @@
           "quote": "TOTAL INC VAT 1,920.00"
         }
       ],
-      "warnings": []
+      "warnings": [],
+      "documentDate": null,
+      "docSide": null,
+      "photo": null,
+      "segments": []
     },
     "usage": {
       "inputTokens": 2200,
@@ -399,7 +419,11 @@
       "summary": "Invented photo of rear damage (synthetic test fixture).",
       "formTemplateId": null,
       "fields": [],
-      "warnings": []
+      "warnings": [],
+      "documentDate": null,
+      "docSide": null,
+      "photo": null,
+      "segments": []
     }
   },
   {

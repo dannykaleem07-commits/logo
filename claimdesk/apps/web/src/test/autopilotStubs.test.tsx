@@ -19,7 +19,8 @@ describe('Autopilot wiring', () => {
       expect(KIND_LABEL[kind].length).toBeGreaterThan(3);
     }
     expect(panelFor('approve_send')).toBeUndefined();
-    expect(Object.keys(KIND_PANELS).sort()).toEqual([...AUTOPILOT_NEEDS_YOU_KINDS].sort());
+    // + new_claim: the smart-intake case-bundle panel (docs/SMART-INTAKE.md §11.5; renders only for payload.bundleId).
+    expect(Object.keys(KIND_PANELS).sort()).toEqual([...AUTOPILOT_NEEDS_YOU_KINDS, 'new_claim'].sort());
   });
 
   it('puts the Autopilot tab first among the agent tabs (primary and More rows unchanged)', () => {

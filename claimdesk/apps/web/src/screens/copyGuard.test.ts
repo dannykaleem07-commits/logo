@@ -46,3 +46,41 @@ describe('screen copy carries no legacy detail and never advises on insurer offe
     }
   });
 });
+
+/**
+ * Smart intake (docs/SMART-INTAKE.md §4.11, §11.5, §15): no intake screen describes a client or a document as untrue.
+ * Risk signals are plain facts with the innocent explanation, for the owner only. Every source file of the intake
+ * folder (case bundles included) and the intake insertions elsewhere is scanned, comments too.
+ */
+const INTAKE_BANNED = /fraud|fraudulent|fake|forg|dishonest|\blie\b|lying|scam|suspicious|staged/i;
+
+function sourcesDeep(dir: string): string[] {
+  return readdirSync(dir).flatMap((f) => {
+    const p = join(dir, f);
+    if (statSync(p).isDirectory()) return sourcesDeep(p);
+    return /\.(ts|tsx|css|json)$/.test(p) && !/\.test\.tsx?$/.test(p) ? [p] : [];
+  });
+}
+
+describe('intake screens never accuse (case bundles, risk signals)', () => {
+  const files = [
+    ...sourcesDeep(join(root, 'intake')),
+    join(root, 'needsYou', 'panels', 'BundleReadyPanel.tsx'),
+    join(root, 'settings', 'intake', 'IntakeSettingsPage.tsx'),
+    join(root, 'claim', 'components', 'IntakeBriefCard.tsx'),
+    join(root, '..', 'api', 'bundlesApi.ts'),
+  ];
+  it('scans the intake folder and the intake insertions', () => {
+    expect(files.length).toBeGreaterThanOrEqual(25);
+    for (const file of files) {
+      const text = readFileSync(file, 'utf8');
+      text.split('\n').forEach((line, i) => {
+        expect(INTAKE_BANNED.test(line), `${file}:${i + 1}: ${line.trim()}`).toBe(false);
+      });
+      const lower = text.toLowerCase();
+      for (const phrase of BANNED) expect(lower.includes(phrase), `${file} contains "${phrase}"`).toBe(false);
+      for (const re of ADVICE_PATTERNS) expect(re.test(text), `${file} matches ${re}`).toBe(false);
+    }
+  });
+});
+
