@@ -135,11 +135,32 @@ export function raiseBundleConfirmCard(ctx: AppContext, state: BundleState, clai
   });
 }
 
-/** The checklist with items the claim already holds (by evidence kind) marked as had. */
+/**
+ * The checklist recomputed against what the claim already holds (§6.9): its evidence (by kind, and how many photos /
+ * licence images) and its own details (the other side, the client's account, the police reference). An attach to a
+ * claim that is well under way must not ask the client again for what is already on file.
+ */
 export function checklistAgainstClaim(ctx: AppContext, claimId: string, items: ChecklistItem[]): ChecklistItem[] {
-  const kinds = new Set(ctx.repos.listEvidenceForClaim(ctx.db, claimId).map((e) => e.kind));
-  const HAS: Record<string, string[]> = { v5c: ['v5c'], licence_front: ['licence'], insurance_certificate: ['insurance_certificate'], estimate_or_report: ['estimate', 'engineer_report'], bank_details: ['bank_statement'], mot_certificate: ['mot_certificate'], witness_statements: ['witness_statement'] };
-  return items.map((i) => (i.status !== 'have' && i.status !== 'not_needed' && HAS[i.id]?.some((k) => kinds.has(k as never)) ? { ...i, status: 'have' as const, why: 'Already on the claim' } : i));
+  const claim = ctx.repos.getClaim(ctx.db, claimId);
+  const evidence = ctx.repos.listEvidenceForClaim(ctx.db, claimId);
+  const count = (kind: string): number => evidence.filter((e) => e.kind === kind).length;
+  const kinds = new Set(evidence.map((e) => e.kind as string));
+  const HAS: Record<string, string[]> = { v5c: ['v5c'], licence_front: ['licence'], insurance_certificate: ['insurance_certificate'], estimate_or_report: ['estimate', 'engineer_report'], bank_details: ['bank_statement'], mot_certificate: ['mot_certificate'], witness_statements: ['witness_statement'], signed_hire_docs: ['signed_document'] };
+  const onClaim = (id: string): string | null => {
+    if (HAS[id]?.some((k) => kinds.has(k))) return 'Already on the claim';
+    if (id === 'licence_back' && count('licence') >= 2) return 'Already on the claim';
+    if (id === 'damage_photos' && count('photo') >= 4) return 'Already on the claim';
+    if (!claim) return null;
+    if (id === 'tp_details' && (claim.thirdPartyVehicleId || claim.atFaultInsurerId)) return 'The other side is already on the claim';
+    if (id === 'accident_account' && claim.accident?.circumstances?.trim()) return 'The client’s account is already on the claim';
+    if (id === 'police_report' && claim.accident?.policeReference?.trim()) return 'The police reference is already on the claim';
+    return null;
+  };
+  return items.map((i) => {
+    if (i.status === 'have' || i.status === 'not_needed') return i;
+    const why = onClaim(i.id);
+    return why ? { ...i, status: 'have' as const, why } : i;
+  });
 }
 
 // ---------------------------------------------------------------------------

@@ -301,7 +301,7 @@ export async function extractExif(source: Buffer | string, mime: string, logger:
       return undefined;
     }
     const raw = (await exifr.parse(source, {
-      pick: ['DateTimeOriginal', 'CreateDate', 'Make', 'Model', 'Software', 'Orientation', 'ExifImageWidth', 'ExifImageHeight', 'ImageWidth', 'ImageHeight', 'GPSAltitude'],
+      pick: ['DateTimeOriginal', 'CreateDate', 'Make', 'Model', 'Software', 'Orientation', 'ExifImageWidth', 'ExifImageHeight', 'ImageWidth', 'ImageHeight', 'GPSAltitude', 'GPSLatitude', 'GPSLatitudeRef', 'GPSLongitude', 'GPSLongitudeRef'],
       gps: true,
       translateValues: true,
       reviveValues: true,

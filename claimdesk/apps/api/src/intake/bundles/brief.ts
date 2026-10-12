@@ -12,6 +12,7 @@ import { HttpError, notFound } from '../../errors.js';
 import { autopilotView } from '../../autopilot/service.js';
 import { buildCaseBrief } from '../../casework/caseBrief.js';
 import { computeBundle, LIABILITY_NOTE } from './recompute.js';
+import { checklistAgainstClaim } from './attach.js';
 
 export const CALL_REMINDER = 'Call the client: confirm their account in their own words (it was taken from documents), read the call-recording disclosure and ask the script questions.';
 
@@ -24,7 +25,7 @@ export function briefFor(ctx: AppContext, bundle: IntakeBundleRecord, claimId: s
   const claim = ctx.repos.requireClaim(ctx.db, claimId);
   const c = (bundle.computed && typeof bundle.computed === 'object' ? bundle.computed : computeBundle(ctx, bundle.id).computed) as BundleComputed;
   const values = Object.fromEntries(c.draft.fields.map((f) => [f.key, f.value]));
-  const missing: ChecklistItem[] = c.checklist.items.filter((i) => i.status === 'missing' || i.status === 'partial');
+  const missing: ChecklistItem[] = checklistAgainstClaim(ctx, claimId, c.checklist.items).filter((i) => i.status === 'missing' || i.status === 'partial');
   const statement = c.liability.statements[0]?.text ?? null;
   const summary = c.aiSummary ?? caseSummaryTemplate({ values, missingDocs: missing.length, liabilityStatement: statement });
   const outcome = lastOutcome(ctx, bundle.id);
@@ -55,7 +56,8 @@ export function briefFor(ctx: AppContext, bundle: IntakeBundleRecord, claimId: s
   const filedFiles = ctx.repos.listBundleFiles(ctx.db, bundle.id).filter((f) => f.filedClaimId === claim.id);
   const photos = filedFiles.filter((f) => f.filedKind === 'photo').length;
   const events = ctx.repos.listEvents(ctx.db, claim.id).filter((e) => (e.data as { intakeBundleId?: string } | undefined)?.intakeBundleId === bundle.id).length;
-  const zones = ctx.repos.listDamageObservations(ctx.db, claim.id).filter((o) => o.bundleId === bundle.id).length;
+  // parts of the car with damage recorded (several photos and estimates of one part count once)
+  const zones = new Set(ctx.repos.listDamageObservations(ctx.db, claim.id).filter((o) => o.bundleId === bundle.id).map((o) => o.zoneId)).size;
   return {
     claim: { id: claim.id, reference: claim.reference, status: claim.status, createdAt: claim.openedAt },
     bundle: { id: bundle.id, name: bundle.name },

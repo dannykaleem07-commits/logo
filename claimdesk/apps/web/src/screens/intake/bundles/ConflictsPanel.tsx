@@ -9,7 +9,7 @@ import { Button } from '../../../components/Button';
 import { Card } from '../../../components/Card';
 import type { Conflict, FieldSource } from '../../../api/bundlesApi';
 import { SourceChip } from './bundleParts';
-import { bestSourceText, orderedOptions } from './bundleModel';
+import { bestSourceText, chipSources, orderedOptions } from './bundleModel';
 
 export function ConflictsPanel({
   conflicts,
@@ -55,7 +55,7 @@ export function ConflictsPanel({
                     {o.preselected && <Badge tone="green">Preselected</Badge>}
                   </div>
                   <div className="bdl-chips">
-                    {o.sources.map((s, i) => (
+                    {chipSources(o.sources).map((s, i) => (
                       <SourceChip key={`${s.fileId}-${i}`} source={s} onOpen={(x) => onSource(c.label, x)} />
                     ))}
                   </div>

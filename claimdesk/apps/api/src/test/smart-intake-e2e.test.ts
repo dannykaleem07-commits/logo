@@ -154,6 +154,8 @@ describe('smart intake end to end', () => {
     for (const x of d.signals) expect(BANNED_INTAKE_WORDS.test(`${x.title} ${x.message}`)).toBe(false);
     // liability: a guide only, with the insurer's statement quoted
     expect(d.liability.statements.some((x: Detail) => /accept/i.test(x.source.quote ?? ''))).toBe(true);
+    // the AI's bundle reading and the per-file reading of the same sentence show once, not twice
+    expect(d.liability.statements.filter((x: Detail) => /accept/i.test(x.source.quote ?? '')).length).toBe(1);
     expect(d.liability.note).toMatch(/your decision/);
     // no automatic registration (setting off); the owner's card is up
     expect(d.autoRegister.eligible).toBe(false);
@@ -256,6 +258,9 @@ describe('smart intake end to end', () => {
     expect(brief.callReminder).toMatch(/Call the client/);
     expect(Array.isArray(brief.autopilot.firstSteps)).toBe(true);
     expect(brief.signals.length).toBeGreaterThan(0);
+    // "damage on N parts" counts parts, not observations (several photos of one part count once)
+    const parts = (await t.api<Detail>('GET', `/claims/${reg.claim.id}/damage-zones`)).body;
+    expect(brief.filed.damageZones).toBe(Object.keys(parts.zones).length);
     expect(brief.filed.photos).toBe(3);
     // signals never reach the case brief the agents read
     const caseBrief = (await t.api<Detail>('GET', `/claims/${reg.claim.id}/brief`)).body;

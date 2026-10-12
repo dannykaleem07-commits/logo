@@ -178,6 +178,18 @@ describe('BundlePage', () => {
     }
   });
 
+  it('Escape on the bundle name puts the old name back and saves nothing', async () => {
+    const d = bundleDetail();
+    const { user, api } = renderPage(d, { 'PATCH /intake/bundles/:id': () => summaryOf(d) });
+    const name = screen.getByLabelText('Bundle name') as HTMLInputElement;
+    await user.click(name);
+    await user.type(name, ' (draft)');
+    await user.keyboard('{Escape}');
+    expect(name.value).toBe(d.name);
+    await new Promise((r) => setTimeout(r, 50));
+    expect(api.find('PATCH', '/intake/bundles/b1')).toHaveLength(0);
+  });
+
   it('a field value the server refuses shows the validator message under the field', async () => {
     const { user } = renderPage(bundleDetail(), { 'POST /intake/bundles/:id/fields': () => ({ status: 400, body: { error: { code: 'VALIDATION', message: 'Not a UK registration' } } }) });
     const row = document.querySelector('[data-key="vehicle.registration"]') as HTMLElement;

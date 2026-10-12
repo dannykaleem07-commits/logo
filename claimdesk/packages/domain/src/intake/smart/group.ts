@@ -52,6 +52,8 @@ const KIND_LABEL: Record<KeyKind, string> = {
   name_dob: 'name and date of birth', name: 'name', postcode: 'postcode', phone: 'phone number', email: 'email address', accident_date: 'accident date',
   police_ref: 'police reference', sha_on_claim: 'file', plate: 'number plate',
 };
+/** Irregular plurals for warnings ("2 different client names and dates of birth"). */
+const KIND_PLURAL: Partial<Record<KeyKind, string>> = { name_dob: 'names and dates of birth', vin: 'VINs', email: 'email addresses', accident_date: 'accident dates' };
 const REASON_CODE: Partial<Record<KeyKind, GroupReasonCode>> = {
   ccg_ref: 'shared_ccg_ref', vin: 'shared_vin', vrm: 'shared_vrm', plate: 'plate_in_photo', insurer_ref: 'shared_insurer_ref', policy: 'shared_policy', licence: 'shared_licence',
   name_dob: 'shared_name_dob', phone: 'shared_phone', email: 'shared_email', postcode: 'shared_postcode', accident_date: 'shared_accident_date', sha_on_claim: 'same_file_on_claim',
@@ -229,7 +231,7 @@ export function groupFiles(input: GroupingInput): GroupingResult {
     for (const kind of ['vin', 'name_dob'] as KeyKind[]) {
       const values = new Set([...c.keys.values()].filter((k) => k.kind === kind && k.role === 'client').map((k) => k.value));
       if (values.size > 1) {
-        const w = `These files may be two cases: they show ${values.size} different client ${KIND_LABEL[kind]}s`;
+        const w = `These files may be two cases: they show ${values.size} different client ${KIND_PLURAL[kind] ?? `${KIND_LABEL[kind]}s`}`;
         c.warnings.push(w);
         c.reasons.push({ code: 'conflicting_identifiers', text: w });
       }

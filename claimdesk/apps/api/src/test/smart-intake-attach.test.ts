@@ -55,4 +55,25 @@ describe('attaching a bundle', () => {
     const audit = t.ctx.handle.sqlite.prepare(`SELECT after FROM audit_log WHERE action = 'intake.bundle.attach'`).get() as { after: string };
     expect(JSON.parse(audit.after)).toMatchObject({ claimId: claim.id, groupKey: 'main' });
   });
+
+  it('does not ask the client again for what the claim already holds', async () => {
+    const id = (await t.api<Any>('POST', '/intake/bundles', { name: 'More for KX21 ABC' })).body.id;
+    await uploadToBundle(t, id, [await v5cA()]);
+    await drain(t);
+    // before: a V5C alone leaves the other side and the client's account "missing" in the bundle's own checklist
+    const before = (await t.api<Any>('GET', `/intake/bundles/${id}`)).body;
+    const missingBefore = before.checklist.items.filter((i: Any) => i.status === 'missing').map((i: Any) => i.id);
+    expect(missingBefore).toEqual(expect.arrayContaining(['tp_details', 'accident_account']));
+    const r = await t.api<Any>('POST', `/intake/bundles/${id}/attach`, { claimId: claim.id });
+    expect(r.status).toBe(200);
+    const brief = (await t.api<Any>('GET', `/intake/bundles/${id}/brief`)).body;
+    const ids = brief.missing.map((i: Any) => i.id);
+    // the claim (FNOL fixture) already has the other vehicle, the at-fault insurer and the client's account
+    expect(ids).not.toContain('tp_details');
+    expect(ids).not.toContain('accident_account');
+    expect(ids).not.toContain('v5c');
+    // and the prepared request (a question card: no mailbox) does not ask for them either
+    const q = r.body.request.needsYouId ? t.ctx.repos.getNeedsYouItem(t.ctx.db, r.body.request.needsYouId) : undefined;
+    if (q) expect(q.summary).not.toMatch(/account of the accident|Other side/);
+  });
 });

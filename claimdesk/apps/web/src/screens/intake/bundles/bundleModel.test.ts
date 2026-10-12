@@ -10,6 +10,8 @@ import { BUNDLE_DETAIL, CASE_BRIEF, summaryOf } from './__fixtures__/bundleDetai
 import { bundleDetail } from './__fixtures__/mockApi';
 import {
   checklistSummary,
+  chipSources,
+  requestedDocsCount,
   circumstancesNote,
   defaultGroupActions,
   fieldsBySection,
@@ -220,5 +222,19 @@ describe('upload batching (§11.3)', () => {
   it('import folder hint drops characters Windows cannot use', () => {
     expect(importFolderHint('A/B: C?')).toBe('inbox\\intake\\A B C\\');
     expect(importFolderHint('  ')).toBe('inbox\\intake\\bundle\\');
+  });
+
+  it('one source chip per file and page, keeping the most confident reading', () => {
+    const base = BUNDLE_DETAIL.conflicts[0]!.options[0]!.sources[0]!;
+    const a = { ...base, fileId: 'f1', page: 1, confidence: 0.8, engine: 'rules' as const };
+    const b = { ...base, fileId: 'f1', page: 1, confidence: 0.95, engine: 'ai' as const };
+    const c = { ...base, fileId: 'f2', page: 1, confidence: 0.7 };
+    const d = { ...base, fileId: 'f1', page: 2, confidence: 0.6 };
+    expect(chipSources([a, c, b, d]).map((x) => [x.fileId, x.page, x.confidence])).toEqual([['f1', 1, 0.95], ['f2', 1, 0.7], ['f1', 2, 0.6]]);
+  });
+
+  it('counts the documents the client is asked for (not the hire paperwork the Autopilot prepares)', () => {
+    const item = (id: string, status: 'have' | 'missing' | 'partial' | 'not_needed') => ({ id, label: id, status, why: '', fileIds: [] });
+    expect(requestedDocsCount([item('bank_details', 'missing'), item('damage_photos', 'partial'), item('signed_hire_docs', 'missing'), item('v5c', 'have')])).toBe(2);
   });
 });

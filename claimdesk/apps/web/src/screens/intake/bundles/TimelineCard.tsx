@@ -9,7 +9,7 @@ import { Badge } from '../../../components/Badge';
 import { Card } from '../../../components/Card';
 import type { FieldSource, TimelineProposal } from '../../../api/bundlesApi';
 import { SourceChip } from './bundleParts';
-import { sortTimeline, TIMELINE_CLASS_LABEL, TIMELINE_CLASS_TONE, whenText } from './bundleModel';
+import { chipSources, sortTimeline, TIMELINE_CLASS_LABEL, TIMELINE_CLASS_TONE, whenText } from './bundleModel';
 
 export function TimelineCard({ items, onTick, onSource, busy, closed, claimId }: { items: TimelineProposal[]; onTick: (id: string, ticked: boolean) => void; onSource: (title: string, s: FieldSource) => void; busy: boolean; closed: boolean; claimId: string | null }) {
   const sorted = sortTimeline(items);
@@ -35,7 +35,7 @@ export function TimelineCard({ items, onTick, onSource, busy, closed, claimId }:
               </label>
               <div className="bdl-chips">
                 <Badge tone={TIMELINE_CLASS_TONE[t.class]}>{TIMELINE_CLASS_LABEL[t.class]}</Badge>
-                {t.sources.map((s, i) => (
+                {chipSources(t.sources).map((s, i) => (
                   <SourceChip key={`${s.fileId}-${i}`} source={s} onOpen={(x) => onSource(t.eventLabel, x)} />
                 ))}
                 {ownerOnly && claimId && <Link to={`/claims/${encodeURIComponent(claimId)}/offers`}>Offers</Link>}

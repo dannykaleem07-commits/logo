@@ -393,7 +393,16 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
   const statements: LiabilityPreview['statements'] = [...(contribution?.liability ?? []).filter((l) => mainIds.has(l.source.fileId))];
   for (const fc of main) {
     for (const l of readings.get(fc.file.id)?.facts.liability ?? []) {
-      if (statements.some((s) => s.text.toLowerCase() === l.text.toLowerCase())) continue;
+      // the same sentence already given by the AI's bundle reading (its quote is part of this line, or the other way round)
+      const lt = l.text.toLowerCase();
+      const lq = (l.quote ?? l.text).toLowerCase();
+      const same = (s: LiabilityPreview['statements'][number]): boolean => {
+        if (s.text.toLowerCase() === lt) return true;
+        if (s.source.fileId !== fc.file.id || (s.source.page ?? null) !== (l.page ?? null)) return false;
+        const sq = (s.source.quote ?? s.text).toLowerCase();
+        return Boolean(sq) && (lq.includes(sq) || sq.includes(lq));
+      };
+      if (statements.some(same)) continue;
       statements.push({ text: l.text, party: fc.docType === 'insurer_letter' ? 'insurer' : fc.docType === 'police_report' ? 'police' : 'other', source: sourceOf(fc, { page: l.page, quote: l.quote, confidence: 0.8, engine: 'rules', key: 'accident.circumstances' }) });
     }
   }
@@ -449,8 +458,8 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
     missingKey,
     lowKey,
     contactMissing: !values['client.phone'] && !values['client.email'],
-    fnolErrors: fnol ? fnol.errors.map((e) => e.message) : !missingKey.length && built.missing.length ? built.missing : [],
-    fnolWarnings: fnol ? [...fnol.warnings, ...fnol.incomplete.map((i) => i.message)] : [],
+    fnolErrors: fnol ? fnol.errors.map((e) => plainFnolText(e.message)) : !missingKey.length && built.missing.length ? built.missing : [],
+    fnolWarnings: fnol ? [...fnol.warnings, ...fnol.incomplete.map((i) => i.message)].map(plainFnolText) : [],
     mainMatchesClaim: mainGroup?.claim ? { reference: mainGroup.claim.reference } : null,
     confirmedNew: owner.confirmNew,
     signalsWarn: signals.filter((s) => s.severity === 'warn' && !s.acknowledged).length,
@@ -466,7 +475,7 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
     circumstancesUnconfirmed: Boolean(values['accident.circumstances']) && circ.attribution !== 'client' && circ.attribution !== 'owner',
     witnessesWithoutRelationship,
   });
-  const fnolWarnings = fnol ? [...fnol.warnings, ...fnol.incomplete.map((i) => i.message)] : [];
+  const fnolWarnings = fnol ? [...fnol.warnings, ...fnol.incomplete.map((i) => i.message)].map(plainFnolText) : [];
 
   // 13. willDo
   const filedDocs = mainAll.filter((id) => !duplicateOf[id] && fcs.get(id) && !CONTAINER_ROLES.has(fcs.get(id)!.file.role));
@@ -480,9 +489,11 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
   willDo.push(`File ${filedDocs.length - photos} document${filedDocs.length - photos === 1 ? '' : 's'} and ${photos} photo${photos === 1 ? '' : 's'} on the claim${dupCount ? ` (${dupCount} cop${dupCount === 1 ? 'y' : 'ies'} not filed twice)` : ''}`);
   if (ticked) willDo.push(`Add ${ticked} ticked chronology entr${ticked === 1 ? 'y' : 'ies'}`);
   if (zones) willDo.push('Record the damage the photos show on the claim’s damage model');
-  if (wanted.filter((i) => i.id !== 'signed_hire_docs').length && settings.bundles.prepareMissingDocsRequest) willDo.push(`Prepare a request to the client for ${wanted.filter((i) => i.id !== 'signed_hire_docs').length} missing document${wanted.length === 1 ? '' : 's'} — you approve it before anything is sent`);
+  // the signed hire paperwork is prepared by the Autopilot, never asked of the client (requestEmailText)
+  const askN = wanted.filter((i) => i.id !== 'signed_hire_docs').length;
+  if (askN && settings.bundles.prepareMissingDocsRequest) willDo.push(`Prepare a request to the client for ${askN} missing document${askN === 1 ? '' : 's'} — you approve it before anything is sent`);
   const newCases = grouping.groups.filter((g) => g.kind === 'new_case').length;
-  if (newCases || unsureFiles) willDo.push(`Move ${newCases ? `${newCases} other case${newCases === 1 ? '' : 's'}` : ''}${newCases && unsureFiles ? ' and ' : ''}${unsureFiles ? `${unsureFiles} unplaced file${unsureFiles === 1 ? '' : 's'}` : ''} into new bundles (nothing is lost)`);
+  if (newCases || unsureFiles) willDo.push(`Move ${newCases ? `${newCases} other case${newCases === 1 ? '' : 's'}` : ''}${newCases && unsureFiles ? ' and ' : ''}${unsureFiles ? `${unsureFiles} unplaced file${unsureFiles === 1 ? '' : 's'}` : ''} into ${newCases + unsureFiles === 1 ? 'a new bundle' : 'new bundles'} (nothing is lost)`);
   for (const g of grouping.groups.filter((x) => x.kind === 'existing_claim')) willDo.push(`Leave ${g.fileIds.length} file${g.fileIds.length === 1 ? '' : 's'} for ${g.claim?.reference ?? 'the other claim'} — attach them when you register, or later`);
   if (fnolWarnings.length) willDo.push('Put “Call the client” first on the claim: confirm their account, read the recording disclosure, ask the script questions');
   willDo.push('Check for hire-car clashes and wake the Autopilot');
@@ -549,6 +560,11 @@ export function openCard(ctx: AppContext, bundle: IntakeBundleRecord): NeedsYouI
   if (!bundle.needsYouId) return undefined;
   const item = ctx.repos.getNeedsYouItem(ctx.db, bundle.needsYouId);
   return item && (item.status === 'open' || item.status === 'snoozed') ? (item as unknown as NeedsYouItem) : undefined;
+}
+
+/** FNOL checks read "accident.postcode: No postcode: …"; the owner sees the sentence without the field path. */
+export function plainFnolText(message: string): string {
+  return message.replace(/^[A-Za-z][\w.[\]]*:\s+/, '');
 }
 
 /** Recompute and store (`computed`, `computed_revision`, `auto_eligible`, status). */

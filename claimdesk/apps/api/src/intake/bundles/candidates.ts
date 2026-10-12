@@ -139,7 +139,8 @@ export function normaliseForKey(key: BundleFieldKey, raw: string, now: string, h
     const value = (r.value ?? text).slice(0, 4000);
     let display = value;
     if (meta.kind === 'vrm') display = displayVrm(value);
-    if (meta.kind === 'datetime' && r.ok) display = londonDisplay(value);
+    // a date with no time ("15/08/2026") shows as a date, not as midnight
+    if (meta.kind === 'datetime' && r.ok) display = /\d{1,2}[:.]\d{2}/.test(text) ? londonDisplay(value) : londonDateDisplay(value);
     return { ok: r.ok, value, display, message: r.ok ? (r.notes?.join('; ') || null) : r.errors.join('; ') };
   }
   switch (meta.kind) {
@@ -171,13 +172,21 @@ export function normaliseForKey(key: BundleFieldKey, raw: string, now: string, h
     }
     case 'datetime': {
       const r = validateDateTime(text, { notAfter: now });
-      return { ok: r.ok, value: r.value ?? text, display: r.ok ? londonDisplay(r.value!) : text, message: r.ok ? null : r.errors.join('; ') };
+      // a date with no time ("15/08/2026") shows as a date, not as midnight
+      const hasTime = /\d{1,2}[:.]\d{2}/.test(text);
+      return { ok: r.ok, value: r.value ?? text, display: r.ok ? (hasTime ? londonDisplay(r.value!) : londonDateDisplay(r.value!)) : text, message: r.ok ? null : r.errors.join('; ') };
     }
     default: {
       const ok = text.length > 0 && text.length <= (meta.kind === 'ref' ? 60 : 4000);
       return { ok, value: text.slice(0, 4000), display: text.slice(0, 4000), message: ok ? null : 'too long or empty' };
     }
   }
+}
+
+export function londonDateDisplay(iso: string): string {
+  const t = Date.parse(iso);
+  if (Number.isNaN(t)) return iso;
+  return new Date(t).toLocaleDateString('en-GB', { timeZone: 'Europe/London', day: 'numeric', month: 'short', year: 'numeric' });
 }
 
 export function londonDisplay(iso: string): string {

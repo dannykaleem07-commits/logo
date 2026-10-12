@@ -66,4 +66,4 @@ Reading is not knowing: rules readings are pattern matches and AI readings can b
 and confidence. Sorting needs identifiers; photos without a plate or a date land in "Not sure". Without the AI, scans
 and photos are stored and grouped by EXIF and hashes but not read. Photo and PDF checks are hints. A document-led
 claim still needs the FNOL call. An automatically registered claim cannot be un-created (it can be closed).
-The evidence store's EXIF summary does not carry GPS today, so intake reads photo GPS itself.
+Photo GPS is now kept in each photo's evidence record too (it used to be dropped).

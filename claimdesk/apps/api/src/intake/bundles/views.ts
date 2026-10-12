@@ -29,6 +29,8 @@ const STAGE_LABEL: Record<FileStage, string> = {
   skipped: 'Not something intake can read',
   failed: 'Could not be read',
 };
+/** Photos and scans have no text to read without the AI: they are stored (dates, hashes) until the AI looks at them. */
+const NO_TEXT_LABEL = { waiting_ai: 'Stored — the AI will look at it when agents are back', reading_ai: 'Stored — the AI is looking at it now', read_rules_only: 'Stored — not read (no text without the AI)' } as const;
 const WAITING_LABEL: Record<string, string> = {
   agents_off: 'Waiting for the AI — agents are off',
   kill_switch: 'Waiting for the AI — the kill switch is on',
@@ -51,6 +53,16 @@ function pendingSplitItems(ctx: AppContext): Set<string> {
   );
 }
 
+/**
+ * A file's problem in plain words for the owner. Technical reasons from the AI or the parser ("invalid result: …")
+ * stay on the job (Agents > Jobs); short plain messages from the pipeline pass through.
+ */
+export function plainFileError(error: string | null): string | null {
+  if (!error) return null;
+  if (/invalid result|fixture|job type|schema|stack|Error:|ENOENT|EACCES/i.test(error)) return 'The AI could not read this file. What could be read from its text is used; the details are in Agents > Jobs.';
+  return error.length > 300 ? `${error.slice(0, 297)}…` : error;
+}
+
 export function fileStage(ctx: AppContext, f: IntakeBundleFileRecord, splitting: Set<string>): StageInfo {
   const item = ctx.repos.getIntakeItem(ctx.db, f.intakeItemId);
   if (!item) return { stage: 'failed', stageLabel: STAGE_LABEL.failed, waiting: null };
@@ -58,7 +70,9 @@ export function fileStage(ctx: AppContext, f: IntakeBundleFileRecord, splitting:
   const engines = ctx.repos.listIntakeExtractions(ctx.db, item.id).map((e) => ctx.repos.extractionEngine(e));
   const hasAi = engines.includes('ai');
   const hasRules = engines.includes('rules');
-  const mk = (stage: FileStage, waiting: Waiting = null, label?: string): StageInfo => ({ stage, stageLabel: label ?? STAGE_LABEL[stage], waiting });
+  const noText = doc?.kind === 'image' || doc?.kind === 'heic' || doc?.scanned === true || (doc?.kind === 'pdf' && !(doc.pageTexts ?? []).some((t) => t.trim()));
+  const label = (stage: FileStage): string => (noText && (stage === 'waiting_ai' || stage === 'reading_ai' || stage === 'read_rules_only') ? NO_TEXT_LABEL[stage] : STAGE_LABEL[stage]);
+  const mk = (stage: FileStage, waiting: Waiting = null, l?: string): StageInfo => ({ stage, stageLabel: l ?? label(stage), waiting });
   if (splitting.has(item.id)) return mk('splitting');
   switch (item.status) {
     case 'queued':
@@ -73,7 +87,7 @@ export function fileStage(ctx: AppContext, f: IntakeBundleFileRecord, splitting:
     case 'quota_wait': {
       if (hasAi) return mk('read');
       const w = itemWaiting(ctx, item) ?? (item.status === 'quota_wait' ? aiWaiting(ctx) : null);
-      if (w) return mk('waiting_ai', w, hasRules ? STAGE_LABEL.waiting_ai : WAITING_LABEL[w.reason]);
+      if (w) return mk('waiting_ai', w, hasRules ? label('waiting_ai') : WAITING_LABEL[w.reason]);
       return mk(hasRules ? 'reading_ai' : 'reading');
     }
     default:
@@ -147,7 +161,7 @@ export function bundleSummary(ctx: AppContext, bundle: IntakeBundleRecord, opts:
     autoRegister: { settingOn: settings.bundles.autoRegister, eligible: Boolean(c?.auto.eligible) && b.autoEligible, blockers: (c?.auto.blockers ?? []) as Blocker[] },
     claim: claim ? { id: claim.id, reference: claim.reference } : null,
     needsYouId: b.needsYouId ?? null,
-    error: b.error ?? null,
+    error: b.error && /invalid result|fixture|job type/i.test(b.error) ? 'The AI check of these documents did not finish. The draft from the documents’ text still stands — use “Think again” to try once more.' : (b.error ?? null),
   };
 }
 export type BundleSummaryView = ReturnType<typeof bundleSummary>;
@@ -176,7 +190,7 @@ export function fileView(ctx: AppContext, f: IntakeBundleFileRecord, stage: Stag
     stage: stage.stage,
     stageLabel: stage.stageLabel,
     waiting: stage.waiting,
-    error: item?.error ?? null,
+    error: plainFileError(item?.error ?? null),
     docType,
     docTypeLabel: docType ? docTypeLabel(docType) : null,
     docTypeConfidence: item?.docTypeConfidence ?? null,

@@ -57,6 +57,8 @@ describe('riskSignals', () => {
     expect(codes({ ...empty, vehicleAgeYears: 2, documents: [doc('m', { docType: 'mot_certificate', validTo: '2026-05-01' })] })).toEqual([]);
     expect(codes({ ...empty, documents: [doc('p', { pdfMeta: { producer: 'iLovePDF', creator: null, createdAt: '2026-09-01T00:00:00Z', modifiedAt: '2026-10-01T00:00:00Z', incrementalUpdates: 2 } })] })).toEqual(['PDF_EDITED_AFTER_CREATION', 'PDF_EDITOR_PRODUCER', 'PDF_INCREMENTAL_UPDATES']);
     expect(codes({ ...empty, documents: [doc('p', { pdfMeta: { producer: 'Skia/PDF m120', creator: 'Chromium', createdAt: '2026-09-01T00:00:00Z', modifiedAt: '2026-09-01T00:00:00Z', incrementalUpdates: 0 } })] })).toEqual([]);
+    const saves = (n: number) => riskSignals({ ...empty, documents: [doc('p', { pdfMeta: { producer: null, creator: null, createdAt: null, modifiedAt: null, incrementalUpdates: n } })] }).find((s) => s.code === 'PDF_INCREMENTAL_UPDATES')!.message;
+    expect([saves(1), saves(2), saves(5)]).toEqual(['Saved again once after it was first made.', 'Saved again twice after it was first made.', 'Saved again 5 times after it was first made.']);
     expect(riskSignals({ ...empty, documents: [doc('x', { extensionMatches: false, ext: 'pdf', kind: 'JPEG photo' })] })[0]!.message).toBe('Named .pdf but is a JPEG photo.');
     expect(codes({ ...empty, documents: [doc('x', { injection: true })] })).toEqual(['INSTRUCTIONS_IN_DOCUMENT']);
   });

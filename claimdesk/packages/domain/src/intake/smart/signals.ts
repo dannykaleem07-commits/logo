@@ -72,7 +72,7 @@ export const SIGNAL_TEXT: Readonly<Record<RiskSignalCode, { title: string; sever
   DUPLICATE_CLAIMANT: { title: 'Client has another claim', severity: 'warn', template: 'The client also has {ref} ({status}).' },
   PDF_EDITED_AFTER_CREATION: { title: 'PDF modified after it was made', severity: 'info', template: 'Modified {n} days after it was created — normal for many offices.' },
   PDF_EDITOR_PRODUCER: { title: 'PDF saved with an editing tool', severity: 'info', template: 'Last saved with {producer}.' },
-  PDF_INCREMENTAL_UPDATES: { title: 'PDF saved several times', severity: 'info', template: 'Saved {n} times after it was first made.' },
+  PDF_INCREMENTAL_UPDATES: { title: 'PDF saved again after it was made', severity: 'info', template: 'Saved again {times} after it was first made.' },
   FILE_TYPE_MISMATCH: { title: 'File name does not match its type', severity: 'info', template: 'Named .{ext} but is a {kind}.' },
   INSTRUCTIONS_IN_DOCUMENT: { title: 'Text aimed at an AI', severity: 'warn', template: 'Contains text aimed at an AI; it was treated as data only.' },
 };
@@ -172,7 +172,7 @@ export function riskSignals(input: SignalsInput): RiskSignal[] {
       if (c !== null && m !== null && m - c > 86_400_000) add('PDF_EDITED_AFTER_CREATION', { n: Math.round((m - c) / 86_400_000) }, { fileIds: [d.fileId] });
       const producer = [meta.producer, meta.creator].find((x) => x && PDF_EDITORS.test(x));
       if (producer) add('PDF_EDITOR_PRODUCER', { producer }, { fileIds: [d.fileId] });
-      if (meta.incrementalUpdates > 0) add('PDF_INCREMENTAL_UPDATES', { n: meta.incrementalUpdates }, { fileIds: [d.fileId] });
+      if (meta.incrementalUpdates > 0) add('PDF_INCREMENTAL_UPDATES', { times: meta.incrementalUpdates === 1 ? 'once' : meta.incrementalUpdates === 2 ? 'twice' : `${meta.incrementalUpdates} times` }, { fileIds: [d.fileId] });
     }
     if (d.extensionMatches === false) add('FILE_TYPE_MISMATCH', { ext: d.ext ?? '?', kind: d.kind ?? 'different type of file' }, { fileIds: [d.fileId] });
     if (d.injection) add('INSTRUCTIONS_IN_DOCUMENT', {}, { fileIds: [d.fileId] });

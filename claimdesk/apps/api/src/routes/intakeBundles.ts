@@ -31,7 +31,7 @@ import { normaliseForKey } from '../intake/bundles/candidates.js';
 import { damageZonesView } from '../intake/bundles/damage.js';
 import { fileBundleEvidence } from '../intake/bundles/file.js';
 import { CLOSED_STATUSES } from '../intake/bundles/hooks.js';
-import { computeBundle, queueReasoning, recomputeBundle } from '../intake/bundles/recompute.js';
+import { afterReconcile, computeBundle, queueReasoning, recomputeBundle } from '../intake/bundles/recompute.js';
 import { registerBundle, retryRegistration } from '../intake/bundles/register.js';
 import { addFilesToBundle, cancelBundle, createBundle, decide, renameBundle, reopenBundle, requireBundle, requireOpenBundle, type AddSource } from '../intake/bundles/service.js';
 import { splitOffGroup } from '../intake/bundles/splitOff.js';
@@ -386,6 +386,11 @@ export function registerIntakeBundlesRoutes(app: FastifyInstance, ctx: AppContex
     const merged: IntakeSettings = mergeDefaults(before, body as Partial<IntakeSettings>) as IntakeSettings;
     parse(intakeSettingsSchema, merged);
     const next = ctx.repos.patchAgentSettings(ctx.db, { intake: mergeIntakeSettings(merged) }, request.actor, ctx.now());
+    // Automatic registration switched on/off or its confidence changed: look at the bundles that are waiting again,
+    // so their blockers say what is true now and an eligible one is registered without waiting for a new file.
+    if (before.bundles.autoRegister !== next.intake.bundles.autoRegister || before.bundles.autoRegisterMinConfidence !== next.intake.bundles.autoRegisterMinConfidence) {
+      for (const b of ctx.repos.listIntakeBundles(ctx.db, { status: ['ready', 'needs_you'], limit: 200 })) afterReconcile(ctx, recomputeBundle(ctx, b.id));
+    }
     return { settings: next.intake, defaults: DEFAULT_INTAKE_SETTINGS };
   });
 }

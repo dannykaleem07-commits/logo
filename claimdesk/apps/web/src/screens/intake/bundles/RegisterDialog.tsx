@@ -13,7 +13,7 @@ import { Modal } from '../../../components/Modal';
 import { ApiErrorNotice } from '../../../components/ApiErrorNotice';
 import { isApiError } from '../../../api/client';
 import type { Blocker, BundleDetail, GroupAction, RegisterBody, RegisterResult } from '../../../api/bundlesApi';
-import { BLOCKER_ANCHOR, defaultGroupActions, GROUP_ACTION_LABEL, ownerBlockers, registerTitle, willDoLines } from './bundleModel';
+import { BLOCKER_ANCHOR, defaultGroupActions, GROUP_ACTION_LABEL, ownerBlockers, registerTitle, requestedDocsCount, willDoLines } from './bundleModel';
 
 function blockersFromError(e: unknown): Blocker[] {
   if (!isApiError(e)) return [];
@@ -40,7 +40,7 @@ export function RegisterDialog({
   const blockers = ownerBlockers(detail.register.blockers);
   const matches = detail.register.blockers.some((b) => b.code === 'MATCHES_EXISTING_CLAIM');
   const others = detail.groups.filter((g) => g.kind !== 'main' && g.kind !== 'excluded' && g.fileIds.length > 0);
-  const missing = detail.checklist.items.filter((i) => i.status === 'missing' || i.status === 'partial').length;
+  const missing = requestedDocsCount(detail.checklist.items);
   const refused = blockersFromError(error);
   const canSubmit = detail.register.canRegister || (matches && confirmNew && blockers.every((b) => b.code === 'MATCHES_EXISTING_CLAIM'));
 
@@ -129,7 +129,12 @@ export function RegisterDialog({
         )}
         {detail.register.fnolWarnings.length > 0 && (
           <div className="small muted">
-            For the first call: {detail.register.fnolWarnings.join(' ')}
+            For the first call:
+            <ul className="bdl-firstcall">
+              {detail.register.fnolWarnings.map((w) => (
+                <li key={w}>{w}</li>
+              ))}
+            </ul>
           </div>
         )}
         {refused.length > 0 ? (

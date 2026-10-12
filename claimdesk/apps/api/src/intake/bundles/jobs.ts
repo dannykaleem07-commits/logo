@@ -77,7 +77,9 @@ export async function reasonJob(ctx: AppContext, job: JobRecord, payload: { bund
   const message = o.kind === 'error' ? o.message : o.kind === 'invalid_output' ? `invalid result: ${o.errors.join('; ')}` : o.kind === 'refused' ? `refused: ${o.explanation ?? o.category ?? ''}` : o.kind;
   const retryable = (o.kind === 'error' && o.retryable) || o.kind === 'timeout' || o.kind === 'invalid_output';
   if (retryable && job.attempts < job.maxAttempts) return { kind: 'retry', afterMs: 60_000, reason: message };
-  ctx.repos.updateIntakeBundle(ctx.db, b.id, { reasoningStatus: 'failed', error: `The AI check failed: ${message}`.slice(0, 1000) }, now);
+  // the owner sees plain words; the technical reason stays on the failed job (Agents > Jobs, Needs-you "Problem")
+  const why = o.kind === 'refused' ? 'the AI declined to read these documents' : o.kind === 'timeout' ? 'it took too long' : o.kind === 'invalid_output' ? 'its answer could not be used' : 'something went wrong';
+  ctx.repos.updateIntakeBundle(ctx.db, b.id, { reasoningStatus: 'failed', error: `The AI check of these documents did not finish (${why}). The draft from the documents’ text still stands — use “Think again” to try once more.` }, now);
   return { kind: 'fail', reason: message };
 }
 

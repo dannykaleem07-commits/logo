@@ -306,6 +306,28 @@ export function orderedOptions(c: Conflict): ConflictOption[] {
   return [...c.options].sort((a, b) => Number(b.preselected) - Number(a.preselected) || b.rank - a.rank || a.display.localeCompare(b.display));
 }
 
+/**
+ * One source chip per file and page: the same page is often read twice (the per-file reading and the AI's bundle
+ * reading). Keeps the most confident reading of each, in the original order.
+ */
+export function chipSources(sources: FieldSource[]): FieldSource[] {
+  const best = new Map<string, FieldSource>();
+  for (const s of sources) {
+    const k = `${s.fileId}|${s.page ?? ''}`;
+    const prev = best.get(k);
+    if (!prev || s.confidence > prev.confidence) best.set(k, s);
+  }
+  const seen = new Set<string>();
+  const out: FieldSource[] = [];
+  for (const s of sources) {
+    const k = `${s.fileId}|${s.page ?? ''}`;
+    if (seen.has(k)) continue;
+    seen.add(k);
+    out.push(best.get(k)!);
+  }
+  return out;
+}
+
 /** "best source: V5C" */
 export function bestSourceText(o: ConflictOption): string | null {
   const top = [...o.sources].sort((a, b) => b.rank - a.rank)[0];
@@ -406,6 +428,11 @@ export const CHECK_LABEL: Record<ChecklistItem['status'], string> = { have: 'Hav
 export const CHECK_TONE: Record<ChecklistItem['status'], Tone> = { have: 'green', partial: 'amber', missing: 'red', not_needed: 'grey' };
 
 /** "3 missing · 1 partly there" (or "Nothing missing"). */
+/** Checklist items the client is asked for (missing or partial; the signed hire paperwork is prepared by the Autopilot). */
+export function requestedDocsCount(items: ChecklistItem[]): number {
+  return items.filter((i) => (i.status === 'missing' || i.status === 'partial') && i.id !== 'signed_hire_docs').length;
+}
+
 export function checklistSummary(items: ChecklistItem[]): string {
   const missing = items.filter((i) => i.status === 'missing').length;
   const partial = items.filter((i) => i.status === 'partial').length;

@@ -65,6 +65,64 @@ first.
 **The agents stay off after the upgrade** until you finish **Settings → AI** and tick the checklist — nothing is sent
 by surprise.
 
+## Smart intake (case bundles)
+
+**What it is:** a quicker way to start a claim from a pile of documents. Instead of uploading files one by one, you
+give the case a temporary name and drop everything you have at once. ClaimDesk reads all the files together and
+prepares one claim for you to check and register.
+
+**How to use it**
+
+1. Go to **Intake → Case bundles → New bundle**. Type a temporary name, for example *Jane Doe – Corsa crash*.
+2. Drop the files: PDFs, photos, scans, Word files, emails (`.eml`, with their attachments) and `.zip` files — or a
+   whole folder. Each file shows its progress. For very large files or a whole folder you can also copy them into
+   `inbox\intake\<a name>\` in the import folder; that folder becomes a bundle by itself.
+3. Wait a moment while ClaimDesk reads everything. Then check the bundle page:
+   - **Files & cases** — if the pile holds more than one case, the files are sorted into *This case*, *New case B*,
+     an existing claim (for example *CCG-2026-00003*) and *Not sure*, each with the reason (*Same registration
+     KX21 ABC as the V5C*). Move any file with **Move to…**; your choice always wins. **Make a separate bundle**
+     turns another case into its own bundle.
+   - **Details that disagree** — when two documents say different things (two VINs, two dates of birth), you see
+     both, with the more reliable document picked for you (the V5C beats an estimate for the VIN, the licence beats a
+     claim form for the date of birth, the police report beats a letter for the accident time). Nothing is changed
+     until you choose; **Accept all preselected** settles them in one go.
+   - **Draft claim** — every detail shows where it came from (*V5C · page 1*). Click it to see the page with the line
+     highlighted. Use the pencil to correct anything; your corrections teach ClaimDesk for next time.
+   - **Missing documents** — what is still needed for this kind of claim (licence front and back, insurance
+     certificate, four photos with the plate, bank details …) and the email to the client asking for them.
+   - **Chronology** — dated events found in the documents, ticked to be added to the claim. Offers, settlements,
+     payments, hire dates and legal steps are never added by intake — you record those.
+   - **Worth a look** — only you see this, and nothing is declined or reported: for example a photo taken before the
+     accident date (camera clocks are often wrong), a PDF re-saved with an editing tool, or a phone number already on
+     another claim. Press **Noted** once you have checked.
+   - **Photos** — the date and place each photo was taken, the number plates read from them and the damaged parts,
+     which are put on the claim's damage model.
+4. Press **Register claim**. The box tells you exactly what will happen. One click creates the claim, files every
+   document under the right type (copies of the same photo or letter are filed once), adds the ticked chronology
+   entries, records the damage, files any letters for other claims on those claims, and wakes the Autopilot.
+5. You then see a **case brief**: a short summary, the key facts with their sources, a liability guide (your decision),
+   what is still missing, *call the client first*, and the Autopilot's first steps. The brief also appears on the
+   claim's Overview.
+
+**Already have a claim for these documents?** Use **Attach to existing claim…** instead. The files are filed on that
+claim; tick which details to copy across, and the rest wait for you in Needs you. ClaimDesk does not ask the client
+again for things the claim already holds.
+
+**When the agents are paused** everything still works from the documents' text, and you can register. Photos and
+scans are read when the agents are back, and the draft improves by itself.
+
+**Things that always stay with you:** opening a claim (unless you switch on automatic registration), the request to
+the client for missing documents (it waits for your approval before it is sent), offers, settlements, money and legal
+steps. Nothing is ever declined, and no one is ever accused of anything, automatically.
+
+**Automatic registration (off unless you turn it on):** *Settings → Intake → Register automatically when there are no
+conflicts and every key field is confident.* It only happens when every key detail is confident, nothing disagrees,
+the AI has checked the bundle and nothing is worth a look — and you still get a card to look the new claim over.
+Bundles that are not registered automatically wait in **Needs you** as prepared claims.
+
+Every step is in the **daily log** (*Read 12 files for bundle …*, *Registered CCG-2026-00042 …*) and the audit trail.
+Full details: `docs/SMART-INTAKE.md` and `docs/RELEASE-NOTES-0.5-SMART-INTAKE.md`.
+
 ## Good to know
 
 - Windows may still say "Unknown publisher" until the installer is code-signed.

@@ -59,7 +59,14 @@ describe('registering a bundle', () => {
     const d = (await t.api<Any>('GET', `/intake/bundles/${id}`)).body;
     expect(d.register.canRegister).toBe(true);
     expect(d.register.fnolWarnings.length).toBeGreaterThan(0);
+    // plain sentences for the owner, not field paths ("accident.postcode: …")
+    for (const w of d.register.fnolWarnings as string[]) expect(w).not.toMatch(/^[A-Za-z][\w.[\]]*:\s/);
     expect(d.register.willDo.join('\n')).toMatch(/Call the client/);
+    // the request line counts exactly the items the prepared email asks for (not the hire paperwork)
+    const asked = (d.checklist.request?.body.match(/^- /gm) ?? []).length;
+    const line = d.register.willDo.find((l: string) => l.startsWith('Prepare a request')) ?? '';
+    expect(asked).toBeGreaterThan(0);
+    expect(line).toContain(`for ${asked} missing document${asked === 1 ? '' : 's'} `);
     const card = t.ctx.repos.getNeedsYouItem(t.ctx.db, d.needsYouId)!;
     expect(card.kind).toBe('new_claim');
     expect(card.payload).toMatchObject({ bundleId: id, name: 'Jane Doe – Corsa crash' });

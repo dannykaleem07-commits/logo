@@ -57,7 +57,14 @@ function NameEditor({ name, onSave, disabled }: { name: string; onSave: (name: s
   useEffect(() => {
     if (document.activeElement !== ref.current) setValue(name);
   }, [name]);
+  const cancelled = useRef(false);
   const commit = () => {
+    // Escape: the blur that follows must not save what was typed
+    if (cancelled.current) {
+      cancelled.current = false;
+      setValue(name);
+      return;
+    }
     const v = value.trim();
     if (!v) setValue(name);
     else if (v !== name) onSave(v);
@@ -75,6 +82,7 @@ function NameEditor({ name, onSave, disabled }: { name: string; onSave: (name: s
       onKeyDown={(e) => {
         if (e.key === 'Enter') (e.target as HTMLInputElement).blur();
         if (e.key === 'Escape') {
+          cancelled.current = true;
           setValue(name);
           (e.target as HTMLInputElement).blur();
         }

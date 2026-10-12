@@ -12,6 +12,9 @@ import { ReadinessBadge } from '../../intake/bundles/bundleParts';
 import { firstBlockerText, ownerBlockers, signalsText } from '../../intake/bundles/bundleModel';
 import type { NeedsYouPanelProps } from './types';
 
+/** Labels in one column, values aligned in the next (wraps on a phone). */
+const KV_GRID = { display: 'grid', gridTemplateColumns: 'minmax(0, max-content) minmax(0, 1fr)', gap: '2px 16px', margin: 0, alignItems: 'baseline' } as const;
+
 interface BundlePayload {
   bundleId?: string;
   name?: string;
@@ -47,11 +50,11 @@ export function BundleReadyPanel({ item, closed }: NeedsYouPanelProps) {
         {b && b.revision !== p.revision && p.revision !== undefined && <span className="small muted">(changed since this card was raised)</span>}
       </div>
       {p.keyFields && p.keyFields.length > 0 && (
-        <dl className="ny-kv">
+        <dl className="ny-kv" style={KV_GRID}>
           {p.keyFields.map((f) => (
-            <div key={f.label} className="row">
+            <div key={f.label} style={{ display: 'contents' }}>
               <dt className="small muted">{f.label}</dt>
-              <dd>{f.value}</dd>
+              <dd style={{ margin: 0, minWidth: 0, overflowWrap: 'anywhere' }}>{f.value}</dd>
             </div>
           ))}
         </dl>

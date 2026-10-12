@@ -133,7 +133,7 @@ describe('groupFiles', () => {
     const y = fk('y', 2, [cand('vehicle.registration', 'KX21 ABC', 'y', 'bodyshop_estimate'), cand('client.phone', '07700900123', 'y', 'bodyshop_estimate'), cand('vehicle.vin', 'WVWZZZ1KZAW000007', 'y', 'bodyshop_estimate')]);
     const r = groupFiles({ files: [x, y], index: noIndex, nameHint: '', pins: {}, excluded: [] });
     expect(r.groups[0]!.fileIds).toEqual(['x', 'y']);
-    expect(r.warnings[0]).toMatch(/may be two cases/);
+    expect(r.warnings[0]).toBe('These files may be two cases: they show 2 different client VINs');
   });
 
   it('is deterministic regardless of input order', () => {

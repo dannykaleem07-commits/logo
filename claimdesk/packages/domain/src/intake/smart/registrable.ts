@@ -45,7 +45,7 @@ export function registrable(i: RegistrableInput): { canRegister: boolean; autoEl
   if (i.filesInProgress > 0) owner('FILES_IN_PROGRESS', `${plural(i.filesInProgress, 'file')} still being read`);
   if (i.conflictsOpen > 0) owner('OPEN_CONFLICTS', `${plural(i.conflictsOpen, 'detail')} disagree between documents — choose the right value`);
   const missingParts: string[] = [];
-  if (i.missingKey.length) missingParts.push(`missing: ${labels(i.missingKey)}`);
+  if (i.missingKey.length) missingParts.push(labels(i.missingKey));
   if (i.circumstancesUnconfirmed) missingParts.push('the account of what happened is not the client’s own — confirm or write it');
   if (i.witnessesWithoutRelationship) missingParts.push(`${plural(i.witnessesWithoutRelationship, 'witness', 'witnesses')} with no relationship to the client recorded`);
   if (missingParts.length) owner('MISSING_REQUIRED', `Still needed: ${missingParts.join('; ')}`);
