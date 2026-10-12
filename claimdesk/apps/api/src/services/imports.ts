@@ -35,6 +35,8 @@ export interface StagedImport {
   source: 'folder' | 'upload';
   status: 'staged' | 'consumed' | 'failed';
   claimRef?: string;
+  /** Smart intake (docs/SMART-INTAKE.md §6.11): the inbox\intake\ subfolder the file came from (becomes a bundle). */
+  bundleFolder?: string;
   consumedBy?: string;
   consumedAt?: string;
   result?: unknown;
@@ -189,6 +191,8 @@ export interface StageImportOptions {
   purpose: ImportPurpose;
   source: 'folder' | 'upload';
   claimRef?: string;
+  /** inbox\intake\<folder>\ (not a claim reference): the folder name, for a folder bundle. */
+  bundleFolder?: string;
   /** Defaults to the source file's name. */
   filename?: string;
   /** Defaults to a guess from the file extension. */
@@ -221,13 +225,14 @@ export async function stageImport(ctx: AppContext, srcPath: string, opts: StageI
     status: 'staged',
   };
   if (opts.claimRef) imp.claimRef = opts.claimRef.toUpperCase();
+  if (opts.bundleFolder) imp.bundleFolder = opts.bundleFolder.slice(0, 120);
   writeManifest(ctx, imp);
   ctx.repos.appendAudit(ctx.db, {
     actor: opts.actor ?? SYSTEM_ACTOR,
     action: 'import.staged',
     entity: 'imports',
     entityId: id,
-    after: { purpose: imp.purpose, filename, bytes, sha256, source: imp.source, claimRef: imp.claimRef ?? null },
+    after: { purpose: imp.purpose, filename, bytes, sha256, source: imp.source, claimRef: imp.claimRef ?? null, ...(imp.bundleFolder ? { bundleFolder: imp.bundleFolder } : {}) },
     at: imp.receivedAt,
   });
   return imp;
@@ -314,9 +319,10 @@ interface Candidate {
   abs: string;
   purpose: ImportPurpose;
   claimRef?: string;
+  bundleFolder?: string;
 }
 
-function candidates(root: string, onUnread?: (abs: string, hint: string) => void): Candidate[] {
+function candidates(root: string, onUnread?: (abs: string, hint: string) => void, opts: { folderBundles?: boolean } = {}): Candidate[] {
   const out: Candidate[] = [];
   for (const purpose of IMPORT_PURPOSES) {
     const dir = path.join(root, purpose);
@@ -340,6 +346,22 @@ function candidates(root: string, onUnread?: (abs: string, hint: string) => void
           continue;
         }
         for (const f of inner) if (f.isFile() && !ignoredInboxName(f.name)) out.push({ abs: path.join(abs, f.name), purpose, claimRef: ref });
+      } else if (e.isDirectory() && purpose === 'intake' && opts.folderBundles) {
+        // inbox\intake\<any other folder>\<file>: one intake bundle per folder (deeper subfolders are still reported)
+        let inner: import('node:fs').Dirent[];
+        try {
+          inner = readdirSync(abs, { withFileTypes: true });
+        } catch {
+          continue;
+        }
+        for (const f of inner) {
+          if (ignoredInboxName(f.name)) continue;
+          if (f.isFile()) out.push({ abs: path.join(abs, f.name), purpose, bundleFolder: e.name });
+          else if (f.isDirectory() && !unreadFolders.has(path.join(abs, f.name))) {
+            unreadFolders.add(path.join(abs, f.name));
+            onUnread?.(path.join(abs, f.name), `files must be directly in ${abs}`);
+          }
+        }
       } else if (e.isDirectory()) {
         // Any other subfolder is not read: say so once (log + GET /imports/folder) instead of ignoring it silently.
         if (!unreadFolders.has(abs)) {
@@ -367,7 +389,8 @@ export function unreadInboxFolders(ctx: AppContext): string[] {
 export async function scanInboxOnce(ctx: AppContext, nowMs: number = Date.now()): Promise<StagedImport[]> {
   const root = inboxDir(ctx);
   ensureInbox(ctx);
-  const found = candidates(root, (abs, hint) => ctx.logger.warn('imports: a folder in the inbox is not read', { folder: abs, hint }));
+  const folderBundles = ctx.repos.getAgentSettings(ctx.db).intake.bundles.folderBundles;
+  const found = candidates(root, (abs, hint) => ctx.logger.warn('imports: a folder in the inbox is not read', { folder: abs, hint }), { folderBundles });
   const present = new Set(found.map((c) => c.abs));
   for (const k of [...seen.keys()]) if (k.startsWith(root + path.sep) && !present.has(k)) seen.delete(k);
   const staged: StagedImport[] = [];
@@ -387,7 +410,7 @@ export async function scanInboxOnce(ctx: AppContext, nowMs: number = Date.now())
     if (nowMs - prev.since < STABLE_MS) continue;
     let imp: StagedImport;
     try {
-      imp = await stageImport(ctx, c.abs, { purpose: c.purpose, source: 'folder', claimRef: c.claimRef });
+      imp = await stageImport(ctx, c.abs, { purpose: c.purpose, source: 'folder', claimRef: c.claimRef, ...(c.bundleFolder ? { bundleFolder: c.bundleFolder } : {}) });
     } catch (err) {
       // still locked by the program writing it (Windows) or removed meanwhile: try again on the next pass
       ctx.logger.warn('imports: could not take a file from the inbox yet', { file: c.abs, error: String(err) });

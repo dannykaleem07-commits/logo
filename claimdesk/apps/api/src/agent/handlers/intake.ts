@@ -6,6 +6,10 @@
  *   intake.process  cpu, deterministic   payload {itemId} — or, from the mail slice, {evidenceId, claimId, source:'email'}
  *   intake.extract  ai                   payload {itemId}
  *   intake.apply    io, deterministic    payload {itemId, extractionId?}
+ *   intake.split             cpu, deterministic  payload {itemId, segments, source}   (smart intake §5.4)
+ *   intake.bundle_reconcile  cpu, deterministic  payload {bundleId, revision}          (smart intake §6.1)
+ *   intake.bundle_reason     ai                  payload {bundleId, fileset, owner?}   (smart intake §6.2)
+ *   intake.bundle_register   io, mutates         payload {bundleId, revision}          (smart intake §6.7, auto only)
  *
  * Resolvers (run AS THE OWNER):
  *   confirm_fields  apply the ticked proposals through the routes as the owner; the rest are rejected with the reason
@@ -22,6 +26,11 @@ import { itemForEvidence } from '../../intake/items.js';
 import { buildNewClaimDraft } from '../../intake/newClaimDraft.js';
 import type { NormalisedDoc } from '../../intake/normalise.js';
 import { applyItem, extractItem, processItem, settleItemStatus, type ConfirmCardPayload, type NewClaimPayload } from '../../intake/pipeline.js';
+import { splitItem } from '../../intake/split.js';
+import { attachBundle } from '../../intake/bundles/attach.js';
+import { autoRegisterJob, reasonJob, reconcileJob } from '../../intake/bundles/jobs.js';
+import { registerBundle } from '../../intake/bundles/register.js';
+import { cancelBundle } from '../../intake/bundles/service.js';
 
 const processPayload = z.union([
   z.object({ itemId: z.string().min(1) }).passthrough(),
@@ -91,6 +100,82 @@ const applyHandler: JobHandler<z.infer<typeof applyPayload>> = {
 };
 
 // ---------------------------------------------------------------------------
+// Smart intake (docs/SMART-INTAKE.md §7.1)
+// ---------------------------------------------------------------------------
+
+const splitPayload = z
+  .object({
+    itemId: z.string().min(1),
+    segments: z.array(z.object({ fromPage: z.number().int().min(1), toPage: z.number().int().min(1), docType: z.string(), confidence: z.number(), title: z.string().optional() }).passthrough()).min(2),
+    source: z.enum(['rules', 'ai']),
+  })
+  .passthrough();
+const bundleRevisionPayload = z.object({ bundleId: z.string().min(1), revision: z.number().int().min(0) }).passthrough();
+const reasonPayload = z.object({ bundleId: z.string().min(1), fileset: z.string(), owner: z.boolean().optional() }).passthrough();
+
+const splitHandler: JobHandler<z.infer<typeof splitPayload>> = {
+  type: 'intake.split',
+  agent: 'intake',
+  lane: 'cpu',
+  usesAi: false,
+  mutatesClaim: false,
+  payload: splitPayload,
+  defaultPriority: 3,
+  maxAttempts: 3,
+  timeoutMs: 5 * 60_000,
+  async run({ ctx, job, payload }) {
+    const item = ctx.repos.getIntakeItem(ctx.db, payload.itemId);
+    if (!item) return { kind: 'fail', reason: `intake item ${payload.itemId} not found` };
+    return splitItem(ctx, item, job, payload.segments as never, payload.source);
+  },
+};
+
+const bundleReconcileHandler: JobHandler<z.infer<typeof bundleRevisionPayload>> = {
+  type: 'intake.bundle_reconcile',
+  agent: 'intake',
+  lane: 'cpu',
+  usesAi: false,
+  mutatesClaim: false,
+  payload: bundleRevisionPayload,
+  defaultPriority: 3,
+  maxAttempts: 3,
+  timeoutMs: 5 * 60_000,
+  async run({ ctx, payload }) {
+    return reconcileJob(ctx, payload);
+  },
+};
+
+const bundleReasonHandler: JobHandler<z.infer<typeof reasonPayload>> = {
+  type: 'intake.bundle_reason',
+  agent: 'intake',
+  lane: 'ai',
+  usesAi: true,
+  mutatesClaim: false,
+  payload: reasonPayload,
+  defaultPriority: 3,
+  maxAttempts: 3,
+  timeoutMs: 8 * 60_000,
+  async run({ ctx, job, payload }) {
+    return reasonJob(ctx, job, payload);
+  },
+};
+
+const bundleRegisterHandler: JobHandler<z.infer<typeof bundleRevisionPayload>> = {
+  type: 'intake.bundle_register',
+  agent: 'intake',
+  lane: 'io',
+  usesAi: false,
+  mutatesClaim: true,
+  payload: bundleRevisionPayload,
+  defaultPriority: 2,
+  maxAttempts: 2,
+  timeoutMs: 5 * 60_000,
+  async run({ ctx, job, payload }) {
+    return autoRegisterJob(ctx, job, payload);
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Resolvers
 // ---------------------------------------------------------------------------
 
@@ -104,14 +189,21 @@ const confirmEdits = z
   .passthrough();
 
 /** Apply the confirmed proposals of a card as the owner; reject the rest with the owner's reason. */
-export async function resolveConfirmFields(ctx: AppContext, item: NeedsYouItem & { payload: ConfirmCardPayload }, choice: { optionId: string; edits?: unknown; note?: string }, actor: Actor): Promise<void> {
+export async function resolveConfirmFields(ctx: AppContext, item: NeedsYouItem & { payload: ConfirmCardPayload & { bundleId?: string } }, choice: { optionId: string; edits?: unknown; note?: string }, actor: Actor): Promise<void> {
   const payload = item.payload;
-  if (!payload?.itemId) throw badRequest('This card has no intake item');
+  if (!payload?.itemId && !payload?.bundleId) throw badRequest('This card has no intake item');
   const listed = new Set(payload.proposals.map((p) => p.id));
-  const pending = ctx.repos.listClaimUpdateProposals(ctx.db, { intakeItemId: payload.itemId, status: 'pending' }).filter((p) => listed.has(p.id) || p.policyDecision !== 'never');
+  // A bundle card (smart intake §9) lists proposals of several items: pending = exactly the listed ones.
+  const pending = payload.bundleId
+    ? ctx.repos.listClaimUpdateProposals(ctx.db, { claimId: payload.claimId, status: 'pending' }).filter((p) => listed.has(p.id))
+    : ctx.repos.listClaimUpdateProposals(ctx.db, { intakeItemId: payload.itemId, status: 'pending' }).filter((p) => listed.has(p.id) || p.policyDecision !== 'never');
+  const settle = () => {
+    const items = payload.bundleId ? [...new Set(pending.map((p) => p.intakeItemId).filter((x): x is string => Boolean(x)))] : [payload.itemId];
+    for (const id of items) settleItemStatus(ctx, id);
+  };
   if (choice.optionId === 'reject') {
     rejectProposals(ctx, pending.map((p) => p.id), actor, choice.note?.trim() || 'Rejected by the owner');
-    settleItemStatus(ctx, payload.itemId);
+    settle();
     return;
   }
   if (choice.optionId !== 'apply') throw badRequest(`Unknown option ${choice.optionId}`);
@@ -123,7 +215,7 @@ export async function resolveConfirmFields(ctx: AppContext, item: NeedsYouItem &
   const failed = results.filter((r) => !r.ok);
   const rest = pending.filter((p) => !wanted.has(p.id)).map((p) => p.id);
   if (rest.length) rejectProposals(ctx, rest, actor, choice.note?.trim() || 'Not ticked by the owner');
-  settleItemStatus(ctx, payload.itemId);
+  settle();
   if (failed.length) {
     throw conflict('APPLY_FAILED', `${results.length - failed.length} applied; ${failed.length} could not be applied: ${failed.map((f) => `${f.error?.code}: ${f.error?.message}`).join('; ')}`, { failed });
   }
@@ -131,8 +223,9 @@ export async function resolveConfirmFields(ctx: AppContext, item: NeedsYouItem &
 
 const attachEdits = z.object({ claimId: z.string().min(1) }).passthrough();
 
-export async function resolveNewClaim(ctx: AppContext, item: NeedsYouItem & { payload: NewClaimPayload }, choice: { optionId: string; edits?: unknown; note?: string }, actor: Actor): Promise<void> {
-  const payload = item.payload;
+export async function resolveNewClaim(ctx: AppContext, item: NeedsYouItem & { payload: NewClaimPayload | { bundleId: string } }, choice: { optionId: string; edits?: unknown; note?: string }, actor: Actor): Promise<void> {
+  if ('bundleId' in item.payload && item.payload.bundleId) return resolveBundleCard(ctx, item.id, item.payload.bundleId, choice, actor);
+  const payload = item.payload as NewClaimPayload;
   const intakeItem = ctx.repos.getIntakeItem(ctx.db, payload.itemId);
   if (!intakeItem) throw badRequest('The intake item of this card no longer exists');
   const now = ctx.now();
@@ -155,6 +248,24 @@ export async function resolveNewClaim(ctx: AppContext, item: NeedsYouItem & { pa
   throw badRequest(`Unknown option ${choice.optionId}`);
 }
 
+/** The bundle variant of the `new_claim` card (smart intake §9): register / attach / cancel, as the owner. */
+async function resolveBundleCard(ctx: AppContext, cardId: string, bundleId: string, choice: { optionId: string; edits?: unknown; note?: string }, actor: Actor): Promise<void> {
+  if (choice.optionId === 'register') {
+    await registerBundle(ctx, bundleId, actor, { mode: 'owner', acceptPreselected: false, viaCardId: cardId });
+    return;
+  }
+  if (choice.optionId === 'attach') {
+    const { claimId } = attachEdits.parse(choice.edits ?? {});
+    await attachBundle(ctx, bundleId, actor, { claimId, viaCardId: cardId });
+    return;
+  }
+  if (choice.optionId === 'cancel') {
+    cancelBundle(ctx, bundleId, choice.note?.trim() || 'Not a claim', actor, { viaCardId: cardId });
+    return;
+  }
+  throw badRequest(`Unknown option ${choice.optionId}`);
+}
+
 /** Link an item (and its children) to a claim and queue `intake.apply` again. Audited as the actor. */
 export function attachItemToClaim(ctx: AppContext, itemId: string, claimId: string, actor: Actor): void {
   const claim = ctx.repos.requireClaim(ctx.db, claimId);
@@ -171,9 +282,9 @@ export function attachItemToClaim(ctx: AppContext, itemId: string, claimId: stri
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- each handler has its own payload/result types
-export const intakeJobHandlers: JobHandler<any, any>[] = [processHandler, extractHandler, applyHandler];
+export const intakeJobHandlers: JobHandler<any, any>[] = [processHandler, extractHandler, applyHandler, splitHandler, bundleReconcileHandler, bundleReasonHandler, bundleRegisterHandler];
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- each resolver has its own payload type
 export const intakeNeedsYouResolvers: NeedsYouResolver<any>[] = [
   { kind: 'confirm_fields', resolve: resolveConfirmFields } satisfies NeedsYouResolver<ConfirmCardPayload>,
-  { kind: 'new_claim', resolve: resolveNewClaim } satisfies NeedsYouResolver<NewClaimPayload>,
+  { kind: 'new_claim', resolve: resolveNewClaim } satisfies NeedsYouResolver<NewClaimPayload | { bundleId: string }>,
 ];

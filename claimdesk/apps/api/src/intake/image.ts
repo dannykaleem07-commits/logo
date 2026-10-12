@@ -72,3 +72,14 @@ export async function decodeForHash(buffer: Buffer, sniffedKind: string): Promis
   }
   return null;
 }
+
+/** GPS position from a photo's EXIF (bounded; null when absent or unreadable). */
+export async function photoGps(buffer: Buffer): Promise<{ lat: number; lon: number } | null> {
+  if (buffer.length > MAX_HASH_DECODE_BYTES) return null;
+  try {
+    const g = (await exifr.gps(buffer)) as { latitude?: number; longitude?: number } | undefined;
+    return g && Number.isFinite(g.latitude) && Number.isFinite(g.longitude) ? { lat: g.latitude!, lon: g.longitude! } : null;
+  } catch {
+    return null;
+  }
+}

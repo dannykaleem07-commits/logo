@@ -151,3 +151,19 @@ describe('groupFiles', () => {
     expect(groupFiles({ files: [], index: noIndex, nameHint: 'x', pins: {}, excluded: [] }).groups.map((g) => g.key)).toEqual(['main']);
   });
 });
+
+describe('groupFiles — weak identifiers only', () => {
+  it('a file with only a weak identifier joins the one case sharing it, never a case of its own', () => {
+    const notes = fk('notes', 9, [], { otherKeys: [{ kind: 'phone', value: '07700 900456' }] });
+    const form = fk('a-form2', 2, [cand('client.name', 'Jane Doe', 'a-form2', 'fnol_form'), cand('client.phone', '07700 900456', 'a-form2', 'fnol_form'), cand('vehicle.registration', 'KX21 ABC', 'a-form2', 'fnol_form'), cand('vehicle.vin', 'WVWZZZ1KZAW000001', 'a-form2', 'fnol_form')]);
+    const r = groupFiles({ files: [aV5c(), form, notes, bV5c(), bLetter()], index: noIndex, nameHint: 'Jane Doe', pins: {}, excluded: [] });
+    expect(r.fileGroup.notes).toBe('main');
+    expect(r.groups.find((g) => g.key === 'main')!.reasons.some((x) => /weak link/.test(x.text))).toBe(true);
+    expect(r.groups.filter((g) => g.kind === 'new_case')).toHaveLength(1);
+  });
+  it('a weak identifier shared with two cases leaves the file to the unkeyed rules', () => {
+    const notes = fk('notes', 9, [], { otherKeys: [{ kind: 'postcode', value: 'RG1 1AA' }, { kind: 'postcode', value: 'LS1 4AB' }] });
+    const r = groupFiles({ files: [aV5c(), notes, bV5c(), bLetter()], index: noIndex, nameHint: 'Jane Doe', pins: {}, excluded: [] });
+    expect(r.fileGroup.notes).toBe('unsure');
+  });
+});

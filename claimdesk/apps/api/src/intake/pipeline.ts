@@ -28,7 +28,7 @@ import { readEvidenceVerified, stageBuffer } from '../services/evidence.js';
 import { mimeFromFilename } from '../services/imports.js';
 import { unpackLimits, unpackZip } from './archive.js';
 import { childrenAdded, inOpenBundle, itemSettled, recordFileFacts, bundlesOfItem, type ChildFile } from './bundles/hooks.js';
-import { decodeForHash, MAX_HASH_DECODE_BYTES } from './image.js';
+import { decodeForHash, MAX_HASH_DECODE_BYTES, photoGps } from './image.js';
 import { documentInjectionFlags, storeRulesReading, type ExtractionExtras } from './rules.js';
 import { aiSegments, ruleSegments, splitFollowUp } from './split.js';
 import { agentApplier, applyProposals, rejectProposals } from './apply.js';
@@ -163,6 +163,11 @@ export async function processItem(ctx: AppContext, item: IntakeItemRecord, job: 
       doc.phash = h.phash;
       doc.pixels = h.pixels;
       recordFileFacts(ctx, item.id, { phash: h.phash, pixels: h.pixels });
+    }
+    // GPS for the photo checks (the evidence row's EXIF summary does not carry it today)
+    if (!ev.exif?.gps) {
+      const gps = await photoGps(full);
+      if (gps) doc.gps = gps;
     }
   }
   if (doc.kind === 'image' && ev.bytes > MAX_MODEL_IMAGE_BYTES) {

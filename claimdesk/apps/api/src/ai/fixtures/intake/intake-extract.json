@@ -404,29 +404,6 @@
     }
   },
   {
-    "id": "intake-attachment-image",
-    "match": {
-      "jobType": "intake.extract",
-      "agent": "intake",
-      "userContains": [
-        "[intake:image]"
-      ]
-    },
-    "outcome": "ok",
-    "result": {
-      "docType": "damage_photo",
-      "docTypeConfidence": 0.8,
-      "summary": "Invented photo of rear damage (synthetic test fixture).",
-      "formTemplateId": null,
-      "fields": [],
-      "warnings": [],
-      "documentDate": null,
-      "docSide": null,
-      "photo": null,
-      "segments": []
-    }
-  },
-  {
     "id": "intake-quota",
     "match": {
       "jobType": "intake.extract",

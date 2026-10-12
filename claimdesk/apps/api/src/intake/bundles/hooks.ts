@@ -106,6 +106,10 @@ export function childrenAdded(ctx: AppContext, parent: IntakeItemRecord, childre
       if (r.created) added += 1;
     }
     if (children.some((c) => c.role === 'segment') && pf.role !== 'pack') ctx.repos.updateBundleFile(ctx.db, pf.id, { role: 'pack' }, now);
+    else if (pf.role === 'document') {
+      const kind = (ctx.repos.getIntakeItem(ctx.db, parent.id)?.normalised as { kind?: string } | undefined)?.kind;
+      if (kind === 'archive' || kind === 'email') ctx.repos.updateBundleFile(ctx.db, pf.id, { role: kind }, now);
+    }
     if (added) touchBundle(ctx, bundle);
   }
 }

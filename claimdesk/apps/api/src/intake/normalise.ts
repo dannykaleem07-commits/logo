@@ -68,6 +68,8 @@ export interface NormalisedDoc {
   /** Photos: 64-bit difference hash and pixel count. */
   phash?: string;
   pixels?: number;
+  /** Photos: GPS position read from EXIF (when the evidence summary has none). */
+  gps?: { lat: number; lon: number };
   /** ZIP archives: what happened to each entry (the archive item itself stays `skipped`, labelled "Unpacked"). */
   entries?: Array<{ name: string; bytes: number; outcome: 'item' | 'skipped'; reason?: string }>;
   /** Text that looks aimed at an AI (code check over the document text; treated as data only). */

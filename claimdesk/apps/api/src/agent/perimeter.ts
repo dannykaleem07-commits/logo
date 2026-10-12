@@ -55,6 +55,11 @@ export const HUMAN_ONLY_ROUTES: ReadonlySet<string> = new Set([
   'POST /api/claims/:id/autopilot/steps/:stepId/:action',
   'PATCH /api/claims/:id/hire/:hireId/paperwork',
   'PATCH /api/settings/autopilot',
+  // Smart intake (docs/SMART-INTAKE.md §8): registering or attaching a bundle and its settings are the owner's.
+  'POST /api/intake/bundles/:id/register',
+  'POST /api/intake/bundles/:id/register/retry',
+  'POST /api/intake/bundles/:id/attach',
+  'PATCH /api/settings/intake',
 ]);
 
 /** Token-authenticated kiosk routes (§E.2): never reachable with a run token. */

@@ -49,6 +49,8 @@ export interface SignalsInput {
   newestUploadAt?: string | null;
   /** The client car's age at the accident, when known (MOT_EXPIRED applies over 3 years). */
   vehicleAgeYears?: number | null;
+  /** The AI reading the bundle together flagged text aimed at an AI (no single file named). */
+  bundleInjection?: boolean;
 }
 
 export const SIGNAL_TEXT: Readonly<Record<RiskSignalCode, { title: string; severity: RiskSeverity; template: string }>> = {
@@ -175,6 +177,7 @@ export function riskSignals(input: SignalsInput): RiskSignal[] {
     if (d.extensionMatches === false) add('FILE_TYPE_MISMATCH', { ext: d.ext ?? '?', kind: d.kind ?? 'different type of file' }, { fileIds: [d.fileId] });
     if (d.injection) add('INSTRUCTIONS_IN_DOCUMENT', {}, { fileIds: [d.fileId] });
   }
+  if (input.bundleInjection && !out.some((x) => x.code === 'INSTRUCTIONS_IN_DOCUMENT')) add('INSTRUCTIONS_IN_DOCUMENT', {}, { subject: 'bundle' });
   const newest = input.newestUploadAt ?? null;
   if (accMs !== null && newest && accMs > (isoMs(newest) ?? Infinity)) add('ACCIDENT_IN_FUTURE', {}, {});
 

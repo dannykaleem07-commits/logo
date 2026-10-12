@@ -195,8 +195,35 @@ export function groupFiles(input: GroupingInput): GroupingResult {
     c.reasons.push(...(edgeReasons.get(f.fileId) ?? []));
   }
   const clusters = [...clusterMap.values()];
-  const keyed = clusters.filter((c) => c.keys.size > 0);
+  // A cluster identifies a case on its own with a strong key, two medium keys, or a medium key and two weak ones.
+  const solid = (c: Cluster) => {
+    const ks = [...c.keys.values()];
+    const strong = ks.filter((k) => k.strength === 'strong').length;
+    const medium = ks.filter((k) => k.strength === 'medium').length;
+    const weak = ks.filter((k) => k.strength === 'weak').length;
+    return strong >= 1 || medium >= 2 || (medium >= 1 && weak >= 2);
+  };
+  const keyed = clusters.filter(solid);
   const unkeyed = clusters.filter((c) => c.keys.size === 0);
+  // A thin cluster (an estimate with only the registration, a note with only a phone number) joins the one case that
+  // shares one of its identifiers; otherwise it is a case of its own (a medium identifier) or placed like a file with
+  // no identifiers (weak ones only).
+  for (const w of clusters.filter((c) => c.keys.size > 0 && !solid(c))) {
+    const ids = [...w.keys.keys()];
+    const hits = keyed.filter((c) => ids.some((id) => c.keys.has(id)));
+    if (hits.length !== 1) {
+      if ([...w.keys.values()].some((k) => k.strength === 'medium')) keyed.push(w);
+      else unkeyed.push(w);
+      continue;
+    }
+    const target = hits[0]!;
+    const k = w.keys.get(ids.find((id) => target.keys.has(id))!)!;
+    target.files.push(...w.files);
+    for (const [id, key] of w.keys) if (!target.keys.has(id)) target.keys.set(id, key);
+    const weakLink = k.strength === 'weak' ? ' (a weak link — check it)' : '';
+    target.reasons.push(...w.reasons, { code: REASON_CODE[k.kind] ?? 'shared_phone', text: `${describe(w.files[0]!)}: same ${KIND_LABEL[k.kind]}${shortValue(k) ? ` ${shortValue(k)}` : ''} as this case${weakLink}`, fileId: w.files[0]!.fileId, key: k.kind });
+  }
+  keyed.sort((a, b) => Math.min(...a.files.map((f) => f.position)) - Math.min(...b.files.map((f) => f.position)));
 
   for (const c of keyed) {
     for (const kind of ['vin', 'name_dob'] as KeyKind[]) {
