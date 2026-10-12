@@ -50,5 +50,3 @@ export * from './knowledge.js';
 export * from './knowledgeLearning.js';
 export * from './knowledgeResearch.js';
 export * from './knowledgeUse.js';
-// Smart intake — case bundles (docs/SMART-INTAKE.md §3.3), owned by intake-server.
-export * from './intakeBundles.js';

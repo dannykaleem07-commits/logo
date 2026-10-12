@@ -26,12 +26,6 @@ export function waitingText(w: { reason: 'agents_off' | 'kill_switch' | 'usage' 
   return { badge: 'Waiting', text: `Waiting — the AI usage limit${until ? ` resets at ${until}` : ' is reached'}`, link: '/agents' };
 }
 
-/** "Unpacked (6 files)" for a .zip whose files were read on their own (docs/SMART-INTAKE.md §3.1), else the status label. */
-export function itemStatusLabel(i: Pick<IntakeItemRow, 'status' | 'doc' | 'children'>): string {
-  if (i.doc?.kind === 'archive') return `Unpacked (${i.children} ${i.children === 1 ? 'file' : 'files'})`;
-  return STATUS_LABEL[i.status];
-}
-
 export const STATUS_TONE: Record<IntakeStatus, Tone> = {
   queued: 'grey',
   normalising: 'blue',

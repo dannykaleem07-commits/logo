@@ -22,11 +22,7 @@ import { NeedsYouPage } from '../screens/needsYou/NeedsYouPage';
 import { AgentsPage } from '../screens/agents/AgentsPage';
 import { DailyLogPage } from '../screens/dailyLog/DailyLogPage';
 import { OutboxPage } from '../screens/outbox/OutboxPage';
-// Smart intake — case bundles (docs/SMART-INTAKE.md §11.1): /intake opens on the bundles; the per-file screen is its second tab.
-import { IntakeHome } from '../screens/intake/IntakeHome';
-import { NewBundlePage } from '../screens/intake/bundles/NewBundlePage';
-import { BundlePage } from '../screens/intake/bundles/BundlePage';
-import { IntakeSettingsPage } from '../screens/settings/intake/IntakeSettingsPage';
+import { IntakePage } from '../screens/intake/IntakePage';
 import { AiSettingsPage } from '../screens/settings/ai/AiSettingsPage';
 import { EmailSettingsPage } from '../screens/settings/email/EmailSettingsPage';
 import { AutonomySettingsPage } from '../screens/settings/autonomy/AutonomySettingsPage';
@@ -89,10 +85,7 @@ export const routes: RouteObject[] = [
       { path: 'daily-log', element: <DailyLogPage /> },
       { path: 'outbox', element: <OutboxPage /> },
       { path: 'outbox/:id', element: <OutboxPage /> },
-      { path: 'intake', element: <IntakeHome /> },
-      { path: 'intake/bundles/new', element: <NewBundlePage /> },
-      { path: 'intake/bundles/:id', element: <BundlePage /> },
-      { path: 'settings/intake', element: <IntakeSettingsPage /> },
+      { path: 'intake', element: <IntakePage /> },
       { path: 'settings/ai', element: <AiSettingsPage /> },
       { path: 'settings/email', element: <EmailSettingsPage /> },
       { path: 'settings/autonomy', element: <AutonomySettingsPage /> },

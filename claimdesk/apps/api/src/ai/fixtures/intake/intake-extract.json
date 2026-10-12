@@ -96,11 +96,7 @@
           "quote": "Taxation class PETROL CAR"
         }
       ],
-      "warnings": [],
-      "documentDate": null,
-      "docSide": null,
-      "photo": null,
-      "segments": []
+      "warnings": []
     },
     "usage": {
       "inputTokens": 2400,
@@ -244,11 +240,7 @@
           "quote": "I was waiting at the lights"
         }
       ],
-      "warnings": [],
-      "documentDate": null,
-      "docSide": null,
-      "photo": null,
-      "segments": []
+      "warnings": []
     }
   },
   {
@@ -276,11 +268,7 @@
           "quote": "Our ref: EXI/2026/0042"
         }
       ],
-      "warnings": [],
-      "documentDate": null,
-      "docSide": null,
-      "photo": null,
-      "segments": []
+      "warnings": []
     }
   },
   {
@@ -332,11 +320,7 @@
           "quote": "8. 12 HIGH STREET, READING RG1 1AA"
         }
       ],
-      "warnings": [],
-      "documentDate": null,
-      "docSide": null,
-      "photo": null,
-      "segments": []
+      "warnings": []
     },
     "usage": {
       "inputTokens": 1600,
@@ -392,15 +376,30 @@
           "quote": "TOTAL INC VAT 1,920.00"
         }
       ],
-      "warnings": [],
-      "documentDate": null,
-      "docSide": null,
-      "photo": null,
-      "segments": []
+      "warnings": []
     },
     "usage": {
       "inputTokens": 2200,
       "outputTokens": 280
+    }
+  },
+  {
+    "id": "intake-attachment-image",
+    "match": {
+      "jobType": "intake.extract",
+      "agent": "intake",
+      "userContains": [
+        "[intake:image]"
+      ]
+    },
+    "outcome": "ok",
+    "result": {
+      "docType": "damage_photo",
+      "docTypeConfidence": 0.8,
+      "summary": "Invented photo of rear damage (synthetic test fixture).",
+      "formTemplateId": null,
+      "fields": [],
+      "warnings": []
     }
   },
   {

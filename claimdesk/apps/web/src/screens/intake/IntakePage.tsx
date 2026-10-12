@@ -17,7 +17,7 @@ import { useToast } from '../../components/Toast';
 import { useClaims } from '../../api/hooks';
 import { addIntakeFiles, IN_PROGRESS, useIntakeItem, useIntakeList, useIntakeMutations, type IntakeItemDetail, type IntakeItemRow, type Proposal } from '../../api/intakeApi';
 import { sizeText } from '../../api/uploads';
-import { itemStatusLabel, waitingText, canStartClaim, confidenceTone, evidenceFileUrl, fieldRows, FILTERS, filterItems, pct, previewKind, PROPOSAL_STATUS_LABEL, proposalNote, STATUS_LABEL, STATUS_TONE, type FieldRow, type IntakeFilter } from './intakeModel';
+import { waitingText, canStartClaim, confidenceTone, evidenceFileUrl, fieldRows, FILTERS, filterItems, pct, previewKind, PROPOSAL_STATUS_LABEL, proposalNote, STATUS_LABEL, STATUS_TONE, type FieldRow, type IntakeFilter } from './intakeModel';
 import './intake.css';
 
 function ConfidenceBar({ value }: { value: number }) {
@@ -313,7 +313,7 @@ function ItemList({ items, selected, onSelect, checked, onCheck }: { items: Inta
                   {waitingText(i.waiting)!.badge}
                 </Badge>
               ) : (
-                <Badge tone={STATUS_TONE[i.status]}>{IN_PROGRESS.has(i.status) ? `${STATUS_LABEL[i.status]}…` : itemStatusLabel(i)}</Badge>
+                <Badge tone={STATUS_TONE[i.status]}>{IN_PROGRESS.has(i.status) ? `${STATUS_LABEL[i.status]}…` : STATUS_LABEL[i.status]}</Badge>
               )}
             </span>
             <span className="small">

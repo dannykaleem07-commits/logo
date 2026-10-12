@@ -34,8 +34,6 @@ export const AI_JOB_DEFAULTS: Readonly<Partial<Record<JobType, AiJobModel & { ag
   'knowledge.research_web': { agent: 'researcher', model: 'claude-sonnet-5-5', effort: 'medium', maxTurns: 12, timeoutMs: 10 * 60_000 },
   'knowledge.curate': { agent: 'researcher', model: 'claude-opus-5-5', effort: 'medium', maxTurns: 6, timeoutMs: 8 * 60_000 },
   'knowledge.replay_drafts': { agent: 'drafter', model: 'claude-opus-5-5', effort: 'medium', maxTurns: 8, timeoutMs: 10 * 60_000 },
-  // Smart intake (docs/SMART-INTAKE.md §6.2): reads every document of a case bundle together; no tools.
-  'intake.bundle_reason': { agent: 'intake', model: 'claude-opus-5-5', effort: 'medium', maxTurns: 1, timeoutMs: 8 * 60_000 },
 };
 
 export interface ModelPrice {

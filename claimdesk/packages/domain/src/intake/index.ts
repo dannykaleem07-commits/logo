@@ -4,6 +4,3 @@ export type { FnolInput, FnolWitness, FnolOfferDetails, FnolIssue, FnolValidatio
 
 export { intakeScript, assertScriptGuard, scriptText, recordingDisclosureText, GUARD_QUESTION, BANNED_SCRIPT_PATTERNS } from './script.js';
 export type { ScriptStep, ScriptGuardViolation, ScriptGuardResult } from './script.js';
-
-// Smart intake — case bundles (docs/SMART-INTAKE.md §4): pure modules for the bundle engine.
-export * from './smart/index.js';

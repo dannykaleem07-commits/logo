@@ -248,8 +248,6 @@ export const DOC_TYPE_LABELS: Readonly<Record<DocType, string>> = {
   payslip: 'Payslip',
   mot_certificate: 'MOT certificate',
   correspondence: 'Correspondence',
-  witness_statement: 'Witness statement',
-  proof_of_address: 'Proof of address',
   other: 'Document',
 };
 

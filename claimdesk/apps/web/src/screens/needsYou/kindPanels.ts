@@ -13,7 +13,6 @@ import { ApprovePackPanel } from './panels/ApprovePackPanel';
 import { ConfirmSignedPanel } from './panels/ConfirmSignedPanel';
 import { ClashReviewPanel } from './panels/ClashReviewPanel';
 import { EligibilityReviewPanel } from './panels/EligibilityReviewPanel';
-import { BundleReadyPanel } from './panels/BundleReadyPanel';
 
 export type { NeedsYouPanelProps };
 
@@ -24,7 +23,6 @@ export const KIND_PANELS: Readonly<Partial<Record<NeedsYouKind, ComponentType<Ne
   confirm_signed: ConfirmSignedPanel, // ap-paperwork
   clash_review: ClashReviewPanel, // ap-clash
   eligibility_review: EligibilityReviewPanel, // ap-clash
-  new_claim: BundleReadyPanel, // intake-web: renders only for case bundles (payload.bundleId), else nothing
 };
 
 /** The registered panel for a kind, if any. */

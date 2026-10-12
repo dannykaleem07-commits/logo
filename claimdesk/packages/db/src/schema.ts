@@ -90,7 +90,6 @@ import type {
   AutopilotOverride,
   AutopilotPlan,
   AutopilotSettings,
-  IntakeSettings,
   AvailabilityCandidate,
   ClaimAutopilotMode,
   ClashFinding,
@@ -1201,8 +1200,6 @@ export const agentSettings = sqliteTable('agent_settings', {
   checklist: text('checklist', { mode: 'json' }).$type<Partial<ChecklistState>>().notNull(),
   /** Autopilot settings (migration 0013_autopilot): merged over DEFAULT_AUTOPILOT_SETTINGS on read. */
   autopilot: text('autopilot', { mode: 'json' }).$type<Partial<AutopilotSettings>>().notNull().default({}),
-  /** Settings > Intake (migration 0015_smart_intake): merged over DEFAULT_INTAKE_SETTINGS on read. */
-  intake: text('intake', { mode: 'json' }).$type<Partial<IntakeSettings>>().notNull().default({}),
   updatedAt: text('updated_at').notNull(),
   updatedBy: text('updated_by').notNull(),
 });
@@ -1572,8 +1569,6 @@ export const intakeExtractions = sqliteTable(
     fields: text('fields', { mode: 'json' }).$type<unknown>().notNull(),
     summary: text('summary'),
     warnings: text('warnings', { mode: 'json' }).$type<string[]>().notNull(),
-    /** Smart intake (0015): {engine:'ai'|'rules', documentDate, docSide, photo, segments, pdfMeta}. */
-    extras: text('extras', { mode: 'json' }).$type<unknown>(),
     createdAt: text('created_at').notNull(),
   },
   (t) => [index('intake_extractions_item_idx').on(t.intakeItemId, t.createdAt)],
@@ -2547,122 +2542,3 @@ export type KnowledgeUsageRowDb = typeof knowledgeUsage.$inferSelect;
 export type EvalCaseRow = typeof evalCases.$inferSelect;
 export type EvalRunRow = typeof evalRuns.$inferSelect;
 export type KnowledgeAlarmRow = typeof knowledgeAlarms.$inferSelect;
-
-// --- 0015 smart intake (docs/SMART-INTAKE.md §3; owned by intake-server) -------------------------------------------
-// Case bundles. Decisions, AI reasonings and damage observations are append-only (triggers in 0015).
-
-export const intakeBundles = sqliteTable(
-  'intake_bundles',
-  {
-    id: text('id').primaryKey(),
-    name: text('name').notNull(),
-    status: text('status').notNull(),
-    source: text('source').notNull(),
-    folderKey: text('folder_key'),
-    parentBundleId: text('parent_bundle_id'),
-    splitFromGroup: text('split_from_group'),
-    claimId: text('claim_id'),
-    outcome: text('outcome'),
-    revision: integer('revision').notNull().default(0),
-    computedRevision: integer('computed_revision'),
-    computed: text('computed', { mode: 'json' }).$type<unknown>(),
-    reasoningStatus: text('reasoning_status').notNull().default('none'),
-    reasoningFileset: text('reasoning_fileset'),
-    autoEligible: integer('auto_eligible', { mode: 'boolean' }).notNull().default(false),
-    needsYouId: text('needs_you_id'),
-    error: text('error'),
-    createdBy: text('created_by').notNull(),
-    createdAt: text('created_at').notNull(),
-    updatedAt: text('updated_at').notNull(),
-    closedBy: text('closed_by'),
-    closedAt: text('closed_at'),
-  },
-  (t) => [index('intake_bundles_status_idx').on(t.status, t.updatedAt), index('intake_bundles_claim_idx').on(t.claimId)],
-);
-
-export const intakeBundleFiles = sqliteTable(
-  'intake_bundle_files',
-  {
-    id: text('id').primaryKey(),
-    bundleId: text('bundle_id').notNull(),
-    intakeItemId: text('intake_item_id').notNull(),
-    evidenceId: text('evidence_id').notNull(),
-    parentFileId: text('parent_file_id'),
-    position: integer('position').notNull(),
-    role: text('role').notNull().default('document'),
-    pageFrom: integer('page_from'),
-    pageTo: integer('page_to'),
-    phash: text('phash'),
-    facts: text('facts', { mode: 'json' }).$type<unknown>(),
-    filedEvidenceId: text('filed_evidence_id'),
-    filedClaimId: text('filed_claim_id'),
-    filedKind: text('filed_kind'),
-    filedAt: text('filed_at'),
-    addedBy: text('added_by').notNull(),
-    addedAt: text('added_at').notNull(),
-    updatedAt: text('updated_at').notNull(),
-  },
-  (t) => [uniqueIndex('intake_bundle_files_item_uq').on(t.bundleId, t.intakeItemId), index('intake_bundle_files_bundle_idx').on(t.bundleId, t.position), index('intake_bundle_files_item_idx').on(t.intakeItemId)],
-);
-
-/** Append-only. */
-export const intakeBundleDecisions = sqliteTable(
-  'intake_bundle_decisions',
-  {
-    id: text('id').primaryKey(),
-    bundleId: text('bundle_id').notNull(),
-    revision: integer('revision').notNull(),
-    kind: text('kind').notNull(),
-    subject: text('subject'),
-    before: text('before', { mode: 'json' }).$type<unknown>(),
-    after: text('after', { mode: 'json' }).$type<unknown>(),
-    note: text('note'),
-    actor: text('actor').notNull(),
-    runId: text('run_id'),
-    at: text('at').notNull(),
-  },
-  (t) => [index('intake_bundle_decisions_bundle_idx').on(t.bundleId, t.at)],
-);
-
-/** Append-only. */
-export const intakeBundleReasonings = sqliteTable(
-  'intake_bundle_reasonings',
-  {
-    id: text('id').primaryKey(),
-    bundleId: text('bundle_id').notNull(),
-    fileset: text('fileset').notNull(),
-    engine: text('engine').notNull(),
-    runId: text('run_id'),
-    result: text('result', { mode: 'json' }).$type<unknown>().notNull(),
-    checks: text('checks', { mode: 'json' }).$type<unknown>().notNull(),
-    createdAt: text('created_at').notNull(),
-  },
-  (t) => [index('intake_bundle_reasonings_bundle_idx').on(t.bundleId, t.createdAt)],
-);
-
-/** Append-only. The unique index on (claim, coalesce(evidence), zone, source, coalesce(bundle)) is in 0015 (expression index). */
-export const claimDamageObservations = sqliteTable(
-  'claim_damage_observations',
-  {
-    id: text('id').primaryKey(),
-    claimId: text('claim_id').notNull(),
-    evidenceId: text('evidence_id'),
-    zoneId: text('zone_id').notNull(),
-    severity: integer('severity').notNull(),
-    confidence: real('confidence').notNull(),
-    source: text('source').notNull(),
-    bundleId: text('bundle_id'),
-    runId: text('run_id'),
-    createdBy: text('created_by').notNull(),
-    createdAt: text('created_at').notNull(),
-  },
-  (t) => [index('claim_damage_obs_claim_idx').on(t.claimId, t.createdAt)],
-);
-
-export type IntakeBundleRow = typeof intakeBundles.$inferSelect;
-export type IntakeBundleInsert = typeof intakeBundles.$inferInsert;
-export type IntakeBundleFileRow = typeof intakeBundleFiles.$inferSelect;
-export type IntakeBundleFileInsert = typeof intakeBundleFiles.$inferInsert;
-export type IntakeBundleDecisionRow = typeof intakeBundleDecisions.$inferSelect;
-export type IntakeBundleReasoningRow = typeof intakeBundleReasonings.$inferSelect;
-export type ClaimDamageObservationRow = typeof claimDamageObservations.$inferSelect;

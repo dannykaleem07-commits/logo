@@ -92,8 +92,7 @@ describe('agent vocabulary', () => {
     expect(JOB_TYPE_INFO['outbox.release']).toMatchObject({ lane: 'io', defaultPriority: 0 });
   });
   it('field targets are the closed §G.4 set', () => {
-    // 4 claim targets of §G.4 + 7 added by smart intake (docs/SMART-INTAKE.md §5.1)
-    expect(FIELD_TARGETS).toHaveLength(4 + 7 + 4 * 6 + 4 * 6);
+    expect(FIELD_TARGETS).toHaveLength(4 + 4 * 6 + 4 * 6);
     expect(isFieldTarget('vehicle:client.vin')).toBe(true);
     expect(isFieldTarget('party:driver.drivingLicenceNumber')).toBe(true);
     expect(isFieldTarget('claim.status')).toBe(false);

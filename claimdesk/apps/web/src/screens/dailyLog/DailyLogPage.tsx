@@ -139,12 +139,6 @@ export function DailyLogPage() {
           <Card title={`Problems (${log.sections.problems.length})`}>
             <Lines lines={log.sections.problems} empty="No problems." />
           </Card>
-          {log.sections.intake && log.sections.intake.length > 0 && (
-            // intake-web (docs/SMART-INTAKE.md §12): bundles read, registered, attached; requests prepared
-            <Card title={`Intake (${log.sections.intake.length})`} actions={<Link to="/intake">Open Intake</Link>}>
-              <Lines lines={log.sections.intake} empty="No intake activity." />
-            </Card>
-          )}
           <KnowledgeDigestSection sections={log.sections} />
         </div>
       )}

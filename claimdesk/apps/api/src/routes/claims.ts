@@ -37,15 +37,6 @@ function resolveRefsForValidation(ctx: AppContext, n: NormalisedFnol): ResolvedR
   return { claimant: party(n.claimant), vehicle: vehicle(n.vehicle), thirdPartyVehicle: vehicle(n.thirdPartyVehicle), clientInsurer: party(n.clientInsurer), atFaultInsurer: party(n.atFaultInsurer) };
 }
 
-/**
- * The FNOL validation `createClaimFromFnol` would run on this body, without writing anything (smart intake §6.6–6.7:
- * the case-bundle register panel shows the same errors and warnings a person would get from POST /claims).
- */
-export function previewFnolValidation(ctx: AppContext, body: CreateClaimBody): FnolValidation {
-  const n = normaliseFnol(body);
-  return validateFnolInput(toFnolInput(n, resolveRefsForValidation(ctx, n)));
-}
-
 function resolveVehicle(ctx: AppContext, tx: Db, ref: VehicleRef, ownership: Vehicle['ownership'], actor: Actor, now: string): Vehicle {
   if ('id' in ref) return ctx.repos.requireVehicle(tx, ref.id);
   const { odometer, source, ...fields } = ref;

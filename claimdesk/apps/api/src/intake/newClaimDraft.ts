@@ -36,10 +36,9 @@ export interface NewClaimDraftBody {
   claimant?: { kind: 'individual'; name?: string; phone?: string; email?: string; dateOfBirth?: string; drivingLicenceNumber?: string; address?: { line1: string; line2?: string; town?: string; postcode: string }; roles: Array<'claimant' | 'driver'> };
   driver?: { kind: 'individual'; name?: string; phone?: string; email?: string; dateOfBirth?: string; drivingLicenceNumber?: string; address?: { line1: string; line2?: string; town?: string; postcode: string }; roles: Array<'driver'> };
   vehicle?: { registration?: string; vin?: string; make?: string; model?: string; monthOfFirstRegistration?: string; colour?: string; ownership: 'client' };
-  accident?: { occurredAt?: string; location?: string; postcode?: string; policeReference?: string; circumstances?: string };
+  accident?: { occurredAt?: string; location?: string };
   atFaultInsurerRef?: string;
-  thirdParty?: { registration?: string; driverName?: string; insurerPolicyNumber?: string; contact?: string; insurerName?: string };
-  clientInsurer?: { name?: string; policyNumber?: string };
+  thirdParty?: { registration?: string; driverName?: string; insurerPolicyNumber?: string; contact?: string };
 }
 
 export interface NewClaimDraft {
@@ -66,13 +65,6 @@ const PATHS: Record<string, string> = {
   'vehicle:third_party.registration': 'thirdParty.registration',
   'party:third_party.name': 'thirdParty.driverName',
   'party:third_party.phone': 'thirdParty.contact',
-  // smart intake (docs/SMART-INTAKE.md §5.1)
-  'claim.accident.postcode': 'accident.postcode',
-  'claim.accident.policeReference': 'accident.policeReference',
-  'claim.accident.circumstances': 'accident.circumstances',
-  'claim.atFaultInsurerName': 'thirdParty.insurerName',
-  'claim.clientInsurerName': 'clientInsurer.name',
-  'claim.clientPolicyNumber': 'clientInsurer.policyNumber',
 };
 for (const role of ['client', 'claimant', 'driver']) {
   for (const f of ['vin', 'registration', 'make', 'model', 'colour']) PATHS[`vehicle:${role}.${f}`] = `vehicle.${f}`;
@@ -140,7 +132,7 @@ export function buildNewClaimDraft(ctx: AppContext, itemIds: string[], createdBy
   for (const itemId of ids) {
     const item = ctx.repos.getIntakeItem(ctx.db, itemId);
     if (!item) throw notFound('intake item', itemId);
-    const ex = ctx.repos.bestIntakeExtraction(ctx.db, itemId);
+    const ex = ctx.repos.latestIntakeExtraction(ctx.db, itemId);
     if (!ex) continue;
     const fields = (Array.isArray(ex.fields) ? ex.fields : []) as ExtractedField[];
     const docType = item.docType ?? null;

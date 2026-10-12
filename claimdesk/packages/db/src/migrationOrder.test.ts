@@ -66,16 +66,6 @@ describe('migration journal (guard 1)', () => {
   });
 });
 
-describe('0015_smart_intake (docs/SMART-INTAKE.md §3.1)', () => {
-  it('takes `when` 1792450000000 and is the last migration, after 0014_knowledge', () => {
-    const smart = journal.entries.find((e) => e.tag === '0015_smart_intake');
-    expect(smart?.when).toBe(1792450000000);
-    expect(journal.entries.at(-1)?.tag).toBe('0015_smart_intake');
-    const knowledge = journal.entries.find((e) => e.tag === '0014_knowledge');
-    expect(smart!.when).toBeGreaterThan(knowledge!.when);
-  });
-});
-
 describe('runMigrations order guard (guard 2)', () => {
   it('does nothing special for a new database or an in-order upgrade', () => {
     const h = createDatabase({ path: ':memory:' });

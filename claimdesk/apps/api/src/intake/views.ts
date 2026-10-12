@@ -55,7 +55,7 @@ export function itemWaiting(ctx: AppContext, item: IntakeItemRecord): { reason: 
 export function itemRow(ctx: AppContext, item: IntakeItemRecord) {
   const ev = ctx.repos.getEvidence(ctx.db, item.evidenceId);
   const claim = item.claimId ? ctx.repos.getClaim(ctx.db, item.claimId) : undefined;
-  const latest = ctx.repos.bestIntakeExtraction(ctx.db, item.id);
+  const latest = ctx.repos.latestIntakeExtraction(ctx.db, item.id);
   const proposals = ctx.repos.listClaimUpdateProposals(ctx.db, { intakeItemId: item.id });
   const count = (s: ClaimUpdateProposalRecord['status']) => proposals.filter((p) => p.status === s).length;
   const { normalised, ...rest } = item;

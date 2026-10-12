@@ -6,8 +6,7 @@
  *                       (immutable), after = the owner's edited body (the resolution edits, else the outbox body)
  *   owner_reject        the same cards rejected with a reason (stored for context; not clustered)
  *   document_supersede  a document a person wrote that supersedes a document an agent drafted
- *   memory_item         a `correction` memory item whose Needs-you card was not captured above (cross-check), and
- *                       smart-intake field corrections (target kind `intake_field`, template `intake:<docType>`)
+ *   memory_item         a `correction` memory item whose Needs-you card was not captured above (cross-check)
  * The Phase 1 approve_send payload already carries the original text, so no capture is added to the mail resolver.
  *
  * Each correction stores the token diff, its stats and categories and a cluster key; a cluster with at least 3 new
@@ -111,16 +110,7 @@ export function captureCorrections(ctx: AppContext): CaptureResult {
     wMem.lastId ?? '',
   );
   for (const m of mems) {
-    const d = json<{ needsYouId?: string; kind?: string; before?: { email?: { bodyText?: string; kind?: string }; intakeField?: { key?: string; value?: unknown; docType?: string | null; engine?: string | null } }; after?: { bodyText?: unknown; intakeField?: { key?: string; value?: unknown } }; note?: string | null }>(m.data) ?? {};
-    // Smart intake (docs/SMART-INTAKE.md §6.12): the owner changed a value read from a bundle's documents.
-    const field = d.before?.intakeField;
-    if (field && typeof field.key === 'string') {
-      const claimId = m.scope.startsWith('claim:') ? m.scope.slice(6) : null;
-      const beforeText = `${field.key}: ${maskText(String(field.value ?? ''))}`;
-      const afterText = `${field.key}: ${maskText(String(d.after?.intakeField?.value ?? ''))}`;
-      save(build(ctx, { source: 'memory_item', sourceId: m.id, needsYouId: d.needsYouId ?? null, claimId, targetKind: 'intake_field', targetId: null, agent: 'intake', templateId: `intake:${field.docType ?? 'other'}`, emailKind: null, insurerSlug: claimId ? (slugs.get(claimId) ?? null) : null, beforeText, afterText, ownerNote: d.note ?? null }, { cluster: true }));
-      continue;
-    }
+    const d = json<{ needsYouId?: string; kind?: string; before?: { email?: { bodyText?: string; kind?: string } }; after?: { bodyText?: unknown }; note?: string | null }>(m.data) ?? {};
     if (!d.needsYouId || ctx.repos.hasCorrectionSource(ctx.db, 'needs_you_edit', d.needsYouId) || ctx.repos.hasCorrectionSource(ctx.db, 'owner_reject', d.needsYouId)) continue;
     const before = d.before?.email?.bodyText;
     const after = d.after?.bodyText;

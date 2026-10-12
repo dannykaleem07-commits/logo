@@ -72,11 +72,6 @@ export const JOB_TYPES = [
   'knowledge.replay',
   'knowledge.replay_drafts',
   'knowledge.drift',
-  // Smart intake (docs/SMART-INTAKE.md §7.1)
-  'intake.split',
-  'intake.bundle_reconcile',
-  'intake.bundle_reason',
-  'intake.bundle_register',
 ] as const;
 export type JobType = (typeof JOB_TYPES)[number];
 
@@ -185,15 +180,7 @@ export const JOB_TYPE_INFO: Readonly<Record<JobType, JobTypeInfo>> = {
   'knowledge.replay': { lane: 'cpu', usesAi: false, mutatesClaim: false, defaultPriority: 6, agent: 'supervisor' },
   'knowledge.replay_drafts': { lane: 'ai', usesAi: true, mutatesClaim: false, defaultPriority: 8, agent: 'drafter' },
   'knowledge.drift': { lane: 'io', usesAi: false, mutatesClaim: false, defaultPriority: 7, agent: 'supervisor' },
-  // Smart intake (docs/SMART-INTAKE.md §7.1): `intake.bundle_register` has no claim at enqueue (the claim does not exist yet)
-  'intake.split': { lane: 'cpu', usesAi: false, mutatesClaim: false, defaultPriority: 3, agent: 'intake' },
-  'intake.bundle_reconcile': { lane: 'cpu', usesAi: false, mutatesClaim: false, defaultPriority: 3, agent: 'intake' },
-  'intake.bundle_reason': { lane: 'ai', usesAi: true, mutatesClaim: false, defaultPriority: 3, agent: 'intake' },
-  'intake.bundle_register': { lane: 'io', usesAi: false, mutatesClaim: true, defaultPriority: 2, agent: 'intake' },
 };
-
-/** The smart-intake job types (docs/SMART-INTAKE.md §7.1), handled by agent/handlers/intake.ts. */
-export const SMART_INTAKE_JOB_TYPES: readonly JobType[] = ['intake.split', 'intake.bundle_reconcile', 'intake.bundle_reason', 'intake.bundle_register'];
 
 // ---------------------------------------------------------------------------
 // Tools (§B.3, §B.4)
@@ -427,44 +414,15 @@ export type DocType =
   | 'payslip'
   | 'mot_certificate'
   | 'correspondence'
-  // Smart intake (docs/SMART-INTAKE.md §4.2)
-  | 'witness_statement'
-  | 'proof_of_address'
   | 'other';
 export const DOC_TYPES: readonly DocType[] = [
   'v5c', 'driving_licence', 'insurance_certificate', 'police_report', 'fnol_form', 'insurer_letter', 'engineer_report', 'bodyshop_estimate', 'audatex_estimate',
-  'invoice', 'damage_photo', 'vehicle_photo_other', 'signed_ccguk_form', 'bank_statement', 'payslip', 'mot_certificate', 'correspondence',
-  'witness_statement', 'proof_of_address', 'other',
+  'invoice', 'damage_photo', 'vehicle_photo_other', 'signed_ccguk_form', 'bank_statement', 'payslip', 'mot_certificate', 'correspondence', 'other',
 ];
 
 export type FieldRole = 'client' | 'third_party' | 'claimant' | 'driver';
 export const FIELD_ROLES: readonly FieldRole[] = ['client', 'third_party', 'claimant', 'driver'];
-export type ClaimFieldTarget =
-  | 'claim.accident.occurredAt'
-  | 'claim.accident.location'
-  | 'claim.atFaultInsurerRef'
-  | 'claim.thirdPartyPolicyNumber'
-  // Smart intake (docs/SMART-INTAKE.md §5.1)
-  | 'claim.accident.circumstances'
-  | 'claim.accident.postcode'
-  | 'claim.accident.policeReference'
-  | 'claim.accident.injuries'
-  | 'claim.atFaultInsurerName'
-  | 'claim.clientInsurerName'
-  | 'claim.clientPolicyNumber';
-export const CLAIM_FIELD_TARGETS: readonly ClaimFieldTarget[] = [
-  'claim.accident.occurredAt',
-  'claim.accident.location',
-  'claim.atFaultInsurerRef',
-  'claim.thirdPartyPolicyNumber',
-  'claim.accident.circumstances',
-  'claim.accident.postcode',
-  'claim.accident.policeReference',
-  'claim.accident.injuries',
-  'claim.atFaultInsurerName',
-  'claim.clientInsurerName',
-  'claim.clientPolicyNumber',
-];
+export type ClaimFieldTarget = 'claim.accident.occurredAt' | 'claim.accident.location' | 'claim.atFaultInsurerRef' | 'claim.thirdPartyPolicyNumber';
 export type VehicleField = 'vin' | 'registration' | 'make' | 'model' | 'firstRegistered' | 'colour';
 export type PartyField = 'name' | 'address' | 'phone' | 'email' | 'dateOfBirth' | 'drivingLicenceNumber';
 export const VEHICLE_FIELDS: readonly VehicleField[] = ['vin', 'registration', 'make', 'model', 'firstRegistered', 'colour'];
@@ -474,21 +432,18 @@ export const PARTY_FIELDS: readonly PartyField[] = ['name', 'address', 'phone', 
 export type FieldTarget = ClaimFieldTarget | `vehicle:${FieldRole}.${VehicleField}` | `party:${FieldRole}.${PartyField}`;
 
 export const FIELD_TARGETS: readonly FieldTarget[] = [
-  ...CLAIM_FIELD_TARGETS,
+  'claim.accident.occurredAt',
+  'claim.accident.location',
+  'claim.atFaultInsurerRef',
+  'claim.thirdPartyPolicyNumber',
   ...FIELD_ROLES.flatMap((r) => VEHICLE_FIELDS.map((f) => `vehicle:${r}.${f}` as FieldTarget)),
   ...FIELD_ROLES.flatMap((r) => PARTY_FIELDS.map((f) => `party:${r}.${f}` as FieldTarget)),
 ];
 export const isFieldTarget = (v: unknown): v is FieldTarget => typeof v === 'string' && (FIELD_TARGETS as readonly string[]).includes(v);
 
-/**
- * Fields that always need the owner's confirmation (§G.2 step 5): DOB, licence number, policy numbers, and (smart
- * intake §5.1) the client's account of the circumstances and the injuries answer.
- */
+/** Fields that always need the owner's confirmation (§G.2 step 5): DOB, licence number, policy number. */
 export const SENSITIVE_FIELD_TARGETS: ReadonlySet<FieldTarget> = new Set<FieldTarget>([
   'claim.thirdPartyPolicyNumber',
-  'claim.accident.circumstances',
-  'claim.accident.injuries',
-  'claim.clientPolicyNumber',
   ...FIELD_ROLES.flatMap((r) => [`party:${r}.dateOfBirth` as FieldTarget, `party:${r}.drivingLicenceNumber` as FieldTarget]),
 ]);
 

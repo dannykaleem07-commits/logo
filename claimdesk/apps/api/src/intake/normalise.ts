@@ -9,12 +9,10 @@
  *  - DOCX: plain text through the existing scanner in @ccguk/documents (`docxToPlainText`).
  *  - EML: the message (headers + text body) plus its attachments, each of which becomes a child intake item.
  *  - Plain text: as it is.
- *  - ZIP: unpacked by the pipeline (intake/archive.ts, smart intake §5.2); the archive item itself stays skipped.
- *  - Audio (Calls), CAB/Jet/SQLite (engineer data), MSG and the rest: skipped with the reason (Phase 2 or never).
+ *  - Audio (Calls), CAB/Jet/SQLite (engineer data), MSG, ZIP and the rest: skipped with the reason (Phase 2 or never).
  */
 import { createHash } from 'node:crypto';
 import { docxToPlainText } from '@ccguk/documents';
-import type { PdfMeta } from '@ccguk/domain';
 import { MODEL_IMAGE_KINDS, sniff, type SniffedKind, type SniffedType } from './sniff.js';
 
 /** Cap on the text kept per item (the model sees at most this). */
@@ -41,7 +39,7 @@ export interface NormalisedAttachment {
 
 /** What is stored on the intake item (`normalised` JSON). Raw attachment bytes are not part of it. */
 export interface NormalisedDoc {
-  kind: 'pdf' | 'image' | 'docx' | 'email' | 'text' | 'heic' | 'skipped' | 'archive';
+  kind: 'pdf' | 'image' | 'docx' | 'email' | 'text' | 'heic' | 'skipped';
   sniffed: SniffedKind;
   mime: string;
   extensionMatches: boolean;
@@ -62,18 +60,6 @@ export interface NormalisedDoc {
   newClaimDraftId?: string;
   /** Built-in form id the extractor reported. */
   formTemplateId?: string | null;
-  /** Smart intake (docs/SMART-INTAKE.md §5.2): PDF metadata (producer, dates, incremental saves) and page sizes (pt). */
-  pdfMeta?: PdfMeta;
-  pageSizes?: Array<{ w: number; h: number }>;
-  /** Photos: 64-bit difference hash and pixel count. */
-  phash?: string;
-  pixels?: number;
-  /** Photos: GPS position read from EXIF (when the evidence summary has none). */
-  gps?: { lat: number; lon: number };
-  /** ZIP archives: what happened to each entry (the archive item itself stays `skipped`, labelled "Unpacked"). */
-  entries?: Array<{ name: string; bytes: number; outcome: 'item' | 'skipped'; reason?: string }>;
-  /** Text that looks aimed at an AI (code check over the document text; treated as data only). */
-  injectionFlags?: string[];
 }
 
 export interface NormaliseResult {
@@ -97,6 +83,7 @@ const SKIP_REASONS: Partial<Record<SniffedKind, string>> = {
   msg: 'Outlook .msg files are read in Phase 2 — save the message as .eml (File → Save As) or forward it to the claims mailbox',
   ole: 'Old Office (.doc/.xls) files cannot be read yet — save as .docx or PDF',
   xlsx: 'Spreadsheets are not read by intake',
+  zip: 'A ZIP archive is not unpacked by intake — extract it and add the files',
   unknown: 'The file type was not recognised',
 };
 
@@ -126,54 +113,16 @@ function capPages(pages: string[]): { pages: string[]; truncated: boolean; chars
 
 const sha = (text: string): string => createHash('sha256').update(text, 'utf8').digest('hex');
 
-/** "D:20261007120000+01'00'" (PDF date) → ISO, else null. */
-export function pdfDateToIso(raw: unknown): string | null {
-  if (typeof raw !== 'string') return null;
-  const m = /^(?:D:)?(\d{4})(\d{2})?(\d{2})?(\d{2})?(\d{2})?(\d{2})?(Z|[+-]\d{2}'?\d{2}'?)?/.exec(raw.trim());
-  if (!m) return null;
-  const [, y, mo = '01', d = '01', h = '00', mi = '00', se = '00', tz] = m;
-  let offset = 'Z';
-  if (tz && tz !== 'Z') {
-    const t = tz.replace(/'/g, '');
-    offset = `${t.slice(0, 3)}:${t.slice(3, 5) || '00'}`;
-  }
-  const t = Date.parse(`${y}-${mo}-${d}T${h}:${mi}:${se}${offset}`);
-  return Number.isNaN(t) ? null : new Date(t).toISOString();
-}
-
-/** Number of `%%EOF` markers in the bytes (an incremental save appends one each time). */
-export function eofCount(bytes: Buffer): number {
-  let n = 0;
-  const marker = Buffer.from('%%EOF', 'latin1');
-  for (let i = bytes.indexOf(marker); i >= 0; i = bytes.indexOf(marker, i + 5)) n += 1;
-  return n;
-}
-
 /** Per-page text of a PDF with pdfjs-dist (legacy build). Throws on an unreadable / encrypted PDF. */
 export async function pdfText(bytes: Buffer, maxPages = MAX_TEXT_PAGES): Promise<{ numPages: number; pages: string[] }> {
-  const r = await pdfInfo(bytes, maxPages);
-  return { numPages: r.numPages, pages: r.pages };
-}
-
-/** Per-page text, page sizes and metadata of a PDF (smart intake §5.2). */
-export async function pdfInfo(bytes: Buffer, maxPages = MAX_TEXT_PAGES): Promise<{ numPages: number; pages: string[]; sizes: Array<{ w: number; h: number }>; meta: PdfMeta }> {
   const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
   // pdfjs transfers the buffer it is given: hand it a copy.
   const task = pdfjs.getDocument({ data: new Uint8Array(bytes), disableFontFace: true, useSystemFonts: false, verbosity: 0 });
   try {
     const doc = await task.promise;
     const pages: string[] = [];
-    const sizes: Array<{ w: number; h: number }> = [];
-    let info: Record<string, unknown> = {};
-    try {
-      info = ((await doc.getMetadata()).info ?? {}) as Record<string, unknown>;
-    } catch {
-      info = {};
-    }
     for (let i = 1; i <= Math.min(doc.numPages, maxPages); i += 1) {
       const page = await doc.getPage(i);
-      const vp = page.getViewport({ scale: 1 });
-      sizes.push({ w: Math.round(vp.width), h: Math.round(vp.height) });
       const content = await page.getTextContent();
       let text = '';
       for (const item of content.items as Array<{ str?: string; hasEOL?: boolean }>) {
@@ -183,15 +132,7 @@ export async function pdfInfo(bytes: Buffer, maxPages = MAX_TEXT_PAGES): Promise
       pages.push(clean(text));
       page.cleanup();
     }
-    const str = (v: unknown) => (typeof v === 'string' && v.trim() ? v.trim().slice(0, 200) : null);
-    const meta: PdfMeta = {
-      producer: str(info.Producer),
-      creator: str(info.Creator),
-      createdAt: pdfDateToIso(info.CreationDate),
-      modifiedAt: pdfDateToIso(info.ModDate),
-      incrementalUpdates: Math.max(0, eofCount(bytes) - 1),
-    };
-    return { numPages: doc.numPages, pages, sizes, meta };
+    return { numPages: doc.numPages, pages };
   } finally {
     await task.destroy();
   }
@@ -256,12 +197,12 @@ export async function normalise(bytes: Buffer, filename: string, sniffed: Sniffe
   const base = { sniffed: sniffed.kind, mime: sniffed.mime, extensionMatches: sniffed.extensionMatches };
   switch (sniffed.kind) {
     case 'pdf': {
-      const { numPages, pages, sizes, meta } = await pdfInfo(bytes);
+      const { numPages, pages } = await pdfText(bytes);
       const capped = capPages(pages);
       const scanned = capped.chars / Math.max(pages.length, 1) < SCANNED_CHARS_PER_PAGE;
       const joined = capped.pages.join('\n\f\n');
       return {
-        doc: { ...base, kind: 'pdf', pages: numPages, pageTexts: scanned ? [] : capped.pages, scanned, textChars: scanned ? 0 : capped.chars, ...(capped.truncated || numPages > pages.length ? { textTruncated: true } : {}), pdfMeta: meta, pageSizes: sizes },
+        doc: { ...base, kind: 'pdf', pages: numPages, pageTexts: scanned ? [] : capped.pages, scanned, textChars: scanned ? 0 : capped.chars, ...(capped.truncated || numPages > pages.length ? { textTruncated: true } : {}) },
         attachments: [],
         ...(scanned ? {} : { textSha256: sha(joined) }),
       };
@@ -294,9 +235,6 @@ export async function normalise(bytes: Buffer, filename: string, sniffed: Sniffe
       const capped = capPages([text]);
       return { doc: { ...base, kind: 'text', pages: 1, pageTexts: capped.pages, textChars: capped.chars, ...(capped.truncated ? { textTruncated: true } : {}) }, attachments: [], ...(text ? { textSha256: sha(text) } : {}) };
     }
-    case 'zip':
-      // Unpacked by the pipeline (intake/archive.ts) from the stored file; the archive item itself is not read.
-      return { doc: { ...base, kind: 'archive', entries: [] }, attachments: [] };
     default:
       return { doc: { ...base, kind: 'skipped', skipReason: SKIP_REASONS[sniffed.kind] ?? 'Not a document intake can read' }, attachments: [] };
   }

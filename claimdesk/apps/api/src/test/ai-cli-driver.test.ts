@@ -14,7 +14,7 @@ import { RESULT_SCHEMAS } from '@ccguk/domain';
 import { createTestApp, type TestApp } from './helpers.js';
 import { recomputeClocks } from '../services/claimView.js';
 import { buildCliArgs, buildCliEnv, mcpToolName, RealAiForbiddenError, SubscriptionCliDriver } from '../ai/subscriptionCliDriver.js';
-import { candidatePaths, compareVersions, detectClaudeCli, MIN_CLAUDE_CODE_VERSION, parseClaudeVersion, type CommandRunner } from '../ai/cliDetect.js';
+import { candidatePaths, compareVersions, detectClaudeCli, MIN_CLAUDE_CODE_VERSION, parseClaudeVersion, parseRegPath, type CommandRunner } from '../ai/cliDetect.js';
 import { classifyFailure, AUTH_PATTERNS, USAGE_LIMIT_PATTERNS } from '../ai/usageLimits.js';
 import { normaliseRateLimit, StreamJsonParser } from '../ai/streamJson.js';
 import { enqueueJob } from '../agent/core.js';
@@ -280,6 +280,30 @@ describe('health and detection', () => {
     const winget = await detectClaudeCli(env, { platform: 'win32', exists: (p) => p.endsWith('WinGet\\Links\\claude.exe'), run: async (cmd) => (cmd === 'where.exe' ? { code: 1, stdout: '', stderr: '' } : { code: 0, stdout: '2.1.300 (Claude Code)', stderr: '' }), forbidRealAi: false });
     expect(winget.path).toBe('C:\\Users\\o\\AppData\\Local\\Microsoft\\WinGet\\Links\\claude.exe');
     expect(candidatePaths(env, 'win32').map((c) => c.source)).toEqual(['native installer']);
+  });
+
+  it('finds a WinGet package folder and an install made after ClaimDesk started (registry PATH)', async () => {
+    const env = { USERPROFILE: 'C:\\Users\\o', LOCALAPPDATA: 'C:\\Users\\o\\AppData\\Local' };
+    const pkgRoot = 'C:\\Users\\o\\AppData\\Local\\Microsoft\\WinGet\\Packages';
+    const pkgExe = `${pkgRoot}\\Anthropic.ClaudeCode_Microsoft.Winget.Source_8wekyb3d8bbwe\\claude.exe`;
+    const noWhere: CommandRunner = async (cmd) => (cmd === 'where.exe' || cmd === 'reg.exe' ? { code: 1, stdout: '', stderr: '' } : { code: 0, stdout: '2.1.300 (Claude Code)', stderr: '' });
+    const viaPkg = await detectClaudeCli(env, { platform: 'win32', exists: (p) => p === pkgExe, listDir: (d) => (d === pkgRoot ? ['Other.App', 'Anthropic.ClaudeCode_Microsoft.Winget.Source_8wekyb3d8bbwe'] : []), run: noWhere, forbidRealAi: false });
+    expect(viaPkg.path).toBe(pkgExe);
+    const regExe = 'C:\\Users\\o\\Tools\\Claude\\claude.exe';
+    const viaReg = await detectClaudeCli(env, {
+      platform: 'win32',
+      exists: (p) => p === regExe,
+      listDir: () => [],
+      run: async (cmd, args) => {
+        if (cmd === 'where.exe') return { code: 1, stdout: '', stderr: '' };
+        if (cmd === 'reg.exe' && String(args[1]).startsWith('HKCU')) return { code: 0, stdout: '\r\nHKEY_CURRENT_USER\\Environment\r\n    Path    REG_EXPAND_SZ    %USERPROFILE%\\Tools\\Claude;C:\\Other\r\n', stderr: '' };
+        if (cmd === 'reg.exe') return { code: 1, stdout: '', stderr: '' };
+        return { code: 0, stdout: '2.1.300 (Claude Code)', stderr: '' };
+      },
+      forbidRealAi: false,
+    });
+    expect(viaReg.path).toBe(regExe);
+    expect(parseRegPath('    Path    REG_SZ    C:\\A;C:\\B;')).toEqual(['C:\\A', 'C:\\B']);
   });
 
   it('version parsing and the minimum version', async () => {

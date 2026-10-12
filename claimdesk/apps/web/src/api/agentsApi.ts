@@ -190,8 +190,6 @@ export interface DailyLog {
     usage: { driver: string; fiveHourPeak?: number; sevenDay?: number; costUsd?: number };
     /** Knowledge Builder §9.4 (optional; absent on logs compiled before 0.5) */
     knowledge?: KnowledgeDigest;
-    /** Smart intake (docs/SMART-INTAKE.md §12; optional; absent on older logs and on days with no bundle activity) */
-    intake?: LogLine[];
   };
 }
 

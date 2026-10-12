@@ -21,7 +21,6 @@ const PERIMETER_LABEL: Record<string, string> = {
   PERSONAL_INJURY_REFER_OUT: 'Personal injury element: refer out to a PI solicitor, no referral fee (LASPO 2012 ss.56–60)',
 };
 import { GatesRow } from '../components/GatesRow';
-import { IntakeBriefCard } from '../components/IntakeBriefCard'; // intake-web (docs/SMART-INTAKE.md §11.5)
 import { BasisText } from '../components/BasisText';
 import { headLabel, positionByHead, type HeadPosition } from '../lib/ledger';
 
@@ -45,7 +44,6 @@ export function OverviewTab({ view }: { view: ClaimView }) {
 
   return (
     <div className="stack">
-      <IntakeBriefCard claimId={c.id} />
       <Card
         title="Evidence gates"
         actions={

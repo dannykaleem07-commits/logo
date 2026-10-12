@@ -30,16 +30,12 @@
     "nodemailer": "10.0.16",
     "mailparser": "3.9.36",
     "pdfjs-dist": "6.4.299",
-    "fflate": "^0.8.3",
-    "pdf-lib": "1.17.1",
-    "jpeg-js": "0.4.4",
-    "pngjs": "7.0.0"
+    "fflate": "^0.8.3"
   },
   "devDependencies": {
     "vitest": "^3.2.7",
     "typescript": "^5.9.3",
     "@types/node": "^22.19.0",
-    "@types/mailparser": "3.9.0",
-    "@types/pngjs": "6.0.5"
+    "@types/mailparser": "3.9.0"
   }
 }

@@ -186,8 +186,7 @@ export async function scanStagedIntakeImports(ctx: AppContext): Promise<{ create
   const staged: StagedImport[] = listStagedImports(ctx, { purpose: 'intake', status: 'staged' });
   for (const imp of staged.reverse()) {
     try {
-      // Smart intake: a file from inbox\intake\<folder>\ joins that folder's bundle (docs/SMART-INTAKE.md §6.11).
-      const r = imp.bundleFolder ? await (await import('./bundles/folder.js')).consumeFolderImport(ctx, imp) : await consumeStagedImport(ctx, imp.id, { actor: INTAKE_SCAN_ACTOR });
+      const r = await consumeStagedImport(ctx, imp.id, { actor: INTAKE_SCAN_ACTOR });
       if (r.created) created += 1;
     } catch (err) {
       failed += 1;

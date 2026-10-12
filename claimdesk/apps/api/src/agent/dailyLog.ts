@@ -11,7 +11,6 @@ import type { DriverKind } from '../ai/types.js';
 import { londonDay } from './core.js';
 import { autopilotDailyLogSections } from '../autopilot/dailyLog.js';
 import { knowledgeDailyLogSection } from '../knowledge/digest.js';
-import { intakeDailyLogSection } from '../intake/bundles/dailyLog.js';
 import type { KnowledgeDigest } from '@ccguk/domain';
 
 export interface LogLine {
@@ -47,8 +46,6 @@ export interface DailyLog {
     clashes?: LogLine[];
     // Knowledge Builder (docs/SUPREME-KNOWLEDGE-BUILDER.md §9.4), built by apps/api/src/knowledge/digest.ts.
     knowledge?: KnowledgeDigest;
-    // Smart intake (docs/SMART-INTAKE.md §12), built by apps/api/src/intake/bundles/dailyLog.ts; absent when empty.
-    intake?: LogLine[];
   };
 }
 
@@ -91,7 +88,7 @@ interface AuditRow {
 }
 
 /** Audit actions that are bookkeeping, not record updates. */
-const NOT_RECORD_UPDATE = /^(agent\.|needs_you\.|ai\.|job\.|email\.send|notifications?\.|knowledge\.|intake\.bundle\.(?!register$|attach$)|intake\.(unpack|split_pack)$)/;
+const NOT_RECORD_UPDATE = /^(agent\.|needs_you\.|ai\.|job\.|email\.send|notifications?\.|knowledge\.)/;
 const DRAFT_ACTION = /(^document\.(create|generate|draft)|^docx[._-]?document\.(create|generate)|^outbox\.(draft|create)|^email\.draft)/;
 // One count per field: intake writes `intake.apply` for every field it fills (the route it goes through writes its own
 // claim.patch / vehicle.update / party.patch row too, which would double the count), so only the apply rows count.
@@ -110,9 +107,6 @@ const RECORD_LABEL: Record<string, string> = {
   'task.create': 'task scheduled',
   'offer.create': 'offer recorded',
   'mail.link': 'email filed on the claim',
-  'intake.bundle.register': 'claim registered from documents',
-  'intake.bundle.attach': 'documents attached to the claim',
-  'intake.damage_observation': 'damage recorded from photos',
 };
 
 export function compileDailyLog(ctx: AppContext, day: string): DailyLog {
@@ -361,7 +355,6 @@ export function compileDailyLog(ctx: AppContext, day: string): DailyLog {
       problems,
       ...autopilotDailyLogSections(ctx, day, { start, end }),
       ...knowledgeDailyLogSection(ctx, day),
-      ...intakeDailyLogSection(ctx, day, { start, end }),
       usage: { driver, ...(fiveHourPeak !== undefined ? { fiveHourPeak } : {}), ...(typeof seven?.utilization === 'number' ? { sevenDay: seven.utilization } : {}), ...(costUsd > 0 ? { costUsd: Math.round(costUsd * 100) / 100 } : {}) },
     },
   };

@@ -32,7 +32,6 @@ import {
   validateName,
   validateUkPhone,
   validateVin,
-  validatePostcode,
   validateVrm,
   type ValidationResult,
 } from './validators.js';
@@ -54,11 +53,6 @@ export interface ClaimSnapshot {
   thirdPartyVehicle?: Vehicle;
   /** The third party's policy number as last recorded (FNOL event data or an intake note). */
   thirdPartyPolicyNumber?: string;
-  /** The insurers linked on the claim (smart intake: insurer-name targets). */
-  atFaultInsurer?: Party;
-  clientInsurer?: Party;
-  /** Insurer parties on file (role insurer), for "find by name, else create". */
-  insurers?: Party[];
 }
 
 const NOT_THIRD_PARTY = new Set(['witness', 'insurer', 'broker', 'solicitor', 'engineer', 'repairer', 'police', 'council']);
@@ -86,9 +80,6 @@ export function loadClaimSnapshot(ctx: AppContext, claimId: string): ClaimSnapsh
     ...(claim.clientVehicleId ? { clientVehicle: ctx.repos.getVehicle(ctx.db, claim.clientVehicleId) } : {}),
     ...(claim.thirdPartyVehicleId ? { thirdPartyVehicle: ctx.repos.getVehicle(ctx.db, claim.thirdPartyVehicleId) } : {}),
     ...(thirdPartyPolicyNumber ? { thirdPartyPolicyNumber } : {}),
-    ...(claim.atFaultInsurerId && ctx.repos.getParty(ctx.db, claim.atFaultInsurerId) ? { atFaultInsurer: ctx.repos.getParty(ctx.db, claim.atFaultInsurerId)! } : {}),
-    ...(claim.clientInsurerId && ctx.repos.getParty(ctx.db, claim.clientInsurerId) ? { clientInsurer: ctx.repos.getParty(ctx.db, claim.clientInsurerId)! } : {}),
-    insurers: ctx.repos.listParties(ctx.db, { roles: ['insurer'], limit: 2000 }),
   };
 }
 
@@ -218,103 +209,6 @@ const claimTargets: TargetDef[] = [
         body: { type: 'note', at: now, summary: 'Third party’s policy number recorded from a document', data: { intakeField: 'thirdPartyPolicyNumber', value: v, ...provenanceData(prov) } },
       }),
     ],
-  },
-];
-
-// ----- smart intake claim targets (docs/SMART-INTAKE.md §5.1) ----------------
-
-const yesNo = (v: string): ValidationResult => {
-  const t = v.trim().toLowerCase();
-  if (/^(yes|y|true)$/.test(t)) return { ok: true, value: 'yes', errors: [] };
-  if (/^(no|n|false|none)$/.test(t)) return { ok: true, value: 'no', errors: [] };
-  return { ok: false, errors: [`"${v.slice(0, 20)}" is not yes or no`] };
-};
-
-function policyValidator(v: string): ValidationResult {
-  const t = v.replace(/\s+/g, '').toUpperCase();
-  if (!t) return { ok: false, errors: ['No policy number'] };
-  if (!/^[A-Z0-9/-]{4,40}$/.test(t)) return { ok: false, errors: ['A policy number is 4–40 letters, digits, / or -'], value: t };
-  return { ok: true, value: t, errors: [] };
-}
-
-/** An insurer target: the claim's insurer party by name; applying links an insurer on file with that name, else creates one. */
-function insurerTarget(target: FieldTarget, field: 'atFaultInsurerId' | 'clientInsurerId', label: string): TargetDef {
-  const linked = (s: ClaimSnapshot) => (field === 'atFaultInsurerId' ? s.atFaultInsurer : s.clientInsurer);
-  const onFile = (s: ClaimSnapshot, name: string) => (s.insurers ?? []).find((p) => same(p.name, name));
-  return {
-    target,
-    kind: 'claim',
-    field,
-    label,
-    sensitive: SENSITIVE_FIELD_TARGETS.has(target),
-    validate: textValidator(120, 'insurer name'),
-    inspect: (s, value) => {
-      const current = linked(s)?.name;
-      return { ...(current ? { current } : {}), createsRecord: !onFile(s, value) };
-    },
-    plan: (s, value) => {
-      const existing = onFile(s, value);
-      if (existing) return [() => ({ method: 'PATCH', url: `/claims/${enc(s.claim.id)}`, body: { [field]: existing.id } })];
-      return [
-        () => ({ method: 'POST', url: '/parties', body: { kind: 'company', name: value, roles: ['insurer'] } }),
-        (prev) => ({ method: 'PATCH', url: `/claims/${enc(s.claim.id)}`, body: { [field]: (prev[0] as { id: string }).id } }),
-      ];
-    },
-  };
-}
-
-const smartClaimTargets: TargetDef[] = [
-  {
-    target: 'claim.accident.circumstances',
-    kind: 'claim',
-    field: 'accident.circumstances',
-    label: 'What happened (the client’s account)',
-    sensitive: true,
-    validate: textValidator(4000, 'account of the accident'),
-    inspect: (s) => ({ ...(s.claim.accident.circumstances ? { current: s.claim.accident.circumstances } : {}), createsRecord: false }),
-    plan: (s, v) => [() => ({ method: 'PATCH', url: `/claims/${enc(s.claim.id)}`, body: { accident: { circumstances: v } } })],
-  },
-  {
-    target: 'claim.accident.postcode',
-    kind: 'claim',
-    field: 'accident.postcode',
-    label: 'Accident postcode',
-    sensitive: false,
-    validate: (v) => validatePostcode(v),
-    inspect: (s) => ({ ...(s.claim.accident.postcode ? { current: s.claim.accident.postcode } : {}), createsRecord: false }),
-    plan: (s, v) => [() => ({ method: 'PATCH', url: `/claims/${enc(s.claim.id)}`, body: { accident: { postcode: v } } })],
-  },
-  {
-    target: 'claim.accident.policeReference',
-    kind: 'claim',
-    field: 'accident.policeReference',
-    label: 'Police reference',
-    sensitive: false,
-    validate: textValidator(60, 'police reference'),
-    inspect: (s) => ({ ...(s.claim.accident.policeReference ? { current: s.claim.accident.policeReference } : {}), createsRecord: false }),
-    plan: (s, v) => [() => ({ method: 'PATCH', url: `/claims/${enc(s.claim.id)}`, body: { accident: { policeReference: v, policeAttended: true } } })],
-  },
-  {
-    target: 'claim.accident.injuries',
-    kind: 'claim',
-    field: 'accident.injuries',
-    label: 'Anyone injured',
-    sensitive: true,
-    validate: yesNo,
-    inspect: (s) => ({ ...(s.claim.accident.injuries !== undefined ? { current: s.claim.accident.injuries ? 'yes' : 'no' } : {}), createsRecord: false }),
-    plan: (s, v) => [() => ({ method: 'PATCH', url: `/claims/${enc(s.claim.id)}`, body: { accident: { injuries: v === 'yes' } } })],
-  },
-  insurerTarget('claim.atFaultInsurerName', 'atFaultInsurerId', 'At-fault insurer'),
-  insurerTarget('claim.clientInsurerName', 'clientInsurerId', 'Client’s insurer'),
-  {
-    target: 'claim.clientPolicyNumber',
-    kind: 'claim',
-    field: 'clientPolicyNumber',
-    label: 'Client’s policy number',
-    sensitive: true,
-    validate: policyValidator,
-    inspect: (s) => ({ ...(s.claim.clientPolicyNumber ? { current: s.claim.clientPolicyNumber } : {}), createsRecord: false }),
-    plan: (s, v) => [() => ({ method: 'PATCH', url: `/claims/${enc(s.claim.id)}`, body: { clientPolicyNumber: v } })],
   },
 ];
 
@@ -521,7 +415,6 @@ function partyTarget(role: FieldRole, field: PartyField): TargetDef {
 
 const ALL: TargetDef[] = [
   ...claimTargets,
-  ...smartClaimTargets,
   ...(['client', 'third_party', 'claimant', 'driver'] as FieldRole[]).flatMap((r) => (['vin', 'registration', 'make', 'model', 'firstRegistered', 'colour'] as VehicleField[]).map((f) => vehicleTarget(r, f))),
   ...(['client', 'third_party', 'claimant', 'driver'] as FieldRole[]).flatMap((r) => (['name', 'address', 'phone', 'email', 'dateOfBirth', 'drivingLicenceNumber'] as PartyField[]).map((f) => partyTarget(r, f))),
 ];

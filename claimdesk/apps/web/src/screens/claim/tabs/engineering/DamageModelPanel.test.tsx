@@ -7,7 +7,7 @@ import { screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { ClaimView } from '../../claimFile';
 import { renderWithProviders } from '../../../../test/harness';
-import { DamageModelPanel, damageFromZones } from './DamageModelPanel';
+import { DamageModelPanel } from './DamageModelPanel';
 
 const view = {
   claim: { id: 'c1' },
@@ -43,27 +43,6 @@ describe('DamageModelPanel', () => {
     expect(screen.getByTestId('damage-2d')).toBeTruthy();
     const called = fetch.mock.calls.map(([u]) => new URL(String(u), 'http://localhost')).find((u) => u.pathname === '/api/catalogue/dimensions')!;
     expect(Object.fromEntries(called.searchParams)).toMatchObject({ make: 'FORD', model: 'FIESTA', body: 'HATCHBACK', doors: '5', year: '2019' });
-  });
-
-  // intake-web (docs/SMART-INTAKE.md §11.5): damage recorded at intake reaches the model as AI suggestions.
-  it('shows the damage zones recorded for the claim (GET /claims/:id/damage-zones)', async () => {
-    const fetch = vi.fn(async (input: RequestInfo | URL) => {
-      const url = new URL(typeof input === 'string' ? input : input instanceof URL ? input.href : input.url, 'http://localhost');
-      if (url.pathname === '/api/claims/c1/damage-zones') return respond({ zones: { front_bumper: { severity: 2, confidence: 0.86, source: 'ai', evidenceIds: ['ev-1'] }, bonnet: { severity: 0, confidence: 0.5, source: 'ai', evidenceIds: [] } }, observations: [] });
-      if (url.pathname === '/api/catalogue/dimensions') return respond({ dims: { lengthMm: 4040, widthMm: 1735, heightMm: 1476, wheelbaseMm: 2493 }, source: 'file' });
-      return respond({});
-    });
-    vi.stubGlobal('fetch', fetch);
-    renderWithProviders(<DamageModelPanel view={view} />);
-    expect(await screen.findByText(/^1 part damaged/)).toBeTruthy();
-    expect(screen.getAllByText(/AI 86%/).length).toBeGreaterThan(0);
-    expect(fetch.mock.calls.some(([u]) => new URL(String(u), 'http://localhost').pathname === '/api/claims/c1/damage-zones')).toBe(true);
-  });
-
-  it('damageFromZones keeps severities 1–3 as AI suggestions and ignores anything else', () => {
-    expect(damageFromZones({ zones: { front_bumper: { severity: 3, confidence: 0.9, source: 'ai', evidenceIds: [] }, bonnet: { severity: 0, confidence: 1, source: 'ai', evidenceIds: [] } }, observations: [] })).toEqual({ front_bumper: { severity: 3, confidence: 0.9, source: 'ai' } });
-    expect(damageFromZones(undefined)).toEqual({});
-    expect(damageFromZones({} as never)).toEqual({});
   });
 
   it('uses typical body proportions when only body-type defaults are on file', async () => {
