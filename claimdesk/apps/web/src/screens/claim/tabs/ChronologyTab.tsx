@@ -24,6 +24,7 @@ import {
   EVENT_GROUPS,
   EVENT_LABEL,
   eventBodyFrom,
+  eventChips,
   eventGroup,
   eventLabel,
   filterEvents,
@@ -111,6 +112,11 @@ export function ChronologyTab({ view }: { view: ClaimView }) {
               {eventLabel(e.type)}
             </div>
             <div className="xs muted">{eventGroup(e.type)?.label ?? ''}</div>
+            {eventChips(e).map((c) => (
+              <Badge key={c.key} tone={c.key === 'recorded_late' ? 'amber' : 'blue'} title={c.title}>
+                {c.label}
+              </Badge>
+            ))}
             {mark && (
               <Badge tone="amber" title={mark.title}>
                 Corrected

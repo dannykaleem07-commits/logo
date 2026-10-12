@@ -39,6 +39,15 @@ describe('decide() — one test per rule (§D.2)', () => {
     expect(d({ injectionSuspected: true })).toMatchObject({ outcome: 'ask', ruleIds: ['untrusted_source'] });
     expect(di({ spoofSuspected: true })).toMatchObject({ outcome: 'ask', ruleIds: ['untrusted_source'] });
   });
+  it('4c owner_instruction (CLAIM-AI-INPUT §4) → ask with the owner\'s words, only for external sends', () => {
+    const oi = { instructionId: 'ins-1', text: "Don't chase the client until Monday", effect: 'hold_contact' as const };
+    expect(d({ ownerInstruction: oi })).toMatchObject({ outcome: 'ask', ruleIds: ['owner_instruction'], reasons: ["You asked: Don't chase the client until Monday"] });
+    expect(di({ ownerInstruction: oi })).toMatchObject({ outcome: 'auto', ruleIds: ['internal_ok'] });
+    expect(d({ class: 'draft', ownerInstruction: oi })).toMatchObject({ ruleIds: ['read_draft'] });
+    // the kill switch, pauses and untrusted sources still come first; it comes before step modes and always-ask classes
+    expect(d({ ownerInstruction: oi }, {}, { claimPaused: true })).toMatchObject({ ruleIds: ['paused'] });
+    expect(d({ ownerInstruction: oi, injectionSuspected: true })).toMatchObject({ ruleIds: ['untrusted_source'] });
+  });
   it('5 always_ask_classes: money, settlement, legal → ask', () => {
     for (const c of ['money', 'settlement', 'legal'] as ActionClass[]) expect(d({ class: c, confidence: 1 })).toMatchObject({ outcome: 'ask', ruleIds: ['always_ask_classes'] });
   });
@@ -161,11 +170,11 @@ describe('decide() — Autopilot step rules (SUPREME-AUTOPILOT §A.6)', () => {
 });
 
 describe('decide() — ordering', () => {
-  it('lists the 21 phase-1 rule ids plus Autopilot 4a/4b, in order', () => {
-    expect(AUTONOMY_RULE_IDS).toHaveLength(23);
+  it('lists the 21 phase-1 rule ids plus owner_instruction and Autopilot 4a/4b, in order', () => {
+    expect(AUTONOMY_RULE_IDS).toHaveLength(24);
     expect(AUTONOMY_RULE_IDS[0]).toBe('destructive');
-    expect(AUTONOMY_RULE_IDS.slice(3, 7)).toEqual(['untrusted_source', 'step_owner_only', 'step_confirm', 'always_ask_classes']);
-    expect(AUTONOMY_RULE_IDS[22]).toBe('read_draft');
+    expect(AUTONOMY_RULE_IDS.slice(3, 8)).toEqual(['untrusted_source', 'owner_instruction', 'step_owner_only', 'step_confirm', 'always_ask_classes']);
+    expect(AUTONOMY_RULE_IDS[23]).toBe('read_draft');
   });
   it('destructive wins over the kill switch', () => {
     expect(d({ class: 'destructive' }, {}, { killSwitch: true })).toMatchObject({ ruleIds: ['destructive'] });

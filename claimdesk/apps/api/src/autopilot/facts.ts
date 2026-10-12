@@ -17,6 +17,7 @@ import {
 } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
 import { londonDayStart } from '../agent/core.js';
+import { activeInstructionViews, offSystemOutboxFacts } from '../claimai/instructions.js';
 import { acceptanceFor, actionsFor, deriveClocksFor, gatesFor, loadBundle } from '../services/claimView.js';
 import { eligibilityFor } from '../eligibility/service.js';
 import { availabilityFor } from '../booking/service.js';
@@ -80,7 +81,7 @@ export function loadAutopilotFacts(ctx: AppContext, claimId: string, opts: LoadF
   }
   const record = claimAutopilotFor(ctx, claimId);
   const reservations = ctx.repos.listReservations(ctx.db, { claimId });
-  const outbox = ctx.repos.listOutbox(ctx.db, { claimId }).map((o) => ({
+  const outbox: AutopilotFacts['outbox'] = ctx.repos.listOutbox(ctx.db, { claimId }).map((o) => ({
     id: o.id,
     kind: o.kind,
     status: o.status,
@@ -88,6 +89,9 @@ export function loadAutopilotFacts(ctx: AppContext, claimId: string, opts: LoadF
     createdAt: o.createdAt,
     sentAt: o.status === 'sent' ? o.updatedAt : null,
   }));
+  // Letters and emails sent outside ClaimDesk (claim AI input, CLAIM-AI-INPUT §9): virtual `sent` rows so `ack.sent`,
+  // `handlingRef.requested` … hold without new predicates. The runner never touches rows with `offSystem`.
+  outbox.push(...offSystemOutboxFacts(ctx, claimId));
   const lastIn = ctx.repos.listMailMessages(ctx.db, { claimId, direction: 'in', limit: 1 })[0];
   const lastInbound = lastIn ? { at: lastIn.receivedAt, intent: (ctx.repos.latestMailClassification(ctx.db, lastIn.id)?.intent ?? 'other') as MailIntent, messageId: lastIn.id } : null;
   const bounced = ctx.repos
@@ -131,6 +135,8 @@ export function loadAutopilotFacts(ctx: AppContext, claimId: string, opts: LoadF
       ]),
     ],
     ...(opts.forceStepId ? { forceStepId: opts.forceStepId } : {}),
+    // The owner's standing instructions in force now (scope all / autopilot; CLAIM-AI-INPUT §7.2).
+    ownerInstructions: activeInstructionViews(ctx, claimId, { agent: 'autopilot' }),
   };
   if (opts.withAvailability) facts.availability = searchFor(ctx, facts);
   return facts;

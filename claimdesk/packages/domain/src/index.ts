@@ -33,3 +33,5 @@ export * from './eligibility/index.js';
 export * from './signing/index.js';
 // Knowledge Builder (docs/SUPREME-KNOWLEDGE-BUILDER.md): contracts by knowledge-core, behaviour by the owning slices.
 export * from './knowledge/index.js';
+// Claim AI input (docs/CLAIM-AI-INPUT.md §3), owned by claimai-server.
+export * from './claimai/index.js';

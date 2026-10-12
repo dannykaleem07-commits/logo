@@ -60,6 +60,15 @@ export const HUMAN_ONLY_ROUTES: ReadonlySet<string> = new Set([
   'POST /api/intake/bundles/:id/register/retry',
   'POST /api/intake/bundles/:id/attach',
   'PATCH /api/settings/intake',
+  // Claim AI input (docs/CLAIM-AI-INPUT.md §11.3): only the owner gives ClaimDesk updates, instructions and catch-ups.
+  'POST /api/claims/:id/ai-input/updates',
+  'POST /api/claims/:id/ai-input/catch-up',
+  'POST /api/claims/:id/ai-input/:inputId/answers',
+  'POST /api/claims/:id/ai-input/:inputId/apply',
+  'POST /api/claims/:id/ai-input/:inputId/undo',
+  'POST /api/claims/:id/ai-input/:inputId/files/:fileId',
+  'POST /api/claims/:id/instructions',
+  'POST /api/claims/:id/instructions/:instructionId/retire',
 ]);
 
 /** Token-authenticated kiosk routes (§E.2): never reachable with a run token. */

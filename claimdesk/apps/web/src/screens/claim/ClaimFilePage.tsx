@@ -27,6 +27,9 @@ import { FlagsTab } from './tabs/FlagsTab';
 import { MailboxTab } from './tabs/MailboxTab';
 import { AgentTab } from './tabs/AgentTab';
 import { AutopilotTab } from './tabs/AutopilotTab';
+import { AiInputTab } from './ai/AiInputTab'; // claimai-web (docs/CLAIM-AI-INPUT.md §14.1)
+import { AiInputHeaderButton } from './ai/AiInputHeaderButton';
+import { useAiInputPanel } from '../../api/claimAiApi';
 import { isBlocked } from './lib/documents';
 import './claim.css';
 
@@ -43,6 +46,7 @@ export function ClaimFilePage() {
   const bundle = useClaim(id);
   // Hooks before any early return: resolve the handler's name for the header.
   const handlerName = useUserName((bundle.data as ClaimView | undefined)?.claim?.handlerId);
+  const aiPanel = useAiInputPanel(id);
   const current = (rest ?? '').split('/')[0] || 'overview';
 
   if (bundle.isLoading) {
@@ -70,15 +74,16 @@ export function ClaimFilePage() {
     clocks: view.clocks.filter((c) => isOverdue(c, now)).length,
     documents: view.documents.filter((d) => isBlocked(d)).length,
     offers: view.offers.filter((o) => !o.replySentAt).length,
-    actions: (view.actions ?? []).filter((a) => a.priority === 'now').length
+    actions: (view.actions ?? []).filter((a) => a.priority === 'now').length,
+    ai: aiPanel.data?.badge.open ?? 0
   };
   const tabs: TabItem[] = CLAIM_TABS.map((t) => {
     const n = counts[t.id as keyof typeof counts];
-    const tone = t.id === 'offers' || t.id === 'actions' ? 'amber' : 'red';
+    const tone = t.id === 'offers' || t.id === 'actions' || t.id === 'ai' ? 'amber' : 'red';
     return n ? { ...t, badge: <Badge tone={tone}>{n}</Badge> } : t;
   });
   // Primary row + "More ▾" (0.3 §E1); the open-flag count shows on More while Flags sits inside it.
-  const { primary, more, agent } = splitClaimTabs(tabs);
+  const { primary, more, agent, ai } = splitClaimTabs(tabs);
   const moreBadge = counts.flags ? <Badge tone="red">{counts.flags}</Badge> : undefined;
   const linked = view.linkedClaims ?? view.claim.linkedClaimIds.map((lid) => ({ id: lid, reference: lid, status: '' }));
 
@@ -86,6 +91,7 @@ export function ClaimFilePage() {
     <div className="page">
       <PageHeader
         crumbs={[{ label: 'Claims', to: '/claims' }, { label: view.claim.reference }]}
+        actions={<AiInputHeaderButton claimId={view.claim.id} />}
         title={
           <span className="row">
             {view.claim.reference}
@@ -131,7 +137,7 @@ export function ClaimFilePage() {
       )}
       <FlagsBanner claimId={view.claim.id} flags={flags} />
       <div className="claim-tabs-wrap">
-        <Tabs items={[...primary, ...agent]} more={more} moreBadge={moreBadge} narrowPrimary={3} value={current} onChange={(tab) => navigate(`/claims/${id}/${tab}`)} ariaLabel="Claim file sections" />
+        <Tabs items={[...primary, ...ai, ...agent]} more={more} moreBadge={moreBadge} narrowPrimary={3} value={current} onChange={(tab) => navigate(`/claims/${id}/${tab}`)} ariaLabel="Claim file sections" />
       </div>
       <div style={{ marginTop: 16 }} id={`tabpanel-${current}`} role="tabpanel">
         <Routes>
@@ -153,6 +159,7 @@ export function ClaimFilePage() {
           <Route path="mailbox" element={<MailboxTab view={view} />} />
           <Route path="agent" element={<AgentTab view={view} />} />
           <Route path="autopilot" element={<AutopilotTab view={view} />} />
+          <Route path="ai" element={<AiInputTab view={view} />} />
           <Route path="*" element={<Navigate to="overview" replace />} />
         </Routes>
       </div>

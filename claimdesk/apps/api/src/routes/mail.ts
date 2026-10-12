@@ -4,6 +4,7 @@
  *
  *   GET  /mail/account                 the account (no secrets: only "password saved" flags) + IONOS presets + sync state
  *   PUT  /mail/account                 save the account; passwords go to the secret store (write-only), never SQLite
+ *   GET  /mail/footer-preview          ?withClaim=true|false — how the end of every email looks (HTML + plain text)
  *   POST /mail/test                    IMAP login + folder list + SMTP verify() — nothing is sent
  *   POST /mail/test-send               a test email to the mailbox itself (through the outbox, sent at once)
  *   POST /mail/sync-now                queue a sync
@@ -28,6 +29,8 @@ import { FROM_NAME, mailAccount } from '../mail/common.js';
 import { linkMessageToClaim } from '../mail/link.js';
 import { ownerCompose, sendNowOutbox, describeOutbox } from '../mail/outbox.js';
 import { INTENT_RULES } from '../mail/intents.js';
+import { readFileSync } from 'node:fs';
+import { bodyHtml, companyDetails, emailHtmlDocument, footerHtml, LOGO_PATH, plainText } from '../mail/emailHtml.js';
 import type { MailIntent } from '@ccguk/domain';
 
 /** IONOS presets (§F.1, §L.5). */
@@ -56,6 +59,8 @@ const accountBody = z.object({
   smtpPassword: z.string().min(1).max(500).optional(),
   signatureText: z.string().max(4000).nullable().optional(),
   signatureHtml: z.string().max(20000).nullable().optional(),
+  /** Branded HTML part + inline logo on every email (default on). */
+  htmlFooter: z.boolean().optional(),
   processedFolder: z.string().trim().min(1).max(200).optional(),
   quarantineFolder: z.string().trim().min(1).max(200).optional(),
   moveAfterIngest: z.boolean().optional(),
@@ -184,6 +189,29 @@ export function registerMailRoutes(app: FastifyInstance, ctx: AppContext): void 
 
   app.get('/mail/account', async () => accountView(ctx, mailAccount(ctx)));
 
+  // Settings > Email preview: the sample email as it is sent (the logo inline as a data URL so the page can show it).
+  app.get('/mail/footer-preview', async (request) => {
+    const q = parse(z.object({ withClaim: z.enum(['true', 'false']).default('true') }), request.query ?? {});
+    const account = mailAccount(ctx);
+    const d = companyDetails(ctx);
+    const signature = account?.signatureText?.trim();
+    const sample = `Dear Sirs,\n\nThis is how the end of every email ClaimDesk sends looks.${signature ? `\n\n${signature}` : ''}`;
+    const claimRef = q.withClaim === 'true' ? 'CCG-2026-00001' : null;
+    let logo = '';
+    try {
+      logo = `data:image/png;base64,${readFileSync(LOGO_PATH).toString('base64')}`;
+    } catch {
+      logo = '';
+    }
+    const htmlFooter = account?.htmlFooter ?? true;
+    return {
+      htmlFooter,
+      html: emailHtmlDocument(bodyHtml(sample), footerHtml(d, { claimRef, signer: (account?.fromName ?? FROM_NAME).split(',')[0], logoSrc: logo })),
+      text: plainText(sample, d),
+      claimRef,
+    };
+  });
+
   app.put('/mail/account', async (request) => {
     requireRole(request, ['admin', 'approver']);
     const body = parse(accountBody, request.body);
@@ -201,6 +229,7 @@ export function registerMailRoutes(app: FastifyInstance, ctx: AppContext): void 
       secretRef: 'imap_password',
       ...(body.signatureText !== undefined ? { signatureText: body.signatureText } : {}),
       ...(body.signatureHtml !== undefined ? { signatureHtml: body.signatureHtml } : {}),
+      ...(body.htmlFooter !== undefined ? { htmlFooter: body.htmlFooter } : {}),
       ...(body.processedFolder ? { processedFolder: body.processedFolder } : {}),
       ...(body.quarantineFolder ? { quarantineFolder: body.quarantineFolder } : {}),
       ...(body.moveAfterIngest !== undefined ? { moveAfterIngest: body.moveAfterIngest } : {}),

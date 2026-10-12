@@ -25,6 +25,7 @@ import {
 import { JUDGE_QUESTION_IDS, type JudgeQuestionId } from '../autopilot/types.js';
 import { BUNDLE_FIELD_KEYS, PHOTO_SCENES, type BundleFieldKey, type PhotoScene } from '../intake/smart/types.js';
 import { TIMELINE_EVENT_TYPES } from '../intake/smart/timeline.js';
+import { AGENT_SCOPES, AI_ACTION_TYPES, CONTACT_ROLES, JOB_KINDS, OWNER_EVENT_TYPES } from '../claimai/types.js';
 
 // ---------------------------------------------------------------------------
 // Result types
@@ -251,8 +252,34 @@ export interface HireReplyResult {
   injectionSuspected: boolean;
 }
 
-export type ResultSchemaId = 'mail_triage' | 'case_review' | 'drafter' | 'review_verdict' | 'intake_extraction' | 'offer_analysis' | 'research_answer' | 'autopilot_judge' | 'hire_reply' | 'knowledge_curate' | 'knowledge_research' | 'draft_replay' | 'intake_bundle_reasoning';
-export const RESULT_SCHEMA_IDS: readonly ResultSchemaId[] = ['mail_triage', 'case_review', 'drafter', 'review_verdict', 'intake_extraction', 'offer_analysis', 'research_answer', 'autopilot_judge', 'hire_reply', 'knowledge_curate', 'knowledge_research', 'draft_replay', 'intake_bundle_reasoning'];
+/** `claim.input_interpret` (docs/CLAIM-AI-INPUT.md §5.3): the owner's update on one claim → actions (code validates and tiers them). */
+export interface ClaimInputInterpretation {
+  /** ≤ 300 chars: what the owner said, in one plain sentence. */
+  understood: string;
+  actions: Array<{
+    type: string;
+    summary: string;
+    /** Exact words from the owner's text or the call note. */
+    quote: string;
+    from: 'owner_text' | 'transcript';
+    at: string | null;
+    eventType: string | null;
+    target: string | null;
+    value: string | null;
+    contacts: string[];
+    agents: string[];
+    until: string | null;
+    jobKind: string | null;
+    documentHint: string | null;
+    confidence: number;
+  }>;
+  questions: Array<{ text: string; options: string[]; aboutAction: number | null }>;
+  notUnderstood: string[];
+  injectionSuspected: boolean;
+}
+
+export type ResultSchemaId = 'mail_triage' | 'case_review' | 'drafter' | 'review_verdict' | 'intake_extraction' | 'offer_analysis' | 'research_answer' | 'autopilot_judge' | 'hire_reply' | 'knowledge_curate' | 'knowledge_research' | 'draft_replay' | 'intake_bundle_reasoning' | 'claim_input_interpretation';
+export const RESULT_SCHEMA_IDS: readonly ResultSchemaId[] = ['mail_triage', 'case_review', 'drafter', 'review_verdict', 'intake_extraction', 'offer_analysis', 'research_answer', 'autopilot_judge', 'hire_reply', 'knowledge_curate', 'knowledge_research', 'draft_replay', 'intake_bundle_reasoning', 'claim_input_interpretation'];
 
 export interface ResultTypes {
   mail_triage: MailTriageResult;
@@ -268,6 +295,7 @@ export interface ResultTypes {
   knowledge_research: KnowledgeResearchResult;
   draft_replay: DraftReplayResult;
   intake_bundle_reasoning: IntakeBundleReasoning;
+  claim_input_interpretation: ClaimInputInterpretation;
 }
 
 // ---------------------------------------------------------------------------
@@ -412,6 +440,31 @@ export const INTAKE_BUNDLE_REASONING_SCHEMA: JsonSchema = strictObject({
   injectionSuspected: bool(),
 });
 
+export const CLAIM_INPUT_INTERPRETATION_SCHEMA: JsonSchema = strictObject({
+  understood: str('one plain sentence, at most 300 characters'),
+  actions: arr(
+    strictObject({
+      type: strEnum(AI_ACTION_TYPES),
+      summary: str('plain English, at most 200 characters'),
+      quote: str('the exact words this comes from'),
+      from: strEnum(['owner_text', 'transcript']),
+      at: nstr('ISO date or date-time (London) or null'),
+      eventType: nEnum(OWNER_EVENT_TYPES),
+      target: nstr('field target, hire id, current, contact, status or register'),
+      value: nstr('value, liability position, amount in pence (digits), template id or matter'),
+      contacts: arr(strEnum(CONTACT_ROLES)),
+      agents: arr(strEnum(AGENT_SCOPES)),
+      until: nstr('ISO date or null'),
+      jobKind: nEnum(JOB_KINDS),
+      documentHint: nstr(),
+      confidence,
+    }),
+  ),
+  questions: arr(strictObject({ text: str(), options: arr(str()), aboutAction: nint('index into actions or null') })),
+  notUnderstood: arr(str()),
+  injectionSuspected: bool(),
+});
+
 export const OFFER_ANALYSIS_SCHEMA: JsonSchema = strictObject({
   recommendation: strEnum(['accept', 'counter', 'reject', 'hold']),
   counterPence: nint('integer pence'),
@@ -486,6 +539,7 @@ export const RESULT_SCHEMAS: Readonly<Record<ResultSchemaId, JsonSchema>> = {
   knowledge_research: KNOWLEDGE_RESEARCH_SCHEMA,
   draft_replay: DRAFT_REPLAY_SCHEMA,
   intake_bundle_reasoning: INTAKE_BUNDLE_REASONING_SCHEMA,
+  claim_input_interpretation: CLAIM_INPUT_INTERPRETATION_SCHEMA,
 };
 
 /** Compact JSON size limit for a result schema (the CLI receives it on the command line, §A.2/§B.5). */

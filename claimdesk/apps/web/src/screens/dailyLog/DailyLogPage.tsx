@@ -145,6 +145,12 @@ export function DailyLogPage() {
               <Lines lines={log.sections.intake} empty="No intake activity." />
             </Card>
           )}
+          {log.sections.claimAi && log.sections.claimAi.length > 0 && (
+            // claimai-web (docs/CLAIM-AI-INPUT.md §13): owner updates, catch-ups and standing instructions on claims
+            <Card title={`Updates and catch-ups (${log.sections.claimAi.length})`}>
+              <Lines lines={log.sections.claimAi} empty="No updates or catch-ups." />
+            </Card>
+          )}
           <KnowledgeDigestSection sections={log.sections} />
         </div>
       )}

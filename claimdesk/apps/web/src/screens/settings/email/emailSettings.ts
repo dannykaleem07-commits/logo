@@ -15,6 +15,8 @@ export interface EmailForm {
   password: string;
   smtpPassword: string;
   signatureText: string;
+  /** Branded HTML footer with the logo on every email (default on). */
+  htmlFooter: boolean;
   processedFolder: string;
   quarantineFolder: string;
   moveAfterIngest: boolean;
@@ -39,6 +41,7 @@ export function emptyForm(): EmailForm {
     password: '',
     smtpPassword: '',
     signatureText: '',
+    htmlFooter: true,
     processedFolder: 'ClaimDesk-Processed',
     quarantineFolder: 'ClaimDesk-Quarantine',
     moveAfterIngest: true,
@@ -62,6 +65,7 @@ export function formFromView(v: MailAccountView): EmailForm {
     password: '',
     smtpPassword: '',
     signatureText: a.signatureText ?? '',
+    htmlFooter: a.htmlFooter ?? true,
     processedFolder: a.processedFolder,
     quarantineFolder: a.quarantineFolder,
     moveAfterIngest: a.moveAfterIngest,
@@ -108,6 +112,7 @@ export function toInput(f: EmailForm): MailAccountInput {
     ...(f.password ? { password: f.password } : {}),
     ...(f.smtpPassword ? { smtpPassword: f.smtpPassword } : {}),
     signatureText: f.signatureText.trim() ? f.signatureText : null,
+    htmlFooter: f.htmlFooter,
     processedFolder: f.processedFolder.trim(),
     quarantineFolder: f.quarantineFolder.trim(),
     moveAfterIngest: f.moveAfterIngest,

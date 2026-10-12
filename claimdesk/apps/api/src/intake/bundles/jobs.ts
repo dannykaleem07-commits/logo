@@ -88,6 +88,8 @@ export async function autoRegisterJob(ctx: AppContext, job: JobRecord, payload: 
   if (!b) return { kind: 'fail', reason: `intake bundle ${payload.bundleId} not found` };
   if (payload.revision < b.revision) return { kind: 'done', result: { stale: true } };
   if (CLOSED_STATUSES.has(b.status)) return { kind: 'done', result: { skipped: b.status } };
+  // a catch-up bundle belongs to an existing claim: never registered (docs/CLAIM-AI-INPUT.md §8.2, defence in depth)
+  if (b.mode === 'catch_up') return { kind: 'done', result: { skipped: 'catch-up bundle' } };
   if (!ctx.repos.getAgentSettings(ctx.db).intake.bundles.autoRegister) return { kind: 'done', result: { skipped: 'automatic registration is off' } };
   const actor: Actor = { userId: BUNDLE_AGENT, runId: `intake-register-${job.id}` };
   try {

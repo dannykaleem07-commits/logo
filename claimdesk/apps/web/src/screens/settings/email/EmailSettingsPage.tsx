@@ -9,7 +9,7 @@ import { ApiErrorNotice } from '../../../components/ApiErrorNotice';
 import { Checkbox, Select, TextArea, TextInput } from '../../../components/Form';
 import { DateText } from '../../../components/DateText';
 import { useToast } from '../../../components/Toast';
-import { mailApi, useMailAccount, useMailMutation, type MailAccountInput, type MailAccountView, type MailTestResult } from '../../../api/mailApi';
+import { mailApi, useFooterPreview, useMailAccount, useMailMutation, type MailAccountInput, type MailAccountView, type MailTestResult } from '../../../api/mailApi';
 import { emptyForm, formFromView, parsePort, smtpPresetId, toInput, validateForm, SMTP_PRESETS, type EmailForm } from './emailSettings';
 import '../../outbox/outbox.css';
 
@@ -34,6 +34,30 @@ function PortInput({ label, value, onChange, hint }: { label: string; value: num
       onBlur={() => setDraft((d) => (d !== undefined && d.trim() && parsePort(d) === 0 ? d : undefined))}
       {...(hint ? { hint } : {})}
     />
+  );
+}
+
+/** Settings > Email: how the end of every email looks (the saved settings; HTML when the footer is on). */
+function FooterPreviewCard({ on }: { on: boolean }) {
+  const [withClaim, setWithClaim] = useState(true);
+  const q = useFooterPreview(withClaim);
+  return (
+    <Card title="Email footer preview">
+      <div className="mb-stack">
+        <Checkbox label="Show a claim email (with the reference line)" checked={withClaim} onChange={setWithClaim} />
+        {q.isLoading && <Loading />}
+        <ApiErrorNotice error={q.error} what="load the footer preview" />
+        {q.data &&
+          (on ? (
+            <iframe className="es-footer-preview" title="HTML email preview" sandbox="" srcDoc={q.data.html} style={{ width: '100%', maxWidth: 640, height: 520, border: '1px solid var(--border, #d9dce3)', borderRadius: 6, background: '#fff' }} />
+          ) : (
+            <pre className="es-footer-text" style={{ whiteSpace: 'pre-wrap', maxWidth: 640, margin: 0 }}>
+              {q.data.text}
+            </pre>
+          ))}
+        {q.data && on !== q.data.htmlFooter && <p className="muted">Save to apply this change to the emails ClaimDesk sends.</p>}
+      </div>
+    </Card>
   );
 }
 
@@ -91,9 +115,12 @@ export function EmailSettingsPage() {
                 From: <strong>{view.account?.fromName ?? 'Claims Team, Courtesy Cars Group UK Ltd'}</strong> &lt;{form.fromAddress || 'mailbox address'}&gt; — the name is fixed.
               </div>
               <TextArea label="Signature" value={form.signatureText} onChange={set('signatureText')} rows={4} hint="Plain text added under every email (unless the email already contains it)." />
+              <Checkbox label="HTML footer" checked={form.htmlFooter} onChange={set('htmlFooter')} hint="On: every email also has a branded HTML version with the logo and the company details below your text. Off: plain text only. The plain text always ends with the company's registered details." />
               <Checkbox label="Read and send email automatically" checked={form.enabled} onChange={set('enabled')} hint="Off: nothing is read or sent; the settings are kept." />
             </div>
           </Card>
+
+          <FooterPreviewCard on={form.htmlFooter} />
 
           <Card title="Servers (IONOS)">
             <div className="es-grid">

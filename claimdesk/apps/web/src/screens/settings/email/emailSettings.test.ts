@@ -34,4 +34,12 @@ describe('Settings > Email form', () => {
     expect(parsePort('70000')).toBe(0);
     expect(validateForm({ ...emptyForm(), fromAddress: 'claims@x.test', username: 'u', password: 'p', imapPort: parsePort('') }, false)).toContain('Check the IMAP server and port.');
   });
+  it('the HTML footer is on by default, follows the stored account and is sent on save', () => {
+    expect(emptyForm().htmlFooter).toBe(true);
+    const base = { id: 'a', label: 'x', imapHost: 'imap.ionos.co.uk', imapPort: 993, imapTls: true, smtpHost: 'smtp.ionos.co.uk', smtpPort: 465, smtpSecurity: 'tls', username: 'u@x.test', fromName: 'Claims Team, Courtesy Cars Group UK Ltd', fromAddress: 'u@x.test', processedFolder: 'P', quarantineFolder: 'Q', moveAfterIngest: true, enabled: true, createdAt: '', updatedAt: '' };
+    expect(formFromView({ account: base, passwordSaved: { imap: true, smtp: true } } as unknown as MailAccountView).htmlFooter).toBe(true);
+    const off = formFromView({ account: { ...base, htmlFooter: false }, passwordSaved: { imap: true, smtp: true } } as unknown as MailAccountView);
+    expect(off.htmlFooter).toBe(false);
+    expect(toInput(off)).toMatchObject({ htmlFooter: false });
+  });
 });

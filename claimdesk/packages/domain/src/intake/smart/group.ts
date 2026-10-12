@@ -38,6 +38,12 @@ export interface GroupingInput {
   words?: Record<string, string[]>;
   /** AI advice for files left `unsure`: moved only when no strong key contradicts. */
   advice?: Record<string, { groupKey: string; why: string }>;
+  /**
+   * Catch-up grouping (docs/CLAIM-AI-INPUT.md §8.3): the bundle belongs to this claim. Clusters matching it (or with
+   * no identifiers) → `main` ("This claim"); a cluster matching another claim (score ≥ 10 and ≥ 2× the target's) →
+   * `claim:<other>`; a cluster sharing nothing with the claim whose strong client identifiers differ → `unsure`.
+   */
+  fixedClaim?: { claimId: string; reference: string; keys: Array<{ kind: KeyKind; value: string }> };
 }
 
 export interface GroupingResult {
@@ -283,88 +289,136 @@ export function groupFiles(input: GroupingInput): GroupingResult {
     }
   }
 
-  // 5. main (decided before the unkeyed files join, so they can join it)
-  const hintTokens = input.nameHint
-    .split(/\s[–—-]\s|[,;]/)
-    .join(' ')
-    .toLowerCase()
-    .split(/[^a-z0-9]+/)
-    .filter((t) => t.length >= 2 && !HINT_STOP.has(t));
-  const hintScore = (c: Cluster): number => {
-    let s = 0;
-    const nameTokens = new Set<string>();
-    for (const k of c.keys.values()) {
-      if ((k.kind === 'name' || k.kind === 'name_dob') && k.role === 'client' && k.display) for (const t of k.display.toLowerCase().split(/[^a-z]+/)) if (t) nameTokens.add(t);
-      if (k.kind === 'vrm' && hintTokens.some((t) => t.toUpperCase() === k.value)) s += 5;
-    }
-    for (const t of hintTokens) if (nameTokens.has(t)) s += 3;
-    const words = new Set(c.files.flatMap((f) => input.words?.[f.fileId] ?? []).map((w) => w.toLowerCase()));
-    for (const t of hintTokens) if (words.has(t)) s += 2;
-    // compact registration in the hint ("KX21ABC" or "KX21 ABC")
-    const compact = input.nameHint.toUpperCase().replace(/[^A-Z0-9]/g, '');
-    for (const k of c.keys.values()) if (k.kind === 'vrm' && k.value.length >= 5 && compact.includes(k.value) && !hintTokens.some((t) => t.toUpperCase() === k.value)) s += 5;
-    return s;
-  };
-  const docs = (c: Cluster) => c.files.filter((f) => f.isDocument !== false && !f.isPhoto).length;
+  const fixed = input.fixedClaim ?? null;
   const firstPos = (c: Cluster) => Math.min(...c.files.map((f) => f.position));
-  const ranked = [...keyed].sort((a, b) => hintScore(b) - hintScore(a) || Number(Boolean(a.claim)) - Number(Boolean(b.claim)) || docs(b) - docs(a) || firstPos(a) - firstPos(b));
-  const main: Cluster = ranked[0] ?? { seed: '__main__', files: [], keys: new Map(), reasons: [], warnings: [], claim: null, possible: null, score: 0 };
-  if (ranked[0] && hintScore(ranked[0]) > 0) main.reasons.unshift({ code: 'name_hint', text: `Matches the bundle name “${input.nameHint.trim()}”` });
-
-  // 4. unkeyed files
-  const newCases = keyed.filter((c) => !c.claim || c === main);
-  const accidentDay = (c: Cluster): string | null => {
-    if (input.accidentDates?.[c.seed]) return input.accidentDates[c.seed]!;
-    const days = [...c.keys.values()].filter((k) => k.kind === 'accident_date').map((k) => k.value);
-    return days[0] ?? null;
-  };
+  let main: Cluster;
   const unsure: FileKeys[] = [];
   const unsureReasons: GroupReason[] = [];
-  for (const u of unkeyed) {
-    let target: Cluster | undefined;
-    let reason: GroupReason | undefined;
-    if (newCases.length <= 1) {
-      target = newCases[0] ?? main;
-      reason = { code: 'only_case_in_upload', text: `${u.files.length === 1 ? describe(u.files[0]!) : `${u.files.length} files`} ha${u.files.length === 1 ? 's' : 've'} no identifiers; this is the only case in the upload`, fileId: u.files[0]!.fileId };
-    } else {
-      const taken = u.files.map((f) => f.takenAt).find((t): t is string => Boolean(t));
-      if (taken) {
-        const near = newCases
-          .map((c) => ({ c, d: accidentDay(c) }))
-          .filter((x): x is { c: Cluster; d: string } => Boolean(x.d))
-          .map((x) => ({ ...x, gap: Math.abs(daysBetween(x.d, taken) ?? Infinity) }))
-          .filter((x) => x.gap <= 2.5)
-          .sort((a, b) => a.gap - b.gap);
-        if (near.length === 1 || (near.length > 1 && near[0]!.gap < near[1]!.gap)) {
-          target = near[0]!.c;
-          reason = { code: 'photo_date_near_accident', text: `Photo taken ${taken.slice(0, 10)}, within two days of this case's accident`, fileId: u.files[0]!.fileId };
+  const claimCls: Cluster[] = [];
+  if (fixed) {
+    // Catch-up: the claim is fixed (docs/CLAIM-AI-INPUT.md §8.3).
+    const targetKeys = new Set(fixed.keys.map((k) => `${matchKind(k.kind)}|${k.value}`));
+    const targetKinds = new Set(fixed.keys.map((k) => k.kind));
+    const fromIndex = input.index.claims.find((c) => c.claimId === fixed.claimId);
+    main = { seed: '__main__', files: [], keys: new Map(), reasons: [], warnings: [], claim: { claimId: fixed.claimId, reference: fixed.reference, clientName: fromIndex?.clientName ?? null, status: fromIndex?.status ?? '', score: 20 }, possible: null, score: 20 };
+    for (const c of keyed) {
+      let t = 0;
+      const hits: FileKey[] = [];
+      for (const k of c.keys.values()) {
+        if (k.kind === 'sha_on_claim' ? k.value === fixed.claimId : targetKeys.has(keyId(k))) {
+          t += k.kind === 'sha_on_claim' ? WEIGHT.strong : WEIGHT[KEY_STRENGTH[k.kind]];
+          hits.push(k);
         }
       }
-    }
-    if (target) {
-      target.files.push(...u.files);
-      if (reason) target.reasons.push(reason);
-      if (target === main && !keyed.includes(main) && !clusters.includes(main)) {
-        /* main created from unkeyed files only */
+      if (c.claim && c.claim.claimId !== fixed.claimId && c.claim.score >= 10 && c.claim.score >= 2 * t) {
+        claimCls.push(c);
+        continue;
       }
-    } else {
-      unsure.push(...u.files);
-      unsureReasons.push({ code: 'no_identifiers', text: `${u.files.length === 1 ? describe(u.files[0]!) : `${u.files.length} files`}: nothing in ${u.files.length === 1 ? 'it' : 'them'} names a registration, person or reference`, fileId: u.files[0]!.fileId });
+      const differs = (['vin', 'name_dob', 'licence'] as KeyKind[]).some(
+        (kind) => targetKinds.has(kind) && [...c.keys.values()].some((k) => k.kind === kind && k.role === 'client') && ![...c.keys.values()].some((k) => k.kind === kind && targetKeys.has(keyId(k))),
+      );
+      if (t === 0 && differs) {
+        unsure.push(...c.files);
+        unsureReasons.push({ code: 'conflicting_identifiers', text: `${c.files.length === 1 ? describe(c.files[0]!) : `${c.files.length} files`} share${c.files.length === 1 ? 's' : ''} nothing with ${fixed.reference} and name${c.files.length === 1 ? 's' : ''} a different client`, fileId: c.files[0]!.fileId });
+        continue;
+      }
+      main.files.push(...c.files);
+      for (const [id, key] of c.keys) if (!main.keys.has(id)) main.keys.set(id, key);
+      main.warnings.push(...c.warnings);
+      main.reasons.push(...c.reasons);
+      for (const h of hits.slice(0, 2)) {
+        main.reasons.unshift({
+          code: h.kind === 'sha_on_claim' ? 'same_file_on_claim' : 'matches_claim',
+          text: h.kind === 'sha_on_claim' ? `The same file is already on ${fixed.reference}` : `${KIND_LABEL[h.kind][0]!.toUpperCase()}${KIND_LABEL[h.kind].slice(1)}${shortValue(h) ? ` ${shortValue(h)}` : ''} is on ${fixed.reference}`,
+          key: h.kind,
+        });
+      }
     }
-  }
+    for (const u of unkeyed) {
+      main.files.push(...u.files);
+      main.reasons.push({ code: 'no_identifiers', text: `${u.files.length === 1 ? describe(u.files[0]!) : `${u.files.length} files`}: no identifiers — filed on ${fixed.reference}`, fileId: u.files[0]!.fileId });
+    }
+  } else {
+    // 5. main (decided before the unkeyed files join, so they can join it)
+    const hintTokens = input.nameHint
+      .split(/\s[–—-]\s|[,;]/)
+      .join(' ')
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((t) => t.length >= 2 && !HINT_STOP.has(t));
+    const hintScore = (c: Cluster): number => {
+      let s = 0;
+      const nameTokens = new Set<string>();
+      for (const k of c.keys.values()) {
+        if ((k.kind === 'name' || k.kind === 'name_dob') && k.role === 'client' && k.display) for (const t of k.display.toLowerCase().split(/[^a-z]+/)) if (t) nameTokens.add(t);
+        if (k.kind === 'vrm' && hintTokens.some((t) => t.toUpperCase() === k.value)) s += 5;
+      }
+      for (const t of hintTokens) if (nameTokens.has(t)) s += 3;
+      const words = new Set(c.files.flatMap((f) => input.words?.[f.fileId] ?? []).map((w) => w.toLowerCase()));
+      for (const t of hintTokens) if (words.has(t)) s += 2;
+      // compact registration in the hint ("KX21ABC" or "KX21 ABC")
+      const compact = input.nameHint.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      for (const k of c.keys.values()) if (k.kind === 'vrm' && k.value.length >= 5 && compact.includes(k.value) && !hintTokens.some((t) => t.toUpperCase() === k.value)) s += 5;
+      return s;
+    };
+    const docs = (c: Cluster) => c.files.filter((f) => f.isDocument !== false && !f.isPhoto).length;
+    const ranked = [...keyed].sort((a, b) => hintScore(b) - hintScore(a) || Number(Boolean(a.claim)) - Number(Boolean(b.claim)) || docs(b) - docs(a) || firstPos(a) - firstPos(b));
+    main = ranked[0] ?? { seed: '__main__', files: [], keys: new Map(), reasons: [], warnings: [], claim: null, possible: null, score: 0 };
+    if (ranked[0] && hintScore(ranked[0]) > 0) main.reasons.unshift({ code: 'name_hint', text: `Matches the bundle name “${input.nameHint.trim()}”` });
 
-  // AI advice: only out of `unsure`, only when no strong key contradicts (the target is a new case or main).
-  for (const [fileId, adv] of Object.entries(input.advice ?? {})) {
-    const i = unsure.findIndex((f) => f.fileId === fileId);
-    if (i < 0) continue;
-    const target = adv.groupKey === 'main' ? main : undefined;
-    if (!target) continue;
-    const f = unsure[i]!;
-    const contra = target.files.some((t) => contradicts(f, t));
-    if (contra) continue;
-    unsure.splice(i, 1);
-    target.files.push(f);
-    target.reasons.push({ code: 'ai_advice', text: `The AI check placed it here: ${adv.why}`.slice(0, 200), fileId });
+    // 4. unkeyed files
+    const newCases = keyed.filter((c) => !c.claim || c === main);
+    const accidentDay = (c: Cluster): string | null => {
+      if (input.accidentDates?.[c.seed]) return input.accidentDates[c.seed]!;
+      const days = [...c.keys.values()].filter((k) => k.kind === 'accident_date').map((k) => k.value);
+      return days[0] ?? null;
+    };
+    for (const u of unkeyed) {
+      let target: Cluster | undefined;
+      let reason: GroupReason | undefined;
+      if (newCases.length <= 1) {
+        target = newCases[0] ?? main;
+        reason = { code: 'only_case_in_upload', text: `${u.files.length === 1 ? describe(u.files[0]!) : `${u.files.length} files`} ha${u.files.length === 1 ? 's' : 've'} no identifiers; this is the only case in the upload`, fileId: u.files[0]!.fileId };
+      } else {
+        const taken = u.files.map((f) => f.takenAt).find((t): t is string => Boolean(t));
+        if (taken) {
+          const near = newCases
+            .map((c) => ({ c, d: accidentDay(c) }))
+            .filter((x): x is { c: Cluster; d: string } => Boolean(x.d))
+            .map((x) => ({ ...x, gap: Math.abs(daysBetween(x.d, taken) ?? Infinity) }))
+            .filter((x) => x.gap <= 2.5)
+            .sort((a, b) => a.gap - b.gap);
+          if (near.length === 1 || (near.length > 1 && near[0]!.gap < near[1]!.gap)) {
+            target = near[0]!.c;
+            reason = { code: 'photo_date_near_accident', text: `Photo taken ${taken.slice(0, 10)}, within two days of this case's accident`, fileId: u.files[0]!.fileId };
+          }
+        }
+      }
+      if (target) {
+        target.files.push(...u.files);
+        if (reason) target.reasons.push(reason);
+        if (target === main && !keyed.includes(main) && !clusters.includes(main)) {
+          /* main created from unkeyed files only */
+        }
+      } else {
+        unsure.push(...u.files);
+        unsureReasons.push({ code: 'no_identifiers', text: `${u.files.length === 1 ? describe(u.files[0]!) : `${u.files.length} files`}: nothing in ${u.files.length === 1 ? 'it' : 'them'} names a registration, person or reference`, fileId: u.files[0]!.fileId });
+      }
+    }
+
+    // AI advice: only out of `unsure`, only when no strong key contradicts (the target is a new case or main).
+    for (const [fileId, adv] of Object.entries(input.advice ?? {})) {
+      const i = unsure.findIndex((f) => f.fileId === fileId);
+      if (i < 0) continue;
+      const target = adv.groupKey === 'main' ? main : undefined;
+      if (!target) continue;
+      const f = unsure[i]!;
+      const contra = target.files.some((t) => contradicts(f, t));
+      if (contra) continue;
+      unsure.splice(i, 1);
+      target.files.push(f);
+      target.reasons.push({ code: 'ai_advice', text: `The AI check placed it here: ${adv.why}`.slice(0, 200), fileId });
+    }
   }
 
   // 6. labels and keys
@@ -396,10 +450,11 @@ export function groupFiles(input: GroupingInput): GroupingResult {
     confidence: conf(main.claim ? main.claim.score : main.score || (main.files.length ? 10 : 0)),
     suggestedName: suggested(main),
     warnings: main.warnings,
-    defaultAction: main.claim ? 'decide' : 'register',
+    defaultAction: fixed ? 'attach' : main.claim ? 'decide' : 'register',
   };
+  if (fixed) mainGroup.label = 'This claim';
   groups.push(mainGroup);
-  const others = keyed.filter((c) => c !== main && !c.claim).sort((a, b) => firstPos(a) - firstPos(b));
+  const others = fixed ? [] : keyed.filter((c) => c !== main && !c.claim).sort((a, b) => firstPos(a) - firstPos(b));
   const used: string[] = [];
   for (const c of others) {
     const key = nextCaseKey(used);
@@ -419,7 +474,7 @@ export function groupFiles(input: GroupingInput): GroupingResult {
     });
   }
   const claimClusters = new Map<string, Cluster[]>();
-  for (const c of keyed.filter((x) => x !== main && x.claim)) claimClusters.set(c.claim!.claimId, [...(claimClusters.get(c.claim!.claimId) ?? []), c]);
+  for (const c of fixed ? claimCls : keyed.filter((x) => x !== main && x.claim)) claimClusters.set(c.claim!.claimId, [...(claimClusters.get(c.claim!.claimId) ?? []), c]);
   for (const [claimId, cs] of claimClusters) {
     const cl = cs[0]!.claim!;
     groups.push({

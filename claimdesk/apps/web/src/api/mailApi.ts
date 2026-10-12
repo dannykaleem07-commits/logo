@@ -28,6 +28,8 @@ export interface MailAccount {
   fromAddress: string;
   signatureText?: string;
   signatureHtml?: string;
+  /** Branded HTML part + inline logo on every email (default on). */
+  htmlFooter?: boolean;
   processedFolder: string;
   quarantineFolder: string;
   moveAfterIngest: boolean;
@@ -71,10 +73,19 @@ export interface MailAccountInput {
   password?: string;
   smtpPassword?: string;
   signatureText?: string | null;
+  htmlFooter?: boolean;
   processedFolder?: string;
   quarantineFolder?: string;
   moveAfterIngest?: boolean;
   enabled?: boolean;
+}
+
+/** GET /mail/footer-preview: the sample email as sent (logo as a data URL so the page can show it). */
+export interface FooterPreview {
+  htmlFooter: boolean;
+  html: string;
+  text: string;
+  claimRef: string | null;
 }
 
 export interface MailTestResult {
@@ -238,6 +249,7 @@ export const mailApi = {
   test: () => request<MailTestResult>('/mail/test', { method: 'POST', body: {} }),
   testSend: () => request<{ outboxId: string; status: OutboxStatus; to: string }>('/mail/test-send', { method: 'POST', body: {} }),
   syncNow: () => request<{ jobId: string }>('/mail/sync-now', { method: 'POST', body: {} }),
+  footerPreview: (withClaim = true) => request<FooterPreview>('/mail/footer-preview', { query: { withClaim: String(withClaim) } }),
   messages: (q: { status?: string; claimId?: string; limit?: number } = {}) => request<{ items: MailMessageSummary[]; total: number }>('/mail/messages', { query: q }),
   message: (id: string) => request<MailMessageDetail>(`/mail/messages/${seg(id)}`),
   link: (id: string, claimId: string | null, reason?: string) => request<MailMessageDetail>(`/mail/messages/${seg(id)}/link`, { method: 'POST', body: { claimId, ...(reason ? { reason } : {}) } }),
@@ -255,6 +267,7 @@ export const mailApi = {
 export const mailQk = {
   all: ['mail'] as const,
   account: ['mail', 'account'] as const,
+  footerPreview: (withClaim: boolean) => ['mail', 'footer-preview', withClaim] as const,
   messages: (q: object) => ['mail', 'messages', q] as const,
   message: (id: string) => ['mail', 'message', id] as const,
   claimMailbox: (claimId: string) => ['mail', 'claim', claimId] as const,
@@ -267,6 +280,10 @@ export const OUTBOX_POLL_MS = 10_000;
 
 export function useMailAccount() {
   return useQuery({ queryKey: mailQk.account, queryFn: mailApi.account });
+}
+
+export function useFooterPreview(withClaim: boolean) {
+  return useQuery({ queryKey: mailQk.footerPreview(withClaim), queryFn: () => mailApi.footerPreview(withClaim) });
 }
 
 export function useClaimMailbox(claimId: string) {

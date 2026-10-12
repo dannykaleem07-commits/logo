@@ -113,6 +113,20 @@
       "when": 1792450000000,
       "tag": "0015_smart_intake",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "6",
+      "when": 1792550000000,
+      "tag": "0016_claim_ai_input",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1792560000000,
+      "tag": "0017_email_html_footer",
+      "breakpoints": true
     }
   ]
 }

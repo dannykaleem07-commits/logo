@@ -12,6 +12,7 @@ import { londonDay } from './core.js';
 import { autopilotDailyLogSections } from '../autopilot/dailyLog.js';
 import { knowledgeDailyLogSection } from '../knowledge/digest.js';
 import { intakeDailyLogSection } from '../intake/bundles/dailyLog.js';
+import { claimAiDailyLogSection } from '../claimai/dailyLog.js';
 import type { KnowledgeDigest } from '@ccguk/domain';
 
 export interface LogLine {
@@ -49,6 +50,8 @@ export interface DailyLog {
     knowledge?: KnowledgeDigest;
     // Smart intake (docs/SMART-INTAKE.md §12), built by apps/api/src/intake/bundles/dailyLog.ts; absent when empty.
     intake?: LogLine[];
+    // Claim AI input (docs/CLAIM-AI-INPUT.md §13), built by apps/api/src/claimai/dailyLog.ts; absent when empty.
+    claimAi?: LogLine[];
   };
 }
 
@@ -91,7 +94,7 @@ interface AuditRow {
 }
 
 /** Audit actions that are bookkeeping, not record updates. */
-const NOT_RECORD_UPDATE = /^(agent\.|needs_you\.|ai\.|job\.|email\.send|notifications?\.|knowledge\.|intake\.bundle\.(?!register$|attach$)|intake\.(unpack|split_pack)$)/;
+const NOT_RECORD_UPDATE = /^(agent\.|needs_you\.|ai\.|job\.|email\.send|notifications?\.|knowledge\.|intake\.bundle\.(?!register$|attach$)|intake\.(unpack|split_pack)$|claim_ai\.(?!input\.apply$|catch_up\.apply$|instruction\.create$|correspondence\.record$))/;
 const DRAFT_ACTION = /(^document\.(create|generate|draft)|^docx[._-]?document\.(create|generate)|^outbox\.(draft|create)|^email\.draft)/;
 // One count per field: intake writes `intake.apply` for every field it fills (the route it goes through writes its own
 // claim.patch / vehicle.update / party.patch row too, which would double the count), so only the apply rows count.
@@ -99,6 +102,11 @@ const PREFILL_ACTION = /^(intake\.apply|proposal\.apply|field\.apply)$/;
 
 /** Plain words for the record updates the owner reads in the daily log. */
 const RECORD_LABEL: Record<string, string> = {
+  // Claim AI input (docs/CLAIM-AI-INPUT.md §13)
+  'claim_ai.input.apply': 'update applied from your note',
+  'claim_ai.catch_up.apply': 'documents caught up',
+  'claim_ai.instruction.create': 'standing instruction added',
+  'claim_ai.correspondence.record': 'letter recorded',
   'evidence.upload': 'file stored as evidence',
   'evidence.import_attach': 'file attached from the import folder',
   'evidence.import_folder': 'file attached from the import folder',
@@ -362,6 +370,7 @@ export function compileDailyLog(ctx: AppContext, day: string): DailyLog {
       ...autopilotDailyLogSections(ctx, day, { start, end }),
       ...knowledgeDailyLogSection(ctx, day),
       ...intakeDailyLogSection(ctx, day, { start, end }),
+      ...claimAiDailyLogSection(ctx, day, { start, end }),
       usage: { driver, ...(fiveHourPeak !== undefined ? { fiveHourPeak } : {}), ...(typeof seven?.utilization === 'number' ? { sevenDay: seven.utilization } : {}), ...(costUsd > 0 ? { costUsd: Math.round(costUsd * 100) / 100 } : {}) },
     },
   };

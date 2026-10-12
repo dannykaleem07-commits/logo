@@ -51,6 +51,8 @@ export interface MailAccountRecord {
   fromAddress: string;
   signatureText?: string;
   signatureHtml?: string;
+  /** Branded HTML part + inline logo on every email (default on). */
+  htmlFooter: boolean;
   processedFolder: string;
   quarantineFolder: string;
   moveAfterIngest: boolean;
@@ -73,6 +75,7 @@ export interface UpsertMailAccountInput {
   fromAddress: string;
   signatureText?: string | null;
   signatureHtml?: string | null;
+  htmlFooter?: boolean;
   processedFolder?: string;
   quarantineFolder?: string;
   moveAfterIngest?: boolean;
@@ -117,6 +120,7 @@ export function upsertMailAccount(db: Db, input: UpsertMailAccountInput): MailAc
     fromAddress: input.fromAddress,
     signatureText: input.signatureText === undefined ? (existing?.signatureText ?? null) : input.signatureText,
     signatureHtml: input.signatureHtml === undefined ? (existing?.signatureHtml ?? null) : input.signatureHtml,
+    htmlFooter: input.htmlFooter ?? existing?.htmlFooter ?? true,
     processedFolder: input.processedFolder ?? existing?.processedFolder ?? 'ClaimDesk-Processed',
     quarantineFolder: input.quarantineFolder ?? existing?.quarantineFolder ?? 'ClaimDesk-Quarantine',
     moveAfterIngest: input.moveAfterIngest ?? existing?.moveAfterIngest ?? true,

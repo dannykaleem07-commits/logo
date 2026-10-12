@@ -100,7 +100,7 @@ describe('bundles', () => {
     await drain(t);
     const d = (await t.api<Any>('GET', `/intake/bundles/${b.id}`)).body;
     const keys = (o: Any) => Object.keys(o).sort();
-    const summaryKeys = ['id', 'name', 'status', 'readiness', 'source', 'folderKey', 'parentBundleId', 'revision', 'computedRevision', 'createdAt', 'updatedAt', 'createdBy', 'fileCounts', 'groupCount', 'conflictsOpen', 'missingDocs', 'signals', 'reasoning', 'autoRegister', 'claim', 'needsYouId', 'error'];
+    const summaryKeys = ['id', 'name', 'status', 'readiness', 'source', 'folderKey', 'parentBundleId', 'revision', 'computedRevision', 'createdAt', 'updatedAt', 'createdBy', 'fileCounts', 'groupCount', 'conflictsOpen', 'missingDocs', 'signals', 'reasoning', 'autoRegister', 'claim', 'needsYouId', 'error', 'mode', 'targetClaim']; // mode + targetClaim: docs/CLAIM-AI-INPUT.md §11.2
     expect(keys(d)).toEqual([...summaryKeys, 'files', 'groups', 'draft', 'conflicts', 'checklist', 'timeline', 'signals', 'liability', 'register', 'aiSummary', 'decisions'].filter((k, i, a) => a.indexOf(k) === i).sort());
     expect(keys(d.fileCounts)).toEqual(['duplicates', 'failed', 'inProgress', 'read', 'skipped', 'total', 'waitingAi'].sort());
     expect(keys(d.reasoning)).toEqual(['at', 'status', 'waiting'].sort());

@@ -16,6 +16,7 @@
 import { randomUUID } from 'node:crypto';
 import type { MailAccountRecord } from '@ccguk/db';
 import type { AppContext } from '../context.js';
+import { composeEmail } from './emailHtml.js';
 
 // ---------------------------------------------------------------------------
 // Interfaces (§F.2, verbatim)
@@ -44,6 +45,10 @@ export interface SmtpSendInput {
   inReplyTo?: string;
   references?: string[];
   attachments: { filename: string; path: string; contentType: string }[];
+  /** Images shown inside the HTML part (referenced as `cid:<cid>`), e.g. the footer logo — not file attachments. */
+  inline?: { filename: string; path: string; contentType: string; cid: string }[];
+  /** The claim reference for the footer's "Please quote our reference" row; omitted = read from the "[CCG-…]" subject tag. */
+  claimRef?: string | null;
 }
 
 export interface SmtpSender {
@@ -236,7 +241,10 @@ export async function buildRawMessage(msg: SmtpSendInput): Promise<Buffer> {
     messageId: msg.messageId,
     ...(msg.inReplyTo ? { inReplyTo: msg.inReplyTo } : {}),
     ...(msg.references?.length ? { references: msg.references } : {}),
-    attachments: msg.attachments.map((a) => ({ filename: a.filename, path: a.path, contentType: a.contentType })),
+    attachments: [
+      ...msg.attachments.map((a) => ({ filename: a.filename, path: a.path, contentType: a.contentType })),
+      ...(msg.inline ?? []).map((a) => ({ filename: a.filename, path: a.path, contentType: a.contentType, cid: a.cid, contentDisposition: 'inline' as const })),
+    ],
   });
   // MimeNode leaves Bcc out of the generated headers by default (keepBcc false), so the stored copy never shows it.
   return await composer.compile().build();
@@ -467,10 +475,27 @@ export async function mailboxFor(ctx: AppContext, account: MailAccountRecord): P
   return new ImapFlowMailbox({ host: account.imapHost, port: account.imapPort, secure: account.imapTls, user: account.username, pass: await password(ctx, 'imap_password') });
 }
 
-/** The SMTP sender for the account (fake when MAIL_TRANSPORT=fake). SMTP uses `smtp_password`, else the IMAP one. */
+/**
+ * The SMTP sender for the account (fake when MAIL_TRANSPORT=fake). SMTP uses `smtp_password`, else the IMAP one. Every
+ * send goes through `brandedSender`: plain text + trading disclosure, and the branded HTML part with the inline logo
+ * unless Settings > Email "HTML footer" is off (mail/emailHtml.ts).
+ */
 export async function smtpFor(ctx: AppContext, account: MailAccountRecord): Promise<SmtpSender> {
-  if (ctx.config.mailTransport === 'fake') return fakeTransports(ctx).smtp;
-  return new NodemailerSmtp({ host: account.smtpHost, port: account.smtpPort, security: account.smtpSecurity, user: account.username, pass: await password(ctx, 'smtp_password') });
+  if (ctx.config.mailTransport === 'fake') return brandedSender(ctx, account, fakeTransports(ctx).smtp);
+  return brandedSender(ctx, account, new NodemailerSmtp({ host: account.smtpHost, port: account.smtpPort, security: account.smtpSecurity, user: account.username, pass: await password(ctx, 'smtp_password') }));
+}
+
+/** Wrap a sender so every message is composed as multipart text + HTML (see mail/emailHtml.ts). */
+export function brandedSender(ctx: AppContext, account: MailAccountRecord | undefined, inner: SmtpSender): SmtpSender {
+  return {
+    verify: () => inner.verify(),
+    send: (msg) => {
+      const c = composeEmail(ctx, account, { subject: msg.subject, text: msg.text, ...(msg.html ? { html: msg.html } : {}), ...(msg.claimRef !== undefined ? { claimRef: msg.claimRef } : {}) });
+      const { claimRef: _ref, ...rest } = msg;
+      const inline = [...(msg.inline ?? []), ...c.inline];
+      return inner.send({ ...rest, text: c.text, ...(c.html ? { html: c.html } : {}), ...(inline.length ? { inline } : {}) });
+    },
+  };
 }
 
 /** `<uuid@domain>` for an outgoing message (§F.6). */

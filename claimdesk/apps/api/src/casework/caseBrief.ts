@@ -237,6 +237,12 @@ export function buildCaseBrief(ctx: AppContext, claimId: string, opts: CaseBrief
       const text = htmlToText(d.html ?? '');
       return { templateId: d.templateId, sentAt: d.sentAt!, keyFacts: factEntries.filter(([, f]) => text.includes(f.display)).map(([id]) => id).sort() };
     });
+  // Letters sent outside ClaimDesk, recorded from the claim's AI input (docs/CLAIM-AI-INPUT.md §9): the drafter and the
+  // reviewer see they already went.
+  for (const r of ctx.repos.listCorrespondence(ctx.db, claimId, { direction: 'out' })) {
+    priorLetters.push({ templateId: r.templateId ?? `offsystem:${r.kind}`, sentAt: r.at, keyFacts: [] });
+  }
+  priorLetters.sort(byStr((d) => `${d.sentAt}|${d.templateId}`));
 
   // --- recipients ------------------------------------------------------------
   const recipients: CaseBrief['recipients'] = [];

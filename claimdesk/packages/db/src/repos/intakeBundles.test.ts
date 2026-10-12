@@ -158,7 +158,8 @@ describe('migration 0015 on a database at 0014', () => {
     const dir = mkdtempSync(path.join(os.tmpdir(), 'claimdesk-0015-'));
     try {
       mkdirSync(path.join(dir, 'meta'));
-      const upTo14 = journal.entries.filter((e) => e.tag !== '0015_smart_intake');
+      // Everything before 0015 (later migrations, e.g. 0016, need 0015's tables).
+      const upTo14 = journal.entries.filter((e) => e.tag < '0015_smart_intake');
       writeFileSync(path.join(dir, 'meta', '_journal.json'), JSON.stringify({ ...journal, entries: upTo14 }));
       for (const e of upTo14) copyFileSync(path.join(migrationsFolder, `${e.tag}.sql`), path.join(dir, `${e.tag}.sql`));
       const db = createDatabase({ path: ':memory:' });

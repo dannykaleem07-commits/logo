@@ -1,0 +1,220 @@
+{
+  "claim": {
+    "id": "c1",
+    "reference": "CCG-2026-00001",
+    "status": "hire_active"
+  },
+  "ai": {
+    "available": true,
+    "waiting": null
+  },
+  "open": [
+    {
+      "id": "u1",
+      "claimId": "c1",
+      "kind": "update",
+      "channel": "typed",
+      "status": "preview",
+      "statusLabel": "Ready to check",
+      "excerpt": "TP insurer admitted liability on the phone today, ref AB123. Client called, car repaired, hire ended yesterday. Don't chase the client until Monday. Payment of £3,450 received. Keep the client posted ",
+      "createdAt": "2026-10-12T09:00:00.000Z",
+      "createdBy": "user-owner",
+      "createdByName": "Courtesy Cars",
+      "appliedAt": null,
+      "engine": "rules_ai",
+      "counts": {
+        "actions": 10,
+        "applied": 0,
+        "waitingTick": 2,
+        "needsYou": 1,
+        "undone": 0,
+        "failed": 0,
+        "questions": 0
+      },
+      "headline": "7 lines · 2 need your tick · 1 for Needs-you",
+      "waiting": null,
+      "bundle": null
+    },
+    {
+      "id": "cu1",
+      "claimId": "c1",
+      "kind": "catch_up",
+      "channel": "upload",
+      "status": "preview",
+      "statusLabel": "Ready to check",
+      "excerpt": "8 files — letters posted before the claim was opened",
+      "createdAt": "2026-10-12T08:30:00.000Z",
+      "createdBy": "user-owner",
+      "createdByName": "Courtesy Cars",
+      "appliedAt": null,
+      "engine": "catch_up",
+      "counts": {
+        "actions": 4,
+        "applied": 0,
+        "waitingTick": 1,
+        "needsYou": 0,
+        "undone": 0,
+        "failed": 0,
+        "questions": 0
+      },
+      "headline": "8 files · 2 letters to record · 1 needs you",
+      "waiting": null,
+      "bundle": {
+        "id": "b-cu1",
+        "files": 8,
+        "inProgress": 0,
+        "filed": 0
+      }
+    }
+  ],
+  "instructions": [
+    {
+      "id": "ins-1",
+      "claimId": "c1",
+      "text": "Don't chase the client until Monday 19 October 2026.",
+      "appliesTo": [
+        "all"
+      ],
+      "appliesToLabel": "All agents",
+      "effect": {
+        "kind": "hold_contact",
+        "contacts": [
+          "client"
+        ]
+      },
+      "effectLabel": "Holds every email to the client",
+      "activeFrom": "2026-10-12T09:02:00.000Z",
+      "until": "2026-10-18T23:00:00.000Z",
+      "status": "active",
+      "createdBy": "user-owner",
+      "createdByName": "Courtesy Cars",
+      "createdAt": "2026-10-12T09:02:00.000Z",
+      "source": {
+        "inputId": "u0",
+        "actionKey": "a7"
+      },
+      "retiredBy": null,
+      "retiredAt": null,
+      "retiredReason": null
+    },
+    {
+      "id": "ins-0",
+      "claimId": "c1",
+      "text": "Ask me before sending anything to the insurer.",
+      "appliesTo": [
+        "mail",
+        "drafter"
+      ],
+      "appliesToLabel": "Mail, Drafter",
+      "effect": {
+        "kind": "ask_before_sending",
+        "contacts": [
+          "at_fault_insurer"
+        ]
+      },
+      "effectLabel": "Asks you before any email to the insurer",
+      "activeFrom": "2026-10-05T09:00:00.000Z",
+      "until": null,
+      "status": "retired",
+      "createdBy": "user-owner",
+      "createdByName": "Courtesy Cars",
+      "createdAt": "2026-10-05T09:00:00.000Z",
+      "source": null,
+      "retiredBy": "user-owner",
+      "retiredAt": "2026-10-08T09:00:00.000Z",
+      "retiredReason": "Insurer replied"
+    }
+  ],
+  "history": {
+    "items": [
+      {
+        "id": "u1",
+        "claimId": "c1",
+        "kind": "update",
+        "channel": "typed",
+        "status": "preview",
+        "statusLabel": "Ready to check",
+        "excerpt": "TP insurer admitted liability on the phone today, ref AB123. Client called, car repaired, hire ended yesterday. Don't chase the client until Monday. Payment of £3,450 received. Keep the client posted ",
+        "createdAt": "2026-10-12T09:00:00.000Z",
+        "createdBy": "user-owner",
+        "createdByName": "Courtesy Cars",
+        "appliedAt": null,
+        "engine": "rules_ai",
+        "counts": {
+          "actions": 10,
+          "applied": 0,
+          "waitingTick": 2,
+          "needsYou": 1,
+          "undone": 0,
+          "failed": 0,
+          "questions": 0
+        },
+        "headline": "7 lines · 2 need your tick · 1 for Needs-you",
+        "waiting": null,
+        "bundle": null
+      },
+      {
+        "id": "cu1",
+        "claimId": "c1",
+        "kind": "catch_up",
+        "channel": "upload",
+        "status": "preview",
+        "statusLabel": "Ready to check",
+        "excerpt": "8 files — letters posted before the claim was opened",
+        "createdAt": "2026-10-12T08:30:00.000Z",
+        "createdBy": "user-owner",
+        "createdByName": "Courtesy Cars",
+        "appliedAt": null,
+        "engine": "catch_up",
+        "counts": {
+          "actions": 4,
+          "applied": 0,
+          "waitingTick": 1,
+          "needsYou": 0,
+          "undone": 0,
+          "failed": 0,
+          "questions": 0
+        },
+        "headline": "8 files · 2 letters to record · 1 needs you",
+        "waiting": null,
+        "bundle": {
+          "id": "b-cu1",
+          "files": 8,
+          "inProgress": 0,
+          "filed": 0
+        }
+      },
+      {
+        "id": "u0",
+        "claimId": "c1",
+        "kind": "update",
+        "channel": "typed",
+        "status": "applied",
+        "statusLabel": "Done",
+        "excerpt": "Engineer inspected the car today.",
+        "createdAt": "2026-10-10T15:00:00.000Z",
+        "createdBy": "user-owner",
+        "createdByName": "Courtesy Cars",
+        "appliedAt": "2026-10-12T09:02:00.000Z",
+        "engine": "rules_ai",
+        "counts": {
+          "actions": 10,
+          "applied": 5,
+          "waitingTick": 0,
+          "needsYou": 1,
+          "undone": 0,
+          "failed": 1,
+          "questions": 0
+        },
+        "headline": "Inspection noted 10 Oct",
+        "waiting": null,
+        "bundle": null
+      }
+    ],
+    "total": 3
+  },
+  "badge": {
+    "open": 2,
+    "instructions": 1
+  }
+}

@@ -52,3 +52,5 @@ export * from './knowledgeResearch.js';
 export * from './knowledgeUse.js';
 // Smart intake — case bundles (docs/SMART-INTAKE.md §3.3), owned by intake-server.
 export * from './intakeBundles.js';
+// Claim AI input (docs/CLAIM-AI-INPUT.md §2.3), owned by claimai-server.
+export * from './claimAi.js';

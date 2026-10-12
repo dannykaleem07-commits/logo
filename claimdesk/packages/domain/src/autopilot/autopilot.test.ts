@@ -409,3 +409,34 @@ describe('a pack step waits only on its own pack (no cross-stage blocking)', () 
     expect(st.waitingOn).toBe('client');
   });
 });
+
+describe("the owner's standing instructions (CLAIM-AI-INPUT §4, §7.2)", () => {
+  const hold = { id: 'ins-1', text: "Don't chase the client until Monday", appliesTo: ['all' as const], effect: { kind: 'hold_contact' as const, contacts: ['client' as const] }, activeFrom: NOW, until: '2026-09-27T23:00:00.000Z' };
+  const noAck = { outbox: [] };
+
+  it('a hold on the client makes draft steps to the client wait on the owner with the instruction sentence; insurer steps are unaffected', () => {
+    const before = planAutopilot(facts(noAck));
+    expect(step(before, 'intake.acknowledge').status).toBe('due');
+    const plan = planAutopilot(facts({ ...noAck, ownerInstructions: [hold] }));
+    const ack = step(plan, 'intake.acknowledge');
+    expect(ack).toMatchObject({ status: 'waiting', waitingOn: 'owner', dueAt: hold.until });
+    expect(ack.blockedBy[0]).toMatchObject({ kind: 'instruction', code: 'ins-1' });
+    expect(ack.next).toBe("Acknowledge the client: waiting — you asked 'Don't chase the client until Monday' (until Mon 28 Sep).");
+    // a step to the insurer keeps its own status
+    expect(step(plan, 'notify.ncaf').status).toBe(step(before, 'notify.ncaf').status);
+  });
+
+  it('"ask me before sending to the client" raises client draft steps to Ask me with the reason', () => {
+    const ask = { ...hold, id: 'ins-2', text: 'Ask me before sending anything to the client', effect: { kind: 'ask_before_sending' as const, contacts: ['client' as const] }, until: null };
+    const plan = planAutopilot(facts({ ...noAck, ownerInstructions: [ask] }));
+    const ack = step(plan, 'intake.acknowledge');
+    expect(ack.status).toBe('due');
+    expect(ack.mode).toBe('confirm');
+    expect(ack.modeReasons).toContain('You asked to be asked first: Ask me before sending anything to the client');
+  });
+
+  it('an off-system sent row (virtual outbox fact) satisfies ack.sent', () => {
+    const plan = planAutopilot(facts({ outbox: [{ id: 'corr:1', kind: 'ack', status: 'sent', autopilotStepId: null, createdAt: NOW, sentAt: NOW, offSystem: true }] }));
+    expect(step(plan, 'intake.acknowledge').status).toBe('done');
+  });
+});

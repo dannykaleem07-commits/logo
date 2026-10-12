@@ -167,3 +167,37 @@ describe('groupFiles — weak identifiers only', () => {
     expect(r.fileGroup.notes).toBe('unsure');
   });
 });
+
+describe('groupFiles with a fixed claim (catch-up, docs/CLAIM-AI-INPUT.md §8.3)', () => {
+  const target = { claimId: 'c-1', reference: 'CCG-2026-00001', keys: [{ kind: 'vrm' as const, value: 'KX21ABC' }, { kind: 'vin' as const, value: 'WVWZZZ1KZAW000001' }, { kind: 'name_dob' as const, value: 'doe|j|1990-03-12' }] };
+  const other = { claimId: 'c-2', reference: 'CCG-2026-00002', clientName: 'Ali Example', status: 'triage', keys: [{ kind: 'vrm' as const, value: 'YB68KDL' }, { kind: 'vin' as const, value: 'SAJAA01A12B000002' }] };
+  const index: ClaimKeyIndex = { claims: [{ ...target, clientName: 'Jane Doe', status: 'triage' }, other] };
+  const photo = (): FileKeys => ({ fileId: 'photo', position: 9, parentFileId: null, role: 'document', isPhoto: true, takenAt: '2026-10-01T10:00:00.000Z', keys: [], label: 'photo' });
+
+  it('files matching the claim and files with no identifiers go to main ("This claim"); another claim keeps its own group', () => {
+    const r = groupFiles({ files: [aV5c(), aLetter(), bV5c(), bLetter(), photo()], index, nameHint: 'Catch-up CCG-2026-00001', pins: {}, excluded: [], fixedClaim: target });
+    const main = r.groups.find((g) => g.key === 'main')!;
+    expect(main.label).toBe('This claim');
+    expect(main.claim?.reference).toBe('CCG-2026-00001');
+    expect(main.defaultAction).toBe('attach');
+    expect(main.fileIds).toEqual(['a-v5c', 'a-letter', 'photo']);
+    expect(main.reasons.some((x) => /is on CCG-2026-00001/.test(x.text))).toBe(true);
+    const otherGroup = r.groups.find((g) => g.key === 'claim:c-2')!;
+    expect(otherGroup.fileIds).toEqual(['b-v5c', 'b-letter']);
+    expect(r.groups.some((g) => g.kind === 'new_case')).toBe(false);
+  });
+
+  it('a cluster with a different client and no shared key is unsure; a thin cluster with no claim match joins main', () => {
+    const stranger = fk('stranger', 6, [cand('client.name', 'Sam Stranger', 'stranger', 'v5c'), cand('vehicle.vin', 'ZZZZZZ1KZAW000099', 'stranger', 'v5c'), cand('vehicle.registration', 'AB12 CDE', 'stranger', 'v5c')]);
+    const note = fk('note', 7, [cand('tp.insurerRef', 'TPI/5555', 'note', 'insurer_letter')]);
+    const r = groupFiles({ files: [aV5c(), stranger, note], index, nameHint: '', pins: {}, excluded: [], fixedClaim: target });
+    expect(r.groups.find((g) => g.key === 'unsure')!.fileIds).toEqual(['stranger']);
+    expect(r.groups.find((g) => g.key === 'unsure')!.reasons[0]!.text).toMatch(/nothing with CCG-2026-00001/);
+    expect(r.groups.find((g) => g.key === 'main')!.fileIds).toEqual(['a-v5c', 'note']);
+  });
+
+  it('owner pins still win', () => {
+    const r = groupFiles({ files: [aV5c(), bV5c()], index, nameHint: '', pins: { 'b-v5c': 'main' }, excluded: [], fixedClaim: target });
+    expect(r.groups.find((g) => g.key === 'main')!.fileIds).toEqual(['a-v5c', 'b-v5c']);
+  });
+});

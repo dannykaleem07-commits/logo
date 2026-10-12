@@ -193,7 +193,8 @@ export interface StepOption {
   recommended: boolean;
 }
 
-export type StepBlockKind = 'clash' | 'step' | 'requirement' | 'eligibility' | 'acceptance' | 'gate' | 'paused';
+/** `instruction`: an owner's standing instruction holds the step (CLAIM-AI-INPUT §4). */
+export type StepBlockKind = 'clash' | 'step' | 'requirement' | 'eligibility' | 'acceptance' | 'gate' | 'paused' | 'instruction';
 
 export interface StepRefs {
   reservationId?: Id;

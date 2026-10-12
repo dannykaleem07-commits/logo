@@ -192,6 +192,8 @@ export interface DailyLog {
     knowledge?: KnowledgeDigest;
     /** Smart intake (docs/SMART-INTAKE.md §12; optional; absent on older logs and on days with no bundle activity) */
     intake?: LogLine[];
+    /** AI input on claims (docs/CLAIM-AI-INPUT.md §13; optional; absent on older logs and on days with no AI input) */
+    claimAi?: LogLine[];
   };
 }
 

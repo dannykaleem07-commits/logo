@@ -39,6 +39,11 @@ export interface ActionDescriptor {
   step?: StepContext;
   /** A hire offer / delivery slot commitment verified by code (§D.3). Set by code only. */
   commitment?: CommitmentContext;
+  /**
+   * Claim AI input (docs/CLAIM-AI-INPUT.md §7.2): an owner's standing instruction (a hold or "ask me first") covers a
+   * recipient of this send. Set by code only (`describeOutbox`) — never from model input.
+   */
+  ownerInstruction?: { instructionId: string; text: string; effect: 'hold_contact' | 'ask_before_sending' };
 }
 
 export interface AutonomyState {
@@ -65,6 +70,7 @@ export type AutonomyRuleId =
   | 'kill_switch'
   | 'paused'
   | 'untrusted_source'
+  | 'owner_instruction'
   | 'step_owner_only'
   | 'step_confirm'
   | 'always_ask_classes'
@@ -85,12 +91,16 @@ export type AutonomyRuleId =
   | 'external_ok'
   | 'read_draft';
 
-/** The rules in evaluation order: SD §D.2's 21 plus Autopilot's 4a/4b (SUPREME-AUTOPILOT §A.6) after untrusted_source. */
+/**
+ * The rules in evaluation order: SD §D.2's 21 plus the owner's standing instructions (CLAIM-AI-INPUT §4) and Autopilot's
+ * 4a/4b (SUPREME-AUTOPILOT §A.6) after untrusted_source.
+ */
 export const AUTONOMY_RULE_IDS: readonly AutonomyRuleId[] = [
   'destructive',
   'kill_switch',
   'paused',
   'untrusted_source',
+  'owner_instruction',
   'step_owner_only',
   'step_confirm',
   'always_ask_classes',
@@ -153,6 +163,9 @@ const RULES: ReadonlyArray<readonly [AutonomyRuleId, Rule]> = [
         ? ask(a.spoofSuspected ? 'The source message may be spoofed' : 'The source message may contain instructions aimed at the agent')
         : undefined,
   ],
+  // CLAIM-AI-INPUT §4: the owner said not to contact (or to be asked before writing to) this recipient. Ask, not deny:
+  // the owner can still approve that one email.
+  ['owner_instruction', (a) => (a.class === 'external_send' && a.ownerInstruction ? ask(`You asked: ${a.ownerInstruction.text}`) : undefined)],
   // 4a / 4b (SUPREME-AUTOPILOT §A.6): an `owner` step is never attempted by an agent; a `confirm` step never acts alone.
   ['step_owner_only', (a) => (a.step?.mode === 'owner' && !isReadOrDraft(a.class) ? deny('A person does this step') : undefined)],
   ['step_confirm', (a) => (a.step?.mode === 'confirm' && !isReadOrDraft(a.class) ? ask('This step is set to ask you first') : undefined)],

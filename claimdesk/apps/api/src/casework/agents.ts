@@ -26,6 +26,8 @@ import { CASE_REVIEW_SPEC, DRAFTER_SPEC, OFFER_ANALYSE_SPEC, RESEARCHER_SPEC } f
 import { findOffer, offerDecisionItem } from './offers.js';
 import { settlementFigures } from './quantum.js';
 import { maskText } from './mask.js';
+import { activeInstructionViews } from '../claimai/instructions.js';
+import { holdFor, type ContactRole } from '@ccguk/domain';
 
 export const CASE_MANAGER = agentUserId('case_manager');
 export const DRAFTER = agentUserId('drafter');
@@ -91,6 +93,30 @@ export function sameNeed(a: string, b: string): boolean {
   return [...needWords(a)].some((w) => wb.has(w));
 }
 
+const CLIENT_EMAIL_KINDS = new Set(['ack', 'client_update', 'doc_request', 'hire_offer', 'signature_request', 'booking_update', 'info_provided', 'doc_request_fulfil']);
+const INSURER_EMAIL_KINDS = new Set(['handling_ref_request', 'chaser', 'ncaf_cover', 'insurer_notice', 'offer_response', 'complaint']);
+
+/** The contact a drafter hand-off writes to, when an active hold covers it (CLAIM-AI-INPUT §7.2). */
+function heldContactFor(ctx: AppContext, claimId: string, h: { recipientPartyId: string | null; emailKind: string | null; templateId: string | null; purpose: string }): { text: string; until: string | null } | undefined {
+  const active = activeInstructionViews(ctx, claimId, { agent: 'drafter' });
+  if (!active.length) return undefined;
+  const claim = ctx.repos.getClaim(ctx.db, claimId);
+  let contact: ContactRole | null = null;
+  if (h.recipientPartyId && claim) {
+    if (h.recipientPartyId === claim.claimantId || h.recipientPartyId === claim.driverId) contact = 'client';
+    else if (h.recipientPartyId === claim.atFaultInsurerId) contact = 'at_fault_insurer';
+    else {
+      const p = ctx.repos.getParty(ctx.db, h.recipientPartyId);
+      const r = p?.roles.find((x) => x === 'engineer' || x === 'repairer' || x === 'solicitor' || x === 'supplier');
+      contact = (r as ContactRole | undefined) ?? null;
+    }
+  }
+  if (!contact && h.emailKind) contact = CLIENT_EMAIL_KINDS.has(h.emailKind) ? 'client' : INSURER_EMAIL_KINDS.has(h.emailKind) ? 'at_fault_insurer' : null;
+  if (!contact && /\bclient\b/i.test(h.purpose)) contact = 'client';
+  const hold = holdFor(active, contact ?? 'anyone');
+  return hold ? { text: hold.text, until: hold.until } : undefined;
+}
+
 /** Turn a validated CaseReviewResult into tasks, Needs-you items and follow-up jobs (§C.4). Pure of the model. */
 export function applyCaseReview(ctx: AppContext, job: JobRecord, claimId: string, result: CaseReviewResult, runId: string): { outcome: CaseReviewOutcome; followUps: EnqueueInput[] } {
   const out: CaseReviewOutcome = { runId, nextBestAction: result.nextBestAction, accepted: [], rejected: [], asked: [], tasks: [], questions: [] };
@@ -136,6 +162,18 @@ export function applyCaseReview(ctx: AppContext, job: JobRecord, claimId: string
     if (loopGuard) {
       out.rejected.push({ to: d.handoff.to, reason: 'loop guard: hand-off chain too deep' });
       return;
+    }
+    // The owner said not to contact this recipient (CLAIM-AI-INPUT §7.2): a drafter hand-off becomes a task due when the
+    // hold ends instead of a draft (a mail reply hand-off is kept; the outbox rule asks the owner).
+    if (d.handoff.to === 'drafter') {
+      const held = heldContactFor(ctx, claimId, d.handoff);
+      if (held) {
+        const due = held.until ?? addWorkingDays(ctx.now(), 1);
+        const task = ctx.repos.createTask(ctx.db, { claimId, kind: 'follow_up', title: `Held: ${d.handoff.purpose}`.slice(0, 120), note: `Held: you asked "${held.text}". When the hold ends: ${d.handoff.purpose}`.slice(0, 2000), dueAt: new Date(Date.parse(due)).toISOString(), createdBy: CASE_MANAGER, sourceRunId: runId, now: ctx.now() });
+        out.tasks.push(task.id);
+        out.rejected.push({ to: 'drafter', reason: `held by your instruction: ${held.text}` });
+        return;
+      }
     }
     followUps.push(d.job);
     out.accepted.push({ to: d.handoff.to, type: d.job.type, ...(d.job.idempotencyKey ? { key: d.job.idempotencyKey } : {}) });
@@ -254,21 +292,30 @@ export interface DraftComposePayload {
   repairOf?: string;
   issues?: Array<{ code?: string; message?: string; fix?: string | null }>;
   loop?: number;
+  /** Claim AI input (CLAIM-AI-INPUT §6.1): evidence the owner asked to send, and the input that asked for it. */
+  attachEvidenceIds?: string[];
+  ownerInputId?: string;
+  ownerText?: string;
 }
 
 export async function runDraftCompose(ctx: AppContext, job: JobRecord, p: DraftComposePayload): Promise<JobOutcome> {
   const claim = ctx.repos.getClaim(ctx.db, p.claimId);
   if (!claim) return { kind: 'fail', reason: `claim ${p.claimId} not found` };
-  const budget = checkClaimBudget(ctx, claim.id);
+  // an owner-requested draft (AI input) is exempt from the per-claim budget, like "Review now"
+  const budget = checkClaimBudget(ctx, claim.id, Boolean(p.ownerInputId));
   if (!budget.allowed) return budgetExhausted(ctx, job, claim.id, budget.limit, budget.used);
   countClaimRun(ctx, claim.id);
   const message = messageBlock(ctx, claim.id, p.replyToMessageId);
   const recipient = p.recipientPartyId ? ctx.repos.getParty(ctx.db, p.recipientPartyId) : undefined;
+  const attach = (p.attachEvidenceIds ?? []).filter((id) => ctx.repos.getEvidence(ctx.db, id)?.claimId === claim.id);
+  const untrusted = [...(message ? [message] : []), ...(p.ownerText ? [{ kind: 'note' as const, id: 'owner-text', text: maskText(p.ownerText).slice(0, 4000) }] : [])];
   const run = await runAgent(ctx, DRAFTER_SPEC, job, {
-    task: `Draft for claim ${claim.reference} (claimId ${claim.id}): ${p.purpose}`,
+    task: `Draft for claim ${claim.reference} (claimId ${claim.id}): ${p.purpose}${p.ownerInputId ? ' — as the owner asked' : ''}`,
     brief: buildCaseBrief(ctx, claim.id, { mask: !recipient?.email }),
-    ...(message ? { untrusted: [message] } : {}),
+    ...(untrusted.length ? { untrusted } : {}),
     question: [
+      p.ownerInputId ? `Prepared as the owner asked in their update (owner-text). It still follows the sending rules: the owner approves what the policy asks.` : '',
+      attach.length ? `Attach these evidence files with email_draft attach: ${attach.map((id) => `{"evidenceId":"${id}","documentId":null}`).join(', ')}.` : '',
       p.templateId ? `Use the template ${p.templateId} (document_draft for a letter, docx_document_draft for a CCGUK Word template).` : '',
       p.emailKind ? `Write an email of kind ${p.emailKind} with email_draft${p.replyToMessageId ? ` replying to message ${p.replyToMessageId} (inReplyToMessageId)` : ''}.` : '',
       recipient ? `Recipient: ${recipient.name} (party ${recipient.id}).` : 'Choose the recipient from the Case Brief recipients.',
@@ -301,7 +348,7 @@ export async function runDraftCompose(ctx: AppContext, job: JobRecord, p: DraftC
     return { kind: 'done', result: { drafts: [], needsYouId: ny.id, runId: run.runId } };
   }
   for (const d of result.drafts) if (d.kind !== 'outbox') queueIndex(ctx, 'document', d.id, { createdBy: DRAFTER });
-  return { kind: 'done', result: { drafts: result.drafts.map((d) => ({ kind: d.kind, id: d.id })), missingInfo: result.missingInfo, runId: run.runId } };
+  return { kind: 'done', result: { drafts: result.drafts.map((d) => ({ kind: d.kind, id: d.id })), missingInfo: result.missingInfo, runId: run.runId, ...(p.ownerInputId ? { ownerInputId: p.ownerInputId } : {}) } };
 }
 
 // ---------------------------------------------------------------------------
@@ -402,7 +449,10 @@ export function sweepCandidates(ctx: AppContext): SweepCandidate[] {
     const state = ctx.repos.getClaimAgentState(ctx.db, c.id);
     const lastIn = ctx.repos.listMailMessages(ctx.db, { claimId: c.id, direction: 'in', limit: 1 })[0];
     const lastOut = ctx.repos.listMailMessages(ctx.db, { claimId: c.id, direction: 'out', limit: 1 })[0];
-    if (lastIn && (!lastOut || lastOut.receivedAt < lastIn.receivedAt) && (!state.lastReviewAt || state.lastReviewAt < lastIn.receivedAt)) reasons.push('unanswered inbound email');
+    // a letter or email sent outside ClaimDesk after the last inbound (recorded from the AI input) counts as the answer
+    const offSystemOut = ctx.repos.listCorrespondence(ctx.db, c.id, { direction: 'out' }).map((r) => r.at).sort().pop();
+    const answered = (lastOut && lastOut.receivedAt >= (lastIn?.receivedAt ?? '')) || (offSystemOut && lastIn && offSystemOut >= lastIn.receivedAt);
+    if (lastIn && !answered && (!state.lastReviewAt || state.lastReviewAt < lastIn.receivedAt)) reasons.push('unanswered inbound email');
     if (state.lastReviewAt ? state.lastReviewAt < weekAgo : c.openedAt < weekAgo) reasons.push('no review for 7 days');
     if (reasons.length && !state.paused) out.push({ claimId: c.id, reasons });
   }

@@ -15,7 +15,7 @@
  *                        GTA 4.1 clock starts from a recorded event).
  */
 import type { Actor } from '@ccguk/db';
-import { chaseAction, nextChaseAt, type Evidence, type GeneratedDocument, type Id, type SignatureRequest } from '@ccguk/domain';
+import { chaseAction, holdFor, nextChaseAt, type Evidence, type GeneratedDocument, type Id, type SignatureRequest } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
 import { badRequest, conflict, HttpError } from '../errors.js';
 import { createNeedsYou } from '../agent/core.js';
@@ -25,6 +25,7 @@ import { assertHuman } from '../services/humanOnly.js';
 import { appendPaperworkEvent, audit, AUTOPILOT_USER_ID, salutationOf, signingSettings } from './common.js';
 import { signDocumentWithCertificate } from './certificate.js';
 import { refreshPackFromDocuments } from './packs.js';
+import { activeInstructionViews } from '../claimai/instructions.js';
 import { syncEnforceabilityFromPack } from './enforceability.js';
 
 const OPEN_REQUEST: SignatureRequest['status'][] = ['prepared', 'sent', 'chased', 'returned'];
@@ -117,6 +118,8 @@ export interface ChaseRunResult {
   chased: Array<{ claimId: Id; packId?: Id; requestIds: Id[]; outboxId?: string; error?: string }>;
   calls: Array<{ claimId: Id; requestIds: Id[]; needsYouId: Id }>;
   waiting: number;
+  /** Requests not chased because the owner asked not to contact the client (CLAIM-AI-INPUT §7.2); due again after. */
+  held?: Array<{ claimId: Id; requestIds: Id[]; instructionId: Id }>;
 }
 
 function chaseBody(signerName: string, titles: string[], chaseNumber: number): string {
@@ -148,6 +151,13 @@ export async function runSigningChase(ctx: AppContext, job: { id: string; correl
     const claimId = reqs[0]!.claimId;
     const claim = ctx.repos.getClaim(ctx.db, claimId);
     if (!claim) continue;
+    // "Don't chase the client until Monday": no reminder email and no call card while the owner's hold lasts. The
+    // requests stay due (nothing is advanced), so the chase picks up on the first run after the hold ends.
+    const hold = holdFor(activeInstructionViews(ctx, claimId, { agent: 'autopilot', at: now }), 'client');
+    if (hold) {
+      (out.held ??= []).push({ claimId, requestIds: reqs.map((r) => r.id), instructionId: hold.id });
+      continue;
+    }
     const decisions = reqs.map((r) => ({ r, a: chaseAction(r, now, schedule) }));
     const toChase = decisions.filter((d) => d.a.action === 'chase');
     const toCall = decisions.filter((d) => d.a.action === 'call');

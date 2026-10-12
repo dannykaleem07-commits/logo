@@ -377,6 +377,40 @@ describe('emailed PDFs, chasing and returned scans (§E.4)', () => {
     expect(provenFromPack(t.ctx, t.ctx.db, reservation.id).enforceability?.expressRequestToStartAt).toBe('2026-10-21T12:00:00.000Z');
   });
 
+  it("the owner's \"don't chase the client until Monday\" holds the signing reminders until the hold ends (CLAIM-AI-INPUT §7.2)", async () => {
+    await setUpMail(t.ctx);
+    const { claimId, reservation } = await confirmedBooking();
+    const pack = await htmlHireStartPack(claimId, reservation.id);
+    await drain('review.check', 'document.after_review');
+    const sent = await t.api<{ signatureRequestIds: string[] }>('POST', `/packs/${pack.id}/approve`, { send: true });
+    expect(sent.status, JSON.stringify(sent.body)).toBe(200);
+    const [reqId] = sent.body.signatureRequestIds;
+    const ins = await t.api<{ id: string }>('POST', `/claims/${claimId}/instructions`, {
+      text: "Don't chase the client until Monday",
+      effect: { kind: 'hold_contact', contacts: ['client'] },
+      until: '2026-10-18T23:00:00.000Z', // Mon 19 Oct 00:00 London
+    });
+    expect(ins.status, JSON.stringify(ins.body)).toBe(201);
+    const chasers = () => t.ctx.repos.listOutbox(t.ctx.db, { claimId }).filter((o) => o.kind === 'chaser');
+    const chaseAt = async (at: string) => {
+      t.setNow(at);
+      const r = await run(t.ctx, 'signing.chase', {});
+      expect(r.outcome.kind).toBe('done');
+      return (r.outcome as { result: { chased: unknown[]; calls: unknown[]; held?: Array<{ instructionId: string }> } }).result;
+    };
+    // Day 2 and day 5 fall inside the hold: no reminder drafted, nothing advanced.
+    const held = await chaseAt('2026-10-14T08:15:00.000Z');
+    expect(held.chased).toHaveLength(0);
+    expect(held.held?.[0]?.instructionId).toBe(ins.body.id);
+    expect((await chaseAt('2026-10-16T08:15:00.000Z')).chased).toHaveLength(0);
+    expect(chasers()).toHaveLength(0);
+    expect(t.ctx.repos.requireSignatureRequest(t.ctx.db, reqId!)).toMatchObject({ status: 'sent', chaseCount: 0 });
+    // Monday: the hold has ended, the reminder goes the normal way (reviewer + policy).
+    const after = await chaseAt('2026-10-19T08:15:00.000Z');
+    expect(after.held ?? []).toHaveLength(0);
+    expect(after.chased.length + after.calls.length).toBe(1);
+  });
+
   it('a returned copy the owner rejects puts the request back to waiting', async () => {
     await setUpMail(t.ctx);
     const { claimId, reservation } = await confirmedBooking();

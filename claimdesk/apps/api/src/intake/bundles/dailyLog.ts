@@ -33,6 +33,10 @@ export function intakeDailyLogSection(ctx: AppContext, _day: string, bounds: { s
   const rows = sqlite
     .prepare(`SELECT at, user_id, action, entity_id, after FROM audit_log WHERE at >= ? AND at < ? AND (action LIKE 'intake.bundle.%' OR action IN ('intake.unpack', 'intake.split_pack')) ORDER BY at, rowid`)
     .all(bounds.start, bounds.end) as Row[];
+  // catch-up bundles belong to a claim's AI input: the claimAi section reports them (docs/CLAIM-AI-INPUT.md §8.2, §13)
+  const catchUp = new Set<string>();
+  for (const r of rows) if (r.action.startsWith('intake.bundle.') && ctx.repos.getIntakeBundle(ctx.db, r.entity_id)?.mode === 'catch_up') catchUp.add(r.entity_id);
+  if (catchUp.size) rows.splice(0, rows.length, ...rows.filter((r) => !catchUp.has(r.entity_id)));
   const lines: LogLine[] = [];
   const bundleName = (id: string) => ctx.repos.getIntakeBundle(ctx.db, id)?.name ?? 'a bundle';
   const ref = (claimId: string | undefined) => (claimId ? ctx.repos.getClaim(ctx.db, claimId)?.reference : undefined);

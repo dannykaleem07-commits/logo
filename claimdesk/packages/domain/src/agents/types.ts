@@ -77,6 +77,10 @@ export const JOB_TYPES = [
   'intake.bundle_reconcile',
   'intake.bundle_reason',
   'intake.bundle_register',
+  // Claim AI input (docs/CLAIM-AI-INPUT.md §5.5)
+  'claim.input_interpret',
+  'claim.catch_up_apply',
+  'claim.instruction_due',
 ] as const;
 export type JobType = (typeof JOB_TYPES)[number];
 
@@ -190,10 +194,17 @@ export const JOB_TYPE_INFO: Readonly<Record<JobType, JobTypeInfo>> = {
   'intake.bundle_reconcile': { lane: 'cpu', usesAi: false, mutatesClaim: false, defaultPriority: 3, agent: 'intake' },
   'intake.bundle_reason': { lane: 'ai', usesAi: true, mutatesClaim: false, defaultPriority: 3, agent: 'intake' },
   'intake.bundle_register': { lane: 'io', usesAi: false, mutatesClaim: true, defaultPriority: 2, agent: 'intake' },
+  // Claim AI input (docs/CLAIM-AI-INPUT.md §5.5)
+  'claim.input_interpret': { lane: 'ai', usesAi: true, mutatesClaim: false, defaultPriority: 1, agent: 'case_manager' },
+  'claim.catch_up_apply': { lane: 'io', usesAi: false, mutatesClaim: true, defaultPriority: 2, agent: 'intake' },
+  'claim.instruction_due': { lane: 'io', usesAi: false, mutatesClaim: true, defaultPriority: 3, agent: 'supervisor' },
 };
 
 /** The smart-intake job types (docs/SMART-INTAKE.md §7.1), handled by agent/handlers/intake.ts. */
 export const SMART_INTAKE_JOB_TYPES: readonly JobType[] = ['intake.split', 'intake.bundle_reconcile', 'intake.bundle_reason', 'intake.bundle_register'];
+
+/** The claim AI input job types (docs/CLAIM-AI-INPUT.md §5.5), handled by agent/handlers/claimai.ts. */
+export const CLAIM_AI_JOB_TYPES: readonly JobType[] = ['claim.input_interpret', 'claim.catch_up_apply', 'claim.instruction_due'];
 
 // ---------------------------------------------------------------------------
 // Tools (§B.3, §B.4)

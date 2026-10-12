@@ -43,7 +43,7 @@ const MIB = 1024 * 1024;
 const OPEN: BundleStatus[] = ['open', 'reading', 'reconciling', 'ready', 'needs_you', 'registering'];
 const STATUS_FILTER: Record<string, BundleStatus[] | undefined> = { open: OPEN, done: ['registered', 'attached'], cancelled: ['cancelled'], all: undefined };
 
-const listQuery = z.object({ status: z.enum(['open', 'done', 'cancelled', 'all']).default('open'), limit: z.coerce.number().int().min(1).max(200).default(50), offset: z.coerce.number().int().min(0).default(0) });
+const listQuery = z.object({ status: z.enum(['open', 'done', 'cancelled', 'all']).default('open'), mode: z.enum(['intake', 'catch_up', 'all']).default('intake'), limit: z.coerce.number().int().min(1).max(200).default(50), offset: z.coerce.number().int().min(0).default(0) });
 const nameBody = z.object({ name: z.string().trim().min(1).max(120) });
 const jsonFiles = z
   .object({ uploadId: z.string().min(1).optional(), importId: z.string().min(1).optional(), evidenceId: z.string().min(1).optional() })
@@ -87,6 +87,12 @@ function contentLength(request: FastifyRequest): number | undefined {
 }
 const tooLarge = (): HttpError => new HttpError(413, 'FILE_TOO_LARGE', `A file for intake can be up to ${INTAKE_MAX_FILE_BYTES / MIB} MB; larger files go through the chunked upload or the import folder`, { limitBytes: INTAKE_MAX_FILE_BYTES, useChunked: true });
 
+/** Register / attach / wizard-draft / split-off / think-again are not for catch-up bundles (docs/CLAIM-AI-INPUT.md §8.2). */
+function refuseCatchUp(ctx: AppContext, bundleId: string): void {
+  const b = ctx.repos.getIntakeBundle(ctx.db, bundleId);
+  if (b?.mode === 'catch_up') throw new HttpError(409, 'CATCH_UP_BUNDLE', "These files belong to a claim already open — use the claim's AI input panel", { claimId: b.targetClaimId ?? null });
+}
+
 function fileOf(ctx: AppContext, bundleId: string, fileId: string) {
   const f = ctx.repos.getBundleFile(ctx.db, fileId);
   if (!f || f.bundleId !== bundleId) throw notFound('bundle file', fileId);
@@ -97,8 +103,9 @@ export function registerIntakeBundlesRoutes(app: FastifyInstance, ctx: AppContex
   app.get('/intake/bundles', async (request) => {
     const q = parse(listQuery, request.query ?? {});
     const status = STATUS_FILTER[q.status];
-    const items = ctx.repos.listIntakeBundles(ctx.db, { ...(status ? { status } : {}), limit: q.limit, offset: q.offset });
-    return { items: items.map((b) => bundleSummary(ctx, b)), total: ctx.repos.countIntakeBundles(ctx.db, status ? { status } : {}) };
+    // catch-up bundles belong to a claim's AI input panel (docs/CLAIM-AI-INPUT.md §8.2): hidden unless asked for
+    const items = ctx.repos.listIntakeBundles(ctx.db, { ...(status ? { status } : {}), mode: q.mode, limit: q.limit, offset: q.offset });
+    return { items: items.map((b) => bundleSummary(ctx, b)), total: ctx.repos.countIntakeBundles(ctx.db, { ...(status ? { status } : {}), mode: q.mode }) };
   });
 
   app.post('/intake/bundles', async (request, reply) => {
@@ -297,6 +304,7 @@ export function registerIntakeBundlesRoutes(app: FastifyInstance, ctx: AppContex
 
   app.post('/intake/bundles/:id/groups/:groupKey/split-off', async (request, reply) => {
     const { id, groupKey } = params<{ id: string; groupKey: string }>(request);
+    refuseCatchUp(ctx, id);
     const body = parse(splitOffBody, request.body ?? {});
     const r = splitOffGroup(ctx, id, decodeURIComponent(groupKey), body.name, request.actor);
     return reply.status(201).send({ bundle: bundleSummary(ctx, r.bundle), source: bundleDetail(ctx, id) });
@@ -304,6 +312,7 @@ export function registerIntakeBundlesRoutes(app: FastifyInstance, ctx: AppContex
 
   app.post('/intake/bundles/:id/think-again', async (request, reply) => {
     const { id } = params<{ id: string }>(request);
+    refuseCatchUp(ctx, id);
     const b = requireOpenBundle(ctx, id);
     const state = recomputeBundle(ctx, id);
     if (!state.main.length) throw badRequest('There is nothing in this case for the AI to read yet');
@@ -314,6 +323,7 @@ export function registerIntakeBundlesRoutes(app: FastifyInstance, ctx: AppContex
 
   app.post('/intake/bundles/:id/register', async (request, reply) => {
     const { id } = params<{ id: string }>(request);
+    refuseCatchUp(ctx, id);
     const body = parse(registerBody, request.body ?? {});
     const r = await registerBundle(ctx, id, request.actor, {
       mode: 'owner',
@@ -328,11 +338,13 @@ export function registerIntakeBundlesRoutes(app: FastifyInstance, ctx: AppContex
 
   app.post('/intake/bundles/:id/register/retry', async (request) => {
     const { id } = params<{ id: string }>(request);
+    refuseCatchUp(ctx, id);
     return retryRegistration(ctx, id, request.actor);
   });
 
   app.post('/intake/bundles/:id/attach', async (request) => {
     const { id } = params<{ id: string }>(request);
+    refuseCatchUp(ctx, id);
     const body = parse(attachBody, request.body ?? {});
     return attachBundle(ctx, id, request.actor, { claimId: body.claimId, ...(body.groupKey ? { groupKey: body.groupKey } : {}), ...(body.apply ? { apply: body.apply } : {}) });
   });
@@ -350,6 +362,7 @@ export function registerIntakeBundlesRoutes(app: FastifyInstance, ctx: AppContex
 
   app.post('/intake/bundles/:id/wizard-draft', async (request, reply) => {
     const { id } = params<{ id: string }>(request);
+    refuseCatchUp(ctx, id);
     const b = requireBundle(ctx, id);
     if (CLOSED_STATUSES.has(b.status)) throw new HttpError(409, 'BUNDLE_CLOSED', `This bundle is ${b.status}`);
     const state = computeBundle(ctx, id);

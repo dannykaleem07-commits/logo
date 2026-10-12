@@ -67,12 +67,59 @@ describe('migration journal (guard 1)', () => {
 });
 
 describe('0015_smart_intake (docs/SMART-INTAKE.md §3.1)', () => {
-  it('takes `when` 1792450000000 and is the last migration, after 0014_knowledge', () => {
+  it('takes `when` 1792450000000, after 0014_knowledge', () => {
     const smart = journal.entries.find((e) => e.tag === '0015_smart_intake');
     expect(smart?.when).toBe(1792450000000);
-    expect(journal.entries.at(-1)?.tag).toBe('0015_smart_intake');
     const knowledge = journal.entries.find((e) => e.tag === '0014_knowledge');
     expect(smart!.when).toBeGreaterThan(knowledge!.when);
+  });
+});
+
+describe('0016_claim_ai_input (docs/CLAIM-AI-INPUT.md §2.1)', () => {
+  it('takes `when` 1792550000000, after 0015_smart_intake', () => {
+    const ai = journal.entries.find((e) => e.tag === '0016_claim_ai_input');
+    expect(ai?.when).toBe(1792550000000);
+    expect(ai?.idx).toBe(16);
+    const smart = journal.entries.find((e) => e.tag === '0015_smart_intake');
+    expect(ai!.when).toBeGreaterThan(smart!.when);
+  });
+
+  it('applies on a database already at 0015 (upgrade) and on a fresh one', () => {
+    const upTo15 = journal.entries.filter((e) => e.when <= 1792450000000);
+    const h = createDatabase({ path: ':memory:' });
+    handles.push(h);
+    runMigrations(h.db, { migrationsFolder: folderWith(upTo15) });
+    h.sqlite.prepare("INSERT INTO intake_bundles (id, name, status, source, created_by, created_at, updated_at) VALUES ('b0', 'Old', 'open', 'upload', 'o', 't', 't')").run();
+    runMigrations(h.db);
+    expect(skippedMigrations(h.db).tags).toEqual([]);
+    const row = h.sqlite.prepare("SELECT mode, target_claim_id FROM intake_bundles WHERE id = 'b0'").get() as { mode: string; target_claim_id: string | null };
+    expect(row).toEqual({ mode: 'intake', target_claim_id: null });
+    for (const t of ['claim_ai_inputs', 'claim_ai_input_log', 'claim_instructions', 'claim_correspondence']) {
+      expect(h.sqlite.prepare("select name from sqlite_master where type = 'table' and name = ?").get(t), t).toBeTruthy();
+    }
+  });
+});
+
+describe('0017_email_html_footer (branded HTML email footer)', () => {
+  it('takes `when` 1792560000000 and is the last migration, after 0016_claim_ai_input', () => {
+    const footer = journal.entries.find((e) => e.tag === '0017_email_html_footer');
+    expect(footer?.when).toBe(1792560000000);
+    expect(footer?.idx).toBe(17);
+    expect(journal.entries.at(-1)?.tag).toBe('0017_email_html_footer');
+    expect(footer!.when).toBeGreaterThan(journal.entries.find((e) => e.tag === '0016_claim_ai_input')!.when);
+  });
+
+  it('upgrades a database at 0016: existing mailboxes keep sending with the footer on', () => {
+    const upTo16 = journal.entries.filter((e) => e.when <= 1792550000000);
+    const h = createDatabase({ path: ':memory:' });
+    handles.push(h);
+    runMigrations(h.db, { migrationsFolder: folderWith(upTo16) });
+    h.sqlite
+      .prepare("INSERT INTO mail_accounts (id, label, imap_host, imap_port, imap_tls, smtp_host, smtp_port, smtp_security, username, secret_ref, from_address, created_at, updated_at) VALUES ('m0', 'Box', 'imap.x', 993, 1, 'smtp.x', 465, 'tls', 'u', 's', 'claims@x.example', 't', 't')")
+      .run();
+    runMigrations(h.db);
+    expect(skippedMigrations(h.db).tags).toEqual([]);
+    expect(h.sqlite.prepare("SELECT html_footer FROM mail_accounts WHERE id = 'm0'").get()).toEqual({ html_footer: 1 });
   });
 });
 

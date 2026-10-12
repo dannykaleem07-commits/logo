@@ -24,6 +24,8 @@ import { conditionsGatingHireOffer } from '../acceptance/assess.js';
 import { sha256Hex } from '../evidence/hash.js';
 import type { ISODateTime } from '../types.js';
 import { configuredStepMode, floorReason } from './settings.js';
+import { askFirstFor, contactOfStepRecipient, holdFor } from '../claimai/instructions.js';
+import { fmtDayWeek } from '../claimai/dates.js';
 import { STAGELESS_STEPS, STEP_CATALOGUE, STEP_RELATED_NEEDS_YOU, stepTitle } from './steps.js';
 import { DATE_FACTS, REQUIREMENTS, holds, hireNeeded, missingRequirements } from './predicates.js';
 import { activeReservation, currentOffer, liveReservation, msOf, packOf, type AutopilotFacts } from './facts.js';
@@ -123,6 +125,14 @@ export function effectiveMode(def: StepDef, f: AutopilotFacts, green: GreenResul
   if (stage === 'legal' && def.action.kind === 'draft' && def.action.recipient === 'at_fault_insurer') {
     if (STEP_MODE_RANK[mode] < STEP_MODE_RANK.confirm) reasons.push('The claim is with the legal team: nothing goes to the other side automatically');
     mode = stricterMode(mode, 'confirm');
+  }
+  // CLAIM-AI-INPUT §4: "ask me before sending anything to …" makes the step at least "Ask me".
+  if (def.action.kind === 'draft' && f.ownerInstructions?.length) {
+    const ask = askFirstFor(f.ownerInstructions, contactOfStepRecipient(def.action.recipient));
+    if (ask) {
+      if (STEP_MODE_RANK[mode] < STEP_MODE_RANK.confirm) reasons.push(`You asked to be asked first: ${ask.text}`);
+      mode = stricterMode(mode, 'confirm');
+    }
   }
   return { mode, reasons };
 }
@@ -258,8 +268,11 @@ function nextSentence(def: StepDef, st: Omit<StepState, 'next'>, f: AutopilotFac
       return `${t}: blocked — ${st.blockedBy[0]?.message ?? 'see the step'}.`;
     case 'in_progress':
       return `${t}: in progress.`;
-    case 'waiting':
+    case 'waiting': {
+      const held = st.blockedBy.find((b) => b.kind === 'instruction');
+      if (held) return `${t}: waiting — you asked '${held.message.replace(/^you said: "|"$/g, '')}'${st.dueAt ? ` (until ${fmtDayWeek(st.dueAt)})` : ''}.`;
       return st.waitingOn === 'owner' ? `${t}: waiting for you in Needs-you.` : `${t}: waiting on ${WAITING_WORD[st.waitingOn ?? 'time'] ?? st.waitingOn}.`;
+    }
     case 'paused':
       return `${t}: due, but the autopilot is paused on this claim.`;
     case 'failed':
@@ -309,6 +322,11 @@ function evaluateStep(def: StepDef, f: AutopilotFacts, done: ReadonlyMap<Autopil
   if (o?.action === 'done') return finish('done', { since: o.at });
   if (holds(f, def.doneWhen)) return finish('done');
   if (o?.action === 'snooze' && o.until && msOf(o.until) > msOf(f.now)) return finish('waiting', { waitingOn: 'time', dueAt: o.until });
+  // CLAIM-AI-INPUT §4: the owner said not to contact this recipient (until a date) — the draft step waits on the owner.
+  if (def.action.kind === 'draft' && f.ownerInstructions?.length) {
+    const hold = holdFor(f.ownerInstructions, contactOfStepRecipient(def.action.recipient));
+    if (hold) return finish('waiting', { waitingOn: 'owner', ...(hold.until ? { dueAt: hold.until } : {}), blockedBy: [{ kind: 'instruction', code: hold.id, message: `you said: "${hold.text}"` }] });
+  }
   const forced = f.forceStepId === def.id;
   const pending = def.after.filter((a) => !['done', 'skipped', 'not_applicable'].includes(done.get(a) ?? 'upcoming'));
   if (pending.length && !forced) return finish('upcoming', { blockedBy: pending.map((p) => ({ kind: 'step' as const, code: p, message: `after "${stepTitle(p)}"` })) });

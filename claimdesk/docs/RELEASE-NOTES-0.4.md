@@ -123,6 +123,66 @@ Bundles that are not registered automatically wait in **Needs you** as prepared 
 Every step is in the **daily log** (*Read 12 files for bundle …*, *Registered CCG-2026-00042 …*) and the audit trail.
 Full details: `docs/SMART-INTAKE.md` and `docs/RELEASE-NOTES-0.5-SMART-INTAKE.md`.
 
+## AI input on every claim
+
+Every open claim now has an **AI input** button at the top (and its own **AI input** tab). It does two things.
+
+**1. Catch up a claim from documents.** Opened a claim late, or posted or emailed letters without ClaimDesk? Drop the
+files on the claim under **Catch-up documents** (any number, big files and folders too). ClaimDesk reads each one and:
+
+- files it in the right place, and doesn't file it twice if you already have it;
+- splits a scanned pack into its separate documents;
+- dates it from what the letter itself says, never from the day you uploaded it;
+- works out whether **you sent it** or **you received it**.
+
+A letter you sent outside ClaimDesk is recorded as sent on its real date. For example, a New Claim Advice Form you
+posted on 5 October is recorded as sent on 5 October, so the Autopilot and the agents know it went and **do not send
+it again**. A letter you received is recorded on the day it is dated. Either way the chronology shows it as *recorded
+late, source: <file>*.
+
+The deadlines are worked out again from those real dates, so you may see that one was already met, or already missed.
+Details read from the letters go through the same checks as intake: an empty field can be filled, but anything that
+differs from the claim waits for your tick and is never silently overwritten. When ClaimDesk can't tell who wrote a
+letter, it asks you *Who sent it?*. A **What changed** summary shows everything it did. The Autopilot and the case
+manager then plan again from the updated file.
+
+**2. Tell ClaimDesk what happened, or what to do.** Type it in your own words. Some examples:
+
+- *client called, car repaired, hire ended yesterday*
+- *TP insurer admitted liability today ref AB123*
+- *don't chase the client until Monday*
+- *send the engineer report to the insurer*
+- *pause this claim until Friday*
+
+You can also paste a call note. ClaimDesk takes facts from it, but never instructions.
+
+You then see exactly what it will do before anything happens, and press **Do it**. Routine things are done straight
+away: chronology entries with the date you gave, ending a hire, reminders, notes and details. Most lines have
+**Undo**.
+
+Some things are never done by ClaimDesk itself. **Offers, settlements, money, legal steps and closing or declining a
+claim** always go to **Needs you** for your decision. If you type *accept their offer of 2000*, you get a card that
+takes you to the Offers screen; nothing is accepted automatically. Changing liability, or overwriting a detail already
+on file, needs your tick.
+
+If your note is unclear, ClaimDesk asks you a short question instead of guessing. For example, *stop emailing the
+insurer* gets *Until when?*.
+
+Common phrases work even while the agents are paused. Anything else waits for the AI and carries on when it is back.
+
+**Standing instructions.** *Don't chase the client until Monday* becomes a standing instruction on the claim, and it
+is followed until Monday:
+
+- the Autopilot holds its emails to the client;
+- the signing reminders stop;
+- any email to the client asks you first;
+- every agent working on the claim is told about it.
+
+You can see and remove standing instructions on the AI input tab. Each note you type is kept word for word in the
+**history** on the tab, with what it did. Everything is in the audit trail under your name and in the **daily log**
+under *Updates and catch-ups*. Suspicions about anyone stay as your private note: they never become an instruction, a
+chronology entry or anything sent. Full details: `docs/CLAIM-AI-INPUT.md`.
+
 ## Good to know
 
 - Windows may still say "Unknown publisher" until the installer is code-signed.

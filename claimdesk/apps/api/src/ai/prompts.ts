@@ -37,6 +37,11 @@ export interface PackDigest {
 }
 export type PackDigestProvider = (ctx: AppContext, spec: AgentSpec) => PackDigest | undefined;
 export type PlaceholderResolver = (ctx: AppContext, claimId: string, text: string) => string;
+/**
+ * The owner's standing instructions + "already done outside ClaimDesk" block for a claim-scoped run (claim AI input,
+ * docs/CLAIM-AI-INPUT.md §7.3). Registered at boot by the claimai module so the gateway never imports it.
+ */
+export type ClaimInstructionsProvider = (ctx: AppContext, spec: AgentSpec, claimId: string) => string | undefined;
 
 /** Optional services the gateway reads from `ctx.services` (all optional; absent = feature off). */
 export interface GatewayServices {
@@ -46,6 +51,8 @@ export interface GatewayServices {
   resolvePlaceholders?: PlaceholderResolver;
   /** MCP endpoint URL override (tests / a server listening on a port other than config.port). */
   mcpUrl?: string;
+  /** Standing instructions block for claim-scoped runs (claim AI input). */
+  claimInstructions?: ClaimInstructionsProvider;
 }
 
 export function gatewayServices(ctx: AppContext): GatewayServices {
@@ -56,6 +63,9 @@ export function registerPackDigestProvider(ctx: AppContext, provider: PackDigest
 }
 export function registerPlaceholderResolver(ctx: AppContext, resolver: PlaceholderResolver | undefined): void {
   gatewayServices(ctx).resolvePlaceholders = resolver;
+}
+export function registerClaimInstructionsProvider(ctx: AppContext, provider: ClaimInstructionsProvider | undefined): void {
+  gatewayServices(ctx).claimInstructions = provider;
 }
 
 // ---------------------------------------------------------------------------
@@ -145,7 +155,7 @@ export function promptVersionOf(system: PromptBlock[], resultSchemaId: string): 
 }
 
 /** Assemble the system blocks and the user message for a run (§O). */
-export function assemblePrompts(spec: AgentSpec, input: AgentInput, ctx: AppContext, opts: { promptsDir?: string } = {}): AssembledPrompts {
+export function assemblePrompts(spec: AgentSpec, input: AgentInput, ctx: AppContext, opts: { promptsDir?: string; claimId?: string | null } = {}): AssembledPrompts {
   const dir = opts.promptsDir ?? PROMPTS_DIR;
   const system: PromptBlock[] = [
     { id: 'identity', text: readPromptFile('_base/identity.md', dir), stable: true },
@@ -165,6 +175,16 @@ export function assemblePrompts(spec: AgentSpec, input: AgentInput, ctx: AppCont
   // Knowledge block (KB §8.1): after the Case Brief, in the user message — never the cached prefix.
   const knowledge = knowledgeBlockFor(ctx, spec, input);
   if (knowledge) parts.push(knowledge.text);
+  // The owner's standing instructions (CLAIM-AI-INPUT §7.3): claim-scoped runs only, user message only.
+  if (opts.claimId) {
+    let block: string | undefined;
+    try {
+      block = gatewayServices(ctx).claimInstructions?.(ctx, spec, opts.claimId);
+    } catch (err) {
+      ctx.logger.warn('standing instructions block failed', { claimId: opts.claimId, error: String(err) });
+    }
+    if (block) parts.push(block);
+  }
   if (input.attachments?.length) {
     parts.push(`# Attachments (verified copies in ./input)\n\n${input.attachments.map((a) => `- ./input/${path.basename(a.path)} — ${a.label} (${a.mime}, ${a.bytes} bytes, sha256 ${a.sha256.slice(0, 12)}…)`).join('\n')}`);
   }

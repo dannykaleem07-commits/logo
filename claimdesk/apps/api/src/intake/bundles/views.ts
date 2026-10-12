@@ -44,7 +44,7 @@ interface StageInfo {
   waiting: Waiting;
 }
 
-function pendingSplitItems(ctx: AppContext): Set<string> {
+export function pendingSplitItems(ctx: AppContext): Set<string> {
   return new Set(
     ctx.repos
       .listAgentJobs(ctx.db, { type: 'intake.split', status: ['queued', 'leased', 'waiting_usage'], limit: 2000 })
@@ -160,6 +160,12 @@ export function bundleSummary(ctx: AppContext, bundle: IntakeBundleRecord, opts:
     reasoning: reasoningView(ctx, b),
     autoRegister: { settingOn: settings.bundles.autoRegister, eligible: Boolean(c?.auto.eligible) && b.autoEligible, blockers: (c?.auto.blockers ?? []) as Blocker[] },
     claim: claim ? { id: claim.id, reference: claim.reference } : null,
+    // docs/CLAIM-AI-INPUT.md §8.2: catch-up bundles belong to a claim's AI input panel
+    mode: b.mode,
+    targetClaim: (() => {
+      const t = b.targetClaimId ? ctx.repos.getClaim(ctx.db, b.targetClaimId) : undefined;
+      return t ? { id: t.id, reference: t.reference } : null;
+    })(),
     needsYouId: b.needsYouId ?? null,
     error: b.error && /invalid result|fixture|job type/i.test(b.error) ? 'The AI check of these documents did not finish. The draft from the documents’ text still stands — use “Think again” to try once more.' : (b.error ?? null),
   };

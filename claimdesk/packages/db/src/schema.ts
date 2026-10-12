@@ -1360,6 +1360,8 @@ export const mailAccounts = sqliteTable('mail_accounts', {
   fromAddress: text('from_address').notNull(),
   signatureText: text('signature_text'),
   signatureHtml: text('signature_html'),
+  /** Branded HTML part + inline logo on every email (migration 0017_email_html_footer); off = plain text only. */
+  htmlFooter: integer('html_footer', { mode: 'boolean' }).notNull().default(true),
   processedFolder: text('processed_folder').notNull().default('ClaimDesk-Processed'),
   quarantineFolder: text('quarantine_folder').notNull().default('ClaimDesk-Quarantine'),
   moveAfterIngest: integer('move_after_ingest', { mode: 'boolean' }).notNull().default(true),
@@ -2576,6 +2578,9 @@ export const intakeBundles = sqliteTable(
     updatedAt: text('updated_at').notNull(),
     closedBy: text('closed_by'),
     closedAt: text('closed_at'),
+    /** 0016: 'intake' | 'catch_up' (docs/CLAIM-AI-INPUT.md §8). */
+    mode: text('mode').notNull().default('intake'),
+    targetClaimId: text('target_claim_id'),
   },
   (t) => [index('intake_bundles_status_idx').on(t.status, t.updatedAt), index('intake_bundles_claim_idx').on(t.claimId)],
 );
@@ -2601,6 +2606,8 @@ export const intakeBundleFiles = sqliteTable(
     addedBy: text('added_by').notNull(),
     addedAt: text('added_at').notNull(),
     updatedAt: text('updated_at').notNull(),
+    /** 0016: per-file catch-up facts (derived). */
+    catchUp: text('catch_up', { mode: 'json' }).$type<unknown>(),
   },
   (t) => [uniqueIndex('intake_bundle_files_item_uq').on(t.bundleId, t.intakeItemId), index('intake_bundle_files_bundle_idx').on(t.bundleId, t.position), index('intake_bundle_files_item_idx').on(t.intakeItemId)],
 );
@@ -2666,3 +2673,115 @@ export type IntakeBundleFileInsert = typeof intakeBundleFiles.$inferInsert;
 export type IntakeBundleDecisionRow = typeof intakeBundleDecisions.$inferSelect;
 export type IntakeBundleReasoningRow = typeof intakeBundleReasonings.$inferSelect;
 export type ClaimDamageObservationRow = typeof claimDamageObservations.$inferSelect;
+
+// --- 0016 claim AI input (docs/CLAIM-AI-INPUT.md §2; owned by claimai-server) ----------------------------------------
+// The owner's words are immutable, the action log and off-system correspondence are append-only, standing instructions
+// may only be retired (triggers in 0016).
+
+export const claimAiInputs = sqliteTable(
+  'claim_ai_inputs',
+  {
+    id: text('id').primaryKey(),
+    claimId: text('claim_id').notNull(),
+    kind: text('kind').notNull(),
+    channel: text('channel').notNull(),
+    text: text('text').notNull().default(''),
+    extraText: text('extra_text'),
+    status: text('status').notNull(),
+    engine: text('engine'),
+    revision: integer('revision').notNull().default(0),
+    interpretation: text('interpretation', { mode: 'json' }).$type<unknown>(),
+    answers: text('answers', { mode: 'json' }).$type<unknown[]>().notNull().default([]),
+    bundleId: text('bundle_id'),
+    autoApply: integer('auto_apply', { mode: 'boolean' }).notNull().default(true),
+    filesDone: integer('files_done', { mode: 'boolean' }).notNull().default(false),
+    runId: text('run_id'),
+    needsYouId: text('needs_you_id'),
+    error: text('error'),
+    summary: text('summary', { mode: 'json' }).$type<unknown>(),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+    updatedAt: text('updated_at').notNull(),
+    appliedBy: text('applied_by'),
+    appliedAt: text('applied_at'),
+  },
+  (t) => [index('claim_ai_inputs_claim_idx').on(t.claimId, t.createdAt), index('claim_ai_inputs_status_idx').on(t.status, t.updatedAt)],
+);
+
+/** Append-only. */
+export const claimAiInputLog = sqliteTable(
+  'claim_ai_input_log',
+  {
+    id: text('id').primaryKey(),
+    inputId: text('input_id').notNull(),
+    claimId: text('claim_id').notNull(),
+    seq: integer('seq').notNull(),
+    kind: text('kind').notNull(),
+    actionKey: text('action_key'),
+    action: text('action', { mode: 'json' }).$type<unknown>(),
+    refs: text('refs', { mode: 'json' }).$type<unknown>(),
+    note: text('note'),
+    actor: text('actor').notNull(),
+    runId: text('run_id'),
+    at: text('at').notNull(),
+  },
+  (t) => [uniqueIndex('claim_ai_input_log_seq_uq').on(t.inputId, t.seq), index('claim_ai_input_log_claim_idx').on(t.claimId, t.at)],
+);
+
+/** Retire-only. */
+export const claimInstructions = sqliteTable(
+  'claim_instructions',
+  {
+    id: text('id').primaryKey(),
+    claimId: text('claim_id').notNull(),
+    text: text('text').notNull(),
+    appliesTo: text('applies_to', { mode: 'json' }).$type<string[]>().notNull(),
+    effect: text('effect', { mode: 'json' }).$type<unknown>(),
+    activeFrom: text('active_from').notNull(),
+    until: text('until'),
+    status: text('status').notNull().default('active'),
+    sourceInputId: text('source_input_id'),
+    sourceActionKey: text('source_action_key'),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+    retiredBy: text('retired_by'),
+    retiredAt: text('retired_at'),
+    retiredReason: text('retired_reason'),
+  },
+  (t) => [index('claim_instructions_claim_idx').on(t.claimId, t.status)],
+);
+
+/** Append-only (withdrawal = a new row superseding the old one). */
+export const claimCorrespondence = sqliteTable(
+  'claim_correspondence',
+  {
+    id: text('id').primaryKey(),
+    claimId: text('claim_id').notNull(),
+    direction: text('direction').notNull(),
+    channel: text('channel').notNull(),
+    kind: text('kind').notNull(),
+    templateId: text('template_id'),
+    emailKind: text('email_kind'),
+    counterpartyRole: text('counterparty_role'),
+    counterpartyName: text('counterparty_name'),
+    at: text('at').notNull(),
+    dateSource: text('date_source').notNull(),
+    subject: text('subject'),
+    summary: text('summary').notNull(),
+    evidenceId: text('evidence_id'),
+    eventId: text('event_id'),
+    inputId: text('input_id'),
+    bundleId: text('bundle_id'),
+    bundleFileId: text('bundle_file_id'),
+    supersedesId: text('supersedes_id'),
+    withdrawn: integer('withdrawn', { mode: 'boolean' }).notNull().default(false),
+    createdBy: text('created_by').notNull(),
+    createdAt: text('created_at').notNull(),
+  },
+  (t) => [index('claim_correspondence_claim_idx').on(t.claimId, t.at)],
+);
+
+export type ClaimAiInputRow = typeof claimAiInputs.$inferSelect;
+export type ClaimAiInputLogRow = typeof claimAiInputLog.$inferSelect;
+export type ClaimInstructionRow = typeof claimInstructions.$inferSelect;
+export type ClaimCorrespondenceRow = typeof claimCorrespondence.$inferSelect;

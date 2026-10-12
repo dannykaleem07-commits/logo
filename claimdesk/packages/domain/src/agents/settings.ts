@@ -36,6 +36,8 @@ export const AI_JOB_DEFAULTS: Readonly<Partial<Record<JobType, AiJobModel & { ag
   'knowledge.replay_drafts': { agent: 'drafter', model: 'claude-opus-5-5', effort: 'medium', maxTurns: 8, timeoutMs: 10 * 60_000 },
   // Smart intake (docs/SMART-INTAKE.md §6.2): reads every document of a case bundle together; no tools.
   'intake.bundle_reason': { agent: 'intake', model: 'claude-opus-5-5', effort: 'medium', maxTurns: 1, timeoutMs: 8 * 60_000 },
+  // Claim AI input (docs/CLAIM-AI-INPUT.md §5.2): reads the owner's update on one claim; no tools, no read access.
+  'claim.input_interpret': { agent: 'case_manager', model: 'claude-sonnet-5-5', effort: 'low', maxTurns: 1, timeoutMs: 2 * 60_000 },
 };
 
 export interface ModelPrice {

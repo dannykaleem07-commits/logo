@@ -35,6 +35,9 @@ export type BundleDecisionKind =
   | 'ack_signal' | 'split_off' | 'think_again' | 'register' | 'attach' | 'cancel' | 'reopen';
 export type BundleReasoningStatus = 'none' | 'queued' | 'waiting_ai' | 'done' | 'failed' | 'skipped';
 export type BundleSource = 'upload' | 'folder' | 'split';
+/** 0016: 'catch_up' bundles belong to a claim's AI input panel (docs/CLAIM-AI-INPUT.md §8). */
+export type BundleMode = 'intake' | 'catch_up';
+export const BUNDLE_MODES: readonly BundleMode[] = ['intake', 'catch_up'];
 
 export const BUNDLE_STATUSES: readonly BundleStatus[] = ['open', 'reading', 'reconciling', 'ready', 'needs_you', 'registering', 'registered', 'attached', 'cancelled'];
 export const CLOSED_BUNDLE_STATUSES: readonly BundleStatus[] = ['registered', 'attached', 'cancelled'];
@@ -67,6 +70,8 @@ export interface IntakeBundleRecord {
   updatedAt: ISODateTime;
   closedBy?: string;
   closedAt?: ISODateTime;
+  mode: BundleMode;
+  targetClaimId?: string;
 }
 
 export interface IntakeBundleFileRecord {
@@ -88,6 +93,8 @@ export interface IntakeBundleFileRecord {
   addedBy: string;
   addedAt: ISODateTime;
   updatedAt: ISODateTime;
+  /** 0016: per-file catch-up facts (derived). */
+  catchUp?: unknown;
 }
 
 export interface IntakeBundleDecisionRecord {
@@ -135,7 +142,7 @@ const toBundle = (r: IntakeBundleRow): IntakeBundleRecord => {
 };
 const toFile = (r: IntakeBundleFileRow): IntakeBundleFileRecord => {
   const d = denull(r) as unknown as IntakeBundleFileRecord;
-  return { ...d, ...(r.facts !== null && r.facts !== undefined ? { facts: r.facts } : {}) };
+  return { ...d, ...(r.facts !== null && r.facts !== undefined ? { facts: r.facts } : {}), ...(r.catchUp !== null && r.catchUp !== undefined ? { catchUp: r.catchUp } : {}) };
 };
 const toDecision = (r: IntakeBundleDecisionRow): IntakeBundleDecisionRecord => {
   const d = denull(r) as unknown as IntakeBundleDecisionRecord;
@@ -154,6 +161,9 @@ export interface CreateIntakeBundleInput {
   folderKey?: string;
   parentBundleId?: string;
   splitFromGroup?: string;
+  /** Default 'intake'. A 'catch_up' bundle needs `targetClaimId`. */
+  mode?: BundleMode;
+  targetClaimId?: string;
   createdBy: string;
   now?: ISODateTime;
   id?: string;
@@ -163,6 +173,9 @@ export function createIntakeBundle(db: Db, input: CreateIntakeBundleInput): Inta
   const name = input.name.replace(/\s+/g, ' ').trim();
   if (!name || name.length > 120) throw new ValidationError('A bundle name is 1–120 characters');
   if (!['upload', 'folder', 'split'].includes(input.source)) throw new ValidationError(`Unknown bundle source ${input.source}`);
+  const mode = input.mode ?? 'intake';
+  if (!BUNDLE_MODES.includes(mode)) throw new ValidationError(`Unknown bundle mode ${mode}`);
+  if (mode === 'catch_up' && !input.targetClaimId) throw new ValidationError('A catch-up bundle needs its claim');
   const now = input.now ?? nowIso();
   const row = db
     .insert(intakeBundles)
@@ -177,6 +190,8 @@ export function createIntakeBundle(db: Db, input: CreateIntakeBundleInput): Inta
       revision: 0,
       reasoningStatus: 'none',
       autoEligible: false,
+      mode,
+      targetClaimId: input.targetClaimId ?? null,
       createdBy: input.createdBy,
       createdAt: now,
       updatedAt: now,
@@ -200,14 +215,20 @@ export function requireIntakeBundle(db: Db, id: string): IntakeBundleRecord {
 export interface ListIntakeBundlesQuery {
   status?: BundleStatus[];
   claimId?: string;
+  /** Default 'intake' (catch-up bundles never show in Intake > Case bundles); 'all' for every mode. */
+  mode?: BundleMode | 'all';
+  targetClaimId?: string;
   limit?: number;
   offset?: number;
 }
 
-function bundleConds(q: Pick<ListIntakeBundlesQuery, 'status' | 'claimId'>): SQL[] {
+function bundleConds(q: Pick<ListIntakeBundlesQuery, 'status' | 'claimId' | 'mode' | 'targetClaimId'>): SQL[] {
   const conds: SQL[] = [];
   if (q.status?.length) conds.push(inArray(intakeBundles.status, q.status));
   if (q.claimId) conds.push(eq(intakeBundles.claimId, q.claimId));
+  const mode = q.mode ?? 'intake';
+  if (mode !== 'all') conds.push(eq(intakeBundles.mode, mode));
+  if (q.targetClaimId) conds.push(eq(intakeBundles.targetClaimId, q.targetClaimId));
   return conds;
 }
 
@@ -225,7 +246,7 @@ export function listIntakeBundles(db: Db, q: ListIntakeBundlesQuery = {}): Intak
     .map(toBundle);
 }
 
-export function countIntakeBundles(db: Db, q: Pick<ListIntakeBundlesQuery, 'status' | 'claimId'> = {}): number {
+export function countIntakeBundles(db: Db, q: Pick<ListIntakeBundlesQuery, 'status' | 'claimId' | 'mode' | 'targetClaimId'> = {}): number {
   const conds = bundleConds(q);
   const r = db.select({ n: sql<number>`count(*)` }).from(intakeBundles).where(conds.length ? and(...conds) : undefined).get();
   return Number(r?.n ?? 0);
@@ -374,6 +395,7 @@ export interface BundleFilePatch {
   filedKind?: string | null;
   filedAt?: string | null;
   bundleId?: string;
+  catchUp?: unknown;
 }
 
 export function updateBundleFile(db: Db, id: string, patch: BundleFilePatch, now: ISODateTime = nowIso()): IntakeBundleFileRecord {

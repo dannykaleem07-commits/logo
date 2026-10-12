@@ -1,0 +1,91 @@
+[
+  {
+    "id": "ci-draft-send-document",
+    "match": {
+      "jobType": "draft.compose",
+      "userContains": [
+        "as the owner asked",
+        "id=\"owner-text\">\nsend the engineer report"
+      ]
+    },
+    "steps": [
+      {
+        "tool": "email_draft",
+        "input": {
+          "claimId": "$job.claimId",
+          "kind": "info_provided",
+          "to": [
+            "claims@example-mutual.example.test"
+          ],
+          "cc": null,
+          "subject": "Engineer report {{fact:claim.reference}}",
+          "bodyText": "Dear Sirs,\n\nPlease find attached the engineer's report for this claim.\n\nClaims Team, Courtesy Cars Group UK Ltd",
+          "attach": [
+            {
+              "evidenceId": "$job.payload.attachEvidenceIds[0]",
+              "documentId": null
+            }
+          ],
+          "inReplyToMessageId": null
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "drafts": [
+        {
+          "kind": "outbox",
+          "id": "$step[0].outboxId",
+          "templateId": null,
+          "emailKind": "info_provided",
+          "purpose": "Send the engineer report as the owner asked"
+        }
+      ],
+      "missingInfo": [],
+      "notes": "Invented fixture.",
+      "confidence": 0.9
+    }
+  },
+  {
+    "id": "ci-draft-client-update",
+    "match": {
+      "jobType": "draft.compose",
+      "userContains": [
+        "as the owner asked",
+        "keep the client posted weekly"
+      ]
+    },
+    "steps": [
+      {
+        "tool": "email_draft",
+        "input": {
+          "claimId": "$job.claimId",
+          "kind": "client_update",
+          "to": [
+            "jane.doe@example.test"
+          ],
+          "cc": null,
+          "subject": "Update on your claim {{fact:claim.reference}}",
+          "bodyText": "Dear {{fact:party.claimant.name}},\n\nA quick update: your car is still at the garage and the parts are on order. We will keep you posted every week.\n\nClaims Team, Courtesy Cars Group UK Ltd",
+          "attach": [],
+          "inReplyToMessageId": null
+        }
+      }
+    ],
+    "outcome": "ok",
+    "result": {
+      "drafts": [
+        {
+          "kind": "outbox",
+          "id": "$step[0].outboxId",
+          "templateId": null,
+          "emailKind": "client_update",
+          "purpose": "Client update as the owner asked"
+        }
+      ],
+      "missingInfo": [],
+      "notes": "Invented fixture.",
+      "confidence": 0.9
+    }
+  }
+]

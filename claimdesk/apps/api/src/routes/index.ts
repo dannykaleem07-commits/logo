@@ -58,6 +58,8 @@ import { registerKnowledgeRoutes } from './knowledge.js';
 import { registerKnowledgeLearningRoutes } from './knowledgeLearning.js';
 import { registerKnowledgeResearchRoutes } from './knowledgeResearch.js';
 import { registerKnowledgeUseRoutes } from './knowledgeUse.js';
+// Claim AI input (docs/CLAIM-AI-INPUT.md §11.2)
+import { registerClaimAiRoutes } from './claimAi.js';
 
 export const routeModules: RouteModule[] = [
   registerHealthRoutes,
@@ -112,6 +114,8 @@ export const routeModules: RouteModule[] = [
   registerKnowledgeLearningRoutes, // knowledge-learners
   registerKnowledgeResearchRoutes, // knowledge-research
   registerKnowledgeUseRoutes, // knowledge-use
+  // Claim AI input
+  registerClaimAiRoutes, // claimai-server
   registerJobsModule,
 ];
 

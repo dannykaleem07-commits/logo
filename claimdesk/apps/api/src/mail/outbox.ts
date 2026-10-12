@@ -16,7 +16,11 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import {
+  askFirstFor,
+  contactOfRecipientRole,
   decide,
+  holdFor,
+  type ContactRole,
   isAlwaysAskEmailKind,
   isAlwaysAskTemplate,
   MAX_REPAIR_LOOPS,
@@ -30,6 +34,7 @@ import {
 } from '@ccguk/domain';
 import type { Actor, MailAccountRecord, OutboxAttachmentRef, OutboxRecord, ReviewRecord } from '@ccguk/db';
 import type { AppContext } from '../context.js';
+import { activeInstructionViews } from '../claimai/instructions.js';
 import type { JobRecord } from '../agent/contracts.js';
 import { autonomyState, createNeedsYou, enqueueJob, getAutonomy, londonDayWindow, londonHhmm } from '../agent/core.js';
 import { gatewayServices } from '../ai/prompts.js';
@@ -336,8 +341,38 @@ export function describeOutbox(ctx: AppContext, o: OutboxRecord, review: ReviewR
     missingInfo,
     attachmentsAllowed: attachments.allowed,
   };
+  // Claim AI input (CLAIM-AI-INPUT §7.2): the owner's hold / "ask me first" on a recipient → rule owner_instruction.
+  const instruction = o.claimId ? ownerInstructionFor(ctx, o.claimId, recipients) : undefined;
+  if (instruction) descriptor.ownerInstruction = instruction;
   // Autopilot (SUPREME-AUTOPILOT §D.3): the step and any code-verified commitment reach the policy.
   return { descriptor: applyAutopilotCommitment(ctx, o, descriptor), recipients, attachments };
+}
+
+/**
+ * The owner's standing instruction (hold or ask-first) covering any recipient of an email, by role (client / at-fault
+ * insurer) or by the email of an engineer / repairer / solicitor / supplier party on the claim. Code only.
+ */
+export function ownerInstructionFor(ctx: AppContext, claimId: string, recipients: RecipientInfo[]): ActionDescriptor['ownerInstruction'] {
+  const active = activeInstructionViews(ctx, claimId);
+  if (!active.length) return undefined;
+  const claim = ctx.repos.getClaim(ctx.db, claimId);
+  const partyContacts = new Map<string, ContactRole>();
+  for (const pid of claim?.thirdPartyIds ?? []) {
+    const p = ctx.repos.getParty(ctx.db, pid);
+    const role = p?.roles.find((r) => r === 'engineer' || r === 'repairer' || r === 'solicitor' || r === 'supplier');
+    if (p?.email && role) partyContacts.set(lc(p.email), role as ContactRole);
+  }
+  for (const r of recipients) {
+    const contacts = [contactOfRecipientRole(r.role), partyContacts.get(lc(r.address)) ?? null].filter((c): c is ContactRole => Boolean(c));
+    if (!contacts.length) contacts.push('anyone');
+    for (const c of contacts) {
+      const hold = holdFor(active, c);
+      if (hold) return { instructionId: hold.id, text: hold.text, effect: 'hold_contact' };
+      const ask = askFirstFor(active, c);
+      if (ask) return { instructionId: ask.id, text: ask.text, effect: 'ask_before_sending' };
+    }
+  }
+  return undefined;
 }
 
 // ---------------------------------------------------------------------------
@@ -730,6 +765,8 @@ export async function releaseOutbox(ctx: AppContext, outboxId: string, job: Pick
       subject: o.subject,
       text: o.bodyText,
       ...(o.bodyHtml ? { html: o.bodyHtml } : {}),
+      // the footer's "Please quote our reference" row: the claim's reference, none for an email without a claim
+      claimRef: o.claimId ? (ctx.repos.getClaim(ctx.db, o.claimId)?.reference ?? null) : null,
       messageId,
       ...(o.inReplyTo ? { inReplyTo: o.inReplyTo } : {}),
       ...(o.referencesJson?.length ? { references: o.referencesJson } : {}),

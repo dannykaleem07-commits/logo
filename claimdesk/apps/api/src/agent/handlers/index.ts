@@ -18,6 +18,8 @@ import { knowledgeJobHandlers, knowledgeNeedsYouResolvers } from './knowledge.js
 import { knowledgeLearningJobHandlers, knowledgeLearningNeedsYouResolvers } from './knowledgeLearning.js';
 import { knowledgeResearchJobHandlers, knowledgeResearchNeedsYouResolvers } from './knowledgeResearch.js';
 import { knowledgeEvalsJobHandlers, knowledgeEvalsNeedsYouResolvers } from './knowledgeEvals.js';
+// Claim AI input (docs/CLAIM-AI-INPUT.md §5.5), owned by claimai-server.
+import { claimAiJobHandlers, claimAiNeedsYouResolvers } from './claimai.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any -- heterogeneous registry
 type AnyHandler = JobHandler<any, any>;
@@ -38,6 +40,7 @@ export function allJobHandlers(): AnyHandler[] {
     ...knowledgeLearningJobHandlers,
     ...knowledgeResearchJobHandlers,
     ...knowledgeEvalsJobHandlers,
+    ...claimAiJobHandlers,
   ];
 }
 
@@ -55,6 +58,7 @@ export function allNeedsYouResolvers(): AnyResolver[] {
     ...knowledgeLearningNeedsYouResolvers,
     ...knowledgeResearchNeedsYouResolvers,
     ...knowledgeEvalsNeedsYouResolvers,
+    ...claimAiNeedsYouResolvers,
   ];
 }
 

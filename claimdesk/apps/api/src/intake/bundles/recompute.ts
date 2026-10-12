@@ -49,8 +49,7 @@ import {
 } from '@ccguk/domain';
 import { bankKey, type IntakeBundleFileRecord, type IntakeBundleRecord } from '@ccguk/db';
 import type { AppContext } from '../../context.js';
-import { autonomyState, createNeedsYou, enqueueJob, getAutonomy, londonDay } from '../../agent/core.js';
-import { effectiveAgentSettings } from '../../agent/queue.js';
+import { aiWaitingReason, autonomyState, createNeedsYou, enqueueJob, getAutonomy, londonDay } from '../../agent/core.js';
 import type { NeedsYouItem } from '../../agent/contracts.js';
 import { scoreLiabilityFor, type FnolValidation } from '../../engines.js';
 import { previewFnolValidation } from '../../routes/claims.js';
@@ -194,12 +193,7 @@ function packIsSplit(fc: FileContext, files: IntakeBundleFileRecord[], owner: Ow
 
 /** The AI's view of who keeps the bundle busy (for views and the reasoning status). */
 export function aiWaiting(ctx: AppContext): { reason: 'agents_off' | 'kill_switch' | 'usage' | 'sign_in'; until?: string } | null {
-  const settings = effectiveAgentSettings(ctx);
-  if (settings.autonomy.killSwitch) return { reason: 'kill_switch' };
-  if (!settings.agents.enabled || settings.ai.driver === 'off') return { reason: 'agents_off' };
-  const usage = ctx.repos.getAiUsageState(ctx.db);
-  if (usage.pausedUntil && usage.pausedUntil > ctx.now()) return { reason: /auth|sign/i.test(usage.pauseReason ?? '') ? 'sign_in' : 'usage', until: usage.pausedUntil };
-  return null;
+  return aiWaitingReason(ctx);
 }
 
 function claimsOfParty(ctx: AppContext, partyId: string): Array<{ id: string; reference: string }> {
@@ -269,10 +263,13 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
   const latest = ctx.repos.latestBundleReasoning(ctx.db, bundle.id);
   const contribution = latest ? validateReasoning(latest.result as IntakeBundleReasoning, live.filter(readable), now) : null;
 
-  // 4. keys + groups
+  // 4. keys + groups (a catch-up bundle: the claim index includes the target claim and the grouping fixes it)
+  const catchUp = bundle.mode === 'catch_up' && Boolean(bundle.targetClaimId);
   const stop = buildStopList(ctx);
-  const own = bundle.claimId ? [bundle.claimId] : [];
+  const own = bundle.claimId && !catchUp ? [bundle.claimId] : [];
   const index = buildClaimIndex(ctx, { excludeClaimIds: own });
+  const target = catchUp ? index.claims.find((c) => c.claimId === bundle.targetClaimId) : undefined;
+  const fixedClaim = target ? { claimId: target.claimId, reference: target.reference, keys: target.keys } : undefined;
   const keyFiles: FileKeys[] = [...fcs.values()].map((fc) => {
     const r = readings.get(fc.file.id);
     const shaOnClaims = [...new Set(ctx.repos.findEvidenceBySha256(ctx.db, fc.evidence.sha256).map((e) => e.claimId).filter((x): x is string => Boolean(x) && !own.includes(x!)))];
@@ -290,7 +287,7 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
   });
   const words: Record<string, string[]> = {};
   for (const [id, r] of readings) words[id] = r.candidates.filter((c) => c.key === 'vehicle.make' || c.key === 'vehicle.model').flatMap((c) => c.display.split(/\s+/));
-  const grouping = groupFiles({ files: keyFiles, index, nameHint: bundle.name, pins: owner.pins, excluded: [...excluded], duplicateOf, words, advice: contribution?.advice ?? {} });
+  const grouping = groupFiles({ files: keyFiles, index, nameHint: catchUp ? '' : bundle.name, pins: owner.pins, excluded: [...excluded], duplicateOf, words, advice: contribution?.advice ?? {}, ...(fixedClaim ? { fixedClaim } : {}) });
   const groupOf = (id: string) => grouping.fileGroup[id] ?? (excluded.has(id) ? 'excluded' : 'unsure');
   // reasons for files the owner did not exclude themselves
   const exGroup = grouping.groups.find((g) => g.key === 'excluded');
@@ -386,8 +383,11 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
   const facts = main.map((fc) => readings.get(fc.file.id)?.facts).filter(Boolean);
   const bank = facts.find((f) => f?.sortCode && f.accountNumber);
   const docInjection = main.some((fc) => Boolean(fc.doc?.injectionFlags?.length));
-  const signalsInput = buildSignalsInput(ctx, { main, values, acks: owner.acks, settings, bankKey: bank ? (bankKey({ sortCode: bank.sortCode, accountNumber: bank.accountNumber }) ?? null) : null, bundleInjection: Boolean(contribution?.injection), excludeClaimId: bundle.claimId ?? null });
-  const signals: RiskSignal[] = riskSignals(signalsInput);
+  // (risk signals stay an intake-only feature: a catch-up bundle belongs to a claim already open)
+  const signalsInput = catchUp
+    ? { otherClaims: { claimant: [] as Array<{ open: boolean }>, vehicle: [] as Array<{ open: boolean; how: string }> } }
+    : buildSignalsInput(ctx, { main, values, acks: owner.acks, settings, bankKey: bank ? (bankKey({ sortCode: bank.sortCode, accountNumber: bank.accountNumber }) ?? null) : null, bundleInjection: Boolean(contribution?.injection), excludeClaimId: bundle.claimId ?? null });
+  const signals: RiskSignal[] = catchUp ? [] : riskSignals(signalsInput as ReturnType<typeof buildSignalsInput>);
 
   // 9. liability preview (a guide; never written)
   const statements: LiabilityPreview['statements'] = [...(contribution?.liability ?? []).filter((l) => mainIds.has(l.source.fileId))];
@@ -407,7 +407,7 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
     }
   }
   let liability: LiabilityPreview = { score: null, band: null, reasons: [], statements, note: LIABILITY_NOTE };
-  if (values['accident.occurredAt'] && values['accident.location'] && values['accident.circumstances']) {
+  if (!catchUp && values['accident.occurredAt'] && values['accident.location'] && values['accident.circumstances']) {
     const s = scoreLiabilityFor(
       {
         occurredAt: values['accident.occurredAt'],
@@ -424,7 +424,7 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
 
   // 10. existing client record (licence, or name + date of birth)
   let existingParty: BundleComputed['draft']['existingParty'] = null;
-  if (values['client.name'] && (values['client.drivingLicenceNumber'] || values['client.dateOfBirth'])) {
+  if (!catchUp && values['client.name'] && (values['client.drivingLicenceNumber'] || values['client.dateOfBirth'])) {
     const me = { id: '', name: values['client.name'], dateOfBirth: values['client.dateOfBirth'] ?? undefined, drivingLicenceNumber: values['client.drivingLicenceNumber'] ?? undefined };
     for (const p of ctx.repos.listParties(ctx.db, { kind: 'individual', limit: 5000 })) {
       const how = personMatch(me, { id: p.id, name: p.name, dateOfBirth: p.dateOfBirth, drivingLicenceNumber: p.drivingLicenceNumber });
@@ -435,7 +435,7 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
   }
 
   // 11. body + FNOL preview
-  const built = buildCreateClaimBody(ctx, { fields: rec.fields, witnesses: rec.witnesses, witnessesAnswered: rec.witnessesAnswered, bundleName: bundle.name, documents: mainAll.length, now, linkPartyId: owner.linkPartyId });
+  const built = catchUp ? { body: null, missing: [] as string[] } : buildCreateClaimBody(ctx, { fields: rec.fields, witnesses: rec.witnesses, witnessesAnswered: rec.witnessesAnswered, bundleName: bundle.name, documents: mainAll.length, now, linkPartyId: owner.linkPartyId });
   const fnol = built.body ? previewFnolValidation(ctx, built.body) : null;
 
   // 12. registrable
@@ -449,10 +449,10 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
   const otherGroups = grouping.groups.filter((g) => g.kind === 'new_case' || g.kind === 'existing_claim').length;
   const fileset = filesetOf(main.map((fc) => ({ fc, groupKey: 'main' })));
   const reasoningDone = bundle.reasoningStatus === 'done' && bundle.reasoningFileset === fileset && fileset !== '';
-  const policy = decide({ class: 'internal', kind: 'intake.register', confidence: minKeyConfidence, sensitive: false, overwrites: false }, getAutonomy(ctx), autonomyState(ctx, { agent: 'intake' }));
+  const regPolicy = decide({ class: 'internal', kind: 'intake.register', confidence: minKeyConfidence, sensitive: false, overwrites: false }, getAutonomy(ctx), autonomyState(ctx, { agent: 'intake' }));
   const circ = rec.circumstances;
   const witnessesWithoutRelationship = rec.witnessesAnswered ? rec.witnesses.filter((w) => !w.relationship?.trim()).length : 0;
-  const reg = registrable({
+  const regFull = registrable({
     filesInProgress: inProgress.length,
     conflictsOpen: open.length,
     missingKey,
@@ -471,10 +471,12 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
     duplicateOpenClaim: signalsInput.otherClaims.claimant.some((c) => c.open) || signalsInput.otherClaims.vehicle.some((v) => v.open),
     settingOn: settings.bundles.autoRegister,
     minConfidence: settings.bundles.autoRegisterMinConfidence,
-    policy: { outcome: policy.outcome, reasons: policy.reasons },
+    policy: { outcome: regPolicy.outcome, reasons: regPolicy.reasons },
     circumstancesUnconfirmed: Boolean(values['accident.circumstances']) && circ.attribution !== 'client' && circ.attribution !== 'owner',
     witnessesWithoutRelationship,
   });
+  // a catch-up bundle is never registered: it files on its claim through the claim's AI input (§8)
+  const reg = catchUp ? { canRegister: false, autoEligible: false, blockers: [{ code: 'CATCH_UP_BUNDLE', text: 'These files belong to a claim already open — use its AI input panel', for: 'owner' as const }] } : regFull;
   const fnolWarnings = fnol ? [...fnol.warnings, ...fnol.incomplete.map((i) => i.message)].map(plainFnolText) : [];
 
   // 13. willDo
@@ -539,11 +541,11 @@ export function computeBundle(ctx: AppContext, bundleId: string): BundleState {
     groups: grouping.groups,
     draft: { fields: rec.fields, witnesses: rec.witnesses, witnessesAnswered: rec.witnessesAnswered, circumstances: rec.circumstances, existingParty },
     conflicts: rec.conflicts,
-    checklist: { caseKind, caseKindLabel: CASE_KIND_LABELS[caseKind], items, request },
+    checklist: { caseKind, caseKindLabel: CASE_KIND_LABELS[caseKind], items, request: catchUp ? null : request },
     timeline,
     signals,
     liability,
-    register: { canRegister: reg.canRegister, blockers: reg.blockers.filter((b) => b.for === 'owner'), fnolWarnings, willDo },
+    register: { canRegister: reg.canRegister, blockers: reg.blockers.filter((b) => b.for === 'owner'), fnolWarnings, willDo: catchUp ? [] : willDo },
     auto: { eligible: reg.autoEligible, blockers: reg.blockers },
     aiSummary,
     fileset,
@@ -648,8 +650,36 @@ export function raiseBundleCard(ctx: AppContext, state: BundleState): NeedsYouIt
   return item;
 }
 
+/**
+ * Catch-up bundles (docs/CLAIM-AI-INPUT.md §8.2): after a reconcile the claim's AI input plans the files and may apply
+ * them. Late-bound so the intake engine never imports the claimai module.
+ */
+type CatchUpHook = (ctx: AppContext, state: BundleState) => void;
+let catchUpHook: CatchUpHook | null = null;
+export function registerCatchUpHook(fn: CatchUpHook | null): void {
+  catchUpHook = fn;
+}
+
+/** Every main file of a catch-up bundle has settled (the AI reading of each, when the AI is available). */
+export function catchUpSettled(ctx: AppContext, state: BundleState): boolean {
+  return allSettled(ctx, state);
+}
+
 /** Job-path follow-ups of a reconcile (§6.1). */
 export function afterReconcile(ctx: AppContext, state: BundleState): { reasoningQueued: boolean; autoQueued: boolean; needsYouId: string | null } {
+  if (state.bundle.mode === 'catch_up') {
+    // never a new_claim card, never automatic registration, no AI bundle reasoning: the claim's AI input plans the files
+    ctx.repos.appendAudit(ctx.db, {
+      actor: { userId: BUNDLE_AGENT },
+      action: 'intake.bundle.reconcile',
+      entity: 'intake_bundles',
+      entityId: state.bundle.id,
+      after: { bundleId: state.bundle.id, revision: state.computed.revision, files: state.files.length, groups: state.computed.groups.map((g) => g.key), mode: 'catch_up' },
+      at: ctx.now(),
+    });
+    catchUpHook?.(ctx, state);
+    return { reasoningQueued: false, autoQueued: false, needsYouId: null };
+  }
   let b = state.bundle;
   const now = ctx.now();
   let reasoningQueued = false;

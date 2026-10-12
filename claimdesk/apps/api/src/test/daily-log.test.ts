@@ -136,3 +136,33 @@ describe('daily log — smart intake section (docs/SMART-INTAKE.md §12)', () =>
     expect(log.sections.updatedRecords.some((l) => /bundle/.test(l.text))).toBe(false);
   });
 });
+
+describe('daily log — AI input section (docs/CLAIM-AI-INPUT.md §13)', () => {
+  it('is absent on a quiet day; lists applied updates, Needs-you lines and standing instructions', async () => {
+    expect(compileDailyLog(t.ctx, DAY).sections.claimAi).toBeUndefined();
+    const u = await t.api<{ id: string }>('POST', `/claims/${claimId}/ai-input/updates`, { text: 'client called, insurer paid £250.00 for storage' });
+    expect(u.status).toBe(201);
+    expect((await t.api('POST', `/claims/${claimId}/ai-input/${u.body.id}/apply`, {})).status).toBe(200);
+    const i = await t.api<{ id: string }>('POST', `/claims/${claimId}/instructions`, { text: 'Ask me before anything goes to the insurer', effect: { kind: 'ask_before_sending', contacts: ['at_fault_insurer'] } });
+    expect(i.status).toBe(201);
+    const log = compileDailyLog(t.ctx, DAY);
+    const lines = log.sections.claimAi ?? [];
+    const texts = lines.map((l) => l.text);
+    expect(texts.some((x) => x.startsWith(`Your update on ${reference}:`) && /call/i.test(x))).toBe(true);
+    expect(texts.some((x) => x.startsWith(`Sent to Needs-you from your update on ${reference}`))).toBe(true);
+    expect(texts).toContain(`Standing instruction on ${reference}: Ask me before anything goes to the insurer (agents and the Autopilot follow it).`);
+    expect(lines.every((l) => l.claimId === claimId && typeof l.link === 'string')).toBe(true);
+    // the owner's own update is not a record update by an agent
+    expect(log.sections.updatedRecords.some((l) => /claim_ai/.test(l.text))).toBe(false);
+  });
+});
+
+describe('AI input daily-log lines are shortened at a word', () => {
+  it('cuts at a word boundary with an ellipsis', async () => {
+    const { clip } = await import('../claimai/dailyLog.js');
+    expect(clip('Reminder Wed 14 Oct 2026 09:00: Ask Fourth Example Assurance Ltd to confirm the admission in writing')).toBe(
+      'Reminder Wed 14 Oct 2026 09:00: Ask Fourth Example Assurance Ltd to confirm…',
+    );
+    expect(clip('short line')).toBe('short line');
+  });
+});

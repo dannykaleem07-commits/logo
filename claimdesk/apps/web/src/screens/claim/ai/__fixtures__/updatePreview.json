@@ -1,0 +1,392 @@
+{
+  "id": "u1",
+  "claimId": "c1",
+  "kind": "update",
+  "channel": "typed",
+  "status": "preview",
+  "statusLabel": "Ready to check",
+  "excerpt": "TP insurer admitted liability on the phone today, ref AB123. Client called, car repaired, hire ended yesterday. Don't chase the client until Monday. Payment of £3,450 received. Keep the client posted ",
+  "createdAt": "2026-10-12T09:00:00.000Z",
+  "createdBy": "user-owner",
+  "createdByName": "Courtesy Cars",
+  "appliedAt": null,
+  "engine": "rules_ai",
+  "counts": {
+    "actions": 10,
+    "applied": 0,
+    "waitingTick": 2,
+    "needsYou": 1,
+    "undone": 0,
+    "failed": 0,
+    "questions": 0
+  },
+  "headline": "7 lines · 2 need your tick · 1 for Needs-you",
+  "waiting": null,
+  "bundle": null,
+  "text": "TP insurer admitted liability on the phone today, ref AB123. Client called, car repaired, hire ended yesterday. Don't chase the client until Monday. Payment of £3,450 received. Keep the client posted weekly.",
+  "extraText": null,
+  "understood": "The insurer admitted liability by phone (ref AB123); the car is repaired and the hire ended yesterday; hold contact with the client until Monday.",
+  "actions": [
+    {
+      "key": "a1",
+      "type": "event",
+      "tier": "apply",
+      "tierLabel": "Will do",
+      "ticked": true,
+      "tickable": true,
+      "title": "Add to chronology: Call — Mon 12 Oct 2026",
+      "detail": null,
+      "why": null,
+      "at": "2026-10-12T11:00:00.000Z",
+      "precision": "date",
+      "quote": "Client called",
+      "source": "rules",
+      "from": "owner_text",
+      "confidence": 1,
+      "current": null,
+      "params": {
+        "eventType": "call",
+        "summary": "Client called"
+      },
+      "editable": [
+        "at"
+      ],
+      "undo": {
+        "available": true,
+        "why": null
+      },
+      "state": "proposed",
+      "result": null,
+      "link": null,
+      "bundleFileId": null
+    },
+    {
+      "key": "a2",
+      "type": "event",
+      "tier": "apply",
+      "tierLabel": "Will do",
+      "ticked": true,
+      "tickable": true,
+      "title": "Add to chronology: Repair completed — Sun 11 Oct 2026",
+      "detail": "date taken from 'yesterday'",
+      "why": null,
+      "at": "2026-10-11T11:00:00.000Z",
+      "precision": "date",
+      "quote": "car repaired",
+      "source": "rules",
+      "from": "owner_text",
+      "confidence": 1,
+      "current": null,
+      "params": {
+        "eventType": "repair_completed"
+      },
+      "editable": [
+        "at"
+      ],
+      "undo": {
+        "available": false,
+        "why": "correct it in Chronology"
+      },
+      "state": "proposed",
+      "result": null,
+      "link": null,
+      "bundleFileId": null
+    },
+    {
+      "key": "a3",
+      "type": "hire_end",
+      "tier": "apply",
+      "tierLabel": "Will do",
+      "ticked": true,
+      "tickable": true,
+      "title": "End hire HA-0042 on Sun 11 Oct 2026 (repair completed)",
+      "detail": null,
+      "why": null,
+      "at": "2026-10-11T11:00:00.000Z",
+      "precision": "date",
+      "quote": "hire ended yesterday",
+      "source": "rules",
+      "from": "owner_text",
+      "confidence": 1,
+      "current": "running since Sat 3 Oct 2026",
+      "params": {
+        "hireId": "h-42",
+        "endTrigger": "repair_complete_24h"
+      },
+      "editable": [
+        "at"
+      ],
+      "undo": {
+        "available": true,
+        "why": null
+      },
+      "state": "proposed",
+      "result": null,
+      "link": "/claims/c1/hire",
+      "bundleFileId": null
+    },
+    {
+      "key": "a4",
+      "type": "field_update",
+      "tier": "confirm",
+      "tierLabel": "Needs your tick",
+      "ticked": false,
+      "tickable": true,
+      "title": "Their reference: TPI/778812 → AB123",
+      "detail": null,
+      "why": "on file differs — tick to replace",
+      "at": null,
+      "precision": null,
+      "quote": "ref AB123",
+      "source": "ai",
+      "from": "owner_text",
+      "confidence": 0.9,
+      "current": "TPI/778812",
+      "params": {
+        "target": "claim.atFaultInsurerRef",
+        "value": "AB123"
+      },
+      "editable": [
+        "value"
+      ],
+      "undo": {
+        "available": true,
+        "why": null
+      },
+      "state": "proposed",
+      "result": null,
+      "link": null,
+      "bundleFileId": null
+    },
+    {
+      "key": "a5",
+      "type": "liability_position",
+      "tier": "confirm",
+      "tierLabel": "Needs your tick",
+      "ticked": false,
+      "tickable": true,
+      "title": "Liability: unknown → admitted (said on the phone)",
+      "detail": null,
+      "why": null,
+      "at": null,
+      "precision": null,
+      "quote": "TP insurer admitted liability on the phone today",
+      "source": "ai",
+      "from": "owner_text",
+      "confidence": 0.85,
+      "current": "unknown",
+      "params": {
+        "value": "admitted"
+      },
+      "editable": [],
+      "undo": {
+        "available": true,
+        "why": null
+      },
+      "state": "proposed",
+      "result": null,
+      "link": null,
+      "bundleFileId": null
+    },
+    {
+      "key": "a6",
+      "type": "task",
+      "tier": "apply",
+      "tierLabel": "Will do",
+      "ticked": true,
+      "tickable": true,
+      "title": "Reminder Wed 14 Oct 09:00: ask Example Mutual to confirm the admission in writing",
+      "detail": null,
+      "why": null,
+      "at": null,
+      "precision": null,
+      "quote": "admitted liability",
+      "source": "ai",
+      "from": "owner_text",
+      "confidence": 0.8,
+      "current": null,
+      "params": {
+        "taskKind": "follow_up",
+        "dueAt": "2026-10-14T08:00:00.000Z"
+      },
+      "editable": [
+        "dueAt",
+        "text"
+      ],
+      "undo": {
+        "available": true,
+        "why": null
+      },
+      "state": "proposed",
+      "result": null,
+      "link": null,
+      "bundleFileId": null
+    },
+    {
+      "key": "a7",
+      "type": "instruction",
+      "tier": "apply",
+      "tierLabel": "Will do",
+      "ticked": true,
+      "tickable": true,
+      "title": "Standing instruction (all agents): don't chase the client until Mon 19 Oct",
+      "detail": null,
+      "why": null,
+      "at": null,
+      "precision": null,
+      "quote": "Don't chase the client until Monday",
+      "source": "rules",
+      "from": "owner_text",
+      "confidence": 1,
+      "current": null,
+      "params": {
+        "text": "Don't chase the client until Monday 19 October 2026.",
+        "appliesTo": [
+          "all"
+        ],
+        "until": "2026-10-18T23:00:00.000Z",
+        "effect": {
+          "kind": "hold_contact",
+          "contacts": [
+            "client"
+          ]
+        }
+      },
+      "editable": [
+        "until",
+        "text",
+        "appliesTo"
+      ],
+      "undo": {
+        "available": true,
+        "why": null
+      },
+      "state": "proposed",
+      "result": null,
+      "link": null,
+      "bundleFileId": null
+    },
+    {
+      "key": "a8",
+      "type": "money",
+      "tier": "needs_you",
+      "tierLabel": "Goes to Needs-you",
+      "ticked": true,
+      "tickable": true,
+      "title": "Payment of £3,450.00 — goes to Needs-you; you record it in the ledger",
+      "detail": null,
+      "why": null,
+      "at": null,
+      "precision": null,
+      "quote": "Payment of £3,450 received",
+      "source": "rules",
+      "from": "owner_text",
+      "confidence": 1,
+      "current": null,
+      "params": {
+        "amountPence": 345000
+      },
+      "editable": [],
+      "undo": {
+        "available": true,
+        "why": null
+      },
+      "state": "proposed",
+      "result": null,
+      "link": null,
+      "bundleFileId": null
+    },
+    {
+      "key": "a9",
+      "type": "private_note",
+      "tier": "private",
+      "tierLabel": "Private note",
+      "ticked": false,
+      "tickable": false,
+      "title": "Kept as your private note — agents never act on it",
+      "detail": null,
+      "why": null,
+      "at": null,
+      "precision": null,
+      "quote": "Keep the client posted weekly",
+      "source": "rules",
+      "from": "owner_text",
+      "confidence": 1,
+      "current": null,
+      "params": {},
+      "editable": [],
+      "undo": {
+        "available": false,
+        "why": null
+      },
+      "state": "proposed",
+      "result": null,
+      "link": null,
+      "bundleFileId": null
+    },
+    {
+      "key": "a10",
+      "type": "unsupported",
+      "tier": "refused",
+      "tierLabel": "Won't do",
+      "ticked": false,
+      "tickable": false,
+      "title": "ClaimDesk cannot do this: change the client's bank details",
+      "detail": null,
+      "why": null,
+      "at": null,
+      "precision": null,
+      "quote": null,
+      "source": "rules",
+      "from": "owner_text",
+      "confidence": 1,
+      "current": null,
+      "params": {},
+      "editable": [],
+      "undo": {
+        "available": false,
+        "why": null
+      },
+      "state": "proposed",
+      "result": null,
+      "link": null,
+      "bundleFileId": null
+    }
+  ],
+  "questions": [],
+  "notDone": [
+    {
+      "text": "keep the client posted",
+      "why": "Not understood — say it another way or add it as an instruction"
+    }
+  ],
+  "pendingText": [],
+  "warnings": [],
+  "catchUp": null,
+  "whatChanged": null,
+  "log": [
+    {
+      "seq": 1,
+      "at": "2026-10-12T09:00:00.000Z",
+      "kind": "created",
+      "actionKey": null,
+      "actor": "user-owner",
+      "actorName": "Courtesy Cars",
+      "note": null
+    },
+    {
+      "seq": 2,
+      "at": "2026-10-12T09:00:03.000Z",
+      "kind": "interpreted",
+      "actionKey": null,
+      "actor": "agent:case_manager",
+      "actorName": "Case manager",
+      "note": null
+    }
+  ],
+  "canApply": true,
+  "canUndo": false,
+  "canCancel": true,
+  "canThinkAgain": true,
+  "revision": 1
+}

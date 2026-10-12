@@ -28,11 +28,17 @@ export function requireOpenBundle(ctx: AppContext, id: string): IntakeBundleReco
   return b;
 }
 
-export function createBundle(ctx: AppContext, input: { name: string; source?: BundleSource; folderKey?: string; parentBundleId?: string; splitFromGroup?: string }, actor: Actor): IntakeBundleRecord {
+export function createBundle(
+  ctx: AppContext,
+  input: { name: string; source?: BundleSource; folderKey?: string; parentBundleId?: string; splitFromGroup?: string; mode?: 'intake' | 'catch_up'; targetClaimId?: string },
+  actor: Actor,
+): IntakeBundleRecord {
   const now = ctx.now();
   const bundle = ctx.repos.createIntakeBundle(ctx.db, {
     name: input.name.trim().slice(0, 120),
     source: input.source ?? 'upload',
+    // catch-up bundles (docs/CLAIM-AI-INPUT.md §8): the claim is fixed; only the claim's AI input route creates them
+    ...(input.mode === 'catch_up' && input.targetClaimId ? { mode: 'catch_up' as const, targetClaimId: input.targetClaimId } : {}),
     ...(input.folderKey ? { folderKey: input.folderKey } : {}),
     ...(input.parentBundleId ? { parentBundleId: input.parentBundleId } : {}),
     ...(input.splitFromGroup ? { splitFromGroup: input.splitFromGroup } : {}),
@@ -40,7 +46,7 @@ export function createBundle(ctx: AppContext, input: { name: string; source?: Bu
     now,
   });
   ctx.repos.appendBundleDecision(ctx.db, { bundleId: bundle.id, revision: bundle.revision, kind: 'create', after: { name: bundle.name, source: bundle.source }, actor: actor.userId, ...(actor.runId ? { runId: actor.runId } : {}), at: now });
-  ctx.repos.appendAudit(ctx.db, { actor, action: 'intake.bundle.create', entity: 'intake_bundles', entityId: bundle.id, after: { name: bundle.name, source: bundle.source, folderKey: bundle.folderKey ?? null, parentBundleId: bundle.parentBundleId ?? null }, at: now });
+  ctx.repos.appendAudit(ctx.db, { actor, action: 'intake.bundle.create', entity: 'intake_bundles', entityId: bundle.id, after: { name: bundle.name, source: bundle.source, folderKey: bundle.folderKey ?? null, parentBundleId: bundle.parentBundleId ?? null, mode: bundle.mode, targetClaimId: bundle.targetClaimId ?? null }, at: now });
   return bundle;
 }
 

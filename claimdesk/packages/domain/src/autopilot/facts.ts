@@ -16,6 +16,7 @@ import type { DocumentPack, PackStage, SignatureRequest } from '../signing/types
 import type { CaseAcceptance, ClaimBundle, EventType, GateResult, ISODateTime, Id, PlaybookAction, SettlementOffer } from '../types.js';
 import type { AutopilotSettings } from './settings.js';
 import type { AutopilotOverride, AutopilotStepId, ClaimAutopilotMode, HireOffer } from './types.js';
+import type { InstructionView } from '../claimai/types.js';
 
 export interface AutopilotOutboxFact {
   id: Id;
@@ -24,6 +25,8 @@ export interface AutopilotOutboxFact {
   autopilotStepId: string | null;
   createdAt: ISODateTime;
   sentAt: ISODateTime | null;
+  /** A letter or email sent outside ClaimDesk, recorded from the claim's AI input (`corr:<id>`, CLAIM-AI-INPUT §9). */
+  offSystem?: true;
 }
 
 export interface AutopilotFacts {
@@ -64,6 +67,8 @@ export interface AutopilotFacts {
   ownerChosenReservationIds: Id[];
   /** "Run now" (§A.8): a step the tick treats as due. */
   forceStepId?: AutopilotStepId;
+  /** The owner's standing instructions in force now (scope all / autopilot; CLAIM-AI-INPUT §7.2). */
+  ownerInstructions?: InstructionView[];
 }
 
 // ---------------------------------------------------------------------------

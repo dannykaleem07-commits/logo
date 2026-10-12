@@ -111,7 +111,24 @@ export function captureCorrections(ctx: AppContext): CaptureResult {
     wMem.lastId ?? '',
   );
   for (const m of mems) {
-    const d = json<{ needsYouId?: string; kind?: string; before?: { email?: { bodyText?: string; kind?: string }; intakeField?: { key?: string; value?: unknown; docType?: string | null; engine?: string | null } }; after?: { bodyText?: unknown; intakeField?: { key?: string; value?: unknown } }; note?: string | null }>(m.data) ?? {};
+    const d =
+      json<{
+        needsYouId?: string;
+        kind?: string;
+        before?: { email?: { bodyText?: string; kind?: string }; intakeField?: { key?: string; value?: unknown; docType?: string | null; engine?: string | null }; aiInputAction?: { type?: string; params?: unknown; quote?: string | null } };
+        after?: { bodyText?: unknown; intakeField?: { key?: string; value?: unknown }; aiInputAction?: { type?: string; params?: unknown } | null };
+        note?: string | null;
+      }>(m.data) ?? {};
+    // Claim AI input (docs/CLAIM-AI-INPUT.md §12.3): the owner edited, unticked or answered a line the AI read from
+    // their update — clustered per action type so repeated misreadings ("Monday" read as last Monday) queue a curation.
+    const aia = d.before?.aiInputAction;
+    if (aia && typeof aia.type === 'string') {
+      const claimId = m.scope.startsWith('claim:') ? m.scope.slice(6) : null;
+      const beforeText = maskText(`${aia.type}: ${JSON.stringify(aia.params ?? {})}${aia.quote ? ` (quote: ${aia.quote})` : ''}`).slice(0, 4000);
+      const afterText = d.after?.aiInputAction ? maskText(`${d.after.aiInputAction.type ?? aia.type}: ${JSON.stringify(d.after.aiInputAction.params ?? {})}`).slice(0, 4000) : '';
+      save(build(ctx, { source: 'memory_item', sourceId: m.id, needsYouId: d.needsYouId ?? null, claimId, targetKind: 'ai_input_action', targetId: null, agent: 'case_manager', templateId: `claim-input:${aia.type}`, emailKind: null, insurerSlug: claimId ? (slugs.get(claimId) ?? null) : null, beforeText, afterText, ownerNote: d.note ?? null }, { cluster: true }));
+      continue;
+    }
     // Smart intake (docs/SMART-INTAKE.md §6.12): the owner changed a value read from a bundle's documents.
     const field = d.before?.intakeField;
     if (field && typeof field.key === 'string') {

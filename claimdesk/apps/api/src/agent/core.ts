@@ -10,6 +10,20 @@ import { JOB_TYPE_INFO, MAX_HANDOFF_DEPTH, londonWallToUtc, utcToLondonWall, typ
 import type { AppContext } from '../context.js';
 import type { EnqueueInput, JobRecord, NeedsYouInput, NeedsYouItem } from './contracts.js';
 import { getJobHandler } from './handlers/index.js';
+import { effectiveAgentSettings } from './queue.js';
+
+/**
+ * Why the AI cannot run right now (kill switch, agents off / no driver, usage pause, sign-in), or null when it can.
+ * Moved here from intake/bundles/recompute.ts (re-exported there as `aiWaiting`) for the claim AI input (CLAIM-AI-INPUT §5.1).
+ */
+export function aiWaitingReason(ctx: AppContext): { reason: 'agents_off' | 'kill_switch' | 'usage' | 'sign_in'; until?: string } | null {
+  const settings = effectiveAgentSettings(ctx);
+  if (settings.autonomy.killSwitch) return { reason: 'kill_switch' };
+  if (!settings.agents.enabled || settings.ai.driver === 'off') return { reason: 'agents_off' };
+  const usage = ctx.repos.getAiUsageState(ctx.db);
+  if (usage.pausedUntil && usage.pausedUntil > ctx.now()) return { reason: /auth|sign/i.test(usage.pauseReason ?? '') ? 'sign_in' : 'usage', until: usage.pausedUntil };
+  return null;
+}
 
 const pad = (n: number): string => String(n).padStart(2, '0');
 

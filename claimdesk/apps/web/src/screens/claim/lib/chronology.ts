@@ -267,6 +267,32 @@ export function supersededMarks(events: readonly ClaimEvent[]): Map<string, Supe
   return out;
 }
 
+export interface EventChip {
+  key: 'recorded_late' | 'ai_input';
+  label: string;
+  title: string;
+}
+
+/**
+ * Chips for events written by AI input (docs/CLAIM-AI-INPUT.md §14.3): "recorded late" (title "source: <file>") for
+ * back-dated catch-up entries (`data.recordedLate`), and "from your update" for entries from an owner update
+ * (`data.source === 'ai_input'`).
+ */
+export function eventChips(e: Pick<ClaimEvent, 'data'>): EventChip[] {
+  const d = e.data ?? {};
+  const out: EventChip[] = [];
+  if (d.recordedLate === true) {
+    const src = d.lateSource && typeof d.lateSource === 'object' ? (d.lateSource as Record<string, unknown>) : {};
+    const file = typeof src.filename === 'string' && src.filename ? src.filename : null;
+    out.push({ key: 'recorded_late', label: 'recorded late', title: file ? `source: ${file}` : 'Recorded after the event, from a document' });
+  }
+  if (d.source === 'ai_input') {
+    const quote = typeof d.quote === 'string' && d.quote ? d.quote : null;
+    out.push({ key: 'ai_input', label: 'from your update', title: quote ? `Your words: “${quote}”` : 'Written from your update on the AI input tab' });
+  }
+  return out;
+}
+
 export const ATTRIBUTION_EXPLANATION =
   'Counts the time the file sat with each party: from an event to the next event, attributed to the party named on it. Insurer-attributable days are the period defence; log every delay as it happens with the evidence attached.';
 

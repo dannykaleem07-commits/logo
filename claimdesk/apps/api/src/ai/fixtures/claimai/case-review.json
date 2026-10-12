@@ -1,0 +1,61 @@
+[
+  {
+    "id": "ci-case-review-held-handoff",
+    "match": {
+      "jobType": "case.review",
+      "payload": {
+        "marker": "CI-HELD-HANDOFF"
+      }
+    },
+    "outcome": "ok",
+    "result": {
+      "situation": "The repair is under way; the client should hear how it is going. Invented fixture.",
+      "nextBestAction": {
+        "code": "CLIENT_UPDATE",
+        "title": "Update the client",
+        "why": "The client has not heard from us for a week.",
+        "basis": [
+          {
+            "kind": "rule",
+            "id": "CLIENT_UPDATE",
+            "label": null
+          }
+        ],
+        "confidence": 0.8,
+        "dueAt": null
+      },
+      "actions": [],
+      "handoffs": [
+        {
+          "to": "drafter",
+          "templateId": null,
+          "emailKind": "client_update",
+          "purpose": "Update the client on the repair",
+          "recipientPartyId": null,
+          "replyToMessageId": null,
+          "actionCode": null,
+          "dueAt": null
+        },
+        {
+          "to": "drafter",
+          "templateId": null,
+          "emailKind": "chaser",
+          "purpose": "Chase the insurer for the handling reference",
+          "recipientPartyId": null,
+          "replyToMessageId": null,
+          "actionCode": null,
+          "dueAt": null
+        }
+      ],
+      "tasks": [],
+      "questionsForOwner": [],
+      "risks": [],
+      "confidence": 0.8
+    },
+    "usage": {
+      "inputTokens": 1000,
+      "outputTokens": 200,
+      "numTurns": 1
+    }
+  }
+]

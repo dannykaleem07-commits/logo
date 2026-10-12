@@ -20,6 +20,7 @@ import type { AgentInput, AgentRunResult, AgentSpec, JobRecord, RunContext } fro
 import { agentUserId, mintRunToken, revokeRunToken } from './principal.js';
 import { executorFor, registerRun, unregisterRun } from './dispatcher.js';
 import { assemblePrompts } from '../ai/prompts.js';
+import { claimIdOf } from '../knowledge/use/context.js';
 import { getDriver, isOffDriver } from '../ai/driverFactory.js';
 import { validateWithTwin, zodFromJsonSchema } from '../ai/strictSchema.js';
 import { recordApiCost } from '../ai/pricing.js';
@@ -121,7 +122,7 @@ export async function runAgent(ctx: AppContext, spec: AgentSpec, job: JobRecord,
     const web = webPolicyForRun(ctx, spec, job);
     mkdirSync(path.join(runDir, 'input'), { recursive: true });
     const attachments = await copyAttachments(runDir, input.attachments ?? []);
-    const prompts = assemblePrompts(spec, { ...input, attachments }, ctx);
+    const prompts = assemblePrompts(spec, { ...input, attachments }, ctx, { claimId: job.claimId ?? claimIdOf(input) });
     const resultSchema = RESULT_SCHEMAS[spec.resultSchemaId];
     const req: AiRunRequest = {
       runId,

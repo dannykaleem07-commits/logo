@@ -29,7 +29,7 @@ export interface ClaimView extends ClaimBundle {
   linkedClaims?: Array<{ id: Id; reference: string; status: ClaimStatus | string }>;
 }
 
-export type ClaimTabId = 'overview' | 'chronology' | 'ledger' | 'clocks' | 'gates' | 'hire' | 'offers' | 'evidence' | 'documents' | 'engineering' | 'vehicle' | 'actions' | 'flags' | 'mailbox' | 'agent' | 'autopilot';
+export type ClaimTabId = 'overview' | 'chronology' | 'ledger' | 'clocks' | 'gates' | 'hire' | 'offers' | 'evidence' | 'documents' | 'engineering' | 'vehicle' | 'actions' | 'flags' | 'mailbox' | 'agent' | 'autopilot' | 'ai';
 
 /**
  * Claim file tabs (0.3 §E1). The primary row holds the six used every day; the rest sit in the "More ▾" menu. Ids (and
@@ -40,6 +40,8 @@ export const MORE_TAB_IDS: readonly ClaimTabId[] = ['chronology', 'ledger', 'clo
 /** ClaimDesk Supreme tabs (docs/SUPREME-DESIGN.md §L.5, §L.9): shown after the primary row. */
 /** Autopilot (docs/SUPREME-AUTOPILOT.md §I.1) leads the group; the tab itself is built by ap-autopilot. */
 export const AGENT_TAB_IDS: readonly ClaimTabId[] = ['autopilot', 'mailbox', 'agent'];
+/** AI input (docs/CLAIM-AI-INPUT.md §14.1): its own group, shown between the primary row and the agent tabs. */
+export const AI_TAB_IDS: readonly ClaimTabId[] = ['ai'];
 
 export const CLAIM_TABS: Array<TabItem & { id: ClaimTabId }> = [
   { id: 'overview', label: 'Overview' },
@@ -57,18 +59,20 @@ export const CLAIM_TABS: Array<TabItem & { id: ClaimTabId }> = [
   { id: 'flags', label: 'Flags' },
   { id: 'autopilot', label: 'Autopilot' },
   { id: 'mailbox', label: 'Mailbox' },
-  { id: 'agent', label: 'Agent' }
+  { id: 'agent', label: 'Agent' },
+  { id: 'ai', label: 'AI input' }
 ];
 
 /**
- * Split tab items (with their badges) into the primary row, the More menu and the Supreme agent tabs (Mailbox, Agent),
- * keeping CLAIM_TABS order. The claim file shows `agent` tabs right after `primary`.
+ * Split tab items (with their badges) into the primary row, the More menu, the Supreme agent tabs (Autopilot, Mailbox,
+ * Agent) and the AI input tab, keeping CLAIM_TABS order. The claim file shows `primary`, then `ai`, then `agent`.
  */
-export function splitClaimTabs<T extends { id: string }>(tabs: readonly T[]): { primary: T[]; more: T[]; agent: T[] } {
+export function splitClaimTabs<T extends { id: string }>(tabs: readonly T[]): { primary: T[]; more: T[]; agent: T[]; ai: T[] } {
   return {
     primary: tabs.filter((t) => (PRIMARY_TAB_IDS as readonly string[]).includes(t.id)),
     more: tabs.filter((t) => (MORE_TAB_IDS as readonly string[]).includes(t.id)),
-    agent: tabs.filter((t) => (AGENT_TAB_IDS as readonly string[]).includes(t.id))
+    agent: tabs.filter((t) => (AGENT_TAB_IDS as readonly string[]).includes(t.id)),
+    ai: tabs.filter((t) => (AI_TAB_IDS as readonly string[]).includes(t.id))
   };
 }
 
