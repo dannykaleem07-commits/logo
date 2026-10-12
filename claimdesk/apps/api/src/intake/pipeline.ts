@@ -9,15 +9,28 @@
  *   apply    with a claim: proposals from the extraction → auto ones applied as agent:intake → the rest in ONE
  *            Needs-you `confirm_fields` card; with no claim: an FNOL-like document raises Needs-you `new_claim`,
  *            anything else waits on the Intake screen.
+ *
+ * Smart intake (docs/SMART-INTAKE.md §5): for items with no claim or in a case bundle, `process` also unpacks ZIPs
+ * (children), hashes photos, stores a deterministic rules reading (works with the AI paused) and queues `intake.split`
+ * for a text PDF holding several documents; `extract` stores the AI extras (document date, side, photo facts,
+ * segments) and splits scanned packs; bundle items with no claim get no per-file `new_claim` card. Every step calls
+ * the bundle hooks so the bundle recomputes. Claim-linked items keep exactly the Phase 1 behaviour.
  */
 import { open, readFile } from 'node:fs/promises';
-import type { ExtractedField, IntakeExtraction } from '@ccguk/domain';
+import path from 'node:path';
+import { isZoneId, type ExtractedField, type IntakeExtraction } from '@ccguk/domain';
 import type { Actor, ClaimUpdateProposalRecord, IntakeItemRecord } from '@ccguk/db';
 import type { AppContext } from '../context.js';
 import type { EnqueueInput, JobOutcome, JobRecord, NeedsYouItem } from '../agent/contracts.js';
 import { authFailedWait, createNeedsYou } from '../agent/core.js';
 import { runAgent } from '../agent/runAgent.js';
 import { readEvidenceVerified, stageBuffer } from '../services/evidence.js';
+import { mimeFromFilename } from '../services/imports.js';
+import { unpackLimits, unpackZip } from './archive.js';
+import { childrenAdded, inOpenBundle, itemSettled, recordFileFacts, bundlesOfItem, type ChildFile } from './bundles/hooks.js';
+import { decodeForHash, MAX_HASH_DECODE_BYTES, photoGps } from './image.js';
+import { documentInjectionFlags, storeRulesReading, type ExtractionExtras } from './rules.js';
+import { aiSegments, ruleSegments, splitFollowUp } from './split.js';
 import { agentApplier, applyProposals, rejectProposals } from './apply.js';
 import { fingerprintCcgukForm } from './fingerprint.js';
 import { createItemFromStaged } from './items.js';
@@ -112,7 +125,15 @@ export async function processItem(ctx: AppContext, item: IntakeItemRecord, job: 
   const doc: NormalisedDoc = { ...result.doc };
   const text = documentText(doc);
   if (text) doc.fingerprint = fingerprintCcgukForm(text);
+  // Smart intake readings for items with no claim or in a bundle; claim-linked items keep the Phase 1 behaviour.
+  const smart = !item.claimId || inOpenBundle(ctx, item.id);
+  if (smart && text) {
+    const flags = documentInjectionFlags(doc);
+    if (flags.length) doc.injectionFlags = flags;
+  }
   const base = { sniffedType: sniffed.kind, pages: doc.pages ?? null, textSha256: result.textSha256 ?? null, normalised: doc };
+
+  if (doc.kind === 'archive') return unpackArchive(ctx, item, ev.filename, read.absolutePath, doc, base);
 
   if (doc.kind === 'heic') {
     const ny = createNeedsYou(ctx, {
@@ -131,19 +152,38 @@ export async function processItem(ctx: AppContext, item: IntakeItemRecord, job: 
       correlationId: job.correlationId,
     });
     setStatus(ctx, item.id, 'needs_you', base);
+    itemSettled(ctx, item.id);
     return { kind: 'done', result: { status: 'needs_you', needsYouId: ny.id } };
+  }
+  // Photos: perceptual hash for near-duplicate detection (bounded decode; EXIF is on the evidence row).
+  if (smart && doc.kind === 'image' && ev.bytes <= MAX_HASH_DECODE_BYTES) {
+    const full = read.size > head.length ? await readFile(read.absolutePath) : head;
+    const h = await decodeForHash(full, sniffed.kind);
+    if (h) {
+      doc.phash = h.phash;
+      doc.pixels = h.pixels;
+      recordFileFacts(ctx, item.id, { phash: h.phash, pixels: h.pixels });
+    }
+    // GPS for the photo checks (the evidence row's EXIF summary does not carry it today)
+    if (!ev.exif?.gps) {
+      const gps = await photoGps(full);
+      if (gps) doc.gps = gps;
+    }
   }
   if (doc.kind === 'image' && ev.bytes > MAX_MODEL_IMAGE_BYTES) {
     setStatus(ctx, item.id, 'skipped', { ...base, error: `This photo is ${Math.round(ev.bytes / 1048576)} MB — kept as evidence; too large to give the agents (over ${MAX_MODEL_IMAGE_BYTES / 1048576} MB)` });
+    itemSettled(ctx, item.id);
     return { kind: 'done', result: { status: 'skipped', reason: 'image too large for the model' } };
   }
   if (doc.kind === 'skipped') {
     setStatus(ctx, item.id, 'skipped', { ...base, error: doc.skipReason ?? 'not read' });
+    itemSettled(ctx, item.id);
     return { kind: 'done', result: { status: 'skipped', reason: doc.skipReason } };
   }
 
   // An email: each attachment becomes its own (child) item on the same claim.
   const children: string[] = [];
+  const childFiles: ChildFile[] = [];
   if (doc.kind === 'email' && result.attachments.length) {
     for (const a of result.attachments.slice(0, MAX_EMAIL_ATTACHMENTS)) {
       const { item: child } = await createItemFromStaged(ctx, {
@@ -157,15 +197,80 @@ export async function processItem(ctx: AppContext, item: IntakeItemRecord, job: 
         description: `Attachment of ${ev.filename}`,
       });
       children.push(child.id);
+      childFiles.push({ itemId: child.id, evidenceId: child.evidenceId, role: 'attachment' });
     }
+    childrenAdded(ctx, item, childFiles);
   }
 
   if (!text && !doc.scanned && doc.kind !== 'image') {
     setStatus(ctx, item.id, 'skipped', { ...base, error: 'The document has no text to read' });
+    itemSettled(ctx, item.id);
     return { kind: 'done', result: { status: 'skipped', reason: 'no text', children } };
   }
   setStatus(ctx, item.id, 'extracting', base);
-  return { kind: 'done', result: { status: 'extracting', sniffed: sniffed.kind, children }, followUps: [followUp('intake.extract', item, job, { evidenceId: item.evidenceId })] };
+  const followUps: EnqueueInput[] = [followUp('intake.extract', item, job, { evidenceId: item.evidenceId })];
+  let rules: { docType: string; fields: number } | undefined;
+  if (smart) {
+    const r = storeRulesReading(ctx, ctx.repos.requireIntakeItem(ctx.db, item.id), doc, ev.filename);
+    rules = { docType: r.docType, fields: r.fields.length };
+    const split = ctx.repos.getAgentSettings(ctx.db).intake.split;
+    if (split.enabled && doc.kind === 'pdf' && !doc.scanned) {
+      const segs = ruleSegments(ctx, doc, split.minPages);
+      if (segs.length >= 2) followUps.push(splitFollowUp(item, job, segs, 'rules'));
+    }
+  }
+  itemSettled(ctx, item.id);
+  return { kind: 'done', result: { status: 'extracting', sniffed: sniffed.kind, children, ...(rules ? { rules } : {}) }, followUps };
+}
+
+/** How many archives this item sits inside (a ZIP inside a ZIP …). */
+function archiveDepth(ctx: AppContext, item: IntakeItemRecord): number {
+  let depth = 0;
+  let cur = item.parentItemId ? ctx.repos.getIntakeItem(ctx.db, item.parentItemId) : undefined;
+  for (let i = 0; cur && i < 10; i += 1) {
+    if ((cur.normalised as NormalisedDoc | undefined)?.kind === 'archive') depth += 1;
+    cur = cur.parentItemId ? ctx.repos.getIntakeItem(ctx.db, cur.parentItemId) : undefined;
+  }
+  return depth;
+}
+
+/** A ZIP: every entry becomes a child item (and joins the parent's bundles); the archive itself stays `skipped`. */
+async function unpackArchive(ctx: AppContext, item: IntakeItemRecord, filename: string, absolutePath: string, doc: NormalisedDoc, base: Record<string, unknown>): Promise<JobOutcome> {
+  const settings = ctx.repos.getAgentSettings(ctx.db).intake;
+  const depth = archiveDepth(ctx, item);
+  if (depth > settings.archives.maxDepth) {
+    setStatus(ctx, item.id, 'skipped', { ...base, normalised: { ...doc, entries: [] }, error: `A ZIP inside ${depth} other ZIPs is not unpacked (limit ${settings.archives.maxDepth}) — extract it yourself and add the files` });
+    itemSettled(ctx, item.id);
+    return { kind: 'done', result: { status: 'skipped', reason: 'nested archive too deep' } };
+  }
+  const children: ChildFile[] = [];
+  let entries: NonNullable<NormalisedDoc['entries']>;
+  try {
+    entries = await unpackZip(absolutePath, path.join(ctx.config.evidenceDir, '.incoming'), unpackLimits(settings), async ({ name, staged }) => {
+      const { item: child } = await createItemFromStaged(ctx, {
+        source: item.source,
+        ...(item.claimId ? { claimId: item.claimId } : {}),
+        parentItemId: item.id,
+        staged,
+        filename: name,
+        mime: mimeFromFilename(name),
+        actor: INTAKE_ACTOR,
+        description: `From ${filename}`,
+      });
+      children.push({ itemId: child.id, evidenceId: child.evidenceId, role: 'document' });
+    });
+  } catch (err) {
+    setStatus(ctx, item.id, 'failed', { ...base, error: `The ZIP could not be unpacked: ${err instanceof Error ? err.message : String(err)}`.slice(0, 1000) });
+    itemSettled(ctx, item.id);
+    return { kind: 'done', result: { status: 'failed', reason: 'unreadable archive' } };
+  }
+  const normalised: NormalisedDoc = { ...doc, entries };
+  setStatus(ctx, item.id, 'skipped', { ...base, normalised, error: null });
+  childrenAdded(ctx, item, children);
+  const skipped = entries.filter((e) => e.outcome === 'skipped');
+  ctx.repos.appendAudit(ctx.db, { actor: INTAKE_ACTOR, action: 'intake.unpack', entity: 'intake_items', entityId: item.id, after: { filename, entries: entries.length - skipped.length, skipped: skipped.map((e) => ({ name: e.name, reason: e.reason ?? null })), children: children.map((c) => c.itemId) }, at: ctx.now() });
+  itemSettled(ctx, item.id);
+  return { kind: 'done', result: { status: 'unpacked', entries: entries.length - skipped.length, skipped: skipped.length, children: children.map((c) => c.itemId) } };
 }
 
 // ---------------------------------------------------------------------------
@@ -183,12 +288,29 @@ export async function extractItem(ctx: AppContext, item: IntakeItemRecord, job: 
   }
   setStatus(ctx, item.id, 'extracting');
   const claimReference = item.claimId ? ctx.repos.getClaim(ctx.db, item.claimId)?.reference : undefined;
+  const bundleName = bundlesOfItem(ctx, item.id)[0]?.name;
   // The file itself goes to the model only within its limits (images 20 MB, PDFs 32 MB); the text always does.
   const attachOk = ev.bytes <= (doc.kind === 'image' ? MAX_MODEL_IMAGE_BYTES : MAX_MODEL_PDF_BYTES);
-  const r = await runAgent(ctx, INTAKE_SPEC, job, extractionInput({ item, evidence: ev, doc, ...(attachOk ? { absolutePath: read.absolutePath } : {}), ...(claimReference ? { claimReference } : {}) }));
+  const r = await runAgent(ctx, INTAKE_SPEC, job, extractionInput({ item, evidence: ev, doc, ...(attachOk ? { absolutePath: read.absolutePath } : {}), ...(claimReference ? { claimReference } : {}), ...(bundleName ? { bundleName } : {}) }));
   const o = r.outcome;
   if (o.kind === 'ok' && r.result) {
     const x = r.result as IntakeExtraction;
+    const extras: ExtractionExtras = {
+      engine: 'ai',
+      documentDate: typeof x.documentDate === 'string' && /^\d{4}-\d{2}-\d{2}/.test(x.documentDate) ? x.documentDate.slice(0, 10) : null,
+      docSide: x.docSide === 'front' || x.docSide === 'back' ? x.docSide : null,
+      photo: x.photo
+        ? {
+            scene: x.photo.scene,
+            plates: (x.photo.plates ?? []).filter((p) => p && typeof p.text === 'string' && p.text.trim()).map((p) => ({ text: p.text.trim().toUpperCase(), confidence: Math.max(0, Math.min(1, p.confidence)) })),
+            // zone ids must be in the damage model's taxonomy (VEHICLE_ZONES)
+            damageZones: (x.photo.damageZones ?? []).filter((z) => z && isZoneId(z.zoneId)).map((z) => ({ zoneId: z.zoneId, severity: Math.max(1, Math.min(3, Math.round(z.severity))), confidence: Math.max(0, Math.min(1, z.confidence)) })),
+            notes: x.photo.notes ?? null,
+          }
+        : null,
+      segments: Array.isArray(x.segments) ? x.segments : [],
+      pdfMeta: doc.pdfMeta ?? null,
+    };
     const extraction = ctx.repos.appendIntakeExtraction(ctx.db, {
       intakeItemId: item.id,
       runId: r.runId,
@@ -196,18 +318,28 @@ export async function extractItem(ctx: AppContext, item: IntakeItemRecord, job: 
       fields: x.fields,
       summary: x.summary,
       warnings: x.warnings,
+      extras,
       now: ctx.now(),
     });
     setStatus(ctx, item.id, 'proposed', { docType: x.docType, docTypeConfidence: x.docTypeConfidence, normalised: { ...doc, formTemplateId: x.formTemplateId } });
-    return { kind: 'done', result: { extractionId: extraction.id, runId: r.runId, docType: x.docType, fields: x.fields.length }, followUps: [followUp('intake.apply', item, job, { extractionId: extraction.id })] };
+    const followUps: EnqueueInput[] = [followUp('intake.apply', item, job, { extractionId: extraction.id })];
+    const split = ctx.repos.getAgentSettings(ctx.db).intake.split;
+    if (split.enabled && doc.kind === 'pdf' && doc.scanned && (!item.claimId || inOpenBundle(ctx, item.id))) {
+      const segs = aiSegments(extras.segments, doc.pages ?? 0);
+      if (segs) followUps.push(splitFollowUp(item, job, segs, 'ai'));
+    }
+    itemSettled(ctx, item.id);
+    return { kind: 'done', result: { extractionId: extraction.id, runId: r.runId, docType: x.docType, fields: x.fields.length }, followUps };
   }
   if (o.kind === 'usage_limited') {
     setStatus(ctx, item.id, 'quota_wait');
+    itemSettled(ctx, item.id);
     return { kind: 'wait_usage', until: o.resetsAt ?? new Date(Date.parse(ctx.now()) + 15 * 60_000).toISOString() };
   }
   if (o.kind === 'auth_failed') {
     // §A.7: waits with the AI pause and runs again after "I've fixed it" — it does not fail for good.
     setStatus(ctx, item.id, 'quota_wait');
+    itemSettled(ctx, item.id);
     return authFailedWait(ctx, o.message);
   }
   const message = o.kind === 'error' ? o.message : o.kind === 'invalid_output' ? `invalid result: ${o.errors.join('; ')}` : o.kind === 'refused' ? `refused: ${o.explanation ?? o.category ?? ''}` : o.kind;
@@ -217,6 +349,7 @@ export async function extractItem(ctx: AppContext, item: IntakeItemRecord, job: 
     return { kind: 'retry', afterMs: 60_000, reason: message };
   }
   setStatus(ctx, item.id, 'failed', { error: (o.kind === 'error' && o.code === 'AI_OFF' ? 'AI is switched off (Settings > AI). Switch it on, then Retry.' : message).slice(0, 1000) });
+  itemSettled(ctx, item.id);
   // §C.3: after the last attempt the job is dead and the owner gets a Needs-you failure (AI off has its own setup path).
   return { kind: 'fail', reason: message, deadLetter: !(o.kind === 'error' && o.code === 'AI_OFF') };
 }
@@ -327,9 +460,15 @@ export function raiseNewClaimCard(ctx: AppContext, item: IntakeItemRecord, field
 }
 
 export async function applyItem(ctx: AppContext, item: IntakeItemRecord, job: JobRecord, extractionId?: string): Promise<JobOutcome> {
-  const extraction = extractionId ? ctx.repos.getIntakeExtraction(ctx.db, extractionId) : ctx.repos.latestIntakeExtraction(ctx.db, item.id);
+  const extraction = extractionId ? ctx.repos.getIntakeExtraction(ctx.db, extractionId) : ctx.repos.bestIntakeExtraction(ctx.db, item.id);
   const fields = (extraction && Array.isArray(extraction.fields) ? extraction.fields : []) as ExtractedField[];
 
+  if (!item.claimId && inOpenBundle(ctx, item.id)) {
+    // A case-bundle file: the bundle reads every file together and registers one claim (no per-file card).
+    setStatus(ctx, item.id, 'proposed');
+    itemSettled(ctx, item.id);
+    return { kind: 'done', result: { status: 'proposed', reason: 'in a case bundle — read together with the other files' } };
+  }
   if (!item.claimId) {
     if (item.docType && FNOL_LIKE_DOC_TYPES.has(item.docType) && !item.parentItemId) {
       const ny = raiseNewClaimCard(ctx, item, fields, extraction?.summary, job.correlationId);

@@ -7,7 +7,7 @@
  * scanned PDFs and photos go as verified attachment copies. The CCGUK form fingerprint (computed in code) is a hint in
  * the brief, never an instruction.
  */
-import { DOC_TYPES, FIELD_TARGETS, type Evidence } from '@ccguk/domain';
+import { DOC_TYPES, FIELD_TARGETS, PHOTO_SCENES, RULE_FIELD_NAME_LIST, VEHICLE_ZONES, type Evidence } from '@ccguk/domain';
 import type { IntakeItemRecord } from '@ccguk/db';
 import type { AgentInput, AgentSpec } from '../agent/contracts.js';
 import type { AiAttachment } from '../ai/types.js';
@@ -34,7 +34,12 @@ export interface ExtractionContext {
   /** Absolute path of the verified evidence file (for attachments). */
   absolutePath?: string;
   claimReference?: string;
+  /** Smart intake: the case bundle the file was dropped into (its temporary name). */
+  bundleName?: string;
 }
+
+/** Zone ids the photo reading may use (the claim damage model's taxonomy). */
+export const ALLOWED_ZONE_IDS: readonly string[] = VEHICLE_ZONES.map((z) => z.id);
 
 /** The AgentInput for `intake.extract`. The task line carries a stable `[intake:<docKindHint>]` tag fixtures can match. */
 export function extractionInput(c: ExtractionContext): AgentInput {
@@ -67,12 +72,18 @@ export function extractionInput(c: ExtractionContext): AgentInput {
       ccgukFormFingerprint: doc.fingerprint ?? null,
       allowedDocTypes: DOC_TYPES,
       allowedTargets: FIELD_TARGETS,
+      // Smart intake (docs/SMART-INTAKE.md §5.1)
+      bundle: c.bundleName ? { name: c.bundleName } : null,
+      fieldNames: RULE_FIELD_NAME_LIST,
+      allowedZoneIds: doc.kind === 'image' ? ALLOWED_ZONE_IDS : [],
+      photoScenes: PHOTO_SCENES,
     },
     untrusted,
     attachments,
     question: [
       'Classify the document (docType + confidence) and extract every field the field list for that type names, each as {name, target, value, confidence, page, quote}.',
-      'Use target only from allowedTargets (null when a value maps to no claim field). Quote the exact words you read the value from. Never guess a value: leave it out or give a low confidence.',
+      'Use target only from allowedTargets (null when a value maps to no claim field; then use a name from fieldNames when one fits). Quote the exact words you read the value from. Never guess a value: leave it out or give a low confidence.',
+      'Also give documentDate (the date printed on the document, YYYY-MM-DD, or null), docSide (front/back for licences and cards, else null), photo (photos only: scene, every number plate read exactly as printed — never guess a character — and damage zones from allowedZoneIds) and segments ([] unless the file holds several separate documents).',
       attachments.length ? 'The document is attached as a file in ./input — read it with the Read tool.' : '',
       item.claimId ? 'The document belongs to the claim in the brief. You may read the claim with claim_get to see what is already on file.' : 'No claim is linked yet. Do not search for one unless the document names a ClaimDesk reference (CCG-YYYY-NNNNN).',
       'Return the IntakeExtraction JSON only.',

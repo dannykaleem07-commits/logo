@@ -2,7 +2,7 @@
  * Claude Code CLI detection and sign-in check (docs/SUPREME-DESIGN.md §A.2, §A.7, §M.3) — owned by `gateway`.
  *
  * Order: `CLAIMDESK_CLAUDE_PATH` → `%USERPROFILE%\.local\bin\claude.exe` (native installer) → `where.exe claude` (first
- * `.exe` hit only) → the WinGet links and package folders → the PATH saved in the registry. A `.cmd`/`.bat` shim is never spawned (Node
+ * `.exe` hit only) → `%LOCALAPPDATA%\Microsoft\WinGet\Links\claude.exe`. A `.cmd`/`.bat` shim is never spawned (Node
  * refuses it without a shell, and a shell would re-open injection). Verified with `claude --version` matching
  * `^(\d+\.\d+\.\d+) \(Claude Code\)`; older than MIN_CLAUDE_CODE_VERSION → a health problem.
  *
@@ -10,7 +10,7 @@
  * (CLAIMDESK_FORBID_REAL_AI=1) only an injected command or a Node script (`.mjs`/`.js`, the test fake) is executed.
  */
 import { spawn } from 'node:child_process';
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync } from 'node:fs';
 import path from 'node:path';
 
 export const MIN_CLAUDE_CODE_VERSION = '2.1.292';
@@ -106,60 +106,6 @@ export interface CliDeps {
   claudeCommand?: readonly string[];
   /** Real AI forbidden in this process (default: CLAIMDESK_FORBID_REAL_AI=1 in `env`). */
   forbidRealAi?: boolean;
-  /** Directory listing (names only); missing or unreadable directories give []. */
-  listDir?: (dir: string) => string[];
-}
-
-const defaultListDir = (dir: string): string[] => {
-  try {
-    return readdirSync(dir);
-  } catch {
-    return [];
-  }
-};
-
-/** PATH entries saved in the registry (user, then machine): picks up an install made after ClaimDesk started. */
-export function parseRegPath(stdout: string): string[] {
-  const m = /\bPath\s+REG_(?:EXPAND_)?SZ\s+(.+)$/im.exec(stdout);
-  return m ? m[1]!.split(';').map((d) => d.trim()).filter((d) => d !== '') : [];
-}
-
-function expandWinVars(dir: string, env: NodeJS.ProcessEnv): string {
-  return dir.replace(/%([^%]+)%/g, (whole, name: string) => {
-    const key = Object.keys(env).find((k) => k.toLowerCase() === name.toLowerCase());
-    return key ? (env[key] ?? whole) : whole;
-  });
-}
-
-/**
- * Windows fallbacks after `where.exe`: the WinGet links folder, WinGet package folders (user and machine scope, where
- * `winget install Anthropic.ClaudeCode` unpacks claude.exe), and the PATH saved in the registry (a PATH change made
- * after ClaimDesk started is not in this process's environment).
- */
-async function windowsFallbacks(env: NodeJS.ProcessEnv, exists: (p: string) => boolean, listDir: (d: string) => string[], run: CommandRunner): Promise<string | undefined> {
-  const j = path.win32.join;
-  const direct: string[] = [];
-  if (env.LOCALAPPDATA) direct.push(j(env.LOCALAPPDATA, 'Microsoft', 'WinGet', 'Links', 'claude.exe'));
-  if (env.ProgramFiles) direct.push(j(env.ProgramFiles, 'WinGet', 'Links', 'claude.exe'));
-  for (const p of direct) if (exists(p)) return p;
-  const packageRoots = [env.LOCALAPPDATA ? j(env.LOCALAPPDATA, 'Microsoft', 'WinGet', 'Packages') : undefined, env.ProgramFiles ? j(env.ProgramFiles, 'WinGet', 'Packages') : undefined].filter((d): d is string => Boolean(d));
-  for (const root of packageRoots) {
-    for (const pkg of listDir(root).filter((n) => /^anthropic\.claudecode/i.test(n))) {
-      const dir = j(root, pkg);
-      if (exists(j(dir, 'claude.exe'))) return j(dir, 'claude.exe');
-      for (const sub of listDir(dir)) if (exists(j(dir, sub, 'claude.exe'))) return j(dir, sub, 'claude.exe');
-    }
-  }
-  const dirs: string[] = [];
-  for (const key of ['HKCU\\Environment', 'HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Environment']) {
-    const res = await run('reg.exe', ['query', key, '/v', 'Path'], { timeoutMs: 10_000 });
-    if (res.code === 0) dirs.push(...parseRegPath(res.stdout));
-  }
-  for (const d of dirs) {
-    const p = j(expandWinVars(d, env), 'claude.exe');
-    if (exists(p)) return p;
-  }
-  return undefined;
 }
 
 export interface CliDetection {
@@ -239,7 +185,10 @@ export async function detectClaudeCli(env: NodeJS.ProcessEnv = process.env, deps
         .map((l) => l.trim())
         .find((l) => /\.exe$/i.test(l));
       if (hit) found = hit;
-      else found = await windowsFallbacks(env, exists, deps.listDir ?? defaultListDir, run);
+      else if (env.LOCALAPPDATA) {
+        const winget = path.win32.join(env.LOCALAPPDATA, 'Microsoft', 'WinGet', 'Links', 'claude.exe');
+        if (exists(winget)) found = winget;
+      }
     }
     if (found) command = commandFor(found);
   }

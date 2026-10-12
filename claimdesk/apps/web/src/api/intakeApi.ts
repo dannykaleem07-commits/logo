@@ -24,7 +24,8 @@ export type ProposalStatus = 'pending' | 'applied' | 'rejected' | 'superseded';
 export type ProposalPolicy = 'auto' | 'confirm' | 'never';
 
 export interface IntakeDocSummary {
-  kind: 'pdf' | 'image' | 'docx' | 'email' | 'text' | 'heic' | 'skipped';
+  /** 'archive': a .zip whose files were unpacked into their own items (docs/SMART-INTAKE.md §5.2); its status stays `skipped`. */
+  kind: 'pdf' | 'image' | 'docx' | 'email' | 'text' | 'heic' | 'skipped' | 'archive';
   sniffed: string;
   mime: string;
   extensionMatches: boolean;

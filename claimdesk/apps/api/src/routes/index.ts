@@ -42,6 +42,7 @@ import { registerTasksRoutes } from './tasks.js';
 import { registerMailRoutes } from './mail.js';
 import { registerOutboxRoutes } from './outbox.js';
 import { registerIntakeRoutes } from './intake.js';
+import { registerIntakeBundlesRoutes } from './intakeBundles.js';
 import { registerCaseworkRoutes } from './casework.js';
 import { registerBrainRoutes } from './brain.js';
 import { registerModels3dRoutes } from './models3d.js';
@@ -94,6 +95,7 @@ export const routeModules: RouteModule[] = [
   registerTasksRoutes, // runtime
   registerMailRoutes, // mail
   registerOutboxRoutes, // mail
+  registerIntakeBundlesRoutes, // intake-server (smart intake; before /intake/:id)
   registerIntakeRoutes, // intake
   registerCaseworkRoutes, // casework
   registerBrainRoutes, // casework

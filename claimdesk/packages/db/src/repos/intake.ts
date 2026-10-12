@@ -178,6 +178,8 @@ export interface IntakeExtractionRecord {
   fields: unknown;
   summary?: string;
   warnings: string[];
+  /** Smart intake: {engine:'ai'|'rules', documentDate, docSide, photo, segments, pdfMeta} (docs/SMART-INTAKE.md §3.1). */
+  extras?: unknown;
   createdAt: ISODateTime;
 }
 
@@ -188,6 +190,7 @@ export interface AppendIntakeExtractionInput {
   fields: unknown;
   summary?: string;
   warnings?: string[];
+  extras?: unknown;
   id?: string;
   now?: ISODateTime;
 }
@@ -206,6 +209,7 @@ export function appendIntakeExtraction(db: Db, input: AppendIntakeExtractionInpu
       fields: input.fields ?? [],
       summary: input.summary ?? null,
       warnings: input.warnings ?? [],
+      extras: input.extras ?? null,
       createdAt: input.now ?? nowIso(),
     })
     .returning()
@@ -225,6 +229,23 @@ export function listIntakeExtractions(db: Db, intakeItemId: string): IntakeExtra
 
 export function latestIntakeExtraction(db: Db, intakeItemId: string): IntakeExtractionRecord | undefined {
   const all = listIntakeExtractions(db, intakeItemId);
+  return all[all.length - 1];
+}
+
+/** The engine of an extraction row: `rules` for the deterministic reading (schema `intake_rules/1`), else `ai`. */
+export function extractionEngine(e: Pick<IntakeExtractionRecord, 'schemaId' | 'extras'>): 'ai' | 'rules' {
+  const engine = (e.extras as { engine?: unknown } | undefined)?.engine;
+  if (engine === 'rules' || engine === 'ai') return engine;
+  return e.schemaId.startsWith('intake_rules') ? 'rules' : 'ai';
+}
+
+/**
+ * The reading to use for an item (docs/SMART-INTAKE.md §3.3): the latest AI row, else the latest row. A retry of
+ * `intake.process` appends a newer rules row; it must never displace the AI reading.
+ */
+export function bestIntakeExtraction(db: Db, intakeItemId: string): IntakeExtractionRecord | undefined {
+  const all = listIntakeExtractions(db, intakeItemId);
+  for (let i = all.length - 1; i >= 0; i -= 1) if (extractionEngine(all[i]!) === 'ai') return all[i];
   return all[all.length - 1];
 }
 

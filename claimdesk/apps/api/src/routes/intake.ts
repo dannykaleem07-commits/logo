@@ -204,7 +204,8 @@ export function registerIntakeRoutes(app: FastifyInstance, ctx: AppContext): voi
       item = ctx.repos.requireIntakeItem(ctx.db, id);
       if (!body.from) return { item: itemRow(ctx, item), queued: 'intake.apply' };
     }
-    const extracted = Boolean(ctx.repos.latestIntakeExtraction(ctx.db, item.id));
+    // Smart intake also stores a rules reading (engine 'rules'): only an AI reading counts as "extracted" here.
+    const extracted = ctx.repos.listIntakeExtractions(ctx.db, item.id).some((e) => ctx.repos.extractionEngine(e) === 'ai');
     const from = body.from ?? (!item.normalised || ['failed', 'skipped', 'queued', 'normalising'].includes(item.status) ? 'process' : !extracted ? 'extract' : 'apply');
     if (from === 'extract' && !item.normalised) throw badRequest('This item was never read; retry from process');
     const attempt = `r${Date.parse(ctx.now())}`;

@@ -11,7 +11,7 @@ import { copyFileSync, mkdirSync } from 'node:fs';
 import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import type { Actor, MailAccountRecord, MailMessageRecord } from '@ccguk/db';
-import type { ClaimEvent, Evidence, EventType, Id } from '@ccguk/domain';
+import type { ClaimEvent, Evidence, EvidenceKind, EventType, Id } from '@ccguk/domain';
 import type { AppContext } from '../context.js';
 import { absoluteEvidencePath, storeEvidence, type StagedUpload } from '../services/evidence.js';
 import { applyEventSideEffects } from '../services/sideEffects.js';
@@ -67,8 +67,11 @@ export function appendClaimEvent(ctx: AppContext, claimId: Id, input: AppendEven
   return event;
 }
 
-/** Copy an evidence file onto a claim (same bytes, deduped by hash on that claim). */
-export async function copyEvidenceToClaim(ctx: AppContext, evidenceId: Id, claimId: Id, actor: Actor, description?: string): Promise<Evidence> {
+/**
+ * Copy an evidence file onto a claim (same bytes, deduped by hash on that claim). `kind` (smart intake §6.8) files the
+ * copy as another evidence kind (a V5C read by intake → `v5c`); by default the copy keeps the original's kind.
+ */
+export async function copyEvidenceToClaim(ctx: AppContext, evidenceId: Id, claimId: Id, actor: Actor, description?: string, kind?: EvidenceKind): Promise<Evidence> {
   const src = ctx.repos.requireEvidence(ctx.db, evidenceId);
   if (src.claimId === claimId) return src;
   const onClaim = ctx.repos.findEvidenceBySha256(ctx.db, src.sha256).find((e) => e.claimId === claimId);
@@ -78,7 +81,7 @@ export async function copyEvidenceToClaim(ctx: AppContext, evidenceId: Id, claim
   mkdirSync(path.dirname(tempPath), { recursive: true });
   copyFileSync(from, tempPath);
   const staged: StagedUpload = { tempPath, sha256: src.sha256, bytes: src.bytes };
-  const stored = await storeEvidence(ctx, { claimId, staged, filename: src.filename, mime: src.mime, fields: { kind: src.kind, ...(description ?? src.description ? { description: description ?? src.description } : {}) }, actor });
+  const stored = await storeEvidence(ctx, { claimId, staged, filename: src.filename, mime: src.mime, fields: { kind: kind ?? src.kind, ...(description ?? src.description ? { description: description ?? src.description } : {}) }, actor });
   return stored.evidence;
 }
 
