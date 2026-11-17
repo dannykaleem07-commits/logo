@@ -25,7 +25,7 @@ GitHub Actions builds it every time `estimator/` changes (workflow: `.github/wor
 1. Open the repository on GitHub, then **Actions → Build Engineer Report Studio (Windows)**.
 2. Open the latest run and download the **Engineer-Report-Studio-Windows** artifact.
 3. It contains:
-   - `Engineer Report Studio-1.0.0-x64-nsis.exe`, the installer;
+   - `Engineer Report Studio-Setup-1.0.0.exe`, the installer;
    - `Engineer Report Studio-1.0.0-portable.exe`, which runs without installing.
 
 The exe is not code-signed, so Windows SmartScreen will warn on first run: choose *More info → Run anyway*.

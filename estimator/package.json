@@ -24,10 +24,30 @@
   "build": {
     "appId": "uk.co.courtesycars.engineer-report-studio",
     "productName": "Engineer Report Studio",
-    "files": ["main.js", "preload.js", "ai.js", "app/**/*", "package.json"],
-    "directories": { "output": "dist" },
-    "win": { "target": ["nsis", "portable"], "artifactName": "${productName}-${version}-${arch}-${target}.${ext}" },
-    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true },
-    "portable": { "artifactName": "${productName}-${version}-portable.exe" }
+    "files": [
+      "main.js",
+      "preload.js",
+      "ai.js",
+      "app/**/*",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable.exe"
+    }
   }
 }
