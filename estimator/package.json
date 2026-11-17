@@ -1,0 +1,33 @@
+{
+  "name": "engineer-report-studio",
+  "productName": "Engineer Report Studio",
+  "version": "1.0.0",
+  "description": "AI-assisted vehicle engineering and accident damage assessment reports.",
+  "main": "main.js",
+  "private": true,
+  "author": "Courtesy Cars Group UK Limited",
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron .",
+    "build:oem": "node tools/build-oem.js",
+    "test": "node tools/selftest.js",
+    "dist:win": "electron-builder --win nsis portable --x64",
+    "dist:dir": "electron-builder --dir"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.9.0"
+  },
+  "devDependencies": {
+    "electron": "45.3.3",
+    "electron-builder": "26.18.0"
+  },
+  "build": {
+    "appId": "uk.co.courtesycars.engineer-report-studio",
+    "productName": "Engineer Report Studio",
+    "files": ["main.js", "preload.js", "ai.js", "app/**/*", "package.json"],
+    "directories": { "output": "dist" },
+    "win": { "target": ["nsis", "portable"], "artifactName": "${productName}-${version}-${arch}-${target}.${ext}" },
+    "nsis": { "oneClick": false, "allowToChangeInstallationDirectory": true, "createDesktopShortcut": true },
+    "portable": { "artifactName": "${productName}-${version}-portable.exe" }
+  }
+}

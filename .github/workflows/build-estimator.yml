@@ -1,0 +1,35 @@
+name: Build Engineer Report Studio (Windows)
+
+on:
+  push:
+    paths:
+      - 'estimator/**'
+      - '.github/workflows/build-estimator.yml'
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: estimator
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: estimator/package-lock.json
+      - run: npm ci
+      - name: Self-tests
+        run: |
+          node tools/selftest.js
+          node tools/ai-mocktest.js
+      - name: Build Windows installer and portable .exe
+        run: npx electron-builder --win nsis portable --x64 --publish never
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Engineer-Report-Studio-Windows
+          path: |
+            estimator/dist/*.exe
+          if-no-files-found: error

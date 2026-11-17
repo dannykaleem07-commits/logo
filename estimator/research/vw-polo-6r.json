@@ -1,0 +1,9 @@
+{
+  "vehicle": {"make":"Volkswagen","model":"Polo","generation":"6R/6C","years":"2009-2017","notes":"Research limited: catalogue sites (7zap, partsouq, ETKA mirrors, dealer stores) were blocked by the session network policy and the web-search budget ran out, so coverage is partial. Verify against VIN before ordering."},
+  "researched": "2026-11-17",
+  "parts": [
+    {"code":"FE001","side":"","oem":"6R0807221RGRU","description":"Front bumper cover, primed (6R pre-facelift)","notes":"6R pre-facelift; oemwolf gives first/last year of use 2010-2015. An aftermarket cross-reference listing describes it as without parking sensors. Not for GTI.","price_gbp":null,"price_source":null,"source_url":"https://oemwolf.com/oem-parts/6r0807221rgru.html","confidence":"confirmed"},
+    {"code":"FE001","side":"","oem":"6C0807217GRU","description":"Front bumper cover, primed (6C facelift)","notes":"6C facelift 2014-2017, without parking sensors. Seen only as an OE reference on a UK eBay listing for a non-genuine ('OEM quality') bumper; no genuine/catalogue source seen.","price_gbp":null,"price_source":null,"source_url":"https://ebay.co.uk/p/5023246930","confidence":"single-source"},
+    {"code":"BN001","side":"","oem":"6R0823031G","description":"Bonnet","notes":"Supersedes 6R0823031E (replaced Nov 2013, Feb 2014 in Mexico, per oemwolf); earlier 6R0823031D covered 2010-2014. Also seen on a UK eBay listing. Supplied unpainted.","price_gbp":null,"price_source":null,"source_url":"https://oemwolf.com/oem-parts/6r0823031e.html","confidence":"confirmed"}
+  ]
+}

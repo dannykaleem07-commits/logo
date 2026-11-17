@@ -1,0 +1,287 @@
+{
+  "vehicle": {
+    "make": "Nissan",
+    "model": "Juke",
+    "generation": "F15",
+    "years": "2010-2019",
+    "notes": "UK RHD. Nissan UK shop labels this generation F15E. Nissan LH/RH = vehicle's own left/right (LH = UK passenger/near side, RH = UK driver/off side). Most parts are listed by Nissan as chassis-number (VIN) specific."
+  },
+  "researched": "2026-11-17",
+  "parts": [
+    {
+      "code": "SS001",
+      "side": "R",
+      "oem": "768501KA6A",
+      "description": "Mudguard-side sill, centre RH (sill exterior moulding)",
+      "notes": "Listed by Nissan UK for Juke F15E; unpainted black; VIN specific. Also seen on eBay listings for Juke F15. US-market equivalent is 76850-1KA0A (not applicable to UK). Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 89.46,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-mudguard-side-sill-centre-rh-768501ka6a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-mudguard-side-sill-centre-rh-768501ka6a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "SS001",
+      "side": "L",
+      "oem": "768511KA6A",
+      "description": "Mudguard-side sill, centre LH (sill exterior moulding)",
+      "notes": "Listed by Nissan UK for Juke F15E; unpainted black; VIN specific. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 90.58,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-mudguard-side-sill-centre-lh-768511ka6a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-mudguard-side-sill-centre-lh-768511ka6a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "FW003",
+      "side": "R",
+      "oem": "638601KA6A",
+      "description": "Over-fender, front RH (front wheel-arch moulding)",
+      "notes": "Nissan UK: unpainted black plastic, arch clips included; listed for Juke 2010-2014, 2014-2018 and 2018-2019. Also on eBay UK (used) as Juke Mk1 2010-2019. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 98.59,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-over-fender-front-rh-638601ka6a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-over-fender-front-rh-638601ka6a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "FW003",
+      "side": "L",
+      "oem": "638611KA6A",
+      "description": "Over-fender, front LH (front wheel-arch moulding)",
+      "notes": "Nissan UK: unpainted black plastic, arch clips included; listed for Juke 2010-2019. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 102.84,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-over-fender-front-lh-638611ka6a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-over-fender-front-lh-638611ka6a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "RQ004",
+      "side": "R",
+      "oem": "788601KA6A",
+      "description": "Over-fender, rear RH (rear wheel-arch moulding)",
+      "notes": "Nissan UK: unpainted black plastic, arch clips included; VIN specific. Also on eBay.de used listings for Juke. US-market equivalent 78860-1KA0A (not applicable to UK). Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 102.73,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-over-fender-rear-rh-788601ka6a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-over-fender-rear-rh-788601ka6a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "RQ004",
+      "side": "L",
+      "oem": "788611KA6A",
+      "description": "Over-fender, rear LH (rear wheel-arch moulding)",
+      "notes": "Nissan UK: unpainted black plastic, arch clips included; listed for Juke 2010-2019. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 104.14,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-over-fender-rear-lh-788611ka6a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-over-fender-rear-lh-788611ka6a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "MR001",
+      "side": "L",
+      "oem": "963021KK7A",
+      "description": "Door mirror assembly LH",
+      "notes": "Nissan UK lists for Juke 2010 to 2014 (pre-facelift); mirror backing/cap sold separately. Exact spec (heated/folding/indicator) not shown in what could be read. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 529.04,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-door-mirror-assembly-lh-963021kk7a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-door-mirror-assembly-lh-963021kk7a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "MR001",
+      "side": "L",
+      "oem": "963021KK2C",
+      "description": "Door mirror assembly LH",
+      "notes": "Nissan UK Juke F15E listing; mirror backing/cap sold separately. Variant/years not stated in what could be read; a second LH number exists (963021KK7A), so check VIN. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 312.61,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-door-mirror-assembly-lh-963021kk2c",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-door-mirror-assembly-lh-963021kk2c",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "MR001",
+      "side": "R",
+      "oem": "96301BV80B",
+      "description": "Door mirror assembly RH",
+      "notes": "From existing report. Seen only on used-part marketplace listings (eBay) for Juke F15 with electric power-fold mirror, not on an official Nissan or EPC page. One listing described the side inconsistently. LH counterpart 96302BV80B is listed on eBay UK for a 2017 Juke F15 (near side). Verify against VIN.",
+      "price_gbp": null,
+      "price_source": null,
+      "source_url": "https://www.ebay.ca/itm/395054631595",
+      "confidence": "single-source"
+    },
+    {
+      "code": "MR001",
+      "side": "L",
+      "oem": "96302BV80B",
+      "description": "Door mirror assembly LH",
+      "notes": "Seen on an eBay UK product listing: 2017 Nissan Juke F15 door wing mirror, NSF passenger side. Used-part listing only; not verified on Nissan catalogue.",
+      "price_gbp": null,
+      "price_source": null,
+      "source_url": "https://www.ebay.co.uk/p/12002765081",
+      "confidence": "single-source"
+    },
+    {
+      "code": "MR002",
+      "side": "R",
+      "oem": "96365BV82A",
+      "description": "Glass-mirror RH",
+      "notes": "Nissan UK Juke F15E listing; described as for vehicles with heated/folding mirrors (variant wording from search excerpt). VIN specific; several RH glass numbers exist. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 32.76,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-glass-mirror-rh-96365bv82a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-glass-mirror-rh-96365bv82a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "MR002",
+      "side": "R",
+      "oem": "96365BV83A",
+      "description": "Glass-mirror RH",
+      "notes": "Nissan UK Juke F15E listing; variant difference from 96365BV82A not stated. VIN specific. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 32.76,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-glass-mirror-rh-96365bv83a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-glass-mirror-rh-96365bv83a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "MR002",
+      "side": "R",
+      "oem": "963651KA1A",
+      "description": "Mirror glass RH, heated",
+      "notes": "Nissan UK Juke F15E listing, heated glass. VIN specific; variant split vs BV-series not stated. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 125.02,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-mirror-glass-rh-heated-963651ka1a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-mirror-glass-rh-heated-963651ka1a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "MR003",
+      "side": "L",
+      "oem": "963741FC0B",
+      "description": "Cover, mirror backing LH (mirror cap)",
+      "notes": "Nissan UK: shared Cube Z12 / Juke F15E part, listed for Juke 2010 to 2014; black unpainted. VIN specific. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 138.32,
+      "price_source": "https://shop.nissan.co.uk/collections/nissan-juke-parts/products/nissan-cube-juke-z12-f15e-cover-mirror-backing-lh-963741fc0b",
+      "source_url": "https://shop.nissan.co.uk/collections/nissan-juke-parts/products/nissan-cube-juke-z12-f15e-cover-mirror-backing-lh-963741fc0b",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "LT001",
+      "side": "R",
+      "oem": "26010BV80B",
+      "description": "Headlamp assembly RH",
+      "notes": "Nissan UK listing titled Juke (F15). Also given as manufacturer part number on an eBay listing for a 2017 Juke Mk1 RH headlamp. Variant (halogen/xenon, facelift) not stated on what could be read; a Nismo RS lamp appears as 26010BV80A.",
+      "price_gbp": null,
+      "price_source": null,
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15-headlamp-assembly-rh-26010bv80b",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "LT001",
+      "side": "L",
+      "oem": "26060BV80B",
+      "description": "Headlamp assembly LH",
+      "notes": "Nissan UK listing titled Juke (F15). Variant not stated on what could be read.",
+      "price_gbp": null,
+      "price_source": null,
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15-headlamp-assembly-lh-26060bv80b",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "LT001",
+      "side": "R",
+      "oem": "260101KL0A",
+      "description": "Headlamp assembly RH",
+      "notes": "Number from Nissan UK 'Genuine Nissan Juke (F15E) Headlight Assembly - RH' page (via search excerpt) and cross-referenced on an eBay UK listing. Halogen; eBay listing gives 2010-2016 fitment. Distinct from US-market 26010-1KM0A. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 381.02,
+      "price_source": "https://shop.nissan.co.uk/products/copy-of-nissan-juke-f15e-black-purple-headlamp-finishers-2010-2014",
+      "source_url": "https://shop.nissan.co.uk/products/copy-of-nissan-juke-f15e-black-purple-headlamp-finishers-2010-2014",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "LT001",
+      "side": "L",
+      "oem": "260601KL0A",
+      "description": "Headlamp assembly LH",
+      "notes": "Number from Nissan UK 'Genuine Nissan Juke (F15E) Headlight Assembly - LH' page (via search excerpt) and an eBay UK listing for a 2010-2016 Juke LH halogen headlamp. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 381.02,
+      "price_source": "https://shop.nissan.co.uk/products/genuine-nissan-juke-f15e-headlight-assembly-lh",
+      "source_url": "https://shop.nissan.co.uk/products/genuine-nissan-juke-f15e-headlight-assembly-lh",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "LT003",
+      "side": "R",
+      "oem": "261508992B",
+      "description": "Fog lamp assembly, front RH",
+      "notes": "Nissan UK lists for Juke 2010 to 2014 (pre-facelift). Valeo 043403 (Note/Juke 2010>) also cross-references 26150-8992B. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 132.26,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-fog-lamp-assembly-front-rh-261508992b",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-fog-lamp-assembly-front-rh-261508992b",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "LT004",
+      "side": "R",
+      "oem": "26550BV80B",
+      "description": "Rear combination lamp RH (body)",
+      "notes": "Seen on eBay.de 'Nissan Juke F15 Ruecklicht hinten rechts 26550BV80B NEU ORIGINAL' and as OE cross-reference (with 26550-BV80A) for Valeo 047001 on Winparts UK. Another Valeo unit (044976) cross-references 26550-1KA0A / 26550-1KA0B for a Juke F15 RH lamp; split between the 1KA and BV variants (likely facelift) not confirmed - check VIN.",
+      "price_gbp": null,
+      "price_source": null,
+      "source_url": "https://www.winparts.co.uk/lighting-lamps/lighting/tail-lights/c29/combination-tail-light-original-part-047001-valeo/p634802.html",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "FE002",
+      "side": "",
+      "oem": "F20321KADH",
+      "description": "Reinforcer-front bumper, centre inner",
+      "notes": "Nissan UK Juke F15E listing, compatibility 2010-2019. Nissan names it 'centre inner reinforcer'; confirm it is the bumper beam required before use. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 330.13,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-reinforcer-front-bumper-centre-inner-f20321kadh",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-reinforcer-front-bumper-centre-inner-f20321kadh",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "WT001",
+      "side": "",
+      "oem": "D03001KK2A",
+      "description": "Wheel-aluminium 17 x 7J",
+      "notes": "Nissan UK Juke F15E listing, compatible 2010-2019, vehicles without TPMS. 17-inch assumed most common UK size (not verified). Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 351.52,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-wheel-aluminium-17-x-7j-d03001kk2a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-wheel-aluminium-17-x-7j-d03001kk2a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "WT001",
+      "side": "",
+      "oem": "D0C001KK2A",
+      "description": "Wheel-aluminium 17 inch, vehicles with TPMS",
+      "notes": "Nissan UK Juke F15E listing for TPMS-equipped vehicles; TPMS sensor sold separately. Price taken from the Nissan UK shop listing as indexed by search (page could not be fetched directly); re-check before use.",
+      "price_gbp": 336.06,
+      "price_source": "https://shop.nissan.co.uk/products/nissan-juke-f15e-wheel-aluminium-17-vehicles-with-tpms-d0c001kk2a",
+      "source_url": "https://shop.nissan.co.uk/products/nissan-juke-f15e-wheel-aluminium-17-vehicles-with-tpms-d0c001kk2a",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "WT004",
+      "side": "",
+      "oem": "407006WY0B",
+      "description": "TPMS sensor unit",
+      "notes": "From existing report. Nissan UK lists it (Juke fitment shown as 2014-2018 in search excerpt); Vemo V38-72-0224 cross-reference table includes Juke F15 2010-2019; also sold by UK Nissan dealer Glyn Hopkin. Requires programming. Some sellers say it replaces 407006WY0C.",
+      "price_gbp": null,
+      "price_source": null,
+      "source_url": "https://shop.nissan.co.uk/products/nissan-sensor-unit-tyre-pressure-monitoring-407006wy0b",
+      "confidence": "confirmed"
+    },
+    {
+      "code": "FX002",
+      "side": "",
+      "oem": "768821KA1A",
+      "description": "Clip (rocker/sill moulding clip)",
+      "notes": "From existing report. Seen on US Nissan parts retailers (nissanpartsdeal, autopartsprime) as 'Rocker Molding Clip' for 2011-2017 Juke; both appear to use the same US catalogue data. Not found on Nissan UK shop.",
+      "price_gbp": null,
+      "price_source": null,
+      "source_url": "https://www.nissanpartsdeal.com/parts/nissan-clip~76882-1ka1a.html",
+      "confidence": "single-source"
+    }
+  ]
+}
