@@ -108,42 +108,200 @@
   const txt = (x) => (x == null ? '' : String(x));
 
   // ---------- IndexedDB storage ----------
+  // Version 2 adds 'summaries' (one small record per job for the Jobs list, written in the same transaction as the job).
   const DB_NAME = 'engineer-report-studio';
-  let dbPromise;
-  function db() {
-    if (!dbPromise) {
-      dbPromise = new Promise((resolve, reject) => {
-        const req = indexedDB.open(DB_NAME, 1);
-        req.onupgradeneeded = () => {
-          const d = req.result;
-          if (!d.objectStoreNames.contains('jobs')) d.createObjectStore('jobs', { keyPath: 'id' });
-          if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv');
-        };
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-      });
-    }
-    return dbPromise;
+  const DB_VERSION = 2;
+  const SUMMARY_VERSION = 1; // jobSummary() shape; older summaries are rebuilt
+  let dbPromise = null;
+  let summariesChecked = false; // listSummaries() has compared the summaries with the jobs once this session
+  // An Error that keeps the storage error's name ('QuotaExceededError', 'ConflictError', …) with a readable message.
+  const STORE_MESSAGES = {
+    QuotaExceededError: 'There is not enough storage space (the disk is full or nearly full).',
+    AbortError: 'The storage transaction was cancelled.',
+    InvalidStateError: 'The storage connection was closed.',
+    UnknownError: 'The storage reported an unknown error (it may be full or damaged).',
+    DataCloneError: 'Part of the assessment could not be stored.',
+    VersionError: 'The stored data was written by a newer version of this app.'
+  };
+  function storeError(err, fallbackName) {
+    const name = String((err && err.name) || fallbackName || 'Error');
+    if (err instanceof Error && !(typeof DOMException !== 'undefined' && err instanceof DOMException) && err.name === name && err.storeError) return err;
+    const raw = err && err.message ? String(err.message) : '';
+    const e = new Error(STORE_MESSAGES[name] ? STORE_MESSAGES[name] + (raw ? ` (${raw})` : '') : raw || `Storage error (${name}).`);
+    e.name = name;
+    e.storeError = true;
+    if (err) e.cause = err;
+    return e;
   }
-  async function tx(store, mode, fn) {
+  function db() {
+    if (dbPromise) return dbPromise;
+    const p = new Promise((resolve, reject) => {
+      let settled = false, blockedTimer = null;
+      const done = (fn, v) => { if (settled) return false; settled = true; clearTimeout(blockedTimer); fn(v); return true; };
+      let req;
+      try { req = indexedDB.open(DB_NAME, DB_VERSION); } catch (err) { done(reject, storeError(err, 'UnknownError')); return; }
+      req.onupgradeneeded = (e) => upgrade(req.result, req.transaction, (e && e.oldVersion) || 0);
+      req.onsuccess = () => {
+        const d = req.result;
+        if (!done(resolve, d)) { try { d.close(); } catch (e) { /* stale connection after a reported block */ } return; }
+        // a newer version opened elsewhere (another tab): let it upgrade, and reconnect on the next call
+        d.onversionchange = () => { try { d.close(); } catch (e) { /* already closed */ } if (dbPromise === p) dbPromise = null; };
+        d.onclose = () => { if (dbPromise === p) dbPromise = null; };
+      };
+      req.onerror = (e) => { if (e && e.preventDefault) e.preventDefault(); done(reject, storeError(req.error, 'UnknownError')); };
+      // the upgrade waits while an older version of the app has the data open in another window or tab
+      req.onblocked = () => {
+        blockedTimer = setTimeout(() => {
+          const e = new Error('The saved assessments are open in another window or tab of an older version of this app. Close it, then reload.');
+          e.name = 'BlockedError';
+          done(reject, e);
+        }, 4000);
+      };
+    });
+    dbPromise = p;
+    p.catch(() => { if (dbPromise === p) dbPromise = null; }); // a failed open is retried on the next call
+    return p;
+  }
+  // Creates the stores; from version 1, also one summary per stored job through a cursor (one job in memory at a time).
+  // Nothing here may abort the upgrade: a summary that cannot be built is rebuilt later by listSummaries().
+  function upgrade(d, t, oldVersion) {
+    if (!d.objectStoreNames.contains('jobs')) d.createObjectStore('jobs', { keyPath: 'id' });
+    if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv');
+    if (d.objectStoreNames.contains('summaries')) return;
+    try {
+      d.createObjectStore('summaries', { keyPath: 'id' });
+      if (oldVersion >= 1 && t) fillSummaries(t, null);
+    } catch (err) { /* no summaries yet: listSummaries() builds them */ }
+  }
+  const quiet = (r) => { r.onerror = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); } }; return r; };
+  // Puts a summary for every job (or only for the keys in `only`, a Set), reading the jobs through a cursor.
+  function fillSummaries(t, only) {
+    const sums = t.objectStore('summaries');
+    const cur = quiet(t.objectStore('jobs').openCursor());
+    cur.onsuccess = () => {
+      const c = cur.result;
+      if (!c) return;
+      try {
+        if (!only || only.has(c.primaryKey)) quiet(sums.put(Object.assign(jobSummary(c.value), { id: c.primaryKey })));
+      } catch (err) { /* this one is left to the next check */ }
+      try { c.continue(); } catch (err) { /* the rest is rebuilt by the next check */ }
+    };
+  }
+  const hasStore = (d, name) => { try { return d.objectStoreNames.contains(name); } catch (e) { return false; } };
+  // One transaction over `stores`. fn(t, fail) issues the requests; the promise resolves with fn's result once the
+  // transaction has COMMITTED, and rejects when it errors or aborts (Chromium reports a commit-time quota failure only as
+  // an abort), keeping the error's name. fail(err) records why an operation is being abandoned (then call t.abort()).
+  async function tx(stores, mode, fn) {
     const d = await db();
     return new Promise((resolve, reject) => {
-      const t = d.transaction(store, mode);
-      const s = t.objectStore(store);
-      let result;
-      Promise.resolve(fn(s)).then((r) => { result = r; });
-      t.oncomplete = () => resolve(result);
-      t.onerror = () => reject(t.error);
+      let t;
+      try { t = d.transaction(stores, mode); } catch (err) { reject(storeError(err, 'InvalidStateError')); return; }
+      let result, failed = null, finished = false;
+      const fail = (err) => { if (!failed) failed = storeError(err, 'AbortError'); };
+      const stop = (err) => { fail(err); try { t.abort(); } catch (e) { /* already finished */ } };
+      t.oncomplete = () => { if (finished) return; finished = true; if (failed) reject(failed); else resolve(result); };
+      t.onerror = (e) => { if (!(e && e.defaultPrevented)) fail((e && e.target && e.target.error) || t.error); };
+      t.onabort = () => { if (finished) return; finished = true; reject(failed || storeError(t.error, 'AbortError')); };
+      try {
+        Promise.resolve(fn(t, fail)).then((r) => { result = r; }, stop);
+      } catch (err) { stop(err); }
     });
   }
+  // Request → promise. Always awaited or returned inside tx(), so a failed request never becomes an unhandled rejection.
   const reqP = (r) => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  const revOf = (j) => { const r = Math.floor(num(j && j.rev)); return r > 0 ? r : 0; };
+  function conflictError(stored, mine) {
+    const e = new Error('This assessment was changed in another window or tab. Reload it to continue.');
+    e.name = 'ConflictError';
+    e.storeError = true;
+    e.storedRev = stored;
+    e.rev = mine;
+    return e;
+  }
+  // The Jobs list straight from the jobs (one at a time through a cursor), when there is no summaries store to use.
+  function liveSummaries() {
+    return tx('jobs', 'readonly', (t) => new Promise((resolve, reject) => {
+      const out = [];
+      const cur = t.objectStore('jobs').openCursor();
+      cur.onsuccess = () => { const c = cur.result; if (!c) return resolve(out); out.push(Object.assign(jobSummary(c.value), { id: c.primaryKey })); c.continue(); };
+      cur.onerror = () => reject(cur.error);
+    }));
+  }
+  // Once per session: a summary for every job, none for deleted jobs, none of an older shape (e.g. after the upgrade from
+  // version 1 was interrupted, or the data was written by another version). Reads keys and the small summaries only;
+  // jobs needing a summary are read through a cursor, one at a time.
+  function syncSummaries() {
+    return tx(['jobs', 'summaries'], 'readwrite', (t) => new Promise((resolve, reject) => {
+      const js = t.objectStore('jobs'), ss = t.objectStore('summaries');
+      const keys = js.getAllKeys(), sums = ss.getAll();
+      keys.onerror = sums.onerror = (e) => reject(e && e.target && e.target.error);
+      let pending = 2;
+      const next = () => {
+        if (--pending) return;
+        const jobIds = keys.result || [], have = new Map();
+        for (const s of sums.result || []) if (s && s.id != null) have.set(s.id, s);
+        const live = new Set(jobIds);
+        for (const id of have.keys()) if (!live.has(id)) quiet(ss.delete(id));
+        const need = new Set(jobIds.filter((id) => { const s = have.get(id); return !s || s.v !== SUMMARY_VERSION; }));
+        if (need.size) fillSummaries(t, need);
+        resolve(need.size);
+      };
+      keys.onsuccess = sums.onsuccess = next;
+    }));
+  }
   const Store = {
-    async listJobs() { return tx('jobs', 'readonly', (s) => reqP(s.getAll())); },
-    async getJob(id) { return tx('jobs', 'readonly', (s) => reqP(s.get(id))); },
-    async saveJob(job) { job.updatedAt = new Date().toISOString(); return tx('jobs', 'readwrite', (s) => reqP(s.put(job))); },
-    async deleteJob(id) { return tx('jobs', 'readwrite', (s) => reqP(s.delete(id))); },
-    async get(key) { return tx('kv', 'readonly', (s) => reqP(s.get(key))); },
-    async set(key, val) { return tx('kv', 'readwrite', (s) => reqP(s.put(val, key))); }
+    // Every job with all of its photos: for compatibility only (the Jobs list uses listSummaries, the backup listJobIds).
+    async listJobs() { return tx('jobs', 'readonly', (t) => reqP(t.objectStore('jobs').getAll())); },
+    async listJobIds() { return tx('jobs', 'readonly', (t) => reqP(t.objectStore('jobs').getAllKeys())); },
+    // The Jobs list: one small summary per job (jobSummary). Rebuilt once per session where summaries are missing or stale.
+    async listSummaries() {
+      const d = await db();
+      if (!hasStore(d, 'summaries')) return liveSummaries();
+      if (!summariesChecked) {
+        try { await syncSummaries(); summariesChecked = true; } catch (err) { return liveSummaries(); }
+      }
+      return tx('summaries', 'readonly', (t) => reqP(t.objectStore('summaries').getAll()));
+    },
+    async getJob(id) { return tx('jobs', 'readonly', (t) => reqP(t.objectStore('jobs').get(id))); },
+    // Saves the job and its summary in ONE transaction. A job saved elsewhere since it was loaded (a higher stored `rev`)
+    // is not overwritten: the promise rejects with a ConflictError and nothing is written. opts.overwrite (restore,
+    // import) skips that check. On success job.rev and job.updatedAt are the stored values; on failure they are unchanged.
+    async saveJob(job, opts) {
+      if (!job || typeof job !== 'object') throw new TypeError('saveJob: no assessment to save');
+      const overwrite = !!(opts && opts.overwrite);
+      const d = await db();
+      const withSummary = hasStore(d, 'summaries');
+      let before = null, mine = null;
+      try {
+        return await tx(withSummary ? ['jobs', 'summaries'] : ['jobs'], 'readwrite', (t, fail) => new Promise((resolve) => {
+          const js = t.objectStore('jobs');
+          const g = js.get(job.id);
+          g.onsuccess = () => {
+            const have = revOf(g.result);
+            if (g.result && !overwrite && have > revOf(job)) { fail(conflictError(have, revOf(job))); t.abort(); return; }
+            before = { rev: job.rev, updatedAt: job.updatedAt };
+            mine = have + 1;
+            job.rev = mine;
+            job.updatedAt = new Date().toISOString();
+            try {
+              js.put(job);
+              if (withSummary) t.objectStore('summaries').put(jobSummary(job));
+            } catch (err) { fail(err); t.abort(); return; }
+            resolve(job.id);
+          };
+        }));
+      } catch (err) {
+        if (before && job.rev === mine) { job.rev = before.rev; job.updatedAt = before.updatedAt; }
+        throw err;
+      }
+    },
+    async deleteJob(id) {
+      const d = await db();
+      const stores = hasStore(d, 'summaries') ? ['jobs', 'summaries'] : ['jobs'];
+      return tx(stores, 'readwrite', (t) => { t.objectStore('jobs').delete(id); if (stores.length > 1) t.objectStore('summaries').delete(id); });
+    },
+    async get(key) { return tx('kv', 'readonly', (t) => reqP(t.objectStore('kv').get(key))); },
+    async set(key, val) { return tx('kv', 'readwrite', (t) => reqP(t.objectStore('kv').put(val, key))); }
   };
 
   // ---------- settings ----------
@@ -318,12 +476,25 @@
     const pick = scored.find((s) => s.strong && inRange(s.o)) || scored.find((s) => inRange(s.o)) || scored.find((s) => s.strong);
     return pick ? pick.o : null;
   }
+  // Candidate order (as tools/build-oem.js sorts the research): primary before variant numbers, auto-fill candidates
+  // first, UK market first, then confirmed numbers — the assessor's own numbers (confidence 'user') rank with confirmed
+  // ones — then the stored order (the assessor's numbers come first there). A number not marked auto-fill (autoFill:false)
+  // is never ahead of one that is, so it is never the one used to pre-fill a line.
+  const MARKET_RANK = { UK: 0, unknown: 1, 'EU-LHD': 2, US: 3 };
+  const confRank = (c) => (c.confidence === 'confirmed' || c.confidence === 'user' ? 0 : 1);
+  const marketRank = (c) => { const r = MARKET_RANK[c.market || 'unknown']; return r == null ? 1 : r; };
+  function rankOem(list) {
+    return list.map((c, i) => ({ c, i })).sort((a, b) =>
+      ((a.c.role === 'variant') - (b.c.role === 'variant')) || ((a.c.autoFill === false) - (b.c.autoFill === false)) ||
+      (marketRank(a.c) - marketRank(b.c)) || (confRank(a.c) - confRank(b.c)) || (a.i - b.i)).map((x) => x.c);
+  }
   // Returns an array of candidate OEM entries (best first), or []. Parts researched without a side
   // (e.g. alloy wheels, TPMS sensors) are found for either side.
   function oemLookup(vehicleKey, code, side) {
     const v = findOemVehicle(vehicleKey);
     if (!v) return [];
-    return v.parts[code + '|' + (side || '')] || (side ? v.parts[code + '|'] : null) || [];
+    const list = v.parts[code + '|' + (side || '')] || (side ? v.parts[code + '|'] : null) || [];
+    return rankOem(arr(list).filter((c) => c && typeof c === 'object'));
   }
 
   // ---------- VIN decode (WMI) ----------
@@ -374,8 +545,12 @@
       id,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      report: { ref: '', date: todayISO(), version: '1.0', status: 'Draft', headline: '', subHeadline: '', cpr35: false, conflicts: 'I have no conflict of interest in relation to this matter.' },
+      report: {
+        ref: '', date: todayISO(), version: '1.0', status: 'Draft', headline: '', subHeadline: '', cpr35: false, conflicts: 'I have no conflict of interest in relation to this matter.',
+        materialsRelied: '' // CPR 35: literature and other material relied on (PD 35 para 3.2(2)), printed in court-compliant mode
+      },
       aiLog: [],
+      aiFlags: [], // AI narrative-draft review flags kept until dismissed: [{ section, text, at }]
       instruction: {
         instructingParty: '', ownInsurer: '', ownRef: '', tpInsurer: '', tpRef: '', dateOfLoss: '', locationOfLoss: '',
         tpVehicle: '', tpReg: '', dateInstructed: todayISO(), fileRef: '',
@@ -429,25 +604,48 @@
   // ---------- calculations ----------
   // Labour value of one line, rounded to the penny the same way everywhere, so printed lines add up to TOTAL LABOUR.
   const lineLabour = (hours, rate) => Math.round(Math.round(num(hours) * 100) * Math.round(num(rate) * 100) / 100) / 100;
-  // VAT % for a job: its own snapshot, else the current Settings.
-  const vatPctFor = (job) => (job && job.vatPct != null && job.vatPct !== '' ? num(job.vatPct) : num(settings.vatPct));
+  // The snapshot frozen when the report was finalised (job.issued), or null.
+  const issuedOf = (job) => (job && job.issued && typeof job.issued === 'object' && !Array.isArray(job.issued) ? job.issued : null);
+  const given = (o, k) => o != null && Object.prototype.hasOwnProperty.call(o, k) && o[k] != null && o[k] !== '';
+  // VAT % for a job: the finalised report's snapshot, else the job's own snapshot, else the current Settings.
+  const vatPctFor = (job) => {
+    const iss = issuedOf(job);
+    if (iss && given(iss, 'vatPct')) return num(iss.vatPct);
+    return job && job.vatPct != null && job.vatPct !== '' ? num(job.vatPct) : num(settings.vatPct);
+  };
   // Economic-repair threshold: a blank (or 0) setting falls back to the default instead of flagging every job.
   const berThreshold = () => { const n = parseFloat(settings.berThresholdPct); return isFinite(n) && n > 0 ? n : DEFAULT_SETTINGS.berThresholdPct; };
   // Valuation sources the report can show: a name and a positive amount. Unnamed rows are ignored everywhere.
   const namedSources = (job) => arr(obj(obj(job).valuation).sources).filter((x) => x && txt(x.name).trim() && num(x.amount) > 0);
-  // Explicit line rate → the job's own rate for the line type → Settings rate for the type → Body rate (job, then Settings).
+  // Explicit line rate → (finalised report: the issued rate for the line type, else its Body rate) → the job's own rate for
+  // the line type → Settings rate for the type → Body rate (job, then Settings).
   function lineRate(job, line) {
     const l = obj(line);
     if (l.rate != null && txt(l.rate).trim() !== '') return num(l.rate);
-    const given = (o, k) => o[k] != null && o[k] !== '';
+    const type = txt(l.type);
+    const iss = issuedOf(job);
+    const ir = iss && iss.rates && typeof iss.rates === 'object' ? iss.rates : null;
+    if (ir && given(ir, type)) return num(ir[type]);
+    if (ir && given(ir, 'Body')) return num(ir.Body);
     const jr = obj(job && job.rates), sr = obj(settings.rates);
-    if (given(jr, l.type)) return num(jr[l.type]);
-    if (given(sr, l.type)) return num(sr[l.type]);
+    if (given(jr, type)) return num(jr[type]);
+    if (given(sr, type)) return num(sr[type]);
     return num(given(jr, 'Body') ? jr.Body : sr.Body);
+  }
+  // What a finalised report freezes of the figures: the effective labour rate for every standard type and every line type in
+  // use, and the VAT %. APP stores it as job.issued.rates / job.issued.vatPct; totals() then ignores later Settings changes.
+  function rateSnapshot(job) {
+    const j = obj(job);
+    const types = new Set(['Body'].concat(Object.keys(obj(settings.rates)), Object.keys(obj(j.rates))));
+    for (const l of arr(j.lines)) if (l && typeof l === 'object' && txt(l.type)) types.add(txt(l.type));
+    const rates = {};
+    for (const type of types) rates[type] = lineRate(j, { type });
+    return { rates, vatPct: vatPctFor(j) };
   }
   function totals(job) {
     job = obj(job);
-    const t = { labourHours: 0, labour: 0, parts: 0, paint: 0, other: 0, discount: num(job.discount) };
+    // a discount or a PAV below zero is an input error (qaChecks reports it): neither is allowed to add to the estimate
+    const t = { labourHours: 0, labour: 0, parts: 0, paint: 0, other: 0, discount: Math.max(0, num(job.discount)) };
     let labourPence = 0;
     for (const l of arr(job.lines)) {
       if (!l || typeof l !== 'object') continue;
@@ -466,7 +664,7 @@
     t.vat = round2(t.net * t.vatPct / 100);
     t.gross = round2(t.net + t.vat);
     const v = obj(job.valuation);
-    t.pav = num(v.adopted);
+    t.pav = Math.max(0, num(v.adopted));
     t.salvage = v.salvageOverride !== '' && v.salvageOverride != null ? num(v.salvageOverride) : round2(t.pav * num(v.salvagePct) / 100);
     t.pctNet = t.pav ? round2(t.net / t.pav * 100) : 0;
     t.pctGross = t.pav ? round2(t.gross / t.pav * 100) : 0;
@@ -574,7 +772,7 @@
     if (!pn || !l.code || !oemKey) return 0;
     const cands = arr(oemLookup(oemKey, txt(l.code), txt(l.side))).filter((c) => c && typeof c === 'object');
     const hit = cands.find((c) => partKey(c.oem) === pn);
-    if (!hit || hit.user) return 0;
+    if (!hit || hit.user || hit.confidence === 'user') return 0;
     return new Set(cands.map((c) => partKey(c.oem)).filter((k) => k && k !== pn)).size;
   }
 
