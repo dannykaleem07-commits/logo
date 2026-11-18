@@ -1,0 +1,4281 @@
+{
+ "researched": "2026-11-18",
+ "conventions": {
+  "ps": "Metric horsepower (PS) as badged/quoted in the UK; null where not confirmed.",
+  "engine_code": "Manufacturer engine code where well established; null where not confident.",
+  "status": "verified = core trims and main powertrains corroborated by UK sources found during research (finer details may still be general knowledge, see notes); general-knowledge = compiled from established knowledge without direct source confirmation in this pass.",
+  "derivative_pattern": "Make Model Generation Badge Trim Doors Transmission, e.g. 'Nissan Juke F15 1.6 Acenta 5dr Xtronic CVT'"
+ },
+ "models": [
+  {
+   "make": "Nissan",
+   "model": "Qashqai",
+   "generation": "J11",
+   "years": "2014-2021",
+   "facelift": "2017",
+   "bodies": [
+    "5dr crossover"
+   ],
+   "engines": [
+    {
+     "badge": "1.2 DIG-T 115",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 115,
+     "engine_code": "HRA2DDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018",
+     "note": "6-speed manual; Xtronic CVT from Sep 2014 (Parkers). Wikipedia lists this engine as HR12DDT / HRA2 (Renault H5Ft), 1197cc."
+    },
+    {
+     "badge": "1.6 DIG-T 163",
+     "fuel": "Petrol",
+     "cc": 1618,
+     "ps": 163,
+     "engine_code": "MR16DDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2018",
+     "note": "6-speed manual, FWD only; available new Jan 2015 to Jun 2018 (Parkers)."
+    },
+    {
+     "badge": "1.3 DIG-T 140",
+     "fuel": "Petrol",
+     "cc": 1332,
+     "ps": 140,
+     "engine_code": "HR13DDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2021",
+     "note": "6-speed manual only; Sep 2018 to Apr 2021 (Parkers)."
+    },
+    {
+     "badge": "1.3 DIG-T 160",
+     "fuel": "Petrol",
+     "cc": 1332,
+     "ps": 160,
+     "engine_code": "HR13DDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2021",
+     "note": "6-speed manual (Sep 2018 to Oct 2020) or 7-speed DCT (from Nov 2018). The Oct 2020 to Apr 2021 run-out DCT is listed by Parkers as '1.3 DiG-T 160 [157]' at 154bhp."
+    },
+    {
+     "badge": "1.5 dCi 110",
+     "fuel": "Diesel",
+     "cc": 1461,
+     "ps": 110,
+     "engine_code": "K9K",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018",
+     "note": "6-speed manual only (Parkers)."
+    },
+    {
+     "badge": "1.5 dCi 115",
+     "fuel": "Diesel",
+     "cc": 1461,
+     "ps": 115,
+     "engine_code": "K9K",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2020",
+     "note": "K9K Blue dCi. 6-speed manual or 7-speed DCT (DCT from Dec 2018); Jul 2018 to Oct 2020 (Parkers)."
+    },
+    {
+     "badge": "1.6 dCi 130",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 130,
+     "engine_code": "R9M",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2014-2018",
+     "note": "FWD with 6-speed manual or Xtronic CVT; ALL-MODE 4x4-i (AWD) with 6-speed manual only (Parkers)."
+    },
+    {
+     "badge": "1.7 dCi 150",
+     "fuel": "Diesel",
+     "cc": 1749,
+     "ps": 150,
+     "engine_code": "R9N",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2019-2020",
+     "note": "FWD 6-speed manual; AWD 6-speed manual or AWD Xtronic CVT (CVT from Feb 2019); Jan 2019 to Oct 2020 (Parkers)."
+    }
+   ],
+   "trims": [
+    "Visia",
+    "Acenta",
+    "Acenta+",
+    "Acenta Premium",
+    "N-Tec",
+    "N-Tec+",
+    "N-Connecta",
+    "N-Motion",
+    "Tekna",
+    "Tekna+",
+    "Premier Limited Edition",
+    "Black Edition",
+    "N-Vision",
+    "Pilot One Edition"
+   ],
+   "trims_by_period": {
+    "2014-2016": [
+     "Visia",
+     "Acenta",
+     "Acenta Premium",
+     "N-Tec",
+     "N-Tec+",
+     "Tekna",
+     "Premier Limited Edition"
+    ],
+    "2016-2017": [
+     "Visia",
+     "Acenta",
+     "N-Connecta",
+     "Tekna",
+     "Black Edition",
+     "N-Vision"
+    ],
+    "2017-2018 facelift": [
+     "Visia",
+     "Acenta",
+     "N-Connecta",
+     "Tekna",
+     "Tekna+",
+     "Pilot One Edition"
+    ],
+    "2018-2021": [
+     "Visia",
+     "Acenta Premium",
+     "N-Connecta",
+     "N-Motion",
+     "N-Tec",
+     "Tekna",
+     "Tekna+"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "Xtronic CVT",
+    "7-speed DCT"
+   ],
+   "notes": "Engines: 1.2 DIG-T 115, 1.6 DIG-T 163 (from Jan 2015), 1.5 dCi 110 and 1.6 dCi 130 to Jun 2018; then 1.5 dCi 115 (Jul 2018), 1.3 DIG-T 140/160 (Sep 2018) and 1.7 dCi 150 (Jan 2019). Facelift on sale Jul 2017. UK sales began early 2014 (Parkers: available new from Jan 2014; Wikipedia: on sale Feb 2014) with the 1.2 DIG-T as the only petrol. Xtronic CVT on the 1.2 DIG-T and FWD 1.6 dCi; 1.6 dCi ALL-MODE 4x4-i manual only. 7-speed DCT on the 1.3 DIG-T 160 (from Nov 2018) and 1.5 dCi 115 (from Dec 2018); the 1.7 dCi automatic is the 4WD Xtronic CVT. Acenta continued with the new engines until Nov 2018; the 2018-20 core grades were Visia, Acenta Premium, N-Connecta, Tekna and Tekna+. Parkers' last diesel, Visia and Tekna derivatives end Oct 2020; the Oct 2020 to Apr 2021 run-out was 1.3 DIG-T only (Acenta Premium, N-Connecta, N-Motion). Other grades and editions listed by Parkers: Premier Limited Edition (Jan-Mar 2014), N-Tec (Oct 2014-Jan 2016; N-Tec+ listed alongside), Black Edition (Jul-Oct 2016), N-Vision (Oct 2016-May 2017), Pilot One Edition (Mar-Jun 2018), N-Motion (Dec 2018-Apr 2021) and a second N-Tec (Dec 2019-Oct 2020). Parkers lists Acenta+ (1.2 DIG-T, 1.5 dCi) and N-Tec+ derivatives without dates of their own. Bose Personal Edition (from earlier research) is not in Parkers' UK derivative list. Qashqai+2 not offered in this generation.",
+   "status": "verified",
+   "verification": "Trims and periods, engines (cc, PS badges, codes, drive, gearboxes, availability dates) checked against Parkers' UK derivative specs for the 2014-2021 Qashqai (253 derivative pages) and Wikipedia (Qashqai J11 powertrain table; Nissan HR/MR and Renault K-/R-Type engine articles). Acenta+ and N-Tec+ dates are not given separately by Parkers.",
+   "sources": [
+    "https://www.honestjohn.co.uk/news/new-cars/2013-11/new-nissan-qashqai-unveiled/",
+    "https://uk.nissannews.com/releases/release-111316",
+    "https://parkers.co.uk/car-buying/2015/nissan-qashqai-which-version-is-best",
+    "https://buyacar.co.uk/reviews/nissan/qashqai/2014/",
+    "https://www.motorpoint.co.uk/guides/nissan-qashqai-models-and-trim-levels-explained",
+    "https://www.parkers.co.uk/which-car/advice/nissan-qashqai-which-version-is-best/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon/review/",
+    "https://en.wikipedia.org/wiki/Nissan_Qashqai",
+    "https://en.wikipedia.org/wiki/Nissan_HR_engine",
+    "https://en.wikipedia.org/wiki/Nissan_MR_engine",
+    "https://en.wikipedia.org/wiki/Renault_K-Type_engine",
+    "https://en.wikipedia.org/wiki/Renault_R-Type_engine",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/16-dig-t-tekna-5d/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/tekna-15-dci-115-(072018-on)-5d/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/tekna-17-dci-150-5d/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/17-dci-n-tec-4wd-cvt-5d/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/13-dig-t-160-[157]-acenta-premium-5dr-dct/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/acenta-premium-13-dig-t-140-5d/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/12-dig-t-acenta-5d-xtronic/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/16-dci-tekna-4wd-5d/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/15-dci-n-tec-5d/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/13-dig-t-n-motion-5d/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/tekna-12-dig-t-115-(0717-on)-5d/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/station-wagon-2014/12-dig-t-acenta-premium-5d/specs/"
+   ]
+  },
+  {
+   "make": "Nissan",
+   "model": "Qashqai",
+   "generation": "J12",
+   "years": "2021-",
+   "facelift": "2024",
+   "bodies": [
+    "5dr crossover"
+   ],
+   "engines": [
+    {
+     "badge": "1.3 DIG-T MH 140",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1332,
+     "ps": 140,
+     "engine_code": "HR13DDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-",
+     "note": "138bhp per Parkers. 6-speed manual only, FWD only. Parkers lists the facelift MH 140 derivatives (N-Connecta Glass Roof, N-Design) as available new to March 2026, but its October 2026 review still offers the 140hp engine, so no end year is set."
+    },
+    {
+     "badge": "1.3 DIG-T MH 158",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1332,
+     "ps": 158,
+     "engine_code": "HR13DDT",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2021-",
+     "note": "155bhp per Parkers. 6-speed manual or Xtronic CVT; 4WD only with Xtronic, on N-Connecta, Tekna and Tekna+ (last facelift 4WD N-Connecta listed new to Nov 2025)."
+    },
+    {
+     "badge": "1.5 e-Power 190",
+     "fuel": "Petrol series hybrid",
+     "cc": 1497,
+     "ps": 190,
+     "engine_code": "KR15DDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2022-2026",
+     "note": "187bhp per Parkers. On sale from July 2022; superseded by the e-Power 205 from July 2025, last derivatives listed new to March 2026. 1.5 VC-Turbo 3-cyl generator engine. Wikipedia's J12 infobox and KR-engine article call the Qashqai unit 'KH5T', but that section is tagged original research and quotes 1461cc, so the original KR15DDT (the code Wikipedia gives the X-Trail T33 e-Power) is kept."
+    },
+    {
+     "badge": "1.5 e-Power 205",
+     "fuel": "Petrol series hybrid",
+     "cc": 1497,
+     "ps": 205,
+     "engine_code": "ZR15DDTe",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "202bhp per Parkers; reworked third-generation e-Power with a new 1.5 3-cyl turbo generator engine, on sale from July 2025. Code from Wikipedia (J12 infobox, List of Nissan engines, Nissan MR engine article). Parkers gives 1497cc; Wikipedia's MR-engine article gives 1499cc."
+    }
+   ],
+   "trims": [
+    "Visia",
+    "Acenta Premium",
+    "N-Connecta",
+    "N-Design",
+    "Tekna",
+    "Tekna+",
+    "Premiere Edition",
+    "Kuro Edition"
+   ],
+   "trims_by_period": {
+    "2021-2024": [
+     "Visia",
+     "Acenta Premium",
+     "N-Connecta",
+     "Tekna",
+     "Tekna+",
+     "Premiere Edition",
+     "Kuro Edition"
+    ],
+    "2024-": [
+     "Acenta Premium",
+     "N-Connecta",
+     "N-Design",
+     "Tekna",
+     "Tekna+"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "Xtronic CVT",
+    "e-Power single-speed reduction"
+   ],
+   "notes": "MH 140 is 6-speed manual only. MH 158 is manual or Xtronic CVT, with 4WD (ALL-MODE 4x4-i) only with Xtronic on N-Connecta, Tekna and Tekna+. e-Power is a series hybrid: a 1.5 turbo 3-cyl petrol engine works only as a generator and the front wheels are driven by the electric motor through a single-speed reduction gear. e-Power 190 (187bhp) from July 2022; a reworked e-Power 205 (202bhp, new engine, parts shared with the third-generation Leaf) replaced it from July 2025. Facelift revealed 17 April 2024 (UK derivatives from May 2024): new N-Design grade, Visia dropped. Special editions: Premiere Edition (launch, Apr 2021-May 2022, MH 140 manual or MH 158 Xtronic) and Kuro Edition (e-Power 190 only, Jun 2023-Jan 2025). Petrol only, no diesel.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK (Qashqai SUV 2021-on specs listing of 81 derivatives, 52 derivative spec pages, review updated 8 October 2026) and Wikipedia (Nissan Qashqai J12 section, Nissan HR, KR and MR engine articles, List of Nissan engines). Trims, engines, outputs, cc, gearboxes, drive and on-sale dates confirmed by Parkers. e-Power 190 code kept as KR15DDT: Wikipedia's alternative 'KH5T' comes from a section tagged original research. e-Power 205 code ZR15DDTe is from Wikipedia only.",
+   "sources": [
+    "https://www.motorpoint.co.uk/guides/nissan-qashqai-models-and-trim-levels-explained",
+    "https://carwow.co.uk/nissan/qashqai-e-power/specifications",
+    "https://www.autoexpress.co.uk/nissan/qashqai/prices-specs/105634/1.3-dig-t-mh-158-n-connecta-5dr",
+    "https://www.exchangeandmart.co.uk/reviews/nissan/qashqai-e-power/2024/214716",
+    "https://en.wikipedia.org/wiki/Nissan_Qashqai",
+    "https://en.wikipedia.org/wiki/Nissan_HR_engine",
+    "https://en.wikipedia.org/wiki/Nissan_KR_engine",
+    "https://en.wikipedia.org/wiki/List_of_Nissan_engines",
+    "https://en.wikipedia.org/wiki/Nissan_X-Trail",
+    "https://www.parkers.co.uk/nissan/qashqai/suv-2021/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/review/",
+    "https://www.parkers.co.uk/nissan/qashqai/suv-2021/15-e-power-205-tekna-5dr-auto/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Nissan_Qashqai&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=Nissan_KR_engine&action=raw",
+    "https://www.parkers.co.uk/nissan/qashqai/suv-2021/15-e-power-n-design-[comfort-pack]-5dr-auto/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/suv-2021/15-e-power-kuro-edition-5dr-auto/specs/",
+    "https://www.parkers.co.uk/nissan/qashqai/suv-2021/13-dig-t-mh-n-design-5dr/specs/"
+   ]
+  },
+  {
+   "make": "Nissan",
+   "model": "Juke",
+   "generation": "F15",
+   "years": "2010-2019",
+   "facelift": "2014",
+   "bodies": [
+    "5dr crossover"
+   ],
+   "engines": [
+    {
+     "badge": "1.6 94",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": 94,
+     "engine_code": "HR16DE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2019",
+     "note": "5-speed manual only (Visia). On sale from Feb 2013; the 2010-13 Visia had the 117PS 1.6. Parkers: 92 bhp, 140 Nm; its \"Visia 1.6 94PS (06/2018 on)\" runs to Nov 2019 (spec lists 110 bhp)."
+    },
+    {
+     "badge": "1.6 117",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": 117,
+     "engine_code": "HR16DE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2010-2019",
+     "note": "5-speed manual or CVT until May 2014; Xtronic CVT only after the June 2014 facelift. Parkers: 115 bhp, 158 Nm."
+    },
+    {
+     "badge": "1.6 112",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": 112,
+     "engine_code": "HR16DE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2019",
+     "note": "From June 2018 (Acenta, Tekna, Bose Personal Edition): 5-speed manual or Xtronic. Parkers: 110 bhp, 144 Nm. Code matched by 1598 cc (HR16DE)."
+    },
+    {
+     "badge": "1.2 DIG-T 115",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 115,
+     "engine_code": "HRA2DDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2019",
+     "note": "6-speed manual only. Parkers: 113 bhp, 190 Nm. Wikipedia: HR12DDT / HRA2 (Renault H5Ft)."
+    },
+    {
+     "badge": "1.6 DIG-T 190",
+     "fuel": "Petrol",
+     "cc": 1618,
+     "ps": 190,
+     "engine_code": "MR16DDT",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2010-2018",
+     "note": "6-speed manual FWD or CVT/Xtronic 4WD (no FWD auto in the UK). Parkers: 187 bhp, 240 Nm; last sold May 2018."
+    },
+    {
+     "badge": "1.6 DIG-T Nismo 200",
+     "fuel": "Petrol",
+     "cc": 1618,
+     "ps": 200,
+     "engine_code": "MR16DDT",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2013-2014",
+     "note": "6-speed manual FWD or CVT 4WD. Parkers: 197 bhp, 250 Nm (Jan 2013 - May 2014)."
+    },
+    {
+     "badge": "1.6 DIG-T Nismo RS 218",
+     "fuel": "Petrol",
+     "cc": 1618,
+     "ps": 218,
+     "engine_code": "MR16DDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018",
+     "note": "6-speed manual FWD only. Parkers: 214 bhp, 280 Nm (Nov 2014 - Apr 2018)."
+    },
+    {
+     "badge": "1.6 DIG-T Nismo RS 214",
+     "fuel": "Petrol",
+     "cc": 1618,
+     "ps": 214,
+     "engine_code": "MR16DDT",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2014-2018",
+     "note": "Xtronic CVT 4WD only. Parkers: 211 bhp, 250 Nm (Nov 2014 - Apr 2018)."
+    },
+    {
+     "badge": "1.5 dCi 110",
+     "fuel": "Diesel",
+     "cc": 1461,
+     "ps": 110,
+     "engine_code": "K9K",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2010-2019",
+     "note": "6-speed manual only, FWD only. Parkers: 108 bhp; 240 Nm to mid-2013, 260 Nm (stop-start) from June 2013."
+    }
+   ],
+   "trims": [
+    "Visia",
+    "Acenta",
+    "Acenta Sport",
+    "Acenta Premium",
+    "N-Tec",
+    "N-Connecta",
+    "N-Connecta Style",
+    "N-Vision",
+    "Tekna",
+    "Tekna Pulse",
+    "Envy",
+    "Kuro",
+    "Shiro",
+    "Ministry of Sound",
+    "Bose Personal Edition",
+    "Nismo",
+    "Nismo RS"
+   ],
+   "trims_by_period": {
+    "2010-2012": [
+     "Visia",
+     "Acenta",
+     "Acenta Sport",
+     "Acenta Premium",
+     "Tekna",
+     "Kuro",
+     "Shiro",
+     "Ministry of Sound"
+    ],
+    "2013-2014": [
+     "Visia",
+     "Acenta",
+     "Acenta Sport",
+     "Acenta Premium",
+     "N-Tec",
+     "Tekna",
+     "Nismo"
+    ],
+    "2014-2015": [
+     "Visia",
+     "Acenta",
+     "Acenta Premium",
+     "Tekna",
+     "Nismo RS"
+    ],
+    "2015-2018": [
+     "Visia",
+     "Acenta",
+     "N-Connecta",
+     "N-Vision",
+     "N-Connecta Style",
+     "Tekna",
+     "Tekna Pulse",
+     "Envy",
+     "Nismo RS"
+    ],
+    "2018-2019": [
+     "Visia",
+     "Acenta",
+     "Tekna",
+     "Bose Personal Edition"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual",
+    "Xtronic CVT"
+   ],
+   "notes": "1.6 94PS (Visia, Feb 2013 on) = 5-spd manual only; 1.6 117PS = 5-spd manual or CVT pre-facelift, Xtronic only from June 2014; 1.6 112PS (mid-2018) manual or Xtronic. 4WD only with CVT (DIG-T 190, Nismo, Nismo RS 214PS); Nismo RS 218PS = FWD manual. 1.2 DIG-T and 1.5 dCi = 6-spd manual FWD only. Pre-2014 Acenta Sport/Premium were Acenta packs. Specials: Kuro (2011-12), Shiro, Ministry of Sound (2012), N-Vision (2016), Tekna Pulse, N-Connecta Style, Envy (2017-18), Bose Personal Edition (2018-19).",
+   "status": "verified",
+   "verification": "All Parkers UK derivative spec pages read (200 SUV-range + 10 Nismo-range): trims, outputs (bhp to PS), cc, gearboxes, drive and on-sale dates verified; engine codes and kW outputs from Wikipedia (Nissan Juke spec table, HR/MR/K-Type engine articles); 1.6 112 code matched by displacement.",
+   "sources": [
+    "https://wikipedia.com/wiki/Nissan_Juke",
+    "https://Buyacar.co.uk/reviews/nissan/juke/2010/",
+    "https://vehiclescore.co.uk/cars/nissan/juke/nissan-juke-f15-2010-2019/1-6-petrol-119ps-petrol/acenta-xtronic-automatic-suv",
+    "https://www.cinch.co.uk/guides/choosing-a-car/nissan-juke-models",
+    "https://en.wikipedia.org/wiki/Nissan_Juke",
+    "https://en.wikipedia.org/wiki/Nissan_HR_engine",
+    "https://en.wikipedia.org/wiki/Nissan_MR_engine",
+    "https://en.wikipedia.org/wiki/Renault_K-Type_engine",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/specs/",
+    "https://www.parkers.co.uk/nissan/juke/nismo-2013/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/used-review/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/16-(94bhp)-visia-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/acenta-16-112ps-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/acenta-16-112ps-xtronic-auto-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/16-acenta-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/16-dig-t-n-connecta-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/16-dig-t-tekna-4wd-5d-xtronic/specs/",
+    "https://www.parkers.co.uk/nissan/juke/nismo-2013/16-dig-t-nismo-rs-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/nismo-2013/16-dig-t-nismo-rs-4wd-5d-xtronic/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/15-dci-visia-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/15-dci-kuro-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/15-dci-shiro-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/15-dci-ministry-of-sound-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/12-dig-t-n-vision-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/tekna-pulse-dig-t-115-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/n-connecta-style-dig-t-115-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/envy-dig-t-115-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/bose-personal-edition-dig-t-115-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/16-acenta-(sport-pack)-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/16-acenta-(premium-pack)-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/nismo-2013/16-dig-t-nismo-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/16-dig-t-acenta-premium-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/12-dig-t-tekna-[bose]-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2010/16-n-tec-5d/specs/"
+   ]
+  },
+  {
+   "make": "Nissan",
+   "model": "Juke",
+   "generation": "F16",
+   "years": "2019-",
+   "facelift": "2024",
+   "bodies": [
+    "5dr crossover"
+   ],
+   "engines": [
+    {
+     "badge": "1.0 DIG-T 117",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 117,
+     "engine_code": "HR10DDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2020",
+     "note": "Launch engine; every Parkers DIG-T 117 derivative is listed Nov 2019-Nov 2020 (115 bhp, 200 Nm)."
+    },
+    {
+     "badge": "1.0 DIG-T 114",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 114,
+     "engine_code": "HR10DDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-",
+     "note": "Replaced the 117 from Nov 2020 (112 bhp, 200 Nm). Unchanged by the Feb 2024 facelift, after which Parkers lists it simply as '1.0 DiG-T'."
+    },
+    {
+     "badge": "1.6 Hybrid 143",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1598,
+     "ps": 143,
+     "engine_code": "HR16DE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2022-",
+     "note": "On sale from June 2022 (Parkers). 143PS combined; the petrol engine alone gives 94PS (Wikipedia). Parkers quotes 140 bhp. Automatic only."
+    }
+   ],
+   "trims": [
+    "Visia",
+    "Acenta",
+    "Acenta Premium",
+    "N-Connecta",
+    "Tekna",
+    "Tekna+",
+    "N-Sport",
+    "Premiere Edition",
+    "Enigma",
+    "Kiiro",
+    "Pulse Edition"
+   ],
+   "trims_by_period": {
+    "2019-2024": [
+     "Visia",
+     "Acenta",
+     "N-Connecta",
+     "Tekna",
+     "Tekna+",
+     "Premiere Edition",
+     "Enigma",
+     "Kiiro"
+    ],
+    "2024-2026": [
+     "Acenta Premium",
+     "N-Connecta",
+     "Tekna",
+     "Tekna+",
+     "N-Sport"
+    ],
+    "2026-": [
+     "Acenta Premium",
+     "N-Connecta",
+     "Tekna",
+     "Tekna+",
+     "Pulse Edition"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "7-speed DCT",
+    "Hybrid multi-mode automatic"
+   ],
+   "notes": "1.0 DIG-T (HR10DDT) 3-cyl turbo, 6-speed manual or 7-speed DCT (Visia manual only): 117PS Nov 2019-Nov 2020, then 114PS (112bhp) from Nov 2020, carried over unchanged at the Feb 2024 facelift (Parkers then drops the '114' from the name). Hybrid (on sale from June 2022): 1.6 HR16DE petrol + electric motor + multi-mode dog-clutch auto (4 engine speeds, 2 motor speeds), 143PS combined. Before the facelift it was offered in N-Connecta, Tekna, Tekna+ and Premiere Edition; after it, from Acenta Premium upward (Parkers lists the Acenta Premium Hybrid Feb-Aug 2024 only). Never Visia or Acenta. Special editions: Premiere Edition (DIG-T 117 2019-20; Hybrid 2022-24), Enigma (Nov 2020-May 2022), Kiiro (Feb-May 2022), Pulse Edition (from Mar 2026). N-Sport listed Feb 2024-Mar 2026; Acenta Premium and N-Connecta revised Mar 2026. Parkers gives Tekna and Tekna+ the same page, so Tekna+ availability after Mar 2026 is unconfirmed. Trim naming varies ('Tekna+' vs 'Tekna Plus').",
+   "status": "verified",
+   "verification": "Re-checked 2026-11-18 against Parkers UK specs (all 54 Juke SUV 2019-on derivatives, with on-sale dates) and the 2026 Parkers review, plus Wikipedia (Nissan Juke F16 section; Nissan HR engine).",
+   "sources": [
+    "https://vehiclescore.co.uk/cars/nissan/juke/f16-2019-pres",
+    "https://www.nissan.co.uk/content/dam/Nissan/gb/brochures/Vehicles/Nissan_Juke_UK.pdf",
+    "https://autoexpress.co.uk/nissan/juke/prices-specs/95830/1.0-dig-t-114-tekna-5dr",
+    "https://www.leasingoptions.co.uk/news/vehicle-reviews/nissan-juke-buyers-guide-differences-between-all-5-trims/9041",
+    "https://en.wikipedia.org/wiki/Nissan_Juke",
+    "https://en.wikipedia.org/wiki/Nissan_HR_engine",
+    "https://www.parkers.co.uk/nissan/juke/suv-2019/specs/",
+    "https://www.parkers.co.uk/nissan/juke/review/engines/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2019/visia-dig-t-117-5d/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2019/10-dig-t-114-visia-5dr/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2019/10-dig-t-114-kiiro-5dr/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2019/10-dig-t-pulse-edition-5dr/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2019/10-dig-t-n-sport-5dr/specs/",
+    "https://www.parkers.co.uk/nissan/juke/suv-2019/16-hybrid-acenta-premium-5dr-auto/specs/"
+   ]
+  },
+  {
+   "make": "Toyota",
+   "model": "Yaris",
+   "generation": "XP130",
+   "years": "2011-2020",
+   "facelift": "2014; 2017",
+   "bodies": [
+    "3dr hatchback",
+    "5dr hatchback"
+   ],
+   "engines": [
+    {
+     "badge": "1.0 VVT-i 69",
+     "fuel": "Petrol",
+     "cc": 998,
+     "ps": 69,
+     "engine_code": "1KR-FE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2018",
+     "note": "5-speed manual only; 3dr and 5dr. Parkers: 68 bhp, Jul 2011 to May 2018."
+    },
+    {
+     "badge": "1.0 VVT-i 72",
+     "fuel": "Petrol",
+     "cc": 998,
+     "ps": 72,
+     "engine_code": "1KR-FE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2020",
+     "note": "5-speed manual only, 5dr. Parkers: 70 bhp; '(05/18-)' and '1.0 VVT-i 72hp' derivatives, May 2018 to Jul 2020."
+    },
+    {
+     "badge": "1.33 Dual VVT-i 99",
+     "fuel": "Petrol",
+     "cc": 1329,
+     "ps": 99,
+     "engine_code": "1NR-FE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2017",
+     "note": "6-speed manual (3dr/5dr) or CVT (Multidrive S, 5dr). Parkers: 99 bhp to Jun 2014, 97 bhp after the Jul 2014 facelift; last derivatives Apr 2017."
+    },
+    {
+     "badge": "1.5 Dual VVT-iE 111",
+     "fuel": "Petrol",
+     "cc": 1496,
+     "ps": 111,
+     "engine_code": "2NR-FKE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020",
+     "note": "6-speed manual or CVT, 5dr only. Parkers: 109 bhp ('1.5 VVT-i 111hp'), Apr 2017 to Jul 2020."
+    },
+    {
+     "badge": "1.5 VVT-i Hybrid 100",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1497,
+     "ps": 100,
+     "engine_code": "1NZ-FXE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2012-2020",
+     "note": "e-CVT, 5dr only. Parkers: 99 bhp from Jul 2012, 98 bhp from Jul 2014, to Jul 2020."
+    },
+    {
+     "badge": "1.4 D-4D 90",
+     "fuel": "Diesel",
+     "cc": 1364,
+     "ps": 90,
+     "engine_code": "1ND-TV",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2017",
+     "note": "6-speed manual only; 3dr and 5dr. Parkers: 88 bhp, Jul 2011 to Apr 2017."
+    },
+    {
+     "badge": "1.8 GRMN 212",
+     "fuel": "Petrol",
+     "cc": 1798,
+     "ps": 212,
+     "engine_code": "2ZR-FE (supercharged)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2018",
+     "note": "Supercharged 2ZR-FE, 6-speed manual, 3dr only. Parkers: 209 bhp, available new Jan to May 2018. Wikipedia: 156 kW."
+    }
+   ],
+   "trims": [
+    "T2",
+    "TR",
+    "SR",
+    "T Spirit",
+    "T3",
+    "T4",
+    "Edition",
+    "Trend",
+    "Active",
+    "Icon",
+    "Icon+",
+    "Icon Tech",
+    "Sport",
+    "Design",
+    "Bi-tone",
+    "Excel",
+    "Excel Premium",
+    "Orange Edition",
+    "Y20",
+    "GR Sport",
+    "GRMN"
+   ],
+   "trims_by_period": {
+    "2011-2013": [
+     "T2",
+     "TR",
+     "SR",
+     "T Spirit",
+     "T3",
+     "T4",
+     "Edition",
+     "Trend"
+    ],
+    "2013-2014": [
+     "Active",
+     "Icon",
+     "Icon+",
+     "Trend"
+    ],
+    "2014-2017": [
+     "Active",
+     "Icon",
+     "Sport",
+     "Design",
+     "Bi-tone",
+     "Excel",
+     "Excel Premium",
+     "Orange Edition"
+    ],
+    "2017-2020": [
+     "Active",
+     "Icon",
+     "Icon Tech",
+     "Design",
+     "Bi-tone",
+     "Excel",
+     "Y20",
+     "GR Sport",
+     "GRMN"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual",
+    "Multidrive S CVT",
+    "e-CVT (hybrid)"
+   ],
+   "notes": "UK grades (Parkers): T2, TR, SR and T Spirit from Jul 2011 to Oct 2013, with Hybrid T3/T4/T Spirit from Jul 2012, the 1.0 Edition (Jul 2012-Oct 2013) and Trend (Jul 2012-Jun 2014); Active, Icon, Icon+ and Trend Dec 2013-Jun 2014; after the Jul 2014 facelift Active, Icon, Sport (to Dec 2015) and Excel, then Design, Design Bi-tone and Excel Premium (hybrid) from Dec 2015 and Orange Edition (Jun 2016-Apr 2017); after the Apr 2017 facelift Active, Icon, Icon Tech, Design and Bi-tone editions (to Feb 2019), Excel, Y20 (Dec 2018-Jul 2020) and GR Sport (hybrid only, Dec 2018-Jul 2020; Parkers lists it as GR-S). Hybrid (from Jul 2012): e-CVT, 5dr only. 1.0 = 5-speed manual (69PS to May 2018, then 72PS). 1.33 = 6-speed manual or Multidrive S CVT; the 1.5 2NR-FKE (manual or CVT) replaced it at the Apr 2017 facelift, when the 1.4 D-4D diesel was dropped. Excel was offered with the 1.5 petrol until Feb 2019, then hybrid only. GRMN: supercharged 1.8, 3dr manual, Jan-May 2018.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK specs for the Yaris Hatchback (2011-2020): 495 listed derivatives (493 spec pages) with on-sale dates, outputs, gearboxes and doors. Engine codes from Wikipedia (Toyota Vitz article, XP130 section; Toyota KR, NR, NZ and ND engine articles).",
+   "sources": [
+    "https://media.toyota.co.uk/toyota-announces-new-yaris-specifications-prices/",
+    "https://www.carwow.co.uk/toyota/yaris/2016",
+    "https://buyacar.co.uk/reviews/toyota/yaris/",
+    "https://www.autocar.co.uk/car-review/toyota/yaris-2011-2020",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2011/specs/",
+    "https://en.wikipedia.org/wiki/Toyota_Vitz",
+    "https://en.wikipedia.org/wiki/Toyota_NR_engine",
+    "https://en.wikipedia.org/wiki/Toyota_NZ_engine",
+    "https://en.wikipedia.org/wiki/Toyota_ND_engine",
+    "https://en.wikipedia.org/wiki/Toyota_KR_engine",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2011/active-10-vvt-i-5d/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2011/active-10-vvt-i-(0518-)-5d/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2011/grmn-18-dual-vvt-i-3d/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2011/15-vvt-i-hybrid-t3-5d-cvt-auto/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2011/10-vvt-i-edition-3d/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2011/133-vvt-i-trend-5d/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2011/15-hybrid-excel-premium-5d-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2011/orange-edition-133-vvt-i-5d/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2011/133-vvt-i-icon-5d/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2011/excel-15-vvt-i-5d/specs/"
+   ]
+  },
+  {
+   "make": "Toyota",
+   "model": "Yaris",
+   "generation": "XP210",
+   "years": "2020-",
+   "facelift": "2024",
+   "bodies": [
+    "5dr hatchback",
+    "3dr hatchback (GR Yaris)"
+   ],
+   "engines": [
+    {
+     "badge": "1.5 Hybrid 116",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1490,
+     "ps": 116,
+     "engine_code": "M15A-FXE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-",
+     "note": "e-CVT. Parkers: 114 bhp, from Aug 2020; still listed for Icon and Design. Wikipedia: 85 kW combined; Toyota Europe has called it 'Hybrid 115' since the 130 arrived."
+    },
+    {
+     "badge": "1.5 Hybrid 130",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1490,
+     "ps": 130,
+     "engine_code": "M15A-FXE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-",
+     "note": "e-CVT. Parkers: 128 bhp; GR Sport and Premiere Edition from Dec 2023, Excel from Mar 2025. Wikipedia: 96 kW combined, available in Europe from 30 May 2023."
+    },
+    {
+     "badge": "GR Yaris 1.6 261",
+     "fuel": "Petrol",
+     "cc": 1618,
+     "ps": 261,
+     "engine_code": "G16E-GTS",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2020-2024",
+     "note": "3-cyl turbo, 6-speed manual, 3dr. Parkers: 257 bhp, Jul 2020 to Feb 2024."
+    },
+    {
+     "badge": "GR Yaris 1.6 280",
+     "fuel": "Petrol",
+     "cc": 1618,
+     "ps": 280,
+     "engine_code": "G16E-GTS",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2024-",
+     "note": "6-speed manual, or 8-speed automatic (Parkers lists the auto May 2024 to Oct 2025). Parkers: 280 bhp, from May 2024."
+    }
+   ],
+   "trims": [
+    "Icon",
+    "Design",
+    "Dynamic",
+    "Excel",
+    "GR Sport",
+    "Launch Edition",
+    "Premiere Edition",
+    "GR Yaris",
+    "GR Yaris Convenience Pack",
+    "GR Yaris Circuit Pack",
+    "GR Yaris Circuit",
+    "GR Yaris Aero Performance",
+    "GR Yaris Sébastien Ogier Edition",
+    "GR Yaris Kalle Rovanperä Edition"
+   ],
+   "trims_by_period": {
+    "2020-2024": [
+     "Icon",
+     "Design",
+     "Dynamic",
+     "Excel",
+     "GR Sport",
+     "Launch Edition",
+     "GR Yaris",
+     "GR Yaris Convenience Pack",
+     "GR Yaris Circuit Pack"
+    ],
+    "2024-": [
+     "Icon",
+     "Design",
+     "Excel",
+     "GR Sport",
+     "Premiere Edition",
+     "GR Yaris Circuit",
+     "GR Yaris Aero Performance",
+     "GR Yaris Sébastien Ogier Edition",
+     "GR Yaris Kalle Rovanperä Edition"
+    ]
+   },
+   "transmissions": [
+    "e-CVT (hybrid)",
+    "6-speed manual (GR Yaris)",
+    "8-speed automatic (GR Yaris, 2024-)"
+   ],
+   "notes": "UK Yaris hatch is hybrid-only (Parkers lists no UK non-hybrid; Wikipedia: 1.0 and 1.5 non-hybrid petrols only in certain other European markets). Hybrid 116 (Parkers 114 bhp) from Aug 2020; Hybrid 130 (128 bhp) on GR Sport and Premiere Edition from Dec 2023 and on Excel from Mar 2025 (Excel 116 listed to Jan 2025); Icon and Design keep the 116. Launch Edition and Dynamic Aug 2020-Apr 2022; GR Sport from Feb 2022. GR Yaris (3dr, AWD, G16E-GTS): 261PS manual Jul 2020-Feb 2024 (standard, Convenience Pack, Circuit Pack), then 280PS from May 2024 (Circuit manual or 8-speed auto, Sébastien Ogier and Kalle Rovanperä editions, Aero Performance from Oct 2025). Yaris Cross is a separate model not covered here.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK specs for the Yaris Hatchback 2020-on (29 derivatives) and GR Yaris 2020-on (8 derivatives), with on-sale dates and outputs, and Wikipedia (Toyota Yaris (XP210) Europe and powertrain sections; Toyota GR Yaris).",
+   "sources": [
+    "https://www.autoexpress.co.uk/toyota/360315/new-2024-toyota-yaris-gets-more-powerful-hybrid-engine",
+    "https://www.motorpoint.co.uk/guides/toyota-yaris-models-and-trim-levels-explained",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback/review",
+    "https://carbuyer.co.uk:443/toyota/yaris/306142/2025-toyota-yaris-announced-with-minor-upgrades",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2020/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/gr-yaris-2020/specs/",
+    "https://en.wikipedia.org/wiki/Toyota_Yaris_(XP210)",
+    "https://en.wikipedia.org/wiki/Toyota_GR_Yaris",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2020/15-hybrid-130-gr-sport-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2020/15-hybrid-excel-cvt-5d/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/hatchback-2020/15-hybrid-dynamic-cvt-5d/specs/",
+    "https://www.parkers.co.uk/toyota/yaris/gr-yaris-2020/16-awd-3d/specs/"
+   ]
+  },
+  {
+   "make": "Toyota",
+   "model": "Corolla",
+   "generation": "E210",
+   "years": "2019-",
+   "facelift": "2023",
+   "bodies": [
+    "5dr hatchback",
+    "Touring Sports estate",
+    "4dr saloon"
+   ],
+   "engines": [
+    {
+     "badge": "1.2T 116",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 116,
+     "engine_code": "8NR-FTS",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2020",
+     "note": "Parkers lists 6-speed manual only (Icon, Icon Tech, Design; hatch and Touring Sports, no saloon). Parkers: 114 bhp; hatch Dec 2018-Oct 2019; two Touring Sports derivatives (Icon, Design Skyview) listed to Mar 2020. Wikipedia: dropped in the UK in Dec 2019."
+    },
+    {
+     "badge": "1.8 VVT-i Hybrid 122",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1798,
+     "ps": 122,
+     "engine_code": "2ZR-FXE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2022",
+     "note": "e-CVT. Parkers: 120 bhp ('1.8 VVT-i Hybrid 122hp'); Dec 2018 to Aug 2022 (saloon Jan 2019-Jun 2022, Trek Oct 2019-Nov 2021)."
+    },
+    {
+     "badge": "2.0 VVT-i Hybrid 184",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1987,
+     "ps": 184,
+     "engine_code": "M20A-FXS",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2022",
+     "note": "e-CVT; hatch and Touring Sports only. Parkers: 181 bhp, derivatives named '2.0 VVT-i Hybrid 184hp'; Dec 2018 to Aug 2022 (Icon and Icon Tech from Jan 2020)."
+    },
+    {
+     "badge": "1.8 Hybrid 140",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1798,
+     "ps": 140,
+     "engine_code": "2ZR-FXE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2022-",
+     "note": "Fifth-generation hybrid (2023 model-year update). Parkers: 138 bhp, from Aug 2022."
+    },
+    {
+     "badge": "2.0 Hybrid 196",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1987,
+     "ps": 196,
+     "engine_code": "M20A-FXS",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2022-",
+     "note": "Parkers: 193 bhp, from Aug 2022. Most derivatives are listed to Apr 2025, when the revised 178 took over; a GR Sport Bi-tone hatch is still current and a Touring Sports Design runs to Oct 2026."
+    },
+    {
+     "badge": "2.0 Hybrid 178",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1987,
+     "ps": 178,
+     "engine_code": "M20A-FXS",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "Revised 2.0 hybrid listed by Parkers from Jan 2025 at 175 bhp (about 178PS). Most derivatives are named '2.0 Hybrid 182'; the Touring Sports GR Sport Bi-tone is '2.0 Hybrid 178'. Code assumed unchanged (same 1987cc 2.0 hybrid)."
+    }
+   ],
+   "trims": [
+    "Icon",
+    "Icon Tech",
+    "Design",
+    "Excel",
+    "GR Sport",
+    "Trek",
+    "GR Sport Matt Paint Limited Edition"
+   ],
+   "trims_by_period": {
+    "2019-2022": [
+     "Icon",
+     "Icon Tech",
+     "Design",
+     "Excel",
+     "GR Sport",
+     "Trek"
+    ],
+    "2022-": [
+     "Icon",
+     "Design",
+     "Excel",
+     "GR Sport",
+     "GR Sport Matt Paint Limited Edition"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual (1.2T)",
+    "CVT (1.2T)",
+    "e-CVT (hybrid)"
+   ],
+   "notes": "UK grades 2019-22: Icon, Icon Tech, Design, Excel (hybrid only), GR Sport (from Oct 2019) and Trek (Touring Sports only, Oct 2019-Aug 2022). 1.2T petrol (6-speed manual; Icon, Icon Tech, Design) dropped Dec 2019 (Parkers lists Touring Sports to Mar 2020); range hybrid-only thereafter. Saloon: 1.8 hybrid only, Icon/Icon Tech/Design, Jan 2019-Jun 2022, dropped at the facelift. The 2.0 hybrid (184PS) was hatch and Touring Sports only, and on Icon/Icon Tech from Jan 2020. The updated 2023 model-year range (fifth-gen hybrid, 140PS/196PS) is listed from Aug 2022 in Icon, Design, Excel and GR Sport, each with either engine. From Jan 2025 Parkers lists a revised 2.0 hybrid at 175 bhp (178PS; most derivatives named '2.0 Hybrid 182'), and most 196PS derivatives end Apr 2025. No 1.2T CVT appears in Parkers' UK list; 'CVT (1.2T)' is kept from the original record but is unconfirmed for the UK.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK specs for the Corolla Hatchback 2019-on (49 derivatives), Touring Sports 2019-on (38), Saloon 2019-2022 (3) and Trek 2019-2021 (2), all with on-sale dates, outputs and gearboxes, and Wikipedia (Toyota Corolla (E210) Europe, UK and facelift sections; Toyota Dynamic Force engine). The 2025 2.0 hybrid's 178PS is inferred from Parkers' 175 bhp and one '2.0 Hybrid 178' derivative name.",
+   "sources": [
+    "https://www.fleetnews.co.uk/news/manufacturer-news/2019/12/03/toyota-corolla-drops-12-petrol-engine-for-hybrid",
+    "https://fleetworld.co.uk/2023-toyota-corolla-launches-with-latest-hybrid-tech",
+    "https://honestjohn.co.uk/toyota/corolla",
+    "https://www.autoexpress.co.uk/toyota/corolla/touring-sports/prices-specs/87969/2.0-vvt-i-hybrid-excel-5dr-cvt-jbl",
+    "https://www.topgear.com/car-reviews/corolla/buying",
+    "https://www.parkers.co.uk/toyota/corolla/hatchback-2019/specs/",
+    "https://www.parkers.co.uk/toyota/corolla/touring-sports-2019/specs/",
+    "https://www.parkers.co.uk/toyota/corolla/saloon-2019/specs/",
+    "https://www.parkers.co.uk/toyota/corolla/trek-2019/specs/",
+    "https://en.wikipedia.org/wiki/Toyota_Corolla_(E210)",
+    "https://en.wikipedia.org/wiki/Toyota_Dynamic_Force_engine",
+    "https://www.parkers.co.uk/toyota/corolla/touring-sports-2019/icon-12-vvt-i-5d/specs/",
+    "https://www.parkers.co.uk/toyota/corolla/hatchback-2019/gr-sport-20-vvt-i-hybrid-184hp-auto-5d/specs/",
+    "https://www.parkers.co.uk/toyota/corolla/hatchback-2019/18-hybrid-icon-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/corolla/hatchback-2019/20-hybrid-icon-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/corolla/hatchback-2019/20-hybrid-182-icon-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/corolla/touring-sports-2019/20-vvt-i-hybrid-trek-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/corolla/hatchback-2019/gr-sport-18-vvt-i-hybrid-122hp-auto-5d/specs/",
+    "https://www.parkers.co.uk/toyota/corolla/hatchback-2019/18-hybrid-gr-sport-matt-paint-limited-edn-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/corolla/saloon-2019/icon-18-vvt-i-hybrid-auto-4d/specs/"
+   ]
+  },
+  {
+   "make": "Toyota",
+   "model": "C-HR",
+   "generation": "AX10 (Mk1)",
+   "years": "2016-2023",
+   "facelift": "2019",
+   "bodies": [
+    "5dr crossover"
+   ],
+   "engines": [
+    {
+     "badge": "1.2T 116",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 116,
+     "engine_code": "8NR-FTS",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2016-2019",
+     "note": "FWD 6-speed manual (Nov 2016-Nov 2019), FWD CVT (Nov 2016-mid 2018) or AWD CVT (Nov 2016-Nov 2019). Parkers: 113 bhp."
+    },
+    {
+     "badge": "1.8 Hybrid 122",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1798,
+     "ps": 122,
+     "engine_code": "2ZR-FXE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2023",
+     "note": "e-CVT, FWD. Parkers: 120 bhp ('1.8 VVT-i Hybrid 122hp'), Nov 2016 to mid-2023."
+    },
+    {
+     "badge": "2.0 Hybrid 184",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1987,
+     "ps": 184,
+     "engine_code": "M20A-FXS",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2023",
+     "note": "e-CVT, FWD; added at the late-2019 facelift. Parkers: 181 bhp ('2.0 VVT-i Hybrid 184hp'), Oct 2019 to Jul 2023 (one Design derivative listed to Jan 2024)."
+    }
+   ],
+   "trims": [
+    "Icon",
+    "Design",
+    "Excel",
+    "Dynamic",
+    "GR Sport",
+    "Orange Edition",
+    "Dynamic Limited Edition",
+    "Red Edition",
+    "Lime Edition"
+   ],
+   "trims_by_period": {
+    "2016-2019": [
+     "Icon",
+     "Design",
+     "Excel",
+     "Dynamic",
+     "Dynamic Limited Edition",
+     "Red Edition",
+     "Lime Edition"
+    ],
+    "2019-2023": [
+     "Icon",
+     "Design",
+     "Excel",
+     "Dynamic",
+     "Orange Edition",
+     "GR Sport"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "CVT",
+    "e-CVT (hybrid)"
+   ],
+   "notes": "UK grades: Icon, Excel and Dynamic from launch (Nov 2016), Design added Jun 2018, GR Sport from Dec 2020; Dynamic ended Jun 2021. Specials: Dynamic Limited Edition (hybrid, Apr-Sep 2017), Red Edition (Nov 2017-Jul 2018), Lime Edition (hybrid, Apr-Nov 2019), Orange Edition (2.0 hybrid, Oct 2019-Dec 2020). 1.2T: 6-speed manual FWD, CVT FWD (to mid-2018) or CVT AWD (to Nov 2019); dropped at the facelift. Hybrids are e-CVT and FWD only. The 2.0 hybrid (184PS) was added at the late-2019 facelift.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK specs for the C-HR SUV (2016-2023): all 95 derivatives with on-sale dates, outputs, gearboxes and drive. Also checked Wikipedia (Toyota C-HR first-generation Europe and facelift sections; Dynamic Force and NR engine articles).",
+   "sources": [
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2017/specs/",
+    "https://en.wikipedia.org/wiki/Toyota_C-HR",
+    "https://en.wikipedia.org/wiki/Toyota_Dynamic_Force_engine",
+    "https://en.wikipedia.org/wiki/Toyota_NR_engine",
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2017/icon-12-turbo-fwd-auto-5d/specs/",
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2017/design-(black-leather)-12-vvt-i-turbo-5d/specs/",
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2017/18-hybrid-dynamic-limited-edition-cvt-5d/specs/",
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2017/18-hybrid-gr-sport-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2017/design-20-vvt-i-hybrid-184hp-auto-5d/specs/"
+   ]
+  },
+  {
+   "make": "Toyota",
+   "model": "C-HR",
+   "generation": "AX20 (Mk2)",
+   "years": "2023-",
+   "facelift": null,
+   "bodies": [
+    "5dr crossover"
+   ],
+   "engines": [
+    {
+     "badge": "1.8 Hybrid 140",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1798,
+     "ps": 140,
+     "engine_code": "2ZR-FXE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-",
+     "note": "e-CVT, FWD. Parkers: 138 bhp, from Oct 2023; Icon, Design, Excel, Orange Edition (Apr 2025-) and GR Sport (Jan 2026-)."
+    },
+    {
+     "badge": "2.0 Hybrid 197",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1987,
+     "ps": 197,
+     "engine_code": "M20A-FXS",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2023-",
+     "note": "e-CVT. Parkers: 194 bhp, from Oct 2023, GR Sport and Premiere Edition (Oct 2023-Apr 2025). Every UK derivative Parkers lists is FWD; Wikipedia lists a 'Hybrid 200 AWD-i' in the European range, so AWD is kept but unconfirmed for the UK."
+    },
+    {
+     "badge": "2.0 Plug-in Hybrid 223",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1987,
+     "ps": 223,
+     "engine_code": "M20A-FXS",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-",
+     "note": "e-CVT, FWD. Parkers: 219 bhp, from Jan 2024; Design, Excel, GR Sport and Orange Edition (Mar 2025-), not Icon."
+    }
+   ],
+   "trims": [
+    "Icon",
+    "Design",
+    "Excel",
+    "GR Sport",
+    "Premiere Edition",
+    "Orange Edition"
+   ],
+   "trims_by_period": {
+    "2023-2025": [
+     "Icon",
+     "Design",
+     "Excel",
+     "GR Sport",
+     "Premiere Edition"
+    ],
+    "2025-": [
+     "Icon",
+     "Design",
+     "Excel",
+     "GR Sport",
+     "Orange Edition"
+    ]
+   },
+   "transmissions": [
+    "e-CVT (hybrid)"
+   ],
+   "notes": "UK grades: Icon (1.8 only), Design, Excel, GR Sport, plus Premiere Edition (2.0 hybrid, Oct 2023-Apr 2025) and the limited Orange Edition (1.8 and PHEV, from Mar/Apr 2025). 1.8 hybrid on Icon, Design and Excel (and GR Sport from Jan 2026); 2.0 hybrid on GR Sport and Premiere Edition; PHEV (Toyota UK '223 DIN hp'; Parkers 219 bhp; Wikipedia 164 kW) on Design, Excel, GR Sport and Orange Edition from Jan 2024. All e-CVT. Parkers lists no UK AWD-i derivative (Wikipedia: Hybrid 200 AWD-i offered in Europe). Some sources quote the 2.0 HEV as 196/197PS (Wikipedia 145 kW).",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK specs for the C-HR SUV 2024-on (all 28 derivatives with on-sale dates, outputs and drive) and Wikipedia (Toyota C-HR second-generation overview, Europe/UK and powertrain sections).",
+   "sources": [
+    "https://media.toyota.co.uk/all-new-toyota-c-hr-prices-and-equipment-details/",
+    "https://media.toyota.co.uk/?p=58165",
+    "https://www.autocar.co.uk/car-news/new-cars/new-2023-toyota-c-hr-reinvented-phev-option",
+    "https://media.toyota.co.uk/wp-content/uploads/sites/5/pdf/250519-C-HR.pdf",
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2024/specs/",
+    "https://en.wikipedia.org/wiki/Toyota_C-HR",
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2024/18-hybrid-orange-edition-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2024/20-hybrid-premiere-edition-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2024/18-hybrid-gr-sport-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2024/20-hybrid-gr-sport-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/toyota/c-hr/suv-2024/20-phev-design-5dr-cvt/specs/"
+   ]
+  },
+  {
+   "make": "Kia",
+   "model": "Sportage",
+   "generation": "QL",
+   "years": "2016-2021",
+   "facelift": "2018",
+   "bodies": [
+    "5dr SUV"
+   ],
+   "engines": [
+    {
+     "badge": "1.6 GDi 132",
+     "fuel": "Petrol",
+     "cc": 1591,
+     "ps": 132,
+     "engine_code": "G4FD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2021",
+     "note": "6-speed manual only, FWD."
+    },
+    {
+     "badge": "1.6 T-GDi 177",
+     "fuel": "Petrol",
+     "cc": 1591,
+     "ps": 177,
+     "engine_code": "G4FJ",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2016-2021",
+     "note": "6-speed manual or 7-speed DCT. AWD from launch (GT-Line, GT-Line S); FWD versions from Sep 2017 and across 2, 3, 4, GT-Line, GT-Line S and JBL Black Edition after the facelift."
+    },
+    {
+     "badge": "1.7 CRDi 115",
+     "fuel": "Diesel",
+     "cc": 1685,
+     "ps": 115,
+     "engine_code": "D4FD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2018",
+     "note": "6-speed manual, FWD."
+    },
+    {
+     "badge": "1.7 CRDi 141",
+     "fuel": "Diesel",
+     "cc": 1685,
+     "ps": 141,
+     "engine_code": "D4FD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2018",
+     "note": "7-speed DCT only, FWD; from Dec 2016."
+    },
+    {
+     "badge": "2.0 CRDi 136",
+     "fuel": "Diesel",
+     "cc": 1995,
+     "ps": 136,
+     "engine_code": "D4HA",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2016-2018",
+     "note": "6-speed manual or 6-speed automatic; AWD only (KX-1, KX-2, KX-3, GT-Line)."
+    },
+    {
+     "badge": "2.0 CRDi 185",
+     "fuel": "Diesel (48V mild hybrid from 2018)",
+     "cc": 1995,
+     "ps": 185,
+     "engine_code": "D4HA",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2016-2020",
+     "note": "AWD. Pre-facelift 6-speed manual or 6-speed auto (First Edition, KX-4, KX-5, GT-Line S); from the Aug 2018 facelift a 48V mild hybrid with 8-speed auto (4, GT-Line S), last listed Mar 2020."
+    },
+    {
+     "badge": "1.6 CRDi 115",
+     "fuel": "Diesel (48V mild hybrid from 2019)",
+     "cc": 1598,
+     "ps": 115,
+     "engine_code": "D4FE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2020",
+     "note": "6-speed manual, FWD, trim 1; 48V from Sep 2019."
+    },
+    {
+     "badge": "1.6 CRDi 136",
+     "fuel": "Diesel (48V mild hybrid from 2019)",
+     "cc": 1598,
+     "ps": 136,
+     "engine_code": "D4FE",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2018-2021",
+     "note": "6-speed manual or 7-speed DCT; AWD with DCT only; 48V mild hybrid from May 2019."
+    }
+   ],
+   "trims": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "KX-1",
+    "KX-2",
+    "KX-3",
+    "KX-4",
+    "KX-5",
+    "GT-Line",
+    "GT-Line S",
+    "First Edition",
+    "GT-Line Edition",
+    "Edition 25",
+    "Platinum Edition",
+    "JBL Black Edition"
+   ],
+   "trims_by_period": {
+    "2016-2018": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "KX-1",
+     "KX-2",
+     "KX-3",
+     "KX-4",
+     "KX-5",
+     "GT-Line",
+     "GT-Line S",
+     "First Edition",
+     "GT-Line Edition"
+    ],
+    "2018-2021": [
+     "1",
+     "2",
+     "3",
+     "4",
+     "GT-Line",
+     "GT-Line S",
+     "Edition 25",
+     "Platinum Edition",
+     "JBL Black Edition"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "7-speed DCT",
+    "6-speed automatic",
+    "8-speed automatic"
+   ],
+   "notes": "UK line-up checked against all 76 Parkers derivatives (Feb 2016 - Dec 2021). KX-1 to KX-5 were 2.0 CRDi AWD-only grades sold to Dec 2017; 1.6 T-GDi AWD was sold as GT-Line / GT-Line S. Aug 2018 facelift: 1.7 CRDi replaced by 1.6 CRDi 115 (manual, trim 1) and 136 (manual or DCT, FWD or AWD); 2.0 CRDi 185 became a 48V mild hybrid with 8-speed auto (to Mar 2020). Both diesels used 48V: the 2.0 CRDi from Aug 2018, the 1.6 CRDi 136 from May 2019 and the 1.6 CRDi 115 from Sep 2019, which settles the earlier source conflict. Special editions: First Edition (2.0 CRDi 185 auto AWD, Feb-Nov 2016), GT-Line Edition (1.7 CRDi, Apr 2017-Jul 2018), Edition 25 (1.6 GDi, Aug 2018-Sep 2019), Platinum Edition (1.6 GDi, Jul 2019-Mar 2020), JBL Black Edition (1.6 T-GDi or 1.6 CRDi 48V, Dec 2020-Oct 2021). Parkers quotes bhp (130/174/114/139/134/182); PS figures and engine families as Kia/Wikipedia.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against the Parkers UK Kia Sportage Estate 2016-2021 specs listing (all 76 derivatives with on-sale dates, bhp, cc, drivetrain, gearbox) and Wikipedia (Kia Sportage QL infobox engine codes; Hyundai Tucson TL powertrain table for PS figures of the shared engines).",
+   "sources": [
+    "https://www.cargurus.co.uk/research/Kia-Sportage-mk4-2015-mg72",
+    "https://www.autoexpress.co.uk/kia/sportage/104157/new-kia-sportage-2018-facelift-review",
+    "https://honestjohn.co.uk/kia/sportage/2016",
+    "https://cars-data.com/en/kia/sportage/2016/engines",
+    "https://www.parkers.co.uk/kia/sportage/estate-2016/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Kia_Sportage&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=Hyundai_Tucson&action=raw",
+    "https://www.parkers.co.uk/kia/sportage/estate-2016/gt-line-16-t-gdi-174bhp-5d/specs/",
+    "https://www.parkers.co.uk/kia/sportage/estate-2016/gt-line-s-20-crdi-182bhp-48v-auto-isg-awd-(082018-on)-5d/specs/",
+    "https://www.parkers.co.uk/kia/sportage/estate-2016/1-16-crdi-114bhp-48v-isg-2wd-5d/specs/",
+    "https://www.parkers.co.uk/kia/sportage/estate-2016/4-16-crdi-134bhp-48v-isg-5d/specs/",
+    "https://www.parkers.co.uk/kia/sportage/estate-2016/2-17-crdi-139bhp-isg-dct-auto-5d/specs/",
+    "https://www.parkers.co.uk/kia/sportage/estate-2016/20-crdi-kx-2-5d/specs/"
+   ]
+  },
+  {
+   "make": "Kia",
+   "model": "Sportage",
+   "generation": "NQ5",
+   "years": "2021-",
+   "facelift": "2025",
+   "bodies": [
+    "5dr SUV"
+   ],
+   "engines": [
+    {
+     "badge": "1.6 T-GDi 150",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": 150,
+     "engine_code": "G4FP",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-",
+     "note": "Non-hybrid ISG. Pre-facelift 6-speed manual only (2, 3, GT-Line, Launch Edition; Dec 2021 - Jul 2024, 148bhp/250Nm per Parkers). Back as the entry engine at the Jul 2025 facelift with 6-speed manual or 7-speed DCT (Pure, GT-Line, GT-Line S, Storm; 147bhp per Parkers)."
+    },
+    {
+     "badge": "1.6 T-GDi MHEV 150",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1598,
+     "ps": 150,
+     "engine_code": "G4FP",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2021-2024",
+     "note": "48V, 7-speed DCT only; FWD (3, GT-Line, GT-Line S) or AWD (4, GT-Line S); 148bhp/250Nm per Parkers. In the UK the AWD mild hybrid was this 150PS unit."
+    },
+    {
+     "badge": "1.6 T-GDi 157 48V",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1598,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-2025",
+     "note": "2024 model-year update, Kia UK badge '157' (157bhp/264Nm per Parkers; exact PS not confirmed). 6-speed manual or 7-speed DCT, FWD only; 2, 3, GT-Line, GT-Line S, Shadow; Oct 2023 - Jul 2025."
+    },
+    {
+     "badge": "1.6 CRDi 115",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 115,
+     "engine_code": "D4FE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2022",
+     "note": "Non-hybrid, 6-speed manual; 2, 3, GT-Line; Dec 2021 - Oct 2022 (113bhp per Parkers)."
+    },
+    {
+     "badge": "1.6 CRDi MHEV 136",
+     "fuel": "Diesel mild hybrid",
+     "cc": 1598,
+     "ps": 136,
+     "engine_code": "D4FE",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2021-2022",
+     "note": "48V, 7-speed DCT; FWD (3, GT-Line) or AWD (4); Kia UK badge '134' (134bhp); Dec 2021 - Oct 2022. No diesel after Oct 2022."
+    },
+    {
+     "badge": "1.6 T-GDi HEV 230",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1598,
+     "ps": 230,
+     "engine_code": "G4FT",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2021-2024",
+     "note": "6-speed auto; FWD (3, 4, GT-Line, GT-Line S) or AWD (GT-Line S); Dec 2021 - Jul 2024 (226bhp per Parkers)."
+    },
+    {
+     "badge": "1.6 T-GDi 212 HEV",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1598,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2023-2026",
+     "note": "2024 model-year update, Kia UK badge '212' (Parkers quotes 207bhp/350Nm; exact PS not confirmed). 6-speed auto; 3, GT-Line, GT-Line S (FWD or AWD) Oct 2023 - Jul 2025; Shadow Jun 2024 - Jan 2026."
+    },
+    {
+     "badge": "1.6 T-GDi PHEV 265",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1598,
+     "ps": 265,
+     "engine_code": "G4FT",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2021-2024",
+     "note": "6-speed auto, AWD, 13.8kWh; 3, 4, GT-Line, GT-Line S; Dec 2021 - Jul 2024 (261bhp per Parkers)."
+    },
+    {
+     "badge": "1.6 T-GDi 248 PHEV",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1598,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2023-",
+     "note": "2024 model-year update, Kia UK badge '248' (Parkers quotes 241bhp/350Nm; exact PS not confirmed). 6-speed auto, AWD; 3, GT-Line, GT-Line S from Oct 2023 (GT-Line S to Mar 2026; Parkers still lists 3 and GT-Line as available)."
+    },
+    {
+     "badge": "1.6 T-GDi HEV (facelift)",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1598,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2025-",
+     "note": "Jul 2025 facelift: 235bhp per Parkers (the output Hyundai UK badges '239' on the Tucson twin; Kia PS not confirmed). 6-speed auto; Pure, GT-Line, GT-Line S (FWD or AWD), Storm."
+    },
+    {
+     "badge": "1.6 T-GDi PHEV (facelift)",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1598,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2025-",
+     "note": "Facelift: 283bhp per Parkers (Hyundai UK badges the same output '288' on the Tucson; Kia PS not confirmed). 6-speed auto; AWD (GT-Line, GT-Line S) and, from Mar 2026, FWD (Pure, GT-Line)."
+    }
+   ],
+   "trims": [
+    "2",
+    "3",
+    "4",
+    "GT-Line",
+    "GT-Line S",
+    "Launch Edition",
+    "Shadow",
+    "Pure",
+    "Storm"
+   ],
+   "trims_by_period": {
+    "2021-2025": [
+     "2",
+     "3",
+     "4",
+     "GT-Line",
+     "GT-Line S",
+     "Launch Edition",
+     "Shadow"
+    ],
+    "2025-": [
+     "Pure",
+     "GT-Line",
+     "GT-Line S",
+     "Storm"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "6-speed iMT (MHEV)",
+    "7-speed DCT",
+    "6-speed automatic (HEV/PHEV)"
+   ],
+   "notes": "UK line-up checked against all 55 Parkers derivatives (Dec 2021 on). Launch: 1.6 T-GDi 150 (manual), 1.6 T-GDi 48V 150 (DCT, FWD or AWD), HEV 230 (FWD or AWD), PHEV 265 (AWD), and diesels 1.6 CRDi 115 (manual) and 48V 136 (DCT, FWD or AWD), both dropped in Oct 2022. The 180PS mild hybrid sold in some European markets is not in the UK listing. Oct 2023 (2024 model year): Kia UK badges '157 48V', '212 HEV' and '248 PHEV' (bhp-based names; exact PS not confirmed) replaced the 150/230/265 versions, which ran out by Jul 2024. Jul 2025 facelift drops the mild hybrid: 1.6 T-GDi (147bhp, manual or DCT), HEV (235bhp) and PHEV (283bhp, FWD from Mar 2026 or AWD). Trim 4 ran Dec 2021 - Oct 2022, Launch Edition Dec 2021 - Apr 2022, Shadow 2024-26, Storm from Jul 2026. Parkers quotes bhp; PS from Kia/Wikipedia where given. Codes G4FP (1.6 T-GDi) and G4FT (HEV/PHEV) per Wikipedia Smartstream applications; left null for the 2023-on revised versions.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against the Parkers UK Kia Sportage SUV 2022-on specs listing (all 55 derivative cards, 50 derivative pages with on-sale dates, bhp, torque, drivetrain, gearbox) and Wikipedia (Kia Sportage NQ5 infobox and powertrain table; Hyundai Smartstream engine applications).",
+   "sources": [
+    "https://www.whatcar.com/news/facelifted-kia-sportage-ditches-mild-hybrid-power-for-pure-petrol/n27774",
+    "https://www.honestjohn.co.uk/kia/sportage/",
+    "https://prod2-eu.kia.com/uk/new-cars/sportage/specification/",
+    "https://military.motorsourcegroup.com/news/article/new-kia-sportage-pricing-and-specifications-announced-for-uk-s-best-selling-suv",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Kia_Sportage&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=Hyundai_Smartstream_engine&action=raw",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16t-gdi-isg-2-5dr/specs/",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16t-gdi-pure-5dr/specs/",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16t-gdi-48v-isg-4-5dr-dct-awd/specs/",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16-crdi-isg-2-5dr/specs/",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16-crdi-134-48v-isg-4-5dr-dct-awd/specs/",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16t-gdi-hev-gt-line-s-5dr-auto-awd/specs/",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16t-gdi-phev-gt-line-s-5dr-auto-awd/specs/",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16t-gdi-157-48v-isg-2-5dr/specs/",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16t-gdi-212-hev-gt-line-s-5dr-auto-awd/specs/",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16t-gdi-248-phev-gt-line-s-5dr-auto-awd/specs/",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16t-gdi-hev-pure-5dr-auto/specs/",
+    "https://www.parkers.co.uk/kia/sportage/suv-2022/16t-gdi-phev-pure-5dr-auto/specs/"
+   ]
+  },
+  {
+   "make": "Kia",
+   "model": "Ceed",
+   "generation": "CD",
+   "years": "2018-2025",
+   "facelift": "2021",
+   "bodies": [
+    "5dr hatchback",
+    "Sportswagon estate",
+    "ProCeed 5dr shooting brake"
+   ],
+   "engines": [
+    {
+     "badge": "1.0 T-GDi 120",
+     "fuel": "Petrol",
+     "cc": 998,
+     "ps": 120,
+     "engine_code": "G3LC",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2023",
+     "note": "6-speed manual only; hatchback (to Jun 2023) and Sportswagon (to Dec 2022), not ProCeed. No 48V version in the UK listings. Kappa G3LC at launch; Wikipedia lists the Ceed CD among Smartstream G1.0 T-GDi (G3LE/G3LF) applications from 2020."
+    },
+    {
+     "badge": "1.4 T-GDi 140",
+     "fuel": "Petrol",
+     "cc": 1353,
+     "ps": 140,
+     "engine_code": "G4LD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2021",
+     "note": "6-speed manual or 7-speed DCT; to Jan 2021 (ProCeed to Apr 2021)."
+    },
+    {
+     "badge": "1.5 T-GDi 160",
+     "fuel": "Petrol",
+     "cc": 1482,
+     "ps": 160,
+     "engine_code": "G4LH",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2024",
+     "note": "6-speed manual or 7-speed DCT; replaced the 1.4 T-GDi from Jan 2021; UK derivatives are 'ISG' only (no 48V); 158bhp per Parkers."
+    },
+    {
+     "badge": "1.5 T-GDi 140",
+     "fuel": "Petrol",
+     "cc": 1482,
+     "ps": 140,
+     "engine_code": "G4LH",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-2025",
+     "note": "Kia UK badge '138' (138bhp); 6-speed manual or 7-speed DCT; Dec 2023 - Oct 2025."
+    },
+    {
+     "badge": "1.6 T-GDi GT 204",
+     "fuel": "Petrol",
+     "cc": 1591,
+     "ps": 204,
+     "engine_code": "G4FJ",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2022",
+     "note": "GT hatchback and ProCeed GT; 6-speed manual (hatchback, to Jan 2021) or 7-speed DCT; last ProCeed GT listed to Jul 2022 (201bhp per Parkers)."
+    },
+    {
+     "badge": "1.6 CRDi 115",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 115,
+     "engine_code": "D4FE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2021",
+     "note": "6-speed manual or 7-speed DCT; Aug 2018 - Jan 2021."
+    },
+    {
+     "badge": "1.6 CRDi 136",
+     "fuel": "Diesel (48V mild hybrid from 2021)",
+     "cc": 1598,
+     "ps": 136,
+     "engine_code": "D4FE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2022",
+     "note": "From Jan 2019 (GT-Line hatchback, ProCeed GT-Line); from Jan 2021 every UK 1.6 CRDi was 48V (2, 2 NAV, 3, GT-Line; manual or DCT) until Mar 2022."
+    },
+    {
+     "badge": "1.6 GDi PHEV 141",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1580,
+     "ps": 141,
+     "engine_code": "G4LE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2021",
+     "note": "Sportswagon 3 only, 6-speed DCT, 8.9kWh; Mar 2020 - Sep 2021 (139bhp per Parkers). Code G4LE not confirmed for the Ceed by sources read."
+    }
+   ],
+   "trims": [
+    "2",
+    "2 NAV",
+    "3",
+    "Blue Edition",
+    "First Edition",
+    "GT-Line",
+    "GT-Line Lunar Edition",
+    "GT-Line S",
+    "GT"
+   ],
+   "trims_by_period": {
+    "2018-2021": [
+     "2",
+     "2 NAV",
+     "3",
+     "Blue Edition",
+     "GT-Line",
+     "GT-Line S",
+     "First Edition (launch)",
+     "GT-Line Lunar Edition",
+     "GT"
+    ],
+    "2021-2025": [
+     "2",
+     "2 NAV",
+     "3",
+     "GT-Line",
+     "GT-Line S",
+     "GT"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "6-speed iMT (MHEV)",
+    "7-speed DCT",
+    "6-speed DCT (PHEV)"
+   ],
+   "notes": "UK line-up checked against Parkers (hatchback 48, Sportswagon 27, ProCeed 18 derivatives; Aug 2018 - Oct 2025). ProCeed: GT-Line, GT-Line S, GT and GT-Line Lunar Edition only; the PHEV was Sportswagon 3 only. Blue Edition (1.4 T-GDi, hatchback) and First Edition (1.4 T-GDi) Aug 2018 - Sep 2019; GT-Line Lunar Edition Jul - Dec 2019; 2 NAV Jun 2019 - Mar 2022. Jan 2021 update: 1.5 T-GDi 160 replaced the 1.4 T-GDi and the diesel became the 48V 1.6 CRDi 136 only; diesel and GT were dropped in 2022. 1.5 T-GDi 140 ('138') from Dec 2023. No 1.4 MPi and no 48V petrol in the UK listings. 1.5 T-GDi appears at 138bhp (140PS) and 158bhp (160PS). XCeed is a separate model. UK sales ended Oct 2025. Codes G3LC, G4LD, G4LH, G4FJ and D4FE per Wikipedia (Ceed CD infobox; Kappa and Smartstream application lists).",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against the Parkers UK specs listings for Kia Ceed Hatchback 2018, Ceed Sportswagon 2018 and ProCeed Shooting Brake 2019 (93 derivative cards, 80 derivative pages with on-sale dates, bhp, cc, gearbox) and Wikipedia (Kia Ceed CD infobox and engine table; Hyundai Kappa and Smartstream engine applications).",
+   "sources": [
+    "https://vehiclescore.co.uk/cars/kia/ceed/cd-2018-2025",
+    "https://jerseyeveningpost.com/motors/2018/07/29/kia-reveals-details-of-latest-ceed-for-the-uk/",
+    "https://www.conceptcarz.com/a43853/kia-uk-pricing-specification-updated-ceed-model-family.aspx",
+    "https://www.whatcar.com/kia/ceed/hatchback/15-t-gdi-gt-line-hatchback-5dr-petrol-manual-euro-6-ss-158-bhp/version",
+    "https://autoexpress.co.uk/kia/ceed/prices-specs/85779/1.4t-gdi-isg-first-edition-5dr-dct",
+    "https://www.parkers.co.uk/kia/ceed/hatchback-2018/specs/",
+    "https://www.parkers.co.uk/kia/ceed/sportswagon-2018/specs/",
+    "https://www.parkers.co.uk/kia/proceed/shooting-brake-2019/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Kia_Ceed&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=Hyundai_Kappa_engine&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=Hyundai_Smartstream_engine&action=raw",
+    "https://www.parkers.co.uk/kia/ceed/hatchback-2018/10t-gdi-isg-2-5dr/specs/",
+    "https://www.parkers.co.uk/kia/ceed/hatchback-2018/3-14-t-gdi-138bhp-isg-5d/specs/",
+    "https://www.parkers.co.uk/kia/ceed/hatchback-2018/15t-gdi-isg-3-5dr/specs/",
+    "https://www.parkers.co.uk/kia/ceed/hatchback-2018/15t-gdi-isg-138-2-5dr/specs/",
+    "https://www.parkers.co.uk/kia/proceed/shooting-brake-2019/16t-gdi-isg-gt-5dr-dct/specs/",
+    "https://www.parkers.co.uk/kia/ceed/hatchback-2018/3-16-crdi-114bhp-isg-5d/specs/",
+    "https://www.parkers.co.uk/kia/ceed/hatchback-2018/16-crdi-48v-isg-3-5dr/specs/",
+    "https://www.parkers.co.uk/kia/ceed/sportswagon-2018/3-16-gdi-89kwh-lithium-ion-139bhp-dct-auto-plug-in-hybrid-5d/specs/"
+   ]
+  },
+  {
+   "make": "Hyundai",
+   "model": "Tucson",
+   "generation": "TL",
+   "years": "2015-2021",
+   "facelift": "2018",
+   "bodies": [
+    "5dr SUV"
+   ],
+   "engines": [
+    {
+     "badge": "1.6 GDi 132",
+     "fuel": "Petrol",
+     "cc": 1591,
+     "ps": 132,
+     "engine_code": "G4FD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2021",
+     "note": "6-speed manual only, 2WD."
+    },
+    {
+     "badge": "1.6 T-GDi 177",
+     "fuel": "Petrol",
+     "cc": 1591,
+     "ps": 177,
+     "engine_code": "G4FJ",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2015-2021",
+     "note": "6-speed manual or 7-speed DCT. 4WD only at launch (Premium, Premium SE; Sep - Dec 2015); 2WD from Jun 2017 (Sport Edition, Go! SE, then SE Nav, Premium, Premium SE, N Line)."
+    },
+    {
+     "badge": "1.7 CRDi 116",
+     "fuel": "Diesel",
+     "cc": 1685,
+     "ps": 116,
+     "engine_code": "D4FD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2018",
+     "note": "6-speed manual, 2WD (Blue Drive)."
+    },
+    {
+     "badge": "1.7 CRDi 141",
+     "fuel": "Diesel",
+     "cc": 1685,
+     "ps": 141,
+     "engine_code": "D4FD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2018",
+     "note": "7-speed DCT only, 2WD; from May 2016."
+    },
+    {
+     "badge": "2.0 CRDi 136",
+     "fuel": "Diesel",
+     "cc": 1995,
+     "ps": 136,
+     "engine_code": "D4HA",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2015-2018",
+     "note": "2WD 6-speed manual (Blue Drive SE Nav, Premium, Premium SE) or 4WD 6-speed manual / 6-speed auto."
+    },
+    {
+     "badge": "2.0 CRDi 185",
+     "fuel": "Diesel (48V MHEV from 2018)",
+     "cc": 1995,
+     "ps": 185,
+     "engine_code": "D4HA",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2015-2021",
+     "note": "4WD. Pre-facelift 6-speed manual or 6-speed auto; from the Sep 2018 facelift a 48V mild hybrid with 8-speed auto (Premium, Premium SE) to Jan 2021."
+    },
+    {
+     "badge": "1.6 CRDi 115",
+     "fuel": "Diesel (48V mild hybrid from 2019)",
+     "cc": 1598,
+     "ps": 115,
+     "engine_code": "D4FE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2021",
+     "note": "6-speed manual, 2WD; badged 115PS by Hyundai UK; 48V from May 2019."
+    },
+    {
+     "badge": "1.6 CRDi 136",
+     "fuel": "Diesel (48V mild hybrid from 2019)",
+     "cc": 1598,
+     "ps": 136,
+     "engine_code": "D4FE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2021",
+     "note": "6-speed manual or 7-speed DCT, 2WD only in the UK listing; 48V from May 2019 (including N Line)."
+    }
+   ],
+   "trims": [
+    "S",
+    "S Connect",
+    "SE",
+    "SE Nav",
+    "Premium",
+    "Premium SE",
+    "N Line",
+    "Sport Edition",
+    "Go! SE"
+   ],
+   "trims_by_period": {
+    "2015-2018": [
+     "S",
+     "SE",
+     "SE Nav",
+     "Premium",
+     "Premium SE",
+     "Sport Edition",
+     "Go! SE"
+    ],
+    "2018-2021": [
+     "S Connect",
+     "SE Nav",
+     "Premium",
+     "Premium SE",
+     "N Line"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "7-speed DCT",
+    "6-speed automatic",
+    "8-speed automatic"
+   ],
+   "notes": "UK line-up checked against all 67 Parkers derivatives (Sep 2015 - Jan 2021). Mechanically twinned with Kia Sportage QL. Sep 2018 facelift: 1.7 CRDi replaced by 1.6 CRDi 115/136 (2WD only); 2.0 CRDi 185 became a 48V mild hybrid with 8-speed auto (4WD); 1.6 CRDi 48V from May 2019; N Line from May 2019 (1.6 GDi N Line from Apr 2020). 1.6 T-GDi 4WD was only listed Sep - Dec 2015; 2WD 1.6 T-GDi from Jun 2017. Sport Edition Dec 2016 - Aug 2018; Go! SE Feb - Aug 2018. 'Blue Drive' is an eco label, not a trim. No Ultimate trim for the TL in the UK. Engine codes per the Wikipedia TL infobox (G4FD, G4FJ, D4FD, D4HA, D4FE).",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against the Parkers UK Hyundai Tucson Estate 2015-2021 specs listing (all 67 derivatives with on-sale dates, bhp, cc, drivetrain, gearbox) and Wikipedia (Hyundai Tucson TL infobox and powertrain table).",
+   "sources": [
+    "https://vehiclescore.co.uk/cars/hyundai/tucson",
+    "https://www.parkers.co.uk/hyundai/tucson/estate-2015/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Hyundai_Tucson&action=raw",
+    "https://www.parkers.co.uk/hyundai/tucson/estate-2015/premium-se-20-crdi-185ps-48v-mild-hybrid-4wd-auto-(092018-on)-5d/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/estate-2015/se-nav-16-gdi-132ps-2wd-(092018-on)-5d/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/estate-2015/n-line-16-t-gdi-177ps-2wd-5d/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/estate-2015/17-crdi-blue-drive-se-2wd-5d/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/estate-2015/17-crdi-blue-drive-se-2wd-5d-dct/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/estate-2015/20-crdi-blue-drive-premium-2wd-5d/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/estate-2015/s-connect-16-crdi-115ps-2wd-(092018-on)-5d/specs/"
+   ]
+  },
+  {
+   "make": "Hyundai",
+   "model": "Tucson",
+   "generation": "NX4",
+   "years": "2021-",
+   "facelift": "2024",
+   "bodies": [
+    "5dr SUV"
+   ],
+   "engines": [
+    {
+     "badge": "1.6 T-GDi 150",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": 150,
+     "engine_code": "G4FP",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-",
+     "note": "Non-hybrid. 6-speed manual Jan 2021 - Dec 2024 (SE Connect, Premium, N Line, N Line S, Ultimate); the Apr 2024 update was listed at 157bhp (separate entry); 2026 model year from Sep 2025 as '1.6T 150' with 6-speed manual or 7-speed DCT once the 48V system was dropped."
+    },
+    {
+     "badge": "1.6 T-GDi 48V MHEV 150",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1598,
+     "ps": 150,
+     "engine_code": "G4FP",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2024",
+     "note": "2WD; 6-speed iMT in 2021 only, otherwise 7-speed DCT."
+    },
+    {
+     "badge": "1.6 T-GDi 48V MHEV 180",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1598,
+     "ps": 180,
+     "engine_code": "G4FP",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2021-2025",
+     "note": "7-speed DCT, 4WD only (N Line S, Ultimate). Continued after the Apr 2024 update as '1.6T 48V MHD 180' to Oct 2025 (Parkers gives those 157bhp, which conflicts with the badge)."
+    },
+    {
+     "badge": "1.6 T-GDi (2024 update)",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-2025",
+     "note": "Apr 2024 update, non-hybrid 6-speed manual; 157bhp/265Nm per Parkers (PS not confirmed); Advance, Premium, N Line, N Line S, Ultimate; to Oct 2025."
+    },
+    {
+     "badge": "1.6 T-GDi 48V MHEV (2024 update)",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1598,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-2025",
+     "note": "Apr 2024 update, 7-speed DCT, 2WD; 157bhp/265Nm per Parkers (PS not confirmed); Advance, Premium, N Line, N Line S, Ultimate; to Oct 2025."
+    },
+    {
+     "badge": "1.6 T-GDi 180",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": 180,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2025-2025",
+     "note": "2026 model-year non-hybrid 180PS 4WD with 7-speed DCT (Wikipedia); Parkers lists N Line S and Ultimate 4WD DCT for Sep 2025 only (177bhp)."
+    },
+    {
+     "badge": "1.6 T-GDi Hybrid 230",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1598,
+     "ps": 230,
+     "engine_code": "G4FT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2024",
+     "note": "6-speed auto; 2WD only in the UK listing (SE Connect, Premium, Ultimate, N Line, N Line S); 226bhp per Parkers. 4WD hybrids arrived with the Apr 2024 update."
+    },
+    {
+     "badge": "1.6 T-GDi Plug-in Hybrid 265",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1598,
+     "ps": 265,
+     "engine_code": "G4FT",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2021-2024",
+     "note": "6-speed auto, 4WD; Premium, Ultimate, N Line, N Line S; Dec 2020 - Dec 2024 (261bhp per Parkers)."
+    },
+    {
+     "badge": "1.6 T-GDi Hybrid (facelift)",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1598,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2024-2025",
+     "note": "Apr 2024 update: 211bhp per Parkers (PS not confirmed); 6-speed auto; 2WD or 4WD (N Line S, Ultimate). Replaced by the 239 Hybrid from Oct 2025."
+    },
+    {
+     "badge": "1.6 T-GDi Plug-in Hybrid (facelift)",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1598,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2024-",
+     "note": "Apr 2024 update: 248bhp per Parkers (PS not confirmed); 6-speed auto; 4WD from Apr 2024, 2WD from Jul 2024; still listed alongside the 288 PHEV."
+    },
+    {
+     "badge": "1.6 T-GDi 239 Hybrid",
+     "fuel": "Petrol hybrid (HEV)",
+     "cc": 1598,
+     "ps": 239,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2025-",
+     "note": "2026 model year from Oct 2025, Hyundai UK badge '239'; 235bhp per Parkers; 6-speed auto, 2WD or 4WD (N Line S, Ultimate)."
+    },
+    {
+     "badge": "1.6 T-GDi 288 Plug-in Hybrid",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1598,
+     "ps": 288,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2026-",
+     "note": "From May 2026, Hyundai UK badge '288'; 283bhp per Parkers; 6-speed auto, 2WD or 4WD."
+    }
+   ],
+   "trims": [
+    "SE Connect",
+    "Premium",
+    "Ultimate",
+    "N Line",
+    "N Line S",
+    "Advance",
+    "Element",
+    "Black Line",
+    "N Line Edition"
+   ],
+   "trims_by_period": {
+    "2021-2024": [
+     "SE Connect",
+     "Premium",
+     "N Line",
+     "N Line S",
+     "Ultimate"
+    ],
+    "2024-2026": [
+     "Advance",
+     "Premium",
+     "N Line",
+     "N Line S",
+     "Ultimate"
+    ],
+    "2026-": [
+     "Element",
+     "Black Line",
+     "N Line Edition",
+     "N Line S",
+     "Ultimate"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "6-speed iMT",
+    "7-speed DCT",
+    "6-speed automatic (HEV/PHEV)"
+   ],
+   "notes": "UK line-up checked against all 100 Parkers derivatives (Dec 2020 on). UK range is all 1.6 T-GDi Smartstream; no diesel in the UK. 2021-24: 150 manual, 48V 150 (iMT in 2021, then DCT, 2WD), 48V 180 (DCT, 4WD only), Hybrid 230 (2WD only), Plug-in Hybrid 265 (4WD). Apr 2024 update: non-hybrid and 48V listed at 157bhp, 48V 180 4WD kept, Hybrid 211bhp (2WD or 4WD), PHEV 248bhp (4WD, plus 2WD from Jul 2024). These revised outputs are left null because UK PS figures are not confirmed. 2026 model year (Sep/Oct 2025, per Wikipedia and Parkers): 48V dropped, '1.6T 150' (manual or DCT), '1.6T 180' 4WD (listed Sep 2025 only), '239 Hybrid'; '288' PHEV from May 2026. 2026 trim reshuffle (Element, Black Line, N Line Edition) per the Hyundai UK press release and Parkers.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against the Parkers UK Hyundai Tucson SUV 2021-on specs listing (all 100 derivatives with on-sale dates, bhp, torque, drivetrain, gearbox, engine filters) and Wikipedia (Hyundai Tucson NX4 infobox, Europe section and powertrain table).",
+   "sources": [
+    "https://www.hyundai.news/uk/press-kits/hyundai-announces-prices-and-specifications-for-new-tucson-compact-suv",
+    "https://www.hyundai.news/uk/articles/press-releases/hyundai-announces-prices-and-specifications-for-new-tucson-april-2024.html",
+    "https://www.hyundai.news/uk/articles/press-releases/tucson-range-pricing-2026.html",
+    "https://www.honestjohn.co.uk/news/new-cars/2026-03/2026-hyundai-tucson",
+    "https://www.parkers.co.uk/hyundai/tucson/suv-2021/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Hyundai_Tucson&action=raw",
+    "https://www.parkers.co.uk/hyundai/tucson/suv-2021/16t-150-premium-5dr-dct/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/suv-2021/16-tgdi-48v-mhd-premium-5dr-2wd-dct/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/suv-2021/16-tgdi-48v-mhd-180-ultimate-5dr-4wd-dct/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/suv-2021/16t-advance-5dr/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/suv-2021/16t-180-ultimate-5dr-4wd-dct/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/suv-2021/16-tgdi-phev-premium-5dr-4wd-auto/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/suv-2021/16t-hybrid-ultimate-5dr-4wd-auto/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/suv-2021/16t-plug-in-hybrid-advance-5dr-auto/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/suv-2021/16t-239-hybrid-advance-5dr-auto/specs/",
+    "https://www.parkers.co.uk/hyundai/tucson/suv-2021/16t-288-plug-in-hybrid-element-5dr-auto/specs/"
+   ]
+  },
+  {
+   "make": "Hyundai",
+   "model": "i20",
+   "generation": "BC3 (Mk3)",
+   "years": "2020-",
+   "facelift": "2023",
+   "bodies": [
+    "5dr hatchback",
+    "5dr hatchback (i20 N)"
+   ],
+   "engines": [
+    {
+     "badge": "1.0 T-GDi 48V MHEV 100",
+     "fuel": "Petrol mild hybrid",
+     "cc": 998,
+     "ps": 100,
+     "engine_code": "G3LE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2023",
+     "note": "6-speed iMT or 7-speed DCT; SE Connect, Premium, Ultimate; Sep 2020 - Aug 2023."
+    },
+    {
+     "badge": "1.0 T-GDi 48V MHEV 120",
+     "fuel": "Petrol mild hybrid",
+     "cc": 998,
+     "ps": 120,
+     "engine_code": "G3LE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2023",
+     "note": "N Line only; 6-speed iMT or 7-speed DCT; May 2021 - Aug 2023."
+    },
+    {
+     "badge": "1.0 T-GDi 100",
+     "fuel": "Petrol",
+     "cc": 998,
+     "ps": 100,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-",
+     "note": "Non-hybrid. Element (6-speed manual, Jul 2021 - Mar 2022), then the whole range after the Aug 2023 facelift, which dropped the 48V system in the UK (manual or DCT)."
+    },
+    {
+     "badge": "1.0 T-GDi 90",
+     "fuel": "Petrol",
+     "cc": 998,
+     "ps": 90,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "From Nov 2025, Hyundai UK badge '90' (88bhp per Parkers); 6-speed manual or 7-speed DCT; Element, Tech Line, Black Line."
+    },
+    {
+     "badge": "1.6 T-GDi i20 N 204",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": 204,
+     "engine_code": "G4FV",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2024",
+     "note": "6-speed manual, 5-door; on sale from May 2021. European production ended Feb 2024 (Wikipedia), though Parkers still lists the derivative to Oct 2026. G4FV is the i20 N version of the Smartstream G1.6T (G4FP)."
+    }
+   ],
+   "trims": [
+    "SE Connect",
+    "Premium",
+    "Ultimate",
+    "N Line",
+    "Element",
+    "Advance",
+    "N Line S",
+    "Tech Line",
+    "Black Line",
+    "N",
+    "N Performance Pack"
+   ],
+   "trims_by_period": {
+    "2020-2023": [
+     "SE Connect",
+     "Premium",
+     "N Line",
+     "Ultimate",
+     "Element",
+     "N"
+    ],
+    "2023-": [
+     "Advance",
+     "Premium",
+     "N Line S",
+     "Ultimate"
+    ],
+    "2025- 1.0 T-GDi 90": [
+     "Element",
+     "Tech Line",
+     "Black Line"
+    ]
+   },
+   "transmissions": [
+    "6-speed iMT (MHEV)",
+    "6-speed manual",
+    "7-speed DCT"
+   ],
+   "notes": "UK line-up checked against all 27 Parkers i20 derivatives plus the i20 N page. Launch (Sep 2020): 1.0 T-GDi 48V 100 in SE Connect, Premium, Ultimate; N Line (48V 120) from May 2021; non-hybrid 1.0 T-GDi Element Jul 2021 - Mar 2022. The Aug 2023 facelift dropped the 48V system in the UK (Wikipedia, Parkers): 1.0 T-GDi 100 in Advance, Premium, Ultimate and N Line S (from Apr 2024). 1.0 T-GDi 90 (Element, Tech Line, Black Line) from Nov 2025. i20 N (6-speed manual, 5-door) from May 2021; European production ended Feb 2024. Engine codes: G3LE kept for the 48V 1.0 (Wikipedia lists the i20 BC3 under Smartstream G1.0T G3LE/G3LF and describes G3LF as the mild-hybrid-capable version, so the exact split is not confirmed); G4FV for the i20 N per Wikipedia.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against the Parkers UK Hyundai i20 Hatchback 2020-on specs listing (all 27 derivatives with on-sale dates, bhp, gearbox) and the i20 N 2021 page, plus Wikipedia (Hyundai i20 BC3 section and powertrain table; Hyundai Smartstream engine).",
+   "sources": [
+    "https://www.hyundai.news/uk/press-kits/hyundai-announces-all-new-i20-prices-and-specifications",
+    "https://parkers.co.uk/hyundai/i20/hatchback-2020/specs",
+    "https://businesscar.co.uk/?p=18675",
+    "https://vehiclescore.co.uk/cars/hyundai/i20",
+    "https://www.parkers.co.uk/hyundai/i20/hatchback-2020/specs/",
+    "https://www.parkers.co.uk/hyundai/i20/n-2021/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Hyundai_i20&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=Hyundai_Smartstream_engine&action=raw",
+    "https://www.parkers.co.uk/hyundai/i20/n-2021/16t-gdi-n-5dr/specs/",
+    "https://www.parkers.co.uk/hyundai/i20/hatchback-2020/10t-gdi-48v-mhd-120-n-line-5dr/specs/",
+    "https://www.parkers.co.uk/hyundai/i20/hatchback-2020/10t-gdi-element-5dr/specs/",
+    "https://www.parkers.co.uk/hyundai/i20/hatchback-2020/10t-gdi-90-element-5dr/specs/"
+   ]
+  },
+  {
+   "make": "Peugeot",
+   "model": "208",
+   "generation": "P21 (Mk2)",
+   "years": "2019-",
+   "facelift": "2023",
+   "bodies": [
+    "5dr hatchback"
+   ],
+   "engines": [
+    {
+     "badge": "1.2 PureTech 75",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 75,
+     "engine_code": "EB2FA",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2024",
+     "note": "5-speed manual only; Active, Active Premium, Active Premium +; last listed Oct 2024."
+    },
+    {
+     "badge": "1.2 PureTech 100",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 100,
+     "engine_code": "EB2ADTD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-",
+     "note": "6-speed manual throughout; EAT8 auto pre-facelift only (to Sep 2023). Listed as '1.2 100' from Mar 2026 ('1.2 100 Turbo' on Envy)."
+    },
+    {
+     "badge": "1.2 PureTech 130",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 130,
+     "engine_code": "EB2ADTS",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2023",
+     "note": "EAT8 only; Allure, GT Line, GT and the Premium versions; to Sep 2023."
+    },
+    {
+     "badge": "1.5 BlueHDi 100",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 100,
+     "engine_code": "DV5RD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2023",
+     "note": "6-speed manual; to Sep 2023."
+    },
+    {
+     "badge": "e-208 136 (50kWh)",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 136,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-",
+     "note": "100kW. Continued after the Sep 2023 facelift alongside the 115kW version (Active to Oct 2024, E-Style Sep 2023 - Feb 2024, Allure/GT still listed, Envy from Sep 2026)."
+    },
+    {
+     "badge": "e-208 156 (51kWh)",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 156,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-",
+     "note": "115kW, from Sep 2023."
+    },
+    {
+     "badge": "1.2 Hybrid 100",
+     "fuel": "Petrol mild hybrid (48V)",
+     "cc": 1199,
+     "ps": 100,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-2025",
+     "note": "e-DCS6; Active, Allure, GT; Sep 2023 - May 2025 (replaced by Hybrid 110)."
+    },
+    {
+     "badge": "1.2 Hybrid 136",
+     "fuel": "Petrol mild hybrid (48V)",
+     "cc": 1199,
+     "ps": 136,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-2025",
+     "note": "e-DCS6; GT (Sep 2023 - Apr 2025) and Allure (Oct 2024 - Apr 2025); replaced by Hybrid 145."
+    },
+    {
+     "badge": "1.2 Hybrid 110",
+     "fuel": "Petrol mild hybrid (48V)",
+     "cc": 1199,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "e-DCS6; replaced Hybrid 100 from Apr 2025 (Allure, GT, GT Premium; Envy from Sep 2026)."
+    },
+    {
+     "badge": "1.2 Hybrid 145",
+     "fuel": "Petrol mild hybrid (48V)",
+     "cc": 1199,
+     "ps": 145,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "e-DCS6; replaced Hybrid 136 from Apr 2025 (GT, GT Premium)."
+    },
+    {
+     "badge": "e-208 GTi (51kWh)",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2026-",
+     "note": "207kW (277bhp per Parkers); from Jun 2026."
+    }
+   ],
+   "trims": [
+    "Active",
+    "Active Premium",
+    "Active Premium +",
+    "Allure",
+    "Allure Premium",
+    "Allure Premium +",
+    "GT Line",
+    "GT",
+    "GT Premium",
+    "E-Style",
+    "Style",
+    "Envy",
+    "GTi"
+   ],
+   "trims_by_period": {
+    "2019-2021": [
+     "Active",
+     "Allure",
+     "GT Line",
+     "GT",
+     "Active Premium",
+     "Allure Premium"
+    ],
+    "2021-2023": [
+     "Active Premium",
+     "Allure",
+     "Allure Premium",
+     "GT",
+     "GT Premium",
+     "Active Premium +",
+     "Allure Premium +"
+    ],
+    "2023-": [
+     "Active",
+     "Allure",
+     "GT",
+     "E-Style (e-208 limited)",
+     "Style",
+     "GT Premium",
+     "Envy",
+     "GTi (e-208)"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual",
+    "8-speed EAT8 automatic",
+    "6-speed e-DCS6 dual-clutch (Hybrid)",
+    "Single-speed (electric)"
+   ],
+   "notes": "UK line-up checked against Parkers (208 hatchback 62 and e-208 25 derivative cards, Aug 2019 on). PureTech 75 is 5-speed manual only (to Oct 2024); PureTech 100 6-speed manual throughout, EAT8 only before the facelift; PureTech 130 is EAT8 only (Allure, GT Line, GT, to Sep 2023); BlueHDi 100 6-speed manual to Sep 2023. Sep 2023 facelift: 48V Hybrid 100/136 (e-DCS6), replaced in Apr 2025 by Hybrid 110/145; e-208 adds the 115kW/51kWh version and the 100kW/50kWh one carries on. From 2026 the petrol is listed as '1.2 100' (Envy: '1.2 100 Turbo'); e-208 GTi (207kW) from Jun 2026. Trims: GT Line to Dec 2020, GT from Dec 2020 (e-208 GT from launch), Premium versions Feb 2020 - Jun 2022, 'Premium +' Jul 2022 - Sep 2023, E-Style Sep 2023 - Feb 2024, Style from Apr 2025, Envy from Sep 2026. Engine codes per Wikipedia (EB2FA 75, EB2ADTD 100, DV5RD BlueHDi 100). EB2ADTS kept for the 130, but note that Wikipedia's 208 article names the 130 'EB2DTS'.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against the Parkers UK Peugeot 208 Hatchback 2019-on and e-208 Hatchback 2019-on specs listings (87 derivative cards, 82 derivative pages with on-sale dates, bhp, gearbox) and Wikipedia (Peugeot 208 P21 section and powertrain table; List of PSA engines; Ford DLD engine).",
+   "sources": [
+    "https://www.autocar.co.uk/node/129654",
+    "https://www.autoexpress.co.uk/peugeot/208/360449/refreshed-2024-peugeot-208-and-e-208-go-sale-new-face-and-tweaked-features",
+    "https://www.carbuyer.co.uk/news/305061/facelifted-peugeot-208-and-e-208-will-leave-you-spoilt-for-choice",
+    "https://evfleetworld.co.uk/revamped-peugeot-208-and-e-208-open-for-orders/",
+    "https://www.parkers.co.uk/peugeot/208/hatchback-2019/specs/",
+    "https://www.parkers.co.uk/peugeot/e-208/hatchback-2019/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Peugeot_208&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=List_of_PSA_engines&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=Ford_DLD_engine&action=raw",
+    "https://www.parkers.co.uk/peugeot/208/hatchback-2019/12-puretech-active-5dr/specs/",
+    "https://www.parkers.co.uk/peugeot/208/hatchback-2019/12-puretech-100-allure-5dr/specs/",
+    "https://www.parkers.co.uk/peugeot/e-208/hatchback-2019/100kw-gt-50kwh-5dr-auto/specs/",
+    "https://www.parkers.co.uk/peugeot/208/hatchback-2019/12-puretech-130-gt-5dr-eat8/specs/",
+    "https://www.parkers.co.uk/peugeot/208/hatchback-2019/12-hybrid-100-allure-5dr-e-dsc6/specs/",
+    "https://www.parkers.co.uk/peugeot/208/hatchback-2019/12-hybrid-136-gt-5dr-e-dsc6/specs/",
+    "https://www.parkers.co.uk/peugeot/208/hatchback-2019/12-hybrid-110-gt-5dr-e-dsc6/specs/",
+    "https://www.parkers.co.uk/peugeot/208/hatchback-2019/12-hybrid-145-gt-5dr-e-dsc6/specs/",
+    "https://www.parkers.co.uk/peugeot/208/hatchback-2019/207kw-gti-51kwh-5dr-auto/specs/"
+   ]
+  },
+  {
+   "make": "Peugeot",
+   "model": "2008",
+   "generation": "P24 (Mk2)",
+   "years": "2019-",
+   "facelift": "2023",
+   "bodies": [
+    "5dr crossover"
+   ],
+   "engines": [
+    {
+     "badge": "1.2 PureTech 100",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 100,
+     "engine_code": "EB2ADTD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-",
+     "note": "6-speed manual only in the UK; listed as '1.2 PureTech', then '1.2' / '1.2 Turbo' from 2026."
+    },
+    {
+     "badge": "1.2 PureTech 130",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 130,
+     "engine_code": "EB2ADTS",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-",
+     "note": "6-speed manual or EAT8."
+    },
+    {
+     "badge": "1.2 PureTech 155",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 155,
+     "engine_code": "EB2ADTX",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2022",
+     "note": "EAT8; GT (Nov 2019 - Nov 2020) and GT Premium (Dec 2020 - May 2022). EB2ADTX confirmed by the Wikipedia List of PSA engines (155hp, Peugeot 2008 GT)."
+    },
+    {
+     "badge": "1.5 BlueHDi 100",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 100,
+     "engine_code": "DV5RD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2020",
+     "note": "6-speed manual; Active, Allure, GT Line, Active Premium, Allure Premium; Nov 2019 - Nov 2020 (99bhp per Parkers)."
+    },
+    {
+     "badge": "1.5 BlueHDi 110",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 110,
+     "engine_code": "DV5RD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2022",
+     "note": "6-speed manual; Active Premium, Allure, Allure Premium, GT; Dec 2020 - May 2022. The only diesel after 2020, and none after the 2023 facelift."
+    },
+    {
+     "badge": "e-2008 136 (50kWh)",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 136,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2025",
+     "note": "100kW; Nov 2019 - May 2023, then again Jan 2024 - Apr 2025 (Active, Allure, GT)."
+    },
+    {
+     "badge": "e-2008 156 (54kWh)",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 156,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-",
+     "note": "115kW, from May 2023 (First Edition May - Nov 2023)."
+    },
+    {
+     "badge": "1.2 Hybrid 136",
+     "fuel": "Petrol mild hybrid (48V)",
+     "cc": 1199,
+     "ps": 136,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-2025",
+     "note": "e-DCS6; Active, Allure, GT; Jan 2024 - Apr 2025 (replaced by Hybrid 145)."
+    },
+    {
+     "badge": "1.2 Hybrid 145",
+     "fuel": "Petrol mild hybrid (48V)",
+     "cc": 1199,
+     "ps": 145,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "e-DCS6; Allure, GT, GT Premium (May 2025), Envy (Sep 2026); from Apr 2025."
+    },
+    {
+     "badge": "1.2 Hybrid 110",
+     "fuel": "Petrol mild hybrid (48V)",
+     "cc": 1199,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-2025",
+     "note": "e-DCS6; Allure and GT, listed by Parkers for Dec 2025 only."
+    }
+   ],
+   "trims": [
+    "Active",
+    "Active Premium",
+    "Active Premium+",
+    "Allure",
+    "Allure Premium",
+    "Allure Premium+",
+    "GT Line",
+    "GT",
+    "GT Premium",
+    "First Edition",
+    "Envy"
+   ],
+   "trims_by_period": {
+    "2019-2021": [
+     "Active",
+     "Allure",
+     "GT Line",
+     "GT",
+     "Active Premium",
+     "Allure Premium"
+    ],
+    "2021-2023": [
+     "Active Premium",
+     "Allure",
+     "Allure Premium",
+     "GT",
+     "GT Premium",
+     "Active Premium+",
+     "Allure Premium+"
+    ],
+    "2023-": [
+     "Active",
+     "Allure",
+     "GT",
+     "GT Premium",
+     "Envy",
+     "First Edition (e-2008)"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "8-speed EAT8 automatic",
+    "6-speed e-DCS6 dual-clutch (Hybrid)",
+    "Single-speed (electric)"
+   ],
+   "notes": "UK line-up checked against Parkers (2008 53 and e-2008 24 derivative cards, Nov 2019 on) and the Parkers 2008 review. PureTech 100 is 6-speed manual only in the UK; PureTech 130 manual or EAT8; PureTech 155 EAT8 GT/GT Premium to May 2022. Diesels: BlueHDi 100 (Nov 2019 - Nov 2020) then BlueHDi 110 (Dec 2020 - May 2022), both 6-speed manual. There was no UK BlueHDi 130, and no diesel after the 2023 facelift. 48V Hybrid 136 (Jan 2024 - Apr 2025) replaced by Hybrid 145 (from Apr 2025); Hybrid 110 listed Dec 2025 only. e-2008: 100kW/50kWh (2019-23 and 2024-25), 115kW/54kWh from May 2023. Engine codes per Wikipedia (EB2ADTD 100, EB2ADTX 155, DV5RD BlueHDi 100); EB2ADTS (130) and DV5RD (110) kept from the original record and not otherwise confirmed.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against the Parkers UK Peugeot 2008 Estate 2020-on and e-2008 SUV 2020-on specs listings (77 derivative cards, 71 derivative pages with on-sale dates, bhp, gearbox, engine filters), the Parkers 2008 review, and Wikipedia (Peugeot 2008 P24 section and powertrain tables; List of PSA engines; Ford DLD engine).",
+   "sources": [
+    "https://www.stellantisandyou.co.uk/news-hub/new-peugeot-2008-open-for-orders",
+    "https://www.carbuyer.co.uk:443/peugeot/2008/304326/the-peugeot-2008-and-e-2008-suvs-get-new-trim-lineup",
+    "https://www.autoexpress.co.uk/peugeot/2008/prices-specs/104767/1.2-hybrid-136-active-5dr-e-dsc6",
+    "https://www.carkeys.co.uk/guides/buyer-s-guide-to-the-peugeot-2008",
+    "https://www.parkers.co.uk/peugeot/2008/estate-2020/specs/",
+    "https://www.parkers.co.uk/peugeot/e-2008/suv-2020/specs/",
+    "https://www.parkers.co.uk/peugeot/2008/review/",
+    "https://en.wikipedia.org/w/index.php?title=Peugeot_2008&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=List_of_PSA_engines&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=Ford_DLD_engine&action=raw",
+    "https://www.parkers.co.uk/peugeot/2008/estate-2020/active-12-puretech-100-ss-5d/specs/",
+    "https://www.parkers.co.uk/peugeot/2008/estate-2020/allure-12-puretech-130-eat8-auto-ss-5d/specs/",
+    "https://www.parkers.co.uk/peugeot/2008/estate-2020/12-puretech-155-gt-premium-5dr-eat8/specs/",
+    "https://www.parkers.co.uk/peugeot/2008/estate-2020/active-15-bluehdi-100-ss-5d/specs/",
+    "https://www.parkers.co.uk/peugeot/2008/estate-2020/15-bluehdi-110-active-premium-5dr/specs/",
+    "https://www.parkers.co.uk/peugeot/e-2008/suv-2020/100kw-gt-50kwh-5dr-auto/specs/",
+    "https://www.parkers.co.uk/peugeot/2008/estate-2020/12-hybrid-136-gt-5dr-e-dsc6/specs/",
+    "https://www.parkers.co.uk/peugeot/2008/estate-2020/12-hybrid-145-allure-5dr-e-dsc6/specs/",
+    "https://www.parkers.co.uk/peugeot/2008/estate-2020/12-hybrid-110-allure-5dr-e-dsc6/specs/"
+   ]
+  },
+  {
+   "make": "Peugeot",
+   "model": "3008",
+   "generation": "P84 (Mk2)",
+   "years": "2016-2024",
+   "facelift": "2020",
+   "bodies": [
+    "5dr SUV"
+   ],
+   "engines": [
+    {
+     "badge": "1.2 PureTech 130",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 130,
+     "engine_code": "EB2ADTS",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2023",
+     "note": "6-speed manual, EAT6 (to May 2018) or EAT8 (from Sep 2018); to Nov 2023."
+    },
+    {
+     "badge": "1.6 THP 165",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": 165,
+     "engine_code": "EP6FDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2018",
+     "note": "EAT6 only; Allure, GT Line, GT Line Premium; Dec 2016 - May 2018."
+    },
+    {
+     "badge": "1.6 PureTech 180",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": 180,
+     "engine_code": "EP6FADTXD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2021",
+     "note": "EAT8 only; Allure, GT Line, GT Line Premium, then GT and GT Premium; Sep 2018 - Jun 2021."
+    },
+    {
+     "badge": "1.6 BlueHDi 100",
+     "fuel": "Diesel",
+     "cc": 1560,
+     "ps": 100,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2018",
+     "note": "5-speed manual; Active only; Dec 2016 - May 2018 (97bhp per Parkers)."
+    },
+    {
+     "badge": "1.6 BlueHDi 120",
+     "fuel": "Diesel",
+     "cc": 1560,
+     "ps": 120,
+     "engine_code": "DV6FC",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2018",
+     "note": "6-speed manual or EAT6; to Apr 2018."
+    },
+    {
+     "badge": "1.5 BlueHDi 130",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 130,
+     "engine_code": "DV5RC",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2024",
+     "note": "6-speed manual or EAT8; from Mar 2018; last listed May 2024."
+    },
+    {
+     "badge": "2.0 BlueHDi 150",
+     "fuel": "Diesel",
+     "cc": 1997,
+     "ps": 150,
+     "engine_code": "DW10FD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2018",
+     "note": "6-speed manual; GT Line, GT Line Premium; to May 2018."
+    },
+    {
+     "badge": "2.0 BlueHDi 180",
+     "fuel": "Diesel",
+     "cc": 1997,
+     "ps": 180,
+     "engine_code": "DW10FC",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2020",
+     "note": "EAT6 (GT, to Feb 2018), then EAT8 (GT, plus Allure, GT Line and GT Line Premium from May 2018); to Oct 2020."
+    },
+    {
+     "badge": "1.6 Hybrid 225",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1598,
+     "ps": 225,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2024",
+     "note": "e-EAT8, FWD; from Jan 2020; last listed May 2024."
+    },
+    {
+     "badge": "1.6 Hybrid4 300",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1598,
+     "ps": 300,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2020-2023",
+     "note": "e-EAT8, AWD; Jan 2020 - Oct 2023."
+    },
+    {
+     "badge": "1.6 Hybrid 180",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1598,
+     "ps": 180,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2022-2024",
+     "note": "e-EAT8; Active Premium+, Allure Premium+ (Nov 2022 - Oct 2023), Active, Allure (Oct 2023 - May 2024); 177bhp per Parkers."
+    },
+    {
+     "badge": "1.2 Hybrid 136",
+     "fuel": "Petrol mild hybrid (48V)",
+     "cc": 1199,
+     "ps": 136,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-2024",
+     "note": "48V mild hybrid, e-DCS6; Active Premium+, Allure Premium+, GT (May - Nov 2023), then Active, Allure (Oct 2023 - May 2024)."
+    }
+   ],
+   "trims": [
+    "Active",
+    "Active Premium",
+    "Active Premium+",
+    "Allure",
+    "Allure Premium",
+    "Allure Premium+",
+    "GT Line",
+    "GT Line Premium",
+    "GT",
+    "GT Premium"
+   ],
+   "trims_by_period": {
+    "2016-2020": [
+     "Active",
+     "Allure",
+     "GT Line",
+     "GT Line Premium",
+     "GT"
+    ],
+    "2020-2024": [
+     "Active Premium",
+     "Allure",
+     "Allure Premium",
+     "GT",
+     "GT Premium",
+     "Active Premium+",
+     "Allure Premium+",
+     "Active"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual",
+    "6-speed EAT6 automatic",
+    "8-speed EAT8 automatic",
+    "8-speed e-EAT8 (PHEV)",
+    "6-speed e-DCS6 (Hybrid 136)"
+   ],
+   "notes": "UK line-up checked against all 95 Parkers derivative cards (Dec 2016 - May 2024). EAT6 used to mid-2018, then EAT8. 1.6 THP 165 (EAT6) to May 2018, replaced by the 1.6 PureTech 180 (EAT8, to Jun 2021). Diesels: 1.6 BlueHDi 100 (5-speed manual, Active) and 120 to 2018, 2.0 BlueHDi 150 (manual) to May 2018, 2.0 BlueHDi 180 (GT, plus EAT8 Allure/GT Line/GT Line Premium from May 2018) to Oct 2020, 1.5 BlueHDi 130 from Mar 2018 to the end. Plug-in hybrids from Jan 2020 (Hybrid 225 FWD, Hybrid4 300 AWD) and Hybrid 180 from Nov 2022; 48V Hybrid 136 from May 2023 before the E-3008 (Mk3, 2024). GT Line and GT Line Premium ended with the Oct 2020 facelift; Premium versions to mid-2022, then Premium+ to Oct 2023, then Active/Allure. Codes per Wikipedia: DV6FC (1.6 BlueHDi 120), DV5RC (1.5 BlueHDi 130), DW10FD (150) / DW10FC (180), EP6FADTXD (PureTech 180); EP6FDT (THP 165) and EB2ADTS (PureTech 130) kept from the original record.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against the Parkers UK Peugeot 3008 SUV 2016-2024 specs listing (95 derivative cards, 87 derivative pages with on-sale dates, bhp, cc, gearbox, engine and trim filters) and Wikipedia (Peugeot 3008 P84 infobox; Prince engine; PSA EW/DW engine; Ford DLD engine).",
+   "sources": [
+    "https://www.topgear.com/car-reviews/peugeot/3008-2016-2023/buying",
+    "https://parkers.co.uk/peugeot/3008/suv-2016/specs",
+    "https://www.autoexpress.co.uk/peugeot/3008/prices-specs/108215/1.6-plug-in-hybrid-195-gt-premium-5dr-auto",
+    "https://www.parkers.co.uk/peugeot/3008/suv-2016/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Peugeot_3008&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=Prince_engine&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=PSA_EW/DW_engine&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=Ford_DLD_engine&action=raw",
+    "https://www.parkers.co.uk/peugeot/3008/suv-2016/12-hybrid-136-allure-5dr-e-dsc6/specs/",
+    "https://www.parkers.co.uk/peugeot/3008/suv-2016/16-puretech-180-gt-premium-5dr-eat8/specs/",
+    "https://www.parkers.co.uk/peugeot/3008/suv-2016/active-16-bluehdi-100-ss-5d/specs/",
+    "https://www.parkers.co.uk/peugeot/3008/suv-2016/15-bluehdi-active-5dr-eat8/specs/",
+    "https://www.parkers.co.uk/peugeot/3008/suv-2016/16-hybrid-225-active-5dr-e-eat8/specs/",
+    "https://www.parkers.co.uk/peugeot/3008/suv-2016/12-puretech-allure-5dr-eat8/specs/",
+    "https://www.parkers.co.uk/peugeot/3008/suv-2016/16-hybrid-180-allure-premium-5dr-e-eat8/specs/"
+   ]
+  },
+  {
+   "make": "Skoda",
+   "model": "Octavia",
+   "generation": "Mk3 (5E)",
+   "years": "2013-2020",
+   "facelift": "2017",
+   "bodies": [
+    "5dr hatchback (liftback)",
+    "5dr estate"
+   ],
+   "engines": [
+    {
+     "badge": "1.0 TSI 115",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 115,
+     "engine_code": "CHZD (EA211)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2020",
+     "note": "113bhp per Parkers; 6-speed manual or 7-speed DSG. Pre-facelift S/SE from May 2016, facelift (03/17 on) derivatives to June 2020."
+    },
+    {
+     "badge": "1.2 TSI 105",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 105,
+     "engine_code": "CJZA (EA211)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2015",
+     "note": "103bhp per Parkers; 6-speed manual or 7-speed DSG, Mar 2013 - May 2015."
+    },
+    {
+     "badge": "1.2 TSI 110",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 110,
+     "engine_code": "CJZD (EA211)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2016",
+     "note": "108bhp per Parkers; S/SE May 2015 - June 2016, then replaced by the 1.0 TSI 115."
+    },
+    {
+     "badge": "1.4 TSI 140",
+     "fuel": "Petrol",
+     "cc": 1395,
+     "ps": 140,
+     "engine_code": "CHPA (EA211)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2015",
+     "note": "138bhp per Parkers; SE/Elegance, Mar 2013 - May 2015."
+    },
+    {
+     "badge": "1.4 TSI 150",
+     "fuel": "Petrol",
+     "cc": 1395,
+     "ps": 150,
+     "engine_code": "CZDA (EA211)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2018",
+     "note": "147bhp per Parkers; May 2015 - Nov 2018. FWD only in the UK: no 1.4 TSI 4x4 in Parkers' Mk3 hatch, estate or Scout lists."
+    },
+    {
+     "badge": "1.5 TSI 150",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 150,
+     "engine_code": "DADA (EA211 evo)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020",
+     "note": "147bhp per Parkers; ACT cylinder deactivation; from July 2017 (6-speed manual) / Aug 2017 (DSG)."
+    },
+    {
+     "badge": "1.8 TSI 180",
+     "fuel": "Petrol",
+     "cc": 1798,
+     "ps": 180,
+     "engine_code": "CJSA (EA888 Gen3)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2017",
+     "note": "177bhp per Parkers; UK: Laurin & Klement hatch and estate only, FWD, May 2014 - Jan 2017. No UK 1.8 TSI 4x4 or Scout derivative in Parkers' lists."
+    },
+    {
+     "badge": "2.0 TSI 190",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 190,
+     "engine_code": "DKZA (EA888 Gen3)",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2018-2020",
+     "note": "187bhp per Parkers; 7-speed DSG only. SE L and Laurin & Klement from July 2018; 4x4 on the estate (SE L 4x4 to Feb 2020). Code from the Wikipedia FWD table."
+    },
+    {
+     "badge": "2.0 TSI vRS 220",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 220,
+     "engine_code": "CHHB (EA888 Gen3)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017",
+     "note": "216bhp per Parkers; 6-speed manual or 6-speed DSG; estate from Aug 2013, hatch from Nov 2013, both to Feb 2017 (sold alongside the vRS 230 from Sept 2015)."
+    },
+    {
+     "badge": "2.0 TSI vRS 230",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 230,
+     "engine_code": "CHHA (EA888 Gen3)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2018",
+     "note": "226bhp per Parkers; pre-facelift Sept 2015 - Jan 2017, facelift (03/17 on) Mar 2017 - Nov 2018; 6-speed manual or 6-speed DSG."
+    },
+    {
+     "badge": "2.0 TSI vRS 245",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 245,
+     "engine_code": "DLBA (EA888 Gen3)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020",
+     "note": "241bhp per Parkers; vRS 245 from May 2017, later vRS and vRS Challenge; 6-speed manual or 7-speed DSG."
+    },
+    {
+     "badge": "1.6 TDI 90",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 90,
+     "engine_code": "CLHB (EA288)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2016",
+     "note": "UK availability unconfirmed: no 90PS (89bhp) 1.6 TDI in Parkers' Mk3 hatch or estate lists (1.6 TDI derivatives there are 103/108/113bhp). Code per Wikipedia (66kW)."
+    },
+    {
+     "badge": "1.6 TDI 105",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 105,
+     "engine_code": "CLHA (EA288)",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2013-2015",
+     "note": "103bhp per Parkers; 5-speed manual or 7-speed DSG; estate SE/Elegance 4x4 (6-speed manual) to May 2015."
+    },
+    {
+     "badge": "1.6 TDI 110",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2014-2017",
+     "note": "108bhp per Parkers; GreenLine III from Jan 2014, main range May 2015 - Feb 2017 incl. SE and SE L 4x4 estate (to Jan 2017). Wikipedia gives CXXB for the 81kW GreenLine."
+    },
+    {
+     "badge": "1.6 TDI 115",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020",
+     "note": "113bhp per Parkers; facelift (03/17 on) derivatives Mar 2017 - June 2020; 5-speed manual or 7-speed DSG."
+    },
+    {
+     "badge": "2.0 TDI 150",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 150,
+     "engine_code": "CKFC (EA288)",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2013-2020",
+     "note": "147bhp per Parkers; 4x4 estate and Scout; SCR version with 7-speed DSG from July 2018. Code from the Wikipedia 2013-2019 table."
+    },
+    {
+     "badge": "2.0 TDI 184 (vRS/Scout)",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 184,
+     "engine_code": "CUPA (FWD) / CUNA (4x4) (EA288)",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2013-2020",
+     "note": "181bhp per Parkers; vRS from Aug 2013, vRS 4x4 DSG from Nov 2015, Scout 4x4 DSG from Oct 2014."
+    }
+   ],
+   "trims": [
+    "S",
+    "SE",
+    "SE Business",
+    "SE Technology",
+    "SE Sport",
+    "SE Drive",
+    "SE L",
+    "Elegance",
+    "Edition",
+    "Black Edition",
+    "Laurin & Klement",
+    "GreenLine",
+    "Scout",
+    "SportLine",
+    "vRS",
+    "vRS 245",
+    "vRS Challenge"
+   ],
+   "trims_by_period": {
+    "2013-2017": [
+     "S",
+     "SE",
+     "SE Business",
+     "Elegance/SE L",
+     "Laurin & Klement",
+     "GreenLine",
+     "Scout (estate)",
+     "vRS",
+     "SE Sport (2016-2017)",
+     "SE Technology (2016-2017)",
+     "Black Edition (2014)"
+    ],
+    "2017-2020": [
+     "S",
+     "SE",
+     "SE Drive",
+     "SE Technology",
+     "SE L",
+     "Edition",
+     "Laurin & Klement",
+     "Scout (estate)",
+     "SportLine",
+     "vRS",
+     "vRS Challenge",
+     "vRS 245 (2017-2018)"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual",
+    "7-speed DSG",
+    "6-speed DSG"
+   ],
+   "notes": "Hatch launched March 2013, estate May 2013, with 1.2/1.4 TSI and 1.6/2.0 TDI; Elegance renamed SE L in May 2015. vRS 220 petrol and vRS 184 diesel from Aug 2013 (estate) / Nov 2013 (hatch); vRS 230 from Sept 2015; vRS 245 from May 2017; vRS 4x4 TDI DSG from Nov 2015. UK Scout (estate, 4x4) had only the 2.0 TDI 150 (manual) and 2.0 TDI 184 (DSG); Parkers lists no 1.8 TSI Scout or 1.8/1.4 TSI 4x4. 1.0 TSI 115 from May 2016 replaced the 1.2 TSI; 1.5 TSI ACT replaced the 1.4 TSI 150 from July 2017; 2.0 TSI 190 (DSG) from July 2018. Facelift derivatives from March 2017. Hatch listed new to Feb 2020, estate to June 2020. Engine codes from the Wikipedia 5E engine tables (European-market data). The 1.6 TDI 90 and the Edition trim were not found in Parkers' UK lists (kept).",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK (Octavia hatchback 2013-2020 list of 123 derivatives, estate 2013-2020 list of 138, vRS 2013-2017 list of 14, Scout 2014-2020 list of 6; every derivative spec page read) and Wikipedia (Skoda Octavia, third-generation engine tables). Trims, engines, outputs, cc, drive and on-sale dates confirmed by Parkers; engine codes from Wikipedia. Not confirmed for the UK: 1.6 TDI 90 and the Edition trim (kept, flagged).",
+   "sources": [
+    "https://www.autoexpress.co.uk/skoda/octavia/36951/used-skoda-octavia-mk3-2013-2020-review-and-buyers-guide",
+    "https://parkers.co.uk/skoda/octavia/hatchback-2013/used-review",
+    "https://buyacar.co.uk/reviews/skoda/octavia/2013/",
+    "https://en.wikipedia.org/wiki/%C5%A0koda_Octavia",
+    "https://www.parkers.co.uk/skoda/octavia/hatchback-2013/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/estate-2013/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/vrs-2013/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/scout-2014/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/hatchback-2013/s-10-tsi-115ps-5d/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/hatchback-2013/12-tsi-(110bhp)-s-5d/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/hatchback-2013/se-l-15-tsi-150ps-act-5d/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/hatchback-2013/18-tsi-laurin-klement-5d/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/estate-2013/se-l-20-tsi-190ps-4x4-dsg-auto-5d/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/vrs-2013/20-tsi-vrs-hatchback-5d/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/hatchback-2013/vrs-20-tsi-230ps-(0317-on)-5d/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/hatchback-2013/16-tdi-cr-greenline-iii-5d/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/estate-2013/16-tdi-cr-(110bhp)-se-4x4-5d/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/estate-2013/se-l-16-tdi-115ps-(0317-on)-5d/specs/"
+   ]
+  },
+  {
+   "make": "Skoda",
+   "model": "Octavia",
+   "generation": "Mk4 (NX)",
+   "years": "2020-",
+   "facelift": "2024",
+   "bodies": [
+    "5dr hatchback (liftback)",
+    "5dr estate"
+   ],
+   "engines": [
+    {
+     "badge": "1.0 TSI 110",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2023",
+     "note": "108bhp per Parkers; 6-speed manual; Aug 2020 - July 2023."
+    },
+    {
+     "badge": "1.0 TSI e-TEC 110",
+     "fuel": "Petrol mild hybrid (48V)",
+     "cc": 999,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2023",
+     "note": "108bhp per Parkers; 7-speed DSG; Sept 2020 - July 2023."
+    },
+    {
+     "badge": "1.5 TSI 150",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-",
+     "note": "147bhp per Parkers; 6-speed manual."
+    },
+    {
+     "badge": "1.5 TSI e-TEC 150",
+     "fuel": "Petrol mild hybrid (48V)",
+     "cc": 1498,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-",
+     "note": "147bhp per Parkers; 7-speed DSG; from Dec 2020."
+    },
+    {
+     "badge": "1.5 TSI 115",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-",
+     "note": "114bhp per Parkers; 6-speed manual; SE Technology from April 2024."
+    },
+    {
+     "badge": "1.5 TSI e-TEC 115",
+     "fuel": "Petrol mild hybrid (48V)",
+     "cc": 1498,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-",
+     "note": "114bhp per Parkers; 7-speed DSG; SE Technology from April 2024."
+    },
+    {
+     "badge": "1.4 TSI iV 204",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1395,
+     "ps": 204,
+     "engine_code": "DGEA",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2023",
+     "note": "201bhp per Parkers; 6-speed DSG, 13kWh; Nov 2020 - Oct 2022 (estate SE Technology to June 2023). Code per Wikipedia."
+    },
+    {
+     "badge": "1.4 TSI iV vRS 245",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1395,
+     "ps": 245,
+     "engine_code": "DGEA",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2023",
+     "note": "241bhp per Parkers; 6-speed DSG, 13kWh; Parkers lists it new Nov 2020 - Oct 2022 (end year kept). Code per Wikipedia."
+    },
+    {
+     "badge": "2.0 TSI vRS 245",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 245,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2024",
+     "note": "241bhp per Parkers; 6-speed manual Dec 2020 - June 2023, 7-speed DSG Oct 2020 - Mar 2024."
+    },
+    {
+     "badge": "2.0 TSI vRS 265",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 265,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-",
+     "note": "261bhp per Parkers; facelift vRS is petrol and DSG only (Parkers vRS review)."
+    },
+    {
+     "badge": "2.0 TDI 115",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-",
+     "note": "114bhp per Parkers; 6-speed manual or 7-speed DSG."
+    },
+    {
+     "badge": "2.0 TDI 150",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2020-",
+     "note": "147bhp per Parkers; 4x4 only on the estate SE L DSG, Dec 2020 - Aug 2023."
+    },
+    {
+     "badge": "2.0 TDI vRS 200",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 200,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2020-2023",
+     "note": "197bhp per Parkers; 7-speed DSG only, FWD or 4x4, Nov 2020 - Aug 2023."
+    }
+   ],
+   "trims": [
+    "SE First Edition",
+    "SE Technology",
+    "SE Drive",
+    "SE L",
+    "SE L First Edition",
+    "Edition",
+    "SportLine",
+    "vRS",
+    "Scout",
+    "Laurin & Klement",
+    "SE",
+    "First Edition"
+   ],
+   "trims_by_period": {
+    "2020-2021 launch": [
+     "SE First Edition",
+     "SE Technology",
+     "SE L First Edition"
+    ],
+    "2020-2024": [
+     "SE",
+     "SE Technology",
+     "SE Drive",
+     "SE L",
+     "SportLine",
+     "vRS",
+     "Scout (estate)",
+     "Laurin & Klement"
+    ],
+    "2024-": [
+     "SE Technology",
+     "SE L",
+     "SportLine",
+     "vRS",
+     "First Edition (2024-2025)"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "7-speed DSG",
+    "6-speed DSG (iV PHEV)"
+   ],
+   "notes": "e-TEC = 48V mild hybrid, DSG only. iV PHEV uses a 6-speed DSG (SE Technology/SE L iV 204, vRS iV 245); Parkers lists the PHEVs new to Oct 2022 (estate SE Technology iV to June 2023), none after the 2024 facelift. UK launch June 2020 with SE First Edition and SE L First Edition (to April 2021) plus SE Technology; SE from Dec 2020. 1.0 TSI and vRS TDI 200 listed new to mid-2023. Facelift (UK derivatives from April 2024; First Edition to Jan 2025) replaces the 1.0 TSI with the 1.5 TSI 115 on SE Technology; trims SE Technology, SE L, Sportline; vRS 265PS petrol DSG only, with the vRS diesel and PHEV dropped (Parkers vRS review). Carwow lists the 1.5 petrol at 116/150bhp and 2.0 TDI at 116/150bhp post-facelift (Parkers: 114/147bhp). SE Drive, Edition, pre-facelift SportLine, Scout and Laurin & Klement are not in Parkers' UK derivative lists (kept from earlier research).",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK (Octavia hatchback 2020-on list of 42 derivatives, estate 2020-on list of 41, vRS 2020-on list of 12; all derivative spec pages read; Octavia, Octavia Estate and vRS reviews) and Wikipedia (Skoda Octavia, fourth generation). Core trims, engines, outputs, cc, gearboxes and on-sale dates confirmed by Parkers; iV engine code from the Wikipedia infobox. SE Drive, Edition, pre-facelift SportLine, Scout and Laurin & Klement not confirmed (kept).",
+   "sources": [
+    "https://www.skoda.co.uk/news/details/uk-pricing-and-specifications-announced-for-all-new-skoda-octavia",
+    "https://www.motor1.com/news/719389/skoda-octavia-facelift-uk-pricing-specs/",
+    "https://www.carwow.co.uk/skoda/octavia/specifications",
+    "https://vehiclescore.co.uk/cars/skoda/octavia",
+    "https://en.wikipedia.org/wiki/%C5%A0koda_Octavia",
+    "https://www.parkers.co.uk/skoda/octavia/hatchback-2020/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/estate-2020/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/vrs-2020/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/vrs/review/",
+    "https://www.parkers.co.uk/skoda/octavia/estate/review/",
+    "https://www.parkers.co.uk/skoda/octavia/hatchback-2020/10-tsi-se-technology-5d/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/estate-2020/10-tsi-e-tec-se-technology-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/vrs-2020/20-tdi-200-vrs-4x4-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/hatchback-2020/15-tsi-se-first-edition-5d/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/hatchback-2020/15-tsi-150-first-edition-5dr/specs/",
+    "https://www.parkers.co.uk/skoda/octavia/estate-2020/14-tsi-iv-se-technology-dsg-5dr/specs/"
+   ]
+  },
+  {
+   "make": "MINI",
+   "model": "Hatch",
+   "generation": "F56 (3dr) / F55 (5dr)",
+   "years": "2014-2024",
+   "facelift": "2018; 2021",
+   "bodies": [
+    "3dr hatchback (F56)",
+    "5dr hatchback (F55)"
+   ],
+   "engines": [
+    {
+     "badge": "One First 1.2 75",
+     "fuel": "Petrol",
+     "cc": 1198,
+     "ps": 75,
+     "engine_code": "B38A12",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2015",
+     "note": "73bhp per Parkers; 3dr, 6-speed manual only; listed new Aug 2014 - Mar 2015."
+    },
+    {
+     "badge": "One 1.2 102",
+     "fuel": "Petrol",
+     "cc": 1198,
+     "ps": 102,
+     "engine_code": "B38A12",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2017",
+     "note": "100bhp per Parkers; Apr 2014 - Oct 2017; 6-speed manual or 6-speed auto."
+    },
+    {
+     "badge": "One 1.5 102",
+     "fuel": "Petrol",
+     "cc": 1499,
+     "ps": 102,
+     "engine_code": "B38A15",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2022",
+     "note": "100bhp per Parkers; Oct 2017 - Apr 2022 (One Classic only from Nov 2018); 6-speed manual or 7-speed DCT."
+    },
+    {
+     "badge": "Cooper 1.5 136",
+     "fuel": "Petrol",
+     "cc": 1499,
+     "ps": 136,
+     "engine_code": "B38A15",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2024",
+     "note": "134bhp per Parkers; Mar 2014 - Jan 2024."
+    },
+    {
+     "badge": "Cooper S 2.0 192",
+     "fuel": "Petrol",
+     "cc": 1998,
+     "ps": 192,
+     "engine_code": "B48A20",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2020",
+     "note": "189bhp per Parkers; regular derivatives to Nov 2020 (Paddy Hopkirk Edition to Jan 2021)."
+    },
+    {
+     "badge": "Cooper S 2.0 178",
+     "fuel": "Petrol",
+     "cc": 1998,
+     "ps": 178,
+     "engine_code": "B48A20",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2024",
+     "note": "175bhp per Parkers; from Nov 2020."
+    },
+    {
+     "badge": "Cooper S Works 210 2.0 210",
+     "fuel": "Petrol",
+     "cc": 1998,
+     "ps": 210,
+     "engine_code": "B48A20",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2018",
+     "note": "207bhp per Parkers ('2.0 (210bhp)' engine); Cooper S Works 210 3dr/5dr, 6-speed manual or 6-speed auto, Oct 2016 - Mar 2018; same output in the 3dr Challenge (210bhp) Edition, listed Mar 2015 - Mar 2018."
+    },
+    {
+     "badge": "John Cooper Works 2.0 231",
+     "fuel": "Petrol",
+     "cc": 1998,
+     "ps": 231,
+     "engine_code": "B48A20",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2024",
+     "note": "227bhp per Parkers; 3dr only; 6-speed manual, 6-speed auto to Oct 2017, 8-speed auto from Oct 2017."
+    },
+    {
+     "badge": "John Cooper Works GP 2.0 306",
+     "fuel": "Petrol",
+     "cc": 1998,
+     "ps": 306,
+     "engine_code": "B48A20",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020",
+     "note": "301bhp per Parkers; 3dr, 8-speed auto only; listed new Mar - Nov 2020."
+    },
+    {
+     "badge": "One D 1.5 95",
+     "fuel": "Diesel",
+     "cc": 1496,
+     "ps": 95,
+     "engine_code": "B37C15",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018",
+     "note": "93bhp per Parkers; 6-speed manual only; Apr 2014 - Mar 2018."
+    },
+    {
+     "badge": "Cooper D 1.5 116",
+     "fuel": "Diesel",
+     "cc": 1496,
+     "ps": 116,
+     "engine_code": "B37C15",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018",
+     "note": "114bhp per Parkers; Mar 2014 - Oct 2018; 7-speed DCT from Oct 2017."
+    },
+    {
+     "badge": "Cooper SD 2.0 170",
+     "fuel": "Diesel",
+     "cc": 1995,
+     "ps": 170,
+     "engine_code": "B47C20",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018",
+     "note": "167bhp per Parkers; Aug 2014 - Mar 2018; 8-speed auto from Oct 2017. Wikipedia gives B47D20 in the Mini Hatch infobox and B47C/D20 in the B47 article (code kept)."
+    },
+    {
+     "badge": "Cooper SE / Electric 184 (32.6kWh)",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 184,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2024",
+     "note": "184bhp (181bhp from 2021) per Parkers; 3dr only; Mar 2020 - Jan 2024."
+    }
+   ],
+   "trims": [
+    "(base)",
+    "Pepper/Chili packs",
+    "Classic",
+    "Sport",
+    "Exclusive",
+    "Level 1",
+    "Level 2",
+    "Level 3",
+    "Shadow Edition",
+    "Resolute Edition",
+    "Multitone Edition",
+    "Seven",
+    "Cooper S Works 210",
+    "Challenge 210 Edition",
+    "1499 GT Edition",
+    "60 Years Edition",
+    "Paddy Hopkirk Edition",
+    "JCW GP",
+    "JCW Anniversary Edition",
+    "JCW 1 to 6 Edition",
+    "Premium / Premium Plus packs",
+    "Collection Edition"
+   ],
+   "trims_by_period": {
+    "2014-2018": [
+     "One",
+     "Cooper",
+     "Cooper S",
+     "JCW (with Pepper, Chili, Media options packs)",
+     "Seven",
+     "Heddon Street",
+     "Oakwood",
+     "Delaney (special editions)",
+     "One First (2014-2015)",
+     "Cooper S Works 210 (2016-2018)",
+     "Challenge 210 Edition",
+     "1499 GT Edition (2017-2018)"
+    ],
+    "2018-2024": [
+     "Classic",
+     "Sport",
+     "Exclusive",
+     "Shadow Edition",
+     "Resolute Edition",
+     "Multitone Edition",
+     "60 Years Edition (2019-2020)",
+     "JCW GP (2020)",
+     "Paddy Hopkirk Edition (2020-2021)",
+     "JCW Anniversary Edition (2021-2022)",
+     "Premium / Premium Plus packs (2022-2024)",
+     "JCW 1 to 6 Edition (2023-2024)"
+    ],
+    "2020-2024 Electric": [
+     "Level 1",
+     "Level 2",
+     "Level 3",
+     "Electric Collection",
+     "Shadow Edition",
+     "Resolute Edition (2022-2023)",
+     "Multitone Edition (2022-2023)"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "6-speed Steptronic automatic (2014-2018)",
+    "7-speed Steptronic DCT (2017-2024)",
+    "8-speed Steptronic Sport automatic (JCW from late 2017, GP; Cooper SD 2017-2018)",
+    "Single-speed (electric)"
+   ],
+   "notes": "Picker derivative is typically engine variant + trim, e.g. 'MINI Hatch F56 Cooper Sport 3dr Steptronic'. Pack-based range (Pepper, Chili, Media XL, Tech, JCW Chili) to Oct 2018; Classic/Sport/Exclusive from Nov 2018 (One = Classic only); Premium/Premium Plus pack derivatives from May 2022, when the One was dropped. LCI-1 derivatives from March 2018: the 7-speed DCT replaced the 6-speed auto from Oct 2017 (One, Cooper D) or Mar 2018 (Cooper, Cooper S), while JCW and Cooper SD got an 8-speed auto. LCI-2 from Jan 2021. Cooper S output reduced to 178PS from Nov 2020. Diesels dropped in 2018 (One D and Cooper SD to Mar 2018, Cooper D to Oct 2018). JCW, GP and Electric are 3dr only. F57 Convertible not included. Engine codes per Wikipedia (Mini Hatch infobox; BMW B37/B38/B48 articles). Heddon Street, Oakwood, Delaney and a petrol Multitone Edition were not found in Parkers' lists (kept).",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK (MINI Hatchback 2014-2024 list of 1,154 derivatives with all 1,152 derivative spec pages read; MINI Electric Hatch 2020 list of 10 derivatives) and Wikipedia (Mini Hatch third generation; BMW B37, B38, B47 and B48 engine articles). On-sale dates, outputs, cc, gearboxes and trims from Parkers; engine codes from Wikipedia.",
+   "sources": [
+    "https://parkers.co.uk/car-news/2021/2021-mini-facelift",
+    "https://www.autoexpress.co.uk/mini/mini/104902/mini-to-launch-new-classic-sport-and-exclusive-trims",
+    "https://www.carbuyer.co.uk/mini/303043/facelifted-2021-mini-hatchback-range-arrives",
+    "https://www.ultimatespecs.com/car-specs/Mini/M11643/Mini-F56-LCI",
+    "https://en.wikipedia.org/wiki/Mini_Hatch",
+    "https://en.wikipedia.org/wiki/BMW_B38_engine",
+    "https://en.wikipedia.org/wiki/BMW_B37_engine",
+    "https://en.wikipedia.org/wiki/BMW_B48",
+    "https://www.parkers.co.uk/mini/hatchback/hatchback-2014/specs/",
+    "https://www.parkers.co.uk/mini/electric-hatch/hatchback-2020/specs/",
+    "https://www.parkers.co.uk/mini/hatchback/hatchback-2014/12-first-3d/specs/",
+    "https://www.parkers.co.uk/mini/hatchback/hatchback-2014/12-one-hatchback-3d/specs/",
+    "https://www.parkers.co.uk/mini/hatchback/hatchback-2014/one-(102017-on)-3d/specs/",
+    "https://www.parkers.co.uk/mini/hatchback/hatchback-2014/15-one-classic-3dr-[comfort-pack]/specs/",
+    "https://www.parkers.co.uk/mini/hatchback/hatchback-2014/cooper-d-(032018-on)-3d/specs/",
+    "https://www.parkers.co.uk/mini/hatchback/hatchback-2014/cooper-sd-(chili-pack-and-media-pack-xl)-sport-automatic-(102017-on)-3d/specs/",
+    "https://www.parkers.co.uk/mini/hatchback/hatchback-2014/20-john-cooper-works-gp-ii-auto-[8-speed]-3d/specs/",
+    "https://www.parkers.co.uk/mini/hatchback/hatchback-2014/cooper-s-works-210-3d/specs/",
+    "https://www.parkers.co.uk/mini/hatchback/hatchback-2014/cooper-d-steptronic-auto-(102017-on)-3d/specs/",
+    "https://www.parkers.co.uk/mini/hatchback/hatchback-2014/cooper-classic-3d/specs/"
+   ]
+  },
+  {
+   "make": "Tesla",
+   "model": "Model 3",
+   "generation": "Mk1 / Highland facelift",
+   "years": "2019-",
+   "facelift": "2023",
+   "bodies": [
+    "4dr saloon"
+   ],
+   "engines": [
+    {
+     "badge": "Standard Range Plus",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "RWD"
+     ],
+     "years": "2019-2021",
+     "note": "241bhp, 53kWh per Parkers; listed new June 2019 - Nov 2021."
+    },
+    {
+     "badge": "RWD",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "RWD"
+     ],
+     "years": "2021-",
+     "note": "241bhp, 53kWh per Parkers (pre-Highland listing from Nov 2021); continued on the Highland."
+    },
+    {
+     "badge": "Long Range",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2019-",
+     "note": "346bhp per Parkers; 78-79kWh, 84.7kWh (85kWh) from Sept 2025; Premium Long Range AWD from Jan 2026."
+    },
+    {
+     "badge": "Long Range RWD",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "RWD"
+     ],
+     "years": "2025-",
+     "note": "Parkers lists Long Range RWD 85kWh (315bhp) from Sept 2025 and Premium Long Range RWD from Jan 2026; an earlier Long Range RWD listing has inconsistent dates (start year kept)."
+    },
+    {
+     "badge": "Performance",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2019-",
+     "note": "449bhp pre-Highland (June 2019 - Mar 2024), 453bhp Highland from April 2024 per Parkers; 84.7kWh from Sept 2025."
+    },
+    {
+     "badge": "Standard",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "RWD"
+     ],
+     "years": "2026-",
+     "note": "279bhp, 62.5kWh per Parkers; listed new from Jan 2026."
+    }
+   ],
+   "trims": [
+    "Standard Range Plus",
+    "RWD",
+    "Long Range RWD",
+    "Long Range AWD",
+    "Performance",
+    "Standard",
+    "Premium Long Range RWD",
+    "Premium Long Range AWD"
+   ],
+   "trims_by_period": {
+    "2019-2021": [
+     "Standard Range Plus",
+     "Long Range AWD",
+     "Performance"
+    ],
+    "2021-2023": [
+     "RWD",
+     "Long Range AWD",
+     "Performance"
+    ],
+    "2023- (Highland)": [
+     "RWD",
+     "Long Range AWD",
+     "Performance (2024-)",
+     "Long Range RWD (2025-)",
+     "Standard (2026-)",
+     "Premium Long Range RWD (2026-)",
+     "Premium Long Range AWD (2026-)"
+    ]
+   },
+   "transmissions": [
+    "Single-speed reduction"
+   ],
+   "notes": "Tesla does not publish official PS figures - left null; Parkers' bhp figures are in the engine notes. Variant is the trim; battery packs vary by build (LFP in SR+/RWD from c.2021). Highland facelift: Parkers lists the Highland Long Range AWD from Oct 2023 and Performance from April 2024; 85kWh Long Range and Performance derivatives from Sept 2025; Standard, Premium Long Range RWD and Premium Long Range AWD from Jan 2026.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK (Tesla Model 3 saloon list of 16 derivatives, 14 derivative spec pages read) and Wikipedia (Tesla Model 3 specifications tables). Variants, drive, battery sizes and on-sale dates confirmed by Parkers; PS left null because Tesla does not publish it and Wikipedia gives no per-variant outputs. Long Range RWD start year rests on the 85kWh listing (Sept 2025).",
+   "sources": [
+    "https://www.digitaltrends.com/cars/tesla-model-3-vs-tesla-model-y-price-specs-and-range-comparison/",
+    "https://www.electriccarscheme.com/blog/tesla-electric-cars-uk-complete-range-guide-2025",
+    "https://en.wikipedia.org/wiki/Tesla_Model_3",
+    "https://www.parkers.co.uk/tesla/model-3/saloon-2016/specs/",
+    "https://www.parkers.co.uk/tesla/model-3/saloon-2016/standard-rwd-4dr-auto/specs/",
+    "https://www.parkers.co.uk/tesla/model-3/saloon-2016/premium-long-range-rwd-85kwh-4dr-auto/specs/",
+    "https://www.parkers.co.uk/tesla/model-3/saloon-2016/long-range-rwd-85kwh-4dr-auto/specs/",
+    "https://www.parkers.co.uk/tesla/model-3/saloon-2016/standard-range-plus-auto-4d/specs/",
+    "https://www.parkers.co.uk/tesla/model-3/saloon-2016/performance-awd-4dr-auto/specs/"
+   ]
+  },
+  {
+   "make": "Tesla",
+   "model": "Model Y",
+   "generation": "Mk1 / Juniper facelift",
+   "years": "2022-",
+   "facelift": "2025",
+   "bodies": [
+    "5dr SUV"
+   ],
+   "engines": [
+    {
+     "badge": "RWD",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "RWD"
+     ],
+     "years": "2022-",
+     "note": "294bhp, 60kWh per Parkers, listed new Aug 2022 - Oct 2024; Parkers then lists 'Standard Range RWD' (290bhp, 63kWh) Feb - Dec 2025."
+    },
+    {
+     "badge": "Long Range",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2022-",
+     "note": "378bhp, 78.1kWh per Parkers pre-facelift (listed new Oct 2021 - Feb 2025); Juniper Launch Edition/Long Range AWD 369bhp; 84.7kWh from Oct 2025; Premium Long Range AWD from Nov 2025."
+    },
+    {
+     "badge": "Long Range RWD",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "RWD"
+     ],
+     "years": "2024-",
+     "note": "342bhp, 78.1kWh per Parkers, pre-facelift, listed new Oct 2024 - Feb 2025; Premium Long Range RWD (294bhp, 83kWh) from Nov 2025."
+    },
+    {
+     "badge": "Performance",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2022-",
+     "note": "420bhp per Parkers pre-facelift (to Feb 2025); Juniper Performance 453bhp."
+    },
+    {
+     "badge": "Standard",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "RWD"
+     ],
+     "years": "2025-",
+     "note": "294bhp, 63kWh per Parkers, from Dec 2025; Standard Long Range RWD (75.9kWh) listed Feb - June 2026."
+    }
+   ],
+   "trims": [
+    "RWD",
+    "Long Range AWD",
+    "Long Range RWD",
+    "Performance",
+    "Launch Series",
+    "Standard",
+    "Premium Long Range RWD",
+    "Premium Long Range AWD",
+    "Standard Long Range RWD"
+   ],
+   "trims_by_period": {
+    "2022-2025": [
+     "RWD",
+     "Long Range AWD",
+     "Performance",
+     "Long Range RWD (2024-2025)",
+     "Long Range AWD 7-seat (2024-2025)"
+    ],
+    "2025- (Juniper)": [
+     "Launch Series (Long Range AWD)",
+     "RWD",
+     "Long Range RWD",
+     "Long Range AWD",
+     "Performance (from late 2025)",
+     "Standard (late 2025)",
+     "Premium Long Range RWD (late 2025-)",
+     "Premium Long Range AWD (late 2025-)",
+     "Standard Long Range RWD (2026)",
+     "Premium Long Range AWD 7-seat (2026-)"
+    ]
+   },
+   "transmissions": [
+    "Single-speed reduction"
+   ],
+   "notes": "UK RHD deliveries from 2022 (Parkers lists the Long Range AWD and Performance as available new from Oct 2021). Juniper launch: Launch Series LR AWD at GBP 60,990 (Parkers: Jan - Mar 2025), wider range from c.April-June 2025 from GBP 44,990. 7-seat: pre-facelift Long Range AWD 7-seat listed Oct 2024 - Jan 2025; Juniper Premium Long Range AWD 7-seat from April 2026 (Parkers). PS figures not published - null; Parkers bhp in the engine notes.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK (Tesla Model Y SUV list of 16 derivatives, 13 derivative spec pages read). Variants, drive, battery sizes, seating and on-sale dates confirmed by Parkers; PS left null (not published by Tesla).",
+   "sources": [
+    "https://zephr.autocar.co.uk/car-news/new-cars/new-tesla-model-y-lands-uk-%C2%A361k-launch-edition",
+    "https://evfleetworld.co.uk/overhauled-tesla-model-y-now-available-to-order/",
+    "https://www.motor1.com/news/750556/tesla-model-y-performance-7seater-models-coming/",
+    "https://www.autocar.co.uk/node/151371",
+    "https://www.parkers.co.uk/tesla/model-y/suv-2019/specs/",
+    "https://www.parkers.co.uk/tesla/model-y/suv-2019/long-range-rwd-5dr-auto/specs/",
+    "https://www.parkers.co.uk/tesla/model-y/suv-2019/premium-long-range-awd-5dr-auto-[7-seat]/specs/",
+    "https://www.parkers.co.uk/tesla/model-y/suv-2019/premium-long-range-rwd-5dr-auto/specs/",
+    "https://www.parkers.co.uk/tesla/model-y/suv-2019/standard-rwd-5dr-auto/specs/",
+    "https://www.parkers.co.uk/tesla/model-y/suv-2019/rwd-5dr-auto/specs/"
+   ]
+  },
+  {
+   "make": "Land Rover",
+   "model": "Range Rover Evoque",
+   "generation": "L551",
+   "years": "2019-",
+   "facelift": "2023",
+   "bodies": [
+    "5dr SUV"
+   ],
+   "engines": [
+    {
+     "badge": "D150",
+     "fuel": "Diesel",
+     "cc": 1999,
+     "ps": 150,
+     "engine_code": "204DTD (Ingenium)",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2019-2020",
+     "note": "150bhp per Parkers; 6-speed manual FWD or 9-speed auto AWD; Feb 2019 - Aug 2020."
+    },
+    {
+     "badge": "D180 MHEV",
+     "fuel": "Diesel mild hybrid",
+     "cc": 1999,
+     "ps": 180,
+     "engine_code": "204DTD (Ingenium)",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2019-2020",
+     "note": "9-speed auto; Feb 2019 - Aug 2020 (Parkers)."
+    },
+    {
+     "badge": "D240 MHEV",
+     "fuel": "Diesel mild hybrid",
+     "cc": 1999,
+     "ps": 240,
+     "engine_code": "204DTA (Ingenium)",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2019-2020",
+     "note": "9-speed auto; Feb 2019 - Aug 2020 (Parkers)."
+    },
+    {
+     "badge": "D165 MHEV",
+     "fuel": "Diesel mild hybrid",
+     "cc": 1997,
+     "ps": 163,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2020-",
+     "note": "163bhp per Parkers (160bhp, 1998cc from the 2023 facelift); 6-speed manual FWD Oct 2020 - June 2023, otherwise 9-speed auto AWD."
+    },
+    {
+     "badge": "D200 MHEV",
+     "fuel": "Diesel mild hybrid",
+     "cc": 1997,
+     "ps": 204,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2020-",
+     "note": "204bhp per Parkers (201bhp, 1998cc from the 2023 facelift); 9-speed auto; from Aug 2020."
+    },
+    {
+     "badge": "P160",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 160,
+     "engine_code": "AJ150 (Ingenium)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-",
+     "note": "157bhp per Parkers; 1.5 3-cyl, FWD, 8-speed auto; listed new from April 2024. Code per Wikipedia."
+    },
+    {
+     "badge": "P200 MHEV",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1997,
+     "ps": 200,
+     "engine_code": "PT204 (Ingenium)",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2019-2024",
+     "note": "200bhp (197bhp post-facelift) per Parkers; 9-speed auto; to April 2024."
+    },
+    {
+     "badge": "P250 MHEV",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1997,
+     "ps": 249,
+     "engine_code": "PT204 (Ingenium)",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2019-2024",
+     "note": "249bhp (245bhp post-facelift) per Parkers; 9-speed auto; to April 2024."
+    },
+    {
+     "badge": "P300 MHEV",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1997,
+     "ps": 300,
+     "engine_code": "PT204 (Ingenium)",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2019-2023",
+     "note": "300bhp per Parkers; core range to May 2021, then P300 HST May 2021 - Jan 2023."
+    },
+    {
+     "badge": "P300e PHEV",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1498,
+     "ps": 309,
+     "engine_code": "AJ150 (Ingenium)",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2020-2024",
+     "note": "304bhp per Parkers (some 2020-21 listings 295bhp); 8-speed auto; 12.2kWh, 15kWh from the 2023 facelift; April 2020 - April 2024. Code per Wikipedia."
+    },
+    {
+     "badge": "P270e PHEV",
+     "fuel": "Petrol plug-in hybrid (PHEV)",
+     "cc": 1498,
+     "ps": 269,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2024-",
+     "note": "265bhp per Parkers; 1.5 3-cyl PHEV, 8-speed auto, 15kWh; replaced the P300e from April 2024."
+    }
+   ],
+   "trims": [
+    "Evoque (base)",
+    "S",
+    "SE",
+    "HSE",
+    "R-Dynamic S",
+    "R-Dynamic SE",
+    "R-Dynamic HSE",
+    "First Edition",
+    "Autobiography",
+    "Dynamic SE",
+    "Dynamic HSE",
+    "R-Dynamic",
+    "HST",
+    "Evoque Edition",
+    "Edition",
+    "Hoxton Edition"
+   ],
+   "trims_by_period": {
+    "2019-2023": [
+     "Evoque",
+     "S",
+     "SE",
+     "HSE",
+     "R-Dynamic S",
+     "R-Dynamic SE",
+     "R-Dynamic HSE",
+     "First Edition (launch)",
+     "Autobiography (2020-)",
+     "Bronze Collection/Lafayette Edition (specials)",
+     "R-Dynamic",
+     "HST (2021-2023)",
+     "Evoque Edition (2021-2023)"
+    ],
+    "2023-": [
+     "S",
+     "Dynamic SE",
+     "Dynamic HSE",
+     "Autobiography",
+     "Edition (2025-)",
+     "Hoxton Edition (2026-)"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual (D150/D165 FWD only, to 2023)",
+    "9-speed automatic",
+    "8-speed automatic (P300e, P270e, P160)"
+   ],
+   "notes": "Launch (UK Feb 2019): D150 FWD manual or AWD auto; D180/D240/P200/P250/P300 AWD auto. MY21 Ingenium diesel update (Aug 2020) replaced D150/D180/D240 with D165/D200 (outputs 163/204PS). P300e from April 2020: 1.5 3-cyl + rear e-motor, 8-speed auto. Facelift (UK derivatives from June 2023) simplified trims to S, Dynamic SE, Dynamic HSE and Autobiography (Dynamic HSE to Oct 2024). From April 2024 the P270e replaced the P300e and the 1.5 P160 (FWD, 8-speed auto) replaced the P200/P250. Specials: First Edition (2019-2020), HST (P300, 2021-2023), Evoque Edition (2021-2023), Edition (2025-), Hoxton Edition (2026-). Engine families per Wikipedia (AJ150 1.5 I3 for P160/P300e); D165/D200/P270e codes not confirmed; 204DTD/204DTA/PT204 codes general knowledge.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK (Range Rover Evoque SUV 2019-on list of 123 derivatives, 122 derivative spec pages read) and Wikipedia (Range Rover Evoque L551, Ingenium engine family). Trims, engines, outputs, cc, gearboxes, drive and on-sale dates confirmed by Parkers. Bronze Collection/Lafayette Edition not in Parkers lists (kept).",
+   "sources": [
+    "https://www.motoringresearch.com/car-news/2019-range-rover-evoque-prices-specs/",
+    "https://honestjohn.co.uk/news/new-cars/2023-06/2023-range-rover-evoque",
+    "https://www.autocar.co.uk/car-news/new-cars/range-rover-evoque-gets-larger-touchscreen-hybrid-range-boost",
+    "https://auth.autoexpress.co.uk/land-rover/range-rover-evoque/360361/new-range-rover-evoque-facelift-unveiled-updated-tech-and",
+    "https://en.wikipedia.org/wiki/Range_Rover_Evoque",
+    "https://en.wikipedia.org/wiki/Ingenium_engine_family",
+    "https://www.parkers.co.uk/land-rover/range-rover-evoque/suv-2019/specs/",
+    "https://www.parkers.co.uk/land-rover/range-rover-evoque/suv-2019/15-p160-s-5dr-2wd-auto/specs/",
+    "https://www.parkers.co.uk/land-rover/range-rover-evoque/suv-2019/20-p200-s-5dr-auto/specs/",
+    "https://www.parkers.co.uk/land-rover/range-rover-evoque/suv-2019/20-p250-dynamic-se-5dr-auto/specs/",
+    "https://www.parkers.co.uk/land-rover/range-rover-evoque/suv-2019/20-p300-hst-5dr-auto/specs/",
+    "https://www.parkers.co.uk/land-rover/range-rover-evoque/suv-2019/15-p300e-s-5dr-auto/specs/",
+    "https://www.parkers.co.uk/land-rover/range-rover-evoque/suv-2019/15-p270e-s-5dr-auto/specs/",
+    "https://www.parkers.co.uk/land-rover/range-rover-evoque/suv-2019/20-d165-s-5dr-2wd/specs/"
+   ]
+  }
+ ],
+ "verified": "2026-11-18"
+}

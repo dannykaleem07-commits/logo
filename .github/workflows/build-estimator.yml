@@ -1,0 +1,140 @@
+name: Build Engineer Report Studio (Windows)
+
+on:
+  push:
+    paths:
+      - 'estimator/**'
+      - '.github/workflows/build-estimator.yml'
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Publish the Windows build on the Releases page (a plain download link, no sign-in needed)'
+        type: boolean
+        default: false
+      from_run_id:
+        description: 'Publish the build of an earlier green run instead of building again (its run ID)'
+        type: string
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Tests (unit, mocked APIs, UI smoke test)
+    if: ${{ !inputs.from_run_id }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: estimator
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: estimator/package-lock.json
+      - run: npm ci
+      - name: Unit and mocked-API tests
+        run: npm test
+      - name: Install Chromium for the UI smoke test
+        run: npx playwright install --with-deps chromium
+      - name: UI smoke test (every screen and flow, mocked desktop bridge)
+        run: node tools/ui-smoketest.js
+      - name: Download the Electron binary
+        run: node node_modules/electron/install.js
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: ''
+      - name: End-to-end test in real Electron (mocked DVLA, DVSA and Anthropic)
+        run: xvfb-run -a npx electron --no-sandbox tools/electron-e2e.js
+
+  windows:
+    name: Build Windows installer and portable .exe
+    needs: tests
+    if: ${{ !inputs.from_run_id }}
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: estimator
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: estimator/package-lock.json
+      - run: npm ci
+      - name: Unit and mocked-API tests
+        run: npm test
+      - name: End-to-end test in real Electron on Windows (mocked DVLA, DVSA and Anthropic)
+        run: npx electron tools/electron-e2e.js
+      - name: Build Windows installer and portable .exe
+        run: npx electron-builder --win nsis portable --x64 --publish never
+        env:
+          # Code signing: add the repository secrets CSC_LINK (base64 .pfx or https link) and CSC_KEY_PASSWORD.
+          # When they are not set the values are empty and electron-builder builds unsigned.
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+      - uses: actions/upload-artifact@v6
+        with:
+          name: Engineer-Report-Studio-Windows
+          path: |
+            estimator/dist/*.exe
+          if-no-files-found: error
+
+  # Only on request (Run workflow → "Publish the Windows build"). This job runs no project code, so it alone may write.
+  release:
+    name: Publish the download (GitHub Release)
+    needs: windows
+    if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.publish_release && (inputs.from_run_id != '' || needs.windows.result == 'success') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: Engineer-Report-Studio-Windows
+          path: dist
+          run-id: ${{ inputs.from_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN: ${{ inputs.from_run_id || github.run_id }}
+        run: |
+          set -euo pipefail
+          ls -la dist
+          setup=$(ls dist/*-Setup-*.exe | head -n1)
+          ver=$(basename "$setup" | sed -E 's/.*-Setup-(.*)\.exe$/\1/')
+          tag="v$ver"
+          sha=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN" --jq .head_sha)
+          sha256sum dist/*.exe > dist/SHA256SUMS.txt
+          cat > notes.md <<EOF
+          **Engineer Report Studio $ver for Windows 10/11 (64-bit).** Built and tested by GitHub Actions run [$RUN](https://github.com/$GITHUB_REPOSITORY/actions/runs/$RUN) from commit $sha.
+
+          Download **one** of these (under *Assets* below):
+          - \`engineer-report-studio-Setup-$ver.exe\` (installer: Start menu entry and uninstaller), or
+          - \`engineer-report-studio-$ver-portable.exe\` (runs without installing).
+
+          The app is not code-signed yet, so Windows may warn the first time: click **More info → Run anyway**. Checksums are in SHA256SUMS.txt.
+          EOF
+          echo "tag=$tag sha=$sha"
+          # 1) the tag (a plain ref write: needs contents: write)
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" >/dev/null 2>&1; then
+            echo "tag $tag exists"
+          else
+            gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$tag" -f sha="$sha" --jq .ref
+          fi
+          # 2) the release on that tag, then its files
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$tag" dist/*.exe dist/SHA256SUMS.txt --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit "$tag" --notes-file notes.md --latest --repo "$GITHUB_REPOSITORY"
+          else
+            gh api -X POST "repos/$GITHUB_REPOSITORY/releases" -f tag_name="$tag" -f name="Engineer Report Studio $ver" \
+              -F body=@notes.md -F draft=false -F prerelease=false -f make_latest=true --jq '.html_url'
+            gh release upload "$tag" dist/*.exe dist/SHA256SUMS.txt --clobber --repo "$GITHUB_REPOSITORY"
+          fi
+          echo "Download page: https://github.com/$GITHUB_REPOSITORY/releases/tag/$tag"

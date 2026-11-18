@@ -1,0 +1,11 @@
+# Keep LF line endings on every platform (Windows runners default to core.autocrlf=true,
+# which would make the generated-data sync checks in `npm test` fail).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.pdf binary
+*.ico binary
+*.ttf binary
+*.woff binary
+*.woff2 binary

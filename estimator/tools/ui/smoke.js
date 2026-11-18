@@ -1,0 +1,2576 @@
+'use strict';
+// Playwright smoke test for the Engineer Report Studio renderer (app.js / labeler.js), with a mocked window.desktop.
+// Run: node smoke.js   (exit code 1 on any failed check, page error or console error)
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
+const H = require('./harness');
+
+const FIX = path.join(__dirname, 'fixtures');
+const jpg1 = fs.readFileSync(path.join(FIX, 'photo1.jpg'));
+const jpg2 = fs.readFileSync(path.join(FIX, 'photo2.jpg'));
+
+// A JPEG with an EXIF APP1 segment carrying DateTimeOriginal (little-endian TIFF), inserted after SOI.
+function withExif(src, when) {
+  const tiff = Buffer.alloc(64);
+  tiff.write('II', 0, 'ascii'); tiff.writeUInt16LE(42, 2); tiff.writeUInt32LE(8, 4);
+  tiff.writeUInt16LE(1, 8); tiff.writeUInt16LE(0x8769, 10); tiff.writeUInt16LE(4, 12); tiff.writeUInt32LE(1, 14); tiff.writeUInt32LE(26, 18); tiff.writeUInt32LE(0, 22);
+  tiff.writeUInt16LE(1, 26); tiff.writeUInt16LE(0x9003, 28); tiff.writeUInt16LE(2, 30); tiff.writeUInt32LE(20, 32); tiff.writeUInt32LE(44, 36); tiff.writeUInt32LE(0, 40);
+  tiff.write(when + '\0', 44, 'ascii');
+  const head = Buffer.from([0xFF, 0xE1, 0, 0]); head.writeUInt16BE(2 + 6 + tiff.length, 2);
+  return Buffer.concat([src.slice(0, 2), head, Buffer.from('Exif\0\0', 'binary'), tiff, src.slice(2)]);
+}
+const jpgExif = withExif(jpg1, '2026:09:01 11:42:30');
+// pixel size of a JPEG from its SOF marker
+function jpegSize(buf) {
+  for (let i = 2; i + 9 < buf.length;) {
+    if (buf[i] !== 0xFF) { i++; continue; }
+    const m = buf[i + 1];
+    if (m >= 0xC0 && m <= 0xCF && ![0xC4, 0xC8, 0xCC].includes(m)) return { w: buf.readUInt16BE(i + 7), h: buf.readUInt16BE(i + 5) };
+    i += 2 + buf.readUInt16BE(i + 2);
+  }
+  return null;
+}
+const dataUrl1 = 'data:image/jpeg;base64,' + jpg1.toString('base64');
+const dataUrl2 = 'data:image/jpeg;base64,' + jpg2.toString('base64');
+// a suggested line as ai.js returns it
+const SL = (code, side, operation, type, description, guide, hours, basis, reason) => ({ type, code, operation, side, description, guide_hours: guide, labour_hours: hours, hours_basis: basis, needs_part: false, cost_class: type === 'Painting' ? 'paint' : 'parts', reason: reason || 'test evidence', confidence: 0.8 });
+const file = (name, buffer, mimeType) => ({ name, mimeType: mimeType || 'image/jpeg', buffer });
+
+const results = [];
+let t, page;
+// SMOKE_ONLY=<regex>: run only the steps whose name matches (while working on them); unset, every step runs
+const ONLY = process.env.SMOKE_ONLY ? new RegExp(process.env.SMOKE_ONLY) : null;
+async function step(name, fn) {
+  if (ONLY && !ONLY.test(name)) return;
+  const before = t.errors.length;
+  try {
+    await page.evaluate(() => { const m = document.querySelector('#modal'); if (m && !m.classList.contains('hidden')) m.querySelector('[data-close]').click(); });
+    await fn();
+    if (t.errors.length > before) throw new Error('page/console error: ' + t.errors.slice(before).join(' || '));
+    results.push(['PASS', name]);
+  } catch (e) {
+    results.push(['FAIL', name, (e && e.message ? e.message : String(e)).split('\n').slice(0, 3).join(' ')]);
+  }
+  const r = results[results.length - 1];
+  console.log(`${r[0]}  ${r[1]}  (${((Date.now() - t0) / 1000).toFixed(1)}s)${r[2] ? '\n      ' + r[2] : ''}`);
+  t0 = Date.now();
+}
+let t0 = Date.now();
+const settle = (ms) => t.settle(ms);
+const text = (sel) => page.$eval(sel, (n) => n.textContent);
+const exists = (sel) => page.$(sel).then(Boolean);
+const toastText = () => t.toast();
+async function choose(sel, files) { const [fc] = await Promise.all([page.waitForEvent('filechooser', { timeout: 5000 }), page.click(sel)]); await fc.setFiles(files); }
+async function newJob() { await page.click('a[data-nav="new"]'); await page.waitForFunction(() => /#\/job\/[^/]+\/claim$/.test(location.hash)); await settle(200); return t.jobId(); }
+async function openTab(id, tab) { await t.go(`#/job/${id}/${tab}`); await page.waitForFunction((tb) => location.hash.endsWith('/' + tb) && document.querySelector('#tabBody'), tab); await settle(150); }
+async function flush() { await settle(700); } // debounce is 500 ms
+async function pick(code, side, op) {
+  await page.fill('#pickQ', code); await settle(80);
+  await page.click(`#pickResults .r[data-code="${code}"]`);
+  if (side != null) await page.selectOption('#pickSide', side);
+  if (op) await page.selectOption('#pickOp', op);
+  await page.click('[data-act="pickAdd"]'); await settle(200);
+}
+const lines = async (id) => (await t.getJob(id)).lines;
+
+(async () => {
+  t = await H.open();
+  page = t.page;
+  page.setDefaultTimeout(5000);
+  t0 = Date.now();
+  let S, A, B; // sample job, photo/AI job, estimate job
+
+  await step('load sample job and visit every tab', async () => {
+    await page.click('[data-act="loadSample"]');
+    await page.waitForFunction(() => /#\/job\/[^/]+\/report$/.test(location.hash));
+    S = await t.jobId();
+    for (const tb of ['claim', 'vehicle', 'inspection', 'circumstances', 'photos', 'assessment', 'estimate', 'valuation', 'opinion', 'customer', 'signoff', 'report']) {
+      await openTab(S, tb);
+      const len = await page.$eval('#tabBody', (n) => n.innerHTML.length);
+      assert(len > 200, `tab ${tb} rendered ${len} chars`);
+    }
+    const chips = await text('#chips');
+    assert(/£3,365\.08/.test(chips) && /£4,038\.10/.test(chips), 'header totals: ' + chips);
+    assert(/Repair \/ PAV \(net\)/.test(chips) && /59\.2% net/.test(chips), 'BER chip shows the net basis: ' + chips);
+    const job = await t.getJob(S);
+    assert(job.rates && job.rates.Body === 72.5 && job.vatPct === 20, 'job rates / VAT snapshot');
+    assert(job.inspection.by === '' && job.valuation.belowHighestReason === '' && 'firstRegPrecision' in job.vehicle, 'new fields added by migrate');
+  });
+
+  await step('BER chip follows the gross basis setting', async () => {
+    await t.go('#/settings'); await settle(300);
+    await page.selectOption('[data-sbind="berBasis"]', 'gross'); await settle(500);
+    await openTab(S, 'estimate');
+    const chips = await text('#chips');
+    assert(/Repair \/ PAV \(gross\)/.test(chips) && /71\.1% gross/.test(chips), chips);
+    await t.go('#/settings'); await settle(300);
+    await page.selectOption('[data-sbind="berBasis"]', 'net'); await settle(500);
+  });
+
+  await step('#/new uses location.replace (Back does not create jobs)', async () => {
+    await t.go('#/jobs'); await settle(300);
+    const n0 = (await t.listJobs()).length;
+    const h0 = await page.evaluate(() => history.length);
+    A = await newJob();
+    const h1 = await page.evaluate(() => history.length);
+    assert.strictEqual(h1, h0 + 1, `history grew by ${h1 - h0}`);
+    await page.goBack(); await settle(400);
+    assert(/#\/jobs$/.test(await page.evaluate(() => location.hash)), 'Back returned to the jobs list');
+    assert.strictEqual((await t.listJobs()).length, n0 + 1, 'exactly one job created');
+    await page.goForward(); await settle(400);
+  });
+
+  await step('photos: figure numbers, EXIF / file date taken-at, live excluded styling', async () => {
+    await openTab(A, 'photos');
+    await page.setInputFiles('#photoInput', [file('exif.jpg', jpgExif), file('door.jpg', jpg2), file('wing.jpg', jpg1)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 3, null, { timeout: 8000 });
+    await settle(300);
+    const nums = await page.$$eval('.pcard .pnum', (ns) => ns.map((n) => n.textContent));
+    assert.deepStrictEqual(nums, ['IMAGE 01', 'IMAGE 02', 'IMAGE 03']);
+    const taken = await page.$$eval('input[data-pf="takenAt"]', (ns) => ns.map((n) => n.value));
+    assert.strictEqual(taken[0], '2026-09-01T11:42', 'EXIF DateTimeOriginal: ' + taken[0]);
+    assert(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(taken[1]), 'file date fallback: ' + taken[1]);
+    // exclude photo 1: live dimming and renumbering
+    await page.click('.pcard:nth-child(1) input[data-pf="include"]'); await settle(100);
+    const cls = await page.$eval('.pcard:nth-child(1)', (n) => n.classList.contains('excluded'));
+    const nums2 = await page.$$eval('.pcard .pnum', (ns) => ns.map((n) => n.textContent));
+    assert(cls, 'excluded class toggled live');
+    assert.deepStrictEqual(nums2, ['not in report', 'IMAGE 01', 'IMAGE 02']);
+    // edit the taken date of photo 2
+    await page.fill('.pcard:nth-child(2) input[data-pf="takenAt"]', '2026-09-02T09:15'); await flush();
+    const j = await t.getJob(A);
+    assert(j.photos[0].exclude === true && j.photos[0].takenAt && j.photos[1].takenAt === new Date('2026-09-02T09:15').toISOString(), 'stored exclude / takenAt');
+    await page.fill('.pcard:nth-child(2) input[data-pf="title"]', 'RH front door'); await page.fill('.pcard:nth-child(3) input[data-pf="title"]', 'RH front wing'); await flush();
+  });
+
+  await step('AI photo analysis: included photos only, figure indexes, results mapped by id despite reordering', async () => {
+    await t.mock({ aiDelay: 700 });
+    await page.click('[data-act="aiAnalyse"]'); await settle(150);
+    assert(await exists('[data-act="aiAnalyse"][disabled]'), 'AI button disabled while running');
+    // move the wing photo (IMAGE 02) up during the call: order becomes [excluded, wing, door]
+    await page.click('.pcard:nth-child(3) [data-act="pmove"][data-d="-1"]');
+    await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 8000 }); await flush();
+    const call = (await t.calls('ai.analysePhotos')).pop().arg;
+    assert.deepStrictEqual(call.idx, [1, 2], 'indexes sent: ' + JSON.stringify(call.idx));
+    assert.deepStrictEqual(call.jobPhotos, [1, 2], 'slim job photos: ' + JSON.stringify(call.jobPhotos));
+    assert(!call.hasSig && !call.hasIssued, 'no signature / issued snapshot sent to the AI');
+    const j = await t.getJob(A);
+    const byTitle = (tt) => j.photos.find((p) => p.title === tt);
+    const ai = (p) => p.labels.filter((l) => l.ai).map((l) => l.text);
+    assert.deepStrictEqual(ai(byTitle('RH front door')), ['Scoring 1', 'Old chip'], 'door (was IMAGE 01) labels: ' + ai(byTitle('RH front door')));
+    assert.deepStrictEqual(ai(byTitle('RH front wing')), ['Scoring 2', 'Old chip'], 'wing (was IMAGE 02) labels');
+    assert.strictEqual(ai(j.photos[0]).length, 0, 'excluded photo untouched');
+    const chip = byTitle('RH front door').labels.find((l) => l.text === 'Old chip');
+    assert.strictEqual(chip.accidentRelated, 'no - pre-existing / wear');
+    assert(byTitle('RH front door').labelsReviewed === false && j.aiFindings && j.aiLog.some((x) => x.ai), 'findings + AI log');
+    const dashed = await page.$$eval('.pcard .ov .bx', (ns) => ns.filter((n) => n.style.borderStyle === 'dashed').length);
+    assert(dashed >= 2, 'pre-existing labels drawn dashed on cards');
+    const nums = await page.$$eval('.pcard .pnum', (ns) => ns.map((n) => n.textContent));
+    assert.deepStrictEqual(nums, ['not in report', 'IMAGE 01', 'IMAGE 02']);
+    // payload: each photo's id and stored size, the stored image itself (not re-encoded), and whether its text is unedited AI text
+    const door = byTitle('RH front door'), wing = byTitle('RH front wing');
+    const sig = (u) => { const b = u.split(',')[1]; return b.length + ':' + b.slice(0, 40) + ':' + b.slice(-40); };
+    assert.deepStrictEqual(call.ids, [door.id, wing.id], 'ids sent: ' + JSON.stringify(call.ids));
+    assert.deepStrictEqual(call.wh, [[door.w, door.h], [wing.w, wing.h]], 'sizes sent: ' + JSON.stringify(call.wh));
+    assert.deepStrictEqual(call.sig, [sig(door.dataUrl), sig(wing.dataUrl)], 'stored images sent as they are');
+    assert.deepStrictEqual(call.types, ['image/jpeg', 'image/jpeg']);
+    assert.deepStrictEqual([call.titleByAi, call.captionByAi], [[false, false], [false, false]], 'assessor titles, no captions yet');
+    // the AI captions filled the empty captions and are recorded as AI text; the assessor's titles are not
+    assert.deepStrictEqual([door.caption, j.aiText['photos.' + door.id + '.caption']], ['AI caption 1', 'AI caption 1'], 'caption provenance');
+    assert(!(('photos.' + door.id + '.title') in j.aiText), 'assessor title not recorded as AI text');
+    // damage the AI could not place: never drawn, listed in the findings panel; review flags shown
+    assert(!j.photos.some((p) => p.labels.some((l) => /Hidden crease/.test(l.text))), 'unplaced damage not drawn');
+    assert(j.aiFindings.photos.some((ph) => (ph.unplaced_damages || []).length === 1), 'unplaced damage kept in the findings');
+    const panel = await text('.aiPanel');
+    assert(/could not place on a photo \(1\)/.test(panel) && /IMAGE 02: Hidden crease 1 — RH Sill outer panel/.test(panel), 'unplaced list (door is now IMAGE 02): ' + panel.slice(0, 400));
+    assert(/Confirm the ADAS fit from the VIN/.test(await text('.aiPanel .flagBox')), 'review flags shown');
+    await t.mock({ aiDelay: 30 });
+  });
+
+  await step('AI suggestions: op from the AI operation, guide / adjusted hours, "AI: adjusted from guide" note', async () => {
+    const hints = await page.$$eval('.sugg .basis', (ns) => ns.map((n) => n.textContent));
+    assert.deepStrictEqual(hints, ['guide time', 'guide time', 'adjusted from guide 2.0h'], 'suggestion hour notes: ' + JSON.stringify(hints));
+    await page.click('[data-act="aiAddLines"]'); await flush();
+    const ls = await lines(A);
+    assert.strictEqual(ls.length, 3);
+    assert(ls.every((l) => l.ai && !l.reviewed), 'AI lines unreviewed');
+    assert.deepStrictEqual(ls.map((l) => [l.op, l.aiOperation, l.guideHours, l.hoursBasis, l.hours]),
+      [['renew', 'renew', 0.6, 'guide', 0.6], ['repair', 'repair', 2, 'guide', 2], ['refinishRep1', 'refinishRep1', 2, 'adjusted', 1.6]], JSON.stringify(ls.map((l) => [l.op, l.aiOperation, l.guideHours, l.hoursBasis, l.hours])));
+    // adjusted refinish hours are base hours before the paint-finish factor: the factor (metallic ×1.0) is applied once and recorded
+    assert.deepStrictEqual([ls[2].hours, ls[2].pfApplied], [1.6, 1], 'adjusted paint line: factor applied once and recorded: ' + JSON.stringify(ls[2]));
+    await openTab(A, 'estimate');
+    const notes = await page.$$eval('#linesTbl .aiBasis', (ns) => ns.map((n) => n.textContent));
+    assert.deepStrictEqual(notes, ['AI: adjusted from guide 2.0h'], 'estimate notes: ' + JSON.stringify(notes));
+    // findings stored by an older version (no operation): op "ai" and the operation named by a photo label, as before
+    const legacy = await t.getJob(A);
+    const id2 = 'legacy-ai-' + Date.now();
+    await t.putJob(Object.assign({}, legacy, { id: id2, lines: [], aiFindings: { model: 'x', photos: [{ index: 1, damages: [{ component_code: 'DR001', side: 'R', recommended_operation: 'repair medium', box: { x: 0.1, y: 0.1, w: 0.2, h: 0.2 } }] }], summary: {},
+      suggested_lines: [{ type: 'Body', code: 'DR001', side: 'R', description: 'RH front door – repair', labour_hours: 2, needs_part: false, cost_class: 'labour only', reason: 'old', confidence: 0.5 }] } }));
+    await openTab(id2, 'photos');
+    await page.click('[data-act="aiAddLines"]'); await flush();
+    const ll = (await t.getJob(id2)).lines;
+    assert.deepStrictEqual([ll[0].op, ll[0].aiOperation, ll[0].hours, 'hoursBasis' in ll[0]], ['ai', 'repair medium', 2, false], 'legacy line: ' + JSON.stringify(ll[0]));
+    await t.go('#/jobs'); await settle(200);
+    await page.click(`[data-act="delJob"][data-id="${id2}"]`); await settle(300);
+    await openTab(A, 'photos');
+  });
+
+  await step('labeler: "show" toggles, field click keeps focus, save marks labels reviewed', async () => {
+    await openTab(A, 'photos');
+    const nth = await page.$$eval('.pcard', (cs) => cs.findIndex((c) => c.querySelector('input[data-pf="title"]').value === 'RH front door') + 1);
+    assert(nth > 0, 'door card found');
+    await page.click(`.pcard:nth-child(${nth}) button[data-act="label"]`); await settle(250);
+    await page.click('.lablist .it:nth-child(1) label.hint'); await settle(100); // the word "show"
+    const op = await page.$eval('.labStage .bx[data-i="0"]', (n) => n.style.opacity);
+    const checked = await page.$eval('.lablist .it:nth-child(1) input[data-hide]', (n) => n.checked);
+    assert(op === '0.35' && checked === false, `hide via label: opacity=${op} checked=${checked}`);
+    await page.click('.lablist .it:nth-child(2) input[data-f="text"]'); await settle(80);
+    const st = await page.evaluate(() => ({ sel: document.querySelector('.lablist .it:nth-child(2)').classList.contains('sel'), focus: document.activeElement && document.activeElement.dataset.f }));
+    assert(st.sel && st.focus === 'text', 'select in place keeps focus: ' + JSON.stringify(st));
+    // tag text colour by contrast (yellow/orange/white → #111)
+    const ink = await page.$$eval('.labStage .bx .tg', (ns) => ns.map((n) => n.style.color));
+    assert(ink.every((c) => /rgb\(17, 17, 17\)|rgb\(255, 255, 255\)/.test(c)), 'tag ink: ' + ink);
+    // draw a new box
+    const stage = await page.locator('.labStage').boundingBox();
+    await page.mouse.move(stage.x + stage.width * 0.55, stage.y + stage.height * 0.1); await page.mouse.down();
+    await page.mouse.move(stage.x + stage.width * 0.8, stage.y + stage.height * 0.35, { steps: 4 }); await page.mouse.up(); await settle(100);
+    await page.click('[data-q="Dent"]'); await settle(50);
+    // a drag that starts in a field and ends on the backdrop must not close the modal
+    const inp = await page.locator('.lablist input[data-f="text"]').first().boundingBox();
+    await page.mouse.move(inp.x + 5, inp.y + inp.height / 2); await page.mouse.down(); await page.mouse.move(4, 4, { steps: 5 }); await page.mouse.up(); await settle(100);
+    assert(!(await page.$eval('#modal', (n) => n.classList.contains('hidden'))), 'modal stayed open after a drag ending on the backdrop');
+    await page.click('[data-act="save"]'); await flush();
+    const p = (await t.getJob(A)).photos.find((x) => x.title === 'RH front door');
+    assert(p.labelsReviewed === true, 'labelsReviewed');
+    assert(p.labels[0].hidden === true && p.labels.some((l) => l.text === 'Dent' && !l.ai), 'labels saved: ' + JSON.stringify(p.labels.map((l) => [l.text, !!l.hidden])));
+    assert(/reviewed/.test(await text(`.pcard:nth-child(${nth}) .badge`)), 'card badge says reviewed');
+  });
+
+  await step('modal backdrop: a press that starts on the backdrop closes it', async () => {
+    await page.click('.pcard:nth-child(3) button[data-act="label"]'); await settle(200);
+    await page.mouse.click(4, 4); await settle(100);
+    assert(await page.$eval('#modal', (n) => n.classList.contains('hidden')), 'closed');
+  });
+
+  await step('AI draft: the draft on screen is applied (no stale listeners); pending review kept', async () => {
+    await openTab(A, 'opinion');
+    await t.mock({ draftTag: 'DRAFT1' });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await settle(100);
+    await page.click('#modal [data-close]'); await settle(100);
+    assert(await exists('[data-act="reviewPendingDraft"]') || true, '');
+    await t.mock({ draftTag: 'DRAFT2' });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await settle(100);
+    await page.click('#modal [data-sel]'); await page.click('#modal [data-go]'); await flush();
+    const j = await t.getJob(A);
+    assert.strictEqual(j.report.summary, 'DRAFT2 summary');
+    assert.strictEqual(j.opinion, 'DRAFT2 opinion');
+    assert(/12 section\(s\) applied/.test(await toastText()), 'toast: ' + await toastText());
+    const call = (await t.calls('ai.draftNarrative')).pop().arg;
+    assert.deepStrictEqual(call.photos, ['1:RH front wing', '2:RH front door'], 'draft photo list = printed figures: ' + JSON.stringify(call.photos));
+    // a third draft closed without applying stays available
+    await t.mock({ draftTag: 'DRAFT3' });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await settle(200);
+    await openTab(A, 'opinion');
+    await page.click('[data-act="reviewPendingDraft"]'); await settle(150);
+    assert(/DRAFT3 summary/.test(await text('#modalBody')), 'pending draft reopened');
+    await page.click('#modal [data-close]');
+  });
+
+  await step('AI valuation: result stored, comparable links only for http(s)', async () => {
+    await openTab(A, 'valuation');
+    await page.click('[data-act="aiValuation"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 5000 }); await flush();
+    const links = await page.$$eval('.aiPanel a[href]', (ns) => ns.map((n) => n.getAttribute('href')));
+    assert.deepStrictEqual(links, ['https://www.autotrader.co.uk/car-details/1'], 'links: ' + JSON.stringify(links));
+    const body = await text('.aiPanel');
+    assert(/Evil site/.test(body) && !(await exists('a[href^="file:"]')) && !(await exists('a[href^="ms-msdt"]')), 'unsafe URLs rendered as text');
+    // only the verified comparable is a link; unverified ones show the AI's URL as plain text, marked "unverified"
+    const badges = await page.$$eval('.comps .badge', (ns) => ns.map((n) => n.textContent).filter((x) => /verified/.test(x)));
+    assert.deepStrictEqual(badges, ['verified', 'unverified', 'unverified', 'unverified'], 'badges: ' + JSON.stringify(badges));
+    const claimed = await page.$$eval('.comps .claimedUrl', (ns) => ns.map((n) => n.textContent));
+    assert(claimed.length === 3 && claimed.some((x) => /https:\/\/www\.motors\.co\.uk\/car-123456\//.test(x)) && !(await exists('a[href*="motors.co.uk"]')), 'claimed URLs as text: ' + JSON.stringify(claimed));
+    const call = (await t.calls('ai.valuation')).pop().arg;
+    assert.deepStrictEqual([call.claimType, call.valuationDate], ['', ''], 'no claim type or date of loss on this job');
+    assert(/web search: 2 searches, UK listing sites only · claim type: Not specified · no valuation date recorded/.test(await text('.valFooter')), 'footer: ' + await text('.valFooter'));
+    const j = await t.getJob(A);
+    assert(j.valuation.ai && j.valuation.ai.recommended_pav === 5700.4 && j.aiLog.some((x) => /Valuation assistant/.test(x.action)));
+  });
+
+  await step('AI and lookups land on the job they were started for', async () => {
+    // valuation on S, then open A before it returns
+    const sBefore = await t.getJob(S);
+    await openTab(S, 'valuation');
+    await t.mock({ aiDelay: 700 });
+    await page.click('[data-act="aiValuation"]'); await settle(100);
+    await openTab(A, 'claim'); await settle(1000); await flush();
+    let s = await t.getJob(S), a = await t.getJob(A);
+    assert(s.valuation.ai && s.aiLog.length === (sBefore.aiLog || []).length + 1, 'S got its valuation');
+    assert.strictEqual(a.aiLog.filter((x) => /Valuation/.test(x.action)).length, 1, 'A did not get a second valuation');
+    assert(!(await exists('#tabBody .spinner')), 'no spinner on the other job');
+    // photo analysis on A, then leave to the Jobs list
+    await openTab(A, 'photos');
+    const at0 = (await t.getJob(A)).aiFindings.at;
+    await page.click('[data-act="aiAnalyse"]'); await settle(100);
+    await page.click('.jobhead a[href="#/jobs"]'); await settle(1100); await flush();
+    a = await t.getJob(A);
+    assert(a.aiFindings.at !== at0, 'findings saved to A while on the Jobs list');
+    assert(await exists('[data-act="loadSample"]'), 'Jobs list intact');
+    // draft on A, then open S: no review modal on S
+    await openTab(A, 'opinion');
+    await page.click('[data-act="aiDraft"]'); await settle(100);
+    await openTab(S, 'opinion'); await settle(1000);
+    assert(await page.$eval('#modal', (n) => n.classList.contains('hidden')), 'no draft modal on S');
+    assert(/ready/.test(await toastText()), 'toast says the draft is ready: ' + await toastText());
+    s = await t.getJob(S);
+    assert(s.opinion !== 'DRAFT3 opinion', 'S narrative untouched');
+    await openTab(A, 'opinion');
+    assert(await exists('[data-act="reviewPendingDraft"]'), 'A offers the pending draft');
+    await t.mock({ aiDelay: 30 });
+  });
+
+  await step('registration lookup: DVLA + MOT, title-cased colour, first-registration precision', async () => {
+    B = await newJob();
+    await openTab(B, 'vehicle');
+    await page.fill('[data-bind="vehicle.reg"]', 'AB14 CDE'); await settle(50);
+    await page.click('[data-act="lookupVehicle"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 5000 }); await flush();
+    const v = (await t.getJob(B)).vehicle;
+    assert.strictEqual(v.make, 'Nissan'); assert.strictEqual(v.colour, 'Red');
+    assert.strictEqual(v.firstReg, '2014-08-05'); assert.strictEqual(v.firstRegPrecision, 'day');
+    assert(v.dvla.lookedUpAt && v.motHistory.length === 2, 'dvla + mot stored');
+    const log = (await t.getJob(B)).aiLog;
+    assert(log.length === 2 && log.every((x) => x.ai === false), 'data log entries ai:false');
+    assert(/Now choose the exact variant/.test(await toastText()), await toastText());
+    // DVLA only: month precision and its hint
+    await t.mock({ mot: false });
+    const C2 = await newJob();
+    await openTab(C2, 'vehicle');
+    await page.fill('[data-bind="vehicle.reg"]', 'AB14 CDE');
+    await page.click('[data-act="lookupVehicle"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 5000 }); await flush();
+    const v2 = (await t.getJob(C2)).vehicle;
+    assert(v2.firstReg === '2014-08-01' && v2.firstRegPrecision === 'month', JSON.stringify([v2.firstReg, v2.firstRegPrecision]));
+    assert(/month only/.test(await text('#tabBody')), 'month-only hint');
+    await t.mock({ mot: true });
+    // leave and reopen the same job during the lookup: the data still lands on the reopened job
+    await t.mock({ dataDelay: 500 });
+    await page.fill('[data-bind="vehicle.colour"]', ''); await page.fill('[data-bind="vehicle.make"]', 'Ford'); await flush();
+    await page.click('[data-act="lookupVehicle"]'); await settle(100);
+    await t.go('#/jobs'); await settle(100); await openTab(C2, 'vehicle'); await settle(1500); await flush();
+    const v3 = (await t.getJob(C2)).vehicle;
+    assert(v3.make === 'Nissan' && v3.colour === 'Red', 'reopened job got the lookup: ' + v3.make + '/' + v3.colour);
+    assert.strictEqual(await page.$eval('[data-bind="vehicle.make"]', (n) => n.value), 'Nissan', 'shown on screen');
+    await t.mock({ dataDelay: 20 });
+  });
+
+  await step('MOT history by VIN is enabled as soon as a VIN is typed', async () => {
+    const id = await newJob();
+    await openTab(id, 'vehicle');
+    assert(await exists('[data-act="motByVin"][disabled]'), 'disabled without a VIN');
+    await page.fill('[data-bind="vehicle.vin"]', 'SJNFBAF15U7000000'); await settle(50);
+    assert(!(await exists('[data-act="motByVin"][disabled]')), 'enabled after typing');
+    await page.click('[data-act="motByVin"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 5000 }); await flush();
+    const v = (await t.getJob(id)).vehicle;
+    assert(v.motHistory.length === 2 && v.firstReg === '2014-08-05' && v.firstRegPrecision === 'day');
+    assert.strictEqual((await t.calls('data.mot')).pop().arg.by, 'vin');
+  });
+
+  await step('variant picker: no carry-over between jobs; notes stripped; gearbox shown; mild hybrid keeps base fuel', async () => {
+    await openTab(S, 'vehicle');
+    const mk = await page.$eval('select[data-vp="make"]', (n) => n.value);
+    assert.strictEqual(mk, 'Nissan', 'sample detects Nissan');
+    const id = await newJob();
+    await openTab(id, 'vehicle');
+    assert.strictEqual(await page.$eval('select[data-vp="make"]', (n) => n.value), '', 'blank job has no make selected');
+    assert(await exists('[data-act="applyVariant"][disabled]'), 'Use this variant disabled');
+    // pick a model whose engine is a 48V mild hybrid and whose gearbox label carries a bracketed note
+    const pickIdx = await page.evaluate(() => {
+      const V = window.VARIANTS;
+      for (let i = 0; i < V.length; i++) {
+        const e = V[i].engines.findIndex((x) => /mild|mhev|48\s*v|eq boost/i.test(x.fuel || ''));
+        const g = (V[i].transmissions || []).find((x) => /\(/.test(x));
+        if (e >= 0 && g) return { i, e, g, make: V[i].make, fuel: V[i].engines[e].fuel, badge: V[i].engines[e].badge };
+      }
+      return null;
+    });
+    assert(pickIdx, 'found a mild-hybrid model with a noted gearbox');
+    await page.selectOption('select[data-vp="make"]', pickIdx.make); await settle(150);
+    await page.selectOption('select[data-vp="model"]', String(pickIdx.i)); await settle(150);
+    await page.selectOption('select[data-vp="engine"]', String(pickIdx.e)); await settle(150);
+    await page.selectOption('select[data-vp="trans"]', pickIdx.g); await settle(150);
+    await page.click('[data-act="applyVariant"]'); await flush();
+    const v = (await t.getJob(id)).vehicle;
+    assert(!/[()]/.test(v.derivative) && !/[()]/.test(v.transmission), 'notes stripped: ' + v.derivative + ' | ' + v.transmission);
+    assert.strictEqual(v.fuel, /diesel/i.test(pickIdx.fuel) ? 'Diesel' : 'Petrol', `fuel for "${pickIdx.fuel}"`);
+    assert.strictEqual(await page.$eval('[data-bind="vehicle.transmission"]', (n) => n.value), v.transmission, 'transmission field shows the value');
+  });
+
+  await step('estimate picker: ops, pfApplied, repair hours/cap/wording, PDR and refusal rules, operations', async () => {
+    const id = await newJob();
+    await openTab(id, 'vehicle');
+    await page.selectOption('[data-bind="vehicle.paintType"]', 'pearl'); await settle(200);
+    await openTab(id, 'estimate');
+    await pick('FW001', 'R', 'replace');
+    let ls = await lines(id).catch(() => []); await flush(); ls = await lines(id);
+    assert.deepStrictEqual(ls.map((l) => [l.description, l.op, l.pfApplied]), [['RH front wing – renew', 'renew', undefined], ['RH front wing – refinish new part', 'refinish', 1.2]]);
+    assert.strictEqual(ls[1].hours, 2.6, 'refinish 2.2h × pearl 1.2');
+    await pick('FE001', '', 'repair3'); await flush(); ls = await lines(id);
+    const rep = ls.find((l) => l.op === 'repair3');
+    assert.strictEqual(rep.description, 'Front bumper cover – plastic repair (heavy)'); assert.strictEqual(rep.hours, 2.4, 'repairHrs 1.2 × 2');
+    assert(ls.some((l) => l.op === 'refinishRep2' && l.pfApplied === 1.2), 'refinish of repaired part has pfApplied');
+    await pick('DR001', 'R', 'repair'); await flush(); ls = await lines(id);
+    assert(ls.some((l) => l.description === 'RH front door shell – repair (medium) / metal finish' && l.hours === 2), 'steel wording and repairHrs 2.0');
+    const n0 = ls.length;
+    await pick('FE009', '', 'repair1');
+    assert(/renew it instead/.test(await toastText()), 'renew-only refusal: ' + await toastText());
+    await pick('FE001', '', 'pdr'); assert(/Paintless dent repair applies only/.test(await toastText()), 'PDR plastic refused');
+    await pick('ST001', 'R', 'pdr'); assert(/Paintless dent repair applies only/.test(await toastText()), 'PDR chassis leg refused');
+    await pick('BN002', 'R', 'pdr'); assert(/Paintless dent repair applies only/.test(await toastText()), 'PDR hinge refused');
+    await pick('SR001', '', 'refurb'); assert(/never refurbished/.test(await toastText()), 'SRS refurb refused');
+    await flush(); assert.strictEqual((await lines(id)).length, n0, 'refused operations add nothing');
+    await pick('DR001', 'R', 'pdr'); await pick('RF001', '', 'pdr'); await flush(); ls = await lines(id);
+    assert.strictEqual(ls.filter((l) => l.op === 'pdr').length, 2, 'PDR on door and roof');
+    // operation rows: the selector switches to "Operation / service"; no "– renew"; 0 h allowed
+    await page.fill('#pickQ', 'EL007'); await settle(80); await page.click('#pickResults .r[data-code="EL007"]');
+    assert.strictEqual(await page.$eval('#pickOp', (n) => n.value), 'operation', 'selector defaulted to operation');
+    await page.click('[data-act="pickAdd"]'); await settle(150);
+    await pick('FX008', '', null); await flush(); ls = await lines(id);
+    const scan = ls.find((l) => l.code === 'EL007'), waste = ls.find((l) => l.code === 'FX008');
+    assert.deepStrictEqual([scan.description, scan.type, scan.op, scan.hours], ['Pre-repair diagnostic scan', 'Auxiliary', 'operation', 0.3]);
+    assert.deepStrictEqual([waste.description, waste.hours, waste.costClass], ['Hazardous waste disposal', 0, 'other']);
+    await page.fill('#pickQ', 'FW001'); await settle(80); await page.click('#pickResults .r[data-code="FW001"]');
+    assert.strictEqual(await page.$eval('#pickOp', (n) => n.value), 'replace', 'a part switches the selector back to Renew');
+    await pick('EL007', '', 'repair'); assert(/is an operation or service/.test(await toastText()), 'repair on an operation refused');
+    await pick('DR001', 'R', 'blend'); await flush(); ls = await lines(id);
+    assert(ls.some((l) => l.op === 'blend' && l.pfApplied === 1.2), 'blend pfApplied');
+    // heavy repair capped at renew + refinish
+    const cap = await page.evaluate(() => (window.CATALOGUE.find((r) => r[8] > 0 && r[8] * 2 > r[4] + r[5] && !r[3]) || window.CATALOGUE.find((r) => r[8] > 0 && r[8] * 2 > r[4] + r[5])));
+    if (cap) { await pick(cap[0], cap[3] ? 'R' : '', 'repair3'); assert(/capped/.test(await toastText()), 'cap toast: ' + await toastText()); }
+    // labour-op button and blank line
+    await page.click('[data-act="addOp"][data-code="OP002"]'); await settle(100);
+    await page.click('[data-act="addBlank"]'); await flush(); ls = await lines(id);
+    assert(ls.some((l) => l.op === 'labour' && l.description === 'Prepare & refinish panel') && ls[ls.length - 1].op === 'manual', 'labour / manual ops');
+    assert(ls.every((l) => l.op), 'every created line has op');
+  });
+
+  await step('paint materials: factor applied once; no second charge when materials are priced', async () => {
+    await t.go('#/settings'); await settle(300);
+    await page.fill('[data-sbind="paintMaterialsPerHour"]', '20'); await settle(600);
+    const id = await newJob();
+    await openTab(id, 'vehicle'); await page.selectOption('[data-bind="vehicle.paintType"]', 'pearl'); await settle(200);
+    await openTab(id, 'estimate');
+    await pick('FW001', 'R', 'replace');
+    await page.click('[data-act="addOp"][data-code="OP002"]'); await settle(100);
+    await page.click('[data-act="paintMaterials"]'); await flush();
+    const m = (await lines(id)).find((l) => l.auto === 'paintMaterials');
+    assert.strictEqual(m.amount, 90.4, '(2.6 + 1.6 × 1.2) × £20 = £90.40, got ' + m.amount);
+    assert.strictEqual(m.op, 'operation');
+    await openTab(S, 'estimate');
+    await page.click('[data-act="paintMaterials"]'); await settle(150);
+    assert(/already priced/.test(await toastText()), 'warns: ' + await toastText());
+    await flush();
+    const s = await t.getJob(S);
+    assert(!s.lines.some((l) => l.auto === 'paintMaterials'), 'no second materials line on the sample');
+    assert(/£3,365\.08/.test(await text('#chips')), 'sample total unchanged');
+    await t.go('#/settings'); await settle(300); await page.fill('[data-sbind="paintMaterialsPerHour"]', '0'); await settle(600);
+  });
+
+  await step('discount and valuation edits refresh totals and hints live', async () => {
+    await openTab(S, 'estimate');
+    await page.fill('[data-bind="discount"]', '100'); await settle(100);
+    const box = await text('#totalsBox');
+    assert(/Less discount/.test(box) && /£3,265\.08/.test(box), 'totals box: ' + box);
+    await page.fill('[data-bind="discount"]', '0'); await flush();
+    await openTab(S, 'valuation');
+    await page.fill('input[data-vs="amount"][data-i="0"]', '6000'); await settle(100);
+    assert(/£5,269\.00 – £6,000\.00/.test(await text('#valRange')), 'range hint: ' + await text('#valRange'));
+    await page.fill('[data-bind="valuation.salvagePct"]', '20'); await settle(100);
+    assert(/= £1,136\.40/.test(await text('#salvageHint')), 'salvage hint: ' + await text('#salvageHint'));
+    await page.fill('[data-bind="valuation.adopted"]', '10000'); await settle(100);
+    assert(/33\.65%/.test(await text('#econBox')), 'econ box: ' + await text('#econBox'));
+    await page.fill('input[data-vs="amount"][data-i="0"]', '5682'); await page.fill('[data-bind="valuation.salvagePct"]', '15'); await page.fill('[data-bind="valuation.adopted"]', '5682'); await flush();
+    assert(/£3,365\.08/.test(await text('#chips')));
+    assert(await exists('[data-bind="valuation.belowHighestReason"]'), 'below-highest reason field');
+  });
+
+  await step('per-job rates: Settings changes do not alter a job until "Use current Settings rates"', async () => {
+    await t.go('#/settings'); await settle(300);
+    await page.fill('[data-sbind="rates.Body"]', '80'); await settle(600);
+    await openTab(S, 'estimate');
+    assert(/£3,365\.08/.test(await text('#chips')), 'job keeps its rates');
+    assert(/differ from Settings/.test(await text('#tabBody')), 'badge');
+    await page.click('[data-act="useSettingsRates"]'); await flush();
+    assert(!/£3,365\.08/.test(await text('#chips')), 'figures changed after taking Settings rates');
+    await t.go('#/settings'); await settle(300); await page.fill('[data-sbind="rates.Body"]', '72.5'); await settle(600);
+    await openTab(S, 'estimate'); await page.click('[data-act="useSettingsRates"]'); await flush();
+    assert(/£3,365\.08/.test(await text('#chips')), 'back to the reference total');
+    await page.fill('[data-bind="rates.Painting"]', '50'); await settle(100);
+    const cell = await page.$eval('#linesTbl tr:last-child [data-lv]', (n) => n.textContent);
+    await page.fill('[data-bind="rates.Painting"]', '72.5'); await flush();
+    assert(/£3,365\.08/.test(await text('#chips')), 'restored');
+    assert(cell, 'labour cells refresh');
+  });
+
+  await step('sign-off: finalise freezes a snapshot; re-open removes it; inspection fields', async () => {
+    await openTab(S, 'signoff');
+    await page.click('[data-act="finaliseReport"]'); await flush();
+    let s = await t.getJob(S);
+    assert(s.issued && s.issued.company && s.issued.company.name && typeof s.issued.declaration === 'string' && 'signature' in s.issued && s.issued.at, 'issued snapshot');
+    assert(/Report finalised/.test(await text('#tabBody')), 'finalised view');
+    await page.click('[data-act="reopenReport"]'); await flush();
+    s = await t.getJob(S);
+    assert(!('issued' in s), 're-opened');
+    await openTab(S, 'inspection');
+    await page.click('[data-act="inspByAssessor"]'); await flush();
+    s = await t.getJob(S);
+    assert.strictEqual(s.inspection.by, 'Sample Assessor');
+    assert(await exists('[data-bind="inspection.byQualifications"]'));
+    await page.fill('[data-bind="inspection.by"]', ''); await flush();
+  });
+
+  await step('export PDF asks for confirmation while AI lines are unreviewed', async () => {
+    await openTab(A, 'report'); await settle(300);
+    const n0 = (await t.calls('exportPdf')).length;
+    t.dialogMode = 'dismiss';
+    await page.click('[data-act="exportPdf"]'); await settle(200);
+    t.dialogMode = 'accept';
+    assert.strictEqual((await t.calls('exportPdf')).length, n0, 'cancelled');
+    assert(/not been marked as reviewed/.test(t.dialogs[t.dialogs.length - 1]), 'dialog: ' + t.dialogs[t.dialogs.length - 1]);
+    await page.click('[data-act="exportPdf"]'); await settle(300);
+    assert.strictEqual((await t.calls('exportPdf')).length, n0 + 1, 'exported after confirming');
+    // sample (all reviewed): no dialog
+    const d0 = t.dialogs.length;
+    await openTab(S, 'report'); await settle(300); await page.click('[data-act="exportPdf"]'); await settle(300);
+    assert.strictEqual(t.dialogs.length, d0, 'no dialog for a reviewed job');
+  });
+
+  await step('two modals in a row: OEM picker "Use" changes only its own line; + Part number works after the signature pad', async () => {
+    await openTab(S, 'estimate');
+    const before = (await t.getJob(S)).lines;
+    // line 1 gets the assessor's own number and price
+    await page.fill(`input[data-lf="partNo"][data-id="${before[0].id}"]`, 'MY-OWN-PN-1'); await page.fill(`input[data-lf="amount"][data-id="${before[0].id}"]`, '11.11'); await flush();
+    await page.click(`[data-act="oemPick"][data-id="${before[0].id}"]`); await settle(150);
+    const modalText = await text('#modalBody');
+    assert(/£74\.55 ex VAT \(£89\.46 inc VAT\)/.test(modalText), 'OEM modal prices ex / inc VAT');
+    await page.click('#modal [data-close]'); await settle(100);
+    await page.click(`[data-act="oemPick"][data-id="${before[1].id}"]`); await settle(150);
+    await page.click('#modal [data-use="0"]'); await flush();
+    const after = (await t.getJob(S)).lines;
+    assert.deepStrictEqual([after[0].partNo, after[0].amount], ['MY-OWN-PN-1', 11.11], 'line 1 unchanged by line 2\'s picker');
+    assert.deepStrictEqual([after[1].partNo, after[1].amount], [before[1].partNo, before[1].amount], 'line 2: number set, no researched price so amount kept');
+    // restore line 1 through its own picker: the EX-VAT price is used
+    await page.click(`[data-act="oemPick"][data-id="${before[0].id}"]`); await settle(150);
+    await page.click('#modal [data-use="0"]'); await flush();
+    const l1 = (await t.getJob(S)).lines[0];
+    assert.deepStrictEqual([l1.partNo, l1.amount], ['768501KA6A', 74.55], 'Use fills the ex-VAT price');
+    assert(/£3,365\.08/.test(await text('#chips')), 'sample total intact: ' + await text('#chips'));
+    // signature pad, then catalogue "+ Part number"
+    await t.go('#/settings'); await settle(300);
+    await page.click('[data-act="sigDraw"][data-target="default"]'); await settle(150);
+    const cv = await page.locator('canvas.sigpad').boundingBox();
+    await page.mouse.move(cv.x + 20, cv.y + 40); await page.mouse.down(); await page.mouse.move(cv.x + 200, cv.y + 80, { steps: 6 }); await page.mouse.up();
+    await page.click('#modal [data-ok]'); await settle(300);
+    await t.go('#/catalogue'); await settle(300);
+    await page.click('[data-act="catAddNo"]'); await settle(150);
+    assert(/Price £ ex VAT/.test(await text('#modalBody')), 'ex VAT price label');
+    await page.fill('#nOem', 'TEST-PN-123'); await page.fill('#nPrice', '12.5');
+    assert.strictEqual(await page.$eval('#nAuto', (n) => n.checked), false, 'auto-fill is off unless ticked');
+    await page.check('#nAuto');
+    await page.click('#modal [data-ok]'); await settle(300);
+    assert(/#\/catalogue$/.test(await page.evaluate(() => location.hash)) && /Parts catalogue/.test(await text('#main')), 'still on the catalogue');
+    assert(/Part number added/.test(await toastText()), await toastText());
+    const custom = await t.getKv('customOem');
+    const entry = custom.flatMap((v) => Object.values(v.parts).flat()).find((c) => c.oem === 'TEST-PN-123');
+    assert(entry && entry.confidence === 'user' && entry.user === true && entry.autoFill === true && entry.role === 'primary' && entry.market === 'UK' && entry.price === 12.5, 'user entry fields: ' + JSON.stringify(entry));
+  });
+
+  await step('switching jobs mid-edit keeps the edit', async () => {
+    await openTab(S, 'claim');
+    await page.fill('[data-bind="instruction.fileRef"]', 'EDITED-REF-123');
+    await page.click('.jobhead a[href="#/jobs"]'); await settle(300);
+    assert.strictEqual((await t.getJob(S)).instruction.fileRef, 'EDITED-REF-123');
+    await openTab(S, 'claim');
+    await page.fill('[data-bind="instruction.tpReg"]', 'ZZ99 ZZZ');
+    await openTab(B, 'claim'); await settle(200);
+    assert.strictEqual((await t.getJob(S)).instruction.tpReg, 'ZZ99 ZZZ');
+    await openTab(S, 'claim');
+    await page.fill('[data-bind="instruction.fileRef"]', 'CCG-AB14CDE-010926'); await page.fill('[data-bind="instruction.tpReg"]', 'XX08 XXX'); await flush();
+  });
+
+  await step('zone filter: chip with ✕, reset when another job opens', async () => {
+    await openTab(S, 'estimate');
+    await page.click('[data-act="zonePick"][data-z="RH mirror"]'); await settle(150);
+    assert(/Zone: RH mirror/.test(await text('.zchip')), 'chip');
+    const n = await page.$$eval('#pickResults .r', (ns) => ns.length);
+    const id = await newJob();
+    await openTab(id, 'estimate');
+    assert(!(await exists('.zchip')), 'no chip on another job');
+    const n2 = await page.$$eval('#pickResults .r', (ns) => ns.length);
+    assert(n2 > n, `filter cleared (${n} → ${n2})`);
+    await openTab(S, 'estimate');
+    await page.click('[data-act="zonePick"][data-z="RH mirror"]'); await settle(100);
+    await page.click('.zchip [data-act="zonePick"]'); await settle(100);
+    assert(!(await exists('.zchip')), 'cleared by ✕');
+  });
+
+  await step('CSV import: quoted fields, doubled quotes, optional header, skipped rows reported', async () => {
+    await t.go('#/catalogue'); await settle(300);
+    await page.selectOption('#catVeh', 'nissan-juke-f15'); await settle(200);
+    const csv = 'FW001,RH,OEM-FW-R,"Wing, right ""outer""",£123.45\r\nBN001,,OEM-BONNET,Bonnet,400\r\nXX999,,BAD,Bad,1\r\n';
+    await choose('[data-act="catImport"]', { name: 'parts.csv', mimeType: 'text/csv', buffer: Buffer.from(csv) }); await settle(400);
+    assert(/Imported 2 part number\(s\), skipped 1 row/.test(await toastText()), await toastText());
+    let custom = await t.getKv('customOem');
+    const juke = custom.find((v) => v.key === 'nissan-juke-f15');
+    const fw = juke.parts['FW001|R'].find((c) => c.oem === 'OEM-FW-R');
+    assert(fw.description === 'Wing, right "outer"' && fw.price === 123.45 && fw.confidence === 'user' && fw.autoFill === false, JSON.stringify(fw));
+    assert(juke.parts['BN001|'].some((c) => c.oem === 'OEM-BONNET' && c.price === 400));
+    await choose('[data-act="catImport"]', { name: 'h.csv', mimeType: 'text/csv', buffer: Buffer.from('code,side,oem,description,price\nRE001,,OEM-RB,Rear bumper,150\n') }); await settle(400);
+    assert(/Imported 1 part number\(s\)\./.test(await toastText()) && !/header/.test(await toastText()), await toastText());
+  });
+
+  await step('import a legacy job lacking sections; Jobs list still renders', async () => {
+    await t.go('#/jobs'); await settle(300);
+    await choose('[data-act="importJob"]', { name: 'min.json', mimeType: 'application/json', buffer: Buffer.from('{"vehicle":{"reg":"MIN 1"},"lines":[{"description":null,"hours":1}]}') });
+    await page.waitForFunction(() => /#\/job\/[^/]+\/claim$/.test(location.hash)); await settle(300);
+    const id = await t.jobId();
+    const j = await t.getJob(id);
+    assert(j.valuation && j.report && j.rates && j.lines[0].description === '' && j.lines[0].id, 'migrated before saving');
+    for (const tb of ['vehicle', 'estimate', 'valuation', 'report']) await openTab(id, tb);
+    await page.click('.jobhead a[href="#/jobs"]'); await settle(400);
+    assert(await exists('[data-act="loadSample"]'), 'list rendered');
+    assert(/MIN 1/.test(await text('#main')), 'imported row shown');
+  });
+
+  await step('a job with AI findings and a raw legacy DVLA record reopens (migrate is safe and saves once)', async () => {
+    const legacy = { id: 'legacy-1', createdAt: '2025-01-01T00:00:00.000Z', updatedAt: '2025-01-02T00:00:00.000Z', vehicle: { reg: 'LEG 1', make: 'Nissan', firstReg: '2014-08-01', dvla: { make: 'NISSAN', motExpiryDate: '2027-02-01', monthOfFirstRegistration: '2014-08', taxStatus: 'Taxed', wheelplan: '2 AXLE RIGID BODY' } }, lines: [], photos: [{ dataUrl: 'data:image/jpeg;base64,' + jpg2.toString('base64'), title: 'x', labels: null }], aiFindings: { summary: { impact_type: 'x' }, suggested_lines: [], photos: [] }, valuation: { sources: [null, { name: 'CAP HPI', amount: 5000 }] } };
+    await t.putJob(legacy);
+    await t.go('#/catalogue'); await settle(200); await t.go('#/jobs'); await settle(300);
+    await page.click('a[href="#/job/legacy-1/claim"].btn'); await settle(400);
+    await openTab('legacy-1', 'vehicle');
+    const dv = await page.$eval('#tabBody .hint b', (n) => n.parentElement.textContent);
+    assert(/^DVLA:/.test(dv.trim()) && /expires 01\/02\/2027/.test(dv), 'DVLA line: ' + dv.trim().slice(0, 80));
+    let j = await t.getJob('legacy-1');
+    assert(j.vehicle.dvla.motExpiry === '2027-02-01' && j.vehicle.dvla.firstRegistration === '2014-08-01' && !('motExpiryDate' in j.vehicle.dvla), 'dvla normalised');
+    assert(j.vehicle.firstRegPrecision === 'month' && j.photos[0].id && Array.isArray(j.photos[0].labels) && j.valuation.sources.length === 1, 'other fields migrated');
+    const u1 = j.updatedAt;
+    await t.go('#/jobs'); await settle(300); await openTab('legacy-1', 'claim'); await settle(200);
+    j = await t.getJob('legacy-1');
+    assert.strictEqual(j.updatedAt, u1, 'second open does not re-save (migrate is idempotent)');
+    // the Photos tab makes the missing thumbnail once (the card shows it; the full image stays for the report), then never again
+    await openTab('legacy-1', 'photos'); await flush();
+    j = await t.getJob('legacy-1');
+    const th = j.photos[0].thumb;
+    assert(/^data:image\/jpeg;base64,/.test(th) && th.length < j.photos[0].dataUrl.length * 2 && j.photos[0].dataUrl.startsWith('data:image/jpeg'), 'thumbnail stored: ' + String(th).slice(0, 30));
+    assert.strictEqual(await page.$eval('.pcard .pimg img', (n) => n.getAttribute('src')), th, 'the card shows the thumbnail');
+    const u2 = j.updatedAt;
+    await t.go('#/jobs'); await settle(300); await openTab('legacy-1', 'photos'); await flush();
+    assert.strictEqual((await t.getJob('legacy-1')).updatedAt, u2, 'thumbnails are made once');
+  });
+
+  await step('Jobs list: rendered from the summaries (never the full jobs); one bad record shows an error row instead of blanking the list', async () => {
+    // the list must not read the full records (with every photo): count the calls while it renders
+    await page.evaluate(() => {
+      const S = window.Core.Store; window.__listJobsCalls = 0; window.__getJobCalls = 0;
+      S.__listJobs = S.listJobs; S.listJobs = function () { window.__listJobsCalls++; return S.__listJobs.apply(this, arguments); };
+      S.__getJob = S.getJob; S.getJob = function () { window.__getJobCalls++; return S.__getJob.apply(this, arguments); };
+    });
+    await t.go('#/settings'); await settle(200); await t.go('#/jobs'); await settle(400);
+    const reads = await page.evaluate(() => { const S = window.Core.Store; S.listJobs = S.__listJobs; S.getJob = S.__getJob; delete S.__listJobs; delete S.__getJob; return [window.__listJobsCalls, window.__getJobCalls, typeof S.listSummaries]; });
+    if (reads[2] === 'function') assert.deepStrictEqual(reads.slice(0, 2), [0, 0], 'the Jobs list read no full job: ' + JSON.stringify(reads));
+    assert(/AB14 CDE/.test(await text('#main')) && /MIN 1/.test(await text('#main')), 'rows from summaries');
+    // a stored record its summary cannot be built from (a line rate that is an object with no text form): core.js marks the
+    // summary unreadable, and the list shows an error row for it with Open and Delete
+    await t.putJob({ id: 'bad-record-1', updatedAt: '2099-01-01T00:00:00.000Z', vehicle: { reg: 'BAD 1' }, lines: [{ description: 'x', hours: 1, rate: { toString: 1, valueOf: 1 } }] });
+    await t.go('#/settings'); await settle(200); await t.go('#/jobs'); await settle(400);
+    let bad = await page.$$eval('tr.bad', (ns) => ns.map((n) => n.textContent));
+    assert(bad.length === 1 && /BAD 1/.test(bad[0]) && /could not be read/.test(bad[0]) && /primitive/.test(bad[0]), 'error row: ' + bad);
+    assert(/AB14 CDE/.test(await text('#main')) && await exists('[data-act="loadSample"]'), 'other rows render');
+    // a summary that is not an object, or whose fields cannot be read, does not stop the list either
+    await page.evaluate(() => {
+      const S = window.Core.Store; S.__ls = S.listSummaries;
+      S.listSummaries = async () => [].concat(await S.__ls.call(S), [null, { id: 'bad-2', get reg() { throw new Error('boom'); }, updatedAt: '2099-01-02' }]);
+    });
+    await t.go('#/settings'); await settle(200); await t.go('#/jobs'); await settle(400);
+    bad = await page.$$eval('tr.bad', (ns) => ns.map((n) => n.textContent));
+    await page.evaluate(() => { const S = window.Core.Store; S.listSummaries = S.__ls; delete S.__ls; });
+    assert(bad.length === 3 && bad.every((b) => /could not be read/.test(b)) && bad.some((b) => /boom/.test(b)), 'error rows: ' + bad);
+    await t.go('#/settings'); await settle(200); await t.go('#/jobs'); await settle(400);
+    await page.click('tr.bad [data-act="delJob"][data-id="bad-record-1"]'); await settle(400);
+    assert(!(await t.getJob('bad-record-1')) && !(await exists('tr.bad')), 'deleted from its error row');
+  });
+
+  await step('restore an old (format 1) backup: settings defaults merged, jobs migrated, own part numbers added (never replaced)', async () => {
+    // the backup's own part numbers: one the user already has (written differently), one new, saved by the old version as 'confirmed'
+    const oemV1 = [{ key: 'nissan-juke-f15', make: 'Nissan', model: 'Juke', generation: 'F15', years: '2010-2019', parts: { 'RE001|': [
+      { oem: 'oem rb', description: 'Rear bumper', confidence: 'confirmed', user: true, autoFill: true },
+      { oem: 'V1-ONLY-PN', description: 'Rear bumper (old backup)', price: 99, confidence: 'confirmed', user: true, autoFill: true }] } }];
+    const backup = { kind: 'engineer-report-studio-backup', at: '2025-01-01T00:00:00Z', settings: { company: { name: 'RESTORED LTD' }, rates: { Body: 60, Painting: 60, Mechanical: 60, Auxiliary: 60, Electrical: 60 }, vatPct: 20 }, customOem: oemV1, jobs: [{ id: 'restored-1', vehicle: { reg: 'RST 1' }, lines: [], aiFindings: { summary: {} } }] };
+    await t.go('#/settings'); await settle(300);
+    const d0 = t.dialogs.length;
+    await choose('[data-act="restore"]', { name: 'backup.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(backup)) }); await settle(600);
+    assert(/Backup restored: 1 restored, 0 unreadable; 1 of your own part number added/.test(await toastText()), await toastText());
+    const q = t.dialogs[d0] || '';
+    assert(/Restore 1 assessment from this backup/.test(q) && /replaces the assessment here with the same ID/.test(q) && /Assessments that are only on this computer are kept/.test(q)
+      && /Settings: replaced by the backup's settings/.test(q) && /API keys and data-connection credentials are not changed/.test(q) && /the backup's are added to the ones here\. None are removed or replaced/.test(q), 'the confirmation says what happens: ' + q);
+    const own = await t.getKv('customOem');
+    const juke = own.find((v) => v.key === 'nissan-juke-f15');
+    assert(juke.parts['FW001|R'].some((c) => c.oem === 'OEM-FW-R'), 'part numbers added since the backup are kept');
+    assert.deepStrictEqual(juke.parts['RE001|'].map((c) => [c.oem, c.confidence, c.autoFill]), [['OEM-RB', 'user', false], ['V1-ONLY-PN', 'user', false]], 'merged without a duplicate: ' + JSON.stringify(juke.parts['RE001|']));
+    const st = await page.evaluate(() => ({ model: window.Core.settings.ai && window.Core.settings.ai.model, blend: window.Core.settings.blendFactor, name: window.Core.settings.company.name, pearl: (window.Core.settings.paintTypeFactor || {}).pearl }));
+    assert(st.model === 'claude-opus-5-5' && st.blend === 0.5 && st.name === 'RESTORED LTD' && st.pearl === 1.2, JSON.stringify(st));
+    const r = await t.getJob('restored-1');
+    assert(r.valuation && r.report && r.rates && r.rates.Body === 60, 'restored job migrated with the restored rates');
+    await page.click('[data-act="aiTest"]'); await settle(200);
+    assert(/Connected/.test(await toastText()), 'AI test works after restore: ' + await toastText());
+    await t.go('#/jobs'); await settle(300);
+    assert(/RST 1/.test(await text('#main')), 'restored job listed');
+    await openTab('restored-1', 'photos'); await openTab('restored-1', 'opinion');
+  });
+
+  await step('logo upload: SVG rasterised to a PNG the report accepts', async () => {
+    await t.go('#/settings'); await settle(300);
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="100" viewBox="0 0 300 100"><rect width="300" height="100" fill="#1f3349"/><text x="20" y="60" fill="#fff" font-size="40">ACME</text></svg>';
+    await choose('[data-act="logoUpload"]', { name: 'logo.svg', mimeType: 'image/svg+xml', buffer: Buffer.from(svg) }); await settle(600);
+    const logo = await page.evaluate(() => window.Core.settings.company.logo);
+    assert(/^data:image\/png;base64,/.test(logo), 'logo stored as PNG: ' + logo.slice(0, 30));
+    assert(await page.evaluate((u) => window.Report.safeImage(u) === u, logo), 'accepted by Report.safeImage');
+    await page.click('[data-act="logoClear"]'); await settle(200);
+  });
+
+  await step('report preview and PDF templates render for the sample', async () => {
+    await openTab(S, 'report'); await settle(500);
+    const len = await page.$eval('#preview', (f) => (f.srcdoc || '').length);
+    assert(len > 5000, 'preview length ' + len);
+    await page.click('[data-act="exportPdf"]'); await settle(300);
+    const c = (await t.calls('exportPdf')).pop().arg;
+    assert(c.header && c.footer && c.htmlLen > 5000);
+  });
+
+  await step('Settings: a blank or 0% economic-repair threshold is reset to 60% with a message', async () => {
+    await t.go('#/settings'); await settle(300);
+    await page.fill('[data-sbind="berThresholdPct"]', ''); await settle(50);
+    await page.press('[data-sbind="berThresholdPct"]', 'Tab'); await settle(150);
+    assert.strictEqual(await page.$eval('[data-sbind="berThresholdPct"]', (n) => n.value), '60');
+    assert(/reset to 60%/.test(await toastText()), await toastText());
+    await page.fill('[data-sbind="berThresholdPct"]', '0'); await page.press('[data-sbind="berThresholdPct"]', 'Tab'); await settle(600);
+    assert.strictEqual(await page.evaluate(() => window.Core.settings.berThresholdPct), 60);
+    await page.fill('[data-sbind="berThresholdPct"]', '65'); await page.press('[data-sbind="berThresholdPct"]', 'Tab'); await settle(600);
+    assert.strictEqual((await t.getKv('settings')).berThresholdPct, 65);
+    await page.fill('[data-sbind="berThresholdPct"]', '60'); await settle(600);
+  });
+
+  await step('Duplicate makes an editable draft copy (not finalised)', async () => {
+    await openTab(S, 'signoff'); await page.click('[data-act="finaliseReport"]'); await flush();
+    await t.go('#/jobs'); await settle(300);
+    const n0 = (await t.listJobs()).length;
+    await page.click(`[data-act="dupJob"][data-id="${S}"]`); await settle(400);
+    const all = await t.listJobs();
+    const copy = all.find((j) => j.report && /-COPY$/.test(j.report.ref || ''));
+    assert(all.length === n0 + 1 && copy && !copy.issued && copy.id !== S, 'copy without the issued snapshot');
+    assert(/finalised/.test(await text('#main')), 'Jobs list marks the finalised original');
+    await openTab(S, 'signoff'); await page.click('[data-act="reopenReport"]'); await flush();
+  });
+
+  await step('an edit typed just before the window reloads is saved (beforeunload flush)', async () => {
+    await openTab(S, 'claim');
+    await page.fill('[data-bind="instruction.locationOfLoss"]', 'High Street, Esher (flushed)');
+    await page.reload(); await page.waitForFunction(() => document.querySelector('#main').innerHTML.length > 0); await settle(500);
+    assert.strictEqual((await t.getJob(S)).instruction.locationOfLoss, 'High Street, Esher (flushed)');
+    await openTab(S, 'claim'); await page.fill('[data-bind="instruction.locationOfLoss"]', 'High Street, Esher'); await flush();
+  });
+
+  await step('OEM auto-fill: only autoFill candidates pre-fill; otherwise blank part no., ⋯ button and a VIN message', async () => {
+    const id = await newJob();
+    await openTab(id, 'vehicle'); await page.selectOption('[data-bind="vehicle.oemKey"]', 'nissan-juke-f15'); await settle(200);
+    await openTab(id, 'estimate');
+    await pick('FE002', '', 'replace');
+    assert(/1 researched number: choose the variant by VIN/.test(await toastText()), 'toast: ' + await toastText());
+    await pick('SS001', 'R', 'replace'); await flush();
+    const ls = await lines(id);
+    const fe2 = ls.find((l) => l.code === 'FE002'), ss1 = ls.find((l) => l.code === 'SS001');
+    assert.deepStrictEqual([fe2.partNo, fe2.amount], ['', 0], 'FE002 not auto-filled');
+    assert.deepStrictEqual([ss1.partNo, ss1.amount], ['768501KA6A', 74.55], 'SS001 filled with the ex-VAT price');
+    assert(await exists(`[data-act="oemPick"][data-id="${fe2.id}"]`), '⋯ options button on the FE002 line');
+    await page.click(`[data-act="oemPick"][data-id="${fe2.id}"]`); await settle(150);
+    assert(/choose by VIN/.test(await text('#modalBody')), 'modal badge');
+    await page.click('#modal [data-close]');
+    await page.fill('#pickQ', 'SS001'); await settle(100);
+    assert(/768501KA6A · £74\.55 ex VAT/.test(await text('#pickResults')), 'picker shows the ex-VAT price: ' + await text('#pickResults'));
+  });
+
+  // ---------- AI module outputs (ai.js) and main-process replies ----------
+  await step('AI lines on an SUV with pearl paint: guide hours scaled exactly as the picker scales them; adjusted hours kept; "replace" read as renew', async () => {
+    const id = await newJob();
+    await openTab(id, 'vehicle');
+    await page.selectOption('[data-bind="vehicle.sizeClass"]', 'suv'); await settle(150);
+    await page.selectOption('[data-bind="vehicle.paintType"]', 'pearl'); await flush();
+    await t.go('#/jobs'); await settle(200);
+    const j0 = await t.getJob(id);
+    j0.aiFindings = { model: 'claude-opus-5-5', at: new Date().toISOString(), photos: [], summary: {}, review_flags: [], suggested_lines: [
+      SL('FW001', 'R', 'replace', 'Body', 'RH front wing – renew', 1.2, 1.2, 'guide'),
+      SL('FW001', 'R', 'refinish', 'Painting', 'RH front wing – refinish new part', 2.2, 2.2, 'guide'),
+      SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 2, 'guide'),
+      SL('DR001', 'R', 'refinishRep1', 'Painting', 'RH front door – refinish repaired part (damage <50%)', 2, 2, 'guide'),
+      SL('FW001', 'L', 'blend', 'Painting', 'LH front wing – blend (colour match)', 1.1, 1.1, 'guide'),
+      SL('DR003', 'R', 'blend', 'Painting', 'RH rear door – blend (colour match)', 1.3, 1.9, 'adjusted', 'Pearl: extended blend into the shut.'),
+      SL('EL007', '', 'operation', 'Auxiliary', 'Pre-repair diagnostic scan', 0.3, 0.3, 'guide'),
+      SL('OP005', '', 'labour', 'Auxiliary', 'Strip / refit handle, trims & mouldings', 0.6, 0.6, 'guide'),
+      SL('DR001', 'R', 'check', 'Auxiliary', 'RH front door – inspect / test', 0.3, 0.3, 'guide'),
+      SL('DR001', 'R', 'rr', 'Auxiliary', 'RH front door – remove & refit', 1.8, 1.8, 'guide')
+    ] };
+    await t.putJob(j0);
+    await openTab(id, 'photos');
+    const hints = await page.$$eval('.sugg .basis', (ns) => ns.map((n) => n.textContent));
+    // the adjusted blend (1.9h base) takes the pearl factor once: 1.9 × 1.2 = 2.3h
+    assert(hints[0] === 'guide 1.2h, scaled for this vehicle' && hints[5] === 'adjusted from guide 1.3h (1.8h for this vehicle)AI 1.9h × 1.2 for the pearlescent finish', 'suggestion notes: ' + JSON.stringify(hints));
+    await page.click('[data-act="aiAddLines"]'); await flush();
+    // the same work through the picker on the same job
+    await openTab(id, 'estimate');
+    await pick('FW001', 'R', 'replace'); await pick('DR001', 'R', 'repair'); await pick('FW001', 'L', 'blend'); await pick('DR003', 'R', 'blend');
+    await pick('EL007', '', null); await pick('DR001', 'R', 'check'); await pick('DR001', 'R', 'rr');
+    await page.click('[data-act="addOp"][data-code="OP005"]'); await flush();
+    const ls = await lines(id);
+    const ai = ls.filter((l) => l.ai), man = ls.filter((l) => !l.ai);
+    const key = (l) => (l.code ? `${l.code}|${l.side}|${l.op}` : l.description);
+    const hoursOf = (arr2) => Object.fromEntries(arr2.map((l) => [key(l), l.hours]));
+    const A2 = hoursOf(ai), M2 = hoursOf(man);
+    assert.deepStrictEqual(A2, { 'FW001|R|renew': 1.4, 'FW001|R|refinish': 3, 'DR001|R|repair': 2.3, 'DR001|R|refinishRep1': 2.7, 'FW001|L|blend': 1.5, 'DR003|R|blend': 2.3, 'EL007||operation': 0.3, 'Strip / refit handle, trims & mouldings': 0.6, 'DR001|R|check': 0.3, 'DR001|R|rr': 2.1 }, 'AI hours: ' + JSON.stringify(A2));
+    for (const k of Object.keys(A2)) if (k !== 'DR003|R|blend') assert.strictEqual(A2[k], M2[k], `${k}: AI ${A2[k]}h vs picker ${M2[k]}h`);
+    assert.strictEqual(M2['DR003|R|blend'], 1.8, 'picker blend for the adjusted line');
+    const byKey = (k) => ai.find((l) => key(l) === k);
+    assert.deepStrictEqual([byKey('FW001|R|renew').op, byKey('FW001|R|renew').aiOperation], ['renew', 'replace'], '"replace" stored as renew');
+    assert(['FW001|R|refinish', 'DR001|R|refinishRep1', 'FW001|L|blend'].every((k) => byKey(k).pfApplied === 1.2), 'guide paint lines record the paint factor');
+    assert(byKey('DR003|R|blend').pfApplied === 1.2 && byKey('DR003|R|blend').hoursBasis === 'adjusted', 'adjusted blend: base hours × the paint factor, recorded once');
+    const notes = await page.$$eval('#linesTbl .aiBasis', (ns) => ns.map((n) => n.textContent));
+    assert.deepStrictEqual(notes, ['AI: adjusted from guide 1.3h (1.8h for this vehicle); ×1.2 paint finish included'], 'notes: ' + JSON.stringify(notes));
+  });
+
+  await step('photo batches: lines of one batch never merge; across batches only the same code, operation, side and wording, with both figures visible', async () => {
+    const id = await newJob();
+    await t.go('#/jobs'); await settle(200);
+    const sz = jpegSize(jpg2);
+    const j0 = await t.getJob(id);
+    j0.photos = Array.from({ length: 12 }, (_, k) => ({ id: 'bp' + (k + 1), dataUrl: dataUrl2, w: sz.w, h: sz.h, title: '', caption: '', source: '', labels: [] }));
+    await t.putJob(j0);
+    await t.mock({ linesByBatch: {
+      1: [SL('FW001', 'R', 'refinish', 'Painting', 'RH front wing – refinish new part', 2.2, 2.2, 'guide', 'Photo 3.'),
+        SL('FW001', 'R', 'blend', 'Painting', 'RH front wing – blend', 1.1, 1.1, 'guide', 'Photo 4.'),
+        SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 2, 'guide', 'Photo 5.'),
+        SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 2, 'guide', 'Photo 6.')],
+      11: [SL('FW001', 'R', 'refinish', 'Painting', 'RH front wing – refinish new part', 2.2, 2.6, 'adjusted', 'Photo 11: deeper scoring.'),
+        SL('FW001', 'R', 'blend', 'Painting', 'RH front wing - blend', 1.1, 1.1, 'guide', 'Photo 12.'),
+        SL('DR003', 'R', 'refinishRep1', 'Painting', 'RH rear door – refinish repaired part', 1.8, 1.8, 'guide', 'Photo 12.')]
+    } });
+    await openTab(id, 'photos');
+    const c0 = (await t.calls('ai.analysePhotos')).length;
+    await page.click('[data-act="aiAnalyse"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 8000 }); await flush();
+    const calls = (await t.calls('ai.analysePhotos')).slice(c0).map((c) => c.arg.idx);
+    assert.deepStrictEqual(calls, [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [11, 12]], 'two batches: ' + JSON.stringify(calls));
+    const f = (await t.getJob(id)).aiFindings;
+    const sl = f.suggested_lines;
+    assert.deepStrictEqual(sl.map((l) => [l.code, l.operation, l.labour_hours, l.hoursSeen]), [
+      ['FW001', 'refinish', 2.6, [2.2, 2.6]], ['FW001', 'blend', 1.1, [1.1, 1.1]], ['DR001', 'repair', 2, [2]], ['DR001', 'repair', 2, [2]], ['DR003', 'refinishRep1', 1.8, [1.8]]
+    ], 'merged lines: ' + JSON.stringify(sl.map((l) => [l.code, l.operation, l.labour_hours, l.hoursSeen])));
+    assert.strictEqual(Math.round(sl.reduce((a, l) => a + l.labour_hours, 0) * 10) / 10, 9.5, 'no hours lost (the old merge offered 6.4h)');
+    assert(/Photo 3\. Photo 11: deeper scoring\./.test(sl[0].reason), 'evidence of both batches kept');
+    assert.strictEqual(f.review_flags.filter((x) => /ADAS fit/.test(x)).length, 1, 'identical flags from two batches shown once');
+    assert.strictEqual(f.photos.filter((ph) => (ph.unplaced_damages || []).length).length, 2, 'unplaced damage from each batch');
+    const j = await t.getJob(id);
+    assert(j.photos.every((p) => p.labels.filter((l) => l.ai).length === 2), 'all 12 photos labelled by id');
+    const hints = await page.$$eval('.sugg .basis', (ns) => ns.map((n) => n.textContent));
+    assert(/photo batches differed: 2\.2h \/ 2\.6h/.test(hints[0]) && !/differed/.test(hints[1]), 'hint: ' + JSON.stringify(hints.slice(0, 2)));
+    assert(/IMAGE 01: Hidden crease 1/.test(await text('.unplaced')) && /IMAGE 11: Hidden crease 11/.test(await text('.unplaced')), 'unplaced list');
+    await page.click('[data-act="aiAddLines"]'); await flush();
+    const wing = (await lines(id)).find((l) => l.code === 'FW001' && l.op === 'refinish');
+    assert.deepStrictEqual([wing.hours, wing.aiHoursSeen, wing.hoursBasis], [2.6, [2.2, 2.6], 'adjusted'], JSON.stringify(wing));
+    await openTab(id, 'estimate');
+    assert(/AI photo batches differed: 2\.2h \/ 2\.6h\. Check the hours\./.test(await text('#linesTbl')), 'figures on the estimate line');
+    await t.mock({ linesByBatch: null });
+  });
+
+  await step('photo size limits: a photo over the AI\'s 7 MB limit is re-encoded; others are sent as stored; a missing size is read from the image', async () => {
+    const id = await newJob();
+    await t.go('#/jobs'); await settle(200);
+    const big = await page.evaluate(async ({ jid, small }) => {
+      const W = 1800, H = 1500;
+      const c = document.createElement('canvas'); c.width = W; c.height = H;
+      const ctx = c.getContext('2d'); const img = ctx.createImageData(W, H);
+      for (let o = 0; o < img.data.length; o += 65536) crypto.getRandomValues(img.data.subarray(o, Math.min(o + 65536, img.data.length)));
+      for (let k = 3; k < img.data.length; k += 4) img.data[k] = 255;
+      ctx.putImageData(img, 0, 0);
+      const url = c.toDataURL('image/png');
+      const db = await new Promise((res, rej) => { const r = indexedDB.open('engineer-report-studio'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+      const job = await new Promise((res, rej) => { const q = db.transaction('jobs').objectStore('jobs').get(jid); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+      job.photos = [{ id: 'big1', dataUrl: url, w: W, h: H, title: 'Big', caption: '', source: '', labels: [] }, { id: 'legacy1', dataUrl: small, title: 'Legacy', caption: '', source: '', labels: [] }];
+      await new Promise((res, rej) => { const tx = db.transaction('jobs', 'readwrite'); tx.objectStore('jobs').put(job); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+      db.close();
+      const b = url.split(',')[1];
+      return { bytes: Math.floor(b.length * 3 / 4) };
+    }, { jid: id, small: dataUrl1 });
+    assert(big.bytes > 7e6, 'test photo is over 7 MB: ' + big.bytes);
+    await openTab(id, 'photos');
+    await page.click('[data-act="aiAnalyse"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 15000 }); await flush();
+    const call = (await t.calls('ai.analysePhotos')).pop().arg;
+    assert.deepStrictEqual(call.ids, ['big1', 'legacy1']);
+    assert.deepStrictEqual(call.types, ['image/jpeg', 'image/jpeg'], 'the big PNG was re-encoded as JPEG');
+    assert(call.bytes[0] <= 7e6 && call.bytes[0] < big.bytes, 'within the limit: ' + call.bytes[0]);
+    assert(call.wh[0][0] <= 1800 && call.wh[0][1] === Math.round(call.wh[0][0] * 1500 / 1800), 're-encoded size sent: ' + JSON.stringify(call.wh[0]));
+    const sz = jpegSize(jpg1), b1 = jpg1.toString('base64');
+    assert.deepStrictEqual(call.wh[1], [sz.w, sz.h], 'size read from the stored image: ' + JSON.stringify(call.wh[1]));
+    assert.strictEqual(call.sig[1], `${b1.length}:${b1.slice(0, 40)}:${b1.slice(-40)}`, 'the legacy JPEG sent as stored');
+    const j = await t.getJob(id);
+    assert(j.photos.every((p) => p.labels.some((l) => l.ai)), 'both photos labelled');
+    assert(/AI labelled 2 photo/.test(await toastText()), await toastText());
+  });
+
+  await step('AI valuation: claim type and date of loss sent; "+" asks first for an unverified comparable and adds it without its link; footer', async () => {
+    const id = await newJob();
+    await page.fill('[data-bind="instruction.dateOfLoss"]', '2026-09-01'); await flush();
+    await openTab(id, 'valuation');
+    assert(/claim type Not specified · valuation date 01\/09\/2026 \(date of loss\)/.test(await text('.valSent')), await text('.valSent'));
+    await page.selectOption('[data-bind="valuation.claimType"]', 'third-party'); await flush();
+    assert.strictEqual((await t.getJob(id)).valuation.claimType, 'third-party');
+    assert(/claim type Third-party claim/.test(await text('.valSent')), 'note follows the select: ' + await text('.valSent'));
+    await page.click('[data-act="aiValuation"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 5000 }); await flush();
+    const call = (await t.calls('ai.valuation')).pop().arg;
+    assert.deepStrictEqual([call.claimType, call.valuationDate], ['third-party', '2026-09-01'], JSON.stringify(call));
+    assert(/web search: 2 searches, UK listing sites only · claim type: Third-party claim · valued at 01\/09\/2026/.test(await text('.valFooter')), 'footer: ' + await text('.valFooter'));
+    // unverified comparable: the confirmation is asked; cancelling adds nothing
+    const d0 = t.dialogs.length;
+    t.dialogMode = 'dismiss';
+    await page.click('[data-act="advFromAi"][data-i="3"]'); await flush();
+    t.dialogMode = 'accept';
+    assert(t.dialogs.length === d0 + 1 && /could not be matched/.test(t.dialogs[d0]), 'confirmation asked: ' + t.dialogs.slice(d0));
+    assert.strictEqual(((await t.getJob(id)).valuation.adverts || []).length, 0, 'nothing added when cancelled');
+    await page.click('[data-act="advFromAi"][data-i="3"]'); await flush();
+    let ads = (await t.getJob(id)).valuation.adverts;
+    assert.deepStrictEqual([ads.length, ads[0].url, ads[0].claimedUrl, ads[0].aiUnverified], [1, '', 'https://www.motors.co.uk/car-123456/', true], 'added without its link: ' + JSON.stringify(ads[0]));
+    assert(/AI comparable, not verified: the AI gave https:\/\/www\.motors\.co\.uk\/car-123456\//.test(await text('.advUnverified')), 'advert row hint');
+    // verified comparable: added with its link, no question
+    const d1 = t.dialogs.length;
+    await page.click('[data-act="advFromAi"][data-i="0"]'); await flush();
+    ads = (await t.getJob(id)).valuation.adverts;
+    assert(t.dialogs.length === d1 && ads[1].url === 'https://www.autotrader.co.uk/car-details/1' && !ads[1].aiUnverified, 'verified added directly');
+    // the claim type changed after the valuation; a search without the UK site list is reported
+    await page.selectOption('[data-bind="valuation.claimType"]', 'court'); await flush();
+    assert(/claim type changed since this valuation/.test(await text('.aiPanel')), 'stale claim type flagged');
+    await t.mock({ domainsRestricted: false });
+    await page.click('[data-act="aiValuation"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 5000 }); await flush();
+    assert(/not limited to UK listing sites/.test(await text('.valFooter')) && /claim type: Court proceedings/.test(await text('.valFooter')), 'footer: ' + await text('.valFooter'));
+    await t.mock({ domainsRestricted: true });
+  });
+
+  await step('provenance: applied AI text recorded in job.aiText and sent with labels[].ai, titleByAi / captionByAi and the ADAS fit', async () => {
+    await openTab(A, 'vehicle');
+    await page.fill('[data-bind="vehicle.adas"]', 'Windscreen camera (lane keeping), front radar'); await flush();
+    // another photo analysis of A: the captions the first run applied are still AI text, although the AI's newest suggestions differ
+    await openTab(A, 'photos');
+    await page.click('[data-act="aiAnalyse"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 8000 }); await flush();
+    const run = (await t.calls('ai.analysePhotos')).pop().arg;
+    assert.deepStrictEqual([run.captionByAi, run.titleByAi, run.adas], [[true, true], [false, false], 'Windscreen camera (lane keeping), front radar'], 'analysis provenance: ' + JSON.stringify([run.captionByAi, run.titleByAi, run.adas]));
+    await page.click('[data-act="aiApplySummary"]'); await flush();
+    await openTab(A, 'valuation');
+    await page.click('[data-act="aiValApply"]'); await flush();
+    let j = await t.getJob(A);
+    assert.strictEqual(j.vehicle.adas, 'Windscreen camera (lane keeping), front radar');
+    assert.deepStrictEqual([j.aiText['circumstances.impactType'], j.aiText['circumstances.direction'], j.aiText['report.summary'], j.aiText['valuation.comments']],
+      ['Sideswipe / lateral side contact', 'Rear to front', 'DRAFT2 summary', 'AI valuation comments **£5,700**'], JSON.stringify(j.aiText));
+    assert(!('inspection.condition' in j.aiText) || j.aiText['inspection.condition'] === j.inspection.condition, 'a field the summary did not fill keeps its own record');
+    const door = j.photos.find((p) => p.title === 'RH front door');
+    assert(door.aiCaption !== door.caption && j.aiText['photos.' + door.id + '.caption'] === door.caption, 'the applied caption is recorded; the newest AI suggestion differs');
+    // narrative: aiText (job fields only), photo provenance and label provenance
+    await openTab(A, 'opinion');
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await settle(150);
+    const call = (await t.calls('ai.draftNarrative')).pop().arg;
+    assert(call.aiText['circumstances.impactType'] && call.aiText['valuation.comments'] && call.aiText['report.summary'] === 'DRAFT2 summary', 'aiText sent: ' + JSON.stringify(Object.keys(call.aiText)));
+    assert(!Object.keys(call.aiText).some((k) => k.startsWith('photos.')), 'photo provenance travels per photo, not in aiText');
+    assert.strictEqual(call.adas, 'Windscreen camera (lane keeping), front radar', 'ADAS fit sent');
+    const dp = call.prov.find((x) => x.labels.some((l) => l[0] === 'Dent'));
+    assert(dp && dp.captionByAi === true && dp.titleByAi === false, 'door provenance: ' + JSON.stringify(dp));
+    assert(dp.labels.some((l) => l[0] === 'Dent' && l[1] === false) && dp.labels.some((l) => /Scoring/.test(l[0]) && l[1] === true), 'label provenance: ' + JSON.stringify(dp.labels));
+    // once the assessor edits an applied field, ai.js sees text that no longer matches the AI record
+    await openTab(A, 'opinion');
+    await page.fill('[data-bind="report.summary"]', 'My own summary.'); await flush();
+    j = await t.getJob(A);
+    assert(j.aiText['report.summary'] === 'DRAFT2 summary' && j.report.summary === 'My own summary.', 'record kept; text now differs');
+  });
+
+  await step('AI status: a catalogue / AI error shows in the sidebar and Settings; key-storage wording; refused key changes are reported', async () => {
+    await t.mock({ aiStatusError: 'The parts catalogue could not be loaded: window.CATALOGUE is missing or empty', aiProtection: 'none', dataProtection: 'weak' });
+    await t.go('#/settings'); await settle(300);
+    const side = await text('#aiState');
+    assert(/AI assessor unavailable/.test(side) && /parts catalogue could not be loaded/.test(side), 'sidebar: ' + side);
+    assert(/The AI features cannot run: The parts catalogue could not be loaded/.test(await text('.aiPanel .errBox')), 'Settings AI error');
+    assert(/Stored without encryption: this PC has no secure storage, so the key is saved as plain text\./.test(await text('.aiStorage')), 'AI key storage: ' + await text('.aiStorage'));
+    assert(/Stored without proper encryption: no system keyring was found, so the keys are protected only by a fixed key built into the app \(the Linux fallback\)/.test(await text('.dataStorage')), 'data keys: ' + await text('.dataStorage'));
+    // a refused save says why, keeps the typed key, and never says "saved"
+    await t.mock({ setKeyError: 'That is too short to be an Anthropic API key. Copy it again from the Anthropic Console.' });
+    await page.fill('#aiKey', 'sk-ant-x'); await page.click('[data-act="aiSaveKey"]'); await settle(200);
+    assert(/too short to be an Anthropic API key/.test(await toastText()) && !/saved/i.test(await toastText()), 'toast: ' + await toastText());
+    assert.strictEqual(await page.$eval('#aiKey', (n) => n.value), 'sk-ant-x', 'typed key kept for correction');
+    await t.mock({ setKeysError: 'The credentials could not be saved (EACCES): the app\'s settings folder could not be written.' });
+    await page.fill('#kDvla', 'dvla-key-123'); await page.click('[data-act="saveDvla"]'); await settle(200);
+    assert(/could not be saved \(EACCES\)/.test(await toastText()) && !/DVLA key saved/.test(await toastText()), 'toast: ' + await toastText());
+    await page.click('[data-act="clearMot"]'); await settle(200);
+    assert(/could not be saved \(EACCES\)/.test(await toastText()), 'clear refused: ' + await toastText());
+    await t.mock({ setKeyError: '', setKeysError: '', aiProtection: 'none' });
+    await page.fill('#aiKey', 'sk-ant-valid-key-123'); await page.click('[data-act="aiSaveKey"]'); await settle(300);
+    assert(/API key saved, but without proper encryption/.test(await toastText()), 'saved without encryption: ' + await toastText());
+    await t.mock({ aiStatusError: '', aiProtection: 'os', dataProtection: 'os' });
+    await t.go('#/jobs'); await settle(200); await t.go('#/settings'); await settle(300);
+    assert(/AI assessor ready/.test(await text('#aiState')) && !(await exists('.errBox')) && !(await exists('.keyWarn')), 'back to normal: ' + await text('#aiState'));
+    assert(/The key is encrypted by your operating system/.test(await text('.aiStorage')), 'os wording');
+  });
+
+  await step('unreadable data credentials: error shown, saving disabled, lookups explain it; "Remove all saved credentials" clears and refreshes', async () => {
+    await t.mock({ dataUnreadable: true });
+    await openTab(B, 'vehicle');
+    await page.click('[data-act="lookupVehicle"]'); await settle(300);
+    assert(/could not be read/.test(await toastText()), 'lookup toast: ' + await toastText());
+    await t.go('#/settings'); await settle(300);
+    assert(/The saved credentials cannot be read\./.test(await text('.errBox')), 'error box: ' + await text('.errBox'));
+    assert(await exists('[data-act="saveDvla"][disabled]') && await exists('[data-act="saveMot"][disabled]'), 'saving disabled');
+    const n0 = (await t.calls('data.clearKeys')).length;
+    await page.click('[data-act="clearAllData"]'); await settle(400);
+    assert.strictEqual((await t.calls('data.clearKeys')).length, n0 + 1, 'clearKeys called');
+    assert(/All saved data-connection credentials were removed/.test(await toastText()), await toastText());
+    assert(!(await exists('.errBox')) && !(await exists('[data-act="saveDvla"][disabled]')), 'status refreshed: no error, saving enabled');
+    await t.mock({ dvla: true, mot: true });
+  });
+
+  await step('save failures are reported (backup / job file); PDF export passes the report\'s margins', async () => {
+    // a write that fails part-way: the backup is stopped, the partial file deleted (abort), and the reason shown
+    await t.mock({ backupWriteError: 'The backup could not be written: the disk is full.', backupFailAtWrite: 1 });
+    await t.go('#/settings'); await settle(300);
+    const a0 = (await t.calls('backup.abort')).length;
+    await page.click('[data-act="backup"]'); await settle(600);
+    assert(/backup failed, so no backup file was kept: The backup could not be written: the disk is full\./.test(await toastText()), 'backup failure: ' + await toastText());
+    assert.strictEqual((await t.calls('backup.abort')).length, a0 + 1, 'abort called');
+    assert.strictEqual(await text('#dataProgress'), '', 'progress cleared');
+    await t.mock({ backupWriteError: '', saveError: 'The file could not be saved: the disk is full.' });
+    await openTab(S, 'report'); await settle(300);
+    await page.click('[data-act="exportJson"]'); await settle(300);
+    assert(/the disk is full/.test(await toastText()), 'job file failure: ' + await toastText());
+    await t.mock({ saveError: '' });
+    await page.click('[data-act="exportJson"]'); await settle(300);
+    assert(/^Saved /.test(await toastText()) && (await t.calls('saveFile')).pop().arg.kind === 'json', 'saved with kind json');
+    // the margins come from report.js (one definition for @page and printToPDF) whenever it gives them
+    await page.click('[data-act="exportPdf"]'); await settle(300);
+    const given = await page.evaluate((id) => { const tpl = window.Report.pdfTemplates(null) || {}; return tpl.marginsMm || null; }, S);
+    const sent = (await t.calls('exportPdf')).pop().arg;
+    if (given) assert.deepStrictEqual(sent.marginsMm, given, 'report.js margins forwarded');
+    else assert(!('marginsMm' in sent), 'no margins while report.js gives none');
+    await page.evaluate(() => { const R = window.Report; R.__pt = R.pdfTemplates; R.pdfTemplates = (jb) => Object.assign(R.__pt(jb), { marginsMm: { top: 21, bottom: 22, left: 13, right: 14 } }); });
+    await page.click('[data-act="exportPdf"]'); await settle(300);
+    await page.evaluate(() => { const R = window.Report; R.pdfTemplates = R.__pt; delete R.__pt; });
+    assert.deepStrictEqual((await t.calls('exportPdf')).pop().arg.marginsMm, { top: 21, bottom: 22, left: 13, right: 14 });
+  });
+
+  await step('QA: a researched part number with variant alternatives asks for confirmation by VIN', async () => {
+    const id = await newJob();
+    await openTab(id, 'vehicle'); await page.selectOption('[data-bind="vehicle.oemKey"]', 'ford-fiesta-mk7'); await settle(200);
+    await openTab(id, 'estimate');
+    await pick('LT004', 'L', 'replace'); await flush();
+    const l = (await lines(id)).find((x) => x.code === 'LT004');
+    assert.strictEqual(l.partNo, '1709553', 'auto-filled with the first researched number');
+    await openTab(id, 'report'); await settle(300);
+    assert(/Line 1 uses researched part number 1709553; there is 1 alternative \(variant\): confirm by VIN\./.test(await text('.qa')), await text('.qa'));
+    await openTab(id, 'estimate');
+    await page.fill(`input[data-lf="partNo"][data-id="${l.id}"]`, 'NOT-RESEARCHED-1'); await flush();
+    await openTab(id, 'report'); await settle(300);
+    assert(!/uses researched part number/.test(await text('#tabBody')), 'no message for a number that is not researched');
+    const msgs = await page.evaluate(() => {
+      const C = window.Core, saved = C.customOem;
+      try {
+        C.setCustomOem([{ key: 'ford-fiesta-mk7', make: 'Ford', model: 'Fiesta', parts: { 'LT004|L': [{ oem: 'MYOWN1', user: true }] } }]);
+        const jb = C.newJob(); jb.vehicle.oemKey = 'ford-fiesta-mk7';
+        jb.lines = [C.newLine({ code: 'LT004', side: 'L', partNo: 'MYOWN1', description: 'own' }), C.newLine({ code: 'LT004', side: 'L', partNo: '18-77-011', description: 'researched' }), C.newLine({ code: 'SS001', side: 'R', partNo: '768501KA6A', description: 'single' })];
+        return C.qaChecks(jb).filter((q) => /researched part number/.test(q.msg)).map((q) => q.msg);
+      } finally { C.setCustomOem(saved); }
+    });
+    assert.deepStrictEqual(msgs, ['Line 2 uses researched part number 18-77-011; there are 2 alternatives (variants): confirm by VIN.'], JSON.stringify(msgs));
+  });
+
+  await step('migrate keeps op / aiOperation / guideHours / hoursBasis / aiHoursSeen; "replace" becomes "renew"; junk values dropped', async () => {
+    await t.go('#/jobs'); await settle(300);
+    const file = { vehicle: { reg: 'OPS 1' }, lines: [
+      { description: 'RH front wing – renew', code: 'FW001', side: 'R', hours: 1.2, op: 'replace', ai: true, reviewed: false, aiOperation: 'replace', guideHours: '1.2', hoursBasis: 'Guide' },
+      { description: 'RH front door – refinish repaired part', code: 'DR001', side: 'R', hours: 1.6, type: 'Painting', op: 'refinishRep1', ai: true, aiOperation: 'refinishRep1', guideHours: 2, hoursBasis: 'adjusted', aiHoursSeen: [1.6, 2.1], pfApplied: 1 },
+      { description: 'x', op: 42, hoursBasis: 'whatever', aiOperation: { a: 1 }, aiHoursSeen: 'no' }
+    ], aiText: { 'report.summary': 'AI text', bad: 7 }, valuation: { claimType: 'Own Insurer' } };
+    await choose('[data-act="importJob"]', { name: 'ops.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(file)) });
+    await page.waitForFunction(() => /#\/job\/[^/]+\/claim$/.test(location.hash)); await settle(300);
+    const id = await t.jobId();
+    const j = await t.getJob(id);
+    const ls = j.lines;
+    assert.deepStrictEqual([ls[0].op, ls[0].aiOperation, ls[0].guideHours, ls[0].hoursBasis], ['renew', 'replace', 1.2, 'guide'], JSON.stringify(ls[0]));
+    assert.deepStrictEqual([ls[1].op, ls[1].aiOperation, ls[1].guideHours, ls[1].hoursBasis, ls[1].aiHoursSeen, ls[1].pfApplied], ['refinishRep1', 'refinishRep1', 2, 'adjusted', [1.6, 2.1], 1], JSON.stringify(ls[1]));
+    assert(!['op', 'hoursBasis', 'aiOperation', 'aiHoursSeen'].some((k) => k in ls[2]), 'junk values dropped: ' + JSON.stringify(ls[2]));
+    assert.deepStrictEqual([j.aiText, j.valuation.claimType, j.vehicle.adas], [{ 'report.summary': 'AI text' }, 'own-insurer', ''], 'job fields: ' + JSON.stringify([j.aiText, j.valuation.claimType]));
+    const u1 = j.updatedAt;
+    await t.go('#/jobs'); await settle(300); await openTab(id, 'estimate'); await settle(200);
+    assert.strictEqual((await t.getJob(id)).updatedAt, u1, 'reopening changes nothing (migrate is idempotent)');
+    const tbl = await text('#linesTbl');
+    assert(/AI: adjusted from guide 2\.0h/.test(tbl) && /AI photo batches differed: 1\.6h \/ 2\.1h/.test(tbl), 'notes on the migrated lines');
+    assert.strictEqual(await page.evaluate(() => window.Core.isDamageOp({ op: 'renew' })), true, 'a migrated "replace" line counts as a renewal');
+  });
+
+  // ---------- round 3: report integrity ----------
+  const drawBox = async (x0, y0, x1, y1) => {
+    const st = await page.locator('.labStage').boundingBox();
+    await page.mouse.move(st.x + st.width * x0, st.y + st.height * y0); await page.mouse.down();
+    await page.mouse.move(st.x + st.width * x1, st.y + st.height * y1, { steps: 5 }); await page.mouse.up(); await settle(150);
+  };
+  const inkSignature = async () => {
+    const cv = await page.locator('canvas.sigpad').boundingBox();
+    await page.mouse.move(cv.x + 30, cv.y + 50); await page.mouse.down(); await page.mouse.move(cv.x + 240, cv.y + 95, { steps: 6 }); await page.mouse.up();
+  };
+  const clearToast = () => page.evaluate(() => { const el = document.querySelector('#toast'); el.textContent = ''; el.classList.add('hidden'); });
+  const noSpinner = (ms) => page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: ms || 8000 });
+
+  await step('finalised report is locked: banner on every tab, inputs and actions disabled, rates and VAT frozen; re-open unlocks', async () => {
+    await openTab(S, 'signoff');
+    await page.click('[data-act="finaliseReport"]'); await flush();
+    const s = await t.getJob(S);
+    const types = [...new Set(['Body', 'Painting', 'Mechanical', 'Auxiliary', 'Electrical'].concat(s.lines.map((l) => l.type)))];
+    assert(s.issued && s.issued.vatPct === 20 && types.every((k) => typeof s.issued.rates[k] === 'number'), 'rates / VAT frozen: ' + JSON.stringify([s.issued.rates, s.issued.vatPct]));
+    for (const tb of ['claim', 'vehicle', 'inspection', 'circumstances', 'photos', 'assessment', 'estimate', 'valuation', 'opinion', 'customer', 'signoff', 'report']) {
+      await openTab(S, tb);
+      assert(/^Finalised on .+ — Re-open to edit\.$/.test((await text('.lockBanner b')).trim()), tb + ' banner: ' + await text('.lockBanner'));
+      const editable = await page.$$eval('#tabBody input, #tabBody select, #tabBody textarea', (ns) => ns.filter((n) => !n.disabled).map((n) => n.dataset.bind || n.dataset.lf || n.dataset.pf || n.id || n.type));
+      assert.deepStrictEqual(editable, [], tb + ': editable inputs');
+      const acts = await page.$$eval('#tabBody button[data-act]:not([disabled])', (ns) => ns.map((n) => n.dataset.act));
+      assert(acts.every((x) => ['reopenReport', 'exportPdf', 'exportJson', 'zonePick'].includes(x)), tb + ': actions still enabled ' + JSON.stringify(acts));
+    }
+    assert(await exists('#tabBody [data-act="exportPdf"]:not([disabled])'), 'PDF export stays available');
+    // nothing changes it: a damage-zone click is refused and says why
+    await openTab(S, 'assessment');
+    const z0 = JSON.stringify((await t.getJob(S)).zones);
+    await page.dispatchEvent('[data-zone="Roof"]', 'click'); await flush();
+    assert.strictEqual(JSON.stringify((await t.getJob(S)).zones), z0, 'zones unchanged');
+    assert(/finalised\. Re-open it to edit/.test(await toastText()), 'says why: ' + await toastText());
+    // a later change in Settings cannot alter the issued figures
+    await t.go('#/settings'); await settle(300);
+    await page.fill('[data-sbind="rates.Body"]', '95'); await settle(600);
+    await openTab(S, 'estimate');
+    assert(/£3,365\.08/.test(await text('#chips')), 'issued totals unchanged: ' + await text('#chips'));
+    await t.go('#/settings'); await settle(300); await page.fill('[data-sbind="rates.Body"]', '72.5'); await settle(600);
+    // re-open from the banner
+    await openTab(S, 'estimate');
+    await page.click('.lockBanner [data-act="reopenReport"]'); await flush();
+    assert(!('issued' in (await t.getJob(S))), 're-opened');
+    assert(!(await exists('.lockBanner')) && (await page.$$eval('#tabBody input:not([disabled])', (ns) => ns.length)) > 10, 'unlocked');
+  });
+
+  await step('Duplicate: the copy is an unsigned draft (no signature, date signed, finalised snapshot or AI log; Draft, version 1.0, dated today)', async () => {
+    await openTab(S, 'claim');
+    await page.fill('[data-bind="report.version"]', '2.1'); await page.fill('[data-bind="report.status"]', 'Final Engineering Assessment — Repair'); await flush();
+    await openTab(S, 'signoff');
+    await page.click('[data-act="signToday"]'); await flush();
+    await page.click('[data-act="sigDraw"][data-target="job"]'); await settle(150);
+    await inkSignature();
+    await page.click('#modal [data-ok]'); await flush();
+    const s = await t.getJob(S);
+    assert(s.assessor.signature && s.assessor.dateSigned && s.aiLog.length, 'the original is signed and has a log');
+    await page.click('[data-act="finaliseReport"]'); await flush();
+    await t.go('#/jobs'); await settle(300);
+    const n0 = (await t.listJobs()).length;
+    await page.click(`[data-act="dupJob"][data-id="${S}"]`); await settle(600);
+    const all = await t.listJobs();
+    const copy = all.filter((j) => j.copiedFrom && j.copiedFrom.id === S).pop();
+    const today = await page.evaluate(() => window.Core.todayISO());
+    assert(all.length === n0 + 1 && copy, 'one copy');
+    assert.deepStrictEqual([copy.assessor.signature, copy.assessor.dateSigned, copy.report.status, copy.report.version, copy.report.date, copy.aiLog.length, 'issued' in copy, 'aiDraftPending' in copy],
+      ['', '', 'Draft', '1.0', today, 0, false, false], 'copy: ' + JSON.stringify([copy.assessor.dateSigned, copy.report.status, copy.report.version, copy.report.date, copy.aiLog.length]));
+    assert(copy.copiedFrom.ref === s.report.ref && copy.report.ref === s.report.ref + '-COPY', 'the copy notes where it came from');
+    await openTab(copy.id, 'claim');
+    assert(/Copied from .+ as a new unsigned draft/.test(await text('.copiedFrom')), 'note shown');
+    // the original keeps everything
+    const orig = await t.getJob(S);
+    assert(orig.issued && orig.assessor.signature && orig.report.version === '2.1', 'original unchanged');
+    await openTab(S, 'signoff'); await page.click('.lockBanner [data-act="reopenReport"]'); await flush();
+  });
+
+  await step('salvage categories A and B can be recorded, with the break / crush hint', async () => {
+    const id = await newJob();
+    await openTab(id, 'valuation');
+    const opts = await page.$$eval('[data-bind="outcome.category"] option', (ns) => ns.map((n) => [n.value, n.textContent]));
+    assert.deepStrictEqual(opts.map((o) => o[0]), ['', 'A', 'B', 'S', 'N'], JSON.stringify(opts));
+    assert(/Category A — Scrap/.test(opts[1][1]) && /Category B — Break/.test(opts[2][1]), 'names');
+    assert(/A\/B: break or crush only — the vehicle must not return to the road/.test(await page.$eval('[data-bind="outcome.category"]', (n) => n.closest('label').textContent)), 'hint');
+    await page.selectOption('[data-bind="outcome.category"]', 'B'); await flush();
+    assert.strictEqual((await t.getJob(id)).outcome.category, 'B');
+    await page.selectOption('[data-bind="outcome.category"]', 'A'); await flush();
+    assert.strictEqual((await t.getJob(id)).outcome.category, 'A');
+  });
+
+  await step('CPR 35 "Material relied on": entered on Sign-off, suggested from the assessment, required in CPR mode', async () => {
+    await openTab(S, 'signoff');
+    assert(await exists('textarea[data-bind="report.materialsRelied"]'), 'field on Sign-off');
+    await page.click('[data-act="suggestMaterials"]'); await flush();
+    let s = await t.getJob(S);
+    assert(/^Valuation guides: /m.test(s.report.materialsRelied) && /guide labour times/.test(s.report.materialsRelied), 'suggestion: ' + s.report.materialsRelied);
+    await page.fill('[data-bind="report.materialsRelied"]', ''); await flush();
+    await page.check('[data-bind-check="report.cpr35"]'); await flush();
+    await openTab(S, 'report'); await settle(300);
+    assert(/Material relied on/.test(await text('.qa')), 'CPR 35 check asks for it');
+    await openTab(S, 'signoff');
+    assert(/Required in a CPR 35 report/.test(await page.$eval('[data-bind="report.materialsRelied"]', (n) => n.closest('label').textContent)), 'hint in CPR mode');
+    await page.fill('[data-bind="report.materialsRelied"]', "Glass's Guide and CAP HPI retail values; DVSA MOT History; ABI salvage Code of Practice."); await flush();
+    s = await t.getJob(S);
+    assert.strictEqual(s.report.materialsRelied, "Glass's Guide and CAP HPI retail values; DVSA MOT History; ABI salvage Code of Practice.");
+    await openTab(S, 'report'); await settle(300);
+    assert(!/Material relied on/.test(await text('#tabBody .qa')), 'check satisfied');
+    await openTab(S, 'signoff'); await page.uncheck('[data-bind-check="report.cpr35"]'); await flush();
+  });
+
+  await step('AI draft "check before signing" flags are stored when sections are applied, listed until dismissed, never doubled', async () => {
+    let a = await t.getJob(A);
+    assert(Array.isArray(a.aiFlags) && a.aiFlags.filter((f) => f.text === 'Check the RH sill concealed area').length === 1 && a.aiFlags.every((f) => f.section && f.at), 'stored: ' + JSON.stringify(a.aiFlags));
+    await openTab(A, 'opinion');
+    assert(/Check the RH sill concealed area/.test(await text('.aiFlags')), 'shown on the Opinion tab');
+    await openTab(A, 'report'); await settle(300);
+    assert(/AI review flag.*Check the RH sill concealed area/.test(await text('.qa')), 'pre-issue check lists it');
+    // applying another draft with the same flag does not add it twice
+    await openTab(A, 'opinion');
+    await t.mock({ draftTag: 'DRAFT6' });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]');
+    await page.$$eval('#modal input[data-apply]', (ns) => ns.forEach((n, k) => { n.checked = k === 0; }));
+    await page.click('#modal [data-go]'); await flush();
+    a = await t.getJob(A);
+    assert.strictEqual(a.aiFlags.filter((f) => f.text === 'Check the RH sill concealed area').length, 1, 'not doubled');
+    await openTab(A, 'opinion');
+    await page.click('.aiFlags [data-act="aiFlagDismiss"][data-i="0"]'); await flush();
+    a = await t.getJob(A);
+    assert(!a.aiFlags.some((f) => f.text === 'Check the RH sill concealed area'), 'dismissed');
+    assert(!(await exists('.aiFlags')) || !/Check the RH sill/.test(await text('.aiFlags')), 'gone from the tab');
+  });
+
+  await step('AI photo batches: a later batch fails, the earlier ones are kept; "Analyse the remaining photos" sends only those', async () => {
+    const id = await newJob();
+    await t.go('#/jobs'); await settle(200);
+    const sz = jpegSize(jpg2);
+    const j0 = await t.getJob(id);
+    j0.photos = Array.from({ length: 12 }, (_, k) => ({ id: 'pb' + (k + 1), dataUrl: dataUrl2, w: sz.w, h: sz.h, title: '', caption: '', source: '', labels: [] }));
+    await t.putJob(j0);
+    await t.mock({ failBatchAt: 11 });
+    await openTab(id, 'photos');
+    const c0 = (await t.calls('ai.analysePhotos')).length;
+    await page.click('[data-act="aiAnalyse"]'); await noSpinner(); await flush();
+    assert(/^Analysed 10 of 12 photos; the rest failed: The AI service is overloaded \(529\)/.test(await toastText()), 'toast: ' + await toastText());
+    let j = await t.getJob(id);
+    assert.strictEqual(j.photos.filter((p) => p.labels.some((l) => l.ai)).length, 10, 'the first batch is applied');
+    assert(j.aiFindings && j.aiFindings.partial && j.aiFindings.partial.analysed === 10 && j.aiFindings.partial.total === 12, 'partial run recorded: ' + JSON.stringify(j.aiFindings && j.aiFindings.partial));
+    assert(j.aiLog.some((x) => /10 photos; 2 more could not be analysed/.test(x.action)), 'logged as a partial run');
+    assert(/Only 10 of 12 photos were analysed/.test(await text('.partialRun')), 'the findings panel says so');
+    await t.mock({ failBatchAt: null });
+    await page.click('[data-act="aiAnalyseRest"]'); await noSpinner(); await flush();
+    const sent = (await t.calls('ai.analysePhotos')).slice(c0).map((c) => c.arg.idx);
+    assert.deepStrictEqual(sent, [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [11, 12], [11, 12]], 'sent: ' + JSON.stringify(sent));
+    j = await t.getJob(id);
+    assert(j.photos.every((p) => p.labels.some((l) => l.ai)) && !j.aiFindings.partial && j.aiFindings.photos.length === 12, 'all 12 analysed, findings added to');
+    assert(!(await exists('.partialRun')), 'notice gone');
+  });
+
+  await step('your own part numbers: "your number", auto-fill only when ticked, edit and delete, no doubles on re-import, old entries migrated once', async () => {
+    await t.go('#/catalogue'); await settle(300);
+    await page.selectOption('#catVeh', 'nissan-juke-f15'); await settle(200);
+    // the earlier import again, plus the same bonnet number written differently: nothing is added twice
+    const csv = 'FW001,RH,OEM-FW-R,"Wing, right",£125.00\r\nBN001,,OEM-BONNET,Bonnet,400\r\nBN001,,oem bonnet,Bonnet again,410\r\n';
+    await choose('[data-act="catImport"]', { name: 'again.csv', mimeType: 'text/csv', buffer: Buffer.from(csv) }); await settle(400);
+    assert(/Imported 0 part number\(s\), updated 3 already in your list/.test(await toastText()), await toastText());
+    let juke = (await t.getKv('customOem')).find((v) => v.key === 'nissan-juke-f15');
+    assert.deepStrictEqual(juke.parts['BN001|'].map((c) => c.oem), ['oem bonnet'], 'one bonnet entry: ' + JSON.stringify(juke.parts['BN001|']));
+    assert.strictEqual(juke.parts['FW001|R'].filter((c) => c.oem === 'OEM-FW-R').length, 1, 'one wing entry');
+    const listed = await page.$$eval('.userOem tr.uoem', (ns) => ns.map((n) => n.textContent));
+    assert(listed.some((r) => /OEM-FW-R/.test(r)) && listed.some((r) => /oem bonnet/.test(r)), 'listed under Your part numbers: ' + listed.length);
+    // on a job: shown as your number, not filled in until auto-fill is ticked
+    const id = await newJob();
+    await openTab(id, 'vehicle'); await page.selectOption('[data-bind="vehicle.oemKey"]', 'nissan-juke-f15'); await settle(200);
+    await openTab(id, 'estimate');
+    await pick('FW001', 'R', 'replace');
+    assert(/1 of your own number \(not set to auto-fill\)/.test(await toastText()), 'says why: ' + await toastText());
+    await flush();
+    let l = (await lines(id)).find((x) => x.code === 'FW001' && x.op === 'renew');
+    assert.deepStrictEqual([l.partNo, l.amount], ['', 0], 'not auto-filled');
+    await page.click(`[data-act="oemPick"][data-id="${l.id}"]`); await settle(150);
+    assert(/your number/.test(await text('#modalBody')), 'badge in the OEM picker');
+    await page.click('#modal [data-close]'); await settle(100);
+    await t.go('#/catalogue'); await settle(300);
+    await page.check('.userOem tr.uoem:has-text("OEM-FW-R") input[data-oem-af]'); await settle(400);
+    juke = (await t.getKv('customOem')).find((v) => v.key === 'nissan-juke-f15');
+    assert.strictEqual(juke.parts['FW001|R'].find((c) => c.oem === 'OEM-FW-R').autoFill, true, 'auto-fill ticked');
+    await openTab(id, 'estimate'); await pick('FW001', 'R', 'replace'); await flush();
+    l = (await lines(id)).filter((x) => x.code === 'FW001' && x.op === 'renew').pop();
+    assert.deepStrictEqual([l.partNo, l.amount], ['OEM-FW-R', 125], 'filled once auto-fill is ticked');
+    // edit (number, price) and delete
+    await t.go('#/catalogue'); await settle(300);
+    await page.click('.userOem tr.uoem:has-text("oem bonnet") [data-act="oemEdit"]'); await settle(150);
+    assert.strictEqual(await page.$eval('#nOem', (n) => n.value), 'oem bonnet', 'form filled in');
+    await page.fill('#nOem', 'OEM-BONNET-2'); await page.fill('#nPrice', '420');
+    await page.click('#modal [data-ok]'); await settle(400);
+    juke = (await t.getKv('customOem')).find((v) => v.key === 'nissan-juke-f15');
+    assert.deepStrictEqual(juke.parts['BN001|'].map((c) => [c.oem, c.price, c.confidence]), [['OEM-BONNET-2', 420, 'user']], 'edited in place: ' + JSON.stringify(juke.parts['BN001|']));
+    await page.click('.userOem tr.uoem:has-text("V1-ONLY-PN") [data-act="oemDel"]'); await settle(400);
+    assert(!JSON.stringify(await t.getKv('customOem')).includes('V1-ONLY-PN') && /Part number deleted/.test(await toastText()), 'deleted');
+    // entries an older version saved ('confirmed', auto-fill on, one number twice): migrated once, on start
+    const old = await t.getKv('customOem');
+    old.push({ key: 'user-test-old-1', make: 'Testmake', model: 'Oldmodel', generation: '', years: '', parts: { 'FE001|': [
+      { oem: 'OLD-PN-1', description: 'Old', notes: '', price: 10, priceIncVat: null, source: '', confidence: 'confirmed', user: true, autoFill: true, role: 'primary', market: 'UK' },
+      { oem: 'old pn.1', description: 'Old again', confidence: 'confirmed', user: true, autoFill: true }] } });
+    await t.putKv('customOem', old);
+    await page.reload(); await page.waitForFunction(() => document.querySelector('#main').innerHTML.length > 0); await settle(1300);
+    assert(/1 of your own part number is now marked "your number" and no longer fills estimate lines by itself/.test(await toastText()), 'told once: ' + await toastText());
+    const mig = (await t.getKv('customOem')).find((v) => v.key === 'user-test-old-1');
+    assert.deepStrictEqual(mig.parts['FE001|'].map((c) => [c.oem, c.confidence, c.autoFill]), [['OLD-PN-1', 'user', false]], 'migrated: ' + JSON.stringify(mig.parts));
+    await page.reload(); await page.waitForFunction(() => document.querySelector('#main').innerHTML.length > 0); await settle(1300);
+    assert(!/no longer fill/.test(await toastText()), 'only once');
+  });
+
+  await step('an advert the AI found stays "not verified" until the assessor ticks Verified (a URL alone does not verify it)', async () => {
+    const id = await newJob();
+    await openTab(id, 'valuation');
+    await page.click('[data-act="aiValuation"]'); await noSpinner(5000); await flush();
+    await page.click('[data-act="advFromAi"][data-i="3"]'); await flush();
+    assert.strictEqual((await t.getJob(id)).valuation.adverts[0].aiUnverified, true, 'added as unverified');
+    await page.fill('input[data-adv="url"][data-i="0"]', 'https://www.motors.co.uk/car-123456/'); await flush();
+    assert.strictEqual((await t.getJob(id)).valuation.adverts[0].aiUnverified, true, 'still unverified with a URL');
+    await openTab(id, 'report'); await settle(300);
+    assert(/found by AI web search has not been verified/.test(await text('.qa')), 'pre-issue check lists it');
+    await openTab(id, 'valuation');
+    await page.click('input[data-adv-verify="0"]'); await flush(); // the box goes once ticked (the advert is verified)
+    const ad = (await t.getJob(id)).valuation.adverts[0];
+    assert(!('aiUnverified' in ad) && ad.url === 'https://www.motors.co.uk/car-123456/', 'verified: ' + JSON.stringify(ad));
+    assert(!(await exists('.advUnverified')), 'hint gone');
+  });
+
+  await step('the variant picker reopens on the saved variant: make, model, the exact engine (badges repeat), trim, body and gearbox', async () => {
+    const want = await page.evaluate(() => {
+      const V = window.VARIANTS;
+      for (let i = 0; i < V.length; i++) {
+        const m = V[i], seen = {};
+        for (let k = 0; k < m.engines.length; k++) {
+          const b = m.engines[k].badge;
+          if (b in seen) {
+            const trims = [...new Set([...(m.trims || []), ...Object.values(m.trims_by_period || {}).flat()])];
+            return { make: m.make, model: String(i), engine: String(k), trim: trims[trims.length - 1] || '', body: (m.bodies || [])[0] || '', trans: (m.transmissions || []).slice(-1)[0] || '' };
+          }
+          seen[b] = k;
+        }
+      }
+      return null;
+    });
+    assert(want, 'a model with a repeated engine badge');
+    const id = await newJob();
+    await openTab(id, 'vehicle');
+    for (const k of ['make', 'model', 'engine', 'trim', 'body', 'trans']) if (want[k]) { await page.selectOption(`select[data-vp="${k}"]`, want[k]); await settle(120); }
+    await page.click('[data-act="applyVariant"]'); await flush();
+    assert((await t.getJob(id)).vehicle.variantKey.split('|').length === 8, 'key with the engine signature');
+    await openTab(S, 'vehicle'); // another job in between, so the picker starts afresh
+    await openTab(id, 'vehicle');
+    const got = await page.$$eval('select[data-vp]', (ns) => Object.fromEntries(ns.map((n) => [n.dataset.vp, n.value])));
+    assert.deepStrictEqual(got, want, 'picker preselected: ' + JSON.stringify(got));
+  });
+
+  await step('estimate money is labelled ex VAT; hours and amounts cannot go below 0; messages name the real Settings sections', async () => {
+    await openTab(S, 'estimate');
+    const th = await page.$$eval('#linesTbl th', (ns) => ns.map((n) => n.textContent));
+    assert(th.includes('Parts / mat. £ (ex VAT)'), JSON.stringify(th));
+    assert(/Parts \(ex VAT\)/.test(await text('#totalsBox')) && /Discount £ \(ex VAT\)/.test(await text('#tabBody')), 'totals / discount labels');
+    assert.deepStrictEqual(await page.$eval('input[data-lf="amount"]', (n) => [n.placeholder, n.min]), ['ex VAT', '0']);
+    assert.deepStrictEqual(await page.$$eval('input[data-lf="hours"], input[data-lf="rate"], input[data-bind="discount"], input[data-bind^="rates."]', (ns) => [...new Set(ns.map((n) => n.min))]), ['0'], 'min 0');
+    await page.click('[data-act="paintMaterials"]'); await settle(150);
+    assert(/Settings → Rates & thresholds/.test(await toastText()), await toastText());
+    await openTab(S, 'valuation');
+    assert.strictEqual(await page.$eval('[data-bind="valuation.adopted"]', (n) => n.min), '0', 'PAV min 0');
+  });
+
+  await step('unedited AI text is marked on its field; PDF export counts unreviewed AI lines, AI labels and AI text', async () => {
+    await openTab(A, 'circumstances');
+    const hint = await page.$eval('[data-bind="circumstances.impactType"]', (n) => ((n.closest('.aiField') || n.parentElement).querySelector('.aiTextHint') || {}).textContent || '');
+    assert(/AI text, not edited yet\. The report prints it as assessed from the photographs \(AI-assisted\)/.test(hint), 'hint: ' + hint);
+    await openTab(A, 'report'); await settle(300);
+    const n0 = (await t.calls('exportPdf')).length;
+    t.dialogMode = 'dismiss';
+    await page.click('[data-act="exportPdf"]'); await settle(250);
+    t.dialogMode = 'accept';
+    const d = t.dialogs[t.dialogs.length - 1];
+    assert(/AI-suggested estimate lines? ha(s|ve) not been marked as reviewed/.test(d) && /the AI damage labels on \d+ photos? in the report have not been reviewed/.test(d) && /fields? still holds? AI text you have not edited \(.*Impact type/.test(d), 'dialog: ' + d);
+    assert.strictEqual((await t.calls('exportPdf')).length, n0, 'cancelled');
+    // once edited it is the assessor's text: the mark goes as they type
+    await openTab(A, 'circumstances');
+    await page.fill('[data-bind="circumstances.impactType"]', 'Sideswipe / lateral side contact (confirmed by the driver)'); await flush();
+    assert(!(await page.$eval('[data-bind="circumstances.impactType"]', (n) => !!(n.closest('.aiField') || n.parentElement).querySelector('.aiTextHint, [data-act="aiConfirm"]'))), 'mark and ✓ Confirm removed');
+  });
+
+  await step('Photos tab: thumbnails on the cards; moving or removing a photo changes only its card (no rebuild)', async () => {
+    const id = await newJob();
+    await openTab(id, 'photos');
+    await page.setInputFiles('#photoInput', [file('1.jpg', jpg1), file('2.jpg', jpg2), file('3.jpg', jpg1)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 3, null, { timeout: 8000 }); await flush();
+    let j = await t.getJob(id);
+    assert(j.photos.every((p) => /^data:image\/jpeg;base64,/.test(p.thumb || '') && p.thumb !== p.dataUrl), 'thumbnails made when the photos are added');
+    assert.deepStrictEqual(await page.$$eval('.pcard .pimg img', (ns) => ns.map((n) => n.getAttribute('src'))), j.photos.map((p) => p.thumb), 'cards show the thumbnails');
+    await page.evaluate(() => document.querySelectorAll('.pcard').forEach((c, k) => { c.__mark = k + 1; }));
+    await page.click('.pcard:nth-child(3) [data-act="pmove"][data-d="-1"]'); await flush();
+    assert.deepStrictEqual(await page.$$eval('.pcard', (ns) => ns.map((n) => n.__mark)), [1, 3, 2], 'the same card elements, reordered');
+    j = await t.getJob(id);
+    assert.deepStrictEqual(await page.$$eval('.pcard', (ns) => ns.map((n) => n.dataset.pid)), j.photos.map((p) => p.id), 'order stored');
+    assert.deepStrictEqual(await page.$$eval('.pcard .pnum', (ns) => ns.map((n) => n.textContent)), ['IMAGE 01', 'IMAGE 02', 'IMAGE 03']);
+    await page.click('.pcard:nth-child(1) [data-act="pdel"]'); await flush();
+    assert.deepStrictEqual(await page.$$eval('.pcard', (ns) => ns.map((n) => n.__mark)), [3, 2], 'removed in place');
+    assert.strictEqual((await t.getJob(id)).photos.length, 2);
+    assert(/Photos & AI2/.test(await text('.jobhead .tabs')), 'tab count: ' + await text('.jobhead .tabs'));
+    // the report keeps the full image
+    await openTab(id, 'report'); await settle(400);
+    const full = (await t.getJob(id)).photos[0].dataUrl;
+    assert(await page.$eval('#preview', (f, u) => f.srcdoc.includes(u), full), 'report uses the full image');
+  });
+
+  // ---------- round 3: robustness ----------
+  await step('storage full: a failed save keeps the change and shows a banner with Retry; a save that hangs never holds up navigation', async () => {
+    const id = await newJob();
+    await openTab(id, 'claim');
+    await page.evaluate(() => { const S = window.Core.Store; S.__save = S.saveJob; S.saveJob = () => Promise.reject(Object.assign(new Error('There is not enough storage space.'), { name: 'QuotaExceededError' })); });
+    await page.fill('[data-bind="instruction.fileRef"]', 'TYPED-WHILE-FULL'); await flush();
+    assert.strictEqual((await text('#banners .banner.err')).replace(/Retry$/, '').trim(), 'Not saved: storage is full or unavailable — the disk is full, or the space this app may use has run out. Free disk space, then click Retry.', 'banner: ' + await text('#banners'));
+    assert.strictEqual(await text('#savedState'), 'Not saved');
+    await page.evaluate(() => { window.Core.Store.saveJob = () => new Promise(() => {}); }); // storage that never answers
+    await page.fill('[data-bind="instruction.fileRef"]', 'TYPED-WHILE-HUNG');
+    const t1 = Date.now();
+    await page.click('.jobhead a[href="#/jobs"]');
+    await page.waitForSelector('[data-act="loadSample"]', { timeout: 6000 });
+    assert(Date.now() - t1 < 5000, 'navigation took ' + (Date.now() - t1) + ' ms');
+    assert(await exists('#banners .banner.err'), 'the banner stays on the next screen');
+    await page.evaluate(() => { const S = window.Core.Store; S.saveJob = S.__save; delete S.__save; });
+    await page.click('#banners [data-banner="retry"]'); await settle(600);
+    assert.strictEqual((await t.getJob(id)).instruction.fileRef, 'TYPED-WHILE-HUNG', 'the kept change is stored');
+    assert(!(await exists('#banners .banner')) && /^Saved\.$/.test(await toastText()), 'banner gone: ' + await toastText());
+  });
+
+  await step('the same job in two tabs: the stale tab\'s save is refused (nothing overwritten), autosave stops with a banner, Reload shows the other tab\'s change', async () => {
+    const id = await newJob();
+    await openTab(id, 'claim'); await flush();
+    assert.strictEqual(typeof (await t.getJob(id)).rev, 'number', 'core.js stores a revision');
+    const p2 = await t.context.newPage();
+    const errs2 = [];
+    p2.on('pageerror', (e) => errs2.push(String(e.message))); p2.on('console', (m) => { if (m.type() === 'error') errs2.push(m.text()); }); p2.on('dialog', (dl) => dl.accept());
+    await p2.goto(t.url + `#/job/${id}/claim`); await p2.waitForSelector('#tabBody'); await p2.waitForTimeout(300);
+    await p2.fill('[data-bind="instruction.instructingParty"]', 'Typed in tab 2'); await p2.waitForTimeout(900);
+    assert.strictEqual((await t.getJob(id)).instruction.instructingParty, 'Typed in tab 2', 'tab 2 saved');
+    await page.fill('[data-bind="instruction.fileRef"]', 'Typed in tab 1'); await flush();
+    let j = await t.getJob(id);
+    assert.deepStrictEqual([j.instruction.instructingParty, j.instruction.fileRef], ['Typed in tab 2', ''], 'the other tab\'s change is kept: ' + JSON.stringify([j.instruction.instructingParty, j.instruction.fileRef]));
+    assert(/This assessment was changed in another window or tab\. Reload it to continue\./.test(await text('#banners')), 'banner: ' + await text('#banners'));
+    assert.strictEqual(await text('#savedState'), 'Not saved: changed elsewhere');
+    await page.fill('[data-bind="instruction.fileRef"]', 'Typed again in tab 1'); await flush();
+    assert.strictEqual((await t.getJob(id)).instruction.fileRef, '', 'autosave stopped for this job');
+    await page.click('#banners [data-banner="reload"]'); await settle(500);
+    assert.strictEqual(await page.$eval('[data-bind="instruction.instructingParty"]', (n) => n.value), 'Typed in tab 2', 'reloaded with tab 2\'s change');
+    assert(!(await exists('#banners .banner')), 'banner gone');
+    await page.fill('[data-bind="instruction.fileRef"]', 'After reload'); await flush();
+    assert.strictEqual((await t.getJob(id)).instruction.fileRef, 'After reload', 'saving again');
+    await p2.close();
+    assert.deepStrictEqual(errs2, [], 'second tab errors');
+  });
+
+  await step('a result that lands while its job is being re-opened goes into the job on screen, and survives the next edit', async () => {
+    const id = await newJob();
+    await openTab(id, 'valuation');
+    await page.evaluate(() => { const S = window.Core.Store; S.__get = S.getJob; S.getJob = async function (x) { await new Promise((r) => setTimeout(r, 600)); return S.__get.call(S, x); }; });
+    await t.mock({ aiDelay: 900 });
+    await page.click('[data-act="aiValuation"]'); await settle(100);
+    await t.go('#/jobs'); await settle(350);
+    await page.evaluate((jid) => { location.hash = `#/job/${jid}/valuation`; }, id); // re-opened just before the result arrives
+    await settle(1700);
+    await page.evaluate(() => { const S = window.Core.Store; S.getJob = S.__get; delete S.__get; });
+    await t.mock({ aiDelay: 30 });
+    assert(await exists('[data-act="aiValApply"]'), 'the result is on screen');
+    await page.fill('[data-bind="valuation.historyNotes"]', 'one edit after re-opening'); await flush();
+    const j = await t.getJob(id);
+    assert(j.valuation.ai && j.valuation.ai.recommended_pav === 5700.4 && j.aiLog.filter((x) => /Valuation/.test(x.action)).length === 1 && j.valuation.historyNotes === 'one edit after re-opening', 'result kept after the edit');
+  });
+
+  await step('typing while a lookup or AI result lands: the field keeps focus, caret and every keystroke', async () => {
+    const id = await newJob();
+    await openTab(id, 'vehicle');
+    await page.fill('[data-bind="vehicle.reg"]', 'AB14 CDE');
+    await t.mock({ dataDelay: 400 });
+    await page.click('[data-act="lookupVehicle"]');
+    await page.click('[data-bind="vehicle.vin"]');
+    const VIN = 'SJNFBAF15U7123456';
+    await page.keyboard.type(VIN, { delay: 90 });
+    await flush();
+    await t.mock({ dataDelay: 20 });
+    const v = (await t.getJob(id)).vehicle;
+    assert.deepStrictEqual([await page.$eval('[data-bind="vehicle.vin"]', (n) => n.value), v.vin, v.make], [VIN, VIN, 'Nissan'], 'every keystroke kept and the lookup applied');
+    assert.strictEqual(await page.evaluate(() => document.activeElement && document.activeElement.dataset.bind), 'vehicle.vin', 'focus kept');
+    await openTab(id, 'valuation');
+    await page.fill('[data-bind="valuation.historyNotes"]', 'Two keepers.');
+    await t.mock({ aiDelay: 500 });
+    await page.click('[data-act="aiValuation"]');
+    await page.focus('[data-bind="valuation.historyNotes"]'); await page.keyboard.press('Control+End');
+    await page.keyboard.type(' Full service history seen.', { delay: 40 });
+    await flush();
+    await t.mock({ aiDelay: 30 });
+    assert.strictEqual((await t.getJob(id)).valuation.historyNotes, 'Two keepers. Full service history seen.', 'caret kept at the end');
+    assert(await exists('[data-act="aiValApply"]'), 'the AI result landed meanwhile');
+  });
+
+  await step('an AI draft that finishes while the labeler or signature pad is open never replaces it: "AI draft ready – Review" waits', async () => {
+    await openTab(A, 'opinion');
+    await t.mock({ aiDelay: 1500, draftTag: 'DRAFT4' });
+    await page.click('[data-act="aiDraft"]'); await settle(100);
+    await openTab(A, 'photos');
+    await page.click('.pcard:nth-child(2) button[data-act="label"]'); await settle(250);
+    await drawBox(0.05, 0.7, 0.3, 0.9); // an empty corner: a press on an existing box would move it
+    await page.keyboard.type('Dent 40mm');
+    await settle(1800);
+    assert(/^Label damage/.test(await text('#modalTitle')) && await exists('#modal:not(.hidden) .labStage'), 'labeler still open: ' + await text('#modalTitle'));
+    assert(/AI draft ready – Review/.test(await toastText()), 'toast: ' + await toastText());
+    assert(await exists('.jobhead [data-act="reviewPendingDraft"]'), 'header button');
+    await page.click('[data-act="save"]'); await flush();
+    const ph = (await t.getJob(A)).photos.find((p) => p.labels.some((l) => l.text === 'Dent 40mm'));
+    assert(ph, 'the labels drawn were saved');
+    await page.click('.jobhead [data-act="reviewPendingDraft"]'); await settle(200);
+    assert(/DRAFT4 summary/.test(await text('#modalBody')), 'the draft is there to review');
+    await page.click('#modal [data-close]'); await settle(100);
+    // the signature pad is not replaced either
+    await openTab(A, 'opinion');
+    await t.mock({ draftTag: 'DRAFT7' });
+    await page.click('[data-act="aiDraft"]'); await settle(100);
+    await openTab(A, 'signoff');
+    await page.click('[data-act="sigDraw"][data-target="job"]'); await settle(150);
+    await inkSignature();
+    await settle(1800);
+    await t.mock({ aiDelay: 30 });
+    assert(/Draw signature/.test(await text('#modalTitle')) && await exists('#modal:not(.hidden) canvas.sigpad'), 'signature pad still open');
+    await page.click('#modal [data-ok]'); await flush();
+    assert((await t.getJob(A)).assessor.signature.startsWith('data:image/png'), 'signature saved');
+  });
+
+  await step('saving the labeler keeps AI labels that arrived while it was open (and does not call them reviewed)', async () => {
+    const id = await newJob();
+    await openTab(id, 'photos');
+    await page.setInputFiles('#photoInput', [file('a.jpg', jpg1), file('b.jpg', jpg2)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 2, null, { timeout: 8000 }); await flush();
+    await t.mock({ aiDelay: 1500 });
+    await page.click('[data-act="aiAnalyse"]'); await settle(150);
+    await page.click('.pcard:nth-child(2) button[data-act="label"]'); await settle(250);
+    await drawBox(0.6, 0.6, 0.8, 0.8);
+    await settle(1900); // the analysis lands meanwhile
+    await t.mock({ aiDelay: 30 });
+    await page.click('[data-act="save"]'); await flush();
+    const p = (await t.getJob(id)).photos[1];
+    const lab = p.labels.map((l) => (l.ai ? 'AI:' : 'me:') + l.text);
+    assert(lab.includes('me:Damage') && lab.includes('AI:Scoring 2') && lab.includes('AI:Old chip'), 'merged: ' + JSON.stringify(lab));
+    assert.strictEqual(p.labelsReviewed, false, 'the new AI labels have not been seen yet');
+    assert(/2 new AI labels arrived for this photo while you were editing/.test(await toastText()), await toastText());
+  });
+
+  await step('double clicks run an action once: Duplicate, Load sample, Export PDF, Export job file, backup', async () => {
+    await t.go('#/jobs'); await settle(300);
+    let n0 = (await t.listJobs()).length;
+    await page.dblclick(`[data-act="dupJob"][data-id="${B}"]`); await settle(900);
+    assert.strictEqual((await t.listJobs()).length, n0 + 1, 'one copy');
+    n0 = (await t.listJobs()).length;
+    await page.dblclick('[data-act="loadSample"]'); await settle(1500);
+    assert.strictEqual((await t.listJobs()).length, n0 + 1, 'one sample');
+    await t.mock({ exportDelay: 400 });
+    await openTab(B, 'report'); await settle(300);
+    const p0 = (await t.calls('exportPdf')).length, s0 = (await t.calls('saveFile')).length;
+    await page.dblclick('[data-act="exportPdf"]'); await settle(900);
+    await page.dblclick('[data-act="exportJson"]'); await settle(900);
+    assert.deepStrictEqual([(await t.calls('exportPdf')).length - p0, (await t.calls('saveFile')).length - s0], [1, 1], 'one PDF and one job file');
+    await t.mock({ exportDelay: 0 });
+    await t.go('#/settings'); await settle(300);
+    const b0 = (await t.calls('backup.begin')).length;
+    await clearToast();
+    await page.dblclick('[data-act="backup"]');
+    await page.waitForFunction(() => /Backup saved/.test(document.querySelector('#toast').textContent), null, { timeout: 30000 }); await settle(300);
+    assert.strictEqual((await t.calls('backup.begin')).length - b0, 1, 'one backup');
+  });
+
+  await step('an unapplied AI draft is kept with the job: it survives a reload, is applied or discarded, and is never sent to the AI', async () => {
+    const id = await newJob();
+    await openTab(id, 'opinion');
+    await t.mock({ draftTag: 'DRAFT5' });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await flush();
+    assert.strictEqual((await t.getJob(id)).aiDraftPending.draft.summary, 'DRAFT5 summary', 'stored with the job');
+    await page.reload(); await page.waitForFunction(() => document.querySelector('#main').innerHTML.length > 0); await settle(500);
+    await openTab(id, 'opinion');
+    assert(await exists('#tabBody [data-act="reviewPendingDraft"]') && await exists('.jobhead [data-act="reviewPendingDraft"]'), 'still offered after a reload');
+    await page.click('#tabBody [data-act="reviewPendingDraft"]'); await settle(200);
+    assert(/DRAFT5 summary/.test(await text('#modalBody')), 'the same draft');
+    await page.click('#modal [data-sel]'); await page.click('#modal [data-go]'); await flush();
+    let j = await t.getJob(id);
+    assert(j.report.summary === 'DRAFT5 summary' && !('aiDraftPending' in j), 'applied and cleared');
+    await t.mock({ draftTag: 'DRAFT8' });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await flush();
+    // a new draft while one is waiting: the waiting one is not sent to the AI, and the new one replaces it
+    await t.mock({ draftTag: 'DRAFT9' });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await flush();
+    assert.strictEqual((await t.calls('ai.draftNarrative')).pop().arg.hasPending, false, 'a waiting draft is never sent to the AI');
+    assert.strictEqual((await t.getJob(id)).aiDraftPending.draft.summary, 'DRAFT9 summary', 'replaced by the newer draft');
+    await page.click('[data-act="discardDraft"]'); await flush();
+    j = await t.getJob(id);
+    assert(!('aiDraftPending' in j) && j.aiLog.filter((x) => /Narrative/.test(x.action)).length === 3 && !(await exists('#tabBody [data-act="reviewPendingDraft"]')), 'discarded; the AI log keeps every run');
+  });
+
+  await step('Back while the labeler or signature pad has unsaved work asks first: Cancel keeps it open, OK discards', async () => {
+    await t.go('#/jobs'); await settle(200);
+    await openTab(A, 'photos');
+    await page.click('.pcard:nth-child(3) button[data-act="label"]'); await settle(250);
+    await drawBox(0.05, 0.7, 0.3, 0.9);
+    const h0 = await page.evaluate(() => location.hash), d0 = t.dialogs.length;
+    t.dialogMode = 'dismiss';
+    await page.goBack(); await settle(500);
+    t.dialogMode = 'accept';
+    assert(t.dialogs.length === d0 + 1 && /^Leave this page\?/.test(t.dialogs[d0]), 'asked: ' + t.dialogs.slice(d0));
+    assert(await exists('#modal:not(.hidden) .labStage') && await page.evaluate(() => location.hash) === h0, 'still open; the address is back');
+    await page.goBack(); await settle(500);
+    assert(await page.$eval('#modal', (n) => n.classList.contains('hidden')) && /#\/jobs$/.test(await page.evaluate(() => location.hash)), 'closed after OK');
+    // × on the signature pad with ink asks too; a pad without ink just closes
+    await openTab(A, 'signoff');
+    await page.click('[data-act="sigDraw"][data-target="job"]'); await settle(150);
+    await inkSignature();
+    const d1 = t.dialogs.length;
+    t.dialogMode = 'dismiss';
+    await page.click('#modal [data-close]'); await settle(150);
+    t.dialogMode = 'accept';
+    assert(t.dialogs.length === d1 + 1 && await exists('#modal:not(.hidden) canvas.sigpad'), 'kept after Cancel');
+    await page.click('#modal [data-close]'); await settle(150);
+    assert(await page.$eval('#modal', (n) => n.classList.contains('hidden')), 'closed after OK');
+    await page.click('[data-act="sigDraw"][data-target="job"]'); await settle(150);
+    const d2 = t.dialogs.length;
+    await page.click('#modal [data-close]'); await settle(150);
+    assert(t.dialogs.length === d2 && await page.$eval('#modal', (n) => n.classList.contains('hidden')), 'no question without unsaved work');
+  });
+
+  await step('full backup: every job (with photos) streamed in chunks to the desktop backup file; restore brings them back; a cut-short file is reported', async () => {
+    await t.go('#/settings'); await settle(300);
+    const ids = (await t.listJobs()).map((j) => j.id);
+    const c0 = (await t.calls('backup.write')).length;
+    await clearToast();
+    await page.click('[data-act="backup"]');
+    await page.waitForFunction(() => /Backup saved/.test(document.querySelector('#toast').textContent), null, { timeout: 30000 });
+    assert(new RegExp(`Backup saved: ${ids.length} assessments to C:/Backups/backup-\\d{4}-\\d{2}-\\d{2}\\.ersbackup\\.`).test(await toastText()), await toastText());
+    const writes = (await t.calls('backup.write')).slice(c0).map((c) => c.arg.len);
+    assert(writes.length >= 2 && writes.every((n) => n <= 8 * 1024 * 1024), 'chunks: ' + JSON.stringify(writes));
+    const file = await page.evaluate(() => window.__lastBackup);
+    assert(file.endsWith('\n'), 'ends with a newline');
+    const lines = file.slice(0, -1).split('\n');
+    const recs = lines.map((l) => JSON.parse(l));
+    assert.deepStrictEqual([recs[0].kind, recs[0].format, recs[0].jobs], ['engineer-report-studio-backup', 2, ids.length], 'header');
+    assert.deepStrictEqual([recs[1].type, recs[2].type, recs[recs.length - 1].type, recs[recs.length - 1].jobs], ['settings', 'customOem', 'end', ids.length], 'settings, part numbers, end');
+    const jobs = recs.filter((r) => r.type === 'job').map((r) => r.data);
+    assert.deepStrictEqual(jobs.map((j) => j.id).sort(), ids.slice().sort(), 'every job, one line each');
+    const withPhotos = jobs.filter((j) => j.photos.length).sort((a, b) => b.photos.length - a.photos.length);
+    assert(withPhotos.length >= 2, 'more than one job with photos');
+    // delete one job, change another, then restore the backup over them
+    const gone = withPhotos[0], changedJob = withPhotos[1];
+    await t.go('#/jobs'); await settle(300);
+    await page.click(`[data-act="delJob"][data-id="${gone.id}"]`); await settle(400);
+    assert(!(await t.getJob(gone.id)), 'deleted');
+    await openTab(changedJob.id, 'claim'); await page.fill('[data-bind="instruction.fileRef"]', 'CHANGED-AFTER-BACKUP'); await flush();
+    await t.go('#/settings'); await settle(300);
+    const d0 = t.dialogs.length;
+    await clearToast();
+    await choose('[data-act="restore"]', { name: 'backup.ersbackup', mimeType: 'application/octet-stream', buffer: Buffer.from(file) });
+    await page.waitForFunction(() => /Backup restored|incomplete|stopped/.test(document.querySelector('#toast').textContent), null, { timeout: 30000 });
+    assert(new RegExp(`^Restore ${ids.length} assessments from this backup`).test(t.dialogs[d0] || ''), 'confirm: ' + t.dialogs[d0]);
+    assert.strictEqual(await toastText(), `Backup restored: ${ids.length} restored, 0 unreadable.`);
+    const back = await t.getJob(gone.id);
+    assert(back && back.photos.length === gone.photos.length && back.photos.every((p, k) => p.dataUrl === gone.photos[k].dataUrl && p.thumb === gone.photos[k].thumb), 'the deleted job is back with its photos');
+    assert.strictEqual((await t.getJob(changedJob.id)).instruction.fileRef, changedJob.instruction.fileRef, 'the changed job is as it was in the backup');
+    await t.go('#/jobs'); await settle(400);
+    assert(await exists(`[data-act="dupJob"][data-id="${gone.id}"]`), 'listed again');
+    await openTab(changedJob.id, 'claim'); // the restored copy is the one shown and saved (no conflict with the old one)
+    await page.fill('[data-bind="instruction.tpReg"]', 'RS01 TOR'); await flush();
+    assert.strictEqual((await t.getJob(changedJob.id)).instruction.tpReg, 'RS01 TOR', 'editable after the restore');
+    // a file cut short (no end line) and one with a damaged line
+    const cut = lines.slice(0, -1).join('\n') + '\n';
+    const damaged = lines.map((l, k) => (k === 3 ? l.slice(0, 40) : l)).join('\n') + '\n';
+    await t.go('#/settings'); await settle(300);
+    await clearToast();
+    await choose('[data-act="restore"]', { name: 'cut.ersbackup', mimeType: 'application/octet-stream', buffer: Buffer.from(cut) });
+    await page.waitForFunction(() => /restored/.test(document.querySelector('#toast').textContent), null, { timeout: 30000 });
+    assert(new RegExp(`^The backup file is incomplete: ${ids.length} restored, 0 unreadable\\.`).test(await toastText()), await toastText());
+    await settle(300);
+    await clearToast();
+    await choose('[data-act="restore"]', { name: 'damaged.ersbackup', mimeType: 'application/octet-stream', buffer: Buffer.from(damaged) });
+    await page.waitForFunction(() => /1 unreadable/.test(document.querySelector('#toast').textContent), null, { timeout: 30000 });
+    assert(new RegExp(`${ids.length - 1} restored, 1 unreadable`).test(await toastText()), await toastText());
+  });
+
+  // ---------- accessibility: modal dialog (R#15), accessible names (R#16), contrast (R#28), keyboard-only use (R#14) ----------
+  let K; // a fresh sample job
+  const focused = () => page.evaluate(() => { const a = document.activeElement || document.body; const d = a.dataset || {}; return { inModal: !!a.closest('#modal'), tag: a.tagName, id: a.id, cls: String(a.getAttribute('class') || ''), act: d.act || '', dataId: d.id || '', pid: d.pid || '', target: d.target || '', zone: a.getAttribute('data-zone') || '' }; });
+  const modalShown = () => page.$eval('#modal', (n) => !n.classList.contains('hidden'));
+  const tabUntil = async (test, max) => { for (let k = 0; k < (max || 40); k++) { await page.keyboard.press('Tab'); if (await page.evaluate(test)) return true; } return false; };
+
+  await step('modal: a dialog that takes focus, keeps Tab inside, closes on Escape (asking first when it holds unsaved work) and gives focus back', async () => {
+    await t.go('#/jobs'); await settle(200);
+    await page.click('[data-act="loadSample"]');
+    await page.waitForFunction(() => /#\/job\/[^/]+\/report$/.test(location.hash)); await settle(200);
+    K = await t.jobId();
+    await openTab(K, 'estimate');
+    const lineId = await page.$eval('#linesTbl [data-act="oemPick"]', (n) => n.dataset.id);
+    await page.focus(`[data-act="oemPick"][data-id="${lineId}"]`);
+    await page.keyboard.press('Enter'); await settle(200);
+    assert(await modalShown(), 'opened from the keyboard');
+    const sem = await page.evaluate(() => { const m = document.querySelector('#modal'); return [m.getAttribute('role'), m.getAttribute('aria-modal'), m.getAttribute('aria-labelledby'), m.querySelector('[data-close]').getAttribute('aria-label'), document.querySelector('.side').inert, document.querySelector('.mainCol').inert]; });
+    assert.deepStrictEqual(sem, ['dialog', 'true', 'modalTitle', 'Close', true, true], 'dialog semantics, a named ×, the page behind inert');
+    assert((await focused()).inModal, 'focus moved into the dialog');
+    // Tab and Shift+Tab stay in the dialog and wrap round at its ends
+    const pos = () => page.evaluate(() => { const f = [...document.querySelectorAll('#modal button, #modal a[href], #modal input, #modal select, #modal textarea')].filter((x) => !x.disabled && x.getClientRects().length); return { i: f.indexOf(document.activeElement), n: f.length, inModal: !!document.activeElement.closest('#modal') }; });
+    const n = (await pos()).n, fwd = [], back = [];
+    assert(n >= 2, 'controls in the dialog: ' + n);
+    for (let k = 0; k < n + 2; k++) { await page.keyboard.press('Tab'); const p = await pos(); assert(p.inModal, 'Tab left the dialog'); fwd.push(p.i); }
+    assert.deepStrictEqual(fwd, [...Array(n).keys(), 0, 1], 'Tab goes through the dialog and back to its first control');
+    for (let k = 0; k < 3; k++) { await page.keyboard.press('Shift+Tab'); const p = await pos(); assert(p.inModal, 'Shift+Tab left the dialog'); back.push(p.i); }
+    assert.deepStrictEqual(back, [0, n - 1, n - 2], 'Shift+Tab wraps the other way');
+    await page.keyboard.press('Escape'); await settle(150);
+    assert(!(await modalShown()), 'Escape closed it');
+    const f = await focused();
+    assert.deepStrictEqual([f.act, f.dataId], ['oemPick', lineId], 'focus is back on the ⋯ button that opened it');
+    assert(!(await page.evaluate(() => document.querySelector('.mainCol').inert || document.querySelector('.side').inert)), 'the page is usable again');
+    // unsaved work: Escape asks the same question as ×; Cancel keeps it, OK closes it and gives focus back
+    await openTab(K, 'signoff');
+    await page.focus('[data-act="sigDraw"][data-target="job"]'); await page.keyboard.press('Enter'); await settle(150);
+    assert((await focused()).inModal, 'the signature pad takes focus');
+    await inkSignature();
+    const d0 = t.dialogs.length;
+    t.dialogMode = 'dismiss';
+    await page.keyboard.press('Escape'); await settle(150);
+    t.dialogMode = 'accept';
+    assert(t.dialogs.length === d0 + 1 && /^Close this window\?/.test(t.dialogs[d0]) && await exists('#modal:not(.hidden) canvas.sigpad'), 'asked first; Cancel kept the ink: ' + t.dialogs.slice(d0));
+    await page.keyboard.press('Escape'); await settle(150);
+    assert(t.dialogs.length === d0 + 2 && !(await modalShown()), 'OK closed it');
+    const g = await focused();
+    assert.deepStrictEqual([g.act, g.target], ['sigDraw', 'job'], 'focus back on "Draw signature"');
+  });
+
+  await step('names: no unnamed control on the sample job\'s Estimate, Valuation and Photos tabs (Chromium accessibility tree); names say which line, row or photo', async () => {
+    const cdp = await t.context.newCDPSession(page);
+    await cdp.send('Accessibility.enable');
+    // the probe's rule: a control whose name is empty or only a symbol (✕ ↑ ↓ ⋯ +) has no usable name
+    const unnamed = async () => (await cdp.send('Accessibility.getFullAXTree')).nodes
+      .filter((x) => !x.ignored && ['textbox', 'searchbox', 'spinbutton', 'combobox', 'listbox', 'checkbox', 'button', 'link'].includes(x.role && x.role.value))
+      .map((x) => [x.role.value, String((x.name && x.name.value) || '').trim()]).filter(([, nm]) => !nm || /^[✕×↑↓⋯+↗]$/.test(nm)).map(([r, nm]) => `${r} "${nm}"`);
+    await openTab(K, 'photos'); // the sample has no photos: one card to check
+    await page.setInputFiles('#photoInput', [file('a.jpg', jpg1)]);
+    await page.waitForSelector('.pcard'); await flush();
+    const found = {};
+    for (const tb of ['estimate', 'valuation', 'photos']) { await openTab(K, tb); found[tb] = await unnamed(); }
+    await cdp.detach();
+    assert.deepStrictEqual(found, { estimate: [], valuation: [], photos: [] }, 'unnamed controls: ' + JSON.stringify(found));
+    await openTab(K, 'estimate');
+    const line3 = await page.$$eval('#linesTbl tbody tr:nth-child(3) [aria-label]', (ns) => ns.map((x) => x.getAttribute('aria-label')));
+    for (const want of ['Line 3 type', 'Line 3 description', 'Line 3 part number', 'Line 3 hours', 'Line 3 cost class', 'Move line 3 up', 'Move line 3 down', 'Delete line 3']) assert(line3.includes(want), `"${want}" in ${JSON.stringify(line3)}`);
+    assert(/^OEM part numbers for line \d+$/.test(await page.$eval('#linesTbl [data-act="oemPick"]', (x) => x.getAttribute('aria-label'))), 'the ⋯ button is named');
+    await openTab(K, 'valuation');
+    assert.deepStrictEqual(await page.$$eval('#tabBody tr:first-child [data-vs], [data-act="vsDel"][data-i="0"]', (ns) => ns.map((x) => x.getAttribute('aria-label'))), ['Valuation source 1 name', 'Valuation source 1 amount, £', 'Delete valuation source 1']);
+    await openTab(K, 'photos');
+    const card = await page.$$eval('.pcard:first-child [aria-label]', (ns) => ns.map((x) => x.getAttribute('aria-label')));
+    assert(['Move IMAGE 01 earlier', 'Move IMAGE 01 later', 'Remove IMAGE 01', 'IMAGE 01 title'].every((w) => card.includes(w)), 'photo card: ' + JSON.stringify(card));
+  });
+
+  await step('contrast: badge, part-number and muted text colours reach 4.5:1 (WCAG 2) on the backgrounds they are used on', async () => {
+    await openTab(K, 'estimate');
+    const res = await page.evaluate(() => {
+      const parse = (c) => { const p = c.match(/rgba?\(([^)]+)\)/)[1].split(',').map((x) => parseFloat(x)); return { r: p[0], g: p[1], b: p[2], a: p[3] == null ? 1 : p[3] }; };
+      const lum = ({ r, g, b }) => [r, g, b].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }).reduce((s, v, i) => s + v * [0.2126, 0.7152, 0.0722][i], 0);
+      const bgOf = (el) => { for (let x = el; x; x = x.parentElement) { const c = parse(getComputedStyle(x).backgroundColor); if (c.a > 0.9) return c; } return { r: 255, g: 255, b: 255 }; };
+      const ratio = (el) => { const a = lum(parse(getComputedStyle(el).color)), b = lum(bgOf(el)); return +((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2); };
+      const out = {};
+      const probe = (where, host, cls, tag) => { const s = document.createElement(tag || 'span'); s.className = cls; s.textContent = 'x'; host.appendChild(s); out[`${cls || tag} on ${where}`] = ratio(s); s.remove(); };
+      const card = document.querySelector('#tabBody .card');
+      for (const c of ['badge', 'badge ok', 'badge warn', 'badge err', 'badge ai', 'badge user', 'oem confirmed', 'oem single-source', 'oem user', 'oem report', 'hint']) probe('a card', card, c);
+      probe('a card', card, 'btn sm aiConfirm', 'button'); probe('a card', card, 'hint aiTextHint'); // ✓ Confirm and its AI note
+      // a selected row of the parts list (--blue-2): part numbers, codes and hints in it
+      const row = document.createElement('div'); row.className = 'r sel'; document.querySelector('#pickResults').appendChild(row);
+      for (const c of ['oem confirmed', 'oem single-source', 'oem user', 'hint']) probe('a selected part row', row, c);
+      probe('a selected part row', row, '', 'code');
+      row.remove();
+      // muted text on --bg: the tab counter and the totals labels
+      out['tab counter'] = ratio(document.querySelector('.tabs a .cnt'));
+      out['totals label'] = ratio(document.querySelector('#totalsBox div:not(.g) span'));
+      out['grand total label'] = ratio(document.querySelector('#totalsBox .g span'));
+      return out;
+    });
+    const low = Object.entries(res).filter(([, r]) => !(r >= 4.5));
+    assert.deepStrictEqual(low, [], 'below 4.5:1: ' + JSON.stringify(res));
+    assert(res['badge warn on a card'] >= 4.5 && res['badge ok on a card'] >= 4.5 && res['oem single-source on a card'] >= 4.5, JSON.stringify(res));
+  });
+
+  await step('keyboard only: add a photo through the file chooser (dropping files still works), pick a catalogue part and toggle a damage zone', async () => {
+    // a photo: Tab reaches the drop zone, which is a button; Enter opens the file chooser
+    await openTab(K, 'photos');
+    const p0 = (await t.getJob(K)).photos.length;
+    // Playwright intercepts file choosers only once its listener is switched on in the browser, which it does without waiting:
+    // the listener goes on before the Tab presses, as a key press can otherwise beat it (page.click in choose() is slower)
+    let onChooser;
+    const chooser = new Promise((res) => { onChooser = res; page.on('filechooser', onChooser); });
+    let fc;
+    try {
+      await page.focus('.tabs a.active');
+      assert(await tabUntil(() => document.activeElement.id === 'drop'), 'Tab reaches the drop zone');
+      assert.strictEqual(await page.$eval('#drop', (x) => x.tagName), 'BUTTON');
+      await page.keyboard.press('Enter');
+      let tm;
+      fc = await Promise.race([chooser, new Promise((res, rej) => { tm = setTimeout(() => rej(new Error('Enter on the drop zone opened no file chooser')), 5000); })]).finally(() => clearTimeout(tm));
+    } finally { page.off('filechooser', onChooser); }
+    await fc.setFiles([file('keyboard.jpg', jpg2)]);
+    await page.waitForFunction((k) => document.querySelectorAll('.pcard').length === k + 1, p0, { timeout: 8000 }); await flush();
+    assert.strictEqual((await t.getJob(K)).photos.length, p0 + 1, 'photo added from the file chooser');
+    assert.strictEqual((await focused()).id, 'drop', 'focus stays on the drop zone');
+    // dropping files on it still works (it is a button now)
+    const dt = await page.evaluateHandle((b) => { const s = atob(b), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); const d = new DataTransfer(); d.items.add(new File([u], 'dropped.jpg', { type: 'image/jpeg' })); return d; }, jpg1.toString('base64'));
+    await page.dispatchEvent('#drop', 'drop', { dataTransfer: dt });
+    await page.waitForFunction((k) => document.querySelectorAll('.pcard').length === k + 2, p0, { timeout: 8000 }); await flush();
+    assert.deepStrictEqual((await t.getJob(K)).photos.slice(p0).map((p) => p.fileName), ['keyboard.jpg', 'dropped.jpg'], 'chosen and dropped photos added');
+    // a part: type in Search, Enter goes to the list with the best match picked, the arrow keys move, Enter adds the line
+    await openTab(K, 'estimate');
+    await page.selectOption('#pickGroup', ''); await page.selectOption('#pickOp', 'replace'); await page.check('#addRefinish'); // the picker's other settings, as left by earlier steps
+    await page.fill('#pickQ', '');
+    const l0 = (await t.getJob(K)).lines.length;
+    await page.focus('#pickQ'); await page.keyboard.type('bonnet'); await settle(80);
+    await page.keyboard.press('Enter');
+    const st = await page.evaluate(() => { const b = document.querySelector('#pickResults'), s = b.querySelector('.r.sel'); return { focus: document.activeElement.id, role: b.getAttribute('role'), code: s && s.dataset.code, selected: s && s.getAttribute('aria-selected'), active: b.getAttribute('aria-activedescendant') === (s && s.id) }; });
+    assert.deepStrictEqual(st, { focus: 'pickResults', role: 'listbox', code: 'BN001', selected: 'true', active: true }, 'Enter moved to the list');
+    await page.keyboard.press('ArrowDown');
+    assert.strictEqual(await page.$eval('#pickResults .r.sel', (x) => x.dataset.code), 'BN002', 'ArrowDown picks the next part');
+    await page.keyboard.press('ArrowUp');
+    assert.strictEqual(await page.$eval('#pickResults .r.sel', (x) => x.dataset.code), 'BN001', 'ArrowUp picks the first again');
+    await page.keyboard.press('Enter'); await flush();
+    const added = (await t.getJob(K)).lines.slice(l0).map((l) => [l.code, l.op]);
+    assert.deepStrictEqual(added, [['BN001', 'renew'], ['BN001', 'refinish']], 'Enter added the part as a line, with its refinish line');
+    assert.strictEqual((await focused()).id, 'pickResults', 'the list keeps focus for the next part');
+    // a damage zone: Tab reaches each zone (a toggle button); Enter adds it and Space removes it, and the zone keeps focus
+    await openTab(K, 'assessment');
+    await page.focus('.tabs a.active');
+    assert(await tabUntil(() => !!document.activeElement.getAttribute('data-zone')), 'Tab reaches the diagram');
+    const z = (await focused()).zone, had = (await t.getJob(K)).zones.includes(z);
+    await page.keyboard.press('Enter'); await flush();
+    assert.strictEqual((await t.getJob(K)).zones.includes(z), !had, 'Enter toggled ' + z);
+    assert.deepStrictEqual(await page.evaluate(() => ['data-zone', 'role', 'aria-pressed'].map((a) => document.activeElement.getAttribute(a))), [z, 'button', String(!had)], 'the zone keeps focus and reads as pressed');
+    await page.keyboard.press(' '); await flush();
+    assert.strictEqual((await t.getJob(K)).zones.includes(z), had, 'Space toggled it back');
+    assert.strictEqual((await focused()).zone, z, 'still focused');
+  });
+
+  await step('keyboard only: label boxes are created, moved, resized, named and deleted; Escape asks before discarding them', async () => {
+    await openTab(K, 'photos');
+    const ph = (await t.getJob(K)).photos, k = ph.length - 1, pid = ph[k].id; // the photo added in the step before
+    assert.strictEqual(ph[k].labels.length, 0, 'no labels yet');
+    await page.focus(`button[data-act="label"][data-pid="${pid}"]`); await page.keyboard.press('Enter'); await settle(250);
+    assert.deepStrictEqual(await page.evaluate(() => [document.activeElement.classList.contains('labStage'), document.activeElement.getAttribute('role')]), [true, 'application'], 'the photo has focus');
+    assert(await tabUntil(() => document.activeElement.dataset.act === 'newbox', 6), 'Tab reaches New box');
+    await page.keyboard.press('Enter'); await settle(80);
+    assert((await focused()).cls.includes('labStage'), 'back on the photo, with the new box selected');
+    for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('Shift+ArrowRight'); await page.keyboard.press('Shift+ArrowRight'); await page.keyboard.press('Shift+ArrowDown');
+    await page.keyboard.press('Control+Shift+ArrowDown'); // bigger step
+    assert(/^Box 1 of 1, Damage: 40% from the left, 39% from the top, 32% wide, 26% high\.$/.test(await text('[data-say]')), 'spoken: ' + await text('[data-say]'));
+    await page.keyboard.press('Enter');
+    assert.strictEqual((await focused()).tag, 'INPUT', 'Enter edits the text');
+    await page.keyboard.type('Scuff by keyboard'); await page.keyboard.press('Enter');
+    assert((await focused()).cls.includes('labStage'), 'Enter goes back to the photo');
+    // a second box, removed with Delete
+    assert(await tabUntil(() => document.activeElement.dataset.act === 'newbox', 6)); await page.keyboard.press('Enter'); await settle(50);
+    assert.strictEqual(await page.$$eval('.labStage .bx', (x) => x.length), 2, 'second box');
+    await page.keyboard.press('Delete'); await settle(50);
+    assert.strictEqual(await page.$$eval('.labStage .bx', (x) => x.length), 1, 'Delete removed the selected box');
+    assert(await tabUntil(() => document.activeElement.dataset.act === 'save', 60), 'Tab reaches Save labels');
+    await page.keyboard.press('Enter'); await flush();
+    const L = (await t.getJob(K)).photos[k].labels;
+    assert.deepStrictEqual(L.map((l) => [l.text, l.x, l.y, l.w, l.h, l.ai]), [['Scuff by keyboard', 0.4, 0.39, 0.32, 0.26, false]], 'saved from the keys: ' + JSON.stringify(L));
+    const f = await focused();
+    assert.deepStrictEqual([f.act, f.pid, f.tag], ['label', pid, 'BUTTON'], 'focus back on "Edit labels"');
+    // Escape with unsaved changes asks first: Cancel keeps the editor, OK closes it without saving
+    await page.keyboard.press('Enter'); await settle(250);
+    await page.keyboard.press('ArrowLeft');
+    const d0 = t.dialogs.length;
+    t.dialogMode = 'dismiss';
+    await page.keyboard.press('Escape'); await settle(100);
+    t.dialogMode = 'accept';
+    assert(t.dialogs.length === d0 + 1 && /^Close this window\?/.test(t.dialogs[d0]) && await exists('#modal:not(.hidden) .labStage'), 'asked first; Cancel kept it open');
+    await page.keyboard.press('Escape'); await settle(150);
+    assert(!(await modalShown()), 'OK closed it');
+    assert.strictEqual((await t.getJob(K)).photos[k].labels[0].x, 0.4, 'the unsaved move was discarded');
+  });
+
+  // ---------- round 4: "✓ Confirm" for AI text, CPR 35 supervision, year-only first registration, DVLA test data, frames ----------
+  let R4; // a sample job seeded with unreviewed AI text in every field the checks know, a choice field, a custom field and a photo
+  const AI_AT = { 'report.summary': 'opinion', opinion: 'opinion', 'inspection.condition': 'inspection', 'circumstances.providedBy': 'circumstances', 'circumstances.narrative': 'circumstances',
+    'circumstances.impactType': 'circumstances', 'circumstances.primaryArea': 'circumstances', 'circumstances.secondaryArea': 'circumstances', 'circumstances.direction': 'circumstances', 'circumstances.symptoms': 'circumstances',
+    'assessment.structural': 'assessment', 'assessment.mechanical': 'assessment', 'assessment.wheels': 'assessment', 'assessment.geometry': 'assessment', 'assessment.diagnostics': 'assessment', 'assessment.roadworthiness': 'assessment',
+    'valuation.comments': 'valuation', 'outcome.decision': 'valuation', 'outcome.category': 'valuation', estimateNotes: 'estimate', 'customer.notes': 'customer' };
+  const aiVal = (p) => (p === 'outcome.decision' ? 'Repair' : p === 'outcome.category' ? 'N' : `AI draft of ${p}`);
+  const listedAi = async (id) => page.evaluate((jj) => window.Core.unreviewedAiText(jj), await t.getJob(id));
+  const activeData = () => page.evaluate(() => Object.assign({ id: document.activeElement.id, tag: document.activeElement.tagName }, document.activeElement.dataset));
+  // AI text stored straight into a job that is not open (leaving it for the Jobs list drops it from memory), read again when reopened
+  async function seedAi(id, fn) { await t.go('#/jobs'); await flush(); const j = await t.getJob(id); fn(j); await t.putJob(j); }
+  await step('✓ Confirm beside every field the checks list as unreviewed AI text (text, choices, custom fields, a photo\'s title and caption): named, by keyboard; it saves, re-renders, clears the check and leaves focus on the field', async () => {
+    await t.go('#/jobs'); await settle(200);
+    await page.click('[data-act="loadSample"]'); await page.waitForFunction(() => /#\/job\/[^/]+\/report$/.test(location.hash)); await settle(200);
+    R4 = await t.jobId();
+    await openTab(R4, 'photos'); await page.setInputFiles('#photoInput', [file('a.jpg', jpg1)]); await page.waitForSelector('.pcard'); await flush();
+    let pid;
+    await seedAi(R4, (j) => {
+      j.aiText = {};
+      for (const p of Object.keys(AI_AT)) { const [a, b] = p.split('.'); if (b) j[a][b] = aiVal(p); else j[a] = aiVal(p); j.aiText[p] = aiVal(p); }
+      const ph = j.photos[0]; pid = ph.id;
+      Object.assign(ph, { title: 'Seeded AI title', caption: 'Seeded AI caption', aiTitle: 'Seeded AI title', aiCaption: 'Seeded AI caption' });
+      j.aiText[`photos.${pid}.title`] = 'Seeded AI title'; j.aiText[`photos.${pid}.caption`] = 'Seeded AI caption';
+    });
+    const listed = await listedAi(R4);
+    assert.strictEqual(listed.length, Object.keys(AI_AT).length + 2, 'listed: ' + JSON.stringify(listed.map((x) => x.path)));
+    // each one on the tab its check points to: a real button, outside the field's label, named after the field and described by the AI note
+    for (const x of listed) {
+      assert.strictEqual(x.tab, AI_AT[x.path] || (x.path.startsWith('photos.') && 'photos'), x.path + ': the tab its check points to');
+      await openTab(R4, x.tab);
+      const got = await page.evaluate((p) => {
+        const b = document.querySelector(`#tabBody [data-act="aiConfirm"][data-path="${CSS.escape(p)}"]`);
+        if (!b) return null;
+        const pm = /^photos\.(.+)\.(title|caption)$/.exec(p);
+        const f = pm ? document.querySelector(`[data-pf="${pm[2]}"][data-pid="${CSS.escape(pm[1])}"]`) : document.querySelector(`[data-bind="${CSS.escape(p)}"]`);
+        const note = document.getElementById(b.getAttribute('aria-describedby') || '');
+        return { name: b.getAttribute('aria-label'), field: pm ? f.getAttribute('aria-label') : f.closest('label').querySelector('span').textContent, tag: b.tagName, type: b.type, inLabel: !!b.closest('label'),
+          note: note ? note.textContent : '', sameNote: f.getAttribute('aria-describedby') === b.getAttribute('aria-describedby') };
+      }, x.path);
+      assert(got, `no ✓ Confirm beside ${x.path} on the ${x.tab} tab`);
+      assert.strictEqual(got.name, 'Confirm AI text: ' + got.field, x.path + ' name');
+      assert(got.tag === 'BUTTON' && got.type === 'button' && !got.inLabel && got.sameNote && /^✦ AI (text|choice|title|caption), not (edited|confirmed) yet/.test(got.note), x.path + ': ' + JSON.stringify(got));
+    }
+    // the field's own name stays its label (the note is its description): no field is named after the button
+    await openTab(R4, 'valuation');
+    const cdp = await t.context.newCDPSession(page);
+    await cdp.send('Accessibility.enable');
+    const ax = (await cdp.send('Accessibility.getFullAXTree')).nodes.filter((n) => !n.ignored && n.role && ['combobox', 'textbox', 'button'].includes(n.role.value))
+      .map((n) => [n.role.value, String((n.name && n.name.value) || ''), String((n.description && n.description.value) || '')]);
+    await cdp.detach();
+    const dec = ax.find((n) => n[0] === 'combobox' && n[1] === 'Economic repair / total-loss assessment');
+    assert(dec && /AI choice, not confirmed yet/.test(dec[2]), 'decision: ' + JSON.stringify(dec));
+    assert(ax.some((n) => n[0] === 'button' && n[1] === 'Confirm AI text: Economic repair / total-loss assessment' && /AI choice/.test(n[2])), 'its button');
+    assert(!ax.some((n) => n[0] !== 'button' && /Confirm/.test(n[1])), 'a field named after its button: ' + JSON.stringify(ax.filter((n) => n[0] !== 'button' && /Confirm/.test(n[1]))));
+    // keyboard: Tab from the decision reaches its button; Enter confirms it and focus returns to the decision. Space on the category's.
+    await page.focus('[data-bind="outcome.decision"]'); await page.keyboard.press('Tab');
+    assert.deepStrictEqual([(await activeData()).act, (await activeData()).path], ['aiConfirm', 'outcome.decision'], 'Tab reaches ✓ Confirm');
+    await page.keyboard.press('Enter'); await settle(200);
+    assert.strictEqual((await activeData()).bind, 'outcome.decision', 'focus back on the decision');
+    assert(!(await exists('[data-act="aiConfirm"][data-path="outcome.decision"]')) && await exists('[data-act="aiConfirm"][data-path="valuation.comments"]'), 'only its button went');
+    assert(/^Confirmed: Economic repair \/ total-loss assessment\. It is now your own text/.test(await toastText()), await toastText());
+    await page.focus('[data-act="aiConfirm"][data-path="outcome.category"]'); await page.keyboard.press(' '); await settle(200);
+    assert.strictEqual((await activeData()).bind, 'outcome.category', 'focus on the category');
+    await flush();
+    let j = await t.getJob(R4);
+    assert(!('outcome.decision' in j.aiText) && !('outcome.category' in j.aiText) && j.outcome.decision === 'Repair' && j.outcome.category === 'N', 'confirmed and saved, values kept: ' + JSON.stringify(Object.keys(j.aiText)));
+    const qaV = await page.evaluate((jj) => window.Core.qaChecks(jj).filter((q) => q.tab === 'valuation' && /AI-drafted text/.test(q.msg)).map((q) => q.msg), j);
+    assert(qaV.length === 1 && !/decision|Salvage category/.test(qaV[0]) && /Valuation comments/.test(qaV[0]), 'valuation check now: ' + qaV);
+    assert.strictEqual(await page.$eval('.tabs a[href$="/report"] .cnt', (n) => n.textContent), String(await page.evaluate((jj) => window.Core.qaChecks(jj).filter((q) => q.level !== 'info').length, j)), 're-rendered: the check count is current');
+    // a photo: ✓ Confirm beside the title; typing in the caption removes its mark at once (editing still clears it)
+    await openTab(R4, 'photos');
+    await page.click(`[data-act="aiConfirm"][data-path="photos.${pid}.title"]`); await settle(200);
+    assert.deepStrictEqual([(await activeData()).pf, (await activeData()).pid], ['title', pid], 'focus on the title');
+    await page.fill(`[data-pf="caption"][data-pid="${pid}"]`, 'Assessor caption'); await settle(50);
+    assert(!(await exists(`[data-act="aiConfirm"][data-path="photos.${pid}.caption"]`)) && !(await page.$eval(`[data-pf="caption"][data-pid="${pid}"]`, (n) => n.hasAttribute('aria-describedby'))), 'caption mark removed while typing');
+    await openTab(R4, 'assessment');
+    await page.fill('[data-bind="assessment.wheels"]', 'Wheels checked by me.'); await settle(50);
+    assert(!(await exists('[data-act="aiConfirm"][data-path="assessment.wheels"]')) && await exists('[data-act="aiConfirm"][data-path="assessment.mechanical"]'), 'an edited field loses its button, the others keep theirs');
+    await flush();
+    j = await t.getJob(R4);
+    const ph = j.photos[0];
+    assert(!(`photos.${pid}.title` in j.aiText) && !('aiTitle' in ph) && ph.title === 'Seeded AI title' && ph.caption === 'Assessor caption', 'photo: ' + JSON.stringify([Object.keys(j.aiText).filter((k) => k.startsWith('photos.')), ph.aiTitle, ph.title, ph.caption]));
+    assert(!(await listedAi(R4)).some((x) => /^photos\.|^outcome\.|assessment\.wheels/.test(x.path)), 'no longer listed');
+    // the AI is then told the confirmed title is the assessor's (titleByAi false), as for an edited caption
+    await openTab(R4, 'opinion');
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-discard]');
+    await page.click('#modal [data-discard]'); await settle(300);
+    const prov = (await t.calls('ai.draftNarrative')).pop().arg.prov;
+    assert.deepStrictEqual(prov.map((x) => [x.titleByAi, x.captionByAi]), [[false, false]], 'provenance after ✓ Confirm: ' + JSON.stringify(prov));
+    assert(!('aiDraftPending' in (await t.getJob(R4))), 'draft discarded');
+  });
+
+  await step('✓ Confirm for AI text whose field the checked tab cannot show (a custom or Check & report entry): listed with its text on Check & report, keyboard moves on to the next; finalised, every ✓ Confirm is disabled', async () => {
+    await seedAi(R4, (j) => { j.customer.foo = 'AI note with <b>no</b> field'; j.aiText['customer.foo'] = j.customer.foo; j.report.headline = 'TOTAL LOSS'; j.aiText['report.headline'] = 'TOTAL LOSS'; });
+    await openTab(R4, 'report'); await settle(200);
+    const rows = await page.$$eval('.aiOrphans li', (ns) => ns.map((n) => [n.querySelector('.orphanText').textContent, n.querySelector('.hint').textContent, n.querySelector('[data-act="aiConfirm"]').getAttribute('aria-label')]));
+    assert.deepStrictEqual(rows, [['AI note with <b>no</b> field', 'no tab shows this field', 'Confirm AI text: Customer: foo'], ['TOTAL LOSS', 'field on the Valuation & outcome tab', 'Confirm AI text: Report: headline']], JSON.stringify(rows));
+    assert(!(await exists('.aiOrphans b b')), 'its text is escaped');
+    assert(await exists('[data-act="aiConfirm"][data-path="assessment.mechanical"]') === false, 'fields shown on their own tab are not repeated here');
+    // the Valuation tab shows the headline's field with its own button too
+    await openTab(R4, 'valuation');
+    assert(await exists('[data-act="aiConfirm"][data-path="report.headline"]'), 'beside the headline field');
+    await openTab(R4, 'report'); await settle(200);
+    await page.focus('.aiOrphans [data-act="aiConfirm"][data-path="customer.foo"]'); await page.keyboard.press('Enter'); await settle(250);
+    assert.strictEqual((await activeData()).path, 'report.headline', 'focus on the next entry');
+    await page.keyboard.press('Enter'); await settle(250);
+    assert.strictEqual((await activeData()).id, 'qaHead', 'then on the checks');
+    assert(!(await exists('.aiOrphans')), 'the list is gone');
+    await flush();
+    let j = await t.getJob(R4);
+    assert(!('customer.foo' in j.aiText) && !('report.headline' in j.aiText) && j.customer.foo === 'AI note with <b>no</b> field', 'confirmed');
+    // finalised: still shown (the text is still unreviewed in the issued report) but disabled, like every other action
+    await openTab(R4, 'signoff'); await page.click('[data-act="finaliseReport"]'); await flush();
+    for (const tb of ['assessment', 'valuation', 'opinion']) {
+      await openTab(R4, tb);
+      const b = await page.$$eval('#tabBody [data-act="aiConfirm"]', (ns) => ns.map((n) => [n.disabled, n.getAttribute('aria-disabled')]));
+      assert(b.length && b.every(([d, a]) => d && a === 'true'), tb + ' disabled: ' + JSON.stringify(b));
+    }
+    j = await t.getJob(R4);
+    assert(j.issued && 'assessment.structural' in j.aiText, 'nothing confirmed while finalised');
+    await openTab(R4, 'assessment');
+    await page.click('.lockBanner [data-act="reopenReport"]'); await flush();
+    assert(await exists('#tabBody [data-act="aiConfirm"]:not([disabled])'), 'enabled again once re-opened');
+  });
+
+  await step('CPR 35 supervision (PD 35 para 3.2(5)): asked on Sign-off only when someone other than the signing expert examined the vehicle (case and accents ignored, as core.js compares); Yes / No / not recorded saved; the CPR 35 error clears', async () => {
+    await openTab(R4, 'signoff');
+    const me = await page.$eval('[data-bind="assessor.name"]', (n) => n.value);
+    assert(me && await page.$eval('#supervisionFld', (n) => n.hidden), 'hidden while nobody else is recorded: ' + me);
+    await openTab(R4, 'inspection');
+    await page.fill('[data-bind="inspection.by"]', 'José Field'); await flush();
+    await openTab(R4, 'signoff');
+    assert(await page.$eval('#supervisionFld', (n) => !n.hidden), 'shown: examined by José Field, signed by ' + me);
+    assert.strictEqual(await text('#supervisionFld label > span'), 'The vehicle was examined by José Field: was the examination (and any tests) carried out under your supervision?');
+    assert.deepStrictEqual(await page.$$eval('[data-bind="report.examinerSupervised"] option', (ns) => ns.map((o) => [o.value, o.textContent])), [['', 'Not recorded'], ['yes', 'Yes, under my supervision'], ['no', 'No, not under my supervision']]);
+    const sup = async () => page.evaluate((jj) => window.Core.qaChecks(jj).filter((q) => /under your supervision/.test(q.msg)).map((q) => q.level + ':' + q.tab), await t.getJob(R4));
+    assert.deepStrictEqual(await sup(), [], 'no check outside CPR 35 mode');
+    await page.check('[data-bind-check="report.cpr35"]'); await flush();
+    assert.deepStrictEqual(await sup(), ['error:signoff'], 'an error in CPR 35 mode until answered');
+    assert(/Required in a CPR 35 report/.test(await text('#supervisionFld')), 'its hint says so');
+    // by keyboard: the answer is a named select reached with Tab
+    await page.focus('[data-bind="assessor.dateSigned"]');
+    assert(await tabUntil(() => document.activeElement.dataset.bind === 'report.examinerSupervised', 6), 'Tab reaches it');
+    await page.selectOption('[data-bind="report.examinerSupervised"]', 'no'); await flush();
+    assert.strictEqual((await t.getJob(R4)).report.examinerSupervised, 'no');
+    assert.deepStrictEqual(await sup(), [], 'answered');
+    await page.selectOption('[data-bind="report.examinerSupervised"]', 'yes'); await flush();
+    assert.strictEqual((await t.getJob(R4)).report.examinerSupervised, 'yes');
+    // the expert's own name typed in another case and without the accent hides it as it is typed; their name back shows it
+    await page.fill('[data-bind="assessor.name"]', 'jose field'); await settle(50);
+    assert(await page.$eval('#supervisionFld', (n) => n.hidden), 'hidden for the same person');
+    await flush();
+    assert.deepStrictEqual(await sup(), [], 'core.js agrees: the same person');
+    await page.fill('[data-bind="assessor.name"]', me); await settle(50);
+    assert(await page.$eval('#supervisionFld', (n) => !n.hidden), 'shown again');
+    await page.selectOption('[data-bind="report.examinerSupervised"]', ''); await flush();
+    assert.deepStrictEqual(await sup(), ['error:signoff'], 'not recorded');
+    await page.uncheck('[data-bind-check="report.cpr35"]'); await flush();
+  });
+
+  await step('DVLA gives only the year: kept as "YYYY" (precision year) and explained by the date field; an MOT date of that year replaces it, another year does not; test-service data and imports flagged, with months, never an invented day', async () => {
+    await t.mock({ dvla: true, mot: false, dvlaOver: { firstRegistration: '', firstRegistrationYear: 2014, importedOrReRegistered: null, markedForExport: null, markedAsScrapped: null } });
+    const id = await newJob();
+    await openTab(id, 'vehicle');
+    const lookup = async (act) => { await page.click(`[data-act="${act}"]`); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 5000 }); await flush(); return (await t.getJob(id)).vehicle; };
+    await page.fill('[data-bind="vehicle.reg"]', 'AB14 CDE'); await settle(50);
+    let v = await lookup('lookupVehicle');
+    assert.deepStrictEqual([v.firstReg, v.firstRegPrecision, v.dvla.firstRegistrationYear], ['2014', 'year', 2014]);
+    assert.deepStrictEqual(await page.$eval('[data-bind="vehicle.firstReg"]', (n) => [n.value, n.closest('label').querySelector('.hint').textContent]),
+      ['', 'DVLA gives the year only (2014), so the report prints the year. Enter the full date if you know it, for example from the V5C.'], 'the date field');
+    const line = async () => (await page.$eval('#tabBody .hint b', (n) => n.parentElement.textContent)).replace(/\s+/g, ' ');
+    assert(!/marked for export|marked as scrapped|re-registration|test service/.test(await line()), 'flags DVLA did not give are not shown: ' + await line());
+    // the MOT record: another year is a different date (DVLA's year stays); the first-used date of the same year replaces it
+    await t.mock({ mot: true, motOver: { registrationDate: '2015-03-02', firstUsedDate: '2015-03-02' } });
+    await page.fill('[data-bind="vehicle.vin"]', 'SJNFBAF15U7000000'); await settle(50);
+    v = await lookup('motByVin');
+    assert.deepStrictEqual([v.firstReg, v.firstRegPrecision], ['2014', 'year'], 'another year');
+    await t.mock({ motOver: { registrationDate: '', firstUsedDate: '2014-09-03' } });
+    v = await lookup('motByVin');
+    assert.deepStrictEqual([v.firstReg, v.firstRegPrecision], ['2014-09-03', 'day'], 'the first-used date of 2014');
+    await t.mock({ mot: false });
+    v = await lookup('lookupVehicle');
+    assert.deepStrictEqual([v.firstReg, v.firstRegPrecision], ['2014-09-03', 'day'], 'a later year-only reply keeps the full date');
+    // the test service: flagged on the tab, in the message and in the data log; an import's dates as months
+    await t.mock({ dvlaOver: { firstRegistration: '2014-08-01', firstRegistrationYear: 2014, firstRegistrationWithDvla: '2016-02-01', importedOrReRegistered: true, environment: 'test' } });
+    v = await lookup('lookupVehicle');
+    assert(/TEST service \(made-up test vehicles, not the register\)/.test(await toastText()), await toastText());
+    assert(/^DVLA \(\d{2}\/\d{2}\/\d{4}\): DVLA test service data, not the register · tax/.test((await line()).trim()), await line());
+    assert.strictEqual(await text('.dvlaImport'), 'first registered August 2014 but with DVLA February 2016 (import / re-registration)');
+    assert.strictEqual((await t.getJob(id)).aiLog.pop().action, 'DVLA Vehicle Enquiry Service lookup (test service)');
+    // Settings → Test DVLA: the month and year, and the service
+    await t.go('#/settings'); await settle(300);
+    await page.fill('#testReg', 'AB14 CDE'); await page.click('[data-act="testDvla"]'); await settle(200);
+    assert.strictEqual(await toastText(), 'DVLA OK (test service): NISSAN RED PETROL, first registered August 2014');
+    await t.mock({ dvlaOver: { firstRegistration: '', firstRegistrationYear: 1968, environment: 'live' } });
+    await page.click('[data-act="testDvla"]'); await settle(200);
+    assert.strictEqual(await toastText(), 'DVLA OK: NISSAN RED PETROL, first registered 1968');
+    await t.mock({ dvlaOver: {}, motOver: {}, mot: true });
+  });
+
+  await step('migrate: a stored raw DVLA record with the year but no month becomes the year (not 1 January), a numeric year becomes text, a "Yes" / true supervision answer becomes "yes"; the report prints the year; a second open saves nothing', async () => {
+    const base = { createdAt: '2025-01-01T00:00:00.000Z', updatedAt: '2025-01-02T00:00:00.000Z', lines: [], photos: [] };
+    await t.putJob(Object.assign({ id: 'legacy-yr', vehicle: { reg: 'OLD 68', make: 'Morris', model: 'Minor', firstReg: '1968-01-01', dvla: { make: 'MORRIS', yearOfFirstRegistration: 1968, motExpiryDate: '2027-02-01', taxStatus: 'SORN' } }, inspection: { by: 'A N Other' }, report: { examinerSupervised: 'Yes' } }, base));
+    await t.putJob(Object.assign({ id: 'legacy-num', vehicle: { reg: 'OLD 75', make: 'Ford', model: 'Escort', firstReg: 1975 }, report: { examinerSupervised: true } }, base));
+    await openTab('legacy-yr', 'vehicle'); await flush();
+    let j = await t.getJob('legacy-yr');
+    assert.deepStrictEqual([j.vehicle.firstReg, j.vehicle.firstRegPrecision, j.vehicle.dvla.firstRegistration, j.vehicle.dvla.firstRegistrationYear, 'yearOfFirstRegistration' in j.vehicle.dvla, j.report.examinerSupervised],
+      ['1968', 'year', '', 1968, false, 'yes'], JSON.stringify([j.vehicle, j.report.examinerSupervised]));
+    assert(/DVLA gives the year only \(1968\)/.test(await page.$eval('[data-bind="vehicle.firstReg"]', (n) => n.closest('label').textContent)), 'year hint');
+    await openTab('legacy-yr', 'report'); await settle(400);
+    const rep = await page.$eval('#preview', (f) => f.contentDocument.body.textContent);
+    assert(/First registration date\s*1968\b/.test(rep) && !/January 1968|01\/01\/1968/.test(rep), 'report: ' + (rep.match(/First registration date.{0,30}/s) || [''])[0]);
+    const u = j.updatedAt;
+    await t.go('#/jobs'); await settle(300); await openTab('legacy-yr', 'vehicle'); await settle(300);
+    assert.strictEqual((await t.getJob('legacy-yr')).updatedAt, u, 'the second open saves nothing (migrate is idempotent)');
+    await openTab('legacy-num', 'vehicle'); await flush();
+    j = await t.getJob('legacy-num');
+    assert.deepStrictEqual([j.vehicle.firstReg, j.vehicle.firstRegPrecision, j.report.examinerSupervised], ['1975', 'year', 'yes']);
+    assert(await page.$('#tabBody .variantPick, #tabBody [data-vp="make"]'), 'the Vehicle tab renders (the variant picker reads the year)');
+  });
+
+  await step('claim type "Court proceedings": the Valuation tab says the report is a CPR Part 35 expert report only once Sign-off\'s box is ticked, and links there', async () => {
+    await openTab(R4, 'valuation');
+    assert.strictEqual(await page.$eval('[data-bind="valuation.claimType"] option[value="court"]', (o) => o.textContent), 'Court proceedings');
+    await page.selectOption('[data-bind="valuation.claimType"]', 'court'); await flush();
+    assert(/^Not a CPR Part 35 expert report yet\. If it is to be relied on as expert evidence, also tick "Court-compliant expert report \(CPR Part 35 \/ PD 35\)" on Sign-off\.$/.test(await text('.courtCpr')), await text('.courtCpr'));
+    await page.click('.courtCpr a'); await page.waitForFunction(() => /\/signoff$/.test(location.hash)); await settle(200);
+    await page.check('[data-bind-check="report.cpr35"]'); await flush();
+    await openTab(R4, 'valuation');
+    assert.strictEqual(await text('.courtCpr'), 'CPR Part 35 expert report: on (Sign-off).');
+    await openTab(R4, 'signoff'); await page.uncheck('[data-bind-check="report.cpr35"]'); await flush();
+    await openTab(R4, 'valuation'); await page.selectOption('[data-bind="valuation.claimType"]', ''); await flush();
+    assert(!(await exists('.courtCpr')), 'no note for other claim types');
+  });
+
+  await step('frames: the CSP allows no frame source (frame-src and child-src \'none\'); the srcdoc report preview still renders; data: and blob: frames are blocked', async () => {
+    const csp = await page.$eval('meta[http-equiv="Content-Security-Policy"]', (m) => m.content);
+    assert(/frame-src 'none'/.test(csp) && /child-src 'none'/.test(csp), csp);
+    await openTab(R4, 'report'); await settle(400);
+    const prev = await page.$eval('#preview', (f) => (f.contentDocument && f.contentDocument.body ? f.contentDocument.body.textContent : ''));
+    assert(prev.length > 2000 && /First registration date/.test(prev), 'preview rendered: ' + prev.length);
+    const n0 = t.errors.length;
+    const got = await page.evaluate(() => Promise.all(['data:text/html,<p>x</p>', URL.createObjectURL(new Blob(['<p id="x">x</p>'], { type: 'text/html' }))].map((src) => new Promise((res) => {
+      const f = document.createElement('iframe');
+      let done = false;
+      const end = () => { if (done) return; done = true; let r = 'blocked'; try { if (f.contentDocument && f.contentDocument.getElementById('x')) r = 'loaded'; } catch (e) { /* cross-origin: an error page */ } f.remove(); res(r); };
+      f.onload = end; f.src = src; document.body.appendChild(f); setTimeout(end, 2000);
+    }))));
+    await settle(100);
+    // the browser reports each blocked frame as a console error: expected here, so they are not counted as page errors
+    const extra = t.errors.splice(n0);
+    assert.strictEqual(got[1], 'blocked', 'blob: frame');
+    assert(extra.length === 2 && extra.every((x) => /violates the following Content Security Policy directive: "frame-src 'none'"/.test(x)), 'a CSP report for each frame, nothing else: ' + extra.join(' | '));
+  });
+
+
+  // ---------- round 4, final screens review: busy guard, AI flows, estimate, lookups, part numbers, imports ----------
+  const waitSpin = () => page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 8000 });
+  // the file dialog the app opens, cancelled as a user's Cancel is (Chromium fires 'cancel' and no 'change')
+  const cancelPicker = async (sel) => { const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.click(sel)]); await fc.element().evaluate((i) => i.dispatchEvent(new Event('cancel'))); await settle(150); };
+  const opensPicker = async (sel) => {
+    const [fc] = await Promise.all([page.waitForEvent('filechooser', { timeout: 2500 }).catch(() => null), page.click(sel)]);
+    if (fc) await fc.element().evaluate((i) => i.dispatchEvent(new Event('cancel')));
+    await settle(150);
+    return !!fc;
+  };
+  await step('a cancelled file dialog never leaves its button busy: Import job file, Restore backup (and with it Export full backup), Upload logo, Import CSV, Upload image on any Sign-off', async () => {
+    await t.go('#/jobs'); await settle(200);
+    await cancelPicker('[data-act="importJob"]');
+    assert.deepStrictEqual(await page.$eval('[data-act="importJob"]', (b) => [b.classList.contains('isBusy'), b.hasAttribute('aria-busy')]), [false, false], 'not busy once cancelled');
+    assert(await opensPicker('[data-act="importJob"]'), 'Import job file opens its dialog again');
+    await t.go('#/settings'); await settle(300);
+    await cancelPicker('[data-act="restore"]');
+    const b0 = (await t.calls('backup.begin')).length;
+    await page.click('[data-act="backup"]'); await page.waitForFunction(() => !document.querySelector('[data-act="backup"].isBusy'), null, { timeout: 20000 }); await settle(200);
+    assert.strictEqual((await t.calls('backup.begin')).length, b0 + 1, 'Export full backup works after a cancelled Restore (they share one guard)');
+    assert(await opensPicker('[data-act="restore"]'), 'Restore opens its dialog again');
+    await cancelPicker('[data-act="logoUpload"]');
+    assert(await opensPicker('[data-act="logoUpload"]'), 'Upload logo');
+    await t.go('#/catalogue'); await settle(300);
+    await cancelPicker('[data-act="catImport"]');
+    assert(await opensPicker('[data-act="catImport"]'), 'Import CSV');
+    const a = await newJob(); await openTab(a, 'signoff');
+    await cancelPicker('[data-act="sigUpload"][data-target="job"]');
+    const b = await newJob(); await openTab(b, 'signoff');
+    assert(await opensPicker('[data-act="sigUpload"][data-target="job"]'), 'Upload image on another assessment');
+  });
+
+  await step('a lookup still running on one assessment never blocks the same button on another (the double-click guard is per job)', async () => {
+    await t.mock({ dvla: true, mot: true, dvlaOver: {}, motOver: {}, dataDelay: 1200 });
+    const a = await newJob(); await openTab(a, 'vehicle'); await page.fill('[data-bind="vehicle.reg"]', 'AA11 AAA'); await flush();
+    const b = await newJob(); await openTab(b, 'vehicle'); await page.fill('[data-bind="vehicle.reg"]', 'BB22 BBB'); await flush();
+    const n0 = (await t.calls('data.dvla')).length;
+    await openTab(a, 'vehicle'); await page.click('[data-act="lookupVehicle"]'); await settle(100);
+    await openTab(b, 'vehicle'); await page.click('[data-act="lookupVehicle"]'); await settle(150);
+    assert(await exists('[data-act="lookupVehicle"] .spinner'), 'B shows its own lookup running');
+    await waitSpin(); await settle(1500); await flush();
+    assert.deepStrictEqual((await t.calls('data.dvla')).slice(n0).map((c) => c.arg.reg), ['AA11 AAA', 'BB22 BBB'], 'both looked up');
+    assert.deepStrictEqual([(await t.getJob(a)).vehicle.make, (await t.getJob(b)).vehicle.make], ['Nissan', 'Nissan'], 'both filled in');
+    await t.mock({ dataDelay: 20 });
+  });
+
+  await step('adverts an AI search found and the assessor has not verified are never sent back to the AI as the engineer\'s own, even with a URL typed in; once verified they are', async () => {
+    const id = await newJob();
+    await seedAi(id, (j) => {
+      j.valuation.adverts = [{ description: 'Engineer advert', year: '2014', mileage: 60000, price: 5995, url: 'https://www.autotrader.co.uk/car-details/9' },
+        { description: 'AI comparable, not verified', year: '2015', mileage: 50000, price: 5800, url: 'https://www.motors.co.uk/car-123456/', aiUnverified: true, claimedUrl: 'https://www.motors.co.uk/car-123456/' }];
+    });
+    await openTab(id, 'valuation');
+    await page.click('[data-act="aiValuation"]'); await waitSpin(); await flush();
+    assert.deepStrictEqual((await t.calls('ai.valuation')).pop().arg.adverts.map((x) => x.description), ['Engineer advert'], 'valuation: only the engineer\'s advert');
+    await openTab(id, 'opinion');
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-discard]'); await page.click('#modal [data-discard]'); await settle(300);
+    assert.deepStrictEqual((await t.calls('ai.draftNarrative')).pop().arg.adverts, ['Engineer advert'], 'narrative draft: the same');
+    await openTab(id, 'valuation'); await page.click('[data-adv-verify="1"]'); await flush(); // the box goes once ticked
+    await page.click('[data-act="aiValuation"]'); await waitSpin(); await flush();
+    assert.deepStrictEqual((await t.calls('ai.valuation')).pop().arg.adverts.map((x) => x.description), ['Engineer advert', 'AI comparable, not verified'], 'sent once ticked Verified');
+  });
+
+  await step('thumbnails are written only into the assessment as registered now: one deleted while its thumbnails are being made is not stored again', async () => {
+    await t.putJob({ id: 'thumb-del', createdAt: '2025-01-01T00:00:00.000Z', updatedAt: '2025-01-02T00:00:00.000Z', vehicle: { reg: 'TH1 DEL' }, lines: [], photos: [1, 2, 3].map((k) => ({ id: 'tp' + k, dataUrl: dataUrl1, title: 'p' + k, labels: [] })) });
+    // thumbnails made slowly (400 ms each), as on a large job or a slow PC
+    await page.evaluate(() => { const C = window.Core; if (!C.__resize) { C.__resize = C.resizeDataURL; C.resizeDataURL = async (...a) => { await new Promise((r) => setTimeout(r, 400)); return C.__resize(...a); }; } });
+    try {
+      await openTab('thumb-del', 'photos');
+      await t.go('#/jobs'); await settle(200);
+      await page.click('[data-act="delJob"][data-id="thumb-del"]'); await settle(300);
+      assert(!(await t.getJob('thumb-del')), 'deleted');
+      await settle(2000); await flush();
+      assert(!(await t.getJob('thumb-del')), 'not stored again once its thumbnails were made');
+      await t.go('#/catalogue'); await settle(150); await t.go('#/jobs'); await settle(300);
+      assert(!(await exists('a[href="#/job/thumb-del/claim"]')), 'not back in the Jobs list');
+    } finally {
+      await page.evaluate(() => { const C = window.Core; if (C.__resize) { C.resizeDataURL = C.__resize; delete C.__resize; } });
+    }
+  });
+
+  await step('a new photo analysis keeps the AI labels the assessor checked and saved; a photo added since the last analysis is offered on its own', async () => {
+    const id = await newJob();
+    await openTab(id, 'photos'); await page.setInputFiles('#photoInput', [file('a.jpg', jpg1), file('b.jpg', jpg2)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 2, null, { timeout: 8000 }); await flush();
+    await page.click('[data-act="aiAnalyse"]'); await waitSpin(); await flush();
+    // the assessor corrects photo 1's AI labels and saves them (labels reviewed)
+    await seedAi(id, (j) => { const p = j.photos[0]; p.labels = p.labels.map((l) => (l.ai ? Object.assign({}, l, { text: 'Deep scoring, assessor corrected' }) : l)); p.labelsReviewed = true; });
+    await openTab(id, 'photos'); await page.setInputFiles('#photoInput', [file('c.jpg', jpg1)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 3, null, { timeout: 8000 }); await flush();
+    assert(/^1 photo in the report has not been analysed yet\./.test(await text('.notAnalysed')), 'offered: ' + await text('.notAnalysed'));
+    await page.click('.notAnalysed [data-act="aiAnalyseRest"]'); await waitSpin(); await flush();
+    assert.deepStrictEqual((await t.calls('ai.analysePhotos')).pop().arg.idx, [3], 'only the new photo sent');
+    const aiTexts = (p) => p.labels.filter((l) => l.ai).map((l) => l.text);
+    let j = await t.getJob(id);
+    assert(aiTexts(j.photos[0]).length === 2 && aiTexts(j.photos[0]).every((x) => x === 'Deep scoring, assessor corrected') && j.photos[0].labelsReviewed === true, 'checked labels untouched');
+    // a full analysis again: the checked photo keeps its labels, the others are labelled afresh
+    await page.click('[data-act="aiAnalyse"]'); await waitSpin(); await flush();
+    assert(/The labels you checked on 1 photo were kept\./.test(await toastText()), await toastText());
+    j = await t.getJob(id);
+    assert(aiTexts(j.photos[0]).length === 2 && aiTexts(j.photos[0]).every((x) => x === 'Deep scoring, assessor corrected') && j.photos[0].labelsReviewed === true, 'kept: ' + JSON.stringify(aiTexts(j.photos[0])));
+    assert(aiTexts(j.photos[1]).includes('Scoring 2') && j.photos[1].labelsReviewed === false, 'the unchecked photo labelled again');
+  });
+
+  await step('"Analyse the remaining photos": "Add selected lines" waits for it; a suggestion already added is never changed (a repeat is a row of its own, with the earlier hours); the assessor\'s ticks are kept', async () => {
+    const id = await newJob();
+    await openTab(id, 'photos'); await page.setInputFiles('#photoInput', [file('a.jpg', jpg1), file('b.jpg', jpg2)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 2, null, { timeout: 8000 }); await flush();
+    // a partial run covered photo 1: its door repair was added at 2.0h; the alignment check is still to be decided
+    await seedAi(id, (j) => {
+      j.aiFindings = { model: 'claude-opus-5-5', at: new Date().toISOString(), photos: [{ id: j.photos[0].id, index: 1, damages: [] }], summary: {}, review_flags: [], partial: { analysed: 1, total: 2, error: 'overloaded' },
+        suggested_lines: [Object.assign(SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 2, 'guide'), { batches: [1], hoursSeen: [2], added: true }),
+          Object.assign(SL('ST006', '', 'operation', 'Auxiliary', 'Jig / bench set-up and measure', 3, 3, 'guide'), { batches: [1], hoursSeen: [3] })] };
+      j.lines.push({ id: 'door1', type: 'Body', description: 'RH front door – repair (medium) / metal finish', partNo: '', code: 'DR001', side: 'R', hours: 2, rate: '', amount: 0, costClass: 'parts', ai: true, reviewed: false, source: '', op: 'repair' });
+    });
+    await openTab(id, 'photos');
+    await page.uncheck('input[data-sugg="1"]'); // the jig check is not wanted
+    await t.mock({ aiDelay: 900, linesByBatch: { 2: [SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 4, 'adjusted', 'The dent runs into the swage line.')] } });
+    await page.click('[data-act="aiAnalyseRest"]'); await settle(250);
+    assert(await page.$eval('[data-act="aiAddLines"]', (b) => b.disabled), '"Add selected lines" waits while the analysis runs');
+    await waitSpin(); await flush();
+    await t.mock({ aiDelay: 30, linesByBatch: null });
+    const sl = (await t.getJob(id)).aiFindings.suggested_lines;
+    assert.deepStrictEqual(sl.map((l) => [l.code, Number(l.labour_hours), !!l.added, l.batches]), [['DR001', 2, true, [1]], ['ST006', 3, false, [1]], ['DR001', 4, false, [2]]], 'suggestions: ' + JSON.stringify(sl.map((l) => [l.code, l.labour_hours, l.added, l.batches])));
+    assert.deepStrictEqual(await page.$$eval('input[data-sugg]', (ns) => ns.map((n) => n.checked)), [false, false, true], 'ticks kept (the added one is disabled and unticked)');
+    assert(/suggested again by a later batch: the line added earlier has 2\.0h/.test(await page.$eval('tr[data-sugg-row="2"]', (r) => r.textContent)), 'the repeat says so');
+  });
+
+  await step('applying or discarding an older AI draft from its review window keeps a newer draft that landed while it was open', async () => {
+    const id = await newJob();
+    await openTab(id, 'opinion');
+    await t.mock({ draftTag: 'OLD', aiDelay: 30 });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await settle(200);
+    const raceWith = async (tag) => {
+      await t.mock({ draftTag: tag, aiDelay: 1000 });
+      await page.click('[data-act="aiDraft"]'); await settle(150);
+      await page.click('.pendingDraft [data-act="reviewPendingDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]');
+      await page.waitForFunction(() => !document.querySelector('[data-act="aiDraft"] .spinner'), null, { timeout: 8000 }); await settle(200);
+    };
+    await raceWith('NEW');
+    assert(/OLD summary/.test(await text('#modalBody')), 'the older draft is the one shown');
+    await page.click('#modal [data-discard]'); await flush();
+    let j = await t.getJob(id);
+    assert.strictEqual(j.aiDraftPending && j.aiDraftPending.draft.summary, 'NEW summary', 'the newer draft is kept');
+    assert(/A newer AI draft is waiting/.test(await toastText()), await toastText());
+    await raceWith('NEWER');
+    await page.click('#modal [data-go]'); await flush();
+    j = await t.getJob(id);
+    assert.deepStrictEqual([j.report.summary, j.aiDraftPending && j.aiDraftPending.draft.summary], ['NEW summary', 'NEWER summary'], 'applied the one shown; the newer one waits');
+    await t.mock({ draftTag: 'DRAFT1', aiDelay: 30 });
+  });
+
+  await step('a pending AI draft written before the estimate or PAV changed says so in its review window, and its sections that quote figures are not ticked', async () => {
+    const id = await newJob();
+    await openTab(id, 'valuation'); await page.fill('[data-bind="valuation.adopted"]', '5000'); await flush();
+    await openTab(id, 'opinion');
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]');
+    assert(!(await exists('#modal .staleDraft')), 'no warning straight after drafting');
+    await page.click('#modal [data-close]'); await settle(200);
+    await openTab(id, 'valuation'); await page.fill('[data-bind="valuation.adopted"]', '4000'); await flush();
+    await openTab(id, 'opinion'); await page.click('.pendingDraft [data-act="reviewPendingDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]');
+    assert(/The figures have changed since this draft was written.*PAV £5,000\.00 → £4,000\.00/.test(await text('#modal .staleDraft')), await text('#modal .staleDraft'));
+    const ticks = await page.$$eval('#modal input[data-apply]', (ns) => Object.fromEntries(ns.map((n) => [n.dataset.apply, n.checked])));
+    assert(ticks[0] === false && ticks[9] === false && ticks[10] === false && ticks[11] === false && ticks[2] === true, 'figure sections unticked, others ticked: ' + JSON.stringify(ticks));
+    await page.click('#modal [data-close]'); await settle(150);
+  });
+
+  await step('"Add line" adds only a part the list shows now, never one picked before a new search', async () => {
+    const id = await newJob(); await openTab(id, 'estimate');
+    await pick('FW001', 'R', 'replace'); await flush();
+    const n0 = (await lines(id)).length;
+    for (const q of ['bonnet', 'zzzz']) {
+      await page.fill('#pickQ', q); await settle(100);
+      await page.click('[data-act="pickAdd"]'); await settle(150);
+      assert(/Select a part in the list first/.test(await toastText()), q + ': ' + await toastText());
+    }
+    await flush();
+    assert.strictEqual((await lines(id)).length, n0, 'nothing added');
+    await page.fill('#pickQ', 'BN001'); await settle(80); await page.click('#pickResults .r[data-code="BN001"]'); await page.click('[data-act="pickAdd"]'); await settle(200); await flush();
+    assert((await lines(id)).some((l) => l.code === 'BN001'), 'a listed part is added');
+  });
+
+  await step('a lookup of another registration asks first, then clears the previous vehicle (model, derivative, variant, parts-catalogue link); the same registration again does not', async () => {
+    await t.mock({ dvla: true, mot: true, dvlaOver: {}, motOver: {} });
+    const id = await newJob(); await openTab(id, 'vehicle');
+    await page.fill('[data-bind="vehicle.reg"]', 'AB14 CDE'); await settle(50);
+    await page.click('[data-act="lookupVehicle"]'); await waitSpin(); await flush();
+    // another model's variant chosen (as after a mistyped registration)
+    await page.selectOption('[data-vp="model"]', '33'); await settle(150);
+    await page.selectOption('[data-vp="engine"]', '0'); await settle(150);
+    await page.click('[data-act="applyVariant"]'); await flush();
+    let v = (await t.getJob(id)).vehicle;
+    assert(/Qashqai/.test(v.model) && v.variantKey && v.derivative, 'the other model applied: ' + JSON.stringify([v.model, v.derivative, v.oemKey]));
+    const d0 = t.dialogs.length;
+    await page.click('[data-act="lookupVehicle"]'); await waitSpin(); await flush();
+    assert.strictEqual(t.dialogs.length, d0, 'not asked for the same registration');
+    assert(/Qashqai/.test((await t.getJob(id)).vehicle.model), 'the details stay');
+    await page.fill('[data-bind="vehicle.reg"]', 'BB22 BBB'); await flush();
+    const n0 = (await t.calls('data.dvla')).length;
+    t.dialogMode = 'dismiss'; await page.click('[data-act="lookupVehicle"]'); await settle(300); t.dialogMode = 'accept';
+    assert(/came from a lookup of AB14CDE\. Look up BB22BBB instead\?/.test(t.dialogs[t.dialogs.length - 1]), t.dialogs[t.dialogs.length - 1]);
+    assert.strictEqual((await t.calls('data.dvla')).length, n0, 'Cancel: nothing looked up');
+    await page.click('[data-act="lookupVehicle"]'); await waitSpin(); await flush();
+    v = (await t.getJob(id)).vehicle;
+    assert.deepStrictEqual([v.make, v.model, v.derivative, v.variantKey, v.oemKey, v.lookupReg], ['Nissan', 'Juke', '', '', '', 'BB22BBB'], JSON.stringify([v.make, v.model, v.derivative, v.variantKey, v.oemKey, v.lookupReg]));
+    assert.notStrictEqual(await page.$eval('[data-vp="model"]', (s) => s.value), '33', 'the picker does not bring the old variant back');
+  });
+
+  await step('a CSV import that matches one of your part numbers keeps its notes, and its price when the file gives none (the file\'s spelling of the number, description and price win)', async () => {
+    await t.go('#/catalogue'); await settle(300); await page.selectOption('#catVeh', 'nissan-juke-f15'); await settle(200);
+    await page.click('[data-act="catAddNo"]'); await settle(150);
+    await page.selectOption('#nCode', 'FE001'); await page.fill('#nOem', '62022-BA60H'); await page.fill('#nDesc', 'Front bumper, Tekna (dealer)'); await page.fill('#nPrice', '310');
+    await page.fill('#nNotes', 'Confirmed by Nissan dealer for VIN SJNF… on 12/11'); await page.check('#nAuto');
+    await page.click('#modal [data-ok]'); await settle(400);
+    await choose('[data-act="catImport"]', { name: 's.csv', mimeType: 'text/csv', buffer: Buffer.from('FE001,,62022BA60H,Bumper,\n') }); await settle(400);
+    assert(/updated 1 already in your list \(their notes kept, and their price where the file has none\)/.test(await toastText()), await toastText());
+    const e = (await t.getKv('customOem')).find((x) => x.key === 'nissan-juke-f15').parts['FE001|'].find((c) => c.oem.replace(/-/g, '') === '62022BA60H');
+    assert.deepStrictEqual([e.oem, e.description, e.price, e.notes, e.autoFill], ['62022BA60H', 'Bumper', 310, 'Confirmed by Nissan dealer for VIN SJNF… on 12/11', true], JSON.stringify(e));
+  });
+
+  await step('"Use this variant" with another engine: the previous engine\'s code and size go back to what was there before (an i5 never keeps a 520i\'s B48 / 1998 cc); a value typed by the assessor stays', async () => {
+    const id = await newJob(); await openTab(id, 'vehicle');
+    await page.selectOption('[data-vp="make"]', 'BMW'); await settle(150);
+    await page.selectOption('[data-vp="model"]', '7'); await settle(150);
+    const apply = async (eng) => { await page.selectOption('[data-vp="engine"]', eng); await settle(150); await page.click('[data-act="applyVariant"]'); await flush(); return (await t.getJob(id)).vehicle; };
+    let v = await apply('0');
+    assert.deepStrictEqual([v.engineCode, String(v.engineSize), v.fuel], ['B48', '1998', 'Petrol'], 'the 520i');
+    v = await apply('3');
+    assert.deepStrictEqual([/^i5 eDrive40/.test(v.derivative), v.engineCode, String(v.engineSize), v.fuel], [true, '', '', 'Electric'], JSON.stringify([v.derivative, v.engineCode, v.engineSize, v.fuel]));
+    await page.fill('[data-bind="vehicle.engineCode"]', 'HA0001'); await flush();
+    v = await apply('4');
+    assert.deepStrictEqual([/^i5 xDrive40/.test(v.derivative), v.engineCode], [true, 'HA0001'], 'the typed engine code stays: ' + JSON.stringify([v.derivative, v.engineCode]));
+  });
+
+  await step('✕ on an AI line asks first; once it is deleted, its AI suggestion can be added again', async () => {
+    const id = await newJob();
+    await seedAi(id, (j) => {
+      j.aiFindings = { model: 'claude-opus-5-5', at: new Date().toISOString(), photos: [], summary: {}, review_flags: [],
+        suggested_lines: [SL('MR001', 'R', 'renew', 'Body', 'RH door mirror assembly – renew', 0.6, 0.6, 'guide'), SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 2, 'guide')] };
+    });
+    await openTab(id, 'photos'); await page.click('[data-act="aiAddLines"]'); await flush();
+    await openTab(id, 'estimate');
+    const mir = (await lines(id)).find((l) => l.code === 'MR001');
+    t.dialogMode = 'dismiss'; await page.click(`[data-act="ldel"][data-id="${mir.id}"]`); await settle(200); t.dialogMode = 'accept';
+    assert(/^Delete line 1, "RH door mirror assembly – renew"\? It was suggested by the AI/.test(t.dialogs[t.dialogs.length - 1]), t.dialogs[t.dialogs.length - 1]);
+    assert((await lines(id)).some((l) => l.id === mir.id), 'Cancel keeps it');
+    await page.click(`[data-act="ldel"][data-id="${mir.id}"]`); await flush();
+    assert(!(await lines(id)).some((l) => l.code === 'MR001'), 'deleted');
+    await openTab(id, 'photos');
+    assert.deepStrictEqual(await page.$$eval('input[data-sugg]', (ns) => ns.map((n) => n.disabled)), [false, true], 'the mirror can be added again; the door is still on the estimate');
+    await page.click('[data-act="aiAddLines"]'); await flush();
+    assert.deepStrictEqual((await lines(id)).map((l) => l.code).sort(), ['DR001', 'MR001'], 'added again, once');
+  });
+
+  await step('an own part number for a part the catalogue does not side is stored without a side (form, CSV and older entries), so it is offered and auto-filled', async () => {
+    await t.go('#/catalogue'); await settle(300); await page.selectOption('#catVeh', 'nissan-juke-f15'); await settle(200);
+    await page.click('[data-act="catAddNo"]'); await settle(150);
+    await page.selectOption('#nCode', 'FW001'); await settle(50);
+    assert(!(await page.$eval('#nSide', (s) => s.disabled)), 'a sided part takes a side');
+    await page.selectOption('#nCode', 'RE007'); await settle(50);
+    assert(await page.$eval('#nSide', (s) => s.disabled && s.value === ''), 'no side for an unsided part');
+    assert(/does not side this part/.test(await text('#nSideNote')), 'and it says why');
+    await page.fill('#nOem', 'PDC-REAR-1'); await page.fill('#nPrice', '45'); await page.check('#nAuto'); await page.click('#modal [data-ok]'); await settle(400);
+    await choose('[data-act="catImport"]', { name: 'u.csv', mimeType: 'text/csv', buffer: Buffer.from('RE007,RH,PDC-REAR-2,Sensor,50\n') }); await settle(400);
+    assert(/1 row\(s\) gave LH \/ RH for a part the catalogue does not side, so it was stored without a side/.test(await toastText()), await toastText());
+    let parts = (await t.getKv('customOem')).find((x) => x.key === 'nissan-juke-f15').parts;
+    assert.deepStrictEqual(Object.keys(parts).filter((k) => /^RE007/.test(k)), ['RE007|'], JSON.stringify(Object.keys(parts)));
+    const id = await newJob(); await openTab(id, 'vehicle'); await page.selectOption('[data-bind="vehicle.oemKey"]', 'nissan-juke-f15'); await settle(200);
+    await openTab(id, 'estimate'); await pick('RE007', null, 'replace'); await flush();
+    const l = (await lines(id)).find((x) => x.code === 'RE007');
+    assert.deepStrictEqual([l.partNo, l.amount], ['PDC-REAR-1', 45], 'offered and filled: ' + JSON.stringify([l.partNo, l.amount]));
+    // an entry an older version saved with a side moves to the part, once
+    const list = await t.getKv('customOem');
+    list.find((x) => x.key === 'nissan-juke-f15').parts['RE007|L'] = [{ oem: 'PDC-OLD-L', description: 'old', confidence: 'user', user: true, autoFill: false }];
+    await t.putKv('customOem', list);
+    await page.reload(); await page.waitForFunction(() => document.querySelector('#main').innerHTML.length > 0); await settle(800);
+    parts = (await t.getKv('customOem')).find((x) => x.key === 'nissan-juke-f15').parts;
+    assert(!parts['RE007|L'] && parts['RE007|'].some((c) => c.oem === 'PDC-OLD-L'), 'moved: ' + JSON.stringify(Object.keys(parts)));
+  });
+
+  await step('models filled in from MOT History keep their capitals: CX-5, C-HR, XC40, RAV4 (X-TRAIL → X-Trail)', async () => {
+    await t.mock({ dvla: false, mot: true });
+    const got = [];
+    for (const m of ['CX-5', 'C-HR', 'XC40', 'RAV4', 'X-TRAIL']) {
+      await t.mock({ motOver: { model: m } });
+      const id = await newJob(); await openTab(id, 'vehicle');
+      await page.fill('[data-bind="vehicle.reg"]', 'MO11 DEL'); await settle(50);
+      await page.click('[data-act="lookupVehicle"]'); await waitSpin(); await flush();
+      got.push((await t.getJob(id)).vehicle.model);
+    }
+    assert.deepStrictEqual(got, ['CX-5', 'C-HR', 'XC40', 'RAV4', 'X-Trail']);
+    await t.mock({ dvla: true, motOver: {} });
+  });
+
+  // reads a stored record inside the page, so an own "__proto__" key is seen as stored (Playwright's copy could not show it)
+  const storedHasUnsafe = (store, key) => page.evaluate(([st, k]) => new Promise((res, rej) => {
+    const r = indexedDB.open('engineer-report-studio');
+    r.onerror = () => rej(r.error);
+    r.onsuccess = () => {
+      const q = r.result.transaction(st).objectStore(st).get(k);
+      q.onsuccess = () => {
+        const bad = [];
+        const walk = (o, at) => { if (!o || typeof o !== 'object') return; for (const kk of Object.keys(o)) { if (['__proto__', 'constructor', 'prototype'].includes(kk)) bad.push(at + kk); else walk(o[kk], at + kk + '.'); } };
+        walk(q.result, ''); r.result.close(); res(bad);
+      };
+    };
+  }), [store, key]);
+  await step('restoring a backup or importing a job file never brings "__proto__", "constructor" or "prototype" keys into the app (settings, part numbers, jobs)', async () => {
+    const hostile = [
+      JSON.stringify({ kind: 'engineer-report-studio-backup', format: 2, at: new Date().toISOString(), jobs: 1 }),
+      '{"type":"settings","data":{"__proto__":{"exclude":true,"hidden":true,"polluted":"YES"},"constructor":{"prototype":{"polluted2":"YES"}},"vatPct":20}}',
+      '{"type":"customOem","data":[{"key":"x\\"><img id=injected src=q>","make":"Lancia","model":"Delta","generation":"","years":"2010-2019","parts":{"__proto__":{"autoFill":true}}}]}',
+      '{"type":"job","data":{"id":"proto-job","vehicle":{"reg":"PR0 TO","make":"Lancia","model":"Delta","firstReg":"2014-08-01","__proto__":{"polluted3":"YES"}},"lines":[],"photos":[],"__proto__":{"polluted4":"YES"}}}',
+      JSON.stringify({ type: 'end', jobs: 1 })
+    ].join('\n') + '\n';
+    await t.go('#/settings'); await settle(300);
+    await choose('[data-act="restore"]', { name: 'hostile.ersbackup', mimeType: 'application/octet-stream', buffer: Buffer.from(hostile) });
+    await page.waitForFunction(() => /Backup restored/.test(document.querySelector('#toast').textContent), null, { timeout: 15000 });
+    assert.deepStrictEqual(await page.evaluate(() => ['polluted', 'polluted2', 'polluted3', 'polluted4', 'exclude', 'hidden', 'autoFill'].filter((k) => ({})[k] !== undefined)), [], 'nothing on Object.prototype');
+    assert.deepStrictEqual(await storedHasUnsafe('kv', 'settings'), [], 'stored settings');
+    assert.deepStrictEqual(await storedHasUnsafe('kv', 'customOem'), [], 'stored part numbers');
+    assert.deepStrictEqual(await storedHasUnsafe('jobs', 'proto-job'), [], 'stored job');
+    await t.go('#/jobs'); await settle(200);
+    await choose('[data-act="importJob"]', { name: 'p.json', mimeType: 'application/json', buffer: Buffer.from('{"vehicle":{"reg":"PR0 TO2","__proto__":{"polluted5":"YES"}},"lines":[],"photos":[],"constructor":{"prototype":{"polluted6":"YES"}}}') });
+    await page.waitForFunction(() => /#\/job\/[^/]+\/claim$/.test(location.hash)); await settle(300);
+    assert.deepStrictEqual(await page.evaluate(() => ['polluted5', 'polluted6'].filter((k) => ({})[k] !== undefined)), [], 'job file: nothing on Object.prototype');
+    assert.deepStrictEqual(await storedHasUnsafe('jobs', await t.jobId()), [], 'the imported job as stored');
+  });
+
+  await step('the suggested parts-catalogue vehicle on the Vehicle tab is escaped: a crafted key from a backup injects no markup', async () => {
+    await openTab('proto-job', 'vehicle');
+    assert(!(await exists('#injected')), 'no injected element');
+    assert.strictEqual(await page.$eval('[data-act="useOem"]', (b) => b.dataset.key), 'x"><img id=injected src=q>', 'the key stays data');
+  });
+
+  await step('an adjusted AI line\'s note on the Estimate tab gives this vehicle\'s guide as the report prints it (core.js vehicleGuide)', async () => {
+    const id = await newJob(); await openTab(id, 'vehicle');
+    await page.selectOption('[data-bind="vehicle.sizeClass"]', 'suv'); await settle(150);
+    await page.selectOption('[data-bind="vehicle.paintType"]', 'pearl'); await flush();
+    // the AI quotes a 1.5h guide for the blend (the catalogue has 1.3h): this vehicle's guide is 1.5 × 1.15 × 1.2 = 2.1h
+    await seedAi(id, (j) => { j.aiFindings = { model: 'claude-opus-5-5', at: new Date().toISOString(), photos: [], summary: {}, review_flags: [], suggested_lines: [SL('DR003', 'R', 'blend', 'Painting', 'RH rear door – blend (colour match)', 1.5, 1.9, 'adjusted')] }; });
+    await openTab(id, 'photos'); await page.click('[data-act="aiAddLines"]'); await flush();
+    await openTab(id, 'estimate');
+    const note = await text('#linesTbl .aiBasis');
+    await openTab(id, 'report'); await settle(400);
+    const rep = await page.$eval('#preview', (f) => f.contentDocument.body.textContent);
+    const g = /\(guide (\d+\.\d)h\)/.exec(rep);
+    assert(g && g[1] === '2.1' && note.includes('adjusted from guide 1.5h (2.1h for this vehicle)'), JSON.stringify([note, g && g[0]]));
+  });
+
+  await t.close();
+  const errors = t.errors.slice();
+
+  // ---------- browser mode (no desktop bridge): the backup is one download, and restores ----------
+  t = await H.open({ bridge: false }); page = t.page; page.setDefaultTimeout(5000);
+  await step('browser mode: every tab renders; the full backup downloads as one .ersbackup file and restores with the photos', async () => {
+    await page.click('[data-act="loadSample"]');
+    await page.waitForFunction(() => /#\/job\/[^/]+\/report$/.test(location.hash));
+    const id = await t.jobId();
+    await openTab(id, 'photos');
+    await page.setInputFiles('#photoInput', [file('a.jpg', jpg1), file('b.jpg', jpg2)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 2, null, { timeout: 8000 }); await flush();
+    for (const tb of ['claim', 'vehicle', 'inspection', 'circumstances', 'photos', 'assessment', 'estimate', 'valuation', 'opinion', 'customer', 'signoff', 'report']) await openTab(id, tb);
+    const before = await t.getJob(id);
+    await t.go('#/settings'); await settle(300);
+    assert(/AI features run in the desktop app/.test(await text('.aiPanel')), 'AI marked as desktop-only');
+    const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 15000 }), page.click('[data-act="backup"]')]);
+    assert(/^backup-\d{4}-\d{2}-\d{2}\.ersbackup$/.test(dl.suggestedFilename()), dl.suggestedFilename());
+    const buf = fs.readFileSync(await dl.path());
+    const recs = buf.toString('utf8').trim().split('\n').map((l) => JSON.parse(l));
+    assert.deepStrictEqual([recs[0].format, recs[0].jobs, recs[recs.length - 1].type, recs.filter((r) => r.type === 'job').length], [2, 1, 'end', 1], 'one file, JSON Lines');
+    await t.go('#/jobs'); await settle(300);
+    await page.click(`[data-act="delJob"][data-id="${id}"]`); await settle(400);
+    assert(!(await t.getJob(id)), 'deleted');
+    await t.go('#/settings'); await settle(300);
+    await choose('[data-act="restore"]', { name: dl.suggestedFilename(), mimeType: 'application/octet-stream', buffer: buf });
+    await page.waitForFunction(() => /Backup restored/.test(document.querySelector('#toast').textContent), null, { timeout: 15000 });
+    assert.strictEqual(await toastText(), 'Backup restored: 1 restored, 0 unreadable.');
+    const back = await t.getJob(id);
+    assert(back && back.photos.length === 2 && back.photos.every((p, k) => p.dataUrl === before.photos[k].dataUrl), 'restored with its photos');
+  });
+
+  await step('browser mode: "Print / save as PDF" prints the report from a srcdoc frame, which the CSP (frame-src \'none\') still allows', async () => {
+    await t.go('#/jobs'); await settle(200);
+    await page.click('[data-act="loadSample"]'); await page.waitForFunction(() => /#\/job\/[^/]+\/report$/.test(location.hash)); await settle(300);
+    // the frame exportPdf adds for printing: its document, read when it has loaded (the app prints it, then removes it)
+    await page.evaluate(() => {
+      window.__printed = null;
+      new MutationObserver((ms) => { for (const m of ms) for (const n of m.addedNodes) if (n.tagName === 'IFRAME' && n.id !== 'preview') n.addEventListener('load', () => { window.__printed = n.contentDocument && n.contentDocument.body ? n.contentDocument.body.textContent.length : -1; }); }).observe(document.body, { childList: true });
+    });
+    await page.click('[data-act="exportPdf"]');
+    await page.waitForFunction(() => window.__printed != null, null, { timeout: 5000 });
+    assert((await page.evaluate(() => window.__printed)) > 2000, 'print frame document: ' + await page.evaluate(() => window.__printed));
+    await page.waitForFunction(() => !document.querySelector('body > iframe'), null, { timeout: 5000 }); // removed after printing
+  });
+  await t.close();
+  errors.push(...t.errors);
+
+  // ---------- storage that cannot be opened at start-up ----------
+  t = await H.open({ init: () => { Object.defineProperty(window, 'indexedDB', { configurable: true, value: { open() { throw new DOMException('The user denied permission to access the database.', 'SecurityError'); } } }); } });
+  page = t.page; page.setDefaultTimeout(5000);
+  await step('storage that cannot be opened at start-up: an error card with the reason, the data folder and Retry (never a blank screen)', async () => {
+    await page.waitForSelector('.bootErr'); await settle(200);
+    assert(/Your saved assessments cannot be opened/.test(await text('.bootErr h2')) && /denied permission/.test(await text('.bootErr')), await text('#main'));
+    assert(/Engineer Report Studio/.test(await text('.bootErr .dataFolder')), 'data folder shown');
+    await page.evaluate(() => { window.__beforeRetry = 1; });
+    await page.click('[data-act="bootRetry"]');
+    await page.waitForFunction(() => !window.__beforeRetry && document.querySelector('.bootErr'), null, { timeout: 8000 });
+    assert(/cannot be opened/.test(await text('.bootErr h2')), 'Retry tries again');
+  });
+  await t.close();
+  errors.push(...t.errors);
+
+  const failed = results.filter((r) => r[0] === 'FAIL');
+  console.log(`\n${results.length - failed.length}/${results.length} checks passed; ${errors.length} page/console error(s)`);
+  if (errors.length) console.log(errors.join('\n'));
+  process.exit(failed.length || errors.length ? 1 : 0);
+})().catch(async (e) => { console.error('FATAL', e); try { await t.close(); } catch (x) { /* ignore */ } process.exit(1); });

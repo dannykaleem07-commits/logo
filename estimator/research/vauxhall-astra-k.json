@@ -1,0 +1,156 @@
+{
+ "vehicle": {
+  "make": "Vauxhall",
+  "model": "Astra",
+  "generation": "K",
+  "years": "2015-2021",
+  "notes": "Research limited to web-search result pages (titles/snippets of eBay, parts retailers and TecDoc OE cross-reference listings); the session network blocked direct page fetches and EPC mirrors (7zap, partsouq, dealer webstores), so no number here has been checked against a VIN-based GM/Opel EPC. Many parts differ pre-facelift (2015-2019) vs facelift (2019-2021), hatchback vs Sports Tourer, and by PDC/sensors. source_url is the search-result page judged to carry the number, but pages were not opened, so a few source_url mappings may point to a sibling listing. Verify against VIN before use in a report."
+ },
+ "researched": "2026-11-17",
+ "parts": [
+  {
+   "code": "FE001",
+   "side": "",
+   "oem": "39052730",
+   "description": "Front bumper cover",
+   "notes": "Pre-facelift (2015-2019) hatchback; eBay.de title 'Opel Astra K vor Facelift Bj. 2015-2019 Stoßstange Vorne Orig. (PDC) 39052730' (not for OPC-Line) and UK eBay 'VAUXHALL ASTRA K HATCHBACK FRONT BUMPER 2015-ON 39052730'. PDC/non-PDC applicability not settled. 39017250 seen as a cross-reference (relationship not stated). Note: one UK listing under this number is a CAPA-certified aftermarket copy.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.de/p/1079876610",
+   "confidence": "confirmed"
+  },
+  {
+   "code": "FE004",
+   "side": "",
+   "oem": "13499384",
+   "description": "Front upper grille",
+   "notes": "Two eBay listings tie 13499384 to the Astra K upper front grille (one 2015-2022, one 2015-2019; DP Car Parts listing). 321288108 shown as another manufacturer number on one listing. Finish (black/chrome) variant not established.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.co.uk/p/2289348051",
+   "confidence": "confirmed"
+  },
+  {
+   "code": "BN001",
+   "side": "",
+   "oem": "39054067",
+   "description": "Bonnet",
+   "notes": "eBay listing for 2017 Astra K bonnet gives MPN 39054067 with reference OE 39037562; Autodoc lists Prasco OP4203130 Astra K bonnet with OE 39054067. Caution: one eBay.de listing associates these numbers with a bonnet damper and a facelift part; facelift/pre-facelift applicability not established. [Audit: one listing ties this number to a bonnet damper; identity unconfirmed.]",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.ie/itm/395318974444",
+   "confidence": "single-source",
+   "autoFill": false
+  },
+  {
+   "code": "FW001",
+   "side": "L",
+   "oem": "39011390",
+   "description": "Front wing, left (UK passenger side)",
+   "notes": "eBay listing '2019 Vauxhall ASTRA K Passenger Front Wing 39011390' (2016-2022, notes superseded number); Winparts lists 39011390 as Opel original for an Astra K front wing but that page does not state the side. Right-hand number not found.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.co.uk/p/2085710540",
+   "confidence": "single-source"
+  },
+  {
+   "code": "FW002",
+   "side": "R",
+   "oem": "39115548",
+   "description": "Front wheel-arch liner, right",
+   "notes": "Single eBay listing (2015-on Astra K front right arch liner, genuine OE number). Left-hand number not found.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.co.uk/p/2174394434",
+   "confidence": "single-source"
+  },
+  {
+   "code": "LT001",
+   "side": "L",
+   "oem": "39047200",
+   "description": "Headlamp, left (UK passenger/nearside), halogen",
+   "notes": "UK listing '2017 Vauxhall Astra K MK7 headlight, left passenger side nearside 39047200' (halogen) and German listing (left). Cross-referenced with 13488971 and 39081894 (relationship not stated). RHD-specific fit NOT verified in an EPC; LED/Matrix headlamps are different parts.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.com/itm/276721962783",
+   "confidence": "single-source"
+  },
+  {
+   "code": "LT001",
+   "side": "R",
+   "oem": "39081895",
+   "description": "Headlamp, right (UK driver/offside), halogen",
+   "notes": "eBay UK 'genuine Vauxhall Astra K driver's side headlight, part 39081895' (2015-2022) and eBay.de 'SCHEINWERFER RECHTS VAUXHALL ASTRA K 2018 HALOGEN 39081895'. RHD-specific fit NOT verified in an EPC; LED/Matrix headlamps are different parts.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.co.uk/p/3018155266",
+   "confidence": "single-source"
+  },
+  {
+   "code": "LT003",
+   "side": "R",
+   "oem": "13401154",
+   "description": "Front fog lamp, right",
+   "notes": "Two eBay listings give 13401154 for the Astra K (Mk7) front fog lamp (one states right-hand, also Zafira C). Left-hand number not found.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.co.uk/p/1930913137",
+   "confidence": "confirmed"
+  },
+  {
+   "code": "LT004",
+   "side": "L",
+   "oem": "39099014",
+   "description": "Rear lamp (outer, body-mounted), left, 5-door hatchback",
+   "notes": "Pre-facelift hatchback. Listing 'Vauxhall ASTRA 2015 on 5 Door Hatchback Passengers Rear Lamp 39099014'; catalogue cross-reference 13401160 / 39099014 / 39015943 (supersession order not stated). Sports Tourer uses different lamps.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.de/itm/388511552547",
+   "confidence": "confirmed"
+  },
+  {
+   "code": "LT004",
+   "side": "R",
+   "oem": "39099015",
+   "description": "Rear lamp (outer, body-mounted), right, 5-door hatchback",
+   "notes": "Pre-facelift hatchback. Listing 'Vauxhall ASTRA Drivers Side Rear Light 2015 to 2019 Genuine Part No 39099015' and 'Offside Rear Outer Light' listing; catalogue cross-reference 13401161 / 39099015 / 39015944 (supersession order not stated).",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.de/itm/365746103098",
+   "confidence": "confirmed"
+  },
+  {
+   "code": "RE001",
+   "side": "",
+   "oem": "13425478",
+   "description": "Rear bumper cover",
+   "notes": "Hatchback 2015 onward. UK eBay 'Vauxhall ASTRA K Mk7 Rear Bumper 13425478 Genuine'; also a German eBay listing and Marsoni 1808055 cross-reference. PDC applicability CONFLICTS between sources (one says without PDC, one with PDC) - verify sensor holes. Sports Tourer rear bumper is a different part.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.co.uk/p/1674155521",
+   "confidence": "confirmed"
+  },
+  {
+   "code": "CL001",
+   "side": "",
+   "oem": "39109103",
+   "description": "Radiator (engine coolant)",
+   "notes": "Single eBay listing for genuine Vauxhall radiator, 1.4 Turbo petrol (92kW/110kW) hatch and estate, 2020-2023 (facelift). Other engines use different numbers (e.g. 39095604/13453905 listed for 1.4 B14XE; not verified).",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.com.au/itm/183259688564",
+   "confidence": "single-source"
+  },
+  {
+   "code": "CL002",
+   "side": "",
+   "oem": "39010376",
+   "description": "A/C condenser",
+   "notes": "Engine-specific: 1.4 B14XE 100PS (06.2015-09.2021). Listed as Opel original number with 39131675 on multiple aftermarket cross-references (NRF 350339, Nissens 940735, Van Wezel 37015704, AVA OL5739D); which of 39010376/39131675 is current is not shown. 1.6 Turbo uses 39011385/39131676/13475956 (not verified).",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.winparts.co.uk/cooling-system-heating/air-conditioning/air-conditioning-condensor/c15/condenser-air-conditioning-easy-fit-350339-nrf/p1224235.html",
+   "confidence": "confirmed"
+  }
+ ]
+}

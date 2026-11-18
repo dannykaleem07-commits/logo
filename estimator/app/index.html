@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; frame-src 'none'; child-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Engineer Report Studio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <aside class="side">
+    <div class="brand"><div class="mark">ER</div><div><b>Engineer Report</b><span>Studio</span></div></div>
+    <nav>
+      <a href="#/jobs" data-nav="jobs">Jobs</a>
+      <a href="#/new" data-nav="new">New assessment</a>
+      <a href="#/catalogue" data-nav="catalogue">Parts catalogue</a>
+      <a href="#/settings" data-nav="settings">Settings</a>
+    </nav>
+    <div class="side-foot" id="aiState"></div>
+  </aside>
+  <div class="mainCol">
+    <div id="banners" class="hidden"></div>
+    <main id="main"></main>
+  </div>
+  <!-- one dialog at a time (app.js openModal): focus moves into it, Tab stays in it, Escape closes it, and the page behind is inert -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1"><div class="modal-card"><div class="modal-head"><b id="modalTitle"></b><button class="x" data-close aria-label="Close">&times;</button></div><div id="modalBody" class="modal-body"></div></div></div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script src="data/catalogue.js"></script>
+  <script src="data/oem.js"></script>
+  <script src="data/variants.js"></script>
+  <script src="js/core.js"></script>
+  <script src="js/report.js"></script>
+  <script src="js/sample.js"></script>
+  <script src="js/diagram.js"></script>
+  <script src="js/labeler.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
