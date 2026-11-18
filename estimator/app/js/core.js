@@ -11,8 +11,9 @@
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   const num = (v) => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
   const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
-  const gbp = (n) => '£' + round2(num(n)).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const gbp0 = (n) => '£' + Math.round(num(n)).toLocaleString('en-GB');
+  // Negative amounts print with a true minus sign before the pound sign: −£1,234.56 (never £-1,234.56).
+  const gbp = (n) => { const v = num(n), a = round2(Math.abs(v)); return (v < 0 && a > 0 ? '−£' : '£') + a.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+  const gbp0 = (n) => { const v = num(n), a = Math.round(Math.abs(v)); return (v < 0 && a > 0 ? '−£' : '£') + a.toLocaleString('en-GB'); };
   const hrs = (n) => num(n).toFixed(2);
   const todayISO = () => new Date().toISOString().slice(0, 10);
   const ukDate = (iso) => {
@@ -38,6 +39,20 @@
   };
   const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
   const clone = (o) => JSON.parse(JSON.stringify(o));
+  // Accent- and case-folded text for comparisons ("Škoda" → "skoda").
+  const fold = (s) => String(s == null ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+  // "2013-2020" → [2013, 2020]; "2019-", "2019–present" or a lone "2019" → [2019, 9999]; no year → null.
+  const yearRange = (s) => {
+    const t = String(s == null ? '' : s);
+    const m = /(\d{4})\s*(?:[-–—]|to\b)\s*(\d{4})?/i.exec(t);
+    if (m) return [+m[1], m[2] ? +m[2] : 9999];
+    const one = /(\d{4})/.exec(t);
+    return one ? [+one[1], 9999] : null;
+  };
+  // tolerant readers, so legacy or partial jobs never throw
+  const obj = (x) => (x && typeof x === 'object' && !Array.isArray(x) ? x : {});
+  const arr = (x) => (Array.isArray(x) ? x : []);
+  const txt = (x) => (x == null ? '' : String(x));
 
   // ---------- IndexedDB storage ----------
   const DB_NAME = 'engineer-report-studio';
@@ -138,7 +153,7 @@
   // ---------- catalogue ----------
   const CAT = {};
   (window.CATALOGUE || []).forEach((r) => {
-    CAT[r[0]] = { code: r[0], name: r[1], group: r[2], sided: !!r[3], replaceHrs: r[4], refinishHrs: r[5], kind: r[6] };
+    CAT[r[0]] = { code: r[0], name: r[1], group: r[2], sided: !!r[3], replaceHrs: r[4], refinishHrs: r[5], kind: r[6], mat: r[7] || '', repairHrs: num(r[8]) || 0 };
   });
   const OPS = {};
   (window.LABOUR_OPS || []).forEach((r) => { OPS[r[0]] = { code: r[0], name: r[1], type: r[2], hours: r[3] }; });
@@ -148,44 +163,108 @@
   const paintFactor = (job) => num((settings.paintTypeFactor || {})[(job && job.vehicle && job.vehicle.paintType) || 'metallic'] || 1);
   const sideWord = (s) => (s === 'R' ? 'RH' : s === 'L' ? 'LH' : '');
 
+  // ---------- estimate-line helpers ----------
+  const cat = (code) => (code && Object.prototype.hasOwnProperty.call(CAT, code) ? CAT[code] : null);
+  const desc = (l) => txt(l && l.description);
+  // Catalogue rows that are operations, services or consumables rather than parts (calibrations, scans, jig, fixings).
+  function isServiceCode(code) {
+    const p = cat(code);
+    if (!p) return false;
+    if (p.mat) return p.mat === 'operation' || p.mat === 'consumable';
+    return p.kind === 'C' || code === 'ST006' || code === 'ST007' || (p.kind === 'A' && /calibrat|scan|alignment|geometry|\baim\b|beam|coding|diagnostic/i.test(p.name));
+  }
+  const DAMAGE_OPS = ['renew', 'repair1', 'repair', 'repair3', 'pdr'];
+  const NON_DAMAGE_TEXT = /blend|refinish|remove & refit|r&i|strip|smart|polish|inspect|check|measure|calibrat|test/i;
+  // True when the line renews or repairs a part. Lines from the picker carry `op`; AI lines are judged by the
+  // AI's recommended operation, and manual / legacy lines by their wording.
+  function isDamageOp(line) {
+    const l = obj(line);
+    if (l.op && l.op !== 'ai' && l.op !== 'manual') return DAMAGE_OPS.includes(l.op);
+    const aiOp = l.op === 'ai' ? fold(l.aiOperation) : '';
+    if (aiOp) return /^(?:renew|replace|repair|paintless|pdr)/.test(aiOp);
+    return !NON_DAMAGE_TEXT.test(desc(l));
+  }
+  // True when the line fits a new part.
+  function isRenewLine(line) {
+    const l = obj(line);
+    if (l.op && l.op !== 'ai' && l.op !== 'manual') return l.op === 'renew';
+    const aiOp = l.op === 'ai' ? fold(l.aiOperation) : '';
+    if (aiOp) return /^(?:renew|replace)/.test(aiOp);
+    const d = desc(l);
+    return /\b(?:renew|renewal|replace|replacement)\b/i.test(d) && !/refinish|blend|paint|polish|smart|lacquer|\brefit\b/i.test(d);
+  }
+  const isPaintLine = (l) => l.type === 'Painting' || l.costClass === 'paint';
+  // Figure numbers of the photos printed in the report: Map(photoId → 1, 2, 3 …); excluded photos get none.
+  function photoNumbers(job) {
+    const m = new Map();
+    let n = 0;
+    for (const p of arr(obj(job).photos)) if (p && !p.exclude) m.set(p.id, ++n);
+    return m;
+  }
+
   // OEM lookups: window.OEM_VEHICLES = [{key, make, model, generation, years, parts:{ 'CODE|SIDE': {...} } }]
   let customOem = []; // user-added vehicles / numbers, persisted in kv 'customOem'
-  function setCustomOem(list) { customOem = list || []; }
+  function setCustomOem(list) { customOem = Array.isArray(list) ? list.filter((cv) => cv && cv.key) : []; }
   function oemVehicles() {
     const base = (window.OEM_VEHICLES || []).map((v) => Object.assign({}, v, { parts: Object.assign({}, v.parts) }));
     for (const cv of customOem) {
       let v = base.find((x) => x.key === cv.key);
       if (!v) { v = { key: cv.key, make: cv.make, model: cv.model, generation: cv.generation || '', years: cv.years || '', notes: 'Added by user', parts: {} }; base.push(v); }
-      for (const [k, list] of Object.entries(cv.parts || {})) v.parts[k] = list.concat(v.parts[k] || []);
+      for (const [k, list] of Object.entries(obj(cv.parts))) v.parts[k] = arr(list).concat(v.parts[k] || []);
     }
     return base;
   }
   function findOemVehicle(key) { return oemVehicles().find((v) => v.key === key); }
+  const MAKE_KEY_ALIASES = { vw: 'volkswagen', mercedes: 'mercedesbenz', merc: 'mercedesbenz' };
+  const makeKey = (s) => { const k = fold(s).replace(/[^a-z0-9]+/g, ''); return MAKE_KEY_ALIASES[k] || k; };
+  const modelKey = (s) => fold(s).replace(/[-_/.]+/g, ' ').replace(/\s+/g, ' ').trim();
+  const genTokens = (s) => fold(s).replace(/\b(?:mk|mark)\s*(?=\d)/g, 'mk').split(/[^a-z0-9]+/).filter(Boolean);
+  // sibling models / body styles with their own panels: OEM numbers for the base model would be wrong
+  const SIBLING_MODEL = /\b(sv|plus|sportsvan|gtc|coupe|cabrio|cabriolet|convertible|roadster|all ?terrain|alltrack|van)\b/;
+  const OTHER_BODY = /\b(coupe|cabrio|cabriolet|convertible|all ?terrain|alltrack)\b/;
   function guessOemVehicle(vehicle) {
-    const mk = (vehicle.make || '').toLowerCase().trim();
-    const mdRaw = (vehicle.model || '').toLowerCase().trim();
-    if (!mk || !mdRaw) return null;
-    const md = mdRaw.replace(/\s*\(.*\)\s*$/, '');
-    const gen = ((/\(([^)]+)\)/.exec(vehicle.model || '') || [])[1] || '').toLowerCase();
-    const year = parseInt((vehicle.firstReg || '').slice(0, 4), 10);
-    let cands = oemVehicles().filter((v) => v.make.toLowerCase() === mk && md.startsWith(v.model.toLowerCase()));
-    if (gen) {
-      // a generation code was chosen (e.g. "E-Class (W214)"): never fall back to a different generation
-      cands = cands.filter((v) => { const g = (v.generation || '').toLowerCase(); return g && (g.includes(gen) || gen.includes(g.split(' ')[0])); });
-      if (!cands.length) return null;
-    }
-    if (!year) return cands[0] || null;
-    const inRange = cands.find((v) => {
-      const m = /(\d{4})\D+(\d{4})/.exec(v.years || '');
-      return m && year >= +m[1] && year <= +m[2];
+    const veh = obj(vehicle);
+    const mk = makeKey(veh.make);
+    const model = txt(veh.model);
+    const md = modelKey(model.replace(/\s*\(.*\)\s*$/, ''));
+    if (!mk || !md) return null;
+    const gen = ((/\(([^)]+)\)/.exec(model) || [])[1] || '').trim();
+    const genKey = fold(gen), genToks = genTokens(gen);
+    const year = parseInt(txt(veh.firstReg).slice(0, 4), 10) || parseInt(obj(veh.dvla).yearOfManufacture, 10) || 0;
+    const body = modelKey(veh.body);
+    const builtIn = new Set((window.OEM_VEHICLES || []).map((o) => o.key));
+    const pool = oemVehicles().filter((o) => {
+      const m = modelKey(o.model);
+      if (makeKey(o.make) !== mk || !m || !(md === m || md.startsWith(m + ' '))) return false; // whole words: "Golf" ≠ "Golfo"
+      const own = modelKey([o.model, o.generation].concat(arr(o.bodies)).join(' '));
+      const sib = SIBLING_MODEL.exec(md.slice(m.length)); // "Golf SV", "Astra GTC", "E-Class Coupe"
+      if (sib && !own.includes(sib[1])) return false;
+      if (body && arr(o.bodies).length) return o.bodies.some((b) => { const k = modelKey(b); return k && (body.includes(k) || k.includes(body)); });
+      const ob = body && builtIn.has(o.key) ? OTHER_BODY.exec(body) : null; // e.g. variant body "Coupe" on a saloon-only entry
+      return !(ob && !own.includes(ob[1]));
     });
-    return inRange || (gen ? cands[0] : null);
+    const inRange = (o) => { const r = yearRange(o.years); return !!(year && r && year >= r[0] && year <= r[1]); };
+    if (!genToks.length) return year ? pool.find(inRange) || null : pool[0] || null;
+    // A generation was chosen (e.g. "E-Class (W214)"): never fall back to a different generation. Whole tokens only;
+    // a single-letter code ("K", "E") inside a longer name ("Corsa-e") must also agree with the year.
+    const scored = [];
+    for (const o of pool) {
+      const g = fold(o.generation);
+      if (!g) { scored.push({ o, strong: false }); continue; } // entry without a generation: by year only
+      const og = genTokens(o.generation);
+      const shared = genToks.filter((x) => og.includes(x));
+      if (g === genKey || shared.some((x) => x.length >= 2)) scored.push({ o, strong: true });
+      else if (shared.length) scored.push({ o, strong: false });
+    }
+    const pick = scored.find((s) => s.strong && inRange(s.o)) || scored.find((s) => inRange(s.o)) || scored.find((s) => s.strong);
+    return pick ? pick.o : null;
   }
-  // Returns an array of candidate OEM entries (best first), or [].
+  // Returns an array of candidate OEM entries (best first), or []. Parts researched without a side
+  // (e.g. alloy wheels, TPMS sensors) are found for either side.
   function oemLookup(vehicleKey, code, side) {
     const v = findOemVehicle(vehicleKey);
     if (!v) return [];
-    return v.parts[code + '|' + (side || '')] || [];
+    return v.parts[code + '|' + (side || '')] || (side ? v.parts[code + '|'] : null) || [];
   }
 
   // ---------- VIN decode (WMI) ----------
@@ -200,11 +279,13 @@
   };
   const VIN_YEAR = 'ABCDEFGHJKLMNPRSTVWXY123456789';
   function decodeVin(vin) {
-    vin = (vin || '').toUpperCase().replace(/\s/g, '');
+    vin = txt(vin).toUpperCase().replace(/\s/g, '');
     const out = { valid: false, issues: [] };
     if (!vin) return out;
     if (vin.length !== 17) out.issues.push(`VIN has ${vin.length} characters (should be 17).`);
     if (/[IOQ]/.test(vin)) out.issues.push('VIN contains I, O or Q, which are not used in VINs.');
+    const bad = [...new Set(vin.replace(/[A-Z0-9]/g, ''))];
+    if (bad.length) out.issues.push(`VIN contains characters that are not allowed (${bad.map((c) => `"${c}"`).join(' ')}). A VIN uses only 0–9 and A–Z, except I, O and Q.`);
     out.manufacturer = WMI[vin.slice(0, 3)] || null;
     const yc = vin.charAt(9);
     const idx = VIN_YEAR.indexOf(yc);
@@ -212,11 +293,24 @@
     out.valid = out.issues.length === 0;
     return out;
   }
+  // Brands built under another brand's WMI (Abarth VINs start ZFA = Fiat, Suzuki Swace/Across are Toyota-built, …).
+  const VIN_MAKE_ALIASES = {
+    abarth: ['fiat'], suzuki: ['toyota'], lexus: ['toyota'], genesis: ['hyundai'], ds: ['citroen'], 'ds automobiles': ['citroen'],
+    alpine: ['renault'], dacia: ['renault'], cupra: ['seat'], smart: ['mercedes'], infiniti: ['nissan'], mini: ['bmw'],
+    'range rover': ['land rover'], vw: ['volkswagen'], polestar: ['volvo'], opel: ['vauxhall'], vauxhall: ['opel']
+  };
+  function vinMakeMatches(manufacturer, make) {
+    const m = fold(manufacturer), want = fold(make);
+    if (!m || !want) return true;
+    const first = want.split(/[\s/-]+/)[0];
+    return [want, first].concat(VIN_MAKE_ALIASES[want] || [], VIN_MAKE_ALIASES[first] || []).some((c) => c && m.includes(c));
+  }
 
   // ---------- job model ----------
   function newJob() {
     const id = uid();
-    const s = settings;
+    const s = Object.assign({}, DEFAULT_SETTINGS, obj(settings));
+    s.assessor = obj(s.assessor);
     return {
       id,
       createdAt: new Date().toISOString(),
@@ -236,7 +330,7 @@
       inspection: {
         date: todayISO(), time: '', location: '', type: 'Physical vehicle inspection / pre-strip engineering assessment',
         condition: '', dismantling: 'No dismantling undertaken. Assessment limited to damage visible and accessible with the vehicle in its assembled condition.',
-        photos: 'Yes', diagnostic: '', roadTest: '', warningLamps: ''
+        photos: 'Yes', diagnostic: '', roadTest: '', warningLamps: '', by: '', byQualifications: ''
       },
       circumstances: { providedBy: '', narrative: '', impactType: '', primaryArea: '', secondaryArea: '', direction: '', symptoms: '', liabilityNote: 'Legal liability is outside the scope of this engineering report.' },
       assessment: { structural: '', mechanical: '', wheels: '', geometry: '', diagnostics: '', roadworthiness: '' },
@@ -244,12 +338,15 @@
       valuation: {
         date: '', mileage: '', costNew: '', condition: 'SATISFACTORY',
         sources: [{ name: "Glass's Guide", amount: '' }, { name: 'CAP HPI', amount: '' }, { name: 'AutoTrader', amount: '' }],
-        adopted: '', salvagePct: s.salvagePct, salvageOverride: '', comments: '',
+        adopted: '', salvagePct: s.salvagePct, salvageOverride: '', comments: '', belowHighestReason: '',
         adverts: [], historyNotes: '', optionsNotes: '', ai: null
       },
       outcome: { decision: '', category: '' },
       lines: [],
       discount: 0,
+      // labour rates and VAT are snapshotted per job, so later Settings changes do not alter an existing estimate
+      rates: clone(s.rates && typeof s.rates === 'object' ? s.rates : DEFAULT_SETTINGS.rates),
+      vatPct: s.vatPct != null ? s.vatPct : DEFAULT_SETTINGS.vatPct,
       estimateNotes: '',
       opinion: '',
       photos: [],
@@ -267,33 +364,56 @@
   }
 
   // ---------- calculations ----------
+  // Labour value of one line, rounded to the penny the same way everywhere, so printed lines add up to TOTAL LABOUR.
+  const lineLabour = (hours, rate) => Math.round(Math.round(num(hours) * 100) * Math.round(num(rate) * 100) / 100) / 100;
+  // VAT % for a job: its own snapshot, else the current Settings.
+  const vatPctFor = (job) => (job && job.vatPct != null && job.vatPct !== '' ? num(job.vatPct) : num(settings.vatPct));
+  // Economic-repair threshold: a blank (or 0) setting falls back to the default instead of flagging every job.
+  const berThreshold = () => { const n = parseFloat(settings.berThresholdPct); return isFinite(n) && n > 0 ? n : DEFAULT_SETTINGS.berThresholdPct; };
+  // Valuation sources the report can show: a name and a positive amount. Unnamed rows are ignored everywhere.
+  const namedSources = (job) => arr(obj(obj(job).valuation).sources).filter((x) => x && txt(x.name).trim() && num(x.amount) > 0);
+  // Explicit line rate → the job's own rate for the line type → Settings rate for the type → Body rate (job, then Settings).
   function lineRate(job, line) {
-    if (line.rate !== '' && line.rate != null) return num(line.rate);
-    return num(settings.rates[line.type] != null ? settings.rates[line.type] : settings.rates.Body);
+    const l = obj(line);
+    if (l.rate != null && txt(l.rate).trim() !== '') return num(l.rate);
+    const given = (o, k) => o[k] != null && o[k] !== '';
+    const jr = obj(job && job.rates), sr = obj(settings.rates);
+    if (given(jr, l.type)) return num(jr[l.type]);
+    if (given(sr, l.type)) return num(sr[l.type]);
+    return num(given(jr, 'Body') ? jr.Body : sr.Body);
   }
   function totals(job) {
+    job = obj(job);
     const t = { labourHours: 0, labour: 0, parts: 0, paint: 0, other: 0, discount: num(job.discount) };
-    for (const l of job.lines) {
+    let labourPence = 0;
+    for (const l of arr(job.lines)) {
+      if (!l || typeof l !== 'object') continue;
       const h = num(l.hours);
       t.labourHours += h;
-      t.labour += h * lineRate(job, l);
+      labourPence += Math.round(lineLabour(h, lineRate(job, l)) * 100);
       const a = num(l.amount);
       if (l.costClass === 'paint') t.paint += a;
       else if (l.costClass === 'other') t.other += a;
       else t.parts += a;
     }
+    t.labour = labourPence / 100;
     Object.keys(t).forEach((k) => { t[k] = round2(t[k]); });
     t.net = round2(t.labour + t.parts + t.paint + t.other - t.discount);
-    t.vat = round2(t.net * num(settings.vatPct) / 100);
+    t.vatPct = vatPctFor(job);
+    t.vat = round2(t.net * t.vatPct / 100);
     t.gross = round2(t.net + t.vat);
-    const v = job.valuation;
+    const v = obj(job.valuation);
     t.pav = num(v.adopted);
     t.salvage = v.salvageOverride !== '' && v.salvageOverride != null ? num(v.salvageOverride) : round2(t.pav * num(v.salvagePct) / 100);
     t.pctNet = t.pav ? round2(t.net / t.pav * 100) : 0;
     t.pctGross = t.pav ? round2(t.gross / t.pav * 100) : 0;
-    const basisPct = settings.berBasis === 'gross' ? t.pctGross : t.pctNet;
-    t.berSuggested = t.pav > 0 && basisPct >= num(settings.berThresholdPct);
-    const vals = v.sources.map((x) => num(x.amount)).filter((x) => x > 0);
+    // economic repair: the chosen basis, the unrounded ratio, and the default threshold when the setting is blank
+    t.berBasis = settings.berBasis === 'gross' ? 'gross' : 'net';
+    t.berThresholdPct = berThreshold();
+    const ratio = t.pav > 0 ? (t.berBasis === 'gross' ? t.gross : t.net) / t.pav * 100 : 0;
+    t.berPct = round2(ratio);
+    t.berSuggested = t.pav > 0 && ratio >= t.berThresholdPct;
+    const vals = namedSources(job).map((x) => num(x.amount));
     t.valMin = vals.length ? Math.min(...vals) : 0;
     t.valMax = vals.length ? Math.max(...vals) : 0;
     t.valAvg = vals.length ? round2(vals.reduce((a, b) => a + b, 0) / vals.length) : 0;
@@ -301,72 +421,185 @@
   }
 
   // ---------- QA checks (rule based, no AI needed) ----------
+  // Structural-assessment wording, read clause by clause so that negated ("No structural damage has been
+  // identified", "found to be undamaged", "non-structural") and speculative ("cannot be ruled out") statements
+  // do not count as recording structural damage.
+  const STRUCT_PHRASE = /(?<!non[- ])structural (?:damage|deformation|distortion|failure)/i;
+  const STRUCT_MEMBER = /(?<!non[- ])structural (?:members?|components?)|chassis (?:legs?|rails?|members?)|\b[abcd][- ]?pillars?\b|floor ?pans?|inner wings?|suspension turrets?|strut towers?|cross[- ]?members?|sill reinforcements?/i;
+  const DAMAGE_WORD = /damag|deform|distort|kink|buckl|crack|fractur|crush|\bbent\b|displac|misalign|pushed|creas|collaps|shear|\btorn\b|\bsplit\b|compromis|sectional|replace|renew|repair|straighten|out of (?:tolerance|alignment|datum|position)|affected|involved/i;
+  const NEGATION = /\b(?:no|not|nor|none|never|without|neither|nil)\b|n't\b|\bundamaged\b|\bunaffected\b|\bintact\b|\bfree (?:from|of)\b|\bruled out\b|\bexcluded\b|\b(?:is|are|remains?|appears?) straight\b|\bstructurally sound\b|\bwithin (?:tolerance|limits|specification)\b/i;
+  const HEDGE = /\b(?:may|might|could)\s+(?:not\s+|also\s+|well\s+)?(?:have|be|exist)\b|\b(?:possible|possibly|potential|potentially|suspected|suspect|probable|probably|likely|unknown|unclear|unconfirmed|undetermined|tbc)\b|\b(?:if|unless|whether)\b|\bcan ?not (?:yet |currently |presently |at this stage )?(?:be )?(?:ruled out|excluded|discounted|confirmed|established|determined|assessed|fully assessed|conclusively assessed|inspected|seen|verified|rule)\b|\bunable to\b|\bto be confirmed\b/i;
+  const NON_STRUCT = /\b(?:sustained|suffered|has|having|is|was|are|were|assessed as|classed as|categorised as|considered)\s+(?:\w+\s+){0,3}?non-structural\b(?!\s+(?:trims?|components?|parts?|panels?|items?|mouldings?|brackets?|clips?))|\bdamage (?:is|was) (?:confined|limited|restricted) to (?:the )?(?:exterior|external|outer|non-structural|cosmetic|bolt-on)/i;
+  const clausesOf = (t) => txt(t)
+    .split(/(?<=[.!?])\s+|\n+|;\s*|:\s+|,?\s+(?:but|however|whereas|although|though)\b,?\s*|,\s*(?:which|so|therefore|meaning|requiring)\b|,?\s+and\s+(?=(?:the|its|a|an|there|it|this|these|no)\b)/i)
+    .map((s) => (s || '').trim()).filter(Boolean);
+  // → { records: first clause recording structural damage, denies: first clause saying there is none }
+  function structuralWording(text) {
+    const res = { records: '', denies: '' };
+    for (const raw of clausesOf(text)) {
+      const c = raw.replace(/\bnot only\b/gi, ' ');
+      const phrase = STRUCT_PHRASE.test(c), member = STRUCT_MEMBER.test(c), nonStruct = NON_STRUCT.test(c);
+      if (!phrase && !member && !nonStruct) continue;
+      const neg = NEGATION.test(c);
+      if ((phrase || (member && DAMAGE_WORD.test(c))) && !neg && !HEDGE.test(c)) { if (!res.records) res.records = raw; } else if (((phrase || member) && neg) || nonStruct) { if (!res.denies) res.denies = raw; }
+    }
+    return res;
+  }
+  const snip = (s) => (s.length > 110 ? s.slice(0, 107).trim() + '…' : s);
+
+  // ADAS / geometry: each trigger needs its own calibration or check (a geometry line does not calibrate a camera).
+  const CAMERA_CAL = /camera[^.]*calibrat|calibrat[^.]*camera/i;
+  const ADAS_CAL = /\badas\b[^.]*calibrat|calibrat[^.]*\badas\b/i;
+  const ADAS_NOT = /calibrat|\baim\b|beam sett|alignment|geometry|diagnostic|\bscan\b|coding|initiali[sz]/i; // service lines are not triggers
+  const ADAS_RULES = [
+    { label: 'ADAS: windscreen / front camera work', codes: ['GL001'],
+      re: /\bwindscreen\b(?!\s*(?:washer|wiper|scuttle|cowl|trim|seal|surround|finisher|moulding|rubber|jet|pump|motor|reservoir|bottle|demist|chip))|\b(?:front|forward[- ]facing|lane|multi[- ]?function|mono|stereo) camera\b/i,
+      ok: ['GL005', 'EL003'], okText: (x) => (CAMERA_CAL.test(x) && !/surround|\b360\b|around[- ]view|rear|reversing|side|mirror/i.test(x)) || ADAS_CAL.test(x),
+      need: 'windscreen / front camera calibration line (GL005 or EL003)' },
+    { label: 'ADAS: front radar work', codes: ['EL001', 'FE020'],
+      re: /\bradar\b|\badaptive cruise\b|\b(?:acc|aeb) sensor\b/i, not: /blind[- ]?spot|\bbsm\b|\brear\b/i,
+      ok: ['EL002'], okText: (x) => (/radar[^.]*calibrat|calibrat[^.]*radar/i.test(x) && !/blind[- ]?spot|\bbsm\b|\brear\b/i.test(x)) || ADAS_CAL.test(x),
+      need: 'front radar calibration line (EL002)' },
+    { label: 'ADAS: blind-spot radar work', codes: ['RE013'],
+      re: /blind[- ]?spot|\bbsm\b|rear radar/i,
+      ok: ['EL005'], okText: (x) => /(?:blind[- ]?spot|\bbsm\b|rear radar)[^.]*calibrat|calibrat[^.]*(?:blind[- ]?spot|\bbsm\b|rear radar)/i.test(x) || ADAS_CAL.test(x),
+      need: 'blind-spot radar calibration line (EL005)' },
+    { label: 'ADAS: surround-view camera work', codes: ['EL004'],
+      re: /surround[- ]?view|\b360\b|around[- ]view|bird'?s[- ]eye|(?:side|mirror)[- ]camera/i,
+      ok: [], okText: (x) => /(?:surround[- ]?view|\b360\b|around[- ]view|bird'?s[- ]eye|side|mirror)[^.]*calibrat|calibrat[^.]*(?:surround[- ]?view|\b360\b|around[- ]view)/i.test(x) || ADAS_CAL.test(x),
+      need: 'surround-view camera calibration line' },
+    { label: 'Geometry: steering / suspension work', codes: ['SU001', 'SU002', 'SU004', 'SU006', 'SU007', 'SU008', 'SU011', 'SU014', 'SU016'],
+      re: /track[- ]?rod|steering rack|sub[- ]?frame|(?:control|trailing|radius|lower|upper) arm|wishbone|axle beam|twist beam|hub carrier|knuckle/i,
+      ok: ['SU017', 'OP012'], okText: (x) => /geometry|(?:wheel|four[- ]wheel|4[- ]?wheel|laser|suspension) alignment|\btracking\b|\btoe\b|camber/i.test(x),
+      need: 'four-wheel alignment / geometry line (SU017 or OP012)' },
+    { label: 'Parking sensor / camera / mirror work', codes: ['FE019', 'RE007', 'TG007', 'MR001'],
+      re: /parking (?:sensor|aid)|\bpdc\b|\bcamera\b|door mirror(?! (?:glass|cap|cover|indicator|repeater|trim|housing|lower))/i,
+      ok: ['EL008', 'OP011', 'EL002', 'EL003', 'EL005', 'GL005'], okText: (x) => /post[- ]repair (?:diagnostic|scan|check|test|procedure)|function(?:al)? (?:check|test)|calibrat|coding|initiali[sz]/i.test(x),
+      need: 'post-repair function check, diagnostic scan or calibration line (EL008 or OP011)' },
+    { label: 'Headlamp work', level: 'info', codes: ['LT001'],
+      re: /head ?lamp|headlight/i, not: /washer|levelling|\baim\b|beam/i,
+      ok: ['LT009'], okText: (x) => /\baim\b|beam (?:setting|alignment|adjust)|head ?lamp (?:alignment|adjust)|headlight (?:alignment|adjust)/i.test(x),
+      need: 'headlamp aim / beam setting line (LT009)' }
+  ];
+  const RANGE_OF_OPINION = /range of (?:expert |professional )?opinions?|alternative (?:views?|opinions?|explanations?|approach(?:es)?|methods?)|other (?:expert |professional )?(?:views?|opinions?)|opinions? (?:may |might |could )?differ|differing (?:views?|opinions?)|contrary (?:views?|opinions?)|different (?:views?|opinions?)/i;
+  const FREE_PART = /existing|supplied|customer|insurer|\bf\.?o\.?c\b|free of charge|no charge|warranty|goodwill/i;
+  // Name words that identify a catalogue part in a free-text line ("Front bumper cover" → "front bumper").
+  function partWords(name) {
+    let w = fold(name).replace(/\([^)]*\)/g, ' ').split('/')[0].replace(/\s+-\s+.*$/, '').replace(/[^a-z0-9 -]+/g, ' ').split(/\s+/).filter(Boolean);
+    const generic = /^(?:panel|cover|shell|assembly|skin|outer|section|full|complete)$/, positional = /^(?:front|rear|side|upper|lower|inner|outer|lh|rh|left|right|centre|center)$/;
+    while (w.length > 1 && generic.test(w[w.length - 1]) && w.slice(0, -1).some((x) => !positional.test(x))) w = w.slice(0, -1);
+    return w.join(' ');
+  }
+  // Does refinish line x cover the renewed painted part on line l? Same code and side, or a free-text line naming the part.
+  function refinishCovers(x, l) {
+    if (!isPaintLine(x) || ['blend', 'smart'].includes(x.op) || /blend|polish|smart/i.test(desc(x))) return false;
+    if (x.code && x.code === l.code && txt(x.side) === txt(l.side)) return true;
+    if (cat(x.code) && x.code !== l.code) return false;
+    const name = partWords(cat(l.code).name), xd = fold(desc(x));
+    if (!name || !xd.includes(name)) return false;
+    const otherSide = l.side === 'R' ? /\b(?:lh|left|n\/s|nearside)\b/ : l.side === 'L' ? /\b(?:rh|right|o\/s|offside)\b/ : null;
+    return !(otherSide && otherSide.test(xd));
+  }
+
   function qaChecks(job) {
+    job = obj(job);
     const t = totals(job);
     const out = [];
     const add = (level, msg, tab) => out.push({ level, msg, tab });
-    const v = job.vehicle;
+    const v = obj(job.vehicle), ins = obj(job.instruction), insp = obj(job.inspection), rep = obj(job.report);
+    const oc = obj(job.outcome), ass = obj(job.assessment), val = obj(job.valuation), asr = obj(job.assessor);
+    const issued = job.issued && typeof job.issued === 'object' ? job.issued : null;
+    const sa = obj(settings.assessor);
+    const lines = arr(job.lines).map((l) => obj(l));
+    const photos = arr(job.photos).map((p) => obj(p));
+    const shown = photos.filter((p) => !p.exclude); // only photos printed in the report count
+    const d = desc;
     if (!v.reg) add('error', 'Registration is missing.', 'vehicle');
     if (!v.make || !v.model) add('error', 'Make / model is missing.', 'vehicle');
     const vin = decodeVin(v.vin);
     if (!v.vin) add('warn', 'VIN is missing.', 'vehicle');
     else vin.issues.forEach((i) => add('warn', i, 'vehicle'));
-    if (vin.manufacturer && v.make && !vin.manufacturer.toLowerCase().includes(v.make.toLowerCase().split(' ')[0])) {
+    if (vin.manufacturer && v.make && !vinMakeMatches(vin.manufacturer, v.make)) {
       add('warn', `VIN manufacturer code suggests ${vin.manufacturer}, but make is "${v.make}".`, 'vehicle');
     }
-    if (!job.instruction.dateOfLoss) add('error', 'Date of loss is missing.', 'claim');
-    if (job.instruction.dateOfLoss && job.inspection.date && job.inspection.date < job.instruction.dateOfLoss) add('error', 'Inspection date is before the date of loss.', 'inspection');
-    if (!job.instruction.instructingParty) add('warn', 'Instructing party is missing.', 'claim');
-    if (!job.photos.length) add('warn', 'No photographs attached.', 'photos');
-    const unlabelled = job.photos.filter((p) => !p.title).length;
-    if (unlabelled) add('info', `${unlabelled} photo(s) have no title.`, 'photos');
-    if (!job.lines.length) add('warn', 'Repair estimate has no lines.', 'estimate');
-    job.lines.forEach((l, i) => {
-      if (!l.description) add('warn', `Estimate line ${i + 1} has no description.`, 'estimate');
-      if (l.costClass === 'parts' && num(l.amount) > 0 && !l.partNo) add('info', `Line ${i + 1} (${l.description}) has a part cost but no part number.`, 'estimate');
-      if (!num(l.hours) && !num(l.amount)) add('info', `Line ${i + 1} (${l.description || 'blank'}) has no hours and no cost.`, 'estimate');
-      if (l.ai && !l.reviewed) add('warn', `Line ${i + 1} (${l.description}) was suggested by AI and has not been marked as reviewed.`, 'estimate');
+    if (!ins.dateOfLoss) add('error', 'Date of loss is missing.', 'claim');
+    if (ins.dateOfLoss && insp.date && insp.date < ins.dateOfLoss) add('error', 'Inspection date is before the date of loss.', 'inspection');
+    if (!ins.instructingParty) add('warn', 'Instructing party is missing.', 'claim');
+    if (!shown.length) add('warn', photos.length ? `No photographs are included in the report (${photos.length} excluded).` : 'No photographs attached.', 'photos');
+    const unlabelled = shown.filter((p) => !p.title).length;
+    if (unlabelled) add('info', `${unlabelled} photo(s) in the report have no title.`, 'photos');
+    const aiLabelled = shown.filter((p) => !p.labelsReviewed && arr(p.labels).some((x) => x && x.ai && !x.hidden)).length;
+    if (aiLabelled) add('warn', `${aiLabelled} photo(s) in the report carry AI damage labels that have not been reviewed. Open "Edit labels" on each, check the labels and save.`, 'photos');
+    if (!lines.length) add('warn', 'Repair estimate has no lines.', 'estimate');
+    lines.forEach((l, i) => {
+      if (!d(l)) add('warn', `Estimate line ${i + 1} has no description.`, 'estimate');
+      if (l.costClass === 'parts' && num(l.amount) > 0 && !l.partNo) add('info', `Line ${i + 1} (${d(l)}) has a part cost but no part number.`, 'estimate');
+      if (!num(l.hours) && !num(l.amount)) add('info', `Line ${i + 1} (${d(l) || 'blank'}) has no hours and no cost.`, 'estimate');
+      if (isRenewLine(l) && (l.costClass || 'parts') === 'parts' && !num(l.amount) && !isServiceCode(l.code) && !FREE_PART.test(txt(l.partNo))) add('warn', `Line ${i + 1} (${d(l) || 'blank'}) renews a part but has no part price.`, 'estimate');
+      if (l.ai && !l.reviewed) add('warn', `Line ${i + 1} (${d(l)}) was suggested by AI and has not been marked as reviewed.`, 'estimate');
     });
-    const replaced = job.lines.filter((l) => l.code && CAT[l.code] && CAT[l.code].refinishHrs > 0 && /replace/i.test(l.description));
-    replaced.forEach((l) => {
-      const name = CAT[l.code].name.toLowerCase().split(' ')[0];
-      const painted = job.lines.some((x) => x.type === 'Painting' && x.description.toLowerCase().includes(name));
-      if (!painted) add('info', `"${l.description}" is a painted part being replaced, but no refinish line mentions it.`, 'estimate');
+    const renewedPainted = lines.filter((l) => cat(l.code) && cat(l.code).refinishHrs > 0 && isRenewLine(l) && !isPaintLine(l));
+    renewedPainted.forEach((l) => {
+      if (!lines.some((x) => x !== l && refinishCovers(x, l))) add('info', `"${d(l)}" renews a painted part, but no refinish line covers it.`, 'estimate');
     });
+    if (t.net < 0) add('error', t.discount > 0 ? `The discount (${gbp(t.discount)}) is larger than the estimate, so the net repair cost is ${gbp(t.net)}. Reduce the discount.` : `The net repair cost is negative (${gbp(t.net)}). Check the hours and amounts.`, 'estimate');
     if (!t.pav) add('warn', 'No pre-accident value adopted.', 'valuation');
-    if (t.pav && t.berSuggested && job.outcome.decision === 'Repair') add('warn', `Repair cost is ${t.pctNet}% (net) of PAV, at or above your ${settings.berThresholdPct}% threshold, but the decision is "Repair".`, 'valuation');
-    if (t.pav && !t.berSuggested && /total|ber/i.test(job.outcome.decision)) add('info', `Decision is total loss, but repair cost is ${t.pctNet}% of PAV, below your ${settings.berThresholdPct}% threshold. Make sure the opinion explains why.`, 'opinion');
-    if (job.outcome.category === 'S' && /no damage to a principal structural member|non-structural/i.test(job.assessment.structural)) add('warn', 'Category S selected, but the structural assessment text says non-structural.', 'assessment');
-    if (job.outcome.category === 'N' && /structural damage (has been|was) (identified|found)/i.test(job.assessment.structural)) add('warn', 'Category N selected, but the structural text records structural damage.', 'assessment');
-    if (!job.opinion) add('warn', "Engineer's opinion is empty.", 'opinion');
+    if (t.pav > 0) {
+      // the BER basis chosen in Settings (net or gross); never show a rounded figure on the wrong side of the threshold
+      const ratio = (t.berBasis === 'gross' ? t.gross : t.net) / t.pav * 100;
+      const pct = !t.berSuggested && t.berPct >= t.berThresholdPct ? Math.floor(ratio * 100) / 100 : t.berPct;
+      if (t.berSuggested && oc.decision === 'Repair') add('warn', `Repair cost is ${pct}% (${t.berBasis}) of PAV, at or above your ${t.berThresholdPct}% threshold, but the decision is "Repair".`, 'valuation');
+      if (!t.berSuggested && /total|ber/i.test(txt(oc.decision))) add('info', `Decision is total loss, but repair cost is ${pct}% (${t.berBasis}) of PAV, below your ${t.berThresholdPct}% threshold. Make sure the opinion explains why.`, 'opinion');
+    }
+    const sw = structuralWording(ass.structural);
+    if (oc.category === 'S' && sw.denies && !sw.records) add('warn', `Category S selected, but the structural assessment text says there is no structural damage ("${snip(sw.denies)}"). Check the categorisation.`, 'assessment');
+    if (oc.category === 'N' && sw.records) add('warn', `Category N selected, but the structural assessment text records structural damage ("${snip(sw.records)}"). Check the categorisation.`, 'assessment');
+    if (!txt(job.opinion).trim()) add('warn', "Engineer's opinion is empty.", 'opinion');
     // ---- engineer checks ----
-    const has = (re) => job.lines.some((l) => re.test(l.description));
-    const structural = job.lines.filter((l) => l.code && CAT[l.code] && CAT[l.code].kind === 'S' && !/inspect|check|measure/i.test(l.description));
-    if (structural.length && job.outcome.category === 'N') add('error', `Category N selected, but structural parts are being repaired/renewed (${structural.map((l) => l.description).join('; ')}). Damage to a structural member rules out Category N.`, 'valuation');
-    if (/structural damage|chassis leg|a-pillar|b-pillar|floor pan|inner wing/i.test(job.assessment.structural) && !/no (accident-related )?(deformation|damage)|not (been )?established|no definitive/i.test(job.assessment.structural) && job.outcome.category === 'N') add('warn', 'Structural text mentions structural members but Category N is selected. Check the categorisation.', 'assessment');
-    if (job.outcome.category && !(job.assessor.aqpId || settings.assessor.aqpId)) add('warn', 'A salvage category is recommended but no AQP (Appropriately Qualified Person) ID is recorded. Add it in Settings → Assessor or on Sign-off.', 'signoff');
-    if (settings.assessor.accreditationExpiry && settings.assessor.accreditationExpiry < todayISO()) add('error', 'Your recorded accreditation expiry date has passed. Update it in Settings.', 'signoff');
-    if (/electric|hybrid|plug-in/i.test(v.fuel) && (structural.length || job.zones.some((z) => /under|sill/i.test(z)))) add('warn', 'Electric/hybrid vehicle with underbody, sill or structural involvement: assess the high-voltage battery under the ABI salvage code battery provisions and isolate before repair.', 'assessment');
-    const srs = job.lines.filter((l) => l.code && CAT[l.code] && CAT[l.code].group === 'SRS / airbags');
+    const has = (re) => lines.some((l) => re.test(d(l)));
+    // structural parts renewed or repaired (blend, refinish, R&I, checks and measuring do not count)
+    const structural = lines.filter((l) => cat(l.code) && cat(l.code).kind === 'S' && !isServiceCode(l.code) && isDamageOp(l));
+    if (structural.length && oc.category === 'N') add('error', `Category N selected, but structural parts are being repaired/renewed (${structural.map((l) => d(l)).join('; ')}). Damage to a structural member rules out Category N.`, 'valuation');
+    if (oc.category && !(asr.aqpId || (issued && issued.aqpId) || sa.aqpId)) add('warn', 'A salvage category is recommended but no AQP (Appropriately Qualified Person) ID is recorded. Add it in Settings → Assessor or on Sign-off.', 'signoff');
+    // accreditation: judged at the signature (or report) date, so a report signed while it was valid stays valid
+    const expiry = txt(sa.accreditationExpiry).slice(0, 10);
+    if (expiry) {
+      const today = todayISO();
+      const signed = txt(asr.dateSigned).slice(0, 10) || (issued ? txt(issued.at).slice(0, 10) : '');
+      const ref = signed || txt(rep.date).slice(0, 10) || today;
+      if (expiry < ref) add('error', `Your recorded accreditation expiry date (${ukDate(expiry)}) is before the ${signed ? 'signature' : 'report'} date (${ukDate(ref)}). Update it in Settings → Assessor.`, 'signoff');
+      else if (expiry < today) add(signed ? 'info' : 'warn', signed ? `Your recorded accreditation expired on ${ukDate(expiry)}, after this report was signed. Renew it before signing new reports.` : `Your recorded accreditation expired on ${ukDate(expiry)}. Renew it (Settings → Assessor) before signing this report.`, 'signoff');
+    }
+    if (/electric|hybrid|plug-in/i.test(txt(v.fuel)) && (structural.length || arr(job.zones).some((z) => /under|sill/i.test(txt(z))))) add('warn', 'Electric/hybrid vehicle with underbody, sill or structural involvement: assess the high-voltage battery under the ABI salvage code battery provisions and isolate before repair.', 'assessment');
+    const srs = lines.filter((l) => cat(l.code) && cat(l.code).group === 'SRS / airbags');
     if (srs.length && !has(/diagnostic/i)) add('warn', 'SRS components are included but there is no diagnostic scan line.', 'estimate');
-    const adasTriggers = job.lines.filter((l) => ['GL001', 'FE019', 'FE020', 'EL001', 'EL004', 'RE007', 'RE013', 'MR001', 'SU017', 'SU001', 'SU004', 'SU007', 'SU008'].includes(l.code) || /windscreen|radar|camera|sensor|geometry|track rod|steering rack/i.test(l.description));
-    const hasCal = has(/calibrat|adas|aim|geometry|steering angle/i) || ['GL005', 'EL002', 'EL003', 'EL005', 'SU018', 'LT009', 'OP012'].some((c) => job.lines.some((l) => l.code === c || l.description.includes(OPS[c] ? OPS[c].name : '###')));
-    if (adasTriggers.length && !hasCal) add('warn', `Work affects ADAS-related parts (${adasTriggers.slice(0, 3).map((l) => l.description).join('; ')}${adasTriggers.length > 3 ? '…' : ''}) but no calibration / geometry / post-repair check line is included.`, 'estimate');
-    if (job.lines.length && !has(/pre-repair diagnostic|pre repair diagnostic|pre-repair scan/i)) add('info', 'No pre-repair diagnostic scan line. Most manufacturers require pre- and post-repair scans.', 'estimate');
-    const renewedPainted = job.lines.filter((l) => l.code && CAT[l.code] && CAT[l.code].refinishHrs > 0 && /renew|replace/i.test(l.description));
-    const painting = job.lines.filter((l) => l.type === 'Painting');
-    if (renewedPainted.length && /metallic|pearl|three-stage/.test(v.paintType || '') && !has(/blend/i)) add('info', `Metallic/pearl colour with renewed painted panels and no blend lines. Consider blending adjacent panels for colour match.`, 'estimate');
-    if (painting.length && !job.lines.some((l) => l.costClass === 'paint' && num(l.amount) > 0)) add('info', 'Refinish labour is included but no paint materials cost.', 'estimate');
+    // ADAS / geometry: parts renewed, repaired or refitted, each checked against its own calibration or check line
+    const fitment = (l) => isDamageOp(l) || l.op === 'rr' || (l.op === 'ai' && /remove (?:&|and) refit/.test(fold(l.aiOperation))) || ((!l.op || l.op === 'ai' || l.op === 'manual') && /remove ?(?:&|and|\/) ?refit|\br ?& ?i\b|\brefit\b/i.test(d(l)));
+    const triggered = new Map();
+    lines.forEach((l) => {
+      if (!fitment(l)) return;
+      const text = d(l);
+      const rule = ADAS_RULES.find((r) => r.codes.includes(l.code)) || (ADAS_NOT.test(text) ? null : ADAS_RULES.find((r) => r.re.test(text) && !(r.not && r.not.test(text))));
+      if (rule) { if (!triggered.has(rule)) triggered.set(rule, []); triggered.get(rule).push(l); }
+    });
+    for (const [r, ls] of triggered) {
+      const done = lines.some((x) => r.ok.includes(x.code) || r.ok.some((c) => OPS[c] && fold(d(x)).includes(fold(OPS[c].name))) || r.okText(d(x)));
+      if (!done) add(r.level || 'warn', `${r.label} (${ls.slice(0, 3).map((l) => d(l) || 'blank').join('; ')}${ls.length > 3 ? '…' : ''}) but no ${r.need} is included.`, 'estimate');
+    }
+    if (lines.length && !has(/pre-repair diagnostic|pre repair diagnostic|pre-repair scan/i)) add('info', 'No pre-repair diagnostic scan line. Most manufacturers require pre- and post-repair scans.', 'estimate');
+    const painting = lines.filter((l) => l.type === 'Painting');
+    if (renewedPainted.length && /metallic|pearl|three-stage/.test(txt(v.paintType)) && !has(/blend/i)) add('info', `Metallic/pearl colour with renewed painted panels and no blend lines. Consider blending adjacent panels for colour match.`, 'estimate');
+    if (painting.length && !lines.some((l) => l.costClass === 'paint' && num(l.amount) > 0)) add('info', 'Refinish labour is included but no paint materials cost.', 'estimate');
     // ---- MOT mileage evidence (DVSA) ----
     const wantKm = /km/i.test(v.mileageUnit || '');
     const toUnit = (n, unit) => { const u = String(unit || '').toLowerCase(); if (u === 'km' && !wantKm) return n * 0.621371; if ((u === 'mi' || u === 'miles') && wantKm) return n * 1.609344; return n; };
     const unitWord = wantKm ? 'km' : 'miles';
     const fmt = (n) => Math.round(n).toLocaleString('en-GB');
-    const readings = (v.motHistory || [])
-      .filter((t) => num(t.odometer) > 0 && t.date && (!t.odometerResult || t.odometerResult === 'READ'))
+    const readings = arr(v.motHistory)
+      .filter((t) => t && num(t.odometer) > 0 && t.date && (!t.odometerResult || t.odometerResult === 'READ'))
       .map((t) => ({ date: String(t.date).slice(0, 10), miles: toUnit(num(t.odometer), t.unit) }))
       .sort((a, b) => a.date.localeCompare(b.date));
-    const cutoff = job.instruction.dateOfLoss || job.inspection.date || '';
+    const cutoff = ins.dateOfLoss || insp.date || '';
     const before = cutoff ? readings.filter((r) => r.date <= cutoff) : readings;
     const after = cutoff ? readings.filter((r) => r.date > cutoff) : [];
     if (num(v.mileage) && before.length) {
@@ -379,23 +612,29 @@
     if (after.length) {
       const last = after[after.length - 1];
       const since = num(v.mileage) ? last.miles - num(v.mileage) : 0;
-      const offRoad = /total|ber|beyond/i.test(job.outcome.decision) || /off the road|not .*(suitable|roadworthy)|unroadworthy|should not be (used|driven)/i.test(job.assessment.roadworthiness + ' ' + job.inspection.roadTest);
+      const offRoad = /total|ber|beyond/i.test(txt(oc.decision)) || /off the road|not .*(suitable|roadworthy)|unroadworthy|should not be (used|driven)/i.test(txt(ass.roadworthiness) + ' ' + txt(insp.roadTest));
       add(offRoad ? 'warn' : 'info', `The vehicle was presented for an MOT AFTER the date of loss: ${after.map((r) => `${ukDate(r.date)} at ${fmt(r.miles)} ${unitWord}`).join('; ')}${since > 0 ? ` (${fmt(since)} ${unitWord} more than the inspection reading)` : ''}. ${offRoad ? 'The report treats it as off the road / a total loss: confirm whether it has been repaired or used, and address this in the opinion.' : 'Confirm the repair / usage history.'}`, 'vehicle');
     }
-    if (/image|desktop|photo/i.test(job.inspection.type)) {
-      if (job.photos.length < 8) add('warn', `Image-based assessment with only ${job.photos.length} photo(s). Desktop reports are commonly challenged on coverage: include all four corners, the damage close-up and in context, VIN plate and odometer.`, 'photos');
-      if (!job.photos.some((p) => /odometer|mileage|cluster|dash/i.test(p.title + ' ' + p.caption))) add('info', 'No photo identified as the odometer / instrument cluster.', 'photos');
-      if (!job.photos.some((p) => /vin|chassis/i.test(p.title + ' ' + p.caption))) add('info', 'No photo identified as the VIN plate.', 'photos');
+    if (/image|desktop|photo/i.test(txt(insp.type))) {
+      const cap = (p) => `${txt(p.title)} ${txt(p.caption)}`;
+      if (shown.length < 8) add('warn', `Image-based assessment with only ${shown.length} photo(s) in the report. Desktop reports are commonly challenged on coverage: include all four corners, the damage close-up and in context, VIN plate and odometer.`, 'photos');
+      if (!shown.some((p) => /\bodometer\b|\bodo\b|\bmileage\b|\bspeedo(?:meter)?\b|instrument (?:cluster|panel)|\bdash(?:board)?\b/i.test(cap(p)))) add('info', 'No photo identified as the odometer / instrument cluster.', 'photos');
+      if (!shown.some((p) => /\bvin\b|chassis (?:no|number|plate)|(?:identification|build|manufacturer'?s) plate/i.test(cap(p)))) add('info', 'No photo identified as the VIN plate.', 'photos');
     }
-    if (job.report.cpr35) {
-      if (!job.instruction.purpose) add('error', 'CPR 35 report: the substance of the instructions must be stated (Purpose of instruction).', 'claim');
-      if (!(job.assessor.qualifications || settings.assessor.qualifications)) add('error', 'CPR 35 report: the expert\'s qualifications must be stated (Settings → Assessor).', 'signoff');
-      if (!/range|alternative|other view|reasonable/i.test(job.opinion)) add('warn', 'CPR 35 report: where there is a range of opinion, summarise it and give reasons for your own view.', 'opinion');
+    if (rep.cpr35) {
+      if (!txt(ins.purpose).trim()) add('error', 'CPR 35 report: the substance of the instructions must be stated (Purpose of instruction).', 'claim');
+      if (!(asr.qualifications || (issued && issued.qualifications) || sa.qualifications)) add('error', 'CPR 35 report: the expert\'s qualifications must be stated (Settings → Assessor).', 'signoff');
+      if (!txt(insp.by).trim()) add('error', 'CPR 35 report: state who carried out the examination and any tests (Inspection → Examined by).', 'inspection');
+      else if (!txt(insp.byQualifications).trim() && fold(insp.by) !== fold(asr.name)) add('warn', 'CPR 35 report: give the qualifications of the person who carried out the examination (Inspection → Qualifications of examiner).', 'inspection');
+      if (!RANGE_OF_OPINION.test(txt(job.opinion))) add('warn', 'CPR 35 report: where there is a range of opinion, summarise it and give reasons for your own view.', 'opinion');
     }
-    if ((job.aiLog || []).length && !job.report.aiDisclosure) add('info', 'AI tools were used on this report. The report will include an AI-use statement (recommended by the Civil Justice Council, Oct 2026).', 'report');
-    if (num(job.valuation.adopted) && t.valMax && num(job.valuation.adopted) < t.valMax && !/like-for-like|advert|deduct|condition/i.test(job.valuation.comments)) add('warn', `Adopted PAV (${gbp(job.valuation.adopted)}) is below the highest guide figure (${gbp(t.valMax)}). The ombudsman's starting point is the highest retail guide; explain any lower figure with vehicle-specific evidence.`, 'valuation');
-    if (!job.assessor.name) add('error', 'Assessor name is missing.', 'signoff');
-    if (!job.assessor.dateSigned) add('info', 'Report has not been dated / signed.', 'signoff');
+    // only real AI use counts (DVLA / DVSA lookups are logged with ai:false)
+    const aiUsed = arr(job.aiLog).filter((a) => a && a.ai).length;
+    if (aiUsed) add('info', `AI tools were used on this report (${aiUsed} logged action${aiUsed === 1 ? '' : 's'}). The report includes a "Use of AI and data tools" statement listing them (recommended by the Civil Justice Council, Oct 2026).`, 'report');
+    const adopted = num(val.adopted);
+    if (adopted && t.valMax && adopted < t.valMax && !txt(val.belowHighestReason).trim()) add('warn', `Adopted PAV (${gbp(adopted)}) is below the highest guide figure (${gbp(t.valMax)}). The ombudsman's starting point is the highest retail guide: record the vehicle-specific reason for the lower figure on the Valuation tab.`, 'valuation');
+    if (!asr.name) add('error', 'Assessor name is missing.', 'signoff');
+    if (!asr.dateSigned) add('info', 'Report has not been dated / signed.', 'signoff');
     return out;
   }
 
@@ -417,9 +656,10 @@
   }
 
   window.Core = {
-    $, $$, uid, esc, num, round2, gbp, gbp0, hrs, todayISO, ukDate, longDate, getPath, setPath, debounce, clone,
+    $, $$, uid, esc, num, round2, gbp, gbp0, hrs, todayISO, ukDate, longDate, getPath, setPath, debounce, clone, fold, yearRange,
     Store, DEFAULT_SETTINGS, loadSettings, saveSettings, get settings() { return settings; }, set settings(v) { settings = v; },
     CAT, OPS, sideWord, SIZE_CLASSES, sizeFactor, paintFactor, oemVehicles, setCustomOem, get customOem() { return customOem; }, findOemVehicle, guessOemVehicle, oemLookup, decodeVin,
-    newJob, newLine, lineRate, totals, qaChecks, readFileAsDataURL, loadImage, resizeDataURL
+    newJob, newLine, lineRate, lineLabour, vatPctFor, namedSources, totals, qaChecks, isDamageOp, isRenewLine, isServiceCode, photoNumbers,
+    readFileAsDataURL, loadImage, resizeDataURL
   };
 })();

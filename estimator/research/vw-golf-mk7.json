@@ -1,13 +1,91 @@
 {
-  "vehicle": {"make":"Volkswagen","model":"Golf","generation":"Mk7 (5G)","years":"2013-2020","notes":"Research limited: catalogue sites (7zap, partsouq, ETKA mirrors, dealer stores) were blocked by the session network policy, so numbers come from web-search results only. Many Mk7 parts carry multiple suffix revisions by build date/equipment; only parts with a clear number and model fit are recorded. Verify against VIN before ordering."},
-  "researched": "2026-11-17",
-  "parts": [
-    {"code":"FE001","side":"","oem":"5G0807221BJGRU","description":"Front bumper cover, primed","notes":"Pre-facelift Mk7 (2013-2017). Most sellers (ECS Tuning, shopdap, urotuning, NGP) describe this as the Golf R front bumper; deutsche-parts.co.uk describes it as for vehicles with headlight washer system. Per sellers, must be modified to mount parking sensors. NOT confirmed for standard S/SE/GTI bumpers.","price_gbp":null,"price_source":null,"source_url":"https://www.deutsche-parts.co.uk/front-bumper-cover-headlight-washer-vw-golf-mk7-5g0807221bj-gru-new-genuine-part.html","confidence":"confirmed"},
-    {"code":"BN001","side":"","oem":"5G0823031J","description":"Bonnet","notes":"Seen for Golf Mk7 hatchback (globalparts.co.uk used panel, ebay.de 2015 listing, oemwolf). Supplied unpainted; a later suffix may exist, and fit to Mk7.5 not verified.","price_gbp":null,"price_source":null,"source_url":"https://oemwolf.com/oem-parts/5g0823031j.html","confidence":"confirmed"},
-    {"code":"FW001","side":"L","oem":"5G0821105A","description":"Front wing, left (UK passenger/nearside)","notes":"Supersedes 5G0821105. Seen on oemwolf and a globalparts.co.uk Golf Mk7 front left N/S wing listing.","price_gbp":null,"price_source":null,"source_url":"https://oemwolf.com/oem-parts/5g0821105a.html","confidence":"confirmed"},
-    {"code":"FW001","side":"R","oem":"5G0821106A","description":"Front wing, right (UK driver/offside)","notes":"Supersedes 5G0821106 (replaced Oct 2013 per oemwolf). Also seen as a cross-reference on a used right-hand wing listing.","price_gbp":null,"price_source":null,"source_url":"https://oemwolf.com/oem-parts/5g0821106a.html","confidence":"confirmed"},
-    {"code":"MR003","side":"L","oem":"5G0857537EGRU","description":"Door mirror cap, left, primed","notes":"Supersedes 5G0857537CGRU (replaced Apr 2014 per oemwolf). Also listed new genuine on ebay.de. Fit to mirrors with side assist / Mk7.5 variants not verified.","price_gbp":null,"price_source":null,"source_url":"https://oemwolf.com/oem-parts/5g0857537egru.html","confidence":"confirmed"},
-    {"code":"LT001","side":"L","oem":"5G2941005E","description":"Headlamp, left (UK passenger/nearside), halogen, RHD","notes":"Pre-facelift 2013-2017, halogen, listed as suitable for right-hand-drive (UK) only. Xenon/LED and Mk7.5 units use different numbers. Right-hand counterpart not confirmed.","price_gbp":null,"price_source":null,"source_url":"https://www.ebay.co.uk/p/1876036242","confidence":"single-source"},
-    {"code":"TG001","side":"","oem":"5G6827025AA","description":"Tailgate (hatchback), bare","notes":"Hatchback. Listings give 5G6827025K and 5G6827025Q as superseded numbers; 5G6827025AB also appears as an alternative number on a used-parts page, so AA may not be the latest suffix. Seen on used-part listings only.","price_gbp":null,"price_source":null,"source_url":"https://www.ebay.de/p/4035593880","confidence":"single-source"}
-  ]
+ "vehicle": {
+  "make": "Volkswagen",
+  "model": "Golf",
+  "generation": "Mk7 (5G)",
+  "years": "2013-2020",
+  "notes": "Research limited: catalogue sites (7zap, partsouq, ETKA mirrors, dealer stores) were blocked by the session network policy, so numbers come from web-search results only. Many Mk7 parts carry multiple suffix revisions by build date/equipment; only parts with a clear number and model fit are recorded. Verify against VIN before ordering."
+ },
+ "researched": "2026-11-17",
+ "parts": [
+  {
+   "code": "FE001",
+   "side": "",
+   "oem": "5G0807221BJGRU",
+   "description": "Front bumper cover, primed: Golf R / with headlamp washers (pre-facelift)",
+   "notes": "Pre-facelift Mk7 (2013-2017). Most sellers (ECS Tuning, shopdap, urotuning, NGP) describe this as the Golf R front bumper; deutsche-parts.co.uk describes it as for vehicles with headlight washer system. Per sellers, must be modified to mount parking sensors. NOT confirmed for standard S/SE/GTI bumpers. [Audit: not confirmed for standard S/SE/GTI bumpers; not auto-filled.]",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.deutsche-parts.co.uk/front-bumper-cover-headlight-washer-vw-golf-mk7-5g0807221bj-gru-new-genuine-part.html",
+   "confidence": "single-source",
+   "role": "variant",
+   "autoFill": false
+  },
+  {
+   "code": "BN001",
+   "side": "",
+   "oem": "5G0823031J",
+   "description": "Bonnet",
+   "notes": "Seen for Golf Mk7 hatchback (globalparts.co.uk used panel, ebay.de 2015 listing, oemwolf). Supplied unpainted; a later suffix may exist, and fit to Mk7.5 not verified.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://oemwolf.com/oem-parts/5g0823031j.html",
+   "confidence": "confirmed"
+  },
+  {
+   "code": "FW001",
+   "side": "L",
+   "oem": "5G0821105A",
+   "description": "Front wing, left (UK passenger/nearside)",
+   "notes": "Supersedes 5G0821105. Seen on oemwolf and a globalparts.co.uk Golf Mk7 front left N/S wing listing.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://oemwolf.com/oem-parts/5g0821105a.html",
+   "confidence": "confirmed"
+  },
+  {
+   "code": "FW001",
+   "side": "R",
+   "oem": "5G0821106A",
+   "description": "Front wing, right (UK driver/offside)",
+   "notes": "Supersedes 5G0821106 (replaced Oct 2013 per oemwolf). Also seen as a cross-reference on a used right-hand wing listing.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://oemwolf.com/oem-parts/5g0821106a.html",
+   "confidence": "confirmed"
+  },
+  {
+   "code": "MR003",
+   "side": "L",
+   "oem": "5G0857537EGRU",
+   "description": "Door mirror cap, left, primed",
+   "notes": "Supersedes 5G0857537CGRU (replaced Apr 2014 per oemwolf). Also listed new genuine on ebay.de. Fit to mirrors with side assist / Mk7.5 variants not verified.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://oemwolf.com/oem-parts/5g0857537egru.html",
+   "confidence": "confirmed"
+  },
+  {
+   "code": "LT001",
+   "side": "L",
+   "oem": "5G2941005E",
+   "description": "Headlamp, left (UK passenger/nearside), halogen, RHD",
+   "notes": "Pre-facelift 2013-2017, halogen, listed as suitable for right-hand-drive (UK) only. Xenon/LED and Mk7.5 units use different numbers. Right-hand counterpart not confirmed.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.co.uk/p/1876036242",
+   "confidence": "single-source"
+  },
+  {
+   "code": "TG001",
+   "side": "",
+   "oem": "5G6827025AA",
+   "description": "Tailgate (hatchback), bare",
+   "notes": "Hatchback. Listings give 5G6827025K and 5G6827025Q as superseded numbers; 5G6827025AB also appears as an alternative number on a used-parts page, so AA may not be the latest suffix. Seen on used-part listings only.",
+   "price_gbp": null,
+   "price_source": null,
+   "source_url": "https://www.ebay.de/p/4035593880",
+   "confidence": "single-source"
+  }
+ ]
 }

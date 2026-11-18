@@ -19,7 +19,7 @@
     'further investigation required': 'FURTHER INVESTIGATION REQUIRED'
   };
   const PAINT_FINISH = { solid: 'Solid', metallic: 'Metallic', pearl: 'Pearlescent', 'three-stage': '3-stage / tri-coat', matt: 'Matt' };
-  const ODOMETER_RESULT = { NO_ODOMETER: 'No odometer', UNREADABLE: 'Unreadable', READ: 'Not recorded' };
+  const ODOMETER_RESULT = { NO_ODOMETER: 'No odometer', UNREADABLE: 'Unreadable' };
   const BAR_COLOURS = ['#2e9a5a', '#2f4bb5', '#f2a20c', '#6b62e0', '#d0473b', '#1497a8'];
   const DEFAULT_ACCENT = '#1a6fb5';
   const DEFAULT_NAVY = '#1f3349';
@@ -46,6 +46,8 @@
   }
   const pct = (v) => (Math.min(1, Math.max(0, num(v))) * 100).toFixed(2) + '%';
   const arr = (x) => (Array.isArray(x) ? x : []);
+  // lookup that ignores inherited keys ("constructor", "__proto__" …) coming from job data
+  const own = (map, key) => (map && Object.prototype.hasOwnProperty.call(map, key) ? map[key] : undefined);
   const obj = (x) => (x && typeof x === 'object' ? x : {});
 
   // ---------- text helpers ----------
@@ -104,15 +106,15 @@
   }
 
   const catOf = (job) => String(obj(job.outcome).category || '').trim().toUpperCase().replace(/^CAT(EGORY)?\.?\s*/, '');
-  const catText = (cat) => (cat ? CATEGORY_TEXT[cat] || 'Category ' + cat : '');
+  const catText = (cat) => (cat ? own(CATEGORY_TEXT, cat) || 'Category ' + cat : '');
 
   function outcomeText(job) {
     const d = String(obj(job.outcome).decision || '').trim();
     const rep = obj(job.report);
     const cat = catOf(job);
     const isTL = /total|\bber\b|beyond/i.test(d);
-    const auto = HEADLINES[d.toLowerCase().replace(/\s+/g, ' ')] || (isTL ? 'TOTAL LOSS RECOMMENDED' : d.toUpperCase());
-    const name = CATEGORY_NAME[cat];
+    const auto = own(HEADLINES, d.toLowerCase().replace(/\s+/g, ' ')) || (isTL ? 'TOTAL LOSS RECOMMENDED' : d.toUpperCase());
+    const name = own(CATEGORY_NAME, cat);
     return {
       isTL,
       category: cat,
@@ -202,7 +204,7 @@
     const aiPhotos = included.filter((p) => safeImage(p.dataUrl) && visibleLabels(p).some((l) => l.ai));
     const unreviewedPhotos = aiPhotos.filter((p) => !p.labelsReviewed);
     const anyPreExisting = included.some((p) => safeImage(p.dataUrl) && visibleLabels(p).some(isPreExisting));
-    const aiNote = aiPhotos.length ? `<p class="small muted">Damage labels marked "AI" were generated with AI-assisted image analysis${unreviewedPhotos.length ? '' : ' and reviewed by the assessor before issue'}.${unreviewedPhotos.length ? ` The AI labels on ${andList(unreviewedPhotos.map(figName))} had not been reviewed by the assessor when this report was produced.` : ''} Unless changed by the assessor, AI label colours show the severity the AI assessed (red: severe; orange: moderate; yellow: minor). The assessor's findings in this report take precedence over any automated labelling.</p>` : '';
+    const aiNote = aiPhotos.length ? `<p class="small muted">Damage labels marked "AI" were generated with AI-assisted image analysis${unreviewedPhotos.length ? '' : ' and reviewed by the assessor before issue'}.${unreviewedPhotos.length ? ` The AI labels on ${andList(unreviewedPhotos.map(figName))} had not been reviewed by the assessor when this report was produced.` : ''} Unless changed by the assessor, AI label colours give the AI's severity rating (red severe, orange moderate, yellow minor). The assessor's findings take precedence over any automated labelling.</p>` : '';
     const preNote = anyPreExisting ? '<p class="small muted">Labels drawn with a dashed outline and marked "(pre-existing)" show damage identified as pre-existing or wear, not attributed to this accident.</p>' : '';
 
     // ---------- signature, declaration, qualifications: issued snapshot when the report is finalised ----------
@@ -247,7 +249,7 @@
       h2 .n { color: ${accent}; margin-right: 4px; }
       h3 { color: ${navy}; font-size: 10.5pt; margin: 16px 0 6px; break-after: avoid; }
       .grid { display: grid; grid-template-columns: 1fr 1fr; column-gap: 28px; }
-      .f { border-bottom: 1px solid #dde2e8; padding: 8px 0 7px; break-inside: avoid; }
+      .f { border-bottom: 1px solid #dde2e8; padding: 6px 0 5px; break-inside: avoid; }
       .f.full { grid-column: 1 / -1; }
       .fl { font-size: 8.5pt; color: #6b7785; font-weight: bold; margin-bottom: 2px; }
       .fv { font-size: 10pt; color: #2a3340; }
@@ -284,14 +286,15 @@
       .verdict-lines p { font-size: 11.5pt; font-weight: bold; margin: 10px 0; }
       figure.photo { margin: 0 0 12px; break-inside: avoid; text-align: left; }
       .pwrap { position: relative; display: block; margin: 0 auto; width: fit-content; max-width: 100%; }
-      .pwrap img { display: block; max-width: 100%; max-height: 88mm; }
-      figure.photo.tight .pwrap img { max-height: 72mm; }
+      .pwrap img { display: block; max-width: 100%; max-height: 85mm; }
+      figure.photo.tight .pwrap img { max-height: 68mm; }
       .pmissing { border: 1px dashed #c5ccd5; padding: 28px 12px; text-align: center; color: #8a95a2; font-size: 9pt; }
       .pbox { position: absolute; border: 2.5px solid ${DEFAULT_LABEL}; border-radius: 2px; }
       .pbox.pre { border-style: dashed; }
       .ptag { position: absolute; transform: translateY(-100%); color: #fff; font-size: 7pt; font-weight: bold; padding: 1px 4px; white-space: nowrap; border-radius: 2px 2px 0 0; }
       .ptag .ai { display: inline-block; margin-left: 2px; padding: 0 2px; border: 1px solid currentColor; border-radius: 2px; font-size: 5.5pt; line-height: 1.2; vertical-align: 1px; }
       figcaption { margin-top: 5px; } .pt { font-weight: bold; color: ${navy}; font-size: 9.5pt; } .pc { font-size: 8.5pt; margin-top: 2px; } .ps { font-size: 7pt; color: #8a95a2; }
+      .inote h3 { margin: 10px 0 4px; } .inote p { margin: 0 0 4px; }
       .sigimg { max-height: 60px; max-width: 220px; }
       .nobreak { break-inside: avoid; }
       @media print { body { background: #fff; } .page { box-shadow: none; margin: 0; width: auto; min-height: 0; padding: 0; } .pfoot { display: none !important; } }
@@ -304,9 +307,12 @@
 
     // ---------- MOT history: every DVSA test ----------
     const motRows = arr(v.motHistory).filter((m) => m && typeof m === 'object');
-    const odometer = (m) => (num(m.odometer) > 0
-      ? `${num(m.odometer).toLocaleString('en-GB')} ${esc(String(m.unit || '').toLowerCase())}`
-      : esc(ODOMETER_RESULT[m.odometerResult] || (m.odometerResult ? String(m.odometerResult).replace(/_/g, ' ').toLowerCase().replace(/^./, (c) => c.toUpperCase()) : 'Not recorded')));
+    // a reading when DVSA recorded one; otherwise the odometer result type (e.g. unreadable, no odometer)
+    const odometer = (m) => {
+      const r = String(m.odometerResult || '').trim().toUpperCase();
+      if (num(m.odometer) > 0 || (r === 'READ' && m.odometer !== '' && m.odometer != null)) return `${num(m.odometer).toLocaleString('en-GB')} ${esc(String(m.unit || '').toLowerCase())}`.trim();
+      return esc(own(ODOMETER_RESULT, r) || (r && r !== 'READ' ? r.replace(/_/g, ' ').toLowerCase().replace(/^./, (c) => c.toUpperCase()) : 'Not recorded'));
+    };
     const shortDefects = (m) => {
       const d = arr(m.defects).filter((x) => x != null && String(x).trim()).map((x) => { const s = String(x).trim(); return s.length > 110 ? s.slice(0, 107) + '…' : s; });
       return d.length ? esc(d.slice(0, 3).join('; ')) + (d.length > 3 ? ` <span class="muted">(+${d.length - 3} more)</span>` : '') : '—';
@@ -351,11 +357,11 @@
     const ms = v.motSummary && typeof v.motSummary === 'object' ? v.motSummary : null;
     const monthOnly = v.firstRegPrecision === 'month' || (!v.firstRegPrecision && !!dv && !!dv.firstRegistration && dv.firstRegistration === v.firstReg);
     const firstRegText = v.firstReg ? (monthOnly ? monthYear(v.firstReg) : longDate(v.firstReg)) : '';
-    const paintKey = v.paintType || 'metallic';
+    const paintKey = String(v.paintType || 'metallic');
     const paintF = C.paintFactor(job);
-    const paintText = `${PAINT_FINISH[paintKey] || paintKey}${paintF && paintF !== 1 ? ` (refinish-time factor ×${paintF.toFixed(2)})` : ''}`;
-    const sizeKey = v.sizeClass || 'medium';
-    const size = C.SIZE_CLASSES[sizeKey];
+    const paintText = `${own(PAINT_FINISH, paintKey) || paintKey}${paintF && paintF !== 1 ? ` (refinish-time factor ×${paintF.toFixed(2)})` : ''}`;
+    const sizeKey = String(v.sizeClass || 'medium');
+    const size = Array.isArray(own(C.SIZE_CLASSES, sizeKey)) ? C.SIZE_CLASSES[sizeKey] : null;
     const sizeText = `${size ? size[0] : sizeKey} ×${(size ? num(size[1]) : 1).toFixed(2)}`;
     const yn = (b) => (b ? '<strong>Yes</strong>' : 'No');
     const withNote = (main, note) => [main, note].filter(Boolean).join(' — ');
@@ -435,7 +441,7 @@
       <div class="grid">
         ${field('Inspection date', t(ukDate(insp.date)))}${field('Inspection time', t(insp.time))}
         ${field('Inspection location', t(insp.location), 'full')}
-        ${showExaminer ? field('Examination carried out by', t(insp.by)) + field("Examiner's qualifications", t(insp.byQualifications)) : ''}
+        ${showExaminer ? field('Examined by', t(insp.by)) + field('Qualifications of examiner', t(insp.byQualifications)) : ''}
         ${field('Inspection type', t(insp.type))}${field('Vehicle condition at inspection', para(insp.condition))}
         ${field('Dismantling carried out', para(insp.dismantling))}${field('Photographs taken / source', t(insp.photos))}
         ${field('Diagnostic scan / tool', para(insp.diagnostic))}${field('Road test / reason if not completed', para(insp.roadTest))}
@@ -523,11 +529,11 @@
     pages.push(page(`${sec("REPORT COMMENTS / ENGINEER'S OPINION")}<div class="box">${richPara(job.opinion)}</div>`));
 
     // 11 Images (2 per page); always present so the later sections keep their numbers
-    if (!included.length) {
-      pages.push(page(`${sec('IMAGES / PHOTOGRAPHIC EVIDENCE')}<p>No photographs are included in this report.</p>`));
-    } else {
+    // (with no photographs, section 11 is a single sentence printed at the top of the section 12 page)
+    const noPhotos = included.length ? '' : `${sec('IMAGES / PHOTOGRAPHIC EVIDENCE')}<p>No photographs are included in this report.</p>`;
+    if (included.length) {
       const n11 = ++n;
-      const sourceNote = `<div class="nobreak"><h3>Image source / date</h3><p class="small">Inspection and supporting photographs supplied for ${esc(v.reg)}. Capture dates/times and photographers are not independently verified by this document unless stated. Maintain the original uncropped files with the claim.</p>${preNote}${aiNote}</div>`;
+      const sourceNote = `<div class="nobreak inote"><h3>Image source / date</h3><p class="small">Inspection and supporting photographs supplied for ${esc(v.reg)}. Capture dates/times and photographers are not independently verified by this document unless stated. Maintain the original uncropped files with the claim.</p>${preNote}${aiNote}</div>`;
       for (let i = 0; i < included.length; i += 2) {
         const pair = included.slice(i, i + 2);
         const last = i + 2 >= included.length;
@@ -539,7 +545,7 @@
 
     // 12 Customer
     const c = obj(job.customer);
-    pages.push(page(`${sec('CUSTOMER / CLIENT INFORMATION')}
+    pages.push(page(`${noPhotos}${sec('CUSTOMER / CLIENT INFORMATION')}
       <div class="grid">
         ${field('Customer / Client full name', t(c.name))}${field('Company name, if applicable', t(c.company || 'N/A'))}
         ${field('Business representative, if applicable', t(c.representative))}${field('Relationship to vehicle', t(c.relationship))}

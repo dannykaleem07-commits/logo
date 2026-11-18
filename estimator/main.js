@@ -42,7 +42,19 @@ function createWindow() {
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, nodeIntegration: false, sandbox: true }
   });
   win.loadFile(path.join(__dirname, 'app', 'index.html'));
-  win.webContents.setWindowOpenHandler(({ url }) => { shell.openExternal(url); return { action: 'deny' }; });
+  // Links that open a new window go to the system browser, and only when they are web links:
+  // never hand file:, smb:, ms-msdt: or other protocol URLs (e.g. from AI web-search results) to the OS.
+  const isWeb = (url) => /^https?:\/\//i.test(String(url || ''));
+  win.webContents.setWindowOpenHandler(({ url }) => {
+    if (isWeb(url)) shell.openExternal(url).catch(() => {});
+    return { action: 'deny' };
+  });
+  // The app itself is local files: block any navigation of the window away from them.
+  win.webContents.on('will-navigate', (e, url) => {
+    if (/^file:/i.test(String(url || ''))) return;
+    e.preventDefault();
+    if (isWeb(url)) shell.openExternal(url).catch(() => {});
+  });
 }
 
 // Wrap AI calls so errors come back as friendly messages

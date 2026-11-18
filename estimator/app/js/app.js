@@ -784,15 +784,18 @@
   function aiAddLines() {
     const f = job.aiFindings; if (!f) return;
     let n = 0;
+    const damages = (f.photos || []).flatMap((ph) => ph.damages || []);
     (f.suggested_lines || []).forEach((l, i) => {
       if (l.added || ui.suggestSel[i] === false) return;
       const cands = l.code && C.CAT[l.code] ? C.oemLookup(job.vehicle.oemKey, l.code, l.side) : [];
       const o = cands[0];
       const cls = l.cost_class === 'paint' ? 'paint' : l.cost_class === 'other' ? 'other' : 'parts';
-      job.lines.push(C.newLine({
+      // the operation the AI recommended for this component, when one of its photo labels names it
+      const dm = l.code && l.code !== 'OTHER' ? damages.find((d) => d.component_code === l.code && (d.side || '') === (l.side || '') && d.recommended_operation && d.recommended_operation !== 'none') : null;
+      job.lines.push(C.newLine(Object.assign({
         type: l.type, description: l.description, code: C.CAT[l.code] ? l.code : '', side: l.side, hours: l.labour_hours,
-        partNo: l.needs_part && o ? o.oem : '', amount: l.needs_part && o && o.price ? o.price : 0, costClass: cls, ai: true, reviewed: false, source: l.reason
-      }));
+        partNo: l.needs_part && o ? o.oem : '', amount: l.needs_part && o && o.price ? o.price : 0, costClass: cls, ai: true, reviewed: false, source: l.reason, op: 'ai'
+      }, dm ? { aiOperation: dm.recommended_operation } : {})));
       l.added = true; n++;
     });
     changed(); toast(`${n} line(s) added to the estimate.`); renderJob();
@@ -818,12 +821,13 @@
     const ov = C.findOemVehicle(job.vehicle.oemKey);
     return `<div class="card"><div class="row"><h2 class="grow" style="margin:0">Add from parts catalogue</h2>
         <span class="hint">${ov ? `OEM numbers: <b>${esc(ov.make + ' ' + ov.model + ' ' + ov.generation)}</b>` : `No catalogue vehicle linked. <a href="#/job/${job.id}/vehicle">Link one on the Vehicle tab</a> to fill OEM part numbers.`}</span></div>
-      ${job.zones.length ? `<div class="row" style="margin:10px 0 2px"><span class="hint">Damage zones:</span>${job.zones.map((z) => `<button class="btn sm" data-act="zonePick" data-z="${esc(z)}">${esc(z)}</button>`).join('')}<button class="btn sm" data-act="zonePick" data-z="">All</button></div>` : ''}
+      ${job.zones.length || ui.zoneGroups ? `<div class="row" style="margin:10px 0 2px"><span class="hint">Damage zones:</span>${job.zones.map((z) => `<button class="btn sm${ui.zoneGroups && ui.zoneLabel === z ? ' on' : ''}" data-act="zonePick" data-z="${esc(z)}">${esc(z)}</button>`).join('')}${job.zones.length ? `<button class="btn sm${ui.zoneGroups ? '' : ' on'}" data-act="zonePick" data-z="">All</button>` : ''}
+        ${ui.zoneGroups ? `<span class="zchip" title="Only parts for this damage zone are listed">Zone: <b>${esc(ui.zoneLabel)}</b><button class="link" data-act="zonePick" data-z="" title="Clear the zone filter">✕</button></span>` : ''}</div>` : ''}
       <div class="picker" style="margin-top:10px">
         <label class="fld"><span>Search part</span><input id="pickQ" value="${esc(ui.pickQ)}" placeholder="e.g. mirror, sill, bumper, door"></label>
         <label class="fld"><span>Group</span><select id="pickGroup"><option value="">All groups</option>${window.CATALOGUE_GROUPS.map((g) => `<option${g === ui.pickGroup ? ' selected' : ''}>${esc(g)}</option>`).join('')}</select></label>
         <label class="fld"><span>Side</span><select id="pickSide"><option value="">—</option><option value="L"${ui.pickSide === 'L' ? ' selected' : ''}>LH</option><option value="R"${ui.pickSide === 'R' ? ' selected' : ''}>RH</option></select></label>
-        <label class="fld"><span>Operation</span><select id="pickOp">${[['replace', 'Renew (remove & replace) + refinish new part'], ['repair1', 'Repair – light'], ['repair', 'Repair – medium'], ['repair3', 'Repair – heavy'], ['pdr', 'Paintless dent repair'], ['smart', 'Smart repair / polish'], ['refinish', 'Refinish (new part)'], ['refinishRep1', 'Refinish repaired part – damage <50%'], ['refinishRep2', 'Refinish repaired part – damage >50%'], ['blend', 'Blend (colour match)'], ['rr', 'Remove & refit (R&I)'], ['check', 'Inspect / test'], ['refurb', 'Refurbish']].map(([k, v]) => `<option value="${k}"${k === ui.pickOp ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
+        <label class="fld"><span>Operation</span><select id="pickOp">${[['replace', 'Renew (remove & replace) + refinish new part'], ['repair1', 'Repair – light'], ['repair', 'Repair – medium'], ['repair3', 'Repair – heavy'], ['pdr', 'Paintless dent repair'], ['smart', 'Smart repair / polish'], ['refinish', 'Refinish (new part)'], ['refinishRep1', 'Refinish repaired part – damage <50%'], ['refinishRep2', 'Refinish repaired part – damage >50%'], ['blend', 'Blend (colour match)'], ['rr', 'Remove & refit (R&I)'], ['check', 'Inspect / test'], ['refurb', 'Refurbish'], ['operation', 'Operation / service (as listed)']].map(([k, v]) => `<option value="${k}"${k === ui.pickOp ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
         <button class="btn primary" data-act="pickAdd">Add line</button>
       </div>
       <label class="hint" style="display:inline-flex;gap:6px;margin-top:6px"><input type="checkbox" id="addRefinish" style="width:auto" ${ui.addRefinish ? 'checked' : ''}> When renewing or repairing a painted panel, also add its refinish line</label>
@@ -836,12 +840,23 @@
       <tbody>${job.lines.map(lineRow).join('') || '<tr><td colspan="11" class="empty">No lines yet. Add parts above, or use the AI suggestions from Photos &amp; AI.</td></tr>'}</tbody></table>
       <div class="row" style="padding:10px"><button class="btn sm" data-act="addBlank">+ Blank line</button><span class="grow"></span><label class="fld" style="width:160px"><span>Discount £</span><input data-bind="discount" type="number" step="0.01" value="${esc(job.discount)}"></label></div></div>
     <div class="card"><div class="totals" id="totalsBox">${totalsBox(t)}</div></div>
+    ${ratesCard()}
     <div class="card">${F('estimateNotes', 'Estimate notes', { type: 'textarea', rows: 6, full: true })}</div>`;
+  }
+  // The job keeps its own labour rates and VAT (copied from Settings when it was created).
+  function ratesCard() {
+    const S = C.settings, r = job.rates || {};
+    const keys = [...new Set(Object.keys(S.rates).concat(Object.keys(r)))];
+    const differ = keys.some((k) => num(r[k]) !== num(S.rates[k])) || num(C.vatPctFor(job)) !== num(S.vatPct);
+    return `<div class="card"><div class="row"><h2 class="grow" style="margin:0">Labour rates &amp; VAT for this assessment</h2>
+        ${differ ? '<span class="badge warn">differ from Settings</span>' : '<span class="badge ok">same as Settings</span>'}<button class="btn sm" data-act="useSettingsRates" ${differ ? '' : 'disabled'}>Use current Settings rates</button></div>
+      <div class="form3" style="margin-top:10px">${keys.map((k) => F('rates.' + k, `${k} labour rate £/h`, { type: 'number', step: '0.01' })).join('')}${F('vatPct', 'VAT %', { type: 'number', step: '0.1' })}</div>
+      <p class="hint">Copied from Settings when this assessment was created and kept with it, so a later change in Settings does not alter this report. A rate typed on an estimate line overrides these.</p></div>`;
   }
   function totalsBox(t) {
     return `<div><span>Labour hours</span><b>${hrs(t.labourHours)}</b></div><div><span>Labour</span><b>${gbp(t.labour)}</b></div><div><span>Parts</span><b>${gbp(t.parts)}</b></div>
-      <div><span>Paint materials</span><b>${gbp(t.paint)}</b></div><div><span>Other / services</span><b>${gbp(t.other)}</b></div><div><span>Net (excl. VAT)</span><b>${gbp(t.net)}</b></div>
-      <div><span>VAT @ ${num(C.settings.vatPct)}%</span><b>${gbp(t.vat)}</b></div><div class="g"><span>Total repair cost</span><b>${gbp(t.gross)}</b></div>`;
+      <div><span>Paint materials</span><b>${gbp(t.paint)}</b></div><div><span>Other / services</span><b>${gbp(t.other)}</b></div>${num(t.discount) ? `<div><span>Less discount</span><b>${gbp(-num(t.discount))}</b></div>` : ''}<div><span>Net (excl. VAT)</span><b>${gbp(t.net)}</b></div>
+      <div><span>VAT @ ${num(C.vatPctFor(job))}%</span><b>${gbp(t.vat)}</b></div><div class="g"><span>Total repair cost</span><b>${gbp(t.gross)}</b></div>`;
   }
   function pickResults() {
     const q = ui.pickQ.toLowerCase().trim();
@@ -862,7 +877,7 @@
       const sides = p.sided ? (ui.pickSide ? [ui.pickSide] : ['L', 'R']) : [''];
       const oems = sides.map((s) => { const c = C.oemLookup(job.vehicle.oemKey, p.code, s)[0]; return c ? `<span class="oem ${esc(c.confidence)}" title="${esc(c.description + ' — ' + c.confidence)}">${s ? C.sideWord(s) + ' ' : ''}${esc(c.oem)}${c.price ? ' · ' + gbp(c.price) : ''}</span>` : ''; }).filter(Boolean).join(' &nbsp; ');
       return `<div class="r${ui.pickSel === p.code ? ' sel' : ''}" data-act="pickSel" data-code="${p.code}"><code>${p.code}</code><div class="grow"><b>${esc(p.name)}</b> <span class="hint">· ${esc(p.group)}${p.sided ? ' · LH/RH' : ''}</span><div>${oems}</div></div>
-        <span class="hint">R&amp;R ${p.replaceHrs}h${p.refinishHrs ? ' · paint ' + p.refinishHrs + 'h' : ''}</span></div>`;
+        <span class="hint">${pickHint(p)}</span></div>`;
     }).join('');
   }
   function lineRow(l, i) {
@@ -874,12 +889,27 @@
       <td style="min-width:150px"><div class="row" style="flex-wrap:nowrap;gap:4px"><input data-lf="partNo" data-id="${l.id}" value="${esc(l.partNo)}">${hasOem ? `<button class="btn sm" data-act="oemPick" data-id="${l.id}" title="OEM options">⋯</button>` : ''}</div></td>
       <td class="num" style="width:80px"><input data-lf="hours" data-id="${l.id}" type="number" step="0.1" value="${esc(l.hours)}"></td>
       <td class="num" style="width:90px"><input data-lf="rate" data-id="${l.id}" type="number" step="0.01" value="${esc(l.rate)}" placeholder="${rate.toFixed(2)}"></td>
-      <td class="num" data-lv="${l.id}">${num(l.hours) ? gbp(num(l.hours) * rate) : '—'}</td>
+      <td class="num" data-lv="${l.id}">${num(l.hours) ? gbp(C.lineLabour(l.hours, rate)) : '—'}</td>
       <td class="num" style="width:100px"><input data-lf="amount" data-id="${l.id}" type="number" step="0.01" value="${esc(l.amount)}"></td>
       <td style="min-width:128px"><select data-lf="costClass" data-id="${l.id}">${COST_CLASSES.map(([k, v]) => `<option value="${k}"${k === l.costClass ? ' selected' : ''}>${v}</option>`).join('')}</select></td>
       <td>${l.ai ? `<label class="badge ${l.reviewed ? 'ok' : 'ai'}" style="cursor:pointer"><input type="checkbox" data-lf="reviewed" data-id="${l.id}" ${l.reviewed ? 'checked' : ''} style="width:auto;vertical-align:-2px"> AI ${l.reviewed ? 'reviewed' : 'suggested'}</label>` : ''}</td>
       <td style="white-space:nowrap"><button class="btn sm" data-act="lmove" data-id="${l.id}" data-d="-1">↑</button><button class="btn sm" data-act="lmove" data-id="${l.id}" data-d="1">↓</button><button class="btn sm danger" data-act="ldel" data-id="${l.id}">✕</button></td></tr>`;
   }
+  // ---- catalogue rules. Rows: [code, name, group, sided, replaceHrs, refinishHrs, kind, mat, repairHrs] ----
+  const RAW_CAT = new Map((window.CATALOGUE || []).map((r) => [r[0], r]));
+  const matOf = (p) => { const r = RAW_CAT.get(p.code); return String((r ? r[7] : p.mat) || ''); };
+  // guide hours for a MEDIUM repair: 0 = renew only; null = no repair time in the row (older data), so OP001 is used
+  const repairGuide = (p) => { const r = RAW_CAT.get(p.code); const v = r ? r[8] : p.repairHrs; return v == null || v === '' ? null : num(v); };
+  // calibrations, scans, alignment, measuring, fluid services, consumables and sundries: added as operations, not renewed parts
+  const isOperationRow = (p) => ['operation', 'consumable'].includes(matOf(p)) || ['A', 'C'].includes(p.kind) || ['ST006', 'ST007'].includes(p.code);
+  const PDR_PANELS = ['RF001', 'RQ001', 'RQ002', 'SS002', 'SS003', 'SS008', 'FE012']; // structural outer skins that are dent-repairable
+  const pdrAllowed = (p) => { const g = repairGuide(p); return g !== 0 && ['steel', 'aluminium'].includes(matOf(p)) && (p.kind === 'P' || PDR_PANELS.includes(p.code)); };
+  function pickHint(p) {
+    if (isOperationRow(p)) return `${matOf(p) === 'consumable' ? 'consumable' : 'operation'}${p.replaceHrs ? ' · ' + p.replaceHrs + 'h' : ''}`;
+    const g = repairGuide(p);
+    return `R&amp;R ${p.replaceHrs}h${p.refinishHrs ? ' · paint ' + p.refinishHrs + 'h' : ''}${g ? ' · repair ' + g + 'h' : g === 0 ? ' · renew only' : ''}`;
+  }
+  const OP_NAMES = { repair1: 'light repair', repair: 'medium repair', repair3: 'heavy repair', pdr: 'paintless dent repair', smart: 'smart repair', refinish: 'refinish', refinishRep1: 'refinish', refinishRep2: 'refinish', blend: 'blend' };
   function addFromCatalogue() {
     const p = C.CAT[ui.pickSel];
     if (!p) return toast('Select a part in the list first.', true);
@@ -889,9 +919,20 @@
       sides = [ui.pickSide];
     }
     const op = ui.pickOp;
-    if (['repair1', 'repair', 'repair3'].includes(op) && !['P', 'S', 'T'].includes(p.kind)) return toast(`"${p.name}" is not a panel or trim. Choose Renew, Remove & refit, Inspect or Refurbish.`, true);
-    if (op === 'pdr' && !['P', 'S'].includes(p.kind)) return toast('Paintless dent repair applies to metal panels only.', true);
-    if (['smart', 'refinish', 'refinishRep1', 'refinishRep2', 'blend'].includes(op) && !(p.refinishHrs > 0)) return toast(`"${p.name}" is not a painted part, so refinish and blend do not apply.`, true);
+    const mat = matOf(p), guide = repairGuide(p), opRow = isOperationRow(p);
+    const isRepair = ['repair1', 'repair', 'repair3'].includes(op);
+    const isPaint = ['smart', 'refinish', 'refinishRep1', 'refinishRep2', 'blend'].includes(op);
+    if (opRow && (isRepair || isPaint || op === 'pdr')) return toast(`"${p.name}" is an operation or service, so ${OP_NAMES[op]} does not apply. Choose "Operation / service" to add it.`, true);
+    if (!opRow && op === 'operation') return toast(`"${p.name}" is a part: choose what is done to it (Renew, Repair, Refinish…).`, true);
+    if (isRepair && guide === 0) return toast(`"${p.name}" is not repairable in the guide data: renew it instead.`, true);
+    if (isRepair && guide == null && !['P', 'S', 'T'].includes(p.kind)) return toast(`"${p.name}" is not a panel or trim. Choose Renew, Remove & refit, Inspect or Refurbish.`, true);
+    if (op === 'pdr' && !pdrAllowed(p)) return toast(`Paintless dent repair applies only to repairable painted steel or aluminium panels, not to "${p.name}".`, true);
+    if (isPaint && !(p.refinishHrs > 0)) return toast(`"${p.name}" is not a painted part, so refinish and blend do not apply.`, true);
+    if (op === 'refurb' && !opRow && p.group === 'SRS / airbags') return toast('SRS components (airbags, pretensioners, sensors) are renewed, never refurbished.', true);
+    const notes = new Set();
+    const sf = C.sizeFactor(job), pf = C.paintFactor(job);
+    const H = (h) => Math.max(0.1, Math.round(h * sf * 10) / 10);
+    const P = (h) => Math.max(0.1, Math.round(h * sf * pf * 10) / 10); // refinish time: the paint factor is applied here, and recorded as pfApplied
     for (const side of sides) {
       const sw = side ? C.sideWord(side) + ' ' : '';
       const nm = sw + p.name.charAt(0).toLowerCase() + p.name.slice(1);
@@ -899,66 +940,82 @@
       const typeFor = ['M', 'W'].includes(p.kind) ? 'Mechanical' : ['E', 'A'].includes(p.kind) ? 'Electrical' : 'Body';
       const o = C.oemLookup(job.vehicle.oemKey, p.code, side)[0];
       const painted = p.refinishHrs > 0;
-      const sf = C.sizeFactor(job), pf = C.paintFactor(job);
-      const H = (h) => Math.max(0.1, Math.round(h * sf * 10) / 10);
-      const P = (h) => Math.max(0.1, Math.round(h * sf * pf * 10) / 10);
-      const repairLine = (lvl, mult) => {
-        job.lines.push(C.newLine({ type: 'Body', description: `${Nm} – repair (${lvl}) / metal finish`, code: p.code, side, hours: H(C.OPS.OP001.hours * mult), partNo: 'Existing panel', costClass: 'parts' }));
-        if (painted && ui.addRefinish) job.lines.push(C.newLine({ type: 'Painting', description: `${Nm} – refinish repaired part (${mult > 1.2 ? 'damage >50%' : 'damage <50%'})`, code: p.code, side, hours: P(p.refinishHrs * (mult > 1.2 ? 0.9 : 0.7)), costClass: 'paint' }));
+      const add = (fields) => job.lines.push(C.newLine(Object.assign({ code: p.code, side }, fields)));
+      const paintLine = (description, h, lineOp) => add({ type: 'Painting', description, hours: P(h), costClass: 'paint', op: lineOp, pfApplied: pf });
+      if (opRow) { // the operation itself: no "– renew", labour as listed (0 h allowed)
+        add({ type: 'Auxiliary', description: Nm, hours: p.replaceHrs ? H(p.replaceHrs) : 0, partNo: o ? o.oem : '', amount: o && o.price ? o.price : 0, costClass: p.kind === 'C' || mat === 'consumable' ? 'other' : 'parts', op: 'operation' });
+        continue;
+      }
+      const repairLine = (lvl, mult, lineOp) => {
+        const base = (guide == null ? C.OPS.OP001.hours : guide) * mult; // the part's own repair time × 0.5 / 1 / 2
+        const cap = num(p.replaceHrs) + num(p.refinishHrs);
+        if (cap > 0 && base > cap) notes.add(`Repair time capped at the renew + refinish guide (${cap}h): renewing may be more economical.`);
+        const how = mat === 'plastic' ? `plastic repair (${lvl})` : mat === 'composite' ? `composite repair (${lvl})` : ['steel', 'aluminium', ''].includes(mat) ? `repair (${lvl}) / metal finish` : `repair (${lvl})`;
+        add({ type: 'Body', description: `${Nm} – ${how}`, hours: H(cap > 0 ? Math.min(base, cap) : base), partNo: 'Existing panel', costClass: 'parts', op: lineOp });
+        if (painted && ui.addRefinish) paintLine(`${Nm} – refinish repaired part (${mult > 1.2 ? 'damage >50%' : 'damage <50%'})`, p.refinishHrs * (mult > 1.2 ? 0.9 : 0.7), mult > 1.2 ? 'refinishRep2' : 'refinishRep1');
       };
-      switch (ui.pickOp) {
+      switch (op) {
         case 'replace':
-          job.lines.push(C.newLine({ type: typeFor, description: `${Nm} – renew`, code: p.code, side, hours: H(p.replaceHrs), partNo: o ? o.oem : '', amount: o && o.price ? o.price : 0, costClass: 'parts' }));
-          if (painted && ui.addRefinish) job.lines.push(C.newLine({ type: 'Painting', description: `${Nm} – refinish new part`, code: p.code, side, hours: P(p.refinishHrs), costClass: 'paint' }));
+          add({ type: typeFor, description: `${Nm} – renew`, hours: H(p.replaceHrs), partNo: o ? o.oem : '', amount: o && o.price ? o.price : 0, costClass: 'parts', op: 'renew' });
+          if (painted && ui.addRefinish) paintLine(`${Nm} – refinish new part`, p.refinishHrs, 'refinish');
           break;
-        case 'repair1': repairLine('light', 0.5); break;
-        case 'repair': repairLine('medium', 1.0); break;
-        case 'repair3': repairLine('heavy', 2.0); break;
-        case 'pdr': job.lines.push(C.newLine({ type: 'Body', description: `${Nm} – paintless dent repair`, code: p.code, side, hours: H(1.0), partNo: 'Existing panel', costClass: 'parts' })); break;
-        case 'smart': job.lines.push(C.newLine({ type: 'Painting', description: `${Nm} – smart repair / polish`, code: p.code, side, hours: P(0.8), costClass: 'paint' })); break;
-        case 'refinish':
-          job.lines.push(C.newLine({ type: 'Painting', description: `${Nm} – refinish new part`, code: p.code, side, hours: P(p.refinishHrs || 1.0), costClass: 'paint' }));
-          break;
-        case 'refinishRep1': job.lines.push(C.newLine({ type: 'Painting', description: `${Nm} – refinish repaired part (damage <50%)`, code: p.code, side, hours: P((p.refinishHrs || 1.0) * 0.7), costClass: 'paint' })); break;
-        case 'refinishRep2': job.lines.push(C.newLine({ type: 'Painting', description: `${Nm} – refinish repaired part (damage >50%)`, code: p.code, side, hours: P((p.refinishHrs || 1.0) * 0.9), costClass: 'paint' })); break;
-        case 'blend': job.lines.push(C.newLine({ type: 'Painting', description: `${Nm} – blend (colour match)`, code: p.code, side, hours: P((p.refinishHrs || 1.0) * num(C.settings.blendFactor || 0.5)), costClass: 'paint' })); break;
+        case 'repair1': repairLine('light', 0.5, 'repair1'); break;
+        case 'repair': repairLine('medium', 1.0, 'repair'); break;
+        case 'repair3': repairLine('heavy', 2.0, 'repair3'); break;
+        case 'pdr': add({ type: 'Body', description: `${Nm} – paintless dent repair`, hours: H(1.0), partNo: 'Existing panel', costClass: 'parts', op: 'pdr' }); break;
+        case 'smart': paintLine(`${Nm} – smart repair / polish`, 0.8, 'smart'); break;
+        case 'refinish': paintLine(`${Nm} – refinish new part`, p.refinishHrs || 1.0, 'refinish'); break;
+        case 'refinishRep1': paintLine(`${Nm} – refinish repaired part (damage <50%)`, (p.refinishHrs || 1.0) * 0.7, 'refinishRep1'); break;
+        case 'refinishRep2': paintLine(`${Nm} – refinish repaired part (damage >50%)`, (p.refinishHrs || 1.0) * 0.9, 'refinishRep2'); break;
+        case 'blend': paintLine(`${Nm} – blend (colour match)`, (p.refinishHrs || 1.0) * num(C.settings.blendFactor || 0.5), 'blend'); break;
         case 'rr':
-          job.lines.push(C.newLine({ type: 'Auxiliary', description: `${Nm} – remove & refit`, code: p.code, side, hours: H(p.replaceHrs * 0.6), costClass: 'parts' }));
+          add({ type: 'Auxiliary', description: `${Nm} – remove & refit`, hours: H(p.replaceHrs * 0.6), costClass: 'parts', op: 'rr' });
           break;
         case 'check':
-          job.lines.push(C.newLine({ type: typeFor === 'Body' ? 'Auxiliary' : typeFor, description: `${Nm} – inspect / test`, code: p.code, side, hours: 0.3, costClass: 'parts' }));
+          add({ type: typeFor === 'Body' ? 'Auxiliary' : typeFor, description: `${Nm} – inspect / test`, hours: 0.3, costClass: 'parts', op: 'check' });
           break;
         case 'refurb':
-          job.lines.push(C.newLine({ type: 'Other', description: `${Nm} – refurbishment`, code: p.code, side, hours: 0, amount: 0, costClass: 'other' }));
+          add({ type: 'Other', description: `${Nm} – refurbishment`, hours: 0, amount: 0, costClass: 'other', op: 'refurb' });
           break;
       }
     }
     changed(); renderJob();
-    toast('Line added.');
+    toast([opRow ? 'Added as an operation.' : 'Line added.', ...notes].join(' '));
   }
   function paintMaterials() {
     const rate = num(C.settings.paintMaterialsPerHour);
-    const ph = job.lines.filter((l) => l.type === 'Painting').reduce((a, l) => a + num(l.hours), 0);
-    if (!ph) return toast('No painting hours on this estimate.', true);
+    const pf = C.paintFactor(job);
+    const painting = job.lines.filter((l) => l.type === 'Painting');
+    if (!painting.reduce((a, l) => a + num(l.hours), 0)) return toast('No painting hours on this estimate.', true);
     if (!rate) return toast('Set a paint materials rate (£ per paint hour) in Settings → Rates first.', true);
-    const amount = C.round2(ph * rate * C.paintFactor(job));
+    // the paint-finish factor is applied once: picker lines already carry it in their hours (pfApplied)
+    const eff = painting.reduce((a, l) => a + num(l.hours) * (num(l.pfApplied) > 0 ? pf / num(l.pfApplied) : pf), 0);
+    const amount = C.round2(eff * rate);
+    // materials already priced on another paint line (e.g. "Masking, colour matching … £350"): do not charge them twice
+    const priced = job.lines.filter((x) => x.auto !== 'paintMaterials' && x.costClass === 'paint' && num(x.amount) > 0);
+    if (priced.length) {
+      const sum = priced.reduce((a, x) => a + num(x.amount), 0);
+      return toast(`Paint materials are already priced on line${priced.length > 1 ? 's' : ''} ${priced.map((x) => job.lines.indexOf(x) + 1).join(', ')} (${gbp(sum)}), so no second materials charge was added. The calculation gives ${gbp(amount)}; clear the existing amount first to use it.`, true);
+    }
     let l = job.lines.find((x) => x.auto === 'paintMaterials');
-    if (!l) { l = C.newLine({ type: 'Materials', description: '', hours: 0, costClass: 'paint', auto: 'paintMaterials' }); job.lines.push(l); }
-    l.description = `Paint materials – ${hrs(ph)} paint hrs × £${rate.toFixed(2)}${C.paintFactor(job) !== 1 ? ' × ' + C.paintFactor(job) + ' (' + job.vehicle.paintType + ')' : ''}`;
+    if (!l) { l = C.newLine({ type: 'Materials', description: '', hours: 0, costClass: 'paint', auto: 'paintMaterials', op: 'operation' }); job.lines.push(l); }
+    l.description = `Paint materials – ${hrs(eff)} paint hrs × £${rate.toFixed(2)}${pf !== 1 ? ` (${job.vehicle.paintType || 'metallic'} finish ×${pf} included)` : ''}`;
     l.amount = amount;
     changed(); renderJob(); toast('Paint materials: ' + gbp(amount));
   }
   function oemPicker(lineId) {
-    const l = job.lines.find((x) => x.id === lineId); if (!l) return;
-    const cands = C.oemLookup(job.vehicle.oemKey, l.code, l.side);
+    const j = job;
+    const l = j.lines.find((x) => x.id === lineId); if (!l) return;
+    const cands = C.oemLookup(j.vehicle.oemKey, l.code, l.side);
     const b = openModal('OEM part numbers — ' + l.description, `<p class="hint">Researched numbers for this vehicle. Confirm against the VIN with a dealer parts counter before ordering. Versions often differ by facelift, trim and options.</p>
       <table class="tbl"><thead><tr><th>Part number</th><th>Description</th><th>Confidence</th><th class="num">Price</th><th>Notes</th><th></th></tr></thead><tbody>
       ${cands.map((c, i) => `<tr><td><b>${esc(c.oem)}</b></td><td>${esc(c.description)}</td><td><span class="badge ${c.confidence === 'confirmed' ? 'ok' : 'warn'}">${esc(c.confidence)}</span></td><td class="num">${c.price ? gbp(c.price) : '—'}</td>
-        <td class="hint" style="max-width:380px">${esc(c.notes)}${c.source ? `<br><a href="${esc(c.source)}" target="_blank" rel="noopener">source</a>` : ''}</td><td><button class="btn sm primary" data-use="${i}">Use</button></td></tr>`).join('')}</tbody></table>`);
-    b.addEventListener('click', (e) => {
-      const i = e.target.dataset.use; if (i == null) return;
-      const c = cands[+i]; l.partNo = c.oem; if (c.price) l.amount = c.price;
-      changed(); closeModal(); renderJob();
+        <td class="hint" style="max-width:380px">${esc(c.notes)}${httpUrl(c.source) ? `<br><a href="${esc(c.source)}" target="_blank" rel="noopener">source</a>` : c.source ? `<br>${esc(c.source)}` : ''}</td><td><button class="btn sm primary" data-use="${i}">Use</button></td></tr>`).join('')}</tbody></table>`);
+    b.addEventListener('click', async (e) => {
+      const u = e.target.closest('[data-use]'); if (!u) return;
+      const c = cands[+u.dataset.use];
+      closeModal();
+      await applyToJob(j, (x) => { const t = x.lines.find((y) => y.id === lineId); if (t) { t.partNo = c.oem; if (c.price) t.amount = c.price; } });
     });
   }
 
@@ -974,9 +1031,9 @@
         ${v.sources.map((s, i) => `<tr><td><input data-vs="name" data-i="${i}" value="${esc(s.name)}" list="valsrc"></td><td class="num" style="width:160px"><input type="number" step="1" data-vs="amount" data-i="${i}" value="${esc(s.amount)}"></td><td><button class="btn sm danger" data-act="vsDel" data-i="${i}">✕</button></td></tr>`).join('')}
       </tbody></table><datalist id="valsrc"><option value="Glass's Guide"><option value="CAP HPI"><option value="AutoTrader"><option value="Percayso Vehicle Intelligence"><option value="Like-for-like advert"><option value="Dealer retail advert"></datalist>
       <div class="row" style="margin-top:8px"><button class="btn sm" data-act="vsAdd">+ Source</button><span class="grow"></span>
-        ${t.valMax ? `<span class="hint">Range ${gbp(t.valMin)} – ${gbp(t.valMax)} · average ${gbp(t.valAvg)}</span>
-        <button class="btn sm" data-act="adopt" data-w="max">Adopt highest</button><button class="btn sm" data-act="adopt" data-w="avg">Adopt average</button><button class="btn sm" data-act="adopt" data-w="min">Adopt lowest</button>` : ''}</div>
-      <div class="form3" style="margin-top:14px">${F('valuation.adopted', 'Assessed pre-accident value £', { type: 'number' })}${F('valuation.salvagePct', 'Salvage % of PAV', { type: 'number', hint: `= ${gbp(C.round2(t.pav * num(v.salvagePct) / 100))}` })}${F('valuation.salvageOverride', 'Salvage value override £ (e.g. actual bid)', { type: 'number' })}</div>
+        <span class="row" id="valRange">${valRange(t)}</span></div>
+      <div class="form3" style="margin-top:14px">${F('valuation.adopted', 'Assessed pre-accident value £', { type: 'number' })}${F('valuation.salvagePct', 'Salvage % of PAV', { type: 'number', hint: `<span id="salvageHint">= ${gbp(C.round2(t.pav * num(v.salvagePct) / 100))}</span>` })}${F('valuation.salvageOverride', 'Salvage value override £ (e.g. actual bid)', { type: 'number' })}</div>
+      <div class="form" style="margin-top:12px">${F('valuation.belowHighestReason', 'Reason for adopting a value below the highest guide', { type: 'textarea', rows: 2, full: true, hint: 'Printed in the report. The ombudsman\'s starting point is the highest retail guide, so explain any lower figure with evidence about this vehicle.' })}</div>
       <h3>Like-for-like adverts</h3>
       <table class="tbl"><thead><tr><th>Description (derivative)</th><th>Year</th><th class="num">Mileage</th><th class="num">Price £</th><th>Source / URL</th><th></th></tr></thead><tbody>
         ${(v.adverts || []).map((a, i) => `<tr><td><input data-adv="description" data-i="${i}" value="${esc(a.description)}"></td><td style="width:80px"><input data-adv="year" data-i="${i}" value="${esc(a.year)}"></td><td class="num" style="width:110px"><input type="number" data-adv="mileage" data-i="${i}" value="${esc(a.mileage)}"></td><td class="num" style="width:110px"><input type="number" data-adv="price" data-i="${i}" value="${esc(a.price)}"></td><td><input data-adv="url" data-i="${i}" value="${esc(a.url)}" placeholder="AutoTrader / dealer URL"></td><td><button class="btn sm danger" data-act="advDel" data-i="${i}">✕</button></td></tr>`).join('') || '<tr><td colspan="6" class="hint">No adverts. Add your own, or let the AI search for comparables.</td></tr>'}
@@ -985,37 +1042,49 @@
       <div class="form" style="margin-top:12px">${F('valuation.historyNotes', 'History notes (previous write-off category, finance, plate changes, imports)', { type: 'textarea', rows: 2 })}${F('valuation.optionsNotes', 'Condition, options & service history notes', { type: 'textarea', rows: 2 })}</div></div>
     ${valuationAiPanel()}
     <div class="card"><h2 style="margin-top:0">Economic repair &amp; outcome</h2>
-      <div class="totals"><div><span>Net repair</span><b>${gbp(t.net)}</b></div><div><span>Gross repair</span><b>${gbp(t.gross)}</b></div><div><span>PAV</span><b>${t.pav ? gbp(t.pav) : '—'}</b></div>
-        <div><span>Repair / PAV (net)</span><b>${t.pctNet.toFixed(2)}%</b></div><div><span>Repair / PAV (gross)</span><b>${t.pctGross.toFixed(2)}%</b></div><div><span>Salvage</span><b>${gbp(t.salvage)}</b></div></div>
-      <p>${t.pav ? (t.berSuggested ? `<span class="badge err">Over threshold</span> Repair cost is at or above your ${C.settings.berThresholdPct}% (${C.settings.berBasis}) economic-repair threshold. Consider a total loss.` : `<span class="badge ok">Within threshold</span> Repair cost is below your ${C.settings.berThresholdPct}% (${C.settings.berBasis}) threshold.`) : '<span class="hint">Enter a PAV to see the economic repair position.</span>'}</p>
+      <div id="econBox">${econBox(t)}</div>
       <div class="form">${F('outcome.decision', 'Economic repair / total-loss assessment', { type: 'select', options: DECISIONS })}
         ${F('outcome.category', 'Salvage category (ABI Code of Practice)', { type: 'select', options: [['', 'Not assessed'], ['N', 'Category N — Non-Structural'], ['S', 'Category S — Structural']], hint: 'S: structural frame or chassis damaged. N: no structural damage. Categories A/B (break/crush only) are not offered here.' })}
         ${F('report.headline', 'Cover headline (optional override)', { ph: 'Auto: e.g. TOTAL LOSS RECOMMENDED' })}${F('report.subHeadline', 'Cover sub-headline (optional override)', { ph: 'Auto: e.g. CATEGORY N - RECOMMENDATION' })}
         ${F('valuation.comments', 'Valuation comments', { type: 'textarea', rows: 8, full: true, hint: '<button class="link" data-act="genValComments">Write from the figures</button> · use **bold** for emphasis' })}</div></div>`;
   }
+  function valRange(t) {
+    return t.valMax ? `<span class="hint">Range ${gbp(t.valMin)} – ${gbp(t.valMax)} · average ${gbp(t.valAvg)}</span>
+        <button class="btn sm" data-act="adopt" data-w="max">Adopt highest</button><button class="btn sm" data-act="adopt" data-w="avg">Adopt average</button><button class="btn sm" data-act="adopt" data-w="min">Adopt lowest</button>` : '';
+  }
+  function econBox(t) {
+    const basis = berBasis(), thr = esc(C.settings.berThresholdPct);
+    return `<div class="totals"><div><span>Net repair</span><b>${gbp(t.net)}</b></div><div><span>Gross repair</span><b>${gbp(t.gross)}</b></div><div><span>PAV</span><b>${t.pav ? gbp(t.pav) : '—'}</b></div>
+        <div><span>Repair / PAV (net)</span><b>${t.pctNet.toFixed(2)}%</b></div><div><span>Repair / PAV (gross)</span><b>${t.pctGross.toFixed(2)}%</b></div><div><span>Salvage</span><b>${gbp(t.salvage)}</b></div></div>
+      <p>${t.pav ? (t.berSuggested ? `<span class="badge err">Over threshold</span> Repair cost is at or above your ${thr}% (${basis}) economic-repair threshold. Consider a total loss.` : `<span class="badge ok">Within threshold</span> Repair cost is below your ${thr}% (${basis}) threshold.`) : '<span class="hint">Enter a PAV to see the economic repair position.</span>'}</p>`;
+  }
   function valuationAiPanel() {
     const r = job.valuation.ai;
     return `<div class="card aiPanel"><div class="row"><div class="grow"><h2 style="margin:0">✦ AI valuation assistant</h2><div class="hint">Applies the ombudsman's approach: retail market value at the date of loss, starting from the highest guide, adjusted only on evidence about this vehicle, with mileage checked against the MOT history.</div></div>
       <label class="hint"><input type="checkbox" id="valSearch" style="width:auto" ${ui.valSearch !== false ? 'checked' : ''}> search the web for comparable UK adverts</label>
-      <button class="btn ai" data-act="aiValuation" ${desktop ? '' : 'disabled'}>${ui.busy === 'val' ? '<span class="spinner"></span>Valuing…' : '✦ AI valuation'}</button></div>
+      <button class="btn ai" data-act="aiValuation" ${desktop && !busy('val') ? '' : 'disabled'}>${busy('val') ? '<span class="spinner"></span>Valuing…' : '✦ AI valuation'}</button></div>
       ${r ? `<div class="totals" style="margin-top:12px"><div class="g"><span>Recommended PAV</span><b>${gbp(r.recommended_pav)}</b></div><div><span>Range</span><b>${gbp(r.range_low)} – ${gbp(r.range_high)}</b></div><div><span>Basis</span><b style="font-size:13px">${esc(r.basis)}</b></div></div>
         <p><b>Guides:</b> ${esc(r.guide_assessment)}</p><p><b>Mileage:</b> ${esc(r.mileage_assessment)}</p>
         ${(r.adjustments || []).length ? `<table class="tbl"><thead><tr><th>Adjustment</th><th class="num">£</th><th>Reason</th></tr></thead><tbody>${r.adjustments.map((a) => `<tr><td>${esc(a.item)}</td><td class="num">${gbp(a.amount)}</td><td class="hint">${esc(a.reason)}</td></tr>`).join('')}</tbody></table>` : ''}
-        ${(r.comparables || []).length ? `<h3>Comparables</h3><table class="tbl"><thead><tr><th>Vehicle</th><th>Year</th><th class="num">Miles</th><th class="num">Price</th><th>Like-for-like</th><th>Source</th></tr></thead><tbody>${r.comparables.map((c, i) => `<tr><td>${esc(c.description)}<div class="hint">${esc(c.notes)}</div></td><td>${esc(c.year)}</td><td class="num">${num(c.mileage).toLocaleString('en-GB')}</td><td class="num">${gbp(c.price)}</td><td>${c.like_for_like ? '<span class="badge ok">yes</span>' : '<span class="badge warn">partial</span>'}</td><td>${c.url ? `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.source || 'link')}</a>` : esc(c.source)}<button class="btn sm" data-act="advFromAi" data-i="${i}" title="Add to adverts">+</button></td></tr>`).join('')}</tbody></table>` : ''}
+        ${(r.comparables || []).length ? `<h3>Comparables</h3><table class="tbl"><thead><tr><th>Vehicle</th><th>Year</th><th class="num">Miles</th><th class="num">Price</th><th>Like-for-like</th><th>Source</th></tr></thead><tbody>${r.comparables.map((c, i) => `<tr><td>${esc(c.description)}<div class="hint">${esc(c.notes)}</div></td><td>${esc(c.year)}</td><td class="num">${num(c.mileage).toLocaleString('en-GB')}</td><td class="num">${gbp(c.price)}</td><td>${c.like_for_like ? '<span class="badge ok">yes</span>' : '<span class="badge warn">partial</span>'}</td><td>${httpUrl(c.url) ? `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.source || 'link')}</a>` : esc(c.source || c.url || '')}<button class="btn sm" data-act="advFromAi" data-i="${i}" title="Add to adverts">+</button></td></tr>`).join('')}</tbody></table>` : ''}
         ${(r.flags || []).length ? `<div class="card" style="border-color:#f0c36d;background:#fffaf0;margin-top:10px"><b>Check:</b><ul>${r.flags.map((f) => `<li>${esc(f)}</li>`).join('')}</ul></div>` : ''}
         <div class="row" style="margin-top:10px"><button class="btn primary" data-act="aiValApply">Adopt ${gbp(r.recommended_pav)} and use these comments</button><span class="hint">${esc(r.model || '')}${r.searched ? ' · web search used' : ''}</span></div>` : ''}
     </div>`;
   }
   async function aiValuation() {
     if (!desktop) return toast('AI tools need the desktop app.', true);
-    ui.busy = 'val'; renderJob();
+    const j = job;
+    const key = 'val:' + j.id;
+    if (running.has(key)) return;
+    const ai = C.settings.ai || {};
+    running.add(key); renderJob();
     try {
-      const res = await desktop.ai.valuation({ job: slimJob(), motHistory: job.vehicle.motHistory || [], searchWeb: ui.valSearch !== false, model: C.settings.ai.model, effort: C.settings.ai.effort });
+      const res = await desktop.ai.valuation({ job: slimJob(j), motHistory: j.vehicle.motHistory || [], searchWeb: ui.valSearch !== false, model: ai.model, effort: ai.effort });
       if (!res.ok) throw new Error(res.error);
-      job.valuation.ai = res.result;
-      logAi('Valuation assistant' + (res.result.searched ? ' (with web search)' : ''), res.result.model);
-      changed(); toast('AI valuation ready. Review the workings before adopting.');
-    } catch (e) { toast(e.message, true); } finally { ui.busy = false; renderJob(); }
+      const target = await applyToJob(j, (x) => { x.valuation.ai = res.result; logAi(x, 'Valuation assistant' + (res.result.searched ? ' (with web search)' : ''), res.result.model); });
+      if (!target) toast(`${regOf(j)} has been deleted, so the AI valuation was not saved.`, true);
+      else toast(target === job ? 'AI valuation ready. Review the workings before adopting.' : `AI valuation for ${regOf(target)} is ready and saved with that assessment.`);
+    } catch (e) { toast(e.message, true); } finally { running.delete(key); if (job && job.id === j.id) renderJob(); }
   }
   function genValComments() {
     const t = C.totals(job);
@@ -1035,22 +1104,30 @@
   // ---------- OPINION ----------
   function tabOpinion() {
     return `<div class="card"><div class="row"><div class="grow"><h2 style="margin:0">Report narrative</h2><div class="hint">The AI writes every narrative section from your photos, findings, estimate and figures. You review each section before applying it.</div></div>
-      <button class="btn ai" data-act="aiDraft" ${!desktop ? 'disabled' : ''}>${ui.busy === 'draft' ? '<span class="spinner"></span>Drafting…' : '✦ AI draft all narrative'}</button></div></div>
+      <button class="btn ai" data-act="aiDraft" ${!desktop || busy('draft') ? 'disabled' : ''}>${busy('draft') ? '<span class="spinner"></span>Drafting…' : '✦ AI draft all narrative'}</button></div>
+      ${pendingDrafts.has(job.id) ? '<div class="row" style="margin-top:10px"><span class="badge ai">AI draft ready</span><button class="btn sm" data-act="reviewPendingDraft">Review the AI draft</button><span class="hint">Nothing is changed until you apply sections.</span></div>' : ''}</div>
       <div class="card"><div class="form">
       ${F('report.summary', 'Section 01 — headline summary (use **bold** for key findings)', { type: 'textarea', rows: 6, full: true })}
       ${F('opinion', "Report comments / engineer's opinion", { type: 'textarea', rows: 18, full: true })}</div></div>`;
   }
   async function aiDraft() {
     if (!desktop) return toast('AI tools need the desktop app.', true);
-    ui.busy = 'draft'; renderJob();
+    const j = job;
+    const key = 'draft:' + j.id;
+    if (running.has(key)) return;
+    const ai = C.settings.ai || {};
+    running.add(key); renderJob();
     try {
-      const res = await desktop.ai.draftNarrative({ job: slimJob(), totals: C.totals(job), settings: { berThresholdPct: C.settings.berThresholdPct, berBasis: C.settings.berBasis }, model: C.settings.ai.model, effort: C.settings.ai.effort });
+      const res = await desktop.ai.draftNarrative({ job: slimJob(j), totals: C.totals(j), settings: { berThresholdPct: C.settings.berThresholdPct, berBasis: C.settings.berBasis }, model: ai.model, effort: ai.effort });
       if (!res.ok) throw new Error(res.error);
-      logAi('Narrative drafting', res.result.model);
-      reviewDraft(res.result);
-    } catch (e) { toast(e.message, true); } finally { ui.busy = false; if (tab === 'opinion') renderJob(); }
+      const target = await applyToJob(j, (x) => logAi(x, 'Narrative drafting', res.result.model));
+      if (!target) return toast(`${regOf(j)} has been deleted, so the AI draft was discarded.`, true);
+      pendingDrafts.set(j.id, res.result); // kept until applied, so closing the review does not lose a paid draft
+      if (job && job.id === j.id) reviewDraft(res.result, j.id);
+      else toast(`The AI draft for ${regOf(target)} is ready. Open that assessment's Opinion tab to review it.`);
+    } catch (e) { toast(e.message, true); } finally { running.delete(key); if (job && job.id === j.id && tab === 'opinion') renderJob(); }
   }
-  function reviewDraft(d) {
+  function reviewDraft(d, jid) {
     const map = [
       ['summary', 'report.summary', 'Section 01 summary'], ['inspection_condition', 'inspection.condition', 'Vehicle condition at inspection'],
       ['structural', 'assessment.structural', 'Structural & body assessment'], ['mechanical', 'assessment.mechanical', 'Mechanical assessment'],
@@ -1063,12 +1140,15 @@
       ${map.map(([k, path, label], i) => { const cur = getPath(job, path) || ''; const nu = d[k] == null ? '' : String(d[k]); if (!nu) return ''; return `<div class="cmp"><input type="checkbox" data-apply="${i}" ${cur ? '' : 'checked'} style="width:auto"><div><b>${esc(label)}</b><div class="old">${esc(cur) || '<i>empty</i>'}</div></div><div class="new">${esc(nu)}</div></div>`; }).join('')}
       <div class="row" style="margin-top:14px"><button class="btn" data-sel="all">Select all</button><span class="grow"></span><button class="btn primary" data-go="1">Apply selected sections</button></div>`;
     const b = openModal('✦ AI draft — review before applying', html);
-    b.addEventListener('click', (e) => {
-      if (e.target.dataset.sel) $$('input[data-apply]', b).forEach((c) => { c.checked = true; });
-      if (e.target.dataset.go) {
-        let n = 0;
-        $$('input[data-apply]', b).forEach((c) => { if (c.checked) { const [k, path] = map[+c.dataset.apply]; setPath(job, path, d[k]); n++; } });
-        changed(); closeModal(); renderJob(); toast(`${n} section(s) applied. Review them in the report preview.`);
+    b.addEventListener('click', async (e) => {
+      if (e.target.closest('[data-sel]')) $$('input[data-apply]', b).forEach((c) => { c.checked = true; });
+      if (e.target.closest('[data-go]')) {
+        const picks = $$('input[data-apply]', b).filter((c) => c.checked).map((c) => map[+c.dataset.apply]);
+        closeModal();
+        const target = await applyToJob({ id: jid }, (x) => picks.forEach(([k, path]) => setPath(x, path, d[k])));
+        if (!target) return toast('That assessment has been deleted, so the draft was not applied.', true);
+        pendingDrafts.delete(jid);
+        toast(`${picks.length} section(s) applied${target !== job ? ' to ' + regOf(target) : ''}. Review them in the report preview.`);
       }
     });
   }
@@ -1083,21 +1163,28 @@
       <datalist id="rels"><option value="Owner"><option value="Registered keeper"><option value="Driver"><option value="Lease / finance customer"><option value="Fleet manager"></datalist></div>`;
   }
 
+  // The signature the report prints today: this report's own, or the default one from Settings when ticked.
+  const liveSignature = (j) => j.assessor.signature || (j.assessor.useDefaultSignature ? C.settings.assessor.signature : '') || '';
   function tabSignoff() {
-    const sig = job.assessor.signature || (job.assessor.useDefaultSignature ? C.settings.assessor.signature : '');
-    return `<div class="card"><div class="form">
+    const iss = job.issued;
+    const sig = iss ? iss.signature : liveSignature(job);
+    return `<div class="card ${iss ? 'issued' : ''}"><div class="row"><h2 class="grow" style="margin:0">${iss ? 'Report finalised' : 'Finalise the report'}</h2>
+        ${iss ? `<span class="badge ok">finalised ${esc(new Date(iss.at).toLocaleString('en-GB'))}</span><button class="btn" data-act="reopenReport">Re-open</button>` : '<button class="btn primary" data-act="finaliseReport">Finalise report</button>'}</div>
+      <p class="hint" style="margin-bottom:0">${iss ? 'The company details, logo, declaration, signature, qualifications and AQP ID printed in this report are frozen as they were when it was finalised, so later changes in Settings do not alter it. Re-open it to use the current Settings.' : 'Finalising freezes the company details, logo, declaration, signature, qualifications and AQP ID printed in this report, so later changes in Settings cannot alter an issued report. You can re-open it later.'}</p></div>
+      <div class="card"><div class="form">
       ${F('assessor.name', 'Assessor name')}${F('assessor.title', 'Professional role / title')}
       ${F('assessor.qualifications', 'Qualifications (e.g. MIAEA, IMI VDA accreditation no.)')}${F('assessor.aqpId', 'AQP ID (ABI salvage categorisation)')}
       ${F('assessor.dateSigned', 'Date signed', { type: 'date', hint: '<button class="link" data-act="signToday">Sign today</button>' })}<div></div>
       ${F('report.conflicts', 'Conflict of interest declaration', { full: true })}</div>
       <label class="row" style="margin-top:10px"><input type="checkbox" data-bind-check="report.cpr35" ${job.report.cpr35 ? 'checked' : ''} style="width:auto"> <b>Court-compliant expert report (CPR Part 35 / PD 35)</b>: adds the expert's duty statement, the statement of truth, and the PD 35 checks</label>
-      ${(job.aiLog || []).length ? `<h3>AI and data-use log</h3><table class="tbl"><thead><tr><th>When</th><th>Action</th><th>Model / source</th></tr></thead><tbody>${job.aiLog.map((a) => `<tr><td class="hint">${esc(new Date(a.at).toLocaleString('en-GB'))}</td><td>${esc(a.action)}</td><td class="hint">${esc(a.model || '')}</td></tr>`).join('')}</tbody></table><p class="hint">The report includes an AI-use statement listing these. The assessor remains responsible for every opinion.</p>` : ''}
+      ${(job.aiLog || []).length ? `<h3>AI and data-use log</h3><table class="tbl"><thead><tr><th>When</th><th>Action</th><th>Model / source</th></tr></thead><tbody>${job.aiLog.map((a) => `<tr><td class="hint">${esc(new Date(a.at).toLocaleString('en-GB'))}</td><td><span class="badge ${a.ai ? 'ai' : ''}">${a.ai ? 'AI' : 'data'}</span> ${esc(a.action)}</td><td class="hint">${esc(a.model || '')}</td></tr>`).join('')}</tbody></table><p class="hint">The report's "Use of AI and data tools" statement lists these. The assessor remains responsible for every opinion.</p>` : ''}
       <h3>Signature</h3>
       ${sig ? `<img src="${sig}" style="max-height:80px;border:1px solid var(--line);border-radius:6px;background:#fff;padding:4px">` : '<p class="hint">No signature.</p>'}
       <div class="row" style="margin-top:8px"><button class="btn sm" data-act="sigDraw" data-target="job">Draw signature</button><button class="btn sm" data-act="sigUpload" data-target="job">Upload image</button>
         ${job.assessor.signature ? '<button class="btn sm danger" data-act="sigClear">Remove this report\'s signature</button>' : ''}
         <label class="hint"><input type="checkbox" data-bind-check="assessor.useDefaultSignature" ${job.assessor.useDefaultSignature ? 'checked' : ''} style="width:auto"> use my default signature from Settings</label></div>
-      <h3>Declaration</h3><p class="hint" style="white-space:pre-wrap">${esc(C.settings.assessor.declaration)}</p><p class="hint">Edit the declaration in Settings.</p></div>`;
+      ${iss ? '<p class="hint">This is the signature frozen when the report was finalised.</p>' : ''}
+      <h3>Declaration</h3><p class="hint" style="white-space:pre-wrap">${esc(iss ? iss.declaration : C.settings.assessor.declaration)}</p><p class="hint">${iss ? 'The declaration as it was when the report was finalised.' : 'Edit the declaration in Settings.'}</p></div>`;
   }
 
   function tabReport() {
@@ -1111,6 +1198,8 @@
   }
 
   async function exportPdf() {
+    const un = job.lines.filter((l) => l.ai && !l.reviewed).length;
+    if (un && !confirm(`${un} AI-suggested estimate line${un === 1 ? ' has' : 's have'} not been marked as reviewed, and the report will say so. Export anyway?`)) return;
     const html = Report.render(job, { mode: desktop ? 'pdf' : 'print' });
     const name = (job.report.ref || job.vehicle.reg || 'engineering-report').replace(/[^\w.-]+/g, '_');
     if (desktop) {
@@ -1154,7 +1243,9 @@
   // ---------- SETTINGS ----------
   let dataStatus = { dvla: false, mot: false };
   async function renderSettings() {
+    const seq = routeSeq;
     if (desktop) { aiStatus = await desktop.ai.status(); dataStatus = await desktop.data.status(); }
+    if (seq !== routeSeq) return;
     const s = C.settings;
     main.innerHTML = `<div class="wrap"><h1>Settings</h1><div class="sub">Company details, rates and AI. These apply to every report.</div>
       <div class="card"><h2 style="margin-top:0">Company &amp; report branding</h2><div class="form">
@@ -1168,7 +1259,8 @@
         ${Object.keys(s.rates).map((k) => S('rates.' + k, `${k} labour rate £/h`, { type: 'number', step: '0.01' })).join('')}
         ${S('vatPct', 'VAT %', { type: 'number' })}${S('salvagePct', 'Default salvage % of PAV', { type: 'number' })}
         ${S('paintMaterialsPerHour', 'Paint materials £ per paint hour', { type: 'number', step: '0.01', hint: 'Used by "Calculate paint materials".' })}${S('blendFactor', 'Blend time as fraction of refinish', { type: 'number', step: '0.05' })}
-        ${S('berThresholdPct', 'Economic repair threshold %', { type: 'number', hint: 'Repair cost as % of PAV at which a total loss is flagged.' })}${S('berBasis', 'Threshold based on', { type: 'select', options: [['net', 'Net (excl. VAT)'], ['gross', 'Gross (incl. VAT)']] })}</div></div>
+        ${S('berThresholdPct', 'Economic repair threshold %', { type: 'number', hint: 'Repair cost as % of PAV at which a total loss is flagged.' })}${S('berBasis', 'Threshold based on', { type: 'select', options: [['net', 'Net (excl. VAT)'], ['gross', 'Gross (incl. VAT)']] })}</div>
+        <p class="hint">Labour rates and VAT are copied into each new assessment. Existing assessments keep their own; use Estimate → "Use current Settings rates" to update one.</p></div>
       <div class="card"><h2 style="margin-top:0">Data connections</h2>
         ${desktop ? `<p>DVLA: ${dataStatus.dvla ? '<span class="badge ok">key saved</span>' : '<span class="badge warn">not set</span>'} · MOT History: ${dataStatus.mot ? '<span class="badge ok">credentials saved</span>' : '<span class="badge warn">not set</span>'}</p>
         <h3>DVLA Vehicle Enquiry Service</h3>
@@ -1260,26 +1352,46 @@
       await saveCustomOem(list); ui.catVeh = key; closeModal(); renderCatalogue();
     });
   }
+  // RFC 4180 CSV: quoted fields may hold commas, line breaks and doubled quotes ("").
+  function parseCsv(text) {
+    const rows = []; let row = [], f = '', q = false;
+    text = String(text || '').replace(/^\uFEFF/, '');
+    for (let i = 0; i < text.length; i++) {
+      const ch = text[i];
+      if (q) {
+        if (ch === '"') { if (text[i + 1] === '"') { f += '"'; i++; } else q = false; } else f += ch;
+      } else if (ch === '"' && f.trim() === '') { q = true; f = ''; }
+      else if (ch === ',') { row.push(f); f = ''; }
+      else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(f); rows.push(row); row = []; f = ''; }
+      else f += ch;
+    }
+    if (f !== '' || row.length) { row.push(f); rows.push(row); }
+    return rows.map((r) => r.map((x) => x.trim())).filter((r) => r.some(Boolean));
+  }
   async function catImport() {
     const f = await pickFile('.csv,text/csv'); if (!f) return;
-    const text = await f.text();
+    const rows = parseCsv(await f.text());
     const key = ui.catVeh || (C.oemVehicles()[0] || {}).key; const base = C.findOemVehicle(key);
     if (!base) return toast('Choose a vehicle first.', true);
     const list = C.clone(C.customOem);
     let cv = list.find((x) => x.key === key);
     if (!cv) { cv = { key, make: base.make, model: base.model, generation: base.generation, years: base.years, parts: {} }; list.push(cv); }
+    // the first row is a header only when it says "code" or does not start with a catalogue code
+    let start = 0, headerNote = '';
+    if (rows.length) { const c0 = rows[0][0] || ''; if (/^code$/i.test(c0)) start = 1; else if (!C.CAT[c0.toUpperCase()]) { start = 1; headerNote = ` The first row ("${c0.slice(0, 30)}") was read as a header.`; } }
     let n = 0, bad = 0;
-    text.split(/\r?\n/).slice(1).forEach((line) => {
-      const c = line.split(',').map((x) => x.trim().replace(/^"|"$/g, ''));
-      if (c.length < 3 || !c[0]) return;
-      const [code, side, oem, desc, price] = c;
-      if (!C.CAT[code] || !oem) { bad++; return; }
-      const k = code + '|' + (side || '').toUpperCase().replace('LH', 'L').replace('RH', 'R');
-      (cv.parts[k] = cv.parts[k] || []).unshift({ oem, description: desc || C.CAT[code].name, notes: 'Imported from CSV', price: num(price) || null, source: '', confidence: 'confirmed', user: true });
+    for (const c of rows.slice(start)) {
+      const code = (c[0] || '').toUpperCase(), oem = c[2] || '';
+      if (!C.CAT[code] || !oem) { bad++; continue; }
+      const sd = (c[1] || '').toUpperCase().replace(/\s+/g, '');
+      const side = /^(L|LH|LEFT|NS|N\/S|NEARSIDE)$/.test(sd) ? 'L' : /^(R|RH|RIGHT|OS|O\/S|OFFSIDE)$/.test(sd) ? 'R' : '';
+      const price = num(String(c[4] || '').replace(/[£,\s]/g, ''));
+      const k = code + '|' + side;
+      (cv.parts[k] = cv.parts[k] || []).unshift({ oem, description: c[3] || C.CAT[code].name, notes: 'Imported from CSV', price: price || null, source: '', confidence: 'confirmed', user: true });
       n++;
-    });
+    }
     await saveCustomOem(list); renderCatalogue();
-    toast(`Imported ${n} part number(s)${bad ? `, skipped ${bad} with unknown codes` : ''}. CSV columns: code,side,oem,description,price`);
+    toast(`Imported ${n} part number(s)${bad ? `, skipped ${bad} row(s) with an unknown code or no part number` : ''}.${headerNote} CSV columns: code,side,oem,description,price`, !n && (bad > 0 || !rows.length));
   }
 
   // ---------- events ----------
@@ -1295,26 +1407,34 @@
       }
     }
     if (tab === 'report' && job) {
-      const f = $('#preview'); if (f) f.srcdoc = Report.render(job, { mode: 'preview' });
+      const f = $('#preview');
+      if (f) { try { f.srcdoc = Report.render(job, { mode: 'preview' }); } catch (err) { f.srcdoc = `<p style="font:14px sans-serif;padding:20px;color:#c0392b">The report preview could not be built: ${esc(err.message || err)}</p>`; } }
     }
   }
 
   main.addEventListener('input', (e) => {
     const t = e.target;
     if (t.dataset.bind && job) {
-      setPath(job, t.dataset.bind, t.type === 'number' ? (t.value === '' ? '' : num(t.value)) : t.value);
-      changed();
-      if (t.dataset.bind === 'vehicle.vin') { const h = t.parentElement.querySelector('.hint'); if (h) h.innerHTML = vinHint(C.decodeVin(t.value)); }
+      const path = t.dataset.bind;
+      setPath(job, path, t.type === 'number' ? (t.value === '' ? '' : num(t.value)) : t.value);
+      if (path === 'vehicle.firstReg') { job.vehicle.firstRegPrecision = t.value ? 'day' : ''; const h = t.parentElement.querySelector('.hint'); if (h) h.textContent = ''; }
+      changed(); // also refreshes the totals, labour values and valuation hints shown beside the field (discount, rates, PAV, salvage)
+      if (path === 'vehicle.vin') {
+        const h = t.parentElement.querySelector('.hint'); if (h) h.innerHTML = vinHint(C.decodeVin(t.value));
+        const mb = $('[data-act="motByVin"]'); if (mb && !busy('motvin')) mb.disabled = !(desktop && t.value.trim());
+      }
       return;
     }
     if (t.dataset.sbind) {
       setPath(C.settings, t.dataset.sbind, t.type === 'number' ? num(t.value) : t.value);
-      saveSettingsSoon();
+      settingsPending = true; saveSettingsSoon();
       return;
     }
     if (t.dataset.pf && job) {
-      const p = job.photos[+t.dataset.i];
-      if (t.dataset.pf === 'include') p.exclude = !t.checked; else p[t.dataset.pf] = t.value;
+      const p = job.photos[+t.dataset.i]; if (!p) return;
+      if (t.dataset.pf === 'include') { p.exclude = !t.checked; refreshPhotoNumbers(); }
+      else if (t.dataset.pf === 'takenAt') { const d = t.value ? new Date(t.value) : null; p.takenAt = d && !isNaN(d) ? d.toISOString() : ''; }
+      else p[t.dataset.pf] = t.value;
       changed(); return;
     }
     if (t.dataset.lf && job) {
@@ -1324,9 +1444,7 @@
       else if (['hours', 'amount'].includes(f)) l[f] = num(t.value);
       else if (f === 'rate') l.rate = t.value === '' ? '' : num(t.value);
       else l[f] = t.value;
-      const lv = $(`[data-lv="${l.id}"]`); if (lv) { const r = C.lineRate(job, l); lv.textContent = num(l.hours) ? gbp(num(l.hours) * r) : '—'; }
-      const tb = $('#totalsBox'); if (tb) tb.innerHTML = totalsBox(C.totals(job));
-      changed();
+      changed(); // updates this line's labour value and the totals
       if (f === 'reviewed' || f === 'type') renderJob();
       return;
     }
@@ -1365,7 +1483,7 @@
       if (['vehicle.oemKey', 'outcome.decision', 'outcome.category', 'vehicle.sizeClass', 'vehicle.paintType'].includes(t.dataset.bind)) renderJob();
     }
   });
-  const saveSettingsSoon = C.debounce(() => C.saveSettings(), 400);
+  const saveSettingsSoon = C.debounce(() => { settingsPending = false; C.saveSettings(); }, 400);
 
   main.addEventListener('click', async (e) => {
     const zone = e.target.closest('[data-zone]');
@@ -1381,22 +1499,40 @@
       loadSample: async () => { const j = Sample.sampleJob(); await C.Store.saveJob(j); location.hash = `#/job/${j.id}/report`; toast('Sample job loaded. Its personal details are anonymised.'); },
       importJob: async () => {
         const f = await pickFile('.json,application/json'); if (!f) return;
-        try { const j = JSON.parse(await f.text()); if (!j.vehicle || !j.lines) throw new Error(); j.id = C.uid(); await C.Store.saveJob(j); location.hash = `#/job/${j.id}/claim`; } catch (err) { toast('That file is not a job file.', true); }
+        let j;
+        try { j = JSON.parse(await f.text()); if (!isObj(j) || !isObj(j.vehicle) || !Array.isArray(j.lines)) throw new Error(); j.id = C.uid(); migrate(j); } catch (err) { return toast('That file is not a job file.', true); }
+        await C.Store.saveJob(j); // saved in the current shape, so the Jobs list can always read it
+        location.hash = `#/job/${j.id}/claim`;
       },
-      dupJob: async () => { const j = C.clone(await C.Store.getJob(el.dataset.id)); j.id = C.uid(); j.report.ref = (j.report.ref || '') + '-COPY'; j.createdAt = new Date().toISOString(); await C.Store.saveJob(j); renderJobs(); },
+      dupJob: async () => {
+        const src = await C.Store.getJob(el.dataset.id); if (!src) return renderJobs();
+        const j = C.clone(src); migrate(j);
+        j.id = C.uid(); j.report.ref = (j.report.ref || '') + '-COPY'; j.createdAt = new Date().toISOString(); delete j.issued; // a copy is a new draft
+        await C.Store.saveJob(j); renderJobs();
+      },
       delJob: async () => { if (!confirm('Delete this assessment permanently?')) return; await C.Store.deleteJob(el.dataset.id); renderJobs(); },
       genRef: () => { const r = (job.vehicle.reg || 'REG').replace(/\s/g, '').toUpperCase(); const d = (job.report.date || C.todayISO()).split('-'); job.report.ref = `${(C.settings.company.name || 'ER').replace(/[^A-Z]/gi, '').slice(0, 2).toUpperCase()}-${r}-${d[2]}${d[1]}${d[0].slice(2)}`; changed(); renderJob(); },
       useOem: () => { job.vehicle.oemKey = el.dataset.key; changed(); renderJob(); },
-      label: () => { const i = +el.dataset.i; Labeler.open(job.photos[i], (labels) => { job.photos[i].labels = labels; changed(); renderJob(); }, openModal, closeModal); },
+      label: () => {
+        const j = job, ph = j.photos[+el.dataset.i]; if (!ph) return;
+        Labeler.open(ph, (labels) => applyToJob(j, (x) => { const p = x.photos.find((q) => q.id === ph.id); if (p) { p.labels = labels; p.labelsReviewed = true; } }), openModal, closeModal);
+      },
       pmove: () => { const i = +el.dataset.i, j2 = i + +el.dataset.d; if (j2 < 0 || j2 >= job.photos.length) return; const p = job.photos.splice(i, 1)[0]; job.photos.splice(j2, 0, p); changed(); renderJob(); },
       pdel: () => { if (!confirm('Remove this photo?')) return; job.photos.splice(+el.dataset.i, 1); changed(); renderJob(); },
       aiAnalyse, aiApplySummary, aiAddLines, aiDraft,
       zoneDel: () => { job.zones = job.zones.filter((x) => x !== el.dataset.z); changed(); renderJob(); },
-      zonePick: () => { const z = Diagram.byLabel(el.dataset.z); ui.zoneGroups = z ? z.groups : null; ui.pickGroup = ''; if (z && z.side) ui.pickSide = z.side; renderJob(); },
-      pickSel: () => { ui.pickSel = el.dataset.code; $$('#pickResults .r').forEach((r) => r.classList.toggle('sel', r.dataset.code === ui.pickSel)); if (e.detail === 2) addFromCatalogue(); },
+      zonePick: () => { const z = Diagram.byLabel(el.dataset.z); ui.zoneGroups = z ? z.groups : null; ui.zoneLabel = z ? z.label : ''; ui.pickGroup = ''; if (z && z.side) ui.pickSide = z.side; renderJob(); },
+      pickSel: () => {
+        ui.pickSel = el.dataset.code;
+        $$('#pickResults .r').forEach((r) => r.classList.toggle('sel', r.dataset.code === ui.pickSel));
+        // operation / service rows default to "Operation / service"; a part never keeps that choice
+        const p = C.CAT[ui.pickSel];
+        if (p) { const want = isOperationRow(p) ? 'operation' : ui.pickOp === 'operation' ? 'replace' : ui.pickOp; if (want !== ui.pickOp) { ui.pickOp = want; const sel = $('#pickOp'); if (sel) sel.value = want; } }
+        if (e.detail === 2) addFromCatalogue();
+      },
       pickAdd: addFromCatalogue,
-      addOp: () => { const o = C.OPS[el.dataset.code]; const cls = o.type === 'Painting' ? 'paint' : 'parts'; job.lines.push(C.newLine({ type: o.type, description: o.name, hours: o.hours, costClass: cls })); changed(); renderJob(); },
-      addBlank: () => { job.lines.push(C.newLine()); changed(); renderJob(); },
+      addOp: () => { const o = C.OPS[el.dataset.code]; const cls = o.type === 'Painting' ? 'paint' : 'parts'; job.lines.push(C.newLine({ type: o.type, description: o.name, hours: o.hours, costClass: cls, op: 'labour' })); changed(); renderJob(); },
+      addBlank: () => { job.lines.push(C.newLine({ op: 'manual' })); changed(); renderJob(); },
       lmove: () => { const i = job.lines.findIndex((x) => x.id === el.dataset.id), j2 = i + +el.dataset.d; if (j2 < 0 || j2 >= job.lines.length) return; const l = job.lines.splice(i, 1)[0]; job.lines.splice(j2, 0, l); changed(); renderJob(); },
       ldel: () => { job.lines = job.lines.filter((x) => x.id !== el.dataset.id); changed(); renderJob(); },
       oemPick: () => oemPicker(el.dataset.id),
@@ -1406,31 +1542,52 @@
       valMileage: () => { job.valuation.mileage = job.vehicle.mileage; changed(); renderJob(); },
       genValComments,
       signToday: () => { job.assessor.dateSigned = C.todayISO(); changed(); renderJob(); },
-      sigDraw: () => signaturePad(async (url) => { if (el.dataset.target === 'default') { C.settings.assessor.signature = url; await C.saveSettings(); renderSettings(); } else { job.assessor.signature = url; changed(); renderJob(); } }),
-      sigUpload: async () => { const f = await pickFile('image/*'); if (!f) return; const r = await C.resizeDataURL(await C.readFileAsDataURL(f), 600, 0.92); if (el.dataset.target === 'default') { C.settings.assessor.signature = r.dataUrl; await C.saveSettings(); renderSettings(); } else { job.assessor.signature = r.dataUrl; changed(); renderJob(); } },
+      sigDraw: () => { const j = job; signaturePad(async (url) => { if (el.dataset.target === 'default') { C.settings.assessor.signature = url; await C.saveSettings(); renderSettings(); } else await applyToJob(j, (x) => { x.assessor.signature = url; }); }); },
+      sigUpload: async () => { const j = job; const f = await pickFile('image/*'); if (!f) return; const r = await C.resizeDataURL(await C.readFileAsDataURL(f), 600, 0.92); if (el.dataset.target === 'default') { C.settings.assessor.signature = r.dataUrl; await C.saveSettings(); renderSettings(); } else await applyToJob(j, (x) => { x.assessor.signature = r.dataUrl; }); },
       sigClear: () => { job.assessor.signature = ''; changed(); renderJob(); },
       exportPdf, exportJson: () => saveText(JSON.stringify(job, null, 1), (job.report.ref || job.vehicle.reg || 'job').replace(/[^\w.-]+/g, '_') + '.json', 'json'),
       logoUpload: async () => { const f = await pickFile('image/*'); if (!f) return; const raw = await C.readFileAsDataURL(f); const r = f.type === 'image/png' || f.type === 'image/svg+xml' ? { dataUrl: raw } : await C.resizeDataURL(raw, 900, 0.92); C.settings.company.logo = r.dataUrl; await C.saveSettings(); renderSettings(); },
       logoClear: async () => { C.settings.company.logo = ''; await C.saveSettings(); renderSettings(); },
       aiSaveKey: async () => { const k = $('#aiKey').value.trim(); if (!k) return toast('Paste your API key first.', true); await desktop.ai.setKey(k); toast('API key saved.'); refreshAiState(); renderSettings(); },
       aiClearKey: async () => { await desktop.ai.setKey(''); toast('API key removed.'); refreshAiState(); renderSettings(); },
-      aiTest: async () => { el.disabled = true; el.innerHTML = '<span class="spinner" style="border-color:#999;border-top-color:#333"></span>Testing…'; const r = await desktop.ai.test({ model: C.settings.ai.model }); el.disabled = false; el.textContent = 'Test connection'; r.ok ? toast('Connected: ' + r.result.model) : toast(r.error, true); },
+      aiTest: async () => {
+        el.disabled = true; el.innerHTML = '<span class="spinner" style="border-color:#999;border-top-color:#333"></span>Testing…';
+        let r; try { r = await desktop.ai.test({ model: (C.settings.ai || {}).model }); } finally { el.disabled = false; el.textContent = 'Test connection'; }
+        r.ok ? toast('Connected: ' + r.result.model) : toast(r.error, true);
+      },
       backup: async () => { const jobs = await C.Store.listJobs(); saveText(JSON.stringify({ kind: 'engineer-report-studio-backup', at: new Date().toISOString(), settings: C.settings, customOem: C.customOem, jobs }), `backup-${C.todayISO()}.json`, 'json'); },
       restore: async () => {
         const f = await pickFile('.json'); if (!f) return;
-        try {
-          const d = JSON.parse(await f.text()); if (d.kind !== 'engineer-report-studio-backup') throw new Error();
-          if (!confirm(`Restore ${d.jobs.length} job(s) and settings? Jobs with the same ID are overwritten.`)) return;
-          for (const j of d.jobs) await C.Store.saveJob(j);
-          C.settings = d.settings; await C.saveSettings(); await saveCustomOem(d.customOem || []);
-          toast('Backup restored.'); renderSettings();
-        } catch (err) { toast('That is not a backup file.', true); }
+        let d;
+        try { d = JSON.parse(await f.text()); if (!isObj(d) || d.kind !== 'engineer-report-studio-backup') throw new Error(); } catch (err) { return toast('That is not a backup file.', true); }
+        const jobs = (Array.isArray(d.jobs) ? d.jobs : []).filter(isObj);
+        if (!confirm(`Restore ${jobs.length} job(s) and settings? Jobs with the same ID are overwritten.`)) return;
+        // settings are stored as they are and re-read, so the current defaults fill anything an older version did not write (e.g. AI model)
+        if (isObj(d.settings)) { await C.Store.set('settings', d.settings); await C.loadSettings(); }
+        await saveCustomOem(Array.isArray(d.customOem) ? d.customOem : []);
+        let n = 0, bad = 0;
+        for (const j of jobs) { try { if (!j.id) j.id = C.uid(); migrate(j); await C.Store.saveJob(j); n++; } catch (err) { bad++; } }
+        toast(`Backup restored: ${n} job(s)${bad ? `, ${bad} unreadable record(s) skipped` : ''} and settings.`, bad > 0); renderSettings();
       },
       catAddNo, catAddVeh, catImport,
       lookupVehicle, motByVin, applyVariant, paintMaterials, aiValuation,
       advAdd: () => { (job.valuation.adverts = job.valuation.adverts || []).push({ description: '', year: '', mileage: '', price: '', url: '' }); changed(); renderJob(); },
       advDel: () => { job.valuation.adverts.splice(+el.dataset.i, 1); changed(); renderJob(); },
       advFromAi: () => { const c = job.valuation.ai.comparables[+el.dataset.i]; (job.valuation.adverts = job.valuation.adverts || []).push({ description: c.description, year: c.year, mileage: c.mileage, price: c.price, url: c.url, source: c.source }); changed(); renderJob(); toast('Added to adverts.'); },
+      inspByAssessor: () => { job.inspection.by = job.assessor.name; if (!job.inspection.byQualifications) job.inspection.byQualifications = job.assessor.qualifications || C.settings.assessor.qualifications || ''; changed(); renderJob(); },
+      useSettingsRates: () => {
+        if (job.issued && !confirm('This report has been finalised. Taking the current Settings rates changes its figures. Continue?')) return;
+        job.rates = C.clone(C.settings.rates); job.vatPct = C.settings.vatPct; changed(); renderJob(); toast('Labour rates and VAT updated from Settings.');
+      },
+      finaliseReport: () => {
+        const errs = C.qaChecks(job).filter((q) => q.level === 'error').length;
+        if (!confirm(`${errs ? `The pre-issue checks still show ${errs} error${errs === 1 ? '' : 's'}.\n\n` : ''}Finalise this report? The company details, declaration, signature, qualifications and AQP ID are frozen in it as they are now.`)) return;
+        const S = C.settings, a = job.assessor;
+        job.issued = { at: new Date().toISOString(), company: C.clone(S.company), declaration: S.assessor.declaration, signature: liveSignature(job), qualifications: a.qualifications || S.assessor.qualifications || '', aqpId: a.aqpId || S.assessor.aqpId || '' };
+        changed(); renderJob(); toast('Report finalised.');
+      },
+      reopenReport: () => { if (!confirm('Re-open this report? It will use the current Settings (company details, declaration and signature) until it is finalised again.')) return; delete job.issued; changed(); renderJob(); toast('Report re-opened.'); },
+      reviewPendingDraft: () => { const d = pendingDrafts.get(job.id); if (d) reviewDraft(d, job.id); },
       aiValApply: () => { const r = job.valuation.ai; job.valuation.adopted = Math.round(num(r.recommended_pav)); job.valuation.comments = r.comments; changed(); renderJob(); toast('PAV and comments applied. Edit as needed.'); },
       saveDvla: async () => { const k = $('#kDvla').value.trim(); if (!k) return toast('Paste the DVLA key first.', true); await desktop.data.setKeys({ dvla: k }); toast('DVLA key saved.'); renderSettings(); },
       clearDvla: async () => { if (!confirm('Remove the saved DVLA key?')) return; await desktop.data.setKeys({ dvla: null }); renderSettings(); },
@@ -1447,7 +1604,7 @@
       testDvla: async () => { const reg = $('#testReg').value.trim(); if (!reg) return toast('Enter a registration to test with.', true); const r = await desktop.data.dvla(reg, C.settings.dvlaEnv || 'live'); r.ok ? toast(`DVLA OK: ${r.result.make} ${r.result.colour} ${r.result.fuelType}${r.result.firstRegistration ? ', first registered ' + C.ukDate(r.result.firstRegistration) : ''}`) : toast(r.error, true); },
       testMot: async () => { const reg = $('#testReg').value.trim(); if (!reg) return toast('Enter a registration to test with.', true); const r = await desktop.data.mot(reg, 'registration'); r.ok ? toast(`MOT History OK: ${r.result.make} ${r.result.model}, ${r.result.tests.length} test(s)${r.result.tests[0] && r.result.tests[0].odometer ? ', latest ' + r.result.tests[0].odometer.toLocaleString('en-GB') + ' ' + r.result.tests[0].unit : ''}`) : toast(r.error, true); },
     };
-    if (A[a]) { e.preventDefault(); await A[a](); }
+    if (A[a]) { e.preventDefault(); try { await A[a](); } catch (err) { toast((err && err.message) || String(err), true); } }
   });
 
   async function refreshAiState() {
@@ -1463,6 +1620,8 @@
     C.setCustomOem((await C.Store.get('customOem')) || []);
     refreshAiState();
     window.addEventListener('hashchange', route);
+    window.addEventListener('beforeunload', () => { flushSave(); });
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flushSave(); });
     if (!location.hash) location.hash = '#/jobs';
     route();
   })();

@@ -32,19 +32,26 @@
         const d = document.createElement('div');
         d.className = 'bx' + (i === sel ? ' sel' : '');
         d.dataset.i = i;
-        d.style.cssText = `left:${l.x * 100}%;top:${l.y * 100}%;width:${l.w * 100}%;height:${l.h * 100}%;border-color:${l.colour || '#ff3b30'};${l.hidden ? 'opacity:.35' : ''}`;
+        d.style.cssText = `left:${l.x * 100}%;top:${l.y * 100}%;width:${l.w * 100}%;height:${l.h * 100}%;border-color:${l.colour || '#ff3b30'};${preExisting(l) ? 'border-style:dashed;' : ''}${l.hidden ? 'opacity:.35' : ''}`;
         d.innerHTML = `<div class="tg" style="background:${l.colour || '#ff3b30'}">${i + 1}. ${C.esc(l.text)}</div><div class="hd" data-h="1"></div>`;
         stage.appendChild(d);
       });
       list.innerHTML = labels.length ? labels.map((l, i) => `
         <div class="it${i === sel ? ' sel' : ''}" data-i="${i}">
           <div class="row" style="gap:6px"><b>${i + 1}.</b><input data-f="text" data-i="${i}" value="${C.esc(l.text)}" class="grow" style="width:auto">
-          ${l.ai ? '<span class="badge ai">AI</span>' : ''}</div>
+          ${l.ai ? '<span class="badge ai">AI</span>' : ''}${preExisting(l) ? '<span class="badge">pre-existing</span>' : ''}</div>
           ${l.detail ? `<div class="hint" style="margin-top:4px">${C.esc(l.detail)}</div>` : ''}
           <div class="row" style="margin-top:6px"><div class="swatches">${COLOURS.map((c) => `<button title="${c}" data-col="${c}" data-i="${i}" style="background:${c}"></button>`).join('')}</div>
           <label class="hint" style="margin-left:auto"><input type="checkbox" data-hide="${i}" ${l.hidden ? '' : 'checked'} style="width:auto"> show</label>
           <button class="btn sm danger" data-del="${i}">✕</button></div>
         </div>`).join('') : '<div class="hint">No labels yet. Draw a box on the photo.</div>';
+    }
+
+    // highlight a label without rebuilding the list, so a click on 'show', a field or a button still reaches its target
+    function select(i) {
+      sel = i;
+      list.querySelectorAll('.it').forEach((n) => n.classList.toggle('sel', +n.dataset.i === sel));
+      stage.querySelectorAll('.bx').forEach((n) => n.classList.toggle('sel', +n.dataset.i === sel));
     }
 
     function pt(e) {
@@ -103,6 +110,7 @@
         if (tg) tg.textContent = `${+e.target.dataset.i + 1}. ${e.target.value}`;
       }
     });
+    body.addEventListener('focusin', (e) => { const it = e.target.closest('.it'); if (it && +it.dataset.i !== sel) select(+it.dataset.i); });
     body.addEventListener('change', (e) => {
       if (e.target.dataset.hide != null) { labels[+e.target.dataset.hide].hidden = !e.target.checked; draw(); }
     });
@@ -113,9 +121,9 @@
       if (t.dataset.q) { if (sel >= 0) { labels[sel].text = t.dataset.q; draw(); } return; }
       if (t.dataset.act === 'clear') { if (confirm('Remove all labels from this photo?')) { labels = []; sel = -1; draw(); } return; }
       if (t.dataset.act === 'cancel') { closeModal(); return; }
-      if (t.dataset.act === 'save') { onSave(labels); closeModal(); return; }
+      if (t.dataset.act === 'save') { photo.labelsReviewed = true; onSave(labels); closeModal(); return; }
       const it = t.closest('.it');
-      if (it && t.tagName !== 'INPUT') { sel = +it.dataset.i; draw(); }
+      if (it) select(+it.dataset.i);
     });
     const keyh = (e) => {
       if (!document.body.contains(body)) { document.removeEventListener('keydown', keyh); return; }
@@ -127,9 +135,12 @@
     draw();
   }
 
+  // AI labels for damage it judged not accident-related are drawn dashed (as in the report)
+  const preExisting = (l) => /^no/i.test(String(l.accidentRelated || ''));
+
   // Small read-only overlay used on thumbnails
   function overlay(labels) {
-    return `<div class="ov">${(labels || []).filter((l) => !l.hidden).map((l, i) => `<div class="bx" style="left:${l.x * 100}%;top:${l.y * 100}%;width:${l.w * 100}%;height:${l.h * 100}%;border-color:${l.colour || '#ff3b30'}"></div><div class="tg" style="left:${l.x * 100}%;top:${l.y * 100}%;background:${l.colour || '#ff3b30'}">${i + 1}. ${C.esc(l.text)}</div>`).join('')}</div>`;
+    return `<div class="ov">${(labels || []).filter((l) => !l.hidden).map((l, i) => `<div class="bx" style="left:${l.x * 100}%;top:${l.y * 100}%;width:${l.w * 100}%;height:${l.h * 100}%;border-color:${l.colour || '#ff3b30'}${preExisting(l) ? ';border-style:dashed' : ''}"></div><div class="tg" style="left:${l.x * 100}%;top:${l.y * 100}%;background:${l.colour || '#ff3b30'}">${i + 1}. ${C.esc(l.text)}</div>`).join('')}</div>`;
   }
 
   window.Labeler = { open, overlay };
