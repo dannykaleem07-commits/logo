@@ -23,7 +23,7 @@
     const body = document.createElement('div');
     body.innerHTML = `
       <div class="lab">
-        <div><div class="labStage" style="display:inline-block"><img src="${photo.dataUrl}" alt=""></div>
+        <div><div class="labStage" style="display:inline-block"><img src="${C.esc(photo.dataUrl)}" alt=""></div>
           <p class="hint">Drag on the photo to draw a box. Drag a box to move it; drag its corner to resize. Delete removes the selected box.</p></div>
         <div>
           <div class="row" style="margin-bottom:8px"><b class="grow">Labels</b><button class="btn sm danger" data-act="clear">Clear all</button></div>

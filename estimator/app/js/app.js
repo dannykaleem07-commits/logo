@@ -266,13 +266,11 @@
     body.innerHTML = r();
     afterRender();
   }
-  const berBasis = () => (C.settings.berBasis === 'gross' ? 'gross' : 'net');
   function updateHeader() {
     const el = $('#chips'); if (!el || !job) return;
     const t = C.totals(job);
-    const basis = berBasis(), pct = basis === 'gross' ? t.pctGross : t.pctNet;
     el.innerHTML = `<div class="chip">Labour<b>${hrs(t.labourHours)} h</b></div><div class="chip">Net repair<b>${gbp(t.net)}</b></div><div class="chip">Inc. VAT<b>${gbp(t.gross)}</b></div>
-      <div class="chip">PAV<b>${t.pav ? gbp(t.pav) : '—'}</b></div><div class="chip ${t.berSuggested ? 'ber' : ''}" title="Economic-repair threshold ${esc(C.settings.berThresholdPct)}% (${basis})">Repair / PAV (${basis})<b>${t.pav ? pct.toFixed(1) + '% ' + basis : '—'}</b></div>`;
+      <div class="chip">PAV<b>${t.pav ? gbp(t.pav) : '—'}</b></div><div class="chip ${t.berSuggested ? 'ber' : ''}" title="Economic-repair threshold ${esc(t.berThresholdPct)}% (${esc(t.berBasis)})">Repair / PAV (${esc(t.berBasis)})<b>${t.pav ? num(t.berPct).toFixed(1) + '% ' + esc(t.berBasis) : '—'}</b></div>`;
     const v = $('#hdVeh'); if (v) v.textContent = [job.vehicle.make, job.vehicle.model, job.vehicle.derivative].filter(Boolean).join(' ') || 'New assessment';
     const p = $('.jobhead .plate'); if (p) p.textContent = job.vehicle.reg || 'NEW';
   }
@@ -591,7 +589,7 @@
   const localDT = (iso) => { const d = iso ? new Date(iso) : null; if (!d || isNaN(d)) return ''; const p2 = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}T${p2(d.getHours())}:${p2(d.getMinutes())}`; };
   function photoCard(p, i, n) {
     return `<div class="pcard ${p.exclude ? 'excluded' : ''}" data-pid="${esc(p.id)}">
-      <div class="pimg" data-act="label" data-i="${i}" title="Click to edit labels"><div class="pin"><img src="${p.dataUrl}" alt="">${Labeler.overlay(p.labels)}</div></div>
+      <div class="pimg" data-act="label" data-i="${i}" title="Click to edit labels"><div class="pin"><img src="${esc(p.dataUrl)}" alt="">${Labeler.overlay(p.labels)}</div></div>
       <div class="pbody">
         <div class="row"><b class="pnum${n ? '' : ' out'}">${figLabel(n)}</b>${p.aiLabelled ? `<span class="badge ${p.labelsReviewed ? 'ok' : 'ai'}" title="${p.labelsReviewed ? 'Labels saved by the assessor' : 'Open the labels and save them once checked'}">AI labelled${p.labelsReviewed ? ' · reviewed' : ''}</span>` : ''}<span class="grow"></span>
           <button class="btn sm" data-act="pmove" data-i="${i}" data-d="-1" title="Move earlier">↑</button><button class="btn sm" data-act="pmove" data-i="${i}" data-d="1" title="Move later">↓</button>
@@ -865,7 +863,7 @@
   function totalsBox(t) {
     return `<div><span>Labour hours</span><b>${hrs(t.labourHours)}</b></div><div><span>Labour</span><b>${gbp(t.labour)}</b></div><div><span>Parts</span><b>${gbp(t.parts)}</b></div>
       <div><span>Paint materials</span><b>${gbp(t.paint)}</b></div><div><span>Other / services</span><b>${gbp(t.other)}</b></div>${num(t.discount) ? `<div><span>Less discount</span><b>${gbp(-num(t.discount))}</b></div>` : ''}<div><span>Net (excl. VAT)</span><b>${gbp(t.net)}</b></div>
-      <div><span>VAT @ ${num(C.vatPctFor(job))}%</span><b>${gbp(t.vat)}</b></div><div class="g"><span>Total repair cost</span><b>${gbp(t.gross)}</b></div>`;
+      <div><span>VAT @ ${num(t.vatPct)}%</span><b>${gbp(t.vat)}</b></div><div class="g"><span>Total repair cost</span><b>${gbp(t.gross)}</b></div>`;
   }
   function pickResults() {
     const q = ui.pickQ.toLowerCase().trim();
@@ -1067,7 +1065,7 @@
         <button class="btn sm" data-act="adopt" data-w="max">Adopt highest</button><button class="btn sm" data-act="adopt" data-w="avg">Adopt average</button><button class="btn sm" data-act="adopt" data-w="min">Adopt lowest</button>` : '';
   }
   function econBox(t) {
-    const basis = berBasis(), thr = esc(C.settings.berThresholdPct);
+    const basis = esc(t.berBasis), thr = esc(t.berThresholdPct);
     return `<div class="totals"><div><span>Net repair</span><b>${gbp(t.net)}</b></div><div><span>Gross repair</span><b>${gbp(t.gross)}</b></div><div><span>PAV</span><b>${t.pav ? gbp(t.pav) : '—'}</b></div>
         <div><span>Repair / PAV (net)</span><b>${t.pctNet.toFixed(2)}%</b></div><div><span>Repair / PAV (gross)</span><b>${t.pctGross.toFixed(2)}%</b></div><div><span>Salvage</span><b>${gbp(t.salvage)}</b></div></div>
       <p>${t.pav ? (t.berSuggested ? `<span class="badge err">Over threshold</span> Repair cost is at or above your ${thr}% (${basis}) economic-repair threshold. Consider a total loss.` : `<span class="badge ok">Within threshold</span> Repair cost is below your ${thr}% (${basis}) threshold.`) : '<span class="hint">Enter a PAV to see the economic repair position.</span>'}</p>`;
@@ -1193,7 +1191,7 @@
       <label class="row" style="margin-top:10px"><input type="checkbox" data-bind-check="report.cpr35" ${job.report.cpr35 ? 'checked' : ''} style="width:auto"> <b>Court-compliant expert report (CPR Part 35 / PD 35)</b>: adds the expert's duty statement, the statement of truth, and the PD 35 checks</label>
       ${(job.aiLog || []).length ? `<h3>AI and data-use log</h3><table class="tbl"><thead><tr><th>When</th><th>Action</th><th>Model / source</th></tr></thead><tbody>${job.aiLog.map((a) => `<tr><td class="hint">${esc(new Date(a.at).toLocaleString('en-GB'))}</td><td><span class="badge ${a.ai ? 'ai' : ''}">${a.ai ? 'AI' : 'data'}</span> ${esc(a.action)}</td><td class="hint">${esc(a.model || '')}</td></tr>`).join('')}</tbody></table><p class="hint">The report's "Use of AI and data tools" statement lists these. The assessor remains responsible for every opinion.</p>` : ''}
       <h3>Signature</h3>
-      ${sig ? `<img src="${sig}" style="max-height:80px;border:1px solid var(--line);border-radius:6px;background:#fff;padding:4px">` : '<p class="hint">No signature.</p>'}
+      ${sig ? `<img src="${esc(sig)}" style="max-height:80px;border:1px solid var(--line);border-radius:6px;background:#fff;padding:4px">` : '<p class="hint">No signature.</p>'}
       <div class="row" style="margin-top:8px"><button class="btn sm" data-act="sigDraw" data-target="job">Draw signature</button><button class="btn sm" data-act="sigUpload" data-target="job">Upload image</button>
         ${job.assessor.signature ? '<button class="btn sm danger" data-act="sigClear">Remove this report\'s signature</button>' : ''}
         <label class="hint"><input type="checkbox" data-bind-check="assessor.useDefaultSignature" ${job.assessor.useDefaultSignature ? 'checked' : ''} style="width:auto"> use my default signature from Settings</label></div>
@@ -1283,7 +1281,7 @@
         ${S('company.companyNo', 'Company number')}${S('company.phone', 'Telephone')}${S('company.email', 'Email')}<div></div>
         ${S('company.coverTitle', 'Cover title')}${S('company.coverSubtitle', 'Cover subtitle')}${S('company.reportTitle', 'Page header title')}<div></div>
         ${S('company.navy', 'Heading colour', { type: 'color' })}${S('company.accent', 'Accent colour', { type: 'color' })}</div>
-        <h3>Logo</h3><div class="row">${s.company.logo ? `<img src="${s.company.logo}" style="max-height:70px;background:#fff;border:1px solid var(--line);padding:4px;border-radius:6px">` : '<span class="hint">No logo uploaded.</span>'}
+        <h3>Logo</h3><div class="row">${s.company.logo ? `<img src="${esc(s.company.logo)}" style="max-height:70px;background:#fff;border:1px solid var(--line);padding:4px;border-radius:6px">` : '<span class="hint">No logo uploaded.</span>'}
         <button class="btn sm" data-act="logoUpload">Upload logo</button>${s.company.logo ? '<button class="btn sm danger" data-act="logoClear">Remove</button>' : ''}</div></div>
       <div class="card"><h2 style="margin-top:0">Rates &amp; thresholds</h2><div class="form3">
         ${Object.keys(s.rates).map((k) => S('rates.' + k, `${k} labour rate £/h`, { type: 'number', step: '0.01' })).join('')}
@@ -1318,7 +1316,7 @@
         ${S('assessor.qualifications', 'Qualifications (e.g. MIAEA, IMI VDA)')}${S('assessor.aqpId', 'AQP ID (ABI salvage categorisation)')}
         ${S('assessor.accreditationExpiry', 'Accreditation expiry date', { type: 'date', hint: 'You will be warned when it has passed.' })}<div></div>
         ${S('assessor.declaration', 'Assessor declaration', { type: 'textarea', rows: 8, full: true })}</div>
-        <h3>Default signature</h3><div class="row">${s.assessor.signature ? `<img src="${s.assessor.signature}" style="max-height:70px;background:#fff;border:1px solid var(--line);padding:4px">` : '<span class="hint">None.</span>'}
+        <h3>Default signature</h3><div class="row">${s.assessor.signature ? `<img src="${esc(s.assessor.signature)}" style="max-height:70px;background:#fff;border:1px solid var(--line);padding:4px">` : '<span class="hint">None.</span>'}
         <button class="btn sm" data-act="sigDraw" data-target="default">Draw</button><button class="btn sm" data-act="sigUpload" data-target="default">Upload</button></div></div>
       <div class="card"><h2 style="margin-top:0">Data</h2><p class="hint">Jobs are stored on this computer. Back up regularly.</p>
         <div class="row"><button class="btn" data-act="backup">Export full backup</button><button class="btn" data-act="restore">Restore backup</button></div></div></div>`;
@@ -1456,7 +1454,8 @@
       return;
     }
     if (t.dataset.sbind) {
-      setPath(C.settings, t.dataset.sbind, t.type === 'number' ? num(t.value) : t.value);
+      const bad = t.dataset.sbind === 'berThresholdPct' && !(num(t.value) > 0);
+      setPath(C.settings, t.dataset.sbind, bad ? C.DEFAULT_SETTINGS.berThresholdPct : t.type === 'number' ? num(t.value) : t.value);
       settingsPending = true; saveSettingsSoon();
       return;
     }
@@ -1500,6 +1499,10 @@
       if (t.dataset.vp === 'make') { ui.vp.model = ''; ui.vp.engine = ''; ui.vp.trim = ''; ui.vp.body = ''; ui.vp.trans = ''; }
       if (t.dataset.vp === 'model') { ui.vp.engine = ''; ui.vp.trim = ''; ui.vp.body = ''; ui.vp.trans = ''; }
       renderJob(); return;
+    }
+    if (t.dataset.sbind === 'berThresholdPct' && !(num(t.value) > 0)) {
+      t.value = C.DEFAULT_SETTINGS.berThresholdPct;
+      return toast(`The economic repair threshold must be above 0%, so it has been reset to ${C.DEFAULT_SETTINGS.berThresholdPct}%.`, true);
     }
     if (t.id === 'valSearch') { ui.valSearch = t.checked; return; }
     if (t.id === 'pickGroup') { ui.pickGroup = t.value; ui.zoneGroups = null; $('#pickResults').innerHTML = pickResults(); return; }

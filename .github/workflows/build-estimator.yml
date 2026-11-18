@@ -7,6 +7,9 @@ on:
       - '.github/workflows/build-estimator.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   tests:
     name: Tests (unit, mocked APIs, UI smoke test)
