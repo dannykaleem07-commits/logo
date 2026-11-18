@@ -70,6 +70,11 @@
     "portable": {
       "artifactName": "${name}-${version}-portable.${ext}",
       "unpackDirName": "engineer-report-studio"
-    }
+    },
+    "electronLanguages": [
+      "en-GB",
+      "en-US"
+    ],
+    "compression": "maximum"
   }
 }
