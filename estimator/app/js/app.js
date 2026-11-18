@@ -306,21 +306,47 @@
   // ---------- form helpers ----------
   // number inputs never take a negative value (money, hours, mileage, percentages)
   const minAttr = (o) => (o.type === 'number' && o.min !== null ? ` min="${o.min == null ? 0 : o.min}"` : '');
-  // A field still holding text the AI applied, unedited, says so: the report treats it as AI output until it is edited.
-  function aiTextNote(path, val) {
-    const t = job && isObj(job.aiText) ? job.aiText[path] : null;
-    if (typeof t !== 'string' || !String(val).trim() || !sameText(t, val)) return '';
-    return `<div class="hint aiTextHint">✦ AI text, not edited yet. ${path.startsWith('circumstances.') ? 'The report prints it as assessed from the photographs (AI-assisted), not as reported, until you edit it.' : 'The report lists it as unreviewed AI output until you edit it.'}</div>`;
+  // A field still holding text the AI applied, unedited, says so, with a "✓ Confirm" button beside it: the report treats it as AI
+  // output until it is edited or confirmed (C.markAiReviewed). For a choice (decision, salvage category) confirming is the only
+  // way, as it cannot be "edited" to the same value. aiPending: the fields C.unreviewedAiText lists, read at each render.
+  let aiPending = new Map();
+  const readAiPending = () => { aiPending = new Map(unreviewedAiText(job).map((x) => [x.path, x])); };
+  let aiNoteSeq = 0;
+  // the note and its button; the field (and the button) point at the note with aria-describedby. Outside the field's <label>, so
+  // the field's name stays its label and the button is not inside a label.
+  function aiReviewBox(path, note, name, attrs) {
+    const id = 'aiNote' + (++aiNoteSeq);
+    return { id, html: `<div class="aiReview"><span class="hint aiTextHint" id="${id}">${esc(note)}</span><button type="button" class="btn sm aiConfirm" data-act="aiConfirm" data-path="${esc(path)}"${attrs || ''} aria-label="${esc('Confirm AI text: ' + name)}" aria-describedby="${id}" title="The text is right: keep it as your own">✓ Confirm</button></div>` };
   }
+  // report.js prints these circumstances fields as "assessed from photographs (AI-assisted)" while they hold unreviewed AI text
+  const AI_ASSESSED_CIRC = ['circumstances.impactType', 'circumstances.primaryArea', 'circumstances.secondaryArea', 'circumstances.direction', 'circumstances.symptoms'];
+  const aiNoteText = (path, choice) => (choice ? '✦ AI choice, not confirmed yet. The report lists it as unreviewed AI output until you confirm it or choose another.'
+    : AI_ASSESSED_CIRC.includes(path) ? '✦ AI text, not edited yet. The report prints it as assessed from the photographs (AI-assisted), not as reported, until you edit it. Confirm it only if it is the account you were given.'
+      : '✦ AI text, not edited yet. The report lists it as unreviewed AI output until you edit or confirm it.');
+  let fieldPaths = null; // while set, F() records the path of each field it builds (fieldsOnTab)
   function F(path, label, o) {
     o = o || {};
+    if (fieldPaths) fieldPaths.add(path);
     const v = getPath(job, path);
     const val = v == null ? '' : v;
+    const ai = aiPending.has(path) ? aiReviewBox(path, aiNoteText(path, o.type === 'select'), label) : null;
+    const desc = ai ? ` aria-describedby="${ai.id}"` : '';
+    // a date input shows only a full YYYY-MM-DD date (a year or month alone, e.g. a first registration, is explained in its hint)
+    const shown = o.type === 'date' && !/^\d{4}-\d{2}-\d{2}$/.test(String(val)) ? '' : val;
     let input;
-    if (o.type === 'textarea') input = `<textarea data-bind="${path}" rows="${o.rows || 4}" placeholder="${esc(o.ph || '')}">${esc(val)}</textarea>`;
-    else if (o.type === 'select') input = `<select data-bind="${path}">${o.options.map((x) => { const [k, t] = Array.isArray(x) ? x : [x, x || '—']; return `<option value="${esc(k)}"${String(k) === String(val) ? ' selected' : ''}>${esc(t)}</option>`; }).join('')}</select>`;
-    else input = `<input data-bind="${path}" type="${o.type || 'text'}" value="${esc(val)}" placeholder="${esc(o.ph || '')}"${o.list ? ` list="${o.list}"` : ''}${o.step ? ` step="${o.step}"` : ''}${minAttr(o)}>`;
-    return `<label class="fld ${o.full ? 'full' : ''}"><span>${esc(label)}</span>${input}${o.hint ? `<div class="hint">${o.hint}</div>` : ''}${o.type === 'select' ? '' : aiTextNote(path, val)}</label>`;
+    if (o.type === 'textarea') input = `<textarea data-bind="${path}" rows="${o.rows || 4}" placeholder="${esc(o.ph || '')}"${desc}>${esc(val)}</textarea>`;
+    else if (o.type === 'select') input = `<select data-bind="${path}"${desc}>${o.options.map((x) => { const [k, t] = Array.isArray(x) ? x : [x, x || '—']; return `<option value="${esc(k)}"${String(k) === String(val) ? ' selected' : ''}>${esc(t)}</option>`; }).join('')}</select>`;
+    else input = `<input data-bind="${path}" type="${o.type || 'text'}" value="${esc(shown)}" placeholder="${esc(o.ph || '')}"${o.list ? ` list="${o.list}"` : ''}${o.step ? ` step="${o.step}"` : ''}${minAttr(o)}${desc}>`;
+    const fld = `<label class="fld ${o.full && !ai ? 'full' : ''}"><span>${esc(label)}</span>${input}${o.hint ? `<div class="hint">${o.hint}</div>` : ''}</label>`;
+    return ai ? `<div class="aiField${o.full ? ' full' : ''}">${fld}${ai.html}</div>` : fld;
+  }
+  // The fields (F) a tab's form holds, found by building the tab once in memory without showing it.
+  function fieldsOnTab(k) {
+    const seen = new Set(), fn = TAB_RENDER[k];
+    if (!fn || k === 'report') return seen;
+    const prev = fieldPaths; fieldPaths = seen;
+    try { fn(); } catch (e) { /* a tab that cannot be built offers no field */ } finally { fieldPaths = prev; }
+    return seen;
   }
   function S(path, label, o) { // settings field
     o = o || {};
@@ -399,10 +425,13 @@
     if (out.motExpiry == null && d.motExpiryDate != null) out.motExpiry = d.motExpiryDate;
     if (out.wheelPlan == null && d.wheelplan != null) out.wheelPlan = d.wheelplan;
     if (!out.firstRegistration) {
-      const m = d.monthOfFirstRegistration;
-      if (typeof m === 'string' && /^\d{4}-\d{2}/.test(m)) out.firstRegistration = m.slice(0, 7) + '-01';
-      else if (d.yearOfFirstRegistration && m) out.firstRegistration = `${d.yearOfFirstRegistration}-${pad2(m)}-01`;
-      else if (d.yearOfFirstRegistration) out.firstRegistration = `${d.yearOfFirstRegistration}-01-01`;
+      // as vehicledata.js reads DVLA: 'YYYY-MM-01' only for a real month; a year without a month stays a year
+      // (firstRegistration '', firstRegistrationYear), never 1 January of that year
+      const m = d.monthOfFirstRegistration, ym = typeof m === 'string' ? /^\s*(\d{4})-(\d{2})/.exec(m) : null;
+      const y = ym ? ym[1] : (/^\s*\d{4}\s*$/.test(String(d.yearOfFirstRegistration == null ? '' : d.yearOfFirstRegistration)) ? String(d.yearOfFirstRegistration).trim() : '');
+      const mo = ym ? +ym[2] : typeof m === 'number' || /^\s*\d{1,2}\s*$/.test(String(m == null ? '' : m)) ? Number(m) : 0;
+      out.firstRegistration = y && mo >= 1 && mo <= 12 ? `${y}-${pad2(mo)}-01` : '';
+      if (y && out.firstRegistrationYear == null) out.firstRegistrationYear = Number(y);
     }
     RAW_DVLA_KEYS.forEach((k) => { delete out[k]; });
     if (!out.lookedUpAt) out.lookedUpAt = '';
@@ -457,8 +486,19 @@
     if (j.inspection.by == null) set(j.inspection, 'by', '');
     if (j.inspection.byQualifications == null) set(j.inspection, 'byQualifications', '');
     if (j.valuation.belowHighestReason == null) set(j.valuation, 'belowHighestReason', '');
-    if (isObj(v.dvla) && !v.dvla.lookedUpAt && RAW_DVLA_KEYS.some((k) => k in v.dvla)) set(v, 'dvla', normaliseRawDvla(v.dvla));
-    if (v.firstRegPrecision == null) {
+    // a first registration stored as a number by another tool (1968) is text, as the date field and the report read it
+    if (v.firstReg != null && typeof v.firstReg !== 'string') set(v, 'firstReg', typeof v.firstReg === 'number' && isFinite(v.firstReg) ? String(v.firstReg) : '');
+    if (isObj(v.dvla) && !v.dvla.lookedUpAt && RAW_DVLA_KEYS.some((k) => k in v.dvla)) {
+      const nd = normaliseRawDvla(v.dvla);
+      // a raw record with the year but no month: the date older versions took from it (1 January of that year) is only the year
+      const y = !nd.firstRegistration && nd.firstRegistrationYear ? String(nd.firstRegistrationYear) : '';
+      if (y && (v.firstReg === y || v.firstReg === `${y}-01-01`) && v.firstRegPrecision !== 'day') { set(v, 'firstReg', y); set(v, 'firstRegPrecision', 'year'); }
+      set(v, 'dvla', nd);
+    }
+    // known to the year ("1968") or the month ("2014-08") only: printed so (core.js partialDate)
+    const part = C.partialDate(String(v.firstReg || ''));
+    if (part) { if (v.firstRegPrecision !== (part.mo ? 'month' : 'year')) set(v, 'firstRegPrecision', part.mo ? 'month' : 'year'); }
+    else if (v.firstRegPrecision == null) {
       const fr = String(v.firstReg || '');
       const fromDvla = isObj(v.dvla) && fr === String(v.dvla.firstRegistration || '');
       const fromMot = isObj(v.motSummary) && fr === isoDate(v.motSummary.registrationDate || v.motSummary.firstUsedDate);
@@ -471,6 +511,9 @@
       if (!Array.isArray(j.aiFlags) || ok.length !== j.aiFlags.length) set(j, 'aiFlags', ok);
     }
     if (j.report.materialsRelied == null) set(j.report, 'materialsRelied', '');
+    // CPR 35 supervision of an examination by someone else: 'yes' | 'no' | '' (true / false or "Yes" read as core.js reads them)
+    const sup = C.examinerSupervision(j);
+    if (j.report.examinerSupervised !== sup) set(j.report, 'examinerSupervised', sup);
     // timestamps that are missing or not dates are stored as '' and shown as "—"
     if (j.aiLog.some((a) => !isObj(a))) set(j, 'aiLog', j.aiLog.filter(isObj));
     for (const a of j.aiLog) if (a.at !== '' && !stampOk(a.at)) set(a, 'at', '');
@@ -566,13 +609,15 @@
       <div class="wrap" id="tabBody"></div>`;
     updateHeader();
     const body = $('#tabBody');
-    const r = { claim: tabClaim, vehicle: tabVehicle, inspection: tabInspection, circumstances: tabCircumstances, photos: tabPhotos, assessment: tabAssessment, estimate: tabEstimate, valuation: tabValuation, opinion: tabOpinion, customer: tabCustomer, signoff: tabSignoff, report: tabReport }[tab] || tabClaim;
+    const r = TAB_RENDER[tab] || tabClaim;
+    readAiPending(); // which fields get "✓ Confirm"
     body.innerHTML = (job.issued ? issuedBanner() : '') + r();
     rendered = { id: job.id, tab };
     afterRender();
     if (job.issued) lockTab(body);
     restoreFocus(keep);
   }
+  const TAB_RENDER = { claim: tabClaim, vehicle: tabVehicle, inspection: tabInspection, circumstances: tabCircumstances, photos: tabPhotos, assessment: tabAssessment, estimate: tabEstimate, valuation: tabValuation, opinion: tabOpinion, customer: tabCustomer, signoff: tabSignoff, report: tabReport };
   const issuedBanner = () => `<div class="card lockBanner" role="status"><span class="grow"><b>Finalised on ${esc(fmtWhen(job.issued.at))} — Re-open to edit.</b> <span class="hint">The report's text, figures and photos are locked as issued.</span></span><button class="btn" data-act="reopenReport">Re-open</button></div>`;
   // Finalised report: every input on the tab is disabled and every action except re-open, export and the zone filter is off.
   const LOCK_FREE = new Set(['reopenReport', 'exportPdf', 'exportJson', 'zonePick']);
@@ -586,7 +631,7 @@
   // an action button, told apart by the line, photo, row, direction, zone, code or target it acts on. Used for the field being
   // typed in (a lookup or AI result re-renders the tab) and for the button a keyboard user pressed or that opened a modal.
   const FOCUS_KEYS = ['bind', 'bindCheck', 'lf', 'pf', 'adv', 'advVerify', 'vs', 'vp', 'zone', 'act'];
-  const FOCUS_IDS = ['id', 'pid', 'i', 'd', 'w', 'z', 'code', 'target'];
+  const FOCUS_IDS = ['id', 'pid', 'i', 'd', 'w', 'z', 'code', 'target', 'path'];
   const dataAttr = (k) => 'data-' + k.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase());
   function focusTarget(el) {
     const d = el.dataset || {};
@@ -670,8 +715,8 @@
         <button class="btn primary" data-act="lookupVehicle" ${desktop && !busy('lookup') ? '' : 'disabled'}>${busy('lookup') ? '<span class="spinner"></span>Looking up…' : 'Look up registration'}</button>
         <button class="btn" data-act="motByVin" ${desktop && job.vehicle.vin && !busy('motvin') ? '' : 'disabled'} title="MOT history by VIN">${busy('motvin') ? '<span class="spinner" style="border-color:#999;border-top-color:#333"></span>' : ''}MOT history by VIN</button></div>
       <p class="hint">Enter the registration (and VIN if you have it) below, then look it up. DVLA fills make, colour, fuel, engine size and first registration; MOT History adds the model and every recorded mileage. Either works on its own. ${desktop ? '' : 'Lookups run in the desktop app.'}</p>
-      ${dv ? `<div class="hint"><b>DVLA</b>${dayOf(dv.lookedUpAt) ? ' (' + esc(C.ukDate(dayOf(dv.lookedUpAt))) + ')' : ''}: tax <b>${esc(dv.taxStatus || '—')}</b>${dv.taxDueDate ? ' (due ' + esc(C.ukDate(dv.taxDueDate)) + ')' : ''} · MOT <b>${esc(dv.motStatus || '—')}</b>${dv.motExpiry ? ' (expires ' + esc(C.ukDate(dv.motExpiry)) + ')' : ''}${dv.euroStatus ? ' · ' + esc(dv.euroStatus) : ''}${dv.co2Emissions !== '' && dv.co2Emissions != null ? ' · CO₂ ' + esc(dv.co2Emissions) + ' g/km' : ''}${dv.wheelPlan ? ' · ' + esc(dv.wheelPlan) : ''}${dv.dateOfLastV5CIssued ? ' · last V5C ' + esc(C.ukDate(dv.dateOfLastV5CIssued)) : ''}
-        ${dv.markedForExport ? ' · <b style="color:var(--err)">marked for export</b>' : ''}${dv.markedAsScrapped ? ' · <b style="color:var(--err)">marked as scrapped</b>' : ''}${dv.importedOrReRegistered ? ` · <b style="color:var(--warn)">first registered ${esc(C.ukDate(dv.firstRegistration))} but with DVLA ${esc(C.ukDate(dv.firstRegistrationWithDvla))} (import / re-registration)</b>` : ''}</div>` : ''}
+      ${dv ? `<div class="hint"><b>DVLA</b>${dayOf(dv.lookedUpAt) ? ' (' + esc(C.ukDate(dayOf(dv.lookedUpAt))) + ')' : ''}: ${dv.environment === 'test' ? '<span class="badge err dvlaTest" title="Settings → Data connections → DVLA service is set to Test: these are DVLA\'s made-up test vehicles, not the register">DVLA test service data, not the register</span> · ' : ''}tax <b>${esc(dv.taxStatus || '—')}</b>${dv.taxDueDate ? ' (due ' + esc(C.ukDate(dv.taxDueDate)) + ')' : ''} · MOT <b>${esc(dv.motStatus || '—')}</b>${dv.motExpiry ? ' (expires ' + esc(C.ukDate(dv.motExpiry)) + ')' : ''}${dv.euroStatus ? ' · ' + esc(dv.euroStatus) : ''}${dv.co2Emissions !== '' && dv.co2Emissions != null ? ' · CO₂ ' + esc(dv.co2Emissions) + ' g/km' : ''}${dv.wheelPlan ? ' · ' + esc(dv.wheelPlan) : ''}${dv.dateOfLastV5CIssued ? ' · last V5C ' + esc(C.ukDate(dv.dateOfLastV5CIssued)) : ''}
+        ${dv.markedForExport === true ? ' · <b style="color:var(--err)">marked for export</b>' : ''}${dv.markedAsScrapped === true ? ' · <b style="color:var(--err)">marked as scrapped</b>' : ''}${dv.importedOrReRegistered === true ? ` · <b style="color:var(--warn)" class="dvlaImport">${esc(importText(dv))} (import / re-registration)</b>` : ''}</div>` : ''}
       ${ms ? `<div class="hint"><b>MOT History</b>${dayOf(ms.lookedUpAt) ? ' (' + esc(C.ukDate(dayOf(ms.lookedUpAt))) + ')' : ''}: ${esc(ms.make)} ${esc(ms.model)} · ${esc(ms.fuelType)} · ${esc(ms.primaryColour)}${ms.engineSize ? ' · ' + esc(ms.engineSize) + 'cc' : ''} · recall: <b>${esc(ms.recall || 'Unknown')}</b>${ms.motTestDueDate ? ' · first MOT due ' + esc(C.ukDate(ms.motTestDueDate)) : ''}</div>` : ''}
       ${variantPicker()}
     </div>
@@ -687,7 +732,7 @@
       ${F('vehicle.colour', 'Colour')}${F('vehicle.paintCode', 'Paint code')}
       ${F('vehicle.paintType', 'Paint finish', { type: 'select', options: [['solid', 'Solid'], ['metallic', 'Metallic'], ['pearl', 'Pearlescent'], ['three-stage', '3-stage / tri-coat'], ['matt', 'Matt']], hint: 'Affects refinish time and blend recommendations.' })}
       ${F('vehicle.sizeClass', 'Vehicle size class (scales guide labour times)', { type: 'select', options: Object.entries(C.SIZE_CLASSES).map(([k, v]) => [k, `${v[0]} ×${v[1]}`]) })}
-      ${F('vehicle.firstReg', 'First registration date', { type: 'date', hint: job.vehicle.firstRegPrecision === 'month' ? 'DVLA gives the month only, so the report prints the month and year.' : '' })}
+      ${F('vehicle.firstReg', 'First registration date', { type: 'date', hint: firstRegHint(job.vehicle) })}
       ${F('vehicle.oemKey', 'Parts catalogue vehicle (for OEM part numbers)', { type: 'select', options: [['', '— none —']].concat(ov.map((v) => [v.key, `${v.make} ${v.model} ${v.generation} (${v.years})`])), hint: guess && guess.key !== job.vehicle.oemKey ? `Suggested: <button class="link" data-act="useOem" data-key="${guess.key}">${esc(guess.make + ' ' + guess.model + ' ' + guess.generation)}</button>` : 'Links estimate lines to researched OEM part numbers.' })}
       ${F('vehicle.adas', 'ADAS / driver-assistance systems fitted (optional)', { full: true, ph: 'e.g. windscreen camera (lane keeping), front radar (adaptive cruise), blind-spot radar, parking sensors, 360° cameras', hint: 'From the VIN / build data or the vehicle itself. The AI costs a calibration only for a system recorded here or visible in the photos; otherwise it lists the check and asks you to confirm the fit.' })}
       </div><datalist id="makes">${[...new Set(ov.map((v) => v.make).concat(['Audi', 'BMW', 'Citroën', 'Dacia', 'Fiat', 'Honda', 'Hyundai', 'Kia', 'Land Rover', 'Mazda', 'Mercedes-Benz', 'MG', 'MINI', 'Peugeot', 'Renault', 'SEAT', 'Škoda', 'Tesla', 'Toyota', 'Volvo']))].sort().map((m) => `<option value="${esc(m)}">`).join('')}</datalist>
@@ -830,10 +875,13 @@
     if (d.colour) v.colour = titleColour(d.colour);
     if (mapFuel(d.fuelType)) v.fuel = mapFuel(d.fuelType);
     if (d.engineCapacity) v.engineSize = d.engineCapacity;
-    // DVLA gives the month of first registration only; keep a full date from the MOT record when it is the same month
-    const fr = isoDate(d.firstRegistration);
-    if (fr && !(v.firstRegPrecision === 'day' && String(v.firstReg || '').slice(0, 7) === fr.slice(0, 7))) { v.firstReg = fr; v.firstRegPrecision = 'month'; }
-    logAi(j, 'DVLA Vehicle Enquiry Service lookup', 'DVLA', false);
+    // DVLA gives the month of first registration ('YYYY-MM-01'), or only the year (firstRegistration '', firstRegistrationYear).
+    // A more precise date already held for the same month (or year), e.g. from the MOT record, is kept; anything else is replaced.
+    const fr = isoDate(d.firstRegistration), yr = fr ? '' : String(d.firstRegistrationYear == null ? '' : d.firstRegistrationYear).trim();
+    const cur = String(v.firstReg == null ? '' : v.firstReg), p = v.firstRegPrecision;
+    if (fr && !(p === 'day' && cur.slice(0, 7) === fr.slice(0, 7))) { v.firstReg = fr; v.firstRegPrecision = 'month'; }
+    else if (/^\d{4}$/.test(yr) && !((p === 'day' || p === 'month') && cur.slice(0, 4) === yr)) { v.firstReg = yr; v.firstRegPrecision = 'year'; }
+    logAi(j, 'DVLA Vehicle Enquiry Service lookup' + (d.environment === 'test' ? ' (test service)' : ''), 'DVLA', false);
   }
   function applyMot(j, d) {
     const v = j.vehicle;
@@ -844,10 +892,13 @@
     if (!v.colour && d.primaryColour) v.colour = titleColour(d.primaryColour);
     if (!v.fuel && mapFuel(d.fuelType)) v.fuel = mapFuel(d.fuelType);
     if (!v.engineSize && Number(d.engineSize)) v.engineSize = Number(d.engineSize);
-    // the MOT record's registration date is a full date: it replaces an empty date or DVLA's month for the same month
+    // the MOT record's dates are full dates: the registration date replaces an empty date, DVLA's month for the same month or
+    // DVLA's year for the same year; the first-used date replaces an empty date or DVLA's year for the same year
     const reg = isoDate(d.registrationDate), used = isoDate(d.firstUsedDate);
-    if (reg && (!v.firstReg || (v.firstRegPrecision === 'month' && String(v.firstReg).slice(0, 7) === reg.slice(0, 7)))) { v.firstReg = reg; v.firstRegPrecision = 'day'; }
-    else if (!v.firstReg && used) { v.firstReg = used; v.firstRegPrecision = 'day'; }
+    const fr = String(v.firstReg == null ? '' : v.firstReg), p = v.firstRegPrecision;
+    const sameYear = (x) => p === 'year' && fr.slice(0, 4) === x.slice(0, 4);
+    if (reg && (!fr || (p === 'month' && fr.slice(0, 7) === reg.slice(0, 7)) || sameYear(reg))) { v.firstReg = reg; v.firstRegPrecision = 'day'; }
+    else if (used && (!fr || sameYear(used))) { v.firstReg = used; v.firstRegPrecision = 'day'; }
     v.motHistory = d.tests || [];
     logAi(j, `DVSA MOT History lookup (${(d.tests || []).length} tests)`, 'DVSA', false);
   }
@@ -865,7 +916,7 @@
     try {
       if (st.dvla) {
         const r = await desktop.data.dvla(reg, C.settings.dvlaEnv || 'live');
-        if (r.ok) { target = await applyToJob(j, (x) => applyDvla(x, r.result)); if (target) msgs.push('DVLA details applied'); else gone = true; } else msgs.push('DVLA: ' + r.error);
+        if (r.ok) { target = await applyToJob(j, (x) => applyDvla(x, r.result)); if (target) msgs.push(r.result && r.result.environment === 'test' ? "DVLA details applied from DVLA's TEST service (made-up test vehicles, not the register)" : 'DVLA details applied'); else gone = true; } else msgs.push('DVLA: ' + r.error);
       }
       if (st.mot && !gone) {
         const r = await desktop.data.mot(reg, 'registration');
@@ -908,6 +959,33 @@
   }
   function logAi(j, action, model, ai) { (j.aiLog = Array.isArray(j.aiLog) ? j.aiLog : []).push({ at: new Date().toISOString(), action, model, ai: ai !== false }); }
 
+  // A DVLA registration date as DVLA knows it, never with an invented day: "August 2014" ("2014-08-01" or "2014-08"), "1968" for
+  // a year alone; anything else as it is.
+  function regMonth(s) {
+    const t = String(s == null ? '' : s).trim();
+    const c = C.calendarDate(t), p = c ? null : C.partialDate(t);
+    if (!c && !p) return t;
+    const y = c ? c.y : p.y, mo = c ? c.mo : p.mo;
+    if (!mo) return String(y);
+    const d = new Date(Date.UTC(2000, mo - 1, 15)); d.setUTCFullYear(y);
+    return d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  }
+  // DVLA's first registration: its month ('YYYY-MM-01'), else the year when DVLA gives no month (firstRegistrationYear)
+  const dvlaFirstReg = (dv) => (isObj(dv) ? String(dv.firstRegistration || '').trim() || String(dv.firstRegistrationYear == null ? '' : dv.firstRegistrationYear).trim() : '');
+  // "first registered August 2014 but with DVLA February 2016"; a date DVLA did not give is left out
+  function importText(dv) {
+    const first = dvlaFirstReg(dv), withDvla = String(dv.firstRegistrationWithDvla || '').trim();
+    if (first && withDvla) return `first registered ${regMonth(first)} but with DVLA ${regMonth(withDvla)}`;
+    return first ? `first registered ${regMonth(first)}` : withDvla ? `first registered with DVLA ${regMonth(withDvla)}` : 'imported or re-registered';
+  }
+  // the first registration known to the month or the year only: what the report prints, and how to give the full date
+  function firstRegHint(v) {
+    const fr = String(v.firstReg == null ? '' : v.firstReg).trim();
+    if (!fr) return '';
+    if (v.firstRegPrecision === 'year') return `DVLA gives the year only (${esc(fr.slice(0, 4))}), so the report prints the year. Enter the full date if you know it, for example from the V5C.`;
+    if (v.firstRegPrecision === 'month') return `DVLA gives the month only (${esc(regMonth(fr))}), so the report prints the month and year.`;
+    return '';
+  }
   function vinHint(vin) {
     if (!job.vehicle.vin) return '17 characters. Manufacturer and model year are read automatically.';
     const bits = [];
@@ -2859,7 +2937,7 @@
         if (!r || !r.ok) return toast((r && r.error) || 'The MOT History credentials could not be removed.', true);
         toast('MOT History credentials removed.'); renderSettings();
       },
-      testDvla: async () => { const reg = $('#testReg').value.trim(); if (!reg) return toast('Enter a registration to test with.', true); const r = await desktop.data.dvla(reg, C.settings.dvlaEnv || 'live'); r.ok ? toast(`DVLA OK: ${r.result.make} ${r.result.colour} ${r.result.fuelType}${r.result.firstRegistration ? ', first registered ' + C.ukDate(r.result.firstRegistration) : ''}`) : toast(r.error, true); },
+      testDvla: async () => { const reg = $('#testReg').value.trim(); if (!reg) return toast('Enter a registration to test with.', true); const r = await desktop.data.dvla(reg, C.settings.dvlaEnv || 'live'); r.ok ? toast(`DVLA OK${r.result.environment === 'test' ? ' (test service)' : ''}: ${r.result.make} ${r.result.colour} ${r.result.fuelType}${dvlaFirstReg(r.result) ? ', first registered ' + regMonth(dvlaFirstReg(r.result)) : ''}`) : toast(r.error, true); },
       testMot: async () => { const reg = $('#testReg').value.trim(); if (!reg) return toast('Enter a registration to test with.', true); const r = await desktop.data.mot(reg, 'registration'); r.ok ? toast(`MOT History OK: ${r.result.make} ${r.result.model}, ${r.result.tests.length} test(s)${r.result.tests[0] && r.result.tests[0].odometer ? ', latest ' + r.result.tests[0].odometer.toLocaleString('en-GB') + ' ' + r.result.tests[0].unit : ''}`) : toast(r.error, true); },
     };
     if (!A[a]) return;
