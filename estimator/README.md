@@ -14,8 +14,8 @@ It is original software. It has its own parts catalogue, codes and guide times. 
 | **AI valuation tool** | The standard follows the claim type: the Financial Ombudsman Service approach for own-insurer total losses (retail value at the date of loss, starting from the **highest** recognised guide, never averaged, no blanket deductions); for third-party and court claims, the cost of a replacement vehicle.<br>• It checks mileage against the MOT history.<br>• It can **search UK listing sites for comparable adverts** near the date of loss. A comparable keeps its link only if the link really appeared in the search results; the rest are marked unverified.<br>• It returns a recommended PAV, a range, the workings and report-ready comments. |
 | **AI report writer** | Drafts every narrative section for side-by-side review. AI-drafted text is tracked, so later AI runs never treat it as the assessor's own words. |
 | **Repair operations** | • Renew + refinish new part.<br>• Repair light / medium / heavy (per-part guide repair hours) + refinish repaired part (<50% / >50%).<br>• Plastic repair, paintless dent repair (outer metal panels only), smart repair, refinish, **blend**, remove & refit, inspect, refurbish, and operations/services.<br>• Guide times scale by vehicle size class and paint finish. Paint materials are calculated from paint hours, with the paint factor applied once. Operations that make no sense are refused, e.g. "repairing" a lamp or painting a sensor. |
-| **Engineer checks** | • Structural repairs with Category N.<br>• Structural-damage wording vs category (reads negations correctly).<br>• No AQP ID; accreditation expired at the signature date.<br>• EV/hybrid battery assessment.<br>• Each ADAS sensor without its own calibration.<br>• SRS work without a diagnostic scan.<br>• Metallic paint with no blend; paint labour with no materials.<br>• Renewed part at £0.<br>• **MOT mileage:** inspection mileage lower than a pre-loss MOT reading, readings going down, and **an MOT after the date of loss** (the vehicle was presented or used after the accident).<br>• Desktop-assessment photo coverage.<br>• CPR 35 requirements (examiner, qualifications, range of opinion).<br>• Adopted PAV below the highest guide without a stated reason.<br>• Researched part numbers with variants (confirm by VIN).<br>• A salvage category on a repairable vehicle.<br>• Negative PAV or discount; invalid dates.<br>• Adverts found by AI search whose link has not been verified.<br>• Unreviewed AI lines, labels and **AI-drafted text still unedited**, and the AI's own review flags. |
-| **Court-ready option** | Tick *CPR Part 35 report* to address the report to the court. This adds:<br>• the expert's duty statement and the statement of truth (with the contempt wording);<br>• who carried out the examination;<br>• the **material relied on** (PD 35 para 3.2(2));<br>• the PD 35 checks. |
+| **Engineer checks** | • Structural repairs with Category N.<br>• Structural-damage wording vs category (reads negations correctly).<br>• No AQP ID; accreditation expired at the signature date.<br>• EV/hybrid battery assessment.<br>• Each ADAS sensor without its own calibration.<br>• SRS work without a diagnostic scan.<br>• Metallic paint with no blend; paint labour with no materials.<br>• Renewed part at £0.<br>• **MOT mileage:** inspection mileage lower than a pre-loss MOT reading, readings going down, and **an MOT after the date of loss** (the vehicle was presented or used after the accident).<br>• Desktop-assessment photo coverage.<br>• CPR 35 requirements (examiner, qualifications, range of opinion).<br>• Adopted PAV below the highest guide without a stated reason.<br>• Researched part numbers with variants (confirm by VIN).<br>• A salvage category on a repairable vehicle.<br>• DVLA details from DVLA's test service, or a DVLA make that disagrees with the vehicle.<br>• Negative PAV or discount; invalid dates.<br>• Adverts found by AI search whose link has not been verified.<br>• Unreviewed AI lines, labels and **AI-drafted text still unedited**, and the AI's own review flags. |
+| **Court-ready option** | Tick *CPR Part 35 report* to address the report to the court. This adds:<br>• the expert's duty statement and the statement of truth (with the contempt wording);<br>• who carried out the examination, and whether it was under the expert's supervision (PD 35 para 3.2(5));<br>• the **material relied on** (PD 35 para 3.2(2));<br>• the PD 35 checks. Any unreviewed AI output is an error in this mode, because the statement of truth cannot cover it. |
 | **Finalise / re-open** | Finalising **locks the whole report**: every field, the estimate and the photos become read-only. It also freezes the company details, declaration, signature, qualifications, AQP ID, labour rates and VAT, so later Settings changes can't alter an issued report. *Re-open* unlocks it for editing. A duplicate starts as a fresh, unsigned draft. |
 | **Backup and safety** | **Settings → Export full backup** streams every job, photo, setting and your own part numbers into one `.ersbackup` file, whatever the size. Restore reads it, and backups from earlier versions (`.json`), adding your own part numbers rather than replacing them.<br>• A save that fails (for example, a full disk) is shown at once with *Retry*; nothing is silently lost.<br>• Edits from two windows never overwrite each other unnoticed.<br>• If the window crashes or stops responding, the app offers to reload with your saved work. |
 | **AI and data-use log** | Every AI and data-service action is logged. The report includes a "Use of AI and data tools" statement, as the Civil Justice Council recommended in October 2026. It states accurately whether every AI output was reviewed, and names any AI-drafted text still unedited. |
@@ -26,7 +26,7 @@ It is original software. It has its own parts catalogue, codes and guide times. 
 Open **Settings → Data connections**.
 
 1. **DVLA Vehicle Enquiry Service:** paste the API key from your DVLA email and save it.
-   - Set *DVLA service* to **Test** if DVLA gave you a test key. Test keys only work on DVLA's test service, with test registrations such as `AA19AAA`.
+   - Set *DVLA service* to **Test** if DVLA gave you a test key. Test keys only work on DVLA's test service, with test registrations such as `AA19AAA`. Details from the test service are marked as such, and the pre-issue checks stop them reaching a report.
    - Use **Test DVLA** to check it.
 2. **DVSA MOT History** (free): register on gov.uk. Copy into the matching fields the **Client ID**, **Client secret**, **API key**, **Token URL** (`https://login.microsoftonline.com/<tenant>/oauth2/v2.0/token`) and **Scope URL** (`https://tapi.dvsa.gov.uk/.default`). They are all in DVSA's "Here are your credentials" email.
    - Use **Test MOT History** to check it.
@@ -68,6 +68,7 @@ The default model is `claude-opus-5-5` at "High" thoroughness. You can change bo
 
 **AI output is a draft.**
 - Every AI estimate line is marked *AI suggested* until you tick it as reviewed.
+- Every field the AI filled in shows *✓ Confirm* until you edit or confirm it, including drop-downs such as the decision and the salvage category.
 - AI photo labels count as unreviewed until you open and save them in the labelling tool.
 - The pre-issue checks warn about anything unreviewed, PDF export asks for confirmation, and the report states it.
 - The signed report is the assessor's opinion.
@@ -107,15 +108,16 @@ The default model is `claude-opus-5-5` at "High" thoroughness. You can change bo
 ## Tests
 
 ```
-npm test                    # reference-report totals; 438 core checks (incl. storage upgrade, conflicts and
-                            # quota errors on an in-memory IndexedDB); 3,000-job fuzz test; 181 report checks;
+npm test                    # reference-report totals; 586 core checks (incl. storage upgrade, conflicts,
+                            # quota errors and unsafe keys on an in-memory IndexedDB); 3,000-job fuzz test; 229 report checks;
                             # AI photo/narrative/valuation pipeline and DVLA/MOT connectors against mocked APIs
                             # (response shapes from the official specs); the desktop shell under a fake Electron;
                             # OEM and variant data in sync and reachable from the variant picker
-node tools/ui-smoketest.js  # every screen and flow in Chromium with the desktop bridge mocked (68+ checks)
-npm run test:e2e            # the real app in real Electron (43 checks): bridge, key encryption, DVLA/MOT/AI calls
+node tools/ui-smoketest.js  # every screen and flow in Chromium with the desktop bridge mocked (99 checks,
+                            # including keyboard-only use and accessible names)
+npm run test:e2e            # the real app in real Electron (57 checks): bridge, key encryption, DVLA/MOT/AI calls
                             # through Windows networking (mocked servers), PDF export, streaming backup,
-                            # crash/hang recovery, navigation and window locks, second launch
+                            # crash/hang recovery, atomic saves, navigation and frame locks, second launch
                             # (on Linux: xvfb-run -a npx electron --no-sandbox tools/electron-e2e.js)
 ```
 

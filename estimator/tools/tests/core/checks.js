@@ -1007,6 +1007,19 @@ section('R4 dates: first registration known to the month or the year only');
   check('other dates must still be full dates ("2026-09" date of loss warns)', (() => { const j = Sample.sampleJob(); j.instruction.dateOfLoss = '2026-09'; return find(j, /Date of loss "2026-09" is not a valid date/).length === 1; })());
 }
 
+section('R4 DVLA data: test-service records and a DVLA make that disagrees with the vehicle');
+{
+  const withDvla = (dv, make) => { const j = Sample.sampleJob(); if (make) j.vehicle.make = make; j.vehicle.dvla = Object.assign({ make: 'NISSAN', colour: 'GREY' }, dv); return j; };
+  const testErr = (j) => qa(j).filter((q) => q.level === 'error' && /DVLA's TEST service/.test(q.msg)).length;
+  const makeWarn = (j) => find(j, /DVLA lists the make as/).length;
+  check("DVLA record from the test service → error (made-up test vehicle, not the register)", testErr(withDvla({ environment: 'test' })) === 1);
+  check('live, old (no environment) or no DVLA record → no test-service error', testErr(withDvla({ environment: 'live' })) === 0 && testErr(withDvla({})) === 0 && testErr(Sample.sampleJob()) === 0);
+  check('DVLA make NISSAN vs vehicle Nissan → no make warning (case and spacing ignored)', makeWarn(withDvla({}, 'Nissan')) === 0);
+  check('DVLA MERCEDES-BENZ vs vehicle Mercedes / VOLKSWAGEN vs VW → no warning (aliases)', makeWarn(withDvla({ make: 'MERCEDES-BENZ' }, 'Mercedes')) === 0 && makeWarn(withDvla({ make: 'VOLKSWAGEN' }, 'VW')) === 0);
+  check('DVLA make FORD vs vehicle Nissan → warning to check the registration', makeWarn(withDvla({ make: 'FORD' }, 'Nissan')) === 1);
+  check('no DVLA make or no vehicle make → no make warning', makeWarn(withDvla({ make: '' }, 'Nissan')) === 0);
+}
+
 section('R4 security: stored or imported data never reaches Object.prototype (settings, job files, part numbers)');
 {
   const vmod = require('vm');

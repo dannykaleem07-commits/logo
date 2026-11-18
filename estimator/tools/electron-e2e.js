@@ -347,10 +347,18 @@ if (SECOND) {
       const p = mine.contentDocument && mine.contentDocument.getElementById('p');
       return p ? p.textContent : null;
     })()`);
+    // The CSP (frame-src 'none') blocks the load in the page: Chromium then shows an error page in that frame, which
+    // WebFrameMain still lists under the URL it refused. What matters is that the foreign page never ran: its script did
+    // not execute, the stored key is unchanged and nothing reached the system browser. While such a frame exists the
+    // main process refuses every bridge call (fail-closed); once it is gone the bridge answers the app page again.
+    const ran = await js(`[...document.querySelectorAll('#e2e-evil-src, #e2e-evil-refresh')].some((f) => { try { return !!(f.contentWindow && f.contentWindow.__att); } catch (e) { return false; } })`);
     const frameUrls = win.webContents.mainFrame.framesInSubtree.map((f) => f.url);
-    const bridgeAfter = await js('desktop.app.info()');
+    const bridgeDuring = await js('desktop.app.info()');
     await js(`document.querySelectorAll('#e2e-evil-src, #e2e-evil-refresh, #e2e-own').forEach((f) => f.remove()); 1`);
-    check('An iframe of another local page never loads (src, or a meta refresh in a srcdoc iframe): no bridge call, key unchanged, nothing sent to the browser; the page\'s own srcdoc iframe works and the bridge still answers the page', own === 'report preview' && !frameUrls.some((u) => /claim-pack-frame/.test(u)) && R.external.length === externalBefore && fs.readFileSync(path.join(OUT, 'userData', 'ai-key.bin')).equals(keyBefore) && bridgeAfter.ok === true, `own=${own} frames=${text(frameUrls)} external=${text(R.external.slice(externalBefore))} bridge=${text(bridgeAfter)}`);
+    await new Promise((r) => setTimeout(r, 300));
+    const bridgeAfter = await js('desktop.app.info()');
+    const loadedForeign = frameUrls.some((u) => /claim-pack-frame/.test(u));
+    check('An iframe of another local page never runs (src, or a meta refresh in a srcdoc iframe): its script did not execute, key unchanged, nothing sent to the browser; the bridge refuses calls while it exists and answers the page again once it is gone; the page\'s own srcdoc iframe works', own === 'report preview' && !ran && R.external.length === externalBefore && fs.readFileSync(path.join(OUT, 'userData', 'ai-key.bin')).equals(keyBefore) && (!loadedForeign || bridgeDuring.ok === false) && bridgeAfter.ok === true, `own=${own} ran=${ran} frames=${text(frameUrls)} external=${text(R.external.slice(externalBefore))} during=${text(bridgeDuring)} after=${text(bridgeAfter)}`);
 
     const runChild = (arg, out, ms) => new Promise((res) => {
       const p = spawn(process.execPath, childArgs(arg), { stdio: 'ignore', env: { ...process.env, ERS_E2E_OUT: out } });

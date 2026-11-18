@@ -1071,6 +1071,12 @@
     if (vin.manufacturer && v.make && !vinMakeMatches(vin.manufacturer, v.make)) {
       add('warn', `VIN manufacturer code suggests ${vin.manufacturer}, but make is "${v.make}".`, 'vehicle');
     }
+    // DVLA data must come from the live register, and the DVLA make must agree with the vehicle recorded
+    const dvRec = v.dvla && typeof v.dvla === 'object' ? v.dvla : null;
+    if (dvRec && dvRec.environment === 'test') add('error', "The DVLA details come from DVLA's TEST service (made-up test vehicles), not the register. Set Settings → Data connections → DVLA service to Live and look the vehicle up again before issuing.", 'vehicle');
+    if (dvRec && dvRec.make && v.make && makeKey(dvRec.make) && makeKey(v.make) && makeKey(dvRec.make) !== makeKey(v.make)) {
+      add('warn', `DVLA lists the make as "${txt(dvRec.make)}", but the vehicle is recorded as "${txt(v.make)}". Check the registration and the vehicle details.`, 'vehicle');
+    }
     if (!ins.dateOfLoss) add('error', 'Date of loss is missing.', 'claim');
     if (ins.dateOfLoss && insp.date && insp.date < ins.dateOfLoss) add('error', 'Inspection date is before the date of loss.', 'inspection');
     if (!ins.instructingParty) add('warn', 'Instructing party is missing.', 'claim');
