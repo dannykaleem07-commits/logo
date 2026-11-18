@@ -29,24 +29,30 @@
     ['UNDER', 'Underbody / structure', 'rect', [84, 384, 32, 16], ['Underbody', 'Structural'], '']
   ].map((z) => ({ id: z[0], label: z[1], shape: z[2], r: z[3], groups: z[4], side: z[5] }));
 
+  const esc = (s) => window.Core.esc(s);
+  // Every zone is a toggle button: Tab reaches it, Enter or Space toggles it (app.js), and it reads as pressed when selected.
+  // The drawn labels are for sighted users only (aria-hidden): each zone's name comes from its own label.
   function svg(selected) {
     const sel = new Set(selected || []);
     const shapes = ZONES.map((z) => {
       const [x, y, w, h] = z.r;
-      const on = sel.has(z.label) ? ' on' : '';
+      const pressed = sel.has(z.label);
+      const on = pressed ? ' on' : '';
       const rx = z.shape === 'wheel' ? 5 : 4;
       const short = z.label.replace(/^(LH|RH) /, '').replace('front ', 'f. ').replace('rear ', 'r. ');
       const txt = z.shape === 'wheel' || w < 25
         ? ''
-        : `<text x="${x + w / 2}" y="${y + h / 2 + 3}">${short}</text>`;
-      return `<rect class="z ${z.shape === 'wheel' ? 'wheel' : ''}${on}" data-zone="${z.label}" x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}"><title>${z.label}</title></rect>${txt}`;
+        : `<text x="${x + w / 2}" y="${y + h / 2 + 3}" aria-hidden="true">${esc(short)}</text>`;
+      const name = esc(z.label);
+      return `<rect class="z ${z.shape === 'wheel' ? 'wheel' : ''}${on}" data-zone="${name}" x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" tabindex="0" role="button" aria-pressed="${pressed}" aria-label="${name}"><title>${name}</title></rect>${txt}`;
     }).join('');
-    return `<svg viewBox="0 0 200 410" role="img" aria-label="Vehicle damage diagram">
-      <rect x="28" y="8" width="144" height="372" rx="34" fill="#f8fafc" stroke="#b7c2ce" stroke-width="1.5"/>
+    // a group, not role="img": an image's children are hidden from assistive technology, and these are buttons
+    return `<svg viewBox="0 0 200 410" role="group" aria-label="Vehicle damage diagram">
+      <rect x="28" y="8" width="144" height="372" rx="34" fill="#f8fafc" stroke="#b7c2ce" stroke-width="1.5" aria-hidden="true"/>
       ${shapes}
-      <text x="100" y="6" style="font-weight:700">FRONT</text>
+      <g aria-hidden="true"><text x="100" y="6" style="font-weight:700">FRONT</text>
       <text x="12" y="210" transform="rotate(-90 12 210)" style="font-weight:700">LH (nearside)</text>
-      <text x="190" y="210" transform="rotate(90 190 210)" style="font-weight:700">RH (offside)</text>
+      <text x="190" y="210" transform="rotate(90 190 210)" style="font-weight:700">RH (offside)</text></g>
     </svg>`;
   }
 

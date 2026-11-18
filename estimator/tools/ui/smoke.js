@@ -1698,6 +1698,190 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert(new RegExp(`${ids.length - 1} restored, 1 unreadable`).test(await toastText()), await toastText());
   });
 
+  // ---------- accessibility: modal dialog (R#15), accessible names (R#16), contrast (R#28), keyboard-only use (R#14) ----------
+  let K; // a fresh sample job
+  const focused = () => page.evaluate(() => { const a = document.activeElement || document.body; const d = a.dataset || {}; return { inModal: !!a.closest('#modal'), tag: a.tagName, id: a.id, cls: String(a.getAttribute('class') || ''), act: d.act || '', dataId: d.id || '', pid: d.pid || '', target: d.target || '', zone: a.getAttribute('data-zone') || '' }; });
+  const modalShown = () => page.$eval('#modal', (n) => !n.classList.contains('hidden'));
+  const tabUntil = async (test, max) => { for (let k = 0; k < (max || 40); k++) { await page.keyboard.press('Tab'); if (await page.evaluate(test)) return true; } return false; };
+
+  await step('modal: a dialog that takes focus, keeps Tab inside, closes on Escape (asking first when it holds unsaved work) and gives focus back', async () => {
+    await t.go('#/jobs'); await settle(200);
+    await page.click('[data-act="loadSample"]');
+    await page.waitForFunction(() => /#\/job\/[^/]+\/report$/.test(location.hash)); await settle(200);
+    K = await t.jobId();
+    await openTab(K, 'estimate');
+    const lineId = await page.$eval('#linesTbl [data-act="oemPick"]', (n) => n.dataset.id);
+    await page.focus(`[data-act="oemPick"][data-id="${lineId}"]`);
+    await page.keyboard.press('Enter'); await settle(200);
+    assert(await modalShown(), 'opened from the keyboard');
+    const sem = await page.evaluate(() => { const m = document.querySelector('#modal'); return [m.getAttribute('role'), m.getAttribute('aria-modal'), m.getAttribute('aria-labelledby'), m.querySelector('[data-close]').getAttribute('aria-label'), document.querySelector('.side').inert, document.querySelector('.mainCol').inert]; });
+    assert.deepStrictEqual(sem, ['dialog', 'true', 'modalTitle', 'Close', true, true], 'dialog semantics, a named ×, the page behind inert');
+    assert((await focused()).inModal, 'focus moved into the dialog');
+    // Tab and Shift+Tab stay in the dialog and wrap round at its ends
+    const pos = () => page.evaluate(() => { const f = [...document.querySelectorAll('#modal button, #modal a[href], #modal input, #modal select, #modal textarea')].filter((x) => !x.disabled && x.getClientRects().length); return { i: f.indexOf(document.activeElement), n: f.length, inModal: !!document.activeElement.closest('#modal') }; });
+    const n = (await pos()).n, fwd = [], back = [];
+    assert(n >= 2, 'controls in the dialog: ' + n);
+    for (let k = 0; k < n + 2; k++) { await page.keyboard.press('Tab'); const p = await pos(); assert(p.inModal, 'Tab left the dialog'); fwd.push(p.i); }
+    assert.deepStrictEqual(fwd, [...Array(n).keys(), 0, 1], 'Tab goes through the dialog and back to its first control');
+    for (let k = 0; k < 3; k++) { await page.keyboard.press('Shift+Tab'); const p = await pos(); assert(p.inModal, 'Shift+Tab left the dialog'); back.push(p.i); }
+    assert.deepStrictEqual(back, [0, n - 1, n - 2], 'Shift+Tab wraps the other way');
+    await page.keyboard.press('Escape'); await settle(150);
+    assert(!(await modalShown()), 'Escape closed it');
+    const f = await focused();
+    assert.deepStrictEqual([f.act, f.dataId], ['oemPick', lineId], 'focus is back on the ⋯ button that opened it');
+    assert(!(await page.evaluate(() => document.querySelector('.mainCol').inert || document.querySelector('.side').inert)), 'the page is usable again');
+    // unsaved work: Escape asks the same question as ×; Cancel keeps it, OK closes it and gives focus back
+    await openTab(K, 'signoff');
+    await page.focus('[data-act="sigDraw"][data-target="job"]'); await page.keyboard.press('Enter'); await settle(150);
+    assert((await focused()).inModal, 'the signature pad takes focus');
+    await inkSignature();
+    const d0 = t.dialogs.length;
+    t.dialogMode = 'dismiss';
+    await page.keyboard.press('Escape'); await settle(150);
+    t.dialogMode = 'accept';
+    assert(t.dialogs.length === d0 + 1 && /^Close this window\?/.test(t.dialogs[d0]) && await exists('#modal:not(.hidden) canvas.sigpad'), 'asked first; Cancel kept the ink: ' + t.dialogs.slice(d0));
+    await page.keyboard.press('Escape'); await settle(150);
+    assert(t.dialogs.length === d0 + 2 && !(await modalShown()), 'OK closed it');
+    const g = await focused();
+    assert.deepStrictEqual([g.act, g.target], ['sigDraw', 'job'], 'focus back on "Draw signature"');
+  });
+
+  await step('names: no unnamed control on the sample job\'s Estimate, Valuation and Photos tabs (Chromium accessibility tree); names say which line, row or photo', async () => {
+    const cdp = await t.context.newCDPSession(page);
+    await cdp.send('Accessibility.enable');
+    // the probe's rule: a control whose name is empty or only a symbol (✕ ↑ ↓ ⋯ +) has no usable name
+    const unnamed = async () => (await cdp.send('Accessibility.getFullAXTree')).nodes
+      .filter((x) => !x.ignored && ['textbox', 'searchbox', 'spinbutton', 'combobox', 'listbox', 'checkbox', 'button', 'link'].includes(x.role && x.role.value))
+      .map((x) => [x.role.value, String((x.name && x.name.value) || '').trim()]).filter(([, nm]) => !nm || /^[✕×↑↓⋯+↗]$/.test(nm)).map(([r, nm]) => `${r} "${nm}"`);
+    await openTab(K, 'photos'); // the sample has no photos: one card to check
+    await page.setInputFiles('#photoInput', [file('a.jpg', jpg1)]);
+    await page.waitForSelector('.pcard'); await flush();
+    const found = {};
+    for (const tb of ['estimate', 'valuation', 'photos']) { await openTab(K, tb); found[tb] = await unnamed(); }
+    await cdp.detach();
+    assert.deepStrictEqual(found, { estimate: [], valuation: [], photos: [] }, 'unnamed controls: ' + JSON.stringify(found));
+    await openTab(K, 'estimate');
+    const line3 = await page.$$eval('#linesTbl tbody tr:nth-child(3) [aria-label]', (ns) => ns.map((x) => x.getAttribute('aria-label')));
+    for (const want of ['Line 3 type', 'Line 3 description', 'Line 3 part number', 'Line 3 hours', 'Line 3 cost class', 'Move line 3 up', 'Move line 3 down', 'Delete line 3']) assert(line3.includes(want), `"${want}" in ${JSON.stringify(line3)}`);
+    assert(/^OEM part numbers for line \d+$/.test(await page.$eval('#linesTbl [data-act="oemPick"]', (x) => x.getAttribute('aria-label'))), 'the ⋯ button is named');
+    await openTab(K, 'valuation');
+    assert.deepStrictEqual(await page.$$eval('#tabBody tr:first-child [data-vs], [data-act="vsDel"][data-i="0"]', (ns) => ns.map((x) => x.getAttribute('aria-label'))), ['Valuation source 1 name', 'Valuation source 1 amount, £', 'Delete valuation source 1']);
+    await openTab(K, 'photos');
+    const card = await page.$$eval('.pcard:first-child [aria-label]', (ns) => ns.map((x) => x.getAttribute('aria-label')));
+    assert(['Move IMAGE 01 earlier', 'Move IMAGE 01 later', 'Remove IMAGE 01', 'IMAGE 01 title'].every((w) => card.includes(w)), 'photo card: ' + JSON.stringify(card));
+  });
+
+  await step('contrast: badge, part-number and muted text colours reach 4.5:1 (WCAG 2) on the backgrounds they are used on', async () => {
+    await openTab(K, 'estimate');
+    const res = await page.evaluate(() => {
+      const parse = (c) => { const p = c.match(/rgba?\(([^)]+)\)/)[1].split(',').map((x) => parseFloat(x)); return { r: p[0], g: p[1], b: p[2], a: p[3] == null ? 1 : p[3] }; };
+      const lum = ({ r, g, b }) => [r, g, b].map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }).reduce((s, v, i) => s + v * [0.2126, 0.7152, 0.0722][i], 0);
+      const bgOf = (el) => { for (let x = el; x; x = x.parentElement) { const c = parse(getComputedStyle(x).backgroundColor); if (c.a > 0.9) return c; } return { r: 255, g: 255, b: 255 }; };
+      const ratio = (el) => { const a = lum(parse(getComputedStyle(el).color)), b = lum(bgOf(el)); return +((Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05)).toFixed(2); };
+      const out = {};
+      const probe = (where, host, cls, tag) => { const s = document.createElement(tag || 'span'); s.className = cls; s.textContent = 'x'; host.appendChild(s); out[`${cls || tag} on ${where}`] = ratio(s); s.remove(); };
+      const card = document.querySelector('#tabBody .card');
+      for (const c of ['badge', 'badge ok', 'badge warn', 'badge err', 'badge ai', 'badge user', 'oem confirmed', 'oem single-source', 'oem user', 'oem report', 'hint']) probe('a card', card, c);
+      // a selected row of the parts list (--blue-2): part numbers, codes and hints in it
+      const row = document.createElement('div'); row.className = 'r sel'; document.querySelector('#pickResults').appendChild(row);
+      for (const c of ['oem confirmed', 'oem single-source', 'oem user', 'hint']) probe('a selected part row', row, c);
+      probe('a selected part row', row, '', 'code');
+      row.remove();
+      // muted text on --bg: the tab counter and the totals labels
+      out['tab counter'] = ratio(document.querySelector('.tabs a .cnt'));
+      out['totals label'] = ratio(document.querySelector('#totalsBox div:not(.g) span'));
+      out['grand total label'] = ratio(document.querySelector('#totalsBox .g span'));
+      return out;
+    });
+    const low = Object.entries(res).filter(([, r]) => !(r >= 4.5));
+    assert.deepStrictEqual(low, [], 'below 4.5:1: ' + JSON.stringify(res));
+    assert(res['badge warn on a card'] >= 4.5 && res['badge ok on a card'] >= 4.5 && res['oem single-source on a card'] >= 4.5, JSON.stringify(res));
+  });
+
+  await step('keyboard only: add a photo through the file chooser, pick a catalogue part and toggle a damage zone', async () => {
+    // a photo: Tab reaches the drop zone, which is a button; Enter opens the file chooser
+    await openTab(K, 'photos');
+    const p0 = (await t.getJob(K)).photos.length;
+    await page.focus('.tabs a.active');
+    assert(await tabUntil(() => document.activeElement.id === 'drop'), 'Tab reaches the drop zone');
+    assert.strictEqual(await page.$eval('#drop', (x) => x.tagName), 'BUTTON');
+    const [fc] = await Promise.all([page.waitForEvent('filechooser', { timeout: 5000 }), page.keyboard.press('Enter')]);
+    await fc.setFiles([file('keyboard.jpg', jpg2)]);
+    await page.waitForFunction((k) => document.querySelectorAll('.pcard').length === k + 1, p0, { timeout: 8000 }); await flush();
+    assert.strictEqual((await t.getJob(K)).photos.length, p0 + 1, 'photo added from the file chooser');
+    assert.strictEqual((await focused()).id, 'drop', 'focus stays on the drop zone');
+    // a part: type in Search, Enter goes to the list with the best match picked, the arrow keys move, Enter adds the line
+    await openTab(K, 'estimate');
+    await page.selectOption('#pickGroup', ''); await page.selectOption('#pickOp', 'replace'); await page.check('#addRefinish'); // the picker's other settings, as left by earlier steps
+    await page.fill('#pickQ', '');
+    const l0 = (await t.getJob(K)).lines.length;
+    await page.focus('#pickQ'); await page.keyboard.type('bonnet'); await settle(80);
+    await page.keyboard.press('Enter');
+    const st = await page.evaluate(() => { const b = document.querySelector('#pickResults'), s = b.querySelector('.r.sel'); return { focus: document.activeElement.id, role: b.getAttribute('role'), code: s && s.dataset.code, selected: s && s.getAttribute('aria-selected'), active: b.getAttribute('aria-activedescendant') === (s && s.id) }; });
+    assert.deepStrictEqual(st, { focus: 'pickResults', role: 'listbox', code: 'BN001', selected: 'true', active: true }, 'Enter moved to the list');
+    await page.keyboard.press('ArrowDown');
+    assert.strictEqual(await page.$eval('#pickResults .r.sel', (x) => x.dataset.code), 'BN002', 'ArrowDown picks the next part');
+    await page.keyboard.press('ArrowUp');
+    assert.strictEqual(await page.$eval('#pickResults .r.sel', (x) => x.dataset.code), 'BN001', 'ArrowUp picks the first again');
+    await page.keyboard.press('Enter'); await flush();
+    const added = (await t.getJob(K)).lines.slice(l0).map((l) => [l.code, l.op]);
+    assert.deepStrictEqual(added, [['BN001', 'renew'], ['BN001', 'refinish']], 'Enter added the part as a line, with its refinish line');
+    assert.strictEqual((await focused()).id, 'pickResults', 'the list keeps focus for the next part');
+    // a damage zone: Tab reaches each zone (a toggle button); Enter adds it and Space removes it, and the zone keeps focus
+    await openTab(K, 'assessment');
+    await page.focus('.tabs a.active');
+    assert(await tabUntil(() => !!document.activeElement.getAttribute('data-zone')), 'Tab reaches the diagram');
+    const z = (await focused()).zone, had = (await t.getJob(K)).zones.includes(z);
+    await page.keyboard.press('Enter'); await flush();
+    assert.strictEqual((await t.getJob(K)).zones.includes(z), !had, 'Enter toggled ' + z);
+    assert.deepStrictEqual(await page.evaluate(() => ['data-zone', 'role', 'aria-pressed'].map((a) => document.activeElement.getAttribute(a))), [z, 'button', String(!had)], 'the zone keeps focus and reads as pressed');
+    await page.keyboard.press(' '); await flush();
+    assert.strictEqual((await t.getJob(K)).zones.includes(z), had, 'Space toggled it back');
+    assert.strictEqual((await focused()).zone, z, 'still focused');
+  });
+
+  await step('keyboard only: label boxes are created, moved, resized, named and deleted; Escape asks before discarding them', async () => {
+    await openTab(K, 'photos');
+    const ph = (await t.getJob(K)).photos, k = ph.length - 1, pid = ph[k].id; // the photo added in the step before
+    assert.strictEqual(ph[k].labels.length, 0, 'no labels yet');
+    await page.focus(`button[data-act="label"][data-pid="${pid}"]`); await page.keyboard.press('Enter'); await settle(250);
+    assert.deepStrictEqual(await page.evaluate(() => [document.activeElement.classList.contains('labStage'), document.activeElement.getAttribute('role')]), [true, 'application'], 'the photo has focus');
+    assert(await tabUntil(() => document.activeElement.dataset.act === 'newbox', 6), 'Tab reaches New box');
+    await page.keyboard.press('Enter'); await settle(80);
+    assert((await focused()).cls.includes('labStage'), 'back on the photo, with the new box selected');
+    for (let i = 0; i < 5; i++) await page.keyboard.press('ArrowRight');
+    await page.keyboard.press('ArrowUp');
+    await page.keyboard.press('Shift+ArrowRight'); await page.keyboard.press('Shift+ArrowRight'); await page.keyboard.press('Shift+ArrowDown');
+    await page.keyboard.press('Control+Shift+ArrowDown'); // bigger step
+    assert(/^Box 1 of 1, Damage: 40% from the left, 39% from the top, 32% wide, 26% high\.$/.test(await text('[data-say]')), 'spoken: ' + await text('[data-say]'));
+    await page.keyboard.press('Enter');
+    assert.strictEqual((await focused()).tag, 'INPUT', 'Enter edits the text');
+    await page.keyboard.type('Scuff by keyboard'); await page.keyboard.press('Enter');
+    assert((await focused()).cls.includes('labStage'), 'Enter goes back to the photo');
+    // a second box, removed with Delete
+    assert(await tabUntil(() => document.activeElement.dataset.act === 'newbox', 6)); await page.keyboard.press('Enter'); await settle(50);
+    assert.strictEqual(await page.$$eval('.labStage .bx', (x) => x.length), 2, 'second box');
+    await page.keyboard.press('Delete'); await settle(50);
+    assert.strictEqual(await page.$$eval('.labStage .bx', (x) => x.length), 1, 'Delete removed the selected box');
+    assert(await tabUntil(() => document.activeElement.dataset.act === 'save', 60), 'Tab reaches Save labels');
+    await page.keyboard.press('Enter'); await flush();
+    const L = (await t.getJob(K)).photos[k].labels;
+    assert.deepStrictEqual(L.map((l) => [l.text, l.x, l.y, l.w, l.h, l.ai]), [['Scuff by keyboard', 0.4, 0.39, 0.32, 0.26, false]], 'saved from the keys: ' + JSON.stringify(L));
+    const f = await focused();
+    assert.deepStrictEqual([f.act, f.pid, f.tag], ['label', pid, 'BUTTON'], 'focus back on "Edit labels"');
+    // Escape with unsaved changes asks first: Cancel keeps the editor, OK closes it without saving
+    await page.keyboard.press('Enter'); await settle(250);
+    await page.keyboard.press('ArrowLeft');
+    const d0 = t.dialogs.length;
+    t.dialogMode = 'dismiss';
+    await page.keyboard.press('Escape'); await settle(100);
+    t.dialogMode = 'accept';
+    assert(t.dialogs.length === d0 + 1 && /^Close this window\?/.test(t.dialogs[d0]) && await exists('#modal:not(.hidden) .labStage'), 'asked first; Cancel kept it open');
+    await page.keyboard.press('Escape'); await settle(150);
+    assert(!(await modalShown()), 'OK closed it');
+    assert.strictEqual((await t.getJob(K)).photos[k].labels[0].x, 0.4, 'the unsaved move was discarded');
+  });
+
   await t.close();
   const errors = t.errors.slice();
 

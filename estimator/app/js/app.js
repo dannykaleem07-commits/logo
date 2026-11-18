@@ -103,21 +103,42 @@
   // Every modal gets a fresh body element, so listeners added by an earlier modal never fire in a later one.
   // Only one modal is open at a time: openModal() refuses (returns null) while another is open, so a result that finishes in
   // the background can never replace the labeler or the signature pad. A modal with unsaved work passes opts.isDirty, and
-  // closing it from the × button, the backdrop or by navigating away asks first.
-  let modalGuard = null;
+  // closing it from the × button, Escape, the backdrop or by navigating away asks first.
+  // For the keyboard it is a dialog (index.html: role="dialog", aria-modal): opening it moves focus into it (to the element
+  // marked data-autofocus, else the dialog itself), Tab and Shift+Tab stay inside it, the page behind it is inert, and closing it
+  // puts focus back on the control that opened it (or on the same control in the page re-rendered meanwhile).
+  let modalGuard = null, modalReturn = null;
   const modalOpen = () => !$('#modal').classList.contains('hidden');
   const modalDirty = () => { try { return !!(modalGuard && modalGuard()); } catch (e) { return false; } };
   function freshModalBody() { const old = $('#modalBody'); const b = old.cloneNode(false); old.replaceWith(b); return b; }
+  const pageBehind = () => [$('.side'), $('.mainCol')].filter(Boolean);
   function openModal(title, content, opts) {
     if (modalOpen()) return null;
     $('#modalTitle').textContent = title;
     const b = freshModalBody();
     if (typeof content === 'string') b.innerHTML = content; else b.appendChild(content);
     modalGuard = (opts && typeof opts.isDirty === 'function') ? opts.isDirty : null;
+    const from = document.activeElement;
+    modalReturn = from && from !== document.body && !from.closest('#modal') ? { el: from, find: focusTarget(from) } : null;
     $('#modal').classList.remove('hidden');
+    pageBehind().forEach((el) => el.setAttribute('inert', ''));
+    const first = b.querySelector('[data-autofocus]');
+    (first && !first.disabled ? first : $('#modal')).focus();
     return b;
   }
-  function closeModal() { $('#modal').classList.add('hidden'); freshModalBody(); modalGuard = null; }
+  function closeModal() {
+    $('#modal').classList.add('hidden'); freshModalBody(); modalGuard = null;
+    pageBehind().forEach((el) => el.removeAttribute('inert'));
+    const r = modalReturn; modalReturn = null;
+    if (!r) return;
+    refocus(r);
+    // a page re-rendered straight after closing (Catalogue, Settings) has a new copy of the control: focus that one
+    setTimeout(() => { const a = document.activeElement; if (!modalOpen() && (!a || a === document.body)) refocus(r); }, 0);
+  }
+  function refocus(r) {
+    const el = r.el && r.el.isConnected ? r.el : findFocusTarget(r.find, document);
+    if (el && !el.disabled && !el.closest('[inert]')) el.focus({ preventScroll: true });
+  }
   // close unless the modal holds unsaved work and the user chooses to keep it; true when it is closed
   function requestCloseModal(question) {
     if (!modalOpen()) return true;
@@ -131,6 +152,30 @@
   $('#modal').addEventListener('click', (e) => {
     if (e.target.closest('[data-close]') || (e.target.id === 'modal' && pressOnBackdrop)) requestCloseModal('Close this window?');
     pressOnBackdrop = false;
+  });
+  // the controls Tab can reach inside an element, in document order
+  const TABBABLE = 'a[href], button, input, select, textarea, iframe, [tabindex], [contenteditable="true"]';
+  const tabbables = (root) => $$(TABBABLE, root).filter((el) => el.tabIndex >= 0 && !el.disabled && !el.closest('[inert]') && el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden');
+  // Tab inside the open modal: the browser moves between its controls; from the last one Tab goes back to the first (Shift+Tab
+  // the other way), and focus that is on the dialog itself or on no control moves to the next control in order.
+  function trapTab(e) {
+    const box = $('#modal'), f = tabbables(box), a = document.activeElement, i = f.indexOf(a);
+    if (!f.length) { e.preventDefault(); box.focus(); return; }
+    if (i < 0) {
+      e.preventDefault();
+      const inside = box.contains(a) && a !== box;
+      const after = inside ? f.findIndex((x) => !!(a.compareDocumentPosition(x) & Node.DOCUMENT_POSITION_FOLLOWING)) : 0;
+      if (!e.shiftKey) f[after >= 0 ? after : 0].focus();
+      else f[inside && after > 0 ? after - 1 : f.length - 1].focus();
+      return;
+    }
+    if (!e.shiftKey && i === f.length - 1) { e.preventDefault(); f[0].focus(); }
+    else if (e.shiftKey && i === 0) { e.preventDefault(); f[f.length - 1].focus(); }
+  }
+  document.addEventListener('keydown', (e) => {
+    if (!modalOpen() || e.defaultPrevented) return;
+    if (e.key === 'Escape' && !e.isComposing) { e.preventDefault(); requestCloseModal('Close this window?'); return; }
+    if (e.key === 'Tab' && !e.altKey && !e.ctrlKey && !e.metaKey) trapTab(e);
   });
 
   // ---------- loaded jobs ----------
@@ -535,29 +580,39 @@
     body.classList.add('locked');
     $$('input, select, textarea', body).forEach((el) => { el.disabled = true; });
     $$('[data-act]', body).forEach((el) => { if (LOCK_FREE.has(el.dataset.act)) return; if (el.tagName === 'BUTTON' || el.tagName === 'INPUT') el.disabled = true; el.setAttribute('aria-disabled', 'true'); });
-    $$('[data-zone]', body).forEach((el) => el.setAttribute('aria-disabled', 'true'));
+    $$('[data-zone], #pickResults', body).forEach((el) => { if (el.dataset.zone != null) el.setAttribute('aria-disabled', 'true'); el.setAttribute('tabindex', '-1'); });
   }
-  // The focused field of the job view, found again after a re-render by its data attributes.
-  const FOCUS_KEYS = ['bind', 'bindCheck', 'lf', 'pf', 'adv', 'advVerify', 'vs', 'vp'];
+  // A control found again after a re-render, by its data attributes (or its id): a field first (its key), else a damage zone or
+  // an action button, told apart by the line, photo, row, direction, zone, code or target it acts on. Used for the field being
+  // typed in (a lookup or AI result re-renders the tab) and for the button a keyboard user pressed or that opened a modal.
+  const FOCUS_KEYS = ['bind', 'bindCheck', 'lf', 'pf', 'adv', 'advVerify', 'vs', 'vp', 'zone', 'act'];
+  const FOCUS_IDS = ['id', 'pid', 'i', 'd', 'w', 'z', 'code', 'target'];
+  const dataAttr = (k) => 'data-' + k.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase());
+  function focusTarget(el) {
+    const d = el.dataset || {};
+    const k = FOCUS_KEYS.find((x) => d[x] != null);
+    let sel = '';
+    if (k) sel = `[${dataAttr(k)}="${CSS.escape(d[k])}"]` + FOCUS_IDS.filter((x) => d[x] != null).map((x) => `[${dataAttr(x)}="${CSS.escape(d[x])}"]`).join('');
+    else if (el.id) sel = '#' + CSS.escape(el.id);
+    return sel ? { sel, tag: el.tagName } : null;
+  }
+  // the element a focusTarget() describes in root (the same tag: the photo and its "Edit labels" button share their attributes)
+  const findFocusTarget = (f, root) => (f ? $$(f.sel, root).find((x) => x.tagName === f.tag && !x.closest('#modal')) || null : null);
   function focusState() {
     const st = { scroll: main.scrollTop };
     const el = document.activeElement;
     if (!el || el === document.body || !main.contains(el)) return st;
-    const d = el.dataset || {};
-    const k = FOCUS_KEYS.find((x) => d[x] != null);
-    let sel = '';
-    if (k) sel = `[data-${k.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase())}="${CSS.escape(d[k])}"]` + ['id', 'pid', 'i'].filter((x) => d[x] != null).map((x) => `[data-${x}="${CSS.escape(d[x])}"]`).join('');
-    else if (el.id) sel = '#' + CSS.escape(el.id);
-    if (!sel) return st;
+    const find = focusTarget(el);
+    if (!find) return st;
     let a = null, b = null;
     try { a = el.selectionStart; b = el.selectionEnd; } catch (e) { /* not a text field */ }
-    return Object.assign(st, { sel, tag: el.tagName, a, b, top: el.scrollTop });
+    return Object.assign(st, { find, a, b, top: el.scrollTop });
   }
   function restoreFocus(st) {
     if (!st) return;
-    if (st.sel) {
-      const el = main.querySelector(st.sel);
-      if (el && el.tagName === st.tag && !el.disabled) {
+    if (st.find) {
+      const el = findFocusTarget(st.find, main);
+      if (el && !el.disabled) {
         el.focus({ preventScroll: true });
         if (st.a != null) { try { el.setSelectionRange(st.a, st.b); } catch (e) { /* no caret in this kind of input */ } }
         if (st.top) el.scrollTop = st.top;
@@ -894,41 +949,51 @@
       <div class="row"><div class="grow"><h2 style="margin:0">Photographs</h2><div class="hint">Add inspection photos. Photos are resized for storage. Draw labels by hand, or let the AI assessor label them. Only photos ticked "in report" are numbered, printed and sent to the AI.</div></div>
         <button class="btn ai" data-act="aiAnalyse" ${!aiReady || !nums.size || busy('photos') ? 'disabled' : ''}>${busy('photos') ? '<span class="spinner"></span>Analysing…' : '✦ AI assess &amp; label photos'}</button></div>
       ${!aiReady ? '<p class="hint">AI tools are available in the desktop app (they need your API key in Settings → AI assessor).</p>' : ''}
-      ${job.issued ? '' : `<div class="drop" id="drop" style="margin-top:12px">Drop photos here or <b>click to choose</b> (JPG / PNG / HEIC exported as JPG)</div>
+      ${job.issued ? '' : `<button type="button" class="drop" id="drop" style="margin-top:12px">Drop photos here or <b>click to choose</b> (JPG / PNG / HEIC exported as JPG)</button>
       <input type="file" id="photoInput" accept="image/*" multiple hidden>`}
-      <div class="pgrid">${job.photos.map((p) => photoCard(p, nums.get(p.id))).join('')}</div>
+      <div class="pgrid">${job.photos.map((p, k) => photoCard(p, nums.get(p.id), k + 1)).join('')}</div>
     </div>
     ${f ? aiFindingsPanel(f) : ''}`;
   }
   const figLabel = (n) => (n ? 'IMAGE ' + String(n).padStart(2, '0') : 'not in report');
+  // A photo card's controls say which photo they act on: its figure number, or its place on the page when it is not in the
+  // report. refreshPhotoNumbers keeps the names current when a photo is moved, removed, included or excluded.
+  const photoRef = (pos, n) => (n ? figLabel(n) : `photo ${pos} (not in report)`);
+  const PHOTO_CONTROLS = { up: '[data-act="pmove"][data-d="-1"]', down: '[data-act="pmove"][data-d="1"]', del: '[data-act="pdel"]', title: '[data-pf="title"]', caption: '[data-pf="caption"]', source: '[data-pf="source"]', include: '[data-pf="include"]', taken: '[data-pf="takenAt"]', labels: 'button[data-act="label"]' };
+  function photoNames(p, pos, n) {
+    const r = photoRef(pos, n), R = r.charAt(0).toUpperCase() + r.slice(1);
+    return { up: `Move ${r} earlier`, down: `Move ${r} later`, del: `Remove ${r}`, title: `${R} title`, caption: `${R} caption`, source: `${R} source`, include: `${R} in report`, taken: `${R} taken`, labels: `Edit labels (${(p.labels || []).length}) for ${r}` };
+  }
   // ISO date-time ↔ the local "YYYY-MM-DDTHH:MM" a datetime-local input shows
   const localDT = (iso) => { const d = iso ? new Date(iso) : null; if (!d || isNaN(d)) return ''; const p2 = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}T${p2(d.getHours())}:${p2(d.getMinutes())}`; };
   // Cards show a small thumbnail (made once, stored as photo.thumb); the labeler, the report and the AI use the full image.
   // Controls name their photo by id, so moving or removing a card never needs the grid rebuilt.
-  function photoCard(p, n) {
-    const pid = esc(p.id);
+  function photoCard(p, n, pos) {
+    const pid = esc(p.id), nm = photoNames(p, pos, n);
     return `<div class="pcard ${p.exclude ? 'excluded' : ''}" data-pid="${pid}">
       <div class="pimg" data-act="label" data-pid="${pid}" title="Click to edit labels"><div class="pin"><img src="${esc(p.thumb || p.dataUrl)}" alt="">${Labeler.overlay(p.labels)}</div></div>
       <div class="pbody">
         <div class="row"><b class="pnum${n ? '' : ' out'}">${figLabel(n)}</b>${p.aiLabelled ? `<span class="badge ${p.labelsReviewed ? 'ok' : 'ai'}" title="${p.labelsReviewed ? 'Labels saved by the assessor' : 'Open the labels and save them once checked'}">AI labelled${p.labelsReviewed ? ' · reviewed' : ''}</span>` : ''}<span class="grow"></span>
-          <button class="btn sm" data-act="pmove" data-pid="${pid}" data-d="-1" title="Move earlier">↑</button><button class="btn sm" data-act="pmove" data-pid="${pid}" data-d="1" title="Move later">↓</button>
-          <button class="btn sm danger" data-act="pdel" data-pid="${pid}" title="Remove">✕</button></div>
-        <input data-pf="title" data-pid="${pid}" value="${esc(p.title)}" placeholder="Title, e.g. RH front door - surface damage">
-        <textarea data-pf="caption" data-pid="${pid}" placeholder="Caption">${esc(p.caption)}</textarea>
-        <div class="row"><input data-pf="source" data-pid="${pid}" value="${esc(p.source)}" placeholder="Source" class="grow" style="width:auto">
-          <label class="hint"><input type="checkbox" data-pf="include" data-pid="${pid}" ${p.exclude ? '' : 'checked'} style="width:auto"> in report</label></div>
-        <label class="hint row" style="gap:6px;flex-wrap:nowrap" title="When the photo was taken: read from the photo's EXIF data or the file date. Correct it if it is wrong.">Taken<input type="datetime-local" data-pf="takenAt" data-pid="${pid}" value="${localDT(p.takenAt)}" style="width:auto;flex:1"></label>
-        <button class="btn sm" data-act="label" data-pid="${pid}">✎ Edit labels (${(p.labels || []).length})</button>
+          <button class="btn sm" data-act="pmove" data-pid="${pid}" data-d="-1" title="Move earlier" aria-label="${esc(nm.up)}">↑</button><button class="btn sm" data-act="pmove" data-pid="${pid}" data-d="1" title="Move later" aria-label="${esc(nm.down)}">↓</button>
+          <button class="btn sm danger" data-act="pdel" data-pid="${pid}" title="Remove" aria-label="${esc(nm.del)}">✕</button></div>
+        <input data-pf="title" data-pid="${pid}" value="${esc(p.title)}" placeholder="Title, e.g. RH front door - surface damage" aria-label="${esc(nm.title)}">
+        <textarea data-pf="caption" data-pid="${pid}" placeholder="Caption" aria-label="${esc(nm.caption)}">${esc(p.caption)}</textarea>
+        <div class="row"><input data-pf="source" data-pid="${pid}" value="${esc(p.source)}" placeholder="Source" class="grow" style="width:auto" aria-label="${esc(nm.source)}">
+          <label class="hint"><input type="checkbox" data-pf="include" data-pid="${pid}" ${p.exclude ? '' : 'checked'} style="width:auto" aria-label="${esc(nm.include)}"> in report</label></div>
+        <label class="hint row" style="gap:6px;flex-wrap:nowrap" title="When the photo was taken: read from the photo's EXIF data or the file date. Correct it if it is wrong.">Taken<input type="datetime-local" data-pf="takenAt" data-pid="${pid}" value="${localDT(p.takenAt)}" style="width:auto;flex:1" aria-label="${esc(nm.taken)}"></label>
+        <button class="btn sm" data-act="label" data-pid="${pid}" aria-label="${esc(nm.labels)}">✎ Edit labels (${(p.labels || []).length})</button>
       </div></div>`;
   }
-  // after a photo is included / excluded / moved / removed: update every card's figure number and dimming in place
+  // after a photo is included / excluded / moved / removed: update every card's figure number, dimming and control names in place
   function refreshPhotoNumbers() {
     const nums = C.photoNumbers(job);
-    $$('.pcard[data-pid]').forEach((card) => {
+    $$('.pcard[data-pid]').forEach((card, k) => {
       const p = job.photos.find((x) => String(x.id) === card.dataset.pid); if (!p) return;
       const n = nums.get(p.id);
       card.classList.toggle('excluded', !!p.exclude);
       const b = card.querySelector('.pnum'); if (b) { b.textContent = figLabel(n); b.classList.toggle('out', !n); }
+      const nm = photoNames(p, k + 1, n);
+      for (const [key, sel] of Object.entries(PHOTO_CONTROLS)) { const el = card.querySelector(sel); if (el) el.setAttribute('aria-label', nm[key]); }
     });
     const ab = $('[data-act="aiAnalyse"]'); if (ab && !busy('photos')) ab.disabled = !desktop || !nums.size || !!job.issued;
   }
@@ -977,9 +1042,9 @@
       ${unplaced.length ? `<div class="unplaced"><h3>Damage the AI could not place on a photo (${unplaced.length})</h3><p class="hint">Not drawn: the AI's box for these was outside the photo or could not be read. Check each one, and draw a label yourself if it is needed.</p>
         <ul>${unplaced.map(({ ph, d }) => `<li><b>${esc(where(ph))}</b>: ${esc(d.label || 'unnamed')}${d.component_name ? ' — ' + esc([C.sideWord(d.side), d.component_name].filter(Boolean).join(' ')) : ''}${d.damage_type ? ' · ' + esc(d.damage_type) : ''}${d.severity ? ' · ' + esc(d.severity) : ''}${d.accident_related ? ' · accident-related: ' + esc(d.accident_related) : ''}${d.recommended_operation ? ' · ' + esc(d.recommended_operation) : ''}${d.notes ? ' — ' + esc(d.notes) : ''}</li>`).join('')}</ul></div>` : ''}
       <h3>Recommended estimate lines (${lines.length})</h3>
-      <table class="tbl sugg"><thead><tr><th><input type="checkbox" data-act="suggAll" style="width:auto" checked></th><th>Type</th><th>Line</th><th>Part no. (catalogue)</th><th class="num">Hours</th><th>Evidence</th><th>Conf.</th></tr></thead><tbody>
+      <table class="tbl sugg"><thead><tr><th><input type="checkbox" data-act="suggAll" style="width:auto" checked aria-label="Select all recommended lines"></th><th>Type</th><th>Line</th><th>Part no. (catalogue)</th><th class="num">Hours</th><th>Evidence</th><th>Conf.</th></tr></thead><tbody>
       ${lines.map((l, i) => { if (!isObj(l)) return ''; const cands = l.code && C.CAT[l.code] ? C.oemLookup(job.vehicle.oemKey, l.code, l.side) : []; const o = autoOem(cands); const added = l.added; const hz = aiLineHours(job, l); return `<tr${added ? ' style="opacity:.5"' : ''} data-sugg-row="${i}">
-        <td><input type="checkbox" data-sugg="${i}" style="width:auto" ${ui.suggestSel[i] === false || added ? '' : 'checked'} ${added ? 'disabled' : ''}></td>
+        <td><input type="checkbox" data-sugg="${i}" style="width:auto" ${ui.suggestSel[i] === false || added ? '' : 'checked'} ${added ? 'disabled' : ''} aria-label="${esc(`Recommended line ${i + 1}: ${l.description == null ? '' : l.description}${added ? ' (added)' : ''}`)}"></td>
         <td>${esc(l.type)}</td><td><b>${esc(l.description)}</b>${l.code && l.code !== 'OTHER' ? ` <code class="hint">${esc(l.code)}${l.side ? '-' + esc(l.side) : ''}${l.operation ? ' · ' + esc(l.operation) : ''}</code>` : ''}${added ? ' <span class="badge ok">added</span>' : ''}</td>
         <td>${o ? `<span class="oem ${o.user ? 'user' : esc(o.confidence)}">${esc(o.oem)}</span>` : cands.length ? `<span class="hint">${esc(noAutoNote(cands))}</span>` : (l.needs_part ? '<span class="hint">price needed</span>' : '')}</td>
         <td class="num">${hrs(hz.hours)}${suggHoursNote(l, hz)}</td><td class="reason">${esc(l.reason)}</td>
@@ -1271,7 +1336,7 @@
     return `<div class="card"><h2 style="margin-top:0">Damage zones</h2>
       <div class="diagram"><div id="diagramHost">${Diagram.svg(job.zones)}</div>
         <div class="grow"><p class="hint">Click areas of the vehicle to record damage zones. They appear in the report and filter the parts picker on the Estimate tab.</p>
-        <div class="zlist">${job.zones.length ? job.zones.map((z) => `<span class="badge err">${esc(z)} <button class="link" data-act="zoneDel" data-z="${esc(z)}">✕</button></span>`).join('') : '<span class="hint">No zones selected.</span>'}</div></div></div></div>
+        <div class="zlist">${job.zones.length ? job.zones.map((z) => `<span class="badge err">${esc(z)} <button class="link" data-act="zoneDel" data-z="${esc(z)}" aria-label="Remove damage zone ${esc(z)}">✕</button></span>`).join('') : '<span class="hint">No zones selected.</span>'}</div></div></div></div>
       <div class="card"><h2 style="margin-top:0">Structural, mechanical &amp; roadworthiness assessment</h2><div class="form">
       ${F('assessment.structural', 'Structural and body / panel assessment', { type: 'textarea', rows: 8, full: true })}
       ${F('assessment.mechanical', 'Mechanical assessment', { type: 'textarea', rows: 5 })}${F('assessment.wheels', 'Wheels & tyres', { type: 'textarea', rows: 5 })}
@@ -1287,9 +1352,9 @@
     return `<div class="card"><div class="row"><h2 class="grow" style="margin:0">Add from parts catalogue</h2>
         <span class="hint">${ov ? `OEM numbers: <b>${esc(ov.make + ' ' + ov.model + ' ' + ov.generation)}</b>` : `No catalogue vehicle linked. <a href="#/job/${esc(job.id)}/vehicle">Link one on the Vehicle tab</a> to fill OEM part numbers.`}</span></div>
       ${job.zones.length || ui.zoneGroups ? `<div class="row" style="margin:10px 0 2px"><span class="hint">Damage zones:</span>${job.zones.map((z) => `<button class="btn sm${ui.zoneGroups && ui.zoneLabel === z ? ' on' : ''}" data-act="zonePick" data-z="${esc(z)}">${esc(z)}</button>`).join('')}${job.zones.length ? `<button class="btn sm${ui.zoneGroups ? '' : ' on'}" data-act="zonePick" data-z="">All</button>` : ''}
-        ${ui.zoneGroups ? `<span class="zchip" title="Only parts for this damage zone are listed">Zone: <b>${esc(ui.zoneLabel)}</b><button class="link" data-act="zonePick" data-z="" title="Clear the zone filter">✕</button></span>` : ''}</div>` : ''}
+        ${ui.zoneGroups ? `<span class="zchip" title="Only parts for this damage zone are listed">Zone: <b>${esc(ui.zoneLabel)}</b><button class="link" data-act="zonePick" data-z="" title="Clear the zone filter" aria-label="Clear the zone filter">✕</button></span>` : ''}</div>` : ''}
       <div class="picker" style="margin-top:10px">
-        <label class="fld"><span>Search part</span><input id="pickQ" value="${esc(ui.pickQ)}" placeholder="e.g. mirror, sill, bumper, door"></label>
+        <label class="fld"><span>Search part</span><input id="pickQ" value="${esc(ui.pickQ)}" placeholder="e.g. mirror, sill, bumper, door" aria-controls="pickResults" aria-describedby="pickKeys"></label>
         <label class="fld"><span>Group</span><select id="pickGroup"><option value="">All groups</option>${window.CATALOGUE_GROUPS.map((g) => `<option${g === ui.pickGroup ? ' selected' : ''}>${esc(g)}</option>`).join('')}</select></label>
         <label class="fld"><span>Side</span><select id="pickSide"><option value="">—</option><option value="L"${ui.pickSide === 'L' ? ' selected' : ''}>LH</option><option value="R"${ui.pickSide === 'R' ? ' selected' : ''}>RH</option></select></label>
         <label class="fld"><span>Operation</span><select id="pickOp">${[['replace', 'Renew (remove & replace) + refinish new part'], ['repair1', 'Repair – light'], ['repair', 'Repair – medium'], ['repair3', 'Repair – heavy'], ['pdr', 'Paintless dent repair'], ['smart', 'Smart repair / polish'], ['refinish', 'Refinish (new part)'], ['refinishRep1', 'Refinish repaired part – damage <50%'], ['refinishRep2', 'Refinish repaired part – damage >50%'], ['blend', 'Blend (colour match)'], ['rr', 'Remove & refit (R&I)'], ['check', 'Inspect / test'], ['refurb', 'Refurbish'], ['operation', 'Operation / service (as listed)']].map(([k, v]) => `<option value="${k}"${k === ui.pickOp ? ' selected' : ''}>${v}</option>`).join('')}</select></label>
@@ -1297,7 +1362,8 @@
       </div>
       <label class="hint" style="display:inline-flex;gap:6px;margin-top:6px"><input type="checkbox" id="addRefinish" style="width:auto" ${ui.addRefinish ? 'checked' : ''}> When renewing or repairing a painted panel, also add its refinish line</label>
       <div class="hint">Guide times are scaled ×${C.sizeFactor(job)} for the ${esc((C.SIZE_CLASSES[job.vehicle.sizeClass || 'medium'] || ['medium'])[0])} size class, and refinish times ×${C.paintFactor(job)} for ${esc(job.vehicle.paintType || 'metallic')} paint. These are this software's guide times, not manufacturer times. Edit any line to match your own data. <button class="link" data-act="paintMaterials">Calculate paint materials</button></div>
-      <div class="results" id="pickResults">${pickResults()}</div>
+      <span class="srOnly" id="pickKeys">In the list of parts, the arrow keys choose a part and Enter adds it as a line with the side and operation chosen above. From the search box, the down arrow or Enter moves to the list.</span>
+      <div class="results" id="pickResults" role="listbox" tabindex="0" aria-label="Catalogue parts" aria-describedby="pickKeys">${pickResults()}</div>
       <h3>Labour-only operations</h3>
       <div class="row" style="gap:6px">${Object.values(C.OPS).map((o) => `<button class="btn sm" data-act="addOp" data-code="${o.code}" title="${o.type} · ${o.hours}h">${esc(o.name)}</button>`).join('')}</div>
     </div>
@@ -1337,7 +1403,8 @@
     let rows = Object.values(C.CAT).filter((p) => (!groups || groups.includes(p.group)) && (!q || (p.name + ' ' + p.code + ' ' + p.group).toLowerCase().includes(q)));
     if (q) rows = rows.sort(cmp);
     rows = rows.slice(0, 80);
-    if (!rows.length) return '<div class="r hint">No matching parts.</div>';
+    // a listbox (keyboard: pickerKey): one option per part, the picked part selected
+    if (!rows.length) return '<div class="r hint" role="option" aria-selected="false" aria-disabled="true">No matching parts.</div>';
     return rows.map((p) => {
       const sides = p.sided ? (ui.pickSide ? [ui.pickSide] : ['L', 'R']) : [''];
       const oems = sides.map((s) => {
@@ -1345,24 +1412,26 @@
         if (!c) return cands.length ? `<span class="oem single-source">${sw}${esc(noAutoNote(cands))}</span>` : '';
         return `<span class="oem ${c.user ? 'user' : esc(c.confidence)}" title="${esc(c.description + ' — ' + (c.user ? 'your number' : c.confidence) + (c.priceIncVat ? ' — ' + oemPrice(c) : ''))}">${sw}${esc(c.oem)}${c.price ? ' · ' + oemPrice(c, true) : ''}</span>`;
       }).filter(Boolean).join(' &nbsp; ');
-      return `<div class="r${ui.pickSel === p.code ? ' sel' : ''}" data-act="pickSel" data-code="${p.code}"><code>${p.code}</code><div class="grow"><b>${esc(p.name)}</b> <span class="hint">· ${esc(p.group)}${p.sided ? ' · LH/RH' : ''}</span><div>${oems}</div></div>
+      return `<div class="r${ui.pickSel === p.code ? ' sel' : ''}" role="option" id="pick-${esc(p.code)}" aria-selected="${ui.pickSel === p.code}" data-act="pickSel" data-code="${p.code}"><code>${p.code}</code><div class="grow"><b>${esc(p.name)}</b> <span class="hint">· ${esc(p.group)}${p.sided ? ' · LH/RH' : ''}</span><div>${oems}</div></div>
         <span class="hint">${pickHint(p)}</span></div>`;
     }).join('');
   }
+  // Every control on a line is named for assistive technology by the line's number and the column ("Line 3 hours").
   function lineRow(l, i) {
     const rate = C.lineRate(job, l);
     const hasOem = l.code && C.oemLookup(job.vehicle.oemKey, l.code, l.side).length;
-    return `<tr data-row="${l.id}"><td class="hint">${i + 1}</td>
-      <td style="min-width:122px"><select data-lf="type" data-id="${l.id}">${LINE_TYPES.map((t) => `<option${t === l.type ? ' selected' : ''}>${t}</option>`).join('')}</select></td>
-      <td><input data-lf="description" data-id="${l.id}" value="${esc(l.description)}">${aiLineNotes(l)}${l.source ? `<div class="hint" title="${esc(l.source)}">AI evidence: ${esc(String(l.source).slice(0, 110))}${String(l.source).length > 110 ? '…' : ''}</div>` : ''}</td>
-      <td style="min-width:150px"><div class="row" style="flex-wrap:nowrap;gap:4px"><input data-lf="partNo" data-id="${l.id}" value="${esc(l.partNo)}">${hasOem ? `<button class="btn sm" data-act="oemPick" data-id="${l.id}" title="OEM options">⋯</button>` : ''}</div></td>
-      <td class="num" style="width:80px"><input data-lf="hours" data-id="${l.id}" type="number" step="0.1" min="0" value="${esc(l.hours)}"></td>
-      <td class="num" style="width:90px"><input data-lf="rate" data-id="${l.id}" type="number" step="0.01" min="0" value="${esc(l.rate)}" placeholder="${rate.toFixed(2)}"></td>
+    const n = i + 1, st = l.reviewed ? 'reviewed' : 'suggested';
+    return `<tr data-row="${l.id}"><td class="hint">${n}</td>
+      <td style="min-width:122px"><select data-lf="type" data-id="${l.id}" aria-label="Line ${n} type">${LINE_TYPES.map((t) => `<option${t === l.type ? ' selected' : ''}>${t}</option>`).join('')}</select></td>
+      <td><input data-lf="description" data-id="${l.id}" value="${esc(l.description)}" aria-label="Line ${n} description">${aiLineNotes(l)}${l.source ? `<div class="hint" title="${esc(l.source)}">AI evidence: ${esc(String(l.source).slice(0, 110))}${String(l.source).length > 110 ? '…' : ''}</div>` : ''}</td>
+      <td style="min-width:150px"><div class="row" style="flex-wrap:nowrap;gap:4px"><input data-lf="partNo" data-id="${l.id}" value="${esc(l.partNo)}" aria-label="Line ${n} part number">${hasOem ? `<button class="btn sm" data-act="oemPick" data-id="${l.id}" title="OEM options" aria-label="OEM part numbers for line ${n}">⋯</button>` : ''}</div></td>
+      <td class="num" style="width:80px"><input data-lf="hours" data-id="${l.id}" type="number" step="0.1" min="0" value="${esc(l.hours)}" aria-label="Line ${n} hours"></td>
+      <td class="num" style="width:90px"><input data-lf="rate" data-id="${l.id}" type="number" step="0.01" min="0" value="${esc(l.rate)}" placeholder="${rate.toFixed(2)}" aria-label="Line ${n} labour rate, £ per hour"></td>
       <td class="num" data-lv="${l.id}">${num(l.hours) ? gbp(C.lineLabour(l.hours, rate)) : '—'}</td>
-      <td class="num" style="width:100px"><input data-lf="amount" data-id="${l.id}" type="number" step="0.01" min="0" value="${esc(l.amount)}" placeholder="ex VAT" title="Ex VAT: VAT is added to the total"></td>
-      <td style="min-width:128px"><select data-lf="costClass" data-id="${l.id}">${COST_CLASSES.map(([k, v]) => `<option value="${k}"${k === l.costClass ? ' selected' : ''}>${v}</option>`).join('')}</select></td>
-      <td>${l.ai ? `<label class="badge ${l.reviewed ? 'ok' : 'ai'}" style="cursor:pointer"><input type="checkbox" data-lf="reviewed" data-id="${l.id}" ${l.reviewed ? 'checked' : ''} style="width:auto;vertical-align:-2px"> AI ${l.reviewed ? 'reviewed' : 'suggested'}</label>` : ''}</td>
-      <td style="white-space:nowrap"><button class="btn sm" data-act="lmove" data-id="${l.id}" data-d="-1">↑</button><button class="btn sm" data-act="lmove" data-id="${l.id}" data-d="1">↓</button><button class="btn sm danger" data-act="ldel" data-id="${l.id}">✕</button></td></tr>`;
+      <td class="num" style="width:100px"><input data-lf="amount" data-id="${l.id}" type="number" step="0.01" min="0" value="${esc(l.amount)}" placeholder="ex VAT" title="Ex VAT: VAT is added to the total" aria-label="Line ${n} parts or materials, £ ex VAT"></td>
+      <td style="min-width:128px"><select data-lf="costClass" data-id="${l.id}" aria-label="Line ${n} cost class">${COST_CLASSES.map(([k, v]) => `<option value="${k}"${k === l.costClass ? ' selected' : ''}>${v}</option>`).join('')}</select></td>
+      <td>${l.ai ? `<label class="badge ${l.reviewed ? 'ok' : 'ai'}" style="cursor:pointer"><input type="checkbox" data-lf="reviewed" data-id="${l.id}" ${l.reviewed ? 'checked' : ''} style="width:auto;vertical-align:-2px" aria-label="AI ${st}: line ${n} reviewed"> AI ${st}</label>` : ''}</td>
+      <td style="white-space:nowrap"><button class="btn sm" data-act="lmove" data-id="${l.id}" data-d="-1" aria-label="Move line ${n} up">↑</button><button class="btn sm" data-act="lmove" data-id="${l.id}" data-d="1" aria-label="Move line ${n} down">↓</button><button class="btn sm danger" data-act="ldel" data-id="${l.id}" aria-label="Delete line ${n}">✕</button></td></tr>`;
   }
   // ---- catalogue rules. Rows: [code, name, group, sided, replaceHrs, refinishHrs, kind, mat, repairHrs] ----
   const RAW_CAT = new Map((window.CATALOGUE || []).map((r) => [r[0], r]));
@@ -1562,7 +1631,7 @@
     const b = openModal('OEM part numbers — ' + l.description, `<p class="hint">Researched numbers for this vehicle. Confirm against the VIN with a dealer parts counter before ordering. Versions often differ by facelift, trim and options. "Use" fills the price excluding VAT.</p>
       <table class="tbl"><thead><tr><th>Part number</th><th>Description</th><th>Confidence</th><th class="num">Price</th><th>Notes</th><th></th></tr></thead><tbody>
       ${cands.map((c, i) => `<tr><td><b>${esc(c.oem)}</b></td><td>${esc(c.description)}</td><td>${confBadge(c)} ${oemBadges(c)}</td><td class="num">${oemPrice(c) || '—'}</td>
-        <td class="hint" style="max-width:380px">${esc(c.notes)}${httpUrl(c.source) ? `<br><a href="${esc(c.source)}" target="_blank" rel="noopener">source</a>` : c.source ? `<br>${esc(c.source)}` : ''}</td><td><button class="btn sm primary" data-use="${i}">Use</button></td></tr>`).join('')}</tbody></table>`);
+        <td class="hint" style="max-width:380px">${esc(c.notes)}${httpUrl(c.source) ? `<br><a href="${esc(c.source)}" target="_blank" rel="noopener" aria-label="${esc(`Source for ${c.oem}`)}">source</a>` : c.source ? `<br>${esc(c.source)}` : ''}</td><td><button class="btn sm primary" data-use="${i}" aria-label="${esc(`Use ${c.oem}`)}">Use</button></td></tr>`).join('')}</tbody></table>`);
     if (!b) return;
     b.addEventListener('click', async (e) => {
       const u = e.target.closest('[data-use]'); if (!u) return;
@@ -1582,7 +1651,7 @@
       ${F('valuation.costNew', 'Cost at new')}${F('valuation.condition', 'Pre-accident condition', { type: 'select', options: ['EXCELLENT', 'GOOD', 'SATISFACTORY', 'FAIR', 'POOR'] })}</div>
       <h3>Valuation evidence</h3>
       <table class="tbl"><thead><tr><th>Source</th><th class="num">Amount £</th><th></th></tr></thead><tbody>
-        ${v.sources.map((s, i) => `<tr><td><input data-vs="name" data-i="${i}" value="${esc(s.name)}" list="valsrc"></td><td class="num" style="width:160px"><input type="number" step="1" min="0" data-vs="amount" data-i="${i}" value="${esc(s.amount)}"></td><td><button class="btn sm danger" data-act="vsDel" data-i="${i}">✕</button></td></tr>`).join('')}
+        ${v.sources.map((s, i) => `<tr><td><input data-vs="name" data-i="${i}" value="${esc(s.name)}" list="valsrc" aria-label="Valuation source ${i + 1} name"></td><td class="num" style="width:160px"><input type="number" step="1" min="0" data-vs="amount" data-i="${i}" value="${esc(s.amount)}" aria-label="Valuation source ${i + 1} amount, £"></td><td><button class="btn sm danger" data-act="vsDel" data-i="${i}" aria-label="Delete valuation source ${i + 1}">✕</button></td></tr>`).join('')}
       </tbody></table><datalist id="valsrc"><option value="Glass's Guide"><option value="CAP HPI"><option value="AutoTrader"><option value="Percayso Vehicle Intelligence"><option value="Like-for-like advert"><option value="Dealer retail advert"></datalist>
       <div class="row" style="margin-top:8px"><button class="btn sm" data-act="vsAdd">+ Source</button><span class="grow"></span>
         <span class="row" id="valRange">${valRange(t)}</span></div>
@@ -1590,7 +1659,7 @@
       <div class="form" style="margin-top:12px">${F('valuation.belowHighestReason', 'Reason for adopting a value below the highest guide', { type: 'textarea', rows: 2, full: true, hint: 'Printed in the report. The ombudsman\'s starting point is the highest retail guide, so explain any lower figure with evidence about this vehicle.' })}</div>
       <h3>Like-for-like adverts</h3>
       <table class="tbl"><thead><tr><th>Description (derivative)</th><th>Year</th><th class="num">Mileage</th><th class="num">Price £</th><th>Source / URL</th><th></th></tr></thead><tbody>
-        ${(v.adverts || []).map((a, i) => `<tr><td><input data-adv="description" data-i="${i}" value="${esc(a.description)}"></td><td style="width:80px"><input data-adv="year" data-i="${i}" value="${esc(a.year)}"></td><td class="num" style="width:110px"><input type="number" min="0" data-adv="mileage" data-i="${i}" value="${esc(a.mileage)}"></td><td class="num" style="width:110px"><input type="number" min="0" data-adv="price" data-i="${i}" value="${esc(a.price)}"></td><td><input data-adv="url" data-i="${i}" value="${esc(a.url)}" placeholder="AutoTrader / dealer URL">${a.aiUnverified ? `<div class="hint advUnverified" style="word-break:break-all">AI comparable, not verified${a.claimedUrl ? `: the AI gave ${esc(a.claimedUrl)}` : ''}. Check the advert, then enter its URL. The report lists it separately as found by AI search until you tick Verified.</div><label class="hint advVerify" style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" data-adv-verify="${i}" style="width:auto"> Verified: I have checked this advert</label>` : ''}</td><td><button class="btn sm danger" data-act="advDel" data-i="${i}">✕</button></td></tr>`).join('') || '<tr><td colspan="6" class="hint">No adverts. Add your own, or let the AI search for comparables.</td></tr>'}
+        ${(v.adverts || []).map((a, i) => `<tr><td><input data-adv="description" data-i="${i}" value="${esc(a.description)}" aria-label="Advert ${i + 1} description (derivative)"></td><td style="width:80px"><input data-adv="year" data-i="${i}" value="${esc(a.year)}" aria-label="Advert ${i + 1} year"></td><td class="num" style="width:110px"><input type="number" min="0" data-adv="mileage" data-i="${i}" value="${esc(a.mileage)}" aria-label="Advert ${i + 1} mileage"></td><td class="num" style="width:110px"><input type="number" min="0" data-adv="price" data-i="${i}" value="${esc(a.price)}" aria-label="Advert ${i + 1} price, £"></td><td><input data-adv="url" data-i="${i}" value="${esc(a.url)}" placeholder="AutoTrader / dealer URL" aria-label="Advert ${i + 1} source or URL">${a.aiUnverified ? `<div class="hint advUnverified" style="word-break:break-all">AI comparable, not verified${a.claimedUrl ? `: the AI gave ${esc(a.claimedUrl)}` : ''}. Check the advert, then enter its URL. The report lists it separately as found by AI search until you tick Verified.</div><label class="hint advVerify" style="display:inline-flex;gap:5px;align-items:center"><input type="checkbox" data-adv-verify="${i}" style="width:auto" aria-label="Verified: I have checked this advert (advert ${i + 1})"> Verified: I have checked this advert</label>` : ''}</td><td><button class="btn sm danger" data-act="advDel" data-i="${i}" aria-label="Delete advert ${i + 1}">✕</button></td></tr>`).join('') || '<tr><td colspan="6" class="hint">No adverts. Add your own, or let the AI search for comparables.</td></tr>'}
       </tbody></table>
       <div class="row" style="margin-top:8px"><button class="btn sm" data-act="advAdd">+ Advert</button></div>
       <div class="form" style="margin-top:12px">${F('valuation.historyNotes', 'History notes (previous write-off category, finance, plate changes, imports)', { type: 'textarea', rows: 2 })}${F('valuation.optionsNotes', 'Condition, options & service history notes', { type: 'textarea', rows: 2 })}</div></div>
@@ -1642,7 +1711,7 @@
           return `<tr data-comp="${i}"><td>${esc(c.description)}<div class="hint">${esc(c.notes)}</div></td><td>${esc(c.year)}</td><td class="num">${num(c.mileage).toLocaleString('en-GB')}</td><td class="num">${gbp(c.price)}</td><td>${c.like_for_like ? '<span class="badge ok">yes</span>' : '<span class="badge warn">partial</span>'}</td>
             <td>${ok ? `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.source || 'link')}</a> <span class="badge ok" title="The link matched a page found by this run's web search, or one of your own adverts">verified</span>`
               : `${esc(c.source || '')} <span class="badge warn" title="Not matched to this run's web search results or your own adverts: the advert may not exist at this price">unverified</span>${claimed ? `<div class="hint claimedUrl" style="word-break:break-all">Link given by the AI (not verified, not a link): ${esc(claimed)}</div>` : ''}`}
-            <button class="btn sm" data-act="advFromAi" data-i="${i}" title="${ok ? 'Add to adverts' : 'Add to adverts (asks first: not verified)'}">+</button></td></tr>`;
+            <button class="btn sm" data-act="advFromAi" data-i="${i}" title="${ok ? 'Add to adverts' : 'Add to adverts (asks first: not verified)'}" aria-label="${esc(`Add comparable ${i + 1} to adverts${ok ? '' : ' (not verified: asks first)'}`)}">+</button></td></tr>`;
         }).join('')}</tbody></table>` : ''}
         ${flagBox('Check:', (r.flags || []).map((f) => String(f == null ? '' : f)).filter((f) => f.trim()))}
         <div class="row" style="margin-top:10px"><button class="btn primary" data-act="aiValApply">Adopt ${gbp(r.recommended_pav)} and use these comments</button><span class="hint valFooter">${esc(valFooter(r))}</span>${'claim_type' in r && claimKey(r.claim_type) !== claimNow ? ' <span class="badge warn">claim type changed since this valuation: run it again</span>' : ''}</div>` : ''}
@@ -1729,7 +1798,7 @@
     const flags = (Array.isArray(d.review_flags) ? d.review_flags : []).map((f) => String(f == null ? '' : f)).filter((f) => f.trim());
     const html = `${flags.length ? `<div class="card" style="border-color:#f0c36d;background:#fffaf0"><b>Check before signing:</b><ul>${flags.map((f) => `<li>${esc(f)}</li>`).join('')}</ul><p class="hint" style="margin:0">These stay on the Opinion tab, and in the pre-issue checks, until you dismiss them.</p></div>` : ''}
       <div class="cmp" style="font-weight:700"><span></span><span>Current</span><span>AI draft</span></div>
-      ${map.map(([k, path, label], i) => { const cur = getPath(job, path) || ''; const nu = d[k] == null ? '' : String(d[k]); if (!nu) return ''; return `<div class="cmp"><input type="checkbox" data-apply="${i}" ${cur ? '' : 'checked'} style="width:auto"><div><b>${esc(label)}</b><div class="old">${esc(cur) || '<i>empty</i>'}</div></div><div class="new">${esc(nu)}</div></div>`; }).join('')}
+      ${map.map(([k, path, label], i) => { const cur = getPath(job, path) || ''; const nu = d[k] == null ? '' : String(d[k]); if (!nu) return ''; return `<div class="cmp"><input type="checkbox" data-apply="${i}" ${cur ? '' : 'checked'} style="width:auto" aria-label="${esc(`Apply the AI draft of ${label}`)}"><div><b>${esc(label)}</b><div class="old">${esc(cur) || '<i>empty</i>'}</div></div><div class="new">${esc(nu)}</div></div>`; }).join('')}
       <div class="row" style="margin-top:14px"><button class="btn" data-sel="all">Select all</button><button class="btn danger" data-discard="1">Discard the draft</button><span class="grow"></span><button class="btn primary" data-go="1">Apply selected sections</button></div>`;
     const b = openModal('✦ AI draft — review before applying', html);
     if (!b) return toast('AI draft ready – Review it with the button at the top of the page once the open window is closed.');
@@ -2085,7 +2154,7 @@
     const [eCode, eSide] = edit ? edit.pk.split('|') : ['', ''];
     const vehKey = edit ? edit.vk : ui.catVeh || (vs[0] && vs[0].key) || '';
     const b = openModal(edit ? 'Edit your part number' : 'Add OEM part number', `<div class="form">
-      <label class="fld"><span>Vehicle</span><select id="nVeh">${vs.map((x) => `<option value="${esc(x.key)}"${x.key === vehKey ? ' selected' : ''}>${esc(x.make + ' ' + x.model + ' ' + x.generation)}</option>`).join('')}</select></label>
+      <label class="fld"><span>Vehicle</span><select id="nVeh" data-autofocus>${vs.map((x) => `<option value="${esc(x.key)}"${x.key === vehKey ? ' selected' : ''}>${esc(x.make + ' ' + x.model + ' ' + x.generation)}</option>`).join('')}</select></label>
       <label class="fld"><span>Catalogue part</span><select id="nCode">${Object.values(C.CAT).map((p) => `<option value="${p.code}"${p.code === eCode ? ' selected' : ''}>${p.code} — ${esc(p.name)}</option>`).join('')}</select></label>
       <label class="fld"><span>Side</span><select id="nSide"><option value="">— (not sided)</option><option value="L"${eSide === 'L' ? ' selected' : ''}>LH</option><option value="R"${eSide === 'R' ? ' selected' : ''}>RH</option></select></label>
       <label class="fld"><span>OEM part number</span><input id="nOem" value="${esc(cur.oem || '')}"></label>
@@ -2116,7 +2185,7 @@
   }
   const catAddNo = () => oemForm(null);
   function catAddVeh() {
-    const b = openModal('Add catalogue vehicle', `<div class="form"><label class="fld"><span>Make</span><input id="vMake"></label><label class="fld"><span>Model</span><input id="vModel"></label>
+    const b = openModal('Add catalogue vehicle', `<div class="form"><label class="fld"><span>Make</span><input id="vMake" data-autofocus></label><label class="fld"><span>Model</span><input id="vModel"></label>
       <label class="fld"><span>Generation / chassis code</span><input id="vGen" placeholder="e.g. Mk8, F15, J11"></label><label class="fld"><span>Years</span><input id="vYears" placeholder="2017-2023"></label></div>
       <div class="row" style="margin-top:12px"><span class="grow"></span><button class="btn primary" data-ok>Add</button></div>`);
     if (!b) return;
@@ -2394,7 +2463,72 @@
       const f = $('#preview');
       if (f) { try { f.srcdoc = Report.render(job, { mode: 'preview' }); } catch (err) { f.srcdoc = `<p style="font:14px sans-serif;padding:20px;color:#c0392b">The report preview could not be built: ${esc(err.message || err)}</p>`; } }
     }
+    if (tab === 'estimate' && job) syncPickActive();
   }
+
+  // ---- the parts list on the Estimate tab: a listbox ----
+  // The picked part is the selected option and the list's active descendant, so a screen reader reads it while focus stays on
+  // the list. Mouse: a click picks a part, a double click adds it. Keyboard: see pickerKey.
+  function syncPickActive(box) {
+    box = box || $('#pickResults'); if (!box) return;
+    const opt = ui.pickSel ? box.querySelector(`.r[data-code="${CSS.escape(ui.pickSel)}"]`) : null;
+    if (opt) box.setAttribute('aria-activedescendant', opt.id); else box.removeAttribute('aria-activedescendant');
+  }
+  function paintPickResults() { const box = $('#pickResults'); if (!box) return; box.innerHTML = pickResults(); syncPickActive(box); }
+  function selectPick(code) {
+    ui.pickSel = code;
+    const box = $('#pickResults');
+    if (box) $$('.r[data-code]', box).forEach((r) => { const on = r.dataset.code === code; r.classList.toggle('sel', on); r.setAttribute('aria-selected', String(on)); });
+    syncPickActive(box);
+    // operation / service rows default to "Operation / service"; a part never keeps that choice
+    const p = C.CAT[code];
+    if (p) { const want = isOperationRow(p) ? 'operation' : ui.pickOp === 'operation' ? 'replace' : ui.pickOp; if (want !== ui.pickOp) { ui.pickOp = want; const sel = $('#pickOp'); if (sel) sel.value = want; } }
+  }
+  // Keyboard on the list: the arrow keys, Home, End, Page Up and Page Down pick a part (the list scrolls to it), Space picks the
+  // first part when none is picked, and Enter adds the picked part as a line, as "Add line" (or a double click) does.
+  function pickerKey(e) {
+    const box = $('#pickResults'), rows = $$('.r[data-code]', box);
+    if (!rows.length || !['ArrowDown', 'ArrowUp', 'Home', 'End', 'PageDown', 'PageUp', ' ', 'Enter'].includes(e.key)) return;
+    if (job.issued) { e.preventDefault(); toast(LOCKED, true); return; } // as a click on a part is refused
+    const i = rows.findIndex((r) => r.dataset.code === ui.pickSel);
+    const go = (k) => { const r = rows[Math.max(0, Math.min(rows.length - 1, k))]; selectPick(r.dataset.code); r.scrollIntoView({ block: 'nearest' }); };
+    switch (e.key) {
+      case 'ArrowDown': go(i < 0 ? 0 : i + 1); break;
+      case 'ArrowUp': go(i < 0 ? 0 : i - 1); break;
+      case 'Home': go(0); break;
+      case 'End': go(rows.length - 1); break;
+      case 'PageDown': go(i < 0 ? 0 : i + 8); break;
+      case 'PageUp': go(i < 0 ? 0 : i - 8); break;
+      case ' ': if (i < 0) go(0); break;
+      case 'Enter': if (e.repeat) break; if (i < 0) go(0); addFromCatalogue(); break;
+      default: return;
+    }
+    e.preventDefault();
+  }
+  // a damage zone on the diagram: a click, or Enter / Space on the focused zone, adds or removes it
+  function toggleZone(el) {
+    if (!job) return;
+    if (job.issued) return toast(LOCKED, true);
+    const z = el.dataset.zone;
+    job.zones = job.zones.includes(z) ? job.zones.filter((x) => x !== z) : job.zones.concat(z);
+    changed(); renderJob(); // the zone keeps focus (renderJob finds it again by data-zone)
+  }
+  main.addEventListener('keydown', (e) => {
+    const t = e.target;
+    if (!job || !t || !t.closest || e.altKey || e.ctrlKey || e.metaKey) return;
+    const zone = t.closest('[data-zone]');
+    if (zone && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); if (!e.repeat) toggleZone(zone); return; }
+    if (t.id === 'pickResults') { pickerKey(e); return; }
+    // from the search box, the down arrow or Enter goes to the list (the part picked before, if it is still listed, else the first)
+    if (t.id === 'pickQ' && (e.key === 'ArrowDown' || (e.key === 'Enter' && !e.isComposing))) {
+      const box = $('#pickResults'), rows = $$('.r[data-code]', box);
+      if (!rows.length) return;
+      e.preventDefault();
+      if (!rows.some((r) => r.dataset.code === ui.pickSel)) selectPick(rows[0].dataset.code);
+      box.focus();
+      const r = box.querySelector('.r.sel'); if (r) r.scrollIntoView({ block: 'nearest' });
+    }
+  });
 
   main.addEventListener('input', (e) => {
     const t = e.target;
@@ -2445,7 +2579,7 @@
       s[t.dataset.vs] = t.dataset.vs === 'amount' ? (t.value === '' ? '' : num(t.value)) : t.value;
       changed(); return;
     }
-    if (t.id === 'pickQ') { ui.pickQ = t.value; ui.zoneGroups = null; $('#pickResults').innerHTML = pickResults(); return; }
+    if (t.id === 'pickQ') { ui.pickQ = t.value; ui.zoneGroups = null; paintPickResults(); return; }
     if (t.id === 'catQ') { ui.catQ = t.value; const pos = t.selectionStart; renderCatalogue(); const n = $('#catQ'); n.focus(); n.setSelectionRange(pos, pos); return; }
   });
   main.addEventListener('change', (e) => {
@@ -2479,8 +2613,8 @@
       return toast(`The economic repair threshold must be above 0%, so it has been reset to ${C.DEFAULT_SETTINGS.berThresholdPct}%.`, true);
     }
     if (t.id === 'valSearch') { ui.valSearch = t.checked; return; }
-    if (t.id === 'pickGroup') { ui.pickGroup = t.value; ui.zoneGroups = null; $('#pickResults').innerHTML = pickResults(); return; }
-    if (t.id === 'pickSide') { ui.pickSide = t.value; $('#pickResults').innerHTML = pickResults(); return; }
+    if (t.id === 'pickGroup') { ui.pickGroup = t.value; ui.zoneGroups = null; paintPickResults(); return; }
+    if (t.id === 'pickSide') { ui.pickSide = t.value; paintPickResults(); return; }
     if (t.id === 'pickOp') { ui.pickOp = t.value; return; }
     if (t.id === 'addRefinish') { ui.addRefinish = t.checked; return; }
     if (t.id === 'catVeh') { ui.catVeh = t.value; renderCatalogue(); return; }
@@ -2498,12 +2632,7 @@
   const ACT_GROUP = { backup: 'data', restore: 'data' }; // a backup and a restore never run together
   main.addEventListener('click', async (e) => {
     const zone = e.target.closest('[data-zone]');
-    if (zone && job) {
-      if (job.issued) return toast(LOCKED, true);
-      const z = zone.dataset.zone;
-      job.zones = job.zones.includes(z) ? job.zones.filter((x) => x !== z) : job.zones.concat(z);
-      changed(); renderJob(); return;
-    }
+    if (zone && job) { toggleZone(zone); return; }
     const el = e.target.closest('[data-act]');
     if (!el) return;
     const a = el.dataset.act;
@@ -2578,11 +2707,7 @@
       zoneDel: () => { job.zones = job.zones.filter((x) => x !== el.dataset.z); changed(); renderJob(); },
       zonePick: () => { const z = Diagram.byLabel(el.dataset.z); ui.zoneGroups = z ? z.groups : null; ui.zoneLabel = z ? z.label : ''; ui.pickGroup = ''; if (z) ui.pickQ = ''; if (z && z.side) ui.pickSide = z.side; renderJob(); },
       pickSel: () => {
-        ui.pickSel = el.dataset.code;
-        $$('#pickResults .r').forEach((r) => r.classList.toggle('sel', r.dataset.code === ui.pickSel));
-        // operation / service rows default to "Operation / service"; a part never keeps that choice
-        const p = C.CAT[ui.pickSel];
-        if (p) { const want = isOperationRow(p) ? 'operation' : ui.pickOp === 'operation' ? 'replace' : ui.pickOp; if (want !== ui.pickOp) { ui.pickOp = want; const sel = $('#pickOp'); if (sel) sel.value = want; } }
+        selectPick(el.dataset.code);
         if (e.detail === 2) addFromCatalogue();
       },
       pickAdd: addFromCatalogue,

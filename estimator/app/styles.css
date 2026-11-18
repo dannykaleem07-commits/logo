@@ -1,6 +1,8 @@
+/* Text colours reach WCAG AA (4.5:1) on every background they are used on: --muted on white, --bg, --blue-2 (selected rows)
+   and the badge tints; --ok / --warn on their badge tints, on white and on --blue-2 (part numbers in a selected picker row). */
 :root {
-  --navy: #1f3349; --blue: #1a6fb5; --blue-2: #e8f1fa; --bg: #f3f5f8; --card: #fff; --line: #dde2e8; --ink: #24303c; --muted: #6b7785;
-  --ok: #1e8e4e; --warn: #c27c0e; --err: #c0392b; --ai: #7b4ce0; --ai-2: #f1ebfd;
+  --navy: #1f3349; --blue: #1a6fb5; --blue-2: #e8f1fa; --bg: #f3f5f8; --card: #fff; --line: #dde2e8; --ink: #24303c; --muted: #626d7a;
+  --ok: #1a7b44; --warn: #97600b; --err: #c0392b; --ai: #7b4ce0; --ai-2: #f1ebfd;
 }
 * { box-sizing: border-box; }
 html, body { height: 100%; }
@@ -158,3 +160,13 @@ table.tbl input, table.tbl select { padding: 5px 6px; }
 .aiTextHint { color: var(--ai); }
 .aiFlags ul { margin: 8px 0; padding-left: 20px; } .aiFlags li { margin-bottom: 4px; }
 .draftReady { margin-left: 4px; }
+/* keyboard use: these rings show for keyboard focus only (:focus-visible), so the look with a mouse is unchanged */
+.srOnly { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
+.modal:focus { outline: none; } /* the dialog itself takes focus when it opens; Tab then moves through its controls */
+button.drop { display: block; width: 100%; font: inherit; }
+button.drop:focus-visible { outline: 2px solid #9cc6ee; border-color: var(--blue); } /* as a focused input */
+.results:focus-visible { outline: 2px solid #9cc6ee; border-color: var(--blue); }
+.results:focus-visible .r.sel { box-shadow: inset 3px 0 0 var(--blue); }
+.labStage:focus-visible { outline: 3px solid #2d8ae0; outline-offset: 2px; }
+.diagram .z:focus { outline: none; }
+.diagram .z:focus-visible { stroke: var(--blue); stroke-width: 3; }

@@ -22,8 +22,9 @@
     <div id="banners" class="hidden"></div>
     <main id="main"></main>
   </div>
-  <div id="modal" class="modal hidden"><div class="modal-card"><div class="modal-head"><b id="modalTitle"></b><button class="x" data-close>&times;</button></div><div id="modalBody" class="modal-body"></div></div></div>
-  <div id="toast" class="toast hidden"></div>
+  <!-- one dialog at a time (app.js openModal): focus moves into it, Tab stays in it, Escape closes it, and the page behind is inert -->
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1"><div class="modal-card"><div class="modal-head"><b id="modalTitle"></b><button class="x" data-close aria-label="Close">&times;</button></div><div id="modalBody" class="modal-body"></div></div></div>
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
   <script src="data/catalogue.js"></script>
   <script src="data/oem.js"></script>
