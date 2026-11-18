@@ -362,8 +362,10 @@
     const adCells = (x) => `<td>${esc(x.description)}</td><td>${esc(x.year)}</td><td>${x.mileage ? num(x.mileage).toLocaleString('en-GB') : '—'}</td><td>${x.price ? gbp(x.price) : '—'}</td>`;
     const advertTable = verifiedAds.length ? `<h3>Like-for-like market evidence</h3><table class="est">${adHead}<tbody>${verifiedAds.map((x) => `<tr>${adCells(x)}<td class="url">${esc(x.source || '')}${x.source && x.url ? '<br>' : ''}${esc(x.url || '')}${x.source || x.url ? '' : '—'}</td></tr>`).join('')}</tbody></table>` : '';
     const unverifiedTable = unverifiedAds.length ? `<h3>Adverts found by AI search (link not verified)</h3><table class="est unverified">${adHead}<tbody>${unverifiedAds.map((x) => {
-      const link = String(x.url || x.claimedUrl || '').trim();
-      return `<tr>${adCells(x)}<td class="url">${esc(x.source || 'AI web search')}<br><span class="unv">Not verified</span>${link ? `<br><span class="muted">Link given by the AI, not verified: ${esc(link)}</span>` : ''}</td></tr>`;
+      // a link the assessor entered is not attributed to the AI; neither is presented as checked
+      const url = String(x.url || '').trim(), claimed = String(x.claimedUrl || '').trim();
+      const link = url ? `Link (not verified): ${esc(url)}` : claimed ? `Link given by the AI, not verified: ${esc(claimed)}` : '';
+      return `<tr>${adCells(x)}<td class="url">${esc(x.source || 'AI web search')}<br><span class="unv">Not verified</span>${link ? `<br><span class="muted">${link}</span>` : ''}</td></tr>`;
     }).join('')}</tbody></table><p class="small muted">These adverts were reported by an AI web search. The assessor has not verified that they exist at the prices shown, so they are not presented as like-for-like market evidence.</p>` : '';
 
     // ---------- use of AI and data tools ----------

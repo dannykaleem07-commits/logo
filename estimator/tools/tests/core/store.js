@@ -161,7 +161,7 @@ async function run() {
       } catch (e) { threw = e; }
     }
     check('junk input (null, numbers, arrays, wrong types, throwing getter, revoked proxy) → safe defaults', !threw && !bad.length, threw ? threw.message : bad);
-    check('a throwing getter keeps the id, and the summary says why (error)', C.jobSummary(junk[9]).id === 'g' && C.jobSummary(junk[9]).error === 'boom' && !('error' in C.jobSummary(junk[8])));
+    check('a throwing getter keeps the id, and the summary says why (unreadable, as the Jobs list expects)', C.jobSummary(junk[9]).id === 'g' && C.jobSummary(junk[9]).unreadable === 'boom' && !('unreadable' in C.jobSummary(junk[8])));
     check('£5,000 PAV in a legacy job is read (tolerant num)', C.jobSummary(junk[8]).pav === 5000);
   }
 

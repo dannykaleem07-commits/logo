@@ -888,8 +888,8 @@
       out.net = isFinite(t.net) ? t.net : 0;
       out.pav = isFinite(t.pav) ? t.pav : 0;
     } catch (err) {
-      // the defaults above, and the reason, so the Jobs list can show the record as unreadable
-      try { out.error = String((err && err.message) || err).slice(0, 200) || 'This record could not be read.'; } catch (e) { out.error = 'This record could not be read.'; }
+      // the defaults above, and the reason (unreadable), so the Jobs list shows the record as one that could not be read
+      try { out.unreadable = String((err && err.message) || err).slice(0, 200) || 'This record could not be read.'; } catch (e) { out.unreadable = 'This record could not be read.'; }
     }
     return out;
   }
