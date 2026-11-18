@@ -25,6 +25,37 @@
   const oemBadges = (c) => [c.role === 'variant' ? 'variant' : '', c.autoFill === false ? 'choose by VIN' : '', !c.user && MARKETS[c.market] ? MARKETS[c.market] : '']
     .filter(Boolean).map((b) => `<span class="badge warn">${b}</span>`).join(' ');
   const chooseByVin = (n) => `${n} researched number${n === 1 ? '' : 's'}: choose the variant by VIN`;
+  const h1 = (n) => `${(Math.round(num(n) * 10) / 10).toFixed(1)}h`;
+  const sameText = (a, b) => String(a == null ? '' : a).replace(/\s+/g, ' ').trim() === String(b == null ? '' : b).replace(/\s+/g, ' ').trim();
+  // job.aiText: { '<field path>': '<AI text applied there>' }, so the AI can tell its own earlier drafts from the assessor's text
+  const aiTextOf = (j) => (isObj(j.aiText) ? j.aiText : (j.aiText = {}));
+  const photoTextPath = (p, field) => `photos.${p.id}.${field}`;
+  // True while a photo's title / caption is still unedited AI text: what the AI last suggested (aiTitle / aiCaption) or what was applied.
+  function photoTextByAi(j, p, field) {
+    const cur = p && p[field];
+    if (!String(cur || '').trim()) return false;
+    const applied = isObj(j.aiText) ? j.aiText[photoTextPath(p, field)] : '';
+    const suggested = field === 'title' ? p.aiTitle : p.aiCaption;
+    return [applied, suggested].some((t) => typeof t === 'string' && t.trim() !== '' && sameText(t, cur));
+  }
+  // Status replies from the main process: { ok, error?, protection: 'os' | 'weak' | 'none', encrypted, … }
+  const statusError = (s) => (!isObj(s) ? 'No status was returned.' : s.error ? String(s.error) : s.ok === false ? 'The status could not be read.' : '');
+  async function readStatus(fn) { try { const s = await fn(); return isObj(s) ? s : { ok: false }; } catch (err) { return { ok: false, error: (err && err.message) || String(err) }; } }
+  // How saved keys are protected on this PC: 'os' = encrypted by the operating system; 'weak' = Linux's fallback with a fixed
+  // key (no keyring found); 'none' = no secure storage, so saved as plain text.
+  const protectionOf = (s) => (!isObj(s) ? '' : ['os', 'weak', 'none'].includes(s.protection) ? s.protection : s.encrypted === false ? 'none' : s.encrypted === true ? 'os' : '');
+  function storageNote(s, one) {
+    const p = protectionOf(s), it = one ? 'the key is' : 'the keys are';
+    if (p === 'none') return `<b class="keyWarn" style="color:var(--err)">Stored without encryption: this PC has no secure storage, so ${it} saved as plain text.</b>`;
+    if (p === 'weak') return `<b class="keyWarn" style="color:var(--err)">Stored without proper encryption: no system keyring was found, so ${it} protected only by a fixed key built into the app (the Linux fallback). Set up a keyring such as GNOME Keyring or KWallet, then save ${one ? 'it' : 'them'} again.</b>`;
+    if (p === 'os') return `${one ? 'The key is' : 'Keys are'} encrypted by your operating system and never stored in jobs, backups or reports.`;
+    return `${one ? 'The key is' : 'Keys are'} never stored in jobs, backups or reports.`;
+  }
+  const errBox = (title, msg, extra) => `<div class="card errBox" role="alert" style="border-color:#f0b5ad;background:#fff6f5;margin:8px 0"><b style="color:var(--err)">${esc(title)}</b> ${esc(msg)}${extra || ''}</div>`;
+  const flagBox = (title, flags) => (flags.length ? `<div class="card flagBox" style="border-color:#f0c36d;background:#fffaf0;margin-top:10px"><b>${esc(title)}</b><ul>${flags.map((f) => `<li>${esc(f)}</li>`).join('')}</ul></div>` : '');
+  const CLAIM_TYPES = [['', 'Not specified'], ['own-insurer', 'Own-insurer total loss (FOS approach)'], ['third-party', 'Third-party claim'], ['court', 'Court (CPR 35)']];
+  const claimKey = (s) => { const k = String(s == null ? '' : s).trim().toLowerCase().replace(/[\s_]+/g, '-'); return CLAIM_TYPES.some((c) => c[0] === k) ? k : ''; };
+  const claimLabel = (k) => (CLAIM_TYPES.find((c) => c[0] === claimKey(k)) || CLAIM_TYPES[0])[1];
 
   const TABS = [
     ['claim', 'Claim'], ['vehicle', 'Vehicle'], ['inspection', 'Inspection'], ['circumstances', 'Circumstances'],
@@ -167,6 +198,7 @@
   function migrate(j) {
     let ch = false;
     const set = (o, k, v) => { o[k] = v; ch = true; };
+    const del = (o, k) => { delete o[k]; ch = true; };
     const blank = C.newJob();
     for (const k of Object.keys(blank)) {
       const b = blank[k];
@@ -186,7 +218,19 @@
       const base = C.newLine();
       for (const kk of Object.keys(base)) if (l[kk] == null && base[kk] != null) set(l, kk, base[kk]);
       if (typeof l.description !== 'string') set(l, 'description', String(l.description));
+      // the operation and AI fields (op, aiOperation, guideHours, hoursBasis, aiHoursSeen, pfApplied) are kept; only their shape is repaired
+      if (l.op != null && typeof l.op !== 'string') del(l, 'op');
+      if (l.op === 'replace') set(l, 'op', 'renew'); // the picker's "replace" is stored as "renew"
+      if (l.aiOperation != null && typeof l.aiOperation !== 'string') del(l, 'aiOperation');
+      if (l.guideHours != null && !(typeof l.guideHours === 'number' && isFinite(l.guideHours))) set(l, 'guideHours', num(l.guideHours));
+      if (l.hoursBasis != null) {
+        const hb = String(l.hoursBasis).trim().toLowerCase();
+        if (hb !== 'guide' && hb !== 'adjusted') del(l, 'hoursBasis'); else if (hb !== l.hoursBasis) set(l, 'hoursBasis', hb);
+      }
+      if (l.aiHoursSeen != null && !(Array.isArray(l.aiHoursSeen) && l.aiHoursSeen.every((h) => typeof h === 'number'))) del(l, 'aiHoursSeen');
     }
+    if (Object.values(j.aiText).some((t) => typeof t !== 'string')) set(j, 'aiText', Object.fromEntries(Object.entries(j.aiText).filter(([, t]) => typeof t === 'string')));
+    if (j.valuation.claimType !== claimKey(j.valuation.claimType)) set(j.valuation, 'claimType', claimKey(j.valuation.claimType));
     if (j.photos.some((p) => !isObj(p))) set(j, 'photos', j.photos.filter(isObj));
     for (const p of j.photos) { if (!p.id) set(p, 'id', C.uid()); if (!Array.isArray(p.labels)) set(p, 'labels', []); }
     ['sources', 'adverts'].forEach((k) => { if (Array.isArray(j.valuation[k]) && j.valuation[k].some((x) => !isObj(x))) set(j.valuation, k, j.valuation[k].filter(isObj)); });
@@ -334,6 +378,7 @@
       ${F('vehicle.sizeClass', 'Vehicle size class (scales guide labour times)', { type: 'select', options: Object.entries(C.SIZE_CLASSES).map(([k, v]) => [k, `${v[0]} ×${v[1]}`]) })}
       ${F('vehicle.firstReg', 'First registration date', { type: 'date', hint: job.vehicle.firstRegPrecision === 'month' ? 'DVLA gives the month only, so the report prints the month and year.' : '' })}
       ${F('vehicle.oemKey', 'Parts catalogue vehicle (for OEM part numbers)', { type: 'select', options: [['', '— none —']].concat(ov.map((v) => [v.key, `${v.make} ${v.model} ${v.generation} (${v.years})`])), hint: guess && guess.key !== job.vehicle.oemKey ? `Suggested: <button class="link" data-act="useOem" data-key="${guess.key}">${esc(guess.make + ' ' + guess.model + ' ' + guess.generation)}</button>` : 'Links estimate lines to researched OEM part numbers.' })}
+      ${F('vehicle.adas', 'ADAS / driver-assistance systems fitted (optional)', { full: true, ph: 'e.g. windscreen camera (lane keeping), front radar (adaptive cruise), blind-spot radar, parking sensors, 360° cameras', hint: 'From the VIN / build data or the vehicle itself. The AI costs a calibration only for a system recorded here or visible in the photos; otherwise it lists the check and asks you to confirm the fit.' })}
       </div><datalist id="makes">${[...new Set(ov.map((v) => v.make).concat(['Audi', 'BMW', 'Citroën', 'Dacia', 'Fiat', 'Honda', 'Hyundai', 'Kia', 'Land Rover', 'Mazda', 'Mercedes-Benz', 'MG', 'MINI', 'Peugeot', 'Renault', 'SEAT', 'Škoda', 'Tesla', 'Toyota', 'Volvo']))].sort().map((m) => `<option value="${esc(m)}">`).join('')}</datalist>
       <datalist id="gearboxes">${GEARBOXES.map((g) => `<option value="${esc(g)}">`).join('')}</datalist></div>`;
   }
@@ -486,8 +531,8 @@
     if (!j.vehicle.reg) return toast('Enter the registration first.', true);
     const key = 'lookup:' + j.id;
     if (running.has(key)) return;
-    const st = await desktop.data.status();
-    if (!st.dvla && !st.mot) return toast('No data connections set up. Add your DVLA key and/or MOT History credentials in Settings → Data connections.', true);
+    const st = await readStatus(() => desktop.data.status());
+    if (!st.dvla && !st.mot) return toast(statusError(st) || 'No data connections set up. Add your DVLA key and/or MOT History credentials in Settings → Data connections.', true);
     running.add(key); if (job === j) renderJob();
     const reg = j.vehicle.reg;
     const msgs = [];
@@ -617,8 +662,13 @@
   function aiFindingsPanel(f) {
     const s = f.summary || {};
     const lines = f.suggested_lines || [];
+    const nums = C.photoNumbers(job);
+    // damage the AI found but could not place on its photo (box outside the image or unreadable): listed here, never drawn
+    const unplaced = (f.photos || []).filter(isObj).flatMap((ph) => (Array.isArray(ph.unplaced_damages) ? ph.unplaced_damages : []).filter(isObj).map((d) => ({ ph, d })));
+    const where = (ph) => (nums.has(ph.id) ? figLabel(nums.get(ph.id)) : `Photo ${ph.index} (no longer in the report)`);
     return `<div class="card aiPanel"><div class="row"><h2 class="grow">✦ AI assessor findings</h2><span class="hint">${esc(f.model || '')} · ${f.at ? new Date(f.at).toLocaleString('en-GB') : ''}</span></div>
       <p class="hint">Suggestions only. Check every item against the vehicle and photos before it goes in the report.</p>
+      ${flagBox('Check before relying on these findings:', (Array.isArray(f.review_flags) ? f.review_flags : []).map((x) => String(x == null ? '' : x)).filter((x) => x.trim()))}
       <div class="form">
         <div><b>Impact type:</b> ${esc(s.impact_type)}<br><b>Primary area:</b> ${esc(s.primary_area)}<br><b>Secondary:</b> ${esc(s.secondary_areas)}<br><b>Direction:</b> ${esc(s.direction_of_contact)}</div>
         <div><b>Structural concern:</b> ${s.structural_concern ? '<span class="badge err">Possible</span>' : '<span class="badge ok">None seen</span>'} ${esc(s.structural_notes)}</div>
@@ -628,13 +678,15 @@
         ${(s.adas_and_calibration || []).length ? `<div><b>ADAS / calibration:</b><ul>${s.adas_and_calibration.map((x) => `<li>${esc(x)}</li>`).join('')}</ul></div>` : ''}
       </div>
       <div class="row" style="margin:8px 0 14px"><button class="btn" data-act="aiApplySummary">Fill empty circumstances / assessment fields &amp; damage zones from these findings</button></div>
+      ${unplaced.length ? `<div class="unplaced"><h3>Damage the AI could not place on a photo (${unplaced.length})</h3><p class="hint">Not drawn: the AI's box for these was outside the photo or could not be read. Check each one, and draw a label yourself if it is needed.</p>
+        <ul>${unplaced.map(({ ph, d }) => `<li><b>${esc(where(ph))}</b>: ${esc(d.label || 'unnamed')}${d.component_name ? ' — ' + esc([C.sideWord(d.side), d.component_name].filter(Boolean).join(' ')) : ''}${d.damage_type ? ' · ' + esc(d.damage_type) : ''}${d.severity ? ' · ' + esc(d.severity) : ''}${d.accident_related ? ' · accident-related: ' + esc(d.accident_related) : ''}${d.recommended_operation ? ' · ' + esc(d.recommended_operation) : ''}${d.notes ? ' — ' + esc(d.notes) : ''}</li>`).join('')}</ul></div>` : ''}
       <h3>Recommended estimate lines (${lines.length})</h3>
       <table class="tbl sugg"><thead><tr><th><input type="checkbox" data-act="suggAll" style="width:auto" checked></th><th>Type</th><th>Line</th><th>Part no. (catalogue)</th><th class="num">Hours</th><th>Evidence</th><th>Conf.</th></tr></thead><tbody>
-      ${lines.map((l, i) => { const cands = l.code && C.CAT[l.code] ? C.oemLookup(job.vehicle.oemKey, l.code, l.side) : []; const o = autoOem(cands); const added = l.added; return `<tr${added ? ' style="opacity:.5"' : ''}>
+      ${lines.map((l, i) => { const cands = l.code && C.CAT[l.code] ? C.oemLookup(job.vehicle.oemKey, l.code, l.side) : []; const o = autoOem(cands); const added = l.added; const hz = aiLineHours(job, l); return `<tr${added ? ' style="opacity:.5"' : ''} data-sugg-row="${i}">
         <td><input type="checkbox" data-sugg="${i}" style="width:auto" ${ui.suggestSel[i] === false || added ? '' : 'checked'} ${added ? 'disabled' : ''}></td>
-        <td>${esc(l.type)}</td><td><b>${esc(l.description)}</b>${l.code && l.code !== 'OTHER' ? ` <code class="hint">${esc(l.code)}${l.side ? '-' + l.side : ''}</code>` : ''}${added ? ' <span class="badge ok">added</span>' : ''}</td>
+        <td>${esc(l.type)}</td><td><b>${esc(l.description)}</b>${l.code && l.code !== 'OTHER' ? ` <code class="hint">${esc(l.code)}${l.side ? '-' + l.side : ''}${l.operation ? ' · ' + esc(l.operation) : ''}</code>` : ''}${added ? ' <span class="badge ok">added</span>' : ''}</td>
         <td>${o ? `<span class="oem ${esc(o.confidence)}">${esc(o.oem)}</span>` : cands.length ? `<span class="hint">${cands.length} numbers: choose by VIN</span>` : (l.needs_part ? '<span class="hint">price needed</span>' : '')}</td>
-        <td class="num">${hrs(l.labour_hours)}</td><td class="reason">${esc(l.reason)}</td>
+        <td class="num">${hrs(hz.hours)}${suggHoursNote(l, hz)}</td><td class="reason">${esc(l.reason)}</td>
         <td><span class="conf" title="${Math.round(num(l.confidence) * 100)}%"><i style="width:${Math.round(num(l.confidence) * 100)}%"></i></span></td></tr>`; }).join('')}
       </tbody></table>
       <div class="row" style="margin-top:12px"><button class="btn primary" data-act="aiAddLines">Add selected lines to estimate</button><span class="hint">They are added marked "AI" and need ticking as reviewed.</span></div></div>`;
@@ -686,14 +738,69 @@
 
   // Job data for the AI: no images or signatures, and only the photos that are in the report, in figure order,
   // so "Image N" in prompts and drafts matches the printed figure numbers.
+  // Provenance goes with it: job.aiText (fields still holding applied AI text), titleByAi / captionByAi per photo and labels[].ai.
   function slimJob(src) {
     const nums = C.photoNumbers(src);
     const j = C.clone(Object.assign({}, src, { photos: [], issued: undefined }));
     if (j.assessor) delete j.assessor.signature;
+    j.aiText = {};
+    for (const [k, t] of Object.entries(isObj(src.aiText) ? src.aiText : {})) if (typeof t === 'string' && !k.startsWith('photos.')) j.aiText[k] = t;
     j.photos = src.photos.filter((p) => nums.has(p.id)).sort((a, b) => nums.get(a.id) - nums.get(b.id))
-      .map((p) => ({ index: nums.get(p.id), title: p.title, caption: p.caption, labels: (p.labels || []).map((l) => ({ text: l.text })) }));
+      .map((p) => ({ index: nums.get(p.id), title: p.title, caption: p.caption, titleByAi: photoTextByAi(src, p, 'title'), captionByAi: photoTextByAi(src, p, 'caption'), labels: (p.labels || []).filter(isObj).map((l) => ({ text: l.text, ai: !!l.ai })) }));
     return j;
   }
+
+  // ai.js's limits per photo (decoded bytes, pixels per side) and the image types it accepts.
+  const AI_MAX_IMAGE_BYTES = 7 * 1000 * 1000, AI_MAX_SIDE = 8000, AI_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  function dataUrlParts(u) {
+    const m = /^data:([^;,]*)[^,]*;base64,/i.exec(String(u || ''));
+    if (!m) return null;
+    const base64 = String(u).slice(m[0].length);
+    const pad = base64.endsWith('==') ? 2 : base64.endsWith('=') ? 1 : 0;
+    return { type: m[1].trim().toLowerCase(), base64, bytes: Math.floor(base64.length * 3 / 4) - pad };
+  }
+  // One photo for analysePhotos: the stored image as it is (ai.js accepts it up to its limits), re-encoded as a JPEG only when it
+  // is over the per-photo limit or not a type the AI reads. With its id (results come back by id), size and text provenance.
+  async function aiPhotoPayload(j, p, index) {
+    const item = { index, id: p.id, title: p.title || '', caption: p.caption || '', titleByAi: photoTextByAi(j, p, 'title'), captionByAi: photoTextByAi(j, p, 'caption') };
+    const d = dataUrlParts(p.dataUrl);
+    let w = num(p.w), h = num(p.h);
+    if (d && (!w || !h)) { try { const img = await C.loadImage(p.dataUrl); w = img.naturalWidth; h = img.naturalHeight; } catch (e) { w = 0; h = 0; /* ai.js reads the size from the image header */ } }
+    if (d && AI_IMAGE_TYPES.includes(d.type) && d.bytes <= AI_MAX_IMAGE_BYTES && Math.max(w, h) <= AI_MAX_SIDE) {
+      return Object.assign(item, { mediaType: d.type, base64: d.base64 }, w && h ? { width: w, height: h } : {});
+    }
+    try {
+      for (const [edge, q] of [[2576, 0.85], [2048, 0.8], [1568, 0.8], [1024, 0.75]]) {
+        const r = await C.resizeDataURL(p.dataUrl, edge, q);
+        const rd = dataUrlParts(r.dataUrl);
+        if (rd && rd.bytes <= AI_MAX_IMAGE_BYTES) return Object.assign(item, { mediaType: 'image/jpeg', base64: rd.base64, width: r.width, height: r.height });
+      }
+    } catch (e) { throw new Error(`${figLabel(index)} could not be read, so it cannot be sent to the AI. Add the photo again.`); }
+    throw new Error(`${figLabel(index)} is too large to send to the AI, even at a reduced size. Add a smaller copy of it.`);
+  }
+
+  // AI suggestions from several photo batches. The lines of one batch are never merged with each other. A later batch's line is
+  // merged into an earlier one only when the code, operation, side and wording all match, and every batch's hours stay visible
+  // (hoursSeen); the higher figure is offered.
+  const suggDesc = (s) => C.fold(s).replace(/[^a-z0-9]+/g, ' ').trim();
+  const suggKey = (l) => [String(l.code || '').trim().toUpperCase(), String(l.operation || '').trim(), String(l.side || '').trim(), suggDesc(l.description)].join('|');
+  function mergeBatchLines(into, lines, batch) {
+    const fresh = [];
+    for (const raw of lines) {
+      if (!isObj(raw)) continue;
+      const l = Object.assign({}, raw, { batches: [batch], hoursSeen: [num(raw.labour_hours)] });
+      const key = suggKey(l);
+      const dup = into.find((x) => !x.batches.includes(batch) && suggKey(x) === key);
+      if (!dup) { fresh.push(l); continue; }
+      dup.batches.push(batch); dup.hoursSeen.push(num(l.labour_hours));
+      if (num(l.labour_hours) > num(dup.labour_hours)) { dup.labour_hours = l.labour_hours; dup.hours_basis = l.hours_basis; }
+      dup.needs_part = !!(dup.needs_part || l.needs_part);
+      dup.confidence = Math.max(num(dup.confidence), num(l.confidence));
+      if (l.reason && !String(dup.reason || '').includes(l.reason)) dup.reason = [dup.reason, l.reason].filter(Boolean).join(' ');
+    }
+    into.push(...fresh);
+  }
+  const boxOk = (b) => isObj(b) && ['x', 'y', 'w', 'h'].every((k) => typeof b[k] === 'number' && isFinite(b[k]));
 
   async function aiAnalyse() {
     if (!desktop) return toast('AI tools need the desktop app.', true);
@@ -710,41 +817,46 @@
     try {
       const batches = [];
       for (let k = 0; k < photos.length; k += 10) batches.push(photos.slice(k, k + 10));
-      const merged = { photos: [], summary: null, suggested_lines: [], model: '', at: new Date().toISOString() };
-      const idByIndex = new Map();
+      const merged = { photos: [], summary: null, suggested_lines: [], review_flags: [], model: '', at: new Date().toISOString() };
       for (let b = 0; b < batches.length; b++) {
         if (batches.length > 1) toast(`AI analysing batch ${b + 1} of ${batches.length}…`);
         const payload = [];
+        const idByIndex = new Map();
         for (const p of batches[b]) {
-          const r = await C.resizeDataURL(p.dataUrl, 1568, 0.85);
           idByIndex.set(nums.get(p.id), p.id);
-          payload.push({ index: nums.get(p.id), mediaType: 'image/jpeg', base64: r.dataUrl.split(',')[1], title: p.title, caption: p.caption });
+          payload.push(await aiPhotoPayload(j, p, nums.get(p.id)));
         }
         const res = await desktop.ai.analysePhotos({ job: slim, photos: payload, model: ai.model, effort: ai.effort });
-        if (!res.ok) throw new Error(res.error);
-        const d = res.result;
-        merged.model = d.model;
-        merged.photos.push(...(d.photos || []));
+        if (!res || !res.ok) throw new Error((res && res.error) || 'The AI photo analysis failed.');
+        const d = isObj(res.result) ? res.result : {};
+        merged.model = d.model || merged.model;
+        // results come back by photo id (ai.js echoes the id sent); the figure number is only a fallback
+        const sent = new Set(batches[b].map((p) => p.id));
+        for (const ph of d.photos || []) if (isObj(ph)) merged.photos.push(Object.assign(ph, { id: sent.has(ph.id) ? ph.id : idByIndex.get(num(ph.index)) }));
         merged.summary = merged.summary ? mergeSummary(merged.summary, d.summary) : d.summary;
-        for (const l of d.suggested_lines || []) {
-          const dup = merged.suggested_lines.find((x) => x.code === l.code && x.side === l.side && x.type === l.type && x.code !== 'OTHER');
-          if (dup) dup.labour_hours = Math.max(dup.labour_hours, l.labour_hours); else merged.suggested_lines.push(l);
-        }
+        mergeBatchLines(merged.suggested_lines, d.suggested_lines || [], b + 1);
+        for (const fl of d.review_flags || []) { const s = String(fl == null ? '' : fl); if (s.trim() && !merged.review_flags.includes(s)) merged.review_flags.push(s); }
       }
       let labelled = 0;
       const target = await applyToJob(j, (x) => {
         for (const ph of merged.photos) {
-          const p = x.photos.find((q) => q.id === idByIndex.get(ph.index)); // by id: moving or deleting photos meanwhile cannot misplace labels
+          const p = x.photos.find((q) => q.id === ph.id); // by id: moving or deleting photos meanwhile cannot misplace labels
           if (!p) continue;
-          p.labels = (p.labels || []).filter((l) => !l.ai).concat((ph.damages || []).map((d) => ({
+          // only damages with a usable box are drawn; anything else is listed in the findings panel (unplaced_damages)
+          const all = (ph.damages || []).filter(isObj);
+          ph.damages = all.filter((d) => boxOk(d.box));
+          const loose = all.filter((d) => !boxOk(d.box));
+          if (loose.length) ph.unplaced_damages = (Array.isArray(ph.unplaced_damages) ? ph.unplaced_damages : []).concat(loose);
+          p.labels = (p.labels || []).filter((l) => !l.ai).concat(ph.damages.map((d) => ({
             x: d.box.x, y: d.box.y, w: d.box.w, h: d.box.h, text: d.label, ai: true, colour: d.severity === 'severe' ? '#ff3b30' : d.severity === 'moderate' ? '#ff9500' : '#ffcc00',
             detail: `${C.sideWord(d.side)} ${d.component_name} · ${d.damage_type} · ${d.severity} · accident-related: ${d.accident_related} · ${d.recommended_operation}${d.notes ? ' — ' + d.notes : ''}`.trim(),
             code: d.component_code, side: d.side, accidentRelated: d.accident_related
           })));
           p.aiLabelled = true;
           p.labelsReviewed = false;
-          if (!p.title) p.title = ph.title;
-          if (!p.caption) p.caption = ph.caption;
+          // an empty title / caption takes the AI's text, recorded as AI text until the assessor edits it
+          if (!p.title && ph.title) { p.title = ph.title; aiTextOf(x)[photoTextPath(p, 'title')] = ph.title; }
+          if (!p.caption && ph.caption) { p.caption = ph.caption; aiTextOf(x)[photoTextPath(p, 'caption')] = ph.caption; }
           p.aiTitle = ph.title; p.aiCaption = ph.caption;
           labelled++;
         }
@@ -771,7 +883,8 @@
   }
   function aiApplySummary() {
     const s = (job.aiFindings || {}).summary; if (!s) return;
-    const fill = (path, val) => { if (val && !getPath(job, path)) setPath(job, path, val); };
+    // an empty field takes the AI's text, recorded in job.aiText so later AI calls know it is an AI draft, not the assessor's
+    const fill = (path, val) => { if (val && !getPath(job, path)) { setPath(job, path, val); aiTextOf(job)[path] = String(val); } };
     fill('circumstances.impactType', s.impact_type);
     fill('circumstances.primaryArea', s.primary_area);
     fill('circumstances.secondaryArea', s.secondary_areas);
@@ -798,12 +911,24 @@
       const o = autoOem(cands);
       if (l.needs_part && cands.length && !o) byVin++;
       const cls = l.cost_class === 'paint' ? 'paint' : l.cost_class === 'other' ? 'other' : 'parts';
-      // the operation the AI recommended for this component, when one of its photo labels names it
-      const dm = l.code && l.code !== 'OTHER' ? damages.find((d) => d.component_code === l.code && (d.side || '') === (l.side || '') && d.recommended_operation && d.recommended_operation !== 'none') : null;
-      job.lines.push(C.newLine(Object.assign({
-        type: l.type, description: l.description, code: C.CAT[l.code] ? l.code : '', side: l.side, hours: l.labour_hours,
-        partNo: l.needs_part && o ? o.oem : '', amount: l.needs_part && o && o.price ? o.price : 0, costClass: cls, ai: true, reviewed: false, source: l.reason, op: 'ai'
-      }, dm ? { aiOperation: dm.recommended_operation } : {})));
+      const op = lineOp(l.operation);
+      const hz = aiLineHours(job, l);
+      const fields = {
+        type: LINE_TYPES.includes(l.type) ? l.type : 'Body', description: l.description, code: C.CAT[l.code] ? l.code : '', side: l.side, hours: hz.hours,
+        partNo: l.needs_part && o ? o.oem : '', amount: l.needs_part && o && o.price ? o.price : 0, costClass: cls, ai: true, reviewed: false, source: l.reason,
+        op: op || 'ai'
+      };
+      if (op) fields.aiOperation = String(l.operation); // the operation as the AI gave it
+      else {
+        // older findings without an operation: the operation the AI recommended for this component, when one of its photo labels names it
+        const dm = l.code && l.code !== 'OTHER' ? damages.find((d) => d.component_code === l.code && (d.side || '') === (l.side || '') && d.recommended_operation && d.recommended_operation !== 'none') : null;
+        if (dm) fields.aiOperation = dm.recommended_operation;
+      }
+      if (l.guide_hours != null && l.guide_hours !== '') fields.guideHours = num(l.guide_hours);
+      if (l.hours_basis === 'guide' || l.hours_basis === 'adjusted') fields.hoursBasis = l.hours_basis;
+      if (hz.pfApplied) fields.pfApplied = hz.pfApplied;
+      if (Array.isArray(l.hoursSeen) && new Set(l.hoursSeen.map(num)).size > 1) fields.aiHoursSeen = l.hoursSeen.map(num);
+      job.lines.push(C.newLine(fields));
       l.added = true; n++;
     });
     changed(); toast(`${n} line(s) added to the estimate.${byVin ? ` ${byVin} part line(s) have several researched numbers: choose the variant by VIN (⋯ on the line).` : ''}`); renderJob();
@@ -897,7 +1022,7 @@
     const hasOem = l.code && C.oemLookup(job.vehicle.oemKey, l.code, l.side).length;
     return `<tr data-row="${l.id}"><td class="hint">${i + 1}</td>
       <td style="min-width:122px"><select data-lf="type" data-id="${l.id}">${LINE_TYPES.map((t) => `<option${t === l.type ? ' selected' : ''}>${t}</option>`).join('')}</select></td>
-      <td><input data-lf="description" data-id="${l.id}" value="${esc(l.description)}">${l.source ? `<div class="hint" title="${esc(l.source)}">AI evidence: ${esc(l.source.slice(0, 110))}${l.source.length > 110 ? '…' : ''}</div>` : ''}</td>
+      <td><input data-lf="description" data-id="${l.id}" value="${esc(l.description)}">${aiLineNotes(l)}${l.source ? `<div class="hint" title="${esc(l.source)}">AI evidence: ${esc(String(l.source).slice(0, 110))}${String(l.source).length > 110 ? '…' : ''}</div>` : ''}</td>
       <td style="min-width:150px"><div class="row" style="flex-wrap:nowrap;gap:4px"><input data-lf="partNo" data-id="${l.id}" value="${esc(l.partNo)}">${hasOem ? `<button class="btn sm" data-act="oemPick" data-id="${l.id}" title="OEM options">⋯</button>` : ''}</div></td>
       <td class="num" style="width:80px"><input data-lf="hours" data-id="${l.id}" type="number" step="0.1" value="${esc(l.hours)}"></td>
       <td class="num" style="width:90px"><input data-lf="rate" data-id="${l.id}" type="number" step="0.01" value="${esc(l.rate)}" placeholder="${rate.toFixed(2)}"></td>
@@ -922,6 +1047,79 @@
     return `R&amp;R ${p.replaceHrs}h${p.refinishHrs ? ' · paint ' + p.refinishHrs + 'h' : ''}${g ? ' · repair ' + g + 'h' : g === 0 ? ' · renew only' : ''}`;
   }
   const OP_NAMES = { repair1: 'light repair', repair: 'medium repair', repair3: 'heavy repair', pdr: 'paintless dent repair', smart: 'smart repair', refinish: 'refinish', refinishRep1: 'refinish', refinishRep2: 'refinish', blend: 'blend' };
+  // ---- guide times: one set of rules for the picker and for AI suggestions ----
+  // The job's factors as the picker applies them: H = size factor (renew, repair, R&I, operations); P = size × paint-finish factor (refinish work).
+  const scaleH = (j, h) => Math.max(0.1, Math.round(h * C.sizeFactor(j) * 10) / 10);
+  const scaleP = (j, h) => Math.max(0.1, Math.round(h * C.sizeFactor(j) * C.paintFactor(j) * 10) / 10);
+  const LINE_OPS = ['renew', 'repair1', 'repair', 'repair3', 'pdr', 'smart', 'refinish', 'refinishRep1', 'refinishRep2', 'blend', 'rr', 'check', 'refurb', 'operation', 'labour'];
+  const PAINT_OPS = ['smart', 'refinish', 'refinishRep1', 'refinishRep2', 'blend'];
+  const lineOp = (op) => { const o = String(op == null ? '' : op).trim(); return o === 'replace' ? 'renew' : LINE_OPS.includes(o) ? o : ''; };
+  // The picker's guide time for operation `op` on catalogue part p, before the job's factors, and the factor it takes
+  // ('H', 'P' or '' for none); null where the picker refuses the operation. Mirrors addFromCatalogue below.
+  function pickerGuide(p, op) {
+    const rr = num(p.replaceHrs), rf = num(p.refinishHrs), g = repairGuide(p);
+    if (isOperationRow(p)) return op === 'operation' ? { base: rr, kind: rr ? 'H' : '' } : null;
+    const mult = { repair1: 0.5, repair: 1, repair3: 2 }[op];
+    if (mult) {
+      if (g === 0 || (g == null && !['P', 'S', 'T'].includes(p.kind))) return null;
+      const base = (g == null ? (C.OPS.OP001 || { hours: 1.5 }).hours : g) * mult, cap = rr + rf;
+      return { base: cap > 0 ? Math.min(base, cap) : base, kind: 'H' };
+    }
+    if (PAINT_OPS.includes(op) && !(rf > 0)) return null;
+    switch (op) {
+      case 'renew': return { base: rr, kind: 'H' };
+      case 'pdr': return pdrAllowed(p) ? { base: 1.0, kind: 'H' } : null;
+      case 'smart': return { base: 0.8, kind: 'P' };
+      case 'refinish': return { base: rf, kind: 'P' };
+      case 'refinishRep1': return { base: rf * 0.7, kind: 'P' };
+      case 'refinishRep2': return { base: rf * 0.9, kind: 'P' };
+      case 'blend': return { base: rf * num(C.settings.blendFactor || 0.5), kind: 'P' };
+      case 'rr': return { base: rr * 0.6, kind: 'H' };
+      case 'check': return { base: 0.3, kind: '' };
+      case 'refurb': return p.group === 'SRS / airbags' ? null : { base: 0, kind: '' };
+      default: return null;
+    }
+  }
+  // The hours the picker would give this code and operation on job j: { base, kind, hours }, or null when it has no guide.
+  // Labour-only operations (OP codes) are added at their listed hours, as the labour-op buttons add them.
+  function guideFor(j, code, op) {
+    const c = String(code || '').trim().toUpperCase();
+    if (C.OPS[c]) return op === 'labour' ? { base: num(C.OPS[c].hours), kind: '', hours: num(C.OPS[c].hours) } : null;
+    const g = C.CAT[c] ? pickerGuide(C.CAT[c], op) : null;
+    if (!g) return null;
+    return Object.assign(g, { hours: g.kind === 'H' ? scaleH(j, g.base) : g.kind === 'P' ? scaleP(j, g.base) : g.base });
+  }
+  // The hours an AI suggestion is added with. A guide-based line (hours_basis 'guide') gets exactly the picker's time for this vehicle:
+  // the catalogue guide with the job's size / paint factors (paint lines record pfApplied, so paint materials do not apply the factor
+  // again). An adjusted line keeps the AI's own figure, which may already allow for size or paint, so no factor is applied twice.
+  function aiLineHours(j, l) {
+    const op = lineOp(l.operation);
+    const g = op ? guideFor(j, l.code, op) : null;
+    const out = { hours: Math.max(0, num(l.labour_hours)), guide: g };
+    if (l.hours_basis === 'guide' && g) { out.hours = g.hours; if (g.kind === 'P') out.pfApplied = C.paintFactor(j); }
+    return out;
+  }
+  // "adjusted from guide 2.0h" (plus the picker's time for this vehicle when the job's factors change it); OTHER lines have no guide
+  function adjustedNote(base, g) {
+    if (!(base > 0) && !(g && g.hours > 0)) return 'no guide time for this line';
+    return `adjusted from guide ${h1(base)}${g && Math.abs(g.hours - base) >= 0.05 ? ` (${h1(g.hours)} for this vehicle)` : ''}`;
+  }
+  const listH = (hs) => hs.map(h1).join(' / ');
+  function suggHoursNote(l, hz) {
+    const bits = [];
+    if (l.hours_basis === 'guide') bits.push(Math.abs(hz.hours - num(l.labour_hours)) >= 0.05 ? `guide ${h1(l.labour_hours)}, scaled for this vehicle` : 'guide time');
+    else if (l.hours_basis === 'adjusted') bits.push(adjustedNote(num(l.guide_hours), hz.guide));
+    if (Array.isArray(l.hoursSeen) && new Set(l.hoursSeen.map(num)).size > 1) bits.push(`photo batches differed: ${listH(l.hoursSeen)}`);
+    return bits.length ? `<div class="hint basis">${bits.map(esc).join('<br>')}</div>` : '';
+  }
+  // Notes under an AI line's description on the Estimate tab.
+  function aiLineNotes(l) {
+    if (!l.ai) return '';
+    let out = '';
+    if (l.hoursBasis === 'adjusted') out += `<div class="hint aiBasis">AI: ${esc(adjustedNote(num(l.guideHours), guideFor(job, l.code, l.op)))}</div>`;
+    if (Array.isArray(l.aiHoursSeen) && l.aiHoursSeen.length > 1) out += `<div class="hint aiBatches">AI photo batches differed: ${esc(listH(l.aiHoursSeen))}. Check the hours.</div>`;
+    return out;
+  }
   function addFromCatalogue() {
     const p = C.CAT[ui.pickSel];
     if (!p) return toast('Select a part in the list first.', true);
@@ -942,9 +1140,9 @@
     if (isPaint && !(p.refinishHrs > 0)) return toast(`"${p.name}" is not a painted part, so refinish and blend do not apply.`, true);
     if (op === 'refurb' && !opRow && p.group === 'SRS / airbags') return toast('SRS components (airbags, pretensioners, sensors) are renewed, never refurbished.', true);
     const notes = new Set();
-    const sf = C.sizeFactor(job), pf = C.paintFactor(job);
-    const H = (h) => Math.max(0.1, Math.round(h * sf * 10) / 10);
-    const P = (h) => Math.max(0.1, Math.round(h * sf * pf * 10) / 10); // refinish time: the paint factor is applied here, and recorded as pfApplied
+    const pf = C.paintFactor(job);
+    const H = (h) => scaleH(job, h);
+    const P = (h) => scaleP(job, h); // refinish time: the paint factor is applied here, and recorded as pfApplied
     for (const side of sides) {
       const sw = side ? C.sideWord(side) + ' ' : '';
       const nm = sw + p.name.charAt(0).toLowerCase() + p.name.slice(1);
@@ -1037,6 +1235,7 @@
     const t = C.totals(job);
     const v = job.valuation;
     return `<div class="card"><h2 style="margin-top:0">Valuation</h2><div class="form">
+      ${F('valuation.claimType', 'Claim type (sets the valuation standard)', { type: 'select', options: CLAIM_TYPES, hint: "Own-insurer total loss: the Financial Ombudsman's approach (start from the highest trade guide). Third-party or court: the cost of a like-for-like replacement, with your reasoned opinion. The AI valuation applies the standard for the type chosen." })}<div></div>
       ${F('valuation.date', 'Valuation date / date assessed', { ph: 'e.g. September 2026' })}${F('valuation.mileage', 'Mileage used for valuation', { type: 'number', hint: job.vehicle.mileage && !v.mileage ? `<button class="link" data-act="valMileage">Use inspection mileage (${esc(job.vehicle.mileage)})</button>` : '' })}
       ${F('valuation.costNew', 'Cost at new')}${F('valuation.condition', 'Pre-accident condition', { type: 'select', options: ['EXCELLENT', 'GOOD', 'SATISFACTORY', 'FAIR', 'POOR'] })}</div>
       <h3>Valuation evidence</h3>
@@ -1049,7 +1248,7 @@
       <div class="form" style="margin-top:12px">${F('valuation.belowHighestReason', 'Reason for adopting a value below the highest guide', { type: 'textarea', rows: 2, full: true, hint: 'Printed in the report. The ombudsman\'s starting point is the highest retail guide, so explain any lower figure with evidence about this vehicle.' })}</div>
       <h3>Like-for-like adverts</h3>
       <table class="tbl"><thead><tr><th>Description (derivative)</th><th>Year</th><th class="num">Mileage</th><th class="num">Price £</th><th>Source / URL</th><th></th></tr></thead><tbody>
-        ${(v.adverts || []).map((a, i) => `<tr><td><input data-adv="description" data-i="${i}" value="${esc(a.description)}"></td><td style="width:80px"><input data-adv="year" data-i="${i}" value="${esc(a.year)}"></td><td class="num" style="width:110px"><input type="number" data-adv="mileage" data-i="${i}" value="${esc(a.mileage)}"></td><td class="num" style="width:110px"><input type="number" data-adv="price" data-i="${i}" value="${esc(a.price)}"></td><td><input data-adv="url" data-i="${i}" value="${esc(a.url)}" placeholder="AutoTrader / dealer URL"></td><td><button class="btn sm danger" data-act="advDel" data-i="${i}">✕</button></td></tr>`).join('') || '<tr><td colspan="6" class="hint">No adverts. Add your own, or let the AI search for comparables.</td></tr>'}
+        ${(v.adverts || []).map((a, i) => `<tr><td><input data-adv="description" data-i="${i}" value="${esc(a.description)}"></td><td style="width:80px"><input data-adv="year" data-i="${i}" value="${esc(a.year)}"></td><td class="num" style="width:110px"><input type="number" data-adv="mileage" data-i="${i}" value="${esc(a.mileage)}"></td><td class="num" style="width:110px"><input type="number" data-adv="price" data-i="${i}" value="${esc(a.price)}"></td><td><input data-adv="url" data-i="${i}" value="${esc(a.url)}" placeholder="AutoTrader / dealer URL">${a.aiUnverified && !a.url ? `<div class="hint advUnverified" style="word-break:break-all">AI comparable, not verified${a.claimedUrl ? `: the AI gave ${esc(a.claimedUrl)}` : ''}. Check the advert, then enter its URL.</div>` : ''}</td><td><button class="btn sm danger" data-act="advDel" data-i="${i}">✕</button></td></tr>`).join('') || '<tr><td colspan="6" class="hint">No adverts. Add your own, or let the AI search for comparables.</td></tr>'}
       </tbody></table>
       <div class="row" style="margin-top:8px"><button class="btn sm" data-act="advAdd">+ Advert</button></div>
       <div class="form" style="margin-top:12px">${F('valuation.historyNotes', 'History notes (previous write-off category, finance, plate changes, imports)', { type: 'textarea', rows: 2 })}${F('valuation.optionsNotes', 'Condition, options & service history notes', { type: 'textarea', rows: 2 })}</div></div>
@@ -1071,17 +1270,40 @@
         <div><span>Repair / PAV (net)</span><b>${t.pctNet.toFixed(2)}%</b></div><div><span>Repair / PAV (gross)</span><b>${t.pctGross.toFixed(2)}%</b></div><div><span>Salvage</span><b>${gbp(t.salvage)}</b></div></div>
       <p>${t.pav ? (t.berSuggested ? `<span class="badge err">Over threshold</span> Repair cost is at or above your ${thr}% (${basis}) economic-repair threshold. Consider a total loss.` : `<span class="badge ok">Within threshold</span> Repair cost is below your ${thr}% (${basis}) threshold.`) : '<span class="hint">Enter a PAV to see the economic repair position.</span>'}</p>`;
   }
+  // A comparable's link is shown (and offered for the adverts) only when ai.js matched it to this run's web search results or an
+  // advert the engineer entered. Anything else, including older results that were never checked, is shown as text only.
+  const verifiedComparable = (c) => isObj(c) && c.verified === true && httpUrl(c.url);
+  function valFooter(r) {
+    const bits = [r.model || ''];
+    if (r.searched) {
+      const n = num(r.searches);
+      bits.push(`web search: ${r.searches != null ? `${n} search${n === 1 ? '' : 'es'}` : 'used'}${r.search_domains_restricted === true ? ', UK listing sites only' : r.search_domains_restricted === false ? ', not limited to UK listing sites (your organisation\'s search policy rejected the site list)' : ''}`);
+    } else if ('searched' in r) bits.push('no web search');
+    if ('claim_type' in r) bits.push(`claim type: ${claimLabel(r.claim_type)}`);
+    if ('valuation_date' in r) bits.push(r.valuation_date ? `valued at ${C.ukDate(r.valuation_date)}` : 'no valuation date recorded');
+    return bits.filter(Boolean).join(' · ');
+  }
   function valuationAiPanel() {
     const r = job.valuation.ai;
-    return `<div class="card aiPanel"><div class="row"><div class="grow"><h2 style="margin:0">✦ AI valuation assistant</h2><div class="hint">Applies the ombudsman's approach: retail market value at the date of loss, starting from the highest guide, adjusted only on evidence about this vehicle, with mileage checked against the MOT history.</div></div>
+    const dol = isoDate(job.instruction.dateOfLoss);
+    const claimNow = claimKey(job.valuation.claimType);
+    return `<div class="card aiPanel"><div class="row"><div class="grow"><h2 style="margin:0">✦ AI valuation assistant</h2><div class="hint">Values the vehicle at the date of loss to the standard for the claim type: for an own-insurer claim the ombudsman's approach (start from the highest guide, adjust only on evidence about this vehicle); for third-party and court claims the cost of a like-for-like replacement. Mileage is checked against the MOT history.</div></div>
       <label class="hint"><input type="checkbox" id="valSearch" style="width:auto" ${ui.valSearch !== false ? 'checked' : ''}> search the web for comparable UK adverts</label>
       <button class="btn ai" data-act="aiValuation" ${desktop && !busy('val') ? '' : 'disabled'}>${busy('val') ? '<span class="spinner"></span>Valuing…' : '✦ AI valuation'}</button></div>
+      <p class="hint valSent" style="margin:6px 0 0">Sent with the request: claim type <b>${esc(claimLabel(claimNow))}</b> · valuation date <b>${dol ? esc(C.ukDate(dol)) + ' (date of loss)' : 'none'}</b>${dol ? '' : ': no date of loss is recorded on the Claim tab, so the AI values as at today and flags it'}.</p>
       ${r ? `<div class="totals" style="margin-top:12px"><div class="g"><span>Recommended PAV</span><b>${gbp(r.recommended_pav)}</b></div><div><span>Range</span><b>${gbp(r.range_low)} – ${gbp(r.range_high)}</b></div><div><span>Basis</span><b style="font-size:13px">${esc(r.basis)}</b></div></div>
         <p><b>Guides:</b> ${esc(r.guide_assessment)}</p><p><b>Mileage:</b> ${esc(r.mileage_assessment)}</p>
         ${(r.adjustments || []).length ? `<table class="tbl"><thead><tr><th>Adjustment</th><th class="num">£</th><th>Reason</th></tr></thead><tbody>${r.adjustments.map((a) => `<tr><td>${esc(a.item)}</td><td class="num">${gbp(a.amount)}</td><td class="hint">${esc(a.reason)}</td></tr>`).join('')}</tbody></table>` : ''}
-        ${(r.comparables || []).length ? `<h3>Comparables</h3><table class="tbl"><thead><tr><th>Vehicle</th><th>Year</th><th class="num">Miles</th><th class="num">Price</th><th>Like-for-like</th><th>Source</th></tr></thead><tbody>${r.comparables.map((c, i) => `<tr><td>${esc(c.description)}<div class="hint">${esc(c.notes)}</div></td><td>${esc(c.year)}</td><td class="num">${num(c.mileage).toLocaleString('en-GB')}</td><td class="num">${gbp(c.price)}</td><td>${c.like_for_like ? '<span class="badge ok">yes</span>' : '<span class="badge warn">partial</span>'}</td><td>${httpUrl(c.url) ? `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.source || 'link')}</a>` : esc(c.source || c.url || '')}<button class="btn sm" data-act="advFromAi" data-i="${i}" title="Add to adverts">+</button></td></tr>`).join('')}</tbody></table>` : ''}
-        ${(r.flags || []).length ? `<div class="card" style="border-color:#f0c36d;background:#fffaf0;margin-top:10px"><b>Check:</b><ul>${r.flags.map((f) => `<li>${esc(f)}</li>`).join('')}</ul></div>` : ''}
-        <div class="row" style="margin-top:10px"><button class="btn primary" data-act="aiValApply">Adopt ${gbp(r.recommended_pav)} and use these comments</button><span class="hint">${esc(r.model || '')}${r.searched ? ' · web search used' : ''}</span></div>` : ''}
+        ${(r.comparables || []).length ? `<h3>Comparables</h3><table class="tbl comps"><thead><tr><th>Vehicle</th><th>Year</th><th class="num">Miles</th><th class="num">Price</th><th>Like-for-like</th><th>Source</th></tr></thead><tbody>${r.comparables.map((c, i) => {
+          const ok = verifiedComparable(c);
+          const claimed = ok ? '' : String(c.claimed_url || c.url || '').trim();
+          return `<tr data-comp="${i}"><td>${esc(c.description)}<div class="hint">${esc(c.notes)}</div></td><td>${esc(c.year)}</td><td class="num">${num(c.mileage).toLocaleString('en-GB')}</td><td class="num">${gbp(c.price)}</td><td>${c.like_for_like ? '<span class="badge ok">yes</span>' : '<span class="badge warn">partial</span>'}</td>
+            <td>${ok ? `<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.source || 'link')}</a> <span class="badge ok" title="The link matched a page found by this run's web search, or one of your own adverts">verified</span>`
+              : `${esc(c.source || '')} <span class="badge warn" title="Not matched to this run's web search results or your own adverts: the advert may not exist at this price">unverified</span>${claimed ? `<div class="hint claimedUrl" style="word-break:break-all">Link given by the AI (not verified, not a link): ${esc(claimed)}</div>` : ''}`}
+            <button class="btn sm" data-act="advFromAi" data-i="${i}" title="${ok ? 'Add to adverts' : 'Add to adverts (asks first: not verified)'}">+</button></td></tr>`;
+        }).join('')}</tbody></table>` : ''}
+        ${flagBox('Check:', (r.flags || []).map((f) => String(f == null ? '' : f)).filter((f) => f.trim()))}
+        <div class="row" style="margin-top:10px"><button class="btn primary" data-act="aiValApply">Adopt ${gbp(r.recommended_pav)} and use these comments</button><span class="hint valFooter">${esc(valFooter(r))}</span>${'claim_type' in r && claimKey(r.claim_type) !== claimNow ? ' <span class="badge warn">claim type changed since this valuation: run it again</span>' : ''}</div>` : ''}
     </div>`;
   }
   async function aiValuation() {
@@ -1092,8 +1314,9 @@
     const ai = C.settings.ai || {};
     running.add(key); renderJob();
     try {
-      const res = await desktop.ai.valuation({ job: slimJob(j), motHistory: j.vehicle.motHistory || [], searchWeb: ui.valSearch !== false, model: ai.model, effort: ai.effort });
-      if (!res.ok) throw new Error(res.error);
+      // the claim type sets the valuation standard; the valuation date is the date of loss (valuation.date is free text, shown as a note)
+      const res = await desktop.ai.valuation({ job: slimJob(j), motHistory: j.vehicle.motHistory || [], searchWeb: ui.valSearch !== false, claimType: claimKey(j.valuation.claimType), valuationDate: isoDate(j.instruction.dateOfLoss), model: ai.model, effort: ai.effort });
+      if (!res || !res.ok) throw new Error((res && res.error) || 'The AI valuation failed.');
       const target = await applyToJob(j, (x) => { x.valuation.ai = res.result; logAi(x, 'Valuation assistant' + (res.result.searched ? ' (with web search)' : ''), res.result.model); });
       if (!target) toast(`${regOf(j)} has been deleted, so the AI valuation was not saved.`, true);
       else toast(target === job ? 'AI valuation ready. Review the workings before adopting.' : `AI valuation for ${regOf(target)} is ready and saved with that assessment.`);
@@ -1158,7 +1381,8 @@
       if (e.target.closest('[data-go]')) {
         const picks = $$('input[data-apply]', b).filter((c) => c.checked).map((c) => map[+c.dataset.apply]);
         closeModal();
-        const target = await applyToJob({ id: jid }, (x) => picks.forEach(([k, path]) => setPath(x, path, d[k])));
+        // each applied section is recorded in job.aiText, so later AI calls treat it as an AI draft until the assessor edits it
+        const target = await applyToJob({ id: jid }, (x) => picks.forEach(([k, path]) => { setPath(x, path, d[k]); aiTextOf(x)[path] = String(d[k] == null ? '' : d[k]); }));
         if (!target) return toast('That assessment has been deleted, so the draft was not applied.', true);
         pendingDrafts.delete(jid);
         toast(`${picks.length} section(s) applied${target !== job ? ' to ' + regOf(target) : ''}. Review them in the report preview.`);
@@ -1216,9 +1440,10 @@
     const html = Report.render(job, { mode: desktop ? 'pdf' : 'print' });
     const name = (job.report.ref || job.vehicle.reg || 'engineering-report').replace(/[^\w.-]+/g, '_');
     if (desktop) {
-      const tpl = Report.pdfTemplates(job);
-      const r = await desktop.exportPdf({ html, header: tpl.header, footer: tpl.footer, fileName: name });
-      if (r.ok) toast('PDF saved: ' + r.filePath); else if (!r.canceled) toast('PDF export failed: ' + r.error, true);
+      const tpl = Report.pdfTemplates(job) || {};
+      // the page margins come from report.js when it gives them (main.js otherwise uses its own copy of the report's @page margins)
+      const r = await desktop.exportPdf(Object.assign({ html, header: tpl.header, footer: tpl.footer, fileName: name }, isObj(tpl.marginsMm) ? { marginsMm: tpl.marginsMm } : {}));
+      if (r && r.ok) toast('PDF saved: ' + r.filePath); else if (!(r && r.canceled)) toast('PDF export failed: ' + ((r && r.error) || 'no reply from the app.'), true);
     } else {
       const f = document.createElement('iframe');
       f.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
@@ -1228,7 +1453,11 @@
     }
   }
   async function saveText(content, fileName, ext) {
-    if (desktop) { const r = await desktop.saveFile({ content, fileName, filters: [{ name: ext.toUpperCase(), extensions: [ext] }] }); if (r.ok) toast('Saved ' + r.filePath); else if (!r.canceled && r.error) toast(r.error, true); return; }
+    if (desktop) {
+      const r = await desktop.saveFile({ content, fileName, kind: ext });
+      if (r && r.ok) toast('Saved ' + r.filePath); else if (!(r && r.canceled)) toast((r && r.error) || 'The file could not be saved.', true);
+      return;
+    }
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
     a.download = fileName; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -1273,9 +1502,17 @@
   let dataStatus = { dvla: false, mot: false };
   async function renderSettings() {
     const seq = routeSeq;
-    if (desktop) { aiStatus = await desktop.ai.status(); dataStatus = await desktop.data.status(); }
+    if (desktop) {
+      aiStatus = await readStatus(() => desktop.ai.status());
+      dataStatus = await readStatus(() => desktop.data.status());
+      paintAiState();
+    }
     if (seq !== routeSeq) return;
     const s = C.settings;
+    const aiErr = desktop ? statusError(aiStatus) : '', dataErr = desktop ? statusError(dataStatus) : '';
+    // while the saved credentials cannot be read, main refuses every change except "remove all"
+    const locked = !!dataStatus.unreadable;
+    const off = locked ? ' disabled title="The saved credentials cannot be read: remove them first (above)"' : '';
     main.innerHTML = `<div class="wrap"><h1>Settings</h1><div class="sub">Company details, rates and AI. These apply to every report.</div>
       <div class="card"><h2 style="margin-top:0">Company &amp; report branding</h2><div class="form">
         ${S('company.name', 'Company name')}${S('company.tradingName', 'Trading name / site')}${S('company.address', 'Address', { full: true })}
@@ -1291,22 +1528,23 @@
         ${S('berThresholdPct', 'Economic repair threshold %', { type: 'number', hint: 'Repair cost as % of PAV at which a total loss is flagged.' })}${S('berBasis', 'Threshold based on', { type: 'select', options: [['net', 'Net (excl. VAT)'], ['gross', 'Gross (incl. VAT)']] })}</div>
         <p class="hint">Labour rates and VAT are copied into each new assessment. Existing assessments keep their own; use Estimate → "Use current Settings rates" to update one.</p></div>
       <div class="card"><h2 style="margin-top:0">Data connections</h2>
-        ${desktop ? `<p>DVLA: ${dataStatus.dvla ? '<span class="badge ok">key saved</span>' : '<span class="badge warn">not set</span>'} · MOT History: ${dataStatus.mot ? '<span class="badge ok">credentials saved</span>' : '<span class="badge warn">not set</span>'}</p>
+        ${desktop ? `${dataErr ? errBox(locked ? 'The saved credentials cannot be read.' : 'Data connections:', dataErr, locked ? '<div class="row" style="margin-top:8px"><button class="btn danger" data-act="clearAllData">Remove all saved credentials</button><button class="btn" data-act="recheckData">Check again</button><span class="hint">Nothing can be saved until they are removed, unless the file can be read again.</span></div>' : '') : ''}
+        <p>DVLA: ${dataStatus.dvla ? '<span class="badge ok">key saved</span>' : '<span class="badge warn">not set</span>'} · MOT History: ${dataStatus.mot ? '<span class="badge ok">credentials saved</span>' : '<span class="badge warn">not set</span>'}</p>
         <h3>DVLA Vehicle Enquiry Service</h3>
         <div class="form"><label class="fld"><span>DVLA API key (x-api-key)</span><input type="password" id="kDvla" autocomplete="off" placeholder="${dataStatus.dvla ? '•••••• saved, paste a new key to replace' : 'paste the key from your DVLA email'}"></label>
           ${S('dvlaEnv', 'DVLA service', { type: 'select', options: [['live', 'Live'], ['test', 'Test (UAT): test keys only, test registrations']], hint: 'DVLA test keys only work on the test service (test registrations such as AA19AAA).' })}
-          <div class="row" style="align-items:end"><button class="btn primary" data-act="saveDvla">Save DVLA key</button>${dataStatus.dvla ? '<button class="btn danger" data-act="clearDvla">Remove</button>' : ''}</div></div>
+          <div class="row" style="align-items:end"><button class="btn primary" data-act="saveDvla"${off}>Save DVLA key</button>${dataStatus.dvla ? `<button class="btn danger" data-act="clearDvla"${off}>Remove</button>` : ''}</div></div>
         <h3>DVSA MOT History API</h3>
         <p class="hint">Copy each value from the DVSA "Here are your credentials" email.</p>
         <div class="form"><label class="fld"><span>Client ID</span><input type="password" id="kMotId" autocomplete="off"></label><label class="fld"><span>Client secret</span><input type="password" id="kMotSecret" autocomplete="off"></label>
           <label class="fld"><span>API key</span><input type="password" id="kMotKey" autocomplete="off"></label><label class="fld"><span>Token URL (https://login.microsoftonline.com/…/oauth2/v2.0/token) or tenant ID</span><input type="password" id="kMotTokenUrl" autocomplete="off"></label>
           <label class="fld"><span>Scope URL</span><input id="kMotScope" autocomplete="off" placeholder="https://tapi.dvsa.gov.uk/.default"></label>
-          <div class="row" style="align-items:end"><button class="btn primary" data-act="saveMot">Save MOT credentials</button>${dataStatus.mot ? '<button class="btn danger" data-act="clearMot">Remove</button>' : ''}</div></div>
+          <div class="row" style="align-items:end"><button class="btn primary" data-act="saveMot"${off}>Save MOT credentials</button>${dataStatus.mot ? `<button class="btn danger" data-act="clearMot"${off}>Remove</button>` : ''}</div></div>
         <h3>Test the connections</h3>
         <div class="row"><input id="testReg" placeholder="Registration, e.g. ${C.settings.dvlaEnv === 'test' ? 'AA19AAA' : 'AB12 CDE'}" style="width:220px"><button class="btn" data-act="testDvla" ${dataStatus.dvla ? '' : 'disabled'}>Test DVLA</button><button class="btn" data-act="testMot" ${dataStatus.mot ? '' : 'disabled'}>Test MOT History</button></div>
-        <p class="hint">Keys are encrypted on this PC${dataStatus.encrypted === false ? ' <b style="color:var(--err)">(this PC has no secure storage, so keys are saved unencrypted)</b>' : ''} and are never stored in jobs, backups or reports. If a DVSA client secret expires (every 2 years) or an API key is unused for 90 days, request new ones from DVSA.</p>` : '<p class="hint">Data connections work in the desktop app.</p>'}</div>
+        <p class="hint dataStorage">${storageNote(dataStatus, false)} If a DVSA client secret expires (every 2 years) or an API key is unused for 90 days, request new ones from DVSA.</p>` : '<p class="hint">Data connections work in the desktop app.</p>'}</div>
       <div class="card aiPanel"><h2>✦ AI assessor</h2>
-        ${desktop ? `<p>Status: ${aiStatus.hasKey ? '<span class="badge ok">API key set</span>' : '<span class="badge warn">No API key</span>'} ${aiStatus.encrypted ? '<span class="hint">Key is encrypted by your operating system and never stored in reports.</span>' : ''}</p>
+        ${desktop ? `${aiErr ? errBox('The AI features cannot run:', aiErr) : ''}<p>Status: ${aiStatus.hasKey ? '<span class="badge ok">API key set</span>' : '<span class="badge warn">No API key</span>'} <span class="hint aiStorage">${storageNote(aiStatus, true)}</span></p>
         <div class="form"><label class="fld"><span>Anthropic API key</span><input type="password" id="aiKey" placeholder="${aiStatus.hasKey ? '•••••••••• (saved, enter a new key to replace)' : 'sk-ant-…'}"></label>
           <div class="row" style="align-items:end"><button class="btn primary" data-act="aiSaveKey">Save key</button><button class="btn" data-act="aiTest">Test connection</button>${aiStatus.hasKey ? '<button class="btn danger" data-act="aiClearKey">Remove key</button>' : ''}</div>
           ${S('ai.model', 'Model', { hint: 'Default: claude-opus-5-5 (Anthropic\'s current Opus model, with vision).' })}${S('ai.effort', 'Thoroughness (effort)', { type: 'select', options: [['low', 'Low (fastest)'], ['medium', 'Medium'], ['high', 'High (recommended)'], ['xhigh', 'Extra high'], ['max', 'Maximum (slowest)']] })}</div>
@@ -1514,7 +1752,7 @@
     if (t.dataset.sugg != null) { ui.suggestSel[+t.dataset.sugg] = t.checked; return; }
     if (t.dataset.act === 'suggAll') { $$('input[data-sugg]').forEach((c) => { if (!c.disabled) { c.checked = t.checked; ui.suggestSel[+c.dataset.sugg] = t.checked; } }); return; }
     if (t.dataset.bind && job && (t.tagName === 'SELECT' || t.type === 'date')) {
-      if (['vehicle.oemKey', 'outcome.decision', 'outcome.category', 'vehicle.sizeClass', 'vehicle.paintType'].includes(t.dataset.bind)) renderJob();
+      if (['vehicle.oemKey', 'outcome.decision', 'outcome.category', 'vehicle.sizeClass', 'vehicle.paintType', 'valuation.claimType'].includes(t.dataset.bind)) renderJob();
     }
   });
   const saveSettingsSoon = C.debounce(() => { settingsPending = false; C.saveSettings(); }, 400);
@@ -1587,12 +1825,23 @@
         C.settings.company.logo = url; await C.saveSettings(); renderSettings();
       },
       logoClear: async () => { C.settings.company.logo = ''; await C.saveSettings(); renderSettings(); },
-      aiSaveKey: async () => { const k = $('#aiKey').value.trim(); if (!k) return toast('Paste your API key first.', true); await desktop.ai.setKey(k); toast('API key saved.'); refreshAiState(); renderSettings(); },
-      aiClearKey: async () => { await desktop.ai.setKey(''); toast('API key removed.'); refreshAiState(); renderSettings(); },
+      // key changes report what the main process says: it can refuse (bad key, unreadable file, settings folder not writable)
+      aiSaveKey: async () => {
+        const k = $('#aiKey').value.trim(); if (!k) return toast('Paste your API key first.', true);
+        const r = await desktop.ai.setKey(k);
+        if (!r || !r.ok) return toast((r && r.error) || 'The API key could not be saved.', true);
+        toast(protectionOf(r) === 'none' || protectionOf(r) === 'weak' ? 'API key saved, but without proper encryption on this PC (see Settings → AI assessor).' : 'API key saved.', protectionOf(r) === 'none' || protectionOf(r) === 'weak');
+        refreshAiState(); renderSettings();
+      },
+      aiClearKey: async () => {
+        const r = await desktop.ai.setKey('');
+        if (!r || !r.ok) return toast((r && r.error) || 'The API key could not be removed.', true);
+        toast('API key removed.'); refreshAiState(); renderSettings();
+      },
       aiTest: async () => {
         el.disabled = true; el.innerHTML = '<span class="spinner" style="border-color:#999;border-top-color:#333"></span>Testing…';
         let r; try { r = await desktop.ai.test({ model: (C.settings.ai || {}).model }); } finally { el.disabled = false; el.textContent = 'Test connection'; }
-        r.ok ? toast('Connected: ' + r.result.model) : toast(r.error, true);
+        if (r && r.ok) toast('Connected: ' + ((r.result && r.result.model) || 'OK')); else toast((r && r.error) || 'The AI connection test failed.', true);
       },
       backup: async () => { const jobs = await C.Store.listJobs(); saveText(JSON.stringify({ kind: 'engineer-report-studio-backup', at: new Date().toISOString(), settings: C.settings, customOem: C.customOem, jobs }), `backup-${C.todayISO()}.json`, 'json'); },
       restore: async () => {
@@ -1612,7 +1861,16 @@
       lookupVehicle, motByVin, applyVariant, paintMaterials, aiValuation,
       advAdd: () => { (job.valuation.adverts = job.valuation.adverts || []).push({ description: '', year: '', mileage: '', price: '', url: '' }); changed(); renderJob(); },
       advDel: () => { job.valuation.adverts.splice(+el.dataset.i, 1); changed(); renderJob(); },
-      advFromAi: () => { const c = job.valuation.ai.comparables[+el.dataset.i]; (job.valuation.adverts = job.valuation.adverts || []).push({ description: c.description, year: c.year, mileage: c.mileage, price: c.price, url: c.url, source: c.source }); changed(); renderJob(); toast('Added to adverts.'); },
+      advFromAi: () => {
+        const c = (((job.valuation.ai || {}).comparables) || [])[+el.dataset.i]; if (!isObj(c)) return;
+        const ok = verifiedComparable(c);
+        // an unverified comparable is added only after confirmation, and WITHOUT its link: a link stored as one of the engineer's
+        // adverts would count as verified the next time the AI runs
+        if (!ok && !confirm(`"${c.description || 'This comparable'}" could not be matched to the AI's web search results or your own adverts, so the advert may not exist at this price.\n\nAdd it to the adverts anyway? It is added without a link: check the advert and enter its URL yourself.`)) return;
+        const claimed = String(c.claimed_url || c.url || '').trim();
+        (job.valuation.adverts = job.valuation.adverts || []).push(Object.assign({ description: c.description, year: c.year, mileage: c.mileage, price: c.price, url: ok ? c.url : '', source: c.source }, ok ? {} : { aiUnverified: true, claimedUrl: claimed }));
+        changed(); renderJob(); toast(ok ? 'Added to adverts.' : 'Added to adverts without a link. Check the advert before relying on it.');
+      },
       inspByAssessor: () => { job.inspection.by = job.assessor.name; if (!job.inspection.byQualifications) job.inspection.byQualifications = job.assessor.qualifications || C.settings.assessor.qualifications || ''; changed(); renderJob(); },
       useSettingsRates: () => {
         if (job.issued && !confirm('This report has been finalised. Taking the current Settings rates changes its figures. Continue?')) return;
@@ -1627,9 +1885,32 @@
       },
       reopenReport: () => { if (!confirm('Re-open this report? It will use the current Settings (company details, declaration and signature) until it is finalised again.')) return; delete job.issued; changed(); renderJob(); toast('Report re-opened.'); },
       reviewPendingDraft: () => { const d = pendingDrafts.get(job.id); if (d) reviewDraft(d, job.id); },
-      aiValApply: () => { const r = job.valuation.ai; job.valuation.adopted = Math.round(num(r.recommended_pav)); job.valuation.comments = r.comments; changed(); renderJob(); toast('PAV and comments applied. Edit as needed.'); },
-      saveDvla: async () => { const k = $('#kDvla').value.trim(); if (!k) return toast('Paste the DVLA key first.', true); await desktop.data.setKeys({ dvla: k }); toast('DVLA key saved.'); renderSettings(); },
-      clearDvla: async () => { if (!confirm('Remove the saved DVLA key?')) return; await desktop.data.setKeys({ dvla: null }); renderSettings(); },
+      aiValApply: () => {
+        const r = job.valuation.ai; if (!r) return;
+        job.valuation.adopted = Math.round(num(r.recommended_pav));
+        if (r.comments) { job.valuation.comments = r.comments; aiTextOf(job)['valuation.comments'] = String(r.comments); } // AI text until the assessor edits it
+        changed(); renderJob(); toast('PAV and comments applied. Edit as needed.');
+      },
+      saveDvla: async () => {
+        const k = $('#kDvla').value.trim(); if (!k) return toast('Paste the DVLA key first.', true);
+        const r = await desktop.data.setKeys({ dvla: k });
+        if (!r || !r.ok) return toast((r && r.error) || 'The DVLA key could not be saved.', true);
+        toast('DVLA key saved.'); renderSettings();
+      },
+      clearDvla: async () => {
+        if (!confirm('Remove the saved DVLA key?')) return;
+        const r = await desktop.data.setKeys({ dvla: null });
+        if (!r || !r.ok) return toast((r && r.error) || 'The DVLA key could not be removed.', true);
+        toast('DVLA key removed.'); renderSettings();
+      },
+      // the way out when the saved credentials file cannot be read: remove everything, then enter the credentials again
+      clearAllData: async () => {
+        if (!confirm('Remove ALL saved DVLA and MOT History credentials from this PC? You will need to enter them again.')) return;
+        const r = await desktop.data.clearKeys();
+        if (!r || !r.ok) return toast((r && r.error) || 'The saved credentials could not be removed.', true);
+        toast('All saved data-connection credentials were removed. Enter them again to use the lookups.'); renderSettings();
+      },
+      recheckData: () => renderSettings(),
       saveMot: async () => {
         const tok = $('#kMotTokenUrl').value.trim();
         const patch = { motClientId: $('#kMotId').value.trim(), motClientSecret: $('#kMotSecret').value.trim(), motApiKey: $('#kMotKey').value.trim(), motScope: $('#kMotScope').value.trim() };
@@ -1637,9 +1918,16 @@
         Object.keys(patch).forEach((k) => { if (!patch[k]) delete patch[k]; });
         if (!Object.keys(patch).length) return toast('Enter the MOT credentials first.', true);
         if (patch.motTokenUrl && !/^https:\/\/login\.microsoftonline\.com\/[^/]+\/oauth2\/v2\.0\/token$/i.test(patch.motTokenUrl)) return toast('The token URL should look like https://login.microsoftonline.com/<tenant>/oauth2/v2.0/token (copy it from the DVSA email).', true);
-        await desktop.data.setKeys(patch); toast('MOT History credentials saved.'); renderSettings();
+        const r = await desktop.data.setKeys(patch);
+        if (!r || !r.ok) return toast((r && r.error) || 'The MOT History credentials could not be saved.', true);
+        toast('MOT History credentials saved.'); renderSettings();
       },
-      clearMot: async () => { if (!confirm('Remove the saved MOT History credentials?')) return; await desktop.data.setKeys({ motClientId: null, motClientSecret: null, motApiKey: null, motTokenUrl: null, motTenantId: null, motScope: null }); renderSettings(); },
+      clearMot: async () => {
+        if (!confirm('Remove the saved MOT History credentials?')) return;
+        const r = await desktop.data.setKeys({ motClientId: null, motClientSecret: null, motApiKey: null, motTokenUrl: null, motTenantId: null, motScope: null });
+        if (!r || !r.ok) return toast((r && r.error) || 'The MOT History credentials could not be removed.', true);
+        toast('MOT History credentials removed.'); renderSettings();
+      },
       testDvla: async () => { const reg = $('#testReg').value.trim(); if (!reg) return toast('Enter a registration to test with.', true); const r = await desktop.data.dvla(reg, C.settings.dvlaEnv || 'live'); r.ok ? toast(`DVLA OK: ${r.result.make} ${r.result.colour} ${r.result.fuelType}${r.result.firstRegistration ? ', first registered ' + C.ukDate(r.result.firstRegistration) : ''}`) : toast(r.error, true); },
       testMot: async () => { const reg = $('#testReg').value.trim(); if (!reg) return toast('Enter a registration to test with.', true); const r = await desktop.data.mot(reg, 'registration'); r.ok ? toast(`MOT History OK: ${r.result.make} ${r.result.model}, ${r.result.tests.length} test(s)${r.result.tests[0] && r.result.tests[0].odometer ? ', latest ' + r.result.tests[0].odometer.toLocaleString('en-GB') + ' ' + r.result.tests[0].unit : ''}`) : toast(r.error, true); },
     };
@@ -1647,10 +1935,18 @@
   });
 
   async function refreshAiState() {
-    const el = $('#aiState');
+    if (desktop) aiStatus = await readStatus(() => desktop.ai.status());
+    paintAiState();
+  }
+  // Sidebar AI state. An error from the main process (the parts catalogue or the AI module could not be loaded, or the saved key
+  // file cannot be read) is shown here as well as in Settings.
+  function paintAiState() {
+    const el = $('#aiState'); if (!el) return;
     if (!desktop) { el.innerHTML = '<span class="dot"></span>AI: desktop app only'; return; }
-    aiStatus = await desktop.ai.status();
-    el.innerHTML = `<span class="dot ${aiStatus.hasKey ? 'on' : 'off'}"></span>AI assessor ${aiStatus.hasKey ? 'ready' : '— add key in Settings'}`;
+    const err = statusError(aiStatus);
+    el.innerHTML = err
+      ? `<span class="dot" style="background:var(--err)"></span>AI assessor unavailable<div class="aiErr" title="${esc(err)}" style="margin-top:4px;font-size:11px;line-height:1.35;opacity:.85;white-space:normal">${esc(err.length > 160 ? err.slice(0, 157) + '…' : err)} <a href="#/settings" style="color:#fff">Settings</a></div>`
+      : `<span class="dot ${aiStatus.hasKey ? 'on' : 'off'}"></span>AI assessor ${aiStatus.hasKey ? 'ready' : '— add key in Settings'}`;
   }
 
   // ---------- boot ----------

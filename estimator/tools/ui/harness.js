@@ -31,55 +31,104 @@ const BRIDGE = () => {
   const copy = (x) => { try { return JSON.parse(JSON.stringify(x)); } catch (e) { return String(x); } };
   const log = (name, arg) => window.__calls.push({ name, arg: copy(arg) });
   const delay = (ms) => new Promise((r) => setTimeout(r, ms));
-  const photoResult = (p) => ({
-    model: 'claude-opus-5-5',
-    photos: p.photos.map((ph) => ({
-      index: ph.index, title: 'AI title ' + ph.index, caption: 'AI caption ' + ph.index, view: 'RH side',
-      damages: [
-        { label: 'Scoring ' + ph.index, component_code: 'DR001', component_name: 'Front door shell', side: 'R', damage_type: 'scoring', severity: 'moderate', accident_related: 'yes', box: { x: 0.1, y: 0.2, w: 0.3, h: 0.2 }, recommended_operation: 'repair medium', confidence: 0.8, notes: '' },
-        { label: 'Old chip', component_code: 'FW001', component_name: 'Front wing', side: 'R', damage_type: 'scratch', severity: 'minor', accident_related: 'no - pre-existing / wear', box: { x: 0.6, y: 0.5, w: 0.1, h: 0.1 }, recommended_operation: 'none', confidence: 0.6, notes: 'stone chip' }
-      ]
-    })),
-    summary: { impact_type: 'Sideswipe / lateral side contact', primary_area: 'RH front door', secondary_areas: 'RH rear door', direction_of_contact: 'Rear to front', damage_pattern: 'Longitudinal scoring along the RH side.', consistency_with_circumstances: 'Consistent with the reported sideswipe.',
-      structural_concern: false, structural_notes: 'No structural damage visible.', mechanical_checks: ['RH front hub / bearing'], adas_and_calibration: ['Mirror camera check'], zones: ['RH front door', 'RH sill'] },
-    suggested_lines: [
-      { type: 'Body', code: 'MR001', side: 'R', description: 'RH door mirror assembly – renew', labour_hours: 0.6, needs_part: true, cost_class: 'parts', reason: 'Photo 1 shows the broken mirror housing.', confidence: 0.9 },
-      { type: 'Body', code: 'DR001', side: 'R', description: 'RH front door – repair (medium) / metal finish', labour_hours: 2.0, needs_part: false, cost_class: 'labour only', reason: 'Photos 1 and 2: scoring and a shallow dent.', confidence: 0.8 },
-      { type: 'Painting', code: 'DR001', side: 'R', description: 'RH front door – refinish repaired part', labour_hours: 1.6, needs_part: false, cost_class: 'paint', reason: 'Photo 2.', confidence: 0.7 }
-    ]
-  });
+  // Replies in the shape of the current ai.js: lines carry operation / guide_hours / hours_basis; photos echo the id sent and may
+  // carry unplaced_damages (never drawn); review_flags; comparables carry verified / claimed_url.
+  const DEFAULT_LINES = [
+    { type: 'Body', code: 'MR001', operation: 'renew', side: 'R', description: 'RH door mirror assembly – renew', guide_hours: 0.6, labour_hours: 0.6, hours_basis: 'guide', needs_part: true, cost_class: 'parts', reason: 'Photo 1 shows the broken mirror housing.', confidence: 0.9 },
+    { type: 'Body', code: 'DR001', operation: 'repair', side: 'R', description: 'RH front door – repair (medium) / metal finish', guide_hours: 2.0, labour_hours: 2.0, hours_basis: 'guide', needs_part: false, cost_class: 'labour only', reason: 'Photos 1 and 2: scoring and a shallow dent.', confidence: 0.8 },
+    { type: 'Painting', code: 'DR001', operation: 'refinishRep1', side: 'R', description: 'RH front door – refinish repaired part', guide_hours: 2.0, labour_hours: 1.6, hours_basis: 'adjusted', needs_part: false, cost_class: 'paint', reason: 'Photo 2: the damage covers well under half the panel.', confidence: 0.7 }
+  ];
+  const b64bytes = (s) => { const b = String(s || '').replace(/^data:[^,]*,/, ''); return Math.floor(b.length * 3 / 4) - (b.endsWith('==') ? 2 : b.endsWith('=') ? 1 : 0); };
+  const photoResult = (p) => {
+    const first = p.photos[0].index;
+    const lines = (M().linesByBatch && M().linesByBatch[String(first)]) || DEFAULT_LINES;
+    const unplaced = M().unplaced !== false;
+    return {
+      model: 'claude-opus-5-5',
+      photos: p.photos.map((ph, k) => Object.assign({
+        index: ph.index, title: 'AI title ' + ph.index, caption: 'AI caption ' + ph.index, view: 'RH side',
+        damages: [
+          { label: 'Scoring ' + ph.index, component_code: 'DR001', component_name: 'Front door shell', side: 'R', damage_type: 'scoring', severity: 'moderate', accident_related: 'yes', box: { x: 0.1, y: 0.2, w: 0.3, h: 0.2 }, recommended_operation: 'repair medium', confidence: 0.8, notes: '' },
+          { label: 'Old chip', component_code: 'FW001', component_name: 'Front wing', side: 'R', damage_type: 'scratch', severity: 'minor', accident_related: 'no - pre-existing / wear', box: { x: 0.6, y: 0.5, w: 0.1, h: 0.1 }, recommended_operation: 'none', confidence: 0.6, notes: 'stone chip' }
+        ]
+      }, ph.id != null ? { id: ph.id } : {}, unplaced && k === 0 ? { unplaced_damages: [{ label: 'Hidden crease ' + ph.index, component_code: 'SS002', component_name: 'Sill outer panel', side: 'R', damage_type: 'crease', severity: 'moderate', accident_related: 'likely', recommended_operation: 'repair medium', confidence: 0.5, notes: 'lower edge of the photo' }] } : {})),
+      summary: { impact_type: 'Sideswipe / lateral side contact', primary_area: 'RH front door', secondary_areas: 'RH rear door', direction_of_contact: 'Rear to front', damage_pattern: 'Longitudinal scoring along the RH side.', consistency_with_circumstances: 'Consistent with the reported sideswipe.',
+        structural_concern: false, structural_notes: 'No structural damage visible.', mechanical_checks: ['RH front hub / bearing'], adas_and_calibration: ['Mirror camera check'], zones: ['RH front door', 'RH sill'] },
+      suggested_lines: JSON.parse(JSON.stringify(lines)),
+      review_flags: ['Confirm the ADAS fit from the VIN: a mirror camera may be fitted.'].concat(unplaced ? [`Photo ${first}: one damage label (Hidden crease ${first}) could not be placed on the photo because the AI's box was outside the image or unreadable. Draw it if needed.`] : [])
+    };
+  };
+  // the per-photo checks ai.js makes before uploading (prepareImages)
+  const aiImageError = (photos) => {
+    for (const x of photos) {
+      if (!['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(x.mediaType)) return `Photo ${x.index} is not a JPEG, PNG, GIF or WebP image.`;
+      if (b64bytes(x.base64) > 7000000) return `Photo ${x.index} is too large to send to the AI (${(b64bytes(x.base64) / 1e6).toFixed(1)} MB; the limit is 7.0 MB per photo).`;
+      if ((x.width || 0) > 8000 || (x.height || 0) > 8000) return `Photo ${x.index} is ${x.width} × ${x.height} pixels; the AI accepts at most 8000 pixels on each side.`;
+    }
+    return '';
+  };
+  const claimKey = (s) => { const k = String(s || '').trim().toLowerCase().replace(/[\s_]+/g, '-'); return ['own-insurer', 'third-party', 'court'].includes(k) ? k : ''; };
+  const protection = (which) => M()[which] || 'os';
   window.desktop = {
     ai: {
-      status: async () => { log('ai.status'); return { hasKey: M().hasKey !== false, encrypted: true }; },
-      setKey: async (k) => { log('ai.setKey', !!k); M().hasKey = !!k; return { ok: true }; },
+      status: async () => { log('ai.status'); return Object.assign({ ok: true, hasKey: M().hasKey !== false, encrypted: protection('aiProtection') === 'os', protection: protection('aiProtection') }, M().aiStatusError ? { error: M().aiStatusError } : {}); },
+      setKey: async (k) => {
+        log('ai.setKey', !!k);
+        if (M().setKeyError) return { ok: false, error: M().setKeyError };
+        M().hasKey = !!k;
+        return k ? { ok: true, encrypted: protection('aiProtection') === 'os', protection: protection('aiProtection') } : { ok: true };
+      },
       test: async (p) => { log('ai.test', p); await delay(30); return { ok: true, result: { ok: true, model: (p && p.model) || 'claude-opus-5-5' } }; },
       analysePhotos: async (p) => {
-        log('ai.analysePhotos', { n: p.photos.length, idx: p.photos.map((x) => x.index), titles: p.photos.map((x) => x.title), model: p.model, effort: p.effort, jobPhotos: (p.job.photos || []).map((x) => x.index), hasSig: !!(p.job.assessor && p.job.assessor.signature), hasIssued: 'issued' in p.job });
+        log('ai.analysePhotos', {
+          n: p.photos.length, idx: p.photos.map((x) => x.index), ids: p.photos.map((x) => x.id), titles: p.photos.map((x) => x.title),
+          titleByAi: p.photos.map((x) => x.titleByAi), captionByAi: p.photos.map((x) => x.captionByAi), wh: p.photos.map((x) => [x.width, x.height]),
+          types: p.photos.map((x) => x.mediaType), bytes: p.photos.map((x) => b64bytes(x.base64)), sig: p.photos.map((x) => String(x.base64).length + ':' + String(x.base64).slice(0, 40) + ':' + String(x.base64).slice(-40)),
+          model: p.model, effort: p.effort, jobPhotos: (p.job.photos || []).map((x) => x.index), adas: p.job.vehicle && p.job.vehicle.adas, aiText: p.job.aiText,
+          hasSig: !!(p.job.assessor && p.job.assessor.signature), hasIssued: 'issued' in p.job
+        });
         await delay(M().aiDelay || 30);
-        return M().aiFail ? { ok: false, error: 'The AI service rejected the request: test failure' } : { ok: true, result: photoResult(p) };
+        if (M().aiFail) return { ok: false, error: 'The AI service rejected the request: test failure' };
+        const bad = aiImageError(p.photos);
+        return bad ? { ok: false, error: bad } : { ok: true, result: photoResult(p) };
       },
       draftNarrative: async (p) => {
         const tag = M().draftTag || 'DRAFT1';
-        log('ai.draftNarrative', { tag, net: p.totals.net, photos: (p.job.photos || []).map((x) => x.index + ':' + x.title), model: p.model });
+        log('ai.draftNarrative', { tag, net: p.totals.net, photos: (p.job.photos || []).map((x) => x.index + ':' + x.title), model: p.model, aiText: p.job.aiText, adas: p.job.vehicle && p.job.vehicle.adas,
+          prov: (p.job.photos || []).map((x) => ({ index: x.index, titleByAi: x.titleByAi, captionByAi: x.captionByAi, labels: (x.labels || []).map((l) => [l.text, l.ai]) })) });
         await delay(M().aiDelay || 30);
         return { ok: true, result: { model: 'claude-opus-5-5', summary: tag + ' summary', inspection_condition: tag + ' condition', structural: tag + ' structural', mechanical: tag + ' mechanical', wheels: tag + ' wheels', geometry: tag + ' geometry', diagnostics: tag + ' diagnostics', roadworthiness: tag + ' roadworthiness', estimate_notes: tag + ' estimate notes', valuation_comments: tag + ' valuation', opinion: tag + ' opinion', decision: 'Repair', category: '', review_flags: ['Check the RH sill concealed area'] } };
       },
       valuation: async (p) => {
-        log('ai.valuation', { searchWeb: p.searchWeb, mot: (p.motHistory || []).length, reg: p.job.vehicle.reg });
+        log('ai.valuation', { searchWeb: p.searchWeb, mot: (p.motHistory || []).length, reg: p.job.vehicle.reg, claimType: p.claimType, valuationDate: p.valuationDate, aiText: p.job.aiText });
         await delay(M().aiDelay || 30);
-        return { ok: true, result: { model: 'claude-opus-5-5', searched: !!p.searchWeb, recommended_pav: 5700.4, range_low: 5300, range_high: 5900, basis: 'Highest retail guide supported by adverts', guide_assessment: 'Glass\'s is highest.', mileage_assessment: 'Mileage consistent with MOT history.',
+        // as ai.js: a comparable keeps its url only when verified; otherwise url '' and the model's URL as claimed_url (text only)
+        return { ok: true, result: { model: 'claude-opus-5-5', searched: !!p.searchWeb, searches: p.searchWeb ? 2 : 0, search_domains_restricted: !!p.searchWeb && M().domainsRestricted !== false,
+          claim_type: claimKey(p.claimType), valuation_date: p.valuationDate || '',
+          recommended_pav: 5700.4, range_low: 5300, range_high: 5900, basis: 'Highest retail guide supported by adverts', guide_assessment: 'Glass\'s is highest.', mileage_assessment: 'Mileage consistent with MOT history.',
           adjustments: [{ item: 'Tyres', amount: -50, reason: 'worn' }],
           comparables: [
-            { description: 'Nissan Juke Acenta 1.6', year: '2014', mileage: 60000, price: 5995, source: 'AutoTrader', url: 'https://www.autotrader.co.uk/car-details/1', like_for_like: true, notes: 'dealer' },
-            { description: 'Nissan Juke Tekna', year: '2014', mileage: 70000, price: 5495, source: 'Evil site', url: 'file://attacker-host/share/x.exe', like_for_like: false, notes: 'injected' },
-            { description: 'Nissan Juke Visia', year: '2015', mileage: 50000, price: 5800, source: 'Other', url: 'ms-msdt:/id PCWDiagnostic', like_for_like: false, notes: '' }
+            { description: 'Nissan Juke Acenta 1.6', year: '2014', mileage: 60000, price: 5995, source: 'AutoTrader', url: 'https://www.autotrader.co.uk/car-details/1', like_for_like: true, notes: 'dealer', verified: true },
+            { description: 'Nissan Juke Tekna', year: '2014', mileage: 70000, price: 5495, source: 'Evil site', url: '', claimed_url: 'file://attacker-host/share/x.exe', like_for_like: false, notes: 'injected', verified: false },
+            { description: 'Nissan Juke Visia', year: '2015', mileage: 50000, price: 5800, source: 'Other', url: '', claimed_url: 'ms-msdt:/id PCWDiagnostic', like_for_like: false, notes: '', verified: false },
+            { description: 'Nissan Juke N-Connecta', year: '2015', mileage: 48000, price: 6100, source: 'Motors', url: '', claimed_url: 'https://www.motors.co.uk/car-123456/', like_for_like: true, notes: 'not in the search results', verified: false }
           ],
           flags: ['Check service history'], comments: 'AI valuation comments **£5,700**' } };
       }
     },
     data: {
-      status: async () => { log('data.status'); return { dvla: M().dvla !== false, mot: M().mot !== false, motTokenUrl: true, encrypted: true }; },
-      setKeys: async (patch) => { log('data.setKeys', Object.keys(patch || {})); return { ok: true }; },
+      status: async () => {
+        log('data.status');
+        const st = { ok: true, dvla: !M().dataUnreadable && M().dvla !== false, mot: !M().dataUnreadable && M().mot !== false, motTokenUrl: true, encrypted: protection('dataProtection') === 'os', protection: protection('dataProtection') };
+        return M().dataUnreadable ? Object.assign(st, { unreadable: true, error: 'The saved DVLA / MOT History credentials could not be read (they were saved on another PC or user account). Enter them again after choosing "Remove all saved credentials", or try again if the file was only busy.' }) : st;
+      },
+      setKeys: async (patch) => {
+        log('data.setKeys', Object.keys(patch || {}));
+        if (M().dataUnreadable) return { ok: false, code: 'unreadable', error: 'The saved credentials cannot be read, so they cannot be changed. Choose "Remove all saved credentials" first.' };
+        if (M().setKeysError) return { ok: false, error: M().setKeysError };
+        return { ok: true, encrypted: protection('dataProtection') === 'os', protection: protection('dataProtection') };
+      },
+      clearKeys: async () => { log('data.clearKeys'); M().dataUnreadable = false; M().dvla = false; M().mot = false; return { ok: true }; },
       dvla: async (reg, env) => {
         log('data.dvla', { reg, env });
         await delay(M().dataDelay || 20);
@@ -95,8 +144,12 @@ const BRIDGE = () => {
             { date: '2024-08-01', result: 'FAILED', odometer: 52000, unit: 'mi', odometerResult: 'READ', expiry: '', testNumber: '2', defects: ['MAJOR: Headlamp aim too high'] }] }, M().motOver || {}) };
       }
     },
-    exportPdf: async (p) => { log('exportPdf', { htmlLen: p.html.length, header: !!p.header, footer: !!p.footer, fileName: p.fileName }); return { ok: true, filePath: 'C:/Reports/' + p.fileName + '.pdf' }; },
-    saveFile: async (p) => { log('saveFile', { fileName: p.fileName, len: p.content.length }); window.__lastSaved = p.content; return { ok: true, filePath: 'C:/Reports/' + p.fileName }; }
+    exportPdf: async (p) => { log('exportPdf', { htmlLen: p.html.length, header: !!p.header, footer: !!p.footer, fileName: p.fileName, marginsMm: p.marginsMm }); return { ok: true, filePath: 'C:/Reports/' + p.fileName + '.pdf' }; },
+    saveFile: async (p) => {
+      log('saveFile', { fileName: p.fileName, len: p.content.length, kind: p.kind });
+      if (M().saveError) return { ok: false, error: M().saveError };
+      window.__lastSaved = p.content; return { ok: true, filePath: 'C:/Reports/' + p.fileName };
+    }
   };
 };
 

@@ -331,7 +331,8 @@
       vehicle: {
         reg: '', vin: '', make: '', model: '', derivative: '', mileage: '', mileageUnit: 'miles', body: '', fuel: '', transmission: '',
         engineSize: '', engineCode: '', colour: '', paintCode: '', paintType: 'metallic', firstReg: '', oemKey: '',
-        sizeClass: 'medium', variantKey: '', dvla: null, motHistory: [], motModel: ''
+        sizeClass: 'medium', variantKey: '', dvla: null, motHistory: [], motModel: '',
+        adas: '' // ADAS / driver-assistance systems fitted (optional, sent to the AI)
       },
       inspection: {
         date: todayISO(), time: '', location: '', type: 'Physical vehicle inspection / pre-strip engineering assessment',
@@ -345,7 +346,8 @@
         date: '', mileage: '', costNew: '', condition: 'SATISFACTORY',
         sources: [{ name: "Glass's Guide", amount: '' }, { name: 'CAP HPI', amount: '' }, { name: 'AutoTrader', amount: '' }],
         adopted: '', salvagePct: s.salvagePct, salvageOverride: '', comments: '', belowHighestReason: '',
-        adverts: [], historyNotes: '', optionsNotes: '', ai: null
+        adverts: [], historyNotes: '', optionsNotes: '', ai: null,
+        claimType: '' // 'own-insurer' | 'third-party' | 'court' | '' (not specified): the valuation standard the AI applies
       },
       outcome: { decision: '', category: '' },
       lines: [],
@@ -357,6 +359,8 @@
       opinion: '',
       photos: [],
       aiFindings: null,
+      // provenance: { '<field path>': '<AI text last applied there>' }. A field still holding that text is an unedited AI draft.
+      aiText: {},
       customer: { name: '', company: '', representative: '', relationship: 'Owner', address: '', town: '', postcode: '', telephone: '', mobile: '', email: '', vat: '', notes: '' },
       assessor: { name: s.assessor.name, title: s.assessor.title, qualifications: s.assessor.qualifications, aqpId: s.assessor.aqpId, dateSigned: '', signature: '', useDefaultSignature: true }
     };
@@ -506,6 +510,20 @@
     const otherSide = l.side === 'R' ? /\b(?:lh|left|n\/s|nearside)\b/ : l.side === 'L' ? /\b(?:rh|right|o\/s|offside)\b/ : null;
     return !(otherSide && otherSide.test(xd));
   }
+  // Part numbers compared on letters and digits only ("76850-1KA6A" = "768501KA6A").
+  const partKey = (s) => txt(s).toUpperCase().replace(/[^A-Z0-9]/g, '');
+  // How many OTHER researched numbers exist for the part and side of a line that uses a researched number: the right one
+  // depends on the variant (facelift, trim, options), so it must be confirmed by VIN. 0 when the line's number is not a
+  // researched candidate, or is one the assessor added themselves (their own confirmation).
+  function oemAlternatives(oemKey, line) {
+    const l = obj(line);
+    const pn = partKey(l.partNo);
+    if (!pn || !l.code || !oemKey) return 0;
+    const cands = arr(oemLookup(oemKey, txt(l.code), txt(l.side))).filter((c) => c && typeof c === 'object');
+    const hit = cands.find((c) => partKey(c.oem) === pn);
+    if (!hit || hit.user) return 0;
+    return new Set(cands.map((c) => partKey(c.oem)).filter((k) => k && k !== pn)).size;
+  }
 
   function qaChecks(job) {
     job = obj(job);
@@ -543,6 +561,8 @@
       if (!num(l.hours) && !num(l.amount)) add('info', `Line ${i + 1} (${d(l) || 'blank'}) has no hours and no cost.`, 'estimate');
       if (isRenewLine(l) && (l.costClass || 'parts') === 'parts' && !num(l.amount) && !isServiceCode(l.code) && !FREE_PART.test(txt(l.partNo))) add('warn', `Line ${i + 1} (${d(l) || 'blank'}) renews a part but has no part price.`, 'estimate');
       if (l.ai && !l.reviewed) add('warn', `Line ${i + 1} (${d(l)}) was suggested by AI and has not been marked as reviewed.`, 'estimate');
+      const alt = oemAlternatives(v.oemKey, l);
+      if (alt) add('info', `Line ${i + 1} uses researched part number ${txt(l.partNo).trim()}; there ${alt === 1 ? 'is 1 alternative (variant)' : `are ${alt} alternatives (variants)`}: confirm by VIN.`, 'estimate');
     });
     const renewedPainted = lines.filter((l) => cat(l.code) && cat(l.code).refinishHrs > 0 && isRenewLine(l) && !isPaintLine(l));
     renewedPainted.forEach((l) => {
@@ -665,7 +685,7 @@
     $, $$, uid, esc, num, round2, gbp, gbp0, hrs, todayISO, ukDate, longDate, getPath, setPath, debounce, clone, fold, yearRange,
     Store, DEFAULT_SETTINGS, loadSettings, saveSettings, get settings() { return settings; }, set settings(v) { settings = v; },
     CAT, OPS, sideWord, SIZE_CLASSES, sizeFactor, paintFactor, oemVehicles, setCustomOem, get customOem() { return customOem; }, findOemVehicle, guessOemVehicle, oemLookup, decodeVin,
-    newJob, newLine, lineRate, lineLabour, vatPctFor, namedSources, totals, qaChecks, isDamageOp, isRenewLine, isServiceCode, photoNumbers,
+    newJob, newLine, lineRate, lineLabour, vatPctFor, namedSources, totals, qaChecks, isDamageOp, isRenewLine, isServiceCode, photoNumbers, oemAlternatives,
     readFileAsDataURL, loadImage, resizeDataURL
   };
 })();
