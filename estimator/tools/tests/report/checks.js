@@ -42,7 +42,8 @@ console.log('\n1. Sample job');
   check('no "RECOMMENDED RECOMMENDED"', !/RECOMMENDED RECOMMENDED|REQUIRED RECOMMENDED/.test(html));
   check('section 11 present with no photos', section(html, 11).includes('No photographs are included in this report.'));
   check('first registration printed to the day when no precision is recorded', section(html, 3).includes('05 August 2014'));
-  check('paint finish and size class in section 03 (names only)', section(html, 3).includes('Paint finish') && section(html, 3).includes('Metallic') && /Size class<\/div><div class="fv">Medium \(hatch \/ saloon\)<\/div>/.test(section(html, 3)));
+  check('paint finish and size class in section 03 as the guide-time basis, not as vehicle facts (names only)', /Paint finish \(refinish-time basis\)<\/div><div class="fv">Metallic<\/div>/.test(section(html, 3)) && /Size class \(guide-time basis\)<\/div><div class="fv">Medium \(hatch \/ saloon\)<\/div>/.test(section(html, 3)));
+  check('medium / metallic: no guide-time scaling sentence in section 08 (both factors 1)', !/scaled for this vehicle/.test(section(html, 8)) && !/×\s*\d/.test(text(html)));
   check('multi-line inspection location keeps line breaks', section(html, 4).includes('CarFlex Secure Storage Gleneagles Farm<br>Gleneagles Close Stanwell<br>Staines-upon-Thames TW19 7PD'));
   check('no AI statement for a job with no AI or data use', !html.includes('Use of AI and data tools'));
   check('VAT @ 20%', section(html, 9).includes('VAT @ 20%'));
@@ -307,9 +308,10 @@ console.log('\n10. Vehicle data, valuation extras, MOT and adverts');
   const html = R.render(job, { mode: 'pdf' });
   const s3 = section(html, 3), s7 = section(html, 7);
   check('firstRegPrecision month → "August 2014"', s3.includes('First registration date</div><div class="fv">August 2014'));
-  check('paint finish pearl: name only, no refinish-time factor', /Paint finish<\/div><div class="fv">Pearlescent<\/div>/.test(s3) && !/factor/i.test(text(s3)));
-  check('size class premium: name only, no multiplier', /Size class<\/div><div class="fv">Large premium \/ luxury<\/div>/.test(s3) && !/×\s*\d/.test(text(html)));
-  check('DVLA / DVSA block: tax, MOT, flags, recall', s3.includes('DVLA / DVSA status') && s3.includes('Taxed — due 01/03/2027') && s3.includes('Valid — expires 04/08/2027') && /Marked for export \(DVLA\)<\/div><div class="fv"><strong>Yes/.test(s3) && /Marked as scrapped \(DVLA\)<\/div><div class="fv">No/.test(s3) && s3.includes('first registered with DVLA 01/02/2016') && /Outstanding safety recall \(DVSA\)<\/div><div class="fv"><strong>Yes/.test(s3));
+  check('paint finish pearl: name only in section 03, labelled as the refinish-time basis', /Paint finish \(refinish-time basis\)<\/div><div class="fv">Pearlescent<\/div>/.test(s3) && !/factor|×\s*\d/i.test(text(s3)));
+  check('size class premium: name only in section 03, labelled as the guide-time basis', /Size class \(guide-time basis\)<\/div><div class="fv">Large premium \/ luxury<\/div>/.test(s3));
+  check('section 08 discloses the factors used: "Guide times are scaled for this vehicle: size class Large premium / luxury ×1.20; paint finish Pearlescent ×1.20 (refinish work)."', text(section(html, 8)).includes('Guide times are scaled for this vehicle: size class Large premium / luxury ×1.20; paint finish Pearlescent ×1.20 (refinish work).'), text(section(html, 8)).slice(-700));
+  check('DVLA / DVSA block: tax, MOT, flags, recall', s3.includes('DVLA / DVSA status') && s3.includes('Taxed — due 01/03/2027') && s3.includes('Valid — expires 04/08/2027') && /Marked for export \(DVLA\)<\/div><div class="fv"><strong>Yes/.test(s3) && /Marked as scrapped \(DVLA\)<\/div><div class="fv">No/.test(s3) && s3.includes('first registered August 2014, first registered with DVLA February 2016') && /Outstanding safety recall \(DVSA\)<\/div><div class="fv"><strong>Yes/.test(s3));
   check('below-highest reason printed', s7.includes('Adopted value below the highest guide figure (£5,682)') && s7.includes('full service history; none supplied'));
   check('history and options notes printed', s7.includes('<h3>History notes</h3>') && s7.includes('Previous Cat S recorded in 2019.</p><p>Finance outstanding.') && s7.includes('Panoramic roof.'));
   check('unnamed £9,999 source not in the chart', !s7.includes('£9,999'));
@@ -577,6 +579,131 @@ console.log('\n24. Invalid dates print as entered on every page (R#27)');
   job.instruction.dateOfLoss = '2023-02-29';
   const html = R.render(job, { mode: 'pdf' });
   check('cover and section 02 both print "2023-02-29" (no "01 March 2023")', !html.includes('01 March 2023') && /Date of loss<\/div><div class="fv">2023-02-29/.test(html) && section(html, 2).includes('Date of loss</div><div class="fv">2023-02-29'));
+}
+
+// ================================================================ round 4 (final review)
+console.log('\n25. AI-adjusted hours show the guide for THIS vehicle; the guide-time factors are disclosed (R4 #0 / #4 / #7)');
+{
+  const job = sample();
+  job.vehicle.paintType = 'pearl'; job.vehicle.sizeClass = 'suv'; // ×1.2 refinish, ×1.15 size
+  const ai = (o) => C.newLine(Object.assign({ ai: true, reviewed: true, hoursBasis: 'adjusted' }, o));
+  job.lines = [
+    ai({ type: 'Painting', description: 'Front bumper cover – refinish new part', code: 'FE001', op: 'refinish', hours: 3.0, guideHours: 2.4, pfApplied: 1.2, costClass: 'paint' }), // AI 2.5h base × 1.2
+    ai({ type: 'Body', description: 'Front bumper cover – renew', code: 'FE001', op: 'renew', hours: 1.8, guideHours: 1.6, amount: 300, partNo: 'x' }),
+    C.newLine({ type: 'Body', description: 'Front bumper cover – renew (picker)', code: 'FE001', op: 'renew', hours: 1.8, amount: 300, partNo: 'x' }),
+    ai({ type: 'Painting', description: 'Bonnet – refinish new part', code: 'BN001', op: 'refinish', hours: 3.0, guideHours: 3.0, pfApplied: 1.2, costClass: 'paint' }), // the AI cut it to 2.5h base
+    ai({ type: 'Auxiliary', description: 'Bonnet – inspect / test', code: 'BN001', op: 'check', hours: 0.5, guideHours: 0.3 }),
+    ai({ type: 'Body', description: 'Older AI line, operation not known', op: 'ai', hours: 2, guideHours: 1.4 })
+  ];
+  const html = R.render(job, { mode: 'pdf' }), s8 = section(html, 8), t8 = text(s8);
+  check('FE001 refinish 3.00h: "(guide 3.3h)", the guide for this vehicle (2.4h × 1.15 × 1.2), not the base 2.4h', s8.includes('3.00<br><span class="gh">(guide 3.3h)</span>') && !s8.includes('(guide 2.4h)'));
+  check('FE001 renew 1.80h is this vehicle\'s guide (1.6h × 1.15): no note, exactly like the same picker line', !s8.includes('(guide 1.6h)') && !s8.includes('(guide 1.8h)') && (s8.match(/<td>1\.80<\/td>/g) || []).length === 2);
+  check('BN001 refinish reduced by the AI: 3.00h shows "(guide 4.1h)" (no longer hidden)', s8.includes('3.00<br><span class="gh">(guide 4.1h)</span>'));
+  check('an inspect line is not scaled: 0.50h "(guide 0.3h)"', s8.includes('0.50<br><span class="gh">(guide 0.3h)</span>'));
+  check('an AI line whose operation is not known shows no guide on a scaled vehicle (never the unscaled base)', !s8.includes('(guide 1.4h)'));
+  check('section 08 states the factors used and what the bracketed guide is', t8.includes('Guide times are scaled for this vehicle: size class SUV / 4x4 ×1.15; paint finish Pearlescent ×1.20 (refinish work).') && t8.includes('Where an AI-suggested time was adjusted from the guide, the guide time for this vehicle is shown in brackets.'), t8.slice(t8.indexOf('Labour times'), t8.indexOf('Labour times') + 520));
+  check('section 03 labels them as the basis of the guide times (names only, factors in section 08)', /Paint finish \(refinish-time basis\)<\/div><div class="fv">Pearlescent<\/div>/.test(section(html, 3)) && /Size class \(guide-time basis\)<\/div><div class="fv">SUV \/ 4x4<\/div>/.test(section(html, 3)) && !/×/.test(text(section(html, 3))));
+  const foot = (paint, size, lines) => { const j = sample(); j.vehicle.paintType = paint; j.vehicle.sizeClass = size; if (lines) j.lines = lines; const t = text(section(R.render(j, { mode: 'pdf' }), 8)); return t.slice(t.indexOf('Labour times'), t.indexOf('Estimate notes')); };
+  check('pearl, medium: only the paint factor', foot('pearl', 'medium').includes('Guide times are scaled for this vehicle: paint finish Pearlescent ×1.20 (refinish work).') && !foot('pearl', 'medium').includes('size class'));
+  check('metallic, large: only the size factor (×1.10)', foot('metallic', 'large').includes('Guide times are scaled for this vehicle: size class Large (exec / estate / MPV) ×1.10.') && !foot('metallic', 'large').includes('paint finish'));
+  check('metallic, medium (both 1) or no lines: no scaling sentence, no bracket note', !/scaled for this vehicle|shown in brackets/.test(foot('metallic', 'medium')) && !/scaled for this vehicle/.test(foot('pearl', 'suv', [])));
+  const m = sample();
+  m.lines.push(C.newLine({ type: 'Painting', description: 'RH front door – refinish repaired part', hours: 1.6, costClass: 'paint', ai: true, reviewed: true, op: 'refinishRep1', hoursBasis: 'adjusted', guideHours: 2 }));
+  check('medium / metallic: the guide is the catalogue figure, and the bracket note is explained', section(R.render(m, { mode: 'pdf' }), 8).includes('1.60<br><span class="gh">(guide 2.0h)</span>') && text(section(R.render(m, { mode: 'pdf' }), 8)).includes('shown in brackets'));
+}
+
+console.log('\n26. Claim type "Court": "CPR Part 35" only in a CPR 35 report (R4 #2)');
+{
+  const job = sample(); job.valuation.claimType = 'court';
+  let html = R.render(job, { mode: 'pdf' });
+  check('CPR 35 off: "Court proceedings." and the assessor\'s opinion; "CPR Part 35" appears nowhere in the report', text(section(html, 7)).includes('Claim type / valuation standard Court proceedings. Valuation standard: market value, the cost of buying a replacement vehicle of the same kind and condition at the valuation date, in the assessor\'s independent, reasoned opinion.') && !/CPR Part 35|expert's independent opinion/.test(text(html)));
+  job.valuation.claimType = 'Court';
+  check('…the same for the legacy "Court"', text(section(R.render(job, { mode: 'pdf' }), 7)).includes('Court proceedings. Valuation standard') && !/CPR Part 35/.test(text(R.render(job, { mode: 'pdf' }))));
+  job.report.cpr35 = true;
+  html = R.render(job, { mode: 'pdf' });
+  check('CPR 35 on: "Court proceedings (CPR Part 35)" and the expert\'s opinion within the range of reasonable opinion', text(section(html, 7)).includes('Court proceedings (CPR Part 35). Valuation standard: market value, the cost of buying a replacement vehicle of the same kind and condition at the valuation date, given as the expert\'s independent opinion within the range of reasonable opinion.'));
+}
+
+console.log('\n27. CPR 35: whether another examiner worked under the expert\'s supervision (PD 35 para 3.2(5), R4 #5)');
+{
+  const job = sample(); job.report.cpr35 = true; job.inspection.by = 'J Field'; job.inspection.byQualifications = 'IMI Level 3 Vehicle Damage Assessor';
+  const r = (val) => { job.report.examinerSupervised = val; const h = R.render(job, { mode: 'pdf' }); return { s4: text(section(h, 4)), s13: text(section(h, 13)) }; };
+  let x = r('yes');
+  check('"yes": "…carried out by J Field (IMI …), under my supervision." and section 04 says Yes', x.s13.includes('was carried out by J Field (IMI Level 3 Vehicle Damage Assessor), under my supervision.') && x.s4.includes('Examined under the expert\'s supervision Yes'), x.s13.slice(x.s13.indexOf('The examination'), x.s13.indexOf('The examination') + 200));
+  x = r('no');
+  check('"no": "…, not under my supervision." and section 04 says No', x.s13.includes('(IMI Level 3 Vehicle Damage Assessor), not under my supervision.') && x.s4.includes('Examined under the expert\'s supervision No'));
+  x = r('');
+  check('not recorded: the statement says so, and section 04 says "Not recorded"', x.s13.includes('Whether it was carried out under my supervision has not been recorded.') && x.s4.includes('Examined under the expert\'s supervision Not recorded'));
+  job.inspection.by = 'SAMPLE ASSESSOR';
+  x = r('');
+  check('examined by the expert: "carried out by me", no supervision wording', x.s13.includes('was carried out by me.') && !/supervision/.test(x.s13 + x.s4));
+  job.inspection.by = 'J Field'; job.report.cpr35 = false;
+  x = r('yes');
+  check('not a CPR 35 report: no supervision wording', !/supervision/i.test(x.s13 + x.s4));
+}
+
+console.log('\n28. DVLA: month-only dates printed as months; flags DVLA did not give are never "No" (R4 #6, connectors review)');
+{
+  const job = sample();
+  const s3 = () => text(section(R.render(job, { mode: 'pdf' }), 3));
+  job.vehicle.dvla = { taxStatus: 'Taxed', motStatus: 'Valid', markedForExport: null, importedOrReRegistered: null, automatedVehicle: null, firstRegistration: '2014-08-01', lookedUpAt: '2026-09-01T10:00:00Z' }; // markedAsScrapped missing
+  let t3 = s3();
+  check('null or missing flags: "Not stated by DVLA", never "No"', t3.includes('Marked for export (DVLA) Not stated by DVLA') && t3.includes('Marked as scrapped (DVLA) Not stated by DVLA') && t3.includes('Imported / re-registered (DVLA) Not stated by DVLA') && !/\(DVLA\) No\b/.test(t3), t3.slice(t3.indexOf('Vehicle tax'), t3.indexOf('Vehicle tax') + 300));
+  Object.assign(job.vehicle.dvla, { markedForExport: false, markedAsScrapped: false, importedOrReRegistered: false });
+  t3 = s3();
+  check('false (old jobs, or DVLA said so) → "No" as before', t3.includes('Marked for export (DVLA) No') && t3.includes('Marked as scrapped (DVLA) No') && t3.includes('Imported / re-registered (DVLA) No'));
+  Object.assign(job.vehicle.dvla, { markedForExport: true, markedAsScrapped: true });
+  t3 = s3();
+  check('true → "Yes"', t3.includes('Marked for export (DVLA) Yes') && t3.includes('Marked as scrapped (DVLA) Yes'));
+  job.vehicle.dvla = { importedOrReRegistered: true, firstRegistration: '2014-08-01', firstRegistrationWithDvla: '2016-02-01', markedForExport: false, markedAsScrapped: false };
+  job.vehicle.firstReg = '2014-08-19'; job.vehicle.firstRegPrecision = 'day'; // the day, from the MOT record
+  t3 = s3();
+  check('imported: "first registered August 2014, first registered with DVLA February 2016" (no invented day), beside "19 August 2014"', t3.includes('First registration date 19 August 2014') && t3.includes('Imported / re-registered (DVLA) Yes — first registered August 2014, first registered with DVLA February 2016') && !/01\/08\/2014|01\/02\/2016/.test(t3));
+  job.vehicle.dvla.firstRegistrationWithDvla = '';
+  check('a DVLA date that is missing is left out', s3().includes('Imported / re-registered (DVLA) Yes — first registered August 2014 ') && !s3().includes('with DVLA'));
+}
+
+console.log('\n29. First registration: invalid months printed as entered; month-only and year-only dates (R4 #8, connectors review)');
+{
+  const fr = (v, p) => { const j = sample(); j.vehicle.firstReg = v; j.vehicle.firstRegPrecision = p; return (/First registration date (.*?) Paint finish/.exec(text(section(R.render(j, { mode: 'pdf' }), 3))) || [])[1]; };
+  check('"2014-13-01" (month precision) is printed as entered (was "January 2015")', fr('2014-13-01', 'month') === '2014-13-01', fr('2014-13-01', 'month'));
+  check('"2014-00-01" (was "December 2013"), "2014-02-30" and "2014-13" are printed as entered', fr('2014-00-01', 'month') === '2014-00-01' && fr('2014-02-30', 'month') === '2014-02-30' && fr('2014-13', 'month') === '2014-13');
+  check('valid months: "2014-03-01" (month precision) → "March 2014"; "2014-08" → "August 2014" whatever the precision', fr('2014-03-01', 'month') === 'March 2014' && fr('2014-08', '') === 'August 2014' && fr('2014-08', 'day') === 'August 2014');
+  check('year only: "1968" → "1968" whatever the precision; "1968-01-01" with precision "year" → "1968", never "January 1968"', ['month', 'day', '', 'year'].every((p) => fr('1968', p) === '1968') && fr('1968-01-01', 'year') === '1968');
+  check('day precision unchanged ("2014-08-05" → "05 August 2014"); no precision, not from DVLA → the day', fr('2014-08-05', 'day') === '05 August 2014' && fr('2014-08-05', '') === '05 August 2014');
+  const j = sample(); j.vehicle.firstReg = '1968'; j.vehicle.firstRegPrecision = 'year'; j.vehicle.dvla = { importedOrReRegistered: true, firstRegistration: '1968', firstRegistrationWithDvla: '1975-06-01', markedForExport: false, markedAsScrapped: false };
+  check('a year-only DVLA first registration: "first registered 1968, first registered with DVLA June 1975"', text(section(R.render(j, { mode: 'pdf' }), 3)).includes('Yes — first registered 1968, first registered with DVLA June 1975'));
+  const old = sample(); old.vehicle.firstReg = '1968-01-01'; old.vehicle.firstRegPrecision = 'year'; old.vehicle.dvla = { importedOrReRegistered: true, firstRegistration: '1968-01-01', firstRegistrationWithDvla: '1975-06-01', markedForExport: false, markedAsScrapped: false };
+  const to = text(section(R.render(old, { mode: 'pdf' }), 3));
+  check('an old job with "1968-01-01" marked year-only: "1968" in both places, no "January 1968"', to.includes('First registration date 1968 ') && to.includes('first registered 1968,') && !to.includes('January 1968'));
+  for (const v of ['2014-13-01', '2014-00-01', '2014-02-30', '2014-13', 'n/a']) {
+    const k = sample(); k.vehicle.firstReg = v; k.vehicle.firstRegPrecision = 'month';
+    const warned = C.qaChecks(k).some((q) => q.msg === `First registration date "${v}" is not a valid date (YYYY-MM-DD). The report prints it as entered: correct it before issuing.`);
+    check(`"${v}": the QA warning says it is printed as entered, and it is`, warned && fr(v, 'month') === v);
+  }
+}
+
+console.log('\n30. A negative salvage figure or % is never printed (R4 #19)');
+{
+  const job = sample(); job.valuation.salvageOverride = -500;
+  const s7 = () => text(section(R.render(job, { mode: 'pdf' }), 7));
+  check('override −500: "£852.30 (15% of PAV)", no −£500.00', s7().includes('Provisional salvage value (£) £852.30 (15% of PAV)') && !s7().includes('−£500'));
+  job.valuation.salvageOverride = ''; job.valuation.salvagePct = -15;
+  check('salvage % −15: "£0.00 (0% of PAV)", never −£852.30', s7().includes('Provisional salvage value (£) £0.00 (0% of PAV)') && !s7().includes('−£852.30'));
+  job.valuation.salvagePct = 15; job.valuation.salvageOverride = 400;
+  check('a figure of zero or more is still "specific figure entered"', s7().includes('Provisional salvage value (£) £400.00 (specific figure entered)'));
+}
+
+console.log('\n31. A confirmed AI decision and category are no longer reported as unreviewed (R4 #1 / #13)');
+{
+  const job = sample();
+  job.aiText = { 'outcome.decision': job.outcome.decision, 'outcome.category': 'N' };
+  job.aiLog = [{ at: '2026-09-03T10:00:00Z', action: 'AI narrative draft', model: 'claude-opus-5-5', ai: true }];
+  let s13 = text(section(R.render(job, { mode: 'pdf' }), 13));
+  check('before: "had not been edited or confirmed by the assessor …: Economic repair / total-loss decision (section 07); Salvage category (section 07)."', s13.includes('had not been edited or confirmed by the assessor when this report was produced: Economic repair / total-loss decision (section 07); Salvage category (section 07).'));
+  check('C.markAiReviewed on both (the Confirm button)', C.markAiReviewed(job, 'outcome.decision') && C.markAiReviewed(job, 'outcome.category'));
+  s13 = text(section(R.render(job, { mode: 'pdf' }), 13));
+  check('after: "All AI output was reviewed, edited where necessary and adopted by the assessor"', s13.includes('All AI output was reviewed, edited where necessary and adopted by the assessor') && !s13.includes('had not been edited or confirmed'));
 }
 
 process.exitCode = summary() ? 1 : 0;

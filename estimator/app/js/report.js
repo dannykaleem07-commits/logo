@@ -32,8 +32,10 @@
   const CLAIM_TYPES = {
     'own-insurer': ['Own-insurer (first-party) total loss', 'the Financial Ombudsman Service approach (the highest recognised retail trade-guide figure is the starting point; a lower figure is adopted only on evidence about this vehicle)'],
     'third-party': ['Third-party claim', 'market value, the cost of buying a replacement vehicle of the same kind and condition at the valuation date, in the assessor\'s reasoned opinion (the Financial Ombudsman Service highest-guide approach is persuasive, not binding)'],
-    court: ['Court proceedings (CPR Part 35)', 'market value, the cost of buying a replacement vehicle of the same kind and condition at the valuation date, given as the expert\'s independent opinion within the range of reasonable opinion']
+    court: ['Court proceedings', 'market value, the cost of buying a replacement vehicle of the same kind and condition at the valuation date, in the assessor\'s independent, reasoned opinion']
   };
+  // The court claim type in a court-compliant expert report (CPR 35 mode) only: never claimed for a report without the CPR content.
+  const COURT_CPR = ['Court proceedings (CPR Part 35)', 'market value, the cost of buying a replacement vehicle of the same kind and condition at the valuation date, given as the expert\'s independent opinion within the range of reasonable opinion'];
   const claimKey = (s) => String(s == null ? '' : s).trim().toLowerCase().replace(/[\s_]+/g, '-');
 
   // ---------- validation of values that end up in attributes, CSS or URLs ----------
@@ -81,11 +83,30 @@
   const pctText = (x) => String(Math.round(num(x) * 100) / 100);
 
   // ---------- dates ----------
+  // "August 2014" from "2014-08" or a real calendar date ("2014-08-01"); anything else is printed as entered (never a month
+  // rolled into another year: "2014-13-01" stays as it is, as the QA check says).
+  const calendarDate = (s) => (typeof C.calendarDate === 'function' ? C.calendarDate(s) : null);
+  const partialDate = (s) => (typeof C.partialDate === 'function' ? C.partialDate(s) : null);
   function monthYear(iso) {
-    const m = /^(\d{4})-(\d{2})/.exec(String(iso || ''));
-    if (!m) return String(iso || '');
-    const d = new Date(Date.UTC(+m[1], +m[2] - 1, 15));
-    return isNaN(d) ? String(iso) : d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    const s = String(iso == null ? '' : iso).trim();
+    const c = calendarDate(s), p = c ? null : partialDate(s);
+    const y = c ? c.y : p && p.mo ? p.y : 0, mo = c ? c.mo : p ? p.mo : 0;
+    if (!y || !mo) return String(iso == null ? '' : iso);
+    const d = new Date(Date.UTC(2000, mo - 1, 15));
+    d.setUTCFullYear(y);
+    return d.toLocaleDateString('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  }
+  // A first-registration date as precisely as it is known: "05 August 2014" (precision 'day'), "August 2014" ('month': DVLA
+  // gives the month only) or "2014" ('year', or a year alone: never "January 2014" for a month nobody gave). Text that is
+  // not a date is printed as entered.
+  function regDate(s, precision) {
+    const str = String(s == null ? '' : s).trim();
+    if (!str) return '';
+    const p = partialDate(str);
+    if (p) return p.mo && precision !== 'year' ? monthYear(str) : str.slice(0, 4);
+    const c = calendarDate(str);
+    if (!c) return String(s);
+    return precision === 'year' ? c.text[1] : precision === 'month' ? monthYear(str) : longDate(str);
   }
   // "dd/mm/yyyy" or "dd/mm/yyyy hh:mm"; times without a zone are printed as entered, zoned times in UK time.
   function dateTime(s) {
@@ -212,13 +233,17 @@
 
     // ---------- estimate table ----------
     const h1 = (x) => (Math.round(num(x) * 10) / 10).toFixed(1) + 'h';
+    let guideNotes = 0;
     const lineRows = lines.map((l) => {
       const rate = C.lineRate(job, l);
       const h = num(l.hours);
       const pending = l.ai && !l.reviewed ? ' <span title="AI-suggested line not yet reviewed by the assessor">†</span>' : '';
-      // an AI line whose hours were adjusted from the guide time shows the guide time too
-      const g = l.ai && l.hoursBasis === 'adjusted' ? num(l.guideHours) : 0;
+      // an AI line whose hours were adjusted from the guide time shows the guide time FOR THIS VEHICLE (the catalogue guide
+      // scaled for its size class and paint finish, as the picker adds it), on the same basis as the line's hours
+      const vg = l.ai && l.hoursBasis === 'adjusted' && typeof C.vehicleGuide === 'function' ? C.vehicleGuide(job, l) : null;
+      const g = vg ? num(vg.hours) : 0;
       const guide = h && g > 0 && Math.abs(g - h) >= 0.05 ? `<br><span class="gh">(guide ${h1(g)})</span>` : '';
+      if (guide) guideNotes++;
       return `<tr><td class="ct">${esc(l.type)}</td><td>${esc(l.description)}${pending}</td><td>${esc(l.partNo) || '—'}</td>
         <td>${h ? gbp(rate) + '/hr' : '—'}</td><td>${h ? hrs(h) + guide : '—'}</td><td>${h ? gbp(C.lineLabour(h, rate)) : '—'}</td><td>${num(l.amount) ? gbp(l.amount) : '—'}</td></tr>`;
     }).join('');
@@ -416,16 +441,27 @@
     // ---------- vehicle: paint finish, size class, DVLA / DVSA status ----------
     const dv = v.dvla && typeof v.dvla === 'object' ? v.dvla : null;
     const ms = v.motSummary && typeof v.motSummary === 'object' ? v.motSummary : null;
-    const monthOnly = v.firstRegPrecision === 'month' || (!v.firstRegPrecision && !!dv && !!dv.firstRegistration && dv.firstRegistration === v.firstReg);
-    const firstRegText = v.firstReg ? (monthOnly ? monthYear(v.firstReg) : longDate(v.firstReg)) : '';
-    // names only: the size-class and paint-finish multipliers are this software's own guide-time factors, not vehicle facts
+    // DVLA gives the month of first registration (or only the year), never the day
+    const fromDvla = !!dv && !!dv.firstRegistration && dv.firstRegistration === v.firstReg;
+    const precision = v.firstRegPrecision === 'year' ? 'year' : v.firstRegPrecision === 'month' || (!v.firstRegPrecision && fromDvla) ? 'month' : 'day';
+    const firstRegText = regDate(v.firstReg, precision);
+    // names only here: the size-class and paint-finish factors are this software's own guide-time factors, not vehicle
+    // facts, so the labels say so and section 08 states the factors used
     const paintKey = String(v.paintType || 'metallic');
     const paintText = own(PAINT_FINISH, paintKey) || paintKey;
     const sizeKey = String(v.sizeClass || 'medium');
     const size = Array.isArray(own(C.SIZE_CLASSES, sizeKey)) ? C.SIZE_CLASSES[sizeKey] : null;
     const sizeText = size ? String(size[0]) : sizeKey;
+    // section 08: the basis of the guide times, with each factor this vehicle's guide times are scaled by (when it is not 1)
+    const factorOf = (x) => { const f = num(x); return f > 0 ? f : 1; };
+    const fx = (f) => { const r = Math.round(f * 1000) / 1000; return '×' + (Math.abs(r * 100 - Math.round(r * 100)) < 1e-6 ? r.toFixed(2) : String(r)); };
+    const sizeF = factorOf(C.sizeFactor(job)), paintF = factorOf(C.paintFactor(job));
+    const scaling = [sizeF !== 1 ? `size class ${esc(sizeText)} ${fx(sizeF)}` : '', paintF !== 1 ? `paint finish ${esc(paintText)} ${fx(paintF)} (refinish work)` : ''].filter(Boolean);
+    const guideBasis = (lines.length && scaling.length ? ` Guide times are scaled for this vehicle: ${scaling.join('; ')}.` : '') +
+      (guideNotes ? ' Where an AI-suggested time was adjusted from the guide, the guide time for this vehicle is shown in brackets.' : '');
     const present = (x) => x != null && String(x).trim() !== '';
-    const yn = (b) => (b ? '<strong>Yes</strong>' : 'No');
+    // a DVLA flag as DVLA gave it; a flag DVLA did not give (null, missing) is never printed as "No"
+    const flag = (b) => (b === true ? '<strong>Yes</strong>' : b === false ? 'No' : 'Not stated by DVLA');
     const withNote = (main, note) => [main, note].filter(Boolean).join(' — ');
     let statusBlock = '';
     if (dv || ms) {
@@ -433,9 +469,12 @@
       if (dv) {
         fs.push(field('Vehicle tax (DVLA)', t(withNote(dv.taxStatus, dv.taxDueDate ? 'due ' + ukDate(dv.taxDueDate) : ''))));
         fs.push(field('MOT status (DVLA)', t(withNote(dv.motStatus, dv.motExpiry ? 'expires ' + ukDate(dv.motExpiry) : ''))));
-        fs.push(field('Marked for export (DVLA)', yn(dv.markedForExport)));
-        fs.push(field('Marked as scrapped (DVLA)', yn(dv.markedAsScrapped)));
-        fs.push(field('Imported / re-registered (DVLA)', dv.importedOrReRegistered ? `<strong>Yes</strong> — ${t(`first registered ${ukDate(dv.firstRegistration)}, first registered with DVLA ${ukDate(dv.firstRegistrationWithDvla)}`)}` : 'No'));
+        fs.push(field('Marked for export (DVLA)', flag(dv.markedForExport)));
+        fs.push(field('Marked as scrapped (DVLA)', flag(dv.markedAsScrapped)));
+        // DVLA's registration dates have the month (or the year) only: printed so, never with an invented day
+        const regAt = [dv.firstRegistration ? `first registered ${regDate(dv.firstRegistration, fromDvla && precision === 'year' ? 'year' : 'month')}` : '',
+          dv.firstRegistrationWithDvla ? `first registered with DVLA ${regDate(dv.firstRegistrationWithDvla, 'month')}` : ''].filter(Boolean).join(', ');
+        fs.push(field('Imported / re-registered (DVLA)', dv.importedOrReRegistered === true ? `<strong>Yes</strong>${regAt ? ' — ' + t(regAt) : ''}` : flag(dv.importedOrReRegistered)));
         if (dv.dateOfLastV5CIssued) fs.push(field('Last V5C issued (DVLA)', t(ukDate(dv.dateOfLastV5CIssued))));
         if (present(dv.yearOfManufacture)) fs.push(field('Year of manufacture (DVLA)', t(dv.yearOfManufacture)));
         if (present(dv.euroStatus)) fs.push(field('Euro status (DVLA)', t(dv.euroStatus)));
@@ -498,18 +537,27 @@
         ${field('Fuel type', t(v.fuel))}${field('Transmission', t(v.transmission))}
         ${field('Engine size', v.engineSize ? t(num(v.engineSize).toLocaleString('en-GB') + ' cc') : '')}${field('Engine code', t(v.engineCode))}
         ${field('Colour / paint code', t([v.colour, v.paintCode].filter(Boolean).join(' / ')))}${field('First registration date', t(firstRegText))}
-        ${field('Paint finish', t(paintText))}${field('Size class', t(sizeText))}
+        ${field('Paint finish (refinish-time basis)', t(paintText))}${field('Size class (guide-time basis)', t(sizeText))}
         ${field('ADAS / driver-assistance systems fitted', present(v.adas) ? t(v.adas) : 'Not recorded', 'full')}
       </div>
       ${statusBlock}`));
 
     // 04 Inspection
     const showExaminer = !!(insp.by || insp.byQualifications || cpr);
+    // who examined the vehicle; in a CPR 35 report, when it was not the expert, whether under the expert's supervision
+    // (PD 35 para 3.2(5); job.report.examinerSupervised 'yes' | 'no' | '')
+    const fold = (s) => (typeof C.fold === 'function' ? C.fold(s) : String(s == null ? '' : s).trim().toLowerCase());
+    const examiner = String(insp.by || '').trim();
+    const examinerQuals = String(insp.byQualifications || '').trim();
+    const examinerIsAuthor = !!examiner && !!fold(as.name) && fold(examiner) === fold(as.name);
+    const supervised = typeof C.examinerSupervision === 'function' ? C.examinerSupervision(job) : '';
+    const showSupervision = cpr && !!examiner && !examinerIsAuthor;
     pages.push(page(`${sec('INSPECTION DETAILS')}
       <div class="grid">
         ${field('Inspection date', t(ukDate(insp.date)))}${field('Inspection time', t(insp.time))}
         ${field('Inspection location', t(insp.location), 'full')}
         ${showExaminer ? field('Examined by', t(insp.by)) + field('Qualifications of examiner', t(insp.byQualifications)) : ''}
+        ${showSupervision ? field("Examined under the expert's supervision", supervised === 'yes' ? 'Yes' : supervised === 'no' ? 'No' : 'Not recorded', 'full') : ''}
         ${field('Inspection type', t(insp.type))}${field('Vehicle condition at inspection', para(insp.condition))}
         ${field('Dismantling carried out', para(insp.dismantling))}${field('Photographs taken / source', t(insp.photos))}
         ${field('Diagnostic scan / tool', para(insp.diagnostic))}${field('Road test / reason if not completed', para(insp.roadTest))}
@@ -541,15 +589,18 @@
       <h3>Roadworthiness</h3><div class="box">${para(a.roadworthiness)}</div>`));
 
     // 07 Valuation
-    const salvageSet = val.salvageOverride !== '' && val.salvageOverride != null;
+    // as totals() works it out: the figure entered (a negative one is an input error and is ignored), else the % of PAV
+    const salvageSet = tt.salvageEntered != null ? !!tt.salvageEntered : val.salvageOverride !== '' && val.salvageOverride != null;
+    const salvagePct = tt.salvagePct != null ? tt.salvagePct : val.salvagePct;
     const salvageText = hasPav || salvageSet
-      ? `${gbp(tt.salvage)} <span class="small muted">(${salvageSet ? 'specific figure entered' : pctText(val.salvagePct) + '% of PAV'})</span>`
+      ? `${gbp(tt.salvage)} <span class="small muted">(${salvageSet ? 'specific figure entered' : pctText(salvagePct) + '% of PAV'})</span>`
       : 'Not assessed';
     const ratioText = hasPav
       ? `Excl. VAT: ${gbp(tt.net)} — ${tt.pctNet.toFixed(2)}%<br>Incl. VAT: ${gbp(tt.gross)} — ${tt.pctGross.toFixed(2)}%`
       : `Excl. VAT: ${gbp(tt.net)} — Not assessed<br>Incl. VAT: ${gbp(tt.gross)} — Not assessed<br><span class="small muted">No pre-accident value has been adopted.</span>`;
     const belowReason = String(val.belowHighestReason || '').trim();
-    const claim = own(CLAIM_TYPES, claimKey(val.claimType));
+    const claimK = claimKey(val.claimType);
+    const claim = claimK === 'court' && cpr ? COURT_CPR : own(CLAIM_TYPES, claimK);
     // a salvage category belongs to a total loss only; beside any other decision it is "Not applicable"
     const decision = String(obj(job.outcome).decision || '').trim();
     const categoryText = o.isTL ? (catText(cat) || 'Not assessed') : /repair/i.test(decision) ? 'Not applicable (repairable)' : cat ? 'Not applicable (no total-loss decision)' : 'Not assessed';
@@ -587,7 +638,7 @@
         ${tt.discount ? `<tr class="tot"><td></td><td>LESS DISCOUNT</td><td colspan="4"></td><td>${gbp(-tt.discount)}</td></tr>` : ''}
         <tr class="grand"><td></td><td colspan="5">ESTIMATE SUBTOTAL EXCL. VAT</td><td>${gbp(tt.net)}</td></tr>
       </tbody></table>
-      <p class="small muted">Labour times are the assessor's figures, entered or adjusted from this software's own guide times; they are not manufacturer- or Thatcham-published times unless stated in the line. Part prices are exclusive of VAT.${lines.some((l) => l.ai && !l.reviewed) ? ' † AI-suggested line not yet reviewed by the assessor.' : ''}</p>
+      <p class="small muted">Labour times are the assessor's figures, entered or adjusted from this software's own guide times; they are not manufacturer- or Thatcham-published times unless stated in the line.${guideBasis} Part prices are exclusive of VAT.${lines.some((l) => l.ai && !l.reviewed) ? ' † AI-suggested line not yet reviewed by the assessor.' : ''}</p>
       <h3>Estimate notes</h3><div class="box">${para(job.estimateNotes)}</div>`));
 
     pages.push(page(`${sec('REPAIR COSTS SUMMARY')}
@@ -634,11 +685,9 @@
       <h3>Customer notes</h3><div class="box">${para(c.notes)}</div>`));
 
     // 13 Sign-off
-    const examiner = String(insp.by || '').trim();
-    const examinerQuals = String(insp.byQualifications || '').trim();
-    const examinerIsAuthor = !!examiner && !!as.name && examiner.toLowerCase() === String(as.name).trim().toLowerCase();
+    const supervision = !showSupervision ? '' : supervised === 'yes' ? ', under my supervision' : supervised === 'no' ? ', not under my supervision' : '';
     const examination = examiner
-      ? `The examination of the vehicle described in section 04 was carried out by ${examinerIsAuthor ? 'me' : esc(examiner)}${examinerQuals && !examinerIsAuthor ? ` (${esc(examinerQuals)})` : ''}.`
+      ? `The examination of the vehicle described in section 04 was carried out by ${examinerIsAuthor ? 'me' : esc(examiner)}${examinerQuals && !examinerIsAuthor ? ` (${esc(examinerQuals)})` : ''}${supervision}.${showSupervision && !supervision ? ' Whether it was carried out under my supervision has not been recorded.' : ''}`
       : 'The person who carried out the examination of the vehicle described in section 04 has not been recorded.';
     const cprBlock = cpr ? `<h3>Expert's duty and statement of truth (CPR Part 35)</h3>
         <p>I understand that my duty is to help the court on matters within my expertise, and that this duty overrides any obligation to those instructing or paying me. I have complied with that duty and will continue to do so. I am aware of the requirements of CPR Part 35, Practice Direction 35 and the Guidance for the Instruction of Experts in Civil Claims 2014.</p>

@@ -236,7 +236,8 @@ ${METHOD_RULES}
 Drafting the report narrative:
 - Write in the formal, measured style of a UK independent engineer's report.
 - Quote only figures given in the request; never invent a figure. When no pre-accident value (PAV) has been adopted, do not state a PAV, a repair-to-value percentage or an economic-repair conclusion: say that the valuation is outstanding.
-- decision: "Beyond Economical Repair / Total Loss Recommended" only when the figures support it; "Repair" or "Further investigation required" otherwise. category: "N" or "S" only together with the total-loss decision, otherwise "".
+- decision: "Beyond Economical Repair / Total Loss Recommended" when the figures show that repair is uneconomical, or when the vehicle cannot be safely repaired at any cost (for example burnt out, or its structure destroyed: Category A or B, which does not depend on the figures); "Repair" or "Further investigation required" otherwise.
+- category: only together with the total-loss decision, otherwise "". "A" (scrap) or "B" (break for parts, shell crushed) for a vehicle that must never return to the road; "S" for a repairable vehicle with structural damage; "N" for a repairable vehicle with no structural damage. A category the assessor has recorded stands unless the evidence clearly shows another: then give it and say why in review_flags.
 - Keep the assessor's facts; never present an earlier AI draft as the assessor's own finding or wording.
 - List anything the assessor must check before signing in review_flags.`;
 
@@ -348,7 +349,7 @@ const NARRATIVE_SCHEMA = object({
   valuation_comments: { type: 'string', description: 'Use **bold** for figures' },
   opinion: { type: 'string', description: "Engineer's opinion, several paragraphs, ending with the recommendation" },
   decision: { type: 'string', enum: ['Repair', 'Beyond Economical Repair / Total Loss Recommended', 'Further investigation required'] },
-  category: { type: 'string', enum: ['N', 'S', ''], description: 'Salvage category: only with the total-loss decision, otherwise ""' },
+  category: { type: 'string', enum: ['A', 'B', 'S', 'N', ''], description: 'Salvage category, only with the total-loss decision, otherwise "": A (scrap) or B (break for parts) for a vehicle that must never return to the road, S (structural damage, repairable) or N (no structural damage, repairable)' },
   review_flags: { type: 'array', items: { type: 'string' }, description: 'Issues the assessor should check before signing' }
 });
 
@@ -428,6 +429,50 @@ function maxOutputFor(model) {
   if (/claude-3-5|claude-3-(?:opus|sonnet|haiku)/.test(m)) return 8192;
   return 128000;
 }
+/**
+ * The thinking and effort settings a model accepts (anything else is a 400). The request is built for the model it
+ * names, and a server-side fallback re-sends the same request on another model, so the settings are always explicit:
+ *  - Claude 4.6 and later, and any model this file does not recognise (a newer one): adaptive thinking. With no
+ *    `thinking` field, Opus 4.6 / 4.7 / 4.8 and Sonnet 4.6 run WITHOUT thinking (Opus 5.5 and the other current models
+ *    think either way). Every effort level, except "xhigh" on Opus 4.6 and Sonnet 4.6 (it arrived with Opus 4.7).
+ *  - Opus 4.5, Sonnet 4.5 and Haiku 4.5 (and the retired 4.1 / 4 / Sonnet 3.7): "adaptive" is a 400, so thinking gets a
+ *    token budget below max_tokens. Effort: Opus 4.5 up to "high"; Sonnet 4.5, Haiku 4.5 and the older ones none.
+ *  - Claude 3 and 3.5 (retired): no thinking and no effort.
+ */
+function modelProfile(model) {
+  const m = str(model).toLowerCase();
+  if (/claude-3-(?:5|opus|sonnet|haiku)/.test(m)) return { thinking: 'none', efforts: [] };
+  if (/claude-opus-4-5(?!\d)/.test(m)) return { thinking: 'budget', efforts: ['low', 'medium', 'high'] };
+  if (/claude-(?:sonnet|haiku)-4-5(?!\d)|claude-(?:opus|sonnet)-4-1(?!\d)|claude-(?:opus|sonnet)-4-\d{8}|claude-(?:opus|sonnet)-4$|claude-3-7/.test(m)) return { thinking: 'budget', efforts: [] };
+  if (/claude-(?:opus|sonnet)-4-6(?!\d)/.test(m)) return { thinking: 'adaptive', efforts: ['low', 'medium', 'high', 'max'] };
+  return { thinking: 'adaptive', efforts: EFFORTS };
+}
+const THINKING_BUDGET = { low: 4000, medium: 8000, high: 16000, xhigh: 24000, max: 32000 }; // models that need a budget
+/**
+ * max_tokens, thinking and effort for `model` at the effort the engineer chose. A level the model does not have becomes
+ * the nearest lower one it has (never more than was asked for); a model without effort gets none. `effort` is null then.
+ */
+function modelParams(model, effort) {
+  const p = modelProfile(model);
+  const wanted = cleanEffort(effort);
+  const maxTokens = maxOutputFor(model);
+  const level = EFFORTS.slice(0, EFFORTS.indexOf(wanted) + 1).reverse().find((e) => p.efforts.includes(e)) || p.efforts[0] || null;
+  const thinking = p.thinking === 'adaptive' ? { type: 'adaptive' }
+    : p.thinking === 'budget' ? { type: 'enabled', budget_tokens: Math.max(1024, Math.min(THINKING_BUDGET[wanted], Math.floor(maxTokens / 2))) }
+      : null;
+  return { max_tokens: maxTokens, thinking, effort: level };
+}
+/** Point a request at `model`: its model, max_tokens, thinking and output_config.effort (the format is kept). */
+function applyModel(req, model, effort) {
+  const p = modelParams(model, effort);
+  req.model = model;
+  req.max_tokens = p.max_tokens;
+  if (p.thinking) req.thinking = p.thinking; else delete req.thinking;
+  const oc = Object.assign({}, req.output_config);
+  if (p.effort) oc.effort = p.effort; else delete oc.effort;
+  if (Object.keys(oc).length) req.output_config = oc; else delete req.output_config;
+  return req;
+}
 /** Image resolution tier: Claude 4.7 and later models see up to 2576 px / 4784 visual tokens, earlier ones 1568 / 1568. */
 function imageTier(model) {
   const m = str(model).toLowerCase();
@@ -451,6 +496,20 @@ function markFallbacksUnsupported(err) {
 /** An error event that arrived mid-stream (HTTP 200 first) for an overload or a server fault: worth one retry. */
 function isTransientStreamError(err) {
   return err instanceof Anthropic.APIError && !(err instanceof Anthropic.APIConnectionError) && err.status == null && ['overloaded_error', 'api_error'].includes(err.type);
+}
+// A reply that broke off after it had started (HTTP 200): the connection dropped (Wi-Fi, a proxy, a reset) or the
+// stream ended early. The SDK's own retries only cover the time before the reply starts; it raises these as a plain
+// AnthropicError that wraps the transport error ("terminated" under Node, "net::ERR_…" under Electron's net.fetch) or
+// says that the stream ended without a message.
+const STREAM_CUT = /stream ended without producing a Message|request ended without sending any chunks/i;
+const TRANSPORT = /\bterminated\b|net::ERR_|\bE(?:CONNRESET|CONNABORTED|PIPE|TIMEDOUT|NETRESET|NETUNREACH|HOSTUNREACH)\b|\bUND_ERR_|socket hang up|other side closed|premature close|network error/i;
+const STREAM_DROPPED = 'The connection to the AI service was interrupted while it was answering. Check your internet connection (and any proxy or firewall) and try again.';
+function isStreamDrop(err) {
+  if (!(err instanceof Anthropic.AnthropicError) || err instanceof Anthropic.APIError) return false;
+  if (STREAM_CUT.test(str(err.message))) return true;
+  const c = err.cause;
+  if (!c || typeof c !== 'object') return false;
+  return TRANSPORT.test([c.message, c.code, c.cause && c.cause.code, c.cause && c.cause.message].map(str).join(' '));
 }
 
 /**
@@ -517,6 +576,7 @@ function refusalError(message) {
 }
 function logFailure(feature, err) {
   if (err instanceof Anthropic.APIError) console.warn(`[ai] ${feature} request failed:`, { status: err.status, type: err.type, code: err.errorCode, requestID: err.requestID });
+  else if (isStreamDrop(err)) console.warn(`[ai] ${feature} request failed: the reply broke off again (${scrubSecrets(err.message)}).`);
 }
 
 /**
@@ -525,12 +585,7 @@ function logFailure(feature, err) {
  * across every request of the turn and returns the parsed JSON with every content block seen.
  */
 async function callModel({ feature, model, effort, schema, system, content, tools, autoCache }) {
-  const base = {
-    model: cleanModel(model),
-    system,
-    output_config: { effort: cleanEffort(effort), format: { type: 'json_schema', schema } }
-  };
-  base.max_tokens = maxOutputFor(base.model);
+  const base = applyModel({ system, output_config: { format: { type: 'json_schema', schema } } }, cleanModel(model), effort);
   if (tools && tools.length) base.tools = tools;
   if (autoCache) base.cache_control = { type: 'ephemeral' }; // the turn's later requests re-send the growing prefix
   const user = { role: 'user', content };
@@ -558,8 +613,14 @@ async function callModel({ feature, model, effort, schema, system, content, tool
         beta = false;
         continue;
       }
-      if (isTransientStreamError(err) && streamRetries < 1) { streamRetries++; continue; }
+      const dropped = isStreamDrop(err);
+      if ((dropped || isTransientStreamError(err)) && streamRetries < 1) {
+        streamRetries++;
+        if (dropped) console.warn(`[ai] ${feature}: the reply broke off (${scrubSecrets(err.message)}); sending the request once more.`);
+        continue;
+      }
       logFailure(feature, err);
+      if (dropped) throw new AiError('stream_interrupted', STREAM_DROPPED, { cause: err });
       throw err;
     }
     addUsage(usage, message);
@@ -570,8 +631,7 @@ async function callModel({ feature, model, effort, schema, system, content, tool
       const rec = str(obj(message.stop_details).recommended_model).trim();
       if (rec && rec !== base.model) {
         rerouted = true;
-        base.model = rec;
-        base.max_tokens = maxOutputFor(rec);
+        applyModel(base, rec, effort); // that model's own thinking, effort and output limit
         turn = []; blocks = []; container = null;
         continue;
       }
@@ -1070,24 +1130,32 @@ Task: draft every narrative section of the engineering report in the formal, mea
 - ${hasPav ? 'Quote the exact totals and percentages above.' : 'Quote the repair totals above. Do not state a PAV, a repair/PAV percentage or an economic-repair conclusion, and do not recommend a total loss on economic grounds: say that the valuation is outstanding, and add a review flag.'}
 - Keep the facts in text whose source is "assessor" and improve the wording. Text marked as an earlier AI draft is not the assessor's: check it against the evidence and do not present it as their finding.
 - State clearly what was not inspected (pre-strip, no dismantling) where that applies.
-- Recommend a decision only as far as the evidence supports. Give a salvage category (N or S) only with the decision "Beyond Economical Repair / Total Loss Recommended"; with "Repair" or "Further investigation required" the category is "".
+- Recommend a decision only as far as the evidence supports. Give a salvage category (A, B, S or N, as your instructions define them) only with the decision "Beyond Economical Repair / Total Loss Recommended"; with "Repair" or "Further investigation required" the category is "". A total loss because the vehicle cannot be safely repaired at all (Category A or B) does not depend on the figures.
 - List anything the assessor must check in review_flags.`
   }];
   const res = await callModel({ feature: 'narrative', model, effort, schema: NARRATIVE_SCHEMA, system: [{ type: 'text', text: NARRATIVE_SYSTEM, cache_control: { type: 'ephemeral' } }], content });
-  return Object.assign(sanitiseNarrative(res.data, hasPav), { model: res.model, usage: res.usage });
+  const given = str(getPath(job, 'outcome.category')).trim().toUpperCase();
+  const recorded = CATEGORIES.includes(given) && provenance(job, 'outcome.category', getPath(job, 'outcome.category')) === 'assessor' ? given : '';
+  return Object.assign(sanitiseNarrative(res.data, hasPav, recorded), { model: res.model, usage: res.usage });
 }
 
-function sanitiseNarrative(d, hasPav) {
+const CATEGORIES = NARRATIVE_SCHEMA.properties.category.enum; // A, B, S, N or ''
+/** `recorded`: the salvage category the assessor entered themselves ('' when none, or when an earlier AI draft set it). */
+function sanitiseNarrative(d, hasPav, recorded) {
   d = obj(d);
   const out = {};
   for (const k of Object.keys(NARRATIVE_SCHEMA.properties)) if (k !== 'review_flags') out[k] = str(d[k]);
   const flags = arr(d.review_flags).map(str).filter((s) => s.trim());
   if (!NARRATIVE_SCHEMA.properties.decision.enum.includes(out.decision)) out.decision = '';
   const totalLoss = /total loss|beyond economical/i.test(out.decision);
-  if (!['N', 'S', ''].includes(out.category)) out.category = '';
+  if (!CATEGORIES.includes(out.category)) out.category = '';
   if (out.category && !totalLoss) {
     flags.push(`The draft suggested salvage Category ${out.category}, but a salvage category applies only to a total loss that will not be repaired, so it has been left blank.`);
     out.category = '';
+  }
+  if (out.category && recorded && out.category !== recorded) {
+    const downgrade = /^[AB]$/.test(recorded) && /^[SN]$/.test(out.category);
+    flags.push(`The draft suggests salvage Category ${out.category}, but you recorded Category ${recorded}${downgrade ? ` (a Category ${recorded} vehicle must never return to the road; Category ${out.category} is repairable)` : ''}. Check the category before applying the draft.`);
   }
   if (!hasPav) {
     flags.push('No pre-accident value (PAV) has been adopted, so the draft gives no repair-to-value ratio or economic-repair conclusion. Adopt a PAV and redraft the valuation comments and opinion.');
@@ -1126,6 +1194,11 @@ function urlKey(u) {
     const p = x.pathname.replace(/\/+$/, '');
     return { https: x.protocol === 'https:', full: host + p + x.search, hostPath: host + p };
   } catch (e) { return null; }
+}
+/** A web address typed without a scheme ("www.dealer.co.uk/stock/123") as an https URL; anything else unchanged. */
+function withScheme(u) {
+  const s = str(u).trim();
+  return s && !/^[a-z][a-z0-9+.-]*:/i.test(s) && /^[a-z0-9-]+(?:\.[a-z0-9-]+)+(?::\d+)?(?:[/?#]|$)/i.test(s) ? 'https://' + s : s;
 }
 /** Every result URL in the turn's web_search_tool_result blocks (including searches run from code execution). */
 function searchResultUrls(blocks) {
@@ -1223,15 +1296,22 @@ function sanitiseValuation(d, { resultUrls, engineerUrls }) {
     comparables: [], flags: arr(d.flags).map(str).filter((s) => s.trim()), comments: str(d.comments)
   };
   if (out.range_low > out.range_high) [out.range_low, out.range_high] = [out.range_high, out.range_low];
-  const known = resultUrls.concat(arr(engineerUrls)).map(urlKey).filter(Boolean);
+  // A link is kept when it is one of the engineer's own adverts (http or https, as they entered it), or an https link
+  // from this run's web search results. Any other link the model gives is removed (and kept as claimed_url).
+  const found = arr(resultUrls).map(urlKey).filter(Boolean);
+  const own = arr(engineerUrls).map((u) => ({ href: withScheme(u), key: urlKey(withScheme(u)) })).filter((o) => o.key);
   const unverified = [];
   for (const c of arr(d.comparables)) {
     if (!c || typeof c !== 'object') continue;
-    const k = urlKey(c.url);
-    const verified = !!(k && k.https && known.some((r) => r.full === k.full || r.hostPath === k.hostPath));
+    const given = str(c.url).trim();
+    const k = urlKey(withScheme(given));
+    const same = (r) => !!k && (r.full === k.full || r.hostPath === k.hostPath);
+    const mine = own.find((o) => same(o.key));
+    const searched = !!(k && /^https:\/\//i.test(given) && found.some(same));
+    const verified = !!(mine || searched);
     const item = {
       description: str(c.description), year: str(c.year), mileage: Math.max(0, Math.round(num(c.mileage))), price: money(c.price),
-      source: str(c.source), url: verified ? str(c.url).trim() : '', like_for_like: c.like_for_like === true, notes: str(c.notes), verified
+      source: str(c.source), url: mine ? mine.href : searched ? given : '', like_for_like: c.like_for_like === true, notes: str(c.notes), verified
     };
     if (!verified) {
       if (str(c.url).trim()) item.claimed_url = str(c.url).trim().slice(0, 500);
@@ -1247,12 +1327,11 @@ function sanitiseValuation(d, { resultUrls, engineerUrls }) {
 
 // ---------- connection test ----------
 async function testConnection({ model } = {}) {
-  const msg = await client().messages.create({
-    model: cleanModel(model),
-    max_tokens: 2000,
-    output_config: { effort: 'low' },
-    messages: [{ role: 'user', content: 'Reply with the single word: ready' }]
-  });
+  // The model's own thinking and effort settings at their lowest, so the test sends what the real requests send.
+  const req = applyModel({ messages: [{ role: 'user', content: 'Reply with the single word: ready' }] }, cleanModel(model), 'low');
+  req.max_tokens = 2000;
+  if (req.thinking && req.thinking.type === 'enabled') req.thinking = { type: 'enabled', budget_tokens: 1024 };
+  const msg = await client().messages.create(req);
   return { ok: true, model: msg.model };
 }
 
@@ -1309,7 +1388,10 @@ function explainError(err) {
     return `AI service error (HTTP ${err.status})${said}`;
   }
   const message = str(err && err.message);
-  if (err instanceof A.AnthropicError && /Could not resolve authentication method/i.test(message)) return 'No AI key set. Add your Anthropic API key in Settings → AI.';
+  // No key, no ANTHROPIC_API_KEY and no profile. The streaming calls get this wrapped in an AnthropicError; a plain
+  // messages.create() (Test connection) gets the SDK's bare Error.
+  if (err instanceof Error && /Could not resolve authentication method/i.test(message)) return 'No AI key set. Add your Anthropic API key in Settings → AI.';
+  if (isStreamDrop(err)) return STREAM_DROPPED;
   if (/invalid header value|ByteString/i.test(message)) return 'The API key contains characters that are not allowed (for example a line break). Paste the key again in Settings → AI.';
   return message || String(err);
 }
@@ -1319,7 +1401,7 @@ module.exports = {
   get SYSTEM() { const c = loadCatalogue(); return c ? c.system : ''; },
   NARRATIVE_SYSTEM, VALUATION_SYSTEM, PHOTO_SCHEMA, NARRATIVE_SCHEMA, VALUATION_SCHEMA, LINE_OPERATIONS, UK_LISTING_DOMAINS,
   // pure helpers, exported for the offline tests
-  _test: { extractJSON, sniffImage, resizedSize, toFractionBox, guideHours: (code, op) => guideHours(requireCatalogue(), code, op), echoContent, normaliseEnums, scrubSecrets, cleanKey, isFallbackUnsupported, maxOutputFor, imageTier, sourceKind, paintFinishWords: PAINT_FINISH_WORDS }
+  _test: { extractJSON, sniffImage, resizedSize, toFractionBox, guideHours: (code, op) => guideHours(requireCatalogue(), code, op), echoContent, normaliseEnums, scrubSecrets, cleanKey, isFallbackUnsupported, maxOutputFor, imageTier, modelParams, isStreamDrop, withScheme, sourceKind, paintFinishWords: PAINT_FINISH_WORDS }
 };
 
 loadCatalogue(); // load at start-up; a failure only disables the AI features (aiStatus says why)

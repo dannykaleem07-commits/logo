@@ -65,8 +65,21 @@ function trustedSender(event) {
     if (!win || win.isDestroyed() || !event || !event.sender || event.sender.id !== win.webContents.id) return false;
     const frame = event.senderFrame;
     if (!frame || frame.detached || frame.parent) return false; // the top frame only, never an iframe
-    return isAppUrl(frame.url);
+    return isAppUrl(frame.url) && !hasForeignLocalFrame(win.webContents);
   } catch (e) { return false; }
+}
+/**
+ * True while an iframe of the window shows a local file other than the app page. Such a frame shares the page's file:
+ * origin, so its script could call the bridge through the top frame, and the call would arrive as the top frame's. The
+ * navigation guards never let one load (see createWindow); this is the second line: nothing is answered meanwhile.
+ * The page's own srcdoc / about:blank frames (the report preview) are not file: URLs.
+ */
+function hasForeignLocalFrame(wc) {
+  const top = wc && wc.mainFrame;
+  const frames = top && Array.isArray(top.framesInSubtree) ? top.framesInSubtree : [];
+  return frames.some((f) => {
+    try { return !!f.parent && !f.detached && /^file:/i.test(String(f.url)) && !isAppUrl(f.url); } catch (e) { return false; } // a frame that is just going away
+  });
 }
 /** With {withSender:true} the handler gets the calling webContents first, for state kept per window (backups). */
 function handle(channel, fn, opts) {
@@ -380,7 +393,7 @@ const BACKUP_MSG = {
 const epochOf = (owner) => backupEpochs.get(owner) || 0;
 const isWriting = (b) => b.state === 'open' || b.state === 'ending';
 const writingBackup = (owner) => [...backups.values()].some((b) => b.owner === owner && isWriting(b));
-const backupError = (err, what) => fsMessage(err, what) || `${what} (${(err && (err.code || err.message)) || 'error'}).`;
+const backupError = (err, what) => saveError(err, what);
 function backupFor(sender, id) {
   const b = typeof id === 'string' ? backups.get(id) : null;
   return b && b.owner === sender.id ? b : null;
@@ -432,10 +445,19 @@ async function renameWithRetry(from, to) {
     try { await fs.promises.rename(from, to); return; } catch (err) {
       const code = err && err.code;
       const transient = code === 'EBUSY' || (process.platform === 'win32' && (code === 'EPERM' || code === 'EACCES'));
-      if (!transient || attempt >= 8) throw err;
+      if (!transient || attempt >= 8) { if (err && typeof err === 'object') err.atRename = true; throw err; }
       await new Promise((r) => setTimeout(r, 100 * attempt));
     }
   }
+}
+/**
+ * The message for a failed save of a file the user chose. Replacing the chosen file is the last step (a rename), and on
+ * Windows a file that another program holds open (a PDF viewer, an editor) then fails with EPERM / EACCES, not EBUSY:
+ * the .part file was created in that folder a moment before, so it is not a matter of permission there.
+ */
+function saveError(err, what) {
+  const inUse = !!(err && err.atRename) && process.platform === 'win32' && (err.code === 'EPERM' || err.code === 'EACCES');
+  return (inUse ? `${what}: ${FS_WHY.EBUSY}` : fsMessage(err, what)) || `${what} (${(err && (err.code || err.message)) || 'error'}).`;
 }
 /** Close and delete the temporary file (once, however often it is asked for). */
 function discardBackup(b) {
@@ -559,6 +581,42 @@ async function backupAbort(sender, id) {
   return { ok: true };
 }
 
+// ---------- saving a file the user chose: file:save (job export) and pdf:export ----------
+// Written the way a backup is: "<chosen file>.<uuid>.part" in the chosen folder ('wx': never an existing file),
+// flushed to disk, then renamed over the chosen file. A failed or interrupted write (disk full, a network share
+// dropping, the app closing) never truncates or replaces an earlier file of that name, and leaves no temporary file.
+// Quitting waits for a save that is under way, rendering included (see onBeforeQuit).
+const saveTemps = new Set(); // .part files of saves not finished yet (deleted synchronously as a last resort when the app quits)
+const pendingSaves = new Set(); // file:save / pdf:export runs still going
+const SAVE_CLOSING = 'Engineer Report Studio is closing, so nothing was saved.';
+async function writeFileAtomic(target, data, encoding) {
+  const tmp = `${target}.${crypto.randomUUID()}.part`;
+  let fh = null;
+  try {
+    fh = await fs.promises.open(tmp, 'wx');
+    saveTemps.add(tmp);
+    await fh.writeFile(data, encoding);
+    await fh.sync(); // on the disk before it replaces anything
+    await fh.close();
+    fh = null;
+    await renameWithRetry(tmp, target);
+    saveTemps.delete(tmp);
+  } finally {
+    if (fh) await fh.close().catch(() => {});
+    if (saveTemps.has(tmp)) { // not renamed: delete what was written
+      try { await fs.promises.rm(tmp, { force: true, maxRetries: 5, retryDelay: 100 }); saveTemps.delete(tmp); } catch (e) { /* deleted at quit */ }
+    }
+  }
+}
+/** Run one save (dialog already answered) so that quitting waits for it. */
+function trackSave(run) {
+  const p = run();
+  const done = () => { pendingSaves.delete(p); };
+  pendingSaves.add(p);
+  p.then(done, done);
+  return p;
+}
+
 // ---------- quitting ----------
 let quitting = false;
 let quitCleanupDone = false;
@@ -566,13 +624,15 @@ function onBeforeQuit(e) {
   quitting = true;
   if (quitCleanupDone) return;
   for (const b of [...backups.values()]) abortBackup(b);
-  if (!backupCleanups.size) return;
-  // Let open backups close and delete their temporary files first (at most 5 s), then quit for real.
+  const waits = [...backupCleanups, ...pendingSaves];
+  if (!waits.length) return;
+  // Let open backups close and delete their temporary files, and a save or PDF export under way finish (together at
+  // most 5 s), then quit for real. A save cut off then leaves the earlier file as it was; will-quit deletes its .part.
   e.preventDefault();
-  withTimeout(Promise.allSettled([...backupCleanups]), 5000, 'cleanup').catch(() => {}).then(() => { quitCleanupDone = true; app.quit(); });
+  withTimeout(Promise.allSettled(waits), 5000, 'cleanup').catch(() => {}).then(() => { quitCleanupDone = true; app.quit(); });
 }
 function onWillQuit() {
-  for (const tmp of backupTemps) { try { fs.rmSync(tmp, { force: true }); } catch (e) { /* left for the user to delete */ } }
+  for (const tmp of [...backupTemps, ...saveTemps]) { try { fs.rmSync(tmp, { force: true }); } catch (e) { /* left for the user to delete */ } }
 }
 
 // ---------- the page crashing or hanging ----------
@@ -746,31 +806,40 @@ function registerIpc() {
     const header = typeof p.header === 'string' ? p.header : '';
     const footer = typeof p.footer === 'string' ? p.footer : '';
     if (header.length > 8e6 || footer.length > 8e6) return { ok: false, error: 'The report header or footer is too large (is the logo very big?).' };
+    if (quitting) return { ok: false, error: SAVE_CLOSING };
     const filePath = await askSavePath('pdf', p.fileName, 'engineering-report', 'Save report as PDF');
     if (!filePath) return { ok: false, canceled: true };
-    let pdf;
-    try {
-      pdf = await renderPdf(p.html, { header, footer, margins: pdfMargins(p.marginsMm) });
-    } catch (err) {
-      if (err && typeof err.code === 'string' && /^E[A-Z]+$/.test(err.code)) {
-        return { ok: false, error: `The PDF could not be prepared (${err.code}) in the Windows temporary folder. Check that there is free disk space and that the TEMP folder exists.` };
+    if (quitting) return { ok: false, error: SAVE_CLOSING };
+    return trackSave(async () => {
+      let pdf;
+      try {
+        pdf = await renderPdf(p.html, { header, footer, margins: pdfMargins(p.marginsMm) });
+      } catch (err) {
+        if (err && typeof err.code === 'string' && /^E[A-Z]+$/.test(err.code)) {
+          return { ok: false, error: `The PDF could not be prepared (${err.code}) in the Windows temporary folder. Check that there is free disk space and that the TEMP folder exists.` };
+        }
+        return { ok: false, error: `The PDF could not be created: ${redactAll(String((err && err.message) || err))}` };
       }
-      return { ok: false, error: `The PDF could not be created: ${redactAll(String((err && err.message) || err))}` };
-    }
-    try { await fs.promises.writeFile(filePath, pdf); } catch (err) { return { ok: false, error: fsMessage(err, 'The PDF could not be saved') || `The PDF could not be saved (${err.code || err.message}).` }; }
-    rememberDir(filePath);
-    Promise.resolve(shell.openPath(filePath)).catch(() => {});
-    return { ok: true, filePath };
+      try { await writeFileAtomic(filePath, pdf); } catch (err) { return { ok: false, error: saveError(err, 'The PDF could not be saved') }; }
+      rememberDir(filePath);
+      if (!quitting) Promise.resolve(shell.openPath(filePath)).catch(() => {}); // not once the app is closing
+      return { ok: true, filePath };
+    });
   });
   handle('file:save', async (p) => {
     if (!isObj(p) || typeof p.content !== 'string') return { ok: false, error: 'There is nothing to save.' };
     const kind = p.kind === 'json' || !p.kind ? 'json' : null; // renderer-supplied filters are ignored
     if (!kind) return { ok: false, error: 'That file type cannot be saved.' };
+    if (quitting) return { ok: false, error: SAVE_CLOSING };
     const filePath = await askSavePath(kind, p.fileName, 'export', 'Save file');
     if (!filePath) return { ok: false, canceled: true };
-    try { await fs.promises.writeFile(filePath, p.content, 'utf8'); } catch (err) { return { ok: false, error: fsMessage(err, 'The file could not be saved') || `The file could not be saved (${err.code || err.message}).` }; }
-    rememberDir(filePath);
-    return { ok: true, filePath };
+    if (quitting) return { ok: false, error: SAVE_CLOSING };
+    const content = p.content;
+    return trackSave(async () => {
+      try { await writeFileAtomic(filePath, content, 'utf8'); } catch (err) { return { ok: false, error: saveError(err, 'The file could not be saved') }; }
+      rememberDir(filePath);
+      return { ok: true, filePath };
+    });
   });
 
   // Streaming backup (see "streaming backups" above): begin → write … → end, or abort on any error.
@@ -804,6 +873,15 @@ function createWindow() {
   });
   // The window may only show the app's own index.html. Anything else (a dropped .html or photo file, another local or
   // network page, a web link without target=_blank) is cancelled; web links open in the system browser instead.
+  // will-frame-navigate covers every frame, the top one and any iframe: an iframe showing another local file would share
+  // the page's file: origin and reach the bridge through the top frame. Electron emits it before will-navigate and, when
+  // it is prevented, emits no will-navigate, so the top frame's web links are handed to the system browser here. The
+  // page's srcdoc / about:blank iframes (the report preview) are created without a navigation event.
+  wc.on('will-frame-navigate', (e) => {
+    if (isAppUrl(e.url)) return;
+    e.preventDefault();
+    if (e.isMainFrame && isWeb(e.url)) shell.openExternal(e.url).catch(() => {});
+  });
   wc.on('will-navigate', (e, legacyUrl) => {
     const url = (e && e.url) || legacyUrl;
     if (isAppUrl(url)) return;
@@ -819,13 +897,22 @@ function createWindow() {
   // Windows shutting down or logging off: no before-quit / will-quit follows, so clean up now and show no dialogs.
   win.on('session-end', () => { quitting = true; abortBackupsOf(wcId); onWillQuit(); });
   wc.on('did-navigate', () => abortBackupsOf(wcId)); // a new document (reload): in-page #route changes do not count
-  wc.on('render-process-gone', (_e, details) => { onPageGone(w, wcId, details).catch(() => {}); });
+  let rendererGone = false;
+  wc.on('render-process-gone', (_e, details) => { rendererGone = true; onPageGone(w, wcId, details).catch(() => {}); });
   wc.on('unresponsive', () => { onPageUnresponsive(w, wcId).catch(() => {}); });
   win.loadFile(APP_INDEX).catch((err) => {
     if (/ERR_ABORTED|\(-3\)/.test(String(err && err.message))) return; // superseded by another load (e.g. a reload)
-    dialog.showErrorBox('Engineer Report Studio', `The app window could not be loaded.\n\n${(err && err.message) || err}`);
+    // A renderer that dies during this first load (a crash, or security software ending it) fails the load as well
+    // (ERR_FAILED), and Electron reports the renderer gone only a moment later. Wait for that, so that the crash dialog
+    // (Reload / Close) is then the only one: the error box is for a load that failed on its own.
+    setTimeout(() => {
+      if (rendererGone || quitting || w.isDestroyed() || rendererCrashed(wc)) return;
+      dialog.showErrorBox('Engineer Report Studio', `The app window could not be loaded.\n\n${(err && err.message) || err}`);
+    }, LOAD_FAILURE_GRACE_MS);
   });
 }
+const LOAD_FAILURE_GRACE_MS = 1500;
+function rendererCrashed(wc) { try { return wc.isCrashed() === true; } catch (e) { return false; } }
 function focusMainWindow() {
   if (!win || win.isDestroyed()) { if (app.isReady()) createWindow(); return; }
   if (win.isMinimized()) win.restore();
@@ -866,6 +953,11 @@ if (!app.requestSingleInstanceLock()) {
   app.on('web-contents-created', (_e, contents) => {
     contents.on('will-attach-webview', (e) => e.preventDefault());
     contents.setWindowOpenHandler(() => ({ action: 'deny' })); // the main window replaces this with its own handler
+    // Every page this app opens (the main window, the hidden PDF window) shows only what it was loaded with: no frame of
+    // it may navigate anywhere but app/index.html. DevTools (type "remote", only when running from source) is left alone.
+    let type = '';
+    try { type = contents.getType(); } catch (e) { /* guarded like a page */ }
+    if (type !== 'remote') contents.on('will-frame-navigate', (e) => { if (!isAppUrl(e.url)) e.preventDefault(); });
   });
   registerIpc();
   app.whenReady().then(onReady).catch((err) => {

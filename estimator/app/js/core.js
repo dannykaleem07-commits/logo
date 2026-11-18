@@ -10,8 +10,9 @@
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   // Tolerant number reader for stored and imported data: "£5,995" → 5995, "60,000" → 60000, "1,234.50" → 1234.5,
-  // a lone decimal comma "1,5" → 1.5, "1.234,56" → 1234.56, "−£56.34" → −56.34. Text after the number is ignored as
-  // parseFloat does ("1.5h" → 1.5, "1e3" → 1000); anything without a finite number → 0.
+  // a lone decimal comma "1,5" → 1.5, "0,600" → 0.6 (a group of thousands never starts with 0), "1.234,56" → 1234.56,
+  // "−£56.34" → −56.34. Text after the number is ignored as parseFloat does ("1.5h" → 1.5, "1e3" → 1000); anything
+  // without a finite number → 0.
   const NUM_IGNORE = /[\s\u00a0\u2007\u2009\u202f£]/g;
   const num = (v) => {
     if (typeof v === 'number') return isFinite(v) ? v : 0;
@@ -23,8 +24,8 @@
     if (!m) return 0;
     let t = m[2];
     if (t.includes(',')) {
-      if (/^\d{1,3}(?:,\d{3})+(?:\.\d*)?$/.test(t)) t = t.replace(/,/g, ''); // thousands separators
-      else if (/^\d{1,3}(?:\.\d{3})+,\d+$/.test(t)) t = t.replace(/\./g, '').replace(',', '.'); // 1.234,56
+      if (/^[1-9]\d{0,2}(?:,\d{3})+(?:\.\d*)?$/.test(t)) t = t.replace(/,/g, ''); // thousands separators
+      else if (/^[1-9]\d{0,2}(?:\.\d{3})+,\d+$/.test(t)) t = t.replace(/\./g, '').replace(',', '.'); // 1.234,56
       else if (!t.includes('.') && t.indexOf(',') === t.lastIndexOf(',')) t = t.replace(',', '.'); // a lone decimal comma
       else t = t.replace(/,/g, '');
     }
@@ -64,6 +65,13 @@
     const t = new Date(Date.UTC(2000, mo - 1, d));
     t.setUTCFullYear(y);
     return t.getUTCFullYear() === y && t.getUTCMonth() === mo - 1 && t.getUTCDate() === d ? { y, mo, d, text: m } : null;
+  }
+  // A date known only to the month ("2014-08", a real month) or the year ("1968"). → { y, mo } (mo 0: the year only), or null.
+  function partialDate(s) {
+    const m = /^(\d{4})(?:-(\d{2}))?$/.exec(typeof s === 'string' ? s.trim() : '');
+    if (!m) return null;
+    const mo = m[2] ? +m[2] : 0;
+    return m[2] && !(mo >= 1 && mo <= 12) ? null : { y: +m[1], mo };
   }
   // dd/mm/yyyy, or the text unchanged when it is not a valid date (never a silently shifted date)
   const ukDate = (iso) => {
@@ -111,7 +119,7 @@
   // Version 2 adds 'summaries' (one small record per job for the Jobs list, written in the same transaction as the job).
   const DB_NAME = 'engineer-report-studio';
   const DB_VERSION = 2;
-  const SUMMARY_VERSION = 1; // jobSummary() shape; older summaries are rebuilt
+  const SUMMARY_VERSION = 2; // jobSummary() shape; older summaries are rebuilt (2: settingsRates)
   let dbPromise = null;
   // An Error that keeps the storage error's name ('QuotaExceededError', 'ConflictError', …) with a readable message.
   const STORE_MESSAGES = {
@@ -132,24 +140,53 @@
     if (err) e.cause = err;
     return e;
   }
+  // Errors with which an upgrade of existing data can fail to commit (a full disk or quota, a storage write failure).
+  const UPGRADE_FAILURES = ['AbortError', 'QuotaExceededError', 'UnknownError'];
   function db() {
     if (dbPromise) return dbPromise;
-    const p = new Promise((resolve, reject) => {
-      let settled = false, blockedTimer = null;
-      const done = (fn, v) => { if (settled) return false; settled = true; clearTimeout(blockedTimer); fn(v); return true; };
+    const p = openDb(DB_VERSION).catch((err) => {
+      // The upgrade of existing data could not be committed (e.g. the disk is full): open the data at the version it already
+      // has instead, so every assessment can still be read, saved and backed up. Without a summaries store the Jobs list is
+      // built from the jobs. The upgrade is tried again on the next start.
+      if (!(err && err.upgradeFrom >= 1 && UPGRADE_FAILURES.includes(err.name))) throw err;
+      return openDb(null).catch(() => { throw err; });
+    }).then((d) => {
+      // a newer version opened elsewhere (another tab): let it upgrade, and reconnect on the next call
+      d.onversionchange = () => { try { d.close(); } catch (e) { /* already closed */ } if (dbPromise === p) dbPromise = null; };
+      d.onclose = () => { if (dbPromise === p) dbPromise = null; };
+      return d;
+    });
+    dbPromise = p;
+    p.catch(() => { if (dbPromise === p) dbPromise = null; }); // a failed open is retried on the next call
+    return p;
+  }
+  // One open request: at `version`, or (null) at the version the data already has, with no upgrade. A failure after the
+  // upgrade started carries err.upgradeFrom (the old version).
+  function openDb(version) {
+    return new Promise((resolve, reject) => {
+      let settled = false, blockedTimer = null, upgradeFrom = -1;
+      const stopTimer = () => { clearTimeout(blockedTimer); blockedTimer = null; };
+      const done = (fn, v) => { if (settled) return false; settled = true; stopTimer(); fn(v); return true; };
       let req;
-      try { req = indexedDB.open(DB_NAME, DB_VERSION); } catch (err) { done(reject, storeError(err, 'UnknownError')); return; }
-      req.onupgradeneeded = (e) => upgrade(req.result, req.transaction, (e && e.oldVersion) || 0);
+      try { req = version == null ? indexedDB.open(DB_NAME) : indexedDB.open(DB_NAME, version); } catch (err) { done(reject, storeError(err, 'UnknownError')); return; }
+      req.onupgradeneeded = (e) => {
+        stopTimer(); // the upgrade has started, so nothing blocks it any more (however long it takes)
+        upgradeFrom = (e && e.oldVersion) || 0;
+        upgrade(req.result);
+      };
       req.onsuccess = () => {
         const d = req.result;
-        if (!done(resolve, d)) { try { d.close(); } catch (e) { /* stale connection after a reported block */ } return; }
-        // a newer version opened elsewhere (another tab): let it upgrade, and reconnect on the next call
-        d.onversionchange = () => { try { d.close(); } catch (e) { /* already closed */ } if (dbPromise === p) dbPromise = null; };
-        d.onclose = () => { if (dbPromise === p) dbPromise = null; };
+        if (!done(resolve, d)) { try { d.close(); } catch (e) { /* stale connection after a reported block */ } }
       };
-      req.onerror = (e) => { if (e && e.preventDefault) e.preventDefault(); done(reject, storeError(req.error, 'UnknownError')); };
+      req.onerror = (e) => {
+        if (e && e.preventDefault) e.preventDefault();
+        const err = storeError(req.error, 'UnknownError');
+        if (upgradeFrom >= 0) err.upgradeFrom = upgradeFrom;
+        done(reject, err);
+      };
       // the upgrade waits while an older version of the app has the data open in another window or tab
       req.onblocked = () => {
+        if (upgradeFrom >= 0 || blockedTimer || settled) return;
         blockedTimer = setTimeout(() => {
           const e = new Error('The saved assessments are open in another window or tab of an older version of this app. Close it, then reload.');
           e.name = 'BlockedError';
@@ -157,48 +194,43 @@
         }, 4000);
       };
     });
-    dbPromise = p;
-    p.catch(() => { if (dbPromise === p) dbPromise = null; }); // a failed open is retried on the next call
-    return p;
   }
-  // Creates the stores; from version 1, also one summary per stored job through a cursor (one job in memory at a time),
-  // after reading the saved Settings as loadSettings() does (a legacy job without its own rates is totalled with them).
-  // Nothing here may abort the upgrade: a summary that cannot be built is rebuilt later by listSummaries().
-  function upgrade(d, t, oldVersion) {
+  // Creates the stores, and nothing else: the version-change transaction writes no records, so a nearly full disk or one
+  // unreadable job cannot stop the database opening. The summaries of existing jobs are built afterwards, in an ordinary
+  // transaction, by listSummaries() (and stored as each job is saved).
+  function upgrade(d) {
     if (!d.objectStoreNames.contains('jobs')) d.createObjectStore('jobs', { keyPath: 'id' });
     if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv');
-    if (d.objectStoreNames.contains('summaries')) return;
     try {
-      d.createObjectStore('summaries', { keyPath: 'id' });
-      if (!(oldVersion >= 1 && t)) return;
-      const g = quiet(t.objectStore('kv').get('settings'), () => fillSummaries(t, null));
-      g.onsuccess = () => {
-        try { if (g.result && typeof g.result === 'object') settings = deepMerge(clone(DEFAULT_SETTINGS), g.result); } catch (err) { /* defaults */ }
-        fillSummaries(t, null);
-      };
-    } catch (err) { /* no summaries yet: listSummaries() builds them */ }
+      if (!d.objectStoreNames.contains('summaries')) d.createObjectStore('summaries', { keyPath: 'id' });
+    } catch (err) { /* no summaries store: the Jobs list is built from the jobs */ }
   }
   // A request whose failure must not abort its transaction (the summaries are rebuilt later); then calls onError, if given.
   const quiet = (r, onError) => { r.onerror = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); } if (onError) onError(); }; return r; };
-  // Puts a summary for every job (or only for the keys in `only`, a Set), reading the jobs through a cursor, one at a time.
-  // onSummary(summary) sees each summary built (whether or not it could be stored); onEnd() runs when the cursor stops.
-  function fillSummaries(t, only, onSummary, onEnd) {
-    const sums = t.objectStore('summaries');
-    const end = () => { if (onEnd) { const f = onEnd; onEnd = null; f(); } };
-    const cur = t.objectStore('jobs').openCursor();
-    cur.onerror = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); } end(); };
-    cur.onsuccess = () => {
-      const c = cur.result;
-      if (!c) return end();
-      try {
-        if (!only || only.has(c.primaryKey)) {
-          const s = Object.assign(jobSummary(c.value), { id: c.primaryKey });
-          if (onSummary) onSummary(s);
-          quiet(sums.put(s));
-        }
-      } catch (err) { /* this one is left to the next check */ }
-      try { c.continue(); } catch (err) { end(); /* the rest is rebuilt by the next check */ }
+  // Builds and puts the summaries of the jobs `ids`, reading the jobs by key, one at a time (only those jobs are read).
+  // onSummary(summary) sees each summary built, whether or not it could be stored; a job that cannot be read is listed as
+  // unreadable (and not stored, so it is tried again next time). onEnd() runs when done.
+  function fillSummaries(t, ids, onSummary, onEnd) {
+    const sums = t.objectStore('summaries'), jobs = t.objectStore('jobs');
+    let i = 0;
+    const next = () => {
+      if (i >= ids.length) return onEnd();
+      const id = ids[i++];
+      let r;
+      try { r = jobs.get(id); } catch (err) { return onEnd(); /* the transaction ended: the rest is rebuilt by the next check */ }
+      quiet(r, () => { onSummary(Object.assign(jobSummary(null), { id, unreadable: 'This record could not be read.' })); next(); });
+      r.onsuccess = () => {
+        try {
+          if (r.result !== undefined) {
+            const s = Object.assign(jobSummary(r.result), { id });
+            onSummary(s);
+            quiet(sums.put(s));
+          }
+        } catch (err) { /* this one is left to the next check */ }
+        next();
+      };
     };
+    next();
   }
   const hasStore = (d, name) => { try { return d.objectStoreNames.contains(name); } catch (e) { return false; } };
   // One transaction over `stores`. fn(t, fail) issues the requests; the promise resolves with fn's result once the
@@ -240,13 +272,18 @@
       cur.onerror = () => reject(cur.error);
     }));
   }
-  // The stored summaries, checked against the jobs: a summary for every job, of the current shape (keys and the small
-  // summaries only, no job is read). → { list, need: Set of job ids needing a summary, orphans: summary ids without a job }
+  // The stored summaries, checked against the jobs: a summary for every job, of the current shape, and, for a job whose net
+  // uses Settings labour rates (no rate of its own), built with the current ones (keys and the small summaries only, no job
+  // is read). → { list, need: job ids needing a summary (in key order), orphans: summary ids without a job }
   function compareSummaries(ids, sums) {
-    const live = new Set(ids), have = new Map(), list = [], need = new Set(), orphans = [];
+    const live = new Set(ids), have = new Map(), list = [], need = [], orphans = [];
+    const rates = ratesFingerprint();
     for (const x of sums) if (x && x.id != null) have.set(x.id, x);
     for (const id of have.keys()) if (!live.has(id)) orphans.push(id);
-    for (const id of ids) { const x = have.get(id); if (x && x.v === SUMMARY_VERSION) list.push(x); else need.add(id); }
+    for (const id of ids) {
+      const x = have.get(id);
+      if (x && x.v === SUMMARY_VERSION && (x.settingsRates == null || x.settingsRates === rates)) list.push(x); else need.push(id);
+    }
     return { list, need, orphans };
   }
   const readBoth = (t, done, fail) => {
@@ -255,14 +292,14 @@
     keys.onerror = sums.onerror = (e) => fail(e && e.target && e.target.error);
     keys.onsuccess = sums.onsuccess = () => { if (!--pending) done(compareSummaries(keys.result || [], sums.result || [])); };
   };
-  // Repairs the summaries (missing after an interrupted upgrade, written by another version, or jobs stored by other
-  // means): drops summaries of deleted jobs and builds the missing ones through a cursor, one job at a time. Resolves with
-  // the complete list, including any summary that could not be stored.
+  // Repairs the summaries (none yet after the upgrade from version 1, written by another version, built with Settings rates
+  // since changed, or jobs stored by other means): drops summaries of deleted jobs and builds the missing or stale ones,
+  // reading only those jobs, one at a time. Resolves with the complete list, including any summary that could not be stored.
   function syncSummaries() {
     return tx(['jobs', 'summaries'], 'readwrite', (t) => new Promise((resolve, reject) => {
       readBoth(t, ({ list, need, orphans }) => {
         for (const id of orphans) quiet(t.objectStore('summaries').delete(id));
-        if (!need.size) return resolve(list);
+        if (!need.length) return resolve(list);
         fillSummaries(t, need, (x) => list.push(x), () => resolve(list));
       }, reject);
     }));
@@ -272,12 +309,13 @@
     async listJobs() { return tx('jobs', 'readonly', (t) => reqP(t.objectStore('jobs').getAll())); },
     async listJobIds() { return tx('jobs', 'readonly', (t) => reqP(t.objectStore('jobs').getAllKeys())); },
     // The Jobs list: one small summary per job (jobSummary), never the jobs themselves. A read-only check that every job
-    // has a current summary (keys and summaries only); only if not, a repair through a cursor (syncSummaries).
+    // has a current summary (keys and summaries only); only if not, a repair that reads just those jobs (syncSummaries).
+    // When the repair cannot be stored (e.g. the disk is full), the list is built from the jobs without storing anything.
     async listSummaries() {
       const d = await db();
       if (!hasStore(d, 'summaries')) return liveSummaries();
       const now = await tx(['jobs', 'summaries'], 'readonly', (t) => new Promise((resolve, reject) => readBoth(t, resolve, reject)));
-      if (!now.need.size && !now.orphans.length) return now.list;
+      if (!now.need.length && !now.orphans.length) return now.list;
       try { const list = await syncSummaries(); if (Array.isArray(list)) return list; } catch (err) { /* e.g. storage full: built on the fly below */ }
       return liveSummaries();
     },
@@ -391,6 +429,27 @@
   const SIZE_CLASSES = { small: ['Small (city / supermini)', 0.9], medium: ['Medium (hatch / saloon)', 1.0], large: ['Large (exec / estate / MPV)', 1.1], suv: ['SUV / 4x4', 1.15], premium: ['Large premium / luxury', 1.2], lcv: ['Van / LCV', 1.15] };
   const sizeFactor = (job) => ((SIZE_CLASSES[(job && job.vehicle && job.vehicle.sizeClass) || 'medium'] || [0, 1])[1]);
   const paintFactor = (job) => num((settings.paintTypeFactor || {})[(job && job.vehicle && job.vehicle.paintType) || 'metallic'] || 1);
+  // The guide time for THIS vehicle from a catalogue guide `base` (the time for a medium-size vehicle with solid / metallic
+  // paint, as line.guideHours holds it), scaled as the picker scales it: renew, repair, paintless dent repair, remove & refit
+  // and operations by the size class; refinish, blend and smart repair by the size class and the paint finish; inspect,
+  // refurbish and labour operations not at all. Rounded as the picker rounds (one decimal, at least 0.1h): mirrors app.js
+  // guideFor() / scaleH() / scaleP(). → { hours, size, paint } (the factors applied, 1 where none is), or null when there is
+  // no guide, or the line's operation is unknown and the vehicle's factors are not both 1.
+  const SIZE_SCALED_OPS = ['renew', 'replace', 'repair1', 'repair', 'repair3', 'pdr', 'rr', 'operation'];
+  const PAINT_OPS = ['smart', 'refinish', 'refinishRep1', 'refinishRep2', 'blend'];
+  const UNSCALED_OPS = ['check', 'refurb', 'labour'];
+  function vehicleGuide(job, line, base) {
+    const l = line && typeof line === 'object' ? line : {};
+    const b = num(base == null ? l.guideHours : base);
+    if (!(b > 0)) return null;
+    const f = (x) => { const n = num(x); return n > 0 ? n : 1; };
+    const sf = f(sizeFactor(job)), pf = f(paintFactor(job));
+    const op = l.op == null ? '' : String(l.op).trim();
+    if (PAINT_OPS.includes(op)) return { hours: Math.max(0.1, Math.round(b * sf * pf * 10) / 10), size: sf, paint: pf };
+    if (SIZE_SCALED_OPS.includes(op)) return { hours: Math.max(0.1, Math.round(b * sf * 10) / 10), size: sf, paint: 1 };
+    if (UNSCALED_OPS.includes(op) || (sf === 1 && pf === 1)) return { hours: b, size: 1, paint: 1 };
+    return null;
+  }
   const sideWord = (s) => (s === 'R' ? 'RH' : s === 'L' ? 'LH' : '');
 
   // ---------- estimate-line helpers ----------
@@ -566,7 +625,8 @@
       updatedAt: new Date().toISOString(),
       report: {
         ref: '', date: todayISO(), version: '1.0', status: 'Draft', headline: '', subHeadline: '', cpr35: false, conflicts: 'I have no conflict of interest in relation to this matter.',
-        materialsRelied: '' // CPR 35: literature and other material relied on (PD 35 para 3.2(2)), printed in court-compliant mode
+        materialsRelied: '', // CPR 35: literature and other material relied on (PD 35 para 3.2(2)), printed in court-compliant mode
+        examinerSupervised: '' // CPR 35: 'yes' | 'no' | '' — an examination by someone else was under the expert's supervision (PD 35 para 3.2(5))
       },
       aiLog: [],
       aiFlags: [], // AI narrative-draft review flags kept until dismissed: [{ section, text, at }]
@@ -638,19 +698,26 @@
   const namedSources = (job) => arr(obj(obj(job).valuation).sources).filter((x) => x && txt(x.name).trim() && num(x.amount) > 0);
   // Explicit line rate → (finalised report: the issued rate for the line type, else its Body rate) → the job's own rate for
   // the line type → Settings rate for the type → Body rate (job, then Settings).
-  function lineRate(job, line) {
+  // → { rate, settings: true when it is a Settings rate, so that a later Settings change alters it }
+  function rateOf(job, line) {
     const l = obj(line);
-    if (l.rate != null && txt(l.rate).trim() !== '') return num(l.rate);
+    const fixed = (rate) => ({ rate, settings: false });
+    if (l.rate != null && txt(l.rate).trim() !== '') return fixed(num(l.rate));
     const type = txt(l.type);
     const iss = issuedOf(job);
     const ir = iss && iss.rates && typeof iss.rates === 'object' ? iss.rates : null;
-    if (ir && given(ir, type)) return num(ir[type]);
-    if (ir && given(ir, 'Body')) return num(ir.Body);
+    if (ir && given(ir, type)) return fixed(num(ir[type]));
+    if (ir && given(ir, 'Body')) return fixed(num(ir.Body));
     const jr = obj(job && job.rates), sr = obj(settings.rates);
-    if (given(jr, type)) return num(jr[type]);
-    if (given(sr, type)) return num(sr[type]);
-    return num(given(jr, 'Body') ? jr.Body : sr.Body);
+    if (given(jr, type)) return fixed(num(jr[type]));
+    if (given(sr, type)) return { rate: num(sr[type]), settings: true };
+    return given(jr, 'Body') ? fixed(num(jr.Body)) : { rate: num(sr.Body), settings: true };
   }
+  const lineRate = (job, line) => rateOf(job, line).rate;
+  // The Settings labour rates as one comparable string (a job summary built with other rates is rebuilt).
+  const ratesFingerprint = () => { const sr = obj(settings.rates); return JSON.stringify(Object.keys(sr).sort().map((k) => [k, given(sr, k) ? num(sr[k]) : null])); };
+  // True when the job's labour total uses a Settings rate (a line with hours and no rate of its own, job or issued).
+  const usesSettingsRates = (job) => arr(obj(job).lines).some((l) => l && typeof l === 'object' && num(l.hours) !== 0 && rateOf(job, l).settings);
   // What a finalised report freezes of the figures: the effective labour rate for every standard type and every line type in
   // use, and the VAT %. APP stores it as job.issued.rates / job.issued.vatPct; totals() then ignores later Settings changes.
   function rateSnapshot(job) {
@@ -684,7 +751,11 @@
     t.gross = round2(t.net + t.vat);
     const v = obj(job.valuation);
     t.pav = Math.max(0, num(v.adopted));
-    t.salvage = v.salvageOverride !== '' && v.salvageOverride != null ? num(v.salvageOverride) : round2(t.pav * num(v.salvagePct) / 100);
+    // salvage: the specific figure entered, else the % of PAV. A negative figure or % is an input error (qaChecks reports
+    // it): the figure is then ignored, as if not entered, and a negative % counts as 0.
+    t.salvagePct = Math.max(0, num(v.salvagePct));
+    t.salvageEntered = given(v, 'salvageOverride') && num(v.salvageOverride) >= 0;
+    t.salvage = t.salvageEntered ? num(v.salvageOverride) : round2(t.pav * t.salvagePct / 100);
     t.pctNet = t.pav ? round2(t.net / t.pav * 100) : 0;
     t.pctGross = t.pav ? round2(t.gross / t.pav * 100) : 0;
     // economic repair: the chosen basis, the unrounded ratio, and the default threshold when the setting is blank
@@ -706,22 +777,49 @@
   // do not count as recording structural damage.
   const STRUCT_PHRASE = /(?<!non[- ])structural (?:damage|deformation|distortion|failure)/i;
   const STRUCT_MEMBER = /(?<!non[- ])structural (?:members?|components?)|chassis (?:legs?|rails?|members?)|\b[abcd][- ]?pillars?\b|floor ?pans?|inner wings?|suspension turrets?|strut towers?|cross[- ]?members?|sill reinforcements?/i;
-  const DAMAGE_WORD = /damag|deform|distort|kink|buckl|crack|fractur|crush|\bbent\b|displac|misalign|pushed|creas|collaps|shear|\btorn\b|\bsplit\b|compromis|sectional|replace|renew|repair|straighten|out of (?:tolerance|alignment|datum|position)|affected|involved/i;
-  const NEGATION = /\b(?:no|not|nor|none|never|without|neither|nil)\b|n't\b|\bundamaged\b|\bunaffected\b|\bintact\b|\bfree (?:from|of)\b|\bruled out\b|\bexcluded\b|\b(?:is|are|remains?|appears?) straight\b|\bstructurally sound\b|\bwithin (?:tolerance|limits|specification)\b/i;
+  const DAMAGE_STATE = /damag|deform|distort|kink|buckl|crack|fractur|crush|\bbent\b|displac|misalign|pushed|creas|collaps|shear|\btorn\b|\bsplit\b|compromis|out of (?:tolerance|alignment|datum|position)|affected|involved/i;
+  const DAMAGE_WORD = new RegExp(DAMAGE_STATE.source + '|sectional|replace|renew|repair|straighten', 'i'); // the damage, or the repair it needs
+  // A negation counts only when it denies the damage ("no deformation", "is not damaged", "no evidence of damage to the floor
+  // pan"), finding it ("has not been identified") or the need for repair ("does not require repair", "requires no repair").
+  // Other negations deny something else and are ignored: "is not economically repairable", "must not be straightened",
+  // "can't be straightened", "is not safe", "does not permit a safe repair"; "not only / merely / just" is emphasis.
+  const NEGATOR = /\b(?:no|not|nor|none|never|without|neither|nil)\b|n't\b/gi;
+  const DENIAL_WORD = /\bundamaged\b|\bunaffected\b|\bintact\b|\bfree (?:from|of)\b|\bruled out\b|\bexcluded\b|\b(?:is|are|remains?|appears?) straight\b|\bstructurally sound\b|\bwithin (?:tolerance|limits|specification)\b/i;
+  const EMPHASIS = /\b(?:not|nor) (?:only|merely|just|simply|solely|purely)\b|\bno doubt\b|\b(?:without|beyond) (?:any |all )?doubt\b/gi;
+  const NEGATED_FINDING = /^\s*(?:(?:yet|been|be|so far|clearly|actually|currently|presently|at this stage|any|ever|readily)\s+){0,3}(?:identif|found|find|establish|evident|present|observ|detect|seen|noted|apparent|visible|reveal|disclos|confirm|show|indicat)/i;
+  const NEGATED_NEED = /^\s*(?:\w+\s+){0,2}?(?:requir|need|necessar)/i; // "does not require …", "is not required", "not necessary"
+  const NO_REPAIR = /^\s*(?:further\s+|other\s+|structural\s+)?(?:repair|replacement|renewal|straightening|rectification|sectioning|remedial)\b/i; // "no repair …"
+  const NEED_BEFORE = /\b(?:requir\w*|need\w*)\s*$/i; // "requires no …"
   const HEDGE = /\b(?:may|might|could)\s+(?:not\s+|also\s+|well\s+)?(?:have|be|exist)\b|\b(?:possible|possibly|potential|potentially|suspected|suspect|probable|probably|likely|unknown|unclear|unconfirmed|undetermined|tbc)\b|\b(?:if|unless|whether)\b|\bcan ?not (?:yet |currently |presently |at this stage )?(?:be )?(?:ruled out|excluded|discounted|confirmed|established|determined|assessed|fully assessed|conclusively assessed|inspected|seen|verified|rule)\b|\bunable to\b|\bto be confirmed\b/i;
   const NON_STRUCT = /\b(?:sustained|suffered|has|having|is|was|are|were|assessed as|classed as|categorised as|considered)\s+(?:\w+\s+){0,3}?non-structural\b(?!\s+(?:trims?|components?|parts?|panels?|items?|mouldings?|brackets?|clips?))|\bdamage (?:is|was) (?:confined|limited|restricted) to (?:the )?(?:exterior|external|outer|non-structural|cosmetic|bolt-on)/i;
+  // (a label and its value stay together: "Structural damage: nil.", "Chassis legs: no damage.")
   const clausesOf = (t) => txt(t)
-    .split(/(?<=[.!?])\s+|\n+|;\s*|:\s+|,?\s+(?:but|however|whereas|although|though)\b,?\s*|,\s*(?:which|so|therefore|meaning|requiring)\b|,?\s+and\s+(?=(?:the|its|a|an|there|it|this|these|no)\b)/i)
+    .split(/(?<=[.!?])\s+|\n+|;\s*|:\s+(?!(?:nil|none|no|not|n\/a)\b)|,?\s+(?:but|however|whereas|although|though)\b,?\s*|,\s*(?:which|so|therefore|meaning|requiring)\b|,?\s+and\s+(?=(?:the|its|a|an|there|it|this|these|no)\b)/i)
     .map((s) => (s || '').trim()).filter(Boolean);
+  // Where, in clause c, a negation denies the damage: { cut: index of that negation (the damage words before it are still
+  // recorded: "the chassis leg is kinked, with no other damage"), whole: true when it denies the whole clause }.
+  function denialIn(c) {
+    if (DENIAL_WORD.test(c)) return { cut: -1, whole: true };
+    NEGATOR.lastIndex = 0;
+    for (let m; (m = NEGATOR.exec(c));) {
+      const before = c.slice(0, m.index), after = c.slice(m.index + m[0].length), word = m[0].toLowerCase();
+      if (STRUCT_PHRASE.test(after) || STRUCT_MEMBER.test(after) || DAMAGE_STATE.test(after) || NEGATED_NEED.test(after) || (word === 'no' && NO_REPAIR.test(after)) || NEED_BEFORE.test(before)) return { cut: m.index, whole: false };
+      // "… has not been identified", "Structural damage: nil." deny what comes before them
+      if (NEGATED_FINDING.test(after) || (/^(?:nil|none|no)$/.test(word) && /^[\s.!?)]*$/.test(after))) return { cut: -1, whole: true };
+    }
+    return { cut: -1, whole: false };
+  }
   // → { records: first clause recording structural damage, denies: first clause saying there is none }
   function structuralWording(text) {
     const res = { records: '', denies: '' };
     for (const raw of clausesOf(text)) {
-      const c = raw.replace(/\bnot only\b/gi, ' ');
+      const c = raw.replace(EMPHASIS, ' ');
       const phrase = STRUCT_PHRASE.test(c), member = STRUCT_MEMBER.test(c), nonStruct = NON_STRUCT.test(c);
       if ((!phrase && !member && !nonStruct) || HEDGE.test(c)) continue; // speculative clauses neither record nor deny
-      const neg = NEGATION.test(c);
-      if ((phrase || (member && DAMAGE_WORD.test(c))) && !neg) { if (!res.records) res.records = raw; } else if (((phrase || member) && neg) || nonStruct) { if (!res.denies) res.denies = raw; }
+      const { cut, whole } = denialIn(c);
+      const head = whole ? '' : cut >= 0 ? c.slice(0, cut) : c; // what no negation denies
+      if (STRUCT_PHRASE.test(head) || (STRUCT_MEMBER.test(head) && DAMAGE_WORD.test(head))) { if (!res.records) res.records = raw; }
+      else if (((phrase || member) && (whole || cut >= 0)) || nonStruct) { if (!res.denies) res.denies = raw; }
     }
     return res;
   }
@@ -730,23 +828,32 @@
   // ADAS / geometry: each trigger needs its own calibration or check (a geometry line does not calibrate a camera).
   const CAMERA_CAL = /camera[^.]*calibrat|calibrat[^.]*camera/i;
   const ADAS_CAL = /\badas\b[^.]*calibrat|calibrat[^.]*\badas\b/i;
+  // An "ADAS calibration" line covers every sensor only when it names none ("ADAS calibration (static and dynamic)"); one that
+  // names a sensor ("ADAS front camera calibration") covers that sensor only, through the sensor's own rule.
+  const ADAS_SENSOR = /camera|radar|lidar|blind[- ]?spot|\bbsm\b|surround|\b360\b|around[- ]view|bird'?s[- ]eye|windscreen|windshield|\blane\b|mirror|\bpark(?:ing)?\b|ultrasonic|\bacc\b|\baeb\b/i;
+  const genericAdasCal = (x) => ADAS_CAL.test(x) && !ADAS_SENSOR.test(x);
+  // SRS components named in a line without a catalogue code, the service lines that are not components, and the scan that
+  // must follow SRS work (after the repair: confirming the system, clearing crash data and fault codes).
+  const SRS_TEXT = /air ?bag|pretension|belt tensioner|clock ?spring|spiral cable|\bsrs\b|crash (?:\/ impact )?sensor|impact sensor/i;
+  const SRS_SERVICE = /\bscan\b|diagnos|\breset\b|coding|calibrat|inspect|check|\btest|warning (?:lamp|light)|\bfault|investigat/i;
+  const POST_SCAN = /post[- ]repair[^.]{0,20}?(?:diagnostic|scan)|(?:diagnostic|scan)[^.]{0,30}?post[- ]repair|\b(?:srs|air ?bag)\b[^.]{0,20}?(?:\bscan|\breset|\bfault|diagnos)|\bclear(?:ing|ed)?\b[^.]{0,20}?(?:crash data|fault codes|\bsrs\b|air ?bag)/i;
   const ADAS_NOT = /calibrat|\baim\b|beam sett|alignment|geometry|diagnostic|\bscan\b|coding|initiali[sz]/i; // service lines are not triggers
   const ADAS_RULES = [
     { label: 'ADAS: windscreen / front camera work', codes: ['GL001'],
       re: /\bwindscreen\b(?!\s*(?:washer|wiper|scuttle|cowl|trim|seal|surround|finisher|moulding|rubber|jet|pump|motor|reservoir|bottle|demist|chip))|\b(?:front|forward[- ]facing|lane|multi[- ]?function|mono|stereo) camera\b/i,
-      ok: ['GL005', 'EL003'], okText: (x) => (CAMERA_CAL.test(x) && !/surround|\b360\b|around[- ]view|rear|reversing|side|mirror/i.test(x)) || ADAS_CAL.test(x),
+      ok: ['GL005', 'EL003'], okText: (x) => (CAMERA_CAL.test(x) && !/surround|\b360\b|around[- ]view|rear|reversing|side|mirror/i.test(x)) || genericAdasCal(x),
       need: 'windscreen / front camera calibration line (GL005 or EL003)' },
     { label: 'ADAS: front radar work', codes: ['EL001', 'FE020'],
       re: /\bradar\b|\badaptive cruise\b|\b(?:acc|aeb) sensor\b/i, not: /blind[- ]?spot|\bbsm\b|\brear\b/i,
-      ok: ['EL002'], okText: (x) => (/radar[^.]*calibrat|calibrat[^.]*radar/i.test(x) && !/blind[- ]?spot|\bbsm\b|\brear\b/i.test(x)) || ADAS_CAL.test(x),
+      ok: ['EL002'], okText: (x) => (/radar[^.]*calibrat|calibrat[^.]*radar/i.test(x) && !/blind[- ]?spot|\bbsm\b|\brear\b/i.test(x)) || genericAdasCal(x),
       need: 'front radar calibration line (EL002)' },
     { label: 'ADAS: blind-spot radar work', codes: ['RE013'],
       re: /blind[- ]?spot|\bbsm\b|rear radar/i,
-      ok: ['EL005'], okText: (x) => /(?:blind[- ]?spot|\bbsm\b|rear radar)[^.]*calibrat|calibrat[^.]*(?:blind[- ]?spot|\bbsm\b|rear radar)/i.test(x) || ADAS_CAL.test(x),
+      ok: ['EL005'], okText: (x) => /(?:blind[- ]?spot|\bbsm\b|rear radar)[^.]*calibrat|calibrat[^.]*(?:blind[- ]?spot|\bbsm\b|rear radar)/i.test(x) || genericAdasCal(x),
       need: 'blind-spot radar calibration line (EL005)' },
     { label: 'ADAS: surround-view camera work', codes: ['EL004'],
       re: /surround[- ]?view|\b360\b|around[- ]view|bird'?s[- ]eye|(?:side|mirror)[- ]camera/i,
-      ok: [], okText: (x) => /(?:surround[- ]?view|\b360\b|around[- ]view|bird'?s[- ]eye|side|mirror)[^.]*calibrat|calibrat[^.]*(?:surround[- ]?view|\b360\b|around[- ]view)/i.test(x) || ADAS_CAL.test(x),
+      ok: [], okText: (x) => /(?:surround[- ]?view|\b360\b|around[- ]view|bird'?s[- ]eye|side|mirror)[^.]*calibrat|calibrat[^.]*(?:surround[- ]?view|\b360\b|around[- ]view)/i.test(x) || genericAdasCal(x),
       need: 'surround-view camera calibration line' },
     { label: 'Geometry: steering / suspension work', codes: ['SU001', 'SU002', 'SU004', 'SU006', 'SU007', 'SU008', 'SU011', 'SU014', 'SU016'],
       re: /track[- ]?rod|steering rack|sub[- ]?frame|(?:control|trailing|radius|lower|upper) arm|wishbone|axle beam|twist beam|hub carrier|knuckle/i,
@@ -790,8 +897,9 @@
     const pn = partKey(l.partNo);
     if (!pn || !l.code || !oemKey) return 0;
     const cands = arr(oemLookup(oemKey, txt(l.code), txt(l.side))).filter((c) => c && typeof c === 'object');
-    const hit = cands.find((c) => partKey(c.oem) === pn);
-    if (!hit || hit.user || hit.confidence === 'user') return 0;
+    const same = cands.filter((c) => partKey(c.oem) === pn);
+    // the assessor's own number counts as confirmed even when the research lists the same number (in any order)
+    if (!same.length || same.some((c) => c.user || c.confidence === 'user')) return 0;
     return new Set(cands.map((c) => partKey(c.oem)).filter((k) => k && k !== pn)).size;
   }
 
@@ -799,6 +907,12 @@
   const isTotalLoss = (decision) => /total|\bber\b|beyond/i.test(txt(decision));
   // Salvage category letter as entered ("cat s", "Category N" → "S", "N").
   const categoryOf = (job) => txt(obj(obj(job).outcome).category).trim().toUpperCase().replace(/^CAT(?:EGORY)?\.?\s*/, '');
+  // The claim type "court" (valuation.claimType, also the legacy "Court").
+  const isCourtClaim = (s) => txt(s).trim().toLowerCase().replace(/[\s_]+/g, '-') === 'court';
+  // CPR 35, PD 35 para 3.2(5): whether an examination by someone other than the expert was under the expert's supervision
+  // (report.examinerSupervised) → 'yes' | 'no' | '' (not recorded).
+  const supervisionOf = (rep) => { const s = obj(rep).examinerSupervised; const f = s === true ? 'yes' : s === false ? 'no' : fold(s); return f === 'yes' || f === 'no' ? f : ''; };
+  const examinerSupervision = (job) => supervisionOf(obj(job).report);
 
   // ---------- AI provenance: fields that still hold the AI's text unchanged ----------
   // job.aiText = { '<field path>': '<AI text applied there>' } (kept by the renderer). A field counts as unreviewed AI text while
@@ -867,6 +981,16 @@
     }
     return items.sort((a, b) => a.order - b.order).map(({ path, label, tab }) => ({ path, label, tab }));
   }
+  // The assessor has reviewed the AI's text in field `path` and adopts it as their own (the "✓ Confirm" button), so the
+  // field is no longer listed by unreviewedAiText(). Needed above all for fixed-choice fields (decision, salvage category,
+  // impact type), whose value cannot be edited to the same choice. Idempotent. → true when an entry was removed.
+  function markAiReviewed(job, path) {
+    const map = job && typeof job === 'object' ? job.aiText : null;
+    const key = typeof path === 'string' ? path : '';
+    if (!key || !map || typeof map !== 'object' || Array.isArray(map) || !Object.prototype.hasOwnProperty.call(map, key)) return false;
+    delete map[key];
+    return true;
+  }
 
   // ---------- job summary (the Jobs list) ----------
   // The few fields the Jobs list shows, stored beside each job. Never throws: a damaged job gives safe defaults.
@@ -887,6 +1011,8 @@
       const t = totals(j);
       out.net = isFinite(t.net) ? t.net : 0;
       out.pav = isFinite(t.pav) ? t.pav : 0;
+      // a net that uses Settings labour rates records them: after a Settings rate change the summary is rebuilt
+      if (usesSettingsRates(j)) out.settingsRates = ratesFingerprint();
     } catch (err) {
       // the defaults above, and the reason (unreadable), so the Jobs list shows the record as one that could not be read
       try { out.unreadable = String((err && err.message) || err).slice(0, 200) || 'This record could not be read.'; } catch (e) { out.unreadable = 'This record could not be read.'; }
@@ -907,6 +1033,11 @@
     const photos = arr(job.photos).map((p) => obj(p));
     const shown = photos.filter((p) => !p.exclude); // only photos printed in the report count
     const d = desc;
+    // CPR 35: the statement of truth cannot cover AI output the expert has not reviewed, so there every unreviewed AI item
+    // (labels, estimate lines, drafted text, adverts found by AI search) is an error, not a warning
+    const cpr = !!rep.cpr35;
+    const aiLevel = cpr ? 'error' : 'warn';
+    const cprAi = (msg) => (cpr ? `CPR 35 report: ${msg.charAt(0).toLowerCase() + msg.slice(1)} The statement of truth cannot cover AI output you have not reviewed.` : msg);
     if (!v.reg) add('error', 'Registration is missing.', 'vehicle');
     if (!v.make || !v.model) add('error', 'Make / model is missing.', 'vehicle');
     const vin = decodeVin(v.vin);
@@ -922,20 +1053,21 @@
     for (const [when, label, tab] of [[ins.dateOfLoss, 'Date of loss', 'claim'], [ins.dateInstructed, 'Date instructions received', 'claim'], [rep.date, 'Report date', 'claim'],
       [insp.date, 'Inspection date', 'inspection'], [v.firstReg, 'First registration date', 'vehicle'], [asr.dateSigned, 'Date signed', 'signoff']]) {
       const s = txt(when).trim();
-      if (s && !calendarDate(s)) add('warn', `${label} "${s}" is not a valid date (YYYY-MM-DD). The report prints it as entered: correct it before issuing.`, tab);
+      // a first registration may be known to the month or the year only ("2014-08", "1968"), and is printed so
+      if (s && !calendarDate(s) && !(tab === 'vehicle' && partialDate(s))) add('warn', `${label} "${s}" is not a valid date (YYYY-MM-DD). The report prints it as entered: correct it before issuing.`, tab);
     }
     if (!shown.length) add('warn', photos.length ? `No photographs are included in the report (${photos.length} excluded).` : 'No photographs attached.', 'photos');
     const unlabelled = shown.filter((p) => !p.title).length;
     if (unlabelled) add('info', `${unlabelled} photo(s) in the report have no title.`, 'photos');
     const aiLabelled = shown.filter((p) => !p.labelsReviewed && arr(p.labels).some((x) => x && x.ai && !x.hidden)).length;
-    if (aiLabelled) add('warn', `${aiLabelled} photo(s) in the report carry AI damage labels that have not been reviewed. Open "Edit labels" on each, check the labels and save.`, 'photos');
+    if (aiLabelled) add(aiLevel, cprAi(`${aiLabelled} photo(s) in the report carry AI damage labels that have not been reviewed. Open "Edit labels" on each, check the labels and save.`), 'photos');
     if (!lines.length) add('warn', 'Repair estimate has no lines.', 'estimate');
     lines.forEach((l, i) => {
       if (!d(l)) add('warn', `Estimate line ${i + 1} has no description.`, 'estimate');
       if (l.costClass === 'parts' && num(l.amount) > 0 && !l.partNo) add('info', `Line ${i + 1} (${d(l)}) has a part cost but no part number.`, 'estimate');
       if (!num(l.hours) && !num(l.amount)) add('info', `Line ${i + 1} (${d(l) || 'blank'}) has no hours and no cost.`, 'estimate');
       if (isRenewLine(l) && (l.costClass || 'parts') === 'parts' && !num(l.amount) && !isServiceCode(l.code) && !FREE_PART.test(txt(l.partNo))) add('warn', `Line ${i + 1} (${d(l) || 'blank'}) renews a part but has no part price.`, 'estimate');
-      if (l.ai && !l.reviewed) add('warn', `Line ${i + 1} (${d(l)}) was suggested by AI and has not been marked as reviewed.`, 'estimate');
+      if (l.ai && !l.reviewed) add(aiLevel, cprAi(`Line ${i + 1} (${d(l)}) was suggested by AI and has not been marked as reviewed.`), 'estimate');
       const alt = oemAlternatives(v.oemKey, l);
       if (alt) add('info', `Line ${i + 1} uses researched part number ${txt(l.partNo).trim()}; there ${alt === 1 ? 'is 1 alternative (variant)' : `are ${alt} alternatives (variants)`}: confirm by VIN.`, 'estimate');
     });
@@ -947,6 +1079,8 @@
     // totals() ignores a negative discount or PAV; the entry itself is an error
     if (num(job.discount) < 0) add('error', `The discount is negative (${gbp(job.discount)}), so it is ignored. A discount must be zero or more: enter it as a positive amount, or add an estimate line for an extra charge.`, 'estimate');
     if (num(val.adopted) < 0) add('error', `The pre-accident value is negative (${gbp(val.adopted)}), so it is treated as not assessed. Enter it as a positive amount.`, 'valuation');
+    if (given(val, 'salvageOverride') && num(val.salvageOverride) < 0) add('error', `The salvage value entered is negative (${gbp(val.salvageOverride)}), so it is ignored and the salvage is ${t.pav > 0 ? `${gbp(t.salvage)} (${round2(t.salvagePct)}% of PAV)` : 'not assessed'}. Enter it as a positive amount, or clear it.`, 'valuation');
+    if (num(val.salvagePct) < 0) add('error', `The salvage percentage is negative (${round2(num(val.salvagePct))}%), so it is treated as 0%. Enter a percentage of zero or more.`, 'valuation');
     if (!(t.pav > 0)) add('warn', 'No pre-accident value adopted.', 'valuation');
     if (t.pav > 0) {
       // the BER basis chosen in Settings (net or gross); never show a rounded figure on the wrong side of the threshold
@@ -982,10 +1116,14 @@
       else if (expiry < today) add(signed ? 'info' : 'warn', signed ? `Your recorded accreditation expired on ${ukDate(expiry)}, after this report was signed. Renew it before signing new reports.` : `Your recorded accreditation expired on ${ukDate(expiry)}. Renew it (Settings → Assessor defaults) before signing this report.`, 'signoff');
     }
     if (/electric|hybrid|plug-in/i.test(txt(v.fuel)) && (structural.length || arr(job.zones).some((z) => /under|sill/i.test(txt(z))))) add('warn', 'Electric/hybrid vehicle with underbody, sill or structural involvement: assess the high-voltage battery under the ABI salvage code battery provisions and isolate before repair.', 'assessment');
-    const srs = lines.filter((l) => cat(l.code) && cat(l.code).group === 'SRS / airbags');
-    if (srs.length && !has(/diagnostic/i)) add('warn', 'SRS components are included but there is no diagnostic scan line.', 'estimate');
-    // ADAS / geometry: parts renewed, repaired or refitted, each checked against its own calibration or check line
+    // parts renewed, repaired or refitted (the triggers of the SRS, ADAS and geometry checks)
     const fitment = (l) => isDamageOp(l) || l.op === 'rr' || (l.op === 'ai' && /remove (?:&|and) refit/.test(fold(l.aiOperation))) || ((!l.op || l.op === 'ai' || l.op === 'manual') && /remove ?(?:&|and|\/) ?refit|\br ?& ?i\b|\brefit\b/i.test(d(l)));
+    // SRS work: a catalogue SRS part, or a line without a catalogue code that renews or refits one (a manual or AI line).
+    // It needs a POST-repair scan, which confirms the system and clears crash data and fault codes; a pre-repair scan does not.
+    const srs = lines.filter((l) => (cat(l.code) ? cat(l.code).group === 'SRS / airbags' : SRS_TEXT.test(d(l)) && !SRS_SERVICE.test(d(l)) && fitment(l)));
+    const postScan = lines.some((x) => x.code === 'EL008' || (OPS.OP011 && fold(d(x)).includes(fold(OPS.OP011.name))) || POST_SCAN.test(d(x)));
+    if (srs.length && !postScan) add('warn', `SRS components are included (${srs.slice(0, 3).map((l) => d(l) || 'blank').join('; ')}${srs.length > 3 ? '…' : ''}) but there is no post-repair diagnostic scan line (EL008 or OP011). The post-repair scan confirms the system works and clears crash data and fault codes; a pre-repair scan alone does not.`, 'estimate');
+    // ADAS / geometry: parts renewed, repaired or refitted, each checked against its own calibration or check line
     const triggered = new Map();
     lines.forEach((l) => {
       if (!fitment(l)) return;
@@ -1006,13 +1144,21 @@
     const toUnit = (n, unit) => { const u = String(unit || '').toLowerCase(); if (u === 'km' && !wantKm) return n * 0.621371; if ((u === 'mi' || u === 'miles') && wantKm) return n * 1.609344; return n; };
     const unitWord = wantKm ? 'km' : 'miles';
     const fmt = (n) => Math.round(n).toLocaleString('en-GB');
-    const readings = arr(v.motHistory)
-      .filter((t) => t && num(t.odometer) > 0 && t.date && (!t.odometerResult || t.odometerResult === 'READ'))
-      .map((t) => ({ date: String(t.date).slice(0, 10), miles: toUnit(num(t.odometer), t.unit) }))
+    // every DVSA test with a real date; the mileage comparisons use only those whose odometer was read
+    const tests = arr(v.motHistory)
+      .filter((t) => t && typeof t === 'object' && calendarDate(txt(t.date).trim().slice(0, 10)))
+      .map((t) => {
+        const r = txt(t.odometerResult).trim().toUpperCase();
+        const read = num(t.odometer) > 0 && (!r || r === 'READ');
+        return { date: txt(t.date).trim().slice(0, 10), miles: read ? toUnit(num(t.odometer), t.unit) : null, result: r };
+      })
       .sort((a, b) => a.date.localeCompare(b.date));
+    const readings = tests.filter((r) => r.miles != null);
     const cutoff = ins.dateOfLoss || insp.date || '';
     const before = cutoff ? readings.filter((r) => r.date <= cutoff) : readings;
-    const after = cutoff ? readings.filter((r) => r.date > cutoff) : [];
+    // presented for a test after the loss, whether or not the odometer could be read
+    const after = cutoff ? tests.filter((r) => r.date > cutoff) : [];
+    const testText = (r) => `${ukDate(r.date)} ${r.miles != null ? `at ${fmt(r.miles)} ${unitWord}` : r.result === 'UNREADABLE' ? '(odometer unreadable)' : r.result === 'NO_ODOMETER' ? '(no odometer)' : '(no odometer reading recorded)'}`;
     if (num(v.mileage) && before.length) {
       const maxBefore = before.reduce((a, r) => (r.miles > a.miles ? r : a));
       if (num(v.mileage) + 50 < maxBefore.miles) add('error', `Recorded mileage (${fmt(num(v.mileage))} ${unitWord}) is LOWER than the MOT reading of ${fmt(maxBefore.miles)} on ${ukDate(maxBefore.date)}, before the loss. Possible odometer tampering, instrument replacement or an entry error: investigate before valuing.`, 'vehicle');
@@ -1021,10 +1167,11 @@
       if (readings[i].miles + 50 < readings[i - 1].miles) { add('warn', `MOT history shows the mileage going DOWN between ${ukDate(readings[i - 1].date)} (${fmt(readings[i - 1].miles)}) and ${ukDate(readings[i].date)} (${fmt(readings[i].miles)}). Check for an odometer discrepancy.`, 'vehicle'); break; }
     }
     if (after.length) {
-      const last = after[after.length - 1];
-      const since = num(v.mileage) ? last.miles - num(v.mileage) : 0;
+      const read = after.filter((r) => r.miles != null);
+      const last = read[read.length - 1];
+      const since = last && num(v.mileage) ? last.miles - num(v.mileage) : 0;
       const offRoad = totalLoss || /off the road|not .*(suitable|roadworthy)|unroadworthy|should not be (used|driven)/i.test(txt(ass.roadworthiness) + ' ' + txt(insp.roadTest));
-      add(offRoad ? 'warn' : 'info', `The vehicle was presented for an MOT AFTER the date of loss: ${after.map((r) => `${ukDate(r.date)} at ${fmt(r.miles)} ${unitWord}`).join('; ')}${since > 0 ? ` (${fmt(since)} ${unitWord} more than the inspection reading)` : ''}. ${offRoad ? 'The report treats it as off the road / a total loss: confirm whether it has been repaired or used, and address this in the opinion.' : 'Confirm the repair / usage history.'}`, 'vehicle');
+      add(offRoad ? 'warn' : 'info', `The vehicle was presented for an MOT AFTER the date of loss: ${after.map(testText).join('; ')}${since > 0 ? ` (${fmt(since)} ${unitWord} more than the inspection reading)` : ''}. ${offRoad ? 'The report treats it as off the road / a total loss: confirm whether it has been repaired or used, and address this in the opinion.' : 'Confirm the repair / usage history.'}`, 'vehicle');
     }
     if (/image|desktop|photo/i.test(txt(insp.type))) {
       const cap = (p) => `${txt(p.title)} ${txt(p.caption)}`;
@@ -1036,9 +1183,16 @@
       if (!txt(ins.purpose).trim()) add('error', 'CPR 35 report: the substance of the instructions must be stated (Purpose of instruction).', 'claim');
       if (!(asr.qualifications || (issued && issued.qualifications) || sa.qualifications)) add('error', 'CPR 35 report: the expert\'s qualifications must be stated (Settings → Assessor defaults, or on Sign-off).', 'signoff');
       if (!txt(insp.by).trim()) add('error', 'CPR 35 report: state who carried out the examination and any tests (Inspection → Examined by).', 'inspection');
-      else if (!txt(insp.byQualifications).trim() && fold(insp.by) !== fold(asr.name)) add('warn', 'CPR 35 report: give the qualifications of the person who carried out the examination (Inspection → Qualifications of examiner).', 'inspection');
+      else if (fold(insp.by) !== fold(asr.name)) {
+        if (!txt(insp.byQualifications).trim()) add('warn', 'CPR 35 report: give the qualifications of the person who carried out the examination (Inspection → Qualifications of examiner).', 'inspection');
+        // PD 35 para 3.2(5): say whether an examination or test by someone else was carried out under the expert's supervision
+        if (!supervisionOf(rep)) add('error', `CPR 35 report: the vehicle was examined by ${txt(insp.by).trim()}, not by you. Say whether the examination and any tests were carried out under your supervision (PD 35 para 3.2(5)) on Sign-off.`, 'signoff');
+      }
       if (!RANGE_OF_OPINION.test(txt(job.opinion))) add('warn', 'CPR 35 report: where there is a range of opinion, summarise it and give reasons for your own view.', 'opinion');
       if (!txt(rep.materialsRelied).trim()) add('error', 'CPR 35 report: give details of the literature and other material relied on in making the report (PD 35 para 3.2(2)), for example the trade guides and adverts, the ABI salvage Code of Practice, the labour-time basis and the data services used (Sign-off → Material relied on).', 'signoff');
+    } else if (isCourtClaim(val.claimType)) {
+      // a court claim type sets the valuation standard only; the report is a CPR Part 35 expert report only in CPR 35 mode
+      add('warn', 'The claim type is "Court proceedings", but this report is not set up as a court-compliant expert report (Sign-off → "Court-compliant expert report (CPR Part 35 / PD 35)" is off). It therefore has no expert\'s duty statement, statement of truth or list of material relied on, and it does not describe itself as a CPR Part 35 report. If it is to be relied on as expert evidence under CPR Part 35, turn that option on before issuing.', 'signoff');
     }
     // only real AI use counts (DVLA / DVSA lookups are logged with ai:false)
     const aiUsed = arr(job.aiLog).filter((a) => a && a.ai).length;
@@ -1046,7 +1200,11 @@
     // AI-drafted text still exactly as the AI wrote it (job.aiText): one warning per tab, naming the fields
     const byTab = new Map();
     for (const f of unreviewedAiText(job)) { if (!byTab.has(f.tab)) byTab.set(f.tab, []); byTab.get(f.tab).push(f.label); }
-    for (const [tab, labels] of byTab) add('warn', `AI-drafted text not yet edited by the assessor: ${labels.join('; ')}. Review it before issuing: while it is unchanged, the report's AI statement lists it as not reviewed.`, tab);
+    for (const [tab, labels] of byTab) {
+      add(aiLevel, cpr
+        ? `CPR 35 report: AI-drafted text not yet edited or confirmed by you: ${labels.join('; ')}. The statement of truth cannot cover AI output you have not reviewed: edit each field, or confirm it ("✓ Confirm" beside it), before issuing.`
+        : `AI-drafted text not yet edited or confirmed by the assessor: ${labels.join('; ')}. Review it, then edit it or confirm it ("✓ Confirm" beside the field): until then the report's AI statement lists it as not reviewed.`, tab);
+    }
     // review flags the AI attached to an applied narrative draft, kept until the assessor dismisses them
     for (const f of arr(job.aiFlags)) {
       const fl = obj(f), text = txt(fl.text).trim();
@@ -1059,7 +1217,7 @@
     if (unverified.length) {
       const name = (x) => [txt(x.description).trim(), txt(x.year).trim(), num(x.price) ? gbp(x.price) : ''].filter(Boolean).join(' ') || 'advert';
       const n = unverified.length;
-      add('warn', `${n} advert${n === 1 ? '' : 's'} found by AI web search ${n === 1 ? 'has' : 'have'} not been verified (${unverified.slice(0, 3).map(name).join('; ')}${n > 3 ? `; and ${n - 3} more` : ''}). Open each advert and check it exists at that price, then tick "Verified", or delete it. The report lists unverified adverts separately, not as market evidence.`, 'valuation');
+      add(aiLevel, cprAi(`${n} advert${n === 1 ? '' : 's'} found by AI web search ${n === 1 ? 'has' : 'have'} not been verified (${unverified.slice(0, 3).map(name).join('; ')}${n > 3 ? `; and ${n - 3} more` : ''}). Open each advert and check it exists at that price, then tick "Verified", or delete it. The report lists unverified adverts separately, not as market evidence.`), 'valuation');
     }
     if (t.pav > 0 && t.valMax && t.pav < t.valMax && !txt(val.belowHighestReason).trim()) add('warn', `Adopted PAV (${gbp(t.pav)}) is below the highest guide figure (${gbp(t.valMax)}). The ombudsman's starting point is the highest retail guide: record the vehicle-specific reason for the lower figure on the Valuation tab.`, 'valuation');
     if (!asr.name) add('error', 'Assessor name is missing.', 'signoff');
@@ -1102,11 +1260,11 @@
   }
 
   window.Core = {
-    $, $$, uid, esc, num, round2, gbp, gbp0, hrs, todayISO, localISODate, ukDate, longDate, getPath, setPath, debounce, clone, fold, yearRange,
+    $, $$, uid, esc, num, round2, gbp, gbp0, hrs, todayISO, localISODate, ukDate, longDate, calendarDate, partialDate, getPath, setPath, debounce, clone, fold, yearRange,
     Store, DEFAULT_SETTINGS, loadSettings, saveSettings, get settings() { return settings; }, set settings(v) { settings = v; },
-    CAT, OPS, sideWord, SIZE_CLASSES, sizeFactor, paintFactor, oemVehicles, setCustomOem, get customOem() { return customOem; }, findOemVehicle, guessOemVehicle, oemLookup, decodeVin,
+    CAT, OPS, sideWord, SIZE_CLASSES, sizeFactor, paintFactor, vehicleGuide, oemVehicles, setCustomOem, get customOem() { return customOem; }, findOemVehicle, guessOemVehicle, oemLookup, decodeVin,
     newJob, newLine, lineRate, lineLabour, vatPctFor, rateSnapshot, namedSources, totals, qaChecks, isDamageOp, isRenewLine, photoNumbers, oemAlternatives,
-    isTotalLoss, unreviewedAiText, jobSummary,
+    isTotalLoss, isCourtClaim, examinerSupervision, unreviewedAiText, markAiReviewed, jobSummary,
     readFileAsDataURL, loadImage, resizeDataURL
   };
 })();

@@ -22,6 +22,7 @@ const crypto = require('crypto');
 
 const DVLA_BASE = { live: 'https://driver-vehicle-licensing.api.gov.uk', test: 'https://uat.driver-vehicle-licensing.api.gov.uk' };
 const DVLA_PATH = '/vehicle-enquiry/v1/vehicles';
+const DVLA_TEST_REG = 'AA19AAA'; // one of DVLA's test registrations, as the Settings hint and the README give
 const MOT_BASE = 'https://history.mot.api.gov.uk/v1/trade/vehicles/';
 const MOT_SCOPE = 'https://tapi.dvsa.gov.uk/.default';
 const TOKEN_HOST = 'login.microsoftonline.com';
@@ -170,12 +171,16 @@ function networkError(svc, err) {
 }
 /** fetch with a timeout, no redirects and no cookies; reads the whole body. Network failures become networkError(). */
 async function request(svc, url, init) {
+  const signal = AbortSignal.timeout(timeoutMs);
   let res, text;
   try {
-    res = await fetchImpl(url, { ...init, signal: AbortSignal.timeout(timeoutMs), redirect: 'error', credentials: 'omit' });
+    res = await fetchImpl(url, { ...init, signal, redirect: 'error', credentials: 'omit' });
     text = await res.text();
   } catch (err) {
-    throw networkError(svc, err);
+    // Once the timeout has fired it is the cause, whatever the failure says: when the headers came in time but the body
+    // stalled, Electron's net.fetch fails the body read with a plain AbortError ("premature close"), not the signal's
+    // TimeoutError, which would otherwise read as "the request was cancelled".
+    throw networkError(svc, signal.aborted && signal.reason ? signal.reason : err);
   }
   const ctype = (res.headers && typeof res.headers.get === 'function' && res.headers.get('content-type')) || '';
   let body = null;
@@ -200,18 +205,35 @@ function dvlaErrorDetail(r) {
   return r.html ? '' : String(r.text || '').replace(/\s+/g, ' ').trim().slice(0, 200);
 }
 
+/** A yes/no field DVLA sent (true, false, or "true"/"false"); null when it sent none, so that "not stated" is never read as "No". */
+function flag(v) {
+  if (v === true || v === false) return v;
+  if (typeof v === 'string' && /^\s*(true|false)\s*$/i.test(v)) return /true/i.test(v);
+  return null;
+}
+const yearOf = (v) => { const n = Number(String(v == null ? '' : v).trim()); return Number.isInteger(n) && n >= 1880 && n <= 2200 ? n : 0; };
+const monthOf = (v) => { const n = typeof v === 'number' || (typeof v === 'string' && /^\s*\d{1,2}\s*$/.test(v)) ? Number(v) : 0; return n >= 1 && n <= 12 ? n : 0; };
+/**
+ * A registration month as 'YYYY-MM-01' when DVLA gives the month ("2019-03", or 3 with the year 2019), else ''; and the
+ * year whenever DVLA gives one. A year on its own is never turned into a date: "1 January" would be a month DVLA never
+ * gave, and it would stop the full date from the MOT record replacing it.
+ */
+function registrationMonth(month, year) {
+  if (typeof month === 'string' && /^\s*\d{4}-\d{2}/.test(month)) {
+    const s = month.trim(), y = yearOf(s.slice(0, 4)), mo = monthOf(s.slice(5, 7));
+    return y && mo ? { date: `${y}-${pad2(mo)}-01`, year: y } : { date: '', year: y || yearOf(year) };
+  }
+  const y = yearOf(year), mo = monthOf(month);
+  return { date: y && mo ? `${y}-${pad2(mo)}-01` : '', year: y };
+}
+
 /** Turn any DVLA VES response shape into one consistent object for the app. */
 function normaliseDvla(d) {
   d = d || {};
-  let firstReg = '';
-  const m = d.monthOfFirstRegistration;
-  if (typeof m === 'string' && /^\d{4}-\d{2}/.test(m)) firstReg = m.slice(0, 7) + '-01';
-  else if (d.yearOfFirstRegistration && m) firstReg = `${d.yearOfFirstRegistration}-${pad2(m)}-01`;
-  else if (d.yearOfFirstRegistration) firstReg = `${d.yearOfFirstRegistration}-01-01`;
-  let firstRegDvla = '';
+  const first = registrationMonth(d.monthOfFirstRegistration, d.yearOfFirstRegistration);
   const md = d.monthOfFirstRegistrationWithDVLA != null ? d.monthOfFirstRegistrationWithDVLA : d.monthOfFirstDvlaRegistration;
-  if (typeof md === 'string' && /^\d{4}-\d{2}/.test(md)) firstRegDvla = md.slice(0, 7) + '-01';
-  else if (d.yearOfFirstRegistrationWithDVLA && md) firstRegDvla = `${d.yearOfFirstRegistrationWithDVLA}-${pad2(md)}-01`;
+  const withDvla = registrationMonth(md, d.yearOfFirstRegistrationWithDVLA);
+  const firstReg = first.date, firstRegDvla = withDvla.date;
   return {
     registrationNumber: d.registrationNumber || '',
     make: blank(d.make),
@@ -222,22 +244,25 @@ function normaliseDvla(d) {
     euroStatus: blank(d.euroStatus),
     realDrivingEmissions: blank(d.realDrivingEmissions),
     yearOfManufacture: d.yearOfManufacture || '',
-    firstRegistration: firstReg,
+    firstRegistration: firstReg, // 'YYYY-MM-01' only when DVLA gives the month
+    firstRegistrationYear: first.year || '', // the year, also when DVLA gives no month
     firstRegistrationWithDvla: firstRegDvla,
-    importedOrReRegistered: !!(firstReg && firstRegDvla && firstReg !== firstRegDvla),
+    // true / false when both months are known; null when DVLA did not give both, so it cannot be said
+    importedOrReRegistered: firstReg && firstRegDvla ? firstReg !== firstRegDvla : null,
     taxStatus: blank(d.taxStatus),
     taxDueDate: blank(d.taxDueDate),
     artEndDate: blank(d.artEndDate),
     motStatus: blank(d.motStatus),
     motExpiry: blank(d.motExpiry != null ? d.motExpiry : d.motExpiryDate),
-    markedForExport: !!d.markedForExport,
-    markedAsScrapped: !!d.markedAsScrapped,
+    // Every field is optional in the VES spec: a flag DVLA did not send is null ("not stated"), never false ("No").
+    markedForExport: flag(d.markedForExport),
+    markedAsScrapped: flag(d.markedAsScrapped),
     vehicleStatus: blank(d.vehicleStatus),
     typeApproval: blank(d.typeApproval),
     wheelPlan: blank(d.wheelPlan != null ? d.wheelPlan : d.wheelplan),
     revenueWeight: d.revenueWeight || '',
     dateOfLastV5CIssued: blank(d.dateOfLastV5CIssued),
-    automatedVehicle: d.automatedVehicle === true
+    automatedVehicle: flag(d.automatedVehicle)
   };
 }
 
@@ -258,13 +283,20 @@ async function dvlaLookup(reg, apiKey, environment) {
   });
   if (r.status >= 200 && r.status < 300) {
     if (!r.body) throw unexpectedReply(svc, r.status);
-    return normaliseDvla(r.body);
+    // environment 'test': the data came from DVLA's test service (its made-up test vehicles), not the register
+    return Object.assign(normaliseDvla(r.body), { environment: env });
   }
   const blocked = blockedError(svc, r);
   if (blocked) throw blocked;
   const detail = dvlaErrorDetail(r);
-  if (r.status === 404) throw new Error(`DVLA has no record of ${vrm}.`);
-  if (r.status === 400) throw new Error(`DVLA could not accept ${vrm}${detail ? ' (' + detail + ')' : ''}. Check the registration.`);
+  // The test service knows only DVLA's own test registrations, so its "not found" says nothing about a real vehicle.
+  const testOnly = (check) => `That service only holds DVLA's test registrations (such as ${DVLA_TEST_REG}), not real vehicles: ${check}to look up a real vehicle, set "DVLA service" to Live in Settings → Data connections (with a live API key).`;
+  if (r.status === 404) throw new Error(env === 'test' ? `The DVLA test service has no record of ${vrm}. ${testOnly('')}` : `DVLA has no record of ${vrm}.`);
+  if (r.status === 400) {
+    throw new Error(env === 'test'
+      ? `The DVLA test service could not accept ${vrm}${detail ? ' (' + detail + ')' : ''}. ${testOnly('check the registration, or ')}`
+      : `DVLA could not accept ${vrm}${detail ? ' (' + detail + ')' : ''}. Check the registration.`);
+  }
   if (r.status === 401 || r.status === 403) {
     throw new Error(`DVLA refused the API key (${r.status}). Check the key in Settings → Data connections. ${env === 'test' ? 'You are using the DVLA test service: test keys only work there and live keys only work on the live service.' : 'If DVLA issued you a TEST key, switch "DVLA service" to Test in Settings.'} DVLA support: dvlaapiaccess@dvla.gov.uk.`);
   }

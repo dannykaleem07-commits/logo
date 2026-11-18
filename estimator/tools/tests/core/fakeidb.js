@@ -75,6 +75,7 @@ class FakeObjectStore {
     this.transaction._assertActive();
     if (!validKey(key)) throw DE('The parameter is not a valid key.', 'DataError');
     const f = this.transaction.db._factory;
+    f._stat('get', this.name);
     return this.transaction._request(() => {
       if (f.failRequest && f.failRequest(this.name, 'get', key)) throw DE('Simulated request failure.', f.failName || 'UnknownError');
       const i = this._find(key); return i >= 0 ? structuredClone(this._data.records[i].value) : undefined;
@@ -183,6 +184,12 @@ class FakeTransaction {
   }
   _commit() {
     const f = this.db._factory;
+    // test hook: a slow upgrade (the version-change transaction commits upgradeDelayMs later)
+    if (this.mode === 'versionchange' && f.upgradeDelayMs > 0 && !this._delayed) {
+      this._delayed = true;
+      setTimeout(() => { if (this._state === 'active') this._commit(); }, f.upgradeDelayMs);
+      return;
+    }
     if (this.mode !== 'readonly' && f.quotaBytes != null && f._size(this.db._rec) > f.quotaBytes) {
       // Chromium: a commit-time quota failure fires 'abort' only (no 'error' event)
       this._abortWith(DE('The current transaction exceeded its quota limitations.', 'QuotaExceededError'));
@@ -247,7 +254,7 @@ class FakeDatabase {
 class FakeIDBFactory {
   constructor() {
     this._dbs = new Map(); this._conns = new Set(); this._txs = []; this._waiting = []; this._log = [];
-    this.quotaBytes = null; this.failRequest = null; this.failName = null; this.stats = {};
+    this.quotaBytes = null; this.failRequest = null; this.failName = null; this.stats = {}; this.upgradeDelayMs = 0;
   }
   _stat(op, store) { const k = op + ':' + store; this.stats[k] = (this.stats[k] || 0) + 1; }
   _size(rec) { let n = 0; for (const s of rec.stores.values()) for (const r of s.records) n += JSON.stringify(r.value === undefined ? null : r.value).length; return n; }

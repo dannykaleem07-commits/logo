@@ -764,6 +764,242 @@ section('#18. Unused export removed; namedSources used by report.js');
   check('report.js uses C.namedSources', /C\.namedSources\(/.test(fs.readFileSync(APP + '/js/report.js', 'utf8')));
 }
 
+// ======================= round 4 (final review) =======================
+
+section('R4 store/num: "0,600" is a decimal comma (0.6), not thousands');
+{
+  const cases = [['0,600', 0.6], ['0,500', 0.5], ['0,125', 0.125], ['0,999', 0.999], ['00,500', 0.5], ['-0,500', -0.5], ['£0,500', 0.5], ['0,6', 0.6], ['0,05', 0.05],
+    ['1,500', 1500], ['12,345', 12345], ['1,234.50', 1234.5], ['1.234,56', 1234.56], ['0.600,5', 0.6005]];
+  const bad = cases.filter(([v, want]) => !Object.is(C.num(v), want)).map(([v, want]) => `${v} → ${C.num(v)} (want ${want})`);
+  check('num(): a group starting with 0 is never thousands; real thousands still read', bad.length === 0, bad);
+  const j = Sample.sampleJob(); j.lines[0].hours = '0,600';
+  check('sample with line hours "0,600" keeps the reference net £3,365.08 (was £46,821.58)', C.totals(j).net === 3365.08 && C.totals(j).labourHours === 20.2, C.totals(j));
+}
+
+section('R4 qa/structural: a negation counts only when it denies the damage (#14)');
+{
+  const catN = (text) => { const j = Sample.sampleJob(); j.assessment.structural = text; return find(j, /Category N selected, but the structural assessment text/).length; };
+  const catS = (text) => { const j = Sample.sampleJob(); j.outcome.category = 'S'; j.assessment.structural = text; return find(j, /Category S selected, but the structural assessment text/).length; };
+  // records structural damage although the clause has a "not": Cat N warns, Cat S does not
+  const records = [
+    'The RH A-pillar is deformed and is not economically repairable.',
+    'The RH chassis leg is buckled and must not be straightened; it requires renewal.',
+    'The vehicle has sustained structural damage, not merely cosmetic damage.',
+    'The RH chassis leg is kinked and can\'t be straightened.',
+    'The RH A-pillar is deformed beyond repair and is not safe.',
+    'Structural damage is present and does not permit a safe repair.',
+    'The RH chassis leg is kinked, with no other damage found.',
+    'There is no doubt that the RH A-pillar is deformed.',
+    'The RH B-pillar is deformed and has not been repaired.',
+    'The RH sill reinforcement is cracked and is not repairable.',
+    'The A-pillar is not just creased but kinked.'
+  ];
+  for (const s of records) check('records damage (Cat N warns, Cat S silent): ' + s, catN(s) === 1 && catS(s) === 0, [catN(s), catS(s)]);
+  // denies structural damage: Cat N silent, Cat S warns
+  const denies = [
+    'The chassis leg does not require repair or replacement.',
+    'No repair is required to the chassis legs.',
+    'The chassis leg requires no repair.',
+    'Neither the A-pillar nor the B-pillar is damaged.',
+    'The A-pillar isn\'t damaged.',
+    'Deformation of the chassis leg was not found.',
+    'The A-pillar was not affected.',
+    'Structural damage: nil.',
+    'Structural damage: none identified.',
+    'Chassis legs: no damage.',
+    'The B-pillar was inspected and not found to be damaged.'
+  ];
+  for (const s of denies) check('denies damage (Cat N silent, Cat S warns): ' + s, catN(s) === 0 && catS(s) === 1, [catN(s), catS(s)]);
+  // neither: a negation of something that is not the damage, without any damage recorded
+  check('"The chassis leg was not inspected." neither records nor denies (no false Cat S warning)', catN('The chassis leg was not inspected.') === 0 && catS('The chassis leg was not inspected.') === 0);
+  check('the sample text (Category N) still gives no warning, and still warns under Category S', catN(Sample.sampleJob().assessment.structural) === 0 && catS(Sample.sampleJob().assessment.structural) === 1);
+}
+
+section('R4 qa/ADAS: an "ADAS … calibration" line covers only the sensor it names (#15)');
+{
+  const adas = (lines) => { const j = base(); j.lines = lines.map(L); return find(j, /ADAS|Geometry|Parking sensor|Headlamp work/); };
+  const ws = { description: 'Windscreen – renew', code: 'GL001', hours: 1.5, amount: 400, partNo: 'W', op: 'renew' };
+  const radar = { type: 'Electrical', description: 'Front radar sensor (ACC/AEB) – renew', code: 'EL001', hours: 0.5, amount: 600, partNo: 'R', op: 'renew' };
+  const bsm = { description: 'RH blind-spot radar sensor (rear) – renew', code: 'RE013', side: 'R', hours: 0.4, amount: 200, partNo: 'b' };
+  let a = adas([ws, radar, { description: 'ADAS front camera calibration', code: 'EL003', hours: 1 }]);
+  check('windscreen + front radar + "ADAS front camera calibration" → front radar warning only', a.length === 1 && /front radar work/.test(a[0].msg), a);
+  a = adas([bsm, { description: 'ADAS calibration – windscreen camera', code: 'GL005', hours: 1 }]);
+  check('blind-spot radar + "ADAS calibration – windscreen camera" → blind-spot warning', a.length === 1 && /blind-spot radar work/.test(a[0].msg), a);
+  a = adas([{ description: 'LH surround-view camera – renew', code: 'EL004', side: 'L', hours: 0.5, amount: 200, partNo: 's' }, { description: 'ADAS front camera calibration', code: 'EL003', hours: 1 }]);
+  check('surround-view camera + "ADAS front camera calibration" → surround-view warning', a.length === 1 && /surround-view/.test(a[0].msg), a);
+  a = adas([ws, radar, { description: 'ADAS front radar calibration', code: 'EL002', hours: 1 }]);
+  check('windscreen + radar + "ADAS front radar calibration" → camera warning only', a.length === 1 && /windscreen \/ front camera/.test(a[0].msg), a);
+  a = adas([radar, { description: 'ADAS blind-spot radar calibration', code: 'EL005', hours: 0.8 }]);
+  check('front radar + "ADAS blind-spot radar calibration" → front radar warning', a.length === 1 && /front radar work/.test(a[0].msg), a);
+  a = adas([radar, { description: 'ADAS calibration - front camera', amount: 150, costClass: 'other' }]);
+  check('a free-text "ADAS calibration - front camera" line does not cover the radar', a.length === 1 && /front radar work/.test(a[0].msg), a);
+  a = adas([ws, radar, bsm, { description: 'ADAS calibration (static and dynamic)', amount: 250, costClass: 'other' }]);
+  check('a generic "ADAS calibration (static and dynamic)" line still covers camera, radar and blind-spot', a.length === 0, a);
+  a = adas([ws, radar, { description: 'ADAS calibration (front camera and radar)', amount: 250, costClass: 'other' }]);
+  check('"ADAS calibration (front camera and radar)" covers both sensors it names', a.length === 0, a);
+}
+
+section('R4 qa/MOT: a test after the loss counts whatever its odometer result (#16)');
+{
+  const mot = (r, extra) => { const j = Sample.sampleJob(); j.vehicle.motHistory = [{ date: '2025-08-01', result: 'PASSED', odometer: 58000, unit: 'mi', odometerResult: 'READ' }, Object.assign({ date: '2026-10-15', result: 'PASSED', odometer: r === 'READ' ? 65120 : 0, unit: r === 'READ' ? 'mi' : '', odometerResult: r }, extra)]; return find(j, /MOT AFTER the date of loss/); };
+  let m = mot('READ');
+  check('READ → warning with the reading', m.length === 1 && m[0].level === 'warn' && /15\/10\/2026 at 65,120 miles \(752 miles more than the inspection reading\)/.test(m[0].msg), m);
+  m = mot('UNREADABLE');
+  check('UNREADABLE → the same warning, "odometer unreadable"', m.length === 1 && m[0].level === 'warn' && /15\/10\/2026 \(odometer unreadable\)/.test(m[0].msg) && !/more than the inspection/.test(m[0].msg), m);
+  m = mot('NO_ODOMETER');
+  check('NO_ODOMETER → the same warning, "no odometer"', m.length === 1 && /15\/10\/2026 \(no odometer\)/.test(m[0].msg), m);
+  m = mot('', { odometerResult: undefined });
+  check('a legacy test with no reading → "no odometer reading recorded"', m.length === 1 && /no odometer reading recorded/.test(m[0].msg), m);
+  const j = Sample.sampleJob(); j.vehicle.motHistory = [{ date: '2026-10-15', result: 'PASSED', odometer: 0, odometerResult: 'UNREADABLE' }, { date: 'garbage', odometer: 70000, unit: 'mi' }];
+  check('an unread post-loss test is not used for the mileage comparisons; a junk date is ignored', find(j, /MOT AFTER/).length === 1 && !find(j, /garbage|LOWER than the MOT|going DOWN/).length, msgs(j).filter((x) => /MOT/.test(x)));
+  const k = Sample.sampleJob(); k.vehicle.motHistory = [{ date: '2025-08-01', result: 'PASSED', odometer: 0, odometerResult: 'UNREADABLE' }];
+  check('an unread test BEFORE the loss raises nothing', !find(k, /MOT/).length);
+}
+
+section('R4 qa/SRS: SRS work needs a POST-repair scan; manual SRS lines count (#17)');
+{
+  const srs = (lines) => { const j = base(); j.lines = lines.map(L); return find(j, /^SRS components/); };
+  const airbag = { description: 'Driver airbag – renew', code: 'SR001', hours: 0.4, amount: 300, partNo: 'a', op: 'renew' };
+  const pre = { type: 'Auxiliary', description: 'Pre-repair diagnostic procedure', hours: 0.3, op: 'labour' };
+  let m = srs([airbag, pre]);
+  check('SR001 + only a pre-repair scan (OP010) → warning naming the line and EL008 / OP011', m.length === 1 && /Driver airbag – renew/.test(m[0].msg) && /EL008 or OP011/.test(m[0].msg), m);
+  m = srs([airbag, { description: 'Pre-repair diagnostic scan', code: 'EL007', hours: 0.3, op: 'operation' }]);
+  check('SR001 + EL007 (pre-repair scan) → warning', m.length === 1, m);
+  check('SR001 + EL008 (post-repair scan) → none', srs([airbag, { description: 'Post-repair diagnostic scan', code: 'EL008', hours: 0.3, op: 'operation' }]).length === 0);
+  check('SR001 + OP011 "Post-repair diagnostic procedure" (no code) → none', srs([airbag, { type: 'Auxiliary', description: C.OPS.OP011.name, hours: 0.3, op: 'labour' }]).length === 0);
+  check('SR001 + "SRS scan and fault clearing" / "Diagnostic scan (pre and post repair)" → none', srs([airbag, { description: 'SRS scan and fault clearing', hours: 0.3 }]).length === 0 && srs([airbag, { description: 'Diagnostic scan (pre and post repair)', hours: 0.5 }]).length === 0);
+  for (const d of ['Driver airbag – renew', 'Seat-belt pretensioner – replace', 'Clock spring – renew', 'Airbag control module – renew', 'RH crash sensor – renew', 'Passenger air bag – remove & refit']) {
+    check(`manual line "${d}" without a code → warning`, srs([{ description: d, hours: 0.5, amount: 100, partNo: 'x', op: 'manual' }]).length === 1);
+  }
+  check('an AI line (code OTHER, stored without a code) renewing an airbag → warning', srs([{ description: 'Curtain airbag', hours: 2.5, amount: 300, op: 'renew', ai: true, reviewed: true }]).length === 1);
+  check('service lines are not SRS work ("Airbag warning light – diagnose", "SRS diagnostic scan", "Airbag – inspect")', srs([{ description: 'Airbag warning light – diagnose', hours: 0.5, op: 'manual' }, { description: 'SRS diagnostic scan', hours: 0.3 }, { description: 'Airbag – inspect', hours: 0.3, op: 'manual' }]).length === 0);
+  check('the sample (no SRS work) → none', !find(Sample.sampleJob(), /^SRS/).length);
+}
+
+section('R4 qa/OEM: the assessor\'s own number needs no VIN check even when it is also researched (#18)');
+{
+  const k = 'nissan-juke-f15';
+  C.setCustomOem([{ key: k, make: 'Nissan', model: 'Juke', parts: { 'MR001|L': [{ oem: '963021KK2C', confidence: 'user', user: true, autoFill: false, market: 'UK', role: 'primary' }] } }]);
+  const order = C.oemLookup(k, 'MR001', 'L').map((c) => c.oem + (c.user ? '*' : ''));
+  check('(the researched copy sorts ahead of the user\'s copy)', order.indexOf('963021KK2C') < order.indexOf('963021KK2C*'), order);
+  check('oemAlternatives → 0 for the duplicated own number', C.oemAlternatives(k, { code: 'MR001', side: 'L', partNo: '963021KK2C' }) === 0);
+  const j = Sample.sampleJob(); j.lines = [L({ description: 'LH door mirror – renew', code: 'MR001', side: 'L', partNo: '963021KK2C', hours: 0.6, amount: 400, op: 'renew' })];
+  check('…and no "confirm by VIN" info on the line', !find(j, /researched part number/).length);
+  check('another researched number on the same part still asks for the VIN check', C.oemAlternatives(k, { code: 'MR001', side: 'L', partNo: '963021KK7A' }) >= 1);
+  C.setCustomOem([]);
+  check('without the user entry the researched 963021KK2C needs a VIN check again', C.oemAlternatives(k, { code: 'MR001', side: 'L', partNo: '963021KK2C' }) >= 1);
+}
+
+section('R4 qa/salvage: a negative salvage figure or % is ignored and reported (#19)');
+{
+  const j = Sample.sampleJob(); j.valuation.salvageOverride = -500;
+  let t = C.totals(j);
+  check('override −500 → ignored: salvage is the 15% figure £852.30 (salvageEntered false)', t.salvage === 852.3 && t.salvageEntered === false, t);
+  let m = find(j, /salvage value entered is negative/);
+  check('…QA error naming the figure and what is used instead', m.length === 1 && m[0].level === 'error' && m[0].tab === 'valuation' && /−£500\.00/.test(m[0].msg) && /£852\.30 \(15% of PAV\)/.test(m[0].msg), m);
+  j.valuation.salvageOverride = '−£500'; // imported text
+  check('…also for imported text "−£500"', C.totals(j).salvage === 852.3 && find(j, /salvage value entered is negative/).length === 1);
+  j.valuation.salvageOverride = 0;
+  t = C.totals(j);
+  check('an override of 0 is a real figure (salvage £0, entered)', t.salvage === 0 && t.salvageEntered === true && !find(j, /negative/).length, t);
+  j.valuation.salvageOverride = ''; j.valuation.salvagePct = -15;
+  t = C.totals(j);
+  check('salvage % −15 → counts as 0%: salvage £0.00 (not −£852.30), with a QA error', t.salvage === 0 && t.salvagePct === 0 && find(j, /salvage percentage is negative \(-15%\)/).length === 1 && find(j, /salvage percentage is negative/)[0].level === 'error', t);
+  const s = Sample.sampleJob(), ts = C.totals(s);
+  check('the sample is unchanged (salvage £852.30 at 15%, no salvage message)', ts.salvage === 852.3 && ts.salvagePct === 15 && ts.salvageEntered === false && !find(s, /salvage (?:value|percentage)/).length);
+}
+
+section('R4 qa/court: claim type "Court" without CPR 35 mode (#2)');
+{
+  const j = Sample.sampleJob(); j.valuation.claimType = 'court';
+  let m = find(j, /claim type is "Court proceedings"/);
+  check('court claim type, CPR 35 off → one warning (Sign-off) that it is not a CPR Part 35 report, worded conditionally', m.length === 1 && m[0].level === 'warn' && m[0].tab === 'signoff' && /not set up as a court-compliant expert report/.test(m[0].msg) && /If it is to be relied on as expert evidence under CPR Part 35/.test(m[0].msg), m);
+  j.valuation.claimType = 'Court';
+  check('…also for the legacy "Court"', find(j, /claim type is "Court proceedings"/).length === 1);
+  j.report.cpr35 = true;
+  check('CPR 35 on → no such warning', find(j, /claim type is "Court proceedings"/).length === 0);
+  const k = Sample.sampleJob(); k.valuation.claimType = 'third-party';
+  check('other claim types → none; isCourtClaim export', find(k, /Court proceedings/).length === 0 && C.isCourtClaim('court') && C.isCourtClaim(' Court ') && !C.isCourtClaim('third-party') && !C.isCourtClaim(null));
+}
+
+section('R4 qa/CPR 35: examination by someone else — under the expert\'s supervision? (PD 35 para 3.2(5), #5)');
+{
+  const saved = C.clone(C.settings);
+  C.settings.assessor.qualifications = 'MIAEA';
+  const cpr = (f) => { const j = Sample.sampleJob(); j.report.cpr35 = true; j.report.materialsRelied = 'x'; j.inspection.by = 'J Field'; j.inspection.byQualifications = 'IMI Level 3'; if (f) f(j); return j; };
+  check('newJob has report.examinerSupervised = ""', C.newJob().report.examinerSupervised === '');
+  let m = find(cpr(), /under your supervision/);
+  check('another examiner, not recorded → error on Sign-off naming the examiner and PD 35 para 3.2(5)', m.length === 1 && m[0].level === 'error' && m[0].tab === 'signoff' && /examined by J Field/.test(m[0].msg) && /PD 35 para 3\.2\(5\)/.test(m[0].msg), m);
+  check('"yes" or "no" recorded → no error', find(cpr((j) => { j.report.examinerSupervised = 'yes'; }), /supervision/).length === 0 && find(cpr((j) => { j.report.examinerSupervised = 'no'; }), /supervision/).length === 0);
+  check('the examiner is the expert (any case or accents) → no supervision question', find(cpr((j) => { j.inspection.by = 'sample assessor'; }), /supervision/).length === 0);
+  check('not a CPR 35 report → nothing', find(Object.assign(Sample.sampleJob(), { inspection: Object.assign(Sample.sampleJob().inspection, { by: 'J Field' }) }), /supervision/).length === 0);
+  check('examinerSupervision(): "Yes" / true → yes, "NO" / false → no, other → ""', C.examinerSupervision({ report: { examinerSupervised: 'Yes' } }) === 'yes' && C.examinerSupervision({ report: { examinerSupervised: true } }) === 'yes' && C.examinerSupervision({ report: { examinerSupervised: 'NO' } }) === 'no' && C.examinerSupervision({ report: { examinerSupervised: false } }) === 'no' && C.examinerSupervision({ report: { examinerSupervised: 'maybe' } }) === '' && C.examinerSupervision(null) === '');
+  C.settings = saved;
+}
+
+section('R4 qa/CPR 35: unreviewed AI output is an error in a court report, a warning otherwise (#3)');
+{
+  const saved = C.clone(C.settings);
+  C.settings.assessor.qualifications = 'MIAEA';
+  const withAi = (cprOn) => {
+    const j = Sample.sampleJob(); j.report.cpr35 = cprOn; j.report.materialsRelied = 'x'; j.inspection.by = 'Sample Assessor';
+    j.aiText = { opinion: j.opinion, 'report.summary': j.report.summary };
+    j.lines[0].ai = true; j.lines[0].reviewed = false;
+    j.photos = [{ id: 'p1', dataUrl: 'data:,', title: 't', labels: [{ text: 'x', ai: true }] }];
+    j.valuation.adverts = [{ description: 'Ad', price: 5000, aiUnverified: true }];
+    return j;
+  };
+  const kinds = [/AI damage labels/, /was suggested by AI/, /AI-drafted text not yet edited or confirmed/, /found by AI web search/];
+  const on = qa(withAi(true)), off = qa(withAi(false));
+  check('CPR 35: AI labels, AI lines, AI text and unverified adverts are each an ERROR, saying the statement of truth cannot cover them', kinds.every((re) => on.some((q) => re.test(q.msg) && q.level === 'error' && /^CPR 35 report: /.test(q.msg) && /statement of truth cannot cover AI output you have not reviewed/.test(q.msg))), on.filter((q) => /AI/.test(q.msg)));
+  check('not CPR 35: the same items are warnings, worded as before', kinds.every((re) => off.some((q) => re.test(q.msg) && q.level === 'warn' && !/CPR 35/.test(q.msg))), off.filter((q) => /AI/.test(q.msg)));
+  const reviewed = withAi(true); reviewed.aiText = {}; reviewed.lines[0].reviewed = true; reviewed.photos[0].labelsReviewed = true; delete reviewed.valuation.adverts[0].aiUnverified;
+  check('CPR 35 with everything reviewed → no AI error', !qa(reviewed).some((q) => q.level === 'error' && /AI/.test(q.msg)), qa(reviewed).filter((q) => q.level === 'error'));
+  check('AI review flags stay warnings in CPR 35 mode (the report does not print them)', (() => { const j = withAi(true); j.aiFlags = [{ text: 'Check the sill' }]; return find(j, /^AI review flag/).every((q) => q.level === 'warn'); })());
+  C.settings = saved;
+}
+
+section('R4 C.markAiReviewed: the assessor confirms an AI-set field, e.g. the decision and category (#1 / #13)');
+{
+  const j = Sample.sampleJob();
+  j.aiText = { 'outcome.decision': j.outcome.decision, 'outcome.category': 'N', opinion: j.opinion };
+  check('before: decision and category listed as unreviewed AI text, QA warns', C.unreviewedAiText(j).some((f) => f.path === 'outcome.decision') && find(j, /Economic repair \/ total-loss decision \(section 07\); Salvage category \(section 07\)/).length === 1);
+  check('markAiReviewed(job, "outcome.decision") → true, entry removed', C.markAiReviewed(j, 'outcome.decision') === true && !('outcome.decision' in j.aiText));
+  check('…idempotent: a second call → false, nothing else changes', C.markAiReviewed(j, 'outcome.decision') === false && Object.keys(j.aiText).join(',') === 'outcome.category,opinion');
+  C.markAiReviewed(j, 'outcome.category');
+  const u = C.unreviewedAiText(j).map((f) => f.path);
+  check('after confirming both: only the unedited opinion is listed; the valuation-tab warning has gone', JSON.stringify(u) === '["opinion"]' && !find(j, /Salvage category \(section 07\)|total-loss decision \(section 07\)/).length, u);
+  check('the field values are untouched', j.outcome.decision === Sample.sampleJob().outcome.decision && j.outcome.category === 'N');
+  check('photo paths work too (photos.<id>.title)', (() => { const k = Sample.sampleJob(); k.photos = [{ id: 'p1', title: 'AI title' }]; k.aiText = { 'photos.p1.title': 'AI title' }; return C.markAiReviewed(k, 'photos.p1.title') && C.unreviewedAiText(k).length === 0; })());
+  const proto = { aiText: {} };
+  check('no throw and false for: no job, no aiText, an array, a non-string path, "__proto__" / "constructor"', [null, undefined, {}, { aiText: null }, { aiText: [] }, { aiText: 'x' }].every((x) => C.markAiReviewed(x, 'opinion') === false) && C.markAiReviewed(j, 5) === false && C.markAiReviewed(proto, '__proto__') === false && C.markAiReviewed(proto, 'constructor') === false && Object.getPrototypeOf(proto.aiText) === Object.prototype);
+}
+
+section('R4 vehicleGuide: the guide time for THIS vehicle, as the picker scales it (#0 / #4)');
+{
+  const job = (paint, size) => { const j = C.newJob(); j.vehicle.paintType = paint; j.vehicle.sizeClass = size; return j; };
+  const g = (j, op, base) => { const r = C.vehicleGuide(j, { op, guideHours: base }); return r && r.hours; };
+  const suvPearl = job('pearl', 'suv');
+  // figures from the picker for this vehicle (app.js guideFor / scaleP / scaleH), as the final review recorded them
+  check('SUV + pearl: FE001 refinish 2.4h → 3.3h; BN001 refinish 3.0h → 4.1h; FE001 renew 1.6h → 1.8h', g(suvPearl, 'refinish', 2.4) === 3.3 && g(suvPearl, 'refinish', 3.0) === 4.1 && g(suvPearl, 'renew', 1.6) === 1.8);
+  check('medium + pearl: FE001 refinish 2.4h → 2.9h (×1.2 only)', g(job('pearl', 'medium'), 'refinish', 2.4) === 2.9);
+  check('size-scaled operations: repair, pdr, rr, operation; refinishRep1/2, blend and smart also take the paint factor', ['repair1', 'repair', 'repair3', 'pdr', 'rr', 'operation', 'replace'].every((op) => g(suvPearl, op, 2) === 2.3) && ['refinishRep1', 'refinishRep2', 'blend', 'smart'].every((op) => g(suvPearl, op, 2) === 2.8));
+  check('inspect, refurbish and labour operations are not scaled', g(suvPearl, 'check', 0.3) === 0.3 && g(suvPearl, 'labour', 0.3) === 0.3 && g(suvPearl, 'refurb', 0.5) === 0.5);
+  check('an unknown operation: the base when both factors are 1, otherwise null (never a guess)', g(job('metallic', 'medium'), 'ai', 1.4) === 1.4 && C.vehicleGuide(suvPearl, { op: 'ai', guideHours: 1.4 }) === null);
+  check('no guide (0, blank, junk) → null; factors reported', C.vehicleGuide(suvPearl, { op: 'renew', guideHours: 0 }) === null && C.vehicleGuide(suvPearl, { op: 'renew' }) === null && C.vehicleGuide(null, null) === null && JSON.stringify(C.vehicleGuide(suvPearl, { op: 'refinish', guideHours: 2.4 })) === JSON.stringify({ hours: 3.3, size: 1.15, paint: 1.2 }));
+  check('rounding as the picker: one decimal, at least 0.1h (small ×0.9: 0.05h → 0.1h)', g(job('metallic', 'small'), 'renew', 0.05) === 0.1 && g(job('metallic', 'small'), 'renew', 1.5) === 1.4);
+}
+
+section('R4 dates: first registration known to the month or the year only');
+{
+  check('partialDate: "2014-08" → month, "1968" → year; "2014-13", "2014-00", "14-08", "" → null', JSON.stringify(C.partialDate('2014-08')) === JSON.stringify({ y: 2014, mo: 8 }) && JSON.stringify(C.partialDate('1968')) === JSON.stringify({ y: 1968, mo: 0 }) && ['2014-13', '2014-00', '14-08', '', null, '2014-08-01'].every((s) => C.partialDate(s) === null));
+  check('calendarDate exported (2024-02-29 valid, 2023-02-29 not)', !!C.calendarDate('2024-02-29') && C.calendarDate('2023-02-29') === null);
+  const fr = (s) => { const j = Sample.sampleJob(); j.vehicle.firstReg = s; return find(j, /First registration date ".*" is not a valid date/).length; };
+  check('a year-only ("1968") or month-only ("2014-08") first registration is not "not a valid date"', fr('1968') === 0 && fr('2014-08') === 0);
+  check('…but "2014-13-01", "2014-13" and "1968-1" still are', fr('2014-13-01') === 1 && fr('2014-13') === 1 && fr('1968-1') === 1);
+  check('other dates must still be full dates ("2026-09" date of loss warns)', (() => { const j = Sample.sampleJob(); j.instruction.dateOfLoss = '2026-09'; return find(j, /Date of loss "2026-09" is not a valid date/).length === 1; })());
+}
+
 // R#10: image re-encoding with a fake canvas (no DOM in node)
 async function imageChecks() {
   section('R#10. Re-encoding images: white behind JPEG, PNG kept when the image has transparency');

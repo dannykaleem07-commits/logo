@@ -48,7 +48,14 @@ const dec = (buf) => {
 };
 let wcIds = 0;
 class FakeWebContents extends EventEmitter {
-  constructor(win) { super(); this.id = ++wcIds; this.win = win; }
+  constructor(win, type = 'window') {
+    super(); this.id = ++wcIds; this.win = win; this.type = type; this.crashed = false;
+    // like WebFrameMain: framesInSubtree holds the top frame and every iframe; an iframe has a parent
+    this.mainFrame = { url: APP_URL, parent: null, detached: false, framesInSubtree: [] };
+    this.mainFrame.framesInSubtree.push(this.mainFrame);
+  }
+  getType() { return this.type; }
+  isCrashed() { return this.crashed; }
   setWindowOpenHandler(fn) { this.windowOpenHandler = fn; }
   async printToPDF(opts) { S.printCalls.push(opts); return S.printToPDF(opts, this.win); }
   isDestroyed() { return !!(this.win && this.win.destroyed); }
