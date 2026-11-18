@@ -33,6 +33,12 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: UI smoke test (every screen and flow, mocked desktop bridge)
         run: node tools/ui-smoketest.js
+      - name: Download the Electron binary
+        run: node node_modules/electron/install.js
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: ''
+      - name: End-to-end test in real Electron (mocked DVLA, DVSA and Anthropic)
+        run: xvfb-run -a npx electron --no-sandbox tools/electron-e2e.js
 
   windows:
     name: Build Windows installer and portable .exe
@@ -51,6 +57,8 @@ jobs:
       - run: npm ci
       - name: Unit and mocked-API tests
         run: npm test
+      - name: End-to-end test in real Electron on Windows (mocked DVLA, DVSA and Anthropic)
+        run: npx electron tools/electron-e2e.js
       - name: Build Windows installer and portable .exe
         run: npx electron-builder --win nsis portable --x64 --publish never
       - uses: actions/upload-artifact@v4

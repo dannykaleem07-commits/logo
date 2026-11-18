@@ -13,7 +13,8 @@
     "test": "node tools/selftest.js && node tools/tests/core/checks.js && node tools/tests/core/fuzz.js && node tools/tests/report/checks.js && node tools/ai-mocktest.js && node tools/data-mocktest.js && node tools/main-mocktest.js && node tools/build-oem.js --check && node tools/build-variants.js --check",
     "dist:win": "electron-builder --win nsis portable --x64",
     "dist:dir": "electron-builder --dir",
-    "build:variants": "node tools/build-variants.js"
+    "build:variants": "node tools/build-variants.js",
+    "test:e2e": "electron tools/electron-e2e.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.9.0"

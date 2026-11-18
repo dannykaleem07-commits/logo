@@ -36,7 +36,7 @@ Open **Settings → Data connections**.
 
 ## Getting the Windows .exe
 
-GitHub Actions builds it whenever `estimator/` changes (workflow: `.github/workflows/build-estimator.yml`). Every test runs first, including a full UI smoke test in Chromium.
+GitHub Actions builds it whenever `estimator/` changes (workflow: `.github/workflows/build-estimator.yml`). Every test runs first, including a full UI smoke test in Chromium and an end-to-end test of the real app in Electron on Windows.
 
 1. Open the repository on GitHub, then **Actions → Build Engineer Report Studio (Windows)**.
 2. Open the latest green run and download the **Engineer-Report-Studio-Windows** artifact.
@@ -91,7 +91,12 @@ npm test                    # reference-report totals; 301 core checks; 3,000-jo
                             # AI photo/narrative/valuation pipeline and DVLA/MOT connectors against mocked APIs
                             # (response shapes from the official specs); OEM and variant data in sync
 node tools/ui-smoketest.js  # every screen and flow in Chromium with the desktop bridge mocked
+npm run test:e2e            # the real app in real Electron: bridge, key encryption, DVLA/MOT/AI calls
+                            # through Windows networking (mocked servers), PDF export, navigation and
+                            # window locks, second launch (on Linux: xvfb-run -a npx electron --no-sandbox tools/electron-e2e.js)
 ```
+
+`npm test` also runs a fake-Electron proof of the desktop shell (`tools/main-mocktest.js`): IPC sender checks, key-file failures, save-dialog sanitising and PDF temp files. GitHub Actions runs all of these, on Linux and on Windows, before it builds the exe.
 
 ## Files
 
