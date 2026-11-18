@@ -970,4 +970,4 @@ if (!app.requestSingleInstanceLock()) {
 }
 
 // Exposed for tests run under a fake 'electron' module; not used by the app.
-module.exports = { isAppUrl, safeFileName, pdfMargins, withPdfCsp, PDF_MARGINS_MM, BACKUP_CHUNK_MAX };
+module.exports = { isAppUrl, safeFileName, pdfMargins, withPdfCsp, saveError, PDF_MARGINS_MM, BACKUP_CHUNK_MAX };

@@ -86,8 +86,12 @@ const keepAlive = setInterval(() => {}, 1000);
   assert.strictEqual(live.motExpiry, '2008-12-25');
   assert.strictEqual(live.wheelPlan, 'NON STANDARD');
   assert.strictEqual(live.markedAsScrapped, true);
+  assert.strictEqual(live.markedForExport, true);
+  assert.strictEqual(live.automatedVehicle, false);
   assert.strictEqual(live.importedOrReRegistered, false);
-  console.log('✓ DVLA live v1.2.0: POST + x-api-key, VRN normalised, numeric month/year → 2012-12-01, motExpiry, wheelPlan, scrapped flag');
+  assert.strictEqual(live.firstRegistrationYear, 2012);
+  assert.strictEqual(live.environment, 'live');
+  console.log('✓ DVLA live v1.2.0: POST + x-api-key, VRN normalised, numeric month/year → 2012-12-01, motExpiry, wheelPlan, scrapped / export / automated flags as sent, environment "live"');
 
   const uat = await vd.dvlaLookup('AA19PPP', 'KEY1', 'test');
   c = calls[calls.length - 1];
@@ -96,7 +100,43 @@ const keepAlive = setInterval(() => {}, 1000);
   assert.strictEqual(uat.motExpiry, '', 'blank " " normalised');
   assert.strictEqual(uat.taxDueDate, '');
   assert.strictEqual(uat.wheelPlan, '3 AXLE + 3 AXLE ARTIC', 'wheelplan (lower-case p) accepted');
-  console.log('✓ DVLA test service (UAT): uat. URL, string month → 2016-09-01, blank strings and wheelplan normalised');
+  assert.strictEqual(uat.environment, 'test', 'data from the test service is marked as such');
+  console.log('✓ DVLA test service (UAT): uat. URL, string month → 2016-09-01, blank strings and wheelplan normalised, environment "test"');
+
+  // A flag DVLA did not send is null ("not stated"), never false ("No"): every VES field is optional, and the
+  // string-month replies carry no markedAsScrapped at all.
+  assert.deepStrictEqual([uat.markedAsScrapped, uat.markedForExport, uat.automatedVehicle, uat.importedOrReRegistered], [null, false, null, false], 'UAT AA19PPP: scrapped and automated not sent → null; export false as sent; both months 2016-09 → not imported');
+  const bare = vd.normaliseDvla({ registrationNumber: 'X' });
+  assert.deepStrictEqual([bare.markedAsScrapped, bare.markedForExport, bare.automatedVehicle, bare.importedOrReRegistered, bare.firstRegistration, bare.firstRegistrationYear], [null, null, null, null, '', ''], 'nothing sent → nothing claimed');
+  assert.deepStrictEqual(['true', ' False ', 'Y', 1, 0, null].map((v) => vd.normaliseDvla({ markedAsScrapped: v }).markedAsScrapped), [true, false, null, null, null, null], 'only true / false (or their text) count');
+  assert.strictEqual(vd.normaliseDvla({ monthOfFirstRegistration: '2014-08', monthOfFirstDvlaRegistration: '2016-02' }).importedOrReRegistered, true, 'months differ → imported / re-registered');
+  assert.strictEqual(vd.normaliseDvla({ monthOfFirstRegistration: '2014-08' }).importedOrReRegistered, null, 'no DVLA registration month → cannot be said');
+  console.log('✓ DVLA flags: markedAsScrapped / markedForExport / automatedVehicle / importedOrReRegistered are null when DVLA did not say, true / false only when it did');
+
+  // A year without a month is not "1 January": firstRegistration stays empty (so the MOT record's full date can fill
+  // it) and the year is given on its own.
+  for (const month of [null, undefined, 0, '', ' ', 13, '13', 'x']) {
+    const n = vd.normaliseDvla({ registrationNumber: 'OLD1', yearOfFirstRegistration: 1968, monthOfFirstRegistration: month });
+    assert.deepStrictEqual([n.firstRegistration, n.firstRegistrationYear], ['', 1968], `year 1968, month ${JSON.stringify(month)}`);
+  }
+  assert.deepStrictEqual(['firstRegistration', 'firstRegistrationYear'].map((k) => vd.normaliseDvla({ yearOfFirstRegistration: '1968', monthOfFirstRegistration: 6 })[k]), ['1968-06-01', 1968]);
+  assert.deepStrictEqual(['firstRegistration', 'firstRegistrationYear'].map((k) => vd.normaliseDvla({ monthOfFirstRegistration: '2016-13' })[k]), ['', 2016], 'an impossible month is no month');
+  const oldImport = vd.normaliseDvla({ yearOfFirstRegistration: 1968, yearOfFirstRegistrationWithDVLA: 2015, monthOfFirstRegistrationWithDVLA: 4 });
+  assert.deepStrictEqual([oldImport.firstRegistration, oldImport.firstRegistrationWithDvla, oldImport.importedOrReRegistered], ['', '2015-04-01', null]);
+  override = (url) => (url.includes('/vehicle-enquiry/') ? json({ registrationNumber: 'OLD1', make: 'MORRIS', yearOfFirstRegistration: 1968 }) : undefined);
+  const old = await vd.dvlaLookup('OLD1', 'KEY1', 'live');
+  override = null;
+  assert.deepStrictEqual([old.firstRegistration, old.firstRegistrationYear], ['', 1968], 'through dvlaLookup');
+  console.log('✓ DVLA year-only first registration: no made-up "1 January" (empty firstRegistration, firstRegistrationYear 1968); months 1-12 only');
+
+  // The test service holds only DVLA's own test registrations: its "not found" is not a fact about a real vehicle.
+  const notFound = await errOf(vd.dvlaLookup('ER19NFD', 'KEY1', 'test'));
+  assert.match(notFound, /^The DVLA test service has no record of ER19NFD\. That service only holds DVLA's test registrations \(such as AA19AAA\), not real vehicles: to look up a real vehicle, set "DVLA service" to Live in Settings → Data connections/);
+  const badTest = await errOf(vd.dvlaLookup('ER19BAD', 'KEY1', 'test'));
+  assert.match(badTest, /^The DVLA test service could not accept ER19BAD \(Bad Request: Invalid format for field - vehicle registration number\)\. That service only holds DVLA's test registrations .*check the registration, or to look up a real vehicle, set "DVLA service" to Live/);
+  assert.strictEqual(await errOf(vd.dvlaLookup('ER19NFD', 'KEY1', 'live')), 'DVLA has no record of ER19NFD.', 'the live register: as before');
+  assert.match(await errOf(vd.dvlaLookup('ER19BAD', 'KEY1', 'live')), /^DVLA could not accept ER19BAD \(Bad Request: Invalid format for field - vehicle registration number\)\. Check the registration\.$/);
+  console.log('✓ DVLA test service: "no record" (404) and "could not accept" (400) say that it only holds DVLA\'s test registrations and how to switch to Live; live wording unchanged');
 
   await assert.rejects(vd.dvlaLookup('ER19NFD', 'KEY1', 'test'), /no record of ER19NFD/);
   await assert.rejects(vd.dvlaLookup('ER19BAD', 'KEY1', 'test'), /Invalid format for field/);
@@ -194,12 +234,32 @@ const keepAlive = setInterval(() => {}, 1000);
   await vd.motLookup('AB12CDE', { ...keys, motClientId: 'id-t2' }, 'registration'); // token now cached
   vd.setFetch((url, init) => (url.startsWith('https://history.') ? hang(url, init) : mockFetch(url, init)), { timeoutMs: 150 });
   assert.match(await errOf(vd.motLookup('AB12CDE', { ...keys, motClientId: 'id-t3' }, 'registration')), /The MOT History service did not respond within 1 second/);
+  // The headers arrive in time but the body stalls: Electron's net.fetch then fails the body read with a plain
+  // AbortError ("premature close") instead of the signal's TimeoutError. It is still a timeout, not "cancelled".
+  const bodyStall = (url, init) => new Response(new ReadableStream({
+    start(ctl) {
+      ctl.enqueue(new TextEncoder().encode('{"registrationNumber":"AB1'));
+      // Node's AbortError, as Readable.toWeb raises it for net.fetch's response stream
+      init.signal.addEventListener('abort', () => ctl.error(Object.assign(new Error('The operation was aborted'), { name: 'AbortError', code: 'ABORT_ERR', cause: Object.assign(new Error('Premature close'), { code: 'ERR_STREAM_PREMATURE_CLOSE' }) })));
+    }
+  }), { status: 200, headers: { 'content-type': 'application/json' } });
+  vd.setFetch(bodyStall, { timeoutMs: 150 });
+  assert.match(await errOf(vd.dvlaLookup('AB12CDE', 'KEY1', 'live')), /^The DVLA service did not respond within 1 second\. Try again; if it keeps happening/);
+  assert.match(await errOf(vd.motLookup('AB12CDE', { ...keys, motClientId: 'id-b1' }, 'registration')), /^The Microsoft sign-in service for the MOT History API did not respond within 1 second/);
+  vd.setFetch(mockFetch);
+  await vd.motLookup('AB12CDE', { ...keys, motClientId: 'id-b2' }, 'registration'); // token cached
+  vd.setFetch((url, init) => (url.startsWith('https://history.') ? bodyStall(url, init) : mockFetch(url, init)), { timeoutMs: 150 });
+  assert.match(await errOf(vd.motLookup('AB12CDE', { ...keys, motClientId: 'id-b2' }, 'registration')), /^The MOT History service did not respond within 1 second/);
+  // an abort that is not the timeout is still reported as cancelled
+  vd.setFetch(async () => { throw new DOMException('The operation was aborted', 'AbortError'); }, { timeoutMs: 5000 });
+  assert.strictEqual(await errOf(vd.dvlaLookup('AB12CDE', 'KEY1', 'live')), 'The request to the DVLA service was cancelled.');
+  vd.setFetch(mockFetch);
   // setFetch() with no function goes back to the global fetch
   vd.setFetch();
   await errOf(vd.dvlaLookup('AB12CDE', 'KEY1', 'live'));
   assert.strictEqual(globalFetchCalls, 1, 'setFetch() resets to globalThis.fetch');
   vd.setFetch(mockFetch);
-  console.log('✓ Transport: every request uses the injected fetch with a timeout signal, redirect:"error" and no cookies; hung DVLA / token / MOT requests time out (20 s by default)');
+  console.log('✓ Transport: every request uses the injected fetch with a timeout signal, redirect:"error" and no cookies; hung DVLA / token / MOT requests time out (20 s by default), also when the headers came in time and the body stalled (the AbortError net.fetch gives then); a real abort still reads "cancelled"');
 
   // ---------- network error mapping (Node undici and Chromium net.fetch shapes) ----------
   const LEAK = ['dvla-KEY-7f3a9c11', 'mot-SECRET-55aa77bb', 'mot-APIKEY-0c0ffee0'];

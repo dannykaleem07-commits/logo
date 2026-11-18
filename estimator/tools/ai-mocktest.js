@@ -144,7 +144,10 @@ test('photo request: model, streaming, JSON schema, effort, cached system prompt
   assert.strictEqual(b.output_config.effort, 'high');
   assert.strictEqual(b.fallbacks, 'default');
   assert.match(c.beta, /server-side-fallback-2026-07-01/);
-  assert.ok(!('thinking' in b) && !('temperature' in b) && !('budget_tokens' in b));
+  // explicit adaptive thinking: a server-side fallback re-sends this same body, and Opus 4.8 / 4.7 / 4.6 or Sonnet 4.6
+  // run with thinking OFF when the field is missing
+  assert.deepStrictEqual(b.thinking, { type: 'adaptive' });
+  assert.ok(!('temperature' in b) && !('budget_tokens' in b));
   assert.strictEqual(b.system[0].cache_control.type, 'ephemeral');
   assert.strictEqual(b.messages[0].content[1].type, 'image');
   assert.strictEqual(c.auth, 'Bearer sk-ant-test');
@@ -154,9 +157,55 @@ test('photo request: model, streaming, JSON schema, effort, cached system prompt
   await ai.analysePhotos({ job: PHOTO_JOB, photos: [{ index: 1, base64: jpeg(100, 100) }], effort: 'XHIGH' });
   assert.strictEqual(calls2[0].body.output_config.effort, 'xhigh');
   const calls3 = mockFetch(json(photoReply([])));
-  await ai.analysePhotos({ job: PHOTO_JOB, photos: [{ index: 1, base64: jpeg(100, 100) }], effort: 'turbo', model: 'claude-haiku-4-5' });
+  await ai.analysePhotos({ job: PHOTO_JOB, photos: [{ index: 1, base64: jpeg(100, 100) }], effort: 'turbo', model: 'claude-opus-4-8' });
   assert.strictEqual(calls3[0].body.output_config.effort, 'high', 'unknown effort falls back to high');
-  assert.strictEqual(calls3[0].body.max_tokens, 64000, 'max_tokens within an older model\'s limit');
+  const calls4 = mockFetch(json(photoReply([])));
+  await ai.analysePhotos({ job: PHOTO_JOB, photos: [{ index: 1, base64: jpeg(100, 100) }], effort: 'turbo', model: 'claude-haiku-4-5' });
+  assert.strictEqual(calls4[0].body.max_tokens, 64000, 'max_tokens within an older model\'s limit');
+  assert.deepStrictEqual(calls4[0].body.thinking, { type: 'enabled', budget_tokens: 16000 }, 'Haiku 4.5: thinking with a budget ("adaptive" is a 400 there)');
+  assert.ok(!('effort' in calls4[0].body.output_config) && calls4[0].body.output_config.format.type === 'json_schema', 'Haiku 4.5 has no effort parameter');
+});
+
+test('thinking and effort: right for every model the app can end up on (setting, server-side fallback, reroute, test connection)', async () => {
+  const ai = freshAI();
+  const P = ai._test.modelParams;
+  const ladder = ['low', 'medium', 'high', 'xhigh', 'max'];
+  const adaptive = { type: 'adaptive' };
+  // Claude 4.6 and later (and models not known to this file): adaptive thinking, the effort asked for
+  for (const m of ['claude-opus-5-5', 'claude-opus-5', 'claude-opus-4-8', 'claude-opus-4-7', 'claude-sonnet-5-5', 'claude-sonnet-5', 'claude-haiku-5-5', 'claude-fable-5-2', 'claude-mythos-5-2', 'claude-opus-6']) {
+    for (const e of ladder) assert.deepStrictEqual(P(m, e), { max_tokens: 128000, thinking: adaptive, effort: e }, `${m} ${e}`);
+  }
+  // Opus 4.6 and Sonnet 4.6: adaptive (thinking OFF without it); "xhigh" arrived with Opus 4.7, so it becomes "high"
+  for (const m of ['claude-opus-4-6', 'claude-sonnet-4-6']) {
+    assert.deepStrictEqual(ladder.map((e) => P(m, e).effort), ['low', 'medium', 'high', 'high', 'max'], m);
+    assert.deepStrictEqual(P(m, 'max').thinking, adaptive);
+  }
+  // 4.5-era models: "adaptive" is a 400 there, so thinking has a budget below max_tokens; effort only on Opus 4.5, up to high
+  for (const m of ['claude-opus-4-5', 'claude-opus-4-5-20251101', 'claude-sonnet-4-5', 'claude-sonnet-4-5-20250929', 'claude-haiku-4-5', 'claude-haiku-4-5-20251001']) {
+    const opus = /opus/.test(m);
+    assert.deepStrictEqual(ladder.map((e) => P(m, e).effort), opus ? ['low', 'medium', 'high', 'high', 'high'] : [null, null, null, null, null], m);
+    assert.deepStrictEqual(ladder.map((e) => P(m, e).thinking), [4000, 8000, 16000, 24000, 32000].map((n) => ({ type: 'enabled', budget_tokens: n })), m);
+    assert.ok(ladder.every((e) => P(m, e).thinking.budget_tokens < P(m, e).max_tokens && P(m, e).thinking.budget_tokens >= 1024), `${m}: 1024 ≤ budget < max_tokens`);
+  }
+  assert.deepStrictEqual(P('claude-opus-4-1-20250805', 'max'), { max_tokens: 32000, thinking: { type: 'enabled', budget_tokens: 16000 }, effort: null }, 'retired Opus 4.1: budget at most half of its 32K output');
+  assert.deepStrictEqual(P('claude-3-5-sonnet-20241022', 'high'), { max_tokens: 8192, thinking: null, effort: null }, 'Claude 3.5: neither');
+  // what the requests carry: the Settings model; a reroute to the model a refusal recommends gets that model's own settings
+  let calls = mockFetch(json(VAL_REPLY));
+  await ai.valuationAssistant({ job: VAL_JOB, motHistory: [], searchWeb: false, model: 'claude-sonnet-4-5', effort: 'max' });
+  assert.deepStrictEqual([calls[0].body.thinking, calls[0].body.output_config.effort, calls[0].body.max_tokens], [{ type: 'enabled', budget_tokens: 32000 }, undefined, 64000]);
+  const refusal = (rec) => blocksReply([], { stop_reason: 'refusal', stop_details: { type: 'refusal', category: 'cyber', explanation: null, recommended_model: rec } });
+  calls = mockFetch(refusal('claude-opus-4-8'), json(VAL_REPLY, { model: 'claude-opus-4-8' }));
+  await ai.valuationAssistant({ job: VAL_JOB, motHistory: [], searchWeb: false, effort: 'xhigh' });
+  assert.deepStrictEqual(calls.map((x) => [x.body.model, x.body.thinking, x.body.output_config.effort]), [['claude-opus-5-5', adaptive, 'xhigh'], ['claude-opus-4-8', adaptive, 'xhigh']], 'rerouted to Opus 4.8 with adaptive thinking (it would run without thinking otherwise)');
+  calls = mockFetch(refusal('claude-opus-4-6'), json(VAL_REPLY, { model: 'claude-opus-4-6' }));
+  await ai.valuationAssistant({ job: VAL_JOB, motHistory: [], searchWeb: false, effort: 'xhigh' });
+  assert.deepStrictEqual([calls[1].body.model, calls[1].body.thinking, calls[1].body.output_config.effort], ['claude-opus-4-6', adaptive, 'high'], 'a reroute uses the effort levels of the model it goes to');
+  // Test connection sends the model's own settings, at the lowest effort
+  calls = mockFetch(() => new Response(JSON.stringify({ id: 'm', type: 'message', role: 'assistant', model: 'claude-opus-5-5', content: [{ type: 'text', text: 'ready' }], stop_reason: 'end_turn', stop_sequence: null, usage: { input_tokens: 1, output_tokens: 1 } }), { status: 200, headers: { 'content-type': 'application/json' } }));
+  await ai.testConnection({});
+  await ai.testConnection({ model: 'claude-haiku-4-5' });
+  assert.deepStrictEqual([calls[0].body.thinking, calls[0].body.output_config, calls[0].body.max_tokens], [adaptive, { effort: 'low' }, 2000]);
+  assert.deepStrictEqual([calls[1].body.thinking, calls[1].body.output_config, calls[1].body.max_tokens], [{ type: 'enabled', budget_tokens: 1024 }, undefined, 2000], 'Haiku 4.5: a budget, no effort');
 });
 
 test('photos: pixel boxes when the size is known, converted to fractions, cropped (not shifted), unplaceable boxes set aside', async () => {
@@ -435,6 +484,43 @@ test('narrative: no salvage category with Repair; no 0% figures without a PAV; A
   assert.strictEqual(out.category, '');
 });
 
+test('narrative: salvage Categories A and B can be drafted (the rules sent name them), and an assessor\'s recorded category is not silently replaced', async () => {
+  const ai = freshAI();
+  const TL = 'Beyond Economical Repair / Total Loss Recommended';
+  assert.deepStrictEqual(ai.NARRATIVE_SCHEMA.properties.category.enum, ['A', 'B', 'S', 'N', ''], 'constrained decoding can only give what the enum lists');
+  let calls = mockFetch(json(Object.assign({}, NARR_REPLY, { decision: TL, category: 'b', opinion: 'Burnt out: Category B.' })));
+  let out = await ai.draftNarrative({ job: narrJob({ circumstances: { narrative: 'Vehicle fire' } }), totals: TOTALS, settings: SETTINGS });
+  assert.deepStrictEqual([out.decision, out.category], [TL, 'B'], 'a fire-gutted total loss keeps Category B (casing normalised)');
+  assert.ok(!out.review_flags.some((f) => /Category/.test(f)));
+  const b = calls[0].body;
+  assert.deepStrictEqual(b.output_config.format.schema.properties.category.enum, ['A', 'B', 'S', 'N', '']);
+  const sys = b.system[0].text, task = b.messages[0].content[0].text;
+  assert.match(sys, /Categories A \(scrap\) and B \(break for parts, shell crushed\) are not repairable/, 'SALVAGE_RULES');
+  assert.match(sys, /"A" \(scrap\) or "B" \(break for parts, shell crushed\) for a vehicle that must never return to the road; "S" for a repairable vehicle with structural damage; "N"/);
+  assert.match(sys, /or when the vehicle cannot be safely repaired at any cost \(.*Category A or B, which does not depend on the figures\)/, 'a non-economic total loss is not excluded by "when the figures show"');
+  assert.doesNotMatch(sys + task, /"N" or "S" only|\(N or S\)/, 'nothing left that limits the category to N or S');
+  assert.match(task, /Give a salvage category \(A, B, S or N, as your instructions define them\) only with the decision "Beyond Economical Repair \/ Total Loss Recommended"/);
+  mockFetch(json(Object.assign({}, NARR_REPLY, { decision: TL, category: 'A' })));
+  assert.strictEqual((await ai.draftNarrative({ job: narrJob(), totals: TOTALS, settings: SETTINGS })).category, 'A');
+  // A or B with a Repair decision: blanked like any category (a category is only for a total loss)
+  mockFetch(json(Object.assign({}, NARR_REPLY, { decision: 'Repair', category: 'B' })));
+  out = await ai.draftNarrative({ job: narrJob(), totals: TOTALS, settings: SETTINGS });
+  assert.strictEqual(out.category, ''); assert.ok(out.review_flags.some((f) => /Category B, but a salvage category applies only to a total loss/.test(f)));
+  // the assessor recorded B; a draft saying S (repairable) is flagged, not quietly accepted
+  calls = mockFetch(json(Object.assign({}, NARR_REPLY, { decision: TL, category: 'S' })));
+  out = await ai.draftNarrative({ job: narrJob({ outcome: { decision: TL, category: 'B' } }), totals: TOTALS, settings: SETTINGS });
+  assert.strictEqual(out.category, 'S');
+  assert.ok(out.review_flags.some((f) => f === 'The draft suggests salvage Category S, but you recorded Category B (a Category B vehicle must never return to the road; Category S is repairable). Check the category before applying the draft.'), JSON.stringify(out.review_flags));
+  assert.match(calls[0].body.messages[0].content[0].text, /<field name="Salvage category" source="assessor">B<\/field>/);
+  mockFetch(json(Object.assign({}, NARR_REPLY, { decision: TL, category: 'B' })));
+  out = await ai.draftNarrative({ job: narrJob({ outcome: { decision: TL, category: 'B' } }), totals: TOTALS, settings: SETTINGS });
+  assert.ok(!out.review_flags.some((f) => /you recorded/.test(f)), 'the same category: no flag');
+  // a category an earlier AI draft put there is not "recorded by you"
+  mockFetch(json(Object.assign({}, NARR_REPLY, { decision: TL, category: 'N' })));
+  out = await ai.draftNarrative({ job: narrJob({ outcome: { decision: TL, category: 'S' }, aiText: { 'outcome.category': 'S' } }), totals: TOTALS, settings: SETTINGS });
+  assert.ok(!out.review_flags.some((f) => /you recorded/.test(f)));
+});
+
 test('valuation: own system prompt, claim-type standard, valuation date, guides vs adverts, UK domains', async () => {
   const ai = freshAI();
   let calls = mockFetch(json(VAL_REPLY));
@@ -515,6 +601,39 @@ test('valuation: comparable URLs verified against the web search results (and th
   assert.strictEqual(c[5].url, '');
   assert.strictEqual(c[6].url, '', 'only https links are kept');
   assert.ok(v.flags.some((f) => /These comparables could not be matched to this run's web search results or your own adverts, so their links were removed: Not in results at £18,995\.00; File URL/.test(f)));
+});
+
+test('valuation: the engineer\'s own adverts are matched whatever their scheme (http, or typed without one); model-only links stay https-only', async () => {
+  const ai = freshAI();
+  const job = JSON.parse(JSON.stringify(VAL_JOB));
+  job.valuation.adverts = [
+    { description: 'Small dealer', year: '2019', mileage: 40000, price: 18500, source: 'Dealer', url: 'http://www.smalldealer.co.uk/stock/123' },
+    { description: 'Typed without a scheme', year: '2019', mileage: 43000, price: 18750, source: 'Dealer', url: 'www.otherdealer.co.uk/used/e220d-9' },
+    { description: 'PistonHeads', year: '2019', mileage: 41000, price: 18995, source: 'PistonHeads', url: 'https://www.pistonheads.com/buy/listing/123' }
+  ];
+  const comp = (url, desc) => ({ description: desc, year: '2019', mileage: 42000, price: 18995, source: 'x', url, like_for_like: true, notes: '' });
+  mockFetch(json(Object.assign({}, VAL_REPLY, { comparables: [
+    comp('http://www.smalldealer.co.uk/stock/123', 'Echoed http'),
+    comp('https://smalldealer.co.uk/stock/123/', 'Upgraded to https'),
+    comp('www.otherdealer.co.uk/used/e220d-9', 'Echoed without a scheme'),
+    comp('https://www.otherdealer.co.uk/used/e220d-9', 'Scheme added by the model'),
+    comp('http://www.pistonheads.com/buy/listing/123', 'http for an https advert'),
+    comp('http://www.unknown-dealer.co.uk/stock/1', 'http, not the engineer\'s'),
+    comp('www.unknown-dealer.co.uk/stock/2', 'No scheme, not the engineer\'s')
+  ] })));
+  const v = await ai.valuationAssistant({ job, motHistory: [], searchWeb: false });
+  assert.deepStrictEqual(v.comparables.map((x) => [x.verified, x.url]), [
+    [true, 'http://www.smalldealer.co.uk/stock/123'],
+    [true, 'http://www.smalldealer.co.uk/stock/123'],
+    [true, 'https://www.otherdealer.co.uk/used/e220d-9'],
+    [true, 'https://www.otherdealer.co.uk/used/e220d-9'],
+    [true, 'https://www.pistonheads.com/buy/listing/123'],
+    [false, ''],
+    [false, '']
+  ], 'the link kept is the engineer\'s own (a scheme-less one as https)');
+  assert.deepStrictEqual(v.comparables.slice(5).map((x) => x.claimed_url), ['http://www.unknown-dealer.co.uk/stock/1', 'www.unknown-dealer.co.uk/stock/2']);
+  assert.deepStrictEqual(v.flags.filter((f) => /could not be matched/.test(f)), ["These comparables could not be matched to this run's web search results or your own adverts, so their links were removed: http, not the engineer's at £18,995.00; No scheme, not the engineer's at £18,995.00. Confirm each advert exists, at the price shown, before relying on it."]);
+  assert.deepStrictEqual(['www.dealer.co.uk/x', 'dealer.co.uk', 'http://a.b/c', 'javascript:alert(1)', 'file:///C:/x', 'localhost/x', ''].map(ai._test.withScheme), ['https://www.dealer.co.uk/x', 'https://dealer.co.uk', 'http://a.b/c', 'javascript:alert(1)', 'file:///C:/x', 'localhost/x', '']);
 });
 
 test('pause_turn: container passed back, paused content echoed (trailing space trimmed), usage summed across requests', async () => {
@@ -629,6 +748,65 @@ test('mid-stream errors: retried once; otherwise explained without "(undefined)"
   calls = mockFetch(midStreamError('some_new_error', 'Odd'));
   err = await rejects(ai.valuationAssistant({ job: VAL_JOB, motHistory: [], searchWeb: false }));
   assert.strictEqual(ai.describeError(err), 'The AI service reported an error while answering: Odd. Try again.');
+});
+
+test('a reply that breaks off after HTTP 200 (connection dropped, stream ended early) is retried once, then explained', async () => {
+  const ai = freshAI();
+  const enc = new TextEncoder();
+  const head = ev('message_start', { message: { id: 'm', type: 'message', role: 'assistant', model: 'claude-opus-5-5', content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 1, output_tokens: 1 } } })
+    + ev('content_block_start', { index: 0, content_block: { type: 'text', text: '' } }) + ev('content_block_delta', { index: 0, delta: { type: 'text_delta', text: '{"recommended_pav": 185' } });
+  /** The body starts, then fails the way the transport reports it (undici: TypeError "terminated"; Electron net.fetch: net::ERR_…). */
+  const drop = (error) => () => new Response(new ReadableStream({ start(c) { c.enqueue(enc.encode(head)); setTimeout(() => c.error(error), 5); } }), { status: 200, headers: { 'content-type': 'text/event-stream', 'request-id': 'req_mock' } });
+  const cleanEnd = () => sseResponse(head); // HTTP/2 RST_STREAM under net.fetch: the body just ends, no message_stop
+  const DROPPED = 'The connection to the AI service was interrupted while it was answering. Check your internet connection (and any proxy or firewall) and try again.';
+  const cases = [
+    ['undici: terminated', drop(Object.assign(new TypeError('terminated'), { cause: Object.assign(new Error('other side closed'), { code: 'UND_ERR_SOCKET' }) }))],
+    ['net.fetch: ERR_INCOMPLETE_CHUNKED_ENCODING', drop(new Error('net::ERR_INCOMPLETE_CHUNKED_ENCODING'))],
+    ['net.fetch: ERR_CONNECTION_RESET', drop(new Error('net::ERR_CONNECTION_RESET'))],
+    ['net.fetch: ERR_CONNECTION_CLOSED (h2)', drop(new Error('net::ERR_CONNECTION_CLOSED'))],
+    ['stream ended early', cleanEnd]
+  ];
+  for (const [label, responder] of cases) {
+    let calls = mockFetch(responder, json(VAL_REPLY));
+    const v = await ai.valuationAssistant({ job: VAL_JOB, motHistory: [], searchWeb: false });
+    assert.deepStrictEqual([calls.length, v.recommended_pav], [2, 18500], `${label}: retried once, then answered`);
+    assert.deepStrictEqual(calls[1].body, calls[0].body, `${label}: the same request again`);
+    calls = mockFetch(responder);
+    const err = await rejects(ai.valuationAssistant({ job: VAL_JOB, motHistory: [], searchWeb: false }));
+    assert.strictEqual(calls.length, 2, `${label}: one retry only`);
+    assert.strictEqual(ai.describeError(err), DROPPED, label);
+  }
+  // the photo batches get it too (it is what "the rest failed: …" shows)
+  mockFetch(drop(new Error('net::ERR_CONNECTION_RESET')));
+  assert.strictEqual(ai.describeError(await rejects(ai.analysePhotos({ job: PHOTO_JOB, photos: [{ index: 1, base64: jpeg(10, 10) }] }))), DROPPED);
+  // a drop and a mid-stream overload share the one retry
+  const calls = mockFetch(drop(new Error('net::ERR_CONNECTION_RESET')), midStreamError('overloaded_error', 'Overloaded'), json(VAL_REPLY));
+  await rejects(ai.valuationAssistant({ job: VAL_JOB, motHistory: [], searchWeb: false }));
+  assert.strictEqual(calls.length, 2);
+  // what is not a dropped connection is not retried
+  assert.strictEqual(ai._test.isStreamDrop(new (require('@anthropic-ai/sdk').AnthropicError)('Unable to parse tool parameter JSON from model.')), false);
+  assert.strictEqual(ai._test.isStreamDrop(Object.assign(new (require('@anthropic-ai/sdk').AnthropicError)('Headers.append: "x" is an invalid header value.'), { cause: new TypeError('Headers.append: "x" is an invalid header value.') })), false);
+});
+
+test('Test connection with no key at all says "No AI key set" (the SDK throws a bare Error there, not an AnthropicError)', async () => {
+  const ai = freshAI(null);
+  const saved = Object.fromEntries(['ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'ANTHROPIC_PROFILE', 'HOME', 'XDG_CONFIG_HOME', 'APPDATA', 'USERPROFILE'].map((k) => [k, process.env[k]]));
+  const home = fs.mkdtempSync(path.join(os.tmpdir(), 'ai-mocktest-'));
+  try {
+    for (const k of ['ANTHROPIC_API_KEY', 'ANTHROPIC_AUTH_TOKEN', 'ANTHROPIC_PROFILE', 'APPDATA', 'USERPROFILE']) delete process.env[k];
+    process.env.HOME = home; process.env.XDG_CONFIG_HOME = home;
+    const calls = mockFetch(apiError(500, 'api_error', 'never reached'));
+    const err = await rejects(ai.testConnection({}));
+    assert.ok(!(err instanceof require('@anthropic-ai/sdk').AnthropicError), 'the SDK\'s own credential error');
+    assert.strictEqual(ai.describeError(err), 'No AI key set. Add your Anthropic API key in Settings → AI.');
+    assert.strictEqual(calls.length, 0, 'nothing was sent');
+    ai.setFetch(async () => { throw new Error('custom fetch never reached'); });
+    assert.strictEqual(ai.describeError(await rejects(ai.testConnection({ model: 'claude-haiku-4-5' }))), 'No AI key set. Add your Anthropic API key in Settings → AI.', 'with a custom fetch (net.fetch) too');
+    ai.setFetch(null);
+  } finally {
+    for (const [k, v] of Object.entries(saved)) { if (v === undefined) delete process.env[k]; else process.env[k] = v; }
+    fs.rmSync(home, { recursive: true, force: true });
+  }
 });
 
 test('describeError: SDK parsed message, billing and spend limits, refusals, connection and credential problems', async () => {

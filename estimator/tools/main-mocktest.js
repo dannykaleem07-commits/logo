@@ -255,10 +255,24 @@ async function waitFor(cond, ms = 3000, what = 'condition') {
 
   // loadFile promise handled
   await boot({ loadFile: async () => { throw new Error("ERR_FILE_NOT_FOUND (-6) loading 'file:///x/index.html'"); } });
-  assert.strictEqual(S.errorBoxes.length, 1); assert.match(S.errorBoxes[0], /could not be loaded/);
+  await waitFor(() => S.errorBoxes.length === 1, 3000, 'error box for a failed load');
+  assert.match(S.errorBoxes[0], /could not be loaded/); assert.strictEqual(S.messageBoxes.length, 0);
   await boot({ loadFile: async () => { throw new Error("ERR_ABORTED (-3) loading 'file:///x/index.html'"); } });
   assert.strictEqual(S.errorBoxes.length, 0);
-  ok('win.loadFile() rejection handled: error box for a failed load, ignored for ERR_ABORTED (superseded load)');
+  // the renderer dying during the first load also fails it (ERR_FAILED): only the crash dialog, never both
+  const failsWithRenderer = (how) => async (p, w) => {
+    if (how === 'gone-later') setTimeout(() => w.webContents.emit('render-process-gone', {}, { reason: 'crashed', exitCode: 11 }), 40); // reported after the rejection, as Electron does
+    if (how === 'gone-first') w.webContents.emit('render-process-gone', {}, { reason: 'launch-failed', exitCode: 1 });
+    if (how === 'crashed') w.webContents.crashed = true;
+    throw new Error("ERR_FAILED (-2) loading 'file:///x/index.html'");
+  };
+  for (const how of ['gone-later', 'gone-first', 'crashed']) {
+    await boot({ loadFile: failsWithRenderer(how), messageBox: () => undefined });
+    await tick(1700); // longer than main.js waits before deciding the load failed on its own
+    assert.deepStrictEqual(S.errorBoxes, [], `${how}: no "could not be loaded" box`);
+    if (how !== 'crashed') assert.deepStrictEqual(S.messageBoxes.map((b) => b.opts.message), ['The Engineer Report Studio window stopped working.'], `${how}: the crash dialog only`);
+  }
+  ok('win.loadFile() rejection handled: error box for a failed load, ignored for ERR_ABORTED (superseded load); a renderer that dies during the first load (reported before or after the rejection, or seen as crashed) gets the crash dialog only, not both');
 
   // ai.js failing to load (e.g. a damaged catalogue) does not stop the app
   await boot({ aiThrows: true });
@@ -295,6 +309,27 @@ async function waitFor(cond, ms = 3000, what = 'condition') {
   const enc2 = APP_URL.replace(/estimator/, 'estimat%6Fr').replace(/index\.html$/, 'ind%65x.html');
   assert.strictEqual((await S.handlers.get('data:status')(appEvent(enc2 + '#/settings'))).ok, true, 'same file, different percent-encoding');
   ok(`IPC: all ${S.handlers.size} channels refuse ${evilFrames.length} untrusted senders (web, local/UNC html, query, iframe, detached, null frame, other webContents); the app frame is accepted however its URL is encoded`);
+
+  // second line behind the frame guard: while an iframe shows another local file (same file: origin, so its script
+  // could call the bridge through the top frame, the call arriving as the top frame's), nothing is answered
+  const topFrame = mainWin().webContents.mainFrame;
+  const iframe = (url, extra) => Object.assign({ url, parent: topFrame, detached: false }, extra);
+  const setFrames = (...kids) => { topFrame.framesInSubtree = [topFrame, ...kids]; };
+  setFrames(iframe('about:srcdoc'), iframe('about:blank'), iframe(APP_URL + '#/preview'), iframe(''), iframe('data:text/html,x'));
+  assert.strictEqual((await call('app:info')).ok, true, 'the report preview (srcdoc) and other non-file frames do not block the bridge');
+  setFrames(iframe('about:srcdoc'), iframe(pathToFileURL(path.join(os.tmpdir(), 'claim-pack.html')).href));
+  for (const ch of S.handlers.keys()) {
+    const res = await S.handlers.get(ch)(appEvent(), {});
+    assert.strictEqual(res.ok, false, `${ch} with a local-file iframe present`); assert.match(res.error, /Request refused/);
+  }
+  setFrames(iframe('file://fileserver.example/share/x.html'));
+  assert.strictEqual((await S.handlers.get('ai:setKey')(appEvent(), 'sk-ant-api03-ATTACKER')).ok, false, 'UNC file iframe');
+  assert.ok(!fs.existsSync(KEY_FILE()), 'no key written while refused');
+  const disposed = Object.defineProperty(iframe(''), 'url', { get() { throw new Error('Render frame was disposed before WebFrameMain could be accessed'); } });
+  setFrames(iframe('file:///C:/x/claim-pack.html', { detached: true }), disposed);
+  assert.strictEqual((await call('app:info')).ok, true, 'a detached frame, or one that is just going away, is ignored');
+  setFrames();
+  ok(`IPC: while an iframe shows another local file (file: or UNC) all ${S.handlers.size} channels refuse; srcdoc / about:blank / data: frames, the app page itself, and detached or disposed frames do not block the bridge`);
 
   // ================= 3. credentials through IPC =================
   r = await call('data:setKeys', { motClientId: 'cid', motClientSecret: 'TOP-SECRET-CLIENT-SECRET', motApiKey: 'apikey', motTokenUrl: 'https://attacker.example/collect' });
@@ -440,6 +475,55 @@ async function waitFor(cond, ms = 3000, what = 'condition') {
   r = await call('file:save', { content: { a: 1 }, fileName: 'j.json' }); assert.strictEqual(r.ok, false);
   r = await call('file:save', { content: '{}', fileName: 'j.csv', kind: 'bat' }); assert.strictEqual(r.ok, false);
   ok(`Save dialogs: base name only, safe characters (${Object.keys(names).length} cases incl. ..\\, Startup path, CON, bidi override), fixed PDF/JSON filters (renderer filters ignored), Documents or last-used folder; cancel / write failure / bad input → {ok:false}`);
+
+  // file:save and pdf:export write "<file>.<uuid>.part", flush it, then rename it over the chosen file
+  const docParts = () => fs.readdirSync(docs).filter((f) => f.endsWith('.part'));
+  const exportPath = path.join(docs, 'AB12CDE.json');
+  fs.writeFileSync(exportPath, 'EARLIER EXPORT');
+  S.dialogResult = { canceled: false, filePath: exportPath };
+  const realRename5 = fs.promises.rename, realOpen5 = fs.promises.open;
+  const atRename = [];
+  fs.promises.rename = async function (a, b) { atRename.push({ part: path.basename(a), partText: fs.readFileSync(a, 'utf8'), targetText: fs.readFileSync(b, 'utf8') }); return realRename5.call(fs.promises, a, b); };
+  try { r = await call('file:save', { content: '{"job":"new – ü 🚗"}', fileName: 'AB12CDE' }); } finally { fs.promises.rename = realRename5; }
+  assert.deepStrictEqual(r, { ok: true, filePath: exportPath });
+  assert.match(atRename[0].part, /^AB12CDE\.json\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.part$/, '<file>.<uuid>.part in the chosen folder');
+  assert.deepStrictEqual([atRename[0].partText, atRename[0].targetText], ['{"job":"new – ü 🚗"}', 'EARLIER EXPORT'], 'the earlier export is untouched until the complete new one replaces it');
+  assert.strictEqual(fs.readFileSync(exportPath, 'utf8'), '{"job":"new – ü 🚗"}');
+  assert.deepStrictEqual(docParts(), []);
+  // the disk filling up part-way: the earlier export stays as it was, and the partial file is deleted
+  fs.promises.open = async function (...a) {
+    const fh = await realOpen5.apply(fs.promises, a);
+    const realWriteFile = fh.writeFile.bind(fh);
+    fh.writeFile = async (data, enc) => { await realWriteFile(String(data).slice(0, 8), enc); throw errno('ENOSPC', 'no space left on device, write'); };
+    return fh;
+  };
+  try { r = await call('file:save', { content: '{"job":"bigger"}', fileName: 'AB12CDE' }); } finally { fs.promises.open = realOpen5; }
+  assert.deepStrictEqual(r, { ok: false, error: 'The file could not be saved: the disk is full. Free some space or save somewhere else.' });
+  assert.strictEqual(fs.readFileSync(exportPath, 'utf8'), '{"job":"new – ü 🚗"}', 'a failed save never truncates the earlier file');
+  assert.deepStrictEqual(docParts(), [], 'the partial file is deleted');
+  // the same for a PDF over an earlier report; the PDF is opened only once it is complete
+  const pdfPath = path.join(docs, 'report.pdf');
+  fs.writeFileSync(pdfPath, '%PDF-1.7 EARLIER %%EOF');
+  S.dialogResult = { canceled: false, filePath: pdfPath };
+  S.openPath.length = 0;
+  fs.promises.rename = async () => { throw errno('EXDEV', 'cross-device link not permitted, rename'); };
+  try { r = await call('pdf:export', { html: '<p>x</p>', fileName: 'report' }); } finally { fs.promises.rename = realRename5; }
+  assert.strictEqual(r.ok, false); assert.match(r.error, /^The PDF could not be saved \(EXDEV\)\.$/);
+  assert.strictEqual(fs.readFileSync(pdfPath, 'utf8'), '%PDF-1.7 EARLIER %%EOF'); assert.deepStrictEqual(docParts(), []); assert.deepStrictEqual(S.openPath, [], 'nothing opened');
+  r = await call('pdf:export', { html: '<p>x</p>', fileName: 'report' });
+  assert.deepStrictEqual(r, { ok: true, filePath: pdfPath }); assert.strictEqual(fs.readFileSync(pdfPath, 'utf8'), '%PDF-1.7 fake'); assert.deepStrictEqual(S.openPath, [pdfPath]);
+  // Windows: a file another program holds open cannot be replaced, and the rename says EPERM: named as "in use"
+  const realPlatform = Object.getOwnPropertyDescriptor(process, 'platform');
+  let winMsg, linuxMsg;
+  try {
+    Object.defineProperty(process, 'platform', { value: 'win32' });
+    winMsg = S.main.saveError(Object.assign(errno('EPERM', 'operation not permitted, rename'), { atRename: true }), 'The PDF could not be saved');
+    linuxMsg = S.main.saveError(errno('EPERM', 'operation not permitted, open'), 'The PDF could not be saved');
+  } finally { Object.defineProperty(process, 'platform', realPlatform); }
+  assert.strictEqual(winMsg, 'The PDF could not be saved: the file is open in another program (for example a PDF viewer, or an antivirus scan). Close it and try again, or save under another name.');
+  assert.match(linuxMsg, /^The PDF could not be saved: Windows did not allow the file to be written there/, 'creating the file (not replacing it) refused: access denied');
+  S.printCalls.length = 0; S.openPath.length = 0; // section 6 reads the first ones
+  ok('file:save / pdf:export: written to <file>.<uuid>.part, renamed over the earlier file only when complete; disk full or a failed rename leaves the earlier file as it was and no .part; the PDF is opened only when saved; on Windows a file held open by another program is named as such');
 
   // ================= 6. PDF export =================
   let seen = null;
@@ -715,6 +799,67 @@ async function waitFor(cond, ms = 3000, what = 'condition') {
   await call('backup:abort', r.id);
   assert.deepStrictEqual(parts(), []);
   ok('Backup on quit: before-quit is held until the open backup is aborted and its temporary file deleted, then app.quit() again; later begins are refused; will-quit deletes any leftover synchronously');
+
+  // quitting waits for a job export or PDF export under way (closing the window quits the app: window-all-closed)
+  const realOpen7 = fs.promises.open;
+  const gateWrites = (gate) => { fs.promises.open = async function (...a) { const fh = await realOpen7.apply(fs.promises, a); const wf = fh.writeFile.bind(fh); fh.writeFile = async (...w) => { await gate.promise; return wf(...w); }; return fh; }; };
+  const beforeQuit = () => { const q = { prevented: false, preventDefault() { this.prevented = true; } }; app.emit('before-quit', q); return q.prevented; };
+  await boot();
+  fs.writeFileSync(inDocs('held.json'), 'EARLIER');
+  S.dialogResult = { canceled: false, filePath: inDocs('held.json') };
+  let gate = deferred();
+  gateWrites(gate);
+  let pending;
+  try {
+    pending = call('file:save', { content: '{"complete":true}', fileName: 'held' });
+    await waitFor(() => parts().length === 1, 2000, 'the export being written');
+    const quits0 = S.quitCalls, dialogs0 = S.saveDialogCalls.length;
+    assert.strictEqual(beforeQuit(), true, 'the quit waits for the export');
+    await tick(60);
+    assert.strictEqual(S.quitCalls, quits0, 'still waiting');
+    assert.strictEqual(fs.readFileSync(inDocs('held.json'), 'utf8'), 'EARLIER', 'the earlier file is untouched meanwhile');
+    r = await call('file:save', { content: '{}', fileName: 'late' }); assert.deepStrictEqual(r, { ok: false, error: 'Engineer Report Studio is closing, so nothing was saved.' });
+    r = await call('pdf:export', { html: '<p>x</p>', fileName: 'late' }); assert.strictEqual(r.ok, false); assert.match(r.error, /is closing/);
+    assert.strictEqual(S.saveDialogCalls.length, dialogs0, 'no save dialog while closing');
+    gate.resolve();
+    assert.deepStrictEqual(await pending, { ok: true, filePath: inDocs('held.json') });
+    await waitFor(() => S.quitCalls === quits0 + 1, 3000, 'the quit resumed after the export');
+    assert.strictEqual(fs.readFileSync(inDocs('held.json'), 'utf8'), '{"complete":true}', 'the export finished before the app quit');
+    assert.deepStrictEqual(parts(), []);
+  } finally { fs.promises.open = realOpen7; gate.resolve(); }
+  // a PDF export: the quit also waits while the report is still being rendered, and the PDF is not opened then
+  await boot();
+  S.dialogResult = { canceled: false, filePath: inDocs('held.pdf') };
+  const rendering = deferred();
+  S.printToPDF = async () => { await rendering.promise; return Buffer.from('%PDF-1.7 rendered %%EOF'); };
+  S.openPath.length = 0;
+  pending = call('pdf:export', { html: '<p>x</p>', fileName: 'held' });
+  await waitFor(() => S.printCalls.length === 1, 2000, 'rendering');
+  let quits1 = S.quitCalls;
+  assert.strictEqual(beforeQuit(), true, 'the quit waits for the PDF being rendered');
+  await tick(60); assert.strictEqual(S.quitCalls, quits1);
+  rendering.resolve();
+  assert.deepStrictEqual(await pending, { ok: true, filePath: inDocs('held.pdf') });
+  await waitFor(() => S.quitCalls === quits1 + 1, 3000, 'the quit resumed after the PDF export');
+  assert.strictEqual(fs.readFileSync(inDocs('held.pdf'), 'utf8'), '%PDF-1.7 rendered %%EOF');
+  assert.deepStrictEqual(S.openPath, [], 'the PDF is not opened once the app is closing');
+  // last resort: an export still being written at will-quit has its .part deleted; the earlier file is kept
+  await boot();
+  fs.writeFileSync(inDocs('cut.json'), 'EARLIER');
+  S.dialogResult = { canceled: false, filePath: inDocs('cut.json') };
+  gate = deferred();
+  gateWrites(gate);
+  try {
+    pending = call('file:save', { content: '{"never":"finished"}', fileName: 'cut' });
+    await waitFor(() => parts().length === 1, 2000, 'the export being written');
+    app.emit('will-quit');
+    if (process.platform !== 'win32') assert.deepStrictEqual(parts(), [], 'deleted synchronously at will-quit');
+    gate.resolve();
+    assert.strictEqual((await pending).ok, false, 'its rename then fails: nothing replaced');
+  } finally { fs.promises.open = realOpen7; gate.resolve(); }
+  assert.strictEqual(fs.readFileSync(inDocs('cut.json'), 'utf8'), 'EARLIER');
+  assert.deepStrictEqual(parts(), []);
+  ok('Exports on quit: before-quit is held while a job export or PDF export is being written or rendered, then app.quit() again (the export complete, the PDF not opened); new exports are refused while closing; will-quit deletes the .part of an export cut off, leaving the earlier file');
 
   // ================= 8. app:info =================
   r = await call('app:info'); assert.deepStrictEqual(r, { ok: true, dataFolder: S.dirs.userData });
