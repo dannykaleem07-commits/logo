@@ -97,12 +97,14 @@ const BRIDGE = () => {
       draftNarrative: async (p) => {
         const tag = M().draftTag || 'DRAFT1';
         log('ai.draftNarrative', { tag, net: p.totals.net, photos: (p.job.photos || []).map((x) => x.index + ':' + x.title), model: p.model, aiText: p.job.aiText, adas: p.job.vehicle && p.job.vehicle.adas, hasPending: p.job.aiDraftPending != null,
+          adverts: ((p.job.valuation && p.job.valuation.adverts) || []).map((a) => a.description),
           prov: (p.job.photos || []).map((x) => ({ index: x.index, titleByAi: x.titleByAi, captionByAi: x.captionByAi, labels: (x.labels || []).map((l) => [l.text, l.ai]) })) });
         await delay(M().aiDelay || 30);
         return { ok: true, result: { model: 'claude-opus-5-5', summary: tag + ' summary', inspection_condition: tag + ' condition', structural: tag + ' structural', mechanical: tag + ' mechanical', wheels: tag + ' wheels', geometry: tag + ' geometry', diagnostics: tag + ' diagnostics', roadworthiness: tag + ' roadworthiness', estimate_notes: tag + ' estimate notes', valuation_comments: tag + ' valuation', opinion: tag + ' opinion', decision: 'Repair', category: '', review_flags: ['Check the RH sill concealed area'] } };
       },
       valuation: async (p) => {
-        log('ai.valuation', { searchWeb: p.searchWeb, mot: (p.motHistory || []).length, reg: p.job.vehicle.reg, claimType: p.claimType, valuationDate: p.valuationDate, aiText: p.job.aiText });
+        log('ai.valuation', { searchWeb: p.searchWeb, mot: (p.motHistory || []).length, reg: p.job.vehicle.reg, claimType: p.claimType, valuationDate: p.valuationDate, aiText: p.job.aiText,
+          adverts: ((p.job.valuation && p.job.valuation.adverts) || []).map((a) => ({ description: a.description, url: a.url || '', aiUnverified: !!a.aiUnverified })) });
         await delay(M().aiDelay || 30);
         // as ai.js: a comparable keeps its url only when verified; otherwise url '' and the model's URL as claimed_url (text only)
         return { ok: true, result: { model: 'claude-opus-5-5', searched: !!p.searchWeb, searches: p.searchWeb ? 2 : 0, search_domains_restricted: !!p.searchWeb && M().domainsRestricted !== false,

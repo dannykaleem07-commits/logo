@@ -16,6 +16,9 @@
   const running = new Set();
   const busy = (kind) => !!job && running.has(kind + ':' + job.id);
   const isObj = (x) => x != null && typeof x === 'object' && !Array.isArray(x);
+  // JSON from a file (backup, job file): keys that could reach Object.prototype when the data is merged later are dropped
+  const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+  const parseFileJson = (text) => JSON.parse(text, (k, v) => (UNSAFE_KEYS.has(k) ? undefined : v));
   const httpUrl = (u) => /^https?:\/\//i.test(String(u || '').trim());
   // OEM candidates: only the first one marked for auto-fill may pre-fill a line; line amounts always use the EX-VAT price.
   // Researched numbers fill unless marked "choose by VIN"; the assessor's own numbers only when they ticked auto-fill.
@@ -734,7 +737,7 @@
       ${F('vehicle.paintType', 'Paint finish', { type: 'select', options: [['solid', 'Solid'], ['metallic', 'Metallic'], ['pearl', 'Pearlescent'], ['three-stage', '3-stage / tri-coat'], ['matt', 'Matt']], hint: 'Affects refinish time and blend recommendations.' })}
       ${F('vehicle.sizeClass', 'Vehicle size class (scales guide labour times)', { type: 'select', options: Object.entries(C.SIZE_CLASSES).map(([k, v]) => [k, `${v[0]} ×${v[1]}`]) })}
       ${F('vehicle.firstReg', 'First registration date', { type: 'date', hint: firstRegHint(job.vehicle) })}
-      ${F('vehicle.oemKey', 'Parts catalogue vehicle (for OEM part numbers)', { type: 'select', options: [['', '— none —']].concat(ov.map((v) => [v.key, `${v.make} ${v.model} ${v.generation} (${v.years})`])), hint: guess && guess.key !== job.vehicle.oemKey ? `Suggested: <button class="link" data-act="useOem" data-key="${guess.key}">${esc(guess.make + ' ' + guess.model + ' ' + guess.generation)}</button>` : 'Links estimate lines to researched OEM part numbers.' })}
+      ${F('vehicle.oemKey', 'Parts catalogue vehicle (for OEM part numbers)', { type: 'select', options: [['', '— none —']].concat(ov.map((v) => [v.key, `${v.make} ${v.model} ${v.generation} (${v.years})`])), hint: guess && guess.key !== job.vehicle.oemKey ? `Suggested: <button class="link" data-act="useOem" data-key="${esc(guess.key)}">${esc(guess.make + ' ' + guess.model + ' ' + guess.generation)}</button>` : 'Links estimate lines to researched OEM part numbers.' })}
       ${F('vehicle.adas', 'ADAS / driver-assistance systems fitted (optional)', { full: true, ph: 'e.g. windscreen camera (lane keeping), front radar (adaptive cruise), blind-spot radar, parking sensors, 360° cameras', hint: 'From the VIN / build data or the vehicle itself. The AI costs a calibration only for a system recorded here or visible in the photos; otherwise it lists the check and asks you to confirm the fit.' })}
       </div><datalist id="makes">${[...new Set(ov.map((v) => v.make).concat(['Audi', 'BMW', 'Citroën', 'Dacia', 'Fiat', 'Honda', 'Hyundai', 'Kia', 'Land Rover', 'Mazda', 'Mercedes-Benz', 'MG', 'MINI', 'Peugeot', 'Renault', 'SEAT', 'Škoda', 'Tesla', 'Toyota', 'Volvo']))].sort().map((m) => `<option value="${esc(m)}">`).join('')}</datalist>
       <datalist id="gearboxes">${GEARBOXES.map((g) => `<option value="${esc(g)}">`).join('')}</datalist></div>`;
@@ -814,9 +817,17 @@
     const clean = (s) => String(s || '').replace(/\s*\([^)]*\)/g, '').replace(/\s{2,}/g, ' ').trim();
     v.make = mdl.make; v.model = `${mdl.model}${mdl.generation ? ' (' + mdl.generation + ')' : ''}`;
     v.derivative = [e && clean(e.badge), clean(tr), clean(b), clean(g)].filter(Boolean).join(' ');
-    if (e) { if (e.fuel) v.fuel = variantFuel(e.fuel); if (e.cc) v.engineSize = e.cc; if (e.engine_code) v.engineCode = e.engine_code; }
-    if (clean(b)) v.body = clean(b);
-    if (clean(g)) v.transmission = clean(g);
+    // Fuel, engine size and code, body and gearbox: the new variant's value where it has one. Where it has none, a value the
+    // previous variant wrote (and nobody has changed since) goes back to what was there before that variant (DVLA's, the
+    // assessor's or nothing), so a 520i's B48 / 1998 cc never stays on an i5 eDrive40. variantSet: { field: { from, to } }.
+    const was = isObj(v.variantSet) ? v.variantSet : {}, set = {};
+    const put = (k, val) => {
+      const before = isObj(was[k]) && String(v[k] == null ? '' : v[k]) === String(was[k].to) ? was[k].from : v[k];
+      if (val !== '' && val != null) { v[k] = val; set[k] = { from: before == null ? '' : before, to: val }; } else v[k] = before == null ? '' : before;
+    };
+    put('fuel', e && e.fuel ? variantFuel(e.fuel) : ''); put('engineSize', e && e.cc ? e.cc : ''); put('engineCode', e && e.engine_code ? e.engine_code : '');
+    put('body', clean(b)); put('transmission', clean(g));
+    v.variantSet = set;
     v.variantKey = [mdl.make, mdl.model, mdl.generation, e && e.badge, tr, b, g, e ? engineSig(e) : ''].join('|');
     const guess = C.guessOemVehicle(v); v.oemKey = guess ? guess.key : '';
     changed(); renderJob(); toast('Variant applied: ' + v.derivative);
@@ -831,7 +842,10 @@
     return String(raw).toLowerCase().replace(/\b([a-z])([a-z]*)/g, (m, a, b) => a.toUpperCase() + b);
   }
   // model names keep short acronyms (GTI, CX-5); colours are title-cased word by word (RED → Red, DARK BLUE → Dark Blue)
-  const titleWords = (raw) => String(raw || '').split(/\s+/).map((w) => (w.length <= 3 && /[A-Z]/.test(w) && !/^(THE|AND)$/.test(w) ? w : w.charAt(0) + w.slice(1).toLowerCase())).join(' ');
+  // Each run of letters is title-cased, except a run of 3 letters or fewer, which DVSA's capitals already spell right (GTI, the
+  // CX of CX-5, the HR of C-HR, XC40, RAV4, ID.3): JUKE → Juke, X-TRAIL → X-Trail, QASHQAI+2 → Qashqai+2.
+  const titleWords = (raw) => String(raw || '').split(/\s+/).map((w) => (/^(THE|AND)$/.test(w) ? w.charAt(0) + w.slice(1).toLowerCase()
+    : w.replace(/\p{L}+/gu, (run) => (run.length <= 3 ? run : run.charAt(0).toUpperCase() + run.slice(1).toLowerCase())))).join(' ');
   const titleColour = (raw) => String(raw || '').trim().toLowerCase().replace(/(^|[\s/])(\S)/g, (m, a, b) => a + b.toUpperCase());
   // 48V mild hybrids are not high-voltage hybrids: they keep their base fuel
   const MILD_HYBRID = /mild|mhev|48\s*v|eq boost/i;
@@ -1271,6 +1285,8 @@
   // (hoursSeen); the higher figure is offered.
   const suggDesc = (s) => C.fold(s).replace(/[^a-z0-9]+/g, ' ').trim();
   const suggKey = (l) => [String(l.code || '').trim().toUpperCase(), String(l.operation || '').trim(), String(l.side || '').trim(), suggDesc(l.description)].join('|');
+  // one suggestion (its key and the batch that first gave it), stored on the estimate line made from it (line.sugg)
+  const suggId = (l) => suggKey(l) + '#' + num((Array.isArray(l.batches) ? l.batches : [])[0]);
   function mergeBatchLines(into, lines, batch) {
     const fresh = [];
     for (const raw of lines) {
@@ -1435,6 +1451,22 @@
     });
     changed(); toast('Empty fields and damage zones filled from the AI findings.');
   }
+  // ✕ on an estimate line. An AI line asks first; once deleted, its suggestion on Photos & AI can be added again (unless another
+  // line still comes from it). Lines added before line.sugg existed are matched to their suggestion by code, operation, side and wording.
+  function deleteLine(id) {
+    const i = job.lines.findIndex((x) => x.id === id); if (i < 0) return;
+    const l = job.lines[i];
+    if (l.ai && !confirm(`Delete line ${i + 1}, "${l.description || 'AI line'}"? It was suggested by the AI. Its suggestion on Photos & AI can then be added again.`)) return;
+    job.lines.splice(i, 1);
+    const sl = isObj(job.aiFindings) && Array.isArray(job.aiFindings.suggested_lines) ? job.aiFindings.suggested_lines.filter(isObj) : [];
+    if (l.ai && sl.length) {
+      const legacy = [String(l.code || '').toUpperCase(), String(l.aiOperation || ''), String(l.side || ''), suggDesc(l.description)].join('|');
+      const from = (sg) => (l.sugg ? suggId(sg) === l.sugg : suggKey(sg) === legacy);
+      const still = (sg) => job.lines.some((x) => x.ai && (x.sugg ? x.sugg === suggId(sg) : !l.sugg && x.description === l.description && x.code === l.code && x.side === l.side));
+      sl.forEach((sg) => { if (sg.added && from(sg) && !still(sg)) sg.added = false; });
+    }
+    changed(); renderJob();
+  }
   function aiAddLines() {
     const f = job.aiFindings; if (!f) return;
     if (busy('photos')) return toast('Wait for the photo analysis now running to finish: its results replace these findings.', true);
@@ -1452,7 +1484,7 @@
       const fields = {
         type: LINE_TYPES.includes(l.type) ? l.type : 'Body', description: l.description, code: C.CAT[l.code] ? l.code : '', side: l.side, hours: hz.hours,
         partNo: l.needs_part && o ? o.oem : '', amount: l.needs_part && o && o.price ? o.price : 0, costClass: cls, ai: true, reviewed: false, source: l.reason,
-        op: op || 'ai'
+        op: op || 'ai', sugg: suggId(l)
       };
       if (op) fields.aiOperation = String(l.operation); // the operation as the AI gave it
       else {
@@ -1666,13 +1698,15 @@
   function aiLineNotes(l) {
     if (!l.ai) return '';
     let out = '';
-    if (l.hoursBasis === 'adjusted') out += `<div class="hint aiBasis">AI: ${esc(adjustedNote(num(l.guideHours), guideFor(job, l.code, l.op)))}${PAINT_OPS.includes(l.op) && num(l.pfApplied) > 0 && num(l.pfApplied) !== 1 ? esc(`; ×${num(l.pfApplied)} paint finish included`) : ''}</div>`;
+    // this vehicle's guide as the report prints it beside the line (core.js vehicleGuide), else the picker's for the code and operation
+    if (l.hoursBasis === 'adjusted') out += `<div class="hint aiBasis">AI: ${esc(adjustedNote(num(l.guideHours), (typeof C.vehicleGuide === 'function' && C.vehicleGuide(job, l)) || guideFor(job, l.code, l.op)))}${PAINT_OPS.includes(l.op) && num(l.pfApplied) > 0 && num(l.pfApplied) !== 1 ? esc(`; ×${num(l.pfApplied)} paint finish included`) : ''}</div>`;
     if (Array.isArray(l.aiHoursSeen) && l.aiHoursSeen.length > 1) out += `<div class="hint aiBatches">AI photo batches differed: ${esc(listH(l.aiHoursSeen))}. Check the hours.</div>`;
     return out;
   }
   function addFromCatalogue() {
+    // only a part the list shows now: one picked earlier and since filtered out by the search, group or zone is not added
     const p = C.CAT[ui.pickSel];
-    if (!p) return toast('Select a part in the list first.', true);
+    if (!p || !$(`#pickResults .r[data-code="${CSS.escape(String(ui.pickSel))}"]`)) return toast('Select a part in the list first.', true);
     let sides = [''];
     if (p.sided) {
       if (!ui.pickSide) return toast('Choose LH or RH for this part.', true);
@@ -1921,13 +1955,19 @@
     const ai = C.settings.ai || {};
     running.add(key); renderJob();
     try {
-      const res = await desktop.ai.draftNarrative({ job: slimJob(j), totals: C.totals(j), settings: { berThresholdPct: C.settings.berThresholdPct, berBasis: C.settings.berBasis }, model: ai.model, effort: ai.effort });
+      const tot = C.totals(j);
+      const res = await desktop.ai.draftNarrative({ job: slimJob(j), totals: tot, settings: { berThresholdPct: C.settings.berThresholdPct, berBasis: C.settings.berBasis }, model: ai.model, effort: ai.effort });
       if (!res || !res.ok) throw new Error((res && res.error) || 'The AI draft failed.');
-      // the paid draft is kept with the job until it is applied or discarded, so a reload or restart cannot lose it
-      const target = await applyToJob(j, (x) => { logAi(x, 'Narrative drafting', res.result.model); x.aiDraftPending = { at: new Date().toISOString(), model: String(res.result.model || ''), draft: res.result }; });
+      // the paid draft is kept with the job until it is applied or discarded, so a reload or restart cannot lose it; with it, the
+      // figures it was written from, so a later review can say when the estimate or valuation has changed since
+      let pend = null;
+      const target = await applyToJob(j, (x) => {
+        logAi(x, 'Narrative drafting', res.result.model);
+        pend = x.aiDraftPending = { at: new Date().toISOString(), model: String(res.result.model || ''), draft: res.result, basis: { net: tot.net, gross: tot.gross, pav: tot.pav } };
+      });
       if (!target) return toast(`${regOf(j)} has been deleted, so the AI draft was discarded.`, true);
       // a draft never replaces an open window (labeler, signature pad): it waits behind the "AI draft ready – Review" button
-      if (target === job && !modalOpen()) reviewDraft(res.result, j.id);
+      if (target === job && !modalOpen()) reviewDraft(pend, j.id);
       else if (target === job) toast('AI draft ready – Review it with the button at the top of the page when you are ready. Nothing has been changed.');
       else toast(`The AI draft for ${regOf(target)} is ready. Open that assessment and click "AI draft ready – Review".`);
     } catch (e) { toast(errText(e), true); } finally { running.delete(key); if (job && job.id === j.id && tab === 'opinion') renderJob(); }
@@ -1939,12 +1979,24 @@
     ['roadworthiness', 'assessment.roadworthiness', 'Roadworthiness'], ['estimate_notes', 'estimateNotes', 'Estimate notes'], ['valuation_comments', 'valuation.comments', 'Valuation comments'],
     ['opinion', 'opinion', "Engineer's opinion"], ['decision', 'outcome.decision', 'Decision'], ['category', 'outcome.category', 'Salvage category']
   ];
-  function reviewDraft(d, jid) {
-    const map = DRAFT_MAP;
+  // Applying or discarding the draft in the review window removes the pending draft only when it is still that draft: one that
+  // landed while the window was open (a newer, paid draft) stays for its own review.
+  const sameDraft = (a, b) => isObj(a) && isObj(b) && (a === b || a.draft === b.draft || (!!a.at && a.at === b.at));
+  const NEWER_DRAFT = ' A newer AI draft is waiting: review it with "AI draft ready – Review" at the top of the page.';
+  // the sections of a draft that quote the estimate and valuation figures
+  const FIGURE_SECTIONS = ['summary', 'estimate_notes', 'valuation_comments', 'opinion', 'decision', 'category'];
+  // pend: the pending draft { at, model, draft, basis } (basis: the net, gross and PAV it was written from; older drafts have none)
+  function reviewDraft(pend, jid) {
+    const map = DRAFT_MAP, d = pend.draft;
     const flags = (Array.isArray(d.review_flags) ? d.review_flags : []).map((f) => String(f == null ? '' : f)).filter((f) => f.trim());
-    const html = `${flags.length ? `<div class="card" style="border-color:#f0c36d;background:#fffaf0"><b>Check before signing:</b><ul>${flags.map((f) => `<li>${esc(f)}</li>`).join('')}</ul><p class="hint" style="margin:0">These stay on the Opinion tab, and in the pre-issue checks, until you dismiss them.</p></div>` : ''}
+    // the estimate or valuation changed since the draft was written: its quoted totals and percentages are out of date
+    const t = C.totals(job), b0 = isObj(pend.basis) ? pend.basis : null;
+    const moved = b0 ? [['net repair', b0.net, t.net], ['repair inc. VAT', b0.gross, t.gross], ['PAV', b0.pav, t.pav]].filter(([, a, c]) => Math.abs(num(a) - num(c)) >= 0.005) : [];
+    const stale = moved.length ? `<div class="card staleDraft" role="alert" style="border-color:#f0b5ad;background:#fff6f5"><b style="color:var(--err)">The figures have changed since this draft was written</b> (${esc(fmtWhen(pend.at))}): ${esc(moved.map(([n, a, c]) => `${n} ${gbp(a)} → ${gbp(c)}`).join('; '))}. The draft quotes the old figures and percentages. Draft it again, or check every figure before applying: the sections that quote figures are not ticked.</div>`
+      : !b0 ? `<p class="hint staleDraft">Drafted ${esc(fmtWhen(pend.at))}. Check that its figures match the current estimate and valuation before applying.</p>` : '';
+    const html = `${stale}${flags.length ? `<div class="card" style="border-color:#f0c36d;background:#fffaf0"><b>Check before signing:</b><ul>${flags.map((f) => `<li>${esc(f)}</li>`).join('')}</ul><p class="hint" style="margin:0">These stay on the Opinion tab, and in the pre-issue checks, until you dismiss them.</p></div>` : ''}
       <div class="cmp" style="font-weight:700"><span></span><span>Current</span><span>AI draft</span></div>
-      ${map.map(([k, path, label], i) => { const cur = getPath(job, path) || ''; const nu = d[k] == null ? '' : String(d[k]); if (!nu) return ''; return `<div class="cmp"><input type="checkbox" data-apply="${i}" ${cur ? '' : 'checked'} style="width:auto" aria-label="${esc(`Apply the AI draft of ${label}`)}"><div><b>${esc(label)}</b><div class="old">${esc(cur) || '<i>empty</i>'}</div></div><div class="new">${esc(nu)}</div></div>`; }).join('')}
+      ${map.map(([k, path, label], i) => { const cur = getPath(job, path) || ''; const nu = d[k] == null ? '' : String(d[k]); if (!nu) return ''; return `<div class="cmp"><input type="checkbox" data-apply="${i}" ${cur || (moved.length && FIGURE_SECTIONS.includes(k)) ? '' : 'checked'} style="width:auto" aria-label="${esc(`Apply the AI draft of ${label}`)}"><div><b>${esc(label)}</b><div class="old">${esc(cur) || '<i>empty</i>'}</div></div><div class="new">${esc(nu)}</div></div>`; }).join('')}
       <div class="row" style="margin-top:14px"><button class="btn" data-sel="all">Select all</button><button class="btn danger" data-discard="1">Discard the draft</button><span class="grow"></span><button class="btn primary" data-go="1">Apply selected sections</button></div>`;
     const b = openModal('✦ AI draft — review before applying', html);
     if (!b) return toast('AI draft ready – Review it with the button at the top of the page once the open window is closed.');
@@ -1953,7 +2005,11 @@
       if (e.target.closest('[data-discard]')) {
         if (!confirm('Discard this AI draft? It cannot be recovered (the AI log keeps the entry).')) return;
         closeModal();
-        try { await applyToJob({ id: jid }, (x) => { delete x.aiDraftPending; }); toast('AI draft discarded.'); } catch (err) { toast(errText(err), true); }
+        let newer = false;
+        try {
+          await applyToJob({ id: jid }, (x) => { if (sameDraft(x.aiDraftPending, pend)) delete x.aiDraftPending; else newer = isObj(x.aiDraftPending); });
+          toast(`AI draft discarded.${newer ? NEWER_DRAFT : ''}`);
+        } catch (err) { toast(errText(err), true); }
         return;
       }
       if (e.target.closest('[data-go]')) {
@@ -1961,6 +2017,7 @@
         if (!picks.length) return toast('Tick the sections to apply, or close this window to keep the draft for later.', true);
         closeModal();
         const at = new Date().toISOString();
+        let newer = false;
         try {
           // each applied section is recorded in job.aiText, so later AI calls treat it as an AI draft until the assessor edits it;
           // the draft's "check before signing" flags are kept on the job (aiFlags) until dismissed
@@ -1969,10 +2026,10 @@
             const have = new Set((Array.isArray(x.aiFlags) ? x.aiFlags : []).filter(isObj).map((f) => f.text));
             const add = flags.filter((f) => !have.has(f)).map((text) => ({ section: 'AI narrative draft', text, at }));
             if (add.length) x.aiFlags = (Array.isArray(x.aiFlags) ? x.aiFlags.filter(isObj) : []).concat(add);
-            delete x.aiDraftPending;
+            if (sameDraft(x.aiDraftPending, pend)) delete x.aiDraftPending; else newer = isObj(x.aiDraftPending);
           });
           if (!target) return toast('That assessment has been deleted, so the draft was not applied.', true);
-          toast(`${picks.length} section(s) applied${target !== job ? ' to ' + regOf(target) : ''}. Review them in the report preview.${flags.length ? ' Its "check before signing" points are listed on the Opinion tab.' : ''}`);
+          toast(`${picks.length} section(s) applied${target !== job ? ' to ' + regOf(target) : ''}. Review them in the report preview.${flags.length ? ' Its "check before signing" points are listed on the Opinion tab.' : ''}${newer ? NEWER_DRAFT : ''}`);
         } catch (err) { toast(errText(err), true); }
       }
     });
@@ -2297,16 +2354,20 @@
   }
   // Adds one entry for vehicle `key` and part 'CODE|SIDE'; the same number (case, spaces, dots and dashes ignored) is never there
   // twice: an existing one is updated instead ('updated'; keepAutoFill keeps its auto-fill choice). Returns 'added' or 'updated'.
-  function addUserOem(list, key, base, pk, entry, keepAutoFill) {
+  // update: the fields an existing entry takes (default: all of entry); a CSV row gives only what it has, so a re-import never
+  // replaces the assessor's notes, or a price with a blank cell
+  function addUserOem(list, key, base, pk, entry, keepAutoFill, update) {
     let cv = list.find((x) => isObj(x) && x.key === key);
     if (!cv) { cv = { key, make: base.make, model: base.model, generation: base.generation || '', years: base.years || '', parts: {} }; list.push(cv); }
     if (!isObj(cv.parts)) cv.parts = {};
     const arr = cv.parts[pk] = Array.isArray(cv.parts[pk]) ? cv.parts[pk] : [];
     const hit = arr.find((c) => isObj(c) && normPn(c.oem) === normPn(entry.oem));
-    if (hit) { Object.assign(hit, entry, keepAutoFill ? { autoFill: hit.autoFill === true } : {}); return 'updated'; }
+    if (hit) { Object.assign(hit, update || entry, keepAutoFill ? { autoFill: hit.autoFill === true } : {}); return 'updated'; }
     arr.unshift(entry);
     return 'added';
   }
+  // a catalogue part by code (own properties only: a code read from a file is never "__proto__" or "constructor")
+  const catPart = (code) => (Object.prototype.hasOwnProperty.call(C.CAT, String(code)) ? C.CAT[code] : null);
   const userEntry = (fields) => Object.assign({ oem: '', description: '', notes: '', price: null, priceIncVat: null, source: '', confidence: 'user', user: true, autoFill: false, role: 'primary', market: 'UK', addedAt: new Date().toISOString() }, fields);
   // The stored list brought up to date (on load and for a backup's list): every entry is the user's own ('user'); entries saved
   // by older versions as 'confirmed' with auto-fill on stop auto-filling (it was never the user's choice); repeated numbers dropped.
@@ -2316,6 +2377,13 @@
     if (Array.isArray(raw) && list.length !== raw.length) changed = true;
     for (const cv of list) {
       if (!isObj(cv.parts)) { cv.parts = {}; changed = true; }
+      // a part the catalogue does not side is looked up as 'CODE|': numbers saved with LH / RH for one are moved there
+      for (const pk of Object.keys(cv.parts)) {
+        const [code, side] = pk.split('|'), p = catPart(code);
+        if (!side || !p || p.sided) continue;
+        cv.parts[code + '|'] = (Array.isArray(cv.parts[code + '|']) ? cv.parts[code + '|'] : []).concat(Array.isArray(cv.parts[pk]) ? cv.parts[pk] : []);
+        delete cv.parts[pk]; changed = true;
+      }
       for (const [pk, arr] of Object.entries(cv.parts)) {
         const seen = new Set(), out = [];
         for (const c of Array.isArray(arr) ? arr : []) {
@@ -2367,20 +2435,29 @@
     const b = openModal(edit ? 'Edit your part number' : 'Add OEM part number', `<div class="form">
       <label class="fld"><span>Vehicle</span><select id="nVeh" data-autofocus>${vs.map((x) => `<option value="${esc(x.key)}"${x.key === vehKey ? ' selected' : ''}>${esc(x.make + ' ' + x.model + ' ' + x.generation)}</option>`).join('')}</select></label>
       <label class="fld"><span>Catalogue part</span><select id="nCode">${Object.values(C.CAT).map((p) => `<option value="${p.code}"${p.code === eCode ? ' selected' : ''}>${p.code} — ${esc(p.name)}</option>`).join('')}</select></label>
-      <label class="fld"><span>Side</span><select id="nSide"><option value="">— (not sided)</option><option value="L"${eSide === 'L' ? ' selected' : ''}>LH</option><option value="R"${eSide === 'R' ? ' selected' : ''}>RH</option></select></label>
+      <label class="fld"><span>Side</span><select id="nSide"><option value="">— (not sided)</option><option value="L"${eSide === 'L' ? ' selected' : ''}>LH</option><option value="R"${eSide === 'R' ? ' selected' : ''}>RH</option></select><div class="hint" id="nSideNote" aria-live="polite"></div></label>
       <label class="fld"><span>OEM part number</span><input id="nOem" value="${esc(cur.oem || '')}"></label>
       <label class="fld"><span>Description</span><input id="nDesc" value="${esc(cur.description || '')}"></label><label class="fld"><span>Price £ ex VAT (optional)</span><input id="nPrice" type="number" step="0.01" min="0" value="${esc(cur.price == null ? '' : cur.price)}"></label>
       <label class="fld full"><span>Notes / source</span><input id="nNotes" value="${esc(cur.notes || '')}" placeholder="e.g. Confirmed by dealer for VIN …"></label>
       <label class="hint full" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="nAuto" style="width:auto"${cur.autoFill === true ? ' checked' : ''}> <b>Auto-fill</b>: fill new estimate lines for this part with this number (otherwise you choose it with ⋯ on the line)</label></div>
       <div class="row" style="margin-top:12px"><span class="grow"></span><button class="btn primary" data-ok>${edit ? 'Save' : 'Add'}</button></div>`);
     if (!b) return;
+    // a part the catalogue does not side is looked up without a side (core.js oemLookup), so no side is taken for it
+    const syncSide = () => {
+      const p = catPart($('#nCode', b).value), sel = $('#nSide', b), unsided = !!p && !p.sided;
+      if (unsided) sel.value = '';
+      sel.disabled = unsided;
+      $('#nSideNote', b).textContent = unsided ? 'The catalogue does not side this part, so the number is stored for it without a side.' : '';
+    };
+    syncSide();
+    b.addEventListener('change', (e) => { if (e.target.id === 'nCode') syncSide(); });
     let saving = false;
     b.addEventListener('click', async (e) => {
       if (e.target.dataset.ok == null || saving) return;
       const oem = $('#nOem', b).value.trim(); if (!oem) return toast('Enter a part number.', true);
       const key = $('#nVeh', b).value; const base = C.findOemVehicle(key);
       if (!base) return toast('Choose a vehicle.', true);
-      const code = $('#nCode', b).value, pk = code + '|' + $('#nSide', b).value;
+      const code = $('#nCode', b).value, part = catPart(code), pk = code + '|' + (part && part.sided ? $('#nSide', b).value : '');
       const entry = userEntry({ oem, description: $('#nDesc', b).value.trim() || (C.CAT[code] || {}).name || '', notes: $('#nNotes', b).value.trim(), price: num($('#nPrice', b).value) || null, autoFill: $('#nAuto', b).checked });
       if (edit && cur.addedAt) entry.addedAt = cur.addedAt;
       saving = true;
@@ -2440,18 +2517,20 @@
     // the first row is a header only when it says "code" or does not start with a catalogue code
     let start = 0, headerNote = '';
     if (rows.length) { const c0 = rows[0][0] || ''; if (/^code$/i.test(c0)) start = 1; else if (!C.CAT[c0.toUpperCase()]) { start = 1; headerNote = ` The first row ("${c0.slice(0, 30)}") was read as a header.`; } }
-    let n = 0, upd = 0, bad = 0;
+    let n = 0, upd = 0, bad = 0, unsided = 0;
     for (const c of rows.slice(start)) {
       const code = (c[0] || '').toUpperCase(), oem = c[2] || '';
-      if (!C.CAT[code] || !oem) { bad++; continue; }
+      if (!catPart(code) || !oem) { bad++; continue; }
       const sd = (c[1] || '').toUpperCase().replace(/\s+/g, '');
-      const side = /^(L|LH|LEFT|NS|N\/S|NEARSIDE)$/.test(sd) ? 'L' : /^(R|RH|RIGHT|OS|O\/S|OFFSIDE)$/.test(sd) ? 'R' : '';
-      const price = num(String(c[4] || '').replace(/[£,\s]/g, ''));
-      const res = addUserOem(list, key, base, code + '|' + side, userEntry({ oem, description: c[3] || C.CAT[code].name, notes: 'Imported from CSV', price: price || null }), true);
+      let side = /^(L|LH|LEFT|NS|N\/S|NEARSIDE)$/.test(sd) ? 'L' : /^(R|RH|RIGHT|OS|O\/S|OFFSIDE)$/.test(sd) ? 'R' : '';
+      if (side && !C.CAT[code].sided) { side = ''; unsided++; } // the catalogue looks this part up without a side
+      const price = num(String(c[4] || '').replace(/[£,\s]/g, '')), desc = String(c[3] || '').trim();
+      const res = addUserOem(list, key, base, code + '|' + side, userEntry({ oem, description: desc || C.CAT[code].name, notes: 'Imported from CSV', price: price || null }), true,
+        Object.assign({ oem }, desc ? { description: desc } : {}, price > 0 ? { price } : {}));
       if (res === 'added') n++; else upd++;
     }
     await saveCustomOem(list); renderCatalogue();
-    toast(`Imported ${n} part number(s)${upd ? `, updated ${upd} already in your list` : ''}${bad ? `, skipped ${bad} row(s) with an unknown code or no part number` : ''}.${headerNote} They are your own numbers: tick auto-fill (Your part numbers) for any that should fill estimate lines. CSV columns: code,side,oem,description,price (£ ex VAT)`, !n && !upd && (bad > 0 || !rows.length));
+    toast(`Imported ${n} part number(s)${upd ? `, updated ${upd} already in your list (their notes kept, and their price where the file has none)` : ''}${bad ? `, skipped ${bad} row(s) with an unknown code or no part number` : ''}.${unsided ? ` ${unsided} row(s) gave LH / RH for a part the catalogue does not side, so ${unsided === 1 ? 'it was' : 'they were'} stored without a side.` : ''}${headerNote} They are your own numbers: tick auto-fill (Your part numbers) for any that should fill estimate lines. CSV columns: code,side,oem,description,price (£ ex VAT)`, !n && !upd && (bad > 0 || !rows.length));
   }
 
   // ---------- BACKUP / RESTORE ----------
@@ -2588,14 +2667,14 @@
     let first = '';
     try { const r = await lines.next(); first = r.done ? '' : r.value; } catch (err) { return toast('That file could not be read: ' + errText(err), true); }
     let head = null;
-    try { head = JSON.parse(first); } catch (e) { /* not JSON on one line: an older backup written over several lines, or not a backup */ }
+    try { head = parseFileJson(first); } catch (e) { /* not JSON on one line: an older backup written over several lines, or not a backup */ }
     if (isObj(head) && head.kind === BACKUP_KIND && head.format === 2) return restoreV2(head, lines);
     try { await lines.return(); } catch (e) { /* reading stopped */ }
     if (isObj(head) && head.kind === BACKUP_KIND && num(head.format) > 2) return toast('This backup was made by a newer version of the app. Update the app, then restore it.', true);
     let d = isObj(head) && head.kind === BACKUP_KIND ? head : null; // format 1 written on one line
     if (!d) {
       if (f.size > V1_MAX) return toast('That is not a backup file.', true);
-      try { d = JSON.parse(await f.text()); } catch (err) { d = null; }
+      try { d = parseFileJson(await f.text()); } catch (err) { d = null; }
     }
     if (!isObj(d) || d.kind !== BACKUP_KIND) return toast('That is not a backup file.', true);
     return restoreV1(d);
@@ -2607,7 +2686,7 @@
       for await (const raw of lines) {
         if (!raw.trim()) continue;
         let rec = null;
-        try { rec = JSON.parse(raw); } catch (e) { /* an unreadable line */ }
+        try { rec = parseFileJson(raw); } catch (e) { /* an unreadable line */ }
         if (!isObj(rec)) { bad++; continue; }
         if (rec.type === 'end') { end = rec; break; }
         if (rec.type === 'settings') { if (isObj(rec.data)) await restoreSettings(rec.data); else bad++; continue; }
@@ -2685,7 +2764,12 @@
     const opt = ui.pickSel ? box.querySelector(`.r[data-code="${CSS.escape(ui.pickSel)}"]`) : null;
     if (opt) box.setAttribute('aria-activedescendant', opt.id); else box.removeAttribute('aria-activedescendant');
   }
-  function paintPickResults() { const box = $('#pickResults'); if (!box) return; box.innerHTML = pickResults(); syncPickActive(box); }
+  function paintPickResults() {
+    const box = $('#pickResults'); if (!box) return;
+    box.innerHTML = pickResults();
+    if (ui.pickSel && !box.querySelector(`.r[data-code="${CSS.escape(String(ui.pickSel))}"]`)) ui.pickSel = null; // filtered out: no longer picked
+    syncPickActive(box);
+  }
   function selectPick(code) {
     ui.pickSel = code;
     const box = $('#pickResults');
@@ -2861,7 +2945,7 @@
       importJob: async () => {
         const f = await pickFile('.json,application/json'); if (!f) return;
         let j;
-        try { j = JSON.parse(await f.text()); if (!isObj(j) || !isObj(j.vehicle) || !Array.isArray(j.lines)) throw new Error(); j.id = C.uid(); delete j.rev; migrate(j); } catch (err) { return toast('That file is not a job file.', true); }
+        try { j = parseFileJson(await f.text()); if (!isObj(j) || !isObj(j.vehicle) || !Array.isArray(j.lines)) throw new Error(); j.id = C.uid(); delete j.rev; migrate(j); } catch (err) { return toast('That file is not a job file.', true); }
         await C.Store.saveJob(j, { overwrite: true }); // saved in the current shape, so the Jobs list can always read it
         remember(j);
         location.hash = `#/job/${j.id}/claim`;
@@ -2933,7 +3017,7 @@
       addOp: () => { const o = C.OPS[el.dataset.code]; const cls = o.type === 'Painting' ? 'paint' : 'parts'; job.lines.push(C.newLine({ type: o.type, description: o.name, hours: o.hours, costClass: cls, op: 'labour' })); changed(); renderJob(); },
       addBlank: () => { job.lines.push(C.newLine({ op: 'manual' })); changed(); renderJob(); },
       lmove: () => { const i = job.lines.findIndex((x) => x.id === el.dataset.id), j2 = i + +el.dataset.d; if (j2 < 0 || j2 >= job.lines.length) return; const l = job.lines.splice(i, 1)[0]; job.lines.splice(j2, 0, l); changed(); renderJob(); },
-      ldel: () => { job.lines = job.lines.filter((x) => x.id !== el.dataset.id); changed(); renderJob(); },
+      ldel: () => deleteLine(el.dataset.id),
       oemPick: () => oemPicker(el.dataset.id),
       vsAdd: () => { job.valuation.sources.push({ name: '', amount: '' }); changed(); renderJob(); },
       vsDel: () => { job.valuation.sources.splice(+el.dataset.i, 1); changed(); renderJob(); },
@@ -3035,7 +3119,7 @@
         if (!confirm('Re-open this report for editing? Until it is finalised again it uses the current Settings (company details, declaration and signature), and its figures can be changed.')) return;
         delete job.issued; changed(); renderJob(); toast('Report re-opened for editing.');
       },
-      reviewPendingDraft: () => { const d = job.aiDraftPending; if (isObj(d) && isObj(d.draft)) reviewDraft(d.draft, job.id); },
+      reviewPendingDraft: () => { const d = job.aiDraftPending; if (isObj(d) && isObj(d.draft)) reviewDraft(d, job.id); },
       aiValApply: () => {
         const r = job.valuation.ai; if (!r) return;
         job.valuation.adopted = Math.round(num(r.recommended_pav));
