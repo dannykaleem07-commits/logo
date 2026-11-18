@@ -9,7 +9,15 @@
   let job = null;            // current job
   let tab = 'claim';
   let aiStatus = { hasKey: false };
-  const ui = { pickQ: '', pickGroup: '', pickSide: '', pickOp: 'replace', pickSel: null, addRefinish: true, busy: false, suggestSel: {} };
+  const ui = { pickQ: '', pickGroup: '', pickSide: '', pickOp: 'replace', pickSel: null, addRefinish: true, suggestSel: {}, vp: null, zoneGroups: null, zoneLabel: '' };
+  // per-job UI state: cleared when a different job is opened
+  function resetJobUi() { ui.vp = null; ui.zoneGroups = null; ui.zoneLabel = ''; ui.suggestSel = {}; ui.pickSel = null; }
+  // lookups and AI calls in flight, keyed `${kind}:${jobId}`, so a spinner only shows on the job it belongs to
+  const running = new Set();
+  const busy = (kind) => !!job && running.has(kind + ':' + job.id);
+  const pendingDrafts = new Map(); // jobId → AI narrative draft waiting for review
+  const isObj = (x) => x != null && typeof x === 'object' && !Array.isArray(x);
+  const httpUrl = (u) => /^https?:\/\//i.test(String(u || '').trim());
 
   const TABS = [
     ['claim', 'Claim'], ['vehicle', 'Vehicle'], ['inspection', 'Inspection'], ['circumstances', 'Circumstances'],
@@ -27,19 +35,43 @@
     t.textContent = msg; t.className = 'toast' + (isErr ? ' err' : '');
     clearTimeout(toastT); toastT = setTimeout(() => t.classList.add('hidden'), isErr ? 6500 : 2800);
   }
+  // Every modal gets a fresh body element, so listeners added by an earlier modal never fire in a later one.
+  function freshModalBody() { const old = $('#modalBody'); const b = old.cloneNode(false); old.replaceWith(b); return b; }
   function openModal(title, content) {
     $('#modalTitle').textContent = title;
-    const b = $('#modalBody'); b.innerHTML = '';
+    const b = freshModalBody();
     if (typeof content === 'string') b.innerHTML = content; else b.appendChild(content);
     $('#modal').classList.remove('hidden');
     return b;
   }
-  function closeModal() { $('#modal').classList.add('hidden'); $('#modalBody').innerHTML = ''; }
-  $('#modal').addEventListener('click', (e) => { if (e.target.dataset.close != null || e.target.id === 'modal') closeModal(); });
+  function closeModal() { $('#modal').classList.add('hidden'); freshModalBody(); }
+  // the backdrop closes the modal only when the press also started on it (not a drag that ends outside the card)
+  let pressOnBackdrop = false;
+  $('#modal').addEventListener('pointerdown', (e) => { pressOnBackdrop = e.target.id === 'modal'; });
+  $('#modal').addEventListener('click', (e) => {
+    if (e.target.closest('[data-close]') || (e.target.id === 'modal' && pressOnBackdrop)) closeModal();
+    pressOnBackdrop = false;
+  });
 
   // ---------- saving ----------
-  const saveSoon = C.debounce(async () => { if (job) { await C.Store.saveJob(job); const s = $('#savedState'); if (s) s.textContent = 'Saved ' + new Date().toLocaleTimeString('en-GB'); } }, 500);
-  function changed() { const s = $('#savedState'); if (s) s.textContent = 'Saving…'; saveSoon(); updateHeader(); }
+  // changed() remembers WHICH job has unsaved edits, so leaving it within the debounce cannot lose them.
+  let pendingSave = null;
+  let settingsPending = false;
+  async function flushSave() {
+    if (settingsPending) { settingsPending = false; C.saveSettings(); }
+    const j = pendingSave;
+    if (!j) return;
+    pendingSave = null;
+    try { await C.Store.saveJob(j); } catch (err) { if (!pendingSave) pendingSave = j; toast('Could not save the assessment: ' + (err.message || err), true); return; }
+    if (j === job) { const s = $('#savedState'); if (s) s.textContent = 'Saved ' + new Date().toLocaleTimeString('en-GB'); }
+  }
+  const saveSoon = C.debounce(flushSave, 500);
+  function changed() {
+    if (!job) return;
+    pendingSave = job;
+    const s = $('#savedState'); if (s) s.textContent = 'Saving…';
+    saveSoon(); updateHeader(); refreshLive();
+  }
 
   // ---------- form helpers ----------
   function F(path, label, o) {
@@ -49,7 +81,7 @@
     let input;
     if (o.type === 'textarea') input = `<textarea data-bind="${path}" rows="${o.rows || 4}" placeholder="${esc(o.ph || '')}">${esc(val)}</textarea>`;
     else if (o.type === 'select') input = `<select data-bind="${path}">${o.options.map((x) => { const [k, t] = Array.isArray(x) ? x : [x, x || '—']; return `<option value="${esc(k)}"${String(k) === String(val) ? ' selected' : ''}>${esc(t)}</option>`; }).join('')}</select>`;
-    else input = `<input data-bind="${path}" type="${o.type || 'text'}" value="${esc(val)}" placeholder="${esc(o.ph || '')}"${o.list ? ` list="${o.list}"` : ''}>`;
+    else input = `<input data-bind="${path}" type="${o.type || 'text'}" value="${esc(val)}" placeholder="${esc(o.ph || '')}"${o.list ? ` list="${o.list}"` : ''}${o.step ? ` step="${o.step}"` : ''}>`;
     return `<label class="fld ${o.full ? 'full' : ''}"><span>${esc(label)}</span>${input}${o.hint ? `<div class="hint">${o.hint}</div>` : ''}</label>`;
   }
   function S(path, label, o) { // settings field
@@ -64,24 +96,40 @@
   }
 
   // ---------- routing ----------
+  let routeSeq = 0; // a newer navigation supersedes one still waiting on storage
   async function route() {
+    const seq = ++routeSeq;
     const h = location.hash.replace(/^#\/?/, '');
     const parts = h.split('/');
     $$('.side nav a').forEach((a) => a.classList.toggle('active', a.dataset.nav === (parts[0] === 'job' ? 'jobs' : parts[0] || 'jobs')));
+    if (job && !(parts[0] === 'job' && parts[1] === job.id)) closeModal(); // a modal belongs to the job it was opened on
+    await flushSave();
+    if (seq !== routeSeq) return;
     if (parts[0] === 'new') {
       const j = C.newJob();
+      migrate(j);
       await C.Store.saveJob(j);
-      location.hash = `#/job/${j.id}/claim`;
+      if (seq === routeSeq) location.replace(`#/job/${j.id}/claim`); // keep #/new out of the history, so Back does not create another job
       return;
     }
     if (parts[0] === 'job' && parts[1]) {
-      if (!job || job.id !== parts[1]) {
-        job = await C.Store.getJob(parts[1]);
-        if (!job) { location.hash = '#/jobs'; return; }
-        migrate(job);
+      try {
+        if (!job || job.id !== parts[1]) {
+          const j = await C.Store.getJob(parts[1]);
+          if (seq !== routeSeq) return;
+          if (!j) { job = null; location.replace('#/jobs'); return; }
+          if (migrate(j)) await C.Store.saveJob(j);
+          if (seq !== routeSeq) return;
+          resetJobUi();
+          job = j;
+        }
+        tab = parts[2] || 'claim';
+        renderJob();
+      } catch (err) {
+        job = null;
+        main.innerHTML = `<div class="wrap"><div class="card"><h2 style="margin-top:0">This assessment could not be opened</h2><p class="hint">${esc(err.message || err)}</p><a class="btn" href="#/jobs">← Jobs</a></div></div>`;
+        toast('This assessment could not be opened: ' + (err.message || err), true);
       }
-      tab = parts[2] || 'claim';
-      renderJob();
       return;
     }
     job = null;
@@ -89,12 +137,68 @@
     if (parts[0] === 'catalogue') return renderCatalogue();
     return renderJobs();
   }
-  function migrate(j) { // fill any fields added in later versions
+
+  // Older DVLA records stored the raw VES response; convert them to the normalised shape the Vehicle tab reads.
+  const RAW_DVLA_KEYS = ['motExpiryDate', 'monthOfFirstRegistration', 'yearOfFirstRegistration', 'wheelplan'];
+  function normaliseRawDvla(d) {
+    const out = Object.assign({}, d);
+    const pad2 = (n) => String(n).padStart(2, '0');
+    if (out.motExpiry == null && d.motExpiryDate != null) out.motExpiry = d.motExpiryDate;
+    if (out.wheelPlan == null && d.wheelplan != null) out.wheelPlan = d.wheelplan;
+    if (!out.firstRegistration) {
+      const m = d.monthOfFirstRegistration;
+      if (typeof m === 'string' && /^\d{4}-\d{2}/.test(m)) out.firstRegistration = m.slice(0, 7) + '-01';
+      else if (d.yearOfFirstRegistration && m) out.firstRegistration = `${d.yearOfFirstRegistration}-${pad2(m)}-01`;
+      else if (d.yearOfFirstRegistration) out.firstRegistration = `${d.yearOfFirstRegistration}-01-01`;
+    }
+    RAW_DVLA_KEYS.forEach((k) => { delete out[k]; });
+    if (!out.lookedUpAt) out.lookedUpAt = '';
+    return out;
+  }
+  // Bring a stored or imported job up to the current shape. Returns true when anything was added or converted.
+  function migrate(j) {
+    let ch = false;
+    const set = (o, k, v) => { o[k] = v; ch = true; };
     const blank = C.newJob();
     for (const k of Object.keys(blank)) {
-      if (j[k] == null) j[k] = blank[k];
-      else if (typeof blank[k] === 'object' && !Array.isArray(blank[k])) for (const kk of Object.keys(blank[k])) if (j[k][kk] == null) j[k][kk] = blank[k][kk];
+      const b = blank[k];
+      if (j[k] == null) { if (b != null) set(j, k, b); } // null defaults (aiFindings, …) need no filling
+      else if (Array.isArray(b)) { if (!Array.isArray(j[k])) set(j, k, b); }
+      else if (isObj(b)) {
+        if (!isObj(j[k])) { set(j, k, b); continue; }
+        for (const kk of Object.keys(b)) {
+          const bv = b[kk], jv = j[k][kk];
+          if (jv == null) { if (bv != null) set(j[k], kk, bv); } else if (Array.isArray(bv) && !Array.isArray(jv)) set(j[k], kk, bv);
+        }
+      }
     }
+    // estimate lines: drop junk entries, fill fields added since they were written
+    if (j.lines.some((l) => !isObj(l))) set(j, 'lines', j.lines.filter(isObj));
+    for (const l of j.lines) {
+      const base = C.newLine();
+      for (const kk of Object.keys(base)) if (l[kk] == null && base[kk] != null) set(l, kk, base[kk]);
+      if (typeof l.description !== 'string') set(l, 'description', String(l.description));
+    }
+    if (j.photos.some((p) => !isObj(p))) set(j, 'photos', j.photos.filter(isObj));
+    for (const p of j.photos) { if (!p.id) set(p, 'id', C.uid()); if (!Array.isArray(p.labels)) set(p, 'labels', []); }
+    ['sources', 'adverts'].forEach((k) => { if (j.valuation[k].some((x) => !isObj(x))) set(j.valuation, k, j.valuation[k].filter(isObj)); });
+    // per-job rates and VAT (snapshotted from Settings when the job was created)
+    if (!isObj(j.rates)) set(j, 'rates', C.clone(C.settings.rates));
+    else for (const rk of Object.keys(C.settings.rates)) if (j.rates[rk] == null) set(j.rates, rk, C.settings.rates[rk]);
+    if (j.vatPct == null) set(j, 'vatPct', C.settings.vatPct);
+    // fields added in this version
+    const v = j.vehicle;
+    if (j.inspection.by == null) set(j.inspection, 'by', '');
+    if (j.inspection.byQualifications == null) set(j.inspection, 'byQualifications', '');
+    if (j.valuation.belowHighestReason == null) set(j.valuation, 'belowHighestReason', '');
+    if (isObj(v.dvla) && !v.dvla.lookedUpAt && RAW_DVLA_KEYS.some((k) => k in v.dvla)) set(v, 'dvla', normaliseRawDvla(v.dvla));
+    if (v.firstRegPrecision == null) {
+      const fr = String(v.firstReg || '');
+      const fromDvla = isObj(v.dvla) && fr === String(v.dvla.firstRegistration || '');
+      const fromMot = isObj(v.motSummary) && fr === isoDate(v.motSummary.registrationDate || v.motSummary.firstUsedDate);
+      set(v, 'firstRegPrecision', !fr ? '' : fromDvla && !fromMot ? 'month' : 'day');
+    }
+    return ch;
   }
 
   // ---------- JOBS LIST ----------
