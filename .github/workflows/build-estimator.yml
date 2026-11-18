@@ -8,24 +8,46 @@ on:
   workflow_dispatch:
 
 jobs:
-  windows:
-    runs-on: windows-latest
+  tests:
+    name: Tests (unit, mocked APIs, UI smoke test)
+    runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: estimator
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: estimator/package-lock.json
       - run: npm ci
-      - name: Self-tests
-        run: |
-          node tools/selftest.js
-          node tools/ai-mocktest.js
-          node tools/data-mocktest.js
+      - name: Unit and mocked-API tests
+        run: npm test
+      - name: Install Chromium for the UI smoke test
+        run: npx playwright install --with-deps chromium
+      - name: UI smoke test (every screen and flow, mocked desktop bridge)
+        run: node tools/ui-smoketest.js
+
+  windows:
+    name: Build Windows installer and portable .exe
+    needs: tests
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: estimator
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: estimator/package-lock.json
+      - run: npm ci
+      - name: Unit and mocked-API tests
+        run: npm test
       - name: Build Windows installer and portable .exe
         run: npx electron-builder --win nsis portable --x64 --publish never
       - uses: actions/upload-artifact@v4

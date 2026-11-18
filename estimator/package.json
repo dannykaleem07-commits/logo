@@ -20,7 +20,8 @@
   },
   "devDependencies": {
     "electron": "45.3.3",
-    "electron-builder": "26.18.0"
+    "electron-builder": "26.18.0",
+    "playwright": "1.63.0"
   },
   "build": {
     "appId": "uk.co.courtesycars.engineer-report-studio",
