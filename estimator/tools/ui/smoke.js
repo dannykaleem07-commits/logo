@@ -746,6 +746,313 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert(/768501KA6A · £74\.55 ex VAT/.test(await text('#pickResults')), 'picker shows the ex-VAT price: ' + await text('#pickResults'));
   });
 
+  // ---------- AI module outputs (ai.js) and main-process replies ----------
+  await step('AI lines on an SUV with pearl paint: guide hours scaled exactly as the picker scales them; adjusted hours kept; "replace" read as renew', async () => {
+    const id = await newJob();
+    await openTab(id, 'vehicle');
+    await page.selectOption('[data-bind="vehicle.sizeClass"]', 'suv'); await settle(150);
+    await page.selectOption('[data-bind="vehicle.paintType"]', 'pearl'); await flush();
+    await t.go('#/jobs'); await settle(200);
+    const j0 = await t.getJob(id);
+    j0.aiFindings = { model: 'claude-opus-5-5', at: new Date().toISOString(), photos: [], summary: {}, review_flags: [], suggested_lines: [
+      SL('FW001', 'R', 'replace', 'Body', 'RH front wing – renew', 1.2, 1.2, 'guide'),
+      SL('FW001', 'R', 'refinish', 'Painting', 'RH front wing – refinish new part', 2.2, 2.2, 'guide'),
+      SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 2, 'guide'),
+      SL('DR001', 'R', 'refinishRep1', 'Painting', 'RH front door – refinish repaired part (damage <50%)', 2, 2, 'guide'),
+      SL('FW001', 'L', 'blend', 'Painting', 'LH front wing – blend (colour match)', 1.1, 1.1, 'guide'),
+      SL('DR003', 'R', 'blend', 'Painting', 'RH rear door – blend (colour match)', 1.3, 1.9, 'adjusted', 'Pearl: extended blend into the shut.'),
+      SL('EL007', '', 'operation', 'Auxiliary', 'Pre-repair diagnostic scan', 0.3, 0.3, 'guide'),
+      SL('OP005', '', 'labour', 'Auxiliary', 'Strip / refit handle, trims & mouldings', 0.6, 0.6, 'guide'),
+      SL('DR001', 'R', 'check', 'Auxiliary', 'RH front door – inspect / test', 0.3, 0.3, 'guide'),
+      SL('DR001', 'R', 'rr', 'Auxiliary', 'RH front door – remove & refit', 1.8, 1.8, 'guide')
+    ] };
+    await t.putJob(j0);
+    await openTab(id, 'photos');
+    const hints = await page.$$eval('.sugg .basis', (ns) => ns.map((n) => n.textContent));
+    assert(hints[0] === 'guide 1.2h, scaled for this vehicle' && hints[5] === 'adjusted from guide 1.3h (1.8h for this vehicle)', 'suggestion notes: ' + JSON.stringify(hints));
+    await page.click('[data-act="aiAddLines"]'); await flush();
+    // the same work through the picker on the same job
+    await openTab(id, 'estimate');
+    await pick('FW001', 'R', 'replace'); await pick('DR001', 'R', 'repair'); await pick('FW001', 'L', 'blend'); await pick('DR003', 'R', 'blend');
+    await pick('EL007', '', null); await pick('DR001', 'R', 'check'); await pick('DR001', 'R', 'rr');
+    await page.click('[data-act="addOp"][data-code="OP005"]'); await flush();
+    const ls = await lines(id);
+    const ai = ls.filter((l) => l.ai), man = ls.filter((l) => !l.ai);
+    const key = (l) => (l.code ? `${l.code}|${l.side}|${l.op}` : l.description);
+    const hoursOf = (arr2) => Object.fromEntries(arr2.map((l) => [key(l), l.hours]));
+    const A2 = hoursOf(ai), M2 = hoursOf(man);
+    assert.deepStrictEqual(A2, { 'FW001|R|renew': 1.4, 'FW001|R|refinish': 3, 'DR001|R|repair': 2.3, 'DR001|R|refinishRep1': 2.7, 'FW001|L|blend': 1.5, 'DR003|R|blend': 1.9, 'EL007||operation': 0.3, 'Strip / refit handle, trims & mouldings': 0.6, 'DR001|R|check': 0.3, 'DR001|R|rr': 2.1 }, 'AI hours: ' + JSON.stringify(A2));
+    for (const k of Object.keys(A2)) if (k !== 'DR003|R|blend') assert.strictEqual(A2[k], M2[k], `${k}: AI ${A2[k]}h vs picker ${M2[k]}h`);
+    assert.strictEqual(M2['DR003|R|blend'], 1.8, 'picker blend for the adjusted line');
+    const byKey = (k) => ai.find((l) => key(l) === k);
+    assert.deepStrictEqual([byKey('FW001|R|renew').op, byKey('FW001|R|renew').aiOperation], ['renew', 'replace'], '"replace" stored as renew');
+    assert(['FW001|R|refinish', 'DR001|R|refinishRep1', 'FW001|L|blend'].every((k) => byKey(k).pfApplied === 1.2), 'guide paint lines record the paint factor');
+    assert(!('pfApplied' in byKey('DR003|R|blend')) && byKey('DR003|R|blend').hoursBasis === 'adjusted', 'adjusted blend keeps the AI figure, no factor recorded');
+    const notes = await page.$$eval('#linesTbl .aiBasis', (ns) => ns.map((n) => n.textContent));
+    assert.deepStrictEqual(notes, ['AI: adjusted from guide 1.3h (1.8h for this vehicle)'], 'notes: ' + JSON.stringify(notes));
+  });
+
+  await step('photo batches: lines of one batch never merge; across batches only the same code, operation, side and wording, with both figures visible', async () => {
+    const id = await newJob();
+    await t.go('#/jobs'); await settle(200);
+    const sz = jpegSize(jpg2);
+    const j0 = await t.getJob(id);
+    j0.photos = Array.from({ length: 12 }, (_, k) => ({ id: 'bp' + (k + 1), dataUrl: dataUrl2, w: sz.w, h: sz.h, title: '', caption: '', source: '', labels: [] }));
+    await t.putJob(j0);
+    await t.mock({ linesByBatch: {
+      1: [SL('FW001', 'R', 'refinish', 'Painting', 'RH front wing – refinish new part', 2.2, 2.2, 'guide', 'Photo 3.'),
+        SL('FW001', 'R', 'blend', 'Painting', 'RH front wing – blend', 1.1, 1.1, 'guide', 'Photo 4.'),
+        SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 2, 'guide', 'Photo 5.'),
+        SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 2, 'guide', 'Photo 6.')],
+      11: [SL('FW001', 'R', 'refinish', 'Painting', 'RH front wing – refinish new part', 2.2, 2.6, 'adjusted', 'Photo 11: deeper scoring.'),
+        SL('FW001', 'R', 'blend', 'Painting', 'RH front wing - blend', 1.1, 1.1, 'guide', 'Photo 12.'),
+        SL('DR003', 'R', 'refinishRep1', 'Painting', 'RH rear door – refinish repaired part', 1.8, 1.8, 'guide', 'Photo 12.')]
+    } });
+    await openTab(id, 'photos');
+    const c0 = (await t.calls('ai.analysePhotos')).length;
+    await page.click('[data-act="aiAnalyse"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 8000 }); await flush();
+    const calls = (await t.calls('ai.analysePhotos')).slice(c0).map((c) => c.arg.idx);
+    assert.deepStrictEqual(calls, [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [11, 12]], 'two batches: ' + JSON.stringify(calls));
+    const f = (await t.getJob(id)).aiFindings;
+    const sl = f.suggested_lines;
+    assert.deepStrictEqual(sl.map((l) => [l.code, l.operation, l.labour_hours, l.hoursSeen]), [
+      ['FW001', 'refinish', 2.6, [2.2, 2.6]], ['FW001', 'blend', 1.1, [1.1, 1.1]], ['DR001', 'repair', 2, [2]], ['DR001', 'repair', 2, [2]], ['DR003', 'refinishRep1', 1.8, [1.8]]
+    ], 'merged lines: ' + JSON.stringify(sl.map((l) => [l.code, l.operation, l.labour_hours, l.hoursSeen])));
+    assert.strictEqual(Math.round(sl.reduce((a, l) => a + l.labour_hours, 0) * 10) / 10, 9.5, 'no hours lost (the old merge offered 6.4h)');
+    assert(/Photo 3\. Photo 11: deeper scoring\./.test(sl[0].reason), 'evidence of both batches kept');
+    assert.strictEqual(f.review_flags.filter((x) => /ADAS fit/.test(x)).length, 1, 'identical flags from two batches shown once');
+    assert.strictEqual(f.photos.filter((ph) => (ph.unplaced_damages || []).length).length, 2, 'unplaced damage from each batch');
+    const j = await t.getJob(id);
+    assert(j.photos.every((p) => p.labels.filter((l) => l.ai).length === 2), 'all 12 photos labelled by id');
+    const hints = await page.$$eval('.sugg .basis', (ns) => ns.map((n) => n.textContent));
+    assert(/photo batches differed: 2\.2h \/ 2\.6h/.test(hints[0]) && !/differed/.test(hints[1]), 'hint: ' + JSON.stringify(hints.slice(0, 2)));
+    assert(/IMAGE 01: Hidden crease 1/.test(await text('.unplaced')) && /IMAGE 11: Hidden crease 11/.test(await text('.unplaced')), 'unplaced list');
+    await page.click('[data-act="aiAddLines"]'); await flush();
+    const wing = (await lines(id)).find((l) => l.code === 'FW001' && l.op === 'refinish');
+    assert.deepStrictEqual([wing.hours, wing.aiHoursSeen, wing.hoursBasis], [2.6, [2.2, 2.6], 'adjusted'], JSON.stringify(wing));
+    await openTab(id, 'estimate');
+    assert(/AI photo batches differed: 2\.2h \/ 2\.6h\. Check the hours\./.test(await text('#linesTbl')), 'figures on the estimate line');
+    await t.mock({ linesByBatch: null });
+  });
+
+  await step('photo size limits: a photo over the AI\'s 7 MB limit is re-encoded; others are sent as stored; a missing size is read from the image', async () => {
+    const id = await newJob();
+    await t.go('#/jobs'); await settle(200);
+    const big = await page.evaluate(async ({ jid, small }) => {
+      const W = 1800, H = 1500;
+      const c = document.createElement('canvas'); c.width = W; c.height = H;
+      const ctx = c.getContext('2d'); const img = ctx.createImageData(W, H);
+      for (let o = 0; o < img.data.length; o += 65536) crypto.getRandomValues(img.data.subarray(o, Math.min(o + 65536, img.data.length)));
+      for (let k = 3; k < img.data.length; k += 4) img.data[k] = 255;
+      ctx.putImageData(img, 0, 0);
+      const url = c.toDataURL('image/png');
+      const db = await new Promise((res, rej) => { const r = indexedDB.open('engineer-report-studio'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+      const job = await new Promise((res, rej) => { const q = db.transaction('jobs').objectStore('jobs').get(jid); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+      job.photos = [{ id: 'big1', dataUrl: url, w: W, h: H, title: 'Big', caption: '', source: '', labels: [] }, { id: 'legacy1', dataUrl: small, title: 'Legacy', caption: '', source: '', labels: [] }];
+      await new Promise((res, rej) => { const tx = db.transaction('jobs', 'readwrite'); tx.objectStore('jobs').put(job); tx.oncomplete = res; tx.onerror = () => rej(tx.error); });
+      db.close();
+      const b = url.split(',')[1];
+      return { bytes: Math.floor(b.length * 3 / 4) };
+    }, { jid: id, small: dataUrl1 });
+    assert(big.bytes > 7e6, 'test photo is over 7 MB: ' + big.bytes);
+    await openTab(id, 'photos');
+    await page.click('[data-act="aiAnalyse"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 15000 }); await flush();
+    const call = (await t.calls('ai.analysePhotos')).pop().arg;
+    assert.deepStrictEqual(call.ids, ['big1', 'legacy1']);
+    assert.deepStrictEqual(call.types, ['image/jpeg', 'image/jpeg'], 'the big PNG was re-encoded as JPEG');
+    assert(call.bytes[0] <= 7e6 && call.bytes[0] < big.bytes, 'within the limit: ' + call.bytes[0]);
+    assert(call.wh[0][0] <= 1800 && call.wh[0][1] === Math.round(call.wh[0][0] * 1500 / 1800), 're-encoded size sent: ' + JSON.stringify(call.wh[0]));
+    const sz = jpegSize(jpg1), b1 = jpg1.toString('base64');
+    assert.deepStrictEqual(call.wh[1], [sz.w, sz.h], 'size read from the stored image: ' + JSON.stringify(call.wh[1]));
+    assert.strictEqual(call.sig[1], `${b1.length}:${b1.slice(0, 40)}:${b1.slice(-40)}`, 'the legacy JPEG sent as stored');
+    const j = await t.getJob(id);
+    assert(j.photos.every((p) => p.labels.some((l) => l.ai)), 'both photos labelled');
+    assert(/AI labelled 2 photo/.test(await toastText()), await toastText());
+  });
+
+  await step('AI valuation: claim type and date of loss sent; "+" asks first for an unverified comparable and adds it without its link; footer', async () => {
+    const id = await newJob();
+    await page.fill('[data-bind="instruction.dateOfLoss"]', '2026-09-01'); await flush();
+    await openTab(id, 'valuation');
+    assert(/claim type Not specified · valuation date 01\/09\/2026 \(date of loss\)/.test(await text('.valSent')), await text('.valSent'));
+    await page.selectOption('[data-bind="valuation.claimType"]', 'third-party'); await flush();
+    assert.strictEqual((await t.getJob(id)).valuation.claimType, 'third-party');
+    assert(/claim type Third-party claim/.test(await text('.valSent')), 'note follows the select: ' + await text('.valSent'));
+    await page.click('[data-act="aiValuation"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 5000 }); await flush();
+    const call = (await t.calls('ai.valuation')).pop().arg;
+    assert.deepStrictEqual([call.claimType, call.valuationDate], ['third-party', '2026-09-01'], JSON.stringify(call));
+    assert(/web search: 2 searches, UK listing sites only · claim type: Third-party claim · valued at 01\/09\/2026/.test(await text('.valFooter')), 'footer: ' + await text('.valFooter'));
+    // unverified comparable: the confirmation is asked; cancelling adds nothing
+    const d0 = t.dialogs.length;
+    t.dialogMode = 'dismiss';
+    await page.click('[data-act="advFromAi"][data-i="3"]'); await flush();
+    t.dialogMode = 'accept';
+    assert(t.dialogs.length === d0 + 1 && /could not be matched/.test(t.dialogs[d0]), 'confirmation asked: ' + t.dialogs.slice(d0));
+    assert.strictEqual(((await t.getJob(id)).valuation.adverts || []).length, 0, 'nothing added when cancelled');
+    await page.click('[data-act="advFromAi"][data-i="3"]'); await flush();
+    let ads = (await t.getJob(id)).valuation.adverts;
+    assert.deepStrictEqual([ads.length, ads[0].url, ads[0].claimedUrl, ads[0].aiUnverified], [1, '', 'https://www.motors.co.uk/car-123456/', true], 'added without its link: ' + JSON.stringify(ads[0]));
+    assert(/AI comparable, not verified: the AI gave https:\/\/www\.motors\.co\.uk\/car-123456\//.test(await text('.advUnverified')), 'advert row hint');
+    // verified comparable: added with its link, no question
+    const d1 = t.dialogs.length;
+    await page.click('[data-act="advFromAi"][data-i="0"]'); await flush();
+    ads = (await t.getJob(id)).valuation.adverts;
+    assert(t.dialogs.length === d1 && ads[1].url === 'https://www.autotrader.co.uk/car-details/1' && !ads[1].aiUnverified, 'verified added directly');
+    // the claim type changed after the valuation; a search without the UK site list is reported
+    await page.selectOption('[data-bind="valuation.claimType"]', 'court'); await flush();
+    assert(/claim type changed since this valuation/.test(await text('.aiPanel')), 'stale claim type flagged');
+    await t.mock({ domainsRestricted: false });
+    await page.click('[data-act="aiValuation"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 5000 }); await flush();
+    assert(/not limited to UK listing sites/.test(await text('.valFooter')) && /claim type: Court \(CPR 35\)/.test(await text('.valFooter')), 'footer: ' + await text('.valFooter'));
+    await t.mock({ domainsRestricted: true });
+  });
+
+  await step('provenance: applied AI text recorded in job.aiText and sent with labels[].ai, titleByAi / captionByAi and the ADAS fit', async () => {
+    await openTab(A, 'vehicle');
+    await page.fill('[data-bind="vehicle.adas"]', 'Windscreen camera (lane keeping), front radar'); await flush();
+    await openTab(A, 'photos');
+    await page.click('[data-act="aiApplySummary"]'); await flush();
+    await openTab(A, 'valuation');
+    await page.click('[data-act="aiValApply"]'); await flush();
+    let j = await t.getJob(A);
+    assert.strictEqual(j.vehicle.adas, 'Windscreen camera (lane keeping), front radar');
+    assert.deepStrictEqual([j.aiText['circumstances.impactType'], j.aiText['circumstances.direction'], j.aiText['report.summary'], j.aiText['valuation.comments']],
+      ['Sideswipe / lateral side contact', 'Rear to front', 'DRAFT2 summary', 'AI valuation comments **£5,700**'], JSON.stringify(j.aiText));
+    assert(!('inspection.condition' in j.aiText) || j.aiText['inspection.condition'] === j.inspection.condition, 'a field the summary did not fill keeps its own record');
+    // the second photo analysis of A sent the AI captions (applied by the first) as AI text, though the AI's newest suggestions differ
+    const door = j.photos.find((p) => p.title === 'RH front door');
+    const runs = (await t.calls('ai.analysePhotos')).map((c) => c.arg).filter((c) => (c.ids || []).includes(door.id));
+    assert(runs.length >= 2, 'two runs on A');
+    assert.deepStrictEqual([runs[1].captionByAi, runs[1].titleByAi], [[true, true], [false, false]], 'second run provenance: ' + JSON.stringify([runs[1].captionByAi, runs[1].titleByAi]));
+    assert(door.aiCaption !== door.caption, 'the newest AI suggestion differs from the applied caption');
+    // narrative: aiText (job fields only), photo provenance and label provenance
+    await openTab(A, 'opinion');
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await settle(150);
+    const call = (await t.calls('ai.draftNarrative')).pop().arg;
+    assert(call.aiText['circumstances.impactType'] && call.aiText['valuation.comments'] && call.aiText['report.summary'] === 'DRAFT2 summary', 'aiText sent: ' + JSON.stringify(Object.keys(call.aiText)));
+    assert(!Object.keys(call.aiText).some((k) => k.startsWith('photos.')), 'photo provenance travels per photo, not in aiText');
+    assert.strictEqual(call.adas, 'Windscreen camera (lane keeping), front radar', 'ADAS fit sent');
+    const dp = call.prov.find((x) => x.labels.some((l) => l[0] === 'Dent'));
+    assert(dp && dp.captionByAi === true && dp.titleByAi === false, 'door provenance: ' + JSON.stringify(dp));
+    assert(dp.labels.some((l) => l[0] === 'Dent' && l[1] === false) && dp.labels.some((l) => /Scoring/.test(l[0]) && l[1] === true), 'label provenance: ' + JSON.stringify(dp.labels));
+    // once the assessor edits an applied field, ai.js sees text that no longer matches the AI record
+    await openTab(A, 'opinion');
+    await page.fill('[data-bind="report.summary"]', 'My own summary.'); await flush();
+    j = await t.getJob(A);
+    assert(j.aiText['report.summary'] === 'DRAFT2 summary' && j.report.summary === 'My own summary.', 'record kept; text now differs');
+  });
+
+  await step('AI status: a catalogue / AI error shows in the sidebar and Settings; key-storage wording; refused key changes are reported', async () => {
+    await t.mock({ aiStatusError: 'The parts catalogue could not be loaded: window.CATALOGUE is missing or empty', aiProtection: 'none', dataProtection: 'weak' });
+    await t.go('#/settings'); await settle(300);
+    const side = await text('#aiState');
+    assert(/AI assessor unavailable/.test(side) && /parts catalogue could not be loaded/.test(side), 'sidebar: ' + side);
+    assert(/The AI features cannot run: The parts catalogue could not be loaded/.test(await text('.aiPanel .errBox')), 'Settings AI error');
+    assert(/Stored without encryption: this PC has no secure storage, so the key is saved as plain text\./.test(await text('.aiStorage')), 'AI key storage: ' + await text('.aiStorage'));
+    assert(/Stored without proper encryption: no system keyring was found, so the keys are protected only by a fixed key built into the app \(the Linux fallback\)/.test(await text('.dataStorage')), 'data keys: ' + await text('.dataStorage'));
+    // a refused save says why, keeps the typed key, and never says "saved"
+    await t.mock({ setKeyError: 'That is too short to be an Anthropic API key. Copy it again from the Anthropic Console.' });
+    await page.fill('#aiKey', 'sk-ant-x'); await page.click('[data-act="aiSaveKey"]'); await settle(200);
+    assert(/too short to be an Anthropic API key/.test(await toastText()) && !/saved/i.test(await toastText()), 'toast: ' + await toastText());
+    assert.strictEqual(await page.$eval('#aiKey', (n) => n.value), 'sk-ant-x', 'typed key kept for correction');
+    await t.mock({ setKeysError: 'The credentials could not be saved (EACCES): the app\'s settings folder could not be written.' });
+    await page.fill('#kDvla', 'dvla-key-123'); await page.click('[data-act="saveDvla"]'); await settle(200);
+    assert(/could not be saved \(EACCES\)/.test(await toastText()) && !/DVLA key saved/.test(await toastText()), 'toast: ' + await toastText());
+    await page.click('[data-act="clearMot"]'); await settle(200);
+    assert(/could not be saved \(EACCES\)/.test(await toastText()), 'clear refused: ' + await toastText());
+    await t.mock({ setKeyError: '', setKeysError: '', aiProtection: 'none' });
+    await page.fill('#aiKey', 'sk-ant-valid-key-123'); await page.click('[data-act="aiSaveKey"]'); await settle(300);
+    assert(/API key saved, but without proper encryption/.test(await toastText()), 'saved without encryption: ' + await toastText());
+    await t.mock({ aiStatusError: '', aiProtection: 'os', dataProtection: 'os' });
+    await t.go('#/settings'); await settle(300);
+    assert(/AI assessor ready/.test(await text('#aiState')) && !(await exists('.errBox')) && !(await exists('.keyWarn')), 'back to normal: ' + await text('#aiState'));
+    assert(/The key is encrypted by your operating system/.test(await text('.aiStorage')), 'os wording');
+  });
+
+  await step('unreadable data credentials: error shown, saving disabled, lookups explain it; "Remove all saved credentials" clears and refreshes', async () => {
+    await t.mock({ dataUnreadable: true });
+    await openTab(B, 'vehicle');
+    await page.click('[data-act="lookupVehicle"]'); await settle(300);
+    assert(/could not be read/.test(await toastText()), 'lookup toast: ' + await toastText());
+    await t.go('#/settings'); await settle(300);
+    assert(/The saved credentials cannot be read\./.test(await text('.errBox')), 'error box: ' + await text('.errBox'));
+    assert(await exists('[data-act="saveDvla"][disabled]') && await exists('[data-act="saveMot"][disabled]'), 'saving disabled');
+    const n0 = (await t.calls('data.clearKeys')).length;
+    await page.click('[data-act="clearAllData"]'); await settle(400);
+    assert.strictEqual((await t.calls('data.clearKeys')).length, n0 + 1, 'clearKeys called');
+    assert(/All saved data-connection credentials were removed/.test(await toastText()), await toastText());
+    assert(!(await exists('.errBox')) && !(await exists('[data-act="saveDvla"][disabled]')), 'status refreshed: no error, saving enabled');
+    await t.mock({ dvla: true, mot: true });
+  });
+
+  await step('save failures are reported (backup / job file); PDF export passes the report\'s margins when report.js gives them', async () => {
+    await t.mock({ saveError: 'The file could not be saved: the disk is full.' });
+    await t.go('#/settings'); await settle(300);
+    await page.click('[data-act="backup"]'); await settle(400);
+    assert(/the disk is full/.test(await toastText()), 'backup failure: ' + await toastText());
+    await openTab(S, 'report'); await settle(300);
+    await page.click('[data-act="exportJson"]'); await settle(300);
+    assert(/the disk is full/.test(await toastText()), 'job file failure: ' + await toastText());
+    await t.mock({ saveError: '' });
+    await page.click('[data-act="exportJson"]'); await settle(300);
+    assert(/^Saved /.test(await toastText()) && (await t.calls('saveFile')).pop().arg.kind === 'json', 'saved with kind json');
+    await page.click('[data-act="exportPdf"]'); await settle(300);
+    assert(!('marginsMm' in (await t.calls('exportPdf')).pop().arg), 'no margins while report.js gives none');
+    await page.evaluate(() => { const R = window.Report; R.__pt = R.pdfTemplates; R.pdfTemplates = (jb) => Object.assign(R.__pt(jb), { marginsMm: { top: 25, bottom: 26, left: 16, right: 16 } }); });
+    await page.click('[data-act="exportPdf"]'); await settle(300);
+    await page.evaluate(() => { const R = window.Report; R.pdfTemplates = R.__pt; delete R.__pt; });
+    assert.deepStrictEqual((await t.calls('exportPdf')).pop().arg.marginsMm, { top: 25, bottom: 26, left: 16, right: 16 });
+  });
+
+  await step('QA: a researched part number with variant alternatives asks for confirmation by VIN', async () => {
+    const id = await newJob();
+    await openTab(id, 'vehicle'); await page.selectOption('[data-bind="vehicle.oemKey"]', 'ford-fiesta-mk7'); await settle(200);
+    await openTab(id, 'estimate');
+    await pick('LT004', 'L', 'replace'); await flush();
+    const l = (await lines(id)).find((x) => x.code === 'LT004');
+    assert.strictEqual(l.partNo, '1709553', 'auto-filled with the first researched number');
+    await openTab(id, 'report'); await settle(300);
+    assert(/Line 1 uses researched part number 1709553; there is 1 alternative \(variant\): confirm by VIN\./.test(await text('.qa')), await text('.qa'));
+    await openTab(id, 'estimate');
+    await page.fill(`input[data-lf="partNo"][data-id="${l.id}"]`, 'NOT-RESEARCHED-1'); await flush();
+    await openTab(id, 'report'); await settle(300);
+    assert(!/uses researched part number/.test(await text('#tabBody')), 'no message for a number that is not researched');
+    const msgs = await page.evaluate(() => {
+      const C = window.Core, saved = C.customOem;
+      try {
+        C.setCustomOem([{ key: 'ford-fiesta-mk7', make: 'Ford', model: 'Fiesta', parts: { 'LT004|L': [{ oem: 'MYOWN1', user: true }] } }]);
+        const jb = C.newJob(); jb.vehicle.oemKey = 'ford-fiesta-mk7';
+        jb.lines = [C.newLine({ code: 'LT004', side: 'L', partNo: 'MYOWN1', description: 'own' }), C.newLine({ code: 'LT004', side: 'L', partNo: '18-77-011', description: 'researched' }), C.newLine({ code: 'SS001', side: 'R', partNo: '768501KA6A', description: 'single' })];
+        return C.qaChecks(jb).filter((q) => /researched part number/.test(q.msg)).map((q) => q.msg);
+      } finally { C.setCustomOem(saved); }
+    });
+    assert.deepStrictEqual(msgs, ['Line 2 uses researched part number 18-77-011; there are 2 alternatives (variants): confirm by VIN.'], JSON.stringify(msgs));
+  });
+
+  await step('migrate keeps op / aiOperation / guideHours / hoursBasis / aiHoursSeen; "replace" becomes "renew"; junk values dropped', async () => {
+    await t.go('#/jobs'); await settle(300);
+    const file = { vehicle: { reg: 'OPS 1' }, lines: [
+      { description: 'RH front wing – renew', code: 'FW001', side: 'R', hours: 1.2, op: 'replace', ai: true, reviewed: false, aiOperation: 'replace', guideHours: '1.2', hoursBasis: 'Guide' },
+      { description: 'RH front door – refinish repaired part', code: 'DR001', side: 'R', hours: 1.6, type: 'Painting', op: 'refinishRep1', ai: true, aiOperation: 'refinishRep1', guideHours: 2, hoursBasis: 'adjusted', aiHoursSeen: [1.6, 2.1], pfApplied: 1 },
+      { description: 'x', op: 42, hoursBasis: 'whatever', aiOperation: { a: 1 }, aiHoursSeen: 'no' }
+    ], aiText: { 'report.summary': 'AI text', bad: 7 }, valuation: { claimType: 'Own Insurer' } };
+    await choose('[data-act="importJob"]', { name: 'ops.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(file)) });
+    await page.waitForFunction(() => /#\/job\/[^/]+\/claim$/.test(location.hash)); await settle(300);
+    const id = await t.jobId();
+    const j = await t.getJob(id);
+    const ls = j.lines;
+    assert.deepStrictEqual([ls[0].op, ls[0].aiOperation, ls[0].guideHours, ls[0].hoursBasis], ['renew', 'replace', 1.2, 'guide'], JSON.stringify(ls[0]));
+    assert.deepStrictEqual([ls[1].op, ls[1].aiOperation, ls[1].guideHours, ls[1].hoursBasis, ls[1].aiHoursSeen, ls[1].pfApplied], ['refinishRep1', 'refinishRep1', 2, 'adjusted', [1.6, 2.1], 1], JSON.stringify(ls[1]));
+    assert(!['op', 'hoursBasis', 'aiOperation', 'aiHoursSeen'].some((k) => k in ls[2]), 'junk values dropped: ' + JSON.stringify(ls[2]));
+    assert.deepStrictEqual([j.aiText, j.valuation.claimType, j.vehicle.adas], [{ 'report.summary': 'AI text' }, 'own-insurer', ''], 'job fields: ' + JSON.stringify([j.aiText, j.valuation.claimType]));
+    const u1 = j.updatedAt;
+    await t.go('#/jobs'); await settle(300); await openTab(id, 'estimate'); await settle(200);
+    assert.strictEqual((await t.getJob(id)).updatedAt, u1, 'reopening changes nothing (migrate is idempotent)');
+    const tbl = await text('#linesTbl');
+    assert(/AI: adjusted from guide 2\.0h/.test(tbl) && /AI photo batches differed: 1\.6h \/ 2\.1h/.test(tbl), 'notes on the migrated lines');
+    assert.strictEqual(await page.evaluate(() => window.Core.isDamageOp({ op: 'renew' })), true, 'a migrated "replace" line counts as a renewal');
+  });
+
   await t.close();
   const failed = results.filter((r) => r[0] === 'FAIL');
   console.log(`\n${results.length - failed.length}/${results.length} checks passed; ${t.errors.length} page/console error(s)`);
