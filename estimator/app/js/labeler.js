@@ -4,6 +4,17 @@
   const C = window.Core;
   const COLOURS = ['#ff3b30', '#ff9500', '#ffcc00', '#34c759', '#2d8ae0', '#af52de', '#ffffff'];
   const QUICK = ['Scratch', 'Scuff', 'Scoring', 'Paint transfer', 'Dent', 'Crease', 'Deformation', 'Crack', 'Broken', 'Misaligned', 'Deflated tyre', 'Kerbed wheel', 'Gap / flush'];
+  const DEFAULT_COLOUR = '#ff3b30';
+  // the label colour, validated as the report does it
+  const colourOf = (l) => (window.Report && window.Report.safeColour ? window.Report.safeColour(l.colour, DEFAULT_COLOUR) : DEFAULT_COLOUR);
+  // tag text: #fff or #111, whichever contrasts more with the label colour (the report's rule: yellow, white and orange get dark text)
+  function inkFor(bg) {
+    let h = bg.slice(1);
+    if (h.length <= 4) h = h.split('').map((x) => x + x).join('');
+    const lin = [0, 2, 4].map((i) => { const c = parseInt(h.slice(i, i + 2), 16) / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); });
+    const L = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
+    return 1.05 / (L + 0.05) >= (L + 0.05) / 0.0556 ? '#fff' : '#111';
+  }
 
   function open(photo, onSave, openModal, closeModal) {
     let labels = C.clone(photo.labels || []);
@@ -32,8 +43,9 @@
         const d = document.createElement('div');
         d.className = 'bx' + (i === sel ? ' sel' : '');
         d.dataset.i = i;
-        d.style.cssText = `left:${l.x * 100}%;top:${l.y * 100}%;width:${l.w * 100}%;height:${l.h * 100}%;border-color:${l.colour || '#ff3b30'};${preExisting(l) ? 'border-style:dashed;' : ''}${l.hidden ? 'opacity:.35' : ''}`;
-        d.innerHTML = `<div class="tg" style="background:${l.colour || '#ff3b30'}">${i + 1}. ${C.esc(l.text)}</div><div class="hd" data-h="1"></div>`;
+        const col = colourOf(l);
+        d.style.cssText = `left:${l.x * 100}%;top:${l.y * 100}%;width:${l.w * 100}%;height:${l.h * 100}%;border-color:${col};${preExisting(l) ? 'border-style:dashed;' : ''}${l.hidden ? 'opacity:.35' : ''}`;
+        d.innerHTML = `<div class="tg" style="background:${col};color:${inkFor(col)}">${i + 1}. ${C.esc(l.text)}</div><div class="hd" data-h="1"></div>`;
         stage.appendChild(d);
       });
       list.innerHTML = labels.length ? labels.map((l, i) => `
@@ -140,7 +152,7 @@
 
   // Small read-only overlay used on thumbnails
   function overlay(labels) {
-    return `<div class="ov">${(labels || []).filter((l) => !l.hidden).map((l, i) => `<div class="bx" style="left:${l.x * 100}%;top:${l.y * 100}%;width:${l.w * 100}%;height:${l.h * 100}%;border-color:${l.colour || '#ff3b30'}${preExisting(l) ? ';border-style:dashed' : ''}"></div><div class="tg" style="left:${l.x * 100}%;top:${l.y * 100}%;background:${l.colour || '#ff3b30'}">${i + 1}. ${C.esc(l.text)}</div>`).join('')}</div>`;
+    return `<div class="ov">${(labels || []).filter((l) => !l.hidden).map((l, i) => { const col = colourOf(l); return `<div class="bx" style="left:${l.x * 100}%;top:${l.y * 100}%;width:${l.w * 100}%;height:${l.h * 100}%;border-color:${col}${preExisting(l) ? ';border-style:dashed' : ''}"></div><div class="tg" style="left:${l.x * 100}%;top:${l.y * 100}%;background:${col};color:${inkFor(col)}">${i + 1}. ${C.esc(l.text)}</div>`; }).join('')}</div>`;
   }
 
   window.Labeler = { open, overlay };

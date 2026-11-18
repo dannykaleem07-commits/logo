@@ -1217,7 +1217,7 @@
     const html = Report.render(job, { mode: desktop ? 'pdf' : 'print' });
     const name = (job.report.ref || job.vehicle.reg || 'engineering-report').replace(/[^\w.-]+/g, '_');
     if (desktop) {
-      const tpl = Report.pdfTemplates();
+      const tpl = Report.pdfTemplates(job);
       const r = await desktop.exportPdf({ html, header: tpl.header, footer: tpl.footer, fileName: name });
       if (r.ok) toast('PDF saved: ' + r.filePath); else if (!r.canceled) toast('PDF export failed: ' + r.error, true);
     } else {
@@ -1236,6 +1236,22 @@
   }
   function pickFile(accept) {
     return new Promise((res) => { const i = document.createElement('input'); i.type = 'file'; i.accept = accept; i.onchange = () => res(i.files[0] || null); i.click(); });
+  }
+
+  // Logos must be inline PNG / JPEG / GIF / WebP for the report (Report.safeImage). SVG, and anything wider than 900 px,
+  // is rasterised to PNG on a canvas (transparency kept); smaller raster logos are kept as they are.
+  async function logoDataUrl(file) {
+    const raw = await C.readFileAsDataURL(file);
+    const svg = /svg/i.test(file.type) || /^data:image\/svg/i.test(raw);
+    const img = await C.loadImage(raw);
+    const w = img.naturalWidth || (svg ? 900 : 0), h = img.naturalHeight || (svg ? 300 : 0);
+    if (!w || !h) return '';
+    if (!svg && w <= 900 && Report.safeImage(raw)) return raw;
+    const scale = svg ? Math.min(900 / w, 900 / h) : 900 / w; // vector art is drawn at full logo size; raster is only reduced
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(w * scale)); c.height = Math.max(1, Math.round(h * scale));
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    return Report.safeImage(c.toDataURL('image/png'));
   }
 
   // ---------- signature pad ----------
@@ -1560,7 +1576,12 @@
       sigUpload: async () => { const j = job; const f = await pickFile('image/*'); if (!f) return; const r = await C.resizeDataURL(await C.readFileAsDataURL(f), 600, 0.92); if (el.dataset.target === 'default') { C.settings.assessor.signature = r.dataUrl; await C.saveSettings(); renderSettings(); } else await applyToJob(j, (x) => { x.assessor.signature = r.dataUrl; }); },
       sigClear: () => { job.assessor.signature = ''; changed(); renderJob(); },
       exportPdf, exportJson: () => saveText(JSON.stringify(job, null, 1), (job.report.ref || job.vehicle.reg || 'job').replace(/[^\w.-]+/g, '_') + '.json', 'json'),
-      logoUpload: async () => { const f = await pickFile('image/*'); if (!f) return; const raw = await C.readFileAsDataURL(f); const r = f.type === 'image/png' || f.type === 'image/svg+xml' ? { dataUrl: raw } : await C.resizeDataURL(raw, 900, 0.92); C.settings.company.logo = r.dataUrl; await C.saveSettings(); renderSettings(); },
+      logoUpload: async () => {
+        const f = await pickFile('image/*'); if (!f) return;
+        const url = await logoDataUrl(f);
+        if (!url) return toast('That file cannot be used as a logo. Use a PNG, JPEG, GIF, WebP or SVG image.', true);
+        C.settings.company.logo = url; await C.saveSettings(); renderSettings();
+      },
       logoClear: async () => { C.settings.company.logo = ''; await C.saveSettings(); renderSettings(); },
       aiSaveKey: async () => { const k = $('#aiKey').value.trim(); if (!k) return toast('Paste your API key first.', true); await desktop.ai.setKey(k); toast('API key saved.'); refreshAiState(); renderSettings(); },
       aiClearKey: async () => { await desktop.ai.setKey(''); toast('API key removed.'); refreshAiState(); renderSettings(); },

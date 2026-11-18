@@ -12,8 +12,8 @@
   const num = (v) => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
   const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
   // Negative amounts print with a true minus sign before the pound sign: −£1,234.56 (never £-1,234.56).
-  const gbp = (n) => { const v = num(n), a = round2(Math.abs(v)); return (v < 0 && a > 0 ? '−£' : '£') + a.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
-  const gbp0 = (n) => { const v = num(n), a = Math.round(Math.abs(v)); return (v < 0 && a > 0 ? '−£' : '£') + a.toLocaleString('en-GB'); };
+  const gbp = (n) => { const v = num(n), a = round2(Math.abs(v)); return (v < 0 && a > 0 ? '\u2212£' : '£') + a.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+  const gbp0 = (n) => { const v = num(n), a = Math.round(Math.abs(v)); return (v < 0 && a > 0 ? '\u2212£' : '£') + a.toLocaleString('en-GB'); };
   const hrs = (n) => num(n).toFixed(2);
   const todayISO = () => new Date().toISOString().slice(0, 10);
   const ukDate = (iso) => {
@@ -40,7 +40,7 @@
   const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
   const clone = (o) => JSON.parse(JSON.stringify(o));
   // Accent- and case-folded text for comparisons ("Škoda" → "skoda").
-  const fold = (s) => String(s == null ? '' : s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+  const fold = (s) => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
   // "2013-2020" → [2013, 2020]; "2019-", "2019–present" or a lone "2019" → [2019, 9999]; no year → null.
   const yearRange = (s) => {
     const t = String(s == null ? '' : s);
@@ -175,25 +175,31 @@
   }
   const DAMAGE_OPS = ['renew', 'repair1', 'repair', 'repair3', 'pdr'];
   const NON_DAMAGE_TEXT = /blend|refinish|remove & refit|r&i|strip|smart|polish|inspect|check|measure|calibrat|test/i;
-  // True when the line renews or repairs a part. Lines from the picker carry `op`; AI lines are judged by the
-  // AI's recommended operation, and manual / legacy lines by their wording.
+  const isPaintLine = (l) => l.type === 'Painting' || l.costClass === 'paint';
+  // True when the line renews or repairs a part. Picker lines carry `op`; manual and legacy lines are judged by their
+  // wording. AI lines too, falling back to `aiOperation`, which is the AI's operation for the whole component
+  // (so it can say "renew" on that component's refinish line).
   function isDamageOp(line) {
     const l = obj(line);
     if (l.op && l.op !== 'ai' && l.op !== 'manual') return DAMAGE_OPS.includes(l.op);
-    const aiOp = l.op === 'ai' ? fold(l.aiOperation) : '';
-    if (aiOp) return /^(?:renew|replace|repair|paintless|pdr)/.test(aiOp);
-    return !NON_DAMAGE_TEXT.test(desc(l));
+    const d = desc(l);
+    if (l.op === 'ai') {
+      if (isPaintLine(l) || NON_DAMAGE_TEXT.test(d)) return false;
+      if (/\b(?:renew|renewal|replace|replacement|repair|pdr|paintless|straighten|sectional?)\b/i.test(d)) return true;
+      const aiOp = fold(l.aiOperation);
+      if (aiOp) return /^(?:renew|replace|repair|paintless|pdr)/.test(aiOp);
+    }
+    return !NON_DAMAGE_TEXT.test(d);
   }
   // True when the line fits a new part.
   function isRenewLine(line) {
     const l = obj(line);
     if (l.op && l.op !== 'ai' && l.op !== 'manual') return l.op === 'renew';
-    const aiOp = l.op === 'ai' ? fold(l.aiOperation) : '';
-    if (aiOp) return /^(?:renew|replace)/.test(aiOp);
     const d = desc(l);
-    return /\b(?:renew|renewal|replace|replacement)\b/i.test(d) && !/refinish|blend|paint|polish|smart|lacquer|\brefit\b/i.test(d);
+    if (/\b(?:renew|renewal|replace|replacement)\b/i.test(d)) return !/refinish|blend|paint|polish|smart|lacquer|\brefit\b/i.test(d);
+    if (l.op === 'ai' && !isPaintLine(l) && !/repair|refinish|blend|refit|inspect|check|test|refurb|polish|smart/i.test(d)) return /^(?:renew|replace)/.test(fold(l.aiOperation));
+    return false;
   }
-  const isPaintLine = (l) => l.type === 'Painting' || l.costClass === 'paint';
   // Figure numbers of the photos printed in the report: Map(photoId → 1, 2, 3 …); excluded photos get none.
   function photoNumbers(job) {
     const m = new Map();
