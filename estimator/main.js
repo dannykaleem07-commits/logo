@@ -4,10 +4,14 @@
  *
  * Security model
  *  - The UI is app/index.html in a sandboxed, context-isolated window with no Node.js. The window may only ever show
- *    that file: every other navigation is cancelled (web links open in the system browser), new windows are denied,
- *    <webview> is blocked and all permission requests (camera, notifications, clipboard read…) are refused.
+ *    that file, in its top frame and in any iframe: every other navigation is cancelled (web links open in the system
+ *    browser), new windows are denied, <webview> is blocked and all permission requests (camera, notifications,
+ *    clipboard read…) are refused.
  *  - The page reaches this process only through the IPC channels below. Each one answers only the main window's top
- *    frame while it shows app/index.html, checks its arguments, and always replies {ok:false, error} instead of throwing.
+ *    frame while it shows app/index.html (and no iframe shows another local file), checks its arguments, and always
+ *    replies {ok:false, error} instead of throwing.
+ *  - Files the user saves (exports, PDFs, backups) are written to a temporary file in the same folder and renamed over
+ *    the chosen one when complete, and quitting waits for a save under way.
  *  - Keys (Anthropic, DVLA, DVSA) are encrypted with the operating system (safeStorage: DPAPI on Windows) and never
  *    sent to the page. A key file that cannot be read is reported, never silently replaced.
  *  - Network calls use Electron's net.fetch, so the Windows proxy settings (PAC/WPAD, integrated proxy sign-in) and the
