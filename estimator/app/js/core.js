@@ -9,23 +9,76 @@
   const esc = (s) => String(s == null ? '' : s)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  const num = (v) => { const n = parseFloat(v); return isFinite(n) ? n : 0; };
-  const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
+  // Tolerant number reader for stored and imported data: "£5,995" → 5995, "60,000" → 60000, "1,234.50" → 1234.5,
+  // a lone decimal comma "1,5" → 1.5, "1.234,56" → 1234.56, "−£56.34" → −56.34. Text after the number is ignored as
+  // parseFloat does ("1.5h" → 1.5, "1e3" → 1000); anything without a finite number → 0.
+  const NUM_IGNORE = /[\s    £]/g;
+  const num = (v) => {
+    if (typeof v === 'number') return isFinite(v) ? v : 0;
+    if (v == null || typeof v === 'boolean') return 0;
+    let s;
+    try { s = String(v); } catch (e) { return 0; }
+    s = s.replace(NUM_IGNORE, '').replace(/^−/, '-');
+    const m = /^([-+]?)(\d[\d.,]*|[.,]\d[\d.,]*)/.exec(s);
+    if (!m) return 0;
+    let t = m[2];
+    if (t.includes(',')) {
+      if (/^\d{1,3}(?:,\d{3})+(?:\.\d*)?$/.test(t)) t = t.replace(/,/g, ''); // thousands separators
+      else if (/^\d{1,3}(?:\.\d{3})+,\d+$/.test(t)) t = t.replace(/\./g, '').replace(',', '.'); // 1.234,56
+      else if (!t.includes('.') && t.indexOf(',') === t.lastIndexOf(',')) t = t.replace(',', '.'); // a lone decimal comma
+      else t = t.replace(/,/g, '');
+    }
+    const n = parseFloat(m[1] + t + s.slice(m[0].length));
+    return isFinite(n) ? n : 0;
+  };
+  const round2 =(n) => Math.round((n + Number.EPSILON) * 100) / 100;
   // Negative amounts print with a true minus sign before the pound sign: −£1,234.56 (never £-1,234.56).
   const gbp = (n) => { const v = num(n), a = round2(Math.abs(v)); return (v < 0 && a > 0 ? '\u2212£' : '£') + a.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
   const gbp0 = (n) => { const v = num(n), a = Math.round(Math.abs(v)); return (v < 0 && a > 0 ? '\u2212£' : '£') + a.toLocaleString('en-GB'); };
   const hrs = (n) => num(n).toFixed(2);
-  const todayISO = () => new Date().toISOString().slice(0, 10);
+  // The calendar date (YYYY-MM-DD) of a moment in UK time (Europe/London), or in the computer's own time zone when the
+  // runtime has no time-zone data; never the UTC date (between 00:00 and 01:00 BST that is still the day before).
+  // A plain YYYY-MM-DD is returned as it is; anything that is not a date gives ''.
+  let ukParts = null;
+  function localISODate(when) {
+    if (typeof when === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(when.trim())) return when.trim();
+    const d = when == null ? new Date() : when instanceof Date ? when : new Date(typeof when === 'number' ? when : String(when));
+    if (isNaN(d)) return '';
+    try {
+      if (ukParts !== false) {
+        if (!ukParts) ukParts = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit' });
+        const p = {};
+        for (const x of ukParts.formatToParts(d)) p[x.type] = x.value;
+        if (/^\d{4}$/.test(p.year) && /^\d{2}$/.test(p.month) && /^\d{2}$/.test(p.day)) return `${p.year}-${p.month}-${p.day}`;
+      }
+    } catch (e) { ukParts = false; /* no Europe/London data: the local calendar date below */ }
+    const two = (n) => String(n).padStart(2, '0');
+    return `${String(d.getFullYear()).padStart(4, '0')}-${two(d.getMonth() + 1)}-${two(d.getDate())}`;
+  }
+  const todayISO = () => localISODate(new Date());
+  // "2026-09-01" (or a timestamp starting with it) → its parts when it is a real calendar date; "2023-02-29" → null.
+  function calendarDate(s) {
+    const m = /^(\d{4})-(\d{2})-(\d{2})(?:$|[T ])/.exec(typeof s === 'string' ? s.trim() : '');
+    if (!m) return null;
+    const y = +m[1], mo = +m[2], d = +m[3];
+    const t = new Date(Date.UTC(2000, mo - 1, d));
+    t.setUTCFullYear(y);
+    return t.getUTCFullYear() === y && t.getUTCMonth() === mo - 1 && t.getUTCDate() === d ? { y, mo, d, text: m } : null;
+  }
+  // dd/mm/yyyy, or the text unchanged when it is not a valid date (never a silently shifted date)
   const ukDate = (iso) => {
-    if (!iso) return '';
-    const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
-    return m ? `${m[3]}/${m[2]}/${m[1]}` : iso;
+    if (iso == null || iso === '') return '';
+    const c = calendarDate(iso);
+    return c ? `${c.text[3]}/${c.text[2]}/${c.text[1]}` : String(iso);
   };
+  // "01 September 2026", or the text unchanged when it is not a valid date ("2023-02-29" is not rolled over to 1 March)
   const longDate = (iso) => {
-    if (!iso) return '';
-    const d = new Date(iso + 'T12:00:00');
-    if (isNaN(d)) return iso;
-    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' });
+    if (iso == null || iso === '') return '';
+    const c = calendarDate(iso);
+    if (!c) return String(iso);
+    const d = new Date(Date.UTC(2000, c.mo - 1, c.d, 12));
+    d.setUTCFullYear(c.y);
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' });
   };
   const getPath = (obj, path) => path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
   const setPath = (obj, path, val) => {
