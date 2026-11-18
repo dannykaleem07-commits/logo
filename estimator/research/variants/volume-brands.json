@@ -1,407 +1,4673 @@
 {
-  "researched": "2026-11-18",
-  "conventions": "ps = DIN metric horsepower (PS) as used in UK price lists. engine_code only where well established, otherwise null. status 'verified' = core trims/engines confirmed against at least one UK web source in this research pass (not every line item); 'general-knowledge' = compiled from established knowledge without a confirming source in this pass. Trims listed roughly in ladder order, by period (see notes for renames).",
-  "models": [
+ "researched": "2026-11-18",
+ "conventions": "ps = DIN metric horsepower (PS) as used in UK price lists. engine_code only where well established, otherwise null. status 'verified' = core trims/engines confirmed against at least one UK web source in this research pass (not every line item); 'general-knowledge' = compiled from established knowledge without a confirming source in this pass. Trims listed roughly in ladder order, by period (see notes for renames).",
+ "models": [
+  {
+   "make": "Ford",
+   "model": "Fiesta",
+   "generation": "Mk7",
+   "years": "2008-2017",
+   "facelift": "2013",
+   "bodies": [
+    "3dr hatchback",
+    "5dr hatchback"
+   ],
+   "engines": [
     {
-      "make": "Ford", "model": "Fiesta", "generation": "Mk7", "years": "2008-2017", "facelift": "2013",
-      "bodies": ["3dr hatchback", "5dr hatchback"],
-      "engines": [
-        {"badge": "1.25 Duratec 60", "fuel": "Petrol", "cc": 1242, "ps": 60, "engine_code": null, "drive": ["FWD"], "years": "2008-2015"},
-        {"badge": "1.25 Duratec 82", "fuel": "Petrol", "cc": 1242, "ps": 82, "engine_code": null, "drive": ["FWD"], "years": "2008-2015"},
-        {"badge": "1.4 Duratec 96", "fuel": "Petrol", "cc": 1388, "ps": 96, "engine_code": null, "drive": ["FWD"], "years": "2008-2013"},
-        {"badge": "1.6 Ti-VCT 120", "fuel": "Petrol", "cc": 1596, "ps": 120, "engine_code": null, "drive": ["FWD"], "years": "2008-2013"},
-        {"badge": "1.6 Ti-VCT 105", "fuel": "Petrol", "cc": 1596, "ps": 105, "engine_code": null, "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.0 Ti-VCT 65", "fuel": "Petrol", "cc": 998, "ps": 65, "engine_code": null, "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.0 Ti-VCT 80", "fuel": "Petrol", "cc": 998, "ps": 80, "engine_code": null, "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.0 EcoBoost 100", "fuel": "Petrol", "cc": 999, "ps": 100, "engine_code": null, "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.0 EcoBoost 125", "fuel": "Petrol", "cc": 999, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.0 EcoBoost 140", "fuel": "Petrol", "cc": 999, "ps": 140, "engine_code": null, "drive": ["FWD"], "years": "2014-2017"},
-        {"badge": "1.6 EcoBoost 182 (ST)", "fuel": "Petrol", "cc": 1596, "ps": 182, "engine_code": null, "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.6 EcoBoost 200 (ST200)", "fuel": "Petrol", "cc": 1596, "ps": 200, "engine_code": null, "drive": ["FWD"], "years": "2016-2017"},
-        {"badge": "1.4 TDCi 70", "fuel": "Diesel", "cc": 1399, "ps": 70, "engine_code": null, "drive": ["FWD"], "years": "2008-2013"},
-        {"badge": "1.6 TDCi 90", "fuel": "Diesel", "cc": 1560, "ps": 90, "engine_code": null, "drive": ["FWD"], "years": "2008-2013"},
-        {"badge": "1.6 TDCi 95", "fuel": "Diesel", "cc": 1560, "ps": 95, "engine_code": null, "drive": ["FWD"], "years": "2010-2017"},
-        {"badge": "1.5 TDCi 75", "fuel": "Diesel", "cc": 1499, "ps": 75, "engine_code": null, "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.5 TDCi 95", "fuel": "Diesel", "cc": 1499, "ps": 95, "engine_code": null, "drive": ["FWD"], "years": "2015-2017"}
-      ],
-      "trims": ["Studio", "Style", "Style+", "Edge", "Zetec", "Zetec S", "Titanium", "Titanium X", "ECOnetic", "Metal", "Zetec S Black/Red Edition", "ST-Line", "ST-1", "ST-2", "ST-3", "ST200"],
-      "transmissions": ["5-speed manual", "6-speed manual (ST)", "4-speed auto (pre-2013 1.4)", "6-speed Powershift (1.6 105 and 1.0 EcoBoost 100, post-2013)"],
-      "notes": "Pre-facelift ladder: Studio, Style, Style+, Zetec, Zetec S, Titanium (Edge/Econetic specials). 2013 facelift (Aston-style grille) added 1.0 EcoBoost and 1.0 Ti-VCT; ST arrived 2013 (3dr only). ST-Line added 2016. 1.5 TDCi replaced 1.6 TDCi around 2013-2015. Van derivatives excluded. Exact year boundaries per engine are approximate.",
-      "status": "general-knowledge",
-      "sources": ["https://vehiclescore.co.uk/cars/ford/fiesta/mk7-2008-2017"]
+     "badge": "1.25 Duratec 60",
+     "fuel": "Petrol",
+     "cc": 1242,
+     "ps": 60,
+     "engine_code": "Sigma (Duratec)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2008-2017"
     },
     {
-      "make": "Ford", "model": "Fiesta", "generation": "Mk8", "years": "2017-2023", "facelift": "2022",
-      "bodies": ["3dr hatchback", "5dr hatchback", "5dr crossover (Active)"],
-      "engines": [
-        {"badge": "1.1 Ti-VCT 70", "fuel": "Petrol", "cc": 1084, "ps": 70, "engine_code": null, "drive": ["FWD"], "years": "2017-2019"},
-        {"badge": "1.1 Ti-VCT 75", "fuel": "Petrol", "cc": 1084, "ps": 75, "engine_code": null, "drive": ["FWD"], "years": "2019-2021"},
-        {"badge": "1.1 Ti-VCT 85", "fuel": "Petrol", "cc": 1084, "ps": 85, "engine_code": null, "drive": ["FWD"], "years": "2017-2021"},
-        {"badge": "1.0 EcoBoost 95", "fuel": "Petrol", "cc": 999, "ps": 95, "engine_code": null, "drive": ["FWD"], "years": "2019-2021"},
-        {"badge": "1.0 EcoBoost 100", "fuel": "Petrol", "cc": 999, "ps": 100, "engine_code": null, "drive": ["FWD"], "years": "2017-2023"},
-        {"badge": "1.0 EcoBoost 125", "fuel": "Petrol", "cc": 999, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "1.0 EcoBoost 140", "fuel": "Petrol", "cc": 999, "ps": 140, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "1.0 EcoBoost Hybrid (mHEV) 125", "fuel": "Petrol mild hybrid", "cc": 999, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2020-2023"},
-        {"badge": "1.0 EcoBoost Hybrid (mHEV) 155", "fuel": "Petrol mild hybrid", "cc": 999, "ps": 155, "engine_code": null, "drive": ["FWD"], "years": "2020-2023"},
-        {"badge": "1.5 EcoBoost 200 (ST)", "fuel": "Petrol", "cc": 1497, "ps": 200, "engine_code": null, "drive": ["FWD"], "years": "2018-2023"},
-        {"badge": "1.5 TDCi 85", "fuel": "Diesel", "cc": 1499, "ps": 85, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "1.5 TDCi / EcoBlue 120", "fuel": "Diesel", "cc": 1499, "ps": 120, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"}
-      ],
-      "trims": ["Style", "Zetec", "Trend", "Titanium", "B&O Play", "ST-Line", "ST-Line Edition", "ST-Line X", "Titanium X", "Vignale", "ST-Line Vignale", "Active", "Active X", "Active Edition", "ST-2", "ST-3", "ST Performance Edition"],
-      "transmissions": ["5-speed manual (1.1)", "6-speed manual", "6-speed auto (1.0 EcoBoost 100)", "7-speed Powershift dual-clutch auto (mHEV 125, 2021-)"],
-      "notes": "2017 launch: Style, Zetec, Titanium, B&O Play, ST-Line, Vignale, Active (1/2/3/X). Trend replaced Zetec as entry trim mid-2019; Style dropped early. Titanium and ST-Line could carry X suffix; later superseded by Vignale suffix (e.g. ST-Line Vignale) at 2022 facelift. mHEV 125/155 added mid-2020; diesels dropped 2020 (sources conflict slightly). 2022 facelift: LED matrix option, Ford badge on bonnet, ST 200 with 320Nm; range ~Trend, Titanium, ST-Line, ST-Line X, ST-Line Vignale, Active, ST-2/ST-3. Production ended mid-2023.",
-      "status": "verified",
-      "sources": ["https://www.honestjohn.co.uk/ford/fiesta/", "https://www.motorpoint.co.uk/model-guides/ford-fiesta-models-and-trim-levels-explained", "https://www.fleetnews.co.uk/news/manufacturer-news/2020/06/09/ford-adds-mild-hybrid-engines-to-fiesta-for-better-economy", "https://vehiclescore.co.uk/cars/ford/fiesta/mk8-2017-2023"]
+     "badge": "1.25 Duratec 82",
+     "fuel": "Petrol",
+     "cc": 1242,
+     "ps": 82,
+     "engine_code": "Sigma (Duratec)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2008-2017"
     },
     {
-      "make": "Ford", "model": "Focus", "generation": "Mk3", "years": "2011-2018", "facelift": "2014",
-      "bodies": ["5dr hatchback", "5dr estate"],
-      "engines": [
-        {"badge": "1.6 Ti-VCT 85", "fuel": "Petrol", "cc": 1596, "ps": 85, "engine_code": null, "drive": ["FWD"], "years": "2011-2018"},
-        {"badge": "1.6 Ti-VCT 105", "fuel": "Petrol", "cc": 1596, "ps": 105, "engine_code": null, "drive": ["FWD"], "years": "2011-2018"},
-        {"badge": "1.6 Ti-VCT 125", "fuel": "Petrol", "cc": 1596, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2011-2018"},
-        {"badge": "1.0 EcoBoost 100", "fuel": "Petrol", "cc": 999, "ps": 100, "engine_code": null, "drive": ["FWD"], "years": "2012-2018"},
-        {"badge": "1.0 EcoBoost 125", "fuel": "Petrol", "cc": 999, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2012-2018"},
-        {"badge": "1.6 EcoBoost 150", "fuel": "Petrol", "cc": 1596, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2011-2014"},
-        {"badge": "1.6 EcoBoost 182", "fuel": "Petrol", "cc": 1596, "ps": 182, "engine_code": null, "drive": ["FWD"], "years": "2011-2014"},
-        {"badge": "1.5 EcoBoost 150", "fuel": "Petrol", "cc": null, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2014-2018"},
-        {"badge": "1.5 EcoBoost 182", "fuel": "Petrol", "cc": null, "ps": 182, "engine_code": null, "drive": ["FWD"], "years": "2014-2018"},
-        {"badge": "2.0 EcoBoost 250 (ST)", "fuel": "Petrol", "cc": 1999, "ps": 250, "engine_code": null, "drive": ["FWD"], "years": "2012-2018"},
-        {"badge": "2.3 EcoBoost 350 (RS)", "fuel": "Petrol", "cc": 2261, "ps": 350, "engine_code": null, "drive": ["AWD"], "years": "2016-2018"},
-        {"badge": "1.6 TDCi 95", "fuel": "Diesel", "cc": 1560, "ps": 95, "engine_code": null, "drive": ["FWD"], "years": "2011-2014"},
-        {"badge": "1.6 TDCi 115", "fuel": "Diesel", "cc": 1560, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2011-2014"},
-        {"badge": "1.5 TDCi 95", "fuel": "Diesel", "cc": 1499, "ps": 95, "engine_code": null, "drive": ["FWD"], "years": "2014-2018"},
-        {"badge": "1.5 TDCi 105 (ECOnetic)", "fuel": "Diesel", "cc": 1499, "ps": 105, "engine_code": null, "drive": ["FWD"], "years": "2014-2018"},
-        {"badge": "1.5 TDCi 120", "fuel": "Diesel", "cc": 1499, "ps": 120, "engine_code": null, "drive": ["FWD"], "years": "2014-2018"},
-        {"badge": "2.0 TDCi 115", "fuel": "Diesel", "cc": 1997, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2011-2014"},
-        {"badge": "2.0 TDCi 140", "fuel": "Diesel", "cc": 1997, "ps": 140, "engine_code": null, "drive": ["FWD"], "years": "2011-2014"},
-        {"badge": "2.0 TDCi 150", "fuel": "Diesel", "cc": 1997, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2014-2018"},
-        {"badge": "2.0 TDCi 185 (ST)", "fuel": "Diesel", "cc": 1997, "ps": 185, "engine_code": null, "drive": ["FWD"], "years": "2015-2018"}
-      ],
-      "trims": ["Studio", "Edge", "Style", "Zetec", "Zetec Navigator", "Zetec S", "Titanium", "Titanium Navigator", "Titanium X", "Titanium X Navigator", "Zetec Edition", "ST-Line", "ST-Line X", "ST-1", "ST-2", "ST-3", "RS", "RS Red/Black Edition"],
-      "transmissions": ["5-speed manual", "6-speed manual", "6-speed Powershift (pre-facelift petrol/diesel)", "6-speed auto (torque converter, post-facelift)"],
-      "notes": "Pre-facelift ladder: Studio, Edge, Zetec, Zetec S, Titanium, Titanium X. 2014 facelift (on sale early 2015) brought 1.5 EcoBoost/1.5 TDCi replacing 1.6 EcoBoost/1.6 TDCi, and Style trim; Style later dropped. Zetec S replaced by ST-Line in 2016. ST 2012-, RS 2016-2018 (5dr only). Saloon not sold in UK. 1.6 TDCi 95 and 1.6 Ti-VCT outputs not confirmed in this pass.",
-      "status": "verified",
-      "sources": ["https://vehiclescore.co.uk/cars/ford/focus/mk3-2011-2018", "https://www.cargurus.co.uk/Cars/Ford-Focus-2011-Generation-Overview-mg44", "https://www.autoexpress.co.uk/ford/focus/63833/used-ford-focus-mk3-2011-2018-review"]
+     "badge": "1.4 Duratec 96",
+     "fuel": "Petrol",
+     "cc": 1388,
+     "ps": 96,
+     "engine_code": "Sigma (Duratec)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2008-2012",
+     "note": "4-speed auto available"
     },
     {
-      "make": "Ford", "model": "Focus", "generation": "Mk4", "years": "2018-2025", "facelift": "2022",
-      "bodies": ["5dr hatchback", "5dr estate", "5dr hatchback (Active)", "5dr estate (Active)"],
-      "engines": [
-        {"badge": "1.0 EcoBoost 85", "fuel": "Petrol", "cc": 999, "ps": 85, "engine_code": null, "drive": ["FWD"], "years": "2018-2020"},
-        {"badge": "1.0 EcoBoost 100", "fuel": "Petrol", "cc": 999, "ps": 100, "engine_code": null, "drive": ["FWD"], "years": "2018-2020"},
-        {"badge": "1.0 EcoBoost 125", "fuel": "Petrol", "cc": 999, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2018-2025"},
-        {"badge": "1.0 EcoBoost Hybrid (mHEV) 125", "fuel": "Petrol mild hybrid", "cc": 999, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2020-2025"},
-        {"badge": "1.0 EcoBoost Hybrid (mHEV) 155", "fuel": "Petrol mild hybrid", "cc": 999, "ps": 155, "engine_code": null, "drive": ["FWD"], "years": "2020-2025"},
-        {"badge": "1.5 EcoBoost 150", "fuel": "Petrol", "cc": 1497, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2018-2022"},
-        {"badge": "1.5 EcoBoost 182", "fuel": "Petrol", "cc": 1497, "ps": 182, "engine_code": null, "drive": ["FWD"], "years": "2018-2021"},
-        {"badge": "2.3 EcoBoost 280 (ST)", "fuel": "Petrol", "cc": 2261, "ps": 280, "engine_code": null, "drive": ["FWD"], "years": "2019-2025"},
-        {"badge": "1.5 EcoBlue 95", "fuel": "Diesel", "cc": 1499, "ps": 95, "engine_code": null, "drive": ["FWD"], "years": "2018-2021"},
-        {"badge": "1.5 EcoBlue 120", "fuel": "Diesel", "cc": 1499, "ps": 120, "engine_code": null, "drive": ["FWD"], "years": "2018-2022"},
-        {"badge": "1.5 EcoBlue 115", "fuel": "Diesel", "cc": 1499, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2022-2025"},
-        {"badge": "2.0 EcoBlue 150", "fuel": "Diesel", "cc": 1995, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2018-2025"},
-        {"badge": "2.0 EcoBlue 190 (ST)", "fuel": "Diesel", "cc": 1995, "ps": 190, "engine_code": null, "drive": ["FWD"], "years": "2019-2022"}
-      ],
-      "trims": ["Style", "Zetec", "Titanium", "ST-Line", "ST-Line X", "Titanium X", "Vignale", "Active", "Active X", "Zetec Edition", "ST-Line Edition", "Active Edition", "Trend", "ST-Line Vignale", "Active Vignale", "Titanium Edition", "ST-3", "ST Track Pack", "ST Edition"],
-      "transmissions": ["6-speed manual", "8-speed auto (torque converter)", "7-speed Powershift dual-clutch auto (mHEV, 2022-)"],
-      "notes": "2018 launch: Style, Zetec, Titanium, ST-Line, ST-Line X, Titanium X, Vignale, Active, Active X; ST 2019. 2020: Edition variants and mHEV 125/155 added. 2022 facelift (no new engines; 1.5 EcoBoost petrol dropped; diesel retuned to 115): Trend/Titanium/ST-Line/ST-Line X/Active/ST-Line Vignale/Active Vignale/ST. Sources conflict on entry trim after facelift (Trend vs Titanium). Production ended Nov 2025.",
-      "status": "verified",
-      "sources": ["https://carmagazine.co.uk/ford/focus", "https://www.cargurus.co.uk/research/Ford-Focus-2025-mg76", "https://www.motorpoint.co.uk/model-guides/ford-focus-models-and-trim-levels-explained", "https://parkers.co.uk/car-news/2021/ford-focus-facelift"]
+     "badge": "1.6 Ti-VCT 120",
+     "fuel": "Petrol",
+     "cc": 1596,
+     "ps": 120,
+     "engine_code": "Sigma (Duratec Ti-VCT)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2008-2012"
     },
     {
-      "make": "Ford", "model": "Kuga", "generation": "Mk3", "years": "2019-", "facelift": "2024",
-      "bodies": ["5dr SUV"],
-      "engines": [
-        {"badge": "1.5 EcoBoost 120", "fuel": "Petrol", "cc": 1497, "ps": 120, "engine_code": null, "drive": ["FWD"], "years": "2019-2024"},
-        {"badge": "1.5 EcoBoost 150", "fuel": "Petrol", "cc": 1497, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2019-2024"},
-        {"badge": "1.5 EcoBoost (2024 facelift)", "fuel": "Petrol", "cc": 1497, "ps": null, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
-        {"badge": "1.5 EcoBlue 120", "fuel": "Diesel", "cc": 1499, "ps": 120, "engine_code": null, "drive": ["FWD"], "years": "2019-2023"},
-        {"badge": "2.0 EcoBlue Hybrid (mHEV) 150", "fuel": "Diesel mild hybrid", "cc": 1995, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2019-2022"},
-        {"badge": "2.0 EcoBlue 190", "fuel": "Diesel", "cc": 1995, "ps": 190, "engine_code": null, "drive": ["AWD"], "years": "2019-2022"},
-        {"badge": "2.5 Duratec FHEV 190", "fuel": "Petrol hybrid", "cc": 2488, "ps": 190, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2020-2024"},
-        {"badge": "2.5 Duratec FHEV (2024 facelift)", "fuel": "Petrol hybrid", "cc": 2488, "ps": null, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2024-"},
-        {"badge": "2.5 Duratec PHEV 225", "fuel": "Petrol plug-in hybrid", "cc": 2488, "ps": 225, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"},
-        {"badge": "2.5 Duratec PHEV 243", "fuel": "Petrol plug-in hybrid", "cc": 2488, "ps": 243, "engine_code": null, "drive": ["FWD"], "years": "2024-"}
-      ],
-      "trims": ["Zetec", "Titanium", "Titanium First Edition", "ST-Line", "ST-Line First Edition", "ST-Line X", "Vignale", "ST-Line Edition", "Titanium Edition", "ST-Line X Edition", "Graphite Tech Edition", "Active", "Active X"],
-      "transmissions": ["6-speed manual", "8-speed auto", "eCVT (FHEV/PHEV)"],
-      "notes": "2019 launch: Zetec, Titanium, ST-Line, ST-Line First Edition, ST-Line X, Vignale. Edition variants 2021-23. Diesels phased out ~2022-23 (diesel badged 'EcoBlue' by Ford; some listings still show 'TDCi'). 2024 facelift: new front end/SYNC 4; trims Titanium, ST-Line, ST-Line X, Active (+Active X); Vignale dropped; PHEV re-rated to 243PS; FHEV facelift output not confirmed in this pass (listings show 183-200PS, left null).",
-      "status": "verified",
-      "sources": ["https://vehiclescore.co.uk/cars/ford/kuga/mk3-2020-pres", "https://www.motorpoint.co.uk/model-guides/ford-kuga-models-and-trim-levels-explained", "https://carkeys.co.uk/guides/buyer-s-guide-to-the-2023-ford-kuga", "https://www.cargurus.co.uk/Cars/articles/ford_kuga_models"]
+     "badge": "1.6 Ti-VCT 134",
+     "fuel": "Petrol",
+     "cc": 1596,
+     "ps": 134,
+     "engine_code": "Sigma (Duratec Ti-VCT)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2012",
+     "note": "S1600 and Metal special editions (3dr)"
     },
     {
-      "make": "Ford", "model": "Puma", "generation": "Mk1 (J2K)", "years": "2019-", "facelift": "2024",
-      "bodies": ["5dr SUV"],
-      "engines": [
-        {"badge": "1.0 EcoBoost 125", "fuel": "Petrol", "cc": 999, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
-        {"badge": "1.0 EcoBoost Hybrid (mHEV) 125", "fuel": "Petrol mild hybrid", "cc": 999, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2019-"},
-        {"badge": "1.0 EcoBoost Hybrid (mHEV) 155", "fuel": "Petrol mild hybrid", "cc": 999, "ps": 155, "engine_code": null, "drive": ["FWD"], "years": "2019-"},
-        {"badge": "1.0 EcoBoost Hybrid (mHEV) 170 (ST Powershift)", "fuel": "Petrol mild hybrid", "cc": 999, "ps": 170, "engine_code": null, "drive": ["FWD"], "years": "2023-"},
-        {"badge": "1.5 EcoBoost 200 (ST)", "fuel": "Petrol", "cc": 1497, "ps": 200, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"},
-        {"badge": "Puma Gen-E 168", "fuel": "Electric", "cc": null, "ps": 168, "engine_code": null, "drive": ["FWD"], "years": "2025-"}
-      ],
-      "trims": ["First Edition", "First Edition Plus", "Titanium", "ST-Line", "ST-Line X", "ST-Line Vignale", "Vignale Ruby Edition", "ST-Line X Vignale", "ST", "ST Performance Pack", "Gen-E Select", "Gen-E Premium"],
-      "transmissions": ["6-speed manual", "7-speed Powershift dual-clutch auto"],
-      "notes": "Launch: Titanium, ST-Line, ST-Line X, First Edition(s). Vignale variants added 2021-22; sources conflict on whether Vignale survives the 2024 facelift (Parkers: discontinued; Carwow still lists ST-Line Vignale). 2024 facelift: new interior screens, mHEV only for most trims, ST continues with mHEV 170 Powershift. Gen-E electric (Select/Premium) from early 2025. ST 1.5 manual dropped ~2024.",
-      "status": "verified",
-      "sources": ["https://www.parkers.co.uk/ford/puma/suv-2020", "https://www.uk-car-discount.co.uk/news/ford-puma-trim-levels-explained", "https://carwow.co.uk/ford/puma/specifications", "https://uk.driveduel.de/models/ford/puma/specs"]
+     "badge": "1.6 Ti-VCT 105",
+     "fuel": "Petrol",
+     "cc": 1596,
+     "ps": 105,
+     "engine_code": "Sigma (Duratec Ti-VCT)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017",
+     "note": "6-speed Powershift auto"
     },
     {
-      "make": "Volkswagen", "model": "Golf", "generation": "Mk7 (incl. 7.5)", "years": "2013-2020", "facelift": "2017",
-      "bodies": ["3dr hatchback", "5dr hatchback", "5dr estate", "5dr estate (Alltrack)"],
-      "engines": [
-        {"badge": "1.2 TSI 85", "fuel": "Petrol", "cc": 1197, "ps": 85, "engine_code": null, "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.2 TSI 105 / 110", "fuel": "Petrol", "cc": 1197, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.4 TSI 122 / 125", "fuel": "Petrol", "cc": 1395, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.4 TSI ACT 140 / 150", "fuel": "Petrol", "cc": 1395, "ps": 150, "engine_code": "CZEA", "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.0 TSI 85", "fuel": "Petrol", "cc": 999, "ps": 85, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "1.0 TSI 110", "fuel": "Petrol", "cc": 999, "ps": 110, "engine_code": "CHZD", "drive": ["FWD"], "years": "2015-2020"},
-        {"badge": "1.5 TSI EVO 130", "fuel": "Petrol", "cc": 1498, "ps": 130, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "1.5 TSI EVO 150", "fuel": "Petrol", "cc": 1498, "ps": 150, "engine_code": "DADA", "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "2.0 TSI 220 (GTI)", "fuel": "Petrol", "cc": 1984, "ps": 220, "engine_code": "CHHB", "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "2.0 TSI 230 (GTI Performance / GTI 7.5)", "fuel": "Petrol", "cc": 1984, "ps": 230, "engine_code": "CHHA", "drive": ["FWD"], "years": "2013-2018"},
-        {"badge": "2.0 TSI 245 (GTI Performance 7.5)", "fuel": "Petrol", "cc": 1984, "ps": 245, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "2.0 TSI 290 (GTI TCR)", "fuel": "Petrol", "cc": 1984, "ps": 290, "engine_code": null, "drive": ["FWD"], "years": "2019-2020"},
-        {"badge": "2.0 TSI 300 (R)", "fuel": "Petrol", "cc": 1984, "ps": 300, "engine_code": "CJXC", "drive": ["AWD"], "years": "2014-2017"},
-        {"badge": "2.0 TSI 310 (R 7.5)", "fuel": "Petrol", "cc": 1984, "ps": 310, "engine_code": null, "drive": ["AWD"], "years": "2017-2020"},
-        {"badge": "1.4 TSI GTE 204", "fuel": "Petrol plug-in hybrid", "cc": 1395, "ps": 204, "engine_code": null, "drive": ["FWD"], "years": "2015-2020"},
-        {"badge": "e-Golf 115 / 136", "fuel": "Electric", "cc": null, "ps": 136, "engine_code": null, "drive": ["FWD"], "years": "2014-2020"},
-        {"badge": "1.6 TDI 90 / 105 / 110", "fuel": "Diesel", "cc": 1598, "ps": 110, "engine_code": "CLHA", "drive": ["FWD"], "years": "2013-2017"},
-        {"badge": "1.6 TDI 115", "fuel": "Diesel", "cc": 1598, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "2.0 TDI 150", "fuel": "Diesel", "cc": 1968, "ps": 150, "engine_code": "CRBC", "drive": ["FWD", "AWD"], "years": "2013-2020"},
-        {"badge": "2.0 TDI 184 (GTD)", "fuel": "Diesel", "cc": 1968, "ps": 184, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2013-2020"}
-      ],
-      "trims": ["S", "SE", "Match", "SE Nav", "Match Edition", "GT", "GT Edition", "R-Line", "R-Line Edition", "BlueMotion", "GTD", "GTI", "GTI Performance", "GTI Clubsport", "GTI TCR", "GTE", "GTE Advance", "e-Golf", "R"],
-      "transmissions": ["5-speed manual", "6-speed manual", "6-speed DSG", "7-speed DSG"],
-      "notes": "Pre-facelift: S, SE, Match, GT, GTD, GTI, R (+ Match Edition 2015/16, R-Line 2015). 7.5 facelift (2017): S, SE, SE Nav, Match, GT, R-Line, GTD, GTI (230), GTI Performance (245), GTE, e-Golf, R (310); 1.0 TSI and 1.5 TSI EVO replaced 1.2/1.4 TSI. Engine ps for ranges shown as highest of the listed outputs; 1.6 TDI (pre-FL) sold as 90/105/110. Golf SV and Cabriolet not included. Engine codes are the common UK fitments; multiple codes exist per output.",
-      "status": "verified",
-      "sources": ["https://www.honestjohn.co.uk/volkswagen/golf/2012", "https://www.autoexpress.co.uk/volkswagen/golf/60741/hatchback", "https://www.autoexpress.co.uk/volkswagen/golf/61003/used-volkswagen-golf-review", "https://www.autocar.co.uk/node/83769"]
+     "badge": "1.0 Ti-VCT 65",
+     "fuel": "Petrol",
+     "cc": 998,
+     "ps": 65,
+     "engine_code": "Fox (1.0 Ti-VCT)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017",
+     "note": "Not in Parkers UK derivative listings (only 80 PS seen)"
     },
     {
-      "make": "Volkswagen", "model": "Golf", "generation": "Mk8 (incl. 8.5)", "years": "2020-", "facelift": "2024",
-      "bodies": ["5dr hatchback", "5dr estate"],
-      "engines": [
-        {"badge": "1.0 TSI 110", "fuel": "Petrol", "cc": 999, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"},
-        {"badge": "1.0 eTSI 110", "fuel": "Petrol mild hybrid", "cc": 999, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"},
-        {"badge": "1.5 TSI 130", "fuel": "Petrol", "cc": 1498, "ps": 130, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"},
-        {"badge": "1.5 TSI 150", "fuel": "Petrol", "cc": 1498, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
-        {"badge": "1.5 eTSI 150", "fuel": "Petrol mild hybrid", "cc": 1498, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
-        {"badge": "1.5 TSI 116", "fuel": "Petrol", "cc": 1498, "ps": 116, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
-        {"badge": "1.5 eTSI 116", "fuel": "Petrol mild hybrid", "cc": 1498, "ps": 116, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
-        {"badge": "1.4 TSI eHybrid 204", "fuel": "Petrol plug-in hybrid", "cc": 1395, "ps": 204, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"},
-        {"badge": "1.4 TSI GTE 245", "fuel": "Petrol plug-in hybrid", "cc": 1395, "ps": 245, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"},
-        {"badge": "1.5 TSI eHybrid 204", "fuel": "Petrol plug-in hybrid", "cc": 1498, "ps": 204, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
-        {"badge": "1.5 TSI GTE 272", "fuel": "Petrol plug-in hybrid", "cc": 1498, "ps": 272, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
-        {"badge": "2.0 TSI 245 (GTI)", "fuel": "Petrol", "cc": 1984, "ps": 245, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"},
-        {"badge": "2.0 TSI 265 (GTI 8.5)", "fuel": "Petrol", "cc": 1984, "ps": 265, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
-        {"badge": "2.0 TSI 300 (GTI Clubsport)", "fuel": "Petrol", "cc": 1984, "ps": 300, "engine_code": null, "drive": ["FWD"], "years": "2021-"},
-        {"badge": "2.0 TSI 320 (R)", "fuel": "Petrol", "cc": 1984, "ps": 320, "engine_code": null, "drive": ["AWD"], "years": "2021-2024"},
-        {"badge": "2.0 TSI 333 (R 8.5)", "fuel": "Petrol", "cc": 1984, "ps": 333, "engine_code": null, "drive": ["AWD"], "years": "2024-"},
-        {"badge": "2.0 TDI 115", "fuel": "Diesel", "cc": 1968, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
-        {"badge": "2.0 TDI 150", "fuel": "Diesel", "cc": 1968, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
-        {"badge": "2.0 TDI 200 (GTD)", "fuel": "Diesel", "cc": 1968, "ps": 200, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"}
-      ],
-      "trims": ["Life", "Active", "Match", "Style", "R-Line", "Black Edition", "First Edition", "GTI", "GTI Clubsport", "GTD", "GTE", "R", "R 20 Years", "R Black Edition"],
-      "transmissions": ["6-speed manual", "7-speed DSG"],
-      "notes": "2020 launch: Life, Style, R-Line (+First Edition), GTI/GTD/GTE/R following. Active added 2021-22, Match 2023. 8.5 facelift (on sale April 2024): Life, Match, Style, R-Line, Black Edition, GTI, GTI Clubsport, GTE, R; 1.0 TSI and 1.5 TSI 130 replaced by 1.5 TSI/eTSI 116; GTD dropped in UK; eHybrid/GTE moved to 1.5 TSI. eTSI = DSG only. GTI 8.5 DSG only (manual dropped).",
-      "status": "verified",
-      "sources": ["https://www.autoexpress.co.uk/volkswagen/golf/352673/volkswagen-golf-review", "https://www.evo.co.uk/volkswagen/golf/207291/volkswagen-golf-mk85-engine-gearbox-and-technical-highlights", "https://www.autoexpress.co.uk/volkswagen/golf/358924/new-2024-volkswagen-golf-back-basics-mid-life-facelift"]
+     "badge": "1.0 Ti-VCT 80",
+     "fuel": "Petrol",
+     "cc": 998,
+     "ps": 80,
+     "engine_code": "Fox (1.0 Ti-VCT)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017"
     },
     {
-      "make": "Volkswagen", "model": "Polo", "generation": "6R/6C (Mk5)", "years": "2009-2017", "facelift": "2014",
-      "bodies": ["3dr hatchback", "5dr hatchback"],
-      "engines": [
-        {"badge": "1.2 60", "fuel": "Petrol", "cc": 1198, "ps": 60, "engine_code": null, "drive": ["FWD"], "years": "2009-2014"},
-        {"badge": "1.2 70", "fuel": "Petrol", "cc": 1198, "ps": 70, "engine_code": null, "drive": ["FWD"], "years": "2009-2014"},
-        {"badge": "1.4 85", "fuel": "Petrol", "cc": 1390, "ps": 85, "engine_code": null, "drive": ["FWD"], "years": "2009-2014"},
-        {"badge": "1.2 TSI 90", "fuel": "Petrol", "cc": 1197, "ps": 90, "engine_code": null, "drive": ["FWD"], "years": "2010-2017"},
-        {"badge": "1.2 TSI 105 / 110", "fuel": "Petrol", "cc": 1197, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2010-2017"},
-        {"badge": "1.4 TSI ACT 140 (BlueGT)", "fuel": "Petrol", "cc": 1395, "ps": 140, "engine_code": null, "drive": ["FWD"], "years": "2012-2014"},
-        {"badge": "1.4 TSI ACT 150 (BlueGT)", "fuel": "Petrol", "cc": 1395, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2014-2017"},
-        {"badge": "1.4 TSI 180 (GTI)", "fuel": "Petrol", "cc": 1390, "ps": 180, "engine_code": null, "drive": ["FWD"], "years": "2010-2014"},
-        {"badge": "1.8 TSI 192 (GTI)", "fuel": "Petrol", "cc": 1798, "ps": 192, "engine_code": null, "drive": ["FWD"], "years": "2015-2017"},
-        {"badge": "1.0 60", "fuel": "Petrol", "cc": 999, "ps": 60, "engine_code": null, "drive": ["FWD"], "years": "2014-2017"},
-        {"badge": "1.0 75", "fuel": "Petrol", "cc": 999, "ps": 75, "engine_code": null, "drive": ["FWD"], "years": "2014-2017"},
-        {"badge": "1.0 TSI 95", "fuel": "Petrol", "cc": 999, "ps": 95, "engine_code": null, "drive": ["FWD"], "years": "2015-2017"},
-        {"badge": "1.0 TSI 110", "fuel": "Petrol", "cc": 999, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2015-2017"},
-        {"badge": "1.2 TDI 75 (BlueMotion)", "fuel": "Diesel", "cc": 1199, "ps": 75, "engine_code": null, "drive": ["FWD"], "years": "2009-2014"},
-        {"badge": "1.6 TDI 75 / 90 / 105", "fuel": "Diesel", "cc": 1598, "ps": 90, "engine_code": null, "drive": ["FWD"], "years": "2009-2014"},
-        {"badge": "1.4 TDI 75", "fuel": "Diesel", "cc": 1422, "ps": 75, "engine_code": null, "drive": ["FWD"], "years": "2014-2017"},
-        {"badge": "1.4 TDI 90", "fuel": "Diesel", "cc": 1422, "ps": 90, "engine_code": null, "drive": ["FWD"], "years": "2014-2017"}
-      ],
-      "trims": ["S", "S A/C", "Moda", "Match", "SE", "SEL", "R-Line", "BlueMotion", "BlueGT", "Match Edition", "Beats", "R-Line Style", "GTI"],
-      "transmissions": ["5-speed manual", "6-speed manual (GTI 6C)", "7-speed DSG"],
-      "notes": "6R (2009-2014): S, Moda, Match, SE, SEL, BlueMotion, BlueGT, GTI. 6C facelift (mid-2014): new 1.0 three-cylinder and 1.4 TDI, MIB infotainment; trims S, Match, SE, SEL, R-Line, Beats (2016), BlueGT, GTI (1.8 TSI, manual or DSG). Older 6R 1.4 85 had optional 7-speed DSG. Year boundaries approximate.",
-      "status": "general-knowledge",
-      "sources": []
+     "badge": "1.0 EcoBoost 100",
+     "fuel": "Petrol",
+     "cc": 998,
+     "ps": 100,
+     "engine_code": "Fox (1.0 EcoBoost)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017"
     },
     {
-      "make": "Volkswagen", "model": "Polo", "generation": "AW (Mk6)", "years": "2017-", "facelift": "2021",
-      "bodies": ["5dr hatchback"],
-      "engines": [
-        {"badge": "1.0 65", "fuel": "Petrol", "cc": 999, "ps": 65, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "1.0 75", "fuel": "Petrol", "cc": 999, "ps": 75, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "1.0 80", "fuel": "Petrol", "cc": 999, "ps": 80, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
-        {"badge": "1.0 TSI 95", "fuel": "Petrol", "cc": 999, "ps": 95, "engine_code": null, "drive": ["FWD"], "years": "2017-"},
-        {"badge": "1.0 TSI 115", "fuel": "Petrol", "cc": 999, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "1.0 TSI 110", "fuel": "Petrol", "cc": 999, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
-        {"badge": "1.5 TSI EVO 150", "fuel": "Petrol", "cc": 1498, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2018-2020"},
-        {"badge": "2.0 TSI 200 (GTI)", "fuel": "Petrol", "cc": 1984, "ps": 200, "engine_code": null, "drive": ["FWD"], "years": "2018-2021"},
-        {"badge": "2.0 TSI 207 (GTI)", "fuel": "Petrol", "cc": 1984, "ps": 207, "engine_code": null, "drive": ["FWD"], "years": "2022-"},
-        {"badge": "1.6 TDI 80", "fuel": "Diesel", "cc": 1598, "ps": 80, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "1.6 TDI 95", "fuel": "Diesel", "cc": 1598, "ps": 95, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"}
-      ],
-      "trims": ["S", "SE", "Beats", "SEL", "R-Line", "GTI", "GTI+", "United", "Match", "Life", "Style", "GTI Edition 25", "Black Edition"],
-      "transmissions": ["5-speed manual", "6-speed manual", "7-speed DSG"],
-      "notes": "Pre-facelift UK ladder: S, SE, Beats, SEL, R-Line, GTI/GTI+ (United, Match specials 2020). 2021 facelift (on sale mid-2021): Life, Style, R-Line; GTI (207PS, DSG) arrived early 2022. Base 1.0 80 MPI uses 5-speed manual; 1.0 TSI 95 5-speed manual or 7-speed DSG; 1.0 TSI 110 DSG. Diesels dropped around 2020. Later specials (Match, Black Edition) not confirmed in this pass.",
-      "status": "verified",
-      "sources": ["https://www.carbuyer.co.uk/volkswagen/polo/303017/facelifted-2021-volkswagen-polo-on-sale-now", "https://www.evo.co.uk/volkswagen/polo/203772/facelifted-2021-volkswagen-polo-priced-from-ps17885", "https://parkers.co.uk/car-news/2021/volkswagen-polo-facelift"]
+     "badge": "1.0 EcoBoost 125",
+     "fuel": "Petrol",
+     "cc": 998,
+     "ps": 125,
+     "engine_code": "Fox (1.0 EcoBoost)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017"
     },
     {
-      "make": "Volkswagen", "model": "T-Roc", "generation": "Mk1 (A1)", "years": "2017-", "facelift": "2022",
-      "bodies": ["5dr SUV", "2dr cabriolet"],
-      "engines": [
-        {"badge": "1.0 TSI 115", "fuel": "Petrol", "cc": 999, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
-        {"badge": "1.0 TSI 110", "fuel": "Petrol", "cc": 999, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
-        {"badge": "1.5 TSI EVO 150", "fuel": "Petrol", "cc": 1498, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2017-"},
-        {"badge": "2.0 TSI 190 4MOTION", "fuel": "Petrol", "cc": 1984, "ps": 190, "engine_code": null, "drive": ["AWD"], "years": "2017-"},
-        {"badge": "2.0 TSI 300 (R)", "fuel": "Petrol", "cc": 1984, "ps": 300, "engine_code": null, "drive": ["AWD"], "years": "2019-"},
-        {"badge": "1.6 TDI 115", "fuel": "Diesel", "cc": 1598, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2018-2020"},
-        {"badge": "2.0 TDI 115", "fuel": "Diesel", "cc": 1968, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2020-2022"},
-        {"badge": "2.0 TDI 150", "fuel": "Diesel", "cc": 1968, "ps": 150, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2017-"}
-      ],
-      "trims": ["S", "SE", "Design", "SEL", "R-Line", "First Edition", "United", "Active", "Life", "Style", "Black Edition", "Match", "R"],
-      "transmissions": ["6-speed manual", "7-speed DSG"],
-      "notes": "Pre-facelift: S, SE, Design, SEL, R-Line (+First Edition, United, Active specials). 2022 facelift: Life, Style, R-Line, Black Edition, R (Cabriolet: Style, R-Line, Black Edition). 2.0 TSI/TDI 4MOTION with DSG. Facelift engine line-up of 1.0 TSI 110 / 1.5 TSI 150 / 2.0 TSI 190 confirmed; diesel outputs not confirmed in this pass. Second-generation T-Roc revealed 2025 (mild-hybrid only) - not included.",
-      "status": "verified",
-      "sources": ["https://www.carbuyer.co.uk/volkswagen/t-roc/303621/new-2022-volkswagen-t-roc-facelift-unveiled", "https://www.fleetnews.co.uk/cars/reviews/vw-t-roc-15-tsi-r-line", "https://www.honestjohn.co.uk/volkswagen/t-roc/2017/", "https://www.autoexpress.co.uk/volkswagen/t-roc/355996/new-2022-volkswagen-t-roc-r-pricing-powertrain-and-tech"]
+     "badge": "1.0 EcoBoost 140",
+     "fuel": "Petrol",
+     "cc": 998,
+     "ps": 140,
+     "engine_code": "Fox (1.0 EcoBoost)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2017"
     },
     {
-      "make": "Volkswagen", "model": "Tiguan", "generation": "Mk2 (AD1)", "years": "2016-2024", "facelift": "2020",
-      "bodies": ["5dr SUV"],
-      "engines": [
-        {"badge": "1.4 TSI 125", "fuel": "Petrol", "cc": 1395, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2016-2018"},
-        {"badge": "1.4 TSI ACT 150", "fuel": "Petrol", "cc": 1395, "ps": 150, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2016-2018"},
-        {"badge": "1.5 TSI EVO 130", "fuel": "Petrol", "cc": 1498, "ps": 130, "engine_code": null, "drive": ["FWD"], "years": "2018-2024"},
-        {"badge": "1.5 TSI EVO 150", "fuel": "Petrol", "cc": 1498, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2018-2024"},
-        {"badge": "2.0 TSI 180 4MOTION", "fuel": "Petrol", "cc": 1984, "ps": 180, "engine_code": null, "drive": ["AWD"], "years": "2016-2020"},
-        {"badge": "2.0 TSI 220 4MOTION", "fuel": "Petrol", "cc": 1984, "ps": 220, "engine_code": null, "drive": ["AWD"], "years": "2016-2020"},
-        {"badge": "2.0 TSI 190 4MOTION", "fuel": "Petrol", "cc": 1984, "ps": 190, "engine_code": null, "drive": ["AWD"], "years": "2020-2024"},
-        {"badge": "2.0 TSI 245 4MOTION", "fuel": "Petrol", "cc": 1984, "ps": 245, "engine_code": null, "drive": ["AWD"], "years": "2020-2024"},
-        {"badge": "2.0 TSI 320 (R)", "fuel": "Petrol", "cc": 1984, "ps": 320, "engine_code": null, "drive": ["AWD"], "years": "2021-2024"},
-        {"badge": "1.4 TSI eHybrid 245", "fuel": "Petrol plug-in hybrid", "cc": 1395, "ps": 245, "engine_code": null, "drive": ["FWD"], "years": "2021-2024"},
-        {"badge": "2.0 TDI 115", "fuel": "Diesel", "cc": 1968, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2016-2020"},
-        {"badge": "2.0 TDI 150", "fuel": "Diesel", "cc": 1968, "ps": 150, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2016-2024"},
-        {"badge": "2.0 TDI 190", "fuel": "Diesel", "cc": 1968, "ps": 190, "engine_code": null, "drive": ["AWD"], "years": "2016-2020"},
-        {"badge": "2.0 BiTDI 240", "fuel": "Diesel", "cc": 1968, "ps": 240, "engine_code": null, "drive": ["AWD"], "years": "2016-2020"},
-        {"badge": "2.0 TDI 200", "fuel": "Diesel", "cc": 1968, "ps": 200, "engine_code": null, "drive": ["AWD"], "years": "2020-2024"}
-      ],
-      "trims": ["S", "SE", "SE Nav", "Match", "SEL", "R-Line", "R-Line Tech", "Active", "Tiguan", "Life", "Elegance", "R-Line Edition", "Black Edition", "R"],
-      "transmissions": ["6-speed manual", "6-speed DSG (eHybrid)", "7-speed DSG"],
-      "notes": "Pre-facelift: S, SE, SE Nav, Match, SEL, R-Line, R-Line Tech. Late-2020 facelift: base Tiguan, Life, Elegance, R-Line, plus eHybrid (2021) and R (2021); Active/Black Edition specials later. 2.0 TSI and 2.0 TDI 200 are 4MOTION DSG only. Tiguan Allspace (7-seat, 2017-) is a separate model line. Mk3 Tiguan from 2024 not included.",
-      "status": "verified",
-      "sources": ["https://www.fleetnews.co.uk/news/manufacturer-news/2020/10/16/volkswagen-opens-order-book-for-facelifted-tiguan-suv-range", "https://www.parkers.co.uk/car-news/2020/vw-tiguan-facelift", "https://www.autoexpress.co.uk/volkswagen/tiguan/352025/facelifted-volkswagen-tiguan-prices-start-ps24915"]
+     "badge": "1.6 EcoBoost 182 (ST)",
+     "fuel": "Petrol",
+     "cc": 1596,
+     "ps": 182,
+     "engine_code": "EcoBoost 1.6 SCTi",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017"
     },
     {
-      "make": "Vauxhall", "model": "Corsa", "generation": "E", "years": "2014-2019", "facelift": null,
-      "bodies": ["3dr hatchback", "5dr hatchback"],
-      "engines": [
-        {"badge": "1.2 70", "fuel": "Petrol", "cc": 1229, "ps": 70, "engine_code": null, "drive": ["FWD"], "years": "2014-2019"},
-        {"badge": "1.4 75", "fuel": "Petrol", "cc": 1398, "ps": 75, "engine_code": null, "drive": ["FWD"], "years": "2014-2019"},
-        {"badge": "1.4 90", "fuel": "Petrol", "cc": 1398, "ps": 90, "engine_code": null, "drive": ["FWD"], "years": "2014-2019"},
-        {"badge": "1.4 Turbo 100", "fuel": "Petrol", "cc": 1364, "ps": 100, "engine_code": null, "drive": ["FWD"], "years": "2014-2018"},
-        {"badge": "1.4 Turbo 150", "fuel": "Petrol", "cc": 1364, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2016-2019"},
-        {"badge": "1.0 ecoTEC Turbo 90", "fuel": "Petrol", "cc": 999, "ps": 90, "engine_code": null, "drive": ["FWD"], "years": "2014-2019"},
-        {"badge": "1.0 ecoTEC Turbo 115", "fuel": "Petrol", "cc": 999, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2014-2019"},
-        {"badge": "1.6 Turbo 205 (VXR)", "fuel": "Petrol", "cc": 1598, "ps": 205, "engine_code": null, "drive": ["FWD"], "years": "2015-2018"},
-        {"badge": "1.3 CDTi 75", "fuel": "Diesel", "cc": 1248, "ps": 75, "engine_code": null, "drive": ["FWD"], "years": "2014-2019"},
-        {"badge": "1.3 CDTi 95", "fuel": "Diesel", "cc": 1248, "ps": 95, "engine_code": null, "drive": ["FWD"], "years": "2014-2019"}
-      ],
-      "trims": ["Life", "Sting", "Sting R", "Excite", "Design", "Energy", "Limited Edition", "SRi", "SRi VX-Line", "SE", "Elite", "Griffin", "Black Edition", "Red Edition", "VXR", "VXR Performance Pack"],
-      "transmissions": ["5-speed manual", "6-speed manual (1.0 Turbo, VXR)", "5-speed Easytronic automated manual", "6-speed auto (1.4 90)"],
-      "notes": "Launched UK late 2014 (sold to 2019); no formal facelift, range reshuffled annually. Early ladder Life, Sting, Excite, Design, Energy, SRi, SE, Limited Edition, VXR; 2017-19 simplified to Sting, Energy, Griffin, Design, SRi (VX-Line), SE, Elite (Nav). Platform and many engines carried from Corsa D. 1.0 Turbo 115 confirmed on SRi VX-Line; other outputs not confirmed in this pass.",
-      "status": "general-knowledge",
-      "sources": ["https://vehiclescore.co.uk/cars/vauxhall/corsa/corsa-e-2015-2019/1-0-petrol-115ps-petrol/sri-vx-line-manual-hatchback"]
+     "badge": "1.6 EcoBoost 200 (ST200)",
+     "fuel": "Petrol",
+     "cc": 1596,
+     "ps": 200,
+     "engine_code": "EcoBoost 1.6 SCTi",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2017"
     },
     {
-      "make": "Vauxhall", "model": "Corsa", "generation": "F", "years": "2019-", "facelift": "2023",
-      "bodies": ["5dr hatchback"],
-      "engines": [
-        {"badge": "1.2 75", "fuel": "Petrol", "cc": 1199, "ps": 75, "engine_code": null, "drive": ["FWD"], "years": "2019-"},
-        {"badge": "1.2 Turbo 100", "fuel": "Petrol", "cc": 1199, "ps": 100, "engine_code": null, "drive": ["FWD"], "years": "2019-"},
-        {"badge": "1.2 Turbo 130", "fuel": "Petrol", "cc": 1199, "ps": 130, "engine_code": null, "drive": ["FWD"], "years": "2019-"},
-        {"badge": "1.2 Hybrid 100", "fuel": "Petrol mild hybrid", "cc": 1199, "ps": 100, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
-        {"badge": "1.2 Hybrid 110", "fuel": "Petrol mild hybrid", "cc": 1199, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2025-"},
-        {"badge": "1.5 Turbo D 100", "fuel": "Diesel", "cc": 1499, "ps": 102, "engine_code": null, "drive": ["FWD"], "years": "2019-2023"},
-        {"badge": "Corsa-e / Corsa Electric 136", "fuel": "Electric", "cc": null, "ps": 136, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
-        {"badge": "Corsa Electric 156", "fuel": "Electric", "cc": null, "ps": 156, "engine_code": null, "drive": ["FWD"], "years": "2023-"}
-      ],
-      "trims": ["SE", "SE Nav", "SRi", "SRi Nav", "Elite", "Elite Nav", "Ultimate Nav", "SE Premium", "SRi Premium", "Elite Nav Premium", "Griffin", "Design", "GS Line", "Ultimate", "YES Edition", "GS", "GSE"],
-      "transmissions": ["5-speed manual (1.2 75)", "6-speed manual", "8-speed auto", "6-speed e-DCT (Hybrid)", "single-speed reduction (Electric)"],
-      "notes": "2019 launch: SE, SRi, Elite (Nav), Ultimate Nav; 2020-21 Premium/Nav variants and Griffin. April 2022 simplified to Design, GS Line, Ultimate. 2023 facelift (Vizor face, on sale early 2024): Design, GS, Ultimate (+YES Edition specials); Electric renamed from Corsa-e; Hybrid added 2024. 1.2 Turbo 130 auto only. Diesel dropped (petrol/hybrid/EV only by 2025). 1.5 diesel rated 102PS, badged 100. GSE badge appears on Opel UK datasheet - status unclear.",
-      "status": "verified",
-      "sources": ["https://www.motorpoint.co.uk/model-guides/vauxhall-corsa-models-and-trim-levels-explained", "https://Www.Parkers.co.uk/car-buying/2019/which-vauxhall-corsa-is-right-for-me/", "https://www.fleetnews.co.uk/news/manufacturer-news/2020/11/25/vauxhall-expands-corsa-line-up-and-cuts-prices", "https://www.media.stellantis.com/uk-en/vauxhall/press/vauxhall-corsa-yes-2025-special-edition-offers-customers-more-choice-with-new-powertrain-option", "https://www.honestjohn.co.uk/young-drivers/learner-road-tests/learning-to-drive-in-a-vauxhall-corsa/"]
+     "badge": "1.4 TDCi 70",
+     "fuel": "Diesel",
+     "cc": 1399,
+     "ps": 70,
+     "engine_code": "DLD-414 (Duratorq)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2008-2012",
+     "note": "68 PS until Aug 2010, 70 PS after"
     },
     {
-      "make": "Vauxhall", "model": "Astra", "generation": "K", "years": "2015-2021", "facelift": "2019",
-      "bodies": ["5dr hatchback", "5dr estate (Sports Tourer)"],
-      "engines": [
-        {"badge": "1.4 75 / 100", "fuel": "Petrol", "cc": 1399, "ps": 100, "engine_code": null, "drive": ["FWD"], "years": "2015-2019"},
-        {"badge": "1.0 Turbo 105", "fuel": "Petrol", "cc": 999, "ps": 105, "engine_code": null, "drive": ["FWD"], "years": "2015-2019"},
-        {"badge": "1.4 Turbo 125", "fuel": "Petrol", "cc": 1399, "ps": 125, "engine_code": null, "drive": ["FWD"], "years": "2015-2019"},
-        {"badge": "1.4 Turbo 150", "fuel": "Petrol", "cc": 1399, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2015-2019"},
-        {"badge": "1.6 Turbo 200", "fuel": "Petrol", "cc": 1598, "ps": 200, "engine_code": null, "drive": ["FWD"], "years": "2016-2019"},
-        {"badge": "1.6 CDTi 110", "fuel": "Diesel", "cc": 1598, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2015-2019"},
-        {"badge": "1.6 CDTi 136", "fuel": "Diesel", "cc": 1598, "ps": 136, "engine_code": null, "drive": ["FWD"], "years": "2015-2019"},
-        {"badge": "1.6 BiTurbo CDTi 160", "fuel": "Diesel", "cc": 1598, "ps": 160, "engine_code": null, "drive": ["FWD"], "years": "2016-2019"},
-        {"badge": "1.2 Turbo 110", "fuel": "Petrol", "cc": 1199, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2019-2021"},
-        {"badge": "1.2 Turbo 130", "fuel": "Petrol", "cc": 1199, "ps": 130, "engine_code": null, "drive": ["FWD"], "years": "2019-2021"},
-        {"badge": "1.2 Turbo 145", "fuel": "Petrol", "cc": 1199, "ps": 145, "engine_code": null, "drive": ["FWD"], "years": "2019-2021"},
-        {"badge": "1.4 Turbo 145 CVT", "fuel": "Petrol", "cc": 1341, "ps": 145, "engine_code": null, "drive": ["FWD"], "years": "2019-2021"},
-        {"badge": "1.5 Turbo D 105", "fuel": "Diesel", "cc": 1496, "ps": 105, "engine_code": null, "drive": ["FWD"], "years": "2019-2021"},
-        {"badge": "1.5 Turbo D 122", "fuel": "Diesel", "cc": 1496, "ps": 122, "engine_code": null, "drive": ["FWD"], "years": "2019-2021"}
-      ],
-      "trims": ["Design", "Tech Line", "Tech Line Nav", "Energy", "SRi", "SRi Nav", "SRi VX-Line", "SRi VX-Line Nav", "Elite", "Elite Nav", "Griffin", "Business Edition Nav", "SE", "Ultimate Nav"],
-      "transmissions": ["5-speed manual", "6-speed manual", "6-speed auto", "CVT (1.4 Turbo 145)", "9-speed auto (1.5 Turbo D 122)"],
-      "notes": "Launch: Design, Tech Line, Energy, SRi, SRi VX-Line, Elite (Nav variants). Late-2019 facelift brought new GM 1.2 Turbo three-cylinder and 1.5 Turbo D engines (WLTP), Business Edition Nav, Griffin, SRi Nav, Elite Nav, Ultimate Nav trims. GM-era Astra; engines differ from Astra L. Facelift 1.2 Turbo 145 listed by VehicleScore as 146PS. Pre-facelift engine outputs general-knowledge.",
-      "status": "verified",
-      "sources": ["https://vehiclescore.co.uk/cars/vauxhall/astra", "https://www.autoexpress.co.uk/vauxhall/astra/prices-specs/90600/1.5-turbo-d-sri-nav-5dr", "https://www.autoexpress.co.uk/vauxhall/astra/prices-specs/90596/1.2-turbo-130-business-edition-nav-5dr"]
+     "badge": "1.6 TDCi 90",
+     "fuel": "Diesel",
+     "cc": 1560,
+     "ps": 90,
+     "engine_code": "DLD-416 (Duratorq)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2008-2010"
     },
     {
-      "make": "Vauxhall", "model": "Astra", "generation": "L", "years": "2022-", "facelift": null,
-      "bodies": ["5dr hatchback", "5dr estate (Sports Tourer)"],
-      "engines": [
-        {"badge": "1.2 Turbo 110", "fuel": "Petrol", "cc": 1199, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2022-2024"},
-        {"badge": "1.2 Turbo 130", "fuel": "Petrol", "cc": 1199, "ps": 130, "engine_code": null, "drive": ["FWD"], "years": "2022-"},
-        {"badge": "1.2 Hybrid 136 / 145", "fuel": "Petrol mild hybrid", "cc": 1199, "ps": null, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
-        {"badge": "1.5 Turbo D 130", "fuel": "Diesel", "cc": 1499, "ps": 130, "engine_code": null, "drive": ["FWD"], "years": "2022-2023"},
-        {"badge": "1.6 Hybrid 180", "fuel": "Petrol plug-in hybrid", "cc": 1598, "ps": 180, "engine_code": null, "drive": ["FWD"], "years": "2022-"},
-        {"badge": "1.6 Hybrid 225 (GSe)", "fuel": "Petrol plug-in hybrid", "cc": 1598, "ps": 225, "engine_code": null, "drive": ["FWD"], "years": "2023-2024"},
-        {"badge": "Astra Electric 156", "fuel": "Electric", "cc": null, "ps": 156, "engine_code": null, "drive": ["FWD"], "years": "2023-"}
-      ],
-      "trims": ["Design", "GS Line", "Ultimate", "Elite", "GS", "GSe", "Griffin"],
-      "transmissions": ["6-speed manual", "8-speed auto", "7-speed e-DCT (Hybrid)", "single-speed reduction (Electric)"],
-      "notes": "2022 launch: Design, GS Line, Ultimate (Elite briefly). 2023: GS Line renamed GS; GSe (PHEV 225) added. Diesel removed from UK range in 2023. Current (MY25/26) UK datasheet: Griffin, GS, Ultimate. Hybrid (mild-hybrid) badge and output unconfirmed in this pass (left null). PHEV re-rated 195PS on Opel datasheet for latest MY - unconfirmed for UK. Astra Electric confirmed generally but not in this pass.",
-      "status": "verified",
-      "sources": ["https://www.vauxhall.co.uk/hub/datasheet/astra-my26-gb.html", "https://drive.co.uk/cars/vauxhall/astra/sports-tourer/review", "https://www.carkeys.co.uk/guides/buyer-s-guide-to-the-2023-vauxhall-astra", "https://parkers.co.uk/vauxhall/astra/hatchback-2021/specs"]
+     "badge": "1.6 TDCi 95",
+     "fuel": "Diesel",
+     "cc": 1560,
+     "ps": 95,
+     "engine_code": "DLD-416 (Duratorq)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2010-2015"
     },
     {
-      "make": "Vauxhall", "model": "Mokka", "generation": "B", "years": "2021-", "facelift": null,
-      "bodies": ["5dr SUV"],
-      "engines": [
-        {"badge": "1.2 Turbo 100", "fuel": "Petrol", "cc": 1199, "ps": 100, "engine_code": null, "drive": ["FWD"], "years": "2021-"},
-        {"badge": "1.2 Turbo 130", "fuel": "Petrol", "cc": 1199, "ps": 130, "engine_code": null, "drive": ["FWD"], "years": "2021-"},
-        {"badge": "1.2 Hybrid 136", "fuel": "Petrol mild hybrid", "cc": 1199, "ps": 136, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
-        {"badge": "1.5 Turbo D 110", "fuel": "Diesel", "cc": 1499, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2021-2022"},
-        {"badge": "Mokka-e 136", "fuel": "Electric", "cc": null, "ps": 136, "engine_code": null, "drive": ["FWD"], "years": "2021-2023"},
-        {"badge": "Mokka Electric 156", "fuel": "Electric", "cc": null, "ps": 156, "engine_code": null, "drive": ["FWD"], "years": "2023-"},
-        {"badge": "Mokka GSE 280", "fuel": "Electric", "cc": null, "ps": 280, "engine_code": null, "drive": ["FWD"], "years": "2025-"}
-      ],
-      "trims": ["SE", "SE Premium", "SRi", "SRi Nav Premium", "Elite Nav", "Elite Nav Premium", "Launch Edition", "Ultimate Nav", "Design", "GS Line", "GS", "Ultimate", "Griffin", "GSE"],
-      "transmissions": ["6-speed manual", "8-speed auto", "6-speed e-DCT (Hybrid)", "single-speed reduction (Electric)"],
-      "notes": "2021 launch (orders late 2020): SE, SRi, Elite Nav, Launch Edition, Ultimate Nav (+Premium/Nav variants). April 2022 simplified to Design, GS Line, Ultimate (Mokka-e GS Line/Ultimate only). Later GS Line renamed GS; Mokka-e renamed Mokka Electric with 156PS motor; Hybrid 136 added 2024. Griffin entry trim from April 2025; GSE electric hot version 2025. Launch 1.2 Turbo 130 offered manual and 8-speed auto; diesel 1.5 dropped. Mild 2025 refresh (interior) - not treated as facelift. Electric 156 and GSE 280 outputs general-knowledge.",
-      "status": "verified",
-      "sources": ["https://vauxhall.co.uk/experience/vauxhall-news/2020/09/vauxhall-confirms-prices-and-specs-for-all-new-mokka-and-mokka-e.html", "https://www.motor1.com/news/579072/vauxhall-corsa-mokka-range-pricing/", "https://businessmotoring.co.uk/vauxhall-mokka-update-sees-price-changes/", "https://vehiclescore.co.uk/cars/vauxhall/mokka"]
+     "badge": "1.5 TDCi 75",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 75,
+     "engine_code": "DLD-415 (Duratorq)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017"
+    },
+    {
+     "badge": "1.5 TDCi 95",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 95,
+     "engine_code": "DLD-415 (Duratorq)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2017"
     }
-  ]
+   ],
+   "trims": [
+    "Studio",
+    "Style",
+    "Style+",
+    "Edge",
+    "Zetec",
+    "Zetec S",
+    "Titanium",
+    "Titanium X",
+    "ECOnetic",
+    "Metal",
+    "Zetec S Black/Red Edition",
+    "ST-Line",
+    "ST-1",
+    "ST-2",
+    "ST-3",
+    "ST200",
+    "Titanium Individual",
+    "S1600",
+    "Centura",
+    "Zetec Black/White/Blue",
+    "ST-Line Black/Red Edition"
+   ],
+   "trims_by_period": {
+    "2008-2012 pre-facelift": [
+     "Studio",
+     "Style",
+     "Style+",
+     "Edge",
+     "Zetec",
+     "Zetec S",
+     "Titanium",
+     "Titanium Individual",
+     "ECOnetic",
+     "S1600 (2010-2011)",
+     "Metal (2011-2012)",
+     "Centura (2011)"
+    ],
+    "2013-2017 facelift": [
+     "Studio",
+     "Style",
+     "Zetec",
+     "Zetec S (to 2016)",
+     "Titanium",
+     "Titanium X",
+     "ECOnetic",
+     "Zetec S Black/Red Edition (2014-2016)",
+     "Zetec Black/White/Blue (2015-2016)",
+     "ST-Line (2016-)",
+     "ST-Line Black/Red Edition (2016-2017)",
+     "ST-1",
+     "ST-2",
+     "ST-3",
+     "ST200 (2016-2017)"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual (ST)",
+    "4-speed auto (pre-2013 1.4)",
+    "6-speed Powershift (1.6 105 and 1.0 EcoBoost 100, post-2013)"
+   ],
+   "notes": "Pre-facelift ladder: Studio, Style, Style+, Zetec, Zetec S, Titanium (Edge/ECOnetic/Metal/S1600 specials). Facelift (Aston-style grille) on sale from Nov 2012 per Parkers (2013 model): added 1.0 EcoBoost, 1.0 Ti-VCT and 1.5 TDCi 75; ST arrived Mar 2013 (3dr only); ST-Line added Jun 2016. 1.5 TDCi 95 replaced the 1.6 TDCi 95 in May 2015. Van derivatives excluded. Engine years follow Parkers UK \"available new\" dates.",
+   "status": "verified",
+   "verification": "Engines (Parkers bhp converted to PS), cc and UK on-sale dates verified against Parkers UK derivative spec pages (hatchback 2008-2017 and ST 2012-2017 lists); trims against Parkers and Wikipedia UK section; engine families from Wikipedia. 1.0 Ti-VCT 65 and Style+ not in Parkers lists.",
+   "sources": [
+    "https://vehiclescore.co.uk/cars/ford/fiesta/mk7-2008-2017",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2008/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/st-2012/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Ford_Fiesta_(sixth_generation)&action=raw",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2008/125-style-(1112-)-5d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2008/14-zetec-5d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2008/16-zetec-s-3d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2008/16-(134bhp)-metal-3d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2008/16-titanium-5d-powershift/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2008/10-zetec-5d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2008/10-ecoboost-zetec-5d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2008/14-tdci-(70bhp)-zetec-5d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2008/16-tdci-zetec-5d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2008/16-tdci-titanium-x-5d/specs/"
+   ]
+  },
+  {
+   "make": "Ford",
+   "model": "Fiesta",
+   "generation": "Mk8",
+   "years": "2017-2023",
+   "facelift": "2022",
+   "bodies": [
+    "3dr hatchback",
+    "5dr hatchback",
+    "5dr crossover (Active)"
+   ],
+   "engines": [
+    {
+     "badge": "1.1 Ti-VCT 70",
+     "fuel": "Petrol",
+     "cc": 1084,
+     "ps": 70,
+     "engine_code": "Duratec Ti-VCT (1.1)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2019"
+    },
+    {
+     "badge": "1.1 Ti-VCT 75",
+     "fuel": "Petrol",
+     "cc": 1084,
+     "ps": 75,
+     "engine_code": "Duratec Ti-VCT (1.1)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2023",
+     "note": "Trend; continued after the 2022 facelift"
+    },
+    {
+     "badge": "1.1 Ti-VCT 85",
+     "fuel": "Petrol",
+     "cc": 1084,
+     "ps": 85,
+     "engine_code": "Duratec Ti-VCT (1.1)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2019"
+    },
+    {
+     "badge": "1.0 EcoBoost 85",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 85,
+     "engine_code": "Fox (1.0 EcoBoost)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2019",
+     "note": "Fiesta Active 1 only"
+    },
+    {
+     "badge": "1.0 EcoBoost 95",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 95,
+     "engine_code": "Fox (1.0 EcoBoost)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2021"
+    },
+    {
+     "badge": "1.0 EcoBoost 100",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 100,
+     "engine_code": "Fox (1.0 EcoBoost)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2023"
+    },
+    {
+     "badge": "1.0 EcoBoost 125",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 125,
+     "engine_code": "Fox (1.0 EcoBoost)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2022",
+     "note": "Non-hybrid; mostly replaced by mHEV 125 from Jun 2020, but 7-speed auto (2020-2021) and Zetec Edition (to Jan 2022) continued"
+    },
+    {
+     "badge": "1.0 EcoBoost 140",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 140,
+     "engine_code": "Fox (1.0 EcoBoost)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020"
+    },
+    {
+     "badge": "1.0 EcoBoost Hybrid (mHEV) 125",
+     "fuel": "Petrol mild hybrid",
+     "cc": 999,
+     "ps": 125,
+     "engine_code": "Fox mHEV (1.0 EcoBoost Hybrid)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2023"
+    },
+    {
+     "badge": "1.0 EcoBoost Hybrid (mHEV) 155",
+     "fuel": "Petrol mild hybrid",
+     "cc": 999,
+     "ps": 155,
+     "engine_code": "Fox mHEV (1.0 EcoBoost Hybrid)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2022",
+     "note": "Dropped Apr 2022"
+    },
+    {
+     "badge": "1.5 EcoBoost 200 (ST)",
+     "fuel": "Petrol",
+     "cc": 1497,
+     "ps": 200,
+     "engine_code": "Dragon (1.5 EcoBoost)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2023",
+     "note": "320 Nm from 2022 facelift"
+    },
+    {
+     "badge": "1.5 TDCi 85",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 85,
+     "engine_code": "DLD-415 (Duratorq)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020"
+    },
+    {
+     "badge": "1.5 TDCi 120",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 120,
+     "engine_code": "DLD-415 (Duratorq)",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2019",
+     "note": "Parkers UK names it 1.5 TDCi 120PS; last derivatives May 2019"
+    }
+   ],
+   "trims": [
+    "Style",
+    "Zetec",
+    "Trend",
+    "Titanium",
+    "B&O Play",
+    "ST-Line",
+    "ST-Line Edition",
+    "ST-Line X",
+    "Titanium X",
+    "Vignale",
+    "ST-Line Vignale",
+    "Active",
+    "Active X",
+    "Active Edition",
+    "ST-2",
+    "ST-3",
+    "ST Performance Edition",
+    "ST-1",
+    "Active 1",
+    "Active B&O Play",
+    "ST-Line X Edition",
+    "Vignale Edition",
+    "Zetec Edition",
+    "Active X Edition",
+    "Titanium Vignale",
+    "Active Vignale",
+    "ST Edition"
+   ],
+   "trims_by_period": {
+    "2017-2019 launch": [
+     "Style",
+     "Zetec",
+     "Titanium",
+     "Titanium X",
+     "B&O Play (Zetec/Titanium Series)",
+     "ST-Line",
+     "ST-Line X",
+     "Vignale",
+     "Active 1",
+     "Active B&O Play",
+     "Active X",
+     "ST-1",
+     "ST-2",
+     "ST-3"
+    ],
+    "2019-2021": [
+     "Trend",
+     "Titanium",
+     "Titanium X",
+     "ST-Line",
+     "ST-Line X",
+     "ST-Line Edition",
+     "ST-Line X Edition",
+     "Vignale",
+     "Vignale Edition",
+     "Zetec Edition (2020-2022)",
+     "Active",
+     "Active X",
+     "Active Edition",
+     "Active X Edition",
+     "ST-2",
+     "ST-3",
+     "ST Performance Edition",
+     "ST Edition (2020-2021)"
+    ],
+    "2022-2023 facelift": [
+     "Trend",
+     "Titanium",
+     "ST-Line",
+     "Titanium Vignale (to 2022)",
+     "ST-Line Vignale (to 2022)",
+     "Active",
+     "Active Vignale (to 2022)",
+     "Titanium X (from Aug 2022)",
+     "ST-Line X (from Aug 2022)",
+     "Active X (from Aug 2022)",
+     "ST-2 (to 2022)",
+     "ST-3"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual (1.1)",
+    "6-speed manual",
+    "6-speed auto (1.0 EcoBoost 100)",
+    "7-speed Powershift dual-clutch auto (1.0 EcoBoost 125 2020-2021, mHEV 125 2021-)"
+   ],
+   "notes": "2017 launch: Style, Zetec, Titanium, Titanium X, B&O Play, ST-Line, ST-Line X, Vignale; Fiesta Active (Active 1, Active B&O Play, Active X) from Mar 2018; ST (ST-1/2/3) from May 2018. Trend replaced Style/Zetec as entry trim mid-2019; Edition specials 2019-2021. mHEV 125/155 added Jun 2020; diesels: 120 PS dropped May 2019, 85 PS Sep 2020. Facelift (announced Sep 2021, on sale early 2022): LED matrix option, Ford badge on bonnet, ST 200 with 320Nm; launched with Vignale-suffix trims (Titanium/ST-Line/Active Vignale, to Apr 2022) and X-suffix trims returned Aug 2022; 3-door and mHEV 155 dropped spring 2022. Production ended July 2023 (Parkers lists stock to May 2024).",
+   "status": "verified",
+   "verification": "Engines (Parkers bhp converted to PS), cc, UK on-sale dates and trims verified against Parkers UK derivative spec pages (hatchback 2017-2023, Active 2018-2022/2022-2023 and ST 2018-2022 lists); engine families from Wikipedia.",
+   "sources": [
+    "https://www.honestjohn.co.uk/ford/fiesta/",
+    "https://www.motorpoint.co.uk/model-guides/ford-fiesta-models-and-trim-levels-explained",
+    "https://www.fleetnews.co.uk/news/manufacturer-news/2020/06/09/ford-adds-mild-hybrid-engines-to-fiesta-for-better-economy",
+    "https://vehiclescore.co.uk/cars/ford/fiesta/mk8-2017-2023",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2017/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/active-2018/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/active-2022/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/st-2018/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Ford_Fiesta_(seventh_generation)&action=raw",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2017/trend-11-ti-vct-75ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2017/trend-11-ti-vct-85ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/active-2018/1-10t-ecoboost-85ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2017/10-ecoboost-125-zetec-edition-5d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2017/10-ecoboost-hybrid-mhev-155-st-line-5dr/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2017/titanium-x-15-tdci-120ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/st-2018/st-1-15t-ecoboost-200ps-3d/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2017/10-ecoboost-hbd-mhev-125-st-line-vignale-5dr-auto/specs/",
+    "https://www.parkers.co.uk/ford/fiesta/hatchback-2017/10-ecoboost-125-titanium-x-auto-[7-speed]-5d/specs/"
+   ]
+  },
+  {
+   "make": "Ford",
+   "model": "Focus",
+   "generation": "Mk3",
+   "years": "2011-2018",
+   "facelift": "2014",
+   "bodies": [
+    "5dr hatchback",
+    "5dr estate"
+   ],
+   "engines": [
+    {
+     "badge": "1.6 Ti-VCT 85",
+     "fuel": "Petrol",
+     "cc": 1596,
+     "ps": 85,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2017"
+    },
+    {
+     "badge": "1.6 Ti-VCT 105",
+     "fuel": "Petrol",
+     "cc": 1596,
+     "ps": 105,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2017"
+    },
+    {
+     "badge": "1.6 Ti-VCT 125",
+     "fuel": "Petrol",
+     "cc": 1596,
+     "ps": 125,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2016"
+    },
+    {
+     "badge": "1.0 EcoBoost 100",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 100,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2012-2018"
+    },
+    {
+     "badge": "1.0 EcoBoost 125",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 125,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2012-2018"
+    },
+    {
+     "badge": "1.0 EcoBoost 140",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 140,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2018",
+     "note": "ST-Line X only"
+    },
+    {
+     "badge": "1.6 EcoBoost 150",
+     "fuel": "Petrol",
+     "cc": 1596,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2014"
+    },
+    {
+     "badge": "1.6 EcoBoost 182",
+     "fuel": "Petrol",
+     "cc": 1596,
+     "ps": 182,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2014"
+    },
+    {
+     "badge": "1.5 EcoBoost 150",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018"
+    },
+    {
+     "badge": "1.5 EcoBoost 182",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 182,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018"
+    },
+    {
+     "badge": "2.0 EcoBoost 250 (ST)",
+     "fuel": "Petrol",
+     "cc": 1999,
+     "ps": 250,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2012-2018"
+    },
+    {
+     "badge": "2.3 EcoBoost 350 (RS)",
+     "fuel": "Petrol",
+     "cc": 2261,
+     "ps": 350,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2016-2018"
+    },
+    {
+     "badge": "Focus Electric 145",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 145,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2018",
+     "note": "5dr hatch only; 107 kW motor; Parkers lists 140 bhp"
+    },
+    {
+     "badge": "1.6 TDCi 95",
+     "fuel": "Diesel",
+     "cc": 1560,
+     "ps": 95,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2015"
+    },
+    {
+     "badge": "1.6 TDCi 105 (ECOnetic)",
+     "fuel": "Diesel",
+     "cc": 1560,
+     "ps": 105,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2012-2014"
+    },
+    {
+     "badge": "1.6 TDCi 115",
+     "fuel": "Diesel",
+     "cc": 1560,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2015"
+    },
+    {
+     "badge": "1.5 TDCi 95",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 95,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018"
+    },
+    {
+     "badge": "1.5 TDCi 105 (ECOnetic)",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 105,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2018"
+    },
+    {
+     "badge": "1.5 TDCi 120",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 120,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018"
+    },
+    {
+     "badge": "2.0 TDCi 115",
+     "fuel": "Diesel",
+     "cc": 1997,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2014",
+     "note": "Not in Parkers UK Mk3 derivative lists (UK 2.0 TDCi: 140/163 pre-facelift, 150/185 facelift); UK availability unconfirmed"
+    },
+    {
+     "badge": "2.0 TDCi 140",
+     "fuel": "Diesel",
+     "cc": 1997,
+     "ps": 140,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2014"
+    },
+    {
+     "badge": "2.0 TDCi 163",
+     "fuel": "Diesel",
+     "cc": 1997,
+     "ps": 163,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2011-2014",
+     "note": "Zetec S / Titanium X"
+    },
+    {
+     "badge": "2.0 TDCi 150",
+     "fuel": "Diesel",
+     "cc": 1997,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018"
+    },
+    {
+     "badge": "2.0 TDCi 185 (ST)",
+     "fuel": "Diesel",
+     "cc": 1997,
+     "ps": 185,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2018"
+    }
+   ],
+   "trims": [
+    "Studio",
+    "Edge",
+    "Style",
+    "Zetec",
+    "Zetec Navigator",
+    "Zetec Navigation",
+    "Zetec S",
+    "Zetec S Navigation",
+    "Zetec S Black",
+    "Zetec S Red",
+    "Titanium",
+    "Titanium Navigator",
+    "Titanium Navigation",
+    "Titanium X",
+    "Titanium X Navigator",
+    "Titanium X Navigation",
+    "Zetec Edition",
+    "ST-Line",
+    "ST-Line Black Edition",
+    "ST-Line Red Edition",
+    "ST-Line X",
+    "ST-1",
+    "ST-2",
+    "ST-3",
+    "RS",
+    "RS Edition",
+    "RS Red Edition",
+    "RS Black Edition",
+    "RS Heritage"
+   ],
+   "trims_by_period": {
+    "2011-2014 pre-facelift": [
+     "Studio",
+     "Edge",
+     "Zetec",
+     "Zetec Navigator",
+     "Zetec S",
+     "Titanium",
+     "Titanium Navigator",
+     "Titanium X",
+     "Titanium X Navigator",
+     "ST-1",
+     "ST-2",
+     "ST-3"
+    ],
+    "2014-2016 facelift": [
+     "Studio",
+     "Style",
+     "Zetec",
+     "Zetec Navigation",
+     "Zetec S",
+     "Zetec S Navigation",
+     "Zetec S Black",
+     "Zetec S Red",
+     "Titanium",
+     "Titanium Navigation",
+     "Titanium X",
+     "Titanium X Navigation",
+     "ST-1",
+     "ST-2",
+     "ST-3"
+    ],
+    "2016-2018 ST-Line era": [
+     "Style",
+     "Zetec",
+     "Zetec Navigation",
+     "Zetec Edition",
+     "ST-Line",
+     "ST-Line Black Edition",
+     "ST-Line Red Edition",
+     "ST-Line X",
+     "Titanium",
+     "Titanium Navigation",
+     "Titanium X",
+     "Titanium X Navigation",
+     "ST-1",
+     "ST-2",
+     "ST-3",
+     "RS",
+     "RS Edition",
+     "RS Red Edition",
+     "RS Heritage"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual",
+    "6-speed Powershift dual-clutch auto (1.6 Ti-VCT 125 to 2016, TDCi diesels incl. ST diesel 2016-)",
+    "6-speed auto (torque converter, post-facelift 1.0/1.5 EcoBoost)",
+    "Single-speed auto (Focus Electric)"
+   ],
+   "notes": "Pre-facelift (2011-2014): Studio, Edge, Zetec, Zetec S, Titanium, Titanium X (+ Navigator versions from Aug 2013; ECOnetic 1.6 TDCi 105 2012-2014); ST-1/2/3 from 2012 (Parkers names the pre-facelift base ST plain \"ST\"). Facelift on sale Nov 2014: 1.5 EcoBoost/1.5 TDCi replaced 1.6 EcoBoost/1.6 TDCi (1.6 TDCi lingered to Sep 2015); Style replaced Edge; Navigation versions; Zetec S Black/Red 2015-16. Zetec S replaced by ST-Line Jun 2016 (ST-Line Black/Red Edition 2016-17); Style and Zetec replaced by Zetec Edition Feb 2017; ST-Line X (incl. 1.0 EcoBoost 140) Aug 2017. RS Feb 2016-2018 (5dr only; RS Edition 2017, RS Red Edition and UK-only RS Heritage 2018; RS Black Edition kept from earlier research but not found on Parkers). ST diesel gained Powershift auto in 2016. Focus Electric 2013-2018. Saloon not sold in UK. 2.0 TDCi 115 not found in Parkers UK lists.",
+   "status": "verified",
+   "verification": "Engines (outputs, cc, UK availability) and trims checked against the full Parkers UK derivative lists for Focus hatchback/estate 2011-2018 and ST 2012-2018 and their spec pages; Wikipedia European engine table. trims_by_period built from Parkers availability dates (the pre-facelift base ST, listed by Parkers as plain \"ST\", is kept as ST-1); RS Black Edition and 2.0 TDCi 115 retained from earlier research but unconfirmed and not period-assigned.",
+   "sources": [
+    "https://vehiclescore.co.uk/cars/ford/focus/mk3-2011-2018",
+    "https://www.cargurus.co.uk/Cars/Ford-Focus-2011-Generation-Overview-mg44",
+    "https://www.autoexpress.co.uk/ford/focus/63833/used-ford-focus-mk3-2011-2018-review",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/specs/",
+    "https://www.parkers.co.uk/ford/focus/estate-2011/specs/",
+    "https://www.parkers.co.uk/ford/focus/st-2012/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Ford_Focus_(third_generation)&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=Ford_Focus_Electric&action=raw",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/16-(85bhp)-style-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/16-style-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/16-(125bhp)-style-5d-powershift/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/st-line-x-10t-ecoboost-140ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/15-ecoboost-titanium-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/15-ecoboost-(182bhp)-titanium-x-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/electric-5d-auto/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/electric-(0515-)-5d-auto/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/16-tdci-style-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/16-tdci-edge-econetic-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/16-tdci-(115bhp)-titanium-(1114-)-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/15-tdci-(105bhp)-style-econetic-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/20-tdci-(163bhp)-titanium-x-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/20-tdci-(163bhp)-titanium-x-navigator-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/rs-red-edition-23-ecoboost-350ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/16-(85bhp)-studio-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/st-line-10t-ecoboost-125ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/zetec-edition-10t-ecoboost-125ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/rs-23-ecoboost-350ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2011/rs-heritage-23-ecoboost-350ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/st-2012/20-tdci-(185bhp)-st-2-hatchback-5d-powershift/specs/"
+   ]
+  },
+  {
+   "make": "Ford",
+   "model": "Focus",
+   "generation": "Mk4",
+   "years": "2018-2025",
+   "facelift": "2022",
+   "bodies": [
+    "5dr hatchback",
+    "5dr estate",
+    "5dr hatchback (Active)",
+    "5dr estate (Active)"
+   ],
+   "engines": [
+    {
+     "badge": "1.0 EcoBoost 85",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 85,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2019"
+    },
+    {
+     "badge": "1.0 EcoBoost 100",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 100,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2020"
+    },
+    {
+     "badge": "1.0 EcoBoost 125",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 125,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2023"
+    },
+    {
+     "badge": "1.0 EcoBoost Hybrid (mHEV) 125",
+     "fuel": "Petrol mild hybrid",
+     "cc": 999,
+     "ps": 125,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2025"
+    },
+    {
+     "badge": "1.0 EcoBoost Hybrid (mHEV) 155",
+     "fuel": "Petrol mild hybrid",
+     "cc": 999,
+     "ps": 155,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2025"
+    },
+    {
+     "badge": "1.5 EcoBoost 150",
+     "fuel": "Petrol",
+     "cc": 1497,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2020"
+    },
+    {
+     "badge": "1.5 EcoBoost 182",
+     "fuel": "Petrol",
+     "cc": 1497,
+     "ps": 182,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2020"
+    },
+    {
+     "badge": "2.3 EcoBoost 280 (ST)",
+     "fuel": "Petrol",
+     "cc": 2261,
+     "ps": 280,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2025"
+    },
+    {
+     "badge": "1.5 EcoBlue 95",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 95,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2020"
+    },
+    {
+     "badge": "1.5 EcoBlue 120",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 120,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2022"
+    },
+    {
+     "badge": "1.5 EcoBlue 115",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2022-2023",
+     "note": "8-speed auto only"
+    },
+    {
+     "badge": "2.0 EcoBlue 150",
+     "fuel": "Diesel",
+     "cc": 1995,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2022"
+    },
+    {
+     "badge": "2.0 EcoBlue 190 (ST)",
+     "fuel": "Diesel",
+     "cc": 1995,
+     "ps": 190,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2022"
+    }
+   ],
+   "trims": [
+    "Style",
+    "Zetec",
+    "Titanium",
+    "ST-Line",
+    "ST-Line X",
+    "Titanium X",
+    "Vignale",
+    "Active",
+    "Active X",
+    "Active X Vignale",
+    "ST",
+    "Zetec Edition",
+    "Titanium Edition",
+    "Titanium X Edition",
+    "ST-Line Edition",
+    "ST-Line X Edition",
+    "Vignale Edition",
+    "Active Edition",
+    "Active X Edition",
+    "Active X Vignale Edition",
+    "Trend",
+    "Titanium Vignale",
+    "ST-Line Vignale",
+    "Active Vignale",
+    "Titanium Design",
+    "ST-Line Design",
+    "Active Design",
+    "Titanium Style",
+    "ST-Line Style",
+    "Active Style",
+    "Titanium X Style",
+    "ST-Line X Style",
+    "Active X Style",
+    "ST-3",
+    "ST Track Pack",
+    "ST Edition"
+   ],
+   "trims_by_period": {
+    "2018-2020 launch": [
+     "Style",
+     "Zetec",
+     "Titanium",
+     "Titanium X",
+     "ST-Line",
+     "ST-Line X",
+     "Vignale",
+     "Active",
+     "Active X",
+     "Active X Vignale",
+     "ST"
+    ],
+    "2020-2022 Edition range": [
+     "Zetec Edition",
+     "Titanium Edition",
+     "Titanium X Edition",
+     "ST-Line Edition",
+     "ST-Line X Edition",
+     "Vignale Edition",
+     "Active Edition",
+     "Active X Edition",
+     "Active X Vignale Edition",
+     "ST",
+     "ST Edition"
+    ],
+    "2021-2025 facelift": [
+     "Trend",
+     "Titanium",
+     "Titanium Design",
+     "Titanium Style",
+     "Titanium X",
+     "Titanium X Style",
+     "Titanium Vignale",
+     "ST-Line",
+     "ST-Line Design",
+     "ST-Line Style",
+     "ST-Line X",
+     "ST-Line X Style",
+     "ST-Line Vignale",
+     "Active",
+     "Active Design",
+     "Active Style",
+     "Active X",
+     "Active X Style",
+     "Active Vignale",
+     "ST-Line X Edition",
+     "Active X Edition",
+     "ST",
+     "ST Track Pack",
+     "ST Edition"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "8-speed auto (torque converter)",
+    "7-speed auto (torque converter, ST 2.3, 2020-)",
+    "7-speed Powershift dual-clutch auto (mHEV, 2021-)"
+   ],
+   "notes": "2018 launch: Style (to Oct 2019), Zetec, Titanium, ST-Line, ST-Line X, Titanium X, Vignale, Active, Active X (+Active X Vignale 2019-20); ST (2.3 280 / 2.0 EcoBlue 190) from mid-2019, 7-speed auto ST from 2020. Jun 2020: standard trims replaced by Edition versions as mHEV 125/155 arrived; 1.0 EcoBoost 100, 1.5 EcoBoost 150/182 and 1.5 EcoBlue 95 dropped. Facelift (Parkers lists facelift derivatives from Oct 2021; on sale 2022): Trend (entry until Apr 2023), Titanium, ST-Line, Active, Titanium/ST-Line/Active Vignale (to Sep 2022), X trims from Sep 2022, Design and Style variants 2022-23; 2.0 EcoBlue dropped Mar 2022, 1.5 EcoBlue 115 auto-only until Apr 2023; non-hybrid 1.0 EcoBoost 125 manual until Aug 2023, then mHEV only. ST Edition 2021 (and 2024 per Wikipedia), ST Track Pack 2022-25; final ST-Line X/Active X Edition 2025. ST-3 kept from earlier research but Parkers lists the Mk4 ST only as ST/ST Edition/ST Track Pack. Production ended Nov 2025.",
+   "status": "verified",
+   "verification": "Engine outputs, cc, UK availability and all trim names checked against the full Parkers UK derivative lists (hatch, estate, Active hatch/estate, ST) and spec pages; Wikipedia powertrain table/infobox for outputs and gearboxes. ST-3 retained from earlier research but unconfirmed.",
+   "sources": [
+    "https://carmagazine.co.uk/ford/focus",
+    "https://www.cargurus.co.uk/research/Ford-Focus-2025-mg76",
+    "https://www.motorpoint.co.uk/model-guides/ford-focus-models-and-trim-levels-explained",
+    "https://parkers.co.uk/car-news/2021/ford-focus-facelift",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/specs/",
+    "https://www.parkers.co.uk/ford/focus/estate-2018/specs/",
+    "https://www.parkers.co.uk/ford/focus/active-hatchback-2018/specs/",
+    "https://www.parkers.co.uk/ford/focus/active-estate-2018/specs/",
+    "https://www.parkers.co.uk/ford/focus/st-2019/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Ford_Focus_(fourth_generation)&action=raw",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/style-10-ford-ecoboost-85ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/10-ecoboost-st-line-5dr/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/10-ecoboost-hybrid-mhev-st-line-x-5dr/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/st-line-(sync3-dab-naviagtion-system)-15-ford-ecoboost-150ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/15-ecoboost-182-st-line-x-edition-auto-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/zetec-15-ford-ecoblue-95ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/estate-2018/15-ecoblue-115-trend-5dr-auto/specs/",
+    "https://www.parkers.co.uk/ford/focus/estate-2018/20-ecoblue-150-st-line-edition-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/active-hatchback-2018/x-vignale-10-ford-ecoboost-125ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/10-ecoboost-trend-5dr/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/10-ecoboost-titanium-design-5dr/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/10-ecoboost-titanium-style-5dr/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/10-ecoboost-titanium-x-style-5dr/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/10-ecoboost-titanium-vignale-5dr/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/10-ecoboost-hybrid-mhev-st-line-x-edition-5dr/specs/",
+    "https://www.parkers.co.uk/ford/focus/st-2019/23-ecoboost-st-[track-pack]-5dr/specs/",
+    "https://www.parkers.co.uk/ford/focus/st-2019/23-ecoboost-st-edition-5dr/specs/",
+    "https://www.parkers.co.uk/ford/focus/st-2019/23-ecoboost-st-auto-5d/specs/",
+    "https://www.parkers.co.uk/ford/focus/hatchback-2018/10-ecoboost-hybrid-mhev-155-titanium-5dr-auto/specs/"
+   ]
+  },
+  {
+   "make": "Ford",
+   "model": "Kuga",
+   "generation": "Mk3",
+   "years": "2019-",
+   "facelift": "2024",
+   "bodies": [
+    "5dr SUV"
+   ],
+   "engines": [
+    {
+     "badge": "1.5 EcoBoost 120",
+     "fuel": "Petrol",
+     "cc": 1497,
+     "ps": 120,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2020",
+     "note": "Zetec only"
+    },
+    {
+     "badge": "1.5 EcoBoost 150",
+     "fuel": "Petrol",
+     "cc": 1497,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-"
+    },
+    {
+     "badge": "1.5 EcoBlue 120",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 120,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2021"
+    },
+    {
+     "badge": "2.0 EcoBlue Hybrid (mHEV) 150",
+     "fuel": "Diesel mild hybrid",
+     "cc": 1995,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2021"
+    },
+    {
+     "badge": "2.0 EcoBlue 190",
+     "fuel": "Diesel",
+     "cc": 1995,
+     "ps": 190,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2019-2021"
+    },
+    {
+     "badge": "2.5 Duratec FHEV 190",
+     "fuel": "Petrol hybrid",
+     "cc": 2488,
+     "ps": 190,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2020-2023",
+     "note": "Parkers lists the pre-facelift FHEV as FWD only"
+    },
+    {
+     "badge": "2.5 Duratec FHEV 180 (2024 facelift)",
+     "fuel": "Petrol hybrid",
+     "cc": 2488,
+     "ps": 180,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-"
+    },
+    {
+     "badge": "2.5 Duratec FHEV AWD (2024 facelift)",
+     "fuel": "Petrol hybrid",
+     "cc": 2488,
+     "ps": null,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2024-",
+     "note": "Parkers lists 180 bhp for AWD vs 177 bhp FWD; PS not confirmed"
+    },
+    {
+     "badge": "2.5 Duratec PHEV 225",
+     "fuel": "Petrol plug-in hybrid",
+     "cc": 2488,
+     "ps": 225,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2023"
+    },
+    {
+     "badge": "2.5 Duratec PHEV 243",
+     "fuel": "Petrol plug-in hybrid",
+     "cc": 2488,
+     "ps": 243,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-"
+    }
+   ],
+   "trims": [
+    "Zetec",
+    "Titanium",
+    "Titanium First Edition",
+    "ST-Line",
+    "ST-Line First Edition",
+    "ST-Line X",
+    "ST-Line X First Edition",
+    "Vignale",
+    "ST-Line Edition",
+    "Titanium Edition",
+    "ST-Line X Edition",
+    "Graphite Tech Edition",
+    "Black Package Edition",
+    "Active",
+    "Active X",
+    "ST-Line X Black Package",
+    "Sound Edition",
+    "BlueCruise Edition"
+   ],
+   "trims_by_period": {
+    "2019-2020 launch": [
+     "Zetec",
+     "Titanium",
+     "Titanium First Edition",
+     "ST-Line",
+     "ST-Line First Edition",
+     "ST-Line X",
+     "ST-Line X First Edition",
+     "Vignale"
+    ],
+    "2020-2023 Edition range": [
+     "Zetec",
+     "Titanium Edition",
+     "ST-Line Edition",
+     "ST-Line X Edition",
+     "Vignale",
+     "Graphite Tech Edition",
+     "Black Package Edition"
+    ],
+    "2024- facelift": [
+     "Titanium",
+     "ST-Line",
+     "ST-Line X",
+     "Active",
+     "ST-Line X Black Package",
+     "Sound Edition",
+     "BlueCruise Edition"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "8-speed auto",
+    "eCVT (FHEV/PHEV)"
+   ],
+   "notes": "2019 launch (Parkers from Dec 2019): Zetec, Titanium, ST-Line, ST-Line X, Vignale plus Titanium/ST-Line/ST-Line X First Edition (to Jun 2020). Aug 2020: Titanium/ST-Line/ST-Line X Edition replaced the plain trims (Zetec to Apr 2023, Vignale to Oct 2023); FHEV from Aug 2020; Graphite Tech and Black Package Edition 2023. Diesels (1.5 EcoBlue 120, 2.0 EcoBlue mHEV 150, 2.0 EcoBlue 190 AWD) dropped Oct-Nov 2021; 1.5 EcoBoost 120 only 2019-2020. Diesel badged EcoBlue by Ford; some listings still show TDCi. 2024 facelift (Jan 2024): new front end/SYNC 4, trims Titanium, ST-Line, ST-Line X, Active (Vignale dropped); 1.5 EcoBoost 150 continues; FHEV 180PS (FWD) with the only AWD option; PHEV 243PS; later ST-Line X Black Package, Sound Edition and BlueCruise Edition. Active X kept from earlier research but not in Parkers lists; Parkers shows no AWD FHEV before the facelift.",
+   "status": "verified",
+   "verification": "All UK derivatives on the Parkers Kuga SUV (2020-) spec list and their spec pages checked for outputs, drive and availability; facelift outputs and trim ladder from the Parkers review. Wikipedia Kuga article has no UK detail. Active X and pre-facelift FHEV AWD retained but unconfirmed.",
+   "sources": [
+    "https://vehiclescore.co.uk/cars/ford/kuga/mk3-2020-pres",
+    "https://www.motorpoint.co.uk/model-guides/ford-kuga-models-and-trim-levels-explained",
+    "https://carkeys.co.uk/guides/buyer-s-guide-to-the-2023-ford-kuga",
+    "https://www.cargurus.co.uk/Cars/articles/ford_kuga_models",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/specs/",
+    "https://www.parkers.co.uk/ford/kuga/review/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/zetec-15-ecoboost-120ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/15-ecoboost-st-line-5dr/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/st-line-15-ecoboost-150ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/zetec-15-ecoblue-120ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/vignale-20-ecoblue-150ps-mhev-5d/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/vignale-20-ecoblue-190ps-auto-awd-5d/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/25-duratec-fhev-vignale-cvt-5d/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/25-fhev-st-line-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/25-fhev-4wd-st-line-x-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/st-line-25-duratec-225ps-phev-cvt-auto-5d/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/25-phev-graphite-tech-edition-5dr-cvt/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/zetec-15-ecoboost-150ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/kuga/suv-2020/15-ecoboost-150-graphite-tech-edition-5dr/specs/"
+   ]
+  },
+  {
+   "make": "Ford",
+   "model": "Puma",
+   "generation": "Mk1 (J2K)",
+   "years": "2019-",
+   "facelift": "2024",
+   "bodies": [
+    "5dr SUV"
+   ],
+   "engines": [
+    {
+     "badge": "1.0 EcoBoost 100",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 100,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2020",
+     "note": "non-hybrid manual, Titanium/ST-Line Feb-Jun 2020; Parkers spec data shows 123 bhp, output per derivative name"
+    },
+    {
+     "badge": "1.0 EcoBoost 125",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 125,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2021",
+     "note": "non-hybrid, 7-speed DCT only"
+    },
+    {
+     "badge": "1.0 EcoBoost Hybrid (mHEV) 125",
+     "fuel": "Petrol mild hybrid",
+     "cc": 999,
+     "ps": 125,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-"
+    },
+    {
+     "badge": "1.0 EcoBoost Hybrid (mHEV) 155",
+     "fuel": "Petrol mild hybrid",
+     "cc": 999,
+     "ps": 155,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-"
+    },
+    {
+     "badge": "1.0 EcoBoost Hybrid (mHEV) 170 (ST Powershift)",
+     "fuel": "Petrol mild hybrid",
+     "cc": 999,
+     "ps": 170,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-"
+    },
+    {
+     "badge": "1.5 EcoBoost 200 (ST)",
+     "fuel": "Petrol",
+     "cc": 1497,
+     "ps": 200,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2024"
+    },
+    {
+     "badge": "Puma Gen-E 168",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 168,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-"
+    }
+   ],
+   "trims": [
+    "Titanium",
+    "Titanium First Edition",
+    "ST-Line",
+    "ST-Line X",
+    "ST-Line X First Edition",
+    "ST-Line X First Edition Plus",
+    "ST-Line X Vignale",
+    "ST-Line Vignale",
+    "Titanium Design",
+    "ST-Line Design",
+    "ST-Line X Gold Edition",
+    "Vivid Ruby Edition",
+    "Sound Edition",
+    "ST-Line Black Package",
+    "BlueCruise Edition",
+    "ST",
+    "ST Performance Pack",
+    "ST Gold Edition",
+    "ST Handling Pack",
+    "Gen-E Select",
+    "Gen-E Premium",
+    "Gen-E Sound Edition",
+    "Gen-E BlueCruise Edition"
+   ],
+   "trims_by_period": {
+    "2019-2021 launch": [
+     "Titanium",
+     "Titanium First Edition",
+     "ST-Line",
+     "ST-Line X",
+     "ST-Line X First Edition",
+     "ST-Line X First Edition Plus",
+     "ST-Line X Vignale",
+     "ST-Line Vignale",
+     "ST",
+     "ST Performance Pack"
+    ],
+    "2021-2024": [
+     "Titanium",
+     "Titanium Design",
+     "ST-Line",
+     "ST-Line Design",
+     "ST-Line X",
+     "ST-Line X Gold Edition",
+     "ST-Line Vignale",
+     "Vivid Ruby Edition",
+     "ST",
+     "ST Performance Pack",
+     "ST Gold Edition"
+    ],
+    "2024- facelift": [
+     "Titanium",
+     "ST-Line",
+     "ST-Line X",
+     "Sound Edition",
+     "ST-Line Black Package",
+     "BlueCruise Edition",
+     "ST",
+     "ST Handling Pack"
+    ],
+    "2024- Gen-E": [
+     "Gen-E Select",
+     "Gen-E Premium",
+     "Gen-E Sound Edition",
+     "Gen-E BlueCruise Edition"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "7-speed Powershift dual-clutch auto",
+    "Single-speed auto (Gen-E)"
+   ],
+   "notes": "Launch (Parkers from Dec 2019): Titanium, ST-Line, ST-Line X, with Titanium/ST-Line X First Edition and ST-Line X First Edition Plus to Jun 2020; mHEV 125/155 manual from launch, DCT auto from Mar 2021 (non-hybrid 125 DCT Jun 2020-Mar 2021; non-hybrid 100 manual Feb-Jun 2020). ST-Line X Vignale (2020), ST-Line Vignale Oct 2020-Apr 2024, Design editions 2021-23, ST-Line X Gold / ST Gold Edition 2021-22, Vivid Ruby Edition Nov 2022-Apr 2024. ST 1.5 EcoBoost 200 manual Aug 2020-Apr 2024 (Performance Pack); ST mHEV 170 Powershift from Apr 2023 (Handling Pack 2024-). 2024 facelift (Feb 2024): new interior screens, mHEV only; Parkers spec data confirms Vignale ended Apr 2024; later Sound Edition, ST-Line Black Package and BlueCruise Edition. Gen-E electric (Select/Premium) from Dec 2024.",
+   "status": "verified",
+   "verification": "Every UK derivative on the Parkers Puma SUV (2019-), Puma ST (2020-) and Puma Gen-E (2025-) spec lists and spec pages checked for outputs, gearbox and availability; Wikipedia for outputs, Vivid Ruby Edition and Gen-E launch.",
+   "sources": [
+    "https://www.parkers.co.uk/ford/puma/suv-2020",
+    "https://www.uk-car-discount.co.uk/news/ford-puma-trim-levels-explained",
+    "https://carwow.co.uk/ford/puma/specifications",
+    "https://uk.driveduel.de/models/ford/puma/specs",
+    "https://www.parkers.co.uk/ford/puma/suv-2019/specs/",
+    "https://www.parkers.co.uk/ford/puma/st-2020/specs/",
+    "https://www.parkers.co.uk/ford/puma-gen-e/suv-2025/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Ford_Puma_(crossover)&action=raw",
+    "https://www.parkers.co.uk/ford/puma/suv-2019/titanium-10-ford-ecoboost-125ps-auto-5d/specs/",
+    "https://www.parkers.co.uk/ford/puma/suv-2019/10-ecoboost-hybrid-mhev-titanium-5dr-dct/specs/",
+    "https://www.parkers.co.uk/ford/puma/suv-2019/titanium-10-ford-ecoboost-100ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/puma/suv-2019/st-line-10-ford-ecoboost-100ps-5d/specs/",
+    "https://www.parkers.co.uk/ford/puma-gen-e/suv-2025/124kw-select-54kwh-5dr-auto/specs/",
+    "https://www.parkers.co.uk/ford/puma/suv-2019/10-ecoboost-hybrid-mhev-vivid-ruby-edition-5dr/specs/",
+    "https://www.parkers.co.uk/ford/puma/suv-2019/10-ecoboost-hybrid-mhev-st-line-5dr/specs/",
+    "https://www.parkers.co.uk/ford/puma/suv-2019/10-ecoboost-hybrid-mhev-155-st-line-vignale-5dr/specs/",
+    "https://www.parkers.co.uk/ford/puma/st-2020/15-ecoboost-st-gold-edition-5dr/specs/",
+    "https://www.parkers.co.uk/ford/puma/st-2020/10-ecoboost-hybrid-mhev-st-[handling-pk]-5dr-dct/specs/"
+   ]
+  },
+  {
+   "make": "Volkswagen",
+   "model": "Golf",
+   "generation": "Mk7 (incl. 7.5)",
+   "years": "2013-2020",
+   "facelift": "2017",
+   "bodies": [
+    "3dr hatchback",
+    "5dr hatchback",
+    "5dr estate",
+    "5dr estate (Alltrack)"
+   ],
+   "engines": [
+    {
+     "badge": "1.2 TSI 85",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 85,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017"
+    },
+    {
+     "badge": "1.2 TSI 105",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 105,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2016"
+    },
+    {
+     "badge": "1.2 TSI 110",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017",
+     "note": "not found in Parkers UK lists or the Wikipedia Mk7 table (1.2 TSI listed as 85/105 only); unconfirmed"
+    },
+    {
+     "badge": "1.4 TSI 122",
+     "fuel": "Petrol",
+     "cc": 1395,
+     "ps": 122,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2015",
+     "note": "Parkers and the Wikipedia Mk7 table give 1390 cc; 1395 cc kept"
+    },
+    {
+     "badge": "1.4 TSI 125",
+     "fuel": "Petrol",
+     "cc": 1395,
+     "ps": 125,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2018"
+    },
+    {
+     "badge": "1.4 TSI ACT 140",
+     "fuel": "Petrol",
+     "cc": 1395,
+     "ps": 140,
+     "engine_code": "CPTA",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017"
+    },
+    {
+     "badge": "1.4 TSI ACT 150",
+     "fuel": "Petrol",
+     "cc": 1395,
+     "ps": 150,
+     "engine_code": "CZEA",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2017"
+    },
+    {
+     "badge": "1.0 TSI 85",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 85,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2019"
+    },
+    {
+     "badge": "1.0 TSI 110",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2018"
+    },
+    {
+     "badge": "1.0 TSI 115",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 115,
+     "engine_code": "CHZD",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2020"
+    },
+    {
+     "badge": "1.5 TSI EVO 130",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 130,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020"
+    },
+    {
+     "badge": "1.5 TSI EVO 150",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 150,
+     "engine_code": "DADA",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020"
+    },
+    {
+     "badge": "2.0 TSI 220 (GTI)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 220,
+     "engine_code": "CHHB",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017"
+    },
+    {
+     "badge": "2.0 TSI 230 (GTI Performance / GTI 7.5)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 230,
+     "engine_code": "CHHA",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2018"
+    },
+    {
+     "badge": "2.0 TSI 245 (GTI Performance 7.5)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 245,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020"
+    },
+    {
+     "badge": "2.0 TSI 265 (GTI Clubsport 40)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 265,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2016",
+     "note": "3dr/5dr, manual or DSG"
+    },
+    {
+     "badge": "2.0 TSI 310 (GTI Clubsport S)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 310,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2016",
+     "note": "3dr manual"
+    },
+    {
+     "badge": "2.0 TSI 290 (GTI TCR)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 290,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2020"
+    },
+    {
+     "badge": "2.0 TSI 300 (R)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 300,
+     "engine_code": "CJXC",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2014-2017"
+    },
+    {
+     "badge": "2.0 TSI 310 (R 7.5)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 310,
+     "engine_code": "DJHA",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2017-2019"
+    },
+    {
+     "badge": "2.0 TSI 300 (R 7.5, 2019-)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 300,
+     "engine_code": "DNUE",
+     "drive": [
+      "AWD"
+     ],
+     "years": "2019-2020"
+    },
+    {
+     "badge": "1.8 TSI 180 (Alltrack)",
+     "fuel": "Petrol",
+     "cc": 1798,
+     "ps": 180,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2018-2018",
+     "note": "4Motion DSG"
+    },
+    {
+     "badge": "1.4 TSI GTE 204",
+     "fuel": "Petrol plug-in hybrid",
+     "cc": 1395,
+     "ps": 204,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2020"
+    },
+    {
+     "badge": "e-Golf 115",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2016",
+     "note": "24.2 kWh"
+    },
+    {
+     "badge": "e-Golf 136",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 136,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020",
+     "note": "35.8 kWh"
+    },
+    {
+     "badge": "1.6 TDI 90",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 90,
+     "engine_code": "CLHB",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2017"
+    },
+    {
+     "badge": "1.6 TDI 105",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 105,
+     "engine_code": "CLHA",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2013-2015"
+    },
+    {
+     "badge": "1.6 TDI 110",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2013-2017",
+     "note": "AWD = Alltrack 4Motion 2015-2016"
+    },
+    {
+     "badge": "1.6 TDI 115",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020"
+    },
+    {
+     "badge": "2.0 TDI 150",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 150,
+     "engine_code": "CRBC",
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2013-2020"
+    },
+    {
+     "badge": "2.0 TDI 184 (GTD)",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 184,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2013-2020"
+    }
+   ],
+   "trims": [
+    "S",
+    "SE",
+    "SE Navigation",
+    "Match",
+    "Match Edition",
+    "GT",
+    "GT Edition",
+    "R-Line",
+    "R-Line Edition",
+    "BlueMotion",
+    "Moda",
+    "GTD",
+    "GTD BlueLine",
+    "GTI",
+    "GTI Performance",
+    "GTI Moda",
+    "GTI Clubsport",
+    "GTI Clubsport S",
+    "GTI TCR",
+    "GTE",
+    "GTE Advance",
+    "e-Golf",
+    "R",
+    "Alltrack"
+   ],
+   "trims_by_period": {
+    "2013-2017 pre-facelift": [
+     "S",
+     "SE",
+     "Match",
+     "Match Edition",
+     "GT",
+     "GT Edition",
+     "R-Line",
+     "R-Line Edition",
+     "BlueMotion",
+     "Moda",
+     "GTD",
+     "GTI",
+     "GTI Performance",
+     "GTI Moda",
+     "GTI Clubsport",
+     "GTI Clubsport S",
+     "GTE",
+     "e-Golf",
+     "R",
+     "Alltrack"
+    ],
+    "2017-2020 facelift (7.5)": [
+     "S",
+     "SE",
+     "SE Navigation",
+     "Match",
+     "Match Edition",
+     "GT",
+     "GT Edition",
+     "R-Line",
+     "R-Line Edition",
+     "GTD",
+     "GTD BlueLine",
+     "GTI",
+     "GTI Performance",
+     "GTI TCR",
+     "GTE",
+     "GTE Advance",
+     "e-Golf",
+     "R",
+     "Alltrack"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual",
+    "6-speed DSG",
+    "7-speed DSG",
+    "Single-speed auto (e-Golf)"
+   ],
+   "notes": "Pre-facelift: S, SE, GT, GTD, GTI (+Performance), Match (Aug 2014-), R (2014-), GTE and R-Line (2015-), BlueMotion; Match/GT/R-Line Edition from Jan 2016; GTI Clubsport 40 (265PS) and Clubsport S (310PS, 3dr) in 2016; Moda/GTI Moda 2016-17. 7.5 facelift (Mar 2017): S, SE, SE Navigation, Match, GT, R-Line (+Editions), GTD (+GTD BlueLine 2017-19), GTI 230 (to 2018) and GTI Performance 245, GTI TCR 290 (2019-20), GTE/GTE Advance, e-Golf 136, R 310 (2017-19, then 300PS 2019-20). 1.0 TSI 115 from 2015 (BlueMotion, then S/SE/Match 2018-20); 1.0 TSI 85/110 and 1.5 TSI EVO 130/150 replaced the 1.2/1.4 TSI from 2017. Alltrack (2015-2020): 1.6 TDI 110 / 2.0 TDI 150/184 4Motion, plus 1.8 TSI 180 4Motion briefly in 2018. Former merged engine entries split per output. 1.2 TSI 110 kept from earlier research but unconfirmed. Golf SV and Cabriolet not included. Engine codes are the common UK fitments; multiple codes exist per output.",
+   "status": "verified",
+   "verification": "All UK derivatives on the Parkers Golf hatchback/estate 2013-2020, GTI 2013-2017, R 2014-2016, Alltrack 2015-2020 and e-Golf 2014 spec lists and their spec pages checked for outputs, cc, drive and availability; Wikipedia Mk7 powertrain table and VW petrol engine list for outputs and codes. 1.2 TSI 110 retained but unconfirmed.",
+   "sources": [
+    "https://www.honestjohn.co.uk/volkswagen/golf/2012",
+    "https://www.autoexpress.co.uk/volkswagen/golf/60741/hatchback",
+    "https://www.autoexpress.co.uk/volkswagen/golf/61003/used-volkswagen-golf-review",
+    "https://www.autocar.co.uk/node/83769",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/estate-2013/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/gti-2013/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/r-2014/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/alltrack-2015/specs/",
+    "https://www.parkers.co.uk/volkswagen/e-golf/hatchback-2014/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Volkswagen_Golf_Mk7&action=raw",
+    "https://en.wikipedia.org/w/index.php?title=List_of_Volkswagen_Group_petrol_engines&action=raw",
+    "https://www.parkers.co.uk/volkswagen/golf/estate-2013/12-tsi-(105bhp)-s-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/12-tsi-(105bhp)-bluemotion-tech-s-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/14-tsi-bluemotion-tech-s-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/14-tsi-(125bhp)-match-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/s-14-tsi-bmt-125ps-(0317-on)-3d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/estate-2013/14-tsi-act-gt-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/14-tsi-moda-dsg-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/14-tsi-(150bhp)-gt-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/14-tsi-(150bhp)-gt-edition-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/s-10-tsi-bmt-85ps-(0317-on)-3d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/se-10-tsi-bmt-110ps-(0317-on)-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/10-tsi-match-bluemotion-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/estate-2013/s-10-tsi-115ps-(0619-)-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/gti-2013/20-tsi-gti-clubsport-40-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/gti-2013/gti-clubsport-s-20-tsi-310ps-3d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/estate-2013/r-20-tsi-bmt-310ps-4motion-dsg-auto-(0317-on)-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/r-20-tsi-300ps-4motion-dsg-auto-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/alltrack-2015/18-tsi-180ps-dsg-auto-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/e-golf/hatchback-2014/e-golf-5d-auto/specs/",
+    "https://www.parkers.co.uk/volkswagen/e-golf/hatchback-2014/e-golf-auto-(0317-on)-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/16-tdi-s-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/estate-2013/s-16-tdi-bmt-90ps-(0317-on)-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/16-tdi-(105bhp)-bluemotion-tech-s-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/16-tdi-bluemotion-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/16-tdi-(110bhp)-gt-edition-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/alltrack-2015/16-tdi-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/gtd-blueline-20-tdi-bmt-184ps-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2013/se-navigation-10-tsi-115ps-5d/specs/"
+   ]
+  },
+  {
+   "make": "Volkswagen",
+   "model": "Golf",
+   "generation": "Mk8 (incl. 8.5)",
+   "years": "2020-",
+   "facelift": "2024",
+   "bodies": [
+    "5dr hatchback",
+    "5dr estate",
+    "5dr estate (Alltrack)"
+   ],
+   "engines": [
+    {
+     "badge": "1.0 TSI 110",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2024"
+    },
+    {
+     "badge": "1.0 eTSI 110",
+     "fuel": "Petrol mild hybrid",
+     "cc": 999,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2023"
+    },
+    {
+     "badge": "1.5 TSI 130",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 130,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2024"
+    },
+    {
+     "badge": "1.5 eTSI 130",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1498,
+     "ps": 130,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2023",
+     "note": "DSG only"
+    },
+    {
+     "badge": "1.5 TSI 150",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-"
+    },
+    {
+     "badge": "1.5 eTSI 150",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1498,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-"
+    },
+    {
+     "badge": "1.5 TSI 115",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-"
+    },
+    {
+     "badge": "1.5 eTSI 115",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1498,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-"
+    },
+    {
+     "badge": "1.4 TSI eHybrid 204",
+     "fuel": "Petrol plug-in hybrid",
+     "cc": 1395,
+     "ps": 204,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2024"
+    },
+    {
+     "badge": "1.4 TSI GTE 245",
+     "fuel": "Petrol plug-in hybrid",
+     "cc": 1395,
+     "ps": 245,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2024"
+    },
+    {
+     "badge": "1.5 TSI eHybrid 204",
+     "fuel": "Petrol plug-in hybrid",
+     "cc": 1498,
+     "ps": 204,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-"
+    },
+    {
+     "badge": "1.5 TSI GTE 272",
+     "fuel": "Petrol plug-in hybrid",
+     "cc": 1498,
+     "ps": 272,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-"
+    },
+    {
+     "badge": "2.0 TSI 245 (GTI)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 245,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2024"
+    },
+    {
+     "badge": "2.0 TSI 265 (GTI 8.5)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 265,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-"
+    },
+    {
+     "badge": "2.0 TSI 300 (GTI Clubsport)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 300,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-"
+    },
+    {
+     "badge": "2.0 TSI 320 (R)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 320,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2020-2024"
+    },
+    {
+     "badge": "2.0 TSI 333 (R 20 Years)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 333,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2022-2023"
+    },
+    {
+     "badge": "2.0 TSI 333 (R 8.5)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 333,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2024-"
+    },
+    {
+     "badge": "2.0 TSI 190 4Motion",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 190,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2023-2024",
+     "note": "Black Edition"
+    },
+    {
+     "badge": "2.0 TSI 204 4Motion",
+     "fuel": "Petrol",
+     "cc": null,
+     "ps": 204,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2025-2025",
+     "note": "Estate R-Line; Parkers lists 1968 cc (sic), cc left null"
+    },
+    {
+     "badge": "2.0 TSI 325 (GTI Edition 50)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 325,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2026-"
+    },
+    {
+     "badge": "2.0 TDI 115",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-"
+    },
+    {
+     "badge": "2.0 TDI 150",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-"
+    },
+    {
+     "badge": "2.0 TDI 200 (GTD)",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 200,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2023"
+    },
+    {
+     "badge": "2.0 TDI 200 4Motion (Alltrack)",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 200,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2020-2023"
+    }
+   ],
+   "trims": [
+    "Life",
+    "Active",
+    "Match",
+    "Style",
+    "Style Edition",
+    "R-Line",
+    "Black Edition",
+    "First Edition",
+    "GTI",
+    "GTI Clubsport",
+    "GTI Clubsport 45",
+    "GTI Edition 50",
+    "GTD",
+    "GTE",
+    "R",
+    "R 20 Years",
+    "R Black Edition",
+    "Alltrack"
+   ],
+   "trims_by_period": {
+    "2020-2024 Mk8": [
+     "Life",
+     "Active",
+     "Style",
+     "Style Edition",
+     "R-Line",
+     "Black Edition",
+     "GTI",
+     "GTI Clubsport",
+     "GTI Clubsport 45",
+     "GTD",
+     "GTE",
+     "R",
+     "R 20 Years",
+     "Alltrack"
+    ],
+    "2024- Mk8.5": [
+     "Life",
+     "Match",
+     "Style",
+     "R-Line",
+     "Black Edition",
+     "GTE",
+     "GTI",
+     "GTI Clubsport",
+     "GTI Edition 50",
+     "R",
+     "R Black Edition"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "7-speed DSG",
+    "6-speed DSG (eHybrid/GTE)"
+   ],
+   "notes": "2020 launch: Life, Style, R-Line (+First Edition, not in Parkers lists); GTI (manual or DSG), GTE and GTD (DSG) from late 2020, R and GTI Clubsport (DSG) from Dec 2020; eTSI 110/130/150 mild hybrids DSG-only. Active Apr-Sep 2021; GTI Clubsport 45 2021; R 20 Years (333PS) 2022-23; Style Edition Nov 2022-Oct 2023; Black Edition from Sep 2023 (incl. 2.0 TSI 190 4Motion). Alltrack (2.0 TDI 200 4Motion) 2020-2023. 8.5 facelift (Parkers from Apr 2024): Life, Match, Style, R-Line, Black Edition, GTE; GTI (265PS, DSG only), GTI Clubsport, R (333PS), R Black Edition; GTI Edition 50 (325PS) from 2026. 1.0 TSI/eTSI and 1.5 TSI/eTSI 130 replaced by 1.5 TSI/eTSI 115; GTD dropped in UK (Oct 2023); eHybrid/GTE moved to 1.5 TSI (204/272PS). Estate R-Line 2.0 TSI 204 4Motion in 2025.",
+   "status": "verified",
+   "verification": "All UK derivatives on the Parkers Golf hatchback 2020-, estate 2021-, GTI, R, GTD, GTE, eHybrid and Alltrack spec lists and their spec pages checked for outputs, cc, drive and availability (8.5 derivatives sharing a URL with a Mk8 one were not used for dates); Parkers review for the 8.5 trim ladder and 115PS base engine; Wikipedia Mk8 powertrain table. First Edition retained but unconfirmed.",
+   "sources": [
+    "https://www.autoexpress.co.uk/volkswagen/golf/352673/volkswagen-golf-review",
+    "https://www.evo.co.uk/volkswagen/golf/207291/volkswagen-golf-mk85-engine-gearbox-and-technical-highlights",
+    "https://www.autoexpress.co.uk/volkswagen/golf/358924/new-2024-volkswagen-golf-back-basics-mid-life-facelift",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2020/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/estate-2021/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/gti-2020/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/r-2020/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/gtd-2020/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/gte-2021/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/ehybrid-2024/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/alltrack-2020/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/review/",
+    "https://en.wikipedia.org/w/index.php?title=Volkswagen_Golf_Mk8&action=raw",
+    "https://www.parkers.co.uk/volkswagen/golf/alltrack-2020/20-tdi-200-4motion-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2020/10-etsi-life-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2020/15-etsi-life-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/estate-2021/15-etsi-style-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2020/15-tsi-life-5dr/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2020/14-tsi-ehybrid-style-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/gti-2020/20-tsi-300-gti-clubsport-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/r-2020/20-tsi-320-r-4motion-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/r-2020/20-tsi-333-r-20-years-4motion-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2020/20-tsi-190-black-edition-4motion-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/estate-2021/20-tsi-204-r-line-4motion-dsg-5dr/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/gti-2020/20-tsi-325-gti-edition-50-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/gtd-2020/20-tdi-gtd-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/gti-2020/20-tsi-300-gti-clubsport-45-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2020/15-tsi-150-style-edition-5dr/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2020/15-tsi-match-5dr/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2020/10-tsi-active-5dr/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/hatchback-2020/15-tsi-150-black-edition-5dr/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/r-2020/20-tsi-333-r-black-edition-4motion-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/golf/gte-2021/15-tsi-272-gte-ehybrid-5dr-dsg/specs/"
+   ]
+  },
+  {
+   "make": "Volkswagen",
+   "model": "Polo",
+   "generation": "6R/6C (Mk5)",
+   "years": "2009-2017",
+   "facelift": "2014",
+   "bodies": [
+    "3dr hatchback",
+    "5dr hatchback"
+   ],
+   "engines": [
+    {
+     "badge": "1.2 60",
+     "fuel": "Petrol",
+     "cc": 1198,
+     "ps": 60,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2009-2014",
+     "note": "6R; 5-speed manual"
+    },
+    {
+     "badge": "1.2 70",
+     "fuel": "Petrol",
+     "cc": 1198,
+     "ps": 70,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2009-2014",
+     "note": "6R; 5-speed manual"
+    },
+    {
+     "badge": "1.4 85",
+     "fuel": "Petrol",
+     "cc": 1390,
+     "ps": 85,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2009-2014",
+     "note": "6R; 5-speed manual or 7-speed DSG"
+    },
+    {
+     "badge": "1.2 TSI 90",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 90,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2017",
+     "note": "6C (from July 2014); 5-speed manual or 7-speed DSG"
+    },
+    {
+     "badge": "1.2 TSI 105",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 105,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2010-2014",
+     "note": "6R SEL and R-Line; Parkers lists 6-speed manual only"
+    },
+    {
+     "badge": "1.2 TSI 110",
+     "fuel": "Petrol",
+     "cc": 1197,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2015",
+     "note": "6C SEL (July 2014 - May 2015); 6-speed manual or 7-speed DSG"
+    },
+    {
+     "badge": "1.4 TSI ACT 140 (BlueGT)",
+     "fuel": "Petrol",
+     "cc": 1395,
+     "ps": 140,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2012-2014",
+     "note": "6-speed manual or 7-speed DSG"
+    },
+    {
+     "badge": "1.4 TSI ACT 150 (BlueGT)",
+     "fuel": "Petrol",
+     "cc": 1395,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2017",
+     "note": "6-speed manual or 7-speed DSG"
+    },
+    {
+     "badge": "1.4 TSI 180 (GTI)",
+     "fuel": "Petrol",
+     "cc": 1390,
+     "ps": 180,
+     "engine_code": "CAVE/CTHE",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2010-2014",
+     "note": "Twincharger, 7-speed DSG only; Wikipedia: CAVE engines 2010-2012, revised CTHE for 2013-2014"
+    },
+    {
+     "badge": "1.8 TSI 192 (GTI)",
+     "fuel": "Petrol",
+     "cc": 1798,
+     "ps": 192,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2017",
+     "note": "6-speed manual (320Nm) or 7-speed DSG (250Nm)"
+    },
+    {
+     "badge": "1.0 60",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 60,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2017",
+     "note": "6C; 5-speed manual"
+    },
+    {
+     "badge": "1.0 75",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 75,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2017",
+     "note": "6C; 5-speed manual"
+    },
+    {
+     "badge": "1.0 TSI 95",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 95,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2017",
+     "note": "BlueMotion only (from Feb 2015); 5-speed manual"
+    },
+    {
+     "badge": "1.0 TSI 110",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2017",
+     "note": "SEL, R-Line (from May 2015); 6-speed manual or 7-speed DSG"
+    },
+    {
+     "badge": "1.2 TDI 75",
+     "fuel": "Diesel",
+     "cc": 1199,
+     "ps": 75,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2010-2014",
+     "note": "6R; BlueMotion, plus SE (2010-2011), Match and Match Edition; 5-speed manual"
+    },
+    {
+     "badge": "1.6 TDI 75",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 75,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2009-2010",
+     "note": "6R launch SE (Oct 2009 - Apr 2010); 5-speed manual"
+    },
+    {
+     "badge": "1.6 TDI 90",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 90,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2009-2014",
+     "note": "6R SEL; 5-speed manual"
+    },
+    {
+     "badge": "1.6 TDI 105",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 105,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2009-2014",
+     "note": "Output from Wikipedia (general market); not in Parkers UK derivative listing - UK availability unconfirmed"
+    },
+    {
+     "badge": "1.4 TDI 75",
+     "fuel": "Diesel",
+     "cc": 1422,
+     "ps": 75,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2017",
+     "note": "6C; 5-speed manual"
+    },
+    {
+     "badge": "1.4 TDI 90",
+     "fuel": "Diesel",
+     "cc": 1422,
+     "ps": 90,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2017",
+     "note": "6C SEL, R-Line; 5-speed manual"
+    }
+   ],
+   "trims": [
+    "S",
+    "S A/C",
+    "Moda",
+    "Match",
+    "SE",
+    "SE Design",
+    "SEL",
+    "R-Line",
+    "BlueMotion",
+    "BlueGT",
+    "Match Edition",
+    "Beats",
+    "R-Line Style",
+    "GTI"
+   ],
+   "trims_by_period": {
+    "2009-2014 6R": [
+     "S",
+     "S A/C",
+     "Moda",
+     "SE",
+     "Match",
+     "Match Edition",
+     "SEL",
+     "R-Line",
+     "R-Line Style",
+     "BlueMotion",
+     "BlueGT",
+     "GTI"
+    ],
+    "2014-2017 6C": [
+     "S",
+     "S A/C",
+     "SE",
+     "SE Design",
+     "Match",
+     "Match Edition",
+     "Beats",
+     "SEL",
+     "R-Line",
+     "BlueMotion",
+     "BlueGT",
+     "GTI"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual",
+    "7-speed DSG"
+   ],
+   "notes": "UK (Parkers) 6R ladder Oct 2009 - Feb 2014: S (and S A/C), Moda and SE (to June 2011), Match (July 2011 - Mar 2013), Match Edition (Apr 2013 - Feb 2014), SEL, R-Line (from June 2012), R-Line Style (Apr 2013 - Feb 2014), BlueMotion (1.2 TDI), BlueGT (1.4 TSI ACT 140, from Dec 2012), GTI (1.4 TSI twincharger 180PS, 7-speed DSG only, May 2010 - Feb 2014). 6C facelift from July 2014: 1.0 60/75 three-cylinder petrols, 1.2 TSI 90/110 and 1.4 TDI 75/90 replaced the 1.2 MPI, 1.4 85, 1.2 TSI 105, 1.2 TDI and 1.6 TDI; 1.0 TSI 95 (BlueMotion, Feb 2015) and 1.0 TSI 110 (May 2015) added; trims S, SE and SE Design (to Dec 2015), Match (2016), Match Edition (2017), Beats (May 2016 - Oct 2017), SEL, R-Line, BlueMotion, BlueGT (150PS), GTI (1.8 TSI 192PS, Feb 2015 - Oct 2017, 6-speed manual or 7-speed DSG). The 6R 1.4 85 had an optional 7-speed DSG; the 1.2 TSI 105 was manual only. Year boundaries from Parkers derivative availability dates.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK spec listings (Polo Hatchback 2009-2017: all 164 derivative spec pages and 13 trim filters; Polo GTI 2010-2017: all 8 derivatives) and Wikipedia (Volkswagen Polo Mk5 powertrain tables, GTI and facelift sections). All trims and all UK petrol/diesel outputs confirmed by Parkers except the 1.6 TDI 105, which only Wikipedia lists (kept, flagged). Engine code only for the GTI 1.4 TSI (Wikipedia).",
+   "sources": [
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2009/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/gti-2010/specs/",
+    "https://en.wikipedia.org/wiki/Volkswagen_Polo_Mk5",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2009/12-tsi-se-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2009/12-tsi-(105bhp)-sel-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2009/16-tdi-cr-se-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2009/12-tdi-se-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2009/10-se-design-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2009/10-(110bhp)-r-line-5d/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Volkswagen_Polo_Mk5&action=raw",
+    "https://www.parkers.co.uk/volkswagen/polo/gti-2010/18-tsi-gti-5d/specs/"
+   ]
+  },
+  {
+   "make": "Volkswagen",
+   "model": "Polo",
+   "generation": "AW (Mk6)",
+   "years": "2017-",
+   "facelift": "2021",
+   "bodies": [
+    "5dr hatchback"
+   ],
+   "engines": [
+    {
+     "badge": "1.0 65",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 65,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2019",
+     "note": "1.0 MPI; S, SE, Beats to Mar 2019, SE Tech Edition to June 2019; 5-speed manual"
+    },
+    {
+     "badge": "1.0 75",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 75,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2019",
+     "note": "SE, Beats (Mar 2018 - Mar 2019); 5-speed manual"
+    },
+    {
+     "badge": "1.0 80",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 80,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-",
+     "note": "1.0 EVO MPI from Oct 2018; 5-speed manual"
+    },
+    {
+     "badge": "1.0 TSI 95",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 95,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-",
+     "note": "5-speed manual or 7-speed DSG"
+    },
+    {
+     "badge": "1.0 TSI 115",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020",
+     "note": "Pre-facelift SEL, R-Line (Mar 2018 - June 2020); 6-speed manual or 7-speed DSG"
+    },
+    {
+     "badge": "1.0 TSI 110",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-",
+     "note": "Parkers lists 110PS on pre-facelift SEL and R-Line only (Sep 2020 - June 2021, 6-speed manual or 7-speed DSG); a facelift 110 DSG is in Wikipedia (European data) but not in the Parkers UK listing"
+    },
+    {
+     "badge": "1.0 TSI 115",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-",
+     "note": "Facelift R-Line (from Jan 2024) and Black Edition (from July 2024); 7-speed DSG only"
+    },
+    {
+     "badge": "1.5 TSI EVO 150",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2020",
+     "note": "Not in Parkers UK derivative listing; Wikipedia (European data) lists it 2019-2021 with 7-speed DSG - UK availability unconfirmed"
+    },
+    {
+     "badge": "2.0 TSI 200 (GTI)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 200,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2020",
+     "note": "GTI and GTI+, 6-speed DSG (Mar 2018 - June 2020); GTI+ also listed with a 6-speed manual May - June 2019"
+    },
+    {
+     "badge": "2.0 TSI 207 (GTI)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 207,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2025",
+     "note": "7-speed DSG; from Apr 2021 (pre-facelift GTI/GTI+), facelift GTI Nov 2021 - Nov 2025, GTI Edition 25 Aug 2023 - Mar 2024"
+    },
+    {
+     "badge": "1.6 TDI 80",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 80,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2019",
+     "note": "SE, Beats (Mar 2018 - Mar 2019); 5-speed manual"
+    },
+    {
+     "badge": "1.6 TDI 95",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 95,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020",
+     "note": "SEL (to June 2020); 5-speed manual"
+    }
+   ],
+   "trims": [
+    "S",
+    "SE",
+    "SE Tech Edition",
+    "Beats",
+    "SEL",
+    "R-Line",
+    "GTI",
+    "GTI+",
+    "United",
+    "Match",
+    "Active",
+    "Life",
+    "Style",
+    "GTI Edition 25",
+    "Black Edition",
+    "Edition 50",
+    "Match Plus"
+   ],
+   "trims_by_period": {
+    "2017-2021 pre-facelift": [
+     "S",
+     "SE",
+     "Beats",
+     "SEL",
+     "R-Line",
+     "SE Tech Edition",
+     "Match",
+     "United",
+     "Active",
+     "GTI",
+     "GTI+"
+    ],
+    "2021- facelift": [
+     "Life",
+     "Style",
+     "R-Line",
+     "Match",
+     "Black Edition",
+     "Edition 50",
+     "Match Plus",
+     "GTI",
+     "GTI Edition 25"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual",
+    "6-speed DSG (GTI 200PS)",
+    "7-speed DSG"
+   ],
+   "notes": "UK (Parkers) pre-facelift ladder: S (to June 2020), SE (to May 2020), Beats (to June 2021), SEL, R-Line (from May 2018), SE Tech Edition (Mar - June 2019), Match (Feb 2020 - June 2021), United (Apr - Nov 2020), Active (Apr - June 2021), GTI/GTI+ (200PS 6-speed DSG Mar 2018 - June 2020; 207PS 7-speed DSG from Apr 2021). 2021 facelift (on sale Sep 2021): Life, Style (Parkers to Jan 2025), R-Line; Match returned Jan 2024, Black Edition from July 2024, Edition 50 from June 2025, Match Plus from June 2026; facelift GTI Nov 2021 - Nov 2025 with GTI Edition 25 (Aug 2023 - Mar 2024). Base 1.0 MPI (65/75, then EVO 80 from Oct 2018) is 5-speed manual; 1.0 TSI 95 5-speed manual or 7-speed DSG; 1.0 TSI 115 6-speed manual or DSG pre-facelift and DSG-only (R-Line, Black Edition) from 2024. Diesels (1.6 TDI 80/95) gone by mid-2020. Parkers GTI review says no manual GTI after 2017, but Parkers spec data lists a manual GTI+ for May - June 2019.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK spec listings (Polo Hatchback 2017-on: all 57 derivative pages and 14 trim filters; Polo GTI 2018-2025: all 5 derivatives), the Parkers Polo and Polo GTI reviews (2026) and Wikipedia (Volkswagen Polo Mk6 powertrain tables). The 1.5 TSI EVO 150 and the facelift 1.0 TSI 110 are not in the Parkers UK listing (kept, flagged). The Parkers 2021 facelift news URL in sources now redirects to the news index.",
+   "sources": [
+    "https://www.carbuyer.co.uk/volkswagen/polo/303017/facelifted-2021-volkswagen-polo-on-sale-now",
+    "https://www.evo.co.uk/volkswagen/polo/203772/facelifted-2021-volkswagen-polo-priced-from-ps17885",
+    "https://parkers.co.uk/car-news/2021/volkswagen-polo-facelift",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2017/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/gti-2018/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/review/",
+    "https://www.parkers.co.uk/volkswagen/polo/gti/review/",
+    "https://en.wikipedia.org/wiki/Volkswagen_Polo_Mk6",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2017/se-10-65ps-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2017/se-10-75ps-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2017/beats-10-80ps-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2017/10-tsi-115-r-line-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2017/10-tsi-110-sel-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/gti-2018/gti-20-tsi-200ps-dsg-auto-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/gti-2018/20-tsi-207-gti-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2017/se-16-tdi-80ps-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/polo/hatchback-2017/10-tsi-95-se-tech-edition-5d/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Volkswagen_Polo_Mk6&action=raw"
+   ]
+  },
+  {
+   "make": "Volkswagen",
+   "model": "T-Roc",
+   "generation": "Mk1 (A1)",
+   "years": "2017-",
+   "facelift": "2022",
+   "bodies": [
+    "5dr SUV",
+    "2dr cabriolet"
+   ],
+   "engines": [
+    {
+     "badge": "1.0 TSI 115",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2017-2020",
+     "note": "Pre-facelift S, SE, Design, SEL, Black Edition, United; Cabriolet Design (Jan - Nov 2020); 6-speed manual"
+    },
+    {
+     "badge": "1.0 TSI 110",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2024",
+     "note": "SUV Nov 2020 - Oct 2024 (pre-facelift and facelift Life/Style/Match), Cabriolet Dec 2020 - Jan 2024; 6-speed manual"
+    },
+    {
+     "badge": "1.0 TSI 115",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-",
+     "note": "Facelift: SUV Life, Match, Style, Style Design (Feb 2024 - Oct 2025); Cabriolet Style (from Jan 2024); 6-speed manual"
+    },
+    {
+     "badge": "1.5 TSI EVO 150",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2017-",
+     "note": "6-speed manual or 7-speed DSG; 4MOTION DSG listed only Jan - Feb 2019 (SEL, R-Line)"
+    },
+    {
+     "badge": "2.0 TSI 190 4MOTION",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 190,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2017-2025",
+     "note": "7-speed DSG; SEL, R-Line, facelift Style/R-Line (to Jan 2025)"
+    },
+    {
+     "badge": "2.0 TSI 300 (R)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 300,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2019-2025",
+     "note": "T-Roc R, 4MOTION 7-speed DSG (Oct 2019 - June 2025); R Black Edition Aug 2024 - June 2025"
+    },
+    {
+     "badge": "1.6 TDI 115",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2020",
+     "note": "6-speed manual"
+    },
+    {
+     "badge": "2.0 TDI 115",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-2025",
+     "note": "6-speed manual; pre-facelift S/SE/Design/Black Edition/Active, facelift Life/Style (to Jan 2025)"
+    },
+    {
+     "badge": "2.0 TDI 150",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2017-2025",
+     "note": "4MOTION 6-speed manual Dec 2017 - Apr 2019; FWD manual or DSG from Feb 2019; facelift FWD manual/DSG and 4MOTION DSG (to Apr 2025)"
+    }
+   ],
+   "trims": [
+    "S",
+    "SE",
+    "Design",
+    "SEL",
+    "R-Line",
+    "First Edition",
+    "United",
+    "Active",
+    "Life",
+    "Style",
+    "Black Edition",
+    "Match",
+    "Style Design",
+    "Black Edition Plus",
+    "R",
+    "R Black Edition"
+   ],
+   "trims_by_period": {
+    "2017-2021 pre-facelift": [
+     "S",
+     "SE",
+     "Design",
+     "SEL",
+     "R-Line",
+     "First Edition",
+     "Black Edition",
+     "United",
+     "Active",
+     "R"
+    ],
+    "2022- facelift": [
+     "Life",
+     "Style",
+     "R-Line",
+     "Match",
+     "Black Edition",
+     "Style Design",
+     "Black Edition Plus",
+     "R",
+     "R Black Edition"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "7-speed DSG"
+   ],
+   "notes": "UK (Parkers) pre-facelift SUV (Dec 2017 - Oct 2021): S, SE, Design, SEL, R-Line (from Apr 2018), Black Edition (May 2020 - Oct 2021), United (July 2020 - May 2021), Active (Apr - Sep 2021); First Edition (from the original record) is not in the Parkers listing. Facelift SUV (Feb 2022 - Oct 2025): Life, Style, R-Line, Match (2024-2025), Black Edition (July 2024 - Apr 2025), Style Design and Black Edition Plus (May - Oct 2025). T-Roc R Oct 2019 - June 2025 (R Black Edition 2024-2025). Cabriolet (Parkers from Jan 2020): Design, R-Line, Active (2021), then Style and R-Line with 1.0 TSI and 1.5 TSI only (no Black Edition Cabriolet in the Parkers listing). Wikipedia: SUV production Nov 2017 - Nov 2025 (second-generation T-Roc not included), Cabriolet production to 2027. The 1.0 TSI was 115PS to 2020, 110PS 2020-2024 and 115PS again from 2024. 2.0 TSI, R and 4MOTION diesels use the 7-speed DSG except the early 2.0 TDI 150 4MOTION manual.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK spec listings (T-Roc SUV 2017-2025: all 96 derivative pages and 13 trim filters; T-Roc Cabriolet: all 15; T-Roc R: all 3) and Wikipedia (Volkswagen T-Roc first generation infobox, Cabriolet section and engine table). Parkers gives 1984cc for the early 2.0 TDI 4MOTION manual; 1968cc kept (Wikipedia and later Parkers TDI pages).",
+   "sources": [
+    "https://www.carbuyer.co.uk/volkswagen/t-roc/303621/new-2022-volkswagen-t-roc-facelift-unveiled",
+    "https://www.fleetnews.co.uk/cars/reviews/vw-t-roc-15-tsi-r-line",
+    "https://www.honestjohn.co.uk/volkswagen/t-roc/2017/",
+    "https://www.autoexpress.co.uk/volkswagen/t-roc/355996/new-2022-volkswagen-t-roc-r-pricing-powertrain-and-tech",
+    "https://www.parkers.co.uk/volkswagen/t-roc/suv-2017/specs/",
+    "https://www.parkers.co.uk/volkswagen/t-roc/cabriolet-2020/specs/",
+    "https://www.parkers.co.uk/volkswagen/t-roc/r-2019/specs/",
+    "https://en.wikipedia.org/wiki/Volkswagen_T-Roc",
+    "https://www.parkers.co.uk/volkswagen/t-roc/suv-2017/10-tsi-match-5dr/specs/",
+    "https://www.parkers.co.uk/volkswagen/t-roc/suv-2017/10-tsi-115-life-5dr/specs/",
+    "https://www.parkers.co.uk/volkswagen/t-roc/suv-2017/sel-15-tsi-evo-150ps-4motion-dsg-auto-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/t-roc/suv-2017/20-tsi-4motion-style-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/t-roc/r-2019/20-tsi-300-4motion-r-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/t-roc/suv-2017/20-tdi-evo-style-5dr/specs/",
+    "https://www.parkers.co.uk/volkswagen/t-roc/suv-2017/20-tdi-150-evo-r-line-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/t-roc/suv-2017/15-tsi-black-edition-plus-5dr-dsg/specs/"
+   ]
+  },
+  {
+   "make": "Volkswagen",
+   "model": "Tiguan",
+   "generation": "Mk2 (AD1)",
+   "years": "2016-2024",
+   "facelift": "2020",
+   "bodies": [
+    "5dr SUV"
+   ],
+   "engines": [
+    {
+     "badge": "1.4 TSI 125",
+     "fuel": "Petrol",
+     "cc": 1395,
+     "ps": 125,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2020",
+     "note": "S, SE (to Dec 2018), SE Nav (to Nov 2020); 6-speed manual"
+    },
+    {
+     "badge": "1.4 TSI ACT 150",
+     "fuel": "Petrol",
+     "cc": 1395,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2016-2018",
+     "note": "6-speed manual or 6-speed DSG; 4MOTION on SE Nav (Aug 2017 - June 2018)"
+    },
+    {
+     "badge": "1.5 TSI EVO 130",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 130,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2021",
+     "note": "6-speed manual; S, SE, SE Nav, Match, facelift base Tiguan and Active (to Dec 2021)"
+    },
+    {
+     "badge": "1.5 TSI EVO 150",
+     "fuel": "Petrol",
+     "cc": 1498,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2024",
+     "note": "6-speed manual or 7-speed DSG"
+    },
+    {
+     "badge": "2.0 TSI 180 4MOTION",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 180,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2016-2019",
+     "note": "7-speed DSG (to Mar 2019); 6-speed manual SEL/R-Line listed Oct 2016 - Apr 2017"
+    },
+    {
+     "badge": "2.0 TSI 220 4MOTION",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 220,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2016-2018",
+     "note": "Wikipedia (Europe) lists 220PS 2016-2018; not in Parkers UK derivative listing - UK availability unconfirmed"
+    },
+    {
+     "badge": "2.0 TSI 230 4MOTION",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 230,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2018-2020",
+     "note": "SEL, R-Line, R-Line Tech; 7-speed DSG (Dec 2018 - Nov 2020)"
+    },
+    {
+     "badge": "2.0 TSI 190 4MOTION",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 190,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2018-2024",
+     "note": "7-speed DSG; from Nov 2018 (SEL, R-Line, R-Line Tech), facelift Elegance, R-Line, Black Edition"
+    },
+    {
+     "badge": "2.0 TSI 245 4MOTION",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 245,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2020-2024",
+     "note": "Facelift R-Line, 7-speed DSG; Parkers lists it Feb 2021 - May 2023"
+    },
+    {
+     "badge": "2.0 TSI 320 (R)",
+     "fuel": "Petrol",
+     "cc": 1984,
+     "ps": 320,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2021-2024",
+     "note": "Tiguan R, 7-speed DSG (Parkers Feb 2021 - Oct 2023)"
+    },
+    {
+     "badge": "1.4 TSI eHybrid 245",
+     "fuel": "Petrol plug-in hybrid",
+     "cc": 1395,
+     "ps": 245,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2024",
+     "note": "Plug-in hybrid, 6-speed DSG (Parkers Aug 2021 - Nov 2023)"
+    },
+    {
+     "badge": "2.0 TDI 115",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2019",
+     "note": "S only, 6-speed manual (Apr 2016 - Apr 2019)"
+    },
+    {
+     "badge": "1.6 TDI 115",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2019",
+     "note": "S only, 6-speed manual; Parkers lists it July - Dec 2019"
+    },
+    {
+     "badge": "2.0 TDI 150",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD",
+      "AWD"
+     ],
+     "years": "2016-2024",
+     "note": "6-speed manual or 7-speed DSG, FWD or 4MOTION"
+    },
+    {
+     "badge": "2.0 TDI 190",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 190,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2016-2020",
+     "note": "4MOTION 7-speed DSG"
+    },
+    {
+     "badge": "2.0 BiTDI 240",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 240,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2016-2020",
+     "note": "4MOTION 7-speed DSG"
+    },
+    {
+     "badge": "2.0 TDI 200",
+     "fuel": "Diesel",
+     "cc": 1968,
+     "ps": 200,
+     "engine_code": null,
+     "drive": [
+      "AWD"
+     ],
+     "years": "2020-2024",
+     "note": "4MOTION 7-speed DSG; facelift Elegance, R-Line, Black Edition"
+    }
+   ],
+   "trims": [
+    "S",
+    "SE",
+    "SE Nav",
+    "Match",
+    "SEL",
+    "R-Line",
+    "R-Line Tech",
+    "Active",
+    "Tiguan",
+    "Life",
+    "Elegance",
+    "R-Line Edition",
+    "Black Edition",
+    "R"
+   ],
+   "trims_by_period": {
+    "2016-2020 pre-facelift": [
+     "S",
+     "SE",
+     "SE Nav",
+     "SEL",
+     "R-Line",
+     "Match",
+     "R-Line Tech"
+    ],
+    "2020-2024 facelift": [
+     "Tiguan",
+     "Life",
+     "Active",
+     "Elegance",
+     "R-Line",
+     "R-Line Edition",
+     "Black Edition",
+     "R"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "6-speed DSG (1.4 TSI ACT 150, eHybrid)",
+    "7-speed DSG"
+   ],
+   "notes": "UK (Parkers) pre-facelift (Apr 2016 - Nov 2020): S, SE (to Dec 2018), SE Nav, SEL, R-Line, Match and R-Line Tech (Dec 2018 - Nov 2020). Facelift (from Oct 2020): base Tiguan (1.5 TSI 130), Life, Elegance, R-Line, Active (Apr - Dec 2021), R-Line Edition (Nov 2022 - Nov 2023), Black Edition (Mar - Nov 2023), eHybrid (from Aug 2021) and R (from Feb 2021). 2.0 TSI and 2.0 TDI 190/200/240 are 4MOTION DSG (a 6-speed manual 2.0 TSI 180 4MOTION was listed Oct 2016 - Apr 2017). Parkers dates the last Mk2 derivatives Nov 2023 (generation shown as 2016-2024). Tiguan Allspace (7-seat, 2017-) is a separate model line. Mk3 Tiguan from 2024 not included.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK spec listing (Tiguan Estate 2016-2024: all 108 derivative pages and 15 trim filters) and Wikipedia (Volkswagen Tiguan second-generation Europe powertrain table). Parkers lists a single 1.4 TSI 160PS \"Moda\" 4MOTION derivative (2016-2017) that looks misfiled from the Mk1 - not added. The 2.0 TSI 220 rests on Wikipedia only (kept, flagged).",
+   "sources": [
+    "https://www.fleetnews.co.uk/news/manufacturer-news/2020/10/16/volkswagen-opens-order-book-for-facelifted-tiguan-suv-range",
+    "https://www.parkers.co.uk/car-news/2020/vw-tiguan-facelift",
+    "https://www.autoexpress.co.uk/volkswagen/tiguan/352025/facelifted-volkswagen-tiguan-prices-start-ps24915",
+    "https://www.parkers.co.uk/volkswagen/tiguan/estate-2016/specs/",
+    "https://en.wikipedia.org/wiki/Volkswagen_Tiguan",
+    "https://www.parkers.co.uk/volkswagen/tiguan/estate-2016/se-navigation-14-tsi-125ps-2wd-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/tiguan/estate-2016/15-tsi-5dr/specs/",
+    "https://www.parkers.co.uk/volkswagen/tiguan/estate-2016/20-tsi-bmt-(180bhp)-4motion-sel-5d-dsg/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Volkswagen_Tiguan&action=raw",
+    "https://www.parkers.co.uk/volkswagen/tiguan/estate-2016/sel-20-tsi-230ps-4motion-dsg-auto-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/tiguan/estate-2016/sel-20-tsi-190ps-4motion-dsg-auto-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/tiguan/estate-2016/20-tsi-245-4motion-r-line-5dr-dsg/specs/",
+    "https://www.parkers.co.uk/volkswagen/tiguan/estate-2016/s-20-tdi-scr-bmt-115ps-2wd-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/tiguan/estate-2016/s-16-tdi-scr-115ps-2wd-5d/specs/",
+    "https://www.parkers.co.uk/volkswagen/tiguan/estate-2016/r-line-14-tsi-150ps-act-2wd-dsg-auto-5d/specs/"
+   ]
+  },
+  {
+   "make": "Vauxhall",
+   "model": "Corsa",
+   "generation": "E",
+   "years": "2014-2019",
+   "facelift": null,
+   "bodies": [
+    "3dr hatchback",
+    "5dr hatchback"
+   ],
+   "engines": [
+    {
+     "badge": "1.2 70",
+     "fuel": "Petrol",
+     "cc": 1229,
+     "ps": 70,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2016",
+     "note": "5-speed manual; Parkers lists it Oct 2014 - Jan 2016 (replaced by the 1.4 75)"
+    },
+    {
+     "badge": "1.4 75",
+     "fuel": "Petrol",
+     "cc": 1398,
+     "ps": 75,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2019",
+     "note": "5-speed manual; from Jan 2016"
+    },
+    {
+     "badge": "1.4 90",
+     "fuel": "Petrol",
+     "cc": 1398,
+     "ps": 90,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2019",
+     "note": "5-speed manual, 5-speed Easytronic or 6-speed auto"
+    },
+    {
+     "badge": "1.4 Turbo 100",
+     "fuel": "Petrol",
+     "cc": 1364,
+     "ps": 100,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2019",
+     "note": "6-speed manual; to Aug 2019"
+    },
+    {
+     "badge": "1.4 Turbo 150",
+     "fuel": "Petrol",
+     "cc": 1364,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2019",
+     "note": "6-speed manual; Black Edition and Red Edition (Sep 2015 - Apr 2018), White Edition (Sep 2017 - Apr 2018), GSi (Sep 2018 - Apr 2019)"
+    },
+    {
+     "badge": "1.0 ecoTEC Turbo 90",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 90,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018",
+     "note": "6-speed manual; to May 2018"
+    },
+    {
+     "badge": "1.0 ecoTEC Turbo 115",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 115,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018",
+     "note": "6-speed manual; Sting, Sting R, Excite, Energy, Limited Edition, SRi VX-Line (to June 2018)"
+    },
+    {
+     "badge": "1.6 Turbo 205 (VXR)",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": 205,
+     "engine_code": "B16LER",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2018",
+     "note": "6-speed manual; VXR and VXR Performance Pack (May 2015 - Apr 2018); the Opel OPC version is rated 207PS"
+    },
+    {
+     "badge": "1.3 CDTi 75",
+     "fuel": "Diesel",
+     "cc": 1248,
+     "ps": 75,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018",
+     "note": "5-speed manual; to Apr 2018"
+    },
+    {
+     "badge": "1.3 CDTi 95",
+     "fuel": "Diesel",
+     "cc": 1248,
+     "ps": 95,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2014-2018",
+     "note": "5-speed manual or 5-speed Easytronic; to June 2018"
+    }
+   ],
+   "trims": [
+    "Life",
+    "Sting",
+    "Sting R",
+    "Excite",
+    "Design",
+    "Energy",
+    "Limited Edition",
+    "SRi",
+    "SRi VX-Line",
+    "SE",
+    "Elite",
+    "Griffin",
+    "Black Edition",
+    "Red Edition",
+    "White Edition",
+    "Diamond",
+    "Active",
+    "Sport",
+    "SE Nav",
+    "SRi Nav",
+    "SRi VX-Line Nav Black",
+    "GSi",
+    "VXR",
+    "VXR Performance Pack"
+   ],
+   "trims_by_period": {
+    "2014-2018 launch ladder": [
+     "Life",
+     "Sting",
+     "Sting R",
+     "Excite",
+     "Design",
+     "Energy",
+     "Limited Edition",
+     "SE",
+     "SRi",
+     "SRi VX-Line",
+     "Elite",
+     "Black Edition",
+     "Red Edition",
+     "White Edition",
+     "Diamond",
+     "VXR",
+     "VXR Performance Pack"
+    ],
+    "2018-2019 Nav ladder": [
+     "Active",
+     "Design",
+     "Energy",
+     "Sport",
+     "SE Nav",
+     "SRi Nav",
+     "SRi VX-Line Nav Black",
+     "Griffin",
+     "GSi"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual (1.0 Turbo, 1.4 Turbo, VXR)",
+    "5-speed Easytronic automated manual (1.4 90, 1.3 CDTi 95)",
+    "6-speed auto (1.4 90)"
+   ],
+   "notes": "UK (Parkers) Oct 2014 - Aug 2019; no formal facelift. Launch ladder: Life and Excite (to July 2015), Sting (to June 2018), Sting R (1.0 Turbo 115, to Nov 2017), Design, Energy (from Sep 2015), Limited Edition, SE, SRi, SRi VX-Line, Elite (May 2016 - Apr 2018), Black/Red Edition (1.4 Turbo 150, Sep 2015 - Apr 2018), White Edition (Sep 2017 - Apr 2018), Diamond (2017). May 2018 reshuffle: Active, Design, Energy, Sport, SE Nav, SRi Nav, SRi VX-Line Nav Black, Griffin (from Nov 2018), GSi (1.4 Turbo 150, Sep 2018 - Apr 2019). The 1.0 Turbo and 1.3 CDTi engines went in mid-2018, leaving the 1.4 75/90 and 1.4 Turbo 100/150. VXR (1.6 Turbo 205PS, May 2015 - Apr 2018) is listed separately by Parkers. Platform and many engines carried from Corsa D.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK spec listings (Corsa Hatchback 2014-2019: all 236 derivative pages and 22 trim filters; Corsa VXR 2015-2018: both derivatives) and Wikipedia (Opel Corsa, Corsa E section and engine table). All trims and engine outputs confirmed by Parkers; VXR engine code from Wikipedia.",
+   "sources": [
+    "https://vehiclescore.co.uk/cars/vauxhall/corsa/corsa-e-2015-2019/1-0-petrol-115ps-petrol/sri-vx-line-manual-hatchback",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2014/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/vxr-2015/specs/",
+    "https://en.wikipedia.org/wiki/Opel_Corsa",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2014/12-design-3d/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2014/14-(75bhp)-design-3d/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2014/14t-ecotec-energy-[ac]-5d/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2014/14t-(150bhp)-black-edition-3d/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2014/design-10i-turbo-(90ps)-ss-ecotec-5d/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2014/sri-vx-line-10i-turbo-(115ps)-ss-3d/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2014/design-13cdti-(75ps)-ss-3d/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2014/design-13cdti-(95ps)-ss-ecotec-5d/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Opel_Corsa&action=raw",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2014/se-nav-14i-(90ps)-auto-5d/specs/"
+   ]
+  },
+  {
+   "make": "Vauxhall",
+   "model": "Corsa",
+   "generation": "F",
+   "years": "2019-",
+   "facelift": "2023",
+   "bodies": [
+    "5dr hatchback"
+   ],
+   "engines": [
+    {
+     "badge": "1.2 75",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 75,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2023",
+     "note": "5-speed manual; Parkers last lists it July 2023 (Design, GS) - not offered on the facelift"
+    },
+    {
+     "badge": "1.2 Turbo 100",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 100,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-",
+     "note": "6-speed manual or 8-speed auto"
+    },
+    {
+     "badge": "1.2 Turbo 130",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 130,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2024",
+     "note": "8-speed auto only; Parkers lists it Nov 2020 - Nov 2024, replaced by the Hybrid 136/145"
+    },
+    {
+     "badge": "1.2 Hybrid 100",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1199,
+     "ps": 100,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-2025",
+     "note": "48V mild hybrid, 6-speed e-DCT; Design, GS, Ultimate, YES (Jan 2024 - Apr 2025)"
+    },
+    {
+     "badge": "1.2 Hybrid 136",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1199,
+     "ps": 136,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-2025",
+     "note": "6-speed e-DCT; GS, Ultimate, YES (Jan 2024 - Apr 2025)"
+    },
+    {
+     "badge": "1.2 Hybrid 110",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1199,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "6-speed e-DCT; replaced the Hybrid 100 from Apr 2025"
+    },
+    {
+     "badge": "1.2 Hybrid 145",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1199,
+     "ps": 145,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "6-speed e-DCT; GS, Ultimate, YES; replaced the Hybrid 136 from Apr 2025"
+    },
+    {
+     "badge": "1.5 Turbo D 100",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 102,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2022",
+     "note": "6-speed manual; rated 102PS, badged 100; last listed Apr 2022"
+    },
+    {
+     "badge": "Corsa-e / Corsa Electric 136",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 136,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2020-",
+     "note": "100kW, 50kWh; Corsa-e (orders from Nov 2019) to July 2023, then Corsa Electric 100kW"
+    },
+    {
+     "badge": "Corsa Electric 156",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 156,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-",
+     "note": "115kW, 51kWh; from July 2023"
+    }
+   ],
+   "trims": [
+    "SE",
+    "SE Nav",
+    "SRi",
+    "SRi Nav",
+    "Elite",
+    "Elite Nav",
+    "Ultimate Nav",
+    "SE Premium",
+    "SE Nav Premium",
+    "SRi Premium",
+    "SRi Nav Premium",
+    "Elite Nav Premium",
+    "Elite Premium",
+    "Griffin",
+    "Griffin Edition",
+    "Elite Edition",
+    "SE Edition",
+    "SRi Edition",
+    "Design",
+    "GS Line",
+    "Ultimate",
+    "Anniversary Edition",
+    "YES Edition",
+    "GS",
+    "GSE"
+   ],
+   "trims_by_period": {
+    "2019-2022 launch": [
+     "SE",
+     "SE Nav",
+     "SE Premium",
+     "SE Nav Premium",
+     "SRi",
+     "SRi Nav",
+     "SRi Premium",
+     "SRi Nav Premium",
+     "Elite",
+     "Elite Nav",
+     "Elite Nav Premium",
+     "Elite Premium",
+     "Ultimate Nav",
+     "Griffin",
+     "Griffin Edition",
+     "Elite Edition",
+     "SE Edition",
+     "SRi Edition",
+     "Ultimate"
+    ],
+    "2022-2023": [
+     "Design",
+     "GS Line",
+     "GS",
+     "Ultimate",
+     "Anniversary Edition"
+    ],
+    "2024- facelift": [
+     "Design",
+     "GS",
+     "Ultimate",
+     "YES Edition"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual (1.2 75)",
+    "6-speed manual",
+    "8-speed auto",
+    "6-speed e-DCT (Hybrid)",
+    "single-speed reduction (Electric)"
+   ],
+   "notes": "UK (Parkers) launch Dec 2019: SE, SE Nav, SRi, SRi Nav, Elite Nav, Ultimate Nav plus Premium versions (to 2021); Elite (Nov 2020 - May 2021), Griffin and Griffin Edition (2021), SE/SRi/Elite Edition (Sep 2021 - Apr 2022), Ultimate from Sep 2021. April 2022: Design, GS Line, Ultimate; GS Line renamed GS Jan 2023. Corsa-e (Nov 2019 - July 2023) followed the same ladder (SE Nav, Elite Nav, Premium versions, Griffin, GS Line, Ultimate, Anniversary Edition Aug 2022 - Apr 2023, GS), then Corsa Electric (from July 2023) in Design, GS, Ultimate, YES. Facelift unveiled May 2023 (Wikipedia), Parkers facelift derivatives from Jan 2024: Design, GS, Ultimate, YES Edition (from Apr 2024); mild hybrids 100/136 Jan 2024 - Apr 2025, then 110/145. 1.2 Turbo 130 auto only. 1.5 diesel (rated 102PS, badged 100) dropped Apr 2022. Corsa GSE (207kW electric) revealed May 2026, not yet in the Parkers listings.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK spec listings (Corsa Hatchback 2020-on: all 102 derivative pages and 23 trim filters; Corsa-e 2020-2023: 21; Corsa Electric 2023-on: 13) and Wikipedia (Opel Corsa, Corsa F powertrain table, facelift and Corsa GSE sections). Parkers misfiles one Corsa E 1.4 75 derivative under the Corsa F listing - ignored.",
+   "sources": [
+    "https://www.motorpoint.co.uk/model-guides/vauxhall-corsa-models-and-trim-levels-explained",
+    "https://Www.Parkers.co.uk/car-buying/2019/which-vauxhall-corsa-is-right-for-me/",
+    "https://www.fleetnews.co.uk/news/manufacturer-news/2020/11/25/vauxhall-expands-corsa-line-up-and-cuts-prices",
+    "https://www.media.stellantis.com/uk-en/vauxhall/press/vauxhall-corsa-yes-2025-special-edition-offers-customers-more-choice-with-new-powertrain-option",
+    "https://www.honestjohn.co.uk/young-drivers/learner-road-tests/learning-to-drive-in-a-vauxhall-corsa/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2020/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa-e/hatchback-2020/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa-electric/hatchback-2023/specs/",
+    "https://en.wikipedia.org/wiki/Opel_Corsa",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2020/12-design-5dr/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2020/12-turbo-[130]-gs-5dr-auto/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2020/12-turbo-hybrid-design-5dr-e-dct6/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2020/12-turbo-hybrid-[136]-gs-5dr-e-dct6/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2020/12-turbo-hybrid-145-gs-5dr-e-dct6/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa/hatchback-2020/15-turbo-d-elite-edition-5dr/specs/",
+    "https://www.parkers.co.uk/vauxhall/corsa-e/hatchback-2020/se-nav-electric-propulsion-(136ps)-auto-5d/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Opel_Corsa&action=raw"
+   ]
+  },
+  {
+   "make": "Vauxhall",
+   "model": "Astra",
+   "generation": "K",
+   "years": "2015-2021",
+   "facelift": "2019",
+   "bodies": [
+    "5dr hatchback",
+    "5dr estate (Sports Tourer)"
+   ],
+   "engines": [
+    {
+     "badge": "1.4 100",
+     "fuel": "Petrol",
+     "cc": 1399,
+     "ps": 100,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2018",
+     "note": "Non-turbo; 5-speed manual; Parkers Dec 2015 - June 2018"
+    },
+    {
+     "badge": "1.4 75",
+     "fuel": "Petrol",
+     "cc": 1399,
+     "ps": 75,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2019",
+     "note": "Not found in the Parkers UK listing (only a 100PS non-turbo 1.4 among 254 Astra K derivatives) or the Wikipedia Astra K engine table - kept from the original record, UK availability doubtful"
+    },
+    {
+     "badge": "1.0 Turbo 105",
+     "fuel": "Petrol",
+     "cc": 999,
+     "ps": 105,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2019",
+     "note": "5-speed manual or 5-speed Easytronic"
+    },
+    {
+     "badge": "1.4 Turbo 125",
+     "fuel": "Petrol",
+     "cc": 1399,
+     "ps": 125,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2019",
+     "note": "6-speed manual"
+    },
+    {
+     "badge": "1.4 Turbo 150",
+     "fuel": "Petrol",
+     "cc": 1399,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2019",
+     "note": "6-speed manual or 6-speed auto"
+    },
+    {
+     "badge": "1.6 Turbo 200",
+     "fuel": "Petrol",
+     "cc": 1598,
+     "ps": 200,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2019",
+     "note": "6-speed manual; SRi, SRi VX-Line (Nav), Elite (Nav), Ultimate"
+    },
+    {
+     "badge": "1.6 CDTi 110",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2019",
+     "note": "6-speed manual"
+    },
+    {
+     "badge": "1.6 CDTi 136",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 136,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2015-2019",
+     "note": "6-speed manual or 6-speed auto"
+    },
+    {
+     "badge": "1.6 BiTurbo CDTi 160",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 160,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2016-2018",
+     "note": "6-speed manual; Jan 2016 - June 2018"
+    },
+    {
+     "badge": "1.6 BiTurbo CDTi 150",
+     "fuel": "Diesel",
+     "cc": 1598,
+     "ps": 150,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2018-2019",
+     "note": "BlueInjection BiTurbo, 6-speed manual; Elite Nav, SRi VX-Line Nav, Ultimate (Oct 2018 - Feb 2019)"
+    },
+    {
+     "badge": "1.2 Turbo 110",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 110,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2021",
+     "note": "6-speed manual; Business Edition Nav, SE, SRi (Nav)"
+    },
+    {
+     "badge": "1.2 Turbo 130",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 130,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2021",
+     "note": "6-speed manual; Sports Tourer Business Edition Nav listed to Feb 2022"
+    },
+    {
+     "badge": "1.2 Turbo 145",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 145,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2021",
+     "note": "6-speed manual"
+    },
+    {
+     "badge": "1.4 Turbo 145 CVT",
+     "fuel": "Petrol",
+     "cc": 1342,
+     "ps": 145,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2021",
+     "note": "CVT (7 stepped ratios); to Apr 2021"
+    },
+    {
+     "badge": "1.5 Turbo D 105",
+     "fuel": "Diesel",
+     "cc": 1496,
+     "ps": 105,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2021",
+     "note": "6-speed manual"
+    },
+    {
+     "badge": "1.5 Turbo D 122",
+     "fuel": "Diesel",
+     "cc": 1496,
+     "ps": 122,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2019-2021",
+     "note": "6-speed manual or 9-speed auto"
+    }
+   ],
+   "trims": [
+    "Design",
+    "Tech Line",
+    "Tech Line Nav",
+    "Energy",
+    "SRi",
+    "SRi Nav",
+    "SRi VX-Line",
+    "SRi VX-Line Nav",
+    "Elite",
+    "Elite Nav",
+    "Ultimate",
+    "Griffin",
+    "Business Edition Nav",
+    "SE",
+    "Ultimate Nav",
+    "Elite Nav Premium",
+    "Griffin Edition"
+   ],
+   "trims_by_period": {
+    "2015-2019 pre-facelift": [
+     "Design",
+     "Tech Line",
+     "Tech Line Nav",
+     "Energy",
+     "SE",
+     "SRi",
+     "SRi Nav",
+     "SRi VX-Line",
+     "SRi VX-Line Nav",
+     "Elite",
+     "Elite Nav",
+     "Ultimate",
+     "Griffin"
+    ],
+    "2019-2021 facelift": [
+     "Business Edition Nav",
+     "SE",
+     "SRi",
+     "SRi Nav",
+     "SRi VX-Line Nav",
+     "Elite Nav",
+     "Elite Nav Premium",
+     "Ultimate Nav",
+     "Griffin",
+     "Griffin Edition"
+    ]
+   },
+   "transmissions": [
+    "5-speed manual",
+    "6-speed manual",
+    "5-speed Easytronic (1.0 Turbo 105)",
+    "6-speed auto",
+    "CVT (1.4 Turbo 145)",
+    "9-speed auto (1.5 Turbo D 122)"
+   ],
+   "notes": "UK (Parkers) launch July 2015 (Sports Tourer Feb 2016): Design, Tech Line (to Sep 2017, then Tech Line Nav), Energy (to Dec 2017), SRi, SRi Nav, SRi VX-Line and SRi VX-Line Nav (from Jan 2017), Elite (to Feb 2018), Elite Nav, SE (from Oct 2017), Ultimate (Jan 2018 - Aug 2019), Griffin (Jan - Aug 2019). Sept 2019 facelift brought the 1.2 Turbo three-cylinder (110/130/145), 1.4 Turbo 145 CVT and 1.5 Turbo D (105/122) with Business Edition Nav, SE, SRi, SRi Nav, SRi VX-Line Nav, Elite Nav and Ultimate Nav (to Aug 2020), Elite Nav Premium (Aug 2020 - Sep 2021), Griffin (2021) and Sports Tourer Griffin Edition (Feb 2021 - Feb 2022). The 1.6 BiTurbo CDTi was 160PS to June 2018, then a 150PS BlueInjection version to Feb 2019. Parkers lists Sports Tourer facelift derivatives to Feb 2022. GM-era Astra; engines differ from Astra L. Facelift 1.2 Turbo 145 listed by VehicleScore as 146PS.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK spec listings (Astra Hatchback 2015-2021: all 162 derivative pages and 16 trim filters; Astra Sports Tourer 2016-2021: all 92 and 10 trim filters) and Wikipedia (Opel Astra, Astra K engine tables). All trims and outputs confirmed except the 1.4 75, found in neither source (kept, flagged).",
+   "sources": [
+    "https://vehiclescore.co.uk/cars/vauxhall/astra",
+    "https://www.autoexpress.co.uk/vauxhall/astra/prices-specs/90600/1.5-turbo-d-sri-nav-5dr",
+    "https://www.autoexpress.co.uk/vauxhall/astra/prices-specs/90596/1.2-turbo-130-business-edition-nav-5dr",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2015/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/sports-tourer-2016/specs/",
+    "https://en.wikipedia.org/wiki/Opel_Astra",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2015/14i-16v-energy-5d/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2015/ultimate-16cdti-biturbo-(160ps)-ss-5d/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2015/ultimate-16cdti-biturbo-(150ps)-ss-blueinjection-5d/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2015/se-14-turbo-(145ps)-stepless-auto-(0919-on)-5d/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2015/ultimate-14i-turbo-(150ps)-ss-auto-5d/specs/"
+   ]
+  },
+  {
+   "make": "Vauxhall",
+   "model": "Astra",
+   "generation": "L",
+   "years": "2022-",
+   "facelift": "2026",
+   "bodies": [
+    "5dr hatchback",
+    "5dr estate (Sports Tourer)"
+   ],
+   "engines": [
+    {
+     "badge": "1.2 Turbo 110",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 110,
+     "engine_code": "EB2ADT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2022-2025",
+     "note": "Design only, 6-speed manual; Parkers last lists it May 2025"
+    },
+    {
+     "badge": "1.2 Turbo 130",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 130,
+     "engine_code": "EB2DTS",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2022-2026",
+     "note": "6-speed manual or 8-speed auto; Parkers last lists it June 2026 (not in the 2026 facelift launch line-up)"
+    },
+    {
+     "badge": "1.2 Hybrid 136",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1199,
+     "ps": 136,
+     "engine_code": "EB2LTEDH2",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-2025",
+     "note": "48V mild hybrid, 6-speed e-DCT; Design, GS, Ultimate (Feb 2024 - May 2025)"
+    },
+    {
+     "badge": "1.2 Hybrid 145",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1199,
+     "ps": 145,
+     "engine_code": "EB2LTEDH2",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "6-speed e-DCT; Design (May 2025), then GS, Griffin, Ultimate (from June 2025)"
+    },
+    {
+     "badge": "1.5 Turbo D 130",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 130,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2022-2025",
+     "note": "6-speed manual or 8-speed auto; Parkers lists diesels to Oct 2025 (hatch Ultimate auto) and Dec 2025 (Sports Tourer GS auto), plus facelift 1.5 Turbo D 130 auto GS/Griffin/Ultimate for June 2026 only"
+    },
+    {
+     "badge": "1.6 Hybrid 180",
+     "fuel": "Petrol plug-in hybrid",
+     "cc": 1598,
+     "ps": 180,
+     "engine_code": "EP6FDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2022-2025",
+     "note": "8-speed auto, 12.4kWh battery; replaced by the Plug-in Hybrid 195 from Sep 2025"
+    },
+    {
+     "badge": "1.6 Plug-in Hybrid 195",
+     "fuel": "Petrol plug-in hybrid",
+     "cc": 1598,
+     "ps": 195,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "7-speed e-DCT, 17.2kWh battery; GS, Ultimate (from Sep 2025), Griffin (from May 2026)"
+    },
+    {
+     "badge": "1.6 Hybrid 225 (GSe)",
+     "fuel": "Petrol plug-in hybrid",
+     "cc": 1598,
+     "ps": 225,
+     "engine_code": "EP6FDT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-2026",
+     "note": "GSe: 8-speed auto Jan 2023 - May 2025; 7-speed e-DCT version Sep 2025 - June 2026"
+    },
+    {
+     "badge": "Astra Electric 156",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 156,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2023-",
+     "note": "115kW, 54kWh (55kWh from May 2026); hatch from June 2023, Sports Tourer from Nov 2023"
+    }
+   ],
+   "trims": [
+    "Business Edition",
+    "Design",
+    "GS Line",
+    "Ultimate",
+    "Elite",
+    "GS",
+    "GSe",
+    "Griffin"
+   ],
+   "trims_by_period": {
+    "2022-2023 launch": [
+     "Business Edition",
+     "Design",
+     "Elite",
+     "GS Line",
+     "Ultimate"
+    ],
+    "2023-2025": [
+     "Design",
+     "GS",
+     "GSe",
+     "Ultimate",
+     "Griffin"
+    ],
+    "2025-": [
+     "Griffin",
+     "GS",
+     "Ultimate",
+     "GSe"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "8-speed auto",
+    "6-speed e-DCT (1.2 Hybrid)",
+    "7-speed e-DCT (Plug-in Hybrid from 2025)",
+    "single-speed reduction (Electric)"
+   ],
+   "notes": "UK (Parkers) launch (orders late 2021, deliveries 2022): Design, GS Line, Ultimate, plus Business Edition (to mid-2022) and Elite (briefly at launch). GS Line renamed GS in Jan 2023; GSe (PHEV 225) from Jan 2023; Griffin entry trim from Aug 2024; Design dropped May 2025, leaving Griffin, GS, Ultimate. The mild hybrid 136 (Feb 2024) became the Hybrid 145 in mid-2025; the PHEV 180 (8-speed auto) was replaced by the Plug-in Hybrid 195 with a 7-speed e-DCT in Sep 2025 (GSe also moved to the e-DCT7). Facelift revealed Jan 2026, UK sales from 28 May 2026 (Wikipedia); Parkers review: mild hybrid, updated plug-in hybrid and Electric, Griffin/GS/Ultimate, cheaper petrols to follow. Diesel listed by Parkers into late 2025. Astra Electric 156 from June 2023 (Sports Tourer Nov 2023).",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK spec listings (Astra Hatchback 2021-on: 46 derivative pages; Sports Tourer 2022-on: 32; Astra GSe: 2; Astra Electric hatch and Sports Tourer: 16), the Parkers Astra review (2026) and Wikipedia (Opel Astra, Astra L engine tables, Electric and Facelift (2026) sections). Engine codes from Wikipedia; the diesel code is left null because Wikipedia gives both DV5 and DV6 TED4. Parkers lists the diesel as 1498cc; 1499cc kept (Wikipedia).",
+   "sources": [
+    "https://www.vauxhall.co.uk/hub/datasheet/astra-my26-gb.html",
+    "https://drive.co.uk/cars/vauxhall/astra/sports-tourer/review",
+    "https://www.carkeys.co.uk/guides/buyer-s-guide-to-the-2023-vauxhall-astra",
+    "https://parkers.co.uk/vauxhall/astra/hatchback-2021/specs",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2021/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/sports-tourer-2022/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/gse-2023/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra-electric/hatchback-2024/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra-electric/sports-tourer-2024/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/review/",
+    "https://en.wikipedia.org/wiki/Opel_Astra",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2021/12-turbo-hybrid-[136]-gs-5dr-e-dct6/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2021/12-turbo-design-5dr/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2021/12-turbo-130-griffin-5dr/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2021/16-plug-in-hybrid-195-gs-5dr-e-dct7/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/gse-2023/16-hybrid-gse-5dr-auto/specs/",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2021/15-turbo-d-ultimate-5dr-auto/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Opel_Astra&action=raw",
+    "https://www.parkers.co.uk/vauxhall/astra/hatchback-2021/15-turbo-d-business-edition-5dr/specs/"
+   ]
+  },
+  {
+   "make": "Vauxhall",
+   "model": "Mokka",
+   "generation": "B",
+   "years": "2021-",
+   "facelift": "2024",
+   "bodies": [
+    "5dr SUV"
+   ],
+   "engines": [
+    {
+     "badge": "1.2 Turbo 100",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 100,
+     "engine_code": "EB2ADTD/F12XHL",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2025",
+     "note": "6-speed manual; last listed May 2025 (Design, GS, Griffin)"
+    },
+    {
+     "badge": "1.2 Turbo 130",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 130,
+     "engine_code": "EB2ADTS/F12XHT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-",
+     "note": "8-speed auto (6-speed manual until Nov 2022, then replaced by the 136 manual)"
+    },
+    {
+     "badge": "1.2 Turbo 136",
+     "fuel": "Petrol",
+     "cc": 1199,
+     "ps": 136,
+     "engine_code": "EB2ADTS/F12XHT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2022-",
+     "note": "6-speed manual; Design, GS Line/GS, Ultimate, Black, Griffin, YES (from Nov 2022)"
+    },
+    {
+     "badge": "1.2 Hybrid 136",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1199,
+     "ps": 136,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-2025",
+     "note": "48V mild hybrid, 6-speed e-DCT; GS, Griffin, Ultimate, Design (June 2024 - May 2025)"
+    },
+    {
+     "badge": "1.2 Hybrid 145",
+     "fuel": "Petrol mild hybrid",
+     "cc": 1199,
+     "ps": 145,
+     "engine_code": "EB2LTEDH2",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "6-speed e-DCT; Design, GS, Griffin, Ultimate, YES (from Apr 2025)"
+    },
+    {
+     "badge": "1.5 Turbo D 110",
+     "fuel": "Diesel",
+     "cc": 1499,
+     "ps": 110,
+     "engine_code": "F15DT",
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2022",
+     "note": "6-speed manual; Parkers Design and GS Line diesels end Aug 2022 (one Ultimate entry runs to May 2025, apparently a listing artefact)"
+    },
+    {
+     "badge": "Mokka-e 136",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 136,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2021-2025",
+     "note": "100kW, 50kWh; Parkers lists 100kW versions Aug 2020 - May 2025 (incl. Design from Sep 2023, Griffin from Apr 2024)"
+    },
+    {
+     "badge": "Mokka Electric 156",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 156,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2024-",
+     "note": "115kW, 54kWh; from Jan 2024 (Mokka-e listing), Mokka Electric listing from Dec 2024"
+    },
+    {
+     "badge": "Mokka GSE 281",
+     "fuel": "Electric",
+     "cc": null,
+     "ps": 281,
+     "engine_code": null,
+     "drive": [
+      "FWD"
+     ],
+     "years": "2025-",
+     "note": "207kW, 54kWh; from Sep 2025"
+    }
+   ],
+   "trims": [
+    "SE",
+    "SE Premium",
+    "SE Nav Premium",
+    "SE Edition",
+    "SRi",
+    "SRi Premium",
+    "SRi Nav Premium",
+    "Elite Nav",
+    "Elite Nav Premium",
+    "Elite Premium",
+    "Elite Edition",
+    "Launch Edition",
+    "Ultimate Edition",
+    "Ultimate Nav",
+    "Design",
+    "GS Line",
+    "GS",
+    "Ultimate",
+    "Black",
+    "Griffin",
+    "YES",
+    "GSE"
+   ],
+   "trims_by_period": {
+    "2021-2022 launch": [
+     "SE",
+     "SE Premium",
+     "SE Nav Premium",
+     "SE Edition",
+     "SRi",
+     "SRi Premium",
+     "SRi Nav Premium",
+     "Elite Nav",
+     "Elite Nav Premium",
+     "Elite Premium",
+     "Elite Edition",
+     "Launch Edition",
+     "Ultimate Edition",
+     "Ultimate Nav",
+     "Ultimate"
+    ],
+    "2022-2024": [
+     "Design",
+     "GS Line",
+     "GS",
+     "Ultimate",
+     "Black",
+     "Griffin"
+    ],
+    "2024- facelift": [
+     "Design",
+     "GS",
+     "Ultimate",
+     "Griffin",
+     "YES",
+     "GSE"
+    ]
+   },
+   "transmissions": [
+    "6-speed manual",
+    "8-speed auto",
+    "6-speed e-DCT (Hybrid)",
+    "single-speed reduction (Electric)"
+   ],
+   "notes": "UK (Parkers) launch (orders Sep 2020, deliveries 2021): SE, SRi, Elite Nav, Ultimate Nav, Launch Edition plus Premium/Nav Premium versions; Mokka-e Ultimate Edition (2021). Sep 2021 - Apr 2022: SE/SRi/Elite Premium, SE Edition, Elite Edition, Ultimate. April 2022: Design, GS Line, Ultimate (GS Line renamed GS Jan 2023; Mokka-e also GS Line/Ultimate, later Design); Black special (Apr - July 2023); Griffin entry trim from Apr 2024; YES from July 2026. 1.2 Turbo 130 is auto (manual until Nov 2022, then a 136 manual); mild hybrid 136 June 2024 - May 2025, then Hybrid 145. Diesel 1.5 dropped 2022. Mokka-e (100kW/136PS) sold to May 2025; 115kW/156PS from Jan 2024; renamed Mokka Electric with the facelift (unveiled Oct 2024; Parkers Mokka Electric listing from Dec 2024). Mokka GSE (207kW) from Sep 2025.",
+   "status": "verified",
+   "verification": "Checked 2026-11-18 against Parkers UK spec listings (Mokka SUV 2020-on: all 75 derivative pages and 18 trim filters; Mokka-e 2020-2025: 16; Mokka Electric 2025-on: 5; Mokka Electric GSE: 1) and Wikipedia (Opel Mokka, Mokka B engine table, facelift and Mokka GSE sections). Engine codes from the Wikipedia Mokka B table. Several Parkers derivatives from trims that ended in 2022 carry a May 2025 end date (listing artefact) and were not used for end years.",
+   "sources": [
+    "https://vauxhall.co.uk/experience/vauxhall-news/2020/09/vauxhall-confirms-prices-and-specs-for-all-new-mokka-and-mokka-e.html",
+    "https://www.motor1.com/news/579072/vauxhall-corsa-mokka-range-pricing/",
+    "https://businessmotoring.co.uk/vauxhall-mokka-update-sees-price-changes/",
+    "https://vehiclescore.co.uk/cars/vauxhall/mokka",
+    "https://www.parkers.co.uk/vauxhall/mokka/suv-2020/specs/",
+    "https://www.parkers.co.uk/vauxhall/mokka-e/suv-2020/specs/",
+    "https://www.parkers.co.uk/vauxhall/mokka-electric/suv-2025/specs/",
+    "https://www.parkers.co.uk/vauxhall/mokka-electric/gse-2025/specs/",
+    "https://en.wikipedia.org/wiki/Opel_Mokka",
+    "https://www.parkers.co.uk/vauxhall/mokka/suv-2020/12-turbo-100-gs-5dr/specs/",
+    "https://www.parkers.co.uk/vauxhall/mokka/suv-2020/12-turbo-136-design-5dr/specs/",
+    "https://www.parkers.co.uk/vauxhall/mokka/suv-2020/12-turbo-hybrid-136-gs-5dr-e-dct6/specs/",
+    "https://www.parkers.co.uk/vauxhall/mokka/suv-2020/12-turbo-hybrid-145-gs-5dr-e-dct6/specs/",
+    "https://www.parkers.co.uk/vauxhall/mokka/suv-2020/15-turbo-d-design-5dr/specs/",
+    "https://www.parkers.co.uk/vauxhall/mokka-e/suv-2020/100kw-griffin-50kwh-5dr-auto/specs/",
+    "https://www.parkers.co.uk/vauxhall/mokka-e/suv-2020/115kw-gs-54kwh-5dr-auto/specs/",
+    "https://www.parkers.co.uk/vauxhall/mokka-electric/gse-2025/207kw-gse-54kwh-5dr-auto/specs/",
+    "https://en.wikipedia.org/w/index.php?title=Opel_Mokka&action=raw"
+   ]
+  }
+ ],
+ "verified": "2026-11-18"
 }
