@@ -910,7 +910,11 @@ const lines = async (id) => (await t.getJob(id)).lines;
   await step('provenance: applied AI text recorded in job.aiText and sent with labels[].ai, titleByAi / captionByAi and the ADAS fit', async () => {
     await openTab(A, 'vehicle');
     await page.fill('[data-bind="vehicle.adas"]', 'Windscreen camera (lane keeping), front radar'); await flush();
+    // another photo analysis of A: the captions the first run applied are still AI text, although the AI's newest suggestions differ
     await openTab(A, 'photos');
+    await page.click('[data-act="aiAnalyse"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 8000 }); await flush();
+    const run = (await t.calls('ai.analysePhotos')).pop().arg;
+    assert.deepStrictEqual([run.captionByAi, run.titleByAi, run.adas], [[true, true], [false, false], 'Windscreen camera (lane keeping), front radar'], 'analysis provenance: ' + JSON.stringify([run.captionByAi, run.titleByAi, run.adas]));
     await page.click('[data-act="aiApplySummary"]'); await flush();
     await openTab(A, 'valuation');
     await page.click('[data-act="aiValApply"]'); await flush();
@@ -919,12 +923,8 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert.deepStrictEqual([j.aiText['circumstances.impactType'], j.aiText['circumstances.direction'], j.aiText['report.summary'], j.aiText['valuation.comments']],
       ['Sideswipe / lateral side contact', 'Rear to front', 'DRAFT2 summary', 'AI valuation comments **£5,700**'], JSON.stringify(j.aiText));
     assert(!('inspection.condition' in j.aiText) || j.aiText['inspection.condition'] === j.inspection.condition, 'a field the summary did not fill keeps its own record');
-    // the second photo analysis of A sent the AI captions (applied by the first) as AI text, though the AI's newest suggestions differ
     const door = j.photos.find((p) => p.title === 'RH front door');
-    const runs = (await t.calls('ai.analysePhotos')).map((c) => c.arg).filter((c) => (c.ids || []).includes(door.id));
-    assert(runs.length >= 2, 'two runs on A');
-    assert.deepStrictEqual([runs[1].captionByAi, runs[1].titleByAi], [[true, true], [false, false]], 'second run provenance: ' + JSON.stringify([runs[1].captionByAi, runs[1].titleByAi]));
-    assert(door.aiCaption !== door.caption, 'the newest AI suggestion differs from the applied caption');
+    assert(door.aiCaption !== door.caption && j.aiText['photos.' + door.id + '.caption'] === door.caption, 'the applied caption is recorded; the newest AI suggestion differs');
     // narrative: aiText (job fields only), photo provenance and label provenance
     await openTab(A, 'opinion');
     await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await settle(150);
@@ -964,7 +964,7 @@ const lines = async (id) => (await t.getJob(id)).lines;
     await page.fill('#aiKey', 'sk-ant-valid-key-123'); await page.click('[data-act="aiSaveKey"]'); await settle(300);
     assert(/API key saved, but without proper encryption/.test(await toastText()), 'saved without encryption: ' + await toastText());
     await t.mock({ aiStatusError: '', aiProtection: 'os', dataProtection: 'os' });
-    await t.go('#/settings'); await settle(300);
+    await t.go('#/jobs'); await settle(200); await t.go('#/settings'); await settle(300);
     assert(/AI assessor ready/.test(await text('#aiState')) && !(await exists('.errBox')) && !(await exists('.keyWarn')), 'back to normal: ' + await text('#aiState'));
     assert(/The key is encrypted by your operating system/.test(await text('.aiStorage')), 'os wording');
   });
