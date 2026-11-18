@@ -1037,10 +1037,19 @@
   // A photo card's controls say which photo they act on: its figure number, or its place on the page when it is not in the
   // report. refreshPhotoNumbers keeps the names current when a photo is moved, removed, included or excluded.
   const photoRef = (pos, n) => (n ? figLabel(n) : `photo ${pos} (not in report)`);
-  const PHOTO_CONTROLS = { up: '[data-act="pmove"][data-d="-1"]', down: '[data-act="pmove"][data-d="1"]', del: '[data-act="pdel"]', title: '[data-pf="title"]', caption: '[data-pf="caption"]', source: '[data-pf="source"]', include: '[data-pf="include"]', taken: '[data-pf="takenAt"]', labels: 'button[data-act="label"]' };
+  const PHOTO_CONTROLS = { up: '[data-act="pmove"][data-d="-1"]', down: '[data-act="pmove"][data-d="1"]', del: '[data-act="pdel"]', title: '[data-pf="title"]', caption: '[data-pf="caption"]', source: '[data-pf="source"]', include: '[data-pf="include"]', taken: '[data-pf="takenAt"]', labels: 'button[data-act="label"]',
+    confirmTitle: '[data-act="aiConfirm"][data-field="title"]', confirmCaption: '[data-act="aiConfirm"][data-field="caption"]' };
   function photoNames(p, pos, n) {
     const r = photoRef(pos, n), R = r.charAt(0).toUpperCase() + r.slice(1);
-    return { up: `Move ${r} earlier`, down: `Move ${r} later`, del: `Remove ${r}`, title: `${R} title`, caption: `${R} caption`, source: `${R} source`, include: `${R} in report`, taken: `${R} taken`, labels: `Edit labels (${(p.labels || []).length}) for ${r}` };
+    return { up: `Move ${r} earlier`, down: `Move ${r} later`, del: `Remove ${r}`, title: `${R} title`, caption: `${R} caption`, source: `${R} source`, include: `${R} in report`, taken: `${R} taken`, labels: `Edit labels (${(p.labels || []).length}) for ${r}`,
+      confirmTitle: `Confirm AI text: ${R} title`, confirmCaption: `Confirm AI text: ${R} caption` };
+  }
+  // A photo's title or caption still holding the text the AI applied, unchanged (job.aiText, core.js's rule): its note and
+  // "✓ Confirm". Shown on photos left out of the report too, though only those in the report are listed by the checks.
+  function photoAiReview(p, field, name) {
+    const t = isObj(job.aiText) ? job.aiText[photoTextPath(p, field)] : null, cur = p[field];
+    if (typeof t !== 'string' || !t.trim() || typeof cur !== 'string' || !cur.trim() || !sameText(t, cur)) return null;
+    return aiReviewBox(photoTextPath(p, field), `✦ AI ${field}, not edited yet`, name.replace(/^Confirm AI text: /, ''), ` data-pid="${esc(p.id)}" data-field="${field}"`);
   }
   // ISO date-time ↔ the local "YYYY-MM-DDTHH:MM" a datetime-local input shows
   const localDT = (iso) => { const d = iso ? new Date(iso) : null; if (!d || isNaN(d)) return ''; const p2 = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}T${p2(d.getHours())}:${p2(d.getMinutes())}`; };
@@ -1048,14 +1057,15 @@
   // Controls name their photo by id, so moving or removing a card never needs the grid rebuilt.
   function photoCard(p, n, pos) {
     const pid = esc(p.id), nm = photoNames(p, pos, n);
+    const rt = photoAiReview(p, 'title', nm.title), rc = photoAiReview(p, 'caption', nm.caption);
     return `<div class="pcard ${p.exclude ? 'excluded' : ''}" data-pid="${pid}">
       <div class="pimg" data-act="label" data-pid="${pid}" title="Click to edit labels"><div class="pin"><img src="${esc(p.thumb || p.dataUrl)}" alt="">${Labeler.overlay(p.labels)}</div></div>
       <div class="pbody">
         <div class="row"><b class="pnum${n ? '' : ' out'}">${figLabel(n)}</b>${p.aiLabelled ? `<span class="badge ${p.labelsReviewed ? 'ok' : 'ai'}" title="${p.labelsReviewed ? 'Labels saved by the assessor' : 'Open the labels and save them once checked'}">AI labelled${p.labelsReviewed ? ' · reviewed' : ''}</span>` : ''}<span class="grow"></span>
           <button class="btn sm" data-act="pmove" data-pid="${pid}" data-d="-1" title="Move earlier" aria-label="${esc(nm.up)}">↑</button><button class="btn sm" data-act="pmove" data-pid="${pid}" data-d="1" title="Move later" aria-label="${esc(nm.down)}">↓</button>
           <button class="btn sm danger" data-act="pdel" data-pid="${pid}" title="Remove" aria-label="${esc(nm.del)}">✕</button></div>
-        <input data-pf="title" data-pid="${pid}" value="${esc(p.title)}" placeholder="Title, e.g. RH front door - surface damage" aria-label="${esc(nm.title)}">
-        <textarea data-pf="caption" data-pid="${pid}" placeholder="Caption" aria-label="${esc(nm.caption)}">${esc(p.caption)}</textarea>
+        <input data-pf="title" data-pid="${pid}" value="${esc(p.title)}" placeholder="Title, e.g. RH front door - surface damage" aria-label="${esc(nm.title)}"${rt ? ` aria-describedby="${rt.id}"` : ''}>${rt ? rt.html : ''}
+        <textarea data-pf="caption" data-pid="${pid}" placeholder="Caption" aria-label="${esc(nm.caption)}"${rc ? ` aria-describedby="${rc.id}"` : ''}>${esc(p.caption)}</textarea>${rc ? rc.html : ''}
         <div class="row"><input data-pf="source" data-pid="${pid}" value="${esc(p.source)}" placeholder="Source" class="grow" style="width:auto" aria-label="${esc(nm.source)}">
           <label class="hint"><input type="checkbox" data-pf="include" data-pid="${pid}" ${p.exclude ? '' : 'checked'} style="width:auto" aria-label="${esc(nm.include)}"> in report</label></div>
         <label class="hint row" style="gap:6px;flex-wrap:nowrap" title="When the photo was taken: read from the photo's EXIF data or the file date. Correct it if it is wrong.">Taken<input type="datetime-local" data-pf="takenAt" data-pid="${pid}" value="${localDT(p.takenAt)}" style="width:auto;flex:1" aria-label="${esc(nm.taken)}"></label>
