@@ -472,7 +472,8 @@
         fs.push(field('Marked for export (DVLA)', flag(dv.markedForExport)));
         fs.push(field('Marked as scrapped (DVLA)', flag(dv.markedAsScrapped)));
         // DVLA's registration dates have the month (or the year) only: printed so, never with an invented day
-        const regAt = [dv.firstRegistration ? `first registered ${regDate(dv.firstRegistration, fromDvla && precision === 'year' ? 'year' : 'month')}` : '',
+        const dvFirst = dv.firstRegistration || (present(dv.firstRegistrationYear) ? String(dv.firstRegistrationYear).trim() : ''); // 'YYYY-MM-01', or the year only
+        const regAt = [dvFirst ? `first registered ${regDate(dvFirst, fromDvla && precision === 'year' ? 'year' : 'month')}` : '',
           dv.firstRegistrationWithDvla ? `first registered with DVLA ${regDate(dv.firstRegistrationWithDvla, 'month')}` : ''].filter(Boolean).join(', ');
         fs.push(field('Imported / re-registered (DVLA)', dv.importedOrReRegistered === true ? `<strong>Yes</strong>${regAt ? ' — ' + t(regAt) : ''}` : flag(dv.importedOrReRegistered)));
         if (dv.dateOfLastV5CIssued) fs.push(field('Last V5C issued (DVLA)', t(ukDate(dv.dateOfLastV5CIssued))));

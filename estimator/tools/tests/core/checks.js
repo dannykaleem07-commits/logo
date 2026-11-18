@@ -810,8 +810,15 @@ section('R4 qa/structural: a negation counts only when it denies the damage (#14
     'The B-pillar was inspected and not found to be damaged.'
   ];
   for (const s of denies) check('denies damage (Cat N silent, Cat S warns): ' + s, catN(s) === 0 && catS(s) === 1, [catN(s), catS(s)]);
-  // neither: a negation of something that is not the damage, without any damage recorded
+  for (const s of ['No damage to a principal structural member has been identified.', 'The vehicle has not sustained any structural damage.', 'Damage is confined to bolt-on panels; no structural members are affected.', 'There is no need to replace the A-pillar.']) {
+    check('denies damage (Cat N silent, Cat S warns): ' + s, catN(s) === 0 && catS(s) === 1, [catN(s), catS(s)]);
+  }
+  for (const s of ['The A-pillar is deformed and the sill is not damaged.', 'Minor structural damage, not requiring sectioning.', 'The A-pillar damage is not severe.']) {
+    check('records damage (Cat N warns, Cat S silent): ' + s, catN(s) === 1 && catS(s) === 0, [catN(s), catS(s)]);
+  }
+  // neither: a negation of something that is not the damage, without any damage recorded; or a speculative "not ruled out"
   check('"The chassis leg was not inspected." neither records nor denies (no false Cat S warning)', catN('The chassis leg was not inspected.') === 0 && catS('The chassis leg was not inspected.') === 0);
+  check('"Structural damage has not been ruled out." / "…not yet been excluded" are speculative: neither', ['Structural damage has not been ruled out.', 'Structural damage to the chassis leg has not yet been excluded.'].every((s) => catN(s) === 0 && catS(s) === 0));
   check('the sample text (Category N) still gives no warning, and still warns under Category S', catN(Sample.sampleJob().assessment.structural) === 0 && catS(Sample.sampleJob().assessment.structural) === 1);
 }
 

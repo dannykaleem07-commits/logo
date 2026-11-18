@@ -661,6 +661,21 @@ console.log('\n28. DVLA: month-only dates printed as months; flags DVLA did not 
   check('imported: "first registered August 2014, first registered with DVLA February 2016" (no invented day), beside "19 August 2014"', t3.includes('First registration date 19 August 2014') && t3.includes('Imported / re-registered (DVLA) Yes — first registered August 2014, first registered with DVLA February 2016') && !/01\/08\/2014|01\/02\/2016/.test(t3));
   job.vehicle.dvla.firstRegistrationWithDvla = '';
   check('a DVLA date that is missing is left out', s3().includes('Imported / re-registered (DVLA) Yes — first registered August 2014 ') && !s3().includes('with DVLA'));
+  job.vehicle.dvla = { importedOrReRegistered: true, firstRegistration: '', firstRegistrationYear: 1968, firstRegistrationWithDvla: '1975-06-01' };
+  check('DVLA gave the year only (firstRegistration "", firstRegistrationYear 1968): "first registered 1968"', s3().includes('Yes — first registered 1968, first registered with DVLA June 1975'));
+  // the connector's own output (vehicledata.js normaliseDvla), as the app stores it
+  let normaliseDvla = null;
+  try { normaliseDvla = require('../../../vehicledata.js').normaliseDvla; } catch (e) { /* reported below */ }
+  check('vehicledata.js exports normaliseDvla', typeof normaliseDvla === 'function');
+  if (typeof normaliseDvla === 'function') {
+    job.vehicle.dvla = normaliseDvla({ registrationNumber: 'OLD1', yearOfFirstRegistration: 1968, taxStatus: 'SORN' });
+    job.vehicle.firstReg = '1968'; job.vehicle.firstRegPrecision = 'year';
+    t3 = s3();
+    check('a VES reply with no flags and a year only: "Not stated by DVLA" three times, no "No", first registration "1968"', (t3.match(/\(DVLA\) Not stated by DVLA/g) || []).length === 3 && !/\(DVLA\) No\b/.test(t3) && t3.includes('First registration date 1968 ') && !t3.includes('January 1968'), t3.slice(t3.indexOf('First registration'), t3.indexOf('First registration') + 60));
+    job.vehicle.dvla = normaliseDvla({ registrationNumber: 'AA19PPP', monthOfFirstRegistration: '2019-03', monthOfFirstDvlaRegistration: '2019-03', markedForExport: false });
+    t3 = s3();
+    check('a VES reply with markedForExport false and no markedAsScrapped: "No" for export, "Not stated by DVLA" for scrapped, "No" for imported', t3.includes('Marked for export (DVLA) No') && t3.includes('Marked as scrapped (DVLA) Not stated by DVLA') && t3.includes('Imported / re-registered (DVLA) No'));
+  }
 }
 
 console.log('\n29. First registration: invalid months printed as entered; month-only and year-only dates (R4 #8, connectors review)');
