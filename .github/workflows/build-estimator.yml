@@ -6,6 +6,15 @@ on:
       - 'estimator/**'
       - '.github/workflows/build-estimator.yml'
   workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Publish the Windows build on the Releases page (a plain download link, no sign-in needed)'
+        type: boolean
+        default: false
+      from_run_id:
+        description: 'Publish the build of an earlier green run instead of building again (its run ID)'
+        type: string
+        default: ''
 
 permissions:
   contents: read
@@ -13,6 +22,7 @@ permissions:
 jobs:
   tests:
     name: Tests (unit, mocked APIs, UI smoke test)
+    if: ${{ !inputs.from_run_id }}
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -43,6 +53,7 @@ jobs:
   windows:
     name: Build Windows installer and portable .exe
     needs: tests
+    if: ${{ !inputs.from_run_id }}
     runs-on: windows-latest
     defaults:
       run:
@@ -72,3 +83,49 @@ jobs:
           path: |
             estimator/dist/*.exe
           if-no-files-found: error
+
+  # Only on request (Run workflow → "Publish the Windows build"). This job runs no project code, so it alone may write.
+  release:
+    name: Publish the download (GitHub Release)
+    needs: windows
+    if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.publish_release && (inputs.from_run_id != '' || needs.windows.result == 'success') }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: Engineer-Report-Studio-Windows
+          path: dist
+          run-id: ${{ inputs.from_run_id || github.run_id }}
+          github-token: ${{ github.token }}
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN: ${{ inputs.from_run_id || github.run_id }}
+        run: |
+          set -euo pipefail
+          ls -la dist
+          setup=$(ls dist/*-Setup-*.exe | head -n1)
+          ver=$(basename "$setup" | sed -E 's/.*-Setup-(.*)\.exe$/\1/')
+          tag="v$ver"
+          sha=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$RUN" --jq .head_sha)
+          sha256sum dist/*.exe > dist/SHA256SUMS.txt
+          cat > notes.md <<EOF
+          **Engineer Report Studio $ver for Windows 10/11 (64-bit).** Built and tested by GitHub Actions run [$RUN](https://github.com/$GITHUB_REPOSITORY/actions/runs/$RUN) from commit $sha.
+
+          Download **one** of these (under *Assets* below):
+          - \`engineer-report-studio-Setup-$ver.exe\` (installer: Start menu entry and uninstaller), or
+          - \`engineer-report-studio-$ver-portable.exe\` (runs without installing).
+
+          The app is not code-signed yet, so Windows may warn the first time: click **More info → Run anyway**. Checksums are in SHA256SUMS.txt.
+          EOF
+          if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release upload "$tag" dist/*.exe dist/SHA256SUMS.txt --clobber --repo "$GITHUB_REPOSITORY"
+            gh release edit "$tag" --notes-file notes.md --latest --repo "$GITHUB_REPOSITORY"
+          else
+            gh release create "$tag" dist/*.exe dist/SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --target "$sha" \
+              --title "Engineer Report Studio $ver" --notes-file notes.md --latest
+          fi
+          echo "Download page: https://github.com/$GITHUB_REPOSITORY/releases/tag/$tag"
