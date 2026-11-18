@@ -53,6 +53,24 @@ assert([...w213.trims, ...Object.values(w213.trims_by_period || {}).flat()].some
 for (const m of V) { assert(m.make && m.model && Array.isArray(m.engines) && m.engines.length, `variant ${m.make} ${m.model} has engines`); }
 console.log(`✓ variants: ${V.length} model generations, ${V.reduce((n, m) => n + m.engines.length, 0)} engines (E 220 d AMG Line Premium Plus available)`);
 
+// Variant picker → researched OEM numbers: a vehicle picked from each generation (model "Fiesta (Mk8)", a year inside the
+// generation) links to that generation's research only, and every researched vehicle is reachable from the picker.
+const reached = new Set();
+const span = (y) => { const m = /^(\d{4})-(\d{4})?$/.exec(String(y || '')); return m ? [+m[1], m[2] ? +m[2] : 2026] : null; };
+for (const g of V) {
+  const r = span(g.years);
+  if (!r) continue;
+  for (const year of new Set([r[0], Math.round((r[0] + r[1]) / 2), r[1]])) {
+    const o = C.guessOemVehicle({ make: g.make, model: `${g.model} (${g.generation})`, firstReg: `${year}-06-01` });
+    if (!o) continue;
+    const or = span(o.years);
+    assert(o.make === g.make && o.model === g.model && or && year >= or[0] && year <= or[1], `${g.make} ${g.model} (${g.generation}) ${year} must not link to ${o.key} (${o.years})`);
+    reached.add(o.key);
+  }
+}
+for (const o of ctx.OEM_VEHICLES) assert(reached.has(o.key), `researched vehicle ${o.key} is not reachable from the variant picker (make/model/generation must match research/variants)`);
+console.log(`✓ variant picker links to researched part numbers for ${reached.size}/${ctx.OEM_VEHICLES.length} vehicles, never across generations`);
+
 const vin = C.decodeVin(job.vehicle.vin);
 assert(vin.valid && /Nissan/.test(vin.manufacturer), 'VIN decode');
 assert(C.decodeVin('ABC').issues.length > 0);
