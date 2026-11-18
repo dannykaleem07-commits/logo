@@ -159,6 +159,10 @@ const mainWin = () => S.windows[0];
 const appEvent = (url = APP_URL + '#/jobs', extra = {}) => ({ sender: mainWin().webContents, senderFrame: { url, parent: null, detached: false }, ...extra });
 const call = async (ch, ...args) => { const r = await S.handlers.get(ch)(appEvent(), ...args); assert.ok(r && typeof r === 'object' && typeof r.ok === 'boolean', `${ch} returns {ok}: ${JSON.stringify(r)}`); return r; };
 const navigate = (wc, ev, url) => { const e = { url, prevented: false, preventDefault() { this.prevented = true; } }; for (const l of wc.listeners(ev)) l(e, url); return e.prevented; };
+/** will-frame-navigate as Electron 45 emits it: for the top frame (isMainFrame) and for every iframe. */
+const frameNavigate = (wc, url, isMainFrame) => { const e = { url, isMainFrame, prevented: false, preventDefault() { this.prevented = true; } }; for (const l of wc.listeners('will-frame-navigate')) l(e); return e.prevented; };
+const deferred = () => { let resolve; const promise = new Promise((r) => { resolve = r; }); return { promise, resolve }; };
+const errno = (code, msg) => Object.assign(new Error(`${code}: ${msg}`), { code });
 const KEY_FILE = () => path.join(S.dirs.userData, 'ai-key.bin');
 const DATA_FILE = () => path.join(S.dirs.userData, 'data-keys.bin');
 const ok = (m) => console.log('✓ ' + m);
@@ -220,6 +224,28 @@ async function waitFor(cond, ms = 3000, what = 'condition') {
   assert.deepStrictEqual(S.openExternal, ['https://example.org/', 'https://dealer.example/ad/1']);
   assert.strictEqual(navigate(wc, 'will-attach-webview', 'x'), true, 'webview attachment prevented');
   ok(`Navigation: only app/index.html (any #route) allowed; ${blocked.length} other targets (dropped/local/UNC html, query, photo, web, smb:, about:) blocked; web links → system browser; window.open denied; <webview> blocked`);
+
+  // every frame: will-frame-navigate (Electron emits it for the top frame and each iframe, before will-navigate)
+  S.openExternal.length = 0;
+  const childBlocked = ['file:///C:/Users/eng/Downloads/claim-pack.html', pathToFileURL(path.join(os.tmpdir(), 'claim-pack.html')).href, 'file://fileserver.example/share/app/index.html',
+    APP_URL + '?x=1', 'data:text/html,<script>parent.desktop</script>', 'blob:file:///0b7f7f3e-2c1d-4d8e-9a6b-1f2e3d4c5b6a', 'https://attacker.example/x', 'javascript:parent.desktop.app.info()'];
+  for (const u of childBlocked) assert.strictEqual(frameNavigate(wc, u, false), true, 'iframe blocked: ' + u);
+  assert.deepStrictEqual(S.openExternal, [], 'an iframe never opens anything in the system browser');
+  assert.strictEqual(frameNavigate(wc, APP_URL + '#/job/abc', false), false, 'an iframe of the app page itself is allowed (same rule as the top frame)');
+  assert.strictEqual(frameNavigate(wc, APP_URL + '#/settings', true), false, 'the top frame may show the app page');
+  assert.strictEqual(frameNavigate(wc, 'file:///C:/Users/eng/Downloads/claim-pack.html', true), true, 'the top frame may not show another local page');
+  assert.strictEqual(frameNavigate(wc, 'https://dealer.example/advert/7', true), true);
+  assert.deepStrictEqual(S.openExternal, ['https://dealer.example/advert/7'], 'a web link in the top frame still opens in the system browser (Electron then emits no will-navigate)');
+  // the same guard on every webContents the app creates (web-contents-created), but not on DevTools
+  const other = new FakeWebContents(null);
+  app.emit('web-contents-created', {}, other);
+  assert.strictEqual(frameNavigate(other, 'file:///etc/passwd', false), true, 'another page: iframe to a local file blocked');
+  assert.strictEqual(frameNavigate(other, 'https://example.org/', true), true, 'another page: top-frame navigation blocked');
+  assert.strictEqual(frameNavigate(other, APP_URL, true), false);
+  const devtools = new FakeWebContents(null, 'remote');
+  app.emit('web-contents-created', {}, devtools);
+  assert.strictEqual(devtools.listeners('will-frame-navigate').length, 0, 'DevTools (type "remote") left alone');
+  ok(`Frames: will-frame-navigate blocks ${childBlocked.length} iframe targets (local/UNC files, query, data:, blob:, web, javascript:) and lets only app/index.html through, for the top frame too (web links → system browser); the same guard on every webContents the app creates, DevTools excepted`);
 
   // dev boot: DevTools available from source only
   await boot({ isPackaged: false });
