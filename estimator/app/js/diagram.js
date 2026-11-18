@@ -42,7 +42,7 @@
       const short = z.label.replace(/^(LH|RH) /, '').replace('front ', 'f. ').replace('rear ', 'r. ');
       const txt = z.shape === 'wheel' || w < 25
         ? ''
-        : `<text x="${x + w / 2}" y="${y + h / 2 + 3}" aria-hidden="true">${esc(short)}</text>`;
+        : `<text x="${x + w / 2}" y="${y + h / 2 + 3}"${pressed ? ' class="on"' : ''} aria-hidden="true">${esc(short)}</text>`;
       const name = esc(z.label);
       return `<rect class="z ${z.shape === 'wheel' ? 'wheel' : ''}${on}" data-zone="${name}" x="${x}" y="${y}" width="${w}" height="${h}" rx="${rx}" tabindex="0" role="button" aria-pressed="${pressed}" aria-label="${name}"><title>${name}</title></rect>${txt}`;
     }).join('');
