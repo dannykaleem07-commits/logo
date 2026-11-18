@@ -4,8 +4,9 @@ const fs = require('fs');
 const path = require('path');
 const vm = require('vm');
 const APP = path.join(__dirname, '..', '..', '..', 'app');
+// opts.report: also load report.js; opts.indexedDB: an IndexedDB factory for Core.Store (default none); opts.globals: more globals.
 function load(opts) {
-  const ctx = { console, window: {}, document: { querySelector: () => null }, indexedDB: null, setTimeout, clearTimeout };
+  const ctx = Object.assign({ console, window: {}, document: { querySelector: () => null }, indexedDB: (opts && opts.indexedDB) || null, setTimeout, clearTimeout, DOMException, structuredClone }, (opts && opts.globals) || {});
   ctx.window = ctx;
   vm.createContext(ctx);
   const files = ['data/catalogue.js', 'data/oem.js', 'data/variants.js', 'js/core.js', 'js/sample.js'];

@@ -301,20 +301,20 @@ section('6/20. guessOemVehicle');
     [{ make: 'Vauxhall', model: 'Astra (K)', firstReg: '2017-06-01' }, 'vauxhall-astra-k'],
     [{ make: 'Vauxhall', model: 'Astra (L)', firstReg: '2023-06-01' }, null],
     [{ make: 'Vauxhall', model: 'Corsa (E)', firstReg: '2016-06-01' }, 'vauxhall-corsa-e'],
-    [{ make: 'Vauxhall', model: 'Corsa (F)', firstReg: '2021-06-01' }, null],
+    [{ make: 'Vauxhall', model: 'Corsa (F)', firstReg: '2021-06-01' }, 'vauxhall-corsa-f'], // researched since round 3
     [{ make: 'Mercedes-Benz', model: 'E-Class (W213)', firstReg: '2019-03-01', body: 'Coupe' }, null],
     [{ make: 'Mercedes-Benz', model: 'E-Class (W213)', firstReg: '2019-03-01', body: 'All-Terrain' }, null],
     [{ make: 'Mercedes-Benz', model: 'E-Class (W213)', firstReg: '2019-03-01', body: 'Saloon' }, 'mercedes-e-class-w213'],
     [{ make: 'Ford', model: 'Fiesta (Mk7)', firstReg: '2015-01-01' }, 'ford-fiesta-mk7'],
     [{ make: 'Ford', model: 'Fiesta (Mk 7)', firstReg: '2015-01-01' }, 'ford-fiesta-mk7'],
-    [{ make: 'Ford', model: 'Fiesta (Mk8)', firstReg: '2019-01-01' }, null],
+    [{ make: 'Ford', model: 'Fiesta (Mk8)', firstReg: '2019-01-01' }, 'ford-fiesta-mk8'],
     [{ make: 'Ford', model: 'Fiesta Van', firstReg: '2015-01-01' }, null],
     [{ make: 'Ford', model: 'Fiesta ST', firstReg: '2015-01-01' }, 'ford-fiesta-mk7'],
     [{ make: 'FORD', model: 'FIESTA', firstReg: '2015-01-01' }, 'ford-fiesta-mk7'],
     [{ make: 'Ford', model: 'Fiestas', firstReg: '2015-01-01' }, null],
     [{ make: 'Mercedes', model: 'E Class', firstReg: '2019-01-01' }, 'mercedes-e-class-w213'],
     [{ make: 'VW', model: 'Golf', firstReg: '2015-01-01' }, 'vw-golf-mk7'],
-    [{ make: 'Nissan', model: 'Juke (F16)', firstReg: '2021-01-01' }, null],
+    [{ make: 'Nissan', model: 'Juke (F16)', firstReg: '2021-01-01' }, 'nissan-juke-f16'],
     [{ make: 'Nissan', model: 'Juke (F15)', firstReg: '2021-01-01' }, 'nissan-juke-f15'], // explicit generation wins over a late registration
     [{ make: 'Vauxhall', model: 'Corsa (E)', firstReg: '2021-06-01' }, 'vauxhall-corsa-e'], // exact generation "E"
     [{ make: 'Vauxhall', model: 'Corsa (Corsa-e)' }, null], // single-letter token, no year to confirm
@@ -322,6 +322,20 @@ section('6/20. guessOemVehicle');
     [{ make: 'Nissan', model: 'Juke', dvla: { yearOfManufacture: 2015 } }, 'nissan-juke-f15']
   ];
   for (const [v, want] of cases) check(`${v.make} ${v.model} ${v.firstReg || ''}${v.body ? ' [' + v.body + ']' : ''} → ${want}`, g(v) === want, g(v));
+  // Generation safety with research for consecutive generations: an explicit generation never borrows its predecessor's
+  // (or successor's) part numbers, whatever the registration year; without a generation the year decides.
+  const never = [
+    [{ make: 'Vauxhall', model: 'Corsa (F)', firstReg: '2021-06-01' }, 'vauxhall-corsa-e'], [{ make: 'Vauxhall', model: 'Corsa (F)', firstReg: '2017-06-01' }, 'vauxhall-corsa-e'],
+    [{ make: 'Ford', model: 'Fiesta (Mk8)', firstReg: '2019-01-01' }, 'ford-fiesta-mk7'], [{ make: 'Ford', model: 'Fiesta (Mk8)', firstReg: '2015-01-01' }, 'ford-fiesta-mk7'],
+    [{ make: 'Nissan', model: 'Juke (F16)', firstReg: '2021-01-01' }, 'nissan-juke-f15'], [{ make: 'Nissan', model: 'Juke (F16)', firstReg: '2015-01-01' }, 'nissan-juke-f15'],
+    [{ make: 'Vauxhall', model: 'Corsa (E)', firstReg: '2021-06-01' }, 'vauxhall-corsa-f'], [{ make: 'Ford', model: 'Fiesta (Mk7)', firstReg: '2019-01-01' }, 'ford-fiesta-mk8'],
+    [{ make: 'Nissan', model: 'Juke (F15)', firstReg: '2021-01-01' }, 'nissan-juke-f16']
+  ];
+  for (const [v, bad] of never) check(`${v.make} ${v.model} ${v.firstReg} never → ${bad}`, g(v) !== bad && g(v) !== null, g(v));
+  const byYear = [[{ make: 'Vauxhall', model: 'Corsa', firstReg: '2021-06-01' }, 'vauxhall-corsa-f'], [{ make: 'Vauxhall', model: 'Corsa', firstReg: '2016-06-01' }, 'vauxhall-corsa-e'],
+    [{ make: 'Ford', model: 'Fiesta', firstReg: '2019-01-01' }, 'ford-fiesta-mk8'], [{ make: 'Ford', model: 'Fiesta', firstReg: '2015-01-01' }, 'ford-fiesta-mk7'],
+    [{ make: 'Nissan', model: 'Juke', firstReg: '2021-01-01' }, 'nissan-juke-f16'], [{ make: 'Nissan', model: 'Juke', firstReg: '2015-01-01' }, 'nissan-juke-f15']];
+  for (const [v, want] of byYear) check(`no generation, ${v.make} ${v.model} ${v.firstReg} → ${want} (by year)`, g(v) === want, g(v));
   C.setCustomOem([{ key: 'user-ford-puma', make: 'Ford', model: 'Puma', generation: '', years: '2019-', parts: {} }]);
   check('custom "2019-" Puma, 2021 → match', g({ make: 'Ford', model: 'Puma', firstReg: '2021-04-01' }) === 'user-ford-puma');
   C.setCustomOem([{ key: 'user-ford-puma', make: 'Ford', model: 'Puma', generation: '', years: '2019–present', parts: {} }]);
@@ -330,8 +344,9 @@ section('6/20. guessOemVehicle');
   check('custom Puma, 2017 → no match', g({ make: 'Ford', model: 'Puma', firstReg: '2017-04-01' }) === null);
   C.setCustomOem([{ key: 'user-mazda-mx5', make: 'Mazda', model: 'MX-5', generation: 'ND', years: '2015-', parts: {} }]);
   check('custom roadster entry still matches its own body ("Convertible")', g({ make: 'Mazda', model: 'MX-5 (ND)', firstReg: '2018-01-01', body: 'Convertible' }) === 'user-mazda-mx5');
-  C.setCustomOem([{ key: 'user-skoda-octavia', make: 'Škoda', model: 'Octavia', generation: 'Mk3', years: '2013-2020', parts: {} }]);
-  check('accent-folded make: "Skoda" finds a "Škoda" entry', g({ make: 'SKODA', model: 'Octavia', firstReg: '2016-01-01' }) === 'user-skoda-octavia');
+  // a model the research does not cover, so the match can only come from accent folding ("SKODA" → "Škoda")
+  C.setCustomOem([{ key: 'user-skoda-fabia', make: 'Škoda', model: 'Fabia', generation: 'Mk3', years: '2015-2021', parts: {} }]);
+  check('accent-folded make: "Skoda" finds a "Škoda" entry', g({ make: 'SKODA', model: 'Fabia', firstReg: '2016-01-01' }) === 'user-skoda-fabia' && g({ make: 'Skoda', model: 'Fabia (Mk3)', firstReg: '2016-01-01' }) === 'user-skoda-fabia');
   C.setCustomOem([null, { make: 'x' }, { key: 'k', make: 'Ford', model: 'Ka', parts: { 'FE001|': 'not-a-list' } }]);
   check('malformed custom entries are ignored without throwing', !throws(() => C.oemVehicles()) && !throws(() => C.oemLookup('k', 'FE001', '')));
   C.setCustomOem([]);
@@ -549,4 +564,233 @@ section('21. MOT mileage checks kept intact');
   check('pre-loss MOT higher than recorded mileage → clocking error', find(j, /LOWER than the MOT/).length === 1 && find(j, /LOWER than the MOT/)[0].level === 'error');
 }
 
-done();
+// ======================= round 3 =======================
+
+section('R#26. Tolerant num(): £, thousands commas, spaces, decimal comma');
+{
+  const cases = [['£5,995', 5995], ['60,000', 60000], ['1,234.50', 1234.5], ['1,5', 1.5], ['1,50', 1.5], ['12,7', 12.7], ['1.234,56', 1234.56], [' £ 1 234.5 ', 1234.5], ['−£56.34', -56.34], ['-£5', -5], ['£−1', -1],
+    ['1,500', 1500], ['1,000,000', 1000000], ['64,368 miles', 64368], ['1.5h', 1.5], ['1e3', 1000], ['2014-08-05', 2014], ['15%', 15], ['.5', 0.5], ['-.5', -0.5], ['', 0], ['abc', 0], ['Infinity', 0],
+    [null, 0], [undefined, 0], [true, 0], [NaN, 0], [Infinity, 0], [{}, 0], [[5], 5], [3365.08, 3365.08], [' 1 000', 1000]];
+  const bad = cases.filter(([v, want]) => !Object.is(C.num(v), want)).map(([v, want]) => `${JSON.stringify(v)} → ${C.num(v)} (want ${want})`);
+  check(`num() reads ${cases.length} legacy / imported number formats`, bad.length === 0, bad);
+  const j = Sample.sampleJob();
+  j.lines[0].hours = '0,6'; j.lines[0].amount = '£74.55'; j.valuation.adopted = '£5,682';
+  const t = C.totals(j);
+  check('string amounts / hours / PAV ("0,6", "£74.55", "£5,682") keep the reference totals', t.net === 3365.08 && t.gross === 4038.1 && t.pav === 5682 && t.pctNet === 59.22, t);
+}
+
+section('R#27. Dates: invalid calendar dates are printed as entered (never rolled over), with a QA warning');
+{
+  check('longDate("2023-02-29") stays "2023-02-29" (was "01 March 2023")', C.longDate('2023-02-29') === '2023-02-29');
+  check('ukDate("2023-02-29") stays "2023-02-29"', C.ukDate('2023-02-29') === '2023-02-29');
+  check('ukDate / longDate agree on 2026-06-31, 2026-13-01, 2026-02-30', ['2026-06-31', '2026-13-01', '2026-02-30', '2026-00-10'].every((d) => C.ukDate(d) === d && C.longDate(d) === d));
+  check('valid dates unchanged (leap day 2024-02-29, DST change days, timestamps)', C.longDate('2024-02-29') === '29 February 2024' && C.ukDate('2024-02-29') === '29/02/2024' && C.longDate('2026-03-29') === '29 March 2026' && C.longDate('2026-10-25') === '25 October 2026' && C.ukDate('2026-09-01T10:00:00Z') === '01/09/2026' && C.longDate('2026-09-01') === '01 September 2026');
+  check('empty / null → ""; other text unchanged', C.ukDate('') === '' && C.longDate(null) === '' && C.ukDate('September 2026') === 'September 2026' && C.longDate('n/a') === 'n/a');
+  const j = Sample.sampleJob(); j.instruction.dateOfLoss = '2023-02-29'; j.assessor.dateSigned = '2026-09-31'; j.vehicle.firstReg = '2014-13-05';
+  const m = find(j, /is not a valid date/);
+  check('QA warning names each invalid date field', m.length === 3 && m.every((x) => x.level === 'warn') && /^Date of loss "2023-02-29"/.test(m[0].msg) && m.some((x) => /^First registration date/.test(x.msg) && x.tab === 'vehicle') && m.some((x) => /^Date signed/.test(x.msg) && x.tab === 'signoff'), m);
+  check('the sample has no date warnings', find(Sample.sampleJob(), /is not a valid date/).length === 0);
+}
+
+section('R#9. todayISO / localISODate: the UK calendar date, not the UTC date');
+{
+  check('localISODate(2026-06-15T23:30Z) = 2026-06-16 (00:30 BST)', C.localISODate(new Date('2026-06-15T23:30:00Z')) === '2026-06-16', C.localISODate(new Date('2026-06-15T23:30:00Z')));
+  check('localISODate of an ISO string (lookedUpAt) and of a winter time', C.localISODate('2026-06-15T23:30:00.000Z') === '2026-06-16' && C.localISODate('2026-01-15T23:30:00Z') === '2026-01-15');
+  check('localISODate passes a plain date through; junk → ""', C.localISODate('2026-02-01') === '2026-02-01' && C.localISODate('not a date') === '' && C.localISODate({}) === '');
+  // a sandbox whose clock reads 00:30 BST on 16 June 2026 (the process runs in UTC)
+  const c2 = load();
+  require('vm').runInContext(`(() => { const R = Date, at = R.parse('2026-06-15T23:30:00Z'); globalThis.Date = class extends R { constructor(...a) { if (a.length) super(...a); else super(at); } static now() { return at; } }; })()`, c2);
+  const nj = c2.Core.newJob();
+  check('todayISO() at 00:30 BST is 2026-06-16, and new jobs are dated that day', c2.Core.todayISO() === '2026-06-16' && nj.report.date === '2026-06-16' && nj.instruction.dateInstructed === '2026-06-16' && nj.inspection.date === '2026-06-16', [c2.Core.todayISO(), nj.report.date]);
+}
+
+section('R#13 / R#20. Negative discount or PAV: ignored by totals(), reported as errors; PAV ≤ 0 is missing');
+{
+  const j = C.newJob(); j.lines = [L({ description: 'Part', amount: 1000, partNo: 'p' })]; j.discount = -100;
+  let t = C.totals(j);
+  check('discount −100 → totals use 0 (net £1,000, not £1,100)', t.discount === 0 && t.net === 1000, t);
+  let m = find(j, /discount is negative/);
+  check('…and a QA error for the negative discount', m.length === 1 && m[0].level === 'error' && m[0].tab === 'estimate', m);
+  j.discount = 100;
+  check('a positive discount is still applied', C.totals(j).net === 900 && !find(j, /discount is negative/).length);
+  const k = Sample.sampleJob(); k.valuation.adopted = -5000;
+  t = C.totals(k);
+  check('PAV −5000 → pav 0, no ratio', t.pav === 0 && t.pctNet === 0 && !t.berSuggested, t);
+  m = qa(k);
+  check('…QA error for the negative PAV, "No pre-accident value adopted", and no "below the highest guide" message', m.some((q) => q.level === 'error' && /pre-accident value is negative/.test(q.msg)) && m.some((q) => /^No pre-accident value adopted/.test(q.msg)) && !m.some((q) => /highest guide/.test(q.msg)), m.map((q) => q.msg));
+  k.valuation.adopted = 0;
+  check('PAV 0 → "No pre-accident value adopted" (no negative error)', find(k, /^No pre-accident value adopted/).length === 1 && !find(k, /negative/).length);
+}
+
+section('#5. A finalised report keeps its rates and VAT (issued.rates / issued.vatPct)');
+{
+  const saved = C.clone(C.settings);
+  const j = Sample.sampleJob();
+  j.lines.push(L({ type: 'Other', description: 'Valet', hours: 1 }), L({ type: 'Materials', description: 'Sundries', hours: 0.5 }));
+  const before = C.totals(j);
+  const snap = C.rateSnapshot(j);
+  check('rateSnapshot: every standard type and every line type in use, plus VAT %', ['Body', 'Painting', 'Mechanical', 'Auxiliary', 'Electrical', 'Other', 'Materials'].every((k) => snap.rates[k] === 72.5) && snap.vatPct === 20, snap);
+  j.issued = Object.assign({ at: '2026-09-06T10:00:00Z' }, snap);
+  check('finalising does not change any figure', JSON.stringify(C.totals(j)) === JSON.stringify(before));
+  C.settings.rates = { Body: 99, Painting: 99, Mechanical: 99, Auxiliary: 99, Electrical: 99 }; C.settings.vatPct = 5;
+  j.rates = { Body: 50, Painting: 50, Mechanical: 50, Auxiliary: 50, Electrical: 50 }; j.vatPct = 0;
+  const after = C.totals(j);
+  check('later Settings AND job rate / VAT changes do not alter the issued figures', after.net === before.net && after.vat === before.vat && after.gross === before.gross && after.vatPct === 20, { before: before.gross, after: after.gross });
+  check('lineRate / vatPctFor read the snapshot (an explicit line rate still wins)', C.lineRate(j, { type: 'Painting' }) === 72.5 && C.lineRate(j, { type: 'Unknown type' }) === 72.5 && C.lineRate(j, { type: 'Body', rate: 40 }) === 40 && C.vatPctFor(j) === 20);
+  const reopened = C.clone(j); delete reopened.issued;
+  check('re-opened (issued cleared): the job\'s own rates apply again', C.lineRate(reopened, { type: 'Body' }) === 50 && C.vatPctFor(reopened) === 0);
+  const legacy = C.clone(j); legacy.issued = { at: '2026-09-06T10:00:00Z' };
+  check('a report finalised before snapshots existed uses the job\'s own rates', C.lineRate(legacy, { type: 'Body' }) === 50);
+  C.settings = saved;
+  const s = Sample.sampleJob(); s.issued = Object.assign({ at: '2026-09-06T10:00:00Z' }, C.rateSnapshot(s));
+  const ts = C.totals(s);
+  check('sample finalised: still £3,365.08 / £4,038.10 / 59.22% / 71.07%', ts.net === 3365.08 && ts.gross === 4038.1 && ts.pctNet === 59.22 && ts.pctGross === 71.07, ts);
+  check('a "constructor" line type does not read Object.prototype (rate is the Body rate)', C.lineRate(Sample.sampleJob(), { type: 'constructor' }) === 72.5);
+}
+
+section('#7. Salvage category vs decision');
+{
+  const cd = (decision, category) => { const j = Sample.sampleJob(); j.outcome = { decision, category }; j.valuation.adopted = 20000; return qa(j); };
+  let q = cd('Repair', 'S');
+  const m = q.filter((x) => /salvage category \(Category S\) is recorded, but the decision is "Repair"/.test(x.msg));
+  check('Repair + Category S → warning on the Valuation tab', m.length === 1 && m[0].level === 'warn' && m[0].tab === 'valuation', q.map((x) => x.msg));
+  check('…and no AQP-ID warning (no category is being recommended)', !q.some((x) => /AQP/.test(x.msg)));
+  q = cd('Repair', 'B');
+  check('Repair + Category B → error (must not return to the road)', q.some((x) => x.level === 'error' && /Category B \(break for parts\)/.test(x.msg)));
+  q = cd('', 'N');
+  check('no decision + Category N → warning', q.some((x) => x.level === 'warn' && /decision is not set/.test(x.msg)));
+  q = cd('Further investigation required', 's');
+  check('lower-case "s" is read as Category S', q.some((x) => /Category S\) is recorded/.test(x.msg)));
+  q = cd('Beyond Economical Repair / Total Loss Recommended', 'N');
+  check('total loss + Category N → no category / decision message', !q.some((x) => /is recorded, but the decision/.test(x.msg)));
+  check('isTotalLoss: BER / total / beyond; not "October" or "Repair"', C.isTotalLoss('BER') && C.isTotalLoss('Total Loss — Uneconomical to Repair') && !C.isTotalLoss('Repair after strip in October') && !C.isTotalLoss('Repair') && !C.isTotalLoss(null));
+}
+
+section('#8. CPR 35: material relied on');
+{
+  const saved = C.clone(C.settings);
+  C.settings.assessor.qualifications = 'MIAEA';
+  const j = Sample.sampleJob(); j.report.cpr35 = true; j.inspection.by = 'Sample Assessor';
+  check('newJob has report.materialsRelied = ""', C.newJob().report.materialsRelied === '');
+  let m = find(j, /material relied on/i);
+  check('CPR 35 with no material relied on → error (Sign-off)', m.length === 1 && m[0].level === 'error' && m[0].tab === 'signoff' && /PD 35 para 3\.2\(2\)/.test(m[0].msg), m);
+  j.report.materialsRelied = "Glass's Guide and CAP HPI retail values; ABI Code of Practice for the Categorisation of Motorised Vehicle Salvage.";
+  check('filled in → no error', find(j, /material relied on/i).length === 0);
+  check('not a CPR 35 report → no error', find(Sample.sampleJob(), /material relied on/i).length === 0);
+  C.settings = saved;
+}
+
+section('#15 (core messages). Settings sections named as they are titled');
+{
+  const src = fs.readFileSync(APP + '/js/core.js', 'utf8');
+  check('no "Settings → Assessor" without "defaults"', !/Settings → Assessor(?! defaults)/.test(src));
+  const j = Sample.sampleJob(); j.outcome.category = 'N';
+  check('AQP message points to "Settings → Assessor defaults"', find(j, /AQP/).every((q) => /Settings → Assessor defaults/.test(q.msg)) && find(j, /AQP/).length === 1);
+}
+
+section('#2. Unverified AI comparables: QA warning');
+{
+  const j = Sample.sampleJob();
+  j.valuation.adverts = [
+    { description: 'Nissan Juke Tekna', year: '2014', mileage: 70000, price: 5495, source: 'AutoTrader', url: '', aiUnverified: true, claimedUrl: 'https://www.autotrader.co.uk/car-details/made-up' },
+    { description: 'Nissan Juke Acenta', year: '2014', mileage: 61000, price: 5600, source: 'AutoTrader', url: 'https://www.autotrader.co.uk/car-details/1' },
+    { description: '', price: '', aiUnverified: true }
+  ];
+  const m = find(j, /found by AI web search/);
+  check('one warning listing the unverified advert (Valuation tab)', m.length === 1 && m[0].level === 'warn' && m[0].tab === 'valuation' && /^1 advert found by AI web search has not been verified \(Nissan Juke Tekna 2014 £5,495\.00\)/.test(m[0].msg), m);
+  delete j.valuation.adverts[0].aiUnverified;
+  check('ticked "Verified" (flag removed) → no warning', find(j, /found by AI web search/).length === 0);
+}
+
+section('#3. C.unreviewedAiText: fields still holding the AI\'s text');
+{
+  const j = Sample.sampleJob();
+  check('no aiText → []', JSON.stringify(C.unreviewedAiText(j)) === '[]' && JSON.stringify(C.unreviewedAiText(null)) === '[]');
+  j.photos = [{ id: 'p1', title: 'AI title', caption: 'Edited caption' }, { id: 'p2', title: 'AI title 2', exclude: true }, { id: 'p3', title: 'Second photo', caption: 'AI caption 3' }];
+  j.circumstances.impactType = 'Sideswipe / lateral side contact';
+  j.aiText = {
+    opinion: j.opinion + ' edited later', // edited by the assessor
+    'circumstances.impactType': 'Sideswipe  /  lateral side contact ', // spacing differs only
+    'report.summary': j.report.summary,
+    'photos.p1.title': 'AI title', 'photos.p1.caption': 'AI caption 1', 'photos.p2.title': 'AI title 2', 'photos.p3.caption': 'AI caption 3', 'photos.gone.title': 'x',
+    'assessment.wheels': '', 'constructor.name': 'Object', '__proto__.x': 'y', 'valuation.historyNotes': 'AI history', 'estimateNotes': 7
+  };
+  j.valuation.historyNotes = 'AI history';
+  const u = C.unreviewedAiText(j);
+  check('lists only fields whose current text is the AI text (spacing ignored), in report order', JSON.stringify(u.map((x) => x.path)) === JSON.stringify(['report.summary', 'circumstances.impactType', 'photos.p1.title', 'photos.p3.caption', 'valuation.historyNotes']), u);
+  check('labels and tabs', u[0].label === 'Section 01 summary' && u[0].tab === 'opinion' && u[1].label === 'Impact type (section 05)' && u[1].tab === 'circumstances' && u[2].label === 'Title of IMAGE 01' && u[2].tab === 'photos' && u[3].label === 'Caption of IMAGE 02' && u[4].label === 'Valuation: history notes' && u[4].tab === 'valuation', u);
+  check('edited, empty, excluded-photo, deleted-photo, prototype and non-string entries are ignored', !u.some((x) => /opinion|wheels|constructor|proto|p2|gone|estimateNotes/.test(x.path)));
+  const m = find(j, /AI-drafted text not yet edited/);
+  check('QA: one warning per tab naming the fields', m.length === 4 && m.every((x) => x.level === 'warn') && m.some((x) => x.tab === 'photos' && /Title of IMAGE 01; Caption of IMAGE 02/.test(x.msg)) && m.some((x) => x.tab === 'circumstances' && /Impact type \(section 05\)/.test(x.msg)), m);
+  j.aiText = {};
+  check('no unedited AI text → no warning', find(j, /AI-drafted text/).length === 0);
+}
+
+section('#21. AI narrative review flags: one QA warning each');
+{
+  const j = Sample.sampleJob();
+  j.aiFlags = [{ section: 'Valuation comments', text: 'No PAV adopted: redraft the valuation comments.', at: '2026-06-15T23:30:00Z' }, { text: 'Check concealed sill damage at strip.' }, { text: '  ' }, null, 'junk'];
+  const m = find(j, /^AI review flag/);
+  check('two warnings (blank / junk entries ignored), Opinion tab', m.length === 2 && m.every((x) => x.level === 'warn' && x.tab === 'opinion'), m);
+  check('…with the section, the UK date and the text', m[0].msg === 'AI review flag (Valuation comments), 16/06/2026: No PAV adopted: redraft the valuation comments. Check it, then dismiss the flag.', m[0].msg);
+  j.aiFlags = 'not-an-array';
+  check('aiFlags of the wrong type do not throw', !throws(() => C.qaChecks(j)));
+  check('newJob has aiFlags = []', Array.isArray(C.newJob().aiFlags));
+}
+
+section('#9. OEM lookup: the assessor\'s numbers rank with confirmed ones and respect auto-fill');
+{
+  const k = 'nissan-juke-f15';
+  const base = C.oemLookup(k, 'SS001', 'R');
+  C.setCustomOem([{ key: k, make: 'Nissan', model: 'Juke', parts: { 'SS001|R': [{ oem: 'USER-NOFILL', confidence: 'user', user: true, autoFill: false, role: 'primary', market: 'UK' }] } }]);
+  let c = C.oemLookup(k, 'SS001', 'R');
+  check('a user number NOT marked auto-fill is never ahead of an auto-fill one', c[0].oem === base[0].oem && c.some((x) => x.oem === 'USER-NOFILL'), c.map((x) => x.oem));
+  C.setCustomOem([{ key: k, make: 'Nissan', model: 'Juke', parts: { 'SS001|R': [{ oem: 'USER-FILL', confidence: 'user', user: true, autoFill: true, role: 'primary', market: 'UK' }] } }]);
+  c = C.oemLookup(k, 'SS001', 'R');
+  check('a user number marked auto-fill ranks like a confirmed one and comes first', c[0].oem === 'USER-FILL', c.map((x) => x.oem + '/' + x.confidence));
+  const mixed = [{ oem: 'S1', confidence: 'single-source', autoFill: true, market: '' }, { oem: 'U1', confidence: 'user', autoFill: true, market: '' }, { oem: 'C1', confidence: 'confirmed', autoFill: true, market: '' }, { oem: 'V1', confidence: 'confirmed', role: 'variant', autoFill: true }];
+  C.setCustomOem([{ key: 'user-test', make: 'Test', model: 'Car', parts: { 'FE001|': mixed } }]);
+  c = C.oemLookup('user-test', 'FE001', '');
+  check('order: user/confirmed (stored order) before single-source; variants last', c.map((x) => x.oem).join(',') === 'U1,C1,S1,V1', c.map((x) => x.oem));
+  check('oemAlternatives: a line using the assessor\'s own number (confidence user) needs no VIN check', C.oemAlternatives('user-test', { code: 'FE001', partNo: 'U1' }) === 0 && C.oemAlternatives('user-test', { code: 'FE001', partNo: 'C1' }) === 3);
+  C.setCustomOem([]);
+  check('built-in research order unchanged (Juke SS001 R → 768501KA6A first)', C.oemLookup(k, 'SS001', 'R')[0].oem === '768501KA6A');
+}
+
+section('#18. Unused export removed; namedSources used by report.js');
+{
+  check('isServiceCode is no longer exported (used inside core only)', !('isServiceCode' in C));
+  check('report.js uses C.namedSources', /C\.namedSources\(/.test(fs.readFileSync(APP + '/js/report.js', 'utf8')));
+}
+
+// R#10: image re-encoding with a fake canvas (no DOM in node)
+async function imageChecks() {
+  section('R#10. Re-encoding images: white behind JPEG, PNG kept when the image has transparency');
+  const run = async (src, alpha) => {
+    const calls = [];
+    const g = {
+      globalCompositeOperation: 'source-over', fillStyle: '#000',
+      drawImage() { calls.push(['draw', this.globalCompositeOperation]); },
+      fillRect() { calls.push(['fill', this.fillStyle, this.globalCompositeOperation]); },
+      getImageData(x, y, w, h) { calls.push(['scan']); const d = new Uint8ClampedArray(w * h * 4).fill(255); if (alpha) d[w * 4 + 7] = 0; return { data: d }; }
+    };
+    const canvas = { width: 0, height: 0, getContext: () => g, toDataURL: (type, q) => { calls.push(['encode', type, q]); return `data:${type};base64,AAAA`; } };
+    class Img { set src(v) { this._s = v; setTimeout(() => { this.naturalWidth = 3000; this.naturalHeight = 1500; this.onload(); }); } get src() { return this._s; } }
+    const c3 = load({ globals: { Image: Img, document: { querySelector: () => null, createElement: () => canvas } } });
+    const r = await c3.Core.resizeDataURL(src, 1800, 0.86);
+    return { r, calls, canvas };
+  };
+  let x = await run('data:image/png;base64,iVBORw0KGgo=', true);
+  check('transparent PNG (a signature) → stays PNG, nothing painted behind it', x.r.dataUrl.startsWith('data:image/png') && x.r.type === 'image/png' && !x.calls.some((c) => c[0] === 'fill') && !x.calls.some((c) => c[1] === 'image/jpeg'), x.calls);
+  x = await run('data:image/png;base64,iVBORw0KGgo=', false);
+  const fill = x.calls.findIndex((c) => c[0] === 'fill'), enc = x.calls.findIndex((c) => c[0] === 'encode');
+  check('opaque PNG → JPEG with white painted behind the image before encoding', x.r.dataUrl.startsWith('data:image/jpeg') && fill >= 0 && x.calls[fill][1] === '#fff' && x.calls[fill][2] === 'destination-over' && fill < enc && x.calls[enc][2] === 0.86, x.calls);
+  x = await run('data:image/jpeg;base64,/9j/', false);
+  check('JPEG source → JPEG (no transparency scan), white behind', x.r.type === 'image/jpeg' && !x.calls.some((c) => c[0] === 'scan') && x.calls.some((c) => c[0] === 'fill' && c[1] === '#fff'), x.calls);
+  check('scaled to the long edge (3000×1500 → 1800×900)', x.r.width === 1800 && x.r.height === 900 && x.canvas.width === 1800 && x.canvas.height === 900);
+}
+
+(async () => {
+  await imageChecks();
+  await require('./store').run();
+})().then(done, (e) => { console.log('  FAIL async checks threw: ' + (e && e.stack)); process.exitCode = 1; done(); });

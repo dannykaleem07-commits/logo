@@ -776,6 +776,102 @@
     return new Set(cands.map((c) => partKey(c.oem)).filter((k) => k && k !== pn)).size;
   }
 
+  // A total-loss / beyond-economical-repair decision ("Beyond Economical Repair / Total Loss Recommended", "BER", …).
+  const isTotalLoss = (decision) => /total|\bber\b|beyond/i.test(txt(decision));
+  // Salvage category letter as entered ("cat s", "Category N" → "S", "N").
+  const categoryOf = (job) => txt(obj(obj(job).outcome).category).trim().toUpperCase().replace(/^CAT(?:EGORY)?\.?\s*/, '');
+
+  // ---------- AI provenance: fields that still hold the AI's text unchanged ----------
+  // job.aiText = { '<field path>': '<AI text applied there>' } (kept by the renderer). A field counts as unreviewed AI text while
+  // its current value is the stored AI text (ignoring spacing). Photo titles / captions use photos.<id>.title / .caption.
+  const AI_TEXT_FIELDS = [
+    ['report.summary', 'Section 01 summary', 'opinion'],
+    ['inspection.condition', 'Vehicle condition at inspection (section 04)', 'inspection'],
+    ['circumstances.providedBy', 'Account provided by (section 05)', 'circumstances'],
+    ['circumstances.narrative', 'Circumstances as reported (section 05)', 'circumstances'],
+    ['circumstances.impactType', 'Impact type (section 05)', 'circumstances'],
+    ['circumstances.primaryArea', 'Primary impact area (section 05)', 'circumstances'],
+    ['circumstances.secondaryArea', 'Secondary contact area (section 05)', 'circumstances'],
+    ['circumstances.direction', 'Direction of contact (section 05)', 'circumstances'],
+    ['circumstances.symptoms', 'Post-impact symptoms (section 05)', 'circumstances'],
+    ['assessment.structural', 'Structural and body/panel assessment (section 06)', 'assessment'],
+    ['assessment.mechanical', 'Mechanical assessment (section 06)', 'assessment'],
+    ['assessment.wheels', 'Wheels & tyres (section 06)', 'assessment'],
+    ['assessment.geometry', 'Wheel alignment / geometry (section 06)', 'assessment'],
+    ['assessment.diagnostics', 'Diagnostics & warning lamps (section 06)', 'assessment'],
+    ['assessment.roadworthiness', 'Roadworthiness (section 06)', 'assessment'],
+    ['valuation.comments', 'Valuation comments (section 07)', 'valuation'],
+    ['outcome.decision', 'Economic repair / total-loss decision (section 07)', 'valuation'],
+    ['outcome.category', 'Salvage category (section 07)', 'valuation'],
+    ['estimateNotes', 'Estimate notes (section 08)', 'estimate'],
+    ['opinion', "Engineer's opinion (section 10)", 'opinion']
+  ];
+  const AI_TEXT_TABS = ['claim', 'vehicle', 'inspection', 'circumstances', 'photos', 'assessment', 'estimate', 'valuation', 'opinion', 'customer', 'signoff'];
+  const sameText = (a, b) => txt(a).replace(/\s+/g, ' ').trim() === txt(b).replace(/\s+/g, ' ').trim();
+  // own properties only, so job data can never reach Object.prototype ("constructor.name" …)
+  function ownPath(o, path) {
+    let cur = o;
+    for (const k of String(path).split('.')) {
+      if (cur == null || typeof cur !== 'object' || !Object.prototype.hasOwnProperty.call(cur, k)) return undefined;
+      cur = cur[k];
+    }
+    return cur;
+  }
+  // → [{ path, label, tab }] in report order: every field whose current text is still the AI's, unedited.
+  // Photos left out of the report, and photos since deleted, are not listed.
+  function unreviewedAiText(job) {
+    const j = obj(job), map = obj(j.aiText);
+    const known = new Map(AI_TEXT_FIELDS.map((f, i) => [f[0], i]));
+    const nums = photoNumbers(j);
+    const photos = arr(j.photos).filter((p) => p && typeof p === 'object');
+    const items = [];
+    for (const path of Object.keys(map)) {
+      const ai = map[path];
+      if (typeof ai !== 'string' || !ai.trim()) continue;
+      const pm = /^photos\.(.+)\.(title|caption)$/.exec(path);
+      if (pm) {
+        const p = photos.find((x) => x.id != null && String(x.id) === pm[1]);
+        if (!p || p.exclude || !nums.has(p.id)) continue;
+        const cur = p[pm[2]];
+        if (typeof cur !== 'string' || !cur.trim() || !sameText(cur, ai)) continue;
+        const fig = 'IMAGE ' + String(nums.get(p.id)).padStart(2, '0');
+        items.push({ path, label: `${pm[2] === 'title' ? 'Title' : 'Caption'} of ${fig}`, tab: 'photos', order: 1000 + nums.get(p.id) * 2 + (pm[2] === 'title' ? 0 : 1) });
+        continue;
+      }
+      const cur = ownPath(j, path);
+      if (!(typeof cur === 'string' || typeof cur === 'number') || !txt(cur).trim() || !sameText(cur, ai)) continue;
+      const k = known.get(path);
+      if (k != null) { items.push({ path, label: AI_TEXT_FIELDS[k][1], tab: AI_TEXT_FIELDS[k][2], order: k }); continue; }
+      const head = path.split('.')[0];
+      const words = path.split('.').map((s) => s.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()).join(': ');
+      items.push({ path, label: words.charAt(0).toUpperCase() + words.slice(1), tab: AI_TEXT_TABS.includes(head) ? head : 'report', order: 100000 + items.length });
+    }
+    return items.sort((a, b) => a.order - b.order).map(({ path, label, tab }) => ({ path, label, tab }));
+  }
+
+  // ---------- job summary (the Jobs list) ----------
+  // The few fields the Jobs list shows, stored beside each job. Never throws: a damaged job gives safe defaults.
+  function jobSummary(job) {
+    const str = (x) => (typeof x === 'string' ? x : typeof x === 'number' && isFinite(x) ? String(x) : '');
+    const out = { id: undefined, v: SUMMARY_VERSION, rev: 0, updatedAt: '', createdAt: '', reg: '', vehicle: '', ref: '', instructingParty: '', dateOfLoss: '', decision: '', category: '', net: 0, pav: 0, issued: false, photoCount: 0 };
+    try {
+      const j = obj(job);
+      out.id = j.id;
+      const v = obj(j.vehicle), r = obj(j.report), ins = obj(j.instruction), oc = obj(j.outcome);
+      Object.assign(out, {
+        rev: revOf(j), updatedAt: str(j.updatedAt), createdAt: str(j.createdAt), reg: str(v.reg),
+        vehicle: [v.make, v.model, v.derivative].map(str).filter((s) => s.trim()).join(' '),
+        ref: str(r.ref), instructingParty: str(ins.instructingParty), dateOfLoss: str(ins.dateOfLoss),
+        decision: str(oc.decision), category: str(oc.category), issued: !!j.issued,
+        photoCount: arr(j.photos).filter((p) => p && typeof p === 'object').length
+      });
+      const t = totals(j);
+      out.net = isFinite(t.net) ? t.net : 0;
+      out.pav = isFinite(t.pav) ? t.pav : 0;
+    } catch (err) { /* the defaults above */ }
+    return out;
+  }
+
   function qaChecks(job) {
     job = obj(job);
     const t = totals(job);
@@ -800,6 +896,12 @@
     if (!ins.dateOfLoss) add('error', 'Date of loss is missing.', 'claim');
     if (ins.dateOfLoss && insp.date && insp.date < ins.dateOfLoss) add('error', 'Inspection date is before the date of loss.', 'inspection');
     if (!ins.instructingParty) add('warn', 'Instructing party is missing.', 'claim');
+    // an entered or imported date that is not a real calendar date ("2023-02-29") is printed as entered, never shifted
+    for (const [when, label, tab] of [[ins.dateOfLoss, 'Date of loss', 'claim'], [ins.dateInstructed, 'Date instructions received', 'claim'], [rep.date, 'Report date', 'claim'],
+      [insp.date, 'Inspection date', 'inspection'], [v.firstReg, 'First registration date', 'vehicle'], [asr.dateSigned, 'Date signed', 'signoff']]) {
+      const s = txt(when).trim();
+      if (s && !calendarDate(s)) add('warn', `${label} "${s}" is not a valid date (YYYY-MM-DD). The report prints it as entered: correct it before issuing.`, tab);
+    }
     if (!shown.length) add('warn', photos.length ? `No photographs are included in the report (${photos.length} excluded).` : 'No photographs attached.', 'photos');
     const unlabelled = shown.filter((p) => !p.title).length;
     if (unlabelled) add('info', `${unlabelled} photo(s) in the report have no title.`, 'photos');
@@ -820,32 +922,42 @@
       if (!lines.some((x) => x !== l && refinishCovers(x, l))) add('info', `"${d(l)}" renews a painted part, but no refinish line covers it.`, 'estimate');
     });
     if (t.net < 0) add('error', t.discount > 0 ? `The discount (${gbp(t.discount)}) is larger than the estimate, so the net repair cost is ${gbp(t.net)}. Reduce the discount.` : `The net repair cost is negative (${gbp(t.net)}). Check the hours and amounts.`, 'estimate');
-    if (!t.pav) add('warn', 'No pre-accident value adopted.', 'valuation');
+    // totals() ignores a negative discount or PAV; the entry itself is an error
+    if (num(job.discount) < 0) add('error', `The discount is negative (${gbp(job.discount)}), so it is ignored. A discount must be zero or more: enter it as a positive amount, or add an estimate line for an extra charge.`, 'estimate');
+    if (num(val.adopted) < 0) add('error', `The pre-accident value is negative (${gbp(val.adopted)}), so it is treated as not assessed. Enter it as a positive amount.`, 'valuation');
+    if (!(t.pav > 0)) add('warn', 'No pre-accident value adopted.', 'valuation');
     if (t.pav > 0) {
       // the BER basis chosen in Settings (net or gross); never show a rounded figure on the wrong side of the threshold
       const ratio = (t.berBasis === 'gross' ? t.gross : t.net) / t.pav * 100;
       const pct = !t.berSuggested && t.berPct >= t.berThresholdPct ? Math.floor(ratio * 100) / 100 : t.berPct;
       if (t.berSuggested && oc.decision === 'Repair') add('warn', `Repair cost is ${pct}% (${t.berBasis}) of PAV, at or above your ${t.berThresholdPct}% threshold, but the decision is "Repair".`, 'valuation');
-      if (!t.berSuggested && /total|ber/i.test(txt(oc.decision))) add('info', `Decision is total loss, but repair cost is ${pct}% (${t.berBasis}) of PAV, below your ${t.berThresholdPct}% threshold. Make sure the opinion explains why.`, 'opinion');
+      if (!t.berSuggested && isTotalLoss(oc.decision)) add('info', `Decision is total loss, but repair cost is ${pct}% (${t.berBasis}) of PAV, below your ${t.berThresholdPct}% threshold. Make sure the opinion explains why.`, 'opinion');
+    }
+    // a salvage category belongs to a total loss only (the report prints "Not applicable" beside any other decision)
+    const catL = categoryOf(job), totalLoss = isTotalLoss(oc.decision);
+    if (catL && !totalLoss) {
+      const dec = txt(oc.decision).trim();
+      if ((catL === 'A' || catL === 'B') && /repair/i.test(dec)) add('error', `Category ${catL} (${catL === 'A' ? 'scrap' : 'break for parts'}) is recorded with the decision "${dec}". A Category ${catL} vehicle must not return to the road, so it cannot be repaired: change the category or the decision.`, 'valuation');
+      else add('warn', `A salvage category (Category ${catL}) is recorded, but the decision is ${dec ? `"${dec}"` : 'not set'}. A salvage category applies only to a total loss (beyond economical repair): clear the category or change the decision. Until then the report prints the category as "Not applicable".`, 'valuation');
     }
     const sw = structuralWording(ass.structural);
-    if (oc.category === 'S' && sw.denies && !sw.records) add('warn', `Category S selected, but the structural assessment text says there is no structural damage ("${snip(sw.denies)}"). Check the categorisation.`, 'assessment');
-    if (oc.category === 'N' && sw.records) add('warn', `Category N selected, but the structural assessment text records structural damage ("${snip(sw.records)}"). Check the categorisation.`, 'assessment');
+    if (catL === 'S' && sw.denies && !sw.records) add('warn', `Category S selected, but the structural assessment text says there is no structural damage ("${snip(sw.denies)}"). Check the categorisation.`, 'assessment');
+    if (catL === 'N' && sw.records) add('warn', `Category N selected, but the structural assessment text records structural damage ("${snip(sw.records)}"). Check the categorisation.`, 'assessment');
     if (!txt(job.opinion).trim()) add('warn', "Engineer's opinion is empty.", 'opinion');
     // ---- engineer checks ----
     const has = (re) => lines.some((l) => re.test(d(l)));
     // structural parts renewed or repaired (blend, refinish, R&I, checks and measuring do not count)
     const structural = lines.filter((l) => cat(l.code) && cat(l.code).kind === 'S' && !isServiceCode(l.code) && isDamageOp(l));
-    if (structural.length && oc.category === 'N') add('error', `Category N selected, but structural parts are being repaired/renewed (${structural.map((l) => d(l)).join('; ')}). Damage to a structural member rules out Category N.`, 'valuation');
-    if (oc.category && !(asr.aqpId || (issued && issued.aqpId) || sa.aqpId)) add('warn', 'A salvage category is recommended but no AQP (Appropriately Qualified Person) ID is recorded. Add it in Settings → Assessor or on Sign-off.', 'signoff');
+    if (structural.length && catL === 'N') add('error', `Category N selected, but structural parts are being repaired/renewed (${structural.map((l) => d(l)).join('; ')}). Damage to a structural member rules out Category N.`, 'valuation');
+    if (catL && totalLoss && !(asr.aqpId || (issued && issued.aqpId) || sa.aqpId)) add('warn', 'A salvage category is recommended but no AQP (Appropriately Qualified Person) ID is recorded. Add it in Settings → Assessor defaults or on Sign-off.', 'signoff');
     // accreditation: judged at the signature (or report) date, so a report signed while it was valid stays valid
     const expiry = txt(sa.accreditationExpiry).slice(0, 10);
     if (expiry) {
       const today = todayISO();
-      const signed = txt(asr.dateSigned).slice(0, 10) || (issued ? txt(issued.at).slice(0, 10) : '');
+      const signed = txt(asr.dateSigned).slice(0, 10) || (issued && issued.at ? localISODate(issued.at) : '');
       const ref = signed || txt(rep.date).slice(0, 10) || today;
-      if (expiry < ref) add('error', `Your recorded accreditation expiry date (${ukDate(expiry)}) is before the ${signed ? 'signature' : 'report'} date (${ukDate(ref)}). Update it in Settings → Assessor.`, 'signoff');
-      else if (expiry < today) add(signed ? 'info' : 'warn', signed ? `Your recorded accreditation expired on ${ukDate(expiry)}, after this report was signed. Renew it before signing new reports.` : `Your recorded accreditation expired on ${ukDate(expiry)}. Renew it (Settings → Assessor) before signing this report.`, 'signoff');
+      if (expiry < ref) add('error', `Your recorded accreditation expiry date (${ukDate(expiry)}) is before the ${signed ? 'signature' : 'report'} date (${ukDate(ref)}). Update it in Settings → Assessor defaults.`, 'signoff');
+      else if (expiry < today) add(signed ? 'info' : 'warn', signed ? `Your recorded accreditation expired on ${ukDate(expiry)}, after this report was signed. Renew it before signing new reports.` : `Your recorded accreditation expired on ${ukDate(expiry)}. Renew it (Settings → Assessor defaults) before signing this report.`, 'signoff');
     }
     if (/electric|hybrid|plug-in/i.test(txt(v.fuel)) && (structural.length || arr(job.zones).some((z) => /under|sill/i.test(txt(z))))) add('warn', 'Electric/hybrid vehicle with underbody, sill or structural involvement: assess the high-voltage battery under the ABI salvage code battery provisions and isolate before repair.', 'assessment');
     const srs = lines.filter((l) => cat(l.code) && cat(l.code).group === 'SRS / airbags');
@@ -889,7 +1001,7 @@
     if (after.length) {
       const last = after[after.length - 1];
       const since = num(v.mileage) ? last.miles - num(v.mileage) : 0;
-      const offRoad = /total|ber|beyond/i.test(txt(oc.decision)) || /off the road|not .*(suitable|roadworthy)|unroadworthy|should not be (used|driven)/i.test(txt(ass.roadworthiness) + ' ' + txt(insp.roadTest));
+      const offRoad = totalLoss || /off the road|not .*(suitable|roadworthy)|unroadworthy|should not be (used|driven)/i.test(txt(ass.roadworthiness) + ' ' + txt(insp.roadTest));
       add(offRoad ? 'warn' : 'info', `The vehicle was presented for an MOT AFTER the date of loss: ${after.map((r) => `${ukDate(r.date)} at ${fmt(r.miles)} ${unitWord}`).join('; ')}${since > 0 ? ` (${fmt(since)} ${unitWord} more than the inspection reading)` : ''}. ${offRoad ? 'The report treats it as off the road / a total loss: confirm whether it has been repaired or used, and address this in the opinion.' : 'Confirm the repair / usage history.'}`, 'vehicle');
     }
     if (/image|desktop|photo/i.test(txt(insp.type))) {
@@ -900,16 +1012,34 @@
     }
     if (rep.cpr35) {
       if (!txt(ins.purpose).trim()) add('error', 'CPR 35 report: the substance of the instructions must be stated (Purpose of instruction).', 'claim');
-      if (!(asr.qualifications || (issued && issued.qualifications) || sa.qualifications)) add('error', 'CPR 35 report: the expert\'s qualifications must be stated (Settings → Assessor).', 'signoff');
+      if (!(asr.qualifications || (issued && issued.qualifications) || sa.qualifications)) add('error', 'CPR 35 report: the expert\'s qualifications must be stated (Settings → Assessor defaults, or on Sign-off).', 'signoff');
       if (!txt(insp.by).trim()) add('error', 'CPR 35 report: state who carried out the examination and any tests (Inspection → Examined by).', 'inspection');
       else if (!txt(insp.byQualifications).trim() && fold(insp.by) !== fold(asr.name)) add('warn', 'CPR 35 report: give the qualifications of the person who carried out the examination (Inspection → Qualifications of examiner).', 'inspection');
       if (!RANGE_OF_OPINION.test(txt(job.opinion))) add('warn', 'CPR 35 report: where there is a range of opinion, summarise it and give reasons for your own view.', 'opinion');
+      if (!txt(rep.materialsRelied).trim()) add('error', 'CPR 35 report: give details of the literature and other material relied on in making the report (PD 35 para 3.2(2)), for example the trade guides and adverts, the ABI salvage Code of Practice, the labour-time basis and the data services used (Sign-off → Material relied on).', 'signoff');
     }
     // only real AI use counts (DVLA / DVSA lookups are logged with ai:false)
     const aiUsed = arr(job.aiLog).filter((a) => a && a.ai).length;
     if (aiUsed) add('info', `AI tools were used on this report (${aiUsed} logged action${aiUsed === 1 ? '' : 's'}). The report includes a "Use of AI and data tools" statement listing them (recommended by the Civil Justice Council, Oct 2026).`, 'report');
-    const adopted = num(val.adopted);
-    if (adopted && t.valMax && adopted < t.valMax && !txt(val.belowHighestReason).trim()) add('warn', `Adopted PAV (${gbp(adopted)}) is below the highest guide figure (${gbp(t.valMax)}). The ombudsman's starting point is the highest retail guide: record the vehicle-specific reason for the lower figure on the Valuation tab.`, 'valuation');
+    // AI-drafted text still exactly as the AI wrote it (job.aiText): one warning per tab, naming the fields
+    const byTab = new Map();
+    for (const f of unreviewedAiText(job)) { if (!byTab.has(f.tab)) byTab.set(f.tab, []); byTab.get(f.tab).push(f.label); }
+    for (const [tab, labels] of byTab) add('warn', `AI-drafted text not yet edited by the assessor: ${labels.join('; ')}. Review it before issuing: while it is unchanged, the report's AI statement lists it as not reviewed.`, tab);
+    // review flags the AI attached to an applied narrative draft, kept until the assessor dismisses them
+    for (const f of arr(job.aiFlags)) {
+      const fl = obj(f), text = txt(fl.text).trim();
+      if (!text) continue;
+      const section = txt(fl.section).trim(), day = fl.at ? ukDate(localISODate(fl.at)) : '';
+      add('warn', `AI review flag${section ? ` (${section})` : ''}${day ? `, ${day}` : ''}: ${text} Check it, then dismiss the flag.`, 'opinion');
+    }
+    // comparables reported by an AI web search whose advert has not been checked (the report lists them separately)
+    const unverified = arr(val.adverts).filter((x) => x && typeof x === 'object' && x.aiUnverified && (x.description || x.price));
+    if (unverified.length) {
+      const name = (x) => [txt(x.description).trim(), txt(x.year).trim(), num(x.price) ? gbp(x.price) : ''].filter(Boolean).join(' ') || 'advert';
+      const n = unverified.length;
+      add('warn', `${n} advert${n === 1 ? '' : 's'} found by AI web search ${n === 1 ? 'has' : 'have'} not been verified (${unverified.slice(0, 3).map(name).join('; ')}${n > 3 ? `; and ${n - 3} more` : ''}). Open each advert and check it exists at that price, then tick "Verified", or delete it. The report lists unverified adverts separately, not as market evidence.`, 'valuation');
+    }
+    if (t.pav > 0 && t.valMax && t.pav < t.valMax && !txt(val.belowHighestReason).trim()) add('warn', `Adopted PAV (${gbp(t.pav)}) is below the highest guide figure (${gbp(t.valMax)}). The ombudsman's starting point is the highest retail guide: record the vehicle-specific reason for the lower figure on the Valuation tab.`, 'valuation');
     if (!asr.name) add('error', 'Assessor name is missing.', 'signoff');
     if (!asr.dateSigned) add('info', 'Report has not been dated / signed.', 'signoff');
     return out;
@@ -922,21 +1052,39 @@
   function loadImage(src) {
     return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
   }
+  // True when any pixel drawn on the canvas is not fully opaque.
+  function canvasHasAlpha(ctx, w, h) {
+    try {
+      const px = ctx.getImageData(0, 0, w, h).data;
+      for (let i = 3; i < px.length; i += 4) if (px[i] < 255) return true;
+    } catch (e) { /* unreadable canvas: treat as opaque */ }
+    return false;
+  }
+  // Scales an image to fit maxEdge. Re-encoded as JPEG on a WHITE background (JPEG has no transparency, so transparent
+  // pixels would otherwise turn black); an image with transparency (a signature, a logo, a PNG diagram) stays a PNG.
   async function resizeDataURL(dataUrl, maxEdge, quality) {
     const img = await loadImage(dataUrl);
     const scale = Math.min(1, maxEdge / Math.max(img.naturalWidth, img.naturalHeight));
-    const w = Math.round(img.naturalWidth * scale), h = Math.round(img.naturalHeight * scale);
+    const w = Math.max(1, Math.round(img.naturalWidth * scale)), h = Math.max(1, Math.round(img.naturalHeight * scale));
     const c = document.createElement('canvas');
     c.width = w; c.height = h;
-    c.getContext('2d').drawImage(img, 0, 0, w, h);
-    return { dataUrl: c.toDataURL('image/jpeg', quality || 0.85), width: w, height: h };
+    const ctx = c.getContext('2d');
+    ctx.drawImage(img, 0, 0, w, h);
+    const mayHaveAlpha = !/^data:image\/(?:jpe?g|pjpeg)[;,]/i.test(String(dataUrl));
+    if (mayHaveAlpha && canvasHasAlpha(ctx, w, h)) return { dataUrl: c.toDataURL('image/png'), width: w, height: h, type: 'image/png' };
+    ctx.globalCompositeOperation = 'destination-over'; // white goes BEHIND what is drawn
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = 'source-over';
+    return { dataUrl: c.toDataURL('image/jpeg', quality || 0.85), width: w, height: h, type: 'image/jpeg' };
   }
 
   window.Core = {
-    $, $$, uid, esc, num, round2, gbp, gbp0, hrs, todayISO, ukDate, longDate, getPath, setPath, debounce, clone, fold, yearRange,
+    $, $$, uid, esc, num, round2, gbp, gbp0, hrs, todayISO, localISODate, ukDate, longDate, getPath, setPath, debounce, clone, fold, yearRange,
     Store, DEFAULT_SETTINGS, loadSettings, saveSettings, get settings() { return settings; }, set settings(v) { settings = v; },
     CAT, OPS, sideWord, SIZE_CLASSES, sizeFactor, paintFactor, oemVehicles, setCustomOem, get customOem() { return customOem; }, findOemVehicle, guessOemVehicle, oemLookup, decodeVin,
-    newJob, newLine, lineRate, lineLabour, vatPctFor, namedSources, totals, qaChecks, isDamageOp, isRenewLine, isServiceCode, photoNumbers, oemAlternatives,
+    newJob, newLine, lineRate, lineLabour, vatPctFor, rateSnapshot, namedSources, totals, qaChecks, isDamageOp, isRenewLine, photoNumbers, oemAlternatives,
+    isTotalLoss, unreviewedAiText, jobSummary,
     readFileAsDataURL, loadImage, resizeDataURL
   };
 })();

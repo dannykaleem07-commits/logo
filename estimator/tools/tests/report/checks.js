@@ -42,7 +42,7 @@ console.log('\n1. Sample job');
   check('no "RECOMMENDED RECOMMENDED"', !/RECOMMENDED RECOMMENDED|REQUIRED RECOMMENDED/.test(html));
   check('section 11 present with no photos', section(html, 11).includes('No photographs are included in this report.'));
   check('first registration printed to the day when no precision is recorded', section(html, 3).includes('05 August 2014'));
-  check('paint finish and size class in section 03', section(html, 3).includes('Paint finish') && section(html, 3).includes('Metallic') && section(html, 3).includes('Medium (hatch / saloon) ×1.00'));
+  check('paint finish and size class in section 03 (names only)', section(html, 3).includes('Paint finish') && section(html, 3).includes('Metallic') && /Size class<\/div><div class="fv">Medium \(hatch \/ saloon\)<\/div>/.test(section(html, 3)));
   check('multi-line inspection location keeps line breaks', section(html, 4).includes('CarFlex Secure Storage Gleneagles Farm<br>Gleneagles Close Stanwell<br>Staines-upon-Thames TW19 7PD'));
   check('no AI statement for a job with no AI or data use', !html.includes('Use of AI and data tools'));
   check('VAT @ 20%', section(html, 9).includes('VAT @ 20%'));
@@ -307,8 +307,8 @@ console.log('\n10. Vehicle data, valuation extras, MOT and adverts');
   const html = R.render(job, { mode: 'pdf' });
   const s3 = section(html, 3), s7 = section(html, 7);
   check('firstRegPrecision month → "August 2014"', s3.includes('First registration date</div><div class="fv">August 2014'));
-  check('paint finish pearl with factor', s3.includes('Pearlescent (refinish-time factor ×1.20)'));
-  check('size class premium ×1.20', s3.includes('Large premium / luxury ×1.20'));
+  check('paint finish pearl: name only, no refinish-time factor', /Paint finish<\/div><div class="fv">Pearlescent<\/div>/.test(s3) && !/factor/i.test(text(s3)));
+  check('size class premium: name only, no multiplier', /Size class<\/div><div class="fv">Large premium \/ luxury<\/div>/.test(s3) && !/×\s*\d/.test(text(html)));
   check('DVLA / DVSA block: tax, MOT, flags, recall', s3.includes('DVLA / DVSA status') && s3.includes('Taxed — due 01/03/2027') && s3.includes('Valid — expires 04/08/2027') && /Marked for export \(DVLA\)<\/div><div class="fv"><strong>Yes/.test(s3) && /Marked as scrapped \(DVLA\)<\/div><div class="fv">No/.test(s3) && s3.includes('first registered with DVLA 01/02/2016') && /Outstanding safety recall \(DVSA\)<\/div><div class="fv"><strong>Yes/.test(s3));
   check('below-highest reason printed', s7.includes('Adopted value below the highest guide figure (£5,682)') && s7.includes('full service history; none supplied'));
   check('history and options notes printed', s7.includes('<h3>History notes</h3>') && s7.includes('Previous Cat S recorded in 2019.</p><p>Finance outstanding.') && s7.includes('Panoramic roof.'));
@@ -391,6 +391,189 @@ console.log('\n13. Edge cases');
   j4.outcome.category = '';
   const h4 = R.render(j4, { mode: 'pdf' });
   check('repair decision: section 01 title "Assessment Summary", no verdict lines', heads(h4)[0] === '01 Assessment Summary' && !h4.includes('class="verdict-lines"'));
+}
+
+// ================================================================ round 3
+console.log('\n14. Unverified AI comparables (#2)');
+{
+  const X = '<b>x</b>';
+  const job = sample();
+  job.valuation.adverts = [
+    { description: 'Nissan Juke Acenta', year: '2014', mileage: '61,000', price: '£5,600', source: 'AutoTrader', url: 'https://www.autotrader.co.uk/car-details/1' },
+    { description: 'COMP-X Juke Tekna' + X, year: '2014', mileage: 70000, price: 5495, source: 'AutoTrader' + X, url: '', aiUnverified: true, claimedUrl: 'https://www.autotrader.co.uk/car-details/made-up' + X }
+  ];
+  const html = R.render(job, { mode: 'pdf' });
+  const s7 = section(html, 7);
+  const like = (/<h3>Like-for-like market evidence<\/h3>[\s\S]*?<\/table>/.exec(s7) || [''])[0];
+  const unv = (/<h3>Adverts found by AI search \(link not verified\)<\/h3>[\s\S]*?<\/table>/.exec(s7) || [''])[0];
+  check('verified advert under "Like-for-like market evidence" (legacy "61,000" / "£5,600" read)', like.includes('Nissan Juke Acenta') && like.includes('61,000') && like.includes('£5,600.00') && !like.includes('COMP-X'));
+  check('unverified AI advert under its own heading, never as market evidence', unv.includes('COMP-X Juke Tekna') && !like.includes('Tekna'));
+  check('…marked "Not verified", with the AI\'s link as text marked not verified', unv.includes('<span class="unv">Not verified</span>') && unv.includes('Link given by the AI, not verified: https://www.autotrader.co.uk/car-details/made-up') && !/href=/.test(unv));
+  check('…escaped', !html.includes('<b>x</b>') && unv.includes('&lt;b&gt;x&lt;/b&gt;'));
+  check('…with the note that they are not presented as market evidence', s7.includes('not presented as like-for-like market evidence'));
+  const s13 = section(html, 13);
+  check('AI statement names the unverified advert and does not claim all AI output was reviewed', s13.includes('1 advert found by AI web search had not been verified') && !s13.includes('All AI output was reviewed'));
+  delete job.valuation.adverts[1].aiUnverified;
+  const h2 = R.render(job, { mode: 'pdf' });
+  check('ticked Verified → printed as market evidence; no AI-search heading', !h2.includes('Adverts found by AI search') && /Like-for-like market evidence[\s\S]*COMP-X/.test(section(h2, 7)));
+}
+
+console.log('\n15. Unedited AI text in the AI statement and section 05 (#3, #4)');
+{
+  const job = sample();
+  job.photos = [photo('p1', { title: 'AI title 1', caption: 'AI caption 1', labels: [{ x: 0.1, y: 0.2, w: 0.2, h: 0.2, text: 'Dent', ai: true }], labelsReviewed: true })];
+  job.circumstances.impactType = 'AI-INFERRED sideswipe';
+  job.aiText = { 'photos.p1.title': 'AI title 1', 'photos.p1.caption': 'AI caption 1', 'circumstances.impactType': 'AI-INFERRED sideswipe', 'report.summary': job.report.summary, 'odd.<i>path</i>': 'v' };
+  job.odd = { '<i>path</i>': 'v' };
+  job.aiLog = [{ at: '2026-09-03T10:00:00Z', action: 'Photo damage labelling & repair suggestions (1 photos)', model: 'claude-opus-5-5', ai: true }];
+  let html = R.render(job, { mode: 'pdf' });
+  let s13 = text(section(html, 13));
+  check('statement lists the unedited AI text (summary, circumstances field, photo title and caption)', s13.includes('The following text is AI-drafted and had not been edited or confirmed by the assessor when this report was produced: Section 01 summary; Impact type (section 05)') && s13.includes('the title of IMAGE 01; the caption of IMAGE 01'), s13.slice(s13.indexOf('Use of AI'), s13.indexOf('Use of AI') + 600));
+  check('…and does NOT say "All AI output was reviewed"', !s13.includes('All AI output was reviewed'));
+  check('…labels from job data are escaped', !section(html, 13).includes('<i>path</i>') && section(html, 13).includes('&lt;i&gt;path&lt;/i&gt;'));
+  const s5 = section(html, 5);
+  check('section 05: AI-filled impact type labelled "Assessed from photographs (AI-assisted)", not "Reported"', s5.includes('Assessed from photographs (AI-assisted): impact type') && !s5.includes('Reported impact type') && s5.includes('Reported primary impact area'));
+  job.circumstances.impactType = 'Sideswipe, as described by the claimant';
+  job.report.summary += ' Reviewed.';
+  job.photos[0].title = 'RH side'; job.photos[0].caption = 'Scoring along the RH doors';
+  delete job.aiText['odd.<i>path</i>'];
+  html = R.render(job, { mode: 'pdf' });
+  s13 = text(section(html, 13));
+  check('all AI text edited → "All AI output was reviewed" and "Reported impact type" again', s13.includes('All AI output was reviewed, edited where necessary and adopted by the assessor') && section(html, 5).includes('Reported impact type'));
+  const j2 = sample(); j2.aiLog = []; j2.aiText = { opinion: j2.opinion };
+  const t2 = text(section(R.render(j2, { mode: 'pdf' }), 13));
+  check('AI text with an empty log (e.g. a copied job) still produces the AI statement', t2.includes('Use of AI and data tools') && t2.includes('AI-drafted text (1 field)') && t2.includes("Engineer's opinion (section 10)"));
+}
+
+console.log('\n16. Finalised report: issued rates and VAT (#5)');
+{
+  const job = sample();
+  job.issued = Object.assign({ at: '2026-09-06T12:00:00Z' }, C.rateSnapshot(job));
+  const before = R.render(job, { mode: 'pdf' });
+  const saved = C.clone(C.settings);
+  C.settings.rates = { Body: 90, Painting: 90, Mechanical: 90, Auxiliary: 90, Electrical: 90 }; C.settings.vatPct = 5;
+  job.rates = { Body: 10, Painting: 10, Mechanical: 10, Auxiliary: 10, Electrical: 10 }; job.vatPct = 0;
+  const after = R.render(job, { mode: 'pdf' });
+  C.settings = saved;
+  check('after Settings and job rate / VAT changes the issued report is unchanged (£3,365.08 / £4,038.10, VAT @ 20%, £72.50/hr)', after === before && after.includes('£4,038.10') && section(after, 9).includes('VAT @ 20%') && section(after, 8).includes('£72.50/hr'));
+}
+
+console.log('\n17. Salvage category only for a total loss (#7)');
+{
+  const job = sample();
+  job.outcome = { decision: 'Repair', category: 'S' };
+  let s7 = section(R.render(job, { mode: 'pdf' }), 7);
+  check('Repair + Category S → "Not applicable (repairable)", no category, no ABI note', s7.includes('Salvage category, if assessed</div><div class="fv">Not applicable (repairable)') && !s7.includes('Category S — Structural') && !s7.includes('Categorisation reference'));
+  job.outcome = { decision: '', category: 'N' };
+  s7 = section(R.render(job, { mode: 'pdf' }), 7);
+  check('no decision + Category N → "Not applicable (no total-loss decision)"', s7.includes('Not applicable (no total-loss decision)') && !s7.includes('Category N — Non-Structural'));
+  job.outcome = { decision: 'Beyond Economical Repair / Total Loss Recommended', category: 'N' };
+  s7 = section(R.render(job, { mode: 'pdf' }), 7);
+  check('total loss + Category N → category and ABI note printed', s7.includes('Salvage category, if assessed</div><div class="fv">Category N — Non-Structural') && s7.includes('Categorisation reference'));
+  job.outcome = { decision: 'Total loss', category: '' };
+  check('total loss without a category → "Not assessed"', section(R.render(job, { mode: 'pdf' }), 7).includes('Salvage category, if assessed</div><div class="fv">Not assessed'));
+}
+
+console.log('\n18. CPR 35: material relied on (#8)');
+{
+  const job = sample();
+  job.report.cpr35 = true;
+  job.report.materialsRelied = "Glass's Guide and CAP HPI retail values <script>x</script>\n\nABI Code of Practice for the Categorisation of Motorised Vehicle Salvage";
+  let s13 = section(R.render(job, { mode: 'pdf' }), 13);
+  check('CPR mode: "Material relied on" printed in section 13 (escaped, paragraphs kept)', s13.includes('<h3>Material relied on</h3>') && s13.includes('<p>Glass&#39;s Guide and CAP HPI retail values &lt;script&gt;x&lt;/script&gt;</p><p>ABI Code of Practice') && !s13.includes('<script>'));
+  check('…before the declaration', s13.indexOf('Material relied on') < s13.indexOf('Assessor declaration'));
+  job.report.cpr35 = false;
+  check('not CPR mode: not printed', !R.render(job, { mode: 'pdf' }).includes('Material relied on'));
+}
+
+console.log('\n19. Collected data printed (#14)');
+{
+  const job = sample();
+  job.vehicle.adas = 'Windscreen camera (lane keeping), front radar <b>';
+  job.valuation.claimType = 'third-party';
+  job.vehicle.dvla = { taxStatus: 'Taxed', motStatus: 'Valid', markedForExport: false, markedAsScrapped: false, importedOrReRegistered: false, yearOfManufacture: 2013, euroStatus: 'EURO 5', co2Emissions: 139, wheelPlan: '2 AXLE RIGID BODY', lookedUpAt: '2026-06-15T23:30:00.000Z' };
+  job.vehicle.motSummary = { recall: 'No', lookedUpAt: '2026-06-15T23:30:00.000Z' };
+  job.vehicle.motHistory = [{ date: '2025-08-01', result: 'PASSED', odometer: '60,000', unit: 'mi', odometerResult: 'READ', expiry: '2026-08-01', testNumber: '123456789012', defects: [] }, { date: '2024-08-01', result: 'PASSED', odometer: 52000, unit: 'mi', odometerResult: 'READ', expiry: '2025-08-01', defects: [] }];
+  const html = R.render(job, { mode: 'pdf' });
+  const s3 = section(html, 3), s7 = section(html, 7);
+  check('ADAS fitted printed in vehicle details (escaped)', s3.includes('ADAS / driver-assistance systems fitted</div><div class="fv">Windscreen camera (lane keeping), front radar &lt;b&gt;'));
+  check('DVLA year of manufacture, Euro status, CO₂ and wheel plan printed', s3.includes('Year of manufacture (DVLA)</div><div class="fv">2013') && s3.includes('Euro status (DVLA)</div><div class="fv">EURO 5') && s3.includes('CO₂ emissions (DVLA)</div><div class="fv">139 g/km') && s3.includes('Wheel plan (DVLA)</div><div class="fv">2 AXLE RIGID BODY'));
+  check('lookup date is the UK date (23:30 UTC on 15 June = 16/06/2026 BST)', s3.includes('looked up 16/06/2026') && !s3.includes('looked up 15/06/2026'));
+  check('claim type and valuation standard printed in section 07', s7.includes('Claim type / valuation standard</div><div class="fv">Third-party claim. Valuation standard: market value, the cost of buying a replacement vehicle'));
+  check('MOT table has a Test number column when the data has one ("—" where missing)', s7.includes('<th style="width:14%">Test number</th>') && s7.includes('<td>123456789012</td>') && s7.includes('<tr><td>01/08/2024</td><td>PASSED</td><td>52,000 mi</td><td>01/08/2025</td><td>—</td><td class="adv">—</td></tr>'));
+  check('legacy odometer "60,000" printed as 60,000 mi (tolerant num)', s7.includes('<td>60,000 mi</td>'));
+  const j2 = sample();
+  j2.vehicle.motHistory = [{ date: '2025-08-01', result: 'PASSED', odometer: 1000, unit: 'mi' }];
+  j2.vehicle.dvla = { co2Emissions: 0, euroStatus: '', wheelPlan: null, lookedUpAt: 'not a date' };
+  const h2 = R.render(j2, { mode: 'pdf' });
+  check('no test numbers → no Test number column; CO₂ 0 (an EV) is printed; blanks are not; a junk lookup time is not printed', !section(h2, 7).includes('Test number') && section(h2, 3).includes('0 g/km') && !section(h2, 3).includes('Euro status') && !section(h2, 3).includes('looked up'));
+  check('ADAS not recorded → "Not recorded"; claim type blank → "Not specified"', section(h2, 3).includes('ADAS / driver-assistance systems fitted</div><div class="fv">Not recorded') && section(h2, 7).includes('Claim type / valuation standard</div><div class="fv">Not specified'));
+}
+
+console.log('\n20. PDF margins: one constant for @page and pdfTemplates (#18)');
+{
+  const html = R.render(sample(), { mode: 'pdf' });
+  const m = /@page \{ size: A4; margin: (\d+)mm (\d+)mm (\d+)mm (\d+)mm;/.exec(html);
+  const tpl = R.pdfTemplates(sample());
+  const mm = tpl.marginsMm || {};
+  check('pdfTemplates returns marginsMm {top, bottom, left, right}', ['top', 'bottom', 'left', 'right'].every((k) => typeof mm[k] === 'number'), mm);
+  check('marginsMm equals the pdf-mode @page margin (top right bottom left)', m && +m[1] === mm.top && +m[2] === mm.right && +m[3] === mm.bottom && +m[4] === mm.left, [m && m.slice(1), mm]);
+  const main = require('fs').readFileSync(require('path').join(__dirname, '..', '..', '..', 'main.js'), 'utf8');
+  const mm2 = /PDF_MARGINS_MM = \{ top: (\d+), bottom: (\d+), left: (\d+), right: (\d+) \}/.exec(main);
+  check('…and main.js\'s fallback copy is the same', mm2 && +mm2[1] === mm.top && +mm2[2] === mm.bottom && +mm2[3] === mm.left && +mm2[4] === mm.right);
+  check('header / footer side margins come from the same constant', tpl.header.includes(`margin:0 ${mm.right}mm 0 ${mm.left}mm`) && tpl.footer.includes(`margin:0 ${mm.right}mm 0 ${mm.left}mm`));
+  const t1 = R.pdfTemplates(sample()); t1.marginsMm.top = 99;
+  check('marginsMm is a fresh plain object (a caller changing it does not change the constant)', R.pdfTemplates(sample()).marginsMm.top === +m[1] && R.render(sample(), { mode: 'pdf' }).includes(`margin: ${m[1]}mm`));
+}
+
+console.log('\n21. AI-adjusted hours show the guide time (optional note)');
+{
+  const job = sample();
+  job.lines.push(C.newLine({ type: 'Painting', description: 'RH front door – refinish repaired part', hours: 1.6, costClass: 'paint', ai: true, reviewed: true, op: 'refinishRep1', hoursBasis: 'adjusted', guideHours: 2 }));
+  job.lines.push(C.newLine({ type: 'Body', description: 'RH door mirror – renew', hours: 0.6, ai: true, reviewed: true, hoursBasis: 'guide', guideHours: 0.6 }));
+  job.lines.push(C.newLine({ type: 'Body', description: 'Adjusted but equal', hours: 2, ai: true, reviewed: true, hoursBasis: 'adjusted', guideHours: 2 }));
+  const s8 = section(R.render(job, { mode: 'pdf' }), 8);
+  check('adjusted AI line: "(guide 2.0h)" under the hours', s8.includes('1.60<br><span class="gh">(guide 2.0h)</span>'));
+  check('guide-based or unchanged lines: no note', (s8.match(/class="gh"/g) || []).length === 1);
+}
+
+console.log('\n22. Negative discount never printed as "LESS DISCOUNT" (R#13)');
+{
+  const job = sample();
+  job.discount = -100;
+  const html = R.render(job, { mode: 'pdf' });
+  const { rows, grand } = sumRows(html);
+  check('no LESS DISCOUNT row; the subtotal is the reference £3,365.08', !html.includes('LESS DISCOUNT') && section(html, 8).includes('£3,365.08') && section(html, 9).includes('<td>Discounts</td><td>£0.00</td>'));
+  check('section 08 rows still add up', Math.abs(rows.reduce((a, r) => a + r.amount, 0) - grand) < 0.005);
+}
+
+console.log('\n23. Label tags stay inside the photo (R#24)');
+{
+  const job = sample();
+  job.photos = [photo('t', { labels: [
+    { x: 0.8, y: 0.45, w: 0.19, h: 0.25, text: 'Deformation and creasing to RH rear quarter panel and wheel arch lip', colour: '#ff3b30' },
+    { x: 0.3, y: 0, w: 0.25, h: 0.25, text: 'Dent to roof edge', colour: '#ff9500' },
+    { x: 0.05, y: 0.5, w: 0.1, h: 0.1, text: 'Scuff', colour: '#ffcc00' },
+    { x: 0.9, y: 0.9, w: 0.5, h: 0.5, text: 'Overhanging box', colour: '#ff3b30' }
+  ] })];
+  const html = R.render(job, { mode: 'pdf' });
+  const tags = [...html.matchAll(/<div class="ptag ([^"]*)" style="([^"]*)">/g)].map((m) => ({ cls: m[1], st: m[2] }));
+  const val = (st, k) => { const m = new RegExp('(?:^|;)' + k + ':([\\d.]+)%').exec(st); return m ? +m[1] : null; };
+  check('four tags', tags.length === 4, tags);
+  check('right-edge box: anchored at its right edge, right-aligned, max-width ≤ room (99%) and ≤ 60%', tags[0].cls === 'up r' && val(tags[0].st, 'right') === 1 && val(tags[0].st, 'left') === null && val(tags[0].st, 'max-width') === 60, tags[0]);
+  check('box at the top edge: tag inside the box at its top (never above the photo)', /\bin\b/.test(tags[1].cls) && val(tags[1].st, 'top') === 0 && val(tags[1].st, 'bottom') === null, tags[1]);
+  check('ordinary box: tag above it (bottom = 1 − y), left-anchored', tags[2].cls === 'up' && val(tags[2].st, 'bottom') === 50 && val(tags[2].st, 'left') === 5 && val(tags[2].st, 'max-width') === 60, tags[2]);
+  const boxes = [...html.matchAll(/<div class="pbox[^"]*" style="left:([\d.]+)%;top:([\d.]+)%;width:([\d.]+)%;height:([\d.]+)%/g)].map((m) => m.slice(1).map(Number));
+  check('a box running past the photo is clipped to it (x + w ≤ 100%, y + h ≤ 100%)', boxes.every(([x, y, w, h]) => x + w <= 100.0001 && y + h <= 100.0001) && boxes[3][2] === 10, boxes);
+  check('tags wrap (no white-space: nowrap) and break long words', /\.ptag \{[^}]*white-space: normal;[^}]*overflow-wrap: anywhere/.test(html) && !/\.ptag \{[^}]*nowrap/.test(html));
+}
+
+console.log('\n24. Invalid dates print as entered on every page (R#27)');
+{
+  const job = sample();
+  job.instruction.dateOfLoss = '2023-02-29';
+  const html = R.render(job, { mode: 'pdf' });
+  check('cover and section 02 both print "2023-02-29" (no "01 March 2023")', !html.includes('01 March 2023') && /Date of loss<\/div><div class="fv">2023-02-29/.test(html) && section(html, 2).includes('Date of loss</div><div class="fv">2023-02-29'));
 }
 
 process.exitCode = summary() ? 1 : 0;

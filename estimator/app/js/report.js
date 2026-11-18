@@ -24,6 +24,17 @@
   const DEFAULT_ACCENT = '#1a6fb5';
   const DEFAULT_NAVY = '#1f3349';
   const DEFAULT_LABEL = '#ff3b30';
+  // Page margins of the Electron PDF in mm: the single source for the pdf-mode @page rule, the header/footer templates and
+  // pdfTemplates().marginsMm (which the renderer forwards to main.js's printToPDF).
+  const PDF_MARGINS_MM = Object.freeze({ top: 25, right: 16, bottom: 26, left: 16 });
+  const marginCss = (m) => `${m.top}mm ${m.right}mm ${m.bottom}mm ${m.left}mm`;
+  // Claim type → what it means for the valuation (the standard the AI valuation applies for that type, see ai.js).
+  const CLAIM_TYPES = {
+    'own-insurer': ['Own-insurer (first-party) total loss', 'the Financial Ombudsman Service approach (the highest recognised retail trade-guide figure is the starting point; a lower figure is adopted only on evidence about this vehicle)'],
+    'third-party': ['Third-party claim', 'market value, the cost of buying a replacement vehicle of the same kind and condition at the valuation date, in the assessor\'s reasoned opinion (the Financial Ombudsman Service highest-guide approach is persuasive, not binding)'],
+    court: ['Court proceedings (CPR Part 35)', 'market value, the cost of buying a replacement vehicle of the same kind and condition at the valuation date, given as the expert\'s independent opinion within the range of reasonable opinion']
+  };
+  const claimKey = (s) => String(s == null ? '' : s).trim().toLowerCase().replace(/[\s_]+/g, '-');
 
   // ---------- validation of values that end up in attributes, CSS or URLs ----------
   // Only inline raster images are allowed (no SVG, no remote or file URLs).
@@ -44,7 +55,6 @@
     const L = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
     return 1.05 / (L + 0.05) >= (L + 0.05) / 0.0556 ? '#fff' : '#111';
   }
-  const pct = (v) => (Math.min(1, Math.max(0, num(v))) * 100).toFixed(2) + '%';
   const arr = (x) => (Array.isArray(x) ? x : []);
   // lookup that ignores inherited keys ("constructor", "__proto__" …) coming from job data
   const own = (map, key) => (map && Object.prototype.hasOwnProperty.call(map, key) ? map[key] : undefined);
@@ -112,7 +122,7 @@
     const d = String(obj(job.outcome).decision || '').trim();
     const rep = obj(job.report);
     const cat = catOf(job);
-    const isTL = /total|\bber\b|beyond/i.test(d);
+    const isTL = typeof C.isTotalLoss === 'function' ? C.isTotalLoss(d) : /total|\bber\b|beyond/i.test(d);
     const auto = own(HEADLINES, d.toLowerCase().replace(/\s+/g, ' ')) || (isTL ? 'TOTAL LOSS RECOMMENDED' : d.toUpperCase());
     const name = own(CATEGORY_NAME, cat);
     return {
@@ -127,14 +137,29 @@
   const isPreExisting = (l) => /^\s*no\b/i.test(String(l.accidentRelated || ''));
   const visibleLabels = (p) => arr(p.labels).filter((l) => l && typeof l === 'object' && !l.hidden);
 
+  // Where a label's tag goes, so that it never runs past the photo (or off the page): anchored at the box's left edge for a
+  // box on the left half and at its right edge (right-aligned) on the right half, at most 60% of the photo wide and never
+  // wider than the room on that side (long text wraps); above the box, or inside it at the top when the box is at the top.
+  const clamp01 = (v) => Math.min(1, Math.max(0, num(v)));
+  const pc = (f) => (f * 100).toFixed(2) + '%';
+  function labelGeometry(l) {
+    const x = clamp01(l.x), y = clamp01(l.y);
+    const w = Math.min(clamp01(l.w), 1 - x), h = Math.min(clamp01(l.h), 1 - y);
+    const right = x + w / 2 > 0.5;
+    const room = right ? x + w : 1 - x;
+    const up = y >= 0.15; // room above for a wrapped tag
+    const tag = [right ? `right:${pc(1 - (x + w))}` : `left:${pc(x)}`, up ? `bottom:${pc(1 - y)}` : `top:${pc(y)}`, `max-width:${pc(Math.min(0.6, room))}`].join(';');
+    return { box: `left:${pc(x)};top:${pc(y)};width:${pc(w)};height:${pc(h)}`, tag, cls: (up ? 'up' : 'in') + (right ? ' r' : '') };
+  }
+
   function photoFigure(p, no, tight) {
     const src = safeImage(p.dataUrl);
     const boxes = src ? visibleLabels(p).map((l, k) => {
       const colour = safeColour(l.colour, DEFAULT_LABEL);
       const pre = isPreExisting(l);
-      const at = `left:${pct(l.x)};top:${pct(l.y)}`;
-      const tag = `<div class="ptag" style="${at};background:${colour};color:${inkFor(colour)}">${k + 1}. ${esc(l.text)}${pre ? ' (pre-existing)' : ''}${l.ai ? ' <span class="ai">AI</span>' : ''}</div>`;
-      return `<div class="pbox${pre ? ' pre' : ''}" style="${at};width:${pct(l.w)};height:${pct(l.h)};border-color:${colour}"></div>${tag}`;
+      const g = labelGeometry(l);
+      const tag = `<div class="ptag ${g.cls}" style="${g.tag};background:${colour};color:${inkFor(colour)}">${k + 1}. ${esc(l.text)}${pre ? ' (pre-existing)' : ''}${l.ai ? ' <span class="ai">AI</span>' : ''}</div>`;
+      return `<div class="pbox${pre ? ' pre' : ''}" style="${g.box};border-color:${colour}"></div>${tag}`;
     }).join('') : '';
     const taken = dateTime(p.takenAt);
     return `<figure class="photo${tight ? ' tight' : ''}">
@@ -176,7 +201,7 @@
     const sec = (title) => h2(++n, title);
 
     // ---------- valuation chart (named sources only) ----------
-    const srcs = arr(val.sources).filter((s) => s && String(s.name || '').trim() && num(s.amount) > 0);
+    const srcs = C.namedSources(job);
     const maxV = Math.max(1, ...srcs.map((s) => num(s.amount)));
     const highestNamed = srcs.length ? Math.max(...srcs.map((s) => num(s.amount))) : 0;
     const hasPav = tt.pav > 0;
@@ -186,12 +211,16 @@
       <div class="valgrid">${srcs.map((s) => `<div class="vcell${hasPav && num(s.amount) === tt.pav ? ' adopted' : ''}"><div class="vn">${esc(s.name)}</div><div class="vl">Valuation Amount</div><div class="va">${gbp0(s.amount)}</div></div>`).join('')}</div></div>` : '';
 
     // ---------- estimate table ----------
+    const h1 = (x) => (Math.round(num(x) * 10) / 10).toFixed(1) + 'h';
     const lineRows = lines.map((l) => {
       const rate = C.lineRate(job, l);
       const h = num(l.hours);
       const pending = l.ai && !l.reviewed ? ' <span title="AI-suggested line not yet reviewed by the assessor">†</span>' : '';
+      // an AI line whose hours were adjusted from the guide time shows the guide time too
+      const g = l.ai && l.hoursBasis === 'adjusted' ? num(l.guideHours) : 0;
+      const guide = h && g > 0 && Math.abs(g - h) >= 0.05 ? `<br><span class="gh">(guide ${h1(g)})</span>` : '';
       return `<tr><td class="ct">${esc(l.type)}</td><td>${esc(l.description)}${pending}</td><td>${esc(l.partNo) || '—'}</td>
-        <td>${h ? gbp(rate) + '/hr' : '—'}</td><td>${h ? hrs(h) : '—'}</td><td>${h ? gbp(C.lineLabour(h, rate)) : '—'}</td><td>${num(l.amount) ? gbp(l.amount) : '—'}</td></tr>`;
+        <td>${h ? gbp(rate) + '/hr' : '—'}</td><td>${h ? hrs(h) + guide : '—'}</td><td>${h ? gbp(C.lineLabour(h, rate)) : '—'}</td><td>${num(l.amount) ? gbp(l.amount) : '—'}</td></tr>`;
     }).join('');
 
     const zones = arr(job.zones);
@@ -228,7 +257,7 @@
         @bottom-right { content: "Page " counter(page) " of " counter(pages); font-family: Arial, Helvetica, sans-serif; font-size: 8pt; color: #6b7785; vertical-align: top; padding-top: 3mm; }` : '';
 
     const css = `
-      @page { size: A4; margin: ${pdf ? '25mm 16mm 26mm 16mm' : printMode === 'print' ? '14mm 16mm 22mm 16mm' : '14mm 16mm 16mm 16mm'};${marginBoxes} }
+      @page { size: A4; margin: ${pdf ? marginCss(PDF_MARGINS_MM) : printMode === 'print' ? '14mm 16mm 22mm 16mm' : '14mm 16mm 16mm 16mm'};${marginBoxes} }
       * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       body { font-family: Arial, Helvetica, sans-serif; color: #2a3340; font-size: 10.5pt; line-height: 1.42; margin: 0; background: ${preview ? '#e9edf2' : '#fff'}; }
       .page { background: #fff; ${preview ? 'width: 210mm; min-height: 297mm; margin: 12px auto; padding: 14mm 16mm 24mm; box-shadow: 0 2px 10px rgba(0,0,0,.15); position: relative;' : ''} page-break-after: always; break-after: page; }
@@ -270,6 +299,8 @@
       table.est tr.grand td { background: #8a8a8a !important; color: #fff; font-size: 12pt; font-weight: bold; padding: 8px 5px; }
       table.est td.url { word-break: break-all; }
       table.mot td.adv { font-size: 7.5pt; color: #44505c; }
+      table.est .gh { font-size: 7pt; color: #8a95a2; white-space: nowrap; }
+      table.est .unv { font-size: 7.5pt; font-weight: bold; color: #a4471b; }
       table.sum { width: 100%; border-collapse: collapse; font-size: 10pt; }
       table.sum th { text-align: left; color: ${navy}; padding: 6px 8px; border-bottom: 1px solid #d5dbe2; }
       table.sum td { padding: 6px 8px; font-weight: bold; color: #3b4652; }
@@ -292,7 +323,8 @@
       .pmissing { border: 1px dashed #c5ccd5; padding: 28px 12px; text-align: center; color: #8a95a2; font-size: 9pt; }
       .pbox { position: absolute; border: 2.5px solid ${DEFAULT_LABEL}; border-radius: 2px; }
       .pbox.pre { border-style: dashed; }
-      .ptag { position: absolute; transform: translateY(-100%); color: #fff; font-size: 7pt; font-weight: bold; padding: 1px 4px; white-space: nowrap; border-radius: 2px 2px 0 0; }
+      .ptag { position: absolute; color: #fff; font-size: 7pt; line-height: 1.25; font-weight: bold; padding: 1px 4px; white-space: normal; overflow-wrap: anywhere; word-break: break-word; border-radius: 2px 2px 0 0; }
+      .ptag.in { border-radius: 0 0 2px 2px; } .ptag.r { text-align: right; }
       .ptag .ai { display: inline-block; margin-left: 2px; padding: 0 2px; border: 1px solid currentColor; border-radius: 2px; font-size: 5.5pt; line-height: 1.2; vertical-align: 1px; }
       figcaption { margin-top: 5px; } .pt { font-weight: bold; color: ${navy}; font-size: 9.5pt; } .pc { font-size: 8.5pt; margin-top: 2px; } .ps { font-size: 7pt; color: #8a95a2; }
       .inote h3 { margin: 10px 0 4px; } .inote p { margin: 0 0 4px; }
@@ -318,9 +350,21 @@
       const d = arr(m.defects).filter((x) => x != null && String(x).trim()).map((x) => { const s = String(x).trim(); return s.length > 110 ? s.slice(0, 107) + '…' : s; });
       return d.length ? esc(d.slice(0, 3).join('; ')) + (d.length > 3 ? ` <span class="muted">(+${d.length - 3} more)</span>` : '') : '—';
     };
-    const motTable = motRows.length ? `<h3>MOT test history (DVSA)</h3><table class="est mot"><thead><tr><th style="width:13%">Test date</th><th style="width:10%">Result</th><th style="width:13%">Odometer</th><th style="width:12%">Expiry</th><th>Advisories / defects</th></tr></thead><tbody>${motRows.map((m) => `<tr><td>${esc(ukDate(m.date))}</td><td>${esc(m.result)}</td><td>${odometer(m)}</td><td>${esc(ukDate(m.expiry || '')) || '—'}</td><td class="adv">${shortDefects(m)}</td></tr>`).join('')}</tbody></table>` : '';
-    const ads = arr(val.adverts).filter((x) => x && (x.description || x.price));
-    const advertTable = ads.length ? `<h3>Like-for-like market evidence</h3><table class="est"><thead><tr><th>Vehicle</th><th>Year</th><th>Mileage</th><th>Asking price</th><th>Source</th></tr></thead><tbody>${ads.map((x) => `<tr><td>${esc(x.description)}</td><td>${esc(x.year)}</td><td>${x.mileage ? num(x.mileage).toLocaleString('en-GB') : '—'}</td><td>${x.price ? gbp(x.price) : '—'}</td><td class="url">${esc(x.source || '')}${x.source && x.url ? '<br>' : ''}${esc(x.url || '')}${x.source || x.url ? '' : '—'}</td></tr>`).join('')}</tbody></table>` : '';
+    // the DVSA test number (to look the test up) when the data has it
+    const testNo = (m) => String(m.testNumber == null ? '' : m.testNumber).trim();
+    const hasTestNo = motRows.some((m) => testNo(m));
+    const motTable = motRows.length ? `<h3>MOT test history (DVSA)</h3><table class="est mot"><thead><tr><th style="width:13%">Test date</th><th style="width:10%">Result</th><th style="width:13%">Odometer</th><th style="width:12%">Expiry</th>${hasTestNo ? '<th style="width:14%">Test number</th>' : ''}<th>Advisories / defects</th></tr></thead><tbody>${motRows.map((m) => `<tr><td>${esc(ukDate(m.date))}</td><td>${esc(m.result)}</td><td>${odometer(m)}</td><td>${esc(ukDate(m.expiry || '')) || '—'}</td>${hasTestNo ? `<td>${esc(testNo(m)) || '—'}</td>` : ''}<td class="adv">${shortDefects(m)}</td></tr>`).join('')}</tbody></table>` : '';
+    // Adverts: those the assessor entered or checked are market evidence; those reported by an AI web search and not yet
+    // checked (aiUnverified) are listed apart, marked as not verified, and never as like-for-like market evidence.
+    const ads = arr(val.adverts).filter((x) => x && typeof x === 'object' && (x.description || x.price));
+    const verifiedAds = ads.filter((x) => !x.aiUnverified), unverifiedAds = ads.filter((x) => x.aiUnverified);
+    const adHead = '<thead><tr><th>Vehicle</th><th>Year</th><th>Mileage</th><th>Asking price</th><th>Source</th></tr></thead>';
+    const adCells = (x) => `<td>${esc(x.description)}</td><td>${esc(x.year)}</td><td>${x.mileage ? num(x.mileage).toLocaleString('en-GB') : '—'}</td><td>${x.price ? gbp(x.price) : '—'}</td>`;
+    const advertTable = verifiedAds.length ? `<h3>Like-for-like market evidence</h3><table class="est">${adHead}<tbody>${verifiedAds.map((x) => `<tr>${adCells(x)}<td class="url">${esc(x.source || '')}${x.source && x.url ? '<br>' : ''}${esc(x.url || '')}${x.source || x.url ? '' : '—'}</td></tr>`).join('')}</tbody></table>` : '';
+    const unverifiedTable = unverifiedAds.length ? `<h3>Adverts found by AI search (link not verified)</h3><table class="est unverified">${adHead}<tbody>${unverifiedAds.map((x) => {
+      const link = String(x.url || x.claimedUrl || '').trim();
+      return `<tr>${adCells(x)}<td class="url">${esc(x.source || 'AI web search')}<br><span class="unv">Not verified</span>${link ? `<br><span class="muted">Link given by the AI, not verified: ${esc(link)}</span>` : ''}</td></tr>`;
+    }).join('')}</tbody></table><p class="small muted">These adverts were reported by an AI web search. The assessor has not verified that they exist at the prices shown, so they are not presented as like-for-like market evidence.</p>` : '';
 
     // ---------- use of AI and data tools ----------
     const log = arr(job.aiLog).filter((x) => x && typeof x === 'object');
@@ -329,11 +373,15 @@
     const dataEntries = log.filter(isDataEntry);
     const aiLines = lines.filter((l) => l.ai);
     const unreviewedLines = aiLines.filter((l) => !l.reviewed);
-    const usedAI = aiEntries.length > 0 || aiLines.length > 0 || aiPhotos.length > 0;
+    // fields still holding AI-drafted text exactly as the AI wrote it (job.aiText), in report order
+    const aiTextFields = typeof C.unreviewedAiText === 'function' ? arr(C.unreviewedAiText(job)) : [];
+    const usedAI = aiEntries.length > 0 || aiLines.length > 0 || aiPhotos.length > 0 || aiTextFields.length > 0 || unverifiedAds.length > 0;
     const logItem = (x, kind) => { const day = dayOf(x.at); return `<li>${esc(x.action || (kind === 'ai' ? 'AI-assisted step' : 'Data lookup'))} (${esc(x.model || (kind === 'ai' ? 'AI' : 'data service'))})${day ? ' on ' + esc(day) : ''}</li>`; };
     const aiItems = aiEntries.length ? aiEntries.map((x) => logItem(x, 'ai')) : [
       aiLines.length ? `<li>AI-suggested estimate lines (${aiLines.length})</li>` : '',
-      aiPhotos.length ? `<li>AI damage labelling of ${plural(aiPhotos.length, 'photograph')}</li>` : ''
+      aiPhotos.length ? `<li>AI damage labelling of ${plural(aiPhotos.length, 'photograph')}</li>` : '',
+      aiTextFields.length ? `<li>AI-drafted text (${plural(aiTextFields.length, 'field')})</li>` : '',
+      unverifiedAds.length ? `<li>AI web search for comparable adverts (${unverifiedAds.length})</li>` : ''
     ].filter(Boolean);
     let reviewText = '';
     if (usedAI) {
@@ -343,6 +391,16 @@
         open.push(`${plural(unreviewedLines.length, 'AI-suggested estimate line')} had not been marked as reviewed by the assessor when this report was produced: ${names.join('; ')}${unreviewedLines.length > 5 ? `; and ${unreviewedLines.length - 5} more` : ''}.`);
       }
       if (unreviewedPhotos.length) open.push(`The AI damage labels on ${andList(unreviewedPhotos.map(figName))} had not been reviewed by the assessor.`);
+      if (aiTextFields.length) {
+        const isPhoto = (f) => /^photos\./.test(String(f.path));
+        const figs = (kind) => aiTextFields.filter((f) => isPhoto(f) && String(f.path).endsWith('.' + kind)).map((f) => String(f.label).replace(/^(?:Title|Caption) of /, ''));
+        const titles = figs('title'), captions = figs('caption');
+        const parts = aiTextFields.filter((f) => !isPhoto(f)).map((f) => String(f.label));
+        if (titles.length) parts.push(`the ${titles.length === 1 ? 'title' : 'titles'} of ${andList(titles)}`);
+        if (captions.length) parts.push(`the ${captions.length === 1 ? 'caption' : 'captions'} of ${andList(captions)}`);
+        open.push(`The following text is AI-drafted and had not been edited or confirmed by the assessor when this report was produced: ${esc(parts.join('; '))}.`);
+      }
+      if (unverifiedAds.length) open.push(`${plural(unverifiedAds.length, 'advert')} found by AI web search had not been verified by the assessor; ${unverifiedAds.length === 1 ? 'it is' : 'they are'} listed separately in the valuation section and not presented as market evidence.`);
       reviewText = open.length
         ? `${open.join(' ')} The assessor takes full responsibility for the findings and opinions expressed in this report.`
         : 'All AI output was reviewed, edited where necessary and adopted by the assessor, who takes full responsibility for the findings and opinions expressed.';
@@ -358,12 +416,13 @@
     const ms = v.motSummary && typeof v.motSummary === 'object' ? v.motSummary : null;
     const monthOnly = v.firstRegPrecision === 'month' || (!v.firstRegPrecision && !!dv && !!dv.firstRegistration && dv.firstRegistration === v.firstReg);
     const firstRegText = v.firstReg ? (monthOnly ? monthYear(v.firstReg) : longDate(v.firstReg)) : '';
+    // names only: the size-class and paint-finish multipliers are this software's own guide-time factors, not vehicle facts
     const paintKey = String(v.paintType || 'metallic');
-    const paintF = C.paintFactor(job);
-    const paintText = `${own(PAINT_FINISH, paintKey) || paintKey}${paintF && paintF !== 1 ? ` (refinish-time factor ×${paintF.toFixed(2)})` : ''}`;
+    const paintText = own(PAINT_FINISH, paintKey) || paintKey;
     const sizeKey = String(v.sizeClass || 'medium');
     const size = Array.isArray(own(C.SIZE_CLASSES, sizeKey)) ? C.SIZE_CLASSES[sizeKey] : null;
-    const sizeText = `${size ? size[0] : sizeKey} ×${(size ? num(size[1]) : 1).toFixed(2)}`;
+    const sizeText = size ? String(size[0]) : sizeKey;
+    const present = (x) => x != null && String(x).trim() !== '';
     const yn = (b) => (b ? '<strong>Yes</strong>' : 'No');
     const withNote = (main, note) => [main, note].filter(Boolean).join(' — ');
     let statusBlock = '';
@@ -376,12 +435,17 @@
         fs.push(field('Marked as scrapped (DVLA)', yn(dv.markedAsScrapped)));
         fs.push(field('Imported / re-registered (DVLA)', dv.importedOrReRegistered ? `<strong>Yes</strong> — ${t(`first registered ${ukDate(dv.firstRegistration)}, first registered with DVLA ${ukDate(dv.firstRegistrationWithDvla)}`)}` : 'No'));
         if (dv.dateOfLastV5CIssued) fs.push(field('Last V5C issued (DVLA)', t(ukDate(dv.dateOfLastV5CIssued))));
+        if (present(dv.yearOfManufacture)) fs.push(field('Year of manufacture (DVLA)', t(dv.yearOfManufacture)));
+        if (present(dv.euroStatus)) fs.push(field('Euro status (DVLA)', t(dv.euroStatus)));
+        if (present(dv.co2Emissions)) fs.push(field('CO₂ emissions (DVLA)', t(`${String(dv.co2Emissions).trim()} g/km`)));
+        if (present(dv.wheelPlan)) fs.push(field('Wheel plan (DVLA)', t(dv.wheelPlan)));
       }
       if (ms) {
         fs.push(field('Outstanding safety recall (DVSA)', /^yes$/i.test(String(ms.recall || '')) ? '<strong>Yes</strong>' : t(ms.recall || 'Unknown')));
         if (ms.motTestDueDate) fs.push(field('MOT test due (DVSA)', t(ukDate(ms.motTestDueDate))));
       }
-      const seen = (x) => (x.lookedUpAt ? ', looked up ' + ukDate(String(x.lookedUpAt).slice(0, 10)) : '');
+      // the UK calendar day of the lookup (a UTC timestamp sliced to 10 characters is the previous day just after midnight BST)
+      const seen = (x) => { const day = x.lookedUpAt ? C.localISODate(x.lookedUpAt) : ''; return day ? ', looked up ' + ukDate(day) : ''; };
       const from = [dv && 'DVLA Vehicle Enquiry Service' + seen(dv), ms && 'DVSA MOT History' + seen(ms)].filter(Boolean).join('; ');
       statusBlock = `<h3>DVLA / DVSA status</h3><div class="grid">${fs.join('')}</div><p class="small muted">Source: ${esc(from)}. Status as recorded at the time of the lookup.</p>`;
     }
@@ -432,7 +496,8 @@
         ${field('Fuel type', t(v.fuel))}${field('Transmission', t(v.transmission))}
         ${field('Engine size', v.engineSize ? t(num(v.engineSize).toLocaleString('en-GB') + ' cc') : '')}${field('Engine code', t(v.engineCode))}
         ${field('Colour / paint code', t([v.colour, v.paintCode].filter(Boolean).join(' / ')))}${field('First registration date', t(firstRegText))}
-        ${field('Paint finish', t(paintText))}${field('Size class (guide-time factor)', t(sizeText))}
+        ${field('Paint finish', t(paintText))}${field('Size class', t(sizeText))}
+        ${field('ADAS / driver-assistance systems fitted', present(v.adas) ? t(v.adas) : 'Not recorded', 'full')}
       </div>
       ${statusBlock}`));
 
@@ -449,14 +514,17 @@
         ${field('Warning lamps', para(insp.warningLamps))}
       </div>`));
 
-    // 05 Circumstances
+    // 05 Circumstances. A field still holding AI text (filled from the photo analysis, unedited) is the AI's assessment of
+    // the photographs, not the account given, so it is never labelled "Reported".
+    const aiPaths = new Set(aiTextFields.map((f) => String(f.path)));
+    const circLabel = (key, reported, what) => (aiPaths.has('circumstances.' + key) ? 'Assessed from photographs (AI-assisted): ' + what : reported);
     pages.push(page(`${sec('ACCIDENT CIRCUMSTANCES')}
       <h3>Account provided by</h3><div class="box"><strong>${t(circ.providedBy) || '—'}</strong></div>
       <h3>Circumstances as reported</h3><div class="box">${para(circ.narrative)}</div>
       <div class="grid">
-        ${field('Reported impact type', t(circ.impactType))}${field('Reported primary impact area', t(circ.primaryArea))}
-        ${field('Reported secondary contact area', t(circ.secondaryArea))}${field('Reported direction of contact', t(circ.direction))}
-        ${field('Post-impact symptoms reported', t(circ.symptoms), 'full')}
+        ${field(circLabel('impactType', 'Reported impact type', 'impact type'), t(circ.impactType))}${field(circLabel('primaryArea', 'Reported primary impact area', 'primary impact area'), t(circ.primaryArea))}
+        ${field(circLabel('secondaryArea', 'Reported secondary contact area', 'secondary contact area'), t(circ.secondaryArea))}${field(circLabel('direction', 'Reported direction of contact', 'direction of contact'), t(circ.direction))}
+        ${field(circLabel('symptoms', 'Post-impact symptoms reported', 'post-impact symptoms'), t(circ.symptoms), 'full')}
       </div>
       ${circ.liabilityNote ? `<p class="small muted"><strong>${nl2br(circ.liabilityNote)}</strong></p>` : ''}`));
 
@@ -479,25 +547,30 @@
       ? `Excl. VAT: ${gbp(tt.net)} — ${tt.pctNet.toFixed(2)}%<br>Incl. VAT: ${gbp(tt.gross)} — ${tt.pctGross.toFixed(2)}%`
       : `Excl. VAT: ${gbp(tt.net)} — Not assessed<br>Incl. VAT: ${gbp(tt.gross)} — Not assessed<br><span class="small muted">No pre-accident value has been adopted.</span>`;
     const belowReason = String(val.belowHighestReason || '').trim();
+    const claim = own(CLAIM_TYPES, claimKey(val.claimType));
+    // a salvage category belongs to a total loss only; beside any other decision it is "Not applicable"
+    const decision = String(obj(job.outcome).decision || '').trim();
+    const categoryText = o.isTL ? (catText(cat) || 'Not assessed') : /repair/i.test(decision) ? 'Not applicable (repairable)' : cat ? 'Not applicable (no total-loss decision)' : 'Not assessed';
     pages.push(page(`${sec('VALUATION')}
       <div class="grid">
         ${field('Valuation date / date assessed', t(val.date))}${field('Mileage used for valuation', val.mileage ? t(num(val.mileage).toLocaleString('en-GB') + ' ' + (v.mileageUnit || 'miles')) : '')}
         ${field('Cost at new', t(val.costNew || 'N/A'))}${field('Pre-accident condition', t(val.condition))}
+        ${field('Claim type / valuation standard', t(claim ? `${claim[0]}. Valuation standard: ${claim[1]}.` : 'Not specified'), 'full')}
       </div>
       ${chart ? `<h3>Valuation evidence</h3>${chart}` : ''}
       <h3>Assessed value</h3><div class="hl">ASSESSED PRE-ACCIDENT VALUE - ${hasPav ? gbp(tt.pav) : 'Not assessed'}</div>
       ${belowReason && hasPav && highestNamed > tt.pav ? `<h3>Adopted value below the highest guide figure (${gbp0(highestNamed)})</h3><div class="box">${para(belowReason)}</div>` : ''}
       <div class="grid">
-        ${field('Provisional salvage value (£)', salvageText)}${field('Salvage category, if assessed', t(catText(cat) || 'Not assessed'))}
+        ${field('Provisional salvage value (£)', salvageText)}${field('Salvage category, if assessed', t(categoryText))}
         ${field('Repair cost / value (%)', ratioText)}
         ${field('Economic repair / total-loss assessment', t(obj(job.outcome).decision))}
       </div>
       ${val.historyNotes && String(val.historyNotes).trim() ? `<h3>History notes</h3><div class="box">${para(val.historyNotes)}</div>` : ''}
       ${val.optionsNotes && String(val.optionsNotes).trim() ? `<h3>Condition, options &amp; service history</h3><div class="box">${para(val.optionsNotes)}</div>` : ''}
-      ${motTable}${advertTable}
+      ${motTable}${advertTable}${unverifiedTable}
       <h3>Valuation comments</h3><div class="box">${richPara(val.comments || '')}
       ${o.isTL ? `<div class="verdict-lines"><p>${esc(String(obj(job.outcome).decision).toUpperCase())}</p>${cat ? `<p>SALVAGE CATEGORY: ${esc(catText(cat).toUpperCase())}</p>` : ''}</div>` : ''}
-      ${cat ? `<p class="small muted">Categorisation reference: ABI Code of Practice for the Categorisation of Motorised Vehicle Salvage. Category N is a repairable non-structural salvage category; Category S is a repairable structural category. Neither is a roadworthiness certificate.${cat === 'A' || cat === 'B' ? ' Category A (scrap) and Category B (break) vehicles must not be returned to the road.' : ''}</p>` : ''}
+      ${cat && o.isTL ? `<p class="small muted">Categorisation reference: ABI Code of Practice for the Categorisation of Motorised Vehicle Salvage. Category N is a repairable non-structural salvage category; Category S is a repairable structural category. Neither is a roadworthiness certificate.${cat === 'A' || cat === 'B' ? ' Category A (scrap) and Category B (break) vehicles must not be returned to the road.' : ''}</p>` : ''}
       </div>`));
 
     // 08 Repair estimate + 09 summary
@@ -570,9 +643,12 @@
         <p>${examination}</p>
         <p>I confirm that I have made clear which facts and matters referred to in this report are within my own knowledge and which are not. Those that are within my own knowledge I confirm to be true. The opinions I have expressed represent my true and complete professional opinions on the matters to which they refer.</p>
         <p>I understand that proceedings for contempt of court may be brought against anyone who makes, or causes to be made, a false statement in a document verified by a statement of truth without an honest belief in its truth.</p>` : '';
+    // CPR 35 / PD 35 para 3.2(2): details of any literature or other material relied on in making the report
+    const materials = cpr ? `<h3>Material relied on</h3><div class="box">${para(rep.materialsRelied)}</div>` : '';
     pages.push(page(`${sec('ASSESSOR DETAILS & SIGN-OFF')}
       <div class="grid">${field('Assessor name', `<strong>${t(as.name)}</strong>`)}${field('Professional role / title', `<strong>${t(as.title)}</strong>`)}
         ${field('Qualifications', t(qualifications))}${field('AQP ID (salvage categorisation)', t(aqpId))}</div>
+      ${materials}
       ${aiUse}
       <div class="nobreak">
         <h3>Assessor declaration</h3>${para(declaration)}
@@ -587,20 +663,22 @@
     return `<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data:; style-src 'unsafe-inline'"><title>${esc(rep.ref || 'Engineering report')}</title><style>${css}</style></head><body>${pages.join('\n')}</body></html>`;
   }
 
-  // Header/footer templates for Electron printToPDF (page numbers). Uses the job's issued company details when
-  // finalised; without a job argument, the job most recently passed to render().
+  // Header/footer templates for Electron printToPDF (page numbers), and the page margins (mm) of the pdf-mode @page rule.
+  // Uses the job's issued company details when finalised; without a job argument, the job most recently passed to render().
   function pdfTemplates(job) {
     const co = companyFor(job || lastJob);
     const navy = safeColour(co.navy, DEFAULT_NAVY);
     const logo = safeImage(co.logo);
-    const header = `<div style="width:100%;margin:0 16mm;padding-bottom:4px;border-bottom:1px solid #d5dbe2;display:flex;justify-content:space-between;align-items:center;font-family:Arial;">
+    const side = `margin:0 ${PDF_MARGINS_MM.right}mm 0 ${PDF_MARGINS_MM.left}mm`;
+    const header = `<div style="width:100%;${side};padding-bottom:4px;border-bottom:1px solid #d5dbe2;display:flex;justify-content:space-between;align-items:center;font-family:Arial;">
       ${logo ? `<img src="${logo}" style="height:34px" alt="">` : `<b style="font-size:10px;color:${navy}">${esc(co.name)}</b>`}
       <span style="font-size:8px;font-weight:bold;color:${navy}">${esc(co.reportTitle)}</span></div>`;
-    const footer = `<div style="width:100%;margin:0 16mm;border-top:1px solid #d5dbe2;padding-top:4px;display:flex;justify-content:space-between;align-items:flex-end;font-family:Arial;font-size:6.5px;font-weight:bold;color:${navy}">
+    const footer = `<div style="width:100%;${side};border-top:1px solid #d5dbe2;padding-top:4px;display:flex;justify-content:space-between;align-items:flex-end;font-family:Arial;font-size:6.5px;font-weight:bold;color:${navy}">
       <div>${esc(co.name)}${co.companyNo ? ' | Company No. ' + esc(co.companyNo) : ''} |<br>${esc(co.tradingName || '')}<br>${esc(co.address)} |<br>T: ${esc(co.phone)} | E: ${esc(co.email)} &nbsp;| PRIVATE &amp; CONFIDENTIAL</div>
       <div style="font-size:8px;font-weight:normal;color:#6b7785">Page <span class="pageNumber" style="font-size:11px;color:${navy}"></span> of <span class="totalPages" style="font-size:11px;color:${navy}"></span></div></div>`;
-    return { header, footer };
+    const m = PDF_MARGINS_MM;
+    return { header, footer, marginsMm: { top: m.top, bottom: m.bottom, left: m.left, right: m.right } };
   }
 
-  window.Report = { render, pdfTemplates, outcomeText, CATEGORY_TEXT, safeImage, safeColour };
+  window.Report = { render, pdfTemplates, outcomeText, CATEGORY_TEXT, safeImage, safeColour, PDF_MARGINS_MM };
 })();
