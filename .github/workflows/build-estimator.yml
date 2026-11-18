@@ -25,6 +25,7 @@ jobs:
         run: |
           node tools/selftest.js
           node tools/ai-mocktest.js
+          node tools/data-mocktest.js
       - name: Build Windows installer and portable .exe
         run: npx electron-builder --win nsis portable --x64 --publish never
       - uses: actions/upload-artifact@v4

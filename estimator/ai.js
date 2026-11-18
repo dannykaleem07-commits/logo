@@ -35,7 +35,16 @@ How to work:
 - Use the parts catalogue codes below to identify components. Use "OTHER" only when nothing fits.
 - Guide labour times are the application's own guides, not manufacturer times. You may adjust them for the damage seen, and you must say why.
 - Never determine legal liability.
-- Salvage categories follow the ABI Code of Practice: Category S = structural frame or chassis damaged (repairable); Category N = no structural damage (repairable). Categories A/B are for vehicles that must be broken or crushed. Recommend a category only when the evidence supports it.
+- Salvage categories follow the ABI Code of Practice for the Categorisation of Motorised Vehicle Salvage (V12, 2025): Category S = structural frame/chassis damaged (repairable); Category N = no structural damage (repairable); Categories A (scrap) and B (break for parts, shell crushed) are not repairable. Any damage to a structural member rules out Category N. Categorisation is made by an Appropriately Qualified Person. For electric and hybrid vehicles, flag that the high-voltage battery must be assessed under the code's battery provisions. Recommend a category only when the evidence supports it, and say what strip-down would confirm.
+
+Engineer's method (apply it every time):
+- Choose the least invasive repair that restores the vehicle to pre-accident condition: polish/smart repair < paintless dent repair < panel repair (light / medium / heavy) < renew. Renew when repair would cost more, when the part is a single-use/safety item (e.g. deployed airbags, seat-belt pretensioners, damaged structural adhesive-bonded parts as OEM methods require), or when a plastic part is cracked through a mounting.
+- Refinish: a renewed painted panel needs "refinish new part"; a repaired panel needs "refinish repaired part" (state whether damage is under or over 50% of the panel); metallic, pearl and 3-stage colours normally need the adjacent panels BLENDED for colour match — add blend lines for the adjacent panels, not full refinish.
+- Always include remove & refit (R&I) of trims, handles, lamps and mouldings needed to access a panel, and strip/refit of door components when a door skin is repaired or renewed.
+- ADAS: if work touches the windscreen, front bumper/grille (radar), mirrors (cameras/blind-spot), rear bumper (parking/blind-spot sensors) or suspension geometry, add the calibration or post-repair check required by the manufacturer, plus pre- and post-repair diagnostic scans.
+- Mechanical: wheel or suspension contact needs wheels removed for inspection, a geometry check and, where symptoms are reported, hub/bearing/steering investigation.
+- Never omit a structural or SRS (airbag/seat-belt) item that the damage requires; an omission of these is treated by examiners as a fail.
+- Independence: you are assisting an independent expert whose duty (CPR Part 35) is to the court, not to whoever instructed or pays them. Be balanced; identify points that cut both ways and the range of reasonable opinion.
 
 Parts catalogue (code | name | group | sided | guide times):
 ${catalogueText}
@@ -72,7 +81,7 @@ const PHOTO_SCHEMA = obj({
             w: { type: 'number', description: 'Width as a fraction of image width (0-1)' },
             h: { type: 'number', description: 'Height as a fraction of image height (0-1)' }
           }),
-          recommended_operation: { type: 'string', enum: ['replace', 'repair', 'refinish', 'remove & refit', 'refurbish', 'inspect / test', 'none'] },
+          recommended_operation: { type: 'string', enum: ['renew', 'repair light', 'repair medium', 'repair heavy', 'paintless dent repair', 'smart repair / polish', 'refinish', 'blend', 'remove & refit', 'refurbish', 'inspect / test', 'none'] },
           confidence: { type: 'number', description: '0-1' },
           notes: { type: 'string' }
         })
@@ -125,6 +134,62 @@ const NARRATIVE_SCHEMA = obj({
   review_flags: { type: 'array', items: { type: 'string' }, description: 'Issues the assessor should check before signing' }
 });
 
+const VALUATION_SCHEMA = obj({
+  recommended_pav: { type: 'number', description: 'Recommended pre-accident value in GBP (retail market value at the date of loss)' },
+  range_low: { type: 'number' },
+  range_high: { type: 'number' },
+  basis: { type: 'string', description: 'e.g. "Highest retail guide (Glass\'s) supported by like-for-like adverts"' },
+  guide_assessment: { type: 'string', description: 'How the guide figures compare and which is adopted, and why' },
+  mileage_assessment: { type: 'string', description: 'Mileage vs average for age; MOT mileage history consistency' },
+  adjustments: { type: 'array', items: obj({ item: { type: 'string' }, amount: { type: 'number', description: 'GBP, negative for deductions' }, reason: { type: 'string' } }) },
+  comparables: { type: 'array', items: obj({
+    description: { type: 'string' }, year: { type: 'string' }, mileage: { type: 'number' }, price: { type: 'number' },
+    source: { type: 'string' }, url: { type: 'string' }, like_for_like: { type: 'boolean' }, notes: { type: 'string' }
+  }) },
+  flags: { type: 'array', items: { type: 'string' }, description: 'Issues for the engineer to check' },
+  comments: { type: 'string', description: 'Report-ready valuation comments in the engineer report style; use **bold** for figures' }
+});
+
+const VALUATION_RULES = `UK total-loss valuation rules to apply (Financial Ombudsman Service approach and FCA 2024 total-loss review):
+- Market value = the price to buy a comparable vehicle (same make, model, derivative, age, mileage, condition) from a reputable dealer immediately before the loss: RETAIL, not trade or part-exchange.
+- Start from the HIGHEST of the recognised trade-guide retail figures supplied (CAP, Glass's, Autotrader valuation, Percayso). Do not average the guides.
+- Like-for-like adverts can support a higher figure; they must genuinely match derivative, year, mileage and condition. Note advert prices are asking prices.
+- Deductions only where justified by evidence specific to this vehicle (e.g. condition shown in photos, missing service history, prior write-off category evidenced to affect value). Never apply blanket deductions (e.g. a flat 20% for a previous write-off).
+- Use the mileage at the date of loss; check it against MOT odometer history for consistency.
+- Present a range and show the workings. If information is missing, say what is needed rather than guessing.`;
+
+async function valuationAssistant({ job, motHistory, searchWeb, model, effort }) {
+  const v = job.vehicle || {};
+  const val = job.valuation || {};
+  const guides = (val.sources || []).filter((s) => s.name && Number(s.amount) > 0).map((s) => `- ${s.name}: £${s.amount}`).join('\n') || '- none entered';
+  const adverts = (val.adverts || []).map((a) => `- ${a.description || ''} | ${a.year || ''} | ${a.mileage || '?'} miles | £${a.price || '?'} | ${a.source || ''} ${a.url || ''}`).join('\n') || '- none entered';
+  const mot = (motHistory || []).map((t) => `- ${t.date}: ${t.result} at ${t.odometer} ${t.unit || ''}`).join('\n') || '- not available';
+  const content = [{
+    type: 'text',
+    text: `${VALUATION_RULES}
+
+Vehicle: ${[v.make, v.model, v.derivative].filter(Boolean).join(' ')}; body ${v.body || '-'}; fuel ${v.fuel || '-'}; transmission ${v.transmission || '-'}; engine ${v.engineSize || '-'}cc; colour ${v.colour || '-'}; first registered ${v.firstReg || '-'}.
+Mileage at inspection: ${v.mileage || '-'} ${v.mileageUnit || 'miles'}. Mileage used for valuation: ${val.mileage || v.mileage || '-'}.
+Date of loss: ${(job.instruction && job.instruction.dateOfLoss) || '-'}. Pre-accident condition noted: ${val.condition || '-'}.
+Previous write-off / history notes: ${val.historyNotes || 'none recorded'}.
+Condition / options notes: ${val.optionsNotes || '-'}.
+
+Trade-guide retail figures entered by the engineer:
+${guides}
+
+Like-for-like adverts entered by the engineer:
+${adverts}
+
+MOT odometer history:
+${mot}
+
+Task: produce an evidence-led pre-accident valuation following the rules above.${searchWeb ? ' Use web search to find current UK retail adverts for comparable vehicles (same derivative, similar year and mileage) on reputable UK sites, and list them as comparables with URLs. Treat them as supporting evidence only.' : ' Do not invent adverts; only use those supplied.'}`
+  }];
+  const tools = searchWeb ? [{ type: 'web_search_20260209', name: 'web_search', max_uses: 8, user_location: { type: 'approximate', country: 'GB' } }] : undefined;
+  const res = await callJSON({ model, effort, schema: VALUATION_SCHEMA, content, tools });
+  return { ...res.data, model: res.model, usage: res.usage, searched: !!searchWeb };
+}
+
 // ---------- client ----------
 let apiKey = null;
 function setApiKey(k) { apiKey = k || null; }
@@ -133,38 +198,45 @@ function client() {
   return apiKey ? new Anthropic({ apiKey }) : new Anthropic();
 }
 
-async function callJSON({ model, effort, schema, content }) {
-  const params = {
+async function callJSON({ model, effort, schema, content, tools }) {
+  const base = {
     model: model || DEFAULT_MODEL,
     max_tokens: 32000,
     system: [{ type: 'text', text: SYSTEM, cache_control: { type: 'ephemeral' } }],
-    output_config: { effort: effort || 'high', format: { type: 'json_schema', schema } },
-    messages: [{ role: 'user', content }]
+    output_config: { effort: effort || 'high', format: { type: 'json_schema', schema } }
   };
+  if (tools) base.tools = tools;
+  const messages = [{ role: 'user', content }];
+  let useFallbacks = true;
   let message;
-  try {
-    // Server-side fallback re-runs a declined request on Anthropic's recommended model.
-    message = await client().beta.messages
-      .stream({ ...params, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' })
-      .finalMessage();
-  } catch (err) {
-    if (err instanceof Anthropic.BadRequestError && /fallback/i.test(err.message)) {
-      message = await client().messages.stream(params).finalMessage();
-    } else {
+  // Server tools (web search) can pause a long turn; continue it until the model finishes.
+  for (let turn = 0; turn < 6; turn++) {
+    const params = { ...base, messages };
+    try {
+      // Server-side fallback re-runs a declined request on Anthropic's recommended model.
+      message = useFallbacks
+        ? await client().beta.messages.stream({ ...params, betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default' }).finalMessage()
+        : await client().messages.stream(params).finalMessage();
+    } catch (err) {
+      if (useFallbacks && err instanceof Anthropic.BadRequestError && /fallback/i.test(err.message)) { useFallbacks = false; turn--; continue; }
       throw err;
     }
+    if (message.stop_reason !== 'pause_turn') break;
+    messages.push({ role: 'assistant', content: message.content });
   }
   if (message.stop_reason === 'refusal') {
     const why = message.stop_details && message.stop_details.explanation;
     throw new Error('The AI declined this request' + (why ? ': ' + why : '.'));
   }
   if (message.stop_reason === 'max_tokens') throw new Error('The AI response was cut off (too long). Try fewer photos per run.');
-  const text = message.content.filter((b) => b.type === 'text').map((b) => b.text).join('');
-  try {
-    return { data: JSON.parse(text), usage: message.usage, model: message.model };
-  } catch (e) {
-    throw new Error('The AI returned an unreadable response. Please try again.');
+  const texts = message.content.filter((b) => b.type === 'text').map((b) => b.text);
+  const candidates = [texts.join(''), ...texts.slice().reverse()];
+  for (const t of candidates) {
+    try { return { data: JSON.parse(t), usage: message.usage, model: message.model }; } catch (e) { /* try next */ }
   }
+  const m = texts.join('').match(/\{[\s\S]*\}$/);
+  if (m) { try { return { data: JSON.parse(m[0]), usage: message.usage, model: message.model }; } catch (e) { /* fall through */ } }
+  throw new Error('The AI returned an unreadable response. Please try again.');
 }
 
 function clamp01(n) { n = Number(n); return isFinite(n) ? Math.min(1, Math.max(0, n)) : 0; }
@@ -199,7 +271,7 @@ async function analysePhotos({ job, photos, model, effort }) {
 Task:
 1. For every photo, label each visible damage area with a tight bounding box (fractions of image width/height, top-left origin), the catalogue component code, side, damage type, severity, whether it is accident-related, and the recommended operation. Write a report title and caption for each photo in the style "RH front door - surface damage" / "Horizontal scratches and paint transfer across the door outer panel."
 2. Summarise the overall damage pattern, the likely impact type and direction, and whether it is consistent with the reported circumstances.
-3. Recommend estimate lines covering parts to replace, panel repair / metal finishing, refinishing, strip & refit, mechanical investigation, diagnostics, geometry, wheel refurbishment, tyres, ADAS calibration and consumables where the evidence supports them. Use the guide hours unless the damage justifies different hours, and cite the photo numbers that support each line.`
+3. Recommend estimate lines covering parts to renew, panel repair (light/medium/heavy), refinish of new parts, refinish of repaired parts, blending of adjacent panels for colour match, remove & refit / strip & refit, mechanical investigation, diagnostics, geometry, wheel refurbishment, tyres, ADAS calibration and consumables where the evidence supports them. Word descriptions the way a UK estimate does, e.g. "RH front door – renew", "RH front door – refinish new part", "RH front wing – blend", "RH rear door – repair (medium) / metal finish". Use the guide hours unless the damage justifies different hours, and cite the photo numbers that support each line.`
   });
   const res = await callJSON({ model, effort, schema: PHOTO_SCHEMA, content });
   const d = res.data;
@@ -269,4 +341,4 @@ function describeError(err) {
   return (err && err.message) || String(err);
 }
 
-module.exports = { analysePhotos, draftNarrative, testConnection, setApiKey, describeError, SYSTEM, PHOTO_SCHEMA, NARRATIVE_SCHEMA };
+module.exports = { analysePhotos, draftNarrative, valuationAssistant, VALUATION_SCHEMA, testConnection, setApiKey, describeError, SYSTEM, PHOTO_SCHEMA, NARRATIVE_SCHEMA };

@@ -10,9 +10,10 @@
   "scripts": {
     "start": "electron .",
     "build:oem": "node tools/build-oem.js",
-    "test": "node tools/selftest.js",
+    "test": "node tools/selftest.js && node tools/ai-mocktest.js && node tools/data-mocktest.js",
     "dist:win": "electron-builder --win nsis portable --x64",
-    "dist:dir": "electron-builder --dir"
+    "dist:dir": "electron-builder --dir",
+    "build:variants": "node tools/build-variants.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.9.0"
@@ -28,6 +29,7 @@
       "main.js",
       "preload.js",
       "ai.js",
+      "vehicledata.js",
       "app/**/*",
       "package.json"
     ],

@@ -52,5 +52,28 @@ ai.setApiKey('sk-ant-test');
   await ai.draftNarrative({ job: { vehicle: {}, circumstances: {}, inspection: {}, assessment: {}, valuation: { sources: [] }, lines: [], photos: [] }, totals: { labourHours: 0, labour: 0, parts: 0, paint: 0, other: 0, net: 0, vat: 0, gross: 0, pav: 0, salvage: 0, pctNet: 0, pctGross: 0 }, settings: { berThresholdPct: 60, berBasis: 'net' } }).catch(() => {});
   assert.ok(captured.body.output_config.format.schema.properties.opinion, 'narrative schema sent');
   console.log('✓ narrative request uses the narrative schema');
+
+  // Valuation assistant: web search tool declared, pause_turn continued, JSON parsed
+  const valReply = { recommended_pav: 18500, range_low: 17900, range_high: 18900, basis: "Highest retail guide (Glass's)", guide_assessment: 'g', mileage_assessment: 'm', adjustments: [], comparables: [{ description: 'E 220 d AMG Line Premium Plus', year: '2019', mileage: 42000, price: 18995, source: 'AutoTrader', url: 'https://example.com', like_for_like: true, notes: '' }], flags: [], comments: 'Valued at **£18,500**.' };
+  let n = 0; const bodies = [];
+  globalThis.fetch = async (url, init) => {
+    bodies.push(JSON.parse(init.body)); n++;
+    if (n === 1) {
+      const ev = (type, data) => `event: ${type}\ndata: ${JSON.stringify(Object.assign({ type }, data))}\n\n`;
+      const s1 = ev('message_start', { message: { id: 'm1', type: 'message', role: 'assistant', model: 'claude-opus-5-5', content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 1, output_tokens: 1 } } })
+        + ev('content_block_start', { index: 0, content_block: { type: 'text', text: '' } }) + ev('content_block_delta', { index: 0, delta: { type: 'text_delta', text: 'Searching.' } }) + ev('content_block_stop', { index: 0 })
+        + ev('message_delta', { delta: { stop_reason: 'pause_turn', stop_sequence: null }, usage: { output_tokens: 3 } }) + ev('message_stop', {});
+      return new Response(s1, { status: 200, headers: { 'content-type': 'text/event-stream' } });
+    }
+    return new Response(sse(valReply), { status: 200, headers: { 'content-type': 'text/event-stream' } });
+  };
+  const val = await ai.valuationAssistant({ job: { vehicle: { make: 'Mercedes-Benz', model: 'E-Class (W213)', derivative: 'E 220 d AMG Line Premium Plus Saloon 9G-Tronic', mileage: 42000 }, instruction: { dateOfLoss: '2026-09-01' }, valuation: { sources: [{ name: "Glass's", amount: 18500 }, { name: 'CAP', amount: 17900 }], adverts: [] } }, motHistory: [{ date: '2025-03-01', result: 'PASSED', odometer: 41000 }], searchWeb: true });
+  assert.strictEqual(n, 2, 'pause_turn continued once');
+  assert.strictEqual(bodies[0].tools[0].type, 'web_search_20260209');
+  assert.strictEqual(bodies[1].messages.length, 2, 'assistant turn appended before continuing');
+  assert.match(bodies[0].messages[0].content[0].text, /HIGHEST of the recognised trade-guide retail figures/);
+  assert.strictEqual(val.recommended_pav, 18500);
+  assert.strictEqual(val.searched, true);
+  console.log('✓ valuation: web search tool declared, paused turn continued, ombudsman rules in prompt, result parsed');
   console.log('AI mock test passed.');
 })().catch((e) => { console.error(e); process.exit(1); });

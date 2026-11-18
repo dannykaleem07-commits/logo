@@ -10,7 +10,7 @@ const app = path.join(__dirname, '..', 'app');
 const ctx = { console, window: {}, document: { querySelector: () => null }, indexedDB: null, setTimeout, clearTimeout };
 ctx.window = ctx;
 vm.createContext(ctx);
-for (const f of ['data/catalogue.js', 'data/oem.js', 'js/core.js', 'js/report.js', 'js/sample.js']) {
+for (const f of ['data/catalogue.js', 'data/oem.js', 'data/variants.js', 'js/core.js', 'js/report.js', 'js/sample.js']) {
   vm.runInContext(fs.readFileSync(path.join(app, f), 'utf8'), ctx, { filename: f });
 }
 const C = ctx.Core;
@@ -29,6 +29,21 @@ const juke = C.guessOemVehicle(job.vehicle);
 assert(juke && juke.key === 'nissan-juke-f15', 'Juke should map to nissan-juke-f15');
 assert.strictEqual(C.oemLookup('nissan-juke-f15', 'SS001', 'R')[0].oem, '768501KA6A');
 console.log('✓ OEM lookup: Juke RH sill moulding → 768501KA6A');
+
+// generation-safe OEM matching
+assert.strictEqual((C.guessOemVehicle({ make: 'Mercedes-Benz', model: 'E-Class (W213)', firstReg: '2019-03-01' }) || {}).key, 'mercedes-e-class-w213');
+assert.strictEqual(C.guessOemVehicle({ make: 'Mercedes-Benz', model: 'E-Class (W214)', firstReg: '2024-05-01' }), null, 'W214 must not get W213 part numbers');
+assert.strictEqual(C.guessOemVehicle({ make: 'Mercedes-Benz', model: 'E-Class', firstReg: '2024-05-01' }), null, 'out-of-range year must not match');
+console.log('✓ OEM matching is generation-safe (W213 ≠ W214)');
+
+// variants
+const V = ctx.VARIANTS;
+assert(V.length >= 50, 'variant generations loaded');
+const w213 = V.find((m) => m.make === 'Mercedes-Benz' && m.model === 'E-Class' && /W213/.test(m.generation));
+assert(w213 && w213.engines.some((e) => /E 220 d/.test(e.badge)), 'E 220 d present');
+assert([...w213.trims, ...Object.values(w213.trims_by_period || {}).flat()].some((t) => /AMG Line Premium Plus/.test(t)), 'AMG Line Premium Plus present');
+for (const m of V) { assert(m.make && m.model && Array.isArray(m.engines) && m.engines.length, `variant ${m.make} ${m.model} has engines`); }
+console.log(`✓ variants: ${V.length} model generations, ${V.reduce((n, m) => n + m.engines.length, 0)} engines (E 220 d AMG Line Premium Plus available)`);
 
 const vin = C.decodeVin(job.vehicle.vin);
 assert(vin.valid && /Nissan/.test(vin.manufacturer), 'VIN decode');

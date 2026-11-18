@@ -3,6 +3,7 @@ const { app, BrowserWindow, ipcMain, dialog, safeStorage, shell, Menu } = requir
 const fs = require('fs');
 const path = require('path');
 const ai = require('./ai');
+const vdata = require('./vehicledata');
 
 const KEY_FILE = () => path.join(app.getPath('userData'), 'ai-key.bin');
 
@@ -17,6 +18,19 @@ function saveKey(key) {
   const data = safeStorage.isEncryptionAvailable() ? safeStorage.encryptString(key) : Buffer.from(key, 'utf8');
   fs.writeFileSync(KEY_FILE(), data);
   ai.setApiKey(key);
+}
+
+// Data-connection credentials (DVLA, DVSA MOT History), encrypted like the AI key
+const DATA_FILE = () => path.join(app.getPath('userData'), 'data-keys.bin');
+function loadDataKeys() {
+  try {
+    const buf = fs.readFileSync(DATA_FILE());
+    return JSON.parse(safeStorage.isEncryptionAvailable() ? safeStorage.decryptString(buf) : buf.toString('utf8'));
+  } catch (e) { return {}; }
+}
+function saveDataKeys(obj) {
+  const s = JSON.stringify(obj);
+  fs.writeFileSync(DATA_FILE(), safeStorage.isEncryptionAvailable() ? safeStorage.encryptString(s) : Buffer.from(s, 'utf8'));
 }
 
 let win;
@@ -41,6 +55,26 @@ ipcMain.handle('ai:setKey', (_e, key) => { saveKey((key || '').trim()); return {
 ipcMain.handle('ai:test', wrap((p) => ai.testConnection(p || {})));
 ipcMain.handle('ai:analysePhotos', wrap((p) => ai.analysePhotos(p)));
 ipcMain.handle('ai:draftNarrative', wrap((p) => ai.draftNarrative(p)));
+
+ipcMain.handle('ai:valuation', wrap((p) => ai.valuationAssistant(p)));
+
+const plainWrap = (fn) => async (_e, payload) => {
+  try { return { ok: true, result: await fn(payload) }; } catch (err) { return { ok: false, error: err.message || String(err) }; }
+};
+ipcMain.handle('data:status', () => {
+  const k = loadDataKeys();
+  return { dvla: !!k.dvla, mot: !!(k.motClientId && k.motClientSecret && k.motApiKey && (k.motTenantId || k.motTokenUrl)) };
+});
+ipcMain.handle('data:setKeys', (_e, patch) => {
+  const k = loadDataKeys();
+  for (const [name, val] of Object.entries(patch || {})) {
+    if (val === null || val === '') delete k[name]; else if (typeof val === 'string') k[name] = val.trim();
+  }
+  saveDataKeys(k);
+  return { ok: true };
+});
+ipcMain.handle('data:dvla', plainWrap((reg) => vdata.dvlaLookup(reg, loadDataKeys().dvla)));
+ipcMain.handle('data:mot', plainWrap((reg) => vdata.motLookup(reg, loadDataKeys())));
 
 ipcMain.handle('pdf:export', async (_e, { html, header, footer, fileName }) => {
   const { canceled, filePath } = await dialog.showSaveDialog(win, {

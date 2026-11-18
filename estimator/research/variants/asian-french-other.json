@@ -1,0 +1,759 @@
+{
+  "researched": "2026-11-18",
+  "conventions": {
+    "ps": "Metric horsepower (PS) as badged/quoted in the UK; null where not confirmed.",
+    "engine_code": "Manufacturer engine code where well established; null where not confident.",
+    "status": "verified = core trims and main powertrains corroborated by UK sources found during research (finer details may still be general knowledge, see notes); general-knowledge = compiled from established knowledge without direct source confirmation in this pass.",
+    "derivative_pattern": "Make Model Generation Badge Trim Doors Transmission, e.g. 'Nissan Juke F15 1.6 Acenta 5dr Xtronic CVT'"
+  },
+  "models": [
+    {
+      "make": "Nissan",
+      "model": "Qashqai",
+      "generation": "J11",
+      "years": "2014-2021",
+      "facelift": "2017",
+      "bodies": ["5dr crossover"],
+      "engines": [
+        {"badge": "1.2 DIG-T 115", "fuel": "Petrol", "cc": 1197, "ps": 115, "engine_code": "HRA2DDT", "drive": ["FWD"], "years": "2014-2018"},
+        {"badge": "1.6 DIG-T 163", "fuel": "Petrol", "cc": 1618, "ps": 163, "engine_code": "MR16DDT", "drive": ["FWD"], "years": "2014-2018"},
+        {"badge": "1.3 DIG-T 140", "fuel": "Petrol", "cc": 1332, "ps": 140, "engine_code": "HR13DDT", "drive": ["FWD"], "years": "2018-2021"},
+        {"badge": "1.3 DIG-T 160", "fuel": "Petrol", "cc": 1332, "ps": 160, "engine_code": "HR13DDT", "drive": ["FWD"], "years": "2018-2021"},
+        {"badge": "1.5 dCi 110", "fuel": "Diesel", "cc": 1461, "ps": 110, "engine_code": "K9K", "drive": ["FWD"], "years": "2014-2018"},
+        {"badge": "1.5 dCi 115", "fuel": "Diesel", "cc": 1461, "ps": 115, "engine_code": "K9K", "drive": ["FWD"], "years": "2018-2021"},
+        {"badge": "1.6 dCi 130", "fuel": "Diesel", "cc": 1598, "ps": 130, "engine_code": "R9M", "drive": ["FWD", "AWD"], "years": "2014-2018"},
+        {"badge": "1.7 dCi 150", "fuel": "Diesel", "cc": 1749, "ps": 150, "engine_code": "R9N", "drive": ["FWD", "AWD"], "years": "2018-2019"}
+      ],
+      "trims": ["Visia", "Acenta", "Acenta Premium", "n-tec", "N-Connecta", "Tekna", "Tekna+"],
+      "trims_by_period": {
+        "2014-2016": ["Visia", "Acenta", "Acenta Premium", "n-tec", "Tekna"],
+        "2016-2017": ["Visia", "Acenta", "N-Connecta", "Tekna"],
+        "2017-2021": ["Visia", "Acenta", "Acenta Premium", "N-Connecta", "N-Motion", "Tekna", "Tekna+"]
+      },
+      "transmissions": ["6-speed manual", "Xtronic CVT", "7-speed DCT"],
+      "notes": "Launch Jan 2014 with 1.2 DIG-T as only petrol; 1.6 DIG-T added later in 2014 (one source quotes 150PS; UK spec widely quoted 163PS, manual only). Xtronic CVT on 1.2 DIG-T and 1.6 dCi; 1.6 dCi 130 offered with 4WD (ALL-MODE 4x4-i). 1.3 DIG-T 160 available with 7-speed DCT from late 2018; 1.5 dCi 115 DCT also offered. Special editions: Bose Personal Edition, N-Motion. Also Qashqai+2 not in this generation.",
+      "status": "verified",
+      "sources": [
+        "https://www.honestjohn.co.uk/news/new-cars/2013-11/new-nissan-qashqai-unveiled/",
+        "https://uk.nissannews.com/releases/release-111316",
+        "https://parkers.co.uk/car-buying/2015/nissan-qashqai-which-version-is-best",
+        "https://buyacar.co.uk/reviews/nissan/qashqai/2014/",
+        "https://www.motorpoint.co.uk/guides/nissan-qashqai-models-and-trim-levels-explained"
+      ]
+    },
+    {
+      "make": "Nissan",
+      "model": "Qashqai",
+      "generation": "J12",
+      "years": "2021-",
+      "facelift": "2024",
+      "bodies": ["5dr crossover"],
+      "engines": [
+        {"badge": "1.3 DIG-T MHEV 140", "fuel": "Petrol mild hybrid", "cc": 1332, "ps": 140, "engine_code": "HR13DDT", "drive": ["FWD"], "years": "2021-"},
+        {"badge": "1.3 DIG-T MHEV 158", "fuel": "Petrol mild hybrid", "cc": 1332, "ps": 158, "engine_code": "HR13DDT", "drive": ["FWD", "AWD"], "years": "2021-"},
+        {"badge": "e-Power 190", "fuel": "Petrol series hybrid", "cc": 1497, "ps": 190, "engine_code": "KR15DDT", "drive": ["FWD"], "years": "2022-"}
+      ],
+      "trims": ["Visia", "Acenta Premium", "N-Connecta", "N-Design", "Tekna", "Tekna+"],
+      "trims_by_period": {
+        "2021-2024": ["Visia", "Acenta Premium", "N-Connecta", "Tekna", "Tekna+", "Premiere Edition"],
+        "2024-": ["Acenta Premium", "N-Connecta", "N-Design", "Tekna", "Tekna+"]
+      },
+      "transmissions": ["6-speed manual", "Xtronic CVT", "e-Power single-speed reduction"],
+      "notes": "MHEV 140 manual only; MHEV 158 manual or Xtronic, 4WD (ALL-MODE 4x4-i) with Xtronic on upper trims. e-Power: 1.5 VC-Turbo 3-cyl petrol generator, wheels driven by electric motor only (approx 190PS / some UK sources 187bhp; Autocar quotes 203bhp - treat as unconfirmed). Upgraded third-generation e-Power announced 2025 - output not confirmed here. No diesel.",
+      "status": "verified",
+      "sources": [
+        "https://www.motorpoint.co.uk/guides/nissan-qashqai-models-and-trim-levels-explained",
+        "https://carwow.co.uk/nissan/qashqai-e-power/specifications",
+        "https://www.autoexpress.co.uk/nissan/qashqai/prices-specs/105634/1.3-dig-t-mh-158-n-connecta-5dr",
+        "https://www.exchangeandmart.co.uk/reviews/nissan/qashqai-e-power/2024/214716"
+      ]
+    },
+    {
+      "make": "Nissan",
+      "model": "Juke",
+      "generation": "F15",
+      "years": "2010-2019",
+      "facelift": "2014",
+      "bodies": ["5dr crossover"],
+      "engines": [
+        {"badge": "1.6 94", "fuel": "Petrol", "cc": 1598, "ps": 94, "engine_code": "HR16DE", "drive": ["FWD"], "years": "2010-2019"},
+        {"badge": "1.6 117", "fuel": "Petrol", "cc": 1598, "ps": 117, "engine_code": "HR16DE", "drive": ["FWD"], "years": "2010-2019"},
+        {"badge": "1.2 DIG-T 115", "fuel": "Petrol", "cc": 1197, "ps": 115, "engine_code": "HRA2DDT", "drive": ["FWD"], "years": "2014-2019"},
+        {"badge": "1.6 DIG-T 190", "fuel": "Petrol", "cc": 1618, "ps": 190, "engine_code": "MR16DDT", "drive": ["FWD", "AWD"], "years": "2010-2017"},
+        {"badge": "1.6 DIG-T Nismo 200", "fuel": "Petrol", "cc": 1618, "ps": 200, "engine_code": "MR16DDT", "drive": ["FWD", "AWD"], "years": "2013-2014"},
+        {"badge": "1.6 DIG-T Nismo RS 218", "fuel": "Petrol", "cc": 1618, "ps": 218, "engine_code": "MR16DDT", "drive": ["FWD", "AWD"], "years": "2014-2019"},
+        {"badge": "1.5 dCi 110", "fuel": "Diesel", "cc": 1461, "ps": 110, "engine_code": "K9K", "drive": ["FWD"], "years": "2010-2019"}
+      ],
+      "trims": ["Visia", "Acenta", "Acenta Premium", "n-tec", "N-Connecta", "Tekna", "Nismo", "Nismo RS"],
+      "trims_by_period": {
+        "2010-2013": ["Visia", "Acenta", "Acenta Sport", "Tekna", "Nismo"],
+        "2013-2014": ["Visia", "Acenta", "Acenta Premium", "n-tec", "Tekna", "Nismo"],
+        "2014-2019": ["Visia", "Acenta", "Acenta Premium", "N-Connecta", "Tekna", "Nismo RS", "Bose Personal Edition"]
+      },
+      "transmissions": ["5-speed manual", "6-speed manual", "Xtronic CVT"],
+      "notes": "1.6 94PS = 5-speed manual only; 1.6 117PS (some data 112-119PS) = Xtronic CVT. 1.6 DIG-T 190: 6-speed manual FWD or Xtronic CVT with ALL-MODE 4x4-i. Nismo RS 218PS FWD manual; 4WD CVT version 214PS. 1.5 dCi 6-speed manual (5-speed pre-facelift) FWD only. Nismo trims/outputs vary by source (Nismo RS 214-218PS).",
+      "status": "verified",
+      "sources": [
+        "https://wikipedia.com/wiki/Nissan_Juke",
+        "https://Buyacar.co.uk/reviews/nissan/juke/2010/",
+        "https://vehiclescore.co.uk/cars/nissan/juke/nissan-juke-f15-2010-2019/1-6-petrol-119ps-petrol/acenta-xtronic-automatic-suv",
+        "https://www.cinch.co.uk/guides/choosing-a-car/nissan-juke-models"
+      ]
+    },
+    {
+      "make": "Nissan",
+      "model": "Juke",
+      "generation": "F16",
+      "years": "2019-",
+      "facelift": "2024",
+      "bodies": ["5dr crossover"],
+      "engines": [
+        {"badge": "1.0 DIG-T 117", "fuel": "Petrol", "cc": 999, "ps": 117, "engine_code": "HRA0DET", "drive": ["FWD"], "years": "2019-2021"},
+        {"badge": "1.0 DIG-T 114", "fuel": "Petrol", "cc": 999, "ps": 114, "engine_code": "HRA0DET", "drive": ["FWD"], "years": "2021-"},
+        {"badge": "1.6 Hybrid 143", "fuel": "Petrol hybrid (HEV)", "cc": 1598, "ps": 143, "engine_code": "HR16DE", "drive": ["FWD"], "years": "2022-"}
+      ],
+      "trims": ["Visia", "Acenta", "Acenta Premium", "N-Connecta", "Tekna", "Tekna+", "N-Sport"],
+      "trims_by_period": {
+        "2019-2024": ["Visia", "Acenta", "N-Connecta", "Tekna", "Tekna+", "Premiere Edition", "Enigma", "Kiro"],
+        "2024-": ["Acenta Premium", "N-Connecta", "Tekna", "Tekna+", "N-Sport"]
+      },
+      "transmissions": ["6-speed manual", "7-speed DCT", "Hybrid multi-mode automatic"],
+      "notes": "1.0 DIG-T 3-cyl turbo, manual or DCT. Hybrid (from 2022): 1.6 petrol + electric motor + multi-mode dog-clutch auto (4 engine speeds, 2 motor speeds); offered Acenta Premium upward, not Visia. Trim naming varies ('Tekna+' vs 'Tekna Plus').",
+      "status": "verified",
+      "sources": [
+        "https://vehiclescore.co.uk/cars/nissan/juke/f16-2019-pres",
+        "https://www.nissan.co.uk/content/dam/Nissan/gb/brochures/Vehicles/Nissan_Juke_UK.pdf",
+        "https://autoexpress.co.uk/nissan/juke/prices-specs/95830/1.0-dig-t-114-tekna-5dr",
+        "https://www.leasingoptions.co.uk/news/vehicle-reviews/nissan-juke-buyers-guide-differences-between-all-5-trims/9041"
+      ]
+    },
+    {
+      "make": "Toyota",
+      "model": "Yaris",
+      "generation": "XP130",
+      "years": "2011-2020",
+      "facelift": "2014; 2017",
+      "bodies": ["3dr hatchback", "5dr hatchback"],
+      "engines": [
+        {"badge": "1.0 VVT-i 69", "fuel": "Petrol", "cc": 998, "ps": 69, "engine_code": "1KR-FE", "drive": ["FWD"], "years": "2011-2017"},
+        {"badge": "1.0 VVT-i 72", "fuel": "Petrol", "cc": 998, "ps": 72, "engine_code": "1KR-FE", "drive": ["FWD"], "years": "2017-2020"},
+        {"badge": "1.33 Dual VVT-i 99", "fuel": "Petrol", "cc": 1329, "ps": 99, "engine_code": "1NR-FE", "drive": ["FWD"], "years": "2011-2017"},
+        {"badge": "1.5 Dual VVT-iE 111", "fuel": "Petrol", "cc": 1496, "ps": 111, "engine_code": "2NR-FKE", "drive": ["FWD"], "years": "2017-2020"},
+        {"badge": "1.5 VVT-i Hybrid 100", "fuel": "Petrol hybrid (HEV)", "cc": 1497, "ps": 100, "engine_code": "1NZ-FXE", "drive": ["FWD"], "years": "2012-2020"},
+        {"badge": "1.4 D-4D 90", "fuel": "Diesel", "cc": 1364, "ps": 90, "engine_code": "1ND-TV", "drive": ["FWD"], "years": "2011-2017"},
+        {"badge": "1.8 GRMN 212", "fuel": "Petrol", "cc": 1798, "ps": 212, "engine_code": "2ZR-FE (supercharged)", "drive": ["FWD"], "years": "2018"}
+      ],
+      "trims": ["T2", "TR", "SR", "T Spirit", "Active", "Icon", "Icon Tech", "Sport", "Design", "Bi-tone", "Excel", "GR Sport", "GRMN"],
+      "trims_by_period": {
+        "2011-2014": ["T2", "TR", "SR", "T Spirit", "Trend"],
+        "2014-2017": ["Active", "Icon", "Icon+", "Sport", "Design", "Excel"],
+        "2017-2020": ["Active", "Icon", "Icon Tech", "Design", "Bi-tone", "Excel", "GR Sport", "Y20"]
+      },
+      "transmissions": ["5-speed manual", "6-speed manual", "Multidrive S CVT", "e-CVT (hybrid)"],
+      "notes": "Hybrid (from mid-2012) e-CVT only, 5dr only. 1.33 available with 6-speed manual or Multidrive S CVT; 1.0 5-speed manual. 1.5 2NR-FKE replaced the 1.33 at 2017 facelift; diesel dropped c.2017. Excel became hybrid-only after 2017. GRMN 3dr limited run (UK c.2018). Trim names pre-2014 from general knowledge.",
+      "status": "verified",
+      "sources": [
+        "https://media.toyota.co.uk/toyota-announces-new-yaris-specifications-prices/",
+        "https://www.carwow.co.uk/toyota/yaris/2016",
+        "https://buyacar.co.uk/reviews/toyota/yaris/",
+        "https://www.autocar.co.uk/car-review/toyota/yaris-2011-2020"
+      ]
+    },
+    {
+      "make": "Toyota",
+      "model": "Yaris",
+      "generation": "XP210",
+      "years": "2020-",
+      "facelift": "2024",
+      "bodies": ["5dr hatchback", "3dr hatchback (GR Yaris)"],
+      "engines": [
+        {"badge": "1.5 Hybrid 116", "fuel": "Petrol hybrid (HEV)", "cc": 1490, "ps": 116, "engine_code": "M15A-FXE", "drive": ["FWD"], "years": "2020-"},
+        {"badge": "1.5 Hybrid 130", "fuel": "Petrol hybrid (HEV)", "cc": 1490, "ps": 130, "engine_code": "M15A-FXE", "drive": ["FWD"], "years": "2024-"},
+        {"badge": "GR Yaris 1.6 261", "fuel": "Petrol", "cc": 1618, "ps": 261, "engine_code": "G16E-GTS", "drive": ["AWD"], "years": "2020-2024"},
+        {"badge": "GR Yaris 1.6 280", "fuel": "Petrol", "cc": 1618, "ps": 280, "engine_code": "G16E-GTS", "drive": ["AWD"], "years": "2024-"}
+      ],
+      "trims": ["Icon", "Design", "Dynamic", "Excel", "GR Sport", "Launch Edition", "Premiere Edition"],
+      "trims_by_period": {
+        "2020-2024": ["Icon", "Design", "Dynamic", "Excel", "GR Sport", "Launch Edition"],
+        "2024-": ["Icon", "Design", "Excel", "GR Sport", "Premiere Edition"]
+      },
+      "transmissions": ["e-CVT (hybrid)", "6-speed manual (GR Yaris)", "8-speed automatic (GR Yaris, 2024-)"],
+      "notes": "UK Yaris hatch is hybrid-only (1.5 petrol non-hybrid sold in some EU markets, not standard UK). From 2024 Icon/Design keep 116PS, Excel/GR Sport get 130PS. GR Yaris is the 3dr homologation model (Circuit Pack trim); Yaris Cross is a separate model not covered here. Dynamic trim existed early (2020-22) - general knowledge.",
+      "status": "verified",
+      "sources": [
+        "https://www.autoexpress.co.uk/toyota/360315/new-2024-toyota-yaris-gets-more-powerful-hybrid-engine",
+        "https://www.motorpoint.co.uk/guides/toyota-yaris-models-and-trim-levels-explained",
+        "https://www.parkers.co.uk/toyota/yaris/hatchback/review",
+        "https://carbuyer.co.uk:443/toyota/yaris/306142/2025-toyota-yaris-announced-with-minor-upgrades"
+      ]
+    },
+    {
+      "make": "Toyota",
+      "model": "Corolla",
+      "generation": "E210",
+      "years": "2019-",
+      "facelift": "2023",
+      "bodies": ["5dr hatchback", "Touring Sports estate", "4dr saloon"],
+      "engines": [
+        {"badge": "1.2T 116", "fuel": "Petrol", "cc": 1197, "ps": 116, "engine_code": "8NR-FTS", "drive": ["FWD"], "years": "2019"},
+        {"badge": "1.8 VVT-i Hybrid 122", "fuel": "Petrol hybrid (HEV)", "cc": 1798, "ps": 122, "engine_code": "2ZR-FXE", "drive": ["FWD"], "years": "2019-2022"},
+        {"badge": "2.0 VVT-i Hybrid 180", "fuel": "Petrol hybrid (HEV)", "cc": 1987, "ps": 180, "engine_code": "M20A-FXS", "drive": ["FWD"], "years": "2019-2022"},
+        {"badge": "1.8 Hybrid 140", "fuel": "Petrol hybrid (HEV)", "cc": 1798, "ps": 140, "engine_code": "2ZR-FXE", "drive": ["FWD"], "years": "2023-"},
+        {"badge": "2.0 Hybrid 196", "fuel": "Petrol hybrid (HEV)", "cc": 1987, "ps": 196, "engine_code": "M20A-FXS", "drive": ["FWD"], "years": "2023-"}
+      ],
+      "trims": ["Icon", "Icon Tech", "Design", "Excel", "GR Sport", "Trek"],
+      "trims_by_period": {
+        "2019-2023": ["Icon", "Icon Tech", "Design", "Excel", "GR Sport (2021-)", "Trek (Touring Sports)"],
+        "2023-": ["Icon", "Design", "GR Sport", "Excel"]
+      },
+      "transmissions": ["6-speed manual (1.2T)", "CVT (1.2T)", "e-CVT (hybrid)"],
+      "notes": "1.2T petrol dropped Dec 2019; range hybrid-only thereafter. Saloon 1.8 hybrid only. 2.0 hybrid listed by Toyota UK price lists as '2.0 VVT-i 178 DIN hp' (pre-2023 sources quote 180 or 184PS). 2023 update: 5th-gen hybrid, 140PS/196PS. Trek trim Touring Sports only.",
+      "status": "verified",
+      "sources": [
+        "https://www.fleetnews.co.uk/news/manufacturer-news/2019/12/03/toyota-corolla-drops-12-petrol-engine-for-hybrid",
+        "https://fleetworld.co.uk/2023-toyota-corolla-launches-with-latest-hybrid-tech",
+        "https://honestjohn.co.uk/toyota/corolla",
+        "https://www.autoexpress.co.uk/toyota/corolla/touring-sports/prices-specs/87969/2.0-vvt-i-hybrid-excel-5dr-cvt-jbl",
+        "https://www.topgear.com/car-reviews/corolla/buying"
+      ]
+    },
+    {
+      "make": "Toyota",
+      "model": "C-HR",
+      "generation": "AX10 (Mk1)",
+      "years": "2016-2023",
+      "facelift": "2019",
+      "bodies": ["5dr crossover"],
+      "engines": [
+        {"badge": "1.2T 116", "fuel": "Petrol", "cc": 1197, "ps": 116, "engine_code": "8NR-FTS", "drive": ["FWD", "AWD"], "years": "2016-2019"},
+        {"badge": "1.8 Hybrid 122", "fuel": "Petrol hybrid (HEV)", "cc": 1798, "ps": 122, "engine_code": "2ZR-FXE", "drive": ["FWD"], "years": "2016-2023"},
+        {"badge": "2.0 Hybrid 184", "fuel": "Petrol hybrid (HEV)", "cc": 1987, "ps": 184, "engine_code": "M20A-FXS", "drive": ["FWD"], "years": "2019-2023"}
+      ],
+      "trims": ["Icon", "Design", "Excel", "Dynamic", "GR Sport", "Orange Edition"],
+      "trims_by_period": {
+        "2016-2019": ["Icon", "Excel", "Dynamic"],
+        "2019-2023": ["Icon", "Design", "Excel", "Dynamic", "Orange Edition", "GR Sport (2021-)"]
+      },
+      "transmissions": ["6-speed manual", "CVT", "e-CVT (hybrid)"],
+      "notes": "1.2T: 6-speed manual FWD or CVT AWD (AWD dropped early). Hybrid e-CVT FWD only. 2.0 hybrid added at 2019/2020 facelift. Toyota's 2.0 often quoted 184PS (some UK sources 178 DIN hp).",
+      "status": "general-knowledge",
+      "sources": []
+    },
+    {
+      "make": "Toyota",
+      "model": "C-HR",
+      "generation": "AX20 (Mk2)",
+      "years": "2023-",
+      "facelift": null,
+      "bodies": ["5dr crossover"],
+      "engines": [
+        {"badge": "1.8 Hybrid 140", "fuel": "Petrol hybrid (HEV)", "cc": 1798, "ps": 140, "engine_code": "2ZR-FXE", "drive": ["FWD"], "years": "2023-"},
+        {"badge": "2.0 Hybrid 197", "fuel": "Petrol hybrid (HEV)", "cc": 1987, "ps": 197, "engine_code": "M20A-FXS", "drive": ["FWD", "AWD"], "years": "2023-"},
+        {"badge": "2.0 Plug-in Hybrid 223", "fuel": "Petrol plug-in hybrid (PHEV)", "cc": 1987, "ps": 223, "engine_code": "M20A-FXS", "drive": ["FWD"], "years": "2024-"}
+      ],
+      "trims": ["Icon", "Design", "Excel", "GR Sport", "Premiere Edition"],
+      "trims_by_period": {
+        "2023-": ["Icon", "Design", "Excel", "GR Sport", "Premiere Edition (launch)"]
+      },
+      "transmissions": ["e-CVT (hybrid)"],
+      "notes": "1.8 on Icon/Design/Excel; 2.0 on GR Sport and Premiere Edition (AWD-i option on 2.0). PHEV (Toyota UK '223 DIN hp'; some sources 226PS) on Design, Excel, GR Sport. Some sources quote 2.0 HEV as 196/197PS.",
+      "status": "verified",
+      "sources": [
+        "https://media.toyota.co.uk/all-new-toyota-c-hr-prices-and-equipment-details/",
+        "https://media.toyota.co.uk/?p=58165",
+        "https://www.autocar.co.uk/car-news/new-cars/new-2023-toyota-c-hr-reinvented-phev-option",
+        "https://media.toyota.co.uk/wp-content/uploads/sites/5/pdf/250519-C-HR.pdf"
+      ]
+    },
+    {
+      "make": "Kia",
+      "model": "Sportage",
+      "generation": "QL",
+      "years": "2016-2021",
+      "facelift": "2018",
+      "bodies": ["5dr SUV"],
+      "engines": [
+        {"badge": "1.6 GDi 132", "fuel": "Petrol", "cc": 1591, "ps": 132, "engine_code": "G4FD", "drive": ["FWD"], "years": "2016-2021"},
+        {"badge": "1.6 T-GDi 177", "fuel": "Petrol", "cc": 1591, "ps": 177, "engine_code": "G4FJ", "drive": ["AWD"], "years": "2016-2021"},
+        {"badge": "1.7 CRDi 115", "fuel": "Diesel", "cc": 1685, "ps": 115, "engine_code": "D4FD", "drive": ["FWD"], "years": "2016-2018"},
+        {"badge": "1.7 CRDi 141", "fuel": "Diesel", "cc": 1685, "ps": 141, "engine_code": "D4FD", "drive": ["FWD"], "years": "2016-2018"},
+        {"badge": "2.0 CRDi 136", "fuel": "Diesel", "cc": 1995, "ps": 136, "engine_code": "D4HA", "drive": ["AWD"], "years": "2016-2018"},
+        {"badge": "2.0 CRDi 185", "fuel": "Diesel", "cc": 1995, "ps": 185, "engine_code": "D4HA", "drive": ["AWD"], "years": "2016-2021"},
+        {"badge": "1.6 CRDi 115", "fuel": "Diesel", "cc": 1598, "ps": 115, "engine_code": "D4FE", "drive": ["FWD"], "years": "2018-2021"},
+        {"badge": "1.6 CRDi 136", "fuel": "Diesel (incl. 48V mild hybrid)", "cc": 1598, "ps": 136, "engine_code": "D4FE", "drive": ["FWD", "AWD"], "years": "2018-2021"}
+      ],
+      "trims": ["1", "2", "3", "4", "KX-1", "KX-2", "KX-3", "KX-4", "KX-5", "GT-Line", "GT-Line S", "JBL Black Edition"],
+      "trims_by_period": {
+        "2016-2018": ["1", "2", "3", "4", "KX-1", "KX-2", "KX-3", "KX-4", "KX-5", "GT-Line", "GT-Line S"],
+        "2018-2021": ["1", "2", "3", "4", "GT-Line", "GT-Line S", "JBL Black Edition", "Edition 25"]
+      },
+      "transmissions": ["6-speed manual", "7-speed DCT", "6-speed automatic", "8-speed automatic"],
+      "notes": "KX- prefix denoted AWD pre-facelift; dropped at 2018 facelift (AWD badge instead). Facelift: 1.7 CRDi replaced by 1.6 CRDi (115/136, 7DCT available); 2.0 CRDi 185 became 48V 'EcoDynamics+' mild hybrid with 8-speed auto. 1.6 T-GDi 6MT or 7DCT. Sources conflict on whether 48V MHEV applied to 1.6 or 2.0 diesel in UK (both reported). Trims-by-engine matrix not verified.",
+      "status": "verified",
+      "sources": [
+        "https://www.cargurus.co.uk/research/Kia-Sportage-mk4-2015-mg72",
+        "https://www.autoexpress.co.uk/kia/sportage/104157/new-kia-sportage-2018-facelift-review",
+        "https://honestjohn.co.uk/kia/sportage/2016",
+        "https://cars-data.com/en/kia/sportage/2016/engines"
+      ]
+    },
+    {
+      "make": "Kia",
+      "model": "Sportage",
+      "generation": "NQ5",
+      "years": "2022-",
+      "facelift": "2025",
+      "bodies": ["5dr SUV"],
+      "engines": [
+        {"badge": "1.6 T-GDi 150", "fuel": "Petrol", "cc": 1598, "ps": 150, "engine_code": "G4FP", "drive": ["FWD"], "years": "2022-"},
+        {"badge": "1.6 T-GDi MHEV 150", "fuel": "Petrol mild hybrid", "cc": 1598, "ps": 150, "engine_code": "G4FP", "drive": ["FWD"], "years": "2022-2025"},
+        {"badge": "1.6 T-GDi MHEV 180", "fuel": "Petrol mild hybrid", "cc": 1598, "ps": 180, "engine_code": "G4FP", "drive": ["AWD"], "years": "2022-2025"},
+        {"badge": "1.6 CRDi MHEV 136", "fuel": "Diesel mild hybrid", "cc": 1598, "ps": 136, "engine_code": "D4FE", "drive": ["FWD"], "years": "2022-2023"},
+        {"badge": "1.6 T-GDi HEV 230", "fuel": "Petrol hybrid (HEV)", "cc": 1598, "ps": 230, "engine_code": "G4FT", "drive": ["FWD", "AWD"], "years": "2022-2025"},
+        {"badge": "1.6 T-GDi PHEV 265", "fuel": "Petrol plug-in hybrid (PHEV)", "cc": 1598, "ps": 265, "engine_code": "G4FT", "drive": ["AWD"], "years": "2022-2025"},
+        {"badge": "1.6 T-GDi HEV (facelift)", "fuel": "Petrol hybrid (HEV)", "cc": 1598, "ps": null, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2025-"},
+        {"badge": "1.6 T-GDi PHEV (facelift)", "fuel": "Petrol plug-in hybrid (PHEV)", "cc": 1598, "ps": null, "engine_code": null, "drive": ["AWD"], "years": "2025-"}
+      ],
+      "trims": ["2", "3", "4", "GT-Line", "GT-Line S", "Black Edition", "Pure"],
+      "trims_by_period": {
+        "2022-2025": ["2", "3", "4", "GT-Line", "GT-Line S", "Black Edition"],
+        "2025-": ["Pure", "GT-Line", "GT-Line S"]
+      },
+      "transmissions": ["6-speed manual", "6-speed iMT (MHEV)", "7-speed DCT", "6-speed automatic (HEV/PHEV)"],
+      "notes": "Facelift (2025) drops mild-hybrid; entry is 1.6 T-GDi ICE ~149PS manual/DCT. Facelift HEV quoted 238-239PS (Honest John 238PS; Kia UK 207bhp on one page - conflicting), PHEV uplifted (one source 283bhp) - left null. Diesel was UK-launch only and not offered post-facelift. Pre-facelift trim list ('4' and 'Black Edition') from general knowledge. Engine codes G4FP/G4FT = Smartstream 1.6 T-GDi (general knowledge).",
+      "status": "verified",
+      "sources": [
+        "https://www.whatcar.com/news/facelifted-kia-sportage-ditches-mild-hybrid-power-for-pure-petrol/n27774",
+        "https://www.honestjohn.co.uk/kia/sportage/",
+        "https://prod2-eu.kia.com/uk/new-cars/sportage/specification/",
+        "https://military.motorsourcegroup.com/news/article/new-kia-sportage-pricing-and-specifications-announced-for-uk-s-best-selling-suv"
+      ]
+    },
+    {
+      "make": "Kia",
+      "model": "Ceed",
+      "generation": "CD",
+      "years": "2018-2025",
+      "facelift": "2021",
+      "bodies": ["5dr hatchback", "Sportswagon estate", "ProCeed 5dr shooting brake"],
+      "engines": [
+        {"badge": "1.4 MPi 100", "fuel": "Petrol", "cc": 1368, "ps": 100, "engine_code": "G4LC", "drive": ["FWD"], "years": "2018-2019"},
+        {"badge": "1.0 T-GDi 120", "fuel": "Petrol (48V MHEV from 2020)", "cc": 998, "ps": 120, "engine_code": "G3LC", "drive": ["FWD"], "years": "2018-2025"},
+        {"badge": "1.4 T-GDi 140", "fuel": "Petrol", "cc": 1353, "ps": 140, "engine_code": "G4LD", "drive": ["FWD"], "years": "2018-2020"},
+        {"badge": "1.5 T-GDi 160", "fuel": "Petrol (48V MHEV in some variants)", "cc": 1482, "ps": 160, "engine_code": "G4LH", "drive": ["FWD"], "years": "2020-2025"},
+        {"badge": "1.5 T-GDi 140", "fuel": "Petrol", "cc": 1482, "ps": 140, "engine_code": "G4LH", "drive": ["FWD"], "years": "2022-2025"},
+        {"badge": "1.6 T-GDi GT 204", "fuel": "Petrol", "cc": 1591, "ps": 204, "engine_code": "G4FJ", "drive": ["FWD"], "years": "2018-2025"},
+        {"badge": "1.6 CRDi 115", "fuel": "Diesel", "cc": 1598, "ps": 115, "engine_code": "D4FE", "drive": ["FWD"], "years": "2018-2020"},
+        {"badge": "1.6 CRDi 136", "fuel": "Diesel (48V MHEV from 2020)", "cc": 1598, "ps": 136, "engine_code": "D4FE", "drive": ["FWD"], "years": "2018-2022"},
+        {"badge": "1.6 GDi PHEV 141", "fuel": "Petrol plug-in hybrid (PHEV)", "cc": 1580, "ps": 141, "engine_code": "G4LE", "drive": ["FWD"], "years": "2020-2022"}
+      ],
+      "trims": ["2", "3", "Blue Edition", "GT-Line", "GT-Line S", "First Edition", "GT"],
+      "trims_by_period": {
+        "2018-2021": ["2", "3", "Blue Edition", "GT-Line", "GT-Line S", "First Edition (launch)", "GT"],
+        "2021-2025": ["2", "3", "GT-Line", "GT-Line S", "GT"]
+      },
+      "transmissions": ["6-speed manual", "6-speed iMT (MHEV)", "7-speed DCT", "6-speed DCT (PHEV)"],
+      "notes": "ProCeed (GT-Line, GT-Line S, GT only) and Sportswagon share platform; PHEV was Sportswagon only (UK). XCeed is a separate model. 1.5 T-GDi appears at 138bhp (140PS) and 158bhp (160PS) in What Car? listings. UK sales ended 2025. Codes G3LC/G4LD/G4LH/G4FJ/D4FE/G4LE general knowledge.",
+      "status": "verified",
+      "sources": [
+        "https://vehiclescore.co.uk/cars/kia/ceed/cd-2018-2025",
+        "https://jerseyeveningpost.com/motors/2018/07/29/kia-reveals-details-of-latest-ceed-for-the-uk/",
+        "https://www.conceptcarz.com/a43853/kia-uk-pricing-specification-updated-ceed-model-family.aspx",
+        "https://www.whatcar.com/kia/ceed/hatchback/15-t-gdi-gt-line-hatchback-5dr-petrol-manual-euro-6-ss-158-bhp/version",
+        "https://autoexpress.co.uk/kia/ceed/prices-specs/85779/1.4t-gdi-isg-first-edition-5dr-dct"
+      ]
+    },
+    {
+      "make": "Hyundai",
+      "model": "Tucson",
+      "generation": "TL",
+      "years": "2015-2020",
+      "facelift": "2018",
+      "bodies": ["5dr SUV"],
+      "engines": [
+        {"badge": "1.6 GDi 132", "fuel": "Petrol", "cc": 1591, "ps": 132, "engine_code": "G4FD", "drive": ["FWD"], "years": "2015-2020"},
+        {"badge": "1.6 T-GDi 177", "fuel": "Petrol", "cc": 1591, "ps": 177, "engine_code": "G4FJ", "drive": ["FWD", "AWD"], "years": "2015-2020"},
+        {"badge": "1.7 CRDi 116", "fuel": "Diesel", "cc": 1685, "ps": 116, "engine_code": "D4FD", "drive": ["FWD"], "years": "2015-2018"},
+        {"badge": "1.7 CRDi 141", "fuel": "Diesel", "cc": 1685, "ps": 141, "engine_code": "D4FD", "drive": ["FWD"], "years": "2015-2018"},
+        {"badge": "2.0 CRDi 136", "fuel": "Diesel", "cc": 1995, "ps": 136, "engine_code": "D4HA", "drive": ["AWD"], "years": "2015-2018"},
+        {"badge": "2.0 CRDi 185", "fuel": "Diesel (48V MHEV from 2018)", "cc": 1995, "ps": 185, "engine_code": "D4HA", "drive": ["AWD"], "years": "2015-2020"},
+        {"badge": "1.6 CRDi 116", "fuel": "Diesel", "cc": 1598, "ps": 116, "engine_code": "D4FE", "drive": ["FWD"], "years": "2018-2020"},
+        {"badge": "1.6 CRDi 136", "fuel": "Diesel (48V MHEV option)", "cc": 1598, "ps": 136, "engine_code": "D4FE", "drive": ["FWD", "AWD"], "years": "2018-2020"}
+      ],
+      "trims": ["S", "S Connect", "SE", "SE Nav", "Premium", "Premium SE", "N Line", "Ultimate", "Sport Edition"],
+      "trims_by_period": {
+        "2015-2018": ["S", "SE", "SE Nav", "Premium", "Premium SE", "Sport Edition", "Go! SE"],
+        "2018-2020": ["S Connect", "SE Nav", "Premium", "Premium SE", "N Line", "Ultimate"]
+      },
+      "transmissions": ["6-speed manual", "7-speed DCT", "6-speed automatic", "8-speed automatic"],
+      "notes": "Mechanically twinned with Kia Sportage QL. Facelift 2018: 1.7 CRDi replaced by 1.6 CRDi; 2.0 CRDi 185 became 48V mild hybrid with 8-speed auto; N Line added 2019. Trim list confirmed only partially (VehicleScore lists S Blue Drive, SE Nav, Premium SE, N Line, Ultimate); engine list general knowledge.",
+      "status": "general-knowledge",
+      "sources": ["https://vehiclescore.co.uk/cars/hyundai/tucson"]
+    },
+    {
+      "make": "Hyundai",
+      "model": "Tucson",
+      "generation": "NX4",
+      "years": "2021-",
+      "facelift": "2024",
+      "bodies": ["5dr SUV"],
+      "engines": [
+        {"badge": "1.6 T-GDi 150", "fuel": "Petrol", "cc": 1598, "ps": 150, "engine_code": "G4FP", "drive": ["FWD"], "years": "2021-"},
+        {"badge": "1.6 T-GDi 48V MHEV 150", "fuel": "Petrol mild hybrid", "cc": 1598, "ps": 150, "engine_code": "G4FP", "drive": ["FWD"], "years": "2021-2024"},
+        {"badge": "1.6 T-GDi 48V MHEV 180", "fuel": "Petrol mild hybrid", "cc": 1598, "ps": 180, "engine_code": "G4FP", "drive": ["FWD", "AWD"], "years": "2021-2024"},
+        {"badge": "1.6 T-GDi Hybrid 230", "fuel": "Petrol hybrid (HEV)", "cc": 1598, "ps": 230, "engine_code": "G4FT", "drive": ["FWD", "AWD"], "years": "2021-2024"},
+        {"badge": "1.6 T-GDi Plug-in Hybrid 265", "fuel": "Petrol plug-in hybrid (PHEV)", "cc": 1598, "ps": 265, "engine_code": "G4FT", "drive": ["AWD"], "years": "2021-2024"},
+        {"badge": "1.6 T-GDi Hybrid (facelift)", "fuel": "Petrol hybrid (HEV)", "cc": 1598, "ps": null, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2024-"},
+        {"badge": "1.6 T-GDi Plug-in Hybrid (facelift)", "fuel": "Petrol plug-in hybrid (PHEV)", "cc": 1598, "ps": null, "engine_code": null, "drive": ["AWD"], "years": "2024-"}
+      ],
+      "trims": ["SE Connect", "Premium", "Ultimate", "N Line", "N Line S", "Advance", "Element", "Black Line", "N Line Edition"],
+      "trims_by_period": {
+        "2021-2024": ["SE Connect", "Premium", "N Line", "N Line S", "Ultimate"],
+        "2024-2026": ["Advance", "Premium", "N Line", "N Line S", "Ultimate"],
+        "2026-": ["Element", "Black Line", "N Line Edition", "N Line S", "Ultimate"]
+      },
+      "transmissions": ["6-speed manual", "6-speed iMT", "7-speed DCT", "6-speed automatic (HEV/PHEV)"],
+      "notes": "UK range all 1.6 T-GDi Smartstream; no diesel in UK. Facelift HEV/PHEV outputs revised (Europe c.215PS HEV / 252PS PHEV reported - not confirmed for UK, left null). 2026 trim reshuffle per Hyundai UK press release.",
+      "status": "verified",
+      "sources": [
+        "https://www.hyundai.news/uk/press-kits/hyundai-announces-prices-and-specifications-for-new-tucson-compact-suv",
+        "https://www.hyundai.news/uk/articles/press-releases/hyundai-announces-prices-and-specifications-for-new-tucson-april-2024.html",
+        "https://www.hyundai.news/uk/articles/press-releases/tucson-range-pricing-2026.html",
+        "https://www.honestjohn.co.uk/news/new-cars/2026-03/2026-hyundai-tucson"
+      ]
+    },
+    {
+      "make": "Hyundai",
+      "model": "i20",
+      "generation": "BC3 (Mk3)",
+      "years": "2020-",
+      "facelift": "2023",
+      "bodies": ["5dr hatchback", "3dr hatchback (i20 N)"],
+      "engines": [
+        {"badge": "1.0 T-GDi 48V MHEV 100", "fuel": "Petrol mild hybrid", "cc": 998, "ps": 100, "engine_code": "G3LE", "drive": ["FWD"], "years": "2020-2023"},
+        {"badge": "1.0 T-GDi 48V MHEV 120", "fuel": "Petrol mild hybrid", "cc": 998, "ps": 120, "engine_code": "G3LE", "drive": ["FWD"], "years": "2021-2023"},
+        {"badge": "1.0 T-GDi 100", "fuel": "Petrol", "cc": 998, "ps": 100, "engine_code": null, "drive": ["FWD"], "years": "2023-"},
+        {"badge": "1.6 T-GDi i20 N 204", "fuel": "Petrol", "cc": 1598, "ps": 204, "engine_code": "G4FP", "drive": ["FWD"], "years": "2021-2024"}
+      ],
+      "trims": ["SE Connect", "Premium", "Ultimate", "N Line", "Advance", "N", "N Performance Pack"],
+      "trims_by_period": {
+        "2020-2023": ["SE Connect", "Premium", "N Line", "Ultimate", "N"],
+        "2023-": ["Advance", "Premium", "N Line", "Ultimate"]
+      },
+      "transmissions": ["6-speed iMT (MHEV)", "6-speed manual", "7-speed DCT"],
+      "notes": "Launch: SE Connect, Premium, Ultimate (Hyundai UK press kit); N Line and i20 N (6MT only) added 2021. Post-2023 facelift trim names and non-MHEV 1.0 T-GDi from general knowledge. G3LE code general knowledge. i20 N ended 2024.",
+      "status": "verified",
+      "sources": [
+        "https://www.hyundai.news/uk/press-kits/hyundai-announces-all-new-i20-prices-and-specifications",
+        "https://parkers.co.uk/hyundai/i20/hatchback-2020/specs",
+        "https://businesscar.co.uk/?p=18675",
+        "https://vehiclescore.co.uk/cars/hyundai/i20"
+      ]
+    },
+    {
+      "make": "Peugeot",
+      "model": "208",
+      "generation": "P21 (Mk2)",
+      "years": "2019-",
+      "facelift": "2023",
+      "bodies": ["5dr hatchback"],
+      "engines": [
+        {"badge": "1.2 PureTech 75", "fuel": "Petrol", "cc": 1199, "ps": 75, "engine_code": "EB2FA", "drive": ["FWD"], "years": "2019-"},
+        {"badge": "1.2 PureTech 100", "fuel": "Petrol", "cc": 1199, "ps": 100, "engine_code": "EB2ADTD", "drive": ["FWD"], "years": "2019-"},
+        {"badge": "1.2 PureTech 130", "fuel": "Petrol", "cc": 1199, "ps": 130, "engine_code": "EB2ADTS", "drive": ["FWD"], "years": "2019-2023"},
+        {"badge": "1.5 BlueHDi 100", "fuel": "Diesel", "cc": 1499, "ps": 100, "engine_code": "DV5RD", "drive": ["FWD"], "years": "2019-2023"},
+        {"badge": "e-208 136 (50kWh)", "fuel": "Electric", "cc": null, "ps": 136, "engine_code": null, "drive": ["FWD"], "years": "2019-2023"},
+        {"badge": "e-208 156 (51kWh)", "fuel": "Electric", "cc": null, "ps": 156, "engine_code": null, "drive": ["FWD"], "years": "2023-"},
+        {"badge": "1.2 Hybrid 100", "fuel": "Petrol mild hybrid (48V)", "cc": 1199, "ps": 100, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
+        {"badge": "1.2 Hybrid 136", "fuel": "Petrol mild hybrid (48V)", "cc": 1199, "ps": 136, "engine_code": null, "drive": ["FWD"], "years": "2024-"}
+      ],
+      "trims": ["Active", "Active Premium", "Allure", "Allure Premium", "GT Line", "GT", "GT Premium", "E-Style"],
+      "trims_by_period": {
+        "2019-2021": ["Active", "Allure", "GT Line", "GT"],
+        "2021-2023": ["Active Premium", "Allure", "Allure Premium", "GT", "GT Premium"],
+        "2023-": ["Active", "Allure", "GT", "E-Style (e-208 limited)"]
+      },
+      "transmissions": ["5-speed manual", "6-speed manual", "8-speed EAT8 automatic", "6-speed e-DCS6 dual-clutch (Hybrid)", "Single-speed (electric)"],
+      "notes": "PureTech 75 5MT; PureTech 100 6MT (EAT8 option pre-facelift); PureTech 130 EAT8 (GT). Facelift (UK orders late 2023/2024) adds 48V Hybrid 100/136 with e-DCS6 (later rebadged 110/145 in some markets - not confirmed UK). Engine codes general knowledge. Mid-cycle trim names (Premium variants) partly general knowledge; facelift trims verified.",
+      "status": "verified",
+      "sources": [
+        "https://www.autocar.co.uk/node/129654",
+        "https://www.autoexpress.co.uk/peugeot/208/360449/refreshed-2024-peugeot-208-and-e-208-go-sale-new-face-and-tweaked-features",
+        "https://www.carbuyer.co.uk/news/305061/facelifted-peugeot-208-and-e-208-will-leave-you-spoilt-for-choice",
+        "https://evfleetworld.co.uk/revamped-peugeot-208-and-e-208-open-for-orders/"
+      ]
+    },
+    {
+      "make": "Peugeot",
+      "model": "2008",
+      "generation": "P24 (Mk2)",
+      "years": "2020-",
+      "facelift": "2023",
+      "bodies": ["5dr crossover"],
+      "engines": [
+        {"badge": "1.2 PureTech 100", "fuel": "Petrol", "cc": 1199, "ps": 100, "engine_code": "EB2ADTD", "drive": ["FWD"], "years": "2020-"},
+        {"badge": "1.2 PureTech 130", "fuel": "Petrol", "cc": 1199, "ps": 130, "engine_code": "EB2ADTS", "drive": ["FWD"], "years": "2020-"},
+        {"badge": "1.2 PureTech 155", "fuel": "Petrol", "cc": 1199, "ps": 155, "engine_code": "EB2ADTX", "drive": ["FWD"], "years": "2020-2023"},
+        {"badge": "1.5 BlueHDi 110", "fuel": "Diesel", "cc": 1499, "ps": 110, "engine_code": "DV5RD", "drive": ["FWD"], "years": "2020-2023"},
+        {"badge": "1.5 BlueHDi 130", "fuel": "Diesel", "cc": 1499, "ps": 130, "engine_code": "DV5RC", "drive": ["FWD"], "years": "2020-2023"},
+        {"badge": "e-2008 136 (50kWh)", "fuel": "Electric", "cc": null, "ps": 136, "engine_code": null, "drive": ["FWD"], "years": "2020-2023"},
+        {"badge": "e-2008 156 (54kWh)", "fuel": "Electric", "cc": null, "ps": 156, "engine_code": null, "drive": ["FWD"], "years": "2023-"},
+        {"badge": "1.2 Hybrid 136", "fuel": "Petrol mild hybrid (48V)", "cc": 1199, "ps": 136, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
+        {"badge": "1.2 Hybrid 145", "fuel": "Petrol mild hybrid (48V)", "cc": 1199, "ps": 145, "engine_code": null, "drive": ["FWD"], "years": "2025-"}
+      ],
+      "trims": ["Active", "Active Premium", "Allure", "Allure Premium", "GT Line", "GT", "GT Premium", "Envy"],
+      "trims_by_period": {
+        "2020-2021": ["Active", "Allure", "GT Line", "GT"],
+        "2021-2023": ["Active Premium", "Allure", "Allure Premium", "GT", "GT Premium"],
+        "2023-": ["Active", "Allure", "GT", "GT Premium", "Envy"]
+      },
+      "transmissions": ["6-speed manual", "8-speed EAT8 automatic", "6-speed e-DCS6 dual-clutch (Hybrid)", "Single-speed (electric)"],
+      "notes": "2023 facelift: PureTech 100 Active-only 6MT; PureTech 130 Allure/GT 6MT or EAT8. PureTech 155 EAT8 GT only. BlueHDi 110 6MT, BlueHDi 130 EAT8. Hybrid 136/145 confirmed by Auto Express listings (GT, Envy). Engine codes general knowledge (EB2ADTX for 155 not certain).",
+      "status": "verified",
+      "sources": [
+        "https://www.stellantisandyou.co.uk/news-hub/new-peugeot-2008-open-for-orders",
+        "https://www.carbuyer.co.uk:443/peugeot/2008/304326/the-peugeot-2008-and-e-2008-suvs-get-new-trim-lineup",
+        "https://www.autoexpress.co.uk/peugeot/2008/prices-specs/104767/1.2-hybrid-136-active-5dr-e-dsc6",
+        "https://www.carkeys.co.uk/guides/buyer-s-guide-to-the-peugeot-2008"
+      ]
+    },
+    {
+      "make": "Peugeot",
+      "model": "3008",
+      "generation": "P84 (Mk2)",
+      "years": "2016-2023",
+      "facelift": "2020",
+      "bodies": ["5dr SUV"],
+      "engines": [
+        {"badge": "1.2 PureTech 130", "fuel": "Petrol", "cc": 1199, "ps": 130, "engine_code": "EB2ADTS", "drive": ["FWD"], "years": "2016-2023"},
+        {"badge": "1.6 THP 165", "fuel": "Petrol", "cc": 1598, "ps": 165, "engine_code": "EP6FDT", "drive": ["FWD"], "years": "2016-2018"},
+        {"badge": "1.6 PureTech 180", "fuel": "Petrol", "cc": 1598, "ps": 180, "engine_code": null, "drive": ["FWD"], "years": "2018-2023"},
+        {"badge": "1.6 BlueHDi 120", "fuel": "Diesel", "cc": 1560, "ps": 120, "engine_code": "DV6FC", "drive": ["FWD"], "years": "2016-2018"},
+        {"badge": "1.5 BlueHDi 130", "fuel": "Diesel", "cc": 1499, "ps": 130, "engine_code": "DV5RC", "drive": ["FWD"], "years": "2018-2023"},
+        {"badge": "2.0 BlueHDi 150", "fuel": "Diesel", "cc": 1997, "ps": 150, "engine_code": "DW10FC", "drive": ["FWD"], "years": "2016-2018"},
+        {"badge": "2.0 BlueHDi 180", "fuel": "Diesel", "cc": 1997, "ps": 180, "engine_code": "DW10FD", "drive": ["FWD"], "years": "2016-2020"},
+        {"badge": "1.6 Hybrid 225", "fuel": "Petrol plug-in hybrid (PHEV)", "cc": 1598, "ps": 225, "engine_code": null, "drive": ["FWD"], "years": "2020-2023"},
+        {"badge": "1.6 Hybrid4 300", "fuel": "Petrol plug-in hybrid (PHEV)", "cc": 1598, "ps": 300, "engine_code": null, "drive": ["AWD"], "years": "2020-2023"},
+        {"badge": "1.2 Hybrid 136", "fuel": "Petrol mild hybrid (48V)", "cc": 1199, "ps": 136, "engine_code": null, "drive": ["FWD"], "years": "2023"}
+      ],
+      "trims": ["Active", "Active Premium", "Active Premium+", "Allure", "Allure Premium", "Allure Premium+", "GT Line", "GT Line Premium", "GT", "GT Premium", "Black Edition"],
+      "trims_by_period": {
+        "2016-2020": ["Active", "Allure", "GT Line", "GT Line Premium", "GT", "Black Edition"],
+        "2020-2023": ["Active Premium", "Allure", "Allure Premium", "GT Line (to 2021)", "GT", "GT Premium", "Active Premium+", "Allure Premium+"]
+      },
+      "transmissions": ["6-speed manual", "6-speed EAT6 automatic", "8-speed EAT8 automatic", "8-speed e-EAT8 (PHEV)", "6-speed e-DCS6 (Hybrid 136)"],
+      "notes": "EAT6 used 2016-2018, replaced by EAT8. 2.0 BlueHDi 180 GT auto only. Plug-in hybrids from early 2020. Hybrid 136 MHEV appeared in final months before E-3008 (Mk3, 2024) replaced it. GT Line reportedly discontinued end-2021. Engine codes and early trim mapping general knowledge; THP 165 and 2.0 BlueHDi not confirmed by search results.",
+      "status": "general-knowledge",
+      "sources": [
+        "https://www.topgear.com/car-reviews/peugeot/3008-2016-2023/buying",
+        "https://parkers.co.uk/peugeot/3008/suv-2016/specs",
+        "https://www.autoexpress.co.uk/peugeot/3008/prices-specs/108215/1.6-plug-in-hybrid-195-gt-premium-5dr-auto"
+      ]
+    },
+    {
+      "make": "Skoda",
+      "model": "Octavia",
+      "generation": "Mk3 (5E)",
+      "years": "2013-2020",
+      "facelift": "2017",
+      "bodies": ["5dr hatchback (liftback)", "5dr estate"],
+      "engines": [
+        {"badge": "1.0 TSI 115", "fuel": "Petrol", "cc": 999, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
+        {"badge": "1.2 TSI 105", "fuel": "Petrol", "cc": 1197, "ps": 105, "engine_code": null, "drive": ["FWD"], "years": "2013-2015"},
+        {"badge": "1.2 TSI 110", "fuel": "Petrol", "cc": 1197, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2015-2017"},
+        {"badge": "1.4 TSI 140", "fuel": "Petrol", "cc": 1395, "ps": 140, "engine_code": null, "drive": ["FWD"], "years": "2013-2015"},
+        {"badge": "1.4 TSI 150", "fuel": "Petrol", "cc": 1395, "ps": 150, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2015-2018"},
+        {"badge": "1.5 TSI 150", "fuel": "Petrol", "cc": 1498, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2018-2020"},
+        {"badge": "1.8 TSI 180", "fuel": "Petrol", "cc": 1798, "ps": 180, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2013-2018"},
+        {"badge": "2.0 TSI vRS 220", "fuel": "Petrol", "cc": 1984, "ps": 220, "engine_code": null, "drive": ["FWD"], "years": "2013-2015"},
+        {"badge": "2.0 TSI vRS 230", "fuel": "Petrol", "cc": 1984, "ps": 230, "engine_code": null, "drive": ["FWD"], "years": "2015-2017"},
+        {"badge": "2.0 TSI vRS 245", "fuel": "Petrol", "cc": 1984, "ps": 245, "engine_code": null, "drive": ["FWD"], "years": "2017-2020"},
+        {"badge": "1.6 TDI 90", "fuel": "Diesel", "cc": 1598, "ps": 90, "engine_code": null, "drive": ["FWD"], "years": "2013-2016"},
+        {"badge": "1.6 TDI 105", "fuel": "Diesel", "cc": 1598, "ps": 105, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2013-2015"},
+        {"badge": "1.6 TDI 110", "fuel": "Diesel", "cc": 1598, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2015-2019"},
+        {"badge": "1.6 TDI 115", "fuel": "Diesel", "cc": 1598, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2019-2020"},
+        {"badge": "2.0 TDI 150", "fuel": "Diesel", "cc": 1968, "ps": 150, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2013-2020"},
+        {"badge": "2.0 TDI 184 (vRS/Scout)", "fuel": "Diesel", "cc": 1968, "ps": 184, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2013-2020"}
+      ],
+      "trims": ["S", "SE", "SE Business", "SE Technology", "SE Drive", "SE L", "Elegance", "Edition", "Laurin & Klement", "GreenLine", "Scout", "SportLine", "vRS", "vRS Challenge"],
+      "trims_by_period": {
+        "2013-2017": ["S", "SE", "SE Business", "Elegance/SE L", "Laurin & Klement", "GreenLine", "Scout (estate)", "vRS"],
+        "2017-2020": ["S", "SE", "SE Drive", "SE Technology", "SE L", "Edition", "Laurin & Klement", "Scout (estate)", "SportLine", "vRS", "vRS Challenge"]
+      },
+      "transmissions": ["5-speed manual", "6-speed manual", "7-speed DSG", "6-speed DSG"],
+      "notes": "Launched March 2013 with 1.2/1.4 TSI, 1.6/2.0 TDI; Elegance renamed SE L. vRS from mid-2013 (petrol/diesel, estate too); vRS 245 from 2017 facelift; 4x4 vRS TDI. Scout estate AWD only (2.0 TDI 150/184, 1.8 TSI). Power outputs by year approximate - general knowledge. Engine codes deliberately left null.",
+      "status": "general-knowledge",
+      "sources": [
+        "https://www.autoexpress.co.uk/skoda/octavia/36951/used-skoda-octavia-mk3-2013-2020-review-and-buyers-guide",
+        "https://parkers.co.uk/skoda/octavia/hatchback-2013/used-review",
+        "https://buyacar.co.uk/reviews/skoda/octavia/2013/"
+      ]
+    },
+    {
+      "make": "Skoda",
+      "model": "Octavia",
+      "generation": "Mk4 (NX)",
+      "years": "2020-",
+      "facelift": "2024",
+      "bodies": ["5dr hatchback (liftback)", "5dr estate"],
+      "engines": [
+        {"badge": "1.0 TSI 110", "fuel": "Petrol", "cc": 999, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"},
+        {"badge": "1.0 TSI e-TEC 110", "fuel": "Petrol mild hybrid (48V)", "cc": 999, "ps": 110, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"},
+        {"badge": "1.5 TSI 150", "fuel": "Petrol", "cc": 1498, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
+        {"badge": "1.5 TSI e-TEC 150", "fuel": "Petrol mild hybrid (48V)", "cc": 1498, "ps": 150, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
+        {"badge": "1.5 TSI 115", "fuel": "Petrol", "cc": 1498, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
+        {"badge": "1.5 TSI e-TEC 115", "fuel": "Petrol mild hybrid (48V)", "cc": 1498, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
+        {"badge": "1.4 TSI iV 204", "fuel": "Petrol plug-in hybrid (PHEV)", "cc": 1395, "ps": 204, "engine_code": null, "drive": ["FWD"], "years": "2020-2023"},
+        {"badge": "1.4 TSI iV vRS 245", "fuel": "Petrol plug-in hybrid (PHEV)", "cc": 1395, "ps": 245, "engine_code": null, "drive": ["FWD"], "years": "2020-2023"},
+        {"badge": "2.0 TSI vRS 245", "fuel": "Petrol", "cc": 1984, "ps": 245, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"},
+        {"badge": "2.0 TSI vRS 265", "fuel": "Petrol", "cc": 1984, "ps": 265, "engine_code": null, "drive": ["FWD"], "years": "2024-"},
+        {"badge": "2.0 TDI 115", "fuel": "Diesel", "cc": 1968, "ps": 115, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
+        {"badge": "2.0 TDI 150", "fuel": "Diesel", "cc": 1968, "ps": 150, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2020-"},
+        {"badge": "2.0 TDI vRS 200", "fuel": "Diesel", "cc": 1968, "ps": 200, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2020-2024"}
+      ],
+      "trims": ["SE First Edition", "SE Technology", "SE Drive", "SE L", "SE L First Edition", "Edition", "SportLine", "vRS", "Scout", "Laurin & Klement"],
+      "trims_by_period": {
+        "2020": ["SE First Edition", "SE Technology", "SE L First Edition"],
+        "2020-2024": ["SE", "SE Technology", "SE Drive", "SE L", "SportLine", "vRS", "Scout (estate)", "Laurin & Klement"],
+        "2024-": ["SE Technology", "SE L", "SportLine", "vRS"]
+      },
+      "transmissions": ["6-speed manual", "7-speed DSG"],
+      "notes": "e-TEC = 48V mild hybrid, DSG only. iV PHEV uses 6-speed DSG (SE L iV 204, vRS iV 245); PHEV dropped with 2024 facelift. Facelift (UK from 2024) replaces 1.0 TSI with 1.5 TSI 115 on SE Technology; vRS 265PS petrol only (vRS diesel dropped in UK - general knowledge). Carwow lists 1.5 petrol at 116/150bhp and 2.0 TDI at 116/150bhp post-facelift.",
+      "status": "verified",
+      "sources": [
+        "https://www.skoda.co.uk/news/details/uk-pricing-and-specifications-announced-for-all-new-skoda-octavia",
+        "https://www.motor1.com/news/719389/skoda-octavia-facelift-uk-pricing-specs/",
+        "https://www.carwow.co.uk/skoda/octavia/specifications",
+        "https://vehiclescore.co.uk/cars/skoda/octavia"
+      ]
+    },
+    {
+      "make": "MINI",
+      "model": "Hatch",
+      "generation": "F56 (3dr) / F55 (5dr)",
+      "years": "2014-2024",
+      "facelift": "2018; 2021",
+      "bodies": ["3dr hatchback (F56)", "5dr hatchback (F55)"],
+      "engines": [
+        {"badge": "One First 1.2 75", "fuel": "Petrol", "cc": 1198, "ps": 75, "engine_code": "B38A12", "drive": ["FWD"], "years": "2015-2018"},
+        {"badge": "One 1.2 102", "fuel": "Petrol", "cc": 1198, "ps": 102, "engine_code": "B38A12", "drive": ["FWD"], "years": "2014-2018"},
+        {"badge": "One 1.5 102", "fuel": "Petrol", "cc": 1499, "ps": 102, "engine_code": "B38A15", "drive": ["FWD"], "years": "2018-2024"},
+        {"badge": "Cooper 1.5 136", "fuel": "Petrol", "cc": 1499, "ps": 136, "engine_code": "B38A15", "drive": ["FWD"], "years": "2014-2024"},
+        {"badge": "Cooper S 2.0 192", "fuel": "Petrol", "cc": 1998, "ps": 192, "engine_code": "B48A20", "drive": ["FWD"], "years": "2014-2020"},
+        {"badge": "Cooper S 2.0 178", "fuel": "Petrol", "cc": 1998, "ps": 178, "engine_code": "B48A20", "drive": ["FWD"], "years": "2020-2024"},
+        {"badge": "John Cooper Works 2.0 231", "fuel": "Petrol", "cc": 1998, "ps": 231, "engine_code": "B48A20", "drive": ["FWD"], "years": "2015-2024"},
+        {"badge": "John Cooper Works GP 2.0 306", "fuel": "Petrol", "cc": 1998, "ps": 306, "engine_code": "B48A20", "drive": ["FWD"], "years": "2020-2021"},
+        {"badge": "One D 1.5 95", "fuel": "Diesel", "cc": 1496, "ps": 95, "engine_code": "B37C15", "drive": ["FWD"], "years": "2014-2018"},
+        {"badge": "Cooper D 1.5 116", "fuel": "Diesel", "cc": 1496, "ps": 116, "engine_code": "B37C15", "drive": ["FWD"], "years": "2014-2020"},
+        {"badge": "Cooper SD 2.0 170", "fuel": "Diesel", "cc": 1995, "ps": 170, "engine_code": "B47C20", "drive": ["FWD"], "years": "2014-2020"},
+        {"badge": "Cooper SE / Electric 184 (32.6kWh)", "fuel": "Electric", "cc": null, "ps": 184, "engine_code": null, "drive": ["FWD"], "years": "2020-2024"}
+      ],
+      "trims": ["(base)", "Pepper/Chili packs", "Classic", "Sport", "Exclusive", "Level 1", "Level 2", "Level 3", "Shadow Edition", "Resolute Edition", "Multitone Edition"],
+      "trims_by_period": {
+        "2014-2019": ["One", "Cooper", "Cooper S", "JCW (with Pepper, Chili, Media options packs)", "Seven", "Heddon Street", "Oakwood", "Delaney (special editions)"],
+        "2019-2024": ["Classic", "Sport", "Exclusive", "Shadow Edition", "Resolute Edition", "Multitone Edition"],
+        "Electric 2020-2024": ["Level 1", "Level 2", "Level 3", "Electric Collection", "Shadow Edition"]
+      },
+      "transmissions": ["6-speed manual", "6-speed Steptronic automatic (2014-2018)", "7-speed Steptronic DCT (2018-2024)", "8-speed Steptronic Sport automatic (JCW, GP)", "Single-speed (electric)"],
+      "notes": "Picker derivative is typically engine variant + trim, e.g. 'MINI Hatch F56 Cooper Sport 3dr Steptronic'. Classic/Sport/Exclusive introduced 2019 (One = Classic only from 2021). Cooper S output reduced to 178PS with WLTP/2021 facelift (sources 176-178bhp). F57 Convertible not included. Diesels dropped c.2020. Engine codes general knowledge; Cooper S 192 vs 178 timing approximate.",
+      "status": "verified",
+      "sources": [
+        "https://parkers.co.uk/car-news/2021/2021-mini-facelift",
+        "https://www.autoexpress.co.uk/mini/mini/104902/mini-to-launch-new-classic-sport-and-exclusive-trims",
+        "https://www.carbuyer.co.uk/mini/303043/facelifted-2021-mini-hatchback-range-arrives",
+        "https://www.ultimatespecs.com/car-specs/Mini/M11643/Mini-F56-LCI"
+      ]
+    },
+    {
+      "make": "Tesla",
+      "model": "Model 3",
+      "generation": "Mk1 / Highland facelift",
+      "years": "2019-",
+      "facelift": "2023",
+      "bodies": ["4dr saloon"],
+      "engines": [
+        {"badge": "Standard Range Plus", "fuel": "Electric", "cc": null, "ps": null, "engine_code": null, "drive": ["RWD"], "years": "2019-2021"},
+        {"badge": "RWD", "fuel": "Electric", "cc": null, "ps": null, "engine_code": null, "drive": ["RWD"], "years": "2021-"},
+        {"badge": "Long Range", "fuel": "Electric", "cc": null, "ps": null, "engine_code": null, "drive": ["AWD"], "years": "2019-"},
+        {"badge": "Long Range RWD", "fuel": "Electric", "cc": null, "ps": null, "engine_code": null, "drive": ["RWD"], "years": "2025-"},
+        {"badge": "Performance", "fuel": "Electric", "cc": null, "ps": null, "engine_code": null, "drive": ["AWD"], "years": "2019-"}
+      ],
+      "trims": ["Standard Range Plus", "RWD", "Long Range RWD", "Long Range AWD", "Performance"],
+      "trims_by_period": {
+        "2019-2021": ["Standard Range Plus", "Long Range AWD", "Performance"],
+        "2021-2023": ["RWD", "Long Range AWD", "Performance"],
+        "2023- (Highland)": ["RWD", "Long Range AWD", "Performance (2024-)", "Long Range RWD (2025-)"]
+      },
+      "transmissions": ["Single-speed reduction"],
+      "notes": "Tesla does not publish official PS figures for most variants - left null. Variant is the trim; battery packs vary by build (LFP in SR+/RWD from c.2021). Highland facelift deliveries UK from late 2023; Performance Highland 2024. Long Range RWD availability in UK general knowledge.",
+      "status": "general-knowledge",
+      "sources": [
+        "https://www.digitaltrends.com/cars/tesla-model-3-vs-tesla-model-y-price-specs-and-range-comparison/",
+        "https://www.electriccarscheme.com/blog/tesla-electric-cars-uk-complete-range-guide-2025"
+      ]
+    },
+    {
+      "make": "Tesla",
+      "model": "Model Y",
+      "generation": "Mk1 / Juniper facelift",
+      "years": "2022-",
+      "facelift": "2025",
+      "bodies": ["5dr SUV"],
+      "engines": [
+        {"badge": "RWD", "fuel": "Electric", "cc": null, "ps": null, "engine_code": null, "drive": ["RWD"], "years": "2022-"},
+        {"badge": "Long Range", "fuel": "Electric", "cc": null, "ps": null, "engine_code": null, "drive": ["AWD"], "years": "2022-"},
+        {"badge": "Long Range RWD", "fuel": "Electric", "cc": null, "ps": null, "engine_code": null, "drive": ["RWD"], "years": "2025-"},
+        {"badge": "Performance", "fuel": "Electric", "cc": null, "ps": null, "engine_code": null, "drive": ["AWD"], "years": "2022-"},
+        {"badge": "Standard", "fuel": "Electric", "cc": null, "ps": null, "engine_code": null, "drive": ["RWD"], "years": "2025-"}
+      ],
+      "trims": ["RWD", "Long Range AWD", "Long Range RWD", "Performance", "Launch Series", "Standard"],
+      "trims_by_period": {
+        "2022-2025": ["RWD", "Long Range AWD", "Performance"],
+        "2025- (Juniper)": ["Launch Series (Long Range AWD)", "RWD", "Long Range RWD", "Long Range AWD", "Performance (from late 2025)", "Standard (late 2025)"]
+      },
+      "transmissions": ["Single-speed reduction"],
+      "notes": "UK RHD deliveries from 2022. Juniper launch: Launch Series LR AWD £60,990, wider range from c.April-June 2025 from £44,990. No 7-seat in UK post-facelift. PS figures not published - null. Standard and Long Range RWD UK availability partly general knowledge.",
+      "status": "verified",
+      "sources": [
+        "https://zephr.autocar.co.uk/car-news/new-cars/new-tesla-model-y-lands-uk-%C2%A361k-launch-edition",
+        "https://evfleetworld.co.uk/overhauled-tesla-model-y-now-available-to-order/",
+        "https://www.motor1.com/news/750556/tesla-model-y-performance-7seater-models-coming/",
+        "https://www.autocar.co.uk/node/151371"
+      ]
+    },
+    {
+      "make": "Land Rover",
+      "model": "Range Rover Evoque",
+      "generation": "L551",
+      "years": "2019-",
+      "facelift": "2023",
+      "bodies": ["5dr SUV"],
+      "engines": [
+        {"badge": "D150", "fuel": "Diesel", "cc": 1999, "ps": 150, "engine_code": "204DTD (Ingenium)", "drive": ["FWD", "AWD"], "years": "2019-2020"},
+        {"badge": "D180 MHEV", "fuel": "Diesel mild hybrid", "cc": 1999, "ps": 180, "engine_code": "204DTD (Ingenium)", "drive": ["AWD"], "years": "2019-2020"},
+        {"badge": "D240 MHEV", "fuel": "Diesel mild hybrid", "cc": 1999, "ps": 240, "engine_code": "204DTA (Ingenium)", "drive": ["AWD"], "years": "2019-2020"},
+        {"badge": "D165 MHEV", "fuel": "Diesel mild hybrid", "cc": 1997, "ps": 163, "engine_code": null, "drive": ["FWD", "AWD"], "years": "2020-"},
+        {"badge": "D200 MHEV", "fuel": "Diesel mild hybrid", "cc": 1997, "ps": 204, "engine_code": null, "drive": ["AWD"], "years": "2020-"},
+        {"badge": "P160", "fuel": "Petrol", "cc": 1497, "ps": 160, "engine_code": null, "drive": ["FWD"], "years": "2020-"},
+        {"badge": "P200 MHEV", "fuel": "Petrol mild hybrid", "cc": 1997, "ps": 200, "engine_code": "PT204 (Ingenium)", "drive": ["AWD"], "years": "2019-"},
+        {"badge": "P250 MHEV", "fuel": "Petrol mild hybrid", "cc": 1997, "ps": 249, "engine_code": "PT204 (Ingenium)", "drive": ["AWD"], "years": "2019-"},
+        {"badge": "P300 MHEV", "fuel": "Petrol mild hybrid", "cc": 1997, "ps": 300, "engine_code": "PT204 (Ingenium)", "drive": ["AWD"], "years": "2019-2022"},
+        {"badge": "P300e PHEV", "fuel": "Petrol plug-in hybrid (PHEV)", "cc": 1497, "ps": 309, "engine_code": null, "drive": ["AWD"], "years": "2020-"}
+      ],
+      "trims": ["Evoque (base)", "S", "SE", "HSE", "R-Dynamic S", "R-Dynamic SE", "R-Dynamic HSE", "First Edition", "Autobiography", "Dynamic SE", "Dynamic HSE"],
+      "trims_by_period": {
+        "2019-2023": ["Evoque", "S", "SE", "HSE", "R-Dynamic S", "R-Dynamic SE", "R-Dynamic HSE", "First Edition (launch)", "Autobiography (2020-)", "Bronze Collection/Lafayette Edition (specials)"],
+        "2023-": ["S", "Dynamic SE", "Dynamic HSE", "Autobiography"]
+      },
+      "transmissions": ["6-speed manual (D150 FWD only)", "9-speed automatic", "8-speed automatic (P300e)"],
+      "notes": "Launch prices (UK 2019): D150 FWD manual, D150/D180/D240/P200/P250/P300 AWD auto. MY21 Ingenium diesel update replaced D150/D180/D240 with D165/D200 (outputs ~163/204PS). P300e: 1.5 3-cyl + rear e-motor, 8-speed auto. Facelift (MY24, mid-2023) simplified trims. D165/D200/P300e engine codes not confirmed. Ingenium codes general knowledge. P160 3-cyl (FWD) existed in some markets - UK availability uncertain.",
+      "status": "verified",
+      "sources": [
+        "https://www.motoringresearch.com/car-news/2019-range-rover-evoque-prices-specs/",
+        "https://honestjohn.co.uk/news/new-cars/2023-06/2023-range-rover-evoque",
+        "https://www.autocar.co.uk/car-news/new-cars/range-rover-evoque-gets-larger-touchscreen-hybrid-range-boost",
+        "https://auth.autoexpress.co.uk/land-rover/range-rover-evoque/360361/new-range-rover-evoque-facelift-unveiled-updated-tech-and"
+      ]
+    }
+  ]
+}

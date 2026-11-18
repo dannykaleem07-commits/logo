@@ -158,6 +158,11 @@
     const foot = `<div class="pfoot">${footerLine}</div>`;
     const page = (body, cls) => `<section class="page ${cls || ''}">${head()}${body}${foot}</section>`;
 
+    const motRows = (v.motHistory || []).filter((m) => num(m.odometer) > 0);
+    const motTable = motRows.length ? `<h3>MOT mileage history (DVSA)</h3><table class="est"><thead><tr><th>Test date</th><th>Result</th><th>Odometer</th></tr></thead><tbody>${motRows.map((m) => `<tr><td>${esc(ukDate(m.date))}</td><td>${esc(m.result)}</td><td>${num(m.odometer).toLocaleString('en-GB')} ${esc(m.unit || '')}</td></tr>`).join('')}</tbody></table>` : '';
+    const ads = (val.adverts || []).filter((a) => a.description || a.price);
+    const advertTable = ads.length ? `<h3>Like-for-like market evidence</h3><table class="est"><thead><tr><th>Vehicle</th><th>Year</th><th>Mileage</th><th>Asking price</th><th>Source</th></tr></thead><tbody>${ads.map((a) => `<tr><td>${esc(a.description)}</td><td>${esc(a.year)}</td><td>${a.mileage ? num(a.mileage).toLocaleString('en-GB') : '—'}</td><td>${a.price ? gbp(a.price) : '—'}</td><td style="word-break:break-all">${esc(a.source || a.url || '')}</td></tr>`).join('')}</tbody></table>` : '';
+    const aiUse = (job.aiLog || []).filter((a) => a.ai);
     const pages = [];
 
     // Cover
@@ -251,6 +256,7 @@
         ${field('Repair cost / value (%)', `Excl. VAT: ${gbp(tt.net)} — ${tt.pctNet.toFixed(2)}%<br>Incl. VAT: ${gbp(tt.gross)} — ${tt.pctGross.toFixed(2)}%`)}
         ${field('Economic repair / total-loss assessment', t(job.outcome.decision))}
       </div>
+      ${motTable}${advertTable}
       <h3>Valuation comments</h3><div class="box">${richPara(valComments)}
       ${o.isTL ? `<div class="verdict-lines"><p>${esc(String(job.outcome.decision).toUpperCase())}</p>${job.outcome.category ? `<p>SALVAGE CATEGORY: ${esc(CATEGORY_TEXT[job.outcome.category].toUpperCase())}</p>` : ''}</div>` : ''}
       ${job.outcome.category ? '<p class="small muted">Categorisation reference: ABI Code of Practice for the Categorisation of Motorised Vehicle Salvage. Category N is a repairable non-structural salvage category; Category S is a repairable structural category. Neither is a roadworthiness certificate.</p>' : ''}
@@ -310,8 +316,15 @@
 
     // 13 Sign-off
     pages.push(page(`${sec('ASSESSOR DETAILS & SIGN-OFF')}
-      <div class="grid">${field('Assessor name', `<strong>${t(job.assessor.name)}</strong>`)}${field('Professional role / title', `<strong>${t(job.assessor.title)}</strong>`)}</div>
+      <div class="grid">${field('Assessor name', `<strong>${t(job.assessor.name)}</strong>`)}${field('Professional role / title', `<strong>${t(job.assessor.title)}</strong>`)}
+        ${field('Qualifications', t(job.assessor.qualifications || S.assessor.qualifications))}${field('AQP ID (salvage categorisation)', t(job.assessor.aqpId || S.assessor.aqpId))}</div>
       <h3>Assessor declaration</h3>${para(S.assessor.declaration)}
+      ${job.report.conflicts ? `<p>${esc(job.report.conflicts)}</p>` : ''}
+      ${job.report.cpr35 ? `<h3>Expert's duty and statement of truth (CPR Part 35)</h3>
+        <p>I understand that my duty is to help the court on matters within my expertise, and that this duty overrides any obligation to those instructing or paying me. I have complied with that duty and will continue to do so. I am aware of the requirements of CPR Part 35, Practice Direction 35 and the Guidance for the Instruction of Experts in Civil Claims.</p>
+        <p>I confirm that I have made clear which facts and matters referred to in this report are within my own knowledge and which are not. Those that are within my own knowledge I confirm to be true. The opinions I have expressed represent my true and complete professional opinions on the matters to which they refer.</p>
+        <p>I understand that proceedings for contempt of court may be brought against anyone who makes, or causes to be made, a false statement in a document verified by a statement of truth without an honest belief in its truth.</p>` : ''}
+      ${aiUse.length ? `<h3>Use of AI and data tools</h3><p class="small">The following software assistance was used in preparing this report. All AI output was reviewed, edited where necessary and adopted by the assessor, who takes full responsibility for the findings and opinions expressed.</p><ul class="small">${aiUse.map((a) => `<li>${esc(a.action)} (${esc(a.model || 'AI')}) on ${esc(new Date(a.at).toLocaleDateString('en-GB'))}</li>`).join('')}</ul>` : ''}
       <div class="grid nobreak">
         ${field('Assessor signature', sig ? `<img class="sigimg" src="${sig}" alt="signature">` : '')}${field('Date signed', t(ukDate(job.assessor.dateSigned)))}
         ${field('Report reference', t(job.report.ref))}${field('Report version / status', t(job.report.status))}
