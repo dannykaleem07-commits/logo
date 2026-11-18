@@ -270,12 +270,26 @@ test('photos: estimate lines carry operation, guide_hours and hours_basis checke
   assert.match(flags, /"RH sill moulding – repair": the catalogue lists Sill exterior moulding \/ side skirt as renew-only/);
   assert.match(flags, /"Hours out of range": the AI's 250h was limited to 50h/);
   assert.match(flags, /"Hallucinated op code": code OP099 is not in the parts catalogue or the labour operations, so the line is marked OTHER/);
+  // adjusted paint hours are base hours before the paint-finish factor, which the application applies: a paint line
+  // adjusted "for pearl paint" is flagged (it would be counted twice); guide lines and non-paint lines are not
+  assert.match(flags, /"RH rear door skin – refinish repaired part \(>50%\)": the AI gives the paint finish as a reason for its 2.5h, but this application applies the paint-finish factor \(pearlescent, three-stage, matt\) to paint hours itself/);
+  assert.strictEqual((flags.match(/paint-finish factor/g) || []).length, 1, 'only the adjusted paint line that cites the finish is flagged');
   // the schema and prompt describe the new fields
   const items = ai.PHOTO_SCHEMA.properties.suggested_lines.items;
   assert.deepStrictEqual(items.properties.operation.enum, ['renew', 'repair1', 'repair', 'repair3', 'pdr', 'smart', 'refinish', 'refinishRep1', 'refinishRep2', 'blend', 'rr', 'check', 'refurb', 'operation', 'labour']);
   assert.deepStrictEqual(items.properties.hours_basis.enum, ['guide', 'adjusted']);
   assert.strictEqual(items.properties.guide_hours.type, 'number');
   assert.match(ai.SYSTEM, /hours_basis: "guide" when labour_hours equals guide_hours; otherwise "adjusted", and the reason must say why/);
+  assert.doesNotMatch(ai.SYSTEM, /pearl or three-stage paint, or the extent/, 'the paint finish is no longer a reason to adjust hours');
+  assert.match(ai.SYSTEM, /Paint finish: give the hours of paint operations \(smart, refinish, refinishRep1, refinishRep2, blend\) as base hours for solid or metallic paint, before the paint-finish factor, in both guide_hours and labour_hours\. This application multiplies them by the vehicle's paint-finish factor/);
+  assert.match(ai.SYSTEM, /never add time for the paint finish and never give it as the reason for adjusted hours/);
+  assert.match(ai.SYSTEM, /metallic, pearl and 3-stage colours normally need the adjacent panels BLENDED/, 'blend lines are still required');
+  assert.match(items.properties.labour_hours.description, /For paint operations \(smart, refinish, refinishRep1, refinishRep2, blend\): base hours before the paint-finish factor; never add time for pearlescent, three-stage or matt paint/);
+  assert.match(items.properties.guide_hours.description, /for paint operations, before the paint-finish factor/);
+  assert.match(items.properties.hours_basis.description, /never the paint finish/);
+  const finish = ai._test.paintFinishWords;
+  assert.deepStrictEqual(['Pearl paint', 'pearlescent white', 'three-stage colour', '3 stage', 'tri-coat', 'Tricoat red', 'matt finish', 'matte black', 'extent of the damage', 'no matter', 'Matthew', 'trimmed'].map((t) => finish.test(t)),
+    [true, true, true, true, true, true, true, true, false, false, false, false]);
   assert.match(ai.SYSTEM, /repair1 \/ repair \/ repair3 – light \/ medium \/ heavy repair: the part's repair guide × 0.5 \/ × 1 \/ × 2/);
   assert.match(ai.SYSTEM, /labour-only code \(OP001–OP018\)/);
   // guide arithmetic mirrors the renderer's picker

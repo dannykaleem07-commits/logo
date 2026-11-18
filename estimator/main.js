@@ -34,7 +34,8 @@ const PDF_TEMP = /^ers-report-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0
 const PDF_MARGINS_MM = { top: 25, bottom: 26, left: 16, right: 16 };
 const SAVE_KINDS = {
   pdf: { ext: 'pdf', filters: [{ name: 'PDF document', extensions: ['pdf'] }] },
-  json: { ext: 'json', filters: [{ name: 'JSON file', extensions: ['json'] }] }
+  json: { ext: 'json', filters: [{ name: 'JSON file', extensions: ['json'] }] },
+  backup: { ext: 'ersbackup', filters: [{ name: 'Engineer Report Studio backup', extensions: ['ersbackup'] }] }
 };
 
 const isObj = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -67,11 +68,13 @@ function trustedSender(event) {
     return isAppUrl(frame.url);
   } catch (e) { return false; }
 }
-function handle(channel, fn) {
+/** With {withSender:true} the handler gets the calling webContents first, for state kept per window (backups). */
+function handle(channel, fn, opts) {
+  const withSender = !!(opts && opts.withSender);
   ipcMain.handle(channel, async (event, ...args) => {
     if (!trustedSender(event)) return { ok: false, error: 'Request refused: it did not come from the Engineer Report Studio window.' };
     try {
-      return await fn(...args);
+      return await (withSender ? fn(event.sender, ...args) : fn(...args));
     } catch (err) {
       return { ok: false, error: fsMessage(err) || redactAll(String((err && err.message) || err)) };
     }
@@ -355,6 +358,303 @@ async function askSavePath(kind, name, fallback, title) {
 }
 const rememberDir = (filePath) => { lastSaveDir = path.dirname(filePath); };
 
+// ---------- streaming backups: desktop.backup.begin / write / end / abort ----------
+// A full backup can be far larger than one JavaScript string (V8 stops at about 512 million characters), so the page
+// sends it in pieces. They are appended to "<chosen file>.<uuid>.part" in the chosen folder, which replaces the chosen
+// file only after everything is written and flushed to disk: a failed or cancelled backup never leaves a truncated file,
+// and an earlier backup of the same name is untouched until the new one is complete. One backup at a time per window.
+// It is cancelled, and its temporary file deleted, when the page that started it goes away (the window is closed,
+// reloaded or crashes) or the app quits.
+const BACKUP_CHUNK_MAX = 64 * 1024 * 1024; // characters per backup:write (at most 128 MB over IPC, 192 MB of UTF-8)
+const backups = new Map(); // id → backup
+const backupStarting = new Set(); // windows (webContents ids) whose backup:begin is still in the save dialog
+const backupEpochs = new Map(); // webContents id → counter, bumped each time that window's page goes away
+const backupTemps = new Set(); // .part files not deleted yet (deleted synchronously as a last resort when the app quits)
+const backupCleanups = new Set(); // deletions still running; quitting waits for them
+const BACKUP_MSG = {
+  busy: 'A backup is already being written. Let it finish, or cancel it, before starting another.',
+  unknown: 'That backup is no longer open (a backup is cancelled when the window is reloaded or closed). Start the backup again.',
+  finishing: 'That backup is already being finished.',
+  gone: 'The backup was cancelled because the window was closed or reloaded, or the app is closing. Nothing was saved.'
+};
+const epochOf = (owner) => backupEpochs.get(owner) || 0;
+const isWriting = (b) => b.state === 'open' || b.state === 'ending';
+const writingBackup = (owner) => [...backups.values()].some((b) => b.owner === owner && isWriting(b));
+const backupError = (err, what) => fsMessage(err, what) || `${what} (${(err && (err.code || err.message)) || 'error'}).`;
+function backupFor(sender, id) {
+  const b = typeof id === 'string' ? backups.get(id) : null;
+  return b && b.owner === sender.id ? b : null;
+}
+function trackCleanup(p) {
+  const done = () => { backupCleanups.delete(p); };
+  backupCleanups.add(p);
+  p.then(done, done);
+  return p;
+}
+/** Resolves once the chunk is written and the stream has drained, so a fast page can never pile data up in memory. */
+function writeChunk(stream, text) {
+  return new Promise((resolve, reject) => {
+    let written = false, drained = true, settled = false;
+    const settle = (err) => {
+      if (settled || (!err && !(written && drained))) return;
+      settled = true;
+      stream.off('error', settle); stream.off('close', onClose); stream.off('drain', onDrain);
+      if (err) reject(err); else resolve();
+    };
+    const onClose = () => settle(coded('ECLOSED')); // destroyed by abort while this chunk was being written
+    const onDrain = () => { drained = true; settle(); };
+    stream.on('error', settle);
+    stream.on('close', onClose);
+    if (!stream.write(text, 'utf8', (err) => { written = true; settle(err); })) { drained = false; stream.once('drain', onDrain); }
+  });
+}
+function finishStream(stream) {
+  return new Promise((resolve, reject) => {
+    const onError = (err) => { stream.off('finish', onFinish); reject(err); };
+    const onFinish = () => { stream.off('error', onError); resolve(); };
+    stream.once('error', onError);
+    stream.once('finish', onFinish);
+    stream.end();
+  });
+}
+/** Close the file descriptor (after any write still in progress, which the stream waits for). */
+function closeStream(stream) {
+  return new Promise((resolve) => {
+    if (stream.closed) { resolve(); return; }
+    stream.once('close', resolve);
+    stream.destroy();
+  });
+}
+const fsyncFd = (fd) => new Promise((resolve, reject) => { fs.fsync(fd, (err) => (err ? reject(err) : resolve())); });
+/** Antivirus, the search indexer or OneDrive often hold a file that was just written for a moment on Windows: retry briefly. */
+async function renameWithRetry(from, to) {
+  for (let attempt = 1; ; attempt++) {
+    try { await fs.promises.rename(from, to); return; } catch (err) {
+      const code = err && err.code;
+      const transient = code === 'EBUSY' || (process.platform === 'win32' && (code === 'EPERM' || code === 'EACCES'));
+      if (!transient || attempt >= 8) throw err;
+      await new Promise((r) => setTimeout(r, 100 * attempt));
+    }
+  }
+}
+/** Close and delete the temporary file (once, however often it is asked for). */
+function discardBackup(b) {
+  if (!b.cleanup) {
+    b.cleanup = trackCleanup((async () => {
+      await closeStream(b.stream).catch(() => {});
+      try { await fs.promises.rm(b.tmp, { force: true, maxRetries: 5, retryDelay: 100 }); backupTemps.delete(b.tmp); } catch (e) { /* deleted at quit */ }
+    })());
+  }
+  return b.cleanup;
+}
+/** A backup that cannot be completed: delete what was written. write/end then report this error, abort answers ok. */
+async function failBackup(b, error) {
+  if (b.state === 'aborted') return { ok: false, error: BACKUP_MSG.gone };
+  if (b.state !== 'failed') { b.state = 'failed'; b.error = error; }
+  await discardBackup(b); // the reply comes once the temporary file is gone
+  return { ok: false, error: b.error };
+}
+function abortBackup(b) {
+  backups.delete(b.id);
+  if (b.state === 'ending') { b.state = 'aborted'; return trackCleanup(b.ending.then(() => {}, () => {})); } // end() deletes the file itself
+  if (b.state === 'open') b.state = 'aborted';
+  return discardBackup(b);
+}
+/** The page of this window went away: whatever backup it was writing can never be finished. */
+function abortBackupsOf(owner) {
+  backupEpochs.set(owner, epochOf(owner) + 1);
+  for (const b of [...backups.values()]) if (b.owner === owner) abortBackup(b);
+}
+/** Writes, end and abort of one backup run in the order they were called, never overlapping. */
+function queueBackup(b, fn) {
+  const run = b.queue.then(fn, fn);
+  b.queue = run.catch(() => {});
+  return run;
+}
+
+async function backupBegin(sender, p) {
+  if (p != null && !isObj(p)) return { ok: false, error: 'Invalid backup request.' };
+  if (quitting) return { ok: false, error: BACKUP_MSG.gone };
+  const owner = sender.id;
+  if (backupStarting.has(owner) || writingBackup(owner)) return { ok: false, error: BACKUP_MSG.busy };
+  const epoch = epochOf(owner);
+  backupStarting.add(owner); // taken before the dialog, so two quick clicks cannot both start a backup
+  try {
+    for (const b of [...backups.values()]) if (b.owner === owner) backups.delete(b.id); // this window's failed backups
+    const target = await askSavePath('backup', p ? p.fileName : '', 'engineer-report-studio-backup', 'Save backup');
+    if (!target) return { ok: false, canceled: true };
+    if (epoch !== epochOf(owner) || quitting) return { ok: false, error: BACKUP_MSG.gone };
+    const tmp = `${target}.${crypto.randomUUID()}.part`;
+    // 'wx': never follow or overwrite an existing file; 0o600: readable by this user only. autoClose:false so that end()
+    // can fsync before the file is closed.
+    const stream = fs.createWriteStream(tmp, { flags: 'wx', mode: 0o600, autoClose: false, highWaterMark: 1024 * 1024 });
+    stream.on('error', () => { /* reported by the write or end that hit it */ });
+    try {
+      await new Promise((resolve, reject) => { stream.once('open', resolve); stream.once('error', reject); });
+    } catch (err) {
+      stream.destroy(); // nothing was created (with 'wx' an existing file is never ours to delete)
+      return { ok: false, error: backupError(err, 'The backup could not be started') };
+    }
+    backupTemps.add(tmp);
+    const b = { id: crypto.randomUUID(), owner, target, tmp, stream, state: 'open', queue: Promise.resolve(), carry: '', error: '', cleanup: null, ending: null };
+    if (epoch !== epochOf(owner) || quitting) { b.state = 'aborted'; discardBackup(b); return { ok: false, error: BACKUP_MSG.gone }; }
+    backups.set(b.id, b);
+    return { ok: true, id: b.id };
+  } finally {
+    backupStarting.delete(owner);
+  }
+}
+async function backupWrite(sender, id, chunk) {
+  const b = backupFor(sender, id);
+  if (!b) return { ok: false, error: BACKUP_MSG.unknown };
+  if (b.state === 'ending') return { ok: false, error: BACKUP_MSG.finishing };
+  if (b.state !== 'open') return { ok: false, error: b.error || BACKUP_MSG.gone };
+  // A refused piece would leave a hole in the file, so the whole backup is stopped.
+  if (typeof chunk !== 'string') return failBackup(b, 'The backup data was not text, so the backup was stopped and nothing was saved.');
+  if (chunk.length > BACKUP_CHUNK_MAX) return failBackup(b, 'A piece of the backup was larger than 64 MiB, so the backup was stopped and nothing was saved.');
+  return queueBackup(b, async () => {
+    if (!isWriting(b)) return { ok: false, error: b.error || BACKUP_MSG.gone };
+    let text = b.carry + chunk;
+    b.carry = '';
+    // The page may split its text anywhere, even between the two halves of a character such as an emoji. Each piece is
+    // encoded on its own, so keep a trailing high surrogate for the next piece instead of writing it as U+FFFD.
+    const last = text.charCodeAt(text.length - 1);
+    if (last >= 0xd800 && last <= 0xdbff) { b.carry = text.slice(-1); text = text.slice(0, -1); }
+    if (text) {
+      try { await writeChunk(b.stream, text); } catch (err) { return failBackup(b, backupError(err, 'The backup could not be written')); }
+    }
+    return { ok: true };
+  });
+}
+async function backupEnd(sender, id) {
+  const b = backupFor(sender, id);
+  if (!b) return { ok: false, error: BACKUP_MSG.unknown };
+  if (b.state === 'ending') return { ok: false, error: BACKUP_MSG.finishing };
+  if (b.state !== 'open') return { ok: false, error: b.error || BACKUP_MSG.gone };
+  b.state = 'ending';
+  b.ending = queueBackup(b, async () => {
+    if (b.state !== 'ending') { await discardBackup(b); return { ok: false, error: b.error || BACKUP_MSG.gone }; } // aborted or failed while queued
+    try {
+      if (b.carry) { await writeChunk(b.stream, b.carry); b.carry = ''; } // an unpaired surrogate at the very end
+      await finishStream(b.stream); // every byte handed to the operating system
+      if (b.state === 'ending') await fsyncFd(b.stream.fd); // ... and on the disk
+      await closeStream(b.stream);
+      if (b.state !== 'ending') throw coded('ECANCELED'); // aborted meanwhile: never replace the chosen file
+      await renameWithRetry(b.tmp, b.target);
+    } catch (err) {
+      if (b.state === 'aborted') { await discardBackup(b); return { ok: false, error: BACKUP_MSG.gone }; }
+      return failBackup(b, backupError(err, 'The backup could not be saved'));
+    }
+    backupTemps.delete(b.tmp);
+    backups.delete(b.id);
+    rememberDir(b.target);
+    return { ok: true, filePath: b.target }; // nothing is opened
+  });
+  return b.ending;
+}
+async function backupAbort(sender, id) {
+  const b = backupFor(sender, id);
+  if (!b) return { ok: false, error: BACKUP_MSG.unknown };
+  await abortBackup(b);
+  return { ok: true };
+}
+
+// ---------- quitting ----------
+let quitting = false;
+let quitCleanupDone = false;
+function onBeforeQuit(e) {
+  quitting = true;
+  if (quitCleanupDone) return;
+  for (const b of [...backups.values()]) abortBackup(b);
+  if (!backupCleanups.size) return;
+  // Let open backups close and delete their temporary files first (at most 5 s), then quit for real.
+  e.preventDefault();
+  withTimeout(Promise.allSettled([...backupCleanups]), 5000, 'cleanup').catch(() => {}).then(() => { quitCleanupDone = true; app.quit(); });
+}
+function onWillQuit() {
+  for (const tmp of backupTemps) { try { fs.rmSync(tmp, { force: true }); } catch (e) { /* left for the user to delete */ } }
+}
+
+// ---------- the page crashing or hanging ----------
+// Jobs and settings live in IndexedDB on disk and keys in the key files, so a reload loses only what had not been saved
+// yet (at most the last moment of typing). A page that fails twice within a minute is not reloaded again (no crash
+// loop): the dialog then offers Close only.
+const FAILURE_WINDOW_MS = 60 * 1000;
+let pageFailures = []; // when the page crashed, or was restarted because it hung
+let hangPrompt = null; // AbortController of the "not responding" dialog while it is shown
+let restarting = null; // {reload} while a hung page's renderer is being ended; its render-process-gone reloads the page
+let closing = false;
+function failuresWithin(now) {
+  pageFailures = pageFailures.filter((t) => now - t < FAILURE_WINDOW_MS);
+  return pageFailures.length;
+}
+function dataFolderText() {
+  try { return `\n\nYour data folder: ${app.getPath('userData')}`; } catch (e) { return ''; }
+}
+/** End a hung page's renderer process, then reload the page in a new one. Calling reload() straight after
+ *  forcefullyCrashRenderer() leaves Electron 45 with no renderer at all, so the reload waits for render-process-gone
+ *  (or 5 s, should that never come). */
+function restartHungPage(wc) {
+  const reload = () => {
+    if (restarting !== state) return;
+    restarting = null;
+    clearTimeout(state.timer);
+    try { if (!wc.isDestroyed()) wc.reload(); } catch (e) { /* window gone */ }
+  };
+  const state = { reload, timer: setTimeout(reload, 5000) };
+  restarting = state;
+  try { wc.forcefullyCrashRenderer(); } catch (e) { reload(); }
+}
+async function onPageGone(w, wcId, details) {
+  const now = Date.now();
+  if (restarting) { restarting.reload(); return; } // our own restart of a hung page (its backup is already cancelled)
+  const hadBackup = writingBackup(wcId);
+  abortBackupsOf(wcId);
+  if (quitting || closing || !w || w.isDestroyed()) return;
+  if (hangPrompt) hangPrompt.abort(); // a "not responding" dialog no longer applies
+  pageFailures.push(now);
+  const again = failuresWithin(now) >= 2;
+  const reason = String((details && details.reason) || '');
+  const memory = reason === 'oom' || reason === 'memory-eviction' ? ' It ran out of memory, which can happen with very large jobs or many large photos; closing other programs may help.' : '';
+  const kept = `Your jobs and settings are saved on this PC; only changes made in the last moment before the problem may be lost.${hadBackup ? ' The backup that was being written was cancelled: start it again.' : ''}`;
+  const opts = again
+    ? { type: 'error', title: 'Engineer Report Studio', message: 'The Engineer Report Studio window stopped working again.', detail: `It stopped twice within a minute, so it will not be reloaded again.${memory} ${kept} Start Engineer Report Studio again to continue. If it keeps stopping, copy the data folder below somewhere safe before reinstalling or updating.${dataFolderText()}`, buttons: ['Close'], defaultId: 0, cancelId: 0, noLink: true }
+    : { type: 'error', title: 'Engineer Report Studio', message: 'The Engineer Report Studio window stopped working.', detail: `${memory ? memory.trim() + ' ' : ''}${kept} Reload to continue: your saved work is loaded again.${dataFolderText()}`, buttons: ['Reload', 'Close'], defaultId: 0, cancelId: 0, noLink: true };
+  let r = null;
+  try { r = await dialog.showMessageBox(w, opts); } catch (e) { return; }
+  if (w.isDestroyed()) return;
+  if (!again && r && r.response === 0) w.webContents.reload();
+  else w.destroy();
+}
+async function onPageUnresponsive(w, wcId) {
+  if (quitting || closing || hangPrompt || !w || w.isDestroyed()) return;
+  const wc = w.webContents;
+  const canReload = failuresWithin(Date.now()) < 1; // hanging straight after a crash or restart: no further reload
+  const ac = new AbortController();
+  hangPrompt = ac;
+  const onResponsive = () => ac.abort(); // it recovered: close the dialog (it then answers as "Wait")
+  wc.once('responsive', onResponsive);
+  let r = null;
+  try {
+    r = await dialog.showMessageBox(w, {
+      type: 'warning', title: 'Engineer Report Studio', message: 'Engineer Report Studio is not responding.',
+      detail: `It may still be busy, for example with a large job, many photos or a backup. Wait to give it more time${canReload ? ', or reload the window' : ''}. Your jobs and settings are saved on this PC; ${canReload ? 'reloading or closing' : 'closing'} loses only changes made in the last moment before it stopped responding${writingBackup(wcId) ? ', and cancels the backup that is being written' : ''}.${dataFolderText()}`,
+      buttons: canReload ? ['Wait', 'Reload', 'Close'] : ['Wait', 'Close'], defaultId: 0, cancelId: 0, noLink: true, signal: ac.signal
+    });
+  } catch (e) { r = null; } finally {
+    wc.removeListener('responsive', onResponsive);
+    if (hangPrompt === ac) hangPrompt = null;
+  }
+  if (ac.signal.aborted || !r || r.response === 0 || w.isDestroyed()) return; // recovered, or the user waits
+  if (canReload && r.response === 1) {
+    pageFailures.push(Date.now());
+    abortBackupsOf(wcId);
+    restartHungPage(wc); // a hung page cannot unload itself: end its renderer process and reload in a new one
+  } else {
+    w.destroy();
+  }
+}
+
 // ---------- IPC handlers ----------
 function registerIpc() {
   handle('ai:status', async () => {
@@ -472,6 +772,15 @@ function registerIpc() {
     rememberDir(filePath);
     return { ok: true, filePath };
   });
+
+  // Streaming backup (see "streaming backups" above): begin → write … → end, or abort on any error.
+  handle('backup:begin', backupBegin, { withSender: true });
+  handle('backup:write', backupWrite, { withSender: true });
+  handle('backup:end', backupEnd, { withSender: true });
+  handle('backup:abort', backupAbort, { withSender: true });
+
+  // Where the app keeps its data (IndexedDB, settings, key files), e.g. for the page's "storage unavailable" card.
+  handle('app:info', () => ({ ok: true, dataFolder: app.getPath('userData') }));
 }
 
 // ---------- windows ----------
@@ -502,7 +811,16 @@ function createWindow() {
     if (isWeb(url)) shell.openExternal(url).catch(() => {});
   });
   wc.on('will-redirect', (e, legacyUrl) => { if (!isAppUrl((e && e.url) || legacyUrl)) e.preventDefault(); });
-  win.on('closed', () => { win = null; });
+  // The page going away (closed, reloaded, crashed) cancels its backup; a crash or hang offers a reload (see above).
+  const w = win, wcId = wc.id;
+  closing = false;
+  win.on('close', () => { closing = true; });
+  win.on('closed', () => { if (win === w) win = null; abortBackupsOf(wcId); });
+  // Windows shutting down or logging off: no before-quit / will-quit follows, so clean up now and show no dialogs.
+  win.on('session-end', () => { quitting = true; abortBackupsOf(wcId); onWillQuit(); });
+  wc.on('did-navigate', () => abortBackupsOf(wcId)); // a new document (reload): in-page #route changes do not count
+  wc.on('render-process-gone', (_e, details) => { onPageGone(w, wcId, details).catch(() => {}); });
+  wc.on('unresponsive', () => { onPageUnresponsive(w, wcId).catch(() => {}); });
   win.loadFile(APP_INDEX).catch((err) => {
     if (/ERR_ABORTED|\(-3\)/.test(String(err && err.message))) return; // superseded by another load (e.g. a reload)
     dialog.showErrorBox('Engineer Report Studio', `The app window could not be loaded.\n\n${(err && err.message) || err}`);
@@ -555,7 +873,9 @@ if (!app.requestSingleInstanceLock()) {
     app.quit();
   });
   app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
+  app.on('before-quit', onBeforeQuit);
+  app.on('will-quit', onWillQuit);
 }
 
 // Exposed for tests run under a fake 'electron' module; not used by the app.
-module.exports = { isAppUrl, safeFileName, pdfMargins, withPdfCsp, PDF_MARGINS_MM };
+module.exports = { isAppUrl, safeFileName, pdfMargins, withPdfCsp, PDF_MARGINS_MM, BACKUP_CHUNK_MAX };

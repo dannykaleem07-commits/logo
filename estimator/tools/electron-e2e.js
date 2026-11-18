@@ -6,37 +6,66 @@
  *   Linux:    xvfb-run -a npx electron --no-sandbox tools/electron-e2e.js
  *
  * Nothing reaches DVLA, DVSA or Anthropic: every https request the app makes through net.fetch is answered by
- * protocol.handle('https') below. userData, temp and documents point into a fresh temporary folder; save dialogs and
- * shell are stubbed. The page is driven through the real preload bridge (window.desktop), so the main process's sender
- * checks see real frames. Exit code 0 means every check passed.
+ * protocol.handle('https') below. userData, temp and documents point into a fresh temporary folder; save dialogs,
+ * shell and the crash / hang message boxes are stubbed (one real message box is shown and closed by its AbortSignal).
+ * The page is driven through the real preload bridge (window.desktop), so the main process's sender checks see real
+ * frames; backups are streamed to real files, and the renderer is really killed and reloaded at the end.
+ * Exit code 0 means every check passed.
  */
 const { app, BrowserWindow, dialog, shell, protocol, session } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const os = require('os');
+const crypto = require('crypto');
 const { spawn } = require('child_process');
 const { pathToFileURL } = require('url');
 
 const ROOT = path.join(__dirname, '..');
 const SECOND = process.argv.includes('--second-instance');
-const OUT = SECOND ? process.env.ERS_E2E_OUT : fs.mkdtempSync(path.join(os.tmpdir(), 'ers-e2e-'));
+// child run: start a backup, then close the window ('close') or quit the app ('quit') while it is open
+const QUIT_MODE = (process.argv.find((a) => a.startsWith('--quit-during-backup=')) || '').split('=')[1] || '';
+const OUT = SECOND || QUIT_MODE ? process.env.ERS_E2E_OUT : fs.mkdtempSync(path.join(os.tmpdir(), 'ers-e2e-'));
 if (!OUT) { console.error('ERS_E2E_OUT not set'); process.exit(9); }
-if (!SECOND) for (const d of ['userData', 'temp', 'docs']) fs.mkdirSync(path.join(OUT, d), { recursive: true });
+if (!SECOND && !QUIT_MODE) for (const d of ['userData', 'temp', 'docs']) fs.mkdirSync(path.join(OUT, d), { recursive: true });
 app.setPath('userData', path.join(OUT, 'userData'));
 app.setPath('temp', path.join(OUT, 'temp'));
 app.setPath('documents', path.join(OUT, 'docs'));
+const childArgs = (arg) => (process.platform === 'linux' ? ['--no-sandbox', '--disable-gpu', __filename, arg] : [__filename, arg]);
 
 if (SECOND) {
   require(path.join(ROOT, 'main.js')); // must quit straight away: the first instance holds the single-instance lock
   setTimeout(() => process.exit(7), 20000);
+} else if (QUIT_MODE) {
+  // Its own userData, so it has its own single-instance lock. Exits 0 once main.js has let the app quit.
+  dialog.showSaveDialog = async (a, b) => ({ canceled: false, filePath: path.join(OUT, 'docs', path.basename((b || a).defaultPath)) });
+  require(path.join(ROOT, 'main.js'));
+  app.once('browser-window-created', (_e, win) => {
+    win.webContents.once('did-finish-load', async () => {
+      try {
+        const r = await win.webContents.executeJavaScript(`desktop.backup.begin({ fileName: 'quit-test' }).then(async (b) => ({ b, w: b.ok ? await desktop.backup.write(b.id, 'x'.repeat(1e6)) : null }))`, true);
+        const parts = fs.readdirSync(path.join(OUT, 'docs')).filter((f) => f.endsWith('.part'));
+        fs.writeFileSync(path.join(OUT, 'state.json'), JSON.stringify({ r, parts }));
+        if (QUIT_MODE === 'close') win.close(); else app.quit();
+      } catch (e) { fs.writeFileSync(path.join(OUT, 'state.json'), JSON.stringify({ error: String(e && e.stack) })); app.exit(5); }
+    });
+  });
+  setTimeout(() => process.exit(7), 30000);
 } else {
-  const R = { requests: [], saveDialogs: [], opened: [], external: [], errorBoxes: [], pdfNet: [], secondInstanceEvents: 0 };
+  const R = { requests: [], saveDialogs: [], opened: [], external: [], errorBoxes: [], pdfNet: [], secondInstanceEvents: 0, messageBoxes: [] };
   dialog.showSaveDialog = async (a, b) => {
     const opts = b || a;
     R.saveDialogs.push({ defaultPath: opts.defaultPath, filters: opts.filters });
     return { canceled: false, filePath: path.join(OUT, 'docs', path.basename(opts.defaultPath)) };
   };
   dialog.showErrorBox = (t, m) => R.errorBoxes.push(`${t}: ${m}`);
+  // The crash / hang dialogs: recorded, answered by messageBoxReply (which may also show the real one).
+  const realShowMessageBox = dialog.showMessageBox;
+  let messageBoxReply = () => ({ response: 0 });
+  dialog.showMessageBox = async (a, b) => {
+    const opts = b || a;
+    R.messageBoxes.push({ type: opts.type, message: opts.message, buttons: opts.buttons, signal: !!opts.signal });
+    return messageBoxReply(opts, b ? a : null);
+  };
   shell.openPath = async (p) => { R.opened.push(p); return ''; };
   shell.openExternal = async (u) => { R.external.push(u); };
   app.on('second-instance', () => { R.secondInstanceEvents++; });
@@ -88,7 +117,7 @@ if (SECOND) {
     const appUrl = win.webContents.getURL();
     check('App page loaded from app/index.html', /^file:\/\/.*\/app\/index\.html(#.*)?$/i.test(appUrl), appUrl);
     const bridge = await js('typeof window.desktop === "object" ? Object.keys(window.desktop).sort().join(",") : ""');
-    check('Desktop bridge exposed on the app page', bridge === 'ai,data,exportPdf,saveFile', bridge);
+    check('Desktop bridge exposed on the app page', bridge === 'ai,app,backup,data,exportPdf,saveFile', bridge);
     const booted = await js('!!(window.Core && window.Report && window.Sample && document.querySelector("#app, main, body"))');
     check('App scripts loaded (Core, Report, Sample)', booted, booted);
 
@@ -141,6 +170,48 @@ if (SECOND) {
     const save = await js(`desktop.saveFile({ content: '{"a":1}', fileName: '..\\\\..\\\\Startup\\\\update.bat', filters: [{ name: 'Batch', extensions: ['bat'] }] })`);
     check('Save dialog: base name only, forced .json', save.ok === true && /\.json$/i.test(save.filePath) && !/\.\.|Startup[\\/]/i.test(save.filePath) && fs.existsSync(save.filePath), text(save));
 
+    const info = await js('desktop.app.info()');
+    check('app.info returns the data folder (userData)', info.ok === true && typeof info.dataFolder === 'string' && path.resolve(info.dataFolder) === path.resolve(OUT, 'userData'), text(info));
+
+    // ---- streaming backup through window.desktop.backup: real IPC, real files ----
+    const docsDir = path.join(OUT, 'docs');
+    const partFiles = () => fs.readdirSync(docsDir).filter((f) => f.endsWith('.part'));
+    const bk = await js(`(async () => {
+      const lines = [{ kind: 'engineer-report-studio-backup', format: 2, at: new Date().toISOString(), jobs: 1 }, { type: 'settings', data: { note: 'Müller – 🚗 “quoted”' } }, { type: 'customOem', data: [] },
+        { type: 'job', data: { id: 'e2e-backup', photo: 'data:image/jpeg;base64,' + 'Q'.repeat(9 * 1024 * 1024), text: '€–🚙'.repeat(50000) } }, { type: 'end', jobs: 1 }];
+      const all = lines.map((o) => JSON.stringify(o)).join('\\n') + '\\n';
+      const sha256 = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(all))), (x) => x.toString(16).padStart(2, '0')).join('');
+      const b = await desktop.backup.begin({ fileName: 'backup-e2e.ersbackup' });
+      if (!b.ok) return { b };
+      const second = await desktop.backup.begin({ fileName: 'other' });
+      const cut = all.indexOf('🚗') + 1; // inside the emoji's surrogate pair
+      const writes = [];
+      for (const piece of [all.slice(0, cut), all.slice(cut, 5e6), all.slice(5e6)]) writes.push(await desktop.backup.write(b.id, piece));
+      const end = await desktop.backup.end(b.id);
+      const after = await desktop.backup.write(b.id, 'x');
+      return { b, second, writes, end, after, sha256 };
+    })()`);
+    const backupPath = path.join(docsDir, 'backup-e2e.ersbackup');
+    const fileSha = fs.existsSync(backupPath) ? crypto.createHash('sha256').update(fs.readFileSync(backupPath)).digest('hex') : '';
+    const bkDialog = R.saveDialogs.find((x) => path.basename(String(x.defaultPath)) === 'backup-e2e.ersbackup');
+    check('Backup: begin → 3 writes (one split inside an emoji) → end writes exactly the UTF-8 text', bk.end && bk.end.ok === true && bk.end.filePath === backupPath && fileSha === bk.sha256 && (bk.writes || []).every((w) => w.ok), `${text({ ...bk, sha256: undefined })} file=${fileSha} page=${bk.sha256}`);
+    check('Backup: .ersbackup dialog, second begin refused, closed afterwards, nothing opened, no .part file left', bkDialog && text(bkDialog.filters) === text([{ name: 'Engineer Report Studio backup', extensions: ['ersbackup'] }]) && bk.second && bk.second.ok === false && /already being written/.test(bk.second.error) && bk.after && bk.after.ok === false && !R.opened.includes(backupPath) && partFiles().length === 0, `${text(bkDialog)} ${text(bk.second)} ${text(partFiles())}`);
+    const ab1 = await js(`desktop.backup.begin({ fileName: 'aborted' }).then(async (b) => ({ b, w: b.ok ? await desktop.backup.write(b.id, 'partial data') : null }))`);
+    const partsWhileOpen = partFiles();
+    const ab2 = ab1.b && ab1.b.ok ? await js(`desktop.backup.abort(${JSON.stringify(ab1.b.id)})`) : null;
+    check('Backup abort deletes the temporary file; the target is never created', ab1.w && ab1.w.ok && partsWhileOpen.length === 1 && /^aborted\.ersbackup\.[0-9a-f-]{36}\.part$/.test(partsWhileOpen[0]) && ab2 && ab2.ok && partFiles().length === 0 && !fs.existsSync(path.join(docsDir, 'aborted.ersbackup')), `${text(ab1)} ${text(partsWhileOpen)} ${text(ab2)}`);
+    const t1 = Date.now();
+    const lim = await js(`(async () => {
+      const b = await desktop.backup.begin({ fileName: 'limit' });
+      const max = await desktop.backup.write(b.id, '\\u2013'.repeat(64 * 1024 * 1024)); // the largest piece, all two-byte characters: 128 MB over IPC
+      const over = await desktop.backup.write(b.id, 'a'.repeat(64 * 1024 * 1024 + 1));
+      const end = await desktop.backup.end(b.id);
+      const abort = await desktop.backup.abort(b.id);
+      const unknown = await desktop.backup.write('no-such-id', 'x');
+      return { b, max, over, end, abort, unknown };
+    })()`);
+    check('Backup limit over real IPC: a 64 Mi-character piece (128 MB) is accepted; one character more stops the backup and deletes it; unknown id refused', lim.max && lim.max.ok === true && lim.over.ok === false && /64 MiB/.test(lim.over.error) && lim.end.ok === false && lim.abort.ok === true && lim.unknown.ok === false && partFiles().length === 0 && !fs.existsSync(path.join(docsDir, 'limit.ersbackup')), `${Date.now() - t1} ms ${text(lim)}`);
+
     const pdf = await js(`(async () => {
       const c = document.createElement('canvas'); c.width = 640; c.height = 480; const g = c.getContext('2d');
       g.fillStyle = '#2d6fb5'; g.fillRect(0, 0, 640, 480); g.fillStyle = '#fff'; g.font = 'bold 60px sans-serif'; g.fillText('TEST PHOTO', 120, 260);
@@ -170,17 +241,78 @@ if (SECOND) {
     await new Promise((r) => setTimeout(r, 400));
     check('window.open: web link to the system browser, file link refused, no new window', BrowserWindow.getAllWindows().length === 1 && text(R.external) === text(['https://example.org/advert']), text(R.external));
 
-    const secondExit = await new Promise((res) => {
-      const args = process.platform === 'linux' ? ['--no-sandbox', '--disable-gpu', __filename, '--second-instance'] : [__filename, '--second-instance'];
-      const p = spawn(process.execPath, args, { stdio: 'ignore', env: { ...process.env, ERS_E2E_OUT: OUT } });
-      const t = setTimeout(() => { p.kill(); res('timeout'); }, 25000);
+    const runChild = (arg, out, ms) => new Promise((res) => {
+      const p = spawn(process.execPath, childArgs(arg), { stdio: 'ignore', env: { ...process.env, ERS_E2E_OUT: out } });
+      const t = setTimeout(() => { p.kill(); res('timeout'); }, ms);
       p.on('exit', (code) => { clearTimeout(t); res(code); });
     });
+    const secondExit = await runChild('--second-instance', OUT, 25000);
     await new Promise((r) => setTimeout(r, 500));
     check('Second launch quits and focuses the running window', secondExit === 0 && R.secondInstanceEvents === 1, `exit=${secondExit} events=${R.secondInstanceEvents}`);
 
+    // closing the window, or quitting, while a backup is being written: the app still quits, and the .part file is gone
+    for (const mode of ['close', 'quit']) {
+      const dir = path.join(OUT, `quit-${mode}`);
+      for (const d of ['userData', 'temp', 'docs']) fs.mkdirSync(path.join(dir, d), { recursive: true });
+      const exit = await runChild(`--quit-during-backup=${mode}`, dir, 35000);
+      let state = null;
+      try { state = JSON.parse(fs.readFileSync(path.join(dir, 'state.json'), 'utf8')); } catch (e) { state = { error: String(e) }; }
+      const left = fs.readdirSync(path.join(dir, 'docs'));
+      check(`${mode === 'close' ? 'Closing the window' : 'Quitting the app'} during a backup: the app quits and its temporary file is deleted`, exit === 0 && state.r && state.r.b.ok && state.r.w.ok && state.parts.length === 1 && left.length === 0, `exit=${exit} ${text(state)} left=${text(left)}`);
+    }
+
+    // ---- the page hanging or crashing: dialog, reload in a new renderer process, saved data read again ----
+    const wc = win.webContents;
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const waitUntil = async (cond, ms) => { for (let i = 0; i * 50 < ms && !cond(); i++) await sleep(50); return !!cond(); };
+    const nextLoad = () => new Promise((res) => { const t = setTimeout(() => res(false), 20000); wc.once('did-finish-load', () => { clearTimeout(t); res(true); }); });
+    const savedJob = await js(`Core.Store.saveJob(Object.assign(Sample.sampleJob(), { id: 'e2e-crash-job' })).then(() => true, (e) => String(e))`);
+    const readJob = () => js(`Core.Store.getJob('e2e-crash-job').then((j) => (j && j.id) || null, (e) => String(e))`);
+    // (a) hang → Reload: the hung renderer is ended and a new one loads the page; that kill is not reported as a crash
+    const hangBackup = await js(`desktop.backup.begin({ fileName: 'hang' }).then(async (b) => { if (b.ok) await desktop.backup.write(b.id, 'partial'); return b; })`);
+    const partsBeforeHang = partFiles().length;
+    const pid0 = wc.getOSProcessId();
+    R.messageBoxes.length = 0;
+    messageBoxReply = () => ({ response: 1 }); // Reload
+    let loaded = nextLoad();
+    wc.emit('unresponsive');
+    const hangReloaded = await loaded;
+    await sleep(1000); // the killed renderer's render-process-gone has arrived by now
+    const pidA = wc.getOSProcessId();
+    const jobA = hangReloaded ? await readJob() : null;
+    check('Hang → Reload: Wait / Reload / Close dialog; a new renderer process loads the page; the kill is not reported as a crash', savedJob === true && hangReloaded && pidA > 0 && pidA !== pid0 && R.messageBoxes.length === 1 && text(R.messageBoxes[0].buttons) === text(['Wait', 'Reload', 'Close']) && R.messageBoxes[0].signal, `saved=${savedJob} reloaded=${hangReloaded} pid ${pid0}→${pidA} ${text(R.messageBoxes)}`);
+    check('After the reload the saved job is read from IndexedDB, and the backup of the hung page was deleted', jobA === 'e2e-crash-job' && hangBackup.ok && partsBeforeHang === 1 && partFiles().length === 0, `job=${jobA} backup=${text(hangBackup)} parts ${partsBeforeHang}→${text(partFiles())}`);
+    // (b) a real "not responding" dialog closes by itself (AbortSignal) when the page responds again
+    let realBox = null;
+    messageBoxReply = (opts, parent) => { const p = realShowMessageBox.call(dialog, parent, opts); realBox = { closed: false }; p.then((v) => { realBox.closed = true; realBox.value = v; }, (e) => { realBox.closed = true; realBox.error = String(e); }); return p; };
+    wc.emit('unresponsive');
+    await sleep(800);
+    const openUntilResponsive = !!realBox && !realBox.closed;
+    wc.emit('responsive');
+    const boxClosed = await waitUntil(() => realBox && realBox.closed, 8000);
+    check('A real "not responding" dialog stays open until the page responds, then closes itself; within a minute of a restart it offers Wait / Close only', openUntilResponsive && boxClosed && !realBox.error && realBox.value && realBox.value.response === 0 && R.messageBoxes.length === 2 && text(R.messageBoxes[1].buttons) === text(['Wait', 'Close']) && wc.getOSProcessId() === pidA, `open=${openUntilResponsive} ${text(realBox)} ${text(R.messageBoxes[1])}`);
+    // (c) a minute later: a renderer crash → Reload brings the page back with its data
+    const realNow = Date.now;
+    Date.now = () => realNow() + 61 * 1000;
+    try {
+      messageBoxReply = () => ({ response: 0 }); // Reload
+      loaded = nextLoad();
+      wc.forcefullyCrashRenderer();
+      const crashReloaded = await loaded;
+      const pidC = wc.getOSProcessId();
+      const jobC = crashReloaded ? await readJob() : null;
+      const crashBox = R.messageBoxes[2] || {};
+      check('Renderer crash: error dialog Reload / Close; Reload brings the page back in a new process with its saved job', crashReloaded && crashBox.type === 'error' && text(crashBox.buttons) === text(['Reload', 'Close']) && pidC > 0 && pidC !== pidA && jobC === 'e2e-crash-job' && (await js('typeof desktop.backup.begin')) === 'function', `reloaded=${crashReloaded} pid ${pidA}→${pidC} job=${jobC} ${text(R.messageBoxes)}`);
+      // (d) a second crash within a minute: Close only (left open here, so the window stays for the last checks)
+      messageBoxReply = () => new Promise(() => {});
+      wc.forcefullyCrashRenderer();
+      const second = await waitUntil(() => R.messageBoxes.length === 4, 8000);
+      check('A second crash within a minute offers Close only (no reload loop)', second && text(R.messageBoxes[3].buttons) === text(['Close']) && /again/.test(R.messageBoxes[3].message) && !win.isDestroyed(), text(R.messageBoxes));
+    } finally { Date.now = realNow; }
+
     const tempLeft = fs.readdirSync(path.join(OUT, 'temp')).filter((f) => /^ers-report-/.test(f));
     check('PDF temp files deleted', tempLeft.length === 0, text(tempLeft));
+    check('No backup temporary (.part) files left', partFiles().length === 0, text(partFiles()));
     check('No error boxes shown', R.errorBoxes.length === 0, text(R.errorBoxes));
     check('No request left the mock (every host expected)', R.requests.every((r) => ['driver-vehicle-licensing.api.gov.uk', 'login.microsoftonline.com', 'history.mot.api.gov.uk', 'api.anthropic.com'].includes(r.host)), text([...new Set(R.requests.map((r) => r.host))]));
 

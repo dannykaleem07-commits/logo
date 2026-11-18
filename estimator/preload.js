@@ -24,6 +24,17 @@ if (onAppPage) {
       mot: (id, by) => ipcRenderer.invoke('data:mot', { id, by: by === 'vin' ? 'vin' : 'registration' })
     },
     exportPdf: (p) => ipcRenderer.invoke('pdf:export', p), // {html, header, footer, fileName, marginsMm?}
-    saveFile: (p) => ipcRenderer.invoke('file:save', p) // {content, fileName}: saved as a .json file
+    saveFile: (p) => ipcRenderer.invoke('file:save', p), // {content, fileName}: saved as a .json file
+    // Streaming backup to a .ersbackup file: begin, then write the text in pieces (await each one), then end. On any
+    // error call abort. Nothing replaces the chosen file until end succeeds; closing or reloading the window cancels it.
+    backup: {
+      begin: (p) => ipcRenderer.invoke('backup:begin', p), // {fileName} → {ok:true, id} | {ok:false, canceled:true} | {ok:false, error}
+      write: (id, chunk) => ipcRenderer.invoke('backup:write', id, chunk), // chunk: a string of at most 64 Mi characters, split anywhere → {ok} | {ok:false, error}
+      end: (id) => ipcRenderer.invoke('backup:end', id), // → {ok:true, filePath} | {ok:false, error}; opens nothing
+      abort: (id) => ipcRenderer.invoke('backup:abort', id) // → {ok:true}: the temporary file is deleted
+    },
+    app: {
+      info: () => ipcRenderer.invoke('app:info') // {ok, dataFolder}: where jobs, settings and keys are stored
+    }
   });
 }

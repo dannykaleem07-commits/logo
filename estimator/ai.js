@@ -212,7 +212,8 @@ Estimate lines (suggested_lines):
   refurb – refurbish (for example an alloy wheel), costed as sublet: 0h labour.
   operation – a catalogue OPERATION or CONSUMABLE row (calibration, diagnostic scan, alignment, measuring, fluid service, valet, fixings and materials): its listed hours.
   labour – a labour-only operation (${opRange}): its listed hours.
-- guide_hours: the guide figure for that code and operation, worked out as above. labour_hours: the hours you recommend. hours_basis: "guide" when labour_hours equals guide_hours; otherwise "adjusted", and the reason must say why (for example a larger vehicle, an aluminium or composite panel, pearl or three-stage paint, or the extent of the damage). An OTHER line has no guide: guide_hours 0, hours_basis "adjusted", and the reason explains the hours.
+- guide_hours: the guide figure for that code and operation, worked out as above. labour_hours: the hours you recommend. hours_basis: "guide" when labour_hours equals guide_hours; otherwise "adjusted", and the reason must say why (for example a larger vehicle, an aluminium or composite panel, or the extent of the damage). An OTHER line has no guide: guide_hours 0, hours_basis "adjusted", and the reason explains the hours.
+- Paint finish: give the hours of paint operations (smart, refinish, refinishRep1, refinishRep2, blend) as base hours for solid or metallic paint, before the paint-finish factor, in both guide_hours and labour_hours. This application multiplies them by the vehicle's paint-finish factor (pearlescent, three-stage / tri-coat or matt paint) when the line is added, so never add time for the paint finish and never give it as the reason for adjusted hours: it would be counted twice. A pearlescent or three-stage colour still needs its blend lines (see the method above). Apart from that factor, adjusted hours are used as you give them, so they include any allowance for the vehicle's size.
 - reason: the evidence for the line, citing photo numbers.
 
 Parts catalogue (code | name | group | sides | kind | material | guide hours). "L/R" means the part is fitted on each side, so give the side. Guide hours: renew = remove & replace, including normal transfers; refinish = refinish a new part ("-" = not painted); repair = a MEDIUM repair before refinish ("-" = renew only, never repaired; "?" = no repair guide, use OP001's hours). Rows marked OPERATION are labour operations or services (calibrations, diagnostic scans, alignment, measuring, fluid services, valeting) and rows marked CONSUMABLE are fixings, materials and sundries: neither is a part to renew or repair, so give them operation "operation" with the listed hours.
@@ -322,9 +323,9 @@ const PHOTO_SCHEMA = object({
       operation: { type: 'string', enum: LINE_OPERATIONS, description: 'What is done: see the operations list' },
       side: SIDE,
       description: { type: 'string', description: 'Estimate line wording, e.g. "RH door mirror assembly – remove & replace"' },
-      guide_hours: { type: 'number', description: 'The catalogue guide hours for this code and operation (0 when there is none)' },
-      labour_hours: { type: 'number', description: 'The hours recommended' },
-      hours_basis: { type: 'string', enum: ['guide', 'adjusted'], description: '"guide" when labour_hours equals guide_hours, otherwise "adjusted" (say why in reason)' },
+      guide_hours: { type: 'number', description: 'The catalogue guide hours for this code and operation (0 when there is none); for paint operations, before the paint-finish factor' },
+      labour_hours: { type: 'number', description: 'The hours recommended. For paint operations (smart, refinish, refinishRep1, refinishRep2, blend): base hours before the paint-finish factor; never add time for pearlescent, three-stage or matt paint, because the application applies that factor' },
+      hours_basis: { type: 'string', enum: ['guide', 'adjusted'], description: '"guide" when labour_hours equals guide_hours, otherwise "adjusted" (say why in reason; never the paint finish, whose factor the application applies)' },
       needs_part: { type: 'boolean', description: 'True if a replacement part must be priced' },
       cost_class: { type: 'string', enum: ['parts', 'paint', 'other', 'labour only'] },
       reason: { type: 'string', description: 'Evidence for this line, citing photo numbers, and why the hours differ from the guide if they do' },
@@ -805,6 +806,10 @@ function toFractionBox(raw, photo) {
 }
 
 // ---------- estimate-line guide times (mirrors the renderer's catalogue picker, before its size and paint factors) ----------
+// The renderer applies the vehicle's paint-finish factor to paint operations (PAINT_OPERATIONS) when it adds an AI line,
+// whether the hours are the guide or the AI's adjusted figure, so every paint figure here and from the model is the base
+// time for solid or metallic paint. A paint line whose adjusted hours cite the paint finish is flagged (see sanitiseLine).
+const PAINT_FINISH_WORDS = /\b(?:pearl\w*|tri-?coat\w*|(?:three|3)[\s-]?(?:stage|coat|layer)s?|matte?)\b/i;
 function guideHours(cat, code, operation) {
   const op = cat.opsByCode.get(code);
   if (op) return operation === 'labour' ? guideRound(op.hours) : null;
@@ -989,6 +994,9 @@ function sanitiseLine(l, cat, flags) {
   const basis = guide != null && Math.abs(hours - guide) < 0.05 ? 'guide' : 'adjusted';
   if (guide != null && l.hours_basis === 'guide' && basis === 'adjusted' && Number.isFinite(modelGuide) && Math.abs(modelGuide - guide) >= 0.05) {
     note(`the AI quoted a guide of ${round1(modelGuide)}h but the catalogue guide is ${guide}h, so its ${hours}h is shown as adjusted.`);
+  }
+  if (PAINT_OPERATIONS.includes(operation) && basis === 'adjusted' && PAINT_FINISH_WORDS.test(str(l.reason))) {
+    note(`the AI gives the paint finish as a reason for its ${hours}h, but this application applies the paint-finish factor (pearlescent, three-stage, matt) to paint hours itself. Check that ${hours}h is the time before that factor, or the finish is counted twice.`);
   }
   let type = l.type;
   if (PAINT_OPERATIONS.includes(operation)) type = 'Painting';
@@ -1311,7 +1319,7 @@ module.exports = {
   get SYSTEM() { const c = loadCatalogue(); return c ? c.system : ''; },
   NARRATIVE_SYSTEM, VALUATION_SYSTEM, PHOTO_SCHEMA, NARRATIVE_SCHEMA, VALUATION_SCHEMA, LINE_OPERATIONS, UK_LISTING_DOMAINS,
   // pure helpers, exported for the offline tests
-  _test: { extractJSON, sniffImage, resizedSize, toFractionBox, guideHours: (code, op) => guideHours(requireCatalogue(), code, op), echoContent, normaliseEnums, scrubSecrets, cleanKey, isFallbackUnsupported, maxOutputFor, imageTier, sourceKind }
+  _test: { extractJSON, sniffImage, resizedSize, toFractionBox, guideHours: (code, op) => guideHours(requireCatalogue(), code, op), echoContent, normaliseEnums, scrubSecrets, cleanKey, isFallbackUnsupported, maxOutputFor, imageTier, sourceKind, paintFinishWords: PAINT_FINISH_WORDS }
 };
 
 loadCatalogue(); // load at start-up; a failure only disables the AI features (aiStatus says why)

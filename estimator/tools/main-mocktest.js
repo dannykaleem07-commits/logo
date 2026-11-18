@@ -3,8 +3,9 @@
 /*
  * Proof for estimator/main.js: loads it under a fake 'electron' module (Module._resolveFilename + require.cache stub)
  * and exercises single-instance, window hardening, navigation guards, IPC sender checks, key-file failure handling,
- * credential validation, save-dialog sanitising and PDF temp-file handling. Nothing under the repo is written:
- * userData / temp / documents point into a scratch directory. Run: node tools/main-mocktest.js  (ERS_ROOT overrides the app dir)
+ * credential validation, save-dialog sanitising, PDF temp-file handling, the streaming backup channels, app:info and
+ * the crash / hang recovery dialogs. Nothing under the repo is written: userData / temp / documents point into a
+ * scratch directory. Run: node tools/main-mocktest.js  (ERS_ROOT overrides the app dir)
  */
 const assert = require('assert');
 const path = require('path');
@@ -35,6 +36,8 @@ function freshState(o = {}) {
     printToPDF: async () => Buffer.from('%PDF-1.7 fake'), loadFile: async () => {},
     netFetch: async () => new Response(JSON.stringify({ registrationNumber: 'AB12CDE', make: 'FORD' }), { status: 200, headers: { 'content-type': 'application/json' } }),
     netFetchCalls: [], sessions: new Map(), aiThrows: false, aiFake: true, aiCalls: { setApiKey: [], setFetch: [] },
+    // message boxes: messageBox(opts) returns {response}, or undefined to leave the box open until its signal aborts it
+    messageBoxes: [], messageBox: () => ({ response: 0 }), reloads: 0, forcedCrashes: 0,
     ...o
   };
 }
@@ -48,6 +51,10 @@ class FakeWebContents extends EventEmitter {
   constructor(win) { super(); this.id = ++wcIds; this.win = win; }
   setWindowOpenHandler(fn) { this.windowOpenHandler = fn; }
   async printToPDF(opts) { S.printCalls.push(opts); return S.printToPDF(opts, this.win); }
+  isDestroyed() { return !!(this.win && this.win.destroyed); }
+  reload() { S.reloads++; }
+  // like Electron: the renderer is killed and render-process-gone follows asynchronously
+  forcefullyCrashRenderer() { S.forcedCrashes++; setTimeout(() => this.emit('render-process-gone', {}, { reason: 'killed', exitCode: 9 }), 5); }
 }
 function makeSession(name) {
   const s = {
@@ -82,7 +89,17 @@ const electron = {
   ipcMain: { handle: (ch, fn) => { assert.ok(!S.handlers.has(ch), 'handler registered twice: ' + ch); S.handlers.set(ch, fn); } },
   dialog: {
     showSaveDialog: async (a, b) => { const opts = b || a; S.saveDialogCalls.push({ parent: b ? a : null, opts }); return S.dialogResult || { canceled: false, filePath: path.join(S.dirs.documents, opts.defaultPath ? path.basename(opts.defaultPath) : 'x') }; },
-    showErrorBox: (t, m) => S.errorBoxes.push(m)
+    showErrorBox: (t, m) => S.errorBoxes.push(m),
+    showMessageBox: (a, b) => {
+      const opts = b || a;
+      const box = { parent: b ? a : null, opts, aborted: false };
+      S.messageBoxes.push(box);
+      return new Promise((resolve) => {
+        // like Electron: an aborted signal closes the box as if it was cancelled
+        if (opts.signal) opts.signal.addEventListener('abort', () => { box.aborted = true; resolve({ response: opts.cancelId || 0, checkboxChecked: false }); });
+        Promise.resolve().then(() => S.messageBox(opts, box)).then((res) => { if (res) resolve({ checkboxChecked: false, ...res }); });
+      });
+    }
   },
   safeStorage: {
     isEncryptionAvailable: () => S.crypto,
@@ -126,7 +143,7 @@ async function boot(o = {}) {
   };
   for (const f of ['main.js', 'vehicledata.js', 'ai.js']) delete require.cache[path.join(APP_ROOT, f)];
   app.removeAllListeners();
-  require(MAIN);
+  S.main = require(MAIN);
   for (let i = 0; i < 50 && (S.lock && !S.windows.length); i++) await new Promise((r) => setTimeout(r, 5));
   await new Promise((r) => setTimeout(r, 20));
   return S;
@@ -139,6 +156,12 @@ const KEY_FILE = () => path.join(S.dirs.userData, 'ai-key.bin');
 const DATA_FILE = () => path.join(S.dirs.userData, 'data-keys.bin');
 const ok = (m) => console.log('✓ ' + m);
 const TENANT = '1a2b3c4d-1111-2222-3333-444455556666';
+const tick = (ms = 20) => new Promise((r) => setTimeout(r, ms));
+/** Poll until cond() holds (counted in steps, not Date.now(), which a test may freeze). */
+async function waitFor(cond, ms = 3000, what = 'condition') {
+  for (let i = 0; i * 10 < ms; i++) { if (cond()) return; await tick(10); }
+  if (!cond()) throw new Error('timed out waiting for ' + what);
+}
 
 (async () => {
   // ================= 1. single instance, window hardening, menu, startup =================
@@ -336,7 +359,12 @@ const TENANT = '1a2b3c4d-1111-2222-3333-444455556666';
   ok('Writes are atomic (no temp left), key files 0600, missing settings folder created, unwritable one → {ok:false, friendly}; non-text / bad-character keys refused without echoing the key');
 
   // Every channel answers {ok} for garbage input, never throws
-  for (const ch of S.handlers.keys()) for (const arg of [undefined, null, 0, 'x', [], {}, { html: 5 }, { content: {} }]) await call(ch, arg);
+  for (const ch of S.handlers.keys()) {
+    for (const arg of [undefined, null, 0, 'x', [], {}, { html: 5 }, { content: {} }]) {
+      const res = await call(ch, arg);
+      if (res.ok && typeof res.id === 'string') assert.strictEqual((await call('backup:abort', res.id)).ok, true); // backup:begin({}) opens one
+    }
+  }
   ok(`All ${S.handlers.size} channels resolve to {ok:…} for 8 kinds of bad input (no rejected invoke)`);
 
   // AI error messages never carry a key
@@ -433,6 +461,340 @@ const TENANT = '1a2b3c4d-1111-2222-3333-444455556666';
   assert.deepStrictEqual(fs.readdirSync(S.dirs.temp).filter((f) => f.startsWith('ers-')), [], 'no temp file left after any failure');
   assert.ok(S.windows.every((x) => x === mainWin() || x.isDestroyed()), 'every hidden PDF window destroyed');
   ok('PDF: random ers-report-<uuid>.html, mode 0600, written inside try and deleted in finally (success and 3 failure paths), CSP injected first, hidden window on its own partition (JS off, sandbox, no DevTools, navigation/window.open blocked, permissions denied, webRequest allows only that temp file + data:), printToPDF options per electron.d.ts with margins = @page 25/26/16/16 mm (renderer may send marginsMm)');
+
+  // ================= 7. streaming backup =================
+  await boot();
+  const bdocs = S.dirs.documents;
+  const parts = () => fs.readdirSync(bdocs).filter((f) => f.endsWith('.part'));
+  const inDocs = (name) => path.join(bdocs, name);
+  const MAX = 64 * 1024 * 1024;
+  assert.strictEqual(S.main.BACKUP_CHUNK_MAX, MAX);
+  // round trip: begin → several writes → end, over an earlier backup of the same name
+  const target = inDocs('backup-2026-11-18.ersbackup');
+  fs.writeFileSync(target, 'EARLIER BACKUP');
+  S.dialogResult = { canceled: false, filePath: target };
+  r = await call('backup:begin', { fileName: 'backup-2026-11-18.ersbackup' });
+  assert.strictEqual(r.ok, true); assert.match(r.id, /^[0-9a-f-]{36}$/);
+  const bid = r.id;
+  d = S.saveDialogCalls.slice(-1)[0];
+  assert.strictEqual(path.basename(d.opts.defaultPath), 'backup-2026-11-18.ersbackup');
+  assert.deepStrictEqual(d.opts.filters, [{ name: 'Engineer Report Studio backup', extensions: ['ersbackup'] }]);
+  assert.strictEqual(d.parent, mainWin());
+  assert.strictEqual(parts().length, 1);
+  assert.match(parts()[0], /^backup-2026-11-18\.ersbackup\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.part$/, '<target>.<uuid>.part in the chosen folder');
+  if (process.platform !== 'win32') assert.strictEqual(fs.statSync(inDocs(parts()[0])).mode & 0o777, 0o600);
+  const lines = [
+    { kind: 'engineer-report-studio-backup', format: 2, at: '2026-11-18T10:00:00.000Z', jobs: 2 },
+    { type: 'settings', data: { company: 'Müller & Søn – Engineers' } },
+    { type: 'customOem', data: [] },
+    { type: 'job', data: { id: 'j1', ref: 'Ref 🚗 AB12 CDE – “quoted”', photo: 'data:image/jpeg;base64,' + 'A'.repeat(9 * 1024 * 1024) } },
+    { type: 'job', data: { id: 'j2', notes: 'Kühler – 🚙🚕 ' + '€'.repeat(100000) } },
+    { type: 'end', jobs: 2 }
+  ];
+  const all = lines.map((o) => JSON.stringify(o)).join('\n') + '\n';
+  const emoji = all.indexOf('🚗');
+  const cuts = [0, 70, emoji + 1, emoji + 5, 4 * 1024 * 1024, all.length - 30, all.length]; // emoji + 1 splits its surrogate pair
+  const chunks = cuts.slice(1).map((c, i) => all.slice(cuts[i], c));
+  chunks.splice(2, 0, ''); // an empty piece right after the split half
+  assert.ok(/[\ud800-\udbff]$/.test(chunks[1]) && /^[\udc00-\udfff]/.test(chunks[3]), 'one piece ends inside an emoji');
+  const order = [];
+  const realFsync = fs.fsync, realRename = fs.promises.rename, realWrite = fs.write, realWritev = fs.writev;
+  fs.fsync = function (fd, cb) { order.push('fsync'); return realFsync.call(fs, fd, cb); };
+  fs.promises.rename = async function (a, b) { order.push('rename'); return realRename.call(fs.promises, a, b); };
+  try {
+    for (const c of chunks) { r = await call('backup:write', bid, c); assert.deepStrictEqual(r, { ok: true }); }
+    assert.strictEqual(fs.readFileSync(target, 'utf8'), 'EARLIER BACKUP', 'the earlier backup is untouched while writing');
+    r = await call('backup:end', bid);
+  } finally { fs.fsync = realFsync; fs.promises.rename = realRename; }
+  assert.deepStrictEqual(r, { ok: true, filePath: target });
+  assert.ok(fs.readFileSync(target).equals(Buffer.from(all, 'utf8')), 'the file is exactly the UTF-8 of the text sent');
+  assert.deepStrictEqual(fs.readFileSync(target, 'utf8').split('\n').slice(0, -1).map((l) => { const o = JSON.parse(l); return o.type || o.kind; }), ['engineer-report-studio-backup', 'settings', 'customOem', 'job', 'job', 'end']);
+  assert.deepStrictEqual(order, ['fsync', 'rename'], 'fsynced before the rename');
+  assert.deepStrictEqual(parts(), []);
+  assert.ok(!S.openPath.includes(target), 'nothing is opened');
+  for (const ch of ['backup:write', 'backup:end', 'backup:abort']) { r = await call(ch, bid, 'more'); assert.strictEqual(r.ok, false, ch + ' after end'); assert.match(r.error, /no longer open/); }
+  // writes that are not awaited are applied in call order, and end waits for them
+  S.dialogResult = { canceled: false, filePath: inDocs('queued.ersbackup') };
+  r = await call('backup:begin', {}); const qid = r.id;
+  const queued = await Promise.all([call('backup:write', qid, 'one\n'), call('backup:write', qid, 'two\n'), call('backup:write', qid, 'three\n'), call('backup:end', qid)]);
+  assert.deepStrictEqual(queued.map((x) => x.ok), [true, true, true, true]);
+  assert.strictEqual(fs.readFileSync(inDocs('queued.ersbackup'), 'utf8'), 'one\ntwo\nthree\n');
+  r = await call('backup:begin', {}); const fid = r.id;
+  const pFinish = call('backup:end', fid);
+  r = await call('backup:write', fid, 'late'); assert.deepStrictEqual(r, { ok: false, error: 'That backup is already being finished.' });
+  assert.strictEqual((await pFinish).ok, true);
+  ok('Backup: begin → 7 writes (non-ASCII, a 9 MB line, an empty piece, a split inside an emoji) → end gives exactly the UTF-8 text; .ersbackup dialog and filter; <name>.<uuid>.part (0600) in the chosen folder; fsynced, then renamed over the earlier backup, which is untouched until then; nothing opened; writes run in call order');
+
+  // abort deletes the temporary file, also while writes are queued
+  S.dialogResult = { canceled: false, filePath: inDocs('aborted.ersbackup') };
+  r = await call('backup:begin', { fileName: 'aborted' }); const aid = r.id;
+  assert.strictEqual(path.basename(S.saveDialogCalls.slice(-1)[0].opts.defaultPath), 'aborted.ersbackup');
+  assert.deepStrictEqual(await call('backup:write', aid, 'partial data'), { ok: true });
+  assert.strictEqual(parts().length, 1);
+  assert.deepStrictEqual(await call('backup:abort', aid), { ok: true });
+  assert.deepStrictEqual(parts(), [], 'temporary file deleted');
+  assert.ok(!fs.existsSync(inDocs('aborted.ersbackup')));
+  r = await call('backup:write', aid, 'x'); assert.match(r.error, /no longer open/);
+  r = await call('backup:abort', aid); assert.strictEqual(r.ok, false, 'an aborted id is unknown');
+  r = await call('backup:begin', {}); const aid2 = r.id;
+  const inFlight = [call('backup:write', aid2, 'a'.repeat(5e6)), call('backup:write', aid2, 'b'.repeat(5e6))];
+  assert.deepStrictEqual(await call('backup:abort', aid2), { ok: true });
+  assert.ok((await Promise.all(inFlight)).every((x) => typeof x.ok === 'boolean'));
+  assert.deepStrictEqual(parts(), []);
+  ok('Backup abort: the temporary file is deleted (also with writes still queued), the target is not created, and the id is then unknown');
+
+  // one backup per window; a second begin (also a simultaneous one) is refused without a dialog
+  S.dialogResult = { canceled: false, filePath: inDocs('one.ersbackup') };
+  r = await call('backup:begin', {}); const oneId = r.id; assert.strictEqual(r.ok, true);
+  const dialogCount = S.saveDialogCalls.length;
+  r = await call('backup:begin', {}); assert.strictEqual(r.ok, false); assert.match(r.error, /already being written/);
+  assert.strictEqual(S.saveDialogCalls.length, dialogCount, 'no second save dialog');
+  assert.strictEqual((await call('backup:abort', oneId)).ok, true);
+  const both = await Promise.all([call('backup:begin', {}), call('backup:begin', {})]);
+  assert.deepStrictEqual(both.map((x) => x.ok).sort(), [false, true], 'two quick clicks start one backup');
+  assert.match(both.find((x) => !x.ok).error, /already being written/);
+  assert.strictEqual((await call('backup:abort', both.find((x) => x.ok).id)).ok, true);
+  S.dialogResult = { canceled: true };
+  assert.deepStrictEqual(await call('backup:begin', {}), { ok: false, canceled: true });
+  S.dialogResult = { canceled: false, filePath: path.join(RUN, 'missing-dir', 'b.ersbackup') };
+  r = await call('backup:begin', {}); assert.strictEqual(r.ok, false); assert.match(r.error, /^The backup could not be started: the folder does not exist/);
+  r = await call('backup:begin', 'x'); assert.strictEqual(r.ok, false);
+  S.dialogResult = { canceled: false, filePath: inDocs('after.ersbackup') };
+  r = await call('backup:begin', {}); assert.strictEqual(r.ok, true, 'a cancelled or failed begin leaves nothing open');
+  assert.strictEqual((await call('backup:abort', r.id)).ok, true);
+  assert.deepStrictEqual(parts(), []);
+  ok('Backup: one at a time per window (a second or simultaneous begin is refused without a dialog); cancel → {canceled}; missing folder → friendly fsMessage; neither blocks the next backup');
+
+  // the 64 MiB limit; non-text; unknown ids
+  S.dialogResult = { canceled: false, filePath: inDocs('limit.ersbackup') };
+  r = await call('backup:begin', {}); const lid = r.id;
+  assert.deepStrictEqual(await call('backup:write', lid, 'a'.repeat(MAX)), { ok: true }, 'exactly 64 MiB is accepted');
+  r = await call('backup:write', lid, 'a'.repeat(MAX + 1)); assert.strictEqual(r.ok, false); assert.match(r.error, /larger than 64 MiB, so the backup was stopped/);
+  assert.deepStrictEqual(parts(), [], 'the stopped backup is deleted straight away');
+  r = await call('backup:write', lid, 'x'); assert.match(r.error, /larger than 64 MiB/, 'later writes say why it stopped');
+  r = await call('backup:end', lid); assert.strictEqual(r.ok, false); assert.match(r.error, /larger than 64 MiB/);
+  assert.ok(!fs.existsSync(inDocs('limit.ersbackup')));
+  assert.deepStrictEqual(await call('backup:abort', lid), { ok: true }, 'abort after a failure is fine');
+  r = await call('backup:begin', {}); const tid = r.id;
+  r = await call('backup:write', tid, 42); assert.strictEqual(r.ok, false); assert.match(r.error, /not text/);
+  assert.deepStrictEqual(parts(), []);
+  await call('backup:abort', tid);
+  for (const [ch, args] of [['backup:write', ['nope', 'x']], ['backup:write', [42, 'x']], ['backup:end', ['nope']], ['backup:end', []], ['backup:abort', ['nope']], ['backup:abort', [{}]]]) {
+    r = await call(ch, ...args); assert.strictEqual(r.ok, false, `${ch} ${JSON.stringify(args)}`); assert.match(r.error, /no longer open/);
+  }
+  ok('Backup limits: a 64 MiB piece is accepted, 64 MiB + 1 (or non-text) stops the backup and deletes its file at once; write/end then repeat the reason; unknown ids → {ok:false, error}');
+
+  // file-system failures: disk full while writing, a busy target (retried), a lasting rename failure
+  S.dialogResult = { canceled: false, filePath: inDocs('full.ersbackup') };
+  r = await call('backup:begin', {}); const eid = r.id;
+  const enospc = () => Object.assign(new Error('ENOSPC: no space left on device, write'), { code: 'ENOSPC', errno: -28, syscall: 'write' });
+  fs.write = function (...a) { process.nextTick(a[a.length - 1], enospc()); };
+  fs.writev = function (...a) { process.nextTick(a[a.length - 1], enospc()); };
+  try { r = await call('backup:write', eid, 'some data'); } finally { fs.write = realWrite; fs.writev = realWritev; }
+  assert.deepStrictEqual(r, { ok: false, error: 'The backup could not be written: the disk is full. Free some space or save somewhere else.' });
+  assert.deepStrictEqual(parts(), []);
+  r = await call('backup:end', eid); assert.match(r.error, /disk is full/);
+  assert.deepStrictEqual(await call('backup:abort', eid), { ok: true });
+  S.dialogResult = { canceled: false, filePath: inDocs('busy.ersbackup') };
+  r = await call('backup:begin', {}); const rid = r.id; await call('backup:write', rid, 'data\n');
+  let renames = 0;
+  fs.promises.rename = async function (a, b) { if (++renames <= 2) throw Object.assign(new Error('EBUSY: resource busy or locked, rename'), { code: 'EBUSY' }); return realRename.call(fs.promises, a, b); };
+  try { r = await call('backup:end', rid); } finally { fs.promises.rename = realRename; }
+  assert.deepStrictEqual(r, { ok: true, filePath: inDocs('busy.ersbackup') }); assert.strictEqual(renames, 3, 'a briefly busy file is retried');
+  fs.writeFileSync(inDocs('folder.ersbackup'), 'EARLIER');
+  S.dialogResult = { canceled: false, filePath: inDocs('folder.ersbackup') };
+  r = await call('backup:begin', {}); const kid = r.id; await call('backup:write', kid, 'new data\n');
+  fs.promises.rename = async () => { throw Object.assign(new Error('EISDIR: illegal operation on a directory, rename'), { code: 'EISDIR' }); };
+  try { r = await call('backup:end', kid); } finally { fs.promises.rename = realRename; }
+  assert.deepStrictEqual(r, { ok: false, error: 'The backup could not be saved: that name is a folder. Choose a file name.' });
+  assert.strictEqual(fs.readFileSync(inDocs('folder.ersbackup'), 'utf8'), 'EARLIER', 'a failed backup never touches the earlier file');
+  assert.deepStrictEqual(parts(), []);
+  await call('backup:abort', kid);
+  // abort while end is flushing: the chosen file is never replaced
+  S.dialogResult = { canceled: false, filePath: inDocs('racing.ersbackup') };
+  r = await call('backup:begin', {}); const xid = r.id; await call('backup:write', xid, 'data\n');
+  let releaseFsync = null;
+  fs.fsync = function (fd, cb) { releaseFsync = () => realFsync.call(fs, fd, cb); };
+  let pEnd, pAbort;
+  try {
+    pEnd = call('backup:end', xid);
+    await waitFor(() => !!releaseFsync, 2000, 'fsync');
+    pAbort = call('backup:abort', xid);
+  } finally { fs.fsync = realFsync; }
+  releaseFsync();
+  const [endRes, abortRes] = await Promise.all([pEnd, pAbort]);
+  assert.strictEqual(endRes.ok, false); assert.match(endRes.error, /cancelled/); assert.deepStrictEqual(abortRes, { ok: true });
+  assert.ok(!fs.existsSync(inDocs('racing.ersbackup')), 'an abort during end never replaces the chosen file');
+  assert.deepStrictEqual(parts(), []);
+  ok('Backup failures use fsMessage: disk full while writing (file deleted), a busy target retried, a lasting rename failure leaves the earlier file and no temporary file; an abort during end never replaces the chosen file');
+
+  // sender guard: untrusted senders cannot begin, write into, end or abort an open backup
+  S.dialogResult = { canceled: false, filePath: inDocs('guarded.ersbackup') };
+  r = await call('backup:begin', {}); const gid = r.id; await call('backup:write', gid, 'GOOD\n');
+  const dialogsBefore = S.saveDialogCalls.length;
+  for (const [label, ev] of evilFrames) {
+    for (const [ch, args] of [['backup:begin', [{}]], ['backup:write', [gid, 'EVIL\n']], ['backup:end', [gid]], ['backup:abort', [gid]], ['app:info', []]]) {
+      const res = await S.handlers.get(ch)({ ...appEvent(), ...ev }, ...args);
+      assert.strictEqual(res.ok, false, `${ch} from ${label}`); assert.match(res.error, /Request refused/);
+    }
+  }
+  assert.strictEqual(S.saveDialogCalls.length, dialogsBefore, 'no dialog for an untrusted begin');
+  r = await call('backup:end', gid); assert.strictEqual(r.ok, true);
+  assert.strictEqual(fs.readFileSync(inDocs('guarded.ersbackup'), 'utf8'), 'GOOD\n');
+  ok(`Backup sender guard: begin/write/end/abort (and app:info) refuse ${evilFrames.length} untrusted senders; an open backup is unaffected`);
+
+  // the page going away cancels its backup: reload (a new document), the window closing
+  S.dialogResult = { canceled: false, filePath: inDocs('reload.ersbackup') };
+  r = await call('backup:begin', {}); const nid1 = r.id; await call('backup:write', nid1, 'x');
+  mainWin().webContents.emit('did-navigate-in-page', {}, APP_URL + '#/settings', true);
+  assert.strictEqual(parts().length, 1, 'a #route change keeps the backup');
+  mainWin().webContents.emit('did-navigate', {}, APP_URL, -1, '');
+  await waitFor(() => parts().length === 0, 3000, 'temporary file deleted after a reload');
+  r = await call('backup:write', nid1, 'y'); assert.match(r.error, /no longer open/);
+  r = await call('backup:begin', {}); assert.strictEqual(r.ok, true, 'the reloaded page can start a new backup');
+  await call('backup:write', r.id, 'z');
+  assert.strictEqual(parts().length, 1);
+  mainWin().destroy();
+  await waitFor(() => parts().length === 0, 3000, 'temporary file deleted after the window closed');
+  assert.ok(!fs.existsSync(inDocs('reload.ersbackup')));
+  ok('Backup cleanup: a reload (did-navigate, not an in-page #route change) or closing the window aborts the open backup and deletes its temporary file');
+
+  // quitting waits for the temporary file to be deleted, then quits; nothing new can start
+  await boot();
+  S.dialogResult = { canceled: false, filePath: inDocs('quit.ersbackup') };
+  r = await call('backup:begin', {}); await call('backup:write', r.id, 'x');
+  const quitsBefore = S.quitCalls;
+  const q1 = { prevented: false, preventDefault() { this.prevented = true; } };
+  app.emit('before-quit', q1);
+  assert.strictEqual(q1.prevented, true, 'the quit waits for the open backup');
+  await waitFor(() => S.quitCalls === quitsBefore + 1, 3000, 'quit resumed');
+  assert.deepStrictEqual(parts(), []);
+  const q2 = { prevented: false, preventDefault() { this.prevented = true; } };
+  app.emit('before-quit', q2); assert.strictEqual(q2.prevented, false, 'the second quit goes ahead');
+  r = await call('backup:begin', {}); assert.strictEqual(r.ok, false); assert.match(r.error, /app is closing/);
+  app.emit('will-quit');
+  // last resort: a temporary file still there at will-quit is deleted synchronously
+  await boot();
+  S.dialogResult = { canceled: false, filePath: inDocs('lastresort.ersbackup') };
+  r = await call('backup:begin', {}); assert.strictEqual(parts().length, 1);
+  app.emit('will-quit');
+  if (process.platform !== 'win32') assert.deepStrictEqual(parts(), [], 'deleted synchronously at will-quit');
+  await call('backup:abort', r.id);
+  assert.deepStrictEqual(parts(), []);
+  ok('Backup on quit: before-quit is held until the open backup is aborted and its temporary file deleted, then app.quit() again; later begins are refused; will-quit deletes any leftover synchronously');
+
+  // ================= 8. app:info =================
+  r = await call('app:info'); assert.deepStrictEqual(r, { ok: true, dataFolder: S.dirs.userData });
+  ok('app:info → {ok:true, dataFolder: userData}; sender-guarded like every channel');
+
+  // ================= 9. the page crashing or hanging =================
+  await boot();
+  let wc9 = mainWin().webContents;
+  const gone = (reason) => wc9.emit('render-process-gone', {}, { reason, exitCode: 1 });
+  S.dialogResult = { canceled: false, filePath: inDocs('crash.ersbackup') };
+  r = await call('backup:begin', {}); const cid = r.id; await call('backup:write', cid, 'x');
+  S.messageBox = () => ({ response: 0 }); // Reload
+  gone('crashed');
+  await waitFor(() => S.reloads === 1, 2000, 'reload');
+  let box = S.messageBoxes[0];
+  assert.strictEqual(box.parent, mainWin());
+  assert.deepStrictEqual([box.opts.type, box.opts.buttons, box.opts.defaultId, box.opts.cancelId, box.opts.noLink], ['error', ['Reload', 'Close'], 0, 0, true]);
+  assert.match(box.opts.message, /stopped working\.$/);
+  assert.match(box.opts.detail, /saved on this PC/); assert.match(box.opts.detail, /backup that was being written was cancelled/);
+  assert.ok(box.opts.detail.includes(S.dirs.userData), 'the data folder is shown');
+  await waitFor(() => parts().length === 0, 2000, 'the crash deleted the backup temporary file');
+  r = await call('backup:write', cid, 'y'); assert.match(r.error, /no longer open/);
+  assert.strictEqual(mainWin().isDestroyed(), false);
+  gone('crashed'); // again within a minute: Close only
+  await waitFor(() => mainWin().isDestroyed(), 2000, 'window closed');
+  box = S.messageBoxes[1];
+  assert.deepStrictEqual(box.opts.buttons, ['Close']); assert.match(box.opts.message, /stopped working again/); assert.match(box.opts.detail, /twice within a minute/);
+  assert.ok(!/backup that was being written/.test(box.opts.detail), 'no backup mentioned when none was open');
+  assert.strictEqual(S.reloads, 1, 'no second reload');
+  // out of memory hint; a crash more than a minute after the last one may reload again
+  await boot();
+  wc9 = mainWin().webContents;
+  const realNow = Date.now;
+  let fakeNow = realNow();
+  Date.now = () => fakeNow;
+  try {
+    S.messageBox = () => ({ response: 0 });
+    gone('oom'); await waitFor(() => S.reloads === 1, 2000, 'reload after oom');
+    assert.match(S.messageBoxes[0].opts.detail, /ran out of memory/);
+    fakeNow += 61 * 1000;
+    gone('crashed'); await waitFor(() => S.reloads === 2, 2000, 'reload a minute later');
+    assert.deepStrictEqual(S.messageBoxes[1].opts.buttons, ['Reload', 'Close']);
+    S.messageBox = () => ({ response: 1 }); // Close
+    fakeNow += 61 * 1000;
+    gone('abnormal-exit'); await waitFor(() => mainWin().isDestroyed(), 2000, 'Close');
+    assert.strictEqual(S.reloads, 2);
+  } finally { Date.now = realNow; }
+  ok('Crash: render-process-gone → error dialog (Reload / Close, data folder, the open backup cancelled and its file deleted) → Reload reloads; a second crash within a minute offers Close only and closes the window (no crash loop); a minute later Reload is offered again; out-of-memory explained');
+
+  // hang: Wait / Reload / Close; Reload ends the hung renderer first and is not reported as a crash
+  await boot();
+  wc9 = mainWin().webContents;
+  S.dialogResult = { canceled: false, filePath: inDocs('hang.ersbackup') };
+  r = await call('backup:begin', {}); await call('backup:write', r.id, 'x');
+  S.messageBox = () => ({ response: 1 }); // Reload
+  wc9.emit('unresponsive');
+  await waitFor(() => S.reloads === 1, 2000, 'reload after a hang');
+  box = S.messageBoxes[0];
+  assert.deepStrictEqual([box.opts.type, box.opts.buttons, box.opts.defaultId, box.opts.cancelId], ['warning', ['Wait', 'Reload', 'Close'], 0, 0]);
+  assert.ok(box.opts.signal instanceof AbortSignal); assert.match(box.opts.detail, /cancels the backup/);
+  assert.strictEqual(S.forcedCrashes, 1, 'the hung renderer is ended before the reload');
+  await tick(60); // the forced crash's render-process-gone (reason "killed") arrives
+  assert.strictEqual(S.messageBoxes.length, 1, 'our own restart is not reported as a crash');
+  await waitFor(() => parts().length === 0, 2000, 'the backup of the hung page is deleted');
+  S.messageBox = () => ({ response: 0 }); // Wait
+  wc9.emit('unresponsive'); await waitFor(() => S.messageBoxes.length === 2, 2000, 'second hang dialog'); await tick();
+  assert.deepStrictEqual(S.messageBoxes[1].opts.buttons, ['Wait', 'Close'], 'hanging again within a minute: no further reload');
+  assert.deepStrictEqual([S.reloads, S.forcedCrashes, mainWin().isDestroyed()], [1, 1, false], 'Wait changes nothing');
+  S.messageBox = () => undefined; // left open
+  gone('crashed'); await waitFor(() => S.messageBoxes.length === 3, 2000, 'crash dialog');
+  assert.deepStrictEqual(S.messageBoxes[2].opts.buttons, ['Close'], 'a crash after a hang restart within a minute: Close only');
+  // the dialog closes by itself when the page recovers; one dialog at a time; a crash replaces the hang dialog
+  await boot();
+  wc9 = mainWin().webContents;
+  S.messageBox = () => undefined;
+  wc9.emit('unresponsive'); await waitFor(() => S.messageBoxes.length === 1, 2000, 'hang dialog');
+  wc9.emit('unresponsive'); await tick();
+  assert.strictEqual(S.messageBoxes.length, 1, 'one dialog at a time');
+  wc9.emit('responsive'); await tick();
+  assert.strictEqual(S.messageBoxes[0].aborted, true, 'the page recovered: the dialog closed by itself');
+  assert.deepStrictEqual([S.reloads, S.forcedCrashes, mainWin().isDestroyed()], [0, 0, false]);
+  wc9.emit('unresponsive'); await waitFor(() => S.messageBoxes.length === 2, 2000, 'hang dialog again');
+  S.messageBox = () => ({ response: 0 });
+  gone('crashed'); await waitFor(() => S.reloads === 1, 2000, 'reload after the crash');
+  assert.strictEqual(S.messageBoxes[1].aborted, true, 'the hang dialog is replaced by the crash dialog');
+  assert.deepStrictEqual(S.messageBoxes[2].opts.buttons, ['Reload', 'Close']);
+  // Close on the hang dialog; no dialog while the window is closing or the app is quitting
+  await boot();
+  S.messageBox = () => ({ response: 2 });
+  mainWin().webContents.emit('unresponsive'); await waitFor(() => mainWin().isDestroyed(), 2000, 'Close');
+  assert.strictEqual(S.forcedCrashes, 0);
+  await boot();
+  wc9 = mainWin().webContents;
+  mainWin().emit('close', {});
+  gone('crashed'); wc9.emit('unresponsive'); await tick();
+  assert.strictEqual(S.messageBoxes.length, 0, 'no dialog while the window is closing');
+  await boot();
+  wc9 = mainWin().webContents;
+  app.emit('before-quit', { preventDefault() {} });
+  gone('crashed'); wc9.emit('unresponsive'); await tick();
+  assert.strictEqual(S.messageBoxes.length, 0, 'no dialog while quitting');
+  // Windows shutting down / logging off (no before-quit follows): backups cleaned up, no dialogs
+  await boot();
+  wc9 = mainWin().webContents;
+  S.dialogResult = { canceled: false, filePath: inDocs('shutdown.ersbackup') };
+  r = await call('backup:begin', {}); await call('backup:write', r.id, 'x');
+  mainWin().emit('session-end', { reasons: ['shutdown'] });
+  if (process.platform !== 'win32') assert.deepStrictEqual(parts(), [], 'deleted at once at session-end');
+  await waitFor(() => parts().length === 0, 3000, 'temporary file deleted at session-end');
+  gone('killed'); await tick();
+  assert.strictEqual(S.messageBoxes.length, 0, 'no dialog while Windows is shutting down');
+  r = await call('backup:begin', {}); assert.strictEqual(r.ok, false, 'no new backup during shutdown');
+  ok('Hang: unresponsive → warning dialog (Wait / Reload / Close, closes itself on "responsive", one at a time); Reload ends the renderer (forcefullyCrashRenderer), reloads on its render-process-gone, cancels the backup, and that kill is not reported as a crash; within a minute only Wait / Close; no dialogs while closing, quitting or at Windows session-end (which also deletes backup temp files)');
 
   assert.deepStrictEqual(unhandled, [], 'no unhandled promise rejections');
   fs.rmSync(RUN, { recursive: true, force: true });
