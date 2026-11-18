@@ -1,0 +1,106 @@
+{
+  "vehicle": {
+    "make": "Toyota",
+    "model": "C-HR",
+    "generation": "AX10 (Mk1)",
+    "years": "2016-2023",
+    "notes": "UK RHD. Toyota LH/RH = vehicle's own left/right (LH = UK nearside/passenger side, RH = UK offside/driver side). European C-HRs were built in Turkey; US-market (Japan-built) numbers seen in searches were excluded. Facelift late 2019 (listings variously say 2019-, 2020- or 2021-). Some listings show Toyota's 12-character form with a '-00' suffix (e.g. 81110-F4051-00). Numbers were read from web-search results (titles/summaries) of the cited UK eBay pages; page fetches were blocked and the shared web-search budget ran out early, so only headlamps and front bumpers are covered. Verify by VIN."
+  },
+  "researched": "2026-11-18",
+  "parts": [
+    {
+      "code": "LT001",
+      "side": "R",
+      "oem": "81110-F4011-00",
+      "description": "Headlamp RH (UK offside/driver side), pre-facelift, listed as halogen/LED type",
+      "notes": "eBay UK product page titled 'Genuine Toyota C-hr Chr 2019 Headlight Right Driver Side PN 81110F401100' (shown as 81110F401100); the search summary says the listing describes it as 'Halogen Led'. Pairs with LH 81150-F4011-00. A pre-facelift LED unit is listed as 81110-F4051-00. Pre-facelift (2016-2019). Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/p/9017799212",
+      "confidence": "single-source",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    },
+    {
+      "code": "LT001",
+      "side": "L",
+      "oem": "81150-F4011-00",
+      "description": "Headlamp LH (UK nearside/passenger side), pre-facelift; type given variously as LED or halogen",
+      "notes": "eBay UK listing titled 'TOYOTA CH-R CHR 2017-20 LED HEADLIGHT LEFT PASSENGER SIDE 81150-F4011-00 Genuine'. Also https://www.ebay.co.uk/p/23018859125?iid=113790528291 ('Toyota Chr LED N/s Left Headlight 2016 - 2018 Genuine 81150 F4011 00'). Search summaries say one seller describes this number as halogen, and the RH 81110-F4011-00 listing says 'Halogen Led', so the lamp type is uncertain. Pre-facelift. Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/itm/147644476658",
+      "confidence": "confirmed",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    },
+    {
+      "code": "LT001",
+      "side": "R",
+      "oem": "81110-F4051-00",
+      "description": "Headlamp RH (UK offside/driver side), LED, pre-facelift",
+      "notes": "eBay UK listing titled 'TOYOTA C-HR CHR RIGHT DRIVER SIDE LED HEADLIGHT HYBRID 81110-F4051-00'. Also https://www.ebay.co.uk/p/25043120914 ('Toyota Chr 2017 Front Headlight Right Side 81110F405100'). Pre-facelift (2016-2019). The LH counterpart 81150-F4051-00 appears on a UK listing that gives no years, so it is not included. Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/itm/226467159164",
+      "confidence": "confirmed",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    },
+    {
+      "code": "LT001",
+      "side": "R",
+      "oem": "81110-F4190",
+      "description": "Headlamp RH (UK offside/driver side), full LED, facelift",
+      "notes": "eBay UK product page titled 'TOYOTA CHR HEADLIGHT FRONT RIGHT DRIVER SIDE 2019-2023 81110-F4190'. Also https://www.ebay.co.uk/p/16044024339 ('Toyota C-hr Hybrid Right Driver Side Full LED Headlight 81110-f4190'). Facelift (2019-2023). An adaptive-LED facelift unit is listed as 81110-F4290-00. Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/p/28052605932",
+      "confidence": "confirmed",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    },
+    {
+      "code": "LT001",
+      "side": "R",
+      "oem": "81110-F4290-00",
+      "description": "Headlamp RH (UK offside/driver side), adaptive LED, facelift",
+      "notes": "Number given in the search-result summary for this eBay UK listing, titled 'Headlight Toyota C-HR Facelift 2019-2023 Adaptive LED, right side, driver side' (the number is not in the title). Pairs with LH 81150-F4290-00. Facelift (2019-2023). Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/itm/277224081698",
+      "confidence": "single-source",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    },
+    {
+      "code": "LT001",
+      "side": "L",
+      "oem": "81150-F4290-00",
+      "description": "Headlamp LH (UK nearside/passenger side), facelift (type not stated; RH 81110-F4290-00 is listed as adaptive LED)",
+      "notes": "eBay UK product page titled 'GENUINE TOYOTA CHR C-HR 2020-2023 PASSENGER SIDE HEADLIGHT P/N 81150-F4290-00'. Facelift. Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/p/4051412582",
+      "confidence": "single-source",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    },
+    {
+      "code": "FE001",
+      "oem": "52119-F4010",
+      "description": "Front bumper cover, facelift",
+      "notes": "eBay UK listing titled 'TOYOTA CHR C-HR FRONT BUMPER 2019 onwards Facelift SUV GENUINE 52119-F4010* G13'. Also https://www.ebay.co.uk/itm/166454008226 ('TOYOTA C-HR CHR FACE LIFT 2021-ON FRONT BUMPER P/N 52119F4010 AA-75') and https://www.ebay.co.uk/itm/168517068339. Facelift only (2019/2020-2023), so not auto-filled: it does not fit pre-facelift cars. Listings do not state parking-sensor provision or grade (GR Sport styling may differ). 52119-F4250, seen on UK listings, is for the 2023-on second-generation C-HR and is not included. Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/itm/127979348097",
+      "confidence": "confirmed",
+      "role": "primary",
+      "autoFill": false,
+      "market": "UK"
+    },
+    {
+      "code": "FE001",
+      "oem": "52119-F4901",
+      "description": "Front bumper cover, pre-facelift, with 4 parking-sensor holes (upper section unprimed)",
+      "notes": "Number (shown as 52119F4901) given in the search-result summary for a UK eBay listing of a new non-genuine, insurance-certified bumper titled 'TOYOTA CHR 2017-2019 FRONT BUMPER NOT PRIMED UPPER + 4 PDC - INSURANCE CERTIFIED'. Treat as an OE reference quoted by an aftermarket seller; not seen on a genuine Toyota listing. Pre-facelift (2016-2019). Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/itm/167662807774",
+      "confidence": "single-source",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    }
+  ]
+}

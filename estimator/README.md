@@ -74,15 +74,30 @@ The default model is `claude-opus-5-5` at "High" thoroughness. You can change bo
 ## Parts catalogue and OEM part numbers
 
 - **Master catalogue:** `app/data/catalogue.js` holds 212 parts across 23 groups. They use this software's own codes (e.g. `DR001` front door shell), with guide renew, refinish and medium-repair hours, material and LH/RH handling. These guide values are this software's own, not manufacturer or Thatcham times. You can edit them on every line, and the report says where they come from.
-- **Researched OEM numbers:** `research/*.json` holds 161 **OEM part numbers** for 9 popular UK vehicles: Mercedes-Benz E-Class W213, Nissan Juke F15 and Qashqai J11, Ford Fiesta Mk7 and Focus Mk3, VW Golf Mk7 and Polo 6R, Vauxhall Corsa E and Astra K.
-  - Each number has its source URL and a confidence level: *confirmed* means two or more sources or an official UK listing; *single-source* means verify it.
-  - Where relevant, entries also record the market (UK / LHD / US) and whether the number is variant-specific.
-  - Variant-specific numbers (by colour, camera, TPMS or trim) are offered but never filled in automatically.
+- **Researched OEM numbers:** `research/*.json` holds **657 OEM part numbers for 23 popular UK vehicles**:
+  - BMW 3 Series G20/G21
+  - Ford Fiesta Mk7 and Mk8, Focus Mk3 and Mk4
+  - Kia Sportage QL
+  - Mercedes-Benz A-Class W177, C-Class W205 and E-Class W213
+  - Nissan Juke F15 and F16, Qashqai J11 and J12
+  - Skoda Octavia Mk3
+  - Tesla Model 3
+  - Toyota C-HR and Corolla E210
+  - Vauxhall Astra K, Corsa E and Corsa F
+  - VW Golf Mk7 and Mk8, Polo 6R/6C
+
+  Each number has:
+  - its source URL;
+  - a confidence level: *confirmed* means two independent sources or the manufacturer's own UK parts shop; *single-source* means verify it;
+  - where relevant, the market (UK / LHD / US), whether the number is variant-specific, and pre-facelift or facelift fitment.
+
+  The numbers come from public listings found by web search: manufacturer UK shops, dealers, UK eBay listings, breakers and retailers. Parts-catalogue (EPC) mirror sites were not used. An independent check of a sample of 57 new numbers supported 50, found none contradicted, and could not decide 7; those were corrected, downgraded or removed.
+- **What fills in automatically:** only *confirmed* numbers that are not variant-specific (155 of the 657). Single-source and variant-specific numbers (by colour, camera, sensors, lamp type, trim or facelift) are offered in the picker with their badges, for you to choose by VIN.
 - **Prices are ex VAT.** Researched shop prices include VAT, so the build divides them by 1.2 and keeps the shop price for display. VAT is added once, on the estimate.
 - **Build commands:** `npm run build:oem` compiles the research into `app/data/oem.js`, and `npm run build:variants` compiles `research/variants/*.json`. Both refuse invalid data, and `npm test` fails if either compiled file is out of date.
 - **Your own numbers:** add them in **Parts catalogue → + Part number**, or import a CSV with the columns `code,side,oem,description,price`. The header row is optional, the price is **£ ex VAT**, and `side` is `L`, `R` or blank. Add new vehicles with **+ Vehicle**.
 
-**Coverage is partial, and every number must be checked by VIN.** Large panels, doors, glass and cooling parts are mostly missing, and some numbers depend on facelift, trim or options. Confirm every number against the VIN with a dealer parts counter before ordering or quoting it in a report. Comprehensive OEM data for every vehicle needs a licensed parts data feed; the catalogue structure is ready to import one (see LICENSING.md).
+**Coverage is partial, and every number must be checked by VIN.** Each vehicle has a different mix of parts (lamps, bumpers, grilles, wings, mirrors and mouldings are the best covered; doors, glass and cooling parts the least), and many numbers depend on facelift, trim or options. Confirm every number against the VIN with a dealer parts counter before ordering or quoting it in a report. Comprehensive OEM data for every vehicle needs a licensed parts data feed; the catalogue structure is ready to import one (see LICENSING.md).
 
 ## Tests
 

@@ -1,0 +1,70 @@
+{
+  "vehicle": {
+    "make": "Toyota",
+    "model": "Corolla",
+    "generation": "E210",
+    "years": "2019-",
+    "notes": "UK RHD. Toyota LH/RH = vehicle's own left/right (LH = UK nearside/passenger side, RH = UK offside/driver side). UK hatchback and Touring Sports are built at Burnaston and the saloon in Turkey; numbers can differ from US Corollas, and US-listed numbers seen in searches were excluded. Facelift from the 2023 model year (Aug 2022). Numbers were read from web-search results (titles/summaries) of the cited UK eBay pages; page fetches were blocked and the shared web-search budget ran out early, so only headlamps and front bumpers are covered. Verify by VIN."
+  },
+  "researched": "2026-11-18",
+  "parts": [
+    {
+      "code": "LT001",
+      "side": "R",
+      "oem": "81110-02T00",
+      "description": "Headlamp RH (UK offside/driver side), LED",
+      "notes": "eBay UK product page titled 'TOYOTA COROLLA HEADLAMP RIGHT SIDE 8111002T00 MK12 E210 2018-2026' (shown as 8111002T00). Search summaries also described other UK-seller listings giving 81110-02T00 for a RH full-LED unit (one titled 'New Genuine Toyota Corolla 2019-> RHD Right Headlamp Headlight Full Led Type A'), but their URLs could not be pinned down, so they are not counted as a second source. More than one LED headlamp type exists: sellers also list 81110-02T10 (described by some as adaptive LED; not included, no listing URL pinned). Facelift (2023-) fit not checked. Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/p/12036470600",
+      "confidence": "single-source",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    },
+    {
+      "code": "LT001",
+      "side": "L",
+      "oem": "81150-02T00",
+      "description": "Headlamp LH (UK nearside/passenger side), LED",
+      "notes": "eBay UK listing titled 'TOYOTA COROLLA 2019 2020 2021 2022 GENUINE PASSENGER SIDE HEADLIGHT 8115002T00' (shown as 8115002T00). Another UK eBay listing (https://www.ebay.co.uk/itm/257449976732, 'Toyota Corolla 2018 ... 2026 LED Headlight Left') appeared in results for this number, but its page text was not seen, so it is not counted. Pairs with RH 81110-02T00. More than one LED type exists (see 81150-02T10). Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/itm/284963141036",
+      "confidence": "single-source",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    },
+    {
+      "code": "LT001",
+      "side": "L",
+      "oem": "81150-02T10",
+      "description": "Headlamp LH (UK nearside/passenger side), LED, alternative type to 81150-02T00",
+      "notes": "eBay UK product page titled 'TOYOTA COROLLA MK12 2019-2022 GENUINE PASSENGER SIDE LED HEADLIGHT 81150-02T10' (pre-facelift years). Some UK sellers describe the 02T10 pair as the adaptive-LED type; not confirmed. Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/p/22039275999",
+      "confidence": "single-source",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    },
+    {
+      "code": "FE001",
+      "oem": "52119-02P40",
+      "description": "Front bumper cover, Corolla Hybrid (body style, grade and parking-sensor provision not stated)",
+      "notes": "eBay UK product page titled 'TOYOTA COROLLA HYBRID 2019 - 2024 GENUINE FRONT BUMPER 52119-02P40 WA-20' (used genuine part). Another UK listing in the same search gives 2023-2025, so pre/post-facelift fit is uncertain. One UK listing also quotes 52119-02P50/02P60/02P70/02S20 alongside it (relationship unknown; not included). Saloon, GR Sport and Trek front bumpers may differ. Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/p/7031678410",
+      "confidence": "single-source",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    },
+    {
+      "code": "FE001",
+      "oem": "52119-F2909",
+      "description": "Front bumper cover, primed, with parking-sensor holes",
+      "notes": "OE reference quoted on a UK eBay listing for a new non-genuine bumper titled 'TOYOTA COROLLA 2018 > FRONT BUMPER WITH PDC HIGH QUALITY NEW OE 52119F2909'. Search summaries indicate a second UK aftermarket listing (likely https://www.ebay.co.uk/itm/226918292575, described as 2019-2023 estate/Touring Sports with 4 parking-sensor holes) giving 'Reference OE/OEM Number - 52119-F2909' alongside 52119F2907. Not seen on a genuine Toyota listing; body style (estate vs hatch) and relation to 52119-02P40 unknown. Choose by VIN.",
+      "source_url": "https://www.ebay.co.uk/itm/155455680301",
+      "confidence": "single-source",
+      "role": "variant",
+      "autoFill": false,
+      "market": "UK"
+    }
+  ]
+}

@@ -5,7 +5,8 @@
  * Research entry fields: code, side, oem, description, notes, price_gbp, price_basis ('inc_vat' | 'ex_vat'),
  * price_source, source_url, confidence ('confirmed' | 'single-source'), and optionally
  *   role: 'primary' (default) | 'variant'  (variant-only numbers are never the default)
- *   autoFill: false                        (offered in the picker but never auto-filled)
+ *   autoFill: false                        (offered in the picker but never auto-filled; single-source and
+ *                                           variant entries are never auto-filled whatever this says)
  *   market: 'UK' | 'unknown' | 'EU-LHD' | 'US'
  *
  * `node tools/build-oem.js --validate [extra.json ...]` checks the research (and any extra files) and writes nothing.
@@ -84,7 +85,10 @@ for (const f of files) {
     const k = p.code + '|' + side;
     (parts[k] = parts[k] || []).push({
       oem: p.oem, description: p.description, notes: p.notes || '', price, priceIncVat, priceSource: p.price_source || '',
-      source: p.source_url || '', confidence, role: p.role === 'variant' ? 'variant' : 'primary', autoFill: p.autoFill !== false,
+      // Only numbers confirmed by two sources (or the manufacturer's UK shop) and not variant-specific are ever filled in
+      // automatically; everything else is offered in the picker for the assessor to choose by VIN.
+      source: p.source_url || '', confidence, role: p.role === 'variant' ? 'variant' : 'primary',
+      autoFill: p.autoFill !== false && confidence === 'confirmed' && p.role !== 'variant',
       market: p.market || '', _i: idx
     });
   });
