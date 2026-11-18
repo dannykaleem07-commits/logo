@@ -9,7 +9,9 @@
  * protocol.handle('https') below. userData, temp and documents point into a fresh temporary folder; save dialogs,
  * shell and the crash / hang message boxes are stubbed (one real message box is shown and closed by its AbortSignal).
  * The page is driven through the real preload bridge (window.desktop), so the main process's sender checks see real
- * frames; backups are streamed to real files, and the renderer is really killed and reloaded at the end.
+ * frames; backups are streamed to real files, and the renderer is really killed and reloaded at the end. Child runs
+ * check quitting during a backup or an export, and a renderer that crashes while the page first loads. ANTHROPIC_*
+ * variables are removed and the SDK's profile folder points into the temporary folder, so no machine setting leaks in.
  * Exit code 0 means every check passed.
  */
 const { app, BrowserWindow, dialog, shell, protocol, session } = require('electron');
@@ -449,7 +451,7 @@ if (SECOND) {
     check('PDF temp files deleted', tempLeft.length === 0, text(tempLeft));
     check('No backup temporary (.part) files left', partFiles().length === 0, text(partFiles()));
     check('No error boxes shown', R.errorBoxes.length === 0, text(R.errorBoxes));
-    check('No request left the mock (every host expected)', R.requests.every((r) => ['driver-vehicle-licensing.api.gov.uk', 'login.microsoftonline.com', 'history.mot.api.gov.uk', 'api.anthropic.com'].includes(r.host)), text([...new Set(R.requests.map((r) => r.host))]));
+    check('No request left the mock (every host expected)', R.requests.every((r) => ['driver-vehicle-licensing.api.gov.uk', 'uat.driver-vehicle-licensing.api.gov.uk', 'login.microsoftonline.com', 'history.mot.api.gov.uk', 'api.anthropic.com'].includes(r.host)), text([...new Set(R.requests.map((r) => r.host))]));
 
     const failed = results.filter((r) => !r.ok);
     for (const r of results) console.log(`${r.ok ? '✓' : '✗'} ${r.name}${r.ok ? '' : '\n    ' + String(r.detail).slice(0, 600)}`);
