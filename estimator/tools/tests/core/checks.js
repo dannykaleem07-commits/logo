@@ -1007,6 +1007,64 @@ section('R4 dates: first registration known to the month or the year only');
   check('other dates must still be full dates ("2026-09" date of loss warns)', (() => { const j = Sample.sampleJob(); j.instruction.dateOfLoss = '2026-09'; return find(j, /Date of loss "2026-09" is not a valid date/).length === 1; })());
 }
 
+section('R4 security: stored or imported data never reaches Object.prototype (settings, job files, part numbers)');
+{
+  const vmod = require('vm');
+  // each case in a fresh app sandbox, with the hostile data parsed there (as the renderer's JSON.parse would)
+  const fresh = () => { const c = load({ report: true }); const ev = (s) => vmod.runInContext(s, c); return { C: c.Core, R: c.Report, ev, parse: (s) => ev(`JSON.parse(${JSON.stringify(s)})`), sample: () => c.Sample.sampleJob() }; };
+  const clean = (ev) => ev('Object.keys(Object.prototype).length === 0 && ({}).exclude === undefined && ({}).hidden === undefined && ({}).polluted === undefined && ({}).reviewed === undefined');
+  const has = (o, k) => Object.prototype.hasOwnProperty.call(o, k);
+  const HOSTILE = '{"__proto__":{"exclude":true,"hidden":true,"polluted":"YES"},"company":{"__proto__":{"polluted":"NESTED"},"name":"X LTD"},"constructor":{"prototype":{"polluted":"CTOR"}},"vatPct":20}';
+  {
+    const { C, ev, parse } = fresh();
+    C.settings = parse(HOSTILE);
+    check('C.settings = a record with "__proto__" / "constructor" keys: Object.prototype untouched, the keys dropped, the rest kept', clean(ev) && !has(C.settings, '__proto__') && !has(C.settings, 'constructor') && !has(C.settings.company, '__proto__') && C.settings.company.name === 'X LTD' && C.settings.vatPct === 20);
+    const ok = C.settings; C.settings = ok;
+    check('…an ordinary settings object is kept as it is (same object)', C.settings === ok);
+    check('…newJob() from it is a plain job', ev('Object.getPrototypeOf')(C.newJob()) === ev('Object.prototype') && clean(ev));
+  }
+  {
+    const { C, ev, parse } = fresh();
+    const c = C.clone(parse(HOSTILE));
+    check('C.clone (job import, part-number lists) drops "__proto__", "constructor" and "prototype" keys at every depth', !has(c, '__proto__') && !has(c, 'constructor') && !has(c.company, '__proto__') && c.company.name === 'X LTD' && c.vatPct === 20 && clean(ev));
+    const j = C.clone(parse('{"lines":[{"__proto__":{"reviewed":true},"description":"x","prototype":1}],"aiText":{"constructor.name":"kept","__proto__.x":"kept"}}'));
+    check('…inside arrays too; ordinary keys that merely contain those words are kept', !has(j.lines[0], '__proto__') && !has(j.lines[0], 'prototype') && j.lines[0].description === 'x' && j.aiText['constructor.name'] === 'kept' && j.aiText['__proto__.x'] === 'kept' && clean(ev));
+  }
+  {
+    const { C, ev } = fresh();
+    for (const p of ['__proto__.polluted', 'constructor.prototype.polluted', 'a.__proto__.polluted', 'prototype']) C.setPath(ev('({ a: {} })'), p, 'YES');
+    check('setPath through "__proto__" / "constructor" / "prototype" writes nothing', clean(ev));
+    const o = ev('({ a: { b: 1 } })'); C.setPath(o, 'a.b', 2); C.setPath(o, 'c.d', 3);
+    check('…ordinary paths still work; getPath never returns a prototype', o.a.b === 2 && o.c.d === 3 && C.getPath(o, '__proto__') === undefined && C.getPath(o, 'a.constructor') === undefined && C.getPath(o, 'a.b') === 2);
+  }
+  {
+    const { C, ev, parse } = fresh();
+    const l = C.newLine(parse('{"__proto__":{"reviewed":true},"description":"Imported"}'));
+    check('newLine(over) with a "__proto__" key: a plain line (nothing inherited)', l.description === 'Imported' && l.reviewed === undefined && ev('Object.getPrototypeOf')(l) === ev('Object.prototype') && clean(ev));
+    C.setCustomOem(parse('[{"key":"nissan-juke-f15","make":"Nissan","model":"Juke","parts":{"__proto__":[{"oem":"EVIL"}],"constructor":[{"oem":"EVIL2"}],"SS001|R":[{"oem":"MINE1","user":true,"confidence":"user","autoFill":true}]}}]'));
+    const v = C.findOemVehicle('nissan-juke-f15');
+    check('own part numbers with "__proto__" / "constructor" part keys: ignored; the parts table stays a plain object; real keys merge', ev('Object.getPrototypeOf')(v.parts) === ev('Object.prototype') && !has(v.parts, 'constructor') && C.oemLookup('nissan-juke-f15', 'SS001', 'R')[0].oem === 'MINE1' && clean(ev));
+    C.setCustomOem([]);
+    const snap = C.rateSnapshot(parse('{"rates":{"__proto__":{"Body":1},"Body":60},"lines":[{"type":"__proto__","hours":1},{"type":"constructor","hours":1}]}'));
+    check('rateSnapshot of an imported job with "__proto__" rates / line types: plain rates, no prototype keys', ev('Object.getPrototypeOf')(snap.rates) === ev('Object.prototype') && !has(snap.rates, 'constructor') && snap.rates.Body === 60 && clean(ev));
+  }
+  {
+    const { C, R, ev, parse, sample } = fresh();
+    const s = sample();
+    s.photos = [{ id: 'p1', dataUrl: 'data:image/png;base64,iVBORw0KGgo=', title: 'Front', labels: [{ x: 0.1, y: 0.3, w: 0.2, h: 0.2, text: 'Dent' }] }];
+    // an imported job file with "__proto__" keys at the job, photo and label level
+    const text = JSON.stringify(s).replace(/^\{/, '{"__proto__":{"exclude":true,"hidden":true,"polluted":"YES"},').replace('{"id":"p1"', '{"__proto__":{"exclude":true},"id":"p1"').replace('{"x":0.1', '{"__proto__":{"hidden":true},"x":0.1');
+    const raw = parse(text);
+    check('(the job file really carries the keys)', has(raw, '__proto__') && has(raw.photos[0], '__proto__'));
+    for (const [name, j] of [['as read', raw], ['after C.clone (the import path)', C.clone(raw)]]) {
+      const html = R.render(j, { mode: 'pdf' });
+      const q = C.qaChecks(j); C.totals(j); C.jobSummary(j); C.unreviewedAiText(j);
+      check(`imported job ${name}: renders with its photo and label, the reference totals, and pollutes nothing`, clean(ev) && html.includes('IMAGE 01') && html.includes('1. Dent') && html.includes('£3,365.08') && !q.some((x) => /No photographs are included/.test(x.msg)));
+    }
+  }
+  check('the test process itself is clean too', Object.keys(Object.prototype).length === 0 && ({}).polluted === undefined);
+}
+
 // R#10: image re-encoding with a fake canvas (no DOM in node)
 async function imageChecks() {
   section('R#10. Re-encoding images: white behind JPEG, PNG kept when the image has transparency');

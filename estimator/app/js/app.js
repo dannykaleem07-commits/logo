@@ -869,9 +869,21 @@
     return cur;
   }
   const regOf = (j) => (j && j.vehicle && j.vehicle.reg) || 'the other assessment';
+  // a registration as DVLA and DVSA compare it: capitals, no spaces
+  const regKey = (r) => String(r == null ? '' : r).toUpperCase().replace(/[^A-Z0-9]/g, '');
+  // the registration the vehicle details were last looked up for (lookupReg; for older jobs, DVLA's record of the lookup)
+  const lookedUpReg = (v) => regKey(v.lookupReg || (isObj(v.dvla) && v.dvla.registrationNumber) || '');
+  // A lookup of another vehicle: everything the previous lookup or variant described is cleared, so nothing of that vehicle
+  // (its model, its variant, its parts-catalogue numbers and prices, its MOT mileages) stays in this report.
+  function forgetVehicle(v) {
+    ['make', 'model', 'derivative', 'body', 'transmission', 'engineSize', 'engineCode', 'fuel', 'colour', 'firstReg', 'firstRegPrecision', 'variantKey', 'oemKey', 'motModel'].forEach((k) => { v[k] = ''; });
+    v.dvla = null; v.motHistory = [];
+    delete v.motSummary; delete v.variantSet; delete v.lookupReg;
+  }
   function applyDvla(j, d) {
     const v = j.vehicle;
     v.dvla = Object.assign({}, d, { lookedUpAt: new Date().toISOString() });
+    v.lookupReg = regKey(d.registrationNumber) || regKey(v.reg);
     if (d.make) v.make = canonicalMake(d.make);
     if (d.colour) v.colour = titleColour(d.colour);
     if (mapFuel(d.fuelType)) v.fuel = mapFuel(d.fuelType);
@@ -884,8 +896,9 @@
     else if (/^\d{4}$/.test(yr) && !((p === 'day' || p === 'month') && cur.slice(0, 4) === yr)) { v.firstReg = yr; v.firstRegPrecision = 'year'; }
     logAi(j, 'DVLA Vehicle Enquiry Service lookup' + (d.environment === 'test' ? ' (test service)' : ''), 'DVLA', false);
   }
-  function applyMot(j, d) {
+  function applyMot(j, d, lookedUp) {
     const v = j.vehicle;
+    if (lookedUp) v.lookupReg = regKey(lookedUp); // a registration lookup (a VIN lookup leaves it)
     v.motModel = d.model || '';
     v.motSummary = { make: d.make, model: d.model, fuelType: d.fuelType, primaryColour: d.primaryColour, engineSize: d.engineSize, recall: d.recall, motTestDueDate: d.motTestDueDate, firstUsedDate: d.firstUsedDate, registrationDate: d.registrationDate, lookedUpAt: new Date().toISOString() };
     if (!v.make && d.make) v.make = canonicalMake(d.make);
@@ -910,19 +923,24 @@
     if (running.has(key)) return;
     const st = await readStatus(() => desktop.data.status());
     if (!st.dvla && !st.mot) return toast(statusError(st) || 'No data connections set up. Add your DVLA key and/or MOT History credentials in Settings → Data connections.', true);
+    // another registration than the one the details came from: another vehicle, so the details of the one looked up before
+    // (model, derivative, exact variant, parts-catalogue link, DVLA record, MOT history …) are cleared with the first result
+    const was = lookedUpReg(j.vehicle), other = !!was && was !== regKey(j.vehicle.reg);
+    if (other && !confirm(`The vehicle details on this assessment came from a lookup of ${was}. Look up ${regKey(j.vehicle.reg)} instead?\n\nThe details of the vehicle looked up before are cleared and replaced from the new lookup: make, model, derivative, body, gearbox, engine, fuel, colour, first registration, exact variant, parts-catalogue link, DVLA record and MOT history.`)) return;
     running.add(key); if (job === j) renderJob();
     const reg = j.vehicle.reg;
     const msgs = [];
-    let target = null, gone = false;
+    let target = null, gone = false, fresh = other;
+    const applyNew = (fn) => (x) => { if (fresh) { forgetVehicle(x.vehicle); fresh = false; } fn(x); };
     try {
       if (st.dvla) {
         const r = await desktop.data.dvla(reg, C.settings.dvlaEnv || 'live');
-        if (r.ok) { target = await applyToJob(j, (x) => applyDvla(x, r.result)); if (target) msgs.push(r.result && r.result.environment === 'test' ? "DVLA details applied from DVLA's TEST service (made-up test vehicles, not the register)" : 'DVLA details applied'); else gone = true; } else msgs.push('DVLA: ' + r.error);
+        if (r.ok) { target = await applyToJob(j, applyNew((x) => applyDvla(x, r.result))); if (target) msgs.push(r.result && r.result.environment === 'test' ? "DVLA details applied from DVLA's TEST service (made-up test vehicles, not the register)" : 'DVLA details applied'); else gone = true; } else msgs.push('DVLA: ' + r.error);
       }
       if (st.mot && !gone) {
         const r = await desktop.data.mot(reg, 'registration');
         if (r.ok) {
-          target = await applyToJob(j, (x) => applyMot(x, r.result));
+          target = await applyToJob(j, applyNew((x) => applyMot(x, r.result, reg)));
           if (!target) gone = true;
           else msgs.push(r.result.tests.length ? `MOT history: ${r.result.tests.length} test(s)` : `MOT History: no tests yet${r.result.motTestDueDate ? ' (first MOT due ' + C.ukDate(r.result.motTestDueDate) + ')' : ''}`);
           if (target && /^yes$/i.test(r.result.recall)) msgs.push('DVSA reports an OUTSTANDING RECALL');
@@ -1096,17 +1114,26 @@
     const todo = j.photos.filter((p) => isObj(p) && !p.thumb && p.dataUrl && !thumbFailed.has(p));
     if (!todo.length) return;
     running.add(key);
-    let made = 0;
+    const made = new Map(); // photo → its thumbnail, written at the end into the job as registered then
     try {
       for (const p of todo) {
         const t = await makeThumb(p.dataUrl);
         if (!t) { thumbFailed.add(p); continue; }
-        p.thumb = t; made++;
-        const img = job === j ? $(`.pcard[data-pid="${CSS.escape(String(p.id))}"] .pimg img`) : null;
+        made.set(p, t);
+        const img = job && job.id === j.id ? $(`.pcard[data-pid="${CSS.escape(String(p.id))}"] .pimg img`) : null;
         if (img) img.src = t;
       }
     } finally { running.delete(key); }
-    if (made && j.photos.some((p) => p && p.thumb)) { markDirty(j); if (j === job) saveSoon(); else await flushSave(); }
+    // Only into the job object registered now, never into the copy this task started with: a job deleted meanwhile is not
+    // stored again, and one restored or reloaded meanwhile gets the thumbnails of its own photos (same id, same image) or none.
+    const e = loaded.get(j.id), live = e && e.job;
+    if (!live || !made.size) return;
+    let n = 0;
+    for (const [p, t] of made) {
+      const q = (Array.isArray(live.photos) ? live.photos : []).find((x) => isObj(x) && x.id === p.id && x.dataUrl === p.dataUrl);
+      if (q && !q.thumb) { q.thumb = t; n++; }
+    }
+    if (n) { markDirty(live); if (live === job) saveSoon(); else await flushSave(); }
   }
   function aiFindingsPanel(f) {
     const s = f.summary || {};
@@ -1139,7 +1166,7 @@
         <td class="num">${hrs(hz.hours)}${suggHoursNote(l, hz)}</td><td class="reason">${esc(l.reason)}</td>
         <td><span class="conf" title="${Math.round(num(l.confidence) * 100)}%"><i style="width:${Math.round(num(l.confidence) * 100)}%"></i></span></td></tr>`; }).join('')}
       </tbody></table>
-      <div class="row" style="margin-top:12px"><button class="btn primary" data-act="aiAddLines">Add selected lines to estimate</button><span class="hint">They are added marked "AI" and need ticking as reviewed.</span></div></div>`;
+      <div class="row" style="margin-top:12px"><button class="btn primary" data-act="aiAddLines" ${busy('photos') ? 'disabled' : ''}>Add selected lines to estimate</button><span class="hint">${busy('photos') ? 'Available again when the analysis now running has finished.' : 'They are added marked "AI" and need ticking as reviewed.'}</span></div></div>`;
   }
 
   // EXIF DateTimeOriginal (or DateTime) of a JPEG as an ISO string; '' when there is none.
@@ -1203,6 +1230,9 @@
     for (const [k, t] of Object.entries(isObj(src.aiText) ? src.aiText : {})) if (typeof t === 'string' && !k.startsWith('photos.')) j.aiText[k] = t;
     j.photos = src.photos.filter((p) => nums.has(p.id)).sort((a, b) => nums.get(a.id) - nums.get(b.id))
       .map((p) => ({ index: nums.get(p.id), title: p.title, caption: p.caption, titleByAi: photoTextByAi(src, p, 'title'), captionByAi: photoTextByAi(src, p, 'caption'), labels: (p.labels || []).filter(isObj).map((l) => ({ text: l.text, ai: !!l.ai })) }));
+    // adverts an AI web search found and the assessor has not ticked Verified are not the engineer's evidence: ai.js lists every
+    // advert sent as one the engineer found (and its URL as the engineer's), so they are never sent, with or without a URL typed in
+    if (isObj(j.valuation) && Array.isArray(j.valuation.adverts)) j.valuation.adverts = j.valuation.adverts.filter((a) => !(isObj(a) && a.aiUnverified));
     return j;
   }
 
@@ -1247,8 +1277,14 @@
       if (!isObj(raw)) continue;
       const l = Object.assign({}, raw, { batches: [batch], hoursSeen: [num(raw.labour_hours)] });
       const key = suggKey(l);
-      const dup = into.find((x) => !x.batches.includes(batch) && suggKey(x) === key);
-      if (!dup) { fresh.push(l); continue; }
+      // a suggestion already added to the estimate is never changed: the new one is a row of its own (its hours and evidence
+      // would otherwise never reach the estimate), noting the hours of the line already added
+      const dup = into.find((x) => !x.added && !x.batches.includes(batch) && suggKey(x) === key);
+      if (!dup) {
+        const was = into.find((x) => x.added && suggKey(x) === key);
+        if (was) l.earlierAdded = num(was.labour_hours);
+        fresh.push(l); continue;
+      }
       dup.batches.push(batch); dup.hoursSeen.push(num(l.labour_hours));
       if (num(l.labour_hours) > num(dup.labour_hours)) { dup.labour_hours = l.labour_hours; dup.hours_basis = l.hours_basis; }
       dup.needs_part = !!(dup.needs_part || l.needs_part);
@@ -1266,10 +1302,11 @@
     return j.photos.filter((p) => nums.has(p.id) && !done.has(p.id));
   }
   function partialNotice(f) {
-    if (!isObj(f.partial)) return '';
     const rest = photosNotAnalysed(job, f).length;
-    return `<div class="card errBox partialRun" role="status" style="border-color:#f0c36d;background:#fffaf0;margin:8px 0"><b>Only ${num(f.partial.analysed)} of ${num(f.partial.total)} photos were analysed.</b> ${esc(f.partial.error || '')}
-      ${rest && desktop ? `<div class="row" style="margin-top:6px"><button class="btn sm ai" data-act="aiAnalyseRest" ${busy('photos') ? 'disabled' : ''}>✦ Analyse the remaining ${rest} photo${rest === 1 ? '' : 's'}</button><span class="hint">The findings so far are kept; only the remaining photos are sent.</span></div>` : ''}</div>`;
+    const restBtn = rest && desktop ? `<div class="row" style="margin-top:6px"><button class="btn sm ai" data-act="aiAnalyseRest" ${busy('photos') ? 'disabled' : ''}>✦ Analyse the ${isObj(f.partial) ? 'remaining ' : ''}${rest} photo${rest === 1 ? '' : 's'}${isObj(f.partial) ? '' : ' not analysed yet'}</button><span class="hint">The findings so far are kept; only ${isObj(f.partial) ? 'the remaining photos are' : 'those photos are'} sent.</span></div>` : '';
+    if (isObj(f.partial)) return `<div class="card errBox partialRun" role="status" style="border-color:#f0c36d;background:#fffaf0;margin:8px 0"><b>Only ${num(f.partial.analysed)} of ${num(f.partial.total)} photos were analysed.</b> ${esc(f.partial.error || '')}${restBtn}</div>`;
+    // photos added (or put in the report) since the last analysis: analysed on their own, so nothing already checked is redone
+    return rest ? `<div class="card notAnalysed" role="status" style="border-color:#d9cdf7;background:#faf7ff;margin:8px 0"><b>${rest} photo${rest === 1 ? ' in the report has' : 's in the report have'} not been analysed yet.</b>${restBtn}</div>` : '';
   }
   // AI analysis of the photos in the report, in batches of 10. If a batch fails, the batches already done are applied and kept,
   // and the findings say which photos are missing; opts.remaining analyses only those, adding to the stored findings.
@@ -1319,11 +1356,16 @@
         } catch (err) { failure = err; break; } // the batches already done are kept
       }
       if (!analysed) throw failure;
-      const before = prev && isObj(prev.partial) ? num(prev.partial.analysed) : 0;
+      // photos covered before this run: the remaining photos of a partial run, or every photo in the report the findings cover
+      const before = !prev ? 0 : isObj(prev.partial) ? num(prev.partial.analysed) : Math.max(0, nums.size - photosNotAnalysed(j, prev).length);
       if (failure) merged.partial = { analysed: before + analysed, total: before + photos.length, error: errText(failure), at: new Date().toISOString() };
       else delete merged.partial;
-      let labelled = 0;
+      let labelled = 0, kept = 0;
       const target = await applyToJob(j, (x) => {
+        // suggestions added to the estimate while this run was going keep their mark (the findings were copied when it started)
+        const live = isObj(x.aiFindings) && Array.isArray(x.aiFindings.suggested_lines) ? x.aiFindings.suggested_lines.filter(isObj) : [];
+        const sameSugg = (a, b) => suggKey(a) === suggKey(b) && num((a.batches || [])[0]) === num((b.batches || [])[0]);
+        if (prev) for (const l of merged.suggested_lines) if (isObj(l) && !l.added && live.some((o) => o.added && sameSugg(o, l))) l.added = true;
         for (const ph of fresh) {
           const p = x.photos.find((q) => q.id === ph.id); // by id: moving or deleting photos meanwhile cannot misplace labels
           if (!p) continue;
@@ -1332,13 +1374,18 @@
           ph.damages = all.filter((d) => boxOk(d.box));
           const loose = all.filter((d) => !boxOk(d.box));
           if (loose.length) ph.unplaced_damages = (Array.isArray(ph.unplaced_damages) ? ph.unplaced_damages : []).concat(loose);
-          p.labels = (p.labels || []).filter((l) => !l.ai).concat(ph.damages.map((d) => ({
-            x: d.box.x, y: d.box.y, w: d.box.w, h: d.box.h, text: d.label, ai: true, colour: d.severity === 'severe' ? '#ff3b30' : d.severity === 'moderate' ? '#ff9500' : '#ffcc00',
-            detail: `${C.sideWord(d.side)} ${d.component_name} · ${d.damage_type} · ${d.severity} · accident-related: ${d.accident_related} · ${d.recommended_operation}${d.notes ? ' — ' + d.notes : ''}`.trim(),
-            code: d.component_code, side: d.side, accidentRelated: d.accident_related
-          })));
-          p.aiLabelled = true;
-          p.labelsReviewed = false;
+          // AI labels the assessor has checked and saved (labels reviewed) are theirs: a new analysis never replaces them. A photo
+          // whose AI labels were all removed gets the new ones, which is also the way to have the AI label a photo again.
+          if (p.labelsReviewed === true && (p.labels || []).some((l) => isObj(l) && l.ai)) kept++;
+          else {
+            p.labels = (p.labels || []).filter((l) => !l.ai).concat(ph.damages.map((d) => ({
+              x: d.box.x, y: d.box.y, w: d.box.w, h: d.box.h, text: d.label, ai: true, colour: d.severity === 'severe' ? '#ff3b30' : d.severity === 'moderate' ? '#ff9500' : '#ffcc00',
+              detail: `${C.sideWord(d.side)} ${d.component_name} · ${d.damage_type} · ${d.severity} · accident-related: ${d.accident_related} · ${d.recommended_operation}${d.notes ? ' — ' + d.notes : ''}`.trim(),
+              code: d.component_code, side: d.side, accidentRelated: d.accident_related
+            })));
+            p.aiLabelled = true;
+            p.labelsReviewed = false;
+          }
           // an empty title / caption takes the AI's text, recorded as AI text until the assessor edits it
           if (!p.title && ph.title) { p.title = ph.title; aiTextOf(x)[photoTextPath(p, 'title')] = ph.title; }
           if (!p.caption && ph.caption) { p.caption = ph.caption; aiTextOf(x)[photoTextPath(p, 'caption')] = ph.caption; }
@@ -1347,11 +1394,13 @@
         }
         x.aiFindings = merged;
         logAi(x, `Photo damage labelling & repair suggestions (${labelled} photos${failure ? `; ${photos.length - analysed} more could not be analysed` : ''})`, merged.model);
-        if (ui.jobId === x.id) ui.suggestSel = {}; // fresh suggestions: all ticked again
+        // a new analysis: all its suggestions ticked again; extending the findings (remaining photos) keeps the assessor's ticks
+        if (ui.jobId === x.id && !prev) ui.suggestSel = {};
       });
+      const keptNote = kept ? ` The labels you checked on ${kept} photo${kept === 1 ? ' were' : 's were'} kept.` : '';
       if (!target) toast(`${regOf(j)} has been deleted, so the AI findings were not saved.`, true);
-      else if (failure) toast(`Analysed ${analysed} of ${photos.length} photos; the rest failed: ${errText(failure)}`, true);
-      else toast(`AI labelled ${labelled} photo(s) and suggested ${merged.suggested_lines.length} estimate line(s)${target !== job ? ` for ${regOf(target)} (saved with that assessment)` : ''}.`);
+      else if (failure) toast(`Analysed ${analysed} of ${photos.length} photos; the rest failed: ${errText(failure)}${keptNote}`, true);
+      else toast(`AI labelled ${labelled - kept} photo(s) and suggested ${merged.suggested_lines.length} estimate line(s)${target !== job ? ` for ${regOf(target)} (saved with that assessment)` : ''}.${keptNote}`);
     } catch (e) {
       toast(errText(e, 'The AI photo analysis failed.'), true);
     } finally {
@@ -1388,6 +1437,7 @@
   }
   function aiAddLines() {
     const f = job.aiFindings; if (!f) return;
+    if (busy('photos')) return toast('Wait for the photo analysis now running to finish: its results replace these findings.', true);
     let n = 0;
     const damages = (f.photos || []).filter(isObj).flatMap((ph) => (Array.isArray(ph.damages) ? ph.damages.filter(isObj) : []));
     let byVin = 0;
@@ -1609,6 +1659,7 @@
     else if (l.hours_basis === 'adjusted') bits.push(adjustedNote(num(l.guide_hours), hz.guide));
     if (hz.base != null && Math.abs(hz.hours - hz.base) >= 0.05) bits.push(`AI ${h1(hz.base)} × ${num(hz.pfApplied)} for the ${finishName(job)} finish`);
     if (Array.isArray(l.hoursSeen) && new Set(l.hoursSeen.map(num)).size > 1) bits.push(`photo batches differed: ${listH(l.hoursSeen)}`);
+    if (l.earlierAdded != null && !l.added) bits.push(`suggested again by a later batch: the line added earlier has ${h1(l.earlierAdded)}. Check that line on the Estimate tab rather than adding both`);
     return bits.length ? `<div class="hint basis">${bits.map(esc).join('<br>')}</div>` : '';
   }
   // Notes under an AI line's description on the Estimate tab.
@@ -2063,8 +2114,22 @@
     a.href = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
     a.download = fileName; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   }
+  // The chosen file, or null when the dialog is cancelled. It always settles: Chromium (Electron) fires 'cancel' and no 'change'
+  // when the dialog is closed without a file, and a promise left waiting would keep its button busy for good (the click guard
+  // below). As a fallback, the window getting focus back with no file chosen also counts as a cancel, after a pause long enough
+  // for a late 'change' to arrive first.
   function pickFile(accept) {
-    return new Promise((res) => { const i = document.createElement('input'); i.type = 'file'; i.accept = accept; i.onchange = () => res(i.files[0] || null); i.click(); });
+    return new Promise((res) => {
+      const i = document.createElement('input');
+      let done = false, tm = 0;
+      const end = (f) => { if (done) return; done = true; clearTimeout(tm); window.removeEventListener('focus', onFocus); res(f || null); };
+      const onFocus = () => { clearTimeout(tm); tm = setTimeout(() => { if (!(i.files && i.files.length)) end(null); }, 1500); };
+      i.type = 'file'; i.accept = accept;
+      i.addEventListener('change', () => end(i.files && i.files[0]));
+      i.addEventListener('cancel', () => end(null));
+      window.addEventListener('focus', onFocus);
+      i.click();
+    });
   }
 
   // Logos must be inline PNG / JPEG / GIF / WebP for the report (Report.safeImage). SVG, and anything wider than 900 px,
@@ -3021,7 +3086,9 @@
     e.preventDefault();
     // an action that runs asynchronously is marked busy until it settles: a double click (or a second click meanwhile) on the same
     // action and target is ignored, so it never shows two save dialogs or makes two copies
-    const key = (ACT_GROUP[a] || a) + '|' + (el.dataset.id || el.dataset.pid || el.dataset.i || el.dataset.vk || el.dataset.target || '');
+    // the open job is part of the key: a lookup or AI call still running on one assessment never blocks the same button on another
+    // (each job's own `running` entry already stops a second call on the same job)
+    const key = (ACT_GROUP[a] || a) + '|' + (job && el.closest('#tabBody, .jobhead') ? job.id : '') + '|' + (el.dataset.id || el.dataset.pid || el.dataset.i || el.dataset.vk || el.dataset.target || '');
     if (inFlight.has(key)) return;
     let r;
     try { r = A[a](); } catch (err) { return toast(errText(err), true); }

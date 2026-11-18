@@ -252,7 +252,7 @@
     const zonesText = zones.length ? `<p class="small"><strong>Damage zones recorded:</strong> ${esc(zones.join(', '))}</p>` : '';
 
     // ---------- photographs ----------
-    const figNos = C.photoNumbers(Object.assign({}, job, { photos }));
+    const figNos = C.photoNumbers({ photos }); // (never Object.assign over the job: a "__proto__" key in it would change the prototype)
     const included = photos.filter((p) => !p.exclude);
     const figOf = (p, i) => (figNos && typeof figNos.get === 'function' && figNos.get(p.id)) || i + 1;
     const figName = (p) => 'IMAGE ' + String(figOf(p, included.indexOf(p))).padStart(2, '0');

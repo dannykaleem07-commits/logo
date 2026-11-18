@@ -88,9 +88,25 @@
     d.setUTCFullYear(c.y);
     return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric', timeZone: 'UTC' });
   };
-  const getPath = (obj, path) => path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+  // Keys that are never followed, written, copied or merged from stored or imported data: through them a crafted backup,
+  // settings record or job file could reach Object.prototype (or a constructor) and change every object in the app.
+  const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+  const safeKey = (k) => !UNSAFE_KEYS.has(k);
+  // A deep copy of plain data (objects, arrays, values) without those keys, at any depth.
+  function stripUnsafe(x, depth) {
+    if (!x || typeof x !== 'object') return x;
+    const d = (depth || 0) + 1;
+    if (d > 100) return null;
+    if (Array.isArray(x)) return x.map((v) => stripUnsafe(v, d));
+    const out = {};
+    for (const k of Object.keys(x)) if (safeKey(k)) out[k] = stripUnsafe(x[k], d);
+    return out;
+  }
+  const hasUnsafeKey = (x, depth) => !!x && typeof x === 'object' && (depth || 0) < 100 && Object.keys(x).some((k) => !safeKey(k) || hasUnsafeKey(x[k], (depth || 0) + 1));
+  const getPath = (obj, path) => String(path).split('.').reduce((o, k) => (o == null || !safeKey(k) ? undefined : o[k]), obj);
   const setPath = (obj, path, val) => {
-    const keys = path.split('.');
+    const keys = String(path).split('.');
+    if (!keys.every(safeKey)) return; // never through "__proto__", "constructor" or "prototype"
     let o = obj;
     for (let i = 0; i < keys.length - 1; i++) {
       if (o[keys[i]] == null || typeof o[keys[i]] !== 'object') o[keys[i]] = {};
@@ -99,7 +115,8 @@
     o[keys[keys.length - 1]] = val;
   };
   const debounce = (fn, ms) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); }; };
-  const clone = (o) => JSON.parse(JSON.stringify(o));
+  // a JSON copy; keys that could reach a prototype are dropped (an imported job or part-number list is copied clean)
+  const clone = (o) => JSON.parse(JSON.stringify(o), (k, v) => (UNSAFE_KEYS.has(k) ? undefined : v));
   // Accent- and case-folded text for comparisons ("Škoda" → "skoda").
   const fold = (s) => String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
   // "2013-2020" → [2013, 2020]; "2019-", "2019–present" or a lone "2019" → [2019, 9999]; no year → null.
@@ -403,11 +420,15 @@
     }
   };
   let settings = clone(DEFAULT_SETTINGS);
+  // Merges stored or restored data `over` into `base`, own keys only. "__proto__", "constructor" and "prototype" are ignored
+  // at every depth (a crafted settings record in a backup must not reach Object.prototype and change every report).
   function deepMerge(base, over) {
-    if (!over || typeof over !== 'object') return base;
+    if (!over || typeof over !== 'object' || Array.isArray(over)) return base;
     for (const k of Object.keys(over)) {
-      if (over[k] && typeof over[k] === 'object' && !Array.isArray(over[k]) && base[k] && typeof base[k] === 'object') deepMerge(base[k], over[k]);
-      else base[k] = over[k];
+      if (!safeKey(k)) continue;
+      const ov = over[k], bv = Object.prototype.hasOwnProperty.call(base, k) ? base[k] : undefined;
+      if (ov && typeof ov === 'object' && !Array.isArray(ov) && bv && typeof bv === 'object' && !Array.isArray(bv)) deepMerge(bv, ov);
+      else base[k] = stripUnsafe(ov);
     }
     return base;
   }
@@ -505,7 +526,9 @@
     for (const cv of customOem) {
       let v = base.find((x) => x.key === cv.key);
       if (!v) { v = { key: cv.key, make: cv.make, model: cv.model, generation: cv.generation || '', years: cv.years || '', notes: 'Added by user', parts: {} }; base.push(v); }
-      for (const [k, list] of Object.entries(obj(cv.parts))) v.parts[k] = arr(list).concat(v.parts[k] || []);
+      for (const [k, list] of Object.entries(obj(cv.parts))) {
+        if (safeKey(k)) v.parts[k] = arr(list).concat(Object.prototype.hasOwnProperty.call(v.parts, k) ? arr(v.parts[k]) : []);
+      }
     }
     return base;
   }
@@ -674,10 +697,12 @@
   }
 
   function newLine(over) {
-    return Object.assign({
+    const l = {
       id: uid(), type: 'Body', description: '', partNo: '', code: '', side: '', hours: 0, rate: '', amount: 0,
       costClass: 'parts', ai: false, source: ''
-    }, over || {});
+    };
+    if (over && typeof over === 'object') for (const k of Object.keys(over)) if (safeKey(k)) l[k] = over[k];
+    return l;
   }
 
   // ---------- calculations ----------
@@ -725,7 +750,7 @@
     const types = new Set(['Body'].concat(Object.keys(obj(settings.rates)), Object.keys(obj(j.rates))));
     for (const l of arr(j.lines)) if (l && typeof l === 'object' && txt(l.type)) types.add(txt(l.type));
     const rates = {};
-    for (const type of types) rates[type] = lineRate(j, { type });
+    for (const type of types) if (safeKey(type)) rates[type] = lineRate(j, { type });
     return { rates, vatPct: vatPctFor(j) };
   }
   function totals(job) {
@@ -1261,7 +1286,8 @@
 
   window.Core = {
     $, $$, uid, esc, num, round2, gbp, gbp0, hrs, todayISO, localISODate, ukDate, longDate, calendarDate, partialDate, getPath, setPath, debounce, clone, fold, yearRange,
-    Store, DEFAULT_SETTINGS, loadSettings, saveSettings, get settings() { return settings; }, set settings(v) { settings = v; },
+    Store, DEFAULT_SETTINGS, loadSettings, saveSettings, get settings() { return settings; },
+    set settings(v) { settings = hasUnsafeKey(v) ? stripUnsafe(v) : v; }, // kept as given, unless it carries a prototype key
     CAT, OPS, sideWord, SIZE_CLASSES, sizeFactor, paintFactor, vehicleGuide, oemVehicles, setCustomOem, get customOem() { return customOem; }, findOemVehicle, guessOemVehicle, oemLookup, decodeVin,
     newJob, newLine, lineRate, lineLabour, vatPctFor, rateSnapshot, namedSources, totals, qaChecks, isDamageOp, isRenewLine, photoNumbers, oemAlternatives,
     isTotalLoss, isCourtClaim, examinerSupervision, unreviewedAiText, markAiReviewed, jobSummary,

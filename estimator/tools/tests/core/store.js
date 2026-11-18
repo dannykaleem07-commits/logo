@@ -222,6 +222,29 @@ async function run() {
     check('jobSummary of an issued job (rates frozen) does not record Settings rates', !('settingsRates' in C.jobSummary(Object.assign(sample(), { rates: {}, issued: { at: '2026-09-06T10:00:00Z', rates: { Body: 72.5 }, vatPct: 20 } }))));
   }
 
+  section('Settings restored from a backup cannot pollute Object.prototype (screens review, security)');
+  {
+    const vm = require('vm');
+    const idb = new FakeIDBFactory();
+    const start = () => { const ctx = load({ indexedDB: idb, report: true }); return { C: ctx.Core, R: ctx.Report, ev: (s) => vm.runInContext(s, ctx) }; };
+    const clean = (ev) => ev('Object.keys(Object.prototype).length === 0 && ({}).exclude === undefined && ({}).hidden === undefined && ({}).polluted === undefined');
+    let { C, R, ev } = start();
+    // what restoreSettings does with a backup's settings record: store it as it is, then loadSettings()
+    const hostile = '{"__proto__":{"exclude":true,"hidden":true,"polluted":"YES"},"company":{"__proto__":{"polluted":"NESTED"},"name":"RESTORED LTD"},"constructor":{"prototype":{"polluted":"CTOR"}},"rates":{"Body":80}}';
+    await C.Store.set('settings', ev(`JSON.parse('${hostile}')`));
+    await C.loadSettings();
+    check('loadSettings of a record with "__proto__" / "constructor" keys (top level and nested): Object.prototype untouched', clean(ev) && ({}).polluted === undefined, ev('JSON.stringify(Object.keys(Object.prototype))'));
+    check('…the record\'s own values still apply and the defaults fill the rest; no prototype key is kept', C.settings.company.name === 'RESTORED LTD' && C.settings.rates.Body === 80 && C.settings.rates.Painting === 72.5 &&
+      !['__proto__', 'constructor'].some((k) => Object.prototype.hasOwnProperty.call(C.settings, k)) && !Object.prototype.hasOwnProperty.call(C.settings.company, '__proto__'));
+    const photoJob = () => { const j = C.newJob(); j.photos = ev('[{ id: "p1", dataUrl: "data:image/png;base64,iVBORw0KGgo=", title: "Front", labels: [{ x: 0.1, y: 0.3, w: 0.2, h: 0.2, text: "Dent" }] }]'); return j; };
+    let html = R.render(photoJob(), { mode: 'pdf' });
+    check('…so a photo made in the app is still in the report, with its label (not "excluded" / "hidden")', C.photoNumbers(photoJob()).size === 1 && html.includes('IMAGE 01') && html.includes('1. Dent'));
+    ({ C, R, ev } = start()); // the next start: the stored record still has the key
+    await C.loadSettings();
+    html = R.render(photoJob(), { mode: 'pdf' });
+    check('…and after a restart (the stored record still carries the key): still clean', clean(ev) && html.includes('IMAGE 01') && html.includes('1. Dent') && C.settings.company.name === 'RESTORED LTD');
+  }
+
   section('jobSummary never throws (#10)');
   {
     const { C } = app(null);
