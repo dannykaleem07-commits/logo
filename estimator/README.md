@@ -14,10 +14,11 @@ It is original software. It has its own parts catalogue, codes and guide times. 
 | **AI valuation tool** | The standard follows the claim type: the Financial Ombudsman Service approach for own-insurer total losses (retail value at the date of loss, starting from the **highest** recognised guide, never averaged, no blanket deductions); for third-party and court claims, the cost of a replacement vehicle.<br>• It checks mileage against the MOT history.<br>• It can **search UK listing sites for comparable adverts** near the date of loss. A comparable keeps its link only if the link really appeared in the search results; the rest are marked unverified.<br>• It returns a recommended PAV, a range, the workings and report-ready comments. |
 | **AI report writer** | Drafts every narrative section for side-by-side review. AI-drafted text is tracked, so later AI runs never treat it as the assessor's own words. |
 | **Repair operations** | • Renew + refinish new part.<br>• Repair light / medium / heavy (per-part guide repair hours) + refinish repaired part (<50% / >50%).<br>• Plastic repair, paintless dent repair (outer metal panels only), smart repair, refinish, **blend**, remove & refit, inspect, refurbish, and operations/services.<br>• Guide times scale by vehicle size class and paint finish. Paint materials are calculated from paint hours, with the paint factor applied once. Operations that make no sense are refused, e.g. "repairing" a lamp or painting a sensor. |
-| **Engineer checks** | • Structural repairs with Category N.<br>• Structural-damage wording vs category (reads negations correctly).<br>• No AQP ID; accreditation expired at the signature date.<br>• EV/hybrid battery assessment.<br>• Each ADAS sensor without its own calibration.<br>• SRS work without a diagnostic scan.<br>• Metallic paint with no blend; paint labour with no materials.<br>• Renewed part at £0.<br>• **MOT mileage:** inspection mileage lower than a pre-loss MOT reading, readings going down, and **an MOT after the date of loss** (the vehicle was presented or used after the accident).<br>• Desktop-assessment photo coverage.<br>• CPR 35 requirements (examiner, qualifications, range of opinion).<br>• Adopted PAV below the highest guide without a stated reason.<br>• Researched part numbers with variants (confirm by VIN).<br>• Unreviewed AI lines and labels. |
-| **Court-ready option** | Tick *CPR Part 35 report* to address the report to the court, add the expert's duty statement and the statement of truth (with the contempt wording), name who carried out the examination, and switch on the PD 35 checks. |
-| **Finalise / re-open** | Finalising locks the company details, declaration, signature and rates into the report, so later Settings changes don't alter an issued report. |
-| **AI and data-use log** | Every AI and data-service action is logged. The report includes a "Use of AI and data tools" statement, as the Civil Justice Council recommended in October 2026. It states accurately whether every AI output was reviewed. |
+| **Engineer checks** | • Structural repairs with Category N.<br>• Structural-damage wording vs category (reads negations correctly).<br>• No AQP ID; accreditation expired at the signature date.<br>• EV/hybrid battery assessment.<br>• Each ADAS sensor without its own calibration.<br>• SRS work without a diagnostic scan.<br>• Metallic paint with no blend; paint labour with no materials.<br>• Renewed part at £0.<br>• **MOT mileage:** inspection mileage lower than a pre-loss MOT reading, readings going down, and **an MOT after the date of loss** (the vehicle was presented or used after the accident).<br>• Desktop-assessment photo coverage.<br>• CPR 35 requirements (examiner, qualifications, range of opinion).<br>• Adopted PAV below the highest guide without a stated reason.<br>• Researched part numbers with variants (confirm by VIN).<br>• A salvage category on a repairable vehicle.<br>• Negative PAV or discount; invalid dates.<br>• Adverts found by AI search whose link has not been verified.<br>• Unreviewed AI lines, labels and **AI-drafted text still unedited**, and the AI's own review flags. |
+| **Court-ready option** | Tick *CPR Part 35 report* to address the report to the court. This adds:<br>• the expert's duty statement and the statement of truth (with the contempt wording);<br>• who carried out the examination;<br>• the **material relied on** (PD 35 para 3.2(2));<br>• the PD 35 checks. |
+| **Finalise / re-open** | Finalising **locks the whole report**: every field, the estimate and the photos become read-only. It also freezes the company details, declaration, signature, qualifications, AQP ID, labour rates and VAT, so later Settings changes can't alter an issued report. *Re-open* unlocks it for editing. A duplicate starts as a fresh, unsigned draft. |
+| **Backup and safety** | **Settings → Export full backup** streams every job, photo, setting and your own part numbers into one `.ersbackup` file, whatever the size. Restore reads it, and backups from earlier versions (`.json`), adding your own part numbers rather than replacing them.<br>• A save that fails (for example, a full disk) is shown at once with *Retry*; nothing is silently lost.<br>• Edits from two windows never overwrite each other unnoticed.<br>• If the window crashes or stops responding, the app offers to reload with your saved work. |
+| **AI and data-use log** | Every AI and data-service action is logged. The report includes a "Use of AI and data tools" statement, as the Civil Justice Council recommended in October 2026. It states accurately whether every AI output was reviewed, and names any AI-drafted text still unedited. |
 | **Report** | A 13-section A4 PDF with running header and footer and "Page n of N". It includes:<br>• the valuation chart;<br>• the estimate (with discount);<br>• the cost summary;<br>• labelled photos (AI and pre-existing damage marked);<br>• DVLA/DVSA status and MOT history;<br>• the signed declaration. |
 
 ## Data connections
@@ -95,20 +96,27 @@ The default model is `claude-opus-5-5` at "High" thoroughness. You can change bo
 - **What fills in automatically:** only *confirmed* numbers that are not variant-specific (155 of the 657). Single-source and variant-specific numbers (by colour, camera, sensors, lamp type, trim or facelift) are offered in the picker with their badges, for you to choose by VIN.
 - **Prices are ex VAT.** Researched shop prices include VAT, so the build divides them by 1.2 and keeps the shop price for display. VAT is added once, on the estimate.
 - **Build commands:** `npm run build:oem` compiles the research into `app/data/oem.js`, and `npm run build:variants` compiles `research/variants/*.json`. Both refuse invalid data, and `npm test` fails if either compiled file is out of date.
-- **Your own numbers:** add them in **Parts catalogue → + Part number**, or import a CSV with the columns `code,side,oem,description,price`. The header row is optional, the price is **£ ex VAT**, and `side` is `L`, `R` or blank. Add new vehicles with **+ Vehicle**.
+- **Your own numbers:**
+  - Add them in **Parts catalogue → + Part number**, or import a CSV with the columns `code,side,oem,description,price`. The header row is optional, the price is **£ ex VAT**, and `side` is `L`, `R` or blank.
+  - Add new vehicles with **+ Vehicle**.
+  - Your numbers show a *your number* badge and fill in automatically only if you tick *auto-fill*.
+  - You can edit or delete them in the parts catalogue, and importing the same CSV twice does not duplicate them.
 
 **Coverage is partial, and every number must be checked by VIN.** Each vehicle has a different mix of parts (lamps, bumpers, grilles, wings, mirrors and mouldings are the best covered; doors, glass and cooling parts the least), and many numbers depend on facelift, trim or options. Confirm every number against the VIN with a dealer parts counter before ordering or quoting it in a report. Comprehensive OEM data for every vehicle needs a licensed parts data feed; the catalogue structure is ready to import one (see LICENSING.md).
 
 ## Tests
 
 ```
-npm test                    # reference-report totals; 301 core checks; 3,000-job fuzz test; 135 report checks;
+npm test                    # reference-report totals; 438 core checks (incl. storage upgrade, conflicts and
+                            # quota errors on an in-memory IndexedDB); 3,000-job fuzz test; 181 report checks;
                             # AI photo/narrative/valuation pipeline and DVLA/MOT connectors against mocked APIs
-                            # (response shapes from the official specs); OEM and variant data in sync
-node tools/ui-smoketest.js  # every screen and flow in Chromium with the desktop bridge mocked
-npm run test:e2e            # the real app in real Electron: bridge, key encryption, DVLA/MOT/AI calls
-                            # through Windows networking (mocked servers), PDF export, navigation and
-                            # window locks, second launch (on Linux: xvfb-run -a npx electron --no-sandbox tools/electron-e2e.js)
+                            # (response shapes from the official specs); the desktop shell under a fake Electron;
+                            # OEM and variant data in sync and reachable from the variant picker
+node tools/ui-smoketest.js  # every screen and flow in Chromium with the desktop bridge mocked (68+ checks)
+npm run test:e2e            # the real app in real Electron (43 checks): bridge, key encryption, DVLA/MOT/AI calls
+                            # through Windows networking (mocked servers), PDF export, streaming backup,
+                            # crash/hang recovery, navigation and window locks, second launch
+                            # (on Linux: xvfb-run -a npx electron --no-sandbox tools/electron-e2e.js)
 ```
 
 `npm test` also runs a fake-Electron proof of the desktop shell (`tools/main-mocktest.js`): IPC sender checks, key-file failures, save-dialog sanitising and PDF temp files. GitHub Actions runs all of these, on Linux and on Windows, before it builds the exe.
