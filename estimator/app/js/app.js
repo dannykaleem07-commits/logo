@@ -682,9 +682,9 @@
         <ul>${unplaced.map(({ ph, d }) => `<li><b>${esc(where(ph))}</b>: ${esc(d.label || 'unnamed')}${d.component_name ? ' — ' + esc([C.sideWord(d.side), d.component_name].filter(Boolean).join(' ')) : ''}${d.damage_type ? ' · ' + esc(d.damage_type) : ''}${d.severity ? ' · ' + esc(d.severity) : ''}${d.accident_related ? ' · accident-related: ' + esc(d.accident_related) : ''}${d.recommended_operation ? ' · ' + esc(d.recommended_operation) : ''}${d.notes ? ' — ' + esc(d.notes) : ''}</li>`).join('')}</ul></div>` : ''}
       <h3>Recommended estimate lines (${lines.length})</h3>
       <table class="tbl sugg"><thead><tr><th><input type="checkbox" data-act="suggAll" style="width:auto" checked></th><th>Type</th><th>Line</th><th>Part no. (catalogue)</th><th class="num">Hours</th><th>Evidence</th><th>Conf.</th></tr></thead><tbody>
-      ${lines.map((l, i) => { const cands = l.code && C.CAT[l.code] ? C.oemLookup(job.vehicle.oemKey, l.code, l.side) : []; const o = autoOem(cands); const added = l.added; const hz = aiLineHours(job, l); return `<tr${added ? ' style="opacity:.5"' : ''} data-sugg-row="${i}">
+      ${lines.map((l, i) => { if (!isObj(l)) return ''; const cands = l.code && C.CAT[l.code] ? C.oemLookup(job.vehicle.oemKey, l.code, l.side) : []; const o = autoOem(cands); const added = l.added; const hz = aiLineHours(job, l); return `<tr${added ? ' style="opacity:.5"' : ''} data-sugg-row="${i}">
         <td><input type="checkbox" data-sugg="${i}" style="width:auto" ${ui.suggestSel[i] === false || added ? '' : 'checked'} ${added ? 'disabled' : ''}></td>
-        <td>${esc(l.type)}</td><td><b>${esc(l.description)}</b>${l.code && l.code !== 'OTHER' ? ` <code class="hint">${esc(l.code)}${l.side ? '-' + l.side : ''}${l.operation ? ' · ' + esc(l.operation) : ''}</code>` : ''}${added ? ' <span class="badge ok">added</span>' : ''}</td>
+        <td>${esc(l.type)}</td><td><b>${esc(l.description)}</b>${l.code && l.code !== 'OTHER' ? ` <code class="hint">${esc(l.code)}${l.side ? '-' + esc(l.side) : ''}${l.operation ? ' · ' + esc(l.operation) : ''}</code>` : ''}${added ? ' <span class="badge ok">added</span>' : ''}</td>
         <td>${o ? `<span class="oem ${esc(o.confidence)}">${esc(o.oem)}</span>` : cands.length ? `<span class="hint">${cands.length} numbers: choose by VIN</span>` : (l.needs_part ? '<span class="hint">price needed</span>' : '')}</td>
         <td class="num">${hrs(hz.hours)}${suggHoursNote(l, hz)}</td><td class="reason">${esc(l.reason)}</td>
         <td><span class="conf" title="${Math.round(num(l.confidence) * 100)}%"><i style="width:${Math.round(num(l.confidence) * 100)}%"></i></span></td></tr>`; }).join('')}
@@ -757,7 +757,8 @@
     if (!m) return null;
     const base64 = String(u).slice(m[0].length);
     const pad = base64.endsWith('==') ? 2 : base64.endsWith('=') ? 1 : 0;
-    return { type: m[1].trim().toLowerCase(), base64, bytes: Math.floor(base64.length * 3 / 4) - pad };
+    const type = m[1].trim().toLowerCase();
+    return { type: type === 'image/jpg' || type === 'image/pjpeg' ? 'image/jpeg' : type, base64, bytes: Math.floor(base64.length * 3 / 4) - pad };
   }
   // One photo for analysePhotos: the stored image as it is (ai.js accepts it up to its limits), re-encoded as a JPEG only when it
   // is over the per-photo limit or not a type the AI reads. With its id (results come back by id), size and text provenance.
@@ -903,10 +904,10 @@
   function aiAddLines() {
     const f = job.aiFindings; if (!f) return;
     let n = 0;
-    const damages = (f.photos || []).flatMap((ph) => ph.damages || []);
+    const damages = (f.photos || []).filter(isObj).flatMap((ph) => (Array.isArray(ph.damages) ? ph.damages.filter(isObj) : []));
     let byVin = 0;
     (f.suggested_lines || []).forEach((l, i) => {
-      if (l.added || ui.suggestSel[i] === false) return;
+      if (!isObj(l) || l.added || ui.suggestSel[i] === false) return;
       const cands = l.code && C.CAT[l.code] ? C.oemLookup(job.vehicle.oemKey, l.code, l.side) : [];
       const o = autoOem(cands);
       if (l.needs_part && cands.length && !o) byVin++;
