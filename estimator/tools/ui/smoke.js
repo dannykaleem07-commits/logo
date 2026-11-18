@@ -21,6 +21,20 @@ function withExif(src, when) {
   return Buffer.concat([src.slice(0, 2), head, Buffer.from('Exif\0\0', 'binary'), tiff, src.slice(2)]);
 }
 const jpgExif = withExif(jpg1, '2026:09:01 11:42:30');
+// pixel size of a JPEG from its SOF marker
+function jpegSize(buf) {
+  for (let i = 2; i + 9 < buf.length;) {
+    if (buf[i] !== 0xFF) { i++; continue; }
+    const m = buf[i + 1];
+    if (m >= 0xC0 && m <= 0xCF && ![0xC4, 0xC8, 0xCC].includes(m)) return { w: buf.readUInt16BE(i + 7), h: buf.readUInt16BE(i + 5) };
+    i += 2 + buf.readUInt16BE(i + 2);
+  }
+  return null;
+}
+const dataUrl1 = 'data:image/jpeg;base64,' + jpg1.toString('base64');
+const dataUrl2 = 'data:image/jpeg;base64,' + jpg2.toString('base64');
+// a suggested line as ai.js returns it
+const SL = (code, side, operation, type, description, guide, hours, basis, reason) => ({ type, code, operation, side, description, guide_hours: guide, labour_hours: hours, hours_basis: basis, needs_part: false, cost_class: type === 'Painting' ? 'paint' : 'parts', reason: reason || 'test evidence', confidence: 0.8 });
 const file = (name, buffer, mimeType) => ({ name, mimeType: mimeType || 'image/jpeg', buffer });
 
 const results = [];
@@ -151,17 +165,51 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert(dashed >= 2, 'pre-existing labels drawn dashed on cards');
     const nums = await page.$$eval('.pcard .pnum', (ns) => ns.map((n) => n.textContent));
     assert.deepStrictEqual(nums, ['not in report', 'IMAGE 01', 'IMAGE 02']);
+    // payload: each photo's id and stored size, the stored image itself (not re-encoded), and whether its text is unedited AI text
+    const door = byTitle('RH front door'), wing = byTitle('RH front wing');
+    const sig = (u) => { const b = u.split(',')[1]; return b.length + ':' + b.slice(0, 40) + ':' + b.slice(-40); };
+    assert.deepStrictEqual(call.ids, [door.id, wing.id], 'ids sent: ' + JSON.stringify(call.ids));
+    assert.deepStrictEqual(call.wh, [[door.w, door.h], [wing.w, wing.h]], 'sizes sent: ' + JSON.stringify(call.wh));
+    assert.deepStrictEqual(call.sig, [sig(door.dataUrl), sig(wing.dataUrl)], 'stored images sent as they are');
+    assert.deepStrictEqual(call.types, ['image/jpeg', 'image/jpeg']);
+    assert.deepStrictEqual([call.titleByAi, call.captionByAi], [[false, false], [false, false]], 'assessor titles, no captions yet');
+    // the AI captions filled the empty captions and are recorded as AI text; the assessor's titles are not
+    assert.deepStrictEqual([door.caption, j.aiText['photos.' + door.id + '.caption']], ['AI caption 1', 'AI caption 1'], 'caption provenance');
+    assert(!(('photos.' + door.id + '.title') in j.aiText), 'assessor title not recorded as AI text');
+    // damage the AI could not place: never drawn, listed in the findings panel; review flags shown
+    assert(!j.photos.some((p) => p.labels.some((l) => /Hidden crease/.test(l.text))), 'unplaced damage not drawn');
+    assert(j.aiFindings.photos.some((ph) => (ph.unplaced_damages || []).length === 1), 'unplaced damage kept in the findings');
+    const panel = await text('.aiPanel');
+    assert(/could not place on a photo \(1\)/.test(panel) && /IMAGE 02: Hidden crease 1 — RH Sill outer panel/.test(panel), 'unplaced list (door is now IMAGE 02): ' + panel.slice(0, 400));
+    assert(/Confirm the ADAS fit from the VIN/.test(await text('.aiPanel .flagBox')), 'review flags shown');
     await t.mock({ aiDelay: 30 });
   });
 
-  await step('AI suggestions become lines with op "ai" and the AI operation', async () => {
+  await step('AI suggestions: op from the AI operation, guide / adjusted hours, "AI: adjusted from guide" note', async () => {
+    const hints = await page.$$eval('.sugg .basis', (ns) => ns.map((n) => n.textContent));
+    assert.deepStrictEqual(hints, ['guide time', 'guide time', 'adjusted from guide 2.0h'], 'suggestion hour notes: ' + JSON.stringify(hints));
     await page.click('[data-act="aiAddLines"]'); await flush();
     const ls = await lines(A);
     assert.strictEqual(ls.length, 3);
-    assert(ls.every((l) => l.op === 'ai' && l.ai && !l.reviewed), 'op ai');
-    const door = ls.find((l) => /repair \(medium\)/.test(l.description));
-    assert.strictEqual(door.aiOperation, 'repair medium');
-    assert(!('aiOperation' in ls.find((l) => /mirror/.test(l.description))), 'no aiOperation when no label names the part');
+    assert(ls.every((l) => l.ai && !l.reviewed), 'AI lines unreviewed');
+    assert.deepStrictEqual(ls.map((l) => [l.op, l.aiOperation, l.guideHours, l.hoursBasis, l.hours]),
+      [['renew', 'renew', 0.6, 'guide', 0.6], ['repair', 'repair', 2, 'guide', 2], ['refinishRep1', 'refinishRep1', 2, 'adjusted', 1.6]], JSON.stringify(ls.map((l) => [l.op, l.aiOperation, l.guideHours, l.hoursBasis, l.hours])));
+    assert(!('pfApplied' in ls[2]), 'adjusted paint line: no paint factor recorded (the AI figure stands)');
+    await openTab(A, 'estimate');
+    const notes = await page.$$eval('#linesTbl .aiBasis', (ns) => ns.map((n) => n.textContent));
+    assert.deepStrictEqual(notes, ['AI: adjusted from guide 2.0h'], 'estimate notes: ' + JSON.stringify(notes));
+    // findings stored by an older version (no operation): op "ai" and the operation named by a photo label, as before
+    const legacy = await t.getJob(A);
+    const id2 = 'legacy-ai-' + Date.now();
+    await t.putJob(Object.assign({}, legacy, { id: id2, lines: [], aiFindings: { model: 'x', photos: [{ index: 1, damages: [{ component_code: 'DR001', side: 'R', recommended_operation: 'repair medium', box: { x: 0.1, y: 0.1, w: 0.2, h: 0.2 } }] }], summary: {},
+      suggested_lines: [{ type: 'Body', code: 'DR001', side: 'R', description: 'RH front door – repair', labour_hours: 2, needs_part: false, cost_class: 'labour only', reason: 'old', confidence: 0.5 }] } }));
+    await openTab(id2, 'photos');
+    await page.click('[data-act="aiAddLines"]'); await flush();
+    const ll = (await t.getJob(id2)).lines;
+    assert.deepStrictEqual([ll[0].op, ll[0].aiOperation, ll[0].hours, 'hoursBasis' in ll[0]], ['ai', 'repair medium', 2, false], 'legacy line: ' + JSON.stringify(ll[0]));
+    await t.go('#/jobs'); await settle(200);
+    await page.click(`[data-act="delJob"][data-id="${id2}"]`); await settle(300);
+    await openTab(A, 'photos');
   });
 
   await step('labeler: "show" toggles, field click keeps focus, save marks labels reviewed', async () => {
@@ -232,6 +280,14 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert.deepStrictEqual(links, ['https://www.autotrader.co.uk/car-details/1'], 'links: ' + JSON.stringify(links));
     const body = await text('.aiPanel');
     assert(/Evil site/.test(body) && !(await exists('a[href^="file:"]')) && !(await exists('a[href^="ms-msdt"]')), 'unsafe URLs rendered as text');
+    // only the verified comparable is a link; unverified ones show the AI's URL as plain text, marked "unverified"
+    const badges = await page.$$eval('.comps .badge', (ns) => ns.map((n) => n.textContent).filter((x) => /verified/.test(x)));
+    assert.deepStrictEqual(badges, ['verified', 'unverified', 'unverified', 'unverified'], 'badges: ' + JSON.stringify(badges));
+    const claimed = await page.$$eval('.comps .claimedUrl', (ns) => ns.map((n) => n.textContent));
+    assert(claimed.length === 3 && claimed.some((x) => /https:\/\/www\.motors\.co\.uk\/car-123456\//.test(x)) && !(await exists('a[href*="motors.co.uk"]')), 'claimed URLs as text: ' + JSON.stringify(claimed));
+    const call = (await t.calls('ai.valuation')).pop().arg;
+    assert.deepStrictEqual([call.claimType, call.valuationDate], ['', ''], 'no claim type or date of loss on this job');
+    assert(/web search: 2 searches, UK listing sites only · claim type: Not specified · no valuation date recorded/.test(await text('.valFooter')), 'footer: ' + await text('.valFooter'));
     const j = await t.getJob(A);
     assert(j.valuation.ai && j.valuation.ai.recommended_pav === 5700.4 && j.aiLog.some((x) => /Valuation assistant/.test(x.action)));
   });
