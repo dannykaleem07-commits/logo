@@ -9,9 +9,9 @@
   let job = null;            // current job
   let tab = 'claim';
   let aiStatus = { hasKey: false };
-  const ui = { pickQ: '', pickGroup: '', pickSide: '', pickOp: 'replace', pickSel: null, addRefinish: true, suggestSel: {}, vp: null, zoneGroups: null, zoneLabel: '' };
-  // per-job UI state: cleared when a different job is opened
-  function resetJobUi() { ui.vp = null; ui.zoneGroups = null; ui.zoneLabel = ''; ui.suggestSel = {}; ui.pickSel = null; }
+  const ui = { pickQ: '', pickGroup: '', pickSide: '', pickOp: 'replace', pickSel: null, addRefinish: true, suggestSel: {}, vp: null, zoneGroups: null, zoneLabel: '', jobId: null };
+  // per-job UI state (variant picker, zone filter, AI suggestion ticks, picked part): cleared when a different job is opened
+  function resetJobUi(id) { if (ui.jobId === id) return; ui.jobId = id; ui.vp = null; ui.zoneGroups = null; ui.zoneLabel = ''; ui.suggestSel = {}; ui.pickSel = null; }
   // lookups and AI calls in flight, keyed `${kind}:${jobId}`, so a spinner only shows on the job it belongs to
   const running = new Set();
   const busy = (kind) => !!job && running.has(kind + ':' + job.id);
@@ -127,7 +127,7 @@
           if (!j) { job = null; location.replace('#/jobs'); return; }
           if (migrate(j)) await C.Store.saveJob(j);
           if (seq !== routeSeq) return;
-          resetJobUi();
+          resetJobUi(j.id);
           job = j;
         }
         tab = parts[2] || 'claim';
@@ -510,7 +510,8 @@
       msgs.push('Lookup: ' + (err.message || err));
     } finally {
       running.delete(key);
-      if (job && job.id === j.id) { if (target) ui.vp = null; renderJob(); } // let the variant picker re-detect from the new make / model
+      if (target && ui.jobId === j.id) ui.vp = null; // let the variant picker re-detect from the new make / model
+      if (job && job.id === j.id) renderJob();
     }
     if (gone) return toast(`The lookup finished, but ${regOf(j)} has been deleted, so nothing was saved.`, true);
     const failed = msgs.some((m) => /^(DVLA|MOT History|Lookup): /.test(m) && !/no tests yet/.test(m));
@@ -749,7 +750,7 @@
         }
         x.aiFindings = merged;
         logAi(x, `Photo damage labelling & repair suggestions (${labelled} photos)`, merged.model);
-        if (x === job) ui.suggestSel = {};
+        if (ui.jobId === x.id) ui.suggestSel = {}; // fresh suggestions: all ticked again
       });
       if (!target) toast(`${regOf(j)} has been deleted, so the AI findings were not saved.`, true);
       else toast(`AI labelled ${labelled} photo(s) and suggested ${merged.suggested_lines.length} estimate line(s)${target !== job ? ` for ${regOf(target)} (saved with that assessment)` : ''}.`);
@@ -1195,7 +1196,7 @@
       <div class="row" style="margin-top:8px"><button class="btn sm" data-act="sigDraw" data-target="job">Draw signature</button><button class="btn sm" data-act="sigUpload" data-target="job">Upload image</button>
         ${job.assessor.signature ? '<button class="btn sm danger" data-act="sigClear">Remove this report\'s signature</button>' : ''}
         <label class="hint"><input type="checkbox" data-bind-check="assessor.useDefaultSignature" ${job.assessor.useDefaultSignature ? 'checked' : ''} style="width:auto"> use my default signature from Settings</label></div>
-      ${iss ? '<p class="hint">This is the signature frozen when the report was finalised.</p>' : ''}
+      ${iss && sig ? '<p class="hint">This is the signature frozen when the report was finalised.</p>' : ''}
       <h3>Declaration</h3><p class="hint" style="white-space:pre-wrap">${esc(iss ? iss.declaration : C.settings.assessor.declaration)}</p><p class="hint">${iss ? 'The declaration as it was when the report was finalised.' : 'Edit the declaration in Settings.'}</p></div>`;
   }
 
@@ -1227,7 +1228,7 @@
     }
   }
   async function saveText(content, fileName, ext) {
-    if (desktop) { const r = await desktop.saveFile({ content, fileName, filters: [{ name: ext.toUpperCase(), extensions: [ext] }] }); if (r.ok) toast('Saved ' + r.filePath); return; }
+    if (desktop) { const r = await desktop.saveFile({ content, fileName, filters: [{ name: ext.toUpperCase(), extensions: [ext] }] }); if (r.ok) toast('Saved ' + r.filePath); else if (!r.canceled && r.error) toast(r.error, true); return; }
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([content], { type: 'application/json' }));
     a.download = fileName; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
@@ -1554,7 +1555,7 @@
       pdel: () => { if (!confirm('Remove this photo?')) return; job.photos.splice(+el.dataset.i, 1); changed(); renderJob(); },
       aiAnalyse, aiApplySummary, aiAddLines, aiDraft,
       zoneDel: () => { job.zones = job.zones.filter((x) => x !== el.dataset.z); changed(); renderJob(); },
-      zonePick: () => { const z = Diagram.byLabel(el.dataset.z); ui.zoneGroups = z ? z.groups : null; ui.zoneLabel = z ? z.label : ''; ui.pickGroup = ''; if (z && z.side) ui.pickSide = z.side; renderJob(); },
+      zonePick: () => { const z = Diagram.byLabel(el.dataset.z); ui.zoneGroups = z ? z.groups : null; ui.zoneLabel = z ? z.label : ''; ui.pickGroup = ''; if (z) ui.pickQ = ''; if (z && z.side) ui.pickSide = z.side; renderJob(); },
       pickSel: () => {
         ui.pickSel = el.dataset.code;
         $$('#pickResults .r').forEach((r) => r.classList.toggle('sel', r.dataset.code === ui.pickSel));
