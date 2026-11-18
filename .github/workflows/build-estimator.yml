@@ -61,6 +61,11 @@ jobs:
         run: npx electron tools/electron-e2e.js
       - name: Build Windows installer and portable .exe
         run: npx electron-builder --win nsis portable --x64 --publish never
+        env:
+          # Code signing: add the repository secrets CSC_LINK (base64 .pfx or https link) and CSC_KEY_PASSWORD.
+          # When they are not set the values are empty and electron-builder builds unsigned.
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
       - uses: actions/upload-artifact@v6
         with:
           name: Engineer-Report-Studio-Windows

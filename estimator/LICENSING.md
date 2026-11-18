@@ -96,11 +96,13 @@ These are the times insurers' engineers accept.
 ---
 
 ## What happens when the keys arrive
-Send the keys to the app's Settings screen, never by email or chat. Then ask for the connector to be built and tested:
-1. DVLA + MOT History: registration lookup fills the Vehicle tab, and MOT mileages feed the valuation and the mileage-discrepancy check.
-2. Derivative provider: exact-variant picker, VIN, CAP ID / K-type.
-3. Valuation provider(s): guide figures fill the valuation table at the date of loss, and the AI valuation assistant writes the workings.
-4. Parts / estimating partner: parts and times flow into the estimate, marked with their source.
+Enter keys only in the app's **Settings** screen, never by email or chat. The app stores them encrypted on the PC.
+1. **DVLA and MOT History: built and ready.** Paste the keys into *Settings → Data connections* and press *Test DVLA* / *Test MOT History*. *Look up registration* then fills the Vehicle tab, and MOT mileages feed the valuation and the mileage checks.
+2. **Paid providers (derivative/VIN, guide valuations, parts, labour times): need a connector built** against each provider's API once you hold the contract and its documentation. The app already has a place for each:
+   - the derivative goes to the exact-variant picker, VIN, CAP ID / K-type;
+   - guide figures go to the valuation table at the date of loss;
+   - parts and times go to the estimate, marked with their source.
+   Until then, enter these figures by hand or import part numbers by CSV (*Parts catalogue → Import CSV*).
 
 ## Legal notes
 - Do not scrape EPC or parts websites (7zap, partsouq, Megazip and the like). It breaches UK database right and their terms.
