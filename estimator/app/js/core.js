@@ -439,9 +439,9 @@
     for (const raw of clausesOf(text)) {
       const c = raw.replace(/\bnot only\b/gi, ' ');
       const phrase = STRUCT_PHRASE.test(c), member = STRUCT_MEMBER.test(c), nonStruct = NON_STRUCT.test(c);
-      if (!phrase && !member && !nonStruct) continue;
+      if ((!phrase && !member && !nonStruct) || HEDGE.test(c)) continue; // speculative clauses neither record nor deny
       const neg = NEGATION.test(c);
-      if ((phrase || (member && DAMAGE_WORD.test(c))) && !neg && !HEDGE.test(c)) { if (!res.records) res.records = raw; } else if (((phrase || member) && neg) || nonStruct) { if (!res.denies) res.denies = raw; }
+      if ((phrase || (member && DAMAGE_WORD.test(c))) && !neg) { if (!res.records) res.records = raw; } else if (((phrase || member) && neg) || nonStruct) { if (!res.denies) res.denies = raw; }
     }
     return res;
   }

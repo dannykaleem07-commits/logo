@@ -18,6 +18,13 @@
   const pendingDrafts = new Map(); // jobId → AI narrative draft waiting for review
   const isObj = (x) => x != null && typeof x === 'object' && !Array.isArray(x);
   const httpUrl = (u) => /^https?:\/\//i.test(String(u || '').trim());
+  // OEM candidates: only the first one marked for auto-fill may pre-fill a line; line amounts always use the EX-VAT price
+  const autoOem = (cands) => (cands || []).find((c) => c && c.autoFill !== false) || null;
+  const oemPrice = (c, short) => (!c ? '' : c.price ? (short || !c.priceIncVat ? `${gbp(c.price)} ex VAT` : `${gbp(c.price)} ex VAT (${gbp(c.priceIncVat)} inc VAT)`) : c.priceIncVat ? `${gbp(c.priceIncVat)} inc VAT` : '');
+  const MARKETS = { US: 'US listing', 'EU-LHD': 'LHD listing', unknown: 'market unknown' };
+  const oemBadges = (c) => [c.role === 'variant' ? 'variant' : '', c.autoFill === false ? 'choose by VIN' : '', !c.user && MARKETS[c.market] ? MARKETS[c.market] : '']
+    .filter(Boolean).map((b) => `<span class="badge warn">${b}</span>`).join(' ');
+  const chooseByVin = (n) => `${n} researched number${n === 1 ? '' : 's'}: choose the variant by VIN`;
 
   const TABS = [
     ['claim', 'Claim'], ['vehicle', 'Vehicle'], ['inspection', 'Inspection'], ['circumstances', 'Circumstances'],
@@ -624,10 +631,10 @@
       <div class="row" style="margin:8px 0 14px"><button class="btn" data-act="aiApplySummary">Fill empty circumstances / assessment fields &amp; damage zones from these findings</button></div>
       <h3>Recommended estimate lines (${lines.length})</h3>
       <table class="tbl sugg"><thead><tr><th><input type="checkbox" data-act="suggAll" style="width:auto" checked></th><th>Type</th><th>Line</th><th>Part no. (catalogue)</th><th class="num">Hours</th><th>Evidence</th><th>Conf.</th></tr></thead><tbody>
-      ${lines.map((l, i) => { const o = l.code && C.CAT[l.code] ? C.oemLookup(job.vehicle.oemKey, l.code, l.side)[0] : null; const added = l.added; return `<tr${added ? ' style="opacity:.5"' : ''}>
+      ${lines.map((l, i) => { const cands = l.code && C.CAT[l.code] ? C.oemLookup(job.vehicle.oemKey, l.code, l.side) : []; const o = autoOem(cands); const added = l.added; return `<tr${added ? ' style="opacity:.5"' : ''}>
         <td><input type="checkbox" data-sugg="${i}" style="width:auto" ${ui.suggestSel[i] === false || added ? '' : 'checked'} ${added ? 'disabled' : ''}></td>
         <td>${esc(l.type)}</td><td><b>${esc(l.description)}</b>${l.code && l.code !== 'OTHER' ? ` <code class="hint">${esc(l.code)}${l.side ? '-' + l.side : ''}</code>` : ''}${added ? ' <span class="badge ok">added</span>' : ''}</td>
-        <td>${o ? `<span class="oem ${esc(o.confidence)}">${esc(o.oem)}</span>` : (l.needs_part ? '<span class="hint">price needed</span>' : '')}</td>
+        <td>${o ? `<span class="oem ${esc(o.confidence)}">${esc(o.oem)}</span>` : cands.length ? `<span class="hint">${cands.length} numbers: choose by VIN</span>` : (l.needs_part ? '<span class="hint">price needed</span>' : '')}</td>
         <td class="num">${hrs(l.labour_hours)}</td><td class="reason">${esc(l.reason)}</td>
         <td><span class="conf" title="${Math.round(num(l.confidence) * 100)}%"><i style="width:${Math.round(num(l.confidence) * 100)}%"></i></span></td></tr>`; }).join('')}
       </tbody></table>
@@ -785,10 +792,12 @@
     const f = job.aiFindings; if (!f) return;
     let n = 0;
     const damages = (f.photos || []).flatMap((ph) => ph.damages || []);
+    let byVin = 0;
     (f.suggested_lines || []).forEach((l, i) => {
       if (l.added || ui.suggestSel[i] === false) return;
       const cands = l.code && C.CAT[l.code] ? C.oemLookup(job.vehicle.oemKey, l.code, l.side) : [];
-      const o = cands[0];
+      const o = autoOem(cands);
+      if (l.needs_part && cands.length && !o) byVin++;
       const cls = l.cost_class === 'paint' ? 'paint' : l.cost_class === 'other' ? 'other' : 'parts';
       // the operation the AI recommended for this component, when one of its photo labels names it
       const dm = l.code && l.code !== 'OTHER' ? damages.find((d) => d.component_code === l.code && (d.side || '') === (l.side || '') && d.recommended_operation && d.recommended_operation !== 'none') : null;
@@ -798,7 +807,7 @@
       }, dm ? { aiOperation: dm.recommended_operation } : {})));
       l.added = true; n++;
     });
-    changed(); toast(`${n} line(s) added to the estimate.`); renderJob();
+    changed(); toast(`${n} line(s) added to the estimate.${byVin ? ` ${byVin} part line(s) have several researched numbers: choose the variant by VIN (⋯ on the line).` : ''}`); renderJob();
   }
 
   // ---------- DAMAGE & ASSESSMENT ----------
@@ -875,7 +884,11 @@
     if (!rows.length) return '<div class="r hint">No matching parts.</div>';
     return rows.map((p) => {
       const sides = p.sided ? (ui.pickSide ? [ui.pickSide] : ['L', 'R']) : [''];
-      const oems = sides.map((s) => { const c = C.oemLookup(job.vehicle.oemKey, p.code, s)[0]; return c ? `<span class="oem ${esc(c.confidence)}" title="${esc(c.description + ' — ' + c.confidence)}">${s ? C.sideWord(s) + ' ' : ''}${esc(c.oem)}${c.price ? ' · ' + gbp(c.price) : ''}</span>` : ''; }).filter(Boolean).join(' &nbsp; ');
+      const oems = sides.map((s) => {
+        const cands = C.oemLookup(job.vehicle.oemKey, p.code, s), c = autoOem(cands), sw = s ? C.sideWord(s) + ' ' : '';
+        if (!c) return cands.length ? `<span class="oem single-source">${sw}${cands.length} numbers: choose by VIN</span>` : '';
+        return `<span class="oem ${esc(c.confidence)}" title="${esc(c.description + ' — ' + c.confidence + (c.priceIncVat ? ' — ' + oemPrice(c) : ''))}">${sw}${esc(c.oem)}${c.price ? ' · ' + oemPrice(c, true) : ''}</span>`;
+      }).filter(Boolean).join(' &nbsp; ');
       return `<div class="r${ui.pickSel === p.code ? ' sel' : ''}" data-act="pickSel" data-code="${p.code}"><code>${p.code}</code><div class="grow"><b>${esc(p.name)}</b> <span class="hint">· ${esc(p.group)}${p.sided ? ' · LH/RH' : ''}</span><div>${oems}</div></div>
         <span class="hint">${pickHint(p)}</span></div>`;
     }).join('');
@@ -938,7 +951,8 @@
       const nm = sw + p.name.charAt(0).toLowerCase() + p.name.slice(1);
       const Nm = nm.charAt(0).toUpperCase() + nm.slice(1);
       const typeFor = ['M', 'W'].includes(p.kind) ? 'Mechanical' : ['E', 'A'].includes(p.kind) ? 'Electrical' : 'Body';
-      const o = C.oemLookup(job.vehicle.oemKey, p.code, side)[0];
+      const cands = C.oemLookup(job.vehicle.oemKey, p.code, side), o = autoOem(cands);
+      if (cands.length && !o && (opRow || op === 'replace')) notes.add(chooseByVin(cands.length) + ' (⋯ on the line).');
       const painted = p.refinishHrs > 0;
       const add = (fields) => job.lines.push(C.newLine(Object.assign({ code: p.code, side }, fields)));
       const paintLine = (description, h, lineOp) => add({ type: 'Painting', description, hours: P(h), costClass: 'paint', op: lineOp, pfApplied: pf });
@@ -1007,9 +1021,9 @@
     const j = job;
     const l = j.lines.find((x) => x.id === lineId); if (!l) return;
     const cands = C.oemLookup(j.vehicle.oemKey, l.code, l.side);
-    const b = openModal('OEM part numbers — ' + l.description, `<p class="hint">Researched numbers for this vehicle. Confirm against the VIN with a dealer parts counter before ordering. Versions often differ by facelift, trim and options.</p>
+    const b = openModal('OEM part numbers — ' + l.description, `<p class="hint">Researched numbers for this vehicle. Confirm against the VIN with a dealer parts counter before ordering. Versions often differ by facelift, trim and options. "Use" fills the price excluding VAT.</p>
       <table class="tbl"><thead><tr><th>Part number</th><th>Description</th><th>Confidence</th><th class="num">Price</th><th>Notes</th><th></th></tr></thead><tbody>
-      ${cands.map((c, i) => `<tr><td><b>${esc(c.oem)}</b></td><td>${esc(c.description)}</td><td><span class="badge ${c.confidence === 'confirmed' ? 'ok' : 'warn'}">${esc(c.confidence)}</span></td><td class="num">${c.price ? gbp(c.price) : '—'}</td>
+      ${cands.map((c, i) => `<tr><td><b>${esc(c.oem)}</b></td><td>${esc(c.description)}</td><td><span class="badge ${c.confidence === 'confirmed' ? 'ok' : 'warn'}">${esc(c.confidence)}</span> ${oemBadges(c)}</td><td class="num">${oemPrice(c) || '—'}</td>
         <td class="hint" style="max-width:380px">${esc(c.notes)}${httpUrl(c.source) ? `<br><a href="${esc(c.source)}" target="_blank" rel="noopener">source</a>` : c.source ? `<br>${esc(c.source)}` : ''}</td><td><button class="btn sm primary" data-use="${i}">Use</button></td></tr>`).join('')}</tbody></table>`);
     b.addEventListener('click', async (e) => {
       const u = e.target.closest('[data-use]'); if (!u) return;
@@ -1307,11 +1321,11 @@
       <div class="card"><div class="row">
         <label class="fld" style="width:340px"><span>Vehicle</span><select id="catVeh">${vs.map((x) => `<option value="${x.key}"${x.key === sel ? ' selected' : ''}>${esc(x.make + ' ' + x.model + ' ' + x.generation + ' (' + x.years + ')')} — ${Object.values(x.parts).flat().length} nos.</option>`).join('')}</select></label>
         <label class="fld grow"><span>Search parts or part numbers</span><input id="catQ" value="${esc(ui.catQ || '')}" placeholder="e.g. mirror, FW001, 96301"></label>
-        <button class="btn" data-act="catAddVeh">+ Vehicle</button><button class="btn" data-act="catAddNo">+ Part number</button><button class="btn" data-act="catImport">Import CSV</button></div>
+        <button class="btn" data-act="catAddVeh">+ Vehicle</button><button class="btn" data-act="catAddNo">+ Part number</button><button class="btn" data-act="catImport" title="CSV columns: code, side (LH/RH), oem, description, price (£ ex VAT). A header row is optional; quoted fields may contain commas.">Import CSV</button></div>
         ${v && v.notes ? `<p class="hint">${esc(v.notes)}</p>` : ''}
         <p class="hint"><span class="oem confirmed">■ confirmed</span> = 2+ independent sources or official listing · <span class="oem single-source">■ single-source</span> = verify before use · <span class="oem report">■ user</span> = added by you. Always confirm by VIN before ordering.</p></div>
       <div class="card" style="padding:0;overflow:auto"><table class="tbl"><thead><tr><th>Code</th><th>Part</th><th>Group</th><th class="num">Replace h</th><th class="num">Refinish h</th><th>OEM numbers (${v ? esc(v.make + ' ' + v.model) : '—'})</th></tr></thead><tbody>
-      ${rows.map((p) => { const cells = v ? ['', 'L', 'R'].map((s) => (v.parts[p.code + '|' + s] || []).map((c) => `<div class="oem ${c.user ? 'report' : esc(c.confidence)}" title="${esc(c.description + ' · ' + c.notes)}">${s ? C.sideWord(s) + ': ' : ''}<b>${esc(c.oem)}</b>${c.price ? ' · ' + gbp(c.price) : ''}${c.source ? ` <a href="${esc(c.source)}" target="_blank" rel="noopener">↗</a>` : ''}</div>`).join('')).join('') : ''; return `<tr><td><code>${p.code}</code></td><td>${esc(p.name)}${p.sided ? ' <span class="hint">LH/RH</span>' : ''}</td><td class="hint">${esc(p.group)}</td><td class="num">${p.replaceHrs}</td><td class="num">${p.refinishHrs || '—'}</td><td>${cells || '<span class="hint">—</span>'}</td></tr>`; }).join('')}
+      ${rows.map((p) => { const cells = v ? ['', 'L', 'R'].map((s) => (v.parts[p.code + '|' + s] || []).map((c) => `<div class="oem ${c.user ? 'report' : esc(c.confidence)}" title="${esc(c.description + ' · ' + c.notes)}">${s ? C.sideWord(s) + ': ' : ''}<b>${esc(c.oem)}</b>${oemPrice(c) ? ' · ' + oemPrice(c) : ''}${httpUrl(c.source) ? ` <a href="${esc(c.source)}" target="_blank" rel="noopener">↗</a>` : ''}</div>`).join('')).join('') : ''; return `<tr><td><code>${p.code}</code></td><td>${esc(p.name)}${p.sided ? ' <span class="hint">LH/RH</span>' : ''}</td><td class="hint">${esc(p.group)}</td><td class="num">${p.replaceHrs}</td><td class="num">${p.refinishHrs || '—'}</td><td>${cells || '<span class="hint">—</span>'}</td></tr>`; }).join('')}
       </tbody></table></div></div>`;
   }
   async function saveCustomOem(list) { await C.Store.set('customOem', list); C.setCustomOem(list); }
@@ -1322,7 +1336,7 @@
       <label class="fld"><span>Catalogue part</span><select id="nCode">${Object.values(C.CAT).map((p) => `<option value="${p.code}">${p.code} — ${esc(p.name)}</option>`).join('')}</select></label>
       <label class="fld"><span>Side</span><select id="nSide"><option value="">— (not sided)</option><option value="L">LH</option><option value="R">RH</option></select></label>
       <label class="fld"><span>OEM part number</span><input id="nOem"></label>
-      <label class="fld"><span>Description</span><input id="nDesc"></label><label class="fld"><span>Price £ (optional)</span><input id="nPrice" type="number" step="0.01"></label>
+      <label class="fld"><span>Description</span><input id="nDesc"></label><label class="fld"><span>Price £ ex VAT (optional)</span><input id="nPrice" type="number" step="0.01"></label>
       <label class="fld full"><span>Notes / source</span><input id="nNotes" placeholder="e.g. Confirmed by dealer for VIN …"></label></div>
       <div class="row" style="margin-top:12px"><span class="grow"></span><button class="btn primary" data-ok>Add</button></div>`);
     b.addEventListener('click', async (e) => {
@@ -1333,7 +1347,7 @@
       let cv = list.find((x) => x.key === key);
       if (!cv) { cv = { key, make: base.make, model: base.model, generation: base.generation, years: base.years, parts: {} }; list.push(cv); }
       const k = $('#nCode', b).value + '|' + $('#nSide', b).value;
-      (cv.parts[k] = cv.parts[k] || []).unshift({ oem, description: $('#nDesc', b).value || C.CAT[$('#nCode', b).value].name, notes: $('#nNotes', b).value, price: num($('#nPrice', b).value) || null, source: '', confidence: 'confirmed', user: true });
+      (cv.parts[k] = cv.parts[k] || []).unshift({ oem, description: $('#nDesc', b).value || C.CAT[$('#nCode', b).value].name, notes: $('#nNotes', b).value, price: num($('#nPrice', b).value) || null, priceIncVat: null, source: '', confidence: 'confirmed', user: true, autoFill: true, role: 'primary', market: 'UK' });
       await saveCustomOem(list); closeModal(); ui.catVeh = key; renderCatalogue(); toast('Part number added.');
     });
   }
@@ -1387,11 +1401,11 @@
       const side = /^(L|LH|LEFT|NS|N\/S|NEARSIDE)$/.test(sd) ? 'L' : /^(R|RH|RIGHT|OS|O\/S|OFFSIDE)$/.test(sd) ? 'R' : '';
       const price = num(String(c[4] || '').replace(/[£,\s]/g, ''));
       const k = code + '|' + side;
-      (cv.parts[k] = cv.parts[k] || []).unshift({ oem, description: c[3] || C.CAT[code].name, notes: 'Imported from CSV', price: price || null, source: '', confidence: 'confirmed', user: true });
+      (cv.parts[k] = cv.parts[k] || []).unshift({ oem, description: c[3] || C.CAT[code].name, notes: 'Imported from CSV', price: price || null, priceIncVat: null, source: '', confidence: 'confirmed', user: true, autoFill: true, role: 'primary', market: 'UK' });
       n++;
     }
     await saveCustomOem(list); renderCatalogue();
-    toast(`Imported ${n} part number(s)${bad ? `, skipped ${bad} row(s) with an unknown code or no part number` : ''}.${headerNote} CSV columns: code,side,oem,description,price`, !n && (bad > 0 || !rows.length));
+    toast(`Imported ${n} part number(s)${bad ? `, skipped ${bad} row(s) with an unknown code or no part number` : ''}.${headerNote} CSV columns: code,side,oem,description,price (£ ex VAT)`, !n && (bad > 0 || !rows.length));
   }
 
   // ---------- events ----------
