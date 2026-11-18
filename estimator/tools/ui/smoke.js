@@ -39,7 +39,10 @@ const file = (name, buffer, mimeType) => ({ name, mimeType: mimeType || 'image/j
 
 const results = [];
 let t, page;
+// SMOKE_ONLY=<regex>: run only the steps whose name matches (while working on them); unset, every step runs
+const ONLY = process.env.SMOKE_ONLY ? new RegExp(process.env.SMOKE_ONLY) : null;
 async function step(name, fn) {
+  if (ONLY && !ONLY.test(name)) return;
   const before = t.errors.length;
   try {
     await page.evaluate(() => { const m = document.querySelector('#modal'); if (m && !m.classList.contains('hidden')) m.querySelector('[data-close]').click(); });
@@ -951,7 +954,7 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert(/claim type changed since this valuation/.test(await text('.aiPanel')), 'stale claim type flagged');
     await t.mock({ domainsRestricted: false });
     await page.click('[data-act="aiValuation"]'); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 5000 }); await flush();
-    assert(/not limited to UK listing sites/.test(await text('.valFooter')) && /claim type: Court \(CPR 35\)/.test(await text('.valFooter')), 'footer: ' + await text('.valFooter'));
+    assert(/not limited to UK listing sites/.test(await text('.valFooter')) && /claim type: Court proceedings/.test(await text('.valFooter')), 'footer: ' + await text('.valFooter'));
     await t.mock({ domainsRestricted: true });
   });
 
@@ -1382,7 +1385,7 @@ const lines = async (id) => (await t.getJob(id)).lines;
 
   await step('unedited AI text is marked on its field; PDF export counts unreviewed AI lines, AI labels and AI text', async () => {
     await openTab(A, 'circumstances');
-    const hint = await page.$eval('[data-bind="circumstances.impactType"]', (n) => (n.parentElement.querySelector('.aiTextHint') || {}).textContent || '');
+    const hint = await page.$eval('[data-bind="circumstances.impactType"]', (n) => ((n.closest('.aiField') || n.parentElement).querySelector('.aiTextHint') || {}).textContent || '');
     assert(/AI text, not edited yet\. The report prints it as assessed from the photographs \(AI-assisted\)/.test(hint), 'hint: ' + hint);
     await openTab(A, 'report'); await settle(300);
     const n0 = (await t.calls('exportPdf')).length;
@@ -1395,7 +1398,7 @@ const lines = async (id) => (await t.getJob(id)).lines;
     // once edited it is the assessor's text: the mark goes as they type
     await openTab(A, 'circumstances');
     await page.fill('[data-bind="circumstances.impactType"]', 'Sideswipe / lateral side contact (confirmed by the driver)'); await flush();
-    assert(!(await page.$eval('[data-bind="circumstances.impactType"]', (n) => !!n.parentElement.querySelector('.aiTextHint'))), 'mark removed');
+    assert(!(await page.$eval('[data-bind="circumstances.impactType"]', (n) => !!(n.closest('.aiField') || n.parentElement).querySelector('.aiTextHint, [data-act="aiConfirm"]'))), 'mark and ✓ Confirm removed');
   });
 
   await step('Photos tab: thumbnails on the cards; moving or removing a photo changes only its card (no rebuild)', async () => {
@@ -1782,6 +1785,7 @@ const lines = async (id) => (await t.getJob(id)).lines;
       const probe = (where, host, cls, tag) => { const s = document.createElement(tag || 'span'); s.className = cls; s.textContent = 'x'; host.appendChild(s); out[`${cls || tag} on ${where}`] = ratio(s); s.remove(); };
       const card = document.querySelector('#tabBody .card');
       for (const c of ['badge', 'badge ok', 'badge warn', 'badge err', 'badge ai', 'badge user', 'oem confirmed', 'oem single-source', 'oem user', 'oem report', 'hint']) probe('a card', card, c);
+      probe('a card', card, 'btn sm aiConfirm', 'button'); probe('a card', card, 'hint aiTextHint'); // ✓ Confirm and its AI note
       // a selected row of the parts list (--blue-2): part numbers, codes and hints in it
       const row = document.createElement('div'); row.className = 'r sel'; document.querySelector('#pickResults').appendChild(row);
       for (const c of ['oem confirmed', 'oem single-source', 'oem user', 'hint']) probe('a selected part row', row, c);
@@ -1896,6 +1900,261 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert.strictEqual((await t.getJob(K)).photos[k].labels[0].x, 0.4, 'the unsaved move was discarded');
   });
 
+  // ---------- round 4: "✓ Confirm" for AI text, CPR 35 supervision, year-only first registration, DVLA test data, frames ----------
+  let R4; // a sample job seeded with unreviewed AI text in every field the checks know, a choice field, a custom field and a photo
+  const AI_AT = { 'report.summary': 'opinion', opinion: 'opinion', 'inspection.condition': 'inspection', 'circumstances.providedBy': 'circumstances', 'circumstances.narrative': 'circumstances',
+    'circumstances.impactType': 'circumstances', 'circumstances.primaryArea': 'circumstances', 'circumstances.secondaryArea': 'circumstances', 'circumstances.direction': 'circumstances', 'circumstances.symptoms': 'circumstances',
+    'assessment.structural': 'assessment', 'assessment.mechanical': 'assessment', 'assessment.wheels': 'assessment', 'assessment.geometry': 'assessment', 'assessment.diagnostics': 'assessment', 'assessment.roadworthiness': 'assessment',
+    'valuation.comments': 'valuation', 'outcome.decision': 'valuation', 'outcome.category': 'valuation', estimateNotes: 'estimate', 'customer.notes': 'customer' };
+  const aiVal = (p) => (p === 'outcome.decision' ? 'Repair' : p === 'outcome.category' ? 'N' : `AI draft of ${p}`);
+  const listedAi = async (id) => page.evaluate((jj) => window.Core.unreviewedAiText(jj), await t.getJob(id));
+  const activeData = () => page.evaluate(() => Object.assign({ id: document.activeElement.id, tag: document.activeElement.tagName }, document.activeElement.dataset));
+  // AI text stored straight into a job that is not open (leaving it for the Jobs list drops it from memory), read again when reopened
+  async function seedAi(id, fn) { await t.go('#/jobs'); await flush(); const j = await t.getJob(id); fn(j); await t.putJob(j); }
+  await step('✓ Confirm beside every field the checks list as unreviewed AI text (text, choices, custom fields, a photo\'s title and caption): named, by keyboard; it saves, re-renders, clears the check and leaves focus on the field', async () => {
+    await t.go('#/jobs'); await settle(200);
+    await page.click('[data-act="loadSample"]'); await page.waitForFunction(() => /#\/job\/[^/]+\/report$/.test(location.hash)); await settle(200);
+    R4 = await t.jobId();
+    await openTab(R4, 'photos'); await page.setInputFiles('#photoInput', [file('a.jpg', jpg1)]); await page.waitForSelector('.pcard'); await flush();
+    let pid;
+    await seedAi(R4, (j) => {
+      j.aiText = {};
+      for (const p of Object.keys(AI_AT)) { const [a, b] = p.split('.'); if (b) j[a][b] = aiVal(p); else j[a] = aiVal(p); j.aiText[p] = aiVal(p); }
+      const ph = j.photos[0]; pid = ph.id;
+      Object.assign(ph, { title: 'Seeded AI title', caption: 'Seeded AI caption', aiTitle: 'Seeded AI title', aiCaption: 'Seeded AI caption' });
+      j.aiText[`photos.${pid}.title`] = 'Seeded AI title'; j.aiText[`photos.${pid}.caption`] = 'Seeded AI caption';
+    });
+    const listed = await listedAi(R4);
+    assert.strictEqual(listed.length, Object.keys(AI_AT).length + 2, 'listed: ' + JSON.stringify(listed.map((x) => x.path)));
+    // each one on the tab its check points to: a real button, outside the field's label, named after the field and described by the AI note
+    for (const x of listed) {
+      assert.strictEqual(x.tab, AI_AT[x.path] || (x.path.startsWith('photos.') && 'photos'), x.path + ': the tab its check points to');
+      await openTab(R4, x.tab);
+      const got = await page.evaluate((p) => {
+        const b = document.querySelector(`#tabBody [data-act="aiConfirm"][data-path="${CSS.escape(p)}"]`);
+        if (!b) return null;
+        const pm = /^photos\.(.+)\.(title|caption)$/.exec(p);
+        const f = pm ? document.querySelector(`[data-pf="${pm[2]}"][data-pid="${CSS.escape(pm[1])}"]`) : document.querySelector(`[data-bind="${CSS.escape(p)}"]`);
+        const note = document.getElementById(b.getAttribute('aria-describedby') || '');
+        return { name: b.getAttribute('aria-label'), field: pm ? f.getAttribute('aria-label') : f.closest('label').querySelector('span').textContent, tag: b.tagName, type: b.type, inLabel: !!b.closest('label'),
+          note: note ? note.textContent : '', sameNote: f.getAttribute('aria-describedby') === b.getAttribute('aria-describedby') };
+      }, x.path);
+      assert(got, `no ✓ Confirm beside ${x.path} on the ${x.tab} tab`);
+      assert.strictEqual(got.name, 'Confirm AI text: ' + got.field, x.path + ' name');
+      assert(got.tag === 'BUTTON' && got.type === 'button' && !got.inLabel && got.sameNote && /^✦ AI (text|choice|title|caption), not (edited|confirmed) yet/.test(got.note), x.path + ': ' + JSON.stringify(got));
+    }
+    // the field's own name stays its label (the note is its description): no field is named after the button
+    await openTab(R4, 'valuation');
+    const cdp = await t.context.newCDPSession(page);
+    await cdp.send('Accessibility.enable');
+    const ax = (await cdp.send('Accessibility.getFullAXTree')).nodes.filter((n) => !n.ignored && n.role && ['combobox', 'textbox', 'button'].includes(n.role.value))
+      .map((n) => [n.role.value, String((n.name && n.name.value) || ''), String((n.description && n.description.value) || '')]);
+    await cdp.detach();
+    const dec = ax.find((n) => n[0] === 'combobox' && n[1] === 'Economic repair / total-loss assessment');
+    assert(dec && /AI choice, not confirmed yet/.test(dec[2]), 'decision: ' + JSON.stringify(dec));
+    assert(ax.some((n) => n[0] === 'button' && n[1] === 'Confirm AI text: Economic repair / total-loss assessment' && /AI choice/.test(n[2])), 'its button');
+    assert(!ax.some((n) => n[0] !== 'button' && /Confirm/.test(n[1])), 'a field named after its button: ' + JSON.stringify(ax.filter((n) => n[0] !== 'button' && /Confirm/.test(n[1]))));
+    // keyboard: Tab from the decision reaches its button; Enter confirms it and focus returns to the decision. Space on the category's.
+    await page.focus('[data-bind="outcome.decision"]'); await page.keyboard.press('Tab');
+    assert.deepStrictEqual([(await activeData()).act, (await activeData()).path], ['aiConfirm', 'outcome.decision'], 'Tab reaches ✓ Confirm');
+    await page.keyboard.press('Enter'); await settle(200);
+    assert.strictEqual((await activeData()).bind, 'outcome.decision', 'focus back on the decision');
+    assert(!(await exists('[data-act="aiConfirm"][data-path="outcome.decision"]')) && await exists('[data-act="aiConfirm"][data-path="valuation.comments"]'), 'only its button went');
+    assert(/^Confirmed: Economic repair \/ total-loss assessment\. It is now your own text/.test(await toastText()), await toastText());
+    await page.focus('[data-act="aiConfirm"][data-path="outcome.category"]'); await page.keyboard.press(' '); await settle(200);
+    assert.strictEqual((await activeData()).bind, 'outcome.category', 'focus on the category');
+    await flush();
+    let j = await t.getJob(R4);
+    assert(!('outcome.decision' in j.aiText) && !('outcome.category' in j.aiText) && j.outcome.decision === 'Repair' && j.outcome.category === 'N', 'confirmed and saved, values kept: ' + JSON.stringify(Object.keys(j.aiText)));
+    const qaV = await page.evaluate((jj) => window.Core.qaChecks(jj).filter((q) => q.tab === 'valuation' && /AI-drafted text/.test(q.msg)).map((q) => q.msg), j);
+    assert(qaV.length === 1 && !/decision|Salvage category/.test(qaV[0]) && /Valuation comments/.test(qaV[0]), 'valuation check now: ' + qaV);
+    assert.strictEqual(await page.$eval('.tabs a[href$="/report"] .cnt', (n) => n.textContent), String(await page.evaluate((jj) => window.Core.qaChecks(jj).filter((q) => q.level !== 'info').length, j)), 're-rendered: the check count is current');
+    // a photo: ✓ Confirm beside the title; typing in the caption removes its mark at once (editing still clears it)
+    await openTab(R4, 'photos');
+    await page.click(`[data-act="aiConfirm"][data-path="photos.${pid}.title"]`); await settle(200);
+    assert.deepStrictEqual([(await activeData()).pf, (await activeData()).pid], ['title', pid], 'focus on the title');
+    await page.fill(`[data-pf="caption"][data-pid="${pid}"]`, 'Assessor caption'); await settle(50);
+    assert(!(await exists(`[data-act="aiConfirm"][data-path="photos.${pid}.caption"]`)) && !(await page.$eval(`[data-pf="caption"][data-pid="${pid}"]`, (n) => n.hasAttribute('aria-describedby'))), 'caption mark removed while typing');
+    await openTab(R4, 'assessment');
+    await page.fill('[data-bind="assessment.wheels"]', 'Wheels checked by me.'); await settle(50);
+    assert(!(await exists('[data-act="aiConfirm"][data-path="assessment.wheels"]')) && await exists('[data-act="aiConfirm"][data-path="assessment.mechanical"]'), 'an edited field loses its button, the others keep theirs');
+    await flush();
+    j = await t.getJob(R4);
+    const ph = j.photos[0];
+    assert(!(`photos.${pid}.title` in j.aiText) && !('aiTitle' in ph) && ph.title === 'Seeded AI title' && ph.caption === 'Assessor caption', 'photo: ' + JSON.stringify([Object.keys(j.aiText).filter((k) => k.startsWith('photos.')), ph.aiTitle, ph.title, ph.caption]));
+    assert(!(await listedAi(R4)).some((x) => /^photos\.|^outcome\.|assessment\.wheels/.test(x.path)), 'no longer listed');
+    // the AI is then told the confirmed title is the assessor's (titleByAi false), as for an edited caption
+    await openTab(R4, 'opinion');
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-discard]');
+    await page.click('#modal [data-discard]'); await settle(300);
+    const prov = (await t.calls('ai.draftNarrative')).pop().arg.prov;
+    assert.deepStrictEqual(prov.map((x) => [x.titleByAi, x.captionByAi]), [[false, false]], 'provenance after ✓ Confirm: ' + JSON.stringify(prov));
+    assert(!('aiDraftPending' in (await t.getJob(R4))), 'draft discarded');
+  });
+
+  await step('✓ Confirm for AI text whose field the checked tab cannot show (a custom or Check & report entry): listed with its text on Check & report, keyboard moves on to the next; finalised, every ✓ Confirm is disabled', async () => {
+    await seedAi(R4, (j) => { j.customer.foo = 'AI note with <b>no</b> field'; j.aiText['customer.foo'] = j.customer.foo; j.report.headline = 'TOTAL LOSS'; j.aiText['report.headline'] = 'TOTAL LOSS'; });
+    await openTab(R4, 'report'); await settle(200);
+    const rows = await page.$$eval('.aiOrphans li', (ns) => ns.map((n) => [n.querySelector('.orphanText').textContent, n.querySelector('.hint').textContent, n.querySelector('[data-act="aiConfirm"]').getAttribute('aria-label')]));
+    assert.deepStrictEqual(rows, [['AI note with <b>no</b> field', 'no tab shows this field', 'Confirm AI text: Customer: foo'], ['TOTAL LOSS', 'field on the Valuation & outcome tab', 'Confirm AI text: Report: headline']], JSON.stringify(rows));
+    assert(!(await exists('.aiOrphans b b')), 'its text is escaped');
+    assert(await exists('[data-act="aiConfirm"][data-path="assessment.mechanical"]') === false, 'fields shown on their own tab are not repeated here');
+    // the Valuation tab shows the headline's field with its own button too
+    await openTab(R4, 'valuation');
+    assert(await exists('[data-act="aiConfirm"][data-path="report.headline"]'), 'beside the headline field');
+    await openTab(R4, 'report'); await settle(200);
+    await page.focus('.aiOrphans [data-act="aiConfirm"][data-path="customer.foo"]'); await page.keyboard.press('Enter'); await settle(250);
+    assert.strictEqual((await activeData()).path, 'report.headline', 'focus on the next entry');
+    await page.keyboard.press('Enter'); await settle(250);
+    assert.strictEqual((await activeData()).id, 'qaHead', 'then on the checks');
+    assert(!(await exists('.aiOrphans')), 'the list is gone');
+    await flush();
+    let j = await t.getJob(R4);
+    assert(!('customer.foo' in j.aiText) && !('report.headline' in j.aiText) && j.customer.foo === 'AI note with <b>no</b> field', 'confirmed');
+    // finalised: still shown (the text is still unreviewed in the issued report) but disabled, like every other action
+    await openTab(R4, 'signoff'); await page.click('[data-act="finaliseReport"]'); await flush();
+    for (const tb of ['assessment', 'valuation', 'opinion']) {
+      await openTab(R4, tb);
+      const b = await page.$$eval('#tabBody [data-act="aiConfirm"]', (ns) => ns.map((n) => [n.disabled, n.getAttribute('aria-disabled')]));
+      assert(b.length && b.every(([d, a]) => d && a === 'true'), tb + ' disabled: ' + JSON.stringify(b));
+    }
+    j = await t.getJob(R4);
+    assert(j.issued && 'assessment.structural' in j.aiText, 'nothing confirmed while finalised');
+    await openTab(R4, 'assessment');
+    await page.click('.lockBanner [data-act="reopenReport"]'); await flush();
+    assert(await exists('#tabBody [data-act="aiConfirm"]:not([disabled])'), 'enabled again once re-opened');
+  });
+
+  await step('CPR 35 supervision (PD 35 para 3.2(5)): asked on Sign-off only when someone other than the signing expert examined the vehicle (case and accents ignored, as core.js compares); Yes / No / not recorded saved; the CPR 35 error clears', async () => {
+    await openTab(R4, 'signoff');
+    const me = await page.$eval('[data-bind="assessor.name"]', (n) => n.value);
+    assert(me && await page.$eval('#supervisionFld', (n) => n.hidden), 'hidden while nobody else is recorded: ' + me);
+    await openTab(R4, 'inspection');
+    await page.fill('[data-bind="inspection.by"]', 'José Field'); await flush();
+    await openTab(R4, 'signoff');
+    assert(await page.$eval('#supervisionFld', (n) => !n.hidden), 'shown: examined by José Field, signed by ' + me);
+    assert.strictEqual(await text('#supervisionFld label > span'), 'The vehicle was examined by José Field: was the examination (and any tests) carried out under your supervision?');
+    assert.deepStrictEqual(await page.$$eval('[data-bind="report.examinerSupervised"] option', (ns) => ns.map((o) => [o.value, o.textContent])), [['', 'Not recorded'], ['yes', 'Yes, under my supervision'], ['no', 'No, not under my supervision']]);
+    const sup = async () => page.evaluate((jj) => window.Core.qaChecks(jj).filter((q) => /under your supervision/.test(q.msg)).map((q) => q.level + ':' + q.tab), await t.getJob(R4));
+    assert.deepStrictEqual(await sup(), [], 'no check outside CPR 35 mode');
+    await page.check('[data-bind-check="report.cpr35"]'); await flush();
+    assert.deepStrictEqual(await sup(), ['error:signoff'], 'an error in CPR 35 mode until answered');
+    assert(/Required in a CPR 35 report/.test(await text('#supervisionFld')), 'its hint says so');
+    // by keyboard: the answer is a named select reached with Tab
+    await page.focus('[data-bind="assessor.dateSigned"]');
+    assert(await tabUntil(() => document.activeElement.dataset.bind === 'report.examinerSupervised', 6), 'Tab reaches it');
+    await page.selectOption('[data-bind="report.examinerSupervised"]', 'no'); await flush();
+    assert.strictEqual((await t.getJob(R4)).report.examinerSupervised, 'no');
+    assert.deepStrictEqual(await sup(), [], 'answered');
+    await page.selectOption('[data-bind="report.examinerSupervised"]', 'yes'); await flush();
+    assert.strictEqual((await t.getJob(R4)).report.examinerSupervised, 'yes');
+    // the expert's own name typed in another case and without the accent hides it as it is typed; their name back shows it
+    await page.fill('[data-bind="assessor.name"]', 'jose field'); await settle(50);
+    assert(await page.$eval('#supervisionFld', (n) => n.hidden), 'hidden for the same person');
+    await flush();
+    assert.deepStrictEqual(await sup(), [], 'core.js agrees: the same person');
+    await page.fill('[data-bind="assessor.name"]', me); await settle(50);
+    assert(await page.$eval('#supervisionFld', (n) => !n.hidden), 'shown again');
+    await page.selectOption('[data-bind="report.examinerSupervised"]', ''); await flush();
+    assert.deepStrictEqual(await sup(), ['error:signoff'], 'not recorded');
+    await page.uncheck('[data-bind-check="report.cpr35"]'); await flush();
+  });
+
+  await step('DVLA gives only the year: kept as "YYYY" (precision year) and explained by the date field; an MOT date of that year replaces it, another year does not; test-service data and imports flagged, with months, never an invented day', async () => {
+    await t.mock({ dvla: true, mot: false, dvlaOver: { firstRegistration: '', firstRegistrationYear: 2014, importedOrReRegistered: null, markedForExport: null, markedAsScrapped: null } });
+    const id = await newJob();
+    await openTab(id, 'vehicle');
+    const lookup = async (act) => { await page.click(`[data-act="${act}"]`); await page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 5000 }); await flush(); return (await t.getJob(id)).vehicle; };
+    await page.fill('[data-bind="vehicle.reg"]', 'AB14 CDE'); await settle(50);
+    let v = await lookup('lookupVehicle');
+    assert.deepStrictEqual([v.firstReg, v.firstRegPrecision, v.dvla.firstRegistrationYear], ['2014', 'year', 2014]);
+    assert.deepStrictEqual(await page.$eval('[data-bind="vehicle.firstReg"]', (n) => [n.value, n.closest('label').querySelector('.hint').textContent]),
+      ['', 'DVLA gives the year only (2014), so the report prints the year. Enter the full date if you know it, for example from the V5C.'], 'the date field');
+    const line = async () => (await page.$eval('#tabBody .hint b', (n) => n.parentElement.textContent)).replace(/\s+/g, ' ');
+    assert(!/marked for export|marked as scrapped|re-registration|test service/.test(await line()), 'flags DVLA did not give are not shown: ' + await line());
+    // the MOT record: another year is a different date (DVLA's year stays); the first-used date of the same year replaces it
+    await t.mock({ mot: true, motOver: { registrationDate: '2015-03-02', firstUsedDate: '2015-03-02' } });
+    await page.fill('[data-bind="vehicle.vin"]', 'SJNFBAF15U7000000'); await settle(50);
+    v = await lookup('motByVin');
+    assert.deepStrictEqual([v.firstReg, v.firstRegPrecision], ['2014', 'year'], 'another year');
+    await t.mock({ motOver: { registrationDate: '', firstUsedDate: '2014-09-03' } });
+    v = await lookup('motByVin');
+    assert.deepStrictEqual([v.firstReg, v.firstRegPrecision], ['2014-09-03', 'day'], 'the first-used date of 2014');
+    await t.mock({ mot: false });
+    v = await lookup('lookupVehicle');
+    assert.deepStrictEqual([v.firstReg, v.firstRegPrecision], ['2014-09-03', 'day'], 'a later year-only reply keeps the full date');
+    // the test service: flagged on the tab, in the message and in the data log; an import's dates as months
+    await t.mock({ dvlaOver: { firstRegistration: '2014-08-01', firstRegistrationYear: 2014, firstRegistrationWithDvla: '2016-02-01', importedOrReRegistered: true, environment: 'test' } });
+    v = await lookup('lookupVehicle');
+    assert(/TEST service \(made-up test vehicles, not the register\)/.test(await toastText()), await toastText());
+    assert(/^DVLA \(\d{2}\/\d{2}\/\d{4}\): DVLA test service data, not the register · tax/.test((await line()).trim()), await line());
+    assert.strictEqual(await text('.dvlaImport'), 'first registered August 2014 but with DVLA February 2016 (import / re-registration)');
+    assert.strictEqual((await t.getJob(id)).aiLog.pop().action, 'DVLA Vehicle Enquiry Service lookup (test service)');
+    // Settings → Test DVLA: the month and year, and the service
+    await t.go('#/settings'); await settle(300);
+    await page.fill('#testReg', 'AB14 CDE'); await page.click('[data-act="testDvla"]'); await settle(200);
+    assert.strictEqual(await toastText(), 'DVLA OK (test service): NISSAN RED PETROL, first registered August 2014');
+    await t.mock({ dvlaOver: { firstRegistration: '', firstRegistrationYear: 1968, environment: 'live' } });
+    await page.click('[data-act="testDvla"]'); await settle(200);
+    assert.strictEqual(await toastText(), 'DVLA OK: NISSAN RED PETROL, first registered 1968');
+    await t.mock({ dvlaOver: {}, motOver: {}, mot: true });
+  });
+
+  await step('migrate: a stored raw DVLA record with the year but no month becomes the year (not 1 January), a numeric year becomes text, a "Yes" / true supervision answer becomes "yes"; the report prints the year; a second open saves nothing', async () => {
+    const base = { createdAt: '2025-01-01T00:00:00.000Z', updatedAt: '2025-01-02T00:00:00.000Z', lines: [], photos: [] };
+    await t.putJob(Object.assign({ id: 'legacy-yr', vehicle: { reg: 'OLD 68', make: 'Morris', model: 'Minor', firstReg: '1968-01-01', dvla: { make: 'MORRIS', yearOfFirstRegistration: 1968, motExpiryDate: '2027-02-01', taxStatus: 'SORN' } }, inspection: { by: 'A N Other' }, report: { examinerSupervised: 'Yes' } }, base));
+    await t.putJob(Object.assign({ id: 'legacy-num', vehicle: { reg: 'OLD 75', make: 'Ford', model: 'Escort', firstReg: 1975 }, report: { examinerSupervised: true } }, base));
+    await openTab('legacy-yr', 'vehicle'); await flush();
+    let j = await t.getJob('legacy-yr');
+    assert.deepStrictEqual([j.vehicle.firstReg, j.vehicle.firstRegPrecision, j.vehicle.dvla.firstRegistration, j.vehicle.dvla.firstRegistrationYear, 'yearOfFirstRegistration' in j.vehicle.dvla, j.report.examinerSupervised],
+      ['1968', 'year', '', 1968, false, 'yes'], JSON.stringify([j.vehicle, j.report.examinerSupervised]));
+    assert(/DVLA gives the year only \(1968\)/.test(await page.$eval('[data-bind="vehicle.firstReg"]', (n) => n.closest('label').textContent)), 'year hint');
+    await openTab('legacy-yr', 'report'); await settle(400);
+    const rep = await page.$eval('#preview', (f) => f.contentDocument.body.textContent);
+    assert(/First registration date\s*1968\b/.test(rep) && !/January 1968|01\/01\/1968/.test(rep), 'report: ' + (rep.match(/First registration date.{0,30}/s) || [''])[0]);
+    const u = j.updatedAt;
+    await t.go('#/jobs'); await settle(300); await openTab('legacy-yr', 'vehicle'); await settle(300);
+    assert.strictEqual((await t.getJob('legacy-yr')).updatedAt, u, 'the second open saves nothing (migrate is idempotent)');
+    await openTab('legacy-num', 'vehicle'); await flush();
+    j = await t.getJob('legacy-num');
+    assert.deepStrictEqual([j.vehicle.firstReg, j.vehicle.firstRegPrecision, j.report.examinerSupervised], ['1975', 'year', 'yes']);
+    assert(await page.$('#tabBody .variantPick, #tabBody [data-vp="make"]'), 'the Vehicle tab renders (the variant picker reads the year)');
+  });
+
+  await step('claim type "Court proceedings": the Valuation tab says the report is a CPR Part 35 expert report only once Sign-off\'s box is ticked, and links there', async () => {
+    await openTab(R4, 'valuation');
+    assert.strictEqual(await page.$eval('[data-bind="valuation.claimType"] option[value="court"]', (o) => o.textContent), 'Court proceedings');
+    await page.selectOption('[data-bind="valuation.claimType"]', 'court'); await flush();
+    assert(/^Not a CPR Part 35 expert report yet\. If it is to be relied on as expert evidence, also tick "Court-compliant expert report \(CPR Part 35 \/ PD 35\)" on Sign-off\.$/.test(await text('.courtCpr')), await text('.courtCpr'));
+    await page.click('.courtCpr a'); await page.waitForFunction(() => /\/signoff$/.test(location.hash)); await settle(200);
+    await page.check('[data-bind-check="report.cpr35"]'); await flush();
+    await openTab(R4, 'valuation');
+    assert.strictEqual(await text('.courtCpr'), 'CPR Part 35 expert report: on (Sign-off).');
+    await openTab(R4, 'signoff'); await page.uncheck('[data-bind-check="report.cpr35"]'); await flush();
+    await openTab(R4, 'valuation'); await page.selectOption('[data-bind="valuation.claimType"]', ''); await flush();
+    assert(!(await exists('.courtCpr')), 'no note for other claim types');
+  });
+
+  await step('frames: the CSP allows no frame source (frame-src and child-src \'none\'); the srcdoc report preview still renders; data: and blob: frames are blocked', async () => {
+    const csp = await page.$eval('meta[http-equiv="Content-Security-Policy"]', (m) => m.content);
+    assert(/frame-src 'none'/.test(csp) && /child-src 'none'/.test(csp), csp);
+    await openTab(R4, 'report'); await settle(400);
+    const prev = await page.$eval('#preview', (f) => (f.contentDocument && f.contentDocument.body ? f.contentDocument.body.textContent : ''));
+    assert(prev.length > 2000 && /First registration date/.test(prev), 'preview rendered: ' + prev.length);
+    const n0 = t.errors.length;
+    const got = await page.evaluate(() => Promise.all(['data:text/html,<p>x</p>', URL.createObjectURL(new Blob(['<p id="x">x</p>'], { type: 'text/html' }))].map((src) => new Promise((res) => {
+      const f = document.createElement('iframe');
+      let done = false;
+      const end = () => { if (done) return; done = true; let r = 'blocked'; try { if (f.contentDocument && f.contentDocument.getElementById('x')) r = 'loaded'; } catch (e) { /* cross-origin: an error page */ } f.remove(); res(r); };
+      f.onload = end; f.src = src; document.body.appendChild(f); setTimeout(end, 2000);
+    }))));
+    await settle(100);
+    // the browser reports each blocked frame as a console error: expected here, so they are not counted as page errors
+    const extra = t.errors.splice(n0);
+    assert.strictEqual(got[1], 'blocked', 'blob: frame');
+    assert(extra.length === 2 && extra.every((x) => /violates the following Content Security Policy directive: "frame-src 'none'"/.test(x)), 'a CSP report for each frame, nothing else: ' + extra.join(' | '));
+  });
+
   await t.close();
   const errors = t.errors.slice();
 
@@ -1926,6 +2185,20 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert.strictEqual(await toastText(), 'Backup restored: 1 restored, 0 unreadable.');
     const back = await t.getJob(id);
     assert(back && back.photos.length === 2 && back.photos.every((p, k) => p.dataUrl === before.photos[k].dataUrl), 'restored with its photos');
+  });
+
+  await step('browser mode: "Print / save as PDF" prints the report from a srcdoc frame, which the CSP (frame-src \'none\') still allows', async () => {
+    await t.go('#/jobs'); await settle(200);
+    await page.click('[data-act="loadSample"]'); await page.waitForFunction(() => /#\/job\/[^/]+\/report$/.test(location.hash)); await settle(300);
+    // the frame exportPdf adds for printing: its document, read when it has loaded (the app prints it, then removes it)
+    await page.evaluate(() => {
+      window.__printed = null;
+      new MutationObserver((ms) => { for (const m of ms) for (const n of m.addedNodes) if (n.tagName === 'IFRAME' && n.id !== 'preview') n.addEventListener('load', () => { window.__printed = n.contentDocument && n.contentDocument.body ? n.contentDocument.body.textContent.length : -1; }); }).observe(document.body, { childList: true });
+    });
+    await page.click('[data-act="exportPdf"]');
+    await page.waitForFunction(() => window.__printed != null, null, { timeout: 5000 });
+    assert((await page.evaluate(() => window.__printed)) > 2000, 'print frame document: ' + await page.evaluate(() => window.__printed));
+    await page.waitForFunction(() => !document.querySelector('body > iframe'), null, { timeout: 5000 }); // removed after printing
   });
   await t.close();
   errors.push(...t.errors);

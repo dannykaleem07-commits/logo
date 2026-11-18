@@ -159,6 +159,17 @@ table.tbl input, table.tbl select { padding: 5px 6px; }
 .badge.user { background: var(--blue-2); color: var(--blue); }
 .oem.user { color: var(--blue); }
 .aiTextHint { color: var(--ai); }
+/* a field still holding unreviewed AI text: its note and "✓ Confirm" under the field (outside its label) */
+.aiReview { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 4px; }
+.aiReview .aiTextHint { flex: 1 1 220px; }
+.btn.aiConfirm { color: var(--ai); border-color: #cdbdf5; } /* 5.3:1 on white */
+.btn.aiConfirm:hover:not(:disabled) { background: #faf7ff; border-color: var(--ai); }
+.btn.aiConfirm:focus-visible { outline: 2px solid var(--ai); outline-offset: 1px; }
+.pcard .aiReview { margin-top: -2px; } .pcard .aiReview .aiTextHint { flex: 1 1 auto; }
+.orphanList { list-style: none; padding: 0; margin: 0; }
+.orphanList li { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--line); }
+.orphanList .orphanText { white-space: pre-wrap; font-size: 13px; margin-top: 4px; max-height: 160px; overflow: auto; }
+#qaHead:focus, #aiOrphansHead:focus { outline: none; }
 .aiFlags ul { margin: 8px 0; padding-left: 20px; } .aiFlags li { margin-bottom: 4px; }
 .draftReady { margin-left: 4px; }
 /* keyboard use: these rings show for keyboard focus only (:focus-visible), so the look with a mouse is unchanged */

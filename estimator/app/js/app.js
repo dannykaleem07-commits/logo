@@ -68,7 +68,8 @@
   }
   const errBox = (title, msg, extra) => `<div class="card errBox" role="alert" style="border-color:#f0b5ad;background:#fff6f5;margin:8px 0"><b style="color:var(--err)">${esc(title)}</b> ${esc(msg)}${extra || ''}</div>`;
   const flagBox = (title, flags) => (flags.length ? `<div class="card flagBox" style="border-color:#f0c36d;background:#fffaf0;margin-top:10px"><b>${esc(title)}</b><ul>${flags.map((f) => `<li>${esc(f)}</li>`).join('')}</ul></div>` : '');
-  const CLAIM_TYPES = [['', 'Not specified'], ['own-insurer', 'Own-insurer total loss (FOS approach)'], ['third-party', 'Third-party claim'], ['court', 'Court (CPR 35)']];
+  // "court" sets the valuation standard only: the report is a CPR Part 35 expert report only with Sign-off's CPR 35 box ticked
+  const CLAIM_TYPES = [['', 'Not specified'], ['own-insurer', 'Own-insurer total loss (FOS approach)'], ['third-party', 'Third-party claim'], ['court', 'Court proceedings']];
   const claimKey = (s) => { const k = String(s == null ? '' : s).trim().toLowerCase().replace(/[\s_]+/g, '-'); return CLAIM_TYPES.some((c) => c[0] === k) ? k : ''; };
   const claimLabel = (k) => (CLAIM_TYPES.find((c) => c[0] === claimKey(k)) || CLAIM_TYPES[0])[1];
 
@@ -716,7 +717,7 @@
         <button class="btn" data-act="motByVin" ${desktop && job.vehicle.vin && !busy('motvin') ? '' : 'disabled'} title="MOT history by VIN">${busy('motvin') ? '<span class="spinner" style="border-color:#999;border-top-color:#333"></span>' : ''}MOT history by VIN</button></div>
       <p class="hint">Enter the registration (and VIN if you have it) below, then look it up. DVLA fills make, colour, fuel, engine size and first registration; MOT History adds the model and every recorded mileage. Either works on its own. ${desktop ? '' : 'Lookups run in the desktop app.'}</p>
       ${dv ? `<div class="hint"><b>DVLA</b>${dayOf(dv.lookedUpAt) ? ' (' + esc(C.ukDate(dayOf(dv.lookedUpAt))) + ')' : ''}: ${dv.environment === 'test' ? '<span class="badge err dvlaTest" title="Settings → Data connections → DVLA service is set to Test: these are DVLA\'s made-up test vehicles, not the register">DVLA test service data, not the register</span> · ' : ''}tax <b>${esc(dv.taxStatus || '—')}</b>${dv.taxDueDate ? ' (due ' + esc(C.ukDate(dv.taxDueDate)) + ')' : ''} · MOT <b>${esc(dv.motStatus || '—')}</b>${dv.motExpiry ? ' (expires ' + esc(C.ukDate(dv.motExpiry)) + ')' : ''}${dv.euroStatus ? ' · ' + esc(dv.euroStatus) : ''}${dv.co2Emissions !== '' && dv.co2Emissions != null ? ' · CO₂ ' + esc(dv.co2Emissions) + ' g/km' : ''}${dv.wheelPlan ? ' · ' + esc(dv.wheelPlan) : ''}${dv.dateOfLastV5CIssued ? ' · last V5C ' + esc(C.ukDate(dv.dateOfLastV5CIssued)) : ''}
-        ${dv.markedForExport === true ? ' · <b style="color:var(--err)">marked for export</b>' : ''}${dv.markedAsScrapped === true ? ' · <b style="color:var(--err)">marked as scrapped</b>' : ''}${dv.importedOrReRegistered === true ? ` · <b style="color:var(--warn)" class="dvlaImport">${esc(importText(dv))} (import / re-registration)</b>` : ''}</div>` : ''}
+        ${dv.markedForExport === true ? ' · <b style="color:var(--err)">marked for export</b>' : ''}${dv.markedAsScrapped === true ? ' · <b style="color:var(--err)">marked as scrapped</b>' : ''}${dv.importedOrReRegistered === true ? ` · <b style="color:var(--warn)" class="dvlaImport">${esc(importText(dv))}</b>` : ''}</div>` : ''}
       ${ms ? `<div class="hint"><b>MOT History</b>${dayOf(ms.lookedUpAt) ? ' (' + esc(C.ukDate(dayOf(ms.lookedUpAt))) + ')' : ''}: ${esc(ms.make)} ${esc(ms.model)} · ${esc(ms.fuelType)} · ${esc(ms.primaryColour)}${ms.engineSize ? ' · ' + esc(ms.engineSize) + 'cc' : ''} · recall: <b>${esc(ms.recall || 'Unknown')}</b>${ms.motTestDueDate ? ' · first MOT due ' + esc(C.ukDate(ms.motTestDueDate)) : ''}</div>` : ''}
       ${variantPicker()}
     </div>
@@ -743,7 +744,7 @@
   const inYears = (str, y) => { const r = C.yearRange(str); return !y || !r || (y >= r[0] - 1 && y <= r[1]); };
   function vehicleYear() {
     const v = job.vehicle;
-    return parseInt((v.firstReg || '').slice(0, 4), 10) || (v.dvla && +v.dvla.yearOfManufacture) || 0;
+    return parseInt(String(v.firstReg || '').slice(0, 4), 10) || (v.dvla && +v.dvla.yearOfManufacture) || 0;
   }
   function variantChoices(mdl) {
     // Year-matched options first; everything else for the generation stays selectable (period data may be incomplete).
@@ -972,11 +973,11 @@
   }
   // DVLA's first registration: its month ('YYYY-MM-01'), else the year when DVLA gives no month (firstRegistrationYear)
   const dvlaFirstReg = (dv) => (isObj(dv) ? String(dv.firstRegistration || '').trim() || String(dv.firstRegistrationYear == null ? '' : dv.firstRegistrationYear).trim() : '');
-  // "first registered August 2014 but with DVLA February 2016"; a date DVLA did not give is left out
+  // "first registered August 2014 but with DVLA February 2016 (import / re-registration)"; a date DVLA did not give is left out
   function importText(dv) {
     const first = dvlaFirstReg(dv), withDvla = String(dv.firstRegistrationWithDvla || '').trim();
-    if (first && withDvla) return `first registered ${regMonth(first)} but with DVLA ${regMonth(withDvla)}`;
-    return first ? `first registered ${regMonth(first)}` : withDvla ? `first registered with DVLA ${regMonth(withDvla)}` : 'imported or re-registered';
+    const dates = first && withDvla ? `first registered ${regMonth(first)} but with DVLA ${regMonth(withDvla)}` : first ? `first registered ${regMonth(first)}` : withDvla ? `first registered with DVLA ${regMonth(withDvla)}` : '';
+    return dates ? `${dates} (import / re-registration)` : 'imported or re-registered';
   }
   // the first registration known to the month or the year only: what the report prints, and how to give the full date
   function firstRegHint(v) {
@@ -998,7 +999,7 @@
   function tabInspection() {
     return `<div class="card"><div class="form">
       ${F('inspection.date', 'Inspection date', { type: 'date' })}${F('inspection.time', 'Inspection time')}
-      ${F('inspection.by', 'Examined by', { hint: !job.inspection.by && job.assessor.name ? `Who carried out the examination and any tests. <button class="link" data-act="inspByAssessor">Same as the assessor (${esc(job.assessor.name)})</button>` : 'Who carried out the examination and any tests (required for a CPR 35 report).' })}${F('inspection.byQualifications', 'Qualifications of examiner')}
+      ${F('inspection.by', 'Examined by', { hint: !job.inspection.by && job.assessor.name ? `Who carried out the examination and any tests. <button class="link" data-act="inspByAssessor">Same as the assessor (${esc(job.assessor.name)})</button>` : `Who carried out the examination and any tests (required for a CPR 35 report).${examinedByOther(job) ? ' Not you: Sign-off asks whether it was under your supervision (PD 35 para 3.2(5)).' : ''}` })}${F('inspection.byQualifications', 'Qualifications of examiner')}
       ${F('inspection.location', 'Inspection location', { type: 'textarea', rows: 3, full: true })}
       ${F('inspection.type', 'Inspection type', { list: 'itypes' })}${F('inspection.photos', 'Photographs taken / source')}
       ${F('inspection.condition', 'Vehicle condition at inspection', { type: 'textarea', full: true })}
@@ -1049,7 +1050,7 @@
   function photoAiReview(p, field, name) {
     const t = isObj(job.aiText) ? job.aiText[photoTextPath(p, field)] : null, cur = p[field];
     if (typeof t !== 'string' || !t.trim() || typeof cur !== 'string' || !cur.trim() || !sameText(t, cur)) return null;
-    return aiReviewBox(photoTextPath(p, field), `✦ AI ${field}, not edited yet`, name.replace(/^Confirm AI text: /, ''), ` data-pid="${esc(p.id)}" data-field="${field}"`);
+    return aiReviewBox(photoTextPath(p, field), `✦ AI ${field}, not edited yet`, name, ` data-pid="${esc(p.id)}" data-field="${field}"`);
   }
   // ISO date-time ↔ the local "YYYY-MM-DDTHH:MM" a datetime-local input shows
   const localDT = (iso) => { const d = iso ? new Date(iso) : null; if (!d || isNaN(d)) return ''; const p2 = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}T${p2(d.getHours())}:${p2(d.getMinutes())}`; };
@@ -1734,7 +1735,7 @@
     const t = C.totals(job);
     const v = job.valuation;
     return `<div class="card"><h2 style="margin-top:0">Valuation</h2><div class="form">
-      ${F('valuation.claimType', 'Claim type (sets the valuation standard)', { type: 'select', options: CLAIM_TYPES, hint: "Own-insurer total loss: the Financial Ombudsman's approach (start from the highest trade guide). Third-party or court: the cost of a like-for-like replacement, with your reasoned opinion. The AI valuation applies the standard for the type chosen." })}<div></div>
+      ${F('valuation.claimType', 'Claim type (sets the valuation standard)', { type: 'select', options: CLAIM_TYPES, hint: "Own-insurer total loss: the Financial Ombudsman's approach (start from the highest trade guide). Third-party or court: the cost of a like-for-like replacement, with your reasoned opinion. The AI valuation applies the standard for the type chosen." + courtHint() })}<div></div>
       ${F('valuation.date', 'Valuation date / date assessed', { ph: 'e.g. September 2026' })}${F('valuation.mileage', 'Mileage used for valuation', { type: 'number', hint: job.vehicle.mileage && !v.mileage ? `<button class="link" data-act="valMileage">Use inspection mileage (${esc(job.vehicle.mileage)})</button>` : '' })}
       ${F('valuation.costNew', 'Cost at new')}${F('valuation.condition', 'Pre-accident condition', { type: 'select', options: ['EXCELLENT', 'GOOD', 'SATISFACTORY', 'FAIR', 'POOR'] })}</div>
       <h3>Valuation evidence</h3>
@@ -1758,6 +1759,12 @@
         ${F('outcome.category', 'Salvage category (ABI Code of Practice)', { type: 'select', options: [['', 'Not assessed'], ['A', 'Category A — Scrap'], ['B', 'Category B — Break'], ['S', 'Category S — Structural'], ['N', 'Category N — Non-Structural']], hint: 'A/B: break or crush only — the vehicle must not return to the road. S: structural frame or chassis damaged. N: no structural damage.' })}
         ${F('report.headline', 'Cover headline (optional override)', { ph: 'Auto: e.g. TOTAL LOSS RECOMMENDED' })}${F('report.subHeadline', 'Cover sub-headline (optional override)', { ph: 'Auto: e.g. CATEGORY N - RECOMMENDATION' })}
         ${F('valuation.comments', 'Valuation comments', { type: 'textarea', rows: 8, full: true, hint: '<button class="link" data-act="genValComments">Write from the figures</button> · use **bold** for emphasis' })}</div></div>`;
+  }
+  // a court claim: whether the report is also set up as a CPR Part 35 expert report (Sign-off), which the claim type alone does not do
+  function courtHint() {
+    if (claimKey(job.valuation.claimType) !== 'court') return '';
+    return job.report.cpr35 ? ' <span class="courtCpr"><b>CPR Part 35 expert report: on</b> (Sign-off).</span>'
+      : ` <span class="courtCpr"><b>Not a CPR Part 35 expert report yet.</b> If it is to be relied on as expert evidence, also tick "Court-compliant expert report (CPR Part 35 / PD 35)" on <a href="#/job/${esc(job.id)}/signoff">Sign-off</a>.</span>`;
   }
   function valRange(t) {
     return t.valMax ? `<span class="hint">Range ${gbp(t.valMin)} – ${gbp(t.valMax)} · average ${gbp(t.valAvg)}</span>
@@ -1932,6 +1939,16 @@
 
   // The signature the report prints today: this report's own, or the default one from Settings when ticked.
   const liveSignature = (j) => j.assessor.signature || (j.assessor.useDefaultSignature ? C.settings.assessor.signature : '') || '';
+  // Inspection → Examined by names someone other than the signing expert (compared as core.js does: case and accents ignored).
+  const examinedByOther = (j) => { const by = String(j.inspection.by == null ? '' : j.inspection.by).trim(); return !!by && C.fold(by) !== C.fold(j.assessor.name); };
+  const SUPERVISION = [['', 'Not recorded'], ['yes', 'Yes, under my supervision'], ['no', 'No, not under my supervision']];
+  // CPR 35, PD 35 para 3.2(5): whether that examination (and any tests) was under the expert's supervision. Hidden while the
+  // expert examined the vehicle themselves; typing the assessor's name shows or hides it in place.
+  function supervisionField() {
+    const by = String(job.inspection.by == null ? '' : job.inspection.by).trim();
+    const hint = `${job.report.cpr35 ? '<b>Required in a CPR 35 report</b> (PD 35 para 3.2(5)): printed' : 'Printed in a CPR 35 report (PD 35 para 3.2(5))'} in section 04 and in the statement of truth. The examiner is recorded on the Inspection tab.`;
+    return `<div class="full supervisionFld" id="supervisionFld"${examinedByOther(job) ? '' : ' hidden'}>${F('report.examinerSupervised', `The vehicle was examined by ${by || 'someone else'}: was the examination (and any tests) carried out under your supervision?`, { type: 'select', options: SUPERVISION, hint })}</div>`;
+  }
   function tabSignoff() {
     const iss = job.issued;
     const sig = iss ? iss.signature : liveSignature(job);
@@ -1942,6 +1959,7 @@
       ${F('assessor.name', 'Assessor name')}${F('assessor.title', 'Professional role / title')}
       ${F('assessor.qualifications', 'Qualifications (e.g. MIAEA, IMI VDA accreditation no.)')}${F('assessor.aqpId', 'AQP ID (ABI salvage categorisation)')}
       ${F('assessor.dateSigned', 'Date signed', { type: 'date', hint: '<button class="link" data-act="signToday">Sign today</button>' })}<div></div>
+      ${supervisionField()}
       ${F('report.conflicts', 'Conflict of interest declaration', { full: true })}
       ${F('report.materialsRelied', 'Material relied on (literature, guides and data)', { type: 'textarea', rows: 4, full: true, ph: "e.g. Glass's Guide and CAP HPI retail values; three like-for-like advertisements; DVSA MOT History; ABI Code of Practice for the Categorisation of Motor Vehicle Salvage", hint: `${job.report.cpr35 ? '<b>Required in a CPR 35 report</b>: printed' : 'Printed in a CPR 35 report'} as "Material relied on" (PD 35 para 3.2(2)). <button class="link" data-act="suggestMaterials">Suggest from this assessment</button>` })}</div>
       <label class="row" style="margin-top:10px"><input type="checkbox" data-bind-check="report.cpr35" ${job.report.cpr35 ? 'checked' : ''} style="width:auto"> <b>Court-compliant expert report (CPR Part 35 / PD 35)</b>: adds the expert's duty statement, the statement of truth, the material relied on, and the PD 35 checks</label>
@@ -1959,16 +1977,56 @@
   function tabReport() {
     const qa = C.qaChecks(job);
     const tabName = (k) => (TABS.find((t) => t[0] === k) || [k, k])[1];
-    return `<div class="card"><div class="row"><h2 class="grow" style="margin:0">Pre-issue checks</h2>
+    return `<div class="card"><div class="row"><h2 class="grow" style="margin:0" id="qaHead" tabindex="-1">Pre-issue checks</h2>
         <button class="btn" data-act="exportJson">Export job file</button>
         <button class="btn primary" data-act="exportPdf">${desktop ? 'Export PDF report' : 'Print / save as PDF'}</button></div>
-      ${qa.length ? `<ul class="qa" style="margin-top:12px">${qa.map((q) => `<li class="${q.level}"><span class="badge ${q.level === 'error' ? 'err' : q.level === 'warn' ? 'warn' : ''}">${q.level}</span><span class="grow">${esc(q.msg)}</span><a href="#/job/${job.id}/${q.tab}">${esc(tabName(q.tab))} →</a></li>`).join('')}</ul>` : '<p><span class="badge ok">All checks passed</span></p>'}</div>
+      ${qa.length ? `<ul class="qa" style="margin-top:12px">${qa.map((q) => `<li class="${q.level}"><span class="badge ${q.level === 'error' ? 'err' : q.level === 'warn' ? 'warn' : ''}">${q.level}</span><span class="grow">${esc(q.msg)}</span><a href="#/job/${esc(job.id)}/${esc(q.tab)}">${esc(tabName(q.tab))} →</a></li>`).join('')}</ul>` : '<p><span class="badge ok">All checks passed</span></p>'}</div>
+      ${aiOrphansCard()}
       <iframe class="preview" id="preview" title="Report preview"></iframe>`;
   }
 
   // Fields still holding AI text the assessor has not edited, by core.js's rule (the one the report and the checks use).
   function unreviewedAiText(j) {
     try { return (C.unreviewedAiText(j) || []).filter(isObj); } catch (e) { return []; }
+  }
+  // The value at `path` from the job's own properties only (job data never reaches Object.prototype)
+  const ownValue = (o, path) => String(path).split('.').reduce((c, k) => (c != null && typeof c === 'object' && Object.prototype.hasOwnProperty.call(c, k) ? c[k] : undefined), o);
+  // AI text whose field is not on the tab the checks point to (an entry from an imported or older job, e.g. one that no tab shows,
+  // or one listed under Check & report): read and confirmed here, so the check it raises (an error in CPR 35 mode) can always be
+  // cleared. Where another tab has its field, the entry links there.
+  function aiOrphansCard() {
+    const forms = new Map();
+    const form = (k) => { if (!forms.has(k)) forms.set(k, fieldsOnTab(k)); return forms.get(k); };
+    const onCard = (x) => x.tab === 'photos' && /^photos\.(.+)\.(title|caption)$/.test(x.path); // beside its photo
+    const list = [...aiPending.values()].filter((x) => !onCard(x) && !form(x.tab).has(x.path));
+    if (!list.length) return '';
+    const tabName = (k) => (TABS.find((x) => x[0] === k) || [k, k])[1];
+    return `<div class="card aiOrphans"><h2 style="margin-top:0" id="aiOrphansHead" tabindex="-1">Other AI text to review (${list.length})</h2>
+      <p class="hint">The checks list these entries, but the tab they point to has no field for them. Read each one, then confirm it if it is right, or edit it on the tab named.</p>
+      <ul class="orphanList">${list.map((x) => {
+        const v = ownValue(job, x.path), at = TABS.map((tb) => tb[0]).find((k) => k !== 'report' && form(k).has(x.path));
+        return `<li><div class="grow"><b>${esc(x.label)}</b> <span class="hint">${at ? `field on the <a href="#/job/${esc(job.id)}/${at}">${esc(tabName(at))} tab</a>` : 'no tab shows this field'}</span><div class="orphanText">${esc(v == null ? '' : v)}</div></div><button type="button" class="btn sm aiConfirm" data-act="aiConfirm" data-path="${esc(x.path)}" aria-label="${esc('Confirm AI text: ' + x.label)}">✓ Confirm</button></li>`;
+      }).join('')}</ul></div>`;
+  }
+  // "✓ Confirm": the assessor has read the AI's text in that field and keeps it as their own (C.markAiReviewed), so the checks and
+  // the report no longer list it. Focus goes to the field itself (or, in the list above, to the next entry).
+  function confirmAiText(el) {
+    const path = el.dataset.path || '';
+    if (!path || !job) return;
+    const name = String(el.getAttribute('aria-label') || '').replace(/^Confirm AI text: /, '') || path;
+    const later = el.closest('.orphanList') ? $$('.orphanList [data-act="aiConfirm"]').map((b) => b.dataset.path).filter((x) => x !== path) : [];
+    C.markAiReviewed(job, path);
+    // a photo's title / caption: the AI's own matching suggestion goes too, so later AI calls send it as the assessor's text
+    const pm = /^photos\.(.+)\.(title|caption)$/.exec(path);
+    const p = pm ? job.photos.find((x) => isObj(x) && String(x.id) === pm[1]) : null;
+    const sk = pm && (pm[2] === 'title' ? 'aiTitle' : 'aiCaption');
+    if (p && typeof p[sk] === 'string' && sameText(p[sk], p[pm[2]])) delete p[sk];
+    changed(); renderJob();
+    const field = pm ? $(`#tabBody [data-pf="${pm[2]}"][data-pid="${CSS.escape(pm[1])}"]`) : $(`#tabBody [data-bind="${CSS.escape(path)}"]`);
+    const next = later.map((x) => $(`.orphanList [data-act="aiConfirm"][data-path="${CSS.escape(x)}"]`)).find(Boolean);
+    const to = field || next || $('#qaHead');
+    if (to && !to.disabled) to.focus({ preventScroll: !!field });
+    toast(`Confirmed: ${name}. It is now your own text, and the report no longer lists it as unreviewed AI output.`);
   }
   async function exportPdf() {
     // everything AI-made that has not been reviewed: estimate lines, damage labels on printed photos, and unedited AI text
@@ -2625,7 +2683,10 @@
       const path = t.dataset.bind;
       setPath(job, path, t.type === 'number' ? (t.value === '' ? '' : num(t.value)) : t.value);
       if (path === 'vehicle.firstReg') { job.vehicle.firstRegPrecision = t.value ? 'day' : ''; const h = t.parentElement.querySelector('.hint'); if (h) h.textContent = ''; }
-      const ah = t.parentElement.querySelector('.aiTextHint'); if (ah && !(isObj(job.aiText) && sameText(job.aiText[path], t.value))) ah.remove(); // edited: no longer AI text
+      // edited: no longer the AI's text, so its note and "✓ Confirm" go (typed back to the AI's text, they return at the next render)
+      const box = t.closest('.aiField'), rv = box && box.querySelector('.aiReview');
+      if (rv && !(isObj(job.aiText) && sameText(job.aiText[path], t.value))) { rv.remove(); t.removeAttribute('aria-describedby'); }
+      if (path === 'assessor.name') { const sf = $('#supervisionFld'); if (sf) sf.hidden = !examinedByOther(job); }
       changed(); // also refreshes the totals, labour values and valuation hints shown beside the field (discount, rates, PAV, salvage)
       if (path === 'vehicle.vin') {
         const h = t.parentElement.querySelector('.hint'); if (h) h.innerHTML = vinHint(C.decodeVin(t.value));
@@ -2643,7 +2704,12 @@
       const p = job.photos.find((x) => String(x.id) === t.dataset.pid); if (!p) return;
       if (t.dataset.pf === 'include') { p.exclude = !t.checked; refreshPhotoNumbers(); }
       else if (t.dataset.pf === 'takenAt') { const d = t.value ? new Date(t.value) : null; p.takenAt = d && !isNaN(d) ? d.toISOString() : ''; }
-      else p[t.dataset.pf] = t.value;
+      else {
+        p[t.dataset.pf] = t.value;
+        // an edited AI title / caption is the assessor's: its note and "✓ Confirm" go
+        const rv = t.nextElementSibling;
+        if (rv && rv.classList.contains('aiReview') && !(isObj(job.aiText) && sameText(job.aiText[photoTextPath(p, t.dataset.pf)], t.value))) { rv.remove(); t.removeAttribute('aria-describedby'); }
+      }
       changed(); return;
     }
     if (t.dataset.lf && job) {
@@ -2862,6 +2928,7 @@
         if (!confirm('Discard the AI draft that is waiting for review? It cannot be recovered (the AI log keeps the entry).')) return;
         await applyToJob(job, (x) => { delete x.aiDraftPending; }); toast('AI draft discarded.');
       },
+      aiConfirm: () => confirmAiText(el),
       aiFlagDismiss: () => { const i = +el.dataset.i; if (Array.isArray(job.aiFlags) && job.aiFlags[i]) { job.aiFlags.splice(i, 1); changed(); renderJob(); } },
       aiFlagDismissAll: () => { if (!confirm('Dismiss every AI "check before signing" point? Only do this once you have dealt with them.')) return; job.aiFlags = []; changed(); renderJob(); },
       suggestMaterials: () => {
