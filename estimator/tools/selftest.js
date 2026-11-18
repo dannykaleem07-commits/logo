@@ -27,8 +27,16 @@ console.log(`✓ catalogue: ${codes.size} parts, ${ctx.OEM_VEHICLES.length} OEM 
 
 const juke = C.guessOemVehicle(job.vehicle);
 assert(juke && juke.key === 'nissan-juke-f15', 'Juke should map to nissan-juke-f15');
-assert.strictEqual(C.oemLookup('nissan-juke-f15', 'SS001', 'R')[0].oem, '768501KA6A');
-console.log('✓ OEM lookup: Juke RH sill moulding → 768501KA6A');
+const jukeSill = C.oemLookup('nissan-juke-f15', 'SS001', 'R')[0];
+assert.strictEqual(jukeSill.oem, '768501KA6A');
+// Researched shop prices include VAT; the compiled catalogue stores them ex VAT so VAT is charged once, on the estimate.
+assert.strictEqual(jukeSill.priceIncVat, 89.46, 'Juke SS001 R shop price (inc VAT)');
+assert.strictEqual(jukeSill.price, 74.55, 'Juke SS001 R price must be ex VAT (89.46 / 1.2)');
+for (const v of ctx.OEM_VEHICLES) for (const [k, list] of Object.entries(v.parts)) for (const e of list) {
+  if (e.priceIncVat != null) assert(Math.abs(e.price - Math.round(e.priceIncVat / 1.2 * 100) / 100) < 0.006, `${v.key} ${k} ${e.oem}: price must be priceIncVat / 1.2`);
+  else assert.strictEqual(e.price, null, `${v.key} ${k} ${e.oem}: ex-VAT price without a shop price`);
+}
+console.log('✓ OEM lookup: Juke RH sill moulding → 768501KA6A at £74.55 ex VAT (£89.46 inc); every researched price is stored ex VAT');
 
 // generation-safe OEM matching
 assert.strictEqual((C.guessOemVehicle({ make: 'Mercedes-Benz', model: 'E-Class (W213)', firstReg: '2019-03-01' }) || {}).key, 'mercedes-e-class-w213');
