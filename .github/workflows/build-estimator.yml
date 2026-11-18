@@ -121,11 +121,20 @@ jobs:
 
           The app is not code-signed yet, so Windows may warn the first time: click **More info → Run anyway**. Checksums are in SHA256SUMS.txt.
           EOF
+          echo "tag=$tag sha=$sha"
+          # 1) the tag (a plain ref write: needs contents: write)
+          if gh api "repos/$GITHUB_REPOSITORY/git/ref/tags/$tag" >/dev/null 2>&1; then
+            echo "tag $tag exists"
+          else
+            gh api -X POST "repos/$GITHUB_REPOSITORY/git/refs" -f ref="refs/tags/$tag" -f sha="$sha" --jq .ref
+          fi
+          # 2) the release on that tag, then its files
           if gh release view "$tag" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release upload "$tag" dist/*.exe dist/SHA256SUMS.txt --clobber --repo "$GITHUB_REPOSITORY"
             gh release edit "$tag" --notes-file notes.md --latest --repo "$GITHUB_REPOSITORY"
           else
-            gh release create "$tag" dist/*.exe dist/SHA256SUMS.txt --repo "$GITHUB_REPOSITORY" --target "$sha" \
-              --title "Engineer Report Studio $ver" --notes-file notes.md --latest
+            gh api -X POST "repos/$GITHUB_REPOSITORY/releases" -f tag_name="$tag" -f name="Engineer Report Studio $ver" \
+              -F body=@notes.md -F draft=false -F prerelease=false -f make_latest=true --jq '.html_url'
+            gh release upload "$tag" dist/*.exe dist/SHA256SUMS.txt --clobber --repo "$GITHUB_REPOSITORY"
           fi
           echo "Download page: https://github.com/$GITHUB_REPOSITORY/releases/tag/$tag"
