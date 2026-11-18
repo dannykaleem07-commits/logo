@@ -2155,6 +2155,357 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert(extra.length === 2 && extra.every((x) => /violates the following Content Security Policy directive: "frame-src 'none'"/.test(x)), 'a CSP report for each frame, nothing else: ' + extra.join(' | '));
   });
 
+
+  // ---------- round 4, final screens review: busy guard, AI flows, estimate, lookups, part numbers, imports ----------
+  const waitSpin = () => page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: 8000 });
+  // the file dialog the app opens, cancelled as a user's Cancel is (Chromium fires 'cancel' and no 'change')
+  const cancelPicker = async (sel) => { const [fc] = await Promise.all([page.waitForEvent('filechooser'), page.click(sel)]); await fc.element().evaluate((i) => i.dispatchEvent(new Event('cancel'))); await settle(150); };
+  const opensPicker = async (sel) => {
+    const [fc] = await Promise.all([page.waitForEvent('filechooser', { timeout: 2500 }).catch(() => null), page.click(sel)]);
+    if (fc) await fc.element().evaluate((i) => i.dispatchEvent(new Event('cancel')));
+    await settle(150);
+    return !!fc;
+  };
+  await step('a cancelled file dialog never leaves its button busy: Import job file, Restore backup (and with it Export full backup), Upload logo, Import CSV, Upload image on any Sign-off', async () => {
+    await t.go('#/jobs'); await settle(200);
+    await cancelPicker('[data-act="importJob"]');
+    assert.deepStrictEqual(await page.$eval('[data-act="importJob"]', (b) => [b.classList.contains('isBusy'), b.hasAttribute('aria-busy')]), [false, false], 'not busy once cancelled');
+    assert(await opensPicker('[data-act="importJob"]'), 'Import job file opens its dialog again');
+    await t.go('#/settings'); await settle(300);
+    await cancelPicker('[data-act="restore"]');
+    const b0 = (await t.calls('backup.begin')).length;
+    await page.click('[data-act="backup"]'); await page.waitForFunction(() => !document.querySelector('[data-act="backup"].isBusy'), null, { timeout: 20000 }); await settle(200);
+    assert.strictEqual((await t.calls('backup.begin')).length, b0 + 1, 'Export full backup works after a cancelled Restore (they share one guard)');
+    assert(await opensPicker('[data-act="restore"]'), 'Restore opens its dialog again');
+    await cancelPicker('[data-act="logoUpload"]');
+    assert(await opensPicker('[data-act="logoUpload"]'), 'Upload logo');
+    await t.go('#/catalogue'); await settle(300);
+    await cancelPicker('[data-act="catImport"]');
+    assert(await opensPicker('[data-act="catImport"]'), 'Import CSV');
+    const a = await newJob(); await openTab(a, 'signoff');
+    await cancelPicker('[data-act="sigUpload"][data-target="job"]');
+    const b = await newJob(); await openTab(b, 'signoff');
+    assert(await opensPicker('[data-act="sigUpload"][data-target="job"]'), 'Upload image on another assessment');
+  });
+
+  await step('a lookup still running on one assessment never blocks the same button on another (the double-click guard is per job)', async () => {
+    await t.mock({ dvla: true, mot: true, dvlaOver: {}, motOver: {}, dataDelay: 1200 });
+    const a = await newJob(); await openTab(a, 'vehicle'); await page.fill('[data-bind="vehicle.reg"]', 'AA11 AAA'); await flush();
+    const b = await newJob(); await openTab(b, 'vehicle'); await page.fill('[data-bind="vehicle.reg"]', 'BB22 BBB'); await flush();
+    const n0 = (await t.calls('data.dvla')).length;
+    await openTab(a, 'vehicle'); await page.click('[data-act="lookupVehicle"]'); await settle(100);
+    await openTab(b, 'vehicle'); await page.click('[data-act="lookupVehicle"]'); await settle(150);
+    assert(await exists('[data-act="lookupVehicle"] .spinner'), 'B shows its own lookup running');
+    await waitSpin(); await settle(1500); await flush();
+    assert.deepStrictEqual((await t.calls('data.dvla')).slice(n0).map((c) => c.arg.reg), ['AA11 AAA', 'BB22 BBB'], 'both looked up');
+    assert.deepStrictEqual([(await t.getJob(a)).vehicle.make, (await t.getJob(b)).vehicle.make], ['Nissan', 'Nissan'], 'both filled in');
+    await t.mock({ dataDelay: 20 });
+  });
+
+  await step('adverts an AI search found and the assessor has not verified are never sent back to the AI as the engineer\'s own, even with a URL typed in; once verified they are', async () => {
+    const id = await newJob();
+    await seedAi(id, (j) => {
+      j.valuation.adverts = [{ description: 'Engineer advert', year: '2014', mileage: 60000, price: 5995, url: 'https://www.autotrader.co.uk/car-details/9' },
+        { description: 'AI comparable, not verified', year: '2015', mileage: 50000, price: 5800, url: 'https://www.motors.co.uk/car-123456/', aiUnverified: true, claimedUrl: 'https://www.motors.co.uk/car-123456/' }];
+    });
+    await openTab(id, 'valuation');
+    await page.click('[data-act="aiValuation"]'); await waitSpin(); await flush();
+    assert.deepStrictEqual((await t.calls('ai.valuation')).pop().arg.adverts.map((x) => x.description), ['Engineer advert'], 'valuation: only the engineer\'s advert');
+    await openTab(id, 'opinion');
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-discard]'); await page.click('#modal [data-discard]'); await settle(300);
+    assert.deepStrictEqual((await t.calls('ai.draftNarrative')).pop().arg.adverts, ['Engineer advert'], 'narrative draft: the same');
+    await openTab(id, 'valuation'); await page.click('[data-adv-verify="1"]'); await flush(); // the box goes once ticked
+    await page.click('[data-act="aiValuation"]'); await waitSpin(); await flush();
+    assert.deepStrictEqual((await t.calls('ai.valuation')).pop().arg.adverts.map((x) => x.description), ['Engineer advert', 'AI comparable, not verified'], 'sent once ticked Verified');
+  });
+
+  await step('thumbnails are written only into the assessment as registered now: one deleted while its thumbnails are being made is not stored again', async () => {
+    await t.putJob({ id: 'thumb-del', createdAt: '2025-01-01T00:00:00.000Z', updatedAt: '2025-01-02T00:00:00.000Z', vehicle: { reg: 'TH1 DEL' }, lines: [], photos: [1, 2, 3].map((k) => ({ id: 'tp' + k, dataUrl: dataUrl1, title: 'p' + k, labels: [] })) });
+    // thumbnails made slowly (400 ms each), as on a large job or a slow PC
+    await page.evaluate(() => { const C = window.Core; if (!C.__resize) { C.__resize = C.resizeDataURL; C.resizeDataURL = async (...a) => { await new Promise((r) => setTimeout(r, 400)); return C.__resize(...a); }; } });
+    try {
+      await openTab('thumb-del', 'photos');
+      await t.go('#/jobs'); await settle(200);
+      await page.click('[data-act="delJob"][data-id="thumb-del"]'); await settle(300);
+      assert(!(await t.getJob('thumb-del')), 'deleted');
+      await settle(2000); await flush();
+      assert(!(await t.getJob('thumb-del')), 'not stored again once its thumbnails were made');
+      await t.go('#/catalogue'); await settle(150); await t.go('#/jobs'); await settle(300);
+      assert(!(await exists('a[href="#/job/thumb-del/claim"]')), 'not back in the Jobs list');
+    } finally {
+      await page.evaluate(() => { const C = window.Core; if (C.__resize) { C.resizeDataURL = C.__resize; delete C.__resize; } });
+    }
+  });
+
+  await step('a new photo analysis keeps the AI labels the assessor checked and saved; a photo added since the last analysis is offered on its own', async () => {
+    const id = await newJob();
+    await openTab(id, 'photos'); await page.setInputFiles('#photoInput', [file('a.jpg', jpg1), file('b.jpg', jpg2)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 2, null, { timeout: 8000 }); await flush();
+    await page.click('[data-act="aiAnalyse"]'); await waitSpin(); await flush();
+    // the assessor corrects photo 1's AI labels and saves them (labels reviewed)
+    await seedAi(id, (j) => { const p = j.photos[0]; p.labels = p.labels.map((l) => (l.ai ? Object.assign({}, l, { text: 'Deep scoring, assessor corrected' }) : l)); p.labelsReviewed = true; });
+    await openTab(id, 'photos'); await page.setInputFiles('#photoInput', [file('c.jpg', jpg1)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 3, null, { timeout: 8000 }); await flush();
+    assert(/^1 photo in the report has not been analysed yet\./.test(await text('.notAnalysed')), 'offered: ' + await text('.notAnalysed'));
+    await page.click('.notAnalysed [data-act="aiAnalyseRest"]'); await waitSpin(); await flush();
+    assert.deepStrictEqual((await t.calls('ai.analysePhotos')).pop().arg.idx, [3], 'only the new photo sent');
+    const aiTexts = (p) => p.labels.filter((l) => l.ai).map((l) => l.text);
+    let j = await t.getJob(id);
+    assert(aiTexts(j.photos[0]).length === 2 && aiTexts(j.photos[0]).every((x) => x === 'Deep scoring, assessor corrected') && j.photos[0].labelsReviewed === true, 'checked labels untouched');
+    // a full analysis again: the checked photo keeps its labels, the others are labelled afresh
+    await page.click('[data-act="aiAnalyse"]'); await waitSpin(); await flush();
+    assert(/The labels you checked on 1 photo were kept\./.test(await toastText()), await toastText());
+    j = await t.getJob(id);
+    assert(aiTexts(j.photos[0]).length === 2 && aiTexts(j.photos[0]).every((x) => x === 'Deep scoring, assessor corrected') && j.photos[0].labelsReviewed === true, 'kept: ' + JSON.stringify(aiTexts(j.photos[0])));
+    assert(aiTexts(j.photos[1]).includes('Scoring 2') && j.photos[1].labelsReviewed === false, 'the unchecked photo labelled again');
+  });
+
+  await step('"Analyse the remaining photos": "Add selected lines" waits for it; a suggestion already added is never changed (a repeat is a row of its own, with the earlier hours); the assessor\'s ticks are kept', async () => {
+    const id = await newJob();
+    await openTab(id, 'photos'); await page.setInputFiles('#photoInput', [file('a.jpg', jpg1), file('b.jpg', jpg2)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 2, null, { timeout: 8000 }); await flush();
+    // a partial run covered photo 1: its door repair was added at 2.0h; the alignment check is still to be decided
+    await seedAi(id, (j) => {
+      j.aiFindings = { model: 'claude-opus-5-5', at: new Date().toISOString(), photos: [{ id: j.photos[0].id, index: 1, damages: [] }], summary: {}, review_flags: [], partial: { analysed: 1, total: 2, error: 'overloaded' },
+        suggested_lines: [Object.assign(SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 2, 'guide'), { batches: [1], hoursSeen: [2], added: true }),
+          Object.assign(SL('ST006', '', 'operation', 'Auxiliary', 'Jig / bench set-up and measure', 3, 3, 'guide'), { batches: [1], hoursSeen: [3] })] };
+      j.lines.push({ id: 'door1', type: 'Body', description: 'RH front door – repair (medium) / metal finish', partNo: '', code: 'DR001', side: 'R', hours: 2, rate: '', amount: 0, costClass: 'parts', ai: true, reviewed: false, source: '', op: 'repair' });
+    });
+    await openTab(id, 'photos');
+    await page.uncheck('input[data-sugg="1"]'); // the jig check is not wanted
+    await t.mock({ aiDelay: 900, linesByBatch: { 2: [SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 4, 'adjusted', 'The dent runs into the swage line.')] } });
+    await page.click('[data-act="aiAnalyseRest"]'); await settle(250);
+    assert(await page.$eval('[data-act="aiAddLines"]', (b) => b.disabled), '"Add selected lines" waits while the analysis runs');
+    await waitSpin(); await flush();
+    await t.mock({ aiDelay: 30, linesByBatch: null });
+    const sl = (await t.getJob(id)).aiFindings.suggested_lines;
+    assert.deepStrictEqual(sl.map((l) => [l.code, Number(l.labour_hours), !!l.added, l.batches]), [['DR001', 2, true, [1]], ['ST006', 3, false, [1]], ['DR001', 4, false, [2]]], 'suggestions: ' + JSON.stringify(sl.map((l) => [l.code, l.labour_hours, l.added, l.batches])));
+    assert.deepStrictEqual(await page.$$eval('input[data-sugg]', (ns) => ns.map((n) => n.checked)), [false, false, true], 'ticks kept (the added one is disabled and unticked)');
+    assert(/suggested again by a later batch: the line added earlier has 2\.0h/.test(await page.$eval('tr[data-sugg-row="2"]', (r) => r.textContent)), 'the repeat says so');
+  });
+
+  await step('applying or discarding an older AI draft from its review window keeps a newer draft that landed while it was open', async () => {
+    const id = await newJob();
+    await openTab(id, 'opinion');
+    await t.mock({ draftTag: 'OLD', aiDelay: 30 });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await settle(200);
+    const raceWith = async (tag) => {
+      await t.mock({ draftTag: tag, aiDelay: 1000 });
+      await page.click('[data-act="aiDraft"]'); await settle(150);
+      await page.click('.pendingDraft [data-act="reviewPendingDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]');
+      await page.waitForFunction(() => !document.querySelector('[data-act="aiDraft"] .spinner'), null, { timeout: 8000 }); await settle(200);
+    };
+    await raceWith('NEW');
+    assert(/OLD summary/.test(await text('#modalBody')), 'the older draft is the one shown');
+    await page.click('#modal [data-discard]'); await flush();
+    let j = await t.getJob(id);
+    assert.strictEqual(j.aiDraftPending && j.aiDraftPending.draft.summary, 'NEW summary', 'the newer draft is kept');
+    assert(/A newer AI draft is waiting/.test(await toastText()), await toastText());
+    await raceWith('NEWER');
+    await page.click('#modal [data-go]'); await flush();
+    j = await t.getJob(id);
+    assert.deepStrictEqual([j.report.summary, j.aiDraftPending && j.aiDraftPending.draft.summary], ['NEW summary', 'NEWER summary'], 'applied the one shown; the newer one waits');
+    await t.mock({ draftTag: 'DRAFT1', aiDelay: 30 });
+  });
+
+  await step('a pending AI draft written before the estimate or PAV changed says so in its review window, and its sections that quote figures are not ticked', async () => {
+    const id = await newJob();
+    await openTab(id, 'valuation'); await page.fill('[data-bind="valuation.adopted"]', '5000'); await flush();
+    await openTab(id, 'opinion');
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]');
+    assert(!(await exists('#modal .staleDraft')), 'no warning straight after drafting');
+    await page.click('#modal [data-close]'); await settle(200);
+    await openTab(id, 'valuation'); await page.fill('[data-bind="valuation.adopted"]', '4000'); await flush();
+    await openTab(id, 'opinion'); await page.click('.pendingDraft [data-act="reviewPendingDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]');
+    assert(/The figures have changed since this draft was written.*PAV £5,000\.00 → £4,000\.00/.test(await text('#modal .staleDraft')), await text('#modal .staleDraft'));
+    const ticks = await page.$$eval('#modal input[data-apply]', (ns) => Object.fromEntries(ns.map((n) => [n.dataset.apply, n.checked])));
+    assert(ticks[0] === false && ticks[9] === false && ticks[10] === false && ticks[11] === false && ticks[2] === true, 'figure sections unticked, others ticked: ' + JSON.stringify(ticks));
+    await page.click('#modal [data-close]'); await settle(150);
+  });
+
+  await step('"Add line" adds only a part the list shows now, never one picked before a new search', async () => {
+    const id = await newJob(); await openTab(id, 'estimate');
+    await pick('FW001', 'R', 'replace'); await flush();
+    const n0 = (await lines(id)).length;
+    for (const q of ['bonnet', 'zzzz']) {
+      await page.fill('#pickQ', q); await settle(100);
+      await page.click('[data-act="pickAdd"]'); await settle(150);
+      assert(/Select a part in the list first/.test(await toastText()), q + ': ' + await toastText());
+    }
+    await flush();
+    assert.strictEqual((await lines(id)).length, n0, 'nothing added');
+    await page.fill('#pickQ', 'BN001'); await settle(80); await page.click('#pickResults .r[data-code="BN001"]'); await page.click('[data-act="pickAdd"]'); await settle(200); await flush();
+    assert((await lines(id)).some((l) => l.code === 'BN001'), 'a listed part is added');
+  });
+
+  await step('a lookup of another registration asks first, then clears the previous vehicle (model, derivative, variant, parts-catalogue link); the same registration again does not', async () => {
+    await t.mock({ dvla: true, mot: true, dvlaOver: {}, motOver: {} });
+    const id = await newJob(); await openTab(id, 'vehicle');
+    await page.fill('[data-bind="vehicle.reg"]', 'AB14 CDE'); await settle(50);
+    await page.click('[data-act="lookupVehicle"]'); await waitSpin(); await flush();
+    // another model's variant chosen (as after a mistyped registration)
+    await page.selectOption('[data-vp="model"]', '33'); await settle(150);
+    await page.selectOption('[data-vp="engine"]', '0'); await settle(150);
+    await page.click('[data-act="applyVariant"]'); await flush();
+    let v = (await t.getJob(id)).vehicle;
+    assert(/Qashqai/.test(v.model) && v.variantKey && v.derivative, 'the other model applied: ' + JSON.stringify([v.model, v.derivative, v.oemKey]));
+    const d0 = t.dialogs.length;
+    await page.click('[data-act="lookupVehicle"]'); await waitSpin(); await flush();
+    assert.strictEqual(t.dialogs.length, d0, 'not asked for the same registration');
+    assert(/Qashqai/.test((await t.getJob(id)).vehicle.model), 'the details stay');
+    await page.fill('[data-bind="vehicle.reg"]', 'BB22 BBB'); await flush();
+    const n0 = (await t.calls('data.dvla')).length;
+    t.dialogMode = 'dismiss'; await page.click('[data-act="lookupVehicle"]'); await settle(300); t.dialogMode = 'accept';
+    assert(/came from a lookup of AB14CDE\. Look up BB22BBB instead\?/.test(t.dialogs[t.dialogs.length - 1]), t.dialogs[t.dialogs.length - 1]);
+    assert.strictEqual((await t.calls('data.dvla')).length, n0, 'Cancel: nothing looked up');
+    await page.click('[data-act="lookupVehicle"]'); await waitSpin(); await flush();
+    v = (await t.getJob(id)).vehicle;
+    assert.deepStrictEqual([v.make, v.model, v.derivative, v.variantKey, v.oemKey, v.lookupReg], ['Nissan', 'Juke', '', '', '', 'BB22BBB'], JSON.stringify([v.make, v.model, v.derivative, v.variantKey, v.oemKey, v.lookupReg]));
+    assert.notStrictEqual(await page.$eval('[data-vp="model"]', (s) => s.value), '33', 'the picker does not bring the old variant back');
+  });
+
+  await step('a CSV import that matches one of your part numbers keeps its notes, and its price when the file gives none (the file\'s spelling of the number, description and price win)', async () => {
+    await t.go('#/catalogue'); await settle(300); await page.selectOption('#catVeh', 'nissan-juke-f15'); await settle(200);
+    await page.click('[data-act="catAddNo"]'); await settle(150);
+    await page.selectOption('#nCode', 'FE001'); await page.fill('#nOem', '62022-BA60H'); await page.fill('#nDesc', 'Front bumper, Tekna (dealer)'); await page.fill('#nPrice', '310');
+    await page.fill('#nNotes', 'Confirmed by Nissan dealer for VIN SJNF… on 12/11'); await page.check('#nAuto');
+    await page.click('#modal [data-ok]'); await settle(400);
+    await choose('[data-act="catImport"]', { name: 's.csv', mimeType: 'text/csv', buffer: Buffer.from('FE001,,62022BA60H,Bumper,\n') }); await settle(400);
+    assert(/updated 1 already in your list \(their notes kept, and their price where the file has none\)/.test(await toastText()), await toastText());
+    const e = (await t.getKv('customOem')).find((x) => x.key === 'nissan-juke-f15').parts['FE001|'].find((c) => c.oem.replace(/-/g, '') === '62022BA60H');
+    assert.deepStrictEqual([e.oem, e.description, e.price, e.notes, e.autoFill], ['62022BA60H', 'Bumper', 310, 'Confirmed by Nissan dealer for VIN SJNF… on 12/11', true], JSON.stringify(e));
+  });
+
+  await step('"Use this variant" with another engine: the previous engine\'s code and size go back to what was there before (an i5 never keeps a 520i\'s B48 / 1998 cc); a value typed by the assessor stays', async () => {
+    const id = await newJob(); await openTab(id, 'vehicle');
+    await page.selectOption('[data-vp="make"]', 'BMW'); await settle(150);
+    await page.selectOption('[data-vp="model"]', '7'); await settle(150);
+    const apply = async (eng) => { await page.selectOption('[data-vp="engine"]', eng); await settle(150); await page.click('[data-act="applyVariant"]'); await flush(); return (await t.getJob(id)).vehicle; };
+    let v = await apply('0');
+    assert.deepStrictEqual([v.engineCode, String(v.engineSize), v.fuel], ['B48', '1998', 'Petrol'], 'the 520i');
+    v = await apply('3');
+    assert.deepStrictEqual([/^i5 eDrive40/.test(v.derivative), v.engineCode, String(v.engineSize), v.fuel], [true, '', '', 'Electric'], JSON.stringify([v.derivative, v.engineCode, v.engineSize, v.fuel]));
+    await page.fill('[data-bind="vehicle.engineCode"]', 'HA0001'); await flush();
+    v = await apply('4');
+    assert.deepStrictEqual([/^i5 xDrive40/.test(v.derivative), v.engineCode], [true, 'HA0001'], 'the typed engine code stays: ' + JSON.stringify([v.derivative, v.engineCode]));
+  });
+
+  await step('✕ on an AI line asks first; once it is deleted, its AI suggestion can be added again', async () => {
+    const id = await newJob();
+    await seedAi(id, (j) => {
+      j.aiFindings = { model: 'claude-opus-5-5', at: new Date().toISOString(), photos: [], summary: {}, review_flags: [],
+        suggested_lines: [SL('MR001', 'R', 'renew', 'Body', 'RH door mirror assembly – renew', 0.6, 0.6, 'guide'), SL('DR001', 'R', 'repair', 'Body', 'RH front door – repair (medium) / metal finish', 2, 2, 'guide')] };
+    });
+    await openTab(id, 'photos'); await page.click('[data-act="aiAddLines"]'); await flush();
+    await openTab(id, 'estimate');
+    const mir = (await lines(id)).find((l) => l.code === 'MR001');
+    t.dialogMode = 'dismiss'; await page.click(`[data-act="ldel"][data-id="${mir.id}"]`); await settle(200); t.dialogMode = 'accept';
+    assert(/^Delete line 1, "RH door mirror assembly – renew"\? It was suggested by the AI/.test(t.dialogs[t.dialogs.length - 1]), t.dialogs[t.dialogs.length - 1]);
+    assert((await lines(id)).some((l) => l.id === mir.id), 'Cancel keeps it');
+    await page.click(`[data-act="ldel"][data-id="${mir.id}"]`); await flush();
+    assert(!(await lines(id)).some((l) => l.code === 'MR001'), 'deleted');
+    await openTab(id, 'photos');
+    assert.deepStrictEqual(await page.$$eval('input[data-sugg]', (ns) => ns.map((n) => n.disabled)), [false, true], 'the mirror can be added again; the door is still on the estimate');
+    await page.click('[data-act="aiAddLines"]'); await flush();
+    assert.deepStrictEqual((await lines(id)).map((l) => l.code).sort(), ['DR001', 'MR001'], 'added again, once');
+  });
+
+  await step('an own part number for a part the catalogue does not side is stored without a side (form, CSV and older entries), so it is offered and auto-filled', async () => {
+    await t.go('#/catalogue'); await settle(300); await page.selectOption('#catVeh', 'nissan-juke-f15'); await settle(200);
+    await page.click('[data-act="catAddNo"]'); await settle(150);
+    await page.selectOption('#nCode', 'FW001'); await settle(50);
+    assert(!(await page.$eval('#nSide', (s) => s.disabled)), 'a sided part takes a side');
+    await page.selectOption('#nCode', 'RE007'); await settle(50);
+    assert(await page.$eval('#nSide', (s) => s.disabled && s.value === ''), 'no side for an unsided part');
+    assert(/does not side this part/.test(await text('#nSideNote')), 'and it says why');
+    await page.fill('#nOem', 'PDC-REAR-1'); await page.fill('#nPrice', '45'); await page.check('#nAuto'); await page.click('#modal [data-ok]'); await settle(400);
+    await choose('[data-act="catImport"]', { name: 'u.csv', mimeType: 'text/csv', buffer: Buffer.from('RE007,RH,PDC-REAR-2,Sensor,50\n') }); await settle(400);
+    assert(/1 row\(s\) gave LH \/ RH for a part the catalogue does not side, so it was stored without a side/.test(await toastText()), await toastText());
+    let parts = (await t.getKv('customOem')).find((x) => x.key === 'nissan-juke-f15').parts;
+    assert.deepStrictEqual(Object.keys(parts).filter((k) => /^RE007/.test(k)), ['RE007|'], JSON.stringify(Object.keys(parts)));
+    const id = await newJob(); await openTab(id, 'vehicle'); await page.selectOption('[data-bind="vehicle.oemKey"]', 'nissan-juke-f15'); await settle(200);
+    await openTab(id, 'estimate'); await pick('RE007', null, 'replace'); await flush();
+    const l = (await lines(id)).find((x) => x.code === 'RE007');
+    assert.deepStrictEqual([l.partNo, l.amount], ['PDC-REAR-1', 45], 'offered and filled: ' + JSON.stringify([l.partNo, l.amount]));
+    // an entry an older version saved with a side moves to the part, once
+    const list = await t.getKv('customOem');
+    list.find((x) => x.key === 'nissan-juke-f15').parts['RE007|L'] = [{ oem: 'PDC-OLD-L', description: 'old', confidence: 'user', user: true, autoFill: false }];
+    await t.putKv('customOem', list);
+    await page.reload(); await page.waitForFunction(() => document.querySelector('#main').innerHTML.length > 0); await settle(800);
+    parts = (await t.getKv('customOem')).find((x) => x.key === 'nissan-juke-f15').parts;
+    assert(!parts['RE007|L'] && parts['RE007|'].some((c) => c.oem === 'PDC-OLD-L'), 'moved: ' + JSON.stringify(Object.keys(parts)));
+  });
+
+  await step('models filled in from MOT History keep their capitals: CX-5, C-HR, XC40, RAV4 (X-TRAIL → X-Trail)', async () => {
+    await t.mock({ dvla: false, mot: true });
+    const got = [];
+    for (const m of ['CX-5', 'C-HR', 'XC40', 'RAV4', 'X-TRAIL']) {
+      await t.mock({ motOver: { model: m } });
+      const id = await newJob(); await openTab(id, 'vehicle');
+      await page.fill('[data-bind="vehicle.reg"]', 'MO11 DEL'); await settle(50);
+      await page.click('[data-act="lookupVehicle"]'); await waitSpin(); await flush();
+      got.push((await t.getJob(id)).vehicle.model);
+    }
+    assert.deepStrictEqual(got, ['CX-5', 'C-HR', 'XC40', 'RAV4', 'X-Trail']);
+    await t.mock({ dvla: true, motOver: {} });
+  });
+
+  // reads a stored record inside the page, so an own "__proto__" key is seen as stored (Playwright's copy could not show it)
+  const storedHasUnsafe = (store, key) => page.evaluate(([st, k]) => new Promise((res, rej) => {
+    const r = indexedDB.open('engineer-report-studio');
+    r.onerror = () => rej(r.error);
+    r.onsuccess = () => {
+      const q = r.result.transaction(st).objectStore(st).get(k);
+      q.onsuccess = () => {
+        const bad = [];
+        const walk = (o, at) => { if (!o || typeof o !== 'object') return; for (const kk of Object.keys(o)) { if (['__proto__', 'constructor', 'prototype'].includes(kk)) bad.push(at + kk); else walk(o[kk], at + kk + '.'); } };
+        walk(q.result, ''); r.result.close(); res(bad);
+      };
+    };
+  }), [store, key]);
+  await step('restoring a backup or importing a job file never brings "__proto__", "constructor" or "prototype" keys into the app (settings, part numbers, jobs)', async () => {
+    const hostile = [
+      JSON.stringify({ kind: 'engineer-report-studio-backup', format: 2, at: new Date().toISOString(), jobs: 1 }),
+      '{"type":"settings","data":{"__proto__":{"exclude":true,"hidden":true,"polluted":"YES"},"constructor":{"prototype":{"polluted2":"YES"}},"vatPct":20}}',
+      '{"type":"customOem","data":[{"key":"x\\"><img id=injected src=q>","make":"Lancia","model":"Delta","generation":"","years":"2010-2019","parts":{"__proto__":{"autoFill":true}}}]}',
+      '{"type":"job","data":{"id":"proto-job","vehicle":{"reg":"PR0 TO","make":"Lancia","model":"Delta","firstReg":"2014-08-01","__proto__":{"polluted3":"YES"}},"lines":[],"photos":[],"__proto__":{"polluted4":"YES"}}}',
+      JSON.stringify({ type: 'end', jobs: 1 })
+    ].join('\n') + '\n';
+    await t.go('#/settings'); await settle(300);
+    await choose('[data-act="restore"]', { name: 'hostile.ersbackup', mimeType: 'application/octet-stream', buffer: Buffer.from(hostile) });
+    await page.waitForFunction(() => /Backup restored/.test(document.querySelector('#toast').textContent), null, { timeout: 15000 });
+    assert.deepStrictEqual(await page.evaluate(() => ['polluted', 'polluted2', 'polluted3', 'polluted4', 'exclude', 'hidden', 'autoFill'].filter((k) => ({})[k] !== undefined)), [], 'nothing on Object.prototype');
+    assert.deepStrictEqual(await storedHasUnsafe('kv', 'settings'), [], 'stored settings');
+    assert.deepStrictEqual(await storedHasUnsafe('kv', 'customOem'), [], 'stored part numbers');
+    assert.deepStrictEqual(await storedHasUnsafe('jobs', 'proto-job'), [], 'stored job');
+    await t.go('#/jobs'); await settle(200);
+    await choose('[data-act="importJob"]', { name: 'p.json', mimeType: 'application/json', buffer: Buffer.from('{"vehicle":{"reg":"PR0 TO2","__proto__":{"polluted5":"YES"}},"lines":[],"photos":[],"constructor":{"prototype":{"polluted6":"YES"}}}') });
+    await page.waitForFunction(() => /#\/job\/[^/]+\/claim$/.test(location.hash)); await settle(300);
+    assert.deepStrictEqual(await page.evaluate(() => ['polluted5', 'polluted6'].filter((k) => ({})[k] !== undefined)), [], 'job file: nothing on Object.prototype');
+    assert.deepStrictEqual(await storedHasUnsafe('jobs', await t.jobId()), [], 'the imported job as stored');
+  });
+
+  await step('the suggested parts-catalogue vehicle on the Vehicle tab is escaped: a crafted key from a backup injects no markup', async () => {
+    await openTab('proto-job', 'vehicle');
+    assert(!(await exists('#injected')), 'no injected element');
+    assert.strictEqual(await page.$eval('[data-act="useOem"]', (b) => b.dataset.key), 'x"><img id=injected src=q>', 'the key stays data');
+  });
+
+  await step('an adjusted AI line\'s note on the Estimate tab gives this vehicle\'s guide as the report prints it (core.js vehicleGuide)', async () => {
+    const id = await newJob(); await openTab(id, 'vehicle');
+    await page.selectOption('[data-bind="vehicle.sizeClass"]', 'suv'); await settle(150);
+    await page.selectOption('[data-bind="vehicle.paintType"]', 'pearl'); await flush();
+    // the AI quotes a 1.5h guide for the blend (the catalogue has 1.3h): this vehicle's guide is 1.5 × 1.15 × 1.2 = 2.1h
+    await seedAi(id, (j) => { j.aiFindings = { model: 'claude-opus-5-5', at: new Date().toISOString(), photos: [], summary: {}, review_flags: [], suggested_lines: [SL('DR003', 'R', 'blend', 'Painting', 'RH rear door – blend (colour match)', 1.5, 1.9, 'adjusted')] }; });
+    await openTab(id, 'photos'); await page.click('[data-act="aiAddLines"]'); await flush();
+    await openTab(id, 'estimate');
+    const note = await text('#linesTbl .aiBasis');
+    await openTab(id, 'report'); await settle(400);
+    const rep = await page.$eval('#preview', (f) => f.contentDocument.body.textContent);
+    const g = /\(guide (\d+\.\d)h\)/.exec(rep);
+    assert(g && g[1] === '2.1' && note.includes('adjusted from guide 1.5h (2.1h for this vehicle)'), JSON.stringify([note, g && g[0]]));
+  });
+
   await t.close();
   const errors = t.errors.slice();
 
