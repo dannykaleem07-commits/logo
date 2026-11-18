@@ -43,11 +43,12 @@ const samePath = (a, b) => {
   const A = path.resolve(a), B = path.resolve(b);
   return process.platform === 'win32' ? A.toLowerCase() === B.toLowerCase() : A === B;
 };
-/** Local path of a plain file: URL (no host / UNC share, no query; the #fragment is ignored), else null. */
+/** File-system path of a file: URL without a query (the #fragment is ignored), else null. A UNC URL (file://host/share/…)
+ *  gives a \\host\share path on Windows, so it can only ever equal a path we compare it with if the app itself is there. */
 function localPathOf(u) {
   try {
     const url = new URL(String(u));
-    if (url.protocol !== 'file:' || url.host !== '' || url.search) return null;
+    if (url.protocol !== 'file:' || url.search) return null;
     url.hash = '';
     return fileURLToPath(url);
   } catch (e) { return null; }

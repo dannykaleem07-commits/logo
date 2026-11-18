@@ -25,12 +25,13 @@ Fill in these details once and reuse them in every enquiry:
 ### 1. DVLA Vehicle Enquiry Service (VES) API: free
 - **Gives:** make, colour, fuel, engine size, first registration, tax and MOT status, Euro status, export marker, date of last V5C. It does **not** give model, derivative or VIN.
 - **Apply:** search "DVLA Vehicle Enquiry Service API" on gov.uk, then register on the DVLA developer portal. You give an estimate of your monthly volume.
-- **You receive:** an API key. Paste it into **Settings → Data connections → DVLA key** once that screen is built.
+- **You receive:** an API key. Paste it into **Settings → Data connections → DVLA API key**. DVLA may issue a **test** key first; it only works on DVLA's test service (set *DVLA service* to Test; test registrations such as AA19AAA). A live key is needed for real vehicles. Support: dvlaapiaccess@dvla.gov.uk.
+- **Note:** the DVSA MOT History credentials are a *different* service and do not work as a DVLA key.
 
 ### 2. DVSA MOT History API: free
 - **Gives:** make, model, colour, fuel, engine size, first-used date, and **every MOT test with its odometer reading**. This is the evidence for valuation mileage and spotting mileage discrepancies.
 - **Apply:** search "MOT history API" on gov.uk, then register as an organisation. Approval takes about 5 working days. The old API was switched off on 1 Sep 2025, so even existing users must register again.
-- **You receive:** client ID, client secret and API key. All three go into Settings.
+- **You receive:** client ID, client secret, API key, scope URL and token URL (with your tenant ID). Copy each one from DVSA's email into **Settings → Data connections → DVSA MOT History**, then press **Test MOT History**. Client secrets expire every 2 years, and DVSA revokes API keys unused for 90 days.
 
 ### 3. Anthropic API key (AI assessor): already supported
 - console.anthropic.com → API keys. Paste it into **Settings → AI assessor**.
