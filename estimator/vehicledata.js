@@ -42,7 +42,7 @@ function setFetch(fn, opts) {
 // ---------- credentials ----------
 // Whitespace, control and invisible format characters survive String.trim() and password inputs when a key is copied
 // from an email or PDF (zero-width space, BOM, NBSP, bidi marks…). None of them can be part of a key.
-const INVISIBLE = /[\p{Cc}\p{Cf}\p{Z}͏ᅟᅠ឴឵ㅤ︀-️ﾠ]/gu;
+const INVISIBLE = /[\p{Cc}\p{Cf}\p{Z}\u034f\u115f\u1160\u17b4\u17b5\u3164\ufe00-\ufe0f\uffa0]/gu;
 const cleanCredential = (v) => String(v == null ? '' : v).replace(INVISIBLE, '');
 
 const DATA_KEY_NAMES = ['dvla', 'motClientId', 'motClientSecret', 'motApiKey', 'motTokenUrl', 'motTenantId', 'motScope'];

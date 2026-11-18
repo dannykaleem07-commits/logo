@@ -274,7 +274,7 @@ const keepAlive = setInterval(() => {}, 1000);
     assert.match(await errOf(vd.motLookup('AB12CDE', { ...keys, motTokenUrl: u }, 'registration')), /saved MOT History access token URL was refused/, u);
     assert.strictEqual(calls.length, n0, `no request at all for a stored ${u}`);
   }
-  assert.strictEqual(vd.applyDataKeyPatch({}, { motTokenUrl: ` HTTPS://LOGIN.MICROSOFTONLINE.COM/${TENANT}/oauth2/v2.0/token​ ` }).motTokenUrl, TOKEN_URL, 'case and stray whitespace normalised');
+  assert.strictEqual(vd.applyDataKeyPatch({}, { motTokenUrl: ` HTTPS://LOGIN.MICROSOFTONLINE.COM/${TENANT}/oauth2/v2.0/token\u200b ` }).motTokenUrl, TOKEN_URL, 'case and stray whitespace normalised');
   assert.strictEqual(vd.applyDataKeyPatch({}, { motTokenUrl: 'https://login.microsoftonline.com/tenant-1/oauth2/v2.0/token' }).motTokenUrl, 'https://login.microsoftonline.com/tenant-1/oauth2/v2.0/token');
   for (const t of [TENANT, 'contoso.onmicrosoft.com', 'dvsa.gov.uk']) assert.strictEqual(vd.applyDataKeyPatch({}, { motTenantId: t }).motTenantId, t);
   for (const t of ['tenant-2', '../evil', 'evil.example/collect', 'https://attacker.example/x', 'a_b.com']) {
@@ -296,15 +296,15 @@ const keepAlive = setInterval(() => {}, 1000);
   console.log(`✓ Token URL: only https://login.microsoftonline.com/<tenant>/oauth2/v2.0/token accepted (${refusedUrls.length} look-alikes refused on save AND before any request); tenant must be a GUID or domain; scope checked; patch semantics`);
 
   // ---------- key cleaning ----------
-  assert.strictEqual(vd.cleanCredential(' ab​c d\uFEFF‮\n\t '), 'abcd', 'whitespace, NBSP, zero-width, BOM and bidi marks removed');
-  assert.strictEqual(vd.validateDataKey('dvla', '  KEY​-123\r\n'), 'KEY-123');
+  assert.strictEqual(vd.cleanCredential(' ab\u200bc\u00a0d\uFEFF\u202e\n\t '), 'abcd', 'whitespace, NBSP, zero-width, BOM and bidi marks removed');
+  assert.strictEqual(vd.validateDataKey('dvla', '  KEY\u200b-123\r\n'), 'KEY-123');
   const bad = await errOf(Promise.resolve().then(() => vd.validateDataKey('dvla', 'KÉY-SECRET-VALUE')));
   assert.match(bad, /DVLA API key contains a character that cannot be part of it \(U\+00C9 at position 2\)/);
   assert.ok(!bad.includes('SECRET-VALUE'), 'the message never includes the key');
-  assert.throws(() => vd.validateDataKey('motClientSecret', ' ​ '), /client secret is empty once spaces and invisible characters are removed/);
+  assert.throws(() => vd.validateDataKey('motClientSecret', ' \u200b '), /client secret is empty once spaces and invisible characters are removed/);
   assert.throws(() => vd.cleanSecret('Anthropic API key', 'sk-ant-é'), /Anthropic API key contains a character .*U\+00E9/);
   // A key saved by an older version with an invisible character is cleaned before it is sent
-  await vd.dvlaLookup('AB12CDE', 'KEY1​ ', 'live');
+  await vd.dvlaLookup('AB12CDE', 'KEY1\u200b ', 'live');
   assert.strictEqual(calls[calls.length - 1].init.headers['x-api-key'], 'KEY1');
   await assert.rejects(vd.dvlaLookup('AB12CDE', 'KÉY1', 'live'), /DVLA API key contains a character/);
   assert.strictEqual(vd.redact(`x ${LEAK[1]} Bearer abcdefghijklmnop y`, { s: LEAK[1] }), 'x ••• Bearer ••• y');

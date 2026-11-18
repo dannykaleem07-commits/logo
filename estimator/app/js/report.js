@@ -189,7 +189,8 @@
     const lineRows = lines.map((l) => {
       const rate = C.lineRate(job, l);
       const h = num(l.hours);
-      return `<tr><td class="ct">${esc(l.type)}</td><td>${esc(l.description)}</td><td>${esc(l.partNo) || '—'}</td>
+      const pending = l.ai && !l.reviewed ? ' <span title="AI-suggested line not yet reviewed by the assessor">†</span>' : '';
+      return `<tr><td class="ct">${esc(l.type)}</td><td>${esc(l.description)}${pending}</td><td>${esc(l.partNo) || '—'}</td>
         <td>${h ? gbp(rate) + '/hr' : '—'}</td><td>${h ? hrs(h) : '—'}</td><td>${h ? gbp(C.lineLabour(h, rate)) : '—'}</td><td>${num(l.amount) ? gbp(l.amount) : '—'}</td></tr>`;
     }).join('');
 
@@ -511,6 +512,7 @@
         ${tt.discount ? `<tr class="tot"><td></td><td>LESS DISCOUNT</td><td colspan="4"></td><td>${gbp(-tt.discount)}</td></tr>` : ''}
         <tr class="grand"><td></td><td colspan="5">ESTIMATE SUBTOTAL EXCL. VAT</td><td>${gbp(tt.net)}</td></tr>
       </tbody></table>
+      <p class="small muted">Labour times are the assessor's figures, entered or adjusted from this software's own guide times; they are not manufacturer- or Thatcham-published times unless stated in the line. Part prices are exclusive of VAT.${lines.some((l) => l.ai && !l.reviewed) ? ' † AI-suggested line not yet reviewed by the assessor.' : ''}</p>
       <h3>Estimate notes</h3><div class="box">${para(job.estimateNotes)}</div>`));
 
     pages.push(page(`${sec('REPAIR COSTS SUMMARY')}

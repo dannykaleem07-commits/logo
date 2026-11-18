@@ -194,8 +194,8 @@ async function readKeyFile(file, plausible) {
 }
 function keyFileMessage(code, what) {
   if (code === 'EDECRYPT') return `The saved ${what} could not be decrypted. This happens when the settings were copied from another PC or Windows user account, or Windows reset this account's encryption keys (for example after an administrator reset the password).`;
-  if (code === 'NOCRYPTO') return `The saved ${what} are encrypted, but this PC's secure storage (Windows data protection or the system keyring) is not available right now.`;
-  if (code === 'EFORMAT') return `The saved ${what} file is damaged.`;
+  if (code === 'NOCRYPTO') return `The saved ${what} cannot be decrypted right now: this PC's secure storage (Windows data protection or the system keyring) is not available.`;
+  if (code === 'EFORMAT') return `The file holding the saved ${what} is damaged.`;
   if (code === 'EBUSY' || code === 'EPERM' || code === 'EACCES') return `The saved ${what} could not be read (${code}): another program, often antivirus or backup software, is using the file, or access was denied. Try again in a moment.`;
   return `The saved ${what} could not be read (${code}).`;
 }
