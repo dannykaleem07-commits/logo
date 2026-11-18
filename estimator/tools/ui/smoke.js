@@ -1798,18 +1798,32 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert(res['badge warn on a card'] >= 4.5 && res['badge ok on a card'] >= 4.5 && res['oem single-source on a card'] >= 4.5, JSON.stringify(res));
   });
 
-  await step('keyboard only: add a photo through the file chooser, pick a catalogue part and toggle a damage zone', async () => {
+  await step('keyboard only: add a photo through the file chooser (dropping files still works), pick a catalogue part and toggle a damage zone', async () => {
     // a photo: Tab reaches the drop zone, which is a button; Enter opens the file chooser
     await openTab(K, 'photos');
     const p0 = (await t.getJob(K)).photos.length;
-    await page.focus('.tabs a.active');
-    assert(await tabUntil(() => document.activeElement.id === 'drop'), 'Tab reaches the drop zone');
-    assert.strictEqual(await page.$eval('#drop', (x) => x.tagName), 'BUTTON');
-    const [fc] = await Promise.all([page.waitForEvent('filechooser', { timeout: 5000 }), page.keyboard.press('Enter')]);
+    // Playwright intercepts file choosers only once its listener is switched on in the browser, which it does without waiting:
+    // the listener goes on before the Tab presses, as a key press can otherwise beat it (page.click in choose() is slower)
+    let onChooser;
+    const chooser = new Promise((res) => { onChooser = res; page.on('filechooser', onChooser); });
+    let fc;
+    try {
+      await page.focus('.tabs a.active');
+      assert(await tabUntil(() => document.activeElement.id === 'drop'), 'Tab reaches the drop zone');
+      assert.strictEqual(await page.$eval('#drop', (x) => x.tagName), 'BUTTON');
+      await page.keyboard.press('Enter');
+      let tm;
+      fc = await Promise.race([chooser, new Promise((res, rej) => { tm = setTimeout(() => rej(new Error('Enter on the drop zone opened no file chooser')), 5000); })]).finally(() => clearTimeout(tm));
+    } finally { page.off('filechooser', onChooser); }
     await fc.setFiles([file('keyboard.jpg', jpg2)]);
     await page.waitForFunction((k) => document.querySelectorAll('.pcard').length === k + 1, p0, { timeout: 8000 }); await flush();
     assert.strictEqual((await t.getJob(K)).photos.length, p0 + 1, 'photo added from the file chooser');
     assert.strictEqual((await focused()).id, 'drop', 'focus stays on the drop zone');
+    // dropping files on it still works (it is a button now)
+    const dt = await page.evaluateHandle((b) => { const s = atob(b), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); const d = new DataTransfer(); d.items.add(new File([u], 'dropped.jpg', { type: 'image/jpeg' })); return d; }, jpg1.toString('base64'));
+    await page.dispatchEvent('#drop', 'drop', { dataTransfer: dt });
+    await page.waitForFunction((k) => document.querySelectorAll('.pcard').length === k + 2, p0, { timeout: 8000 }); await flush();
+    assert.deepStrictEqual((await t.getJob(K)).photos.slice(p0).map((p) => p.fileName), ['keyboard.jpg', 'dropped.jpg'], 'chosen and dropped photos added');
     // a part: type in Search, Enter goes to the list with the best match picked, the arrow keys move, Enter adds the line
     await openTab(K, 'estimate');
     await page.selectOption('#pickGroup', ''); await page.selectOption('#pickOp', 'replace'); await page.check('#addRefinish'); // the picker's other settings, as left by earlier steps
