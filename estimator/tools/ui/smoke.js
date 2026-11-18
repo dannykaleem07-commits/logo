@@ -673,16 +673,25 @@ const lines = async (id) => (await t.getJob(id)).lines;
     const reads = await page.evaluate(() => { const S = window.Core.Store; S.listJobs = S.__listJobs; S.getJob = S.__getJob; delete S.__listJobs; delete S.__getJob; return [window.__listJobsCalls, window.__getJobCalls, typeof S.listSummaries]; });
     if (reads[2] === 'function') assert.deepStrictEqual(reads.slice(0, 2), [0, 0], 'the Jobs list read no full job: ' + JSON.stringify(reads));
     assert(/AB14 CDE/.test(await text('#main')) && /MIN 1/.test(await text('#main')), 'rows from summaries');
-    // a summary that cannot be read, and one that is not even an object
+    // a stored record its summary cannot be built from (a line rate that is an object with no text form): core.js marks the
+    // summary unreadable, and the list shows an error row for it with Open and Delete
+    await t.putJob({ id: 'bad-record-1', updatedAt: '2099-01-01T00:00:00.000Z', vehicle: { reg: 'BAD 1' }, lines: [{ description: 'x', hours: 1, rate: { toString: 1, valueOf: 1 } }] });
+    await t.go('#/settings'); await settle(200); await t.go('#/jobs'); await settle(400);
+    let bad = await page.$$eval('tr.bad', (ns) => ns.map((n) => n.textContent));
+    assert(bad.length === 1 && /BAD 1/.test(bad[0]) && /could not be read/.test(bad[0]) && /primitive/.test(bad[0]), 'error row: ' + bad);
+    assert(/AB14 CDE/.test(await text('#main')) && await exists('[data-act="loadSample"]'), 'other rows render');
+    // a summary that is not an object, or whose fields cannot be read, does not stop the list either
     await page.evaluate(() => {
       const S = window.Core.Store; S.__ls = S.listSummaries;
-      S.listSummaries = async () => [].concat(S.__ls ? await S.__ls.call(S) : [], [null, { id: 'bad-1', get reg() { throw new Error('boom'); }, updatedAt: '2099-01-01' }]);
+      S.listSummaries = async () => [].concat(await S.__ls.call(S), [null, { id: 'bad-2', get reg() { throw new Error('boom'); }, updatedAt: '2099-01-02' }]);
     });
     await t.go('#/settings'); await settle(200); await t.go('#/jobs'); await settle(400);
-    const bad = await page.$$eval('tr.bad', (ns) => ns.map((n) => n.textContent));
-    await page.evaluate(() => { const S = window.Core.Store; if (S.__ls) S.listSummaries = S.__ls; else delete S.listSummaries; delete S.__ls; });
-    assert(bad.length === 2 && bad.every((b) => /could not be read/.test(b)) && bad.some((b) => /boom/.test(b)), 'error rows: ' + bad);
-    assert(/AB14 CDE/.test(await text('#main')) && await exists('[data-act="loadSample"]'), 'other rows render');
+    bad = await page.$$eval('tr.bad', (ns) => ns.map((n) => n.textContent));
+    await page.evaluate(() => { const S = window.Core.Store; S.listSummaries = S.__ls; delete S.__ls; });
+    assert(bad.length === 3 && bad.every((b) => /could not be read/.test(b)) && bad.some((b) => /boom/.test(b)), 'error rows: ' + bad);
+    await t.go('#/settings'); await settle(200); await t.go('#/jobs'); await settle(400);
+    await page.click('tr.bad [data-act="delJob"][data-id="bad-record-1"]'); await settle(400);
+    assert(!(await t.getJob('bad-record-1')) && !(await exists('tr.bad')), 'deleted from its error row');
   });
 
   await step('restore an old (format 1) backup: settings defaults merged, jobs migrated, own part numbers added (never replaced)', async () => {
@@ -1101,9 +1110,645 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert.strictEqual(await page.evaluate(() => window.Core.isDamageOp({ op: 'renew' })), true, 'a migrated "replace" line counts as a renewal');
   });
 
+  // ---------- round 3: report integrity ----------
+  const drawBox = async (x0, y0, x1, y1) => {
+    const st = await page.locator('.labStage').boundingBox();
+    await page.mouse.move(st.x + st.width * x0, st.y + st.height * y0); await page.mouse.down();
+    await page.mouse.move(st.x + st.width * x1, st.y + st.height * y1, { steps: 5 }); await page.mouse.up(); await settle(150);
+  };
+  const inkSignature = async () => {
+    const cv = await page.locator('canvas.sigpad').boundingBox();
+    await page.mouse.move(cv.x + 30, cv.y + 50); await page.mouse.down(); await page.mouse.move(cv.x + 240, cv.y + 95, { steps: 6 }); await page.mouse.up();
+  };
+  const clearToast = () => page.evaluate(() => { const el = document.querySelector('#toast'); el.textContent = ''; el.classList.add('hidden'); });
+  const noSpinner = (ms) => page.waitForFunction(() => !document.querySelector('.spinner'), null, { timeout: ms || 8000 });
+
+  await step('finalised report is locked: banner on every tab, inputs and actions disabled, rates and VAT frozen; re-open unlocks', async () => {
+    await openTab(S, 'signoff');
+    await page.click('[data-act="finaliseReport"]'); await flush();
+    const s = await t.getJob(S);
+    const types = [...new Set(['Body', 'Painting', 'Mechanical', 'Auxiliary', 'Electrical'].concat(s.lines.map((l) => l.type)))];
+    assert(s.issued && s.issued.vatPct === 20 && types.every((k) => typeof s.issued.rates[k] === 'number'), 'rates / VAT frozen: ' + JSON.stringify([s.issued.rates, s.issued.vatPct]));
+    for (const tb of ['claim', 'vehicle', 'inspection', 'circumstances', 'photos', 'assessment', 'estimate', 'valuation', 'opinion', 'customer', 'signoff', 'report']) {
+      await openTab(S, tb);
+      assert(/^Finalised on .+ — Re-open to edit\.$/.test((await text('.lockBanner b')).trim()), tb + ' banner: ' + await text('.lockBanner'));
+      const editable = await page.$$eval('#tabBody input, #tabBody select, #tabBody textarea', (ns) => ns.filter((n) => !n.disabled).map((n) => n.dataset.bind || n.dataset.lf || n.dataset.pf || n.id || n.type));
+      assert.deepStrictEqual(editable, [], tb + ': editable inputs');
+      const acts = await page.$$eval('#tabBody button[data-act]:not([disabled])', (ns) => ns.map((n) => n.dataset.act));
+      assert(acts.every((x) => ['reopenReport', 'exportPdf', 'exportJson', 'zonePick'].includes(x)), tb + ': actions still enabled ' + JSON.stringify(acts));
+    }
+    assert(await exists('#tabBody [data-act="exportPdf"]:not([disabled])'), 'PDF export stays available');
+    // nothing changes it: a damage-zone click is refused and says why
+    await openTab(S, 'assessment');
+    const z0 = JSON.stringify((await t.getJob(S)).zones);
+    await page.dispatchEvent('[data-zone="Roof"]', 'click'); await flush();
+    assert.strictEqual(JSON.stringify((await t.getJob(S)).zones), z0, 'zones unchanged');
+    assert(/finalised\. Re-open it to edit/.test(await toastText()), 'says why: ' + await toastText());
+    // a later change in Settings cannot alter the issued figures
+    await t.go('#/settings'); await settle(300);
+    await page.fill('[data-sbind="rates.Body"]', '95'); await settle(600);
+    await openTab(S, 'estimate');
+    assert(/£3,365\.08/.test(await text('#chips')), 'issued totals unchanged: ' + await text('#chips'));
+    await t.go('#/settings'); await settle(300); await page.fill('[data-sbind="rates.Body"]', '72.5'); await settle(600);
+    // re-open from the banner
+    await openTab(S, 'estimate');
+    await page.click('.lockBanner [data-act="reopenReport"]'); await flush();
+    assert(!('issued' in (await t.getJob(S))), 're-opened');
+    assert(!(await exists('.lockBanner')) && (await page.$$eval('#tabBody input:not([disabled])', (ns) => ns.length)) > 10, 'unlocked');
+  });
+
+  await step('Duplicate: the copy is an unsigned draft (no signature, date signed, finalised snapshot or AI log; Draft, version 1.0, dated today)', async () => {
+    await openTab(S, 'claim');
+    await page.fill('[data-bind="report.version"]', '2.1'); await page.fill('[data-bind="report.status"]', 'Final Engineering Assessment — Repair'); await flush();
+    await openTab(S, 'signoff');
+    await page.click('[data-act="signToday"]'); await flush();
+    await page.click('[data-act="sigDraw"][data-target="job"]'); await settle(150);
+    await inkSignature();
+    await page.click('#modal [data-ok]'); await flush();
+    const s = await t.getJob(S);
+    assert(s.assessor.signature && s.assessor.dateSigned && s.aiLog.length, 'the original is signed and has a log');
+    await page.click('[data-act="finaliseReport"]'); await flush();
+    await t.go('#/jobs'); await settle(300);
+    const n0 = (await t.listJobs()).length;
+    await page.click(`[data-act="dupJob"][data-id="${S}"]`); await settle(600);
+    const all = await t.listJobs();
+    const copy = all.filter((j) => j.copiedFrom && j.copiedFrom.id === S).pop();
+    const today = await page.evaluate(() => window.Core.todayISO());
+    assert(all.length === n0 + 1 && copy, 'one copy');
+    assert.deepStrictEqual([copy.assessor.signature, copy.assessor.dateSigned, copy.report.status, copy.report.version, copy.report.date, copy.aiLog.length, 'issued' in copy, 'aiDraftPending' in copy],
+      ['', '', 'Draft', '1.0', today, 0, false, false], 'copy: ' + JSON.stringify([copy.assessor.dateSigned, copy.report.status, copy.report.version, copy.report.date, copy.aiLog.length]));
+    assert(copy.copiedFrom.ref === s.report.ref && copy.report.ref === s.report.ref + '-COPY', 'the copy notes where it came from');
+    await openTab(copy.id, 'claim');
+    assert(/Copied from .+ as a new unsigned draft/.test(await text('.copiedFrom')), 'note shown');
+    // the original keeps everything
+    const orig = await t.getJob(S);
+    assert(orig.issued && orig.assessor.signature && orig.report.version === '2.1', 'original unchanged');
+    await openTab(S, 'signoff'); await page.click('.lockBanner [data-act="reopenReport"]'); await flush();
+  });
+
+  await step('salvage categories A and B can be recorded, with the break / crush hint', async () => {
+    const id = await newJob();
+    await openTab(id, 'valuation');
+    const opts = await page.$$eval('[data-bind="outcome.category"] option', (ns) => ns.map((n) => [n.value, n.textContent]));
+    assert.deepStrictEqual(opts.map((o) => o[0]), ['', 'A', 'B', 'S', 'N'], JSON.stringify(opts));
+    assert(/Category A — Scrap/.test(opts[1][1]) && /Category B — Break/.test(opts[2][1]), 'names');
+    assert(/A\/B: break or crush only — the vehicle must not return to the road/.test(await page.$eval('[data-bind="outcome.category"]', (n) => n.closest('label').textContent)), 'hint');
+    await page.selectOption('[data-bind="outcome.category"]', 'B'); await flush();
+    assert.strictEqual((await t.getJob(id)).outcome.category, 'B');
+    await page.selectOption('[data-bind="outcome.category"]', 'A'); await flush();
+    assert.strictEqual((await t.getJob(id)).outcome.category, 'A');
+  });
+
+  await step('CPR 35 "Material relied on": entered on Sign-off, suggested from the assessment, required in CPR mode', async () => {
+    await openTab(S, 'signoff');
+    assert(await exists('textarea[data-bind="report.materialsRelied"]'), 'field on Sign-off');
+    await page.click('[data-act="suggestMaterials"]'); await flush();
+    let s = await t.getJob(S);
+    assert(/^Valuation guides: /m.test(s.report.materialsRelied) && /guide labour times/.test(s.report.materialsRelied), 'suggestion: ' + s.report.materialsRelied);
+    await page.fill('[data-bind="report.materialsRelied"]', ''); await flush();
+    await page.check('[data-bind-check="report.cpr35"]'); await flush();
+    await openTab(S, 'report'); await settle(300);
+    assert(/Material relied on/.test(await text('.qa')), 'CPR 35 check asks for it');
+    await openTab(S, 'signoff');
+    assert(/Required in a CPR 35 report/.test(await page.$eval('[data-bind="report.materialsRelied"]', (n) => n.closest('label').textContent)), 'hint in CPR mode');
+    await page.fill('[data-bind="report.materialsRelied"]', "Glass's Guide and CAP HPI retail values; DVSA MOT History; ABI salvage Code of Practice."); await flush();
+    s = await t.getJob(S);
+    assert.strictEqual(s.report.materialsRelied, "Glass's Guide and CAP HPI retail values; DVSA MOT History; ABI salvage Code of Practice.");
+    await openTab(S, 'report'); await settle(300);
+    assert(!/Material relied on/.test(await text('#tabBody .qa')), 'check satisfied');
+    await openTab(S, 'signoff'); await page.uncheck('[data-bind-check="report.cpr35"]'); await flush();
+  });
+
+  await step('AI draft "check before signing" flags are stored when sections are applied, listed until dismissed, never doubled', async () => {
+    let a = await t.getJob(A);
+    assert(Array.isArray(a.aiFlags) && a.aiFlags.filter((f) => f.text === 'Check the RH sill concealed area').length === 1 && a.aiFlags.every((f) => f.section && f.at), 'stored: ' + JSON.stringify(a.aiFlags));
+    await openTab(A, 'opinion');
+    assert(/Check the RH sill concealed area/.test(await text('.aiFlags')), 'shown on the Opinion tab');
+    await openTab(A, 'report'); await settle(300);
+    assert(/AI review flag.*Check the RH sill concealed area/.test(await text('.qa')), 'pre-issue check lists it');
+    // applying another draft with the same flag does not add it twice
+    await openTab(A, 'opinion');
+    await t.mock({ draftTag: 'DRAFT6' });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]');
+    await page.$$eval('#modal input[data-apply]', (ns) => ns.forEach((n, k) => { n.checked = k === 0; }));
+    await page.click('#modal [data-go]'); await flush();
+    a = await t.getJob(A);
+    assert.strictEqual(a.aiFlags.filter((f) => f.text === 'Check the RH sill concealed area').length, 1, 'not doubled');
+    await openTab(A, 'opinion');
+    await page.click('.aiFlags [data-act="aiFlagDismiss"][data-i="0"]'); await flush();
+    a = await t.getJob(A);
+    assert(!a.aiFlags.some((f) => f.text === 'Check the RH sill concealed area'), 'dismissed');
+    assert(!(await exists('.aiFlags')) || !/Check the RH sill/.test(await text('.aiFlags')), 'gone from the tab');
+  });
+
+  await step('AI photo batches: a later batch fails, the earlier ones are kept; "Analyse the remaining photos" sends only those', async () => {
+    const id = await newJob();
+    await t.go('#/jobs'); await settle(200);
+    const sz = jpegSize(jpg2);
+    const j0 = await t.getJob(id);
+    j0.photos = Array.from({ length: 12 }, (_, k) => ({ id: 'pb' + (k + 1), dataUrl: dataUrl2, w: sz.w, h: sz.h, title: '', caption: '', source: '', labels: [] }));
+    await t.putJob(j0);
+    await t.mock({ failBatchAt: 11 });
+    await openTab(id, 'photos');
+    const c0 = (await t.calls('ai.analysePhotos')).length;
+    await page.click('[data-act="aiAnalyse"]'); await noSpinner(); await flush();
+    assert(/^Analysed 10 of 12 photos; the rest failed: The AI service is overloaded \(529\)/.test(await toastText()), 'toast: ' + await toastText());
+    let j = await t.getJob(id);
+    assert.strictEqual(j.photos.filter((p) => p.labels.some((l) => l.ai)).length, 10, 'the first batch is applied');
+    assert(j.aiFindings && j.aiFindings.partial && j.aiFindings.partial.analysed === 10 && j.aiFindings.partial.total === 12, 'partial run recorded: ' + JSON.stringify(j.aiFindings && j.aiFindings.partial));
+    assert(j.aiLog.some((x) => /10 photos; 2 more could not be analysed/.test(x.action)), 'logged as a partial run');
+    assert(/Only 10 of 12 photos were analysed/.test(await text('.partialRun')), 'the findings panel says so');
+    await t.mock({ failBatchAt: null });
+    await page.click('[data-act="aiAnalyseRest"]'); await noSpinner(); await flush();
+    const sent = (await t.calls('ai.analysePhotos')).slice(c0).map((c) => c.arg.idx);
+    assert.deepStrictEqual(sent, [[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], [11, 12], [11, 12]], 'sent: ' + JSON.stringify(sent));
+    j = await t.getJob(id);
+    assert(j.photos.every((p) => p.labels.some((l) => l.ai)) && !j.aiFindings.partial && j.aiFindings.photos.length === 12, 'all 12 analysed, findings added to');
+    assert(!(await exists('.partialRun')), 'notice gone');
+  });
+
+  await step('your own part numbers: "your number", auto-fill only when ticked, edit and delete, no doubles on re-import, old entries migrated once', async () => {
+    await t.go('#/catalogue'); await settle(300);
+    await page.selectOption('#catVeh', 'nissan-juke-f15'); await settle(200);
+    // the earlier import again, plus the same bonnet number written differently: nothing is added twice
+    const csv = 'FW001,RH,OEM-FW-R,"Wing, right",£125.00\r\nBN001,,OEM-BONNET,Bonnet,400\r\nBN001,,oem bonnet,Bonnet again,410\r\n';
+    await choose('[data-act="catImport"]', { name: 'again.csv', mimeType: 'text/csv', buffer: Buffer.from(csv) }); await settle(400);
+    assert(/Imported 0 part number\(s\), updated 3 already in your list/.test(await toastText()), await toastText());
+    let juke = (await t.getKv('customOem')).find((v) => v.key === 'nissan-juke-f15');
+    assert.deepStrictEqual(juke.parts['BN001|'].map((c) => c.oem), ['oem bonnet'], 'one bonnet entry: ' + JSON.stringify(juke.parts['BN001|']));
+    assert.strictEqual(juke.parts['FW001|R'].filter((c) => c.oem === 'OEM-FW-R').length, 1, 'one wing entry');
+    const listed = await page.$$eval('.userOem tr.uoem', (ns) => ns.map((n) => n.textContent));
+    assert(listed.some((r) => /OEM-FW-R/.test(r)) && listed.some((r) => /oem bonnet/.test(r)), 'listed under Your part numbers: ' + listed.length);
+    // on a job: shown as your number, not filled in until auto-fill is ticked
+    const id = await newJob();
+    await openTab(id, 'vehicle'); await page.selectOption('[data-bind="vehicle.oemKey"]', 'nissan-juke-f15'); await settle(200);
+    await openTab(id, 'estimate');
+    await pick('FW001', 'R', 'replace');
+    assert(/1 of your own number \(not set to auto-fill\)/.test(await toastText()), 'says why: ' + await toastText());
+    await flush();
+    let l = (await lines(id)).find((x) => x.code === 'FW001' && x.op === 'renew');
+    assert.deepStrictEqual([l.partNo, l.amount], ['', 0], 'not auto-filled');
+    await page.click(`[data-act="oemPick"][data-id="${l.id}"]`); await settle(150);
+    assert(/your number/.test(await text('#modalBody')), 'badge in the OEM picker');
+    await page.click('#modal [data-close]'); await settle(100);
+    await t.go('#/catalogue'); await settle(300);
+    await page.check('.userOem tr.uoem:has-text("OEM-FW-R") input[data-oem-af]'); await settle(400);
+    juke = (await t.getKv('customOem')).find((v) => v.key === 'nissan-juke-f15');
+    assert.strictEqual(juke.parts['FW001|R'].find((c) => c.oem === 'OEM-FW-R').autoFill, true, 'auto-fill ticked');
+    await openTab(id, 'estimate'); await pick('FW001', 'R', 'replace'); await flush();
+    l = (await lines(id)).filter((x) => x.code === 'FW001' && x.op === 'renew').pop();
+    assert.deepStrictEqual([l.partNo, l.amount], ['OEM-FW-R', 125], 'filled once auto-fill is ticked');
+    // edit (number, price) and delete
+    await t.go('#/catalogue'); await settle(300);
+    await page.click('.userOem tr.uoem:has-text("oem bonnet") [data-act="oemEdit"]'); await settle(150);
+    assert.strictEqual(await page.$eval('#nOem', (n) => n.value), 'oem bonnet', 'form filled in');
+    await page.fill('#nOem', 'OEM-BONNET-2'); await page.fill('#nPrice', '420');
+    await page.click('#modal [data-ok]'); await settle(400);
+    juke = (await t.getKv('customOem')).find((v) => v.key === 'nissan-juke-f15');
+    assert.deepStrictEqual(juke.parts['BN001|'].map((c) => [c.oem, c.price, c.confidence]), [['OEM-BONNET-2', 420, 'user']], 'edited in place: ' + JSON.stringify(juke.parts['BN001|']));
+    await page.click('.userOem tr.uoem:has-text("V1-ONLY-PN") [data-act="oemDel"]'); await settle(400);
+    assert(!JSON.stringify(await t.getKv('customOem')).includes('V1-ONLY-PN') && /Part number deleted/.test(await toastText()), 'deleted');
+    // entries an older version saved ('confirmed', auto-fill on, one number twice): migrated once, on start
+    const old = await t.getKv('customOem');
+    old.push({ key: 'user-test-old-1', make: 'Testmake', model: 'Oldmodel', generation: '', years: '', parts: { 'FE001|': [
+      { oem: 'OLD-PN-1', description: 'Old', notes: '', price: 10, priceIncVat: null, source: '', confidence: 'confirmed', user: true, autoFill: true, role: 'primary', market: 'UK' },
+      { oem: 'old pn.1', description: 'Old again', confidence: 'confirmed', user: true, autoFill: true }] } });
+    await t.putKv('customOem', old);
+    await page.reload(); await page.waitForFunction(() => document.querySelector('#main').innerHTML.length > 0); await settle(1300);
+    assert(/1 of your own part number is now marked "your number" and no longer fills estimate lines by itself/.test(await toastText()), 'told once: ' + await toastText());
+    const mig = (await t.getKv('customOem')).find((v) => v.key === 'user-test-old-1');
+    assert.deepStrictEqual(mig.parts['FE001|'].map((c) => [c.oem, c.confidence, c.autoFill]), [['OLD-PN-1', 'user', false]], 'migrated: ' + JSON.stringify(mig.parts));
+    await page.reload(); await page.waitForFunction(() => document.querySelector('#main').innerHTML.length > 0); await settle(1300);
+    assert(!/no longer fill/.test(await toastText()), 'only once');
+  });
+
+  await step('an advert the AI found stays "not verified" until the assessor ticks Verified (a URL alone does not verify it)', async () => {
+    const id = await newJob();
+    await openTab(id, 'valuation');
+    await page.click('[data-act="aiValuation"]'); await noSpinner(5000); await flush();
+    await page.click('[data-act="advFromAi"][data-i="3"]'); await flush();
+    assert.strictEqual((await t.getJob(id)).valuation.adverts[0].aiUnverified, true, 'added as unverified');
+    await page.fill('input[data-adv="url"][data-i="0"]', 'https://www.motors.co.uk/car-123456/'); await flush();
+    assert.strictEqual((await t.getJob(id)).valuation.adverts[0].aiUnverified, true, 'still unverified with a URL');
+    await openTab(id, 'report'); await settle(300);
+    assert(/found by AI web search has not been verified/.test(await text('.qa')), 'pre-issue check lists it');
+    await openTab(id, 'valuation');
+    await page.click('input[data-adv-verify="0"]'); await flush(); // the box goes once ticked (the advert is verified)
+    const ad = (await t.getJob(id)).valuation.adverts[0];
+    assert(!('aiUnverified' in ad) && ad.url === 'https://www.motors.co.uk/car-123456/', 'verified: ' + JSON.stringify(ad));
+    assert(!(await exists('.advUnverified')), 'hint gone');
+  });
+
+  await step('the variant picker reopens on the saved variant: make, model, the exact engine (badges repeat), trim, body and gearbox', async () => {
+    const want = await page.evaluate(() => {
+      const V = window.VARIANTS;
+      for (let i = 0; i < V.length; i++) {
+        const m = V[i], seen = {};
+        for (let k = 0; k < m.engines.length; k++) {
+          const b = m.engines[k].badge;
+          if (b in seen) {
+            const trims = [...new Set([...(m.trims || []), ...Object.values(m.trims_by_period || {}).flat()])];
+            return { make: m.make, model: String(i), engine: String(k), trim: trims[trims.length - 1] || '', body: (m.bodies || [])[0] || '', trans: (m.transmissions || []).slice(-1)[0] || '' };
+          }
+          seen[b] = k;
+        }
+      }
+      return null;
+    });
+    assert(want, 'a model with a repeated engine badge');
+    const id = await newJob();
+    await openTab(id, 'vehicle');
+    for (const k of ['make', 'model', 'engine', 'trim', 'body', 'trans']) if (want[k]) { await page.selectOption(`select[data-vp="${k}"]`, want[k]); await settle(120); }
+    await page.click('[data-act="applyVariant"]'); await flush();
+    assert((await t.getJob(id)).vehicle.variantKey.split('|').length === 8, 'key with the engine signature');
+    await openTab(S, 'vehicle'); // another job in between, so the picker starts afresh
+    await openTab(id, 'vehicle');
+    const got = await page.$$eval('select[data-vp]', (ns) => Object.fromEntries(ns.map((n) => [n.dataset.vp, n.value])));
+    assert.deepStrictEqual(got, want, 'picker preselected: ' + JSON.stringify(got));
+  });
+
+  await step('estimate money is labelled ex VAT; hours and amounts cannot go below 0; messages name the real Settings sections', async () => {
+    await openTab(S, 'estimate');
+    const th = await page.$$eval('#linesTbl th', (ns) => ns.map((n) => n.textContent));
+    assert(th.includes('Parts / mat. £ (ex VAT)'), JSON.stringify(th));
+    assert(/Parts \(ex VAT\)/.test(await text('#totalsBox')) && /Discount £ \(ex VAT\)/.test(await text('#tabBody')), 'totals / discount labels');
+    assert.deepStrictEqual(await page.$eval('input[data-lf="amount"]', (n) => [n.placeholder, n.min]), ['ex VAT', '0']);
+    assert.deepStrictEqual(await page.$$eval('input[data-lf="hours"], input[data-lf="rate"], input[data-bind="discount"], input[data-bind^="rates."]', (ns) => [...new Set(ns.map((n) => n.min))]), ['0'], 'min 0');
+    await page.click('[data-act="paintMaterials"]'); await settle(150);
+    assert(/Settings → Rates & thresholds/.test(await toastText()), await toastText());
+    await openTab(S, 'valuation');
+    assert.strictEqual(await page.$eval('[data-bind="valuation.adopted"]', (n) => n.min), '0', 'PAV min 0');
+  });
+
+  await step('unedited AI text is marked on its field; PDF export counts unreviewed AI lines, AI labels and AI text', async () => {
+    await openTab(A, 'circumstances');
+    const hint = await page.$eval('[data-bind="circumstances.impactType"]', (n) => (n.parentElement.querySelector('.aiTextHint') || {}).textContent || '');
+    assert(/AI text, not edited yet\. The report prints it as assessed from the photographs \(AI-assisted\)/.test(hint), 'hint: ' + hint);
+    await openTab(A, 'report'); await settle(300);
+    const n0 = (await t.calls('exportPdf')).length;
+    t.dialogMode = 'dismiss';
+    await page.click('[data-act="exportPdf"]'); await settle(250);
+    t.dialogMode = 'accept';
+    const d = t.dialogs[t.dialogs.length - 1];
+    assert(/AI-suggested estimate lines? ha(s|ve) not been marked as reviewed/.test(d) && /the AI damage labels on \d+ photos? in the report have not been reviewed/.test(d) && /fields? still holds? AI text you have not edited \(.*Impact type/.test(d), 'dialog: ' + d);
+    assert.strictEqual((await t.calls('exportPdf')).length, n0, 'cancelled');
+    // once edited it is the assessor's text: the mark goes as they type
+    await openTab(A, 'circumstances');
+    await page.fill('[data-bind="circumstances.impactType"]', 'Sideswipe / lateral side contact (confirmed by the driver)'); await flush();
+    assert(!(await page.$eval('[data-bind="circumstances.impactType"]', (n) => !!n.parentElement.querySelector('.aiTextHint'))), 'mark removed');
+  });
+
+  await step('Photos tab: thumbnails on the cards; moving or removing a photo changes only its card (no rebuild)', async () => {
+    const id = await newJob();
+    await openTab(id, 'photos');
+    await page.setInputFiles('#photoInput', [file('1.jpg', jpg1), file('2.jpg', jpg2), file('3.jpg', jpg1)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 3, null, { timeout: 8000 }); await flush();
+    let j = await t.getJob(id);
+    assert(j.photos.every((p) => /^data:image\/jpeg;base64,/.test(p.thumb || '') && p.thumb !== p.dataUrl), 'thumbnails made when the photos are added');
+    assert.deepStrictEqual(await page.$$eval('.pcard .pimg img', (ns) => ns.map((n) => n.getAttribute('src'))), j.photos.map((p) => p.thumb), 'cards show the thumbnails');
+    await page.evaluate(() => document.querySelectorAll('.pcard').forEach((c, k) => { c.__mark = k + 1; }));
+    await page.click('.pcard:nth-child(3) [data-act="pmove"][data-d="-1"]'); await flush();
+    assert.deepStrictEqual(await page.$$eval('.pcard', (ns) => ns.map((n) => n.__mark)), [1, 3, 2], 'the same card elements, reordered');
+    j = await t.getJob(id);
+    assert.deepStrictEqual(await page.$$eval('.pcard', (ns) => ns.map((n) => n.dataset.pid)), j.photos.map((p) => p.id), 'order stored');
+    assert.deepStrictEqual(await page.$$eval('.pcard .pnum', (ns) => ns.map((n) => n.textContent)), ['IMAGE 01', 'IMAGE 02', 'IMAGE 03']);
+    await page.click('.pcard:nth-child(1) [data-act="pdel"]'); await flush();
+    assert.deepStrictEqual(await page.$$eval('.pcard', (ns) => ns.map((n) => n.__mark)), [3, 2], 'removed in place');
+    assert.strictEqual((await t.getJob(id)).photos.length, 2);
+    assert(/Photos & AI2/.test(await text('.jobhead .tabs')), 'tab count: ' + await text('.jobhead .tabs'));
+    // the report keeps the full image
+    await openTab(id, 'report'); await settle(400);
+    const full = (await t.getJob(id)).photos[0].dataUrl;
+    assert(await page.$eval('#preview', (f, u) => f.srcdoc.includes(u), full), 'report uses the full image');
+  });
+
+  // ---------- round 3: robustness ----------
+  await step('storage full: a failed save keeps the change and shows a banner with Retry; a save that hangs never holds up navigation', async () => {
+    const id = await newJob();
+    await openTab(id, 'claim');
+    await page.evaluate(() => { const S = window.Core.Store; S.__save = S.saveJob; S.saveJob = () => Promise.reject(Object.assign(new Error('There is not enough storage space.'), { name: 'QuotaExceededError' })); });
+    await page.fill('[data-bind="instruction.fileRef"]', 'TYPED-WHILE-FULL'); await flush();
+    assert.strictEqual((await text('#banners .banner.err')).replace(/Retry$/, '').trim(), 'Not saved: storage is full or unavailable — the disk is full, or the space this app may use has run out. Free disk space, then click Retry.', 'banner: ' + await text('#banners'));
+    assert.strictEqual(await text('#savedState'), 'Not saved');
+    await page.evaluate(() => { window.Core.Store.saveJob = () => new Promise(() => {}); }); // storage that never answers
+    await page.fill('[data-bind="instruction.fileRef"]', 'TYPED-WHILE-HUNG');
+    const t1 = Date.now();
+    await page.click('.jobhead a[href="#/jobs"]');
+    await page.waitForSelector('[data-act="loadSample"]', { timeout: 6000 });
+    assert(Date.now() - t1 < 5000, 'navigation took ' + (Date.now() - t1) + ' ms');
+    assert(await exists('#banners .banner.err'), 'the banner stays on the next screen');
+    await page.evaluate(() => { const S = window.Core.Store; S.saveJob = S.__save; delete S.__save; });
+    await page.click('#banners [data-banner="retry"]'); await settle(600);
+    assert.strictEqual((await t.getJob(id)).instruction.fileRef, 'TYPED-WHILE-HUNG', 'the kept change is stored');
+    assert(!(await exists('#banners .banner')) && /^Saved\.$/.test(await toastText()), 'banner gone: ' + await toastText());
+  });
+
+  await step('the same job in two tabs: the stale tab\'s save is refused (nothing overwritten), autosave stops with a banner, Reload shows the other tab\'s change', async () => {
+    const id = await newJob();
+    await openTab(id, 'claim'); await flush();
+    assert.strictEqual(typeof (await t.getJob(id)).rev, 'number', 'core.js stores a revision');
+    const p2 = await t.context.newPage();
+    const errs2 = [];
+    p2.on('pageerror', (e) => errs2.push(String(e.message))); p2.on('console', (m) => { if (m.type() === 'error') errs2.push(m.text()); }); p2.on('dialog', (dl) => dl.accept());
+    await p2.goto(t.url + `#/job/${id}/claim`); await p2.waitForSelector('#tabBody'); await p2.waitForTimeout(300);
+    await p2.fill('[data-bind="instruction.instructingParty"]', 'Typed in tab 2'); await p2.waitForTimeout(900);
+    assert.strictEqual((await t.getJob(id)).instruction.instructingParty, 'Typed in tab 2', 'tab 2 saved');
+    await page.fill('[data-bind="instruction.fileRef"]', 'Typed in tab 1'); await flush();
+    let j = await t.getJob(id);
+    assert.deepStrictEqual([j.instruction.instructingParty, j.instruction.fileRef], ['Typed in tab 2', ''], 'the other tab\'s change is kept: ' + JSON.stringify([j.instruction.instructingParty, j.instruction.fileRef]));
+    assert(/This assessment was changed in another window or tab\. Reload it to continue\./.test(await text('#banners')), 'banner: ' + await text('#banners'));
+    assert.strictEqual(await text('#savedState'), 'Not saved: changed elsewhere');
+    await page.fill('[data-bind="instruction.fileRef"]', 'Typed again in tab 1'); await flush();
+    assert.strictEqual((await t.getJob(id)).instruction.fileRef, '', 'autosave stopped for this job');
+    await page.click('#banners [data-banner="reload"]'); await settle(500);
+    assert.strictEqual(await page.$eval('[data-bind="instruction.instructingParty"]', (n) => n.value), 'Typed in tab 2', 'reloaded with tab 2\'s change');
+    assert(!(await exists('#banners .banner')), 'banner gone');
+    await page.fill('[data-bind="instruction.fileRef"]', 'After reload'); await flush();
+    assert.strictEqual((await t.getJob(id)).instruction.fileRef, 'After reload', 'saving again');
+    await p2.close();
+    assert.deepStrictEqual(errs2, [], 'second tab errors');
+  });
+
+  await step('a result that lands while its job is being re-opened goes into the job on screen, and survives the next edit', async () => {
+    const id = await newJob();
+    await openTab(id, 'valuation');
+    await page.evaluate(() => { const S = window.Core.Store; S.__get = S.getJob; S.getJob = async function (x) { await new Promise((r) => setTimeout(r, 600)); return S.__get.call(S, x); }; });
+    await t.mock({ aiDelay: 900 });
+    await page.click('[data-act="aiValuation"]'); await settle(100);
+    await t.go('#/jobs'); await settle(350);
+    await page.evaluate((jid) => { location.hash = `#/job/${jid}/valuation`; }, id); // re-opened just before the result arrives
+    await settle(1700);
+    await page.evaluate(() => { const S = window.Core.Store; S.getJob = S.__get; delete S.__get; });
+    await t.mock({ aiDelay: 30 });
+    assert(await exists('[data-act="aiValApply"]'), 'the result is on screen');
+    await page.fill('[data-bind="valuation.historyNotes"]', 'one edit after re-opening'); await flush();
+    const j = await t.getJob(id);
+    assert(j.valuation.ai && j.valuation.ai.recommended_pav === 5700.4 && j.aiLog.filter((x) => /Valuation/.test(x.action)).length === 1 && j.valuation.historyNotes === 'one edit after re-opening', 'result kept after the edit');
+  });
+
+  await step('typing while a lookup or AI result lands: the field keeps focus, caret and every keystroke', async () => {
+    const id = await newJob();
+    await openTab(id, 'vehicle');
+    await page.fill('[data-bind="vehicle.reg"]', 'AB14 CDE');
+    await t.mock({ dataDelay: 400 });
+    await page.click('[data-act="lookupVehicle"]');
+    await page.click('[data-bind="vehicle.vin"]');
+    const VIN = 'SJNFBAF15U7123456';
+    await page.keyboard.type(VIN, { delay: 90 });
+    await flush();
+    await t.mock({ dataDelay: 20 });
+    const v = (await t.getJob(id)).vehicle;
+    assert.deepStrictEqual([await page.$eval('[data-bind="vehicle.vin"]', (n) => n.value), v.vin, v.make], [VIN, VIN, 'Nissan'], 'every keystroke kept and the lookup applied');
+    assert.strictEqual(await page.evaluate(() => document.activeElement && document.activeElement.dataset.bind), 'vehicle.vin', 'focus kept');
+    await openTab(id, 'valuation');
+    await page.fill('[data-bind="valuation.historyNotes"]', 'Two keepers.');
+    await t.mock({ aiDelay: 500 });
+    await page.click('[data-act="aiValuation"]');
+    await page.focus('[data-bind="valuation.historyNotes"]'); await page.keyboard.press('Control+End');
+    await page.keyboard.type(' Full service history seen.', { delay: 40 });
+    await flush();
+    await t.mock({ aiDelay: 30 });
+    assert.strictEqual((await t.getJob(id)).valuation.historyNotes, 'Two keepers. Full service history seen.', 'caret kept at the end');
+    assert(await exists('[data-act="aiValApply"]'), 'the AI result landed meanwhile');
+  });
+
+  await step('an AI draft that finishes while the labeler or signature pad is open never replaces it: "AI draft ready – Review" waits', async () => {
+    await openTab(A, 'opinion');
+    await t.mock({ aiDelay: 1500, draftTag: 'DRAFT4' });
+    await page.click('[data-act="aiDraft"]'); await settle(100);
+    await openTab(A, 'photos');
+    await page.click('.pcard:nth-child(2) button[data-act="label"]'); await settle(250);
+    await drawBox(0.05, 0.7, 0.3, 0.9); // an empty corner: a press on an existing box would move it
+    await page.keyboard.type('Dent 40mm');
+    await settle(1800);
+    assert(/^Label damage/.test(await text('#modalTitle')) && await exists('#modal:not(.hidden) .labStage'), 'labeler still open: ' + await text('#modalTitle'));
+    assert(/AI draft ready – Review/.test(await toastText()), 'toast: ' + await toastText());
+    assert(await exists('.jobhead [data-act="reviewPendingDraft"]'), 'header button');
+    await page.click('[data-act="save"]'); await flush();
+    const ph = (await t.getJob(A)).photos.find((p) => p.labels.some((l) => l.text === 'Dent 40mm'));
+    assert(ph, 'the labels drawn were saved');
+    await page.click('.jobhead [data-act="reviewPendingDraft"]'); await settle(200);
+    assert(/DRAFT4 summary/.test(await text('#modalBody')), 'the draft is there to review');
+    await page.click('#modal [data-close]'); await settle(100);
+    // the signature pad is not replaced either
+    await openTab(A, 'opinion');
+    await t.mock({ draftTag: 'DRAFT7' });
+    await page.click('[data-act="aiDraft"]'); await settle(100);
+    await openTab(A, 'signoff');
+    await page.click('[data-act="sigDraw"][data-target="job"]'); await settle(150);
+    await inkSignature();
+    await settle(1800);
+    await t.mock({ aiDelay: 30 });
+    assert(/Draw signature/.test(await text('#modalTitle')) && await exists('#modal:not(.hidden) canvas.sigpad'), 'signature pad still open');
+    await page.click('#modal [data-ok]'); await flush();
+    assert((await t.getJob(A)).assessor.signature.startsWith('data:image/png'), 'signature saved');
+  });
+
+  await step('saving the labeler keeps AI labels that arrived while it was open (and does not call them reviewed)', async () => {
+    const id = await newJob();
+    await openTab(id, 'photos');
+    await page.setInputFiles('#photoInput', [file('a.jpg', jpg1), file('b.jpg', jpg2)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 2, null, { timeout: 8000 }); await flush();
+    await t.mock({ aiDelay: 1500 });
+    await page.click('[data-act="aiAnalyse"]'); await settle(150);
+    await page.click('.pcard:nth-child(2) button[data-act="label"]'); await settle(250);
+    await drawBox(0.6, 0.6, 0.8, 0.8);
+    await settle(1900); // the analysis lands meanwhile
+    await t.mock({ aiDelay: 30 });
+    await page.click('[data-act="save"]'); await flush();
+    const p = (await t.getJob(id)).photos[1];
+    const lab = p.labels.map((l) => (l.ai ? 'AI:' : 'me:') + l.text);
+    assert(lab.includes('me:Damage') && lab.includes('AI:Scoring 2') && lab.includes('AI:Old chip'), 'merged: ' + JSON.stringify(lab));
+    assert.strictEqual(p.labelsReviewed, false, 'the new AI labels have not been seen yet');
+    assert(/2 new AI labels arrived for this photo while you were editing/.test(await toastText()), await toastText());
+  });
+
+  await step('double clicks run an action once: Duplicate, Load sample, Export PDF, Export job file, backup', async () => {
+    await t.go('#/jobs'); await settle(300);
+    let n0 = (await t.listJobs()).length;
+    await page.dblclick(`[data-act="dupJob"][data-id="${B}"]`); await settle(900);
+    assert.strictEqual((await t.listJobs()).length, n0 + 1, 'one copy');
+    n0 = (await t.listJobs()).length;
+    await page.dblclick('[data-act="loadSample"]'); await settle(1500);
+    assert.strictEqual((await t.listJobs()).length, n0 + 1, 'one sample');
+    await t.mock({ exportDelay: 400 });
+    await openTab(B, 'report'); await settle(300);
+    const p0 = (await t.calls('exportPdf')).length, s0 = (await t.calls('saveFile')).length;
+    await page.dblclick('[data-act="exportPdf"]'); await settle(900);
+    await page.dblclick('[data-act="exportJson"]'); await settle(900);
+    assert.deepStrictEqual([(await t.calls('exportPdf')).length - p0, (await t.calls('saveFile')).length - s0], [1, 1], 'one PDF and one job file');
+    await t.mock({ exportDelay: 0 });
+    await t.go('#/settings'); await settle(300);
+    const b0 = (await t.calls('backup.begin')).length;
+    await clearToast();
+    await page.dblclick('[data-act="backup"]');
+    await page.waitForFunction(() => /Backup saved/.test(document.querySelector('#toast').textContent), null, { timeout: 30000 }); await settle(300);
+    assert.strictEqual((await t.calls('backup.begin')).length - b0, 1, 'one backup');
+  });
+
+  await step('an unapplied AI draft is kept with the job: it survives a reload, is applied or discarded, and is never sent to the AI', async () => {
+    const id = await newJob();
+    await openTab(id, 'opinion');
+    await t.mock({ draftTag: 'DRAFT5' });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await flush();
+    assert.strictEqual((await t.getJob(id)).aiDraftPending.draft.summary, 'DRAFT5 summary', 'stored with the job');
+    await page.reload(); await page.waitForFunction(() => document.querySelector('#main').innerHTML.length > 0); await settle(500);
+    await openTab(id, 'opinion');
+    assert(await exists('#tabBody [data-act="reviewPendingDraft"]') && await exists('.jobhead [data-act="reviewPendingDraft"]'), 'still offered after a reload');
+    await page.click('#tabBody [data-act="reviewPendingDraft"]'); await settle(200);
+    assert(/DRAFT5 summary/.test(await text('#modalBody')), 'the same draft');
+    await page.click('#modal [data-sel]'); await page.click('#modal [data-go]'); await flush();
+    let j = await t.getJob(id);
+    assert(j.report.summary === 'DRAFT5 summary' && !('aiDraftPending' in j), 'applied and cleared');
+    await t.mock({ draftTag: 'DRAFT8' });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await flush();
+    // a new draft while one is waiting: the waiting one is not sent to the AI, and the new one replaces it
+    await t.mock({ draftTag: 'DRAFT9' });
+    await page.click('[data-act="aiDraft"]'); await page.waitForSelector('#modal:not(.hidden) [data-go]'); await page.click('#modal [data-close]'); await flush();
+    assert.strictEqual((await t.calls('ai.draftNarrative')).pop().arg.hasPending, false, 'a waiting draft is never sent to the AI');
+    assert.strictEqual((await t.getJob(id)).aiDraftPending.draft.summary, 'DRAFT9 summary', 'replaced by the newer draft');
+    await page.click('[data-act="discardDraft"]'); await flush();
+    j = await t.getJob(id);
+    assert(!('aiDraftPending' in j) && j.aiLog.filter((x) => /Narrative/.test(x.action)).length === 3 && !(await exists('#tabBody [data-act="reviewPendingDraft"]')), 'discarded; the AI log keeps every run');
+  });
+
+  await step('Back while the labeler or signature pad has unsaved work asks first: Cancel keeps it open, OK discards', async () => {
+    await t.go('#/jobs'); await settle(200);
+    await openTab(A, 'photos');
+    await page.click('.pcard:nth-child(3) button[data-act="label"]'); await settle(250);
+    await drawBox(0.05, 0.7, 0.3, 0.9);
+    const h0 = await page.evaluate(() => location.hash), d0 = t.dialogs.length;
+    t.dialogMode = 'dismiss';
+    await page.goBack(); await settle(500);
+    t.dialogMode = 'accept';
+    assert(t.dialogs.length === d0 + 1 && /^Leave this page\?/.test(t.dialogs[d0]), 'asked: ' + t.dialogs.slice(d0));
+    assert(await exists('#modal:not(.hidden) .labStage') && await page.evaluate(() => location.hash) === h0, 'still open; the address is back');
+    await page.goBack(); await settle(500);
+    assert(await page.$eval('#modal', (n) => n.classList.contains('hidden')) && /#\/jobs$/.test(await page.evaluate(() => location.hash)), 'closed after OK');
+    // × on the signature pad with ink asks too; a pad without ink just closes
+    await openTab(A, 'signoff');
+    await page.click('[data-act="sigDraw"][data-target="job"]'); await settle(150);
+    await inkSignature();
+    const d1 = t.dialogs.length;
+    t.dialogMode = 'dismiss';
+    await page.click('#modal [data-close]'); await settle(150);
+    t.dialogMode = 'accept';
+    assert(t.dialogs.length === d1 + 1 && await exists('#modal:not(.hidden) canvas.sigpad'), 'kept after Cancel');
+    await page.click('#modal [data-close]'); await settle(150);
+    assert(await page.$eval('#modal', (n) => n.classList.contains('hidden')), 'closed after OK');
+    await page.click('[data-act="sigDraw"][data-target="job"]'); await settle(150);
+    const d2 = t.dialogs.length;
+    await page.click('#modal [data-close]'); await settle(150);
+    assert(t.dialogs.length === d2 && await page.$eval('#modal', (n) => n.classList.contains('hidden')), 'no question without unsaved work');
+  });
+
+  await step('full backup: every job (with photos) streamed in chunks to the desktop backup file; restore brings them back; a cut-short file is reported', async () => {
+    await t.go('#/settings'); await settle(300);
+    const ids = (await t.listJobs()).map((j) => j.id);
+    const c0 = (await t.calls('backup.write')).length;
+    await clearToast();
+    await page.click('[data-act="backup"]');
+    await page.waitForFunction(() => /Backup saved/.test(document.querySelector('#toast').textContent), null, { timeout: 30000 });
+    assert(new RegExp(`Backup saved: ${ids.length} assessments to C:/Backups/backup-\\d{4}-\\d{2}-\\d{2}\\.ersbackup\\.`).test(await toastText()), await toastText());
+    const writes = (await t.calls('backup.write')).slice(c0).map((c) => c.arg.len);
+    assert(writes.length >= 2 && writes.every((n) => n <= 8 * 1024 * 1024), 'chunks: ' + JSON.stringify(writes));
+    const file = await page.evaluate(() => window.__lastBackup);
+    assert(file.endsWith('\n'), 'ends with a newline');
+    const lines = file.slice(0, -1).split('\n');
+    const recs = lines.map((l) => JSON.parse(l));
+    assert.deepStrictEqual([recs[0].kind, recs[0].format, recs[0].jobs], ['engineer-report-studio-backup', 2, ids.length], 'header');
+    assert.deepStrictEqual([recs[1].type, recs[2].type, recs[recs.length - 1].type, recs[recs.length - 1].jobs], ['settings', 'customOem', 'end', ids.length], 'settings, part numbers, end');
+    const jobs = recs.filter((r) => r.type === 'job').map((r) => r.data);
+    assert.deepStrictEqual(jobs.map((j) => j.id).sort(), ids.slice().sort(), 'every job, one line each');
+    const withPhotos = jobs.filter((j) => j.photos.length).sort((a, b) => b.photos.length - a.photos.length);
+    assert(withPhotos.length >= 2, 'more than one job with photos');
+    // delete one job, change another, then restore the backup over them
+    const gone = withPhotos[0], changedJob = withPhotos[1];
+    await t.go('#/jobs'); await settle(300);
+    await page.click(`[data-act="delJob"][data-id="${gone.id}"]`); await settle(400);
+    assert(!(await t.getJob(gone.id)), 'deleted');
+    await openTab(changedJob.id, 'claim'); await page.fill('[data-bind="instruction.fileRef"]', 'CHANGED-AFTER-BACKUP'); await flush();
+    await t.go('#/settings'); await settle(300);
+    const d0 = t.dialogs.length;
+    await clearToast();
+    await choose('[data-act="restore"]', { name: 'backup.ersbackup', mimeType: 'application/octet-stream', buffer: Buffer.from(file) });
+    await page.waitForFunction(() => /Backup restored|incomplete|stopped/.test(document.querySelector('#toast').textContent), null, { timeout: 30000 });
+    assert(new RegExp(`^Restore ${ids.length} assessments from this backup`).test(t.dialogs[d0] || ''), 'confirm: ' + t.dialogs[d0]);
+    assert.strictEqual(await toastText(), `Backup restored: ${ids.length} restored, 0 unreadable.`);
+    const back = await t.getJob(gone.id);
+    assert(back && back.photos.length === gone.photos.length && back.photos.every((p, k) => p.dataUrl === gone.photos[k].dataUrl && p.thumb === gone.photos[k].thumb), 'the deleted job is back with its photos');
+    assert.strictEqual((await t.getJob(changedJob.id)).instruction.fileRef, changedJob.instruction.fileRef, 'the changed job is as it was in the backup');
+    await t.go('#/jobs'); await settle(400);
+    assert(await exists(`[data-act="dupJob"][data-id="${gone.id}"]`), 'listed again');
+    await openTab(changedJob.id, 'claim'); // the restored copy is the one shown and saved (no conflict with the old one)
+    await page.fill('[data-bind="instruction.tpReg"]', 'RS01 TOR'); await flush();
+    assert.strictEqual((await t.getJob(changedJob.id)).instruction.tpReg, 'RS01 TOR', 'editable after the restore');
+    // a file cut short (no end line) and one with a damaged line
+    const cut = lines.slice(0, -1).join('\n') + '\n';
+    const damaged = lines.map((l, k) => (k === 3 ? l.slice(0, 40) : l)).join('\n') + '\n';
+    await t.go('#/settings'); await settle(300);
+    await clearToast();
+    await choose('[data-act="restore"]', { name: 'cut.ersbackup', mimeType: 'application/octet-stream', buffer: Buffer.from(cut) });
+    await page.waitForFunction(() => /restored/.test(document.querySelector('#toast').textContent), null, { timeout: 30000 });
+    assert(new RegExp(`^The backup file is incomplete: ${ids.length} restored, 0 unreadable\\.`).test(await toastText()), await toastText());
+    await settle(300);
+    await clearToast();
+    await choose('[data-act="restore"]', { name: 'damaged.ersbackup', mimeType: 'application/octet-stream', buffer: Buffer.from(damaged) });
+    await page.waitForFunction(() => /1 unreadable/.test(document.querySelector('#toast').textContent), null, { timeout: 30000 });
+    assert(new RegExp(`${ids.length - 1} restored, 1 unreadable`).test(await toastText()), await toastText());
+  });
+
   await t.close();
+  const errors = t.errors.slice();
+
+  // ---------- browser mode (no desktop bridge): the backup is one download, and restores ----------
+  t = await H.open({ bridge: false }); page = t.page; page.setDefaultTimeout(5000);
+  await step('browser mode: every tab renders; the full backup downloads as one .ersbackup file and restores with the photos', async () => {
+    await page.click('[data-act="loadSample"]');
+    await page.waitForFunction(() => /#\/job\/[^/]+\/report$/.test(location.hash));
+    const id = await t.jobId();
+    await openTab(id, 'photos');
+    await page.setInputFiles('#photoInput', [file('a.jpg', jpg1), file('b.jpg', jpg2)]);
+    await page.waitForFunction(() => document.querySelectorAll('.pcard').length === 2, null, { timeout: 8000 }); await flush();
+    for (const tb of ['claim', 'vehicle', 'inspection', 'circumstances', 'photos', 'assessment', 'estimate', 'valuation', 'opinion', 'customer', 'signoff', 'report']) await openTab(id, tb);
+    const before = await t.getJob(id);
+    await t.go('#/settings'); await settle(300);
+    assert(/AI features run in the desktop app/.test(await text('.aiPanel')), 'AI marked as desktop-only');
+    const [dl] = await Promise.all([page.waitForEvent('download', { timeout: 15000 }), page.click('[data-act="backup"]')]);
+    assert(/^backup-\d{4}-\d{2}-\d{2}\.ersbackup$/.test(dl.suggestedFilename()), dl.suggestedFilename());
+    const buf = fs.readFileSync(await dl.path());
+    const recs = buf.toString('utf8').trim().split('\n').map((l) => JSON.parse(l));
+    assert.deepStrictEqual([recs[0].format, recs[0].jobs, recs[recs.length - 1].type, recs.filter((r) => r.type === 'job').length], [2, 1, 'end', 1], 'one file, JSON Lines');
+    await t.go('#/jobs'); await settle(300);
+    await page.click(`[data-act="delJob"][data-id="${id}"]`); await settle(400);
+    assert(!(await t.getJob(id)), 'deleted');
+    await t.go('#/settings'); await settle(300);
+    await choose('[data-act="restore"]', { name: dl.suggestedFilename(), mimeType: 'application/octet-stream', buffer: buf });
+    await page.waitForFunction(() => /Backup restored/.test(document.querySelector('#toast').textContent), null, { timeout: 15000 });
+    assert.strictEqual(await toastText(), 'Backup restored: 1 restored, 0 unreadable.');
+    const back = await t.getJob(id);
+    assert(back && back.photos.length === 2 && back.photos.every((p, k) => p.dataUrl === before.photos[k].dataUrl), 'restored with its photos');
+  });
+  await t.close();
+  errors.push(...t.errors);
+
+  // ---------- storage that cannot be opened at start-up ----------
+  t = await H.open({ init: () => { Object.defineProperty(window, 'indexedDB', { configurable: true, value: { open() { throw new DOMException('The user denied permission to access the database.', 'SecurityError'); } } }); } });
+  page = t.page; page.setDefaultTimeout(5000);
+  await step('storage that cannot be opened at start-up: an error card with the reason, the data folder and Retry (never a blank screen)', async () => {
+    await page.waitForSelector('.bootErr'); await settle(200);
+    assert(/Your saved assessments cannot be opened/.test(await text('.bootErr h2')) && /denied permission/.test(await text('.bootErr')), await text('#main'));
+    assert(/Engineer Report Studio/.test(await text('.bootErr .dataFolder')), 'data folder shown');
+    await page.evaluate(() => { window.__beforeRetry = 1; });
+    await page.click('[data-act="bootRetry"]');
+    await page.waitForFunction(() => !window.__beforeRetry && document.querySelector('.bootErr'), null, { timeout: 8000 });
+    assert(/cannot be opened/.test(await text('.bootErr h2')), 'Retry tries again');
+  });
+  await t.close();
+  errors.push(...t.errors);
+
   const failed = results.filter((r) => r[0] === 'FAIL');
-  console.log(`\n${results.length - failed.length}/${results.length} checks passed; ${t.errors.length} page/console error(s)`);
-  if (t.errors.length) console.log(t.errors.join('\n'));
-  process.exit(failed.length || t.errors.length ? 1 : 0);
+  console.log(`\n${results.length - failed.length}/${results.length} checks passed; ${errors.length} page/console error(s)`);
+  if (errors.length) console.log(errors.join('\n'));
+  process.exit(failed.length || errors.length ? 1 : 0);
 })().catch(async (e) => { console.error('FATAL', e); try { await t.close(); } catch (x) { /* ignore */ } process.exit(1); });

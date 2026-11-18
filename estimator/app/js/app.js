@@ -40,8 +40,6 @@
     return String(err || fallback || 'Something went wrong.');
   }
   const IMAGE_UNREADABLE = 'That image could not be read. Use a JPG or PNG file (HEIC photos from an iPhone are not supported: export them as JPG first).';
-  // core.js's num() reads "£5,995", "60,000" and "1,5" once it is the tolerant version; until then stored text is left alone, never misread
-  const tolerantNum = C.num('£1,234.5') === 1234.5 && C.num('1,5') === 1.5;
   const h1 = (n) => `${(Math.round(num(n) * 10) / 10).toFixed(1)}h`;
   const sameText = (a, b) => String(a == null ? '' : a).replace(/\s+/g, ' ').trim() === String(b == null ? '' : b).replace(/\s+/g, ' ').trim();
   // job.aiText: { '<field path>': '<AI text applied there>' }, so the AI can tell its own earlier drafts from the assessor's text
@@ -75,22 +73,12 @@
   const claimLabel = (k) => (CLAIM_TYPES.find((c) => c[0] === claimKey(k)) || CLAIM_TYPES[0])[1];
 
   // ---------- dates ----------
-  // Calendar dates are local (Europe/London where the platform knows it), never the UTC date of an ISO timestamp.
-  function localYmd(d) {
-    try {
-      const p = {};
-      for (const x of new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/London', year: 'numeric', month: '2-digit', day: '2-digit' }).formatToParts(d)) p[x.type] = x.value;
-      if (p.year && p.month && p.day) return `${p.year}-${p.month}-${p.day}`;
-    } catch (e) { /* no time-zone data: the computer's own calendar */ }
-    const p2 = (n) => String(n).padStart(2, '0');
-    return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`;
-  }
+  // Calendar dates are local (core.js's localISODate: Europe/London), never the UTC date of an ISO timestamp.
   const stampOk = (s) => (typeof s === 'string' || typeof s === 'number') && String(s).trim() !== '' && !isNaN(new Date(s).getTime());
   // YYYY-MM-DD of a timestamp (no argument: today), in local time; '' for a missing or invalid timestamp
   function dayOf(s) {
     if (s !== undefined && !stampOk(s)) return '';
-    const d = s === undefined ? new Date() : new Date(s);
-    return typeof C.localISODate === 'function' ? C.localISODate(d) : localYmd(d);
+    return C.localISODate(s === undefined ? new Date() : new Date(s));
   }
   const today = () => dayOf();
   // a timestamp for display: "—" when it is missing or is not a date
@@ -442,8 +430,8 @@
     if (j.aiLog.some((a) => !isObj(a))) set(j, 'aiLog', j.aiLog.filter(isObj));
     for (const a of j.aiLog) if (a.at !== '' && !stampOk(a.at)) set(a, 'at', '');
     if (j.issued != null) { if (!isObj(j.issued)) del(j, 'issued'); else if (j.issued.at !== '' && !stampOk(j.issued.at)) set(j.issued, 'at', ''); }
-    // numbers stored as text by other tools or older exports ("60,000", "£5,995", "1,5"), once core.js reads them correctly
-    if (tolerantNum) normaliseNumbers(j, set);
+    // numbers stored as text by other tools or older exports ("60,000", "£5,995", "1,5"), read with core.js's tolerant num()
+    normaliseNumbers(j, set);
     return ch;
   }
   // Numeric fields as numbers. Fields that may be left blank keep ''; text without a digit is not a number.
@@ -469,22 +457,8 @@
 
   // ---------- JOBS LIST ----------
   // Rows come from the small per-job summaries (Store.listSummaries), never from the full records with their photos.
-  async function jobSummaries() {
-    if (typeof C.Store.listSummaries === 'function') return C.Store.listSummaries();
-    // core.js without summaries (older build): summaries made from the records. Remove once Store.listSummaries is everywhere.
-    return (await C.Store.listJobs()).map(fallbackSummary);
-  }
-  function fallbackSummary(j) {
-    if (!isObj(j)) return j;
-    try {
-      if (typeof C.jobSummary === 'function') return C.jobSummary(j);
-      migrate(j); // in memory only
-      const t = C.totals(j), v = j.vehicle;
-      return { id: j.id, updatedAt: j.updatedAt, createdAt: j.createdAt, reg: v.reg, vehicle: [v.make, v.model, v.derivative].filter(Boolean).join(' '), ref: j.report.ref, instructingParty: j.instruction.instructingParty,
-        dateOfLoss: j.instruction.dateOfLoss, decision: j.outcome.decision, category: j.outcome.category, net: t.net, pav: t.pav, issued: !!j.issued, photoCount: j.photos.length };
-    } catch (err) { return { id: j.id, reg: isObj(j.vehicle) ? j.vehicle.reg : '', unreadable: errText(err) }; }
-  }
-  // One row per summary, each rendered on its own, so one bad record shows an error row instead of blanking the list.
+  // One row per summary, each rendered on its own, so one bad record (a summary marked `unreadable`, or one that cannot be read
+  // at all) shows an error row instead of blanking the list.
   function jobRow(s) {
     try {
       if (!isObj(s) || !s.id) throw new Error('The record has no ID.');
@@ -510,7 +484,7 @@
   async function renderJobs() {
     const seq = routeSeq;
     let jobs = [];
-    try { jobs = await jobSummaries(); } catch (err) { toast('Could not read the saved assessments: ' + errText(err), true); }
+    try { jobs = await C.Store.listSummaries(); } catch (err) { toast('Could not read the saved assessments: ' + errText(err), true); }
     if (seq !== routeSeq) return;
     if (!Array.isArray(jobs)) jobs = [];
     const when = (s) => { try { return String((isObj(s) && s.updatedAt) || ''); } catch (e) { return ''; } };
@@ -1835,26 +1809,9 @@
       <iframe class="preview" id="preview" title="Report preview"></iframe>`;
   }
 
-  // Fields still holding AI text the assessor has not edited: [{ path, label }] (core.js's rule; a local copy for older core.js)
-  const FIELD_LABELS = Object.assign(Object.fromEntries(DRAFT_MAP.map(([, path, label]) => [path, label])), {
-    'circumstances.impactType': 'Impact type', 'circumstances.primaryArea': 'Primary impact area', 'circumstances.secondaryArea': 'Secondary contact area',
-    'circumstances.direction': 'Direction of contact'
-  });
+  // Fields still holding AI text the assessor has not edited, by core.js's rule (the one the report and the checks use).
   function unreviewedAiText(j) {
-    try { if (typeof C.unreviewedAiText === 'function') return (C.unreviewedAiText(j) || []).filter(isObj); } catch (e) { /* fall back below */ }
-    const out = [];
-    for (const [path, t] of Object.entries(isObj(j.aiText) ? j.aiText : {})) {
-      if (typeof t !== 'string' || !t.trim()) continue;
-      const m = /^photos\.(.+)\.(title|caption)$/.exec(path);
-      let cur, label;
-      if (m) {
-        const n = C.photoNumbers(j), p = j.photos.find((x) => isObj(x) && String(x.id) === m[1]);
-        if (!p || !n.has(p.id)) continue;
-        cur = p[m[2]]; label = `${figLabel(n.get(p.id))} ${m[2]}`;
-      } else { cur = getPath(j, path); label = FIELD_LABELS[path] || path; }
-      if (typeof cur === 'string' && sameText(cur, t)) out.push({ path, label });
-    }
-    return out;
+    try { return (C.unreviewedAiText(j) || []).filter(isObj); } catch (e) { return []; }
   }
   async function exportPdf() {
     // everything AI-made that has not been reviewed: estimate lines, damage labels on printed photos, and unedited AI text
@@ -2118,7 +2075,8 @@
     C.setCustomOem(m.list);
     if (!m.changed) return;
     try { await saveCustomOem(m.list); } catch (e) { /* kept in memory: stored with the next change */ }
-    if (m.autoOff) setTimeout(() => toast(`${m.autoOff} of your own part number${m.autoOff === 1 ? ' is' : 's are'} now marked "your number" and no longer fill${m.autoOff === 1 ? 's' : ''} estimate lines by themselves. Tick auto-fill for the ones you want (Parts catalogue → Your part numbers).`), 800);
+    const one = m.autoOff === 1;
+    if (m.autoOff) setTimeout(() => toast(`${m.autoOff} of your own part number${one ? ' is' : 's are'} now marked "your number" and no longer fill${one ? 's' : ''} estimate lines by ${one ? 'itself' : 'themselves'}. Tick auto-fill for the ones you want (Parts catalogue → Your part numbers).`), 800);
   }
   // + Part number, and Edit on one of your numbers: the same form
   function oemForm(edit) {
@@ -2224,15 +2182,10 @@
   const CHUNK = 8 * 1024 * 1024; // characters per write (about 8 MB)
   const V1_MAX = 500 * 1024 * 1024; // a format-1 backup is read as one string, so it can never be larger than this
   const progress = (txt) => { const el = $('#dataProgress'); if (el) el.textContent = txt; };
-  async function listJobIds() {
-    if (typeof C.Store.listJobIds === 'function') return C.Store.listJobIds();
-    // core.js without Store.listJobIds (older build): the ids from the records. Remove once listJobIds is everywhere.
-    return (await C.Store.listJobs()).filter(isObj).map((j) => j.id);
-  }
   // Where the backup goes. Desktop app: main writes it to disk chunk by chunk (desktop.backup). Browser: one Blob of many parts.
   function backupSink(fileName) {
     const B = desktop && desktop.backup;
-    if (B && ['begin', 'write', 'end', 'abort'].every((k) => typeof B[k] === 'function')) {
+    if (B) {
       let id = null, buf = [], size = 0;
       const fail = (r, what) => new Error((r && r.error) || what);
       const flush = async () => {
@@ -2254,16 +2207,6 @@
         async abort() { if (id == null) return; const k = id; id = null; buf = []; try { await B.abort(k); } catch (e) { /* main also deletes an unfinished file when the window closes */ } }
       };
     }
-    if (desktop && typeof desktop.saveFile === 'function') {
-      // a desktop app whose main process has no desktop.backup yet: the whole file in one save, as before (size-limited)
-      const parts = [];
-      return {
-        async open() { return true; },
-        async push(line) { parts.push(line); },
-        async close() { const r = await desktop.saveFile({ content: parts.join(''), fileName: fileName.replace(/\.ersbackup$/, '.json'), kind: 'json' }); if (r && r.ok) return r.filePath || ''; if (r && r.canceled) return null; throw new Error((r && r.error) || 'The file could not be saved.'); },
-        async abort() { parts.length = 0; }
-      };
-    }
     const blobs = []; // each line becomes a Blob straight away, so the browser can keep the data out of the page's memory
     return {
       async open() { return true; },
@@ -2280,7 +2223,7 @@
   }
   async function backupAll() {
     await Promise.race([flushSave(), delay(ROUTE_SAVE_WAIT)]);
-    const ids = (await listJobIds()).filter((id) => id != null);
+    const ids = (await C.Store.listJobIds()).filter((id) => id != null);
     const sink = backupSink(`backup-${today()}.ersbackup`);
     if (!(await sink.open())) return; // the save dialog was cancelled
     let written = 0;
@@ -2301,7 +2244,6 @@
       }
       await sink.push(JSON.stringify({ type: 'end', jobs: written }) + '\n');
       const where = await sink.close();
-      if (where === null) return;
       toast(`Backup saved: ${written} assessment${written === 1 ? '' : 's'}${where ? ` to ${where}` : ''}.`);
     } catch (err) {
       await sink.abort();
@@ -2416,14 +2358,6 @@
     restoreDone(restoreSummary(n, bad, added), stopped, false, bad);
   }
 
-  // The labour rate for every standard type and every line type in use, and the VAT %, as they are now: frozen in a finalised
-  // report (core.js's C.rateSnapshot is used when it exists; this is the same rule for an older core.js).
-  function rateSnapshot(j) {
-    const types = new Set(Object.keys(C.settings.rates || {}).concat(Object.keys(isObj(j.rates) ? j.rates : {}), LINE_TYPES, j.lines.map((l) => l && l.type).filter(Boolean)));
-    const rates = {};
-    for (const t of types) rates[t] = C.lineRate(j, { type: t });
-    return { rates, vatPct: C.vatPctFor(j) };
-  }
   // A starting list for "Material relied on" (CPR 35, PD 35 para 3.2(2)) from what this assessment used; the assessor edits it.
   function materialsSuggestion(j) {
     const out = [];
@@ -2747,7 +2681,8 @@
         const errs = C.qaChecks(job).filter((q) => q.level === 'error').length;
         if (!confirm(`${errs ? `The pre-issue checks still show ${errs} error${errs === 1 ? '' : 's'}.\n\n` : ''}Finalise this report? It is locked for editing, and the company details, declaration, signature, qualifications, AQP ID, labour rates and VAT are frozen in it as they are now. You can re-open it to edit.`)) return;
         const S = C.settings, a = job.assessor;
-        const snap = typeof C.rateSnapshot === 'function' ? C.rateSnapshot(job) : rateSnapshot(job);
+        // the labour rate for every standard type and every line type in use, and the VAT %: totals() then uses these
+        const snap = C.rateSnapshot(job);
         job.issued = Object.assign({ at: new Date().toISOString(), company: C.clone(S.company), declaration: S.assessor.declaration, signature: liveSignature(job), qualifications: a.qualifications || S.assessor.qualifications || '', aqpId: a.aqpId || S.assessor.aqpId || '' }, snap);
         changed(); renderJob(); toast('Report finalised and locked.');
       },
@@ -2835,10 +2770,17 @@
   // with Retry and, in the desktop app, the data folder, instead of an empty window.
   async function bootFailed(err) {
     const info = await readAppInfo();
+    const name = err && err.name;
+    // an older copy of the app still open elsewhere blocks the upgrade; data written by a newer version cannot be read here
+    const what = name === 'BlockedError'
+      ? ['Close the other window or tab first', 'An older version of this app has the saved assessments open in another window or browser tab, so their storage cannot be brought up to date. Close that window or tab, then click Retry.']
+      : name === 'VersionError'
+        ? ['This copy of the app is older than your data', 'The saved assessments were written by a newer version of Engineer Report Studio, so this older copy cannot open them. Install the latest version and open them with that. Nothing has been changed.']
+        : ['Your saved assessments cannot be opened', 'Nothing has been deleted. This usually means that another copy of the app (or a browser tab with it) still has the data open, that antivirus or backup software is locking the files, that the disk is full, or, in a browser, that site data is blocked. Close other copies, free some disk space, then click Retry.'];
     main.innerHTML = `<div class="wrap"><div class="card errBox bootErr" role="alert" style="border-color:#f0b5ad;background:#fff6f5;max-width:780px">
-      <h2 style="margin-top:0;color:var(--err)">Your saved assessments cannot be opened</h2>
+      <h2 style="margin-top:0;color:var(--err)">${esc(what[0])}</h2>
       <p>The app's storage could not be opened: <b>${esc(errText(err, 'unknown error'))}</b></p>
-      <p class="hint">Nothing has been deleted. This usually means that another copy of the app (or a browser tab with it) still has the data open, that antivirus or backup software is locking the files, that the disk is full, or, in a browser, that site data is blocked. Close other copies, free some disk space, then click Retry.</p>
+      <p class="hint">${esc(what[1])}</p>
       ${info ? `<p class="hint">The data is kept in <code class="dataFolder">${esc(info.dataFolder)}</code>. Copy that folder somewhere safe before trying anything else.</p>` : ''}
       <div class="row"><button class="btn primary" data-act="bootRetry">Retry</button></div></div></div>`;
   }

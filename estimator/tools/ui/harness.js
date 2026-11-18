@@ -96,7 +96,7 @@ const BRIDGE = () => {
       },
       draftNarrative: async (p) => {
         const tag = M().draftTag || 'DRAFT1';
-        log('ai.draftNarrative', { tag, net: p.totals.net, photos: (p.job.photos || []).map((x) => x.index + ':' + x.title), model: p.model, aiText: p.job.aiText, adas: p.job.vehicle && p.job.vehicle.adas,
+        log('ai.draftNarrative', { tag, net: p.totals.net, photos: (p.job.photos || []).map((x) => x.index + ':' + x.title), model: p.model, aiText: p.job.aiText, adas: p.job.vehicle && p.job.vehicle.adas, hasPending: p.job.aiDraftPending != null,
           prov: (p.job.photos || []).map((x) => ({ index: x.index, titleByAi: x.titleByAi, captionByAi: x.captionByAi, labels: (x.labels || []).map((l) => [l.text, l.ai]) })) });
         await delay(M().aiDelay || 30);
         return { ok: true, result: { model: 'claude-opus-5-5', summary: tag + ' summary', inspection_condition: tag + ' condition', structural: tag + ' structural', mechanical: tag + ' mechanical', wheels: tag + ' wheels', geometry: tag + ' geometry', diagnostics: tag + ' diagnostics', roadworthiness: tag + ' roadworthiness', estimate_notes: tag + ' estimate notes', valuation_comments: tag + ' valuation', opinion: tag + ' opinion', decision: 'Repair', category: '', review_flags: ['Check the RH sill concealed area'] } };
