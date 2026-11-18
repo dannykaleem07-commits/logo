@@ -12,13 +12,13 @@
   // Tolerant number reader for stored and imported data: "£5,995" → 5995, "60,000" → 60000, "1,234.50" → 1234.5,
   // a lone decimal comma "1,5" → 1.5, "1.234,56" → 1234.56, "−£56.34" → −56.34. Text after the number is ignored as
   // parseFloat does ("1.5h" → 1.5, "1e3" → 1000); anything without a finite number → 0.
-  const NUM_IGNORE = /[\s    £]/g;
+  const NUM_IGNORE = /[\s\u00a0\u2007\u2009\u202f£]/g;
   const num = (v) => {
     if (typeof v === 'number') return isFinite(v) ? v : 0;
     if (v == null || typeof v === 'boolean') return 0;
     let s;
     try { s = String(v); } catch (e) { return 0; }
-    s = s.replace(NUM_IGNORE, '').replace(/^−/, '-');
+    s = s.replace(NUM_IGNORE, '').replace(/^\u2212/, '-');
     const m = /^([-+]?)(\d[\d.,]*|[.,]\d[\d.,]*)/.exec(s);
     if (!m) return 0;
     let t = m[2];
@@ -31,7 +31,7 @@
     const n = parseFloat(m[1] + t + s.slice(m[0].length));
     return isFinite(n) ? n : 0;
   };
-  const round2 =(n) => Math.round((n + Number.EPSILON) * 100) / 100;
+  const round2 = (n) => Math.round((n + Number.EPSILON) * 100) / 100;
   // Negative amounts print with a true minus sign before the pound sign: −£1,234.56 (never £-1,234.56).
   const gbp = (n) => { const v = num(n), a = round2(Math.abs(v)); return (v < 0 && a > 0 ? '\u2212£' : '£') + a.toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
   const gbp0 = (n) => { const v = num(n), a = Math.round(Math.abs(v)); return (v < 0 && a > 0 ? '\u2212£' : '£') + a.toLocaleString('en-GB'); };
@@ -113,7 +113,6 @@
   const DB_VERSION = 2;
   const SUMMARY_VERSION = 1; // jobSummary() shape; older summaries are rebuilt
   let dbPromise = null;
-  let summariesChecked = false; // listSummaries() has compared the summaries with the jobs once this session
   // An Error that keeps the storage error's name ('QuotaExceededError', 'ConflictError', …) with a readable message.
   const STORE_MESSAGES = {
     QuotaExceededError: 'There is not enough storage space (the disk is full or nearly full).',
@@ -162,7 +161,8 @@
     p.catch(() => { if (dbPromise === p) dbPromise = null; }); // a failed open is retried on the next call
     return p;
   }
-  // Creates the stores; from version 1, also one summary per stored job through a cursor (one job in memory at a time).
+  // Creates the stores; from version 1, also one summary per stored job through a cursor (one job in memory at a time),
+  // after reading the saved Settings as loadSettings() does (a legacy job without its own rates is totalled with them).
   // Nothing here may abort the upgrade: a summary that cannot be built is rebuilt later by listSummaries().
   function upgrade(d, t, oldVersion) {
     if (!d.objectStoreNames.contains('jobs')) d.createObjectStore('jobs', { keyPath: 'id' });
@@ -170,21 +170,34 @@
     if (d.objectStoreNames.contains('summaries')) return;
     try {
       d.createObjectStore('summaries', { keyPath: 'id' });
-      if (oldVersion >= 1 && t) fillSummaries(t, null);
+      if (!(oldVersion >= 1 && t)) return;
+      const g = quiet(t.objectStore('kv').get('settings'), () => fillSummaries(t, null));
+      g.onsuccess = () => {
+        try { if (g.result && typeof g.result === 'object') settings = deepMerge(clone(DEFAULT_SETTINGS), g.result); } catch (err) { /* defaults */ }
+        fillSummaries(t, null);
+      };
     } catch (err) { /* no summaries yet: listSummaries() builds them */ }
   }
-  const quiet = (r) => { r.onerror = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); } }; return r; };
-  // Puts a summary for every job (or only for the keys in `only`, a Set), reading the jobs through a cursor.
-  function fillSummaries(t, only) {
+  // A request whose failure must not abort its transaction (the summaries are rebuilt later); then calls onError, if given.
+  const quiet = (r, onError) => { r.onerror = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); } if (onError) onError(); }; return r; };
+  // Puts a summary for every job (or only for the keys in `only`, a Set), reading the jobs through a cursor, one at a time.
+  // onSummary(summary) sees each summary built (whether or not it could be stored); onEnd() runs when the cursor stops.
+  function fillSummaries(t, only, onSummary, onEnd) {
     const sums = t.objectStore('summaries');
-    const cur = quiet(t.objectStore('jobs').openCursor());
+    const end = () => { if (onEnd) { const f = onEnd; onEnd = null; f(); } };
+    const cur = t.objectStore('jobs').openCursor();
+    cur.onerror = (e) => { if (e) { e.preventDefault(); e.stopPropagation(); } end(); };
     cur.onsuccess = () => {
       const c = cur.result;
-      if (!c) return;
+      if (!c) return end();
       try {
-        if (!only || only.has(c.primaryKey)) quiet(sums.put(Object.assign(jobSummary(c.value), { id: c.primaryKey })));
+        if (!only || only.has(c.primaryKey)) {
+          const s = Object.assign(jobSummary(c.value), { id: c.primaryKey });
+          if (onSummary) onSummary(s);
+          quiet(sums.put(s));
+        }
       } catch (err) { /* this one is left to the next check */ }
-      try { c.continue(); } catch (err) { /* the rest is rebuilt by the next check */ }
+      try { c.continue(); } catch (err) { end(); /* the rest is rebuilt by the next check */ }
     };
   }
   const hasStore = (d, name) => { try { return d.objectStoreNames.contains(name); } catch (e) { return false; } };
@@ -227,40 +240,46 @@
       cur.onerror = () => reject(cur.error);
     }));
   }
-  // Once per session: a summary for every job, none for deleted jobs, none of an older shape (e.g. after the upgrade from
-  // version 1 was interrupted, or the data was written by another version). Reads keys and the small summaries only;
-  // jobs needing a summary are read through a cursor, one at a time.
+  // The stored summaries, checked against the jobs: a summary for every job, of the current shape (keys and the small
+  // summaries only, no job is read). → { list, need: Set of job ids needing a summary, orphans: summary ids without a job }
+  function compareSummaries(ids, sums) {
+    const live = new Set(ids), have = new Map(), list = [], need = new Set(), orphans = [];
+    for (const x of sums) if (x && x.id != null) have.set(x.id, x);
+    for (const id of have.keys()) if (!live.has(id)) orphans.push(id);
+    for (const id of ids) { const x = have.get(id); if (x && x.v === SUMMARY_VERSION) list.push(x); else need.add(id); }
+    return { list, need, orphans };
+  }
+  const readBoth = (t, done, fail) => {
+    const keys = t.objectStore('jobs').getAllKeys(), sums = t.objectStore('summaries').getAll();
+    let pending = 2;
+    keys.onerror = sums.onerror = (e) => fail(e && e.target && e.target.error);
+    keys.onsuccess = sums.onsuccess = () => { if (!--pending) done(compareSummaries(keys.result || [], sums.result || [])); };
+  };
+  // Repairs the summaries (missing after an interrupted upgrade, written by another version, or jobs stored by other
+  // means): drops summaries of deleted jobs and builds the missing ones through a cursor, one job at a time. Resolves with
+  // the complete list, including any summary that could not be stored.
   function syncSummaries() {
     return tx(['jobs', 'summaries'], 'readwrite', (t) => new Promise((resolve, reject) => {
-      const js = t.objectStore('jobs'), ss = t.objectStore('summaries');
-      const keys = js.getAllKeys(), sums = ss.getAll();
-      keys.onerror = sums.onerror = (e) => reject(e && e.target && e.target.error);
-      let pending = 2;
-      const next = () => {
-        if (--pending) return;
-        const jobIds = keys.result || [], have = new Map();
-        for (const s of sums.result || []) if (s && s.id != null) have.set(s.id, s);
-        const live = new Set(jobIds);
-        for (const id of have.keys()) if (!live.has(id)) quiet(ss.delete(id));
-        const need = new Set(jobIds.filter((id) => { const s = have.get(id); return !s || s.v !== SUMMARY_VERSION; }));
-        if (need.size) fillSummaries(t, need);
-        resolve(need.size);
-      };
-      keys.onsuccess = sums.onsuccess = next;
+      readBoth(t, ({ list, need, orphans }) => {
+        for (const id of orphans) quiet(t.objectStore('summaries').delete(id));
+        if (!need.size) return resolve(list);
+        fillSummaries(t, need, (x) => list.push(x), () => resolve(list));
+      }, reject);
     }));
   }
   const Store = {
     // Every job with all of its photos: for compatibility only (the Jobs list uses listSummaries, the backup listJobIds).
     async listJobs() { return tx('jobs', 'readonly', (t) => reqP(t.objectStore('jobs').getAll())); },
     async listJobIds() { return tx('jobs', 'readonly', (t) => reqP(t.objectStore('jobs').getAllKeys())); },
-    // The Jobs list: one small summary per job (jobSummary). Rebuilt once per session where summaries are missing or stale.
+    // The Jobs list: one small summary per job (jobSummary), never the jobs themselves. A read-only check that every job
+    // has a current summary (keys and summaries only); only if not, a repair through a cursor (syncSummaries).
     async listSummaries() {
       const d = await db();
       if (!hasStore(d, 'summaries')) return liveSummaries();
-      if (!summariesChecked) {
-        try { await syncSummaries(); summariesChecked = true; } catch (err) { return liveSummaries(); }
-      }
-      return tx('summaries', 'readonly', (t) => reqP(t.objectStore('summaries').getAll()));
+      const now = await tx(['jobs', 'summaries'], 'readonly', (t) => new Promise((resolve, reject) => readBoth(t, resolve, reject)));
+      if (!now.need.size && !now.orphans.length) return now.list;
+      try { const list = await syncSummaries(); if (Array.isArray(list)) return list; } catch (err) { /* e.g. storage full: built on the fly below */ }
+      return liveSummaries();
     },
     async getJob(id) { return tx('jobs', 'readonly', (t) => reqP(t.objectStore('jobs').get(id))); },
     // Saves the job and its summary in ONE transaction. A job saved elsewhere since it was loaded (a higher stored `rev`)
@@ -868,7 +887,10 @@
       const t = totals(j);
       out.net = isFinite(t.net) ? t.net : 0;
       out.pav = isFinite(t.pav) ? t.pav : 0;
-    } catch (err) { /* the defaults above */ }
+    } catch (err) {
+      // the defaults above, and the reason, so the Jobs list can show the record as unreadable
+      try { out.error = String((err && err.message) || err).slice(0, 200) || 'This record could not be read.'; } catch (e) { out.error = 'This record could not be read.'; }
+    }
     return out;
   }
 
@@ -1030,7 +1052,7 @@
       const fl = obj(f), text = txt(fl.text).trim();
       if (!text) continue;
       const section = txt(fl.section).trim(), day = fl.at ? ukDate(localISODate(fl.at)) : '';
-      add('warn', `AI review flag${section ? ` (${section})` : ''}${day ? `, ${day}` : ''}: ${text} Check it, then dismiss the flag.`, 'opinion');
+      add('warn', `AI review flag${section ? ` (${section})` : ''}${day ? `, ${day}` : ''}: ${text}${/[.!?]$/.test(text) ? '' : '.'} Check it, then dismiss the flag.`, 'opinion');
     }
     // comparables reported by an AI web search whose advert has not been checked (the report lists them separately)
     const unverified = arr(val.adverts).filter((x) => x && typeof x === 'object' && x.aiUnverified && (x.description || x.price));

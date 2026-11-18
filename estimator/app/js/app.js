@@ -2215,6 +2215,233 @@
     toast(`Imported ${n} part number(s)${upd ? `, updated ${upd} already in your list` : ''}${bad ? `, skipped ${bad} row(s) with an unknown code or no part number` : ''}.${headerNote} They are your own numbers: tick auto-fill (Your part numbers) for any that should fill estimate lines. CSV columns: code,side,oem,description,price (£ ex VAT)`, !n && !upd && (bad > 0 || !rows.length));
   }
 
+  // ---------- BACKUP / RESTORE ----------
+  // Backup format 2 (.ersbackup) is JSON Lines: a header, the settings, your own part numbers, one line per assessment, and an end
+  // line that shows the file is complete. The backup is never held as one string, so it works at any size. Format 1 (one JSON
+  // object, .json) from earlier versions can still be restored.
+  const BACKUP_KIND = 'engineer-report-studio-backup';
+  const CHUNK = 8 * 1024 * 1024; // characters per write (about 8 MB)
+  const V1_MAX = 500 * 1024 * 1024; // a format-1 backup is read as one string, so it can never be larger than this
+  const progress = (txt) => { const el = $('#dataProgress'); if (el) el.textContent = txt; };
+  async function listJobIds() {
+    if (typeof C.Store.listJobIds === 'function') return C.Store.listJobIds();
+    // core.js without Store.listJobIds (older build): the ids from the records. Remove once listJobIds is everywhere.
+    return (await C.Store.listJobs()).filter(isObj).map((j) => j.id);
+  }
+  // Where the backup goes. Desktop app: main writes it to disk chunk by chunk (desktop.backup). Browser: one Blob of many parts.
+  function backupSink(fileName) {
+    const B = desktop && desktop.backup;
+    if (B && ['begin', 'write', 'end', 'abort'].every((k) => typeof B[k] === 'function')) {
+      let id = null, buf = [], size = 0;
+      const fail = (r, what) => new Error((r && r.error) || what);
+      const flush = async () => {
+        if (!buf.length) return;
+        const s = buf.length === 1 ? buf[0] : buf.join('');
+        buf = []; size = 0;
+        for (let i = 0; i < s.length;) {
+          let end = Math.min(s.length, i + CHUNK);
+          if (end < s.length) { const c = s.charCodeAt(end - 1); if (c >= 0xD800 && c <= 0xDBFF) end--; } // never split a surrogate pair
+          const r = await B.write(id, s.slice(i, end));
+          if (!r || !r.ok) throw fail(r, 'The backup could not be written.');
+          i = end;
+        }
+      };
+      return {
+        async open() { const r = await B.begin({ fileName }); if (r && r.ok && r.id != null) { id = r.id; return true; } if (r && r.canceled) return false; throw fail(r, 'The backup file could not be created.'); },
+        async push(line) { buf.push(line); size += line.length; if (size >= CHUNK) await flush(); },
+        async close() { await flush(); const r = await B.end(id); if (!r || !r.ok) throw fail(r, 'The backup file could not be finished.'); id = null; return r.filePath || ''; },
+        async abort() { if (id == null) return; const k = id; id = null; buf = []; try { await B.abort(k); } catch (e) { /* main also deletes an unfinished file when the window closes */ } }
+      };
+    }
+    if (desktop && typeof desktop.saveFile === 'function') {
+      // a desktop app whose main process has no desktop.backup yet: the whole file in one save, as before (size-limited)
+      const parts = [];
+      return {
+        async open() { return true; },
+        async push(line) { parts.push(line); },
+        async close() { const r = await desktop.saveFile({ content: parts.join(''), fileName: fileName.replace(/\.ersbackup$/, '.json'), kind: 'json' }); if (r && r.ok) return r.filePath || ''; if (r && r.canceled) return null; throw new Error((r && r.error) || 'The file could not be saved.'); },
+        async abort() { parts.length = 0; }
+      };
+    }
+    const blobs = []; // each line becomes a Blob straight away, so the browser can keep the data out of the page's memory
+    return {
+      async open() { return true; },
+      async push(line) { blobs.push(new Blob([line])); },
+      async close() {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob(blobs, { type: 'application/x-ndjson' }));
+        a.download = fileName; document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+        return '';
+      },
+      async abort() { blobs.length = 0; }
+    };
+  }
+  async function backupAll() {
+    await Promise.race([flushSave(), delay(ROUTE_SAVE_WAIT)]);
+    const ids = (await listJobIds()).filter((id) => id != null);
+    const sink = backupSink(`backup-${today()}.ersbackup`);
+    if (!(await sink.open())) return; // the save dialog was cancelled
+    let written = 0;
+    try {
+      await sink.push(JSON.stringify({ kind: BACKUP_KIND, format: 2, at: new Date().toISOString(), jobs: ids.length }) + '\n');
+      await sink.push(JSON.stringify({ type: 'settings', data: C.settings }) + '\n');
+      await sink.push(JSON.stringify({ type: 'customOem', data: C.customOem }) + '\n');
+      for (let k = 0; k < ids.length; k++) {
+        progress(`Backing up ${k + 1} of ${ids.length}…`);
+        // changes that could not be stored (storage full) are backed up from memory, so a backup can rescue them
+        const mem = loaded.get(ids[k]);
+        const j = mem && mem.job && (pending.has(ids[k]) || failed.has(ids[k])) ? mem.job : await C.Store.getJob(ids[k]);
+        if (!isObj(j)) continue; // deleted meanwhile
+        let line;
+        try { line = JSON.stringify({ type: 'job', data: j }); } catch (err) { throw new Error(`${regOf(j)} could not be written to the backup (${errText(err)}).`); }
+        await sink.push(line + '\n');
+        written++;
+      }
+      await sink.push(JSON.stringify({ type: 'end', jobs: written }) + '\n');
+      const where = await sink.close();
+      if (where === null) return;
+      toast(`Backup saved: ${written} assessment${written === 1 ? '' : 's'}${where ? ` to ${where}` : ''}.`);
+    } catch (err) {
+      await sink.abort();
+      toast('The backup failed, so no backup file was kept: ' + errText(err), true);
+    } finally { progress(''); }
+  }
+
+  // The lines of a text file, read as a stream (never as one string).
+  async function* readLines(file) {
+    const reader = file.stream().pipeThrough(new TextDecoderStream()).getReader();
+    let parts = [];
+    try {
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        let from = 0, nl;
+        while ((nl = value.indexOf('\n', from)) !== -1) {
+          parts.push(value.slice(from, nl));
+          const line = parts.length === 1 ? parts[0] : parts.join('');
+          parts = [];
+          from = nl + 1;
+          yield line.endsWith('\r') ? line.slice(0, -1) : line;
+        }
+        if (from < value.length) parts.push(from ? value.slice(from) : value);
+      }
+      if (parts.length) yield parts.join('');
+    } finally { try { await reader.cancel(); } catch (e) { /* already finished */ } }
+  }
+  // What a restore does, in the confirmation: exactly what happens to assessments, settings and your own part numbers.
+  function restoreQuestion(n, at, withSettings) {
+    return `Restore ${n} assessment${n === 1 ? '' : 's'} from this backup${stampOk(at) ? ` (made ${fmtWhen(at)})` : ''}?\n\n`
+      + '• Assessments: each one in the backup replaces the assessment here with the same ID. Assessments that are only on this computer are kept.\n'
+      + (withSettings ? "• Settings: replaced by the backup's settings (company details and logo, rates and thresholds, AI model, assessor defaults and default signature). Saved API keys and data-connection credentials are not changed.\n" : '• Settings: not changed (the backup has none).\n')
+      + "• Your own part numbers: the backup's are added to the ones here. None are removed or replaced.";
+  }
+  async function restoreSettings(data) {
+    // stored as they are and read again, so the current defaults fill anything an older version did not write (e.g. the AI model)
+    await withTimeout(Promise.resolve(C.Store.set('settings', data)), SAVE_TIMEOUT, 'storage did not respond within 20 seconds');
+    await C.loadSettings();
+    settingsPending = false; failed.delete('settings');
+  }
+  async function restoreOem(list) { const m = mergeCustomOem(C.customOem, list); await saveCustomOem(m.list); return m.added; }
+  // One assessment from a backup: 'ok', 'bad' (unreadable), or the storage error that stops the restore.
+  async function restoreJob(j) {
+    if (!isObj(j)) return 'bad';
+    try { if (typeof j.id !== 'string' || !j.id) j.id = C.uid(); migrate(j); } catch (e) { return 'bad'; }
+    try { await withTimeout(C.Store.saveJob(j, { overwrite: true }), SAVE_TIMEOUT, 'storage did not respond within 20 seconds'); } catch (err) { return err; }
+    forgetJob(j.id); // a copy loaded earlier is out of date now
+    return 'ok';
+  }
+  const restoreSummary = (n, bad, added) => `${n} restored, ${bad} unreadable${added ? `; ${added} of your own part number${added === 1 ? '' : 's'} added` : ''}`;
+  function restoreDone(msg, stopped, incomplete, bad) {
+    if (stopped) toast(`The restore stopped: ${msg}. Storage is full or unavailable — ${reasonOf(stopped)}. Free disk space, then restore again.`, true);
+    else if (incomplete) toast(`The backup file is incomplete: ${msg}. It may have been cut short when it was saved or copied; restore an earlier complete backup if you have one.`, true);
+    else toast(`Backup restored: ${msg}.`, bad > 0);
+    showBanners();
+    if (/^#\/settings/.test(location.hash)) renderSettings();
+  }
+  async function restoreBackup() {
+    const f = await pickFile('.ersbackup,.json'); if (!f) return;
+    const lines = readLines(f);
+    let first = '';
+    try { const r = await lines.next(); first = r.done ? '' : r.value; } catch (err) { return toast('That file could not be read: ' + errText(err), true); }
+    let head = null;
+    try { head = JSON.parse(first); } catch (e) { /* not JSON on one line: an older backup written over several lines, or not a backup */ }
+    if (isObj(head) && head.kind === BACKUP_KIND && head.format === 2) return restoreV2(head, lines);
+    try { await lines.return(); } catch (e) { /* reading stopped */ }
+    if (isObj(head) && head.kind === BACKUP_KIND && num(head.format) > 2) return toast('This backup was made by a newer version of the app. Update the app, then restore it.', true);
+    let d = isObj(head) && head.kind === BACKUP_KIND ? head : null; // format 1 written on one line
+    if (!d) {
+      if (f.size > V1_MAX) return toast('That is not a backup file.', true);
+      try { d = JSON.parse(await f.text()); } catch (err) { d = null; }
+    }
+    if (!isObj(d) || d.kind !== BACKUP_KIND) return toast('That is not a backup file.', true);
+    return restoreV1(d);
+  }
+  async function restoreV2(head, lines) {
+    if (!confirm(restoreQuestion(num(head.jobs), head.at, true))) { try { await lines.return(); } catch (e) { /* reading stopped */ } return; }
+    let n = 0, bad = 0, seen = 0, added = 0, end = null, stopped = null;
+    try {
+      for await (const raw of lines) {
+        if (!raw.trim()) continue;
+        let rec = null;
+        try { rec = JSON.parse(raw); } catch (e) { /* an unreadable line */ }
+        if (!isObj(rec)) { bad++; continue; }
+        if (rec.type === 'end') { end = rec; break; }
+        if (rec.type === 'settings') { if (isObj(rec.data)) await restoreSettings(rec.data); else bad++; continue; }
+        if (rec.type === 'customOem') { if (Array.isArray(rec.data)) added += await restoreOem(rec.data); else bad++; continue; }
+        if (rec.type !== 'job') { bad++; continue; }
+        seen++;
+        progress(`Restoring ${seen} of ${num(head.jobs)}…`);
+        const r = await restoreJob(rec.data);
+        if (r === 'ok') n++; else if (r === 'bad') bad++; else { stopped = r; break; }
+      }
+    } catch (err) { stopped = err; } finally { progress(''); }
+    restoreDone(restoreSummary(n, bad, added), stopped, !end || num(end.jobs) !== seen, bad);
+  }
+  async function restoreV1(d) {
+    const jobs = Array.isArray(d.jobs) ? d.jobs : [];
+    if (!confirm(restoreQuestion(jobs.length, d.at, isObj(d.settings)))) return;
+    let n = 0, bad = 0, added = 0, stopped = null;
+    try {
+      // settings first, so restored assessments without rates of their own take the restored ones
+      if (isObj(d.settings)) await restoreSettings(d.settings);
+      if (Array.isArray(d.customOem)) added = await restoreOem(d.customOem);
+      for (let k = 0; k < jobs.length; k++) {
+        progress(`Restoring ${k + 1} of ${jobs.length}…`);
+        const r = await restoreJob(jobs[k]);
+        if (r === 'ok') n++; else if (r === 'bad') bad++; else { stopped = r; break; }
+      }
+    } catch (err) { stopped = err; } finally { progress(''); }
+    restoreDone(restoreSummary(n, bad, added), stopped, false, bad);
+  }
+
+  // The labour rate for every standard type and every line type in use, and the VAT %, as they are now: frozen in a finalised
+  // report (core.js's C.rateSnapshot is used when it exists; this is the same rule for an older core.js).
+  function rateSnapshot(j) {
+    const types = new Set(Object.keys(C.settings.rates || {}).concat(Object.keys(isObj(j.rates) ? j.rates : {}), LINE_TYPES, j.lines.map((l) => l && l.type).filter(Boolean)));
+    const rates = {};
+    for (const t of types) rates[t] = C.lineRate(j, { type: t });
+    return { rates, vatPct: C.vatPctFor(j) };
+  }
+  // A starting list for "Material relied on" (CPR 35, PD 35 para 3.2(2)) from what this assessment used; the assessor edits it.
+  function materialsSuggestion(j) {
+    const out = [];
+    const guides = [...new Set((j.valuation.sources || []).filter((s) => isObj(s) && String(s.name || '').trim() && num(s.amount) > 0).map((s) => String(s.name).trim()))];
+    if (guides.length) out.push(`Valuation guides: ${guides.join(', ')}.`);
+    const ads = (j.valuation.adverts || []).filter((a) => isObj(a) && (a.description || a.price));
+    if (ads.length) out.push(`${ads.length} advertisement${ads.length === 1 ? '' : 's'} for comparable vehicles, listed in the valuation section.`);
+    const log = (j.aiLog || []).filter(isObj);
+    if (log.some((a) => !a.ai && /DVLA/i.test(a.action))) out.push('DVLA Vehicle Enquiry Service record for the vehicle.');
+    if (log.some((a) => !a.ai && /MOT/i.test(a.action)) || (j.vehicle.motHistory || []).length) out.push('DVSA MOT History record (test dates, results and recorded mileages).');
+    if (String(j.inspection.diagnostic || '').trim()) out.push('Diagnostic scan results, as recorded in the inspection section.');
+    if (j.lines.length) out.push("Repair times: this software's own guide labour times, adjusted by the assessor where stated (not manufacturer or Thatcham times unless a line says so); part prices as listed in the estimate.");
+    if (j.outcome.category) out.push('ABI Code of Practice for the Categorisation of Motor Vehicle Salvage.');
+    const shown = j.photos.filter((p) => isObj(p) && !p.exclude).length;
+    if (shown) out.push(`${shown} photograph${shown === 1 ? '' : 's'} of the vehicle, reproduced in this report.`);
+    if (log.some((a) => a.ai)) out.push('AI-assisted analysis, as described in the "Use of AI and data tools" statement.');
+    return out.join('\n');
+  }
+
   // ---------- events ----------
   function afterRender() {
     if (tab === 'photos' && job) {
@@ -2347,7 +2574,7 @@
     const a = el.dataset.act;
     if (job && job.issued && el.closest('#tabBody') && !LOCK_FREE.has(a)) { e.preventDefault(); return toast(LOCKED, true); }
     const A = {
-      loadSample: async () => { const j = Sample.sampleJob(); await C.Store.saveJob(j); remember(j); location.hash = `#/job/${j.id}/report`; toast('Sample job loaded. Its personal details are anonymised.'); },
+      loadSample: async () => { const j = Sample.sampleJob(); migrate(j); await C.Store.saveJob(j); remember(j); location.hash = `#/job/${j.id}/report`; toast('Sample job loaded. Its personal details are anonymised.'); },
       importJob: async () => {
         const f = await pickFile('.json,application/json'); if (!f) return;
         let j;
@@ -2603,9 +2830,22 @@
   }
 
   // ---------- boot ----------
+  // Storage that cannot be opened (a locked or damaged database, a full disk, site data blocked in a browser) gets an error card
+  // with Retry and, in the desktop app, the data folder, instead of an empty window.
+  async function bootFailed(err) {
+    const info = await readAppInfo();
+    main.innerHTML = `<div class="wrap"><div class="card errBox bootErr" role="alert" style="border-color:#f0b5ad;background:#fff6f5;max-width:780px">
+      <h2 style="margin-top:0;color:var(--err)">Your saved assessments cannot be opened</h2>
+      <p>The app's storage could not be opened: <b>${esc(errText(err, 'unknown error'))}</b></p>
+      <p class="hint">Nothing has been deleted. This usually means that another copy of the app (or a browser tab with it) still has the data open, that antivirus or backup software is locking the files, that the disk is full, or, in a browser, that site data is blocked. Close other copies, free some disk space, then click Retry.</p>
+      ${info ? `<p class="hint">The data is kept in <code class="dataFolder">${esc(info.dataFolder)}</code>. Copy that folder somewhere safe before trying anything else.</p>` : ''}
+      <div class="row"><button class="btn primary" data-act="bootRetry">Retry</button></div></div></div>`;
+  }
   (async function boot() {
-    await C.loadSettings();
-    C.setCustomOem((await C.Store.get('customOem')) || []);
+    try {
+      await C.loadSettings();
+      await loadCustomOem();
+    } catch (err) { bootFailed(err); return; }
     refreshAiState();
     window.addEventListener('hashchange', route);
     window.addEventListener('beforeunload', () => { flushSave(); });

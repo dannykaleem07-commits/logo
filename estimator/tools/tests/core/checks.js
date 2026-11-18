@@ -570,7 +570,7 @@ section('R#26. Tolerant num(): £, thousands commas, spaces, decimal comma');
 {
   const cases = [['£5,995', 5995], ['60,000', 60000], ['1,234.50', 1234.5], ['1,5', 1.5], ['1,50', 1.5], ['12,7', 12.7], ['1.234,56', 1234.56], [' £ 1 234.5 ', 1234.5], ['−£56.34', -56.34], ['-£5', -5], ['£−1', -1],
     ['1,500', 1500], ['1,000,000', 1000000], ['64,368 miles', 64368], ['1.5h', 1.5], ['1e3', 1000], ['2014-08-05', 2014], ['15%', 15], ['.5', 0.5], ['-.5', -0.5], ['', 0], ['abc', 0], ['Infinity', 0],
-    [null, 0], [undefined, 0], [true, 0], [NaN, 0], [Infinity, 0], [{}, 0], [[5], 5], [3365.08, 3365.08], [' 1 000', 1000]];
+    [null, 0], [undefined, 0], [true, 0], [NaN, 0], [Infinity, 0], [{}, 0], [[5], 5], [3365.08, 3365.08], ['\u00a01\u202f000', 1000]];
   const bad = cases.filter(([v, want]) => !Object.is(C.num(v), want)).map(([v, want]) => `${JSON.stringify(v)} → ${C.num(v)} (want ${want})`);
   check(`num() reads ${cases.length} legacy / imported number formats`, bad.length === 0, bad);
   const j = Sample.sampleJob();
@@ -729,10 +729,11 @@ section('#3. C.unreviewedAiText: fields still holding the AI\'s text');
 section('#21. AI narrative review flags: one QA warning each');
 {
   const j = Sample.sampleJob();
-  j.aiFlags = [{ section: 'Valuation comments', text: 'No PAV adopted: redraft the valuation comments.', at: '2026-06-15T23:30:00Z' }, { text: 'Check concealed sill damage at strip.' }, { text: '  ' }, null, 'junk'];
+  j.aiFlags = [{ section: 'Valuation comments', text: 'No PAV adopted: redraft the valuation comments.', at: '2026-06-15T23:30:00Z' }, { text: 'Check concealed sill damage at strip' }, { text: '  ' }, null, 'junk'];
   const m = find(j, /^AI review flag/);
   check('two warnings (blank / junk entries ignored), Opinion tab', m.length === 2 && m.every((x) => x.level === 'warn' && x.tab === 'opinion'), m);
   check('…with the section, the UK date and the text', m[0].msg === 'AI review flag (Valuation comments), 16/06/2026: No PAV adopted: redraft the valuation comments. Check it, then dismiss the flag.', m[0].msg);
+  check('…a flag without a full stop gets one before the instruction', m[1].msg === 'AI review flag: Check concealed sill damage at strip. Check it, then dismiss the flag.', m[1].msg);
   j.aiFlags = 'not-an-array';
   check('aiFlags of the wrong type do not throw', !throws(() => C.qaChecks(j)));
   check('newJob has aiFlags = []', Array.isArray(C.newJob().aiFlags));

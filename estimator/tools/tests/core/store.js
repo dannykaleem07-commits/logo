@@ -85,6 +85,16 @@ async function run() {
     check('an old job without rev saves normally (missing rev counts as 0) and gets rev 1', !('rev' in jobs[0]) && (await settle(C.Store.saveJob(a))).ok && a.rev === 1);
   }
   {
+    // a legacy job without its own rates is summarised with the SAVED Settings rates, as the old Jobs list showed it
+    const idb = new FakeIDBFactory();
+    const old = { id: 'legacy-rates', vehicle: { reg: 'OLD 1' }, lines: [{ type: 'Body', description: 'Panel', hours: 2, amount: 0, costClass: 'parts' }], valuation: {} };
+    idb.seed(DB, 1, { jobs: { keyPath: 'id', records: [old] }, kv: { records: [['settings', { rates: { Body: 50 }, vatPct: 20 }]] } });
+    const { C } = app(idb);
+    await C.Store.listJobIds();
+    const s = idb.dump(DB, 'summaries')[0] || {};
+    check('upgrade: a job without its own rates is totalled with the saved Settings rates (2h × £50 = £100)', s.net === 100, s);
+  }
+  {
     // the upgrade must not fail because one summary cannot be written
     const idb = new FakeIDBFactory();
     const seedApp = app(new FakeIDBFactory());
@@ -107,9 +117,22 @@ async function run() {
     const sums = await C.Store.listSummaries();
     check('missing summaries are rebuilt, a deleted job\'s summary is dropped, an old-shape summary is rebuilt', sums.length === 3 && !sums.some((s) => s.id === 'ghost') && sums.find((s) => s.id === 'job-a').reg === 'AB14 CDE', sums.map((s) => s.id + ':' + s.reg));
     check('…through a cursor (no getAll on jobs)', statsOf(idb, 'openCursor:jobs') === 1 && statsOf(idb, 'getAll:jobs') === 0, idb.stats);
-    const keysBefore = statsOf(idb, 'getAllKeys:jobs');
     await C.Store.listSummaries();
-    check('the check runs once per session (second call reads the summaries only)', statsOf(idb, 'getAllKeys:jobs') === keysBefore && statsOf(idb, 'openCursor:jobs') === 1, idb.stats);
+    check('once repaired, the next call reads keys and summaries only (no cursor, no job read)', statsOf(idb, 'openCursor:jobs') === 1 && statsOf(idb, 'cursorValue:jobs') === 3, idb.stats);
+    // a job stored by other means (e.g. a test harness writing the jobs store directly) is listed on the next call
+    const extra = seedApp.sample(); extra.id = 'job-raw';
+    const rec = idb._dbs.get(DB).stores.get('jobs'); rec.records.push({ key: 'job-raw', value: structuredClone(extra) });
+    let again = await C.Store.listSummaries();
+    check('a job written straight into the jobs store is listed on the next call (its summary is built and stored)', again.length === 4 && again.some((x) => x.id === 'job-raw' && x.net === 3365.08) && idb.dump(DB, 'summaries').length === 4, again.map((x) => x.id));
+    rec.records.splice(rec.records.findIndex((r) => r.key === 'job-raw'), 1);
+    again = await C.Store.listSummaries();
+    check('…and a job removed that way disappears with its summary', again.length === 3 && idb.dump(DB, 'summaries').length === 3);
+    // a summary that cannot be stored during the repair: the list is still complete
+    rec.records.push({ key: 'job-raw2', value: Object.assign(structuredClone(extra), { id: 'job-raw2' }) });
+    idb.failRequest = (store, op) => store === 'summaries' && op === 'put';
+    again = await C.Store.listSummaries();
+    idb.failRequest = null;
+    check('a summary that cannot be stored is still in the list (no job silently missing)', again.length === 4 && again.some((x) => x.id === 'job-raw2') && idb.dump(DB, 'summaries').length === 3, again.map((x) => x.id));
   }
   {
     // version 2 without a summaries store at all: the list is built on the fly and saving still works
@@ -138,7 +161,7 @@ async function run() {
       } catch (e) { threw = e; }
     }
     check('junk input (null, numbers, arrays, wrong types, throwing getter, revoked proxy) → safe defaults', !threw && !bad.length, threw ? threw.message : bad);
-    check('a throwing getter keeps the id', C.jobSummary(junk[9]).id === 'g');
+    check('a throwing getter keeps the id, and the summary says why (error)', C.jobSummary(junk[9]).id === 'g' && C.jobSummary(junk[9]).error === 'boom' && !('error' in C.jobSummary(junk[8])));
     check('£5,000 PAV in a legacy job is read (tolerant num)', C.jobSummary(junk[8]).pav === 5000);
   }
 

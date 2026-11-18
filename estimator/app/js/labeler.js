@@ -16,8 +16,13 @@
     return 1.05 / (L + 0.05) >= (L + 0.05) / 0.0556 ? '#fff' : '#111';
   }
 
+  // onSave(labels, origins): origins[k] is the label that labels[k] was copied from when the editor opened (null for a new box),
+  // so the app can keep labels that arrived meanwhile (a photo analysis finishing while the editor is open).
   function open(photo, onSave, openModal, closeModal) {
-    let labels = C.clone(photo.labels || []);
+    const origin = new WeakMap();
+    let labels = (Array.isArray(photo.labels) ? photo.labels : []).filter((l) => l && typeof l === 'object').map((l) => { const c = C.clone(l); origin.set(c, l); return c; });
+    const start = JSON.stringify(labels);
+    const dirty = () => JSON.stringify(labels) !== start;
     let sel = labels.length ? 0 : -1;
 
     const body = document.createElement('div');
@@ -33,7 +38,8 @@
           <div class="row" style="margin-top:14px"><button class="btn primary grow" data-act="save">Save labels</button><button class="btn" data-act="cancel">Cancel</button></div>
         </div>
       </div>`;
-    openModal('Label damage — ' + (photo.title || 'photograph'), body);
+    // refused while another window is open; with unsaved boxes, closing it (×, backdrop, Back) asks first
+    if (!openModal('Label damage — ' + (photo.title || 'photograph'), body, { isDirty: dirty })) return;
     const stage = body.querySelector('.labStage');
     const list = body.querySelector('.lablist');
 
@@ -132,8 +138,8 @@
       if (t.dataset.del != null) { labels.splice(+t.dataset.del, 1); sel = Math.min(sel, labels.length - 1); draw(); return; }
       if (t.dataset.q) { if (sel >= 0) { labels[sel].text = t.dataset.q; draw(); } return; }
       if (t.dataset.act === 'clear') { if (confirm('Remove all labels from this photo?')) { labels = []; sel = -1; draw(); } return; }
-      if (t.dataset.act === 'cancel') { closeModal(); return; }
-      if (t.dataset.act === 'save') { photo.labelsReviewed = true; onSave(labels); closeModal(); return; }
+      if (t.dataset.act === 'cancel') { if (!dirty() || confirm('Discard your changes to these labels?')) closeModal(); return; }
+      if (t.dataset.act === 'save') { const out = labels, from = labels.map((l) => origin.get(l) || null); closeModal(); onSave(out, from); return; }
       const it = t.closest('.it');
       if (it) select(+it.dataset.i);
     });

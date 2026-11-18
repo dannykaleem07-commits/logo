@@ -89,6 +89,8 @@ const BRIDGE = () => {
         });
         await delay(M().aiDelay || 30);
         if (M().aiFail) return { ok: false, error: 'The AI service rejected the request: test failure' };
+        // one batch fails (rate limit / overload), named by the figure number of its first photo
+        if (M().failBatchAt != null && p.photos[0] && p.photos[0].index === M().failBatchAt) return { ok: false, error: 'The AI service is overloaded (529). Try again in a few minutes.' };
         const bad = aiImageError(p.photos);
         return bad ? { ok: false, error: bad } : { ok: true, result: photoResult(p) };
       },
@@ -149,7 +151,42 @@ const BRIDGE = () => {
       log('saveFile', { fileName: p.fileName, len: p.content.length, kind: p.kind });
       if (M().saveError) return { ok: false, error: M().saveError };
       window.__lastSaved = p.content; return { ok: true, filePath: 'C:/Reports/' + p.fileName };
-    }
+    },
+    // Streaming backup as main.js does it (one open backup per window, chunks of at most 64 Mi characters, a write or end error
+    // stops the backup), held in memory: window.__lastBackup is the finished file, window.__backupChunks its chunk sizes.
+    backup: (() => {
+      let open = null, seq = 0;
+      return {
+        begin: async (p) => {
+          log('backup.begin', { fileName: p && p.fileName });
+          if (M().backupCancel) return { ok: false, canceled: true };
+          if (M().backupBeginError) return { ok: false, error: M().backupBeginError };
+          if (open) return { ok: false, error: 'A backup is already being written.' };
+          open = { id: 'bk' + (++seq), fileName: String((p && p.fileName) || 'backup.ersbackup'), chunks: [], writes: 0 };
+          return { ok: true, id: open.id };
+        },
+        write: async (id, chunk) => {
+          if (!open || open.id !== id) return { ok: false, error: 'There is no backup being written.' };
+          if (typeof chunk !== 'string') return { ok: false, error: 'There is nothing to write.' };
+          if (chunk.length > 64 * 1024 * 1024) { open = null; return { ok: false, error: 'A piece of the backup is too large.' }; }
+          open.writes++;
+          log('backup.write', { id, len: chunk.length, n: open.writes });
+          if (M().backupWriteError && open.writes >= (M().backupFailAtWrite || 1)) { open = null; return { ok: false, error: M().backupWriteError }; }
+          open.chunks.push(chunk);
+          await delay(M().backupDelay || 0);
+          return { ok: true };
+        },
+        end: async (id) => {
+          if (!open || open.id !== id) return { ok: false, error: 'There is no backup being written.' };
+          const b = open; open = null;
+          window.__lastBackup = b.chunks.join(''); window.__lastBackupName = b.fileName; window.__backupChunks = b.chunks.map((c) => c.length);
+          log('backup.end', { id, len: window.__lastBackup.length, writes: b.chunks.length });
+          return { ok: true, filePath: 'C:/Backups/' + b.fileName };
+        },
+        abort: async (id) => { log('backup.abort', { id }); if (open && open.id === id) open = null; return { ok: true }; }
+      };
+    })(),
+    app: { info: async () => { log('app.info'); return { ok: true, dataFolder: 'C:\\Users\\Assessor\\AppData\\Roaming\\Engineer Report Studio' }; } }
   };
 };
 

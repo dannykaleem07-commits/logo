@@ -194,7 +194,8 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert(ls.every((l) => l.ai && !l.reviewed), 'AI lines unreviewed');
     assert.deepStrictEqual(ls.map((l) => [l.op, l.aiOperation, l.guideHours, l.hoursBasis, l.hours]),
       [['renew', 'renew', 0.6, 'guide', 0.6], ['repair', 'repair', 2, 'guide', 2], ['refinishRep1', 'refinishRep1', 2, 'adjusted', 1.6]], JSON.stringify(ls.map((l) => [l.op, l.aiOperation, l.guideHours, l.hoursBasis, l.hours])));
-    assert(!('pfApplied' in ls[2]), 'adjusted paint line: no paint factor recorded (the AI figure stands)');
+    // adjusted refinish hours are base hours before the paint-finish factor: the factor (metallic ×1.0) is applied once and recorded
+    assert.deepStrictEqual([ls[2].hours, ls[2].pfApplied], [1.6, 1], 'adjusted paint line: factor applied once and recorded: ' + JSON.stringify(ls[2]));
     await openTab(A, 'estimate');
     const notes = await page.$$eval('#linesTbl .aiBasis', (ns) => ns.map((n) => n.textContent));
     assert.deepStrictEqual(notes, ['AI: adjusted from guide 2.0h'], 'estimate notes: ' + JSON.stringify(notes));
@@ -568,12 +569,14 @@ const lines = async (id) => (await t.getJob(id)).lines;
     await page.click('[data-act="catAddNo"]'); await settle(150);
     assert(/Price £ ex VAT/.test(await text('#modalBody')), 'ex VAT price label');
     await page.fill('#nOem', 'TEST-PN-123'); await page.fill('#nPrice', '12.5');
+    assert.strictEqual(await page.$eval('#nAuto', (n) => n.checked), false, 'auto-fill is off unless ticked');
+    await page.check('#nAuto');
     await page.click('#modal [data-ok]'); await settle(300);
     assert(/#\/catalogue$/.test(await page.evaluate(() => location.hash)) && /Parts catalogue/.test(await text('#main')), 'still on the catalogue');
     assert(/Part number added/.test(await toastText()), await toastText());
     const custom = await t.getKv('customOem');
     const entry = custom.flatMap((v) => Object.values(v.parts).flat()).find((c) => c.oem === 'TEST-PN-123');
-    assert(entry && entry.autoFill === true && entry.role === 'primary' && entry.market === 'UK' && entry.price === 12.5, 'user entry fields: ' + JSON.stringify(entry));
+    assert(entry && entry.confidence === 'user' && entry.user === true && entry.autoFill === true && entry.role === 'primary' && entry.market === 'UK' && entry.price === 12.5, 'user entry fields: ' + JSON.stringify(entry));
   });
 
   await step('switching jobs mid-edit keeps the edit', async () => {
@@ -614,7 +617,7 @@ const lines = async (id) => (await t.getJob(id)).lines;
     let custom = await t.getKv('customOem');
     const juke = custom.find((v) => v.key === 'nissan-juke-f15');
     const fw = juke.parts['FW001|R'].find((c) => c.oem === 'OEM-FW-R');
-    assert(fw.description === 'Wing, right "outer"' && fw.price === 123.45 && fw.autoFill === true, JSON.stringify(fw));
+    assert(fw.description === 'Wing, right "outer"' && fw.price === 123.45 && fw.confidence === 'user' && fw.autoFill === false, JSON.stringify(fw));
     assert(juke.parts['BN001|'].some((c) => c.oem === 'OEM-BONNET' && c.price === 400));
     await choose('[data-act="catImport"]', { name: 'h.csv', mimeType: 'text/csv', buffer: Buffer.from('code,side,oem,description,price\nRE001,,OEM-RB,Rear bumper,150\n') }); await settle(400);
     assert(/Imported 1 part number\(s\)\./.test(await toastText()) && !/header/.test(await toastText()), await toastText());
@@ -645,17 +648,40 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert(j.vehicle.dvla.motExpiry === '2027-02-01' && j.vehicle.dvla.firstRegistration === '2014-08-01' && !('motExpiryDate' in j.vehicle.dvla), 'dvla normalised');
     assert(j.vehicle.firstRegPrecision === 'month' && j.photos[0].id && Array.isArray(j.photos[0].labels) && j.valuation.sources.length === 1, 'other fields migrated');
     const u1 = j.updatedAt;
-    await t.go('#/jobs'); await settle(300); await openTab('legacy-1', 'photos'); await settle(200);
+    await t.go('#/jobs'); await settle(300); await openTab('legacy-1', 'claim'); await settle(200);
     j = await t.getJob('legacy-1');
     assert.strictEqual(j.updatedAt, u1, 'second open does not re-save (migrate is idempotent)');
+    // the Photos tab makes the missing thumbnail once (the card shows it; the full image stays for the report), then never again
+    await openTab('legacy-1', 'photos'); await flush();
+    j = await t.getJob('legacy-1');
+    const th = j.photos[0].thumb;
+    assert(/^data:image\/jpeg;base64,/.test(th) && th.length < j.photos[0].dataUrl.length * 2 && j.photos[0].dataUrl.startsWith('data:image/jpeg'), 'thumbnail stored: ' + String(th).slice(0, 30));
+    assert.strictEqual(await page.$eval('.pcard .pimg img', (n) => n.getAttribute('src')), th, 'the card shows the thumbnail');
+    const u2 = j.updatedAt;
+    await t.go('#/jobs'); await settle(300); await openTab('legacy-1', 'photos'); await flush();
+    assert.strictEqual((await t.getJob('legacy-1')).updatedAt, u2, 'thumbnails are made once');
   });
 
-  await step('one bad record shows an error row instead of blanking the list', async () => {
-    await page.evaluate(() => { const C = window.Core; C.__totals = C.totals; C.totals = (j) => { if (j && j.id === 'legacy-1') throw new Error('boom'); return C.__totals(j); }; });
+  await step('Jobs list: rendered from the summaries (never the full jobs); one bad record shows an error row instead of blanking the list', async () => {
+    // the list must not read the full records (with every photo): count the calls while it renders
+    await page.evaluate(() => {
+      const S = window.Core.Store; window.__listJobsCalls = 0; window.__getJobCalls = 0;
+      S.__listJobs = S.listJobs; S.listJobs = function () { window.__listJobsCalls++; return S.__listJobs.apply(this, arguments); };
+      S.__getJob = S.getJob; S.getJob = function () { window.__getJobCalls++; return S.__getJob.apply(this, arguments); };
+    });
+    await t.go('#/settings'); await settle(200); await t.go('#/jobs'); await settle(400);
+    const reads = await page.evaluate(() => { const S = window.Core.Store; S.listJobs = S.__listJobs; S.getJob = S.__getJob; delete S.__listJobs; delete S.__getJob; return [window.__listJobsCalls, window.__getJobCalls, typeof S.listSummaries]; });
+    if (reads[2] === 'function') assert.deepStrictEqual(reads.slice(0, 2), [0, 0], 'the Jobs list read no full job: ' + JSON.stringify(reads));
+    assert(/AB14 CDE/.test(await text('#main')) && /MIN 1/.test(await text('#main')), 'rows from summaries');
+    // a summary that cannot be read, and one that is not even an object
+    await page.evaluate(() => {
+      const S = window.Core.Store; S.__ls = S.listSummaries;
+      S.listSummaries = async () => [].concat(S.__ls ? await S.__ls.call(S) : [], [null, { id: 'bad-1', get reg() { throw new Error('boom'); }, updatedAt: '2099-01-01' }]);
+    });
     await t.go('#/settings'); await settle(200); await t.go('#/jobs'); await settle(400);
     const bad = await page.$$eval('tr.bad', (ns) => ns.map((n) => n.textContent));
-    await page.evaluate(() => { const C = window.Core; C.totals = C.__totals; });
-    assert(bad.length === 1 && /could not be read/.test(bad[0]) && /boom/.test(bad[0]), 'error row: ' + bad);
+    await page.evaluate(() => { const S = window.Core.Store; if (S.__ls) S.listSummaries = S.__ls; else delete S.listSummaries; delete S.__ls; });
+    assert(bad.length === 2 && bad.every((b) => /could not be read/.test(b)) && bad.some((b) => /boom/.test(b)), 'error rows: ' + bad);
     assert(/AB14 CDE/.test(await text('#main')) && await exists('[data-act="loadSample"]'), 'other rows render');
   });
 
@@ -769,7 +795,8 @@ const lines = async (id) => (await t.getJob(id)).lines;
     await t.putJob(j0);
     await openTab(id, 'photos');
     const hints = await page.$$eval('.sugg .basis', (ns) => ns.map((n) => n.textContent));
-    assert(hints[0] === 'guide 1.2h, scaled for this vehicle' && hints[5] === 'adjusted from guide 1.3h (1.8h for this vehicle)', 'suggestion notes: ' + JSON.stringify(hints));
+    // the adjusted blend (1.9h base) takes the pearl factor once: 1.9 × 1.2 = 2.3h
+    assert(hints[0] === 'guide 1.2h, scaled for this vehicle' && hints[5] === 'adjusted from guide 1.3h (1.8h for this vehicle)AI 1.9h × 1.2 for the pearlescent finish', 'suggestion notes: ' + JSON.stringify(hints));
     await page.click('[data-act="aiAddLines"]'); await flush();
     // the same work through the picker on the same job
     await openTab(id, 'estimate');
@@ -781,15 +808,15 @@ const lines = async (id) => (await t.getJob(id)).lines;
     const key = (l) => (l.code ? `${l.code}|${l.side}|${l.op}` : l.description);
     const hoursOf = (arr2) => Object.fromEntries(arr2.map((l) => [key(l), l.hours]));
     const A2 = hoursOf(ai), M2 = hoursOf(man);
-    assert.deepStrictEqual(A2, { 'FW001|R|renew': 1.4, 'FW001|R|refinish': 3, 'DR001|R|repair': 2.3, 'DR001|R|refinishRep1': 2.7, 'FW001|L|blend': 1.5, 'DR003|R|blend': 1.9, 'EL007||operation': 0.3, 'Strip / refit handle, trims & mouldings': 0.6, 'DR001|R|check': 0.3, 'DR001|R|rr': 2.1 }, 'AI hours: ' + JSON.stringify(A2));
+    assert.deepStrictEqual(A2, { 'FW001|R|renew': 1.4, 'FW001|R|refinish': 3, 'DR001|R|repair': 2.3, 'DR001|R|refinishRep1': 2.7, 'FW001|L|blend': 1.5, 'DR003|R|blend': 2.3, 'EL007||operation': 0.3, 'Strip / refit handle, trims & mouldings': 0.6, 'DR001|R|check': 0.3, 'DR001|R|rr': 2.1 }, 'AI hours: ' + JSON.stringify(A2));
     for (const k of Object.keys(A2)) if (k !== 'DR003|R|blend') assert.strictEqual(A2[k], M2[k], `${k}: AI ${A2[k]}h vs picker ${M2[k]}h`);
     assert.strictEqual(M2['DR003|R|blend'], 1.8, 'picker blend for the adjusted line');
     const byKey = (k) => ai.find((l) => key(l) === k);
     assert.deepStrictEqual([byKey('FW001|R|renew').op, byKey('FW001|R|renew').aiOperation], ['renew', 'replace'], '"replace" stored as renew');
     assert(['FW001|R|refinish', 'DR001|R|refinishRep1', 'FW001|L|blend'].every((k) => byKey(k).pfApplied === 1.2), 'guide paint lines record the paint factor');
-    assert(!('pfApplied' in byKey('DR003|R|blend')) && byKey('DR003|R|blend').hoursBasis === 'adjusted', 'adjusted blend keeps the AI figure, no factor recorded');
+    assert(byKey('DR003|R|blend').pfApplied === 1.2 && byKey('DR003|R|blend').hoursBasis === 'adjusted', 'adjusted blend: base hours × the paint factor, recorded once');
     const notes = await page.$$eval('#linesTbl .aiBasis', (ns) => ns.map((n) => n.textContent));
-    assert.deepStrictEqual(notes, ['AI: adjusted from guide 1.3h (1.8h for this vehicle)'], 'notes: ' + JSON.stringify(notes));
+    assert.deepStrictEqual(notes, ['AI: adjusted from guide 1.3h (1.8h for this vehicle); ×1.2 paint finish included'], 'notes: ' + JSON.stringify(notes));
   });
 
   await step('photo batches: lines of one batch never merge; across batches only the same code, operation, side and wording, with both figures visible', async () => {
@@ -985,23 +1012,32 @@ const lines = async (id) => (await t.getJob(id)).lines;
     await t.mock({ dvla: true, mot: true });
   });
 
-  await step('save failures are reported (backup / job file); PDF export passes the report\'s margins when report.js gives them', async () => {
-    await t.mock({ saveError: 'The file could not be saved: the disk is full.' });
+  await step('save failures are reported (backup / job file); PDF export passes the report\'s margins', async () => {
+    // a write that fails part-way: the backup is stopped, the partial file deleted (abort), and the reason shown
+    await t.mock({ backupWriteError: 'The backup could not be written: the disk is full.', backupFailAtWrite: 1 });
     await t.go('#/settings'); await settle(300);
-    await page.click('[data-act="backup"]'); await settle(400);
-    assert(/the disk is full/.test(await toastText()), 'backup failure: ' + await toastText());
+    const a0 = (await t.calls('backup.abort')).length;
+    await page.click('[data-act="backup"]'); await settle(600);
+    assert(/backup failed, so no backup file was kept: The backup could not be written: the disk is full\./.test(await toastText()), 'backup failure: ' + await toastText());
+    assert.strictEqual((await t.calls('backup.abort')).length, a0 + 1, 'abort called');
+    assert.strictEqual(await text('#dataProgress'), '', 'progress cleared');
+    await t.mock({ backupWriteError: '', saveError: 'The file could not be saved: the disk is full.' });
     await openTab(S, 'report'); await settle(300);
     await page.click('[data-act="exportJson"]'); await settle(300);
     assert(/the disk is full/.test(await toastText()), 'job file failure: ' + await toastText());
     await t.mock({ saveError: '' });
     await page.click('[data-act="exportJson"]'); await settle(300);
     assert(/^Saved /.test(await toastText()) && (await t.calls('saveFile')).pop().arg.kind === 'json', 'saved with kind json');
+    // the margins come from report.js (one definition for @page and printToPDF) whenever it gives them
     await page.click('[data-act="exportPdf"]'); await settle(300);
-    assert(!('marginsMm' in (await t.calls('exportPdf')).pop().arg), 'no margins while report.js gives none');
-    await page.evaluate(() => { const R = window.Report; R.__pt = R.pdfTemplates; R.pdfTemplates = (jb) => Object.assign(R.__pt(jb), { marginsMm: { top: 25, bottom: 26, left: 16, right: 16 } }); });
+    const given = await page.evaluate((id) => { const tpl = window.Report.pdfTemplates(null) || {}; return tpl.marginsMm || null; }, S);
+    const sent = (await t.calls('exportPdf')).pop().arg;
+    if (given) assert.deepStrictEqual(sent.marginsMm, given, 'report.js margins forwarded');
+    else assert(!('marginsMm' in sent), 'no margins while report.js gives none');
+    await page.evaluate(() => { const R = window.Report; R.__pt = R.pdfTemplates; R.pdfTemplates = (jb) => Object.assign(R.__pt(jb), { marginsMm: { top: 21, bottom: 22, left: 13, right: 14 } }); });
     await page.click('[data-act="exportPdf"]'); await settle(300);
     await page.evaluate(() => { const R = window.Report; R.pdfTemplates = R.__pt; delete R.__pt; });
-    assert.deepStrictEqual((await t.calls('exportPdf')).pop().arg.marginsMm, { top: 25, bottom: 26, left: 16, right: 16 });
+    assert.deepStrictEqual((await t.calls('exportPdf')).pop().arg.marginsMm, { top: 21, bottom: 22, left: 13, right: 14 });
   });
 
   await step('QA: a researched part number with variant alternatives asks for confirmation by VIN', async () => {

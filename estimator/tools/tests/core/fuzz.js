@@ -1,7 +1,8 @@
-// Mangles random fields of the sample job (delete / null / wrong type) and checks totals() and qaChecks() never throw.
+// Mangles random fields of the sample job (delete / null / wrong type) and checks totals(), qaChecks(), unreviewedAiText(),
+// jobSummary(), rateSnapshot() and (every 10th job) Report.render() never throw.
 'use strict';
 const { load } = require('./harness');
-const ctx = load();
+const ctx = load({ report: true });
 const C = ctx.Core;
 let seed = 12345;
 const rnd = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
@@ -13,7 +14,8 @@ function paths(o, pre, out) {
 let fails = 0, runs = 0;
 for (let n = 0; n < 3000; n++) {
   const j = ctx.Sample.sampleJob();
-  if (n % 3 === 0) { j.aiLog = [{ ai: true }, { ai: false }]; j.photos = [{ id: 'a', labels: [{ ai: true }], title: 'VIN' }, { id: 'b', exclude: true }]; j.report.cpr35 = true; j.vehicle.motHistory = [{ date: '2025-01-01', odometer: 1000, unit: 'km' }]; j.issued = { at: '2026-09-06T00:00:00Z' }; }
+  if (n % 3 === 0) { j.aiLog = [{ ai: true }, { ai: false }]; j.photos = [{ id: 'a', labels: [{ ai: true }], title: 'VIN' }, { id: 'b', exclude: true }]; j.report.cpr35 = true; j.vehicle.motHistory = [{ date: '2025-01-01', odometer: 1000, unit: 'km', testNumber: 'T1' }]; j.issued = { at: '2026-09-06T00:00:00Z', rates: { Body: 70 }, vatPct: 20 }; }
+  if (n % 3 === 1) { j.aiText = { opinion: j.opinion, 'photos.a.title': 'VIN', 'circumstances.impactType': j.circumstances.impactType, 'x.y.z': 'q' }; j.aiFlags = [{ section: 'Opinion', text: 'Check', at: '2026-09-06T00:00:00Z' }]; j.valuation.adverts = [{ description: 'Ad', price: '£5,000', aiUnverified: true, claimedUrl: 'https://x' }]; j.vehicle.adas = 'camera'; j.valuation.claimType = 'third-party'; j.vehicle.dvla = { co2Emissions: 0, euroStatus: 'EURO 6', lookedUpAt: 'x' }; }
   const ps = paths(j, [], []);
   const k = 1 + Math.floor(rnd() * 6);
   for (let i = 0; i < k; i++) {
@@ -24,7 +26,11 @@ for (let n = 0; n < 3000; n++) {
     if (r < 0.3) delete o[p[p.length - 1]]; else o[p[p.length - 1]] = junk[Math.floor(rnd() * junk.length)];
   }
   runs++;
-  try { C.totals(j); C.qaChecks(j); C.photoNumbers(j); C.guessOemVehicle(j.vehicle); C.decodeVin(j.vehicle && j.vehicle.vin); }
+  try {
+    C.totals(j); C.qaChecks(j); C.photoNumbers(j); C.guessOemVehicle(j.vehicle); C.decodeVin(j.vehicle && j.vehicle.vin);
+    C.unreviewedAiText(j); C.jobSummary(j); C.rateSnapshot(j);
+    if (n % 10 === 0) ctx.Report.render(j, { mode: n % 20 ? 'pdf' : 'print' });
+  }
   catch (e) { fails++; if (fails <= 5) console.log('THROW', e.message, '\n', e.stack.split('\n').slice(0, 3).join('\n')); }
 }
 console.log(`${runs} mangled jobs, ${fails} threw`);
