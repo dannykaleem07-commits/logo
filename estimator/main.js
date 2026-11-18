@@ -63,18 +63,21 @@ const plainWrap = (fn) => async (_e, payload) => {
 };
 ipcMain.handle('data:status', () => {
   const k = loadDataKeys();
-  return { dvla: !!k.dvla, mot: !!(k.motClientId && k.motClientSecret && k.motApiKey && (k.motTenantId || k.motTokenUrl)) };
+  return { dvla: !!k.dvla, mot: vdata.motConfigured(k), motTokenUrl: !!(k.motTokenUrl || k.motTenantId), encrypted: safeStorage.isEncryptionAvailable() };
 });
+const DATA_KEY_NAMES = ['dvla', 'motClientId', 'motClientSecret', 'motApiKey', 'motTokenUrl', 'motTenantId', 'motScope'];
 ipcMain.handle('data:setKeys', (_e, patch) => {
   const k = loadDataKeys();
   for (const [name, val] of Object.entries(patch || {})) {
+    if (!DATA_KEY_NAMES.includes(name)) continue; // only known credential fields are stored
     if (val === null || val === '') delete k[name]; else if (typeof val === 'string') k[name] = val.trim();
   }
+  if (patch && patch.motTokenUrl) delete k.motTenantId; // a full token URL supersedes a bare tenant ID
   saveDataKeys(k);
   return { ok: true };
 });
-ipcMain.handle('data:dvla', plainWrap((reg) => vdata.dvlaLookup(reg, loadDataKeys().dvla)));
-ipcMain.handle('data:mot', plainWrap((reg) => vdata.motLookup(reg, loadDataKeys())));
+ipcMain.handle('data:dvla', plainWrap((p) => vdata.dvlaLookup(p && p.reg, loadDataKeys().dvla, p && p.env)));
+ipcMain.handle('data:mot', plainWrap(async (p) => vdata.normaliseMot(await vdata.motLookup(p && p.id, loadDataKeys(), p && p.by))));
 
 ipcMain.handle('pdf:export', async (_e, { html, header, footer, fileName }) => {
   const { canceled, filePath } = await dialog.showSaveDialog(win, {

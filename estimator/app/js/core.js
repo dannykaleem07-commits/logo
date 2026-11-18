@@ -103,6 +103,7 @@
     paintTypeFactor: { solid: 1.0, metallic: 1.0, pearl: 1.2, 'three-stage': 1.3, matt: 1.3 },
     blendFactor: 0.5,
     ai: { model: 'claude-opus-5-5', effort: 'high' },
+    dvlaEnv: 'live',
     assessor: {
       name: '',
       title: 'Automotive Accident Damage Assessor',
@@ -356,11 +357,30 @@
     const painting = job.lines.filter((l) => l.type === 'Painting');
     if (renewedPainted.length && /metallic|pearl|three-stage/.test(v.paintType || '') && !has(/blend/i)) add('info', `Metallic/pearl colour with renewed painted panels and no blend lines. Consider blending adjacent panels for colour match.`, 'estimate');
     if (painting.length && !job.lines.some((l) => l.costClass === 'paint' && num(l.amount) > 0)) add('info', 'Refinish labour is included but no paint materials cost.', 'estimate');
-    const mot = (v.motHistory || []).filter((t) => num(t.odometer) > 0);
-    if (mot.length && num(v.mileage)) {
-      const maxMot = Math.max(...mot.map((t) => num(t.odometer)));
-      if (num(v.mileage) < maxMot) add('error', `Recorded mileage (${num(v.mileage).toLocaleString('en-GB')}) is LOWER than a previous MOT reading (${maxMot.toLocaleString('en-GB')}). Possible clocking or entry error: investigate before valuing.`, 'vehicle');
-      for (let i = 1; i < mot.length; i++) if (num(mot[i].odometer) > num(mot[i - 1].odometer) && mot[i].date < mot[i - 1].date) { add('warn', 'MOT history shows a mileage reduction between tests. Check for a discrepancy.', 'vehicle'); break; }
+    // ---- MOT mileage evidence (DVSA) ----
+    const wantKm = /km/i.test(v.mileageUnit || '');
+    const toUnit = (n, unit) => { const u = String(unit || '').toLowerCase(); if (u === 'km' && !wantKm) return n * 0.621371; if ((u === 'mi' || u === 'miles') && wantKm) return n * 1.609344; return n; };
+    const unitWord = wantKm ? 'km' : 'miles';
+    const fmt = (n) => Math.round(n).toLocaleString('en-GB');
+    const readings = (v.motHistory || [])
+      .filter((t) => num(t.odometer) > 0 && t.date && (!t.odometerResult || t.odometerResult === 'READ'))
+      .map((t) => ({ date: String(t.date).slice(0, 10), miles: toUnit(num(t.odometer), t.unit) }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+    const cutoff = job.instruction.dateOfLoss || job.inspection.date || '';
+    const before = cutoff ? readings.filter((r) => r.date <= cutoff) : readings;
+    const after = cutoff ? readings.filter((r) => r.date > cutoff) : [];
+    if (num(v.mileage) && before.length) {
+      const maxBefore = before.reduce((a, r) => (r.miles > a.miles ? r : a));
+      if (num(v.mileage) + 50 < maxBefore.miles) add('error', `Recorded mileage (${fmt(num(v.mileage))} ${unitWord}) is LOWER than the MOT reading of ${fmt(maxBefore.miles)} on ${ukDate(maxBefore.date)}, before the loss. Possible odometer tampering, instrument replacement or an entry error: investigate before valuing.`, 'vehicle');
+    }
+    for (let i = 1; i < readings.length; i++) {
+      if (readings[i].miles + 50 < readings[i - 1].miles) { add('warn', `MOT history shows the mileage going DOWN between ${ukDate(readings[i - 1].date)} (${fmt(readings[i - 1].miles)}) and ${ukDate(readings[i].date)} (${fmt(readings[i].miles)}). Check for an odometer discrepancy.`, 'vehicle'); break; }
+    }
+    if (after.length) {
+      const last = after[after.length - 1];
+      const since = num(v.mileage) ? last.miles - num(v.mileage) : 0;
+      const offRoad = /total|ber|beyond/i.test(job.outcome.decision) || /off the road|not .*(suitable|roadworthy)|unroadworthy|should not be (used|driven)/i.test(job.assessment.roadworthiness + ' ' + job.inspection.roadTest);
+      add(offRoad ? 'warn' : 'info', `The vehicle was presented for an MOT AFTER the date of loss: ${after.map((r) => `${ukDate(r.date)} at ${fmt(r.miles)} ${unitWord}`).join('; ')}${since > 0 ? ` (${fmt(since)} ${unitWord} more than the inspection reading)` : ''}. ${offRoad ? 'The report treats it as off the road / a total loss: confirm whether it has been repaired or used, and address this in the opinion.' : 'Confirm the repair / usage history.'}`, 'vehicle');
     }
     if (/image|desktop|photo/i.test(job.inspection.type)) {
       if (job.photos.length < 8) add('warn', `Image-based assessment with only ${job.photos.length} photo(s). Desktop reports are commonly challenged on coverage: include all four corners, the damage close-up and in context, VIN plate and odometer.`, 'photos');

@@ -162,15 +162,19 @@
     const guess = C.guessOemVehicle(job.vehicle);
     const ov = C.oemVehicles();
     const mot = job.vehicle.motHistory || [];
+    const dv = job.vehicle.dvla;
+    const ms = job.vehicle.motSummary;
     return `<div class="card"><div class="row"><h2 class="grow" style="margin:0">Vehicle lookup</h2>
-        <button class="btn primary" data-act="dvlaLookup" ${desktop ? '' : 'disabled'}>${ui.busy === 'dvla' ? '<span class="spinner"></span>' : ''}DVLA lookup</button>
-        <button class="btn" data-act="motLookup" ${desktop ? '' : 'disabled'}>${ui.busy === 'mot' ? '<span class="spinner" style="border-color:#999;border-top-color:#333"></span>' : ''}MOT history</button></div>
-      <p class="hint">Enter the registration below, then look it up. DVLA fills make, colour, fuel, engine size and first registration. MOT history adds the model and every recorded mileage. Pick the exact variant from the list below.</p>
-      ${job.vehicle.dvla ? `<div class="hint">DVLA: tax <b>${esc(job.vehicle.dvla.taxStatus || '')}</b>${job.vehicle.dvla.taxDueDate ? ' (due ' + esc(C.ukDate(job.vehicle.dvla.taxDueDate)) + ')' : ''} · MOT <b>${esc(job.vehicle.dvla.motStatus || '')}</b>${job.vehicle.dvla.motExpiryDate ? ' (expires ' + esc(C.ukDate(job.vehicle.dvla.motExpiryDate)) + ')' : ''} · ${esc(job.vehicle.dvla.euroStatus || '')} · CO₂ ${esc(job.vehicle.dvla.co2Emissions || '—')} g/km${job.vehicle.dvla.markedForExport ? ' · <b style="color:var(--err)">marked for export</b>' : ''} · last V5C ${esc(C.ukDate(job.vehicle.dvla.dateOfLastV5CIssued || ''))}</div>` : ''}
+        <button class="btn primary" data-act="lookupVehicle" ${desktop ? '' : 'disabled'}>${ui.busy === 'lookup' ? '<span class="spinner"></span>Looking up…' : 'Look up registration'}</button>
+        <button class="btn" data-act="motByVin" ${desktop && job.vehicle.vin ? '' : 'disabled'} title="MOT history by VIN">${ui.busy === 'motvin' ? '<span class="spinner" style="border-color:#999;border-top-color:#333"></span>' : ''}MOT history by VIN</button></div>
+      <p class="hint">Enter the registration (and VIN if you have it) below, then look it up. DVLA fills make, colour, fuel, engine size and first registration; MOT History adds the model and every recorded mileage. Either works on its own. ${desktop ? '' : 'Lookups run in the desktop app.'}</p>
+      ${dv ? `<div class="hint"><b>DVLA</b> (${esc(C.ukDate((dv.lookedUpAt || '').slice(0, 10)))}): tax <b>${esc(dv.taxStatus || '—')}</b>${dv.taxDueDate ? ' (due ' + esc(C.ukDate(dv.taxDueDate)) + ')' : ''} · MOT <b>${esc(dv.motStatus || '—')}</b>${dv.motExpiry ? ' (expires ' + esc(C.ukDate(dv.motExpiry)) + ')' : ''}${dv.euroStatus ? ' · ' + esc(dv.euroStatus) : ''}${dv.co2Emissions !== '' && dv.co2Emissions != null ? ' · CO₂ ' + esc(dv.co2Emissions) + ' g/km' : ''}${dv.wheelPlan ? ' · ' + esc(dv.wheelPlan) : ''}${dv.dateOfLastV5CIssued ? ' · last V5C ' + esc(C.ukDate(dv.dateOfLastV5CIssued)) : ''}
+        ${dv.markedForExport ? ' · <b style="color:var(--err)">marked for export</b>' : ''}${dv.markedAsScrapped ? ' · <b style="color:var(--err)">marked as scrapped</b>' : ''}${dv.importedOrReRegistered ? ` · <b style="color:var(--warn)">first registered ${esc(C.ukDate(dv.firstRegistration))} but with DVLA ${esc(C.ukDate(dv.firstRegistrationWithDvla))} (import / re-registration)</b>` : ''}</div>` : ''}
+      ${ms ? `<div class="hint"><b>MOT History</b> (${esc(C.ukDate((ms.lookedUpAt || '').slice(0, 10)))}): ${esc(ms.make)} ${esc(ms.model)} · ${esc(ms.fuelType)} · ${esc(ms.primaryColour)}${ms.engineSize ? ' · ' + esc(ms.engineSize) + 'cc' : ''} · recall: <b>${esc(ms.recall || 'Unknown')}</b>${ms.motTestDueDate ? ' · first MOT due ' + esc(C.ukDate(ms.motTestDueDate)) : ''}</div>` : ''}
       ${variantPicker()}
     </div>
     ${mot.length ? `<div class="card"><h2 style="margin-top:0">MOT mileage history</h2><table class="tbl"><thead><tr><th>Date</th><th>Result</th><th class="num">Odometer</th><th>Expiry</th><th>Advisories / defects</th></tr></thead><tbody>
-      ${mot.map((t) => `<tr><td>${esc(C.ukDate(t.date))}</td><td><span class="badge ${/pass/i.test(t.result) ? 'ok' : 'err'}">${esc(t.result)}</span></td><td class="num">${num(t.odometer).toLocaleString('en-GB')} ${esc(t.unit || '')}</td><td>${esc(C.ukDate(t.expiry || ''))}</td><td class="hint">${esc((t.defects || []).slice(0, 4).join('; '))}${(t.defects || []).length > 4 ? '…' : ''}</td></tr>`).join('')}</tbody></table></div>` : ''}
+      ${mot.map((t) => `<tr><td>${esc(C.ukDate(t.date))}</td><td><span class="badge ${/pass/i.test(t.result) ? 'ok' : 'err'}">${esc(t.result)}</span></td><td class="num">${num(t.odometer) ? num(t.odometer).toLocaleString('en-GB') + ' ' + esc(String(t.unit || '').toLowerCase()) : esc(t.odometerResult || 'not read')}</td><td>${esc(C.ukDate(t.expiry || ''))}</td><td class="hint">${esc((t.defects || []).slice(0, 4).join('; '))}${(t.defects || []).length > 4 ? '…' : ''}</td></tr>`).join('')}</tbody></table></div>` : ''}
     <div class="card"><div class="form">
       ${F('vehicle.reg', 'Registration')}${F('vehicle.vin', 'VIN / chassis number', { hint: vinHint(vin) })}
       ${F('vehicle.make', 'Make', { list: 'makes' })}${F('vehicle.model', 'Model')}
@@ -247,37 +251,91 @@
     const guess = C.guessOemVehicle(v); v.oemKey = guess ? guess.key : '';
     changed(); renderJob(); toast('Variant applied: ' + v.derivative);
   }
-  async function dvlaLookup() {
-    if (!job.vehicle.reg) return toast('Enter the registration first.', true);
-    ui.busy = 'dvla'; renderJob();
-    const r = await desktop.data.dvla(job.vehicle.reg);
-    ui.busy = false;
-    if (!r.ok) { renderJob(); return toast(r.error, true); }
-    const d = r.result, v = job.vehicle;
-    v.dvla = d;
-    if (d.make) v.make = d.make.replace(/\b([A-Z])([A-Z]+)\b/g, (m, a, b) => (m.length <= 3 ? m : a + b.toLowerCase()));
-    if (d.colour) v.colour = d.colour.charAt(0) + d.colour.slice(1).toLowerCase();
-    if (d.fuelType) v.fuel = /diesel/i.test(d.fuelType) ? 'Diesel' : /electric/i.test(d.fuelType) && /petrol|diesel/i.test(d.fuelType) ? 'Hybrid' : /electric/i.test(d.fuelType) ? 'Electric' : /hybrid/i.test(d.fuelType) ? 'Hybrid' : 'Petrol';
-    if (d.engineCapacity) v.engineSize = d.engineCapacity;
-    if (d.monthOfFirstRegistration) v.firstReg = d.monthOfFirstRegistration.length === 7 ? d.monthOfFirstRegistration + '-01' : d.monthOfFirstRegistration;
-    ui.vp = null;
-    logAi('DVLA lookup', 'DVLA Vehicle Enquiry Service', false);
-    changed(); renderJob(); toast('DVLA details applied. Now choose the exact variant.');
+  // canonical make spelling from our own data (DVLA/DVSA return upper case)
+  function canonicalMake(raw) {
+    const want = fold(raw);
+    if (!want) return '';
+    const known = [...new Set((window.VARIANTS || []).map((m) => m.make).concat(C.oemVehicles().map((v) => v.make)).concat(['Audi', 'BMW', 'Citroën', 'Dacia', 'Fiat', 'Honda', 'Hyundai', 'Jaguar', 'Kia', 'Land Rover', 'Lexus', 'Mazda', 'Mercedes-Benz', 'MG', 'MINI', 'Mitsubishi', 'Peugeot', 'Porsche', 'Renault', 'SEAT', 'Škoda', 'Smart', 'Subaru', 'Suzuki', 'Tesla', 'Toyota', 'Vauxhall', 'Volkswagen', 'Volvo', 'Cupra', 'Polestar', 'BYD', 'Alfa Romeo', 'Jeep', 'DS', 'Genesis']))];
+    const hit = known.find((m) => fold(m) === want) || (want === 'mercedes' ? 'Mercedes-Benz' : want === 'vw' ? 'Volkswagen' : null);
+    if (hit) return hit;
+    return String(raw).toLowerCase().replace(/\b([a-z])([a-z]*)/g, (m, a, b) => a.toUpperCase() + b);
   }
-  async function motLookup() {
-    if (!job.vehicle.reg) return toast('Enter the registration first.', true);
-    ui.busy = 'mot'; renderJob();
-    const r = await desktop.data.mot(job.vehicle.reg);
-    ui.busy = false;
-    if (!r.ok) { renderJob(); return toast(r.error, true); }
-    const d = r.result, v = job.vehicle;
+  const titleWords = (raw) => String(raw || '').split(/\s+/).map((w) => (w.length <= 3 && /[A-Z]/.test(w) && !/^(THE|AND)$/.test(w) ? w : w.charAt(0) + w.slice(1).toLowerCase())).join(' ');
+  function mapFuel(raw) {
+    const f = String(raw || '').toLowerCase();
+    if (!f) return '';
+    if (/plug/.test(f)) return 'Plug-in hybrid';
+    if (/hybrid/.test(f) || (/electric/.test(f) && /petrol|diesel/.test(f))) return 'Hybrid';
+    if (/^electric|electricity/.test(f)) return 'Electric';
+    if (/diesel/.test(f)) return 'Diesel';
+    if (/gas|lpg/.test(f)) return 'LPG';
+    if (/petrol/.test(f)) return 'Petrol';
+    return '';
+  }
+  // apply results to the job they were requested for, even if the user has moved to another job
+  async function applyToJob(j, fn) {
+    fn(j);
+    if (job && job.id === j.id) { changed(); renderJob(); } else { await C.Store.saveJob(j); }
+  }
+  function applyDvla(j, d) {
+    const v = j.vehicle;
+    v.dvla = Object.assign({}, d, { lookedUpAt: new Date().toISOString() });
+    if (d.make) v.make = canonicalMake(d.make);
+    if (d.colour) v.colour = titleWords(d.colour);
+    if (mapFuel(d.fuelType)) v.fuel = mapFuel(d.fuelType);
+    if (d.engineCapacity) v.engineSize = d.engineCapacity;
+    if (d.firstRegistration) v.firstReg = d.firstRegistration;
+    (j.aiLog = j.aiLog || []).push({ at: new Date().toISOString(), action: 'DVLA Vehicle Enquiry Service lookup', model: 'DVLA', ai: false });
+  }
+  function applyMot(j, d) {
+    const v = j.vehicle;
     v.motModel = d.model || '';
-    if (!v.model && d.model) v.model = d.model.charAt(0) + d.model.slice(1).toLowerCase();
-    if (!v.make && d.make) v.make = d.make;
-    if (!v.colour && d.primaryColour) v.colour = d.primaryColour;
-    v.motHistory = (d.motTests || []).map((t) => ({ date: (t.completedDate || '').slice(0, 10), result: t.testResult || '', odometer: num(t.odometerValue), unit: t.odometerUnit || '', expiry: (t.expiryDate || '').slice(0, 10), defects: (t.defects || []).map((x) => `${x.type ? x.type + ': ' : ''}${x.text}`) }));
-    if (d.hasOutstandingRecall && /yes|true/i.test(String(d.hasOutstandingRecall))) toast('Note: DVSA reports an outstanding recall on this vehicle.');
-    changed(); renderJob(); toast(`MOT history: ${v.motHistory.length} test(s) loaded.`);
+    v.motSummary = { make: d.make, model: d.model, fuelType: d.fuelType, primaryColour: d.primaryColour, engineSize: d.engineSize, recall: d.recall, motTestDueDate: d.motTestDueDate, firstUsedDate: d.firstUsedDate, registrationDate: d.registrationDate, lookedUpAt: new Date().toISOString() };
+    if (!v.make && d.make) v.make = canonicalMake(d.make);
+    if (!v.model && d.model) v.model = titleWords(d.model);
+    if (!v.colour && d.primaryColour) v.colour = titleWords(d.primaryColour);
+    if (!v.fuel && mapFuel(d.fuelType)) v.fuel = mapFuel(d.fuelType);
+    if (!v.engineSize && Number(d.engineSize)) v.engineSize = Number(d.engineSize);
+    if (!v.firstReg && (d.registrationDate || d.firstUsedDate)) v.firstReg = String(d.registrationDate || d.firstUsedDate).slice(0, 10);
+    v.motHistory = d.tests || [];
+    (j.aiLog = j.aiLog || []).push({ at: new Date().toISOString(), action: `DVSA MOT History lookup (${(d.tests || []).length} tests)`, model: 'DVSA', ai: false });
+  }
+  async function lookupVehicle() {
+    const j = job;
+    if (!j.vehicle.reg) return toast('Enter the registration first.', true);
+    const st = await desktop.data.status();
+    if (!st.dvla && !st.mot) return toast('No data connections set up. Add your DVLA key and/or MOT History credentials in Settings → Data connections.', true);
+    ui.busy = 'lookup'; renderJob();
+    const msgs = [];
+    try {
+      if (st.dvla) {
+        const r = await desktop.data.dvla(j.vehicle.reg, C.settings.dvlaEnv || 'live');
+        if (r.ok) { await applyToJob(j, (x) => applyDvla(x, r.result)); msgs.push('DVLA details applied'); } else msgs.push('DVLA: ' + r.error);
+      }
+      if (st.mot) {
+        const r = await desktop.data.mot(j.vehicle.reg, 'registration');
+        if (r.ok) {
+          await applyToJob(j, (x) => applyMot(x, r.result));
+          msgs.push(r.result.tests.length ? `MOT history: ${r.result.tests.length} test(s)` : `MOT History: no tests yet${r.result.motTestDueDate ? ' (first MOT due ' + C.ukDate(r.result.motTestDueDate) + ')' : ''}`);
+          if (/^yes$/i.test(r.result.recall)) msgs.push('DVSA reports an OUTSTANDING RECALL');
+        } else msgs.push('MOT History: ' + r.error);
+      }
+    } finally {
+      ui.busy = false;
+      if (job && job.id === j.id) renderJob();
+    }
+    const failed = msgs.some((m) => /^(DVLA|MOT History): /.test(m) && !/no tests yet/.test(m));
+    toast(msgs.join(' · ') + (failed ? '' : '. Now choose the exact variant.'), failed);
+  }
+  async function motByVin() {
+    const j = job;
+    if (!j.vehicle.vin) return toast('Enter the VIN first.', true);
+    ui.busy = 'motvin'; renderJob();
+    let r;
+    try { r = await desktop.data.mot(j.vehicle.vin, 'vin'); } finally { ui.busy = false; }
+    if (!r.ok) { if (job && job.id === j.id) renderJob(); return toast(r.error, true); }
+    await applyToJob(j, (x) => applyMot(x, r.result));
+    toast(`MOT history by VIN: ${r.result.tests.length} test(s).`);
   }
   function logAi(action, model, ai) { (job.aiLog = job.aiLog || []).push({ at: new Date().toISOString(), action, model, ai: ai !== false }); }
 
@@ -854,11 +912,19 @@
         ${S('berThresholdPct', 'Economic repair threshold %', { type: 'number', hint: 'Repair cost as % of PAV at which a total loss is flagged.' })}${S('berBasis', 'Threshold based on', { type: 'select', options: [['net', 'Net (excl. VAT)'], ['gross', 'Gross (incl. VAT)']] })}</div></div>
       <div class="card"><h2 style="margin-top:0">Data connections</h2>
         ${desktop ? `<p>DVLA: ${dataStatus.dvla ? '<span class="badge ok">key saved</span>' : '<span class="badge warn">not set</span>'} · MOT History: ${dataStatus.mot ? '<span class="badge ok">credentials saved</span>' : '<span class="badge warn">not set</span>'}</p>
-        <div class="form"><label class="fld"><span>DVLA Vehicle Enquiry Service API key</span><input type="password" id="kDvla" placeholder="${dataStatus.dvla ? '•••••• saved, enter a new key to replace' : 'paste your DVLA API key'}"></label><div class="row" style="align-items:end"><button class="btn primary" data-act="saveDvla">Save DVLA key</button>${dataStatus.dvla ? '<button class="btn danger" data-act="clearDvla">Remove</button>' : ''}</div>
-          <label class="fld"><span>MOT History: client ID</span><input type="password" id="kMotId"></label><label class="fld"><span>MOT History: client secret</span><input type="password" id="kMotSecret"></label>
-          <label class="fld"><span>MOT History: API key</span><input type="password" id="kMotKey"></label><label class="fld"><span>MOT History: tenant ID (from your DVSA welcome email)</span><input type="password" id="kMotTenant"></label>
-          <div class="row"><button class="btn primary" data-act="saveMot">Save MOT credentials</button></div></div>
-        <p class="hint">Keys are encrypted on this PC and never stored in jobs or backups.</p>` : '<p class="hint">Data connections work in the desktop app.</p>'}</div>
+        <h3>DVLA Vehicle Enquiry Service</h3>
+        <div class="form"><label class="fld"><span>DVLA API key (x-api-key)</span><input type="password" id="kDvla" autocomplete="off" placeholder="${dataStatus.dvla ? '•••••• saved, paste a new key to replace' : 'paste the key from your DVLA email'}"></label>
+          ${S('dvlaEnv', 'DVLA service', { type: 'select', options: [['live', 'Live'], ['test', 'Test (UAT): test keys only, test registrations']], hint: 'DVLA test keys only work on the test service (test registrations such as AA19AAA).' })}
+          <div class="row" style="align-items:end"><button class="btn primary" data-act="saveDvla">Save DVLA key</button>${dataStatus.dvla ? '<button class="btn danger" data-act="clearDvla">Remove</button>' : ''}</div></div>
+        <h3>DVSA MOT History API</h3>
+        <p class="hint">Copy each value from the DVSA "Here are your credentials" email.</p>
+        <div class="form"><label class="fld"><span>Client ID</span><input type="password" id="kMotId" autocomplete="off"></label><label class="fld"><span>Client secret</span><input type="password" id="kMotSecret" autocomplete="off"></label>
+          <label class="fld"><span>API key</span><input type="password" id="kMotKey" autocomplete="off"></label><label class="fld"><span>Token URL (https://login.microsoftonline.com/…/oauth2/v2.0/token) or tenant ID</span><input type="password" id="kMotTokenUrl" autocomplete="off"></label>
+          <label class="fld"><span>Scope URL</span><input id="kMotScope" autocomplete="off" placeholder="https://tapi.dvsa.gov.uk/.default"></label>
+          <div class="row" style="align-items:end"><button class="btn primary" data-act="saveMot">Save MOT credentials</button>${dataStatus.mot ? '<button class="btn danger" data-act="clearMot">Remove</button>' : ''}</div></div>
+        <h3>Test the connections</h3>
+        <div class="row"><input id="testReg" placeholder="Registration, e.g. ${C.settings.dvlaEnv === 'test' ? 'AA19AAA' : 'AB12 CDE'}" style="width:220px"><button class="btn" data-act="testDvla" ${dataStatus.dvla ? '' : 'disabled'}>Test DVLA</button><button class="btn" data-act="testMot" ${dataStatus.mot ? '' : 'disabled'}>Test MOT History</button></div>
+        <p class="hint">Keys are encrypted on this PC${dataStatus.encrypted === false ? ' <b style="color:var(--err)">(this PC has no secure storage, so keys are saved unencrypted)</b>' : ''} and are never stored in jobs, backups or reports. If a DVSA client secret expires (every 2 years) or an API key is unused for 90 days, request new ones from DVSA.</p>` : '<p class="hint">Data connections work in the desktop app.</p>'}</div>
       <div class="card aiPanel"><h2>✦ AI assessor</h2>
         ${desktop ? `<p>Status: ${aiStatus.hasKey ? '<span class="badge ok">API key set</span>' : '<span class="badge warn">No API key</span>'} ${aiStatus.encrypted ? '<span class="hint">Key is encrypted by your operating system and never stored in reports.</span>' : ''}</p>
         <div class="form"><label class="fld"><span>Anthropic API key</span><input type="password" id="aiKey" placeholder="${aiStatus.hasKey ? '•••••••••• (saved, enter a new key to replace)' : 'sk-ant-…'}"></label>
@@ -1102,14 +1168,25 @@
         } catch (err) { toast('That is not a backup file.', true); }
       },
       catAddNo, catAddVeh, catImport,
-      dvlaLookup, motLookup, applyVariant, paintMaterials, aiValuation,
+      lookupVehicle, motByVin, applyVariant, paintMaterials, aiValuation,
       advAdd: () => { (job.valuation.adverts = job.valuation.adverts || []).push({ description: '', year: '', mileage: '', price: '', url: '' }); changed(); renderJob(); },
       advDel: () => { job.valuation.adverts.splice(+el.dataset.i, 1); changed(); renderJob(); },
       advFromAi: () => { const c = job.valuation.ai.comparables[+el.dataset.i]; (job.valuation.adverts = job.valuation.adverts || []).push({ description: c.description, year: c.year, mileage: c.mileage, price: c.price, url: c.url, source: c.source }); changed(); renderJob(); toast('Added to adverts.'); },
       aiValApply: () => { const r = job.valuation.ai; job.valuation.adopted = Math.round(num(r.recommended_pav)); job.valuation.comments = r.comments; changed(); renderJob(); toast('PAV and comments applied. Edit as needed.'); },
       saveDvla: async () => { const k = $('#kDvla').value.trim(); if (!k) return toast('Paste the DVLA key first.', true); await desktop.data.setKeys({ dvla: k }); toast('DVLA key saved.'); renderSettings(); },
-      clearDvla: async () => { await desktop.data.setKeys({ dvla: null }); renderSettings(); },
-      saveMot: async () => { const patch = { motClientId: $('#kMotId').value, motClientSecret: $('#kMotSecret').value, motApiKey: $('#kMotKey').value, motTenantId: $('#kMotTenant').value }; Object.keys(patch).forEach((k) => { if (!patch[k].trim()) delete patch[k]; }); if (!Object.keys(patch).length) return toast('Enter the MOT credentials first.', true); await desktop.data.setKeys(patch); toast('MOT History credentials saved.'); renderSettings(); }
+      clearDvla: async () => { if (!confirm('Remove the saved DVLA key?')) return; await desktop.data.setKeys({ dvla: null }); renderSettings(); },
+      saveMot: async () => {
+        const tok = $('#kMotTokenUrl').value.trim();
+        const patch = { motClientId: $('#kMotId').value.trim(), motClientSecret: $('#kMotSecret').value.trim(), motApiKey: $('#kMotKey').value.trim(), motScope: $('#kMotScope').value.trim() };
+        if (tok) { if (/^https:\/\//i.test(tok)) patch.motTokenUrl = tok; else patch.motTenantId = tok; }
+        Object.keys(patch).forEach((k) => { if (!patch[k]) delete patch[k]; });
+        if (!Object.keys(patch).length) return toast('Enter the MOT credentials first.', true);
+        if (patch.motTokenUrl && !/^https:\/\/login\.microsoftonline\.com\/[^/]+\/oauth2\/v2\.0\/token$/i.test(patch.motTokenUrl)) return toast('The token URL should look like https://login.microsoftonline.com/<tenant>/oauth2/v2.0/token (copy it from the DVSA email).', true);
+        await desktop.data.setKeys(patch); toast('MOT History credentials saved.'); renderSettings();
+      },
+      clearMot: async () => { if (!confirm('Remove the saved MOT History credentials?')) return; await desktop.data.setKeys({ motClientId: null, motClientSecret: null, motApiKey: null, motTokenUrl: null, motTenantId: null, motScope: null }); renderSettings(); },
+      testDvla: async () => { const reg = $('#testReg').value.trim(); if (!reg) return toast('Enter a registration to test with.', true); const r = await desktop.data.dvla(reg, C.settings.dvlaEnv || 'live'); r.ok ? toast(`DVLA OK: ${r.result.make} ${r.result.colour} ${r.result.fuelType}${r.result.firstRegistration ? ', first registered ' + C.ukDate(r.result.firstRegistration) : ''}`) : toast(r.error, true); },
+      testMot: async () => { const reg = $('#testReg').value.trim(); if (!reg) return toast('Enter a registration to test with.', true); const r = await desktop.data.mot(reg, 'registration'); r.ok ? toast(`MOT History OK: ${r.result.make} ${r.result.model}, ${r.result.tests.length} test(s)${r.result.tests[0] && r.result.tests[0].odometer ? ', latest ' + r.result.tests[0].odometer.toLocaleString('en-GB') + ' ' + r.result.tests[0].unit : ''}`) : toast(r.error, true); },
     };
     if (A[a]) { e.preventDefault(); await A[a](); }
   });
