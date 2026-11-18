@@ -138,6 +138,7 @@
     return renderJobs();
   }
 
+  const isoDate = (s) => { const m = /^(\d{4})[-./](\d{2})[-./](\d{2})/.exec(String(s || '')); return m ? `${m[1]}-${m[2]}-${m[3]}` : ''; };
   // Older DVLA records stored the raw VES response; convert them to the normalised shape the Vehicle tab reads.
   const RAW_DVLA_KEYS = ['motExpiryDate', 'monthOfFirstRegistration', 'yearOfFirstRegistration', 'wheelplan'];
   function normaliseRawDvla(d) {
@@ -181,7 +182,7 @@
     }
     if (j.photos.some((p) => !isObj(p))) set(j, 'photos', j.photos.filter(isObj));
     for (const p of j.photos) { if (!p.id) set(p, 'id', C.uid()); if (!Array.isArray(p.labels)) set(p, 'labels', []); }
-    ['sources', 'adverts'].forEach((k) => { if (j.valuation[k].some((x) => !isObj(x))) set(j.valuation, k, j.valuation[k].filter(isObj)); });
+    ['sources', 'adverts'].forEach((k) => { if (Array.isArray(j.valuation[k]) && j.valuation[k].some((x) => !isObj(x))) set(j.valuation, k, j.valuation[k].filter(isObj)); });
     // per-job rates and VAT (snapshotted from Settings when the job was created)
     if (!isObj(j.rates)) set(j, 'rates', C.clone(C.settings.rates));
     else for (const rk of Object.keys(C.settings.rates)) if (j.rates[rk] == null) set(j.rates, rk, C.settings.rates[rk]);
@@ -202,22 +203,42 @@
   }
 
   // ---------- JOBS LIST ----------
+  // One row per stored job. Each row is migrated (in memory only) and rendered on its own, so one bad record shows an error row instead of blanking the list.
+  function jobRow(j) {
+    try {
+      migrate(j);
+      const t = C.totals(j);
+      const dec = String(j.outcome.decision || '');
+      return `<tr>
+          <td><a href="#/job/${esc(j.id)}/claim"><span class="plate">${esc(j.vehicle.reg || 'NEW')}</span></a></td>
+          <td>${esc([j.vehicle.make, j.vehicle.model, j.vehicle.derivative].filter(Boolean).join(' '))}</td>
+          <td>${esc(j.report.ref)}${j.issued ? ' <span class="badge ok">finalised</span>' : ''}</td><td>${esc(j.instruction.instructingParty)}</td><td>${esc(C.ukDate(j.instruction.dateOfLoss))}</td>
+          <td>${dec ? `<span class="badge ${/total|ber|beyond/i.test(dec) ? 'err' : 'ok'}">${esc(dec.split('/')[0])}${j.outcome.category ? ' · Cat ' + esc(j.outcome.category) : ''}</span>` : ''}</td>
+          <td class="num">${gbp(t.net)}</td><td class="num">${t.pav ? gbp(t.pav) : '—'}</td>
+          <td class="hint">${j.updatedAt ? new Date(j.updatedAt).toLocaleString('en-GB') : ''}</td>
+          <td class="row" style="flex-wrap:nowrap"><a class="btn sm" href="#/job/${esc(j.id)}/claim">Open</a><button class="btn sm" data-act="dupJob" data-id="${esc(j.id)}">Duplicate</button><button class="btn sm danger" data-act="delJob" data-id="${esc(j.id)}">Delete</button></td></tr>`;
+    } catch (err) {
+      const reg = isObj(j) && isObj(j.vehicle) ? j.vehicle.reg : '';
+      const id = isObj(j) ? esc(j.id) : '';
+      return `<tr class="bad"><td><span class="plate">${esc(reg || '?')}</span></td>
+          <td colspan="8"><span class="badge err">This record could not be read</span> <span class="hint">${esc(err.message || err)}</span></td>
+          <td class="row" style="flex-wrap:nowrap"><a class="btn sm" href="#/job/${id}/claim">Open</a><button class="btn sm danger" data-act="delJob" data-id="${id}">Delete</button></td></tr>`;
+    }
+  }
   async function renderJobs() {
-    const jobs = (await C.Store.listJobs()).sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+    const seq = routeSeq;
+    let jobs = [];
+    try { jobs = await C.Store.listJobs(); } catch (err) { toast('Could not read the saved assessments: ' + (err.message || err), true); }
+    if (seq !== routeSeq) return;
+    const when = (j) => String((isObj(j) && j.updatedAt) || '');
+    jobs.sort((a, b) => when(b).localeCompare(when(a)));
     main.innerHTML = `<div class="wrap">
       <div class="row"><div class="grow"><h1>Assessments</h1><div class="sub">Each assessment produces a full engineering &amp; accident damage report.</div></div>
         <button class="btn" data-act="importJob">Import job file</button>
         <button class="btn" data-act="loadSample">Load sample job</button>
         <a class="btn primary" href="#/new">+ New assessment</a></div>
       <div class="card" style="padding:0">${jobs.length ? `<table class="tbl"><thead><tr><th>Registration</th><th>Vehicle</th><th>Report ref</th><th>Instructing party</th><th>Date of loss</th><th>Outcome</th><th class="num">Net repair</th><th class="num">PAV</th><th>Updated</th><th></th></tr></thead><tbody>
-        ${jobs.map((j) => { const t = C.totals(j); return `<tr>
-          <td><a href="#/job/${j.id}/claim"><span class="plate">${esc(j.vehicle.reg || 'NEW')}</span></a></td>
-          <td>${esc([j.vehicle.make, j.vehicle.model, j.vehicle.derivative].filter(Boolean).join(' '))}</td>
-          <td>${esc(j.report.ref)}</td><td>${esc(j.instruction.instructingParty)}</td><td>${esc(C.ukDate(j.instruction.dateOfLoss))}</td>
-          <td>${j.outcome.decision ? `<span class="badge ${/total|ber|beyond/i.test(j.outcome.decision) ? 'err' : 'ok'}">${esc(j.outcome.decision.split('/')[0])}${j.outcome.category ? ' · Cat ' + j.outcome.category : ''}</span>` : ''}</td>
-          <td class="num">${gbp(t.net)}</td><td class="num">${t.pav ? gbp(t.pav) : '—'}</td>
-          <td class="hint">${j.updatedAt ? new Date(j.updatedAt).toLocaleString('en-GB') : ''}</td>
-          <td class="row" style="flex-wrap:nowrap"><a class="btn sm" href="#/job/${j.id}/claim">Open</a><button class="btn sm" data-act="dupJob" data-id="${j.id}">Duplicate</button><button class="btn sm danger" data-act="delJob" data-id="${j.id}">Delete</button></td></tr>`; }).join('')}
+        ${jobs.map(jobRow).join('')}
         </tbody></table>` : '<div class="empty">No assessments yet. Start a new one, or load the sample job to see a completed report.</div>'}</div></div>`;
   }
 
@@ -238,13 +259,30 @@
     body.innerHTML = r();
     afterRender();
   }
+  const berBasis = () => (C.settings.berBasis === 'gross' ? 'gross' : 'net');
   function updateHeader() {
     const el = $('#chips'); if (!el || !job) return;
     const t = C.totals(job);
+    const basis = berBasis(), pct = basis === 'gross' ? t.pctGross : t.pctNet;
     el.innerHTML = `<div class="chip">Labour<b>${hrs(t.labourHours)} h</b></div><div class="chip">Net repair<b>${gbp(t.net)}</b></div><div class="chip">Inc. VAT<b>${gbp(t.gross)}</b></div>
-      <div class="chip">PAV<b>${t.pav ? gbp(t.pav) : '—'}</b></div><div class="chip ${t.berSuggested ? 'ber' : ''}">Repair / PAV<b>${t.pav ? t.pctNet.toFixed(1) + '% net' : '—'}</b></div>`;
+      <div class="chip">PAV<b>${t.pav ? gbp(t.pav) : '—'}</b></div><div class="chip ${t.berSuggested ? 'ber' : ''}" title="Economic-repair threshold ${esc(C.settings.berThresholdPct)}% (${basis})">Repair / PAV (${basis})<b>${t.pav ? pct.toFixed(1) + '% ' + basis : '—'}</b></div>`;
     const v = $('#hdVeh'); if (v) v.textContent = [job.vehicle.make, job.vehicle.model, job.vehicle.derivative].filter(Boolean).join(' ') || 'New assessment';
     const p = $('.jobhead .plate'); if (p) p.textContent = job.vehicle.reg || 'NEW';
+  }
+  // Figures shown next to the field being typed in are updated in place (re-rendering the tab would lose focus).
+  function refreshLive() {
+    if (!job) return;
+    const t = C.totals(job);
+    const tb = $('#totalsBox'); if (tb) tb.innerHTML = totalsBox(t);
+    $$('[data-lv]').forEach((cell) => {
+      const l = job.lines.find((x) => x.id === cell.dataset.lv); if (!l) return;
+      const r = C.lineRate(job, l);
+      cell.textContent = num(l.hours) ? gbp(C.lineLabour(l.hours, r)) : '—';
+      const ri = cell.parentElement.querySelector('input[data-lf="rate"]'); if (ri) ri.placeholder = r.toFixed(2);
+    });
+    const vr = $('#valRange'); if (vr) vr.innerHTML = valRange(t);
+    const sh = $('#salvageHint'); if (sh) sh.textContent = '= ' + gbp(C.round2(t.pav * num(job.valuation.salvagePct) / 100));
+    const eb = $('#econBox'); if (eb) eb.innerHTML = econBox(t);
   }
 
   function tabClaim() {
@@ -269,12 +307,12 @@
     const dv = job.vehicle.dvla;
     const ms = job.vehicle.motSummary;
     return `<div class="card"><div class="row"><h2 class="grow" style="margin:0">Vehicle lookup</h2>
-        <button class="btn primary" data-act="lookupVehicle" ${desktop ? '' : 'disabled'}>${ui.busy === 'lookup' ? '<span class="spinner"></span>Looking up…' : 'Look up registration'}</button>
-        <button class="btn" data-act="motByVin" ${desktop && job.vehicle.vin ? '' : 'disabled'} title="MOT history by VIN">${ui.busy === 'motvin' ? '<span class="spinner" style="border-color:#999;border-top-color:#333"></span>' : ''}MOT history by VIN</button></div>
+        <button class="btn primary" data-act="lookupVehicle" ${desktop && !busy('lookup') ? '' : 'disabled'}>${busy('lookup') ? '<span class="spinner"></span>Looking up…' : 'Look up registration'}</button>
+        <button class="btn" data-act="motByVin" ${desktop && job.vehicle.vin && !busy('motvin') ? '' : 'disabled'} title="MOT history by VIN">${busy('motvin') ? '<span class="spinner" style="border-color:#999;border-top-color:#333"></span>' : ''}MOT history by VIN</button></div>
       <p class="hint">Enter the registration (and VIN if you have it) below, then look it up. DVLA fills make, colour, fuel, engine size and first registration; MOT History adds the model and every recorded mileage. Either works on its own. ${desktop ? '' : 'Lookups run in the desktop app.'}</p>
-      ${dv ? `<div class="hint"><b>DVLA</b> (${esc(C.ukDate((dv.lookedUpAt || '').slice(0, 10)))}): tax <b>${esc(dv.taxStatus || '—')}</b>${dv.taxDueDate ? ' (due ' + esc(C.ukDate(dv.taxDueDate)) + ')' : ''} · MOT <b>${esc(dv.motStatus || '—')}</b>${dv.motExpiry ? ' (expires ' + esc(C.ukDate(dv.motExpiry)) + ')' : ''}${dv.euroStatus ? ' · ' + esc(dv.euroStatus) : ''}${dv.co2Emissions !== '' && dv.co2Emissions != null ? ' · CO₂ ' + esc(dv.co2Emissions) + ' g/km' : ''}${dv.wheelPlan ? ' · ' + esc(dv.wheelPlan) : ''}${dv.dateOfLastV5CIssued ? ' · last V5C ' + esc(C.ukDate(dv.dateOfLastV5CIssued)) : ''}
+      ${dv ? `<div class="hint"><b>DVLA</b>${dv.lookedUpAt ? ' (' + esc(C.ukDate(String(dv.lookedUpAt).slice(0, 10))) + ')' : ''}: tax <b>${esc(dv.taxStatus || '—')}</b>${dv.taxDueDate ? ' (due ' + esc(C.ukDate(dv.taxDueDate)) + ')' : ''} · MOT <b>${esc(dv.motStatus || '—')}</b>${dv.motExpiry ? ' (expires ' + esc(C.ukDate(dv.motExpiry)) + ')' : ''}${dv.euroStatus ? ' · ' + esc(dv.euroStatus) : ''}${dv.co2Emissions !== '' && dv.co2Emissions != null ? ' · CO₂ ' + esc(dv.co2Emissions) + ' g/km' : ''}${dv.wheelPlan ? ' · ' + esc(dv.wheelPlan) : ''}${dv.dateOfLastV5CIssued ? ' · last V5C ' + esc(C.ukDate(dv.dateOfLastV5CIssued)) : ''}
         ${dv.markedForExport ? ' · <b style="color:var(--err)">marked for export</b>' : ''}${dv.markedAsScrapped ? ' · <b style="color:var(--err)">marked as scrapped</b>' : ''}${dv.importedOrReRegistered ? ` · <b style="color:var(--warn)">first registered ${esc(C.ukDate(dv.firstRegistration))} but with DVLA ${esc(C.ukDate(dv.firstRegistrationWithDvla))} (import / re-registration)</b>` : ''}</div>` : ''}
-      ${ms ? `<div class="hint"><b>MOT History</b> (${esc(C.ukDate((ms.lookedUpAt || '').slice(0, 10)))}): ${esc(ms.make)} ${esc(ms.model)} · ${esc(ms.fuelType)} · ${esc(ms.primaryColour)}${ms.engineSize ? ' · ' + esc(ms.engineSize) + 'cc' : ''} · recall: <b>${esc(ms.recall || 'Unknown')}</b>${ms.motTestDueDate ? ' · first MOT due ' + esc(C.ukDate(ms.motTestDueDate)) : ''}</div>` : ''}
+      ${ms ? `<div class="hint"><b>MOT History</b>${ms.lookedUpAt ? ' (' + esc(C.ukDate(String(ms.lookedUpAt).slice(0, 10))) + ')' : ''}: ${esc(ms.make)} ${esc(ms.model)} · ${esc(ms.fuelType)} · ${esc(ms.primaryColour)}${ms.engineSize ? ' · ' + esc(ms.engineSize) + 'cc' : ''} · recall: <b>${esc(ms.recall || 'Unknown')}</b>${ms.motTestDueDate ? ' · first MOT due ' + esc(C.ukDate(ms.motTestDueDate)) : ''}</div>` : ''}
       ${variantPicker()}
     </div>
     ${mot.length ? `<div class="card"><h2 style="margin-top:0">MOT mileage history</h2><table class="tbl"><thead><tr><th>Date</th><th>Result</th><th class="num">Odometer</th><th>Expiry</th><th>Advisories / defects</th></tr></thead><tbody>
@@ -284,18 +322,19 @@
       ${F('vehicle.make', 'Make', { list: 'makes' })}${F('vehicle.model', 'Model')}
       ${F('vehicle.derivative', 'Derivative / trim')}${F('vehicle.body', 'Body type / number of doors')}
       ${F('vehicle.mileage', 'Mileage at inspection', { type: 'number' })}${F('vehicle.mileageUnit', 'Mileage unit', { type: 'select', options: ['miles', 'km'] })}
-      ${F('vehicle.fuel', 'Fuel type', { type: 'select', options: ['', 'Petrol', 'Diesel', 'Hybrid', 'Plug-in hybrid', 'Electric', 'LPG'] })}${F('vehicle.transmission', 'Transmission', { type: 'select', options: ['', 'Manual', 'Automatic', 'Automatic / CVT', 'Automatic / DSG', 'Semi-automatic'] })}
+      ${F('vehicle.fuel', 'Fuel type', { type: 'select', options: ['', 'Petrol', 'Diesel', 'Hybrid', 'Plug-in hybrid', 'Electric', 'LPG'] })}${F('vehicle.transmission', 'Transmission', { list: 'gearboxes', ph: 'e.g. Manual, Automatic / DSG, 9G-Tronic' })}
       ${F('vehicle.engineSize', 'Engine size (cc)', { type: 'number' })}${F('vehicle.engineCode', 'Engine code')}
       ${F('vehicle.colour', 'Colour')}${F('vehicle.paintCode', 'Paint code')}
       ${F('vehicle.paintType', 'Paint finish', { type: 'select', options: [['solid', 'Solid'], ['metallic', 'Metallic'], ['pearl', 'Pearlescent'], ['three-stage', '3-stage / tri-coat'], ['matt', 'Matt']], hint: 'Affects refinish time and blend recommendations.' })}
       ${F('vehicle.sizeClass', 'Vehicle size class (scales guide labour times)', { type: 'select', options: Object.entries(C.SIZE_CLASSES).map(([k, v]) => [k, `${v[0]} ×${v[1]}`]) })}
-      ${F('vehicle.firstReg', 'First registration date', { type: 'date' })}
+      ${F('vehicle.firstReg', 'First registration date', { type: 'date', hint: job.vehicle.firstRegPrecision === 'month' ? 'DVLA gives the month only, so the report prints the month and year.' : '' })}
       ${F('vehicle.oemKey', 'Parts catalogue vehicle (for OEM part numbers)', { type: 'select', options: [['', '— none —']].concat(ov.map((v) => [v.key, `${v.make} ${v.model} ${v.generation} (${v.years})`])), hint: guess && guess.key !== job.vehicle.oemKey ? `Suggested: <button class="link" data-act="useOem" data-key="${guess.key}">${esc(guess.make + ' ' + guess.model + ' ' + guess.generation)}</button>` : 'Links estimate lines to researched OEM part numbers.' })}
-      </div><datalist id="makes">${[...new Set(ov.map((v) => v.make).concat(['Audi', 'BMW', 'Citroën', 'Dacia', 'Fiat', 'Honda', 'Hyundai', 'Kia', 'Land Rover', 'Mazda', 'Mercedes-Benz', 'MG', 'MINI', 'Peugeot', 'Renault', 'SEAT', 'Škoda', 'Tesla', 'Toyota', 'Volvo']))].sort().map((m) => `<option value="${esc(m)}">`).join('')}</datalist></div>`;
+      </div><datalist id="makes">${[...new Set(ov.map((v) => v.make).concat(['Audi', 'BMW', 'Citroën', 'Dacia', 'Fiat', 'Honda', 'Hyundai', 'Kia', 'Land Rover', 'Mazda', 'Mercedes-Benz', 'MG', 'MINI', 'Peugeot', 'Renault', 'SEAT', 'Škoda', 'Tesla', 'Toyota', 'Volvo']))].sort().map((m) => `<option value="${esc(m)}">`).join('')}</datalist>
+      <datalist id="gearboxes">${GEARBOXES.map((g) => `<option value="${esc(g)}">`).join('')}</datalist></div>`;
   }
-  const fold = (x) => String(x || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-  const yearRange = (str) => { const m = /(\d{4})\s*[-–]\s*(\d{4})?/.exec(String(str || '')); if (m) return [+m[1], m[2] ? +m[2] : 9999]; const one = /(\d{4})/.exec(String(str || '')); return one ? [+one[1], 9999] : null; };
-  const inYears = (str, y) => { const r = yearRange(str); return !y || !r || (y >= r[0] - 1 && y <= r[1]); };
+  const GEARBOXES = ['Manual', 'Automatic', 'Automatic / CVT', 'Automatic / DSG', 'Semi-automatic'];
+  const fold = C.fold;
+  const inYears = (str, y) => { const r = C.yearRange(str); return !y || !r || (y >= r[0] - 1 && y <= r[1]); };
   function vehicleYear() {
     const v = job.vehicle;
     return parseInt((v.firstReg || '').slice(0, 4), 10) || (v.dvla && +v.dvla.yearOfManufacture) || 0;
@@ -346,11 +385,13 @@
     const e = vp.engine !== '' && vp.engine != null ? mdl.engines[+vp.engine] : null;
     const tr = vp.trim || '', b = vp.body || '', g = vp.trans || '';
     const v = job.vehicle;
+    // the variant data carries research notes in brackets, e.g. "8-speed Steptronic (118d, 120d, 128ti)": keep them out of the vehicle fields
+    const clean = (s) => String(s || '').replace(/\s*\([^)]*\)/g, '').replace(/\s{2,}/g, ' ').trim();
     v.make = mdl.make; v.model = `${mdl.model}${mdl.generation ? ' (' + mdl.generation + ')' : ''}`;
-    v.derivative = [e && e.badge, tr, b, g].filter(Boolean).join(' ');
-    if (e) { if (e.fuel) v.fuel = /plug/i.test(e.fuel) ? 'Plug-in hybrid' : /hybrid/i.test(e.fuel) ? 'Hybrid' : /diesel/i.test(e.fuel) ? 'Diesel' : /electric/i.test(e.fuel) ? 'Electric' : 'Petrol'; if (e.cc) v.engineSize = e.cc; if (e.engine_code) v.engineCode = e.engine_code; }
-    if (b) v.body = b;
-    if (g) v.transmission = g;
+    v.derivative = [e && clean(e.badge), clean(tr), clean(b), clean(g)].filter(Boolean).join(' ');
+    if (e) { if (e.fuel) v.fuel = variantFuel(e.fuel); if (e.cc) v.engineSize = e.cc; if (e.engine_code) v.engineCode = e.engine_code; }
+    if (clean(b)) v.body = clean(b);
+    if (clean(g)) v.transmission = clean(g);
     v.variantKey = [mdl.make, mdl.model, mdl.generation, e && e.badge, tr, b, g].join('|');
     const guess = C.guessOemVehicle(v); v.oemKey = guess ? guess.key : '';
     changed(); renderJob(); toast('Variant applied: ' + v.derivative);
@@ -364,11 +405,25 @@
     if (hit) return hit;
     return String(raw).toLowerCase().replace(/\b([a-z])([a-z]*)/g, (m, a, b) => a.toUpperCase() + b);
   }
+  // model names keep short acronyms (GTI, CX-5); colours are title-cased word by word (RED → Red, DARK BLUE → Dark Blue)
   const titleWords = (raw) => String(raw || '').split(/\s+/).map((w) => (w.length <= 3 && /[A-Z]/.test(w) && !/^(THE|AND)$/.test(w) ? w : w.charAt(0) + w.slice(1).toLowerCase())).join(' ');
+  const titleColour = (raw) => String(raw || '').trim().toLowerCase().replace(/(^|[\s/])(\S)/g, (m, a, b) => a + b.toUpperCase());
+  // 48V mild hybrids are not high-voltage hybrids: they keep their base fuel
+  const MILD_HYBRID = /mild|mhev|48\s*v|eq boost/i;
+  function variantFuel(f) {
+    f = String(f || '');
+    if (/plug/i.test(f)) return 'Plug-in hybrid';
+    if (MILD_HYBRID.test(f)) return /diesel/i.test(f) ? 'Diesel' : 'Petrol';
+    if (/hybrid/i.test(f)) return 'Hybrid';
+    if (/diesel/i.test(f)) return 'Diesel';
+    if (/electric/i.test(f)) return 'Electric';
+    return 'Petrol';
+  }
   function mapFuel(raw) {
     const f = String(raw || '').toLowerCase();
     if (!f) return '';
     if (/plug/.test(f)) return 'Plug-in hybrid';
+    if (MILD_HYBRID.test(f)) return /diesel/.test(f) ? 'Diesel' : 'Petrol';
     if (/hybrid/.test(f) || (/electric/.test(f) && /petrol|diesel/.test(f))) return 'Hybrid';
     if (/^electric|electricity/.test(f)) return 'Electric';
     if (/diesel/.test(f)) return 'Diesel';
@@ -376,20 +431,34 @@
     if (/petrol/.test(f)) return 'Petrol';
     return '';
   }
-  // apply results to the job they were requested for, even if the user has moved to another job
-  async function applyToJob(j, fn) {
-    fn(j);
-    if (job && job.id === j.id) { changed(); renderJob(); } else { await C.Store.saveJob(j); }
+  // The live object for job j: the open job when it is still open (even if it was reloaded), otherwise the stored copy.
+  async function jobFor(j) {
+    if (job && job.id === j.id) return job;
+    const stored = await C.Store.getJob(j.id);
+    if (stored) migrate(stored);
+    return stored || null;
   }
+  // Apply results to the job they were requested for, even if the user has left it or reopened it meanwhile.
+  // Returns the job that was changed, or null if it no longer exists.
+  async function applyToJob(j, fn) {
+    const cur = await jobFor(j);
+    if (!cur) return null;
+    fn(cur);
+    if (cur === job) { changed(); renderJob(); } else await C.Store.saveJob(cur);
+    return cur;
+  }
+  const regOf = (j) => (j && j.vehicle && j.vehicle.reg) || 'the other assessment';
   function applyDvla(j, d) {
     const v = j.vehicle;
     v.dvla = Object.assign({}, d, { lookedUpAt: new Date().toISOString() });
     if (d.make) v.make = canonicalMake(d.make);
-    if (d.colour) v.colour = titleWords(d.colour);
+    if (d.colour) v.colour = titleColour(d.colour);
     if (mapFuel(d.fuelType)) v.fuel = mapFuel(d.fuelType);
     if (d.engineCapacity) v.engineSize = d.engineCapacity;
-    if (d.firstRegistration) v.firstReg = d.firstRegistration;
-    (j.aiLog = j.aiLog || []).push({ at: new Date().toISOString(), action: 'DVLA Vehicle Enquiry Service lookup', model: 'DVLA', ai: false });
+    // DVLA gives the month of first registration only; keep a full date from the MOT record when it is the same month
+    const fr = isoDate(d.firstRegistration);
+    if (fr && !(v.firstRegPrecision === 'day' && String(v.firstReg || '').slice(0, 7) === fr.slice(0, 7))) { v.firstReg = fr; v.firstRegPrecision = 'month'; }
+    logAi(j, 'DVLA Vehicle Enquiry Service lookup', 'DVLA', false);
   }
   function applyMot(j, d) {
     const v = j.vehicle;
@@ -397,51 +466,71 @@
     v.motSummary = { make: d.make, model: d.model, fuelType: d.fuelType, primaryColour: d.primaryColour, engineSize: d.engineSize, recall: d.recall, motTestDueDate: d.motTestDueDate, firstUsedDate: d.firstUsedDate, registrationDate: d.registrationDate, lookedUpAt: new Date().toISOString() };
     if (!v.make && d.make) v.make = canonicalMake(d.make);
     if (!v.model && d.model) v.model = titleWords(d.model);
-    if (!v.colour && d.primaryColour) v.colour = titleWords(d.primaryColour);
+    if (!v.colour && d.primaryColour) v.colour = titleColour(d.primaryColour);
     if (!v.fuel && mapFuel(d.fuelType)) v.fuel = mapFuel(d.fuelType);
     if (!v.engineSize && Number(d.engineSize)) v.engineSize = Number(d.engineSize);
-    if (!v.firstReg && (d.registrationDate || d.firstUsedDate)) v.firstReg = String(d.registrationDate || d.firstUsedDate).slice(0, 10);
+    // the MOT record's registration date is a full date: it replaces an empty date or DVLA's month for the same month
+    const reg = isoDate(d.registrationDate), used = isoDate(d.firstUsedDate);
+    if (reg && (!v.firstReg || (v.firstRegPrecision === 'month' && String(v.firstReg).slice(0, 7) === reg.slice(0, 7)))) { v.firstReg = reg; v.firstRegPrecision = 'day'; }
+    else if (!v.firstReg && used) { v.firstReg = used; v.firstRegPrecision = 'day'; }
     v.motHistory = d.tests || [];
-    (j.aiLog = j.aiLog || []).push({ at: new Date().toISOString(), action: `DVSA MOT History lookup (${(d.tests || []).length} tests)`, model: 'DVSA', ai: false });
+    logAi(j, `DVSA MOT History lookup (${(d.tests || []).length} tests)`, 'DVSA', false);
   }
   async function lookupVehicle() {
     const j = job;
     if (!j.vehicle.reg) return toast('Enter the registration first.', true);
+    const key = 'lookup:' + j.id;
+    if (running.has(key)) return;
     const st = await desktop.data.status();
     if (!st.dvla && !st.mot) return toast('No data connections set up. Add your DVLA key and/or MOT History credentials in Settings → Data connections.', true);
-    ui.busy = 'lookup'; renderJob();
+    running.add(key); if (job === j) renderJob();
+    const reg = j.vehicle.reg;
     const msgs = [];
+    let target = null, gone = false;
     try {
       if (st.dvla) {
-        const r = await desktop.data.dvla(j.vehicle.reg, C.settings.dvlaEnv || 'live');
-        if (r.ok) { await applyToJob(j, (x) => applyDvla(x, r.result)); msgs.push('DVLA details applied'); } else msgs.push('DVLA: ' + r.error);
+        const r = await desktop.data.dvla(reg, C.settings.dvlaEnv || 'live');
+        if (r.ok) { target = await applyToJob(j, (x) => applyDvla(x, r.result)); if (target) msgs.push('DVLA details applied'); else gone = true; } else msgs.push('DVLA: ' + r.error);
       }
-      if (st.mot) {
-        const r = await desktop.data.mot(j.vehicle.reg, 'registration');
+      if (st.mot && !gone) {
+        const r = await desktop.data.mot(reg, 'registration');
         if (r.ok) {
-          await applyToJob(j, (x) => applyMot(x, r.result));
-          msgs.push(r.result.tests.length ? `MOT history: ${r.result.tests.length} test(s)` : `MOT History: no tests yet${r.result.motTestDueDate ? ' (first MOT due ' + C.ukDate(r.result.motTestDueDate) + ')' : ''}`);
-          if (/^yes$/i.test(r.result.recall)) msgs.push('DVSA reports an OUTSTANDING RECALL');
+          target = await applyToJob(j, (x) => applyMot(x, r.result));
+          if (!target) gone = true;
+          else msgs.push(r.result.tests.length ? `MOT history: ${r.result.tests.length} test(s)` : `MOT History: no tests yet${r.result.motTestDueDate ? ' (first MOT due ' + C.ukDate(r.result.motTestDueDate) + ')' : ''}`);
+          if (target && /^yes$/i.test(r.result.recall)) msgs.push('DVSA reports an OUTSTANDING RECALL');
         } else msgs.push('MOT History: ' + r.error);
       }
+    } catch (err) {
+      msgs.push('Lookup: ' + (err.message || err));
     } finally {
-      ui.busy = false;
-      if (job && job.id === j.id) renderJob();
+      running.delete(key);
+      if (job && job.id === j.id) { if (target) ui.vp = null; renderJob(); } // let the variant picker re-detect from the new make / model
     }
-    const failed = msgs.some((m) => /^(DVLA|MOT History): /.test(m) && !/no tests yet/.test(m));
-    toast(msgs.join(' · ') + (failed ? '' : '. Now choose the exact variant.'), failed);
+    if (gone) return toast(`The lookup finished, but ${regOf(j)} has been deleted, so nothing was saved.`, true);
+    const failed = msgs.some((m) => /^(DVLA|MOT History|Lookup): /.test(m) && !/no tests yet/.test(m));
+    const elsewhere = target && target !== job ? ` (saved to ${regOf(target)})` : '';
+    toast(msgs.join(' · ') + elsewhere + (failed || elsewhere ? '' : '. Now choose the exact variant.'), failed);
   }
   async function motByVin() {
     const j = job;
     if (!j.vehicle.vin) return toast('Enter the VIN first.', true);
-    ui.busy = 'motvin'; renderJob();
-    let r;
-    try { r = await desktop.data.mot(j.vehicle.vin, 'vin'); } finally { ui.busy = false; }
-    if (!r.ok) { if (job && job.id === j.id) renderJob(); return toast(r.error, true); }
-    await applyToJob(j, (x) => applyMot(x, r.result));
-    toast(`MOT history by VIN: ${r.result.tests.length} test(s).`);
+    const key = 'motvin:' + j.id;
+    if (running.has(key)) return;
+    running.add(key); renderJob();
+    let r, target = null;
+    try {
+      r = await desktop.data.mot(j.vehicle.vin, 'vin');
+      if (r.ok) target = await applyToJob(j, (x) => applyMot(x, r.result));
+    } finally {
+      running.delete(key);
+      if (job && job.id === j.id) renderJob();
+    }
+    if (!r.ok) return toast(r.error, true);
+    if (!target) return toast(`${regOf(j)} has been deleted, so the MOT history was not saved.`, true);
+    toast(`MOT history by VIN: ${r.result.tests.length} test(s)${target !== job ? ` (saved to ${regOf(target)})` : ''}.`);
   }
-  function logAi(action, model, ai) { (job.aiLog = job.aiLog || []).push({ at: new Date().toISOString(), action, model, ai: ai !== false }); }
+  function logAi(j, action, model, ai) { (j.aiLog = Array.isArray(j.aiLog) ? j.aiLog : []).push({ at: new Date().toISOString(), action, model, ai: ai !== false }); }
 
   function vinHint(vin) {
     if (!job.vehicle.vin) return '17 characters. Manufacturer and model year are read automatically.';
@@ -455,6 +544,7 @@
   function tabInspection() {
     return `<div class="card"><div class="form">
       ${F('inspection.date', 'Inspection date', { type: 'date' })}${F('inspection.time', 'Inspection time')}
+      ${F('inspection.by', 'Examined by', { hint: !job.inspection.by && job.assessor.name ? `Who carried out the examination and any tests. <button class="link" data-act="inspByAssessor">Same as the assessor (${esc(job.assessor.name)})</button>` : 'Who carried out the examination and any tests (required for a CPR 35 report).' })}${F('inspection.byQualifications', 'Qualifications of examiner')}
       ${F('inspection.location', 'Inspection location', { type: 'textarea', rows: 3, full: true })}
       ${F('inspection.type', 'Inspection type', { list: 'itypes' })}${F('inspection.photos', 'Photographs taken / source')}
       ${F('inspection.condition', 'Vehicle condition at inspection', { type: 'textarea', full: true })}
@@ -478,29 +568,45 @@
   function tabPhotos() {
     const aiReady = !!desktop;
     const f = job.aiFindings;
+    const nums = C.photoNumbers(job);
     return `<div class="card">
-      <div class="row"><div class="grow"><h2 style="margin:0">Photographs</h2><div class="hint">Add inspection photos. Photos are resized for storage. Draw labels by hand, or let the AI assessor label them.</div></div>
-        <button class="btn ai" data-act="aiAnalyse" ${!aiReady || !job.photos.length ? 'disabled' : ''}>${ui.busy === 'photos' ? '<span class="spinner"></span>Analysing…' : '✦ AI assess &amp; label photos'}</button></div>
+      <div class="row"><div class="grow"><h2 style="margin:0">Photographs</h2><div class="hint">Add inspection photos. Photos are resized for storage. Draw labels by hand, or let the AI assessor label them. Only photos ticked "in report" are numbered, printed and sent to the AI.</div></div>
+        <button class="btn ai" data-act="aiAnalyse" ${!aiReady || !nums.size || busy('photos') ? 'disabled' : ''}>${busy('photos') ? '<span class="spinner"></span>Analysing…' : '✦ AI assess &amp; label photos'}</button></div>
       ${!aiReady ? '<p class="hint">AI tools are available in the desktop app (they need your API key in Settings).</p>' : ''}
       <div class="drop" id="drop" style="margin-top:12px">Drop photos here or <b>click to choose</b> (JPG / PNG / HEIC exported as JPG)</div>
       <input type="file" id="photoInput" accept="image/*" multiple hidden>
-      <div class="pgrid">${job.photos.map((p, i) => photoCard(p, i)).join('')}</div>
+      <div class="pgrid">${job.photos.map((p, i) => photoCard(p, i, nums.get(p.id))).join('')}</div>
     </div>
     ${f ? aiFindingsPanel(f) : ''}`;
   }
-  function photoCard(p, i) {
-    return `<div class="pcard ${p.exclude ? 'excluded' : ''}">
+  const figLabel = (n) => (n ? 'IMAGE ' + String(n).padStart(2, '0') : 'not in report');
+  // ISO date-time ↔ the local "YYYY-MM-DDTHH:MM" a datetime-local input shows
+  const localDT = (iso) => { const d = iso ? new Date(iso) : null; if (!d || isNaN(d)) return ''; const p2 = (n) => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}T${p2(d.getHours())}:${p2(d.getMinutes())}`; };
+  function photoCard(p, i, n) {
+    return `<div class="pcard ${p.exclude ? 'excluded' : ''}" data-pid="${esc(p.id)}">
       <div class="pimg" data-act="label" data-i="${i}" title="Click to edit labels"><div class="pin"><img src="${p.dataUrl}" alt="">${Labeler.overlay(p.labels)}</div></div>
       <div class="pbody">
-        <div class="row"><b>IMAGE ${String(i + 1).padStart(2, '0')}</b>${p.aiLabelled ? '<span class="badge ai">AI labelled</span>' : ''}<span class="grow"></span>
+        <div class="row"><b class="pnum${n ? '' : ' out'}">${figLabel(n)}</b>${p.aiLabelled ? `<span class="badge ${p.labelsReviewed ? 'ok' : 'ai'}" title="${p.labelsReviewed ? 'Labels saved by the assessor' : 'Open the labels and save them once checked'}">AI labelled${p.labelsReviewed ? ' · reviewed' : ''}</span>` : ''}<span class="grow"></span>
           <button class="btn sm" data-act="pmove" data-i="${i}" data-d="-1" title="Move earlier">↑</button><button class="btn sm" data-act="pmove" data-i="${i}" data-d="1" title="Move later">↓</button>
           <button class="btn sm danger" data-act="pdel" data-i="${i}" title="Remove">✕</button></div>
         <input data-pf="title" data-i="${i}" value="${esc(p.title)}" placeholder="Title, e.g. RH front door - surface damage">
         <textarea data-pf="caption" data-i="${i}" placeholder="Caption">${esc(p.caption)}</textarea>
         <div class="row"><input data-pf="source" data-i="${i}" value="${esc(p.source)}" placeholder="Source" class="grow" style="width:auto">
           <label class="hint"><input type="checkbox" data-pf="include" data-i="${i}" ${p.exclude ? '' : 'checked'} style="width:auto"> in report</label></div>
+        <label class="hint row" style="gap:6px;flex-wrap:nowrap" title="When the photo was taken: read from the photo's EXIF data or the file date. Correct it if it is wrong.">Taken<input type="datetime-local" data-pf="takenAt" data-i="${i}" value="${localDT(p.takenAt)}" style="width:auto;flex:1"></label>
         <button class="btn sm" data-act="label" data-i="${i}">✎ Edit labels (${(p.labels || []).length})</button>
       </div></div>`;
+  }
+  // after a photo is included / excluded: update every card's figure number and dimming in place
+  function refreshPhotoNumbers() {
+    const nums = C.photoNumbers(job);
+    $$('.pcard[data-pid]').forEach((card) => {
+      const p = job.photos.find((x) => String(x.id) === card.dataset.pid); if (!p) return;
+      const n = nums.get(p.id);
+      card.classList.toggle('excluded', !!p.exclude);
+      const b = card.querySelector('.pnum'); if (b) { b.textContent = figLabel(n); b.classList.toggle('out', !n); }
+    });
+    const ab = $('[data-act="aiAnalyse"]'); if (ab && !busy('photos')) ab.disabled = !desktop || !nums.size;
   }
   function aiFindingsPanel(f) {
     const s = f.summary || {};
@@ -528,43 +634,87 @@
       <div class="row" style="margin-top:12px"><button class="btn primary" data-act="aiAddLines">Add selected lines to estimate</button><span class="hint">They are added marked "AI" and need ticking as reviewed.</span></div></div>`;
   }
 
+  // EXIF DateTimeOriginal (or DateTime) of a JPEG as an ISO string; '' when there is none.
+  async function exifTakenAt(file) {
+    try {
+      if (!/jpe?g/i.test(file.type)) return '';
+      const dv = new DataView(await file.slice(0, 256 * 1024).arrayBuffer());
+      if (dv.getUint16(0) !== 0xFFD8) return '';
+      for (let off = 2; off + 10 < dv.byteLength;) {
+        const marker = dv.getUint16(off), len = dv.getUint16(off + 2);
+        if (marker === 0xFFE1 && dv.getUint32(off + 4) === 0x45786966) { // APP1 "Exif"
+          const t = off + 10, le = dv.getUint16(t) === 0x4949;
+          const u16 = (o) => dv.getUint16(t + o, le), u32 = (o) => dv.getUint32(t + o, le);
+          const find = (ifd, tag) => { const n = u16(ifd); for (let i = 0; i < n; i++) if (u16(ifd + 2 + i * 12) === tag) return ifd + 2 + i * 12; return -1; };
+          const str = (e) => { let s = ''; const o = u32(e + 8); for (let i = 0; i < Math.min(u32(e + 4), 32) - 1; i++) s += String.fromCharCode(dv.getUint8(t + o + i)); return s; };
+          const ifd0 = u32(4), exif = find(ifd0, 0x8769);
+          let e = exif >= 0 ? find(u32(exif + 8), 0x9003) : -1;
+          if (e < 0) e = find(ifd0, 0x0132);
+          const m = e >= 0 && /^(\d{4}):(\d{2}):(\d{2}) (\d{2}):(\d{2}):(\d{2})/.exec(str(e));
+          if (!m) return '';
+          const d = new Date(+m[1], +m[2] - 1, +m[3], +m[4], +m[5], +m[6]);
+          return isNaN(d) ? '' : d.toISOString();
+        }
+        if ((marker & 0xFF00) !== 0xFF00 || marker === 0xFFDA) break;
+        off += 2 + len;
+      }
+    } catch (e) { /* unreadable EXIF: fall back to the file date */ }
+    return '';
+  }
   async function addPhotos(files) {
     const list = Array.from(files).filter((f) => /^image\//.test(f.type));
     if (!list.length) return;
+    const j = job;
     toast(`Adding ${list.length} photo(s)…`);
+    const added = [];
     for (const f of list) {
       try {
         const raw = await C.readFileAsDataURL(f);
         const r = await C.resizeDataURL(raw, 1800, 0.86);
-        job.photos.push({ id: C.uid(), dataUrl: r.dataUrl, w: r.width, h: r.height, title: '', caption: '', source: C.settings.company.name ? C.settings.company.name.replace(/ LTD$/i, '') : '', labels: [], fileName: f.name });
+        const takenAt = (await exifTakenAt(f)) || (f.lastModified ? new Date(f.lastModified).toISOString() : '');
+        added.push({ id: C.uid(), dataUrl: r.dataUrl, w: r.width, h: r.height, title: '', caption: '', source: C.settings.company.name ? C.settings.company.name.replace(/ LTD$/i, '') : '', labels: [], fileName: f.name, takenAt });
       } catch (e) { toast('Could not read ' + f.name, true); }
     }
-    changed(); renderJob();
+    if (added.length && !(await applyToJob(j, (x) => { x.photos.push(...added); }))) toast(`${regOf(j)} has been deleted, so the photos were not added.`, true);
   }
 
-  function slimJob() { // job data for the AI without heavy images
-    const j = C.clone(Object.assign({}, job, { photos: [] }));
-    j.photos = job.photos.map((p) => ({ title: p.title, caption: p.caption, labels: (p.labels || []).map((l) => ({ text: l.text })) }));
+  // Job data for the AI: no images or signatures, and only the photos that are in the report, in figure order,
+  // so "Image N" in prompts and drafts matches the printed figure numbers.
+  function slimJob(src) {
+    const nums = C.photoNumbers(src);
+    const j = C.clone(Object.assign({}, src, { photos: [], issued: undefined }));
+    if (j.assessor) delete j.assessor.signature;
+    j.photos = src.photos.filter((p) => nums.has(p.id)).sort((a, b) => nums.get(a.id) - nums.get(b.id))
+      .map((p) => ({ index: nums.get(p.id), title: p.title, caption: p.caption, labels: (p.labels || []).map((l) => ({ text: l.text })) }));
     return j;
   }
 
   async function aiAnalyse() {
     if (!desktop) return toast('AI tools need the desktop app.', true);
-    const photos = job.photos.map((p, i) => ({ p, i })).filter((x) => !x.p.exclude);
-    if (!photos.length) return toast('Add photos first.', true);
-    ui.busy = 'photos'; renderJob();
+    const j = job;
+    const key = 'photos:' + j.id;
+    if (running.has(key)) return;
+    // only photos in the report are sent, numbered as their printed figures; results come back by that number and are mapped to the photo id
+    const nums = C.photoNumbers(j);
+    const photos = j.photos.filter((p) => nums.has(p.id)).sort((a, b) => nums.get(a.id) - nums.get(b.id));
+    if (!photos.length) return toast('Add photos (ticked "in report") first.', true);
+    const slim = slimJob(j);
+    const ai = C.settings.ai || {};
+    running.add(key); renderJob();
     try {
       const batches = [];
       for (let k = 0; k < photos.length; k += 10) batches.push(photos.slice(k, k + 10));
       const merged = { photos: [], summary: null, suggested_lines: [], model: '', at: new Date().toISOString() };
+      const idByIndex = new Map();
       for (let b = 0; b < batches.length; b++) {
         if (batches.length > 1) toast(`AI analysing batch ${b + 1} of ${batches.length}…`);
         const payload = [];
-        for (const { p, i } of batches[b]) {
+        for (const p of batches[b]) {
           const r = await C.resizeDataURL(p.dataUrl, 1568, 0.85);
-          payload.push({ index: i + 1, mediaType: 'image/jpeg', base64: r.dataUrl.split(',')[1], title: p.title, caption: p.caption });
+          idByIndex.set(nums.get(p.id), p.id);
+          payload.push({ index: nums.get(p.id), mediaType: 'image/jpeg', base64: r.dataUrl.split(',')[1], title: p.title, caption: p.caption });
         }
-        const res = await desktop.ai.analysePhotos({ job: slimJob(), photos: payload, model: C.settings.ai.model, effort: C.settings.ai.effort });
+        const res = await desktop.ai.analysePhotos({ job: slim, photos: payload, model: ai.model, effort: ai.effort });
         if (!res.ok) throw new Error(res.error);
         const d = res.result;
         merged.model = d.model;
@@ -575,29 +725,34 @@
           if (dup) dup.labour_hours = Math.max(dup.labour_hours, l.labour_hours); else merged.suggested_lines.push(l);
         }
       }
-      // apply labels to photos
-      for (const ph of merged.photos) {
-        const p = job.photos[ph.index - 1];
-        if (!p) continue;
-        p.labels = (p.labels || []).filter((l) => !l.ai).concat((ph.damages || []).map((d) => ({
-          x: d.box.x, y: d.box.y, w: d.box.w, h: d.box.h, text: d.label, ai: true, colour: d.severity === 'severe' ? '#ff3b30' : d.severity === 'moderate' ? '#ff9500' : '#ffcc00',
-          detail: `${C.sideWord(d.side)} ${d.component_name} · ${d.damage_type} · ${d.severity} · accident-related: ${d.accident_related} · ${d.recommended_operation}${d.notes ? ' — ' + d.notes : ''}`.trim(),
-          code: d.component_code, side: d.side
-        })));
-        p.aiLabelled = true;
-        if (!p.title) p.title = ph.title;
-        if (!p.caption) p.caption = ph.caption;
-        p.aiTitle = ph.title; p.aiCaption = ph.caption;
-      }
-      job.aiFindings = merged;
-      logAi(`Photo damage labelling & repair suggestions (${merged.photos.length} photos)`, merged.model);
-      ui.suggestSel = {};
-      changed();
-      toast(`AI labelled ${merged.photos.length} photo(s) and suggested ${merged.suggested_lines.length} estimate line(s).`);
+      let labelled = 0;
+      const target = await applyToJob(j, (x) => {
+        for (const ph of merged.photos) {
+          const p = x.photos.find((q) => q.id === idByIndex.get(ph.index)); // by id: moving or deleting photos meanwhile cannot misplace labels
+          if (!p) continue;
+          p.labels = (p.labels || []).filter((l) => !l.ai).concat((ph.damages || []).map((d) => ({
+            x: d.box.x, y: d.box.y, w: d.box.w, h: d.box.h, text: d.label, ai: true, colour: d.severity === 'severe' ? '#ff3b30' : d.severity === 'moderate' ? '#ff9500' : '#ffcc00',
+            detail: `${C.sideWord(d.side)} ${d.component_name} · ${d.damage_type} · ${d.severity} · accident-related: ${d.accident_related} · ${d.recommended_operation}${d.notes ? ' — ' + d.notes : ''}`.trim(),
+            code: d.component_code, side: d.side, accidentRelated: d.accident_related
+          })));
+          p.aiLabelled = true;
+          p.labelsReviewed = false;
+          if (!p.title) p.title = ph.title;
+          if (!p.caption) p.caption = ph.caption;
+          p.aiTitle = ph.title; p.aiCaption = ph.caption;
+          labelled++;
+        }
+        x.aiFindings = merged;
+        logAi(x, `Photo damage labelling & repair suggestions (${labelled} photos)`, merged.model);
+        if (x === job) ui.suggestSel = {};
+      });
+      if (!target) toast(`${regOf(j)} has been deleted, so the AI findings were not saved.`, true);
+      else toast(`AI labelled ${labelled} photo(s) and suggested ${merged.suggested_lines.length} estimate line(s)${target !== job ? ` for ${regOf(target)} (saved with that assessment)` : ''}.`);
     } catch (e) {
       toast(e.message, true);
     } finally {
-      ui.busy = false; renderJob();
+      running.delete(key);
+      if (job && job.id === j.id) renderJob();
     }
   }
   function mergeSummary(a, b) {
