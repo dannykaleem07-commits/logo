@@ -685,11 +685,23 @@ const lines = async (id) => (await t.getJob(id)).lines;
     assert(/AB14 CDE/.test(await text('#main')) && await exists('[data-act="loadSample"]'), 'other rows render');
   });
 
-  await step('restore an old backup: settings defaults merged, jobs migrated', async () => {
-    const backup = { kind: 'engineer-report-studio-backup', at: '2025-01-01T00:00:00Z', settings: { company: { name: 'RESTORED LTD' }, rates: { Body: 60, Painting: 60, Mechanical: 60, Auxiliary: 60, Electrical: 60 }, vatPct: 20 }, customOem: [], jobs: [{ id: 'restored-1', vehicle: { reg: 'RST 1' }, lines: [], aiFindings: { summary: {} } }] };
+  await step('restore an old (format 1) backup: settings defaults merged, jobs migrated, own part numbers added (never replaced)', async () => {
+    // the backup's own part numbers: one the user already has (written differently), one new, saved by the old version as 'confirmed'
+    const oemV1 = [{ key: 'nissan-juke-f15', make: 'Nissan', model: 'Juke', generation: 'F15', years: '2010-2019', parts: { 'RE001|': [
+      { oem: 'oem rb', description: 'Rear bumper', confidence: 'confirmed', user: true, autoFill: true },
+      { oem: 'V1-ONLY-PN', description: 'Rear bumper (old backup)', price: 99, confidence: 'confirmed', user: true, autoFill: true }] } }];
+    const backup = { kind: 'engineer-report-studio-backup', at: '2025-01-01T00:00:00Z', settings: { company: { name: 'RESTORED LTD' }, rates: { Body: 60, Painting: 60, Mechanical: 60, Auxiliary: 60, Electrical: 60 }, vatPct: 20 }, customOem: oemV1, jobs: [{ id: 'restored-1', vehicle: { reg: 'RST 1' }, lines: [], aiFindings: { summary: {} } }] };
     await t.go('#/settings'); await settle(300);
+    const d0 = t.dialogs.length;
     await choose('[data-act="restore"]', { name: 'backup.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(backup)) }); await settle(600);
-    assert(/Backup restored/.test(await toastText()), await toastText());
+    assert(/Backup restored: 1 restored, 0 unreadable; 1 of your own part number added/.test(await toastText()), await toastText());
+    const q = t.dialogs[d0] || '';
+    assert(/Restore 1 assessment from this backup/.test(q) && /replaces the assessment here with the same ID/.test(q) && /Assessments that are only on this computer are kept/.test(q)
+      && /Settings: replaced by the backup's settings/.test(q) && /API keys and data-connection credentials are not changed/.test(q) && /the backup's are added to the ones here\. None are removed or replaced/.test(q), 'the confirmation says what happens: ' + q);
+    const own = await t.getKv('customOem');
+    const juke = own.find((v) => v.key === 'nissan-juke-f15');
+    assert(juke.parts['FW001|R'].some((c) => c.oem === 'OEM-FW-R'), 'part numbers added since the backup are kept');
+    assert.deepStrictEqual(juke.parts['RE001|'].map((c) => [c.oem, c.confidence, c.autoFill]), [['OEM-RB', 'user', false], ['V1-ONLY-PN', 'user', false]], 'merged without a duplicate: ' + JSON.stringify(juke.parts['RE001|']));
     const st = await page.evaluate(() => ({ model: window.Core.settings.ai && window.Core.settings.ai.model, blend: window.Core.settings.blendFactor, name: window.Core.settings.company.name, pearl: (window.Core.settings.paintTypeFactor || {}).pearl }));
     assert(st.model === 'claude-opus-5-5' && st.blend === 0.5 && st.name === 'RESTORED LTD' && st.pearl === 1.2, JSON.stringify(st));
     const r = await t.getJob('restored-1');

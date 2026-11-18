@@ -350,6 +350,7 @@
       return;
     }
     job = null;
+    rendered = { id: null, tab: null }; // the next job view is a fresh render (no focus or scroll carried over)
     pruneLoaded();
     if (parts[0] === 'settings') return renderSettings();
     if (parts[0] === 'catalogue') return renderCatalogue();

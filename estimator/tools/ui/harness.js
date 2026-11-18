@@ -146,9 +146,11 @@ const BRIDGE = () => {
             { date: '2024-08-01', result: 'FAILED', odometer: 52000, unit: 'mi', odometerResult: 'READ', expiry: '', testNumber: '2', defects: ['MAJOR: Headlamp aim too high'] }] }, M().motOver || {}) };
       }
     },
-    exportPdf: async (p) => { log('exportPdf', { htmlLen: p.html.length, header: !!p.header, footer: !!p.footer, fileName: p.fileName, marginsMm: p.marginsMm }); return { ok: true, filePath: 'C:/Reports/' + p.fileName + '.pdf' }; },
+    // exportDelay: how long the save dialog stays open (a double click lands while the first one is still running)
+    exportPdf: async (p) => { log('exportPdf', { htmlLen: p.html.length, header: !!p.header, footer: !!p.footer, fileName: p.fileName, marginsMm: p.marginsMm }); await delay(M().exportDelay || 0); return { ok: true, filePath: 'C:/Reports/' + p.fileName + '.pdf' }; },
     saveFile: async (p) => {
       log('saveFile', { fileName: p.fileName, len: p.content.length, kind: p.kind });
+      await delay(M().exportDelay || 0);
       if (M().saveError) return { ok: false, error: M().saveError };
       window.__lastSaved = p.content; return { ok: true, filePath: 'C:/Reports/' + p.fileName };
     },
@@ -200,6 +202,7 @@ async function open(opts) {
   const dialogs = [];
   if (opts.bridge !== false) await context.addInitScript(BRIDGE);
   if (opts.mock) await context.addInitScript((m) => { window.__mock = Object.assign(window.__mock || {}, m); }, opts.mock);
+  if (opts.init) await context.addInitScript(opts.init); // e.g. storage that cannot be opened
   const page = await context.newPage();
   page.on('pageerror', (e) => errors.push('pageerror: ' + (e.stack || e.message).split('\n').slice(0, 4).join(' | ')));
   page.on('console', (m) => { if (m.type() === 'error') errors.push('console.error: ' + m.text()); });
@@ -214,10 +217,10 @@ async function open(opts) {
     r.onerror = () => rej(r.error);
     r.onsuccess = () => {
       const db = r.result;
-      const tx = db.transaction(st, o === 'put' ? 'readwrite' : 'readonly');
+      const tx = db.transaction(st, o === 'put' || o === 'putkv' ? 'readwrite' : 'readonly');
       const os = tx.objectStore(st);
-      const q = o === 'get' ? os.get(a) : o === 'all' ? os.getAll() : os.put(a);
-      q.onsuccess = () => { const v = q.result; tx.oncomplete = () => { db.close(); res(o === 'put' ? true : v); }; };
+      const q = o === 'get' ? os.get(a) : o === 'all' ? os.getAll() : o === 'putkv' ? os.put(a[1], a[0]) : os.put(a);
+      q.onsuccess = () => { const v = q.result; tx.oncomplete = () => { db.close(); res(o === 'put' || o === 'putkv' ? true : v); }; };
       q.onerror = () => rej(q.error);
     };
   }), [op, store, arg]);
@@ -225,6 +228,7 @@ async function open(opts) {
   const putJob = (job) => idb('put', 'jobs', job);
   const listJobs = () => idb('all', 'jobs');
   const getKv = (k) => idb('get', 'kv', k);
+  const putKv = (k, v) => idb('putkv', 'kv', [k, v]);
   const toast = () => page.evaluate(() => { const t = document.querySelector('#toast'); return t.classList.contains('hidden') ? '' : t.textContent; });
   const calls = (name) => page.evaluate((n) => window.__calls.filter((c) => !n || c.name === n), name);
   const jobId = () => page.evaluate(() => (location.hash.match(/#\/job\/([^/]+)/) || [])[1]);
@@ -232,7 +236,7 @@ async function open(opts) {
   const go = async (hash) => { await page.evaluate((h) => { location.hash = h; }, hash); await settle(250); };
   const mock = (m) => page.evaluate((x) => Object.assign(window.__mock, x), m);
   const close = async () => { await browser.close(); srv.close(); };
-  return Object.assign(api, { page, browser, context, errors, dialogs, close, toast, calls, getJob, putJob, listJobs, getKv, jobId, settle, go, mock, url });
+  return Object.assign(api, { page, browser, context, errors, dialogs, close, toast, calls, getJob, putJob, listJobs, getKv, putKv, jobId, settle, go, mock, url });
 }
 
 module.exports = { open, serve, BRIDGE };
