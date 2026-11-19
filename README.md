@@ -1,5 +1,7 @@
 # Courtesy Cars UK – print-ready logo
 
+> The **claims team agents** (Danny, Harry, Hemant) are in [`CLAIMS-TEAM.md`](CLAIMS-TEAM.md).
+
 Vector rebuild of the Courtesy Cars UK logo for shop signage and print.
 
 ## Files (`print/`)
