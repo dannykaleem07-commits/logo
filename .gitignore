@@ -7,3 +7,4 @@ footer.html
 knowledge/*
 !knowledge/README.md
 .venv/
+docs/hub/

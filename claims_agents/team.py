@@ -141,7 +141,7 @@ def scan(box, folder="INBOX", since_days=None, dry_run=False):
     mails = [m for m in box.messages(folder, since_days=since_days) if not store.seen(m.message_id)]
     if not mails:
         return []
-    log.info("Triage: %d new email(s) in %s", len(mails), folder)
+    log.info("Read %d new email(s) in %s", len(mails), folder)
     folders = box_folders_cache(box, refresh=True)
     with ThreadPoolExecutor(max_workers=4) as pool:
         results = list(pool.map(lambda m: _safe(triage, m, folders), mails))
@@ -234,13 +234,17 @@ def _queue(box, agent, kind, folder, d, docs, in_reply_to=None, references=None,
         log.info("  [dry run] draft saved to %s", out / f"{draft_id}.eml")
         return draft_id
     box.store(config.AWAITING_FOLDER, msg)
-    store.add_draft(draft_id, folder, agent, kind, to + cc, d["subject"], note)
+    store.add_draft(draft_id, folder, agent, kind, to + cc, d["subject"], note, emailfmt._safe_html(d["body_html"]))
     log.info("  %s drafted '%s' -> %s (awaiting %s)", agent, d["subject"][:60], ", ".join(to), config.DIRECTOR_NAME)
     return draft_id
 
 
 def draft_reply(box, mail, t, folder, dry_run=False):
     if not t["needs_response"] or t["handler"] == "none" or store.pending_draft(folder):
+        return None
+    if t["handler"] == "harry" and not store.enabled("harry"):
+        t = dict(t, handler="danny")  # Harry is off: Danny covers
+    if not store.enabled("danny" if t["handler"] == "danny" else "harry"):
         return None
     agent, role = ("Harry", HARRY + f"\nThis task is for your '{t['harry_role']}' helper.") \
         if t["handler"] == "harry" else ("Danny", DANNY)
@@ -289,7 +293,7 @@ def followups(box, dry_run=False):
         last = max(x for x in (out_at, in_at) if x) if (out_at or in_at) else None
         if last and last <= cutoff:
             due.append(c)
-    log.info("Follow-ups due: %d", len(due))
+    log.info("Follow-ups due: %d", len(due)) if not due else log.info("Found %d file(s) overdue for a chase", len(due))
     for c in due:
         _safe(_followup_one, box, c, dry_run)
 
@@ -337,7 +341,7 @@ def send_internal(subject, body_html, attachments=(), raw_html=None):
 
 
 def forward_carflex(mail, t, folder, dry_run=False):
-    if not t["is_carflex_engineer_report"]:
+    if not t["is_carflex_engineer_report"] or not store.enabled("harry"):
         return
     files = mail.attachments()
     points = "".join(f"<li>{p}</li>" for p in t["key_points"])

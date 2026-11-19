@@ -65,6 +65,10 @@ CASE_DOCS_DIR = Path(_get("CASE_DOCS_DIR", str(ROOT / "case-documents")))
 FOOTER_FILE = Path(_get("FOOTER_FILE", str(ROOT / "footer.html")))
 LOGO_FILE = Path(_get("LOGO_FILE", str(ROOT / "print" / "courtesy-cars-uk-logo-preview.png")))
 
+# Boss Hub
+HUB_PORT = int(_get("HUB_PORT", "8765"))
+HUB_ALLOW_LAN = _bool("HUB_ALLOW_LAN", "false")  # true = other devices on the office network can open it
+
 DATA_DIR = ROOT / "data"
 REPORTS_DIR = ROOT / "reports"
 DATA_DIR.mkdir(exist_ok=True)

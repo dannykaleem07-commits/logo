@@ -1,5 +1,7 @@
 """Start the claims team.
 
+    python -m claims_agents hub            the Boss Hub + all agents (http://localhost:8765)
+    python -m claims_agents hub --demo     the Boss Hub with sample data
     python -m claims_agents check          test the IONOS login and Claude key; changes nothing
     python -m claims_agents run --dry-run  full pass, but moves/sends nothing (drafts saved to data/dry-run)
     python -m claims_agents run            one full pass now
@@ -62,6 +64,9 @@ def run_once(dry_run=False, followups=True):
     box = Mailbox()
     try:
         approvals.process(box, dry_run)                     # 1. send what Shahzaib approved
+        if not store.enabled("danny"):
+            log.info("Danny is switched off: inbox not scanned")
+            return
         first_run = store.get("first_run_done") is None
         since = config.BACKFILL_DAYS if first_run else 7
         team.scan(box, box.sent_folder, since_days=since, dry_run=dry_run)   # 2. learn what we sent
@@ -79,6 +84,7 @@ def run_once(dry_run=False, followups=True):
             digest([d for d in store.drafts("awaiting") if d["id"] not in before])
     finally:
         box.close()
+    store.put("last_pass", datetime.now(timezone.utc).replace(microsecond=0).isoformat())
     log.info("Pass finished in %ds", (datetime.now() - started).seconds)
 
 
@@ -95,7 +101,7 @@ def start():
         try:
             run_once()
             today = hemant_due()
-            if today:
+            if today and store.enabled("hemant"):
                 box = Mailbox()
                 try:
                     hemant.daily(box, with_research=datetime.now().weekday() == config.HEMANT_RESEARCH_WEEKDAY)
@@ -112,11 +118,16 @@ def start():
 def main():
     setup_logging()
     p = argparse.ArgumentParser(prog="claims_agents")
-    p.add_argument("command", choices=["check", "run", "start", "followups", "hemant"])
+    p.add_argument("command", choices=["hub", "check", "run", "start", "followups", "hemant"])
+    p.add_argument("--demo", action="store_true")
+    p.add_argument("--no-browser", action="store_true")
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--research", action="store_true")
     a = p.parse_args()
-    if a.command == "check":
+    if a.command == "hub":
+        from . import hub
+        hub.serve(demo=a.demo, open_browser=not a.no_browser)
+    elif a.command == "check":
         check()
     elif a.command == "run":
         run_once(a.dry_run)

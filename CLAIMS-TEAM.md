@@ -10,6 +10,35 @@ Three Claude-powered employees working the `claims@courtesycars.net` IONOS mailb
 
 All three follow the `danny-brain` and `danny-brain-supreme` playbooks, and Hemant also follows `hemant-audit`.
 
+## The Boss Hub
+
+A web app on the office computer, used to run the whole team:
+
+```bash
+python -m claims_agents hub
+```
+
+This starts every agent and opens **http://localhost:8765** in your browser. In the hub you can:
+
+- **See everything at a glance:** emails filed today, drafts awaiting approval, sent items, overdue files, and a live activity feed.
+- **Switch staff on or off.** An employee who is off picks up no work. If Harry is off, Danny covers his emails.
+- **Give any employee a task**, with or without a claim file. Results come back to the Tasks page. Any email they draft goes to your approvals.
+- **Hire new employees.** Give them a name, a role and a brief. Edit anyone's brief, or remove a hired employee.
+- **Approve or reject drafts** in a full email preview. An approved draft is sent straight away.
+- **Search the claim files** to see who is waiting on whom and how far up the chase ladder each file is.
+- **Read Hemant's reports.**
+- **Talk to your personal assistant** (the blue orb, or Ctrl/⌘+K). Ask "brief me", "what needs my approval?", "switch Harry off" or "give Danny a task to…". Use voice mode to talk and hear the replies. Turn on hands-free for a back-and-forth conversation. You can rename the assistant in Settings. The assistant can't approve emails: you always tap Approve yourself.
+
+Voice works in **Chrome or Microsoft Edge**. Edge's "Natural" voices sound the most human, so pick one in the voice menu. The first time you use voice, allow the microphone.
+
+To look around first without connecting anything:
+
+```bash
+python -m claims_agents hub --demo
+```
+
+The hub only answers the computer it runs on.
+
 ## Nothing leaves without Shahzaib
 
 Agents never send anything to an outside party. Each draft lands in the IONOS folder **`Awaiting Shahzaib`**, and Shahzaib gets an email listing it. In IONOS webmail, Shahzaib then does one of three things:
@@ -49,11 +78,13 @@ The only emails sent without approval go to Shahzaib himself: forwarded Carflex 
    python -m claims_agents run --dry-run
    ```
 
-9. **Start the team.** Leave this window open. The team scans every 15 minutes.
+9. **Start the team and the hub.** Leave this window open. The team scans every 15 minutes.
 
    ```bash
-   python -m claims_agents start
+   python -m claims_agents hub
    ```
+
+   To run the agents without the hub, use `python -m claims_agents start` instead.
 
 ## Other commands
 
