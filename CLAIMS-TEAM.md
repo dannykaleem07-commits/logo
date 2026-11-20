@@ -27,6 +27,7 @@ This starts every agent and opens **http://localhost:8765** in your browser. In 
 - **Approve or reject drafts** in a full email preview. An approved draft is sent straight away.
 - **Search the claim files** to see who is waiting on whom and how far up the chase ladder each file is.
 - **Read Hemant's reports.**
+- **Use it on your iPhone** over the office Wi-Fi, as a Home Screen app (see *On your iPhone* below).
 - **Talk to your personal assistant** (the blue orb, or Ctrl/⌘+K). Ask "brief me", "what needs my approval?", "switch Harry off" or "give Danny a task to…". Use voice mode to talk and hear the replies. Turn on hands-free for a back-and-forth conversation. You can rename the assistant in Settings. The assistant can't approve emails: you always tap Approve yourself.
 
 Voice works in **Chrome or Microsoft Edge**. Edge's "Natural" voices sound the most human, so pick one in the voice menu. The first time you use voice, allow the microphone.
@@ -48,6 +49,27 @@ The hub only answers the computer it runs on.
   - **Decisions.** When an agent meets a situation your orders don't cover (a regulator contact, a complaint about the firm, an unusual settlement condition), it stops and asks you here instead of guessing. The assistant works out a recommendation and alternatives, with the risk of getting it wrong. Pick an option or type your own instruction, and the employee gets it as a task.
   - **Standing orders.** Your decisions are saved as "When X, do Y" rules (tick "Remember"), and you can add orders directly or just tell the assistant "From now on, when X happens, do Y." Every agent reads every active order on every job, so the team learns from each ruling. Orders can be paused or deleted.
   - Orders are followed within the law and the playbooks. An order that would need a false statement or an unlawful step is refused, and the assistant tells you why.
+
+### On your iPhone
+
+The hub works on your iPhone over the office Wi-Fi, as an app on your Home Screen.
+
+1. **Start the hub so phones can reach it.** On the office computer run `python -m claims_agents hub --phone` (or put `HUB_ALLOW_LAN=true` in `.env`). If Windows Firewall asks, allow Python on **private** networks. The terminal prints the phone address and a PIN.
+2. **Pair the phone.** In the hub on the office computer open **Settings → Phone** and scan the QR code with the iPhone camera. The hub opens in Safari already signed in. (Or type the address shown and enter the PIN.)
+3. **Make it an app.** In Safari tap **Share → Add to Home Screen**. Open it from the Home Screen and enter the PIN once; it stays signed in for 90 days.
+
+Everything works on the phone exactly as on the computer: approvals (press and hold **Approve** to send), decisions, standing orders, switching staff on and off, tasks, the files, Hemant's reports and the spoken assistant.
+
+**The microphone on the phone** needs a secure address, which the hub can provide itself:
+
+1. Start the hub with `python -m claims_agents hub --phone --https` (or set `HUB_HTTPS=true`). The first time, it makes its own certificate authority in `data/tls/`.
+2. On the iPhone, open the `ca.crt` address shown in **Settings → Phone**, then go to **Settings → Profile Downloaded → Install**.
+3. Go to **Settings → General → About → Certificate Trust Settings** and switch on **Boss Hub Local CA**.
+4. Open the **https** address from Settings → Phone and add *that* one to the Home Screen. "Talk" now works on the phone.
+
+Safety: a phone only gets in after the QR code or the PIN, the sign-in is a secure cookie the page cannot read, five wrong PINs lock the PIN for 30 seconds (doubling each time), and **Settings → Phone → Sign every phone out** removes every phone at once. The hub still refuses any address it does not recognise, and other websites cannot drive it. Choose your own PIN with `HUB_PIN` in `.env` (4 to 8 digits).
+
+Phones are supported from iOS 16.4; Android phones work the same way (Chrome → menu → Add to Home screen).
 
 ## Nothing leaves without Shahzaib
 

@@ -2,6 +2,7 @@
 
     python -m claims_agents hub            the Boss Hub + all agents (http://localhost:8765)
     python -m claims_agents hub --demo     the Boss Hub with sample data
+    python -m claims_agents hub --phone    the hub, also open to your iPhone on the office Wi-Fi
     python -m claims_agents check          test the IONOS login and Claude key; changes nothing
     python -m claims_agents run --dry-run  full pass, but moves/sends nothing (drafts saved to data/dry-run)
     python -m claims_agents run            one full pass now
@@ -121,12 +122,14 @@ def main():
     p.add_argument("command", choices=["hub", "check", "run", "start", "followups", "hemant"])
     p.add_argument("--demo", action="store_true")
     p.add_argument("--no-browser", action="store_true")
+    p.add_argument("--phone", action="store_true", help="also answer phones on the office network (pair with the QR code or PIN)")
+    p.add_argument("--https", action="store_true", help="also serve a secure address so the phone's microphone works")
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--research", action="store_true")
     a = p.parse_args()
     if a.command == "hub":
         from . import hub
-        hub.serve(demo=a.demo, open_browser=not a.no_browser)
+        hub.serve(demo=a.demo, open_browser=not a.no_browser, allow_phone=a.phone, https=a.https)
     elif a.command == "check":
         check()
     elif a.command == "run":

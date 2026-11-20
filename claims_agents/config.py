@@ -67,7 +67,13 @@ LOGO_FILE = Path(_get("LOGO_FILE", str(ROOT / "print" / "courtesy-cars-uk-logo-p
 
 # Boss Hub
 HUB_PORT = int(_get("HUB_PORT", "8765"))
-HUB_ALLOW_LAN = _bool("HUB_ALLOW_LAN", "false")  # true = other devices on the office network can open it
+HUB_ALLOW_LAN = _bool("HUB_ALLOW_LAN", "false")  # true = phones on the office network can open it (after pairing)
+HUB_PIN = (_get("HUB_PIN", "") or "").strip()      # 4-8 digits; blank = a PIN is generated once and shown in Settings -> Phone
+if HUB_PIN and not HUB_PIN.isdigit() or len(HUB_PIN) not in (0, 4, 5, 6, 7, 8):
+    raise SystemExit("HUB_PIN in .env must be 4 to 8 digits.")
+HUB_HTTPS = _bool("HUB_HTTPS", "false")            # a second, https address so the phone's microphone works
+HUB_HTTPS_PORT = int(_get("HUB_HTTPS_PORT", str(HUB_PORT + 1)))
+HUB_EXTRA_HOSTS = _list("HUB_EXTRA_HOSTS", "")      # other names this computer answers to, e.g. office-pc.lan
 
 DATA_DIR = Path(_get("HUB_DATA_DIR", str(ROOT / "data")))   # override only for side-by-side testing
 REPORTS_DIR = ROOT / "reports"

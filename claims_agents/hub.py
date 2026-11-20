@@ -8,6 +8,7 @@ import json
 import logging
 import mimetypes
 import re
+import ssl
 import threading
 import time
 import webbrowser
@@ -15,7 +16,7 @@ from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from . import config, logic, store, workers
+from . import config, logic, phone, store, workers
 
 log = logging.getLogger("agents")
 STATIC = Path(__file__).parent / "static"
@@ -104,34 +105,62 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, *args):
         pass
 
-    def _send(self, code, body, ctype="application/json"):
+    def _send(self, code, body, ctype="application/json", headers=None, cache=False):
         data = body if isinstance(body, bytes) else (json.dumps(body, default=str) if ctype == "application/json" else body).encode()
         self.send_response(code)
         self.send_header("Content-Type", ctype + ("; charset=utf-8" if ctype.startswith(("text", "application/json")) else ""))
         self.send_header("Content-Length", str(len(data)))
-        self.send_header("Cache-Control", "no-store")
+        self.send_header("Cache-Control", "public, max-age=86400" if cache else "no-store")
+        for k, v in (headers or {}).items():
+            self.send_header(k, v)
         self.end_headers()
         self.wfile.write(data)
+
+    @property
+    def _tls(self):
+        return bool(getattr(self.server, "tls", False))
+
+    @property
+    def _local(self):
+        return phone.is_loopback(self.client_address[0])
+
+    def _paired(self):
+        return self._local or phone.valid_session(phone.cookie_token(self.headers.get("Cookie")))
+
+    def _pair_cookie(self):
+        """Pairs this phone: a long-lived HttpOnly session cookie."""
+        token = phone.new_session(self.headers.get("User-Agent", ""))
+        store.activity("director", f"Paired a {phone.device_name(self.headers.get('User-Agent', ''))} with the hub")
+        return {"Set-Cookie": phone.cookie_header(token, self._tls)}
 
     def _body(self):
         n = int(self.headers.get("Content-Length") or 0)
         return json.loads(self.rfile.read(n) or b"{}") if n else {}
 
+    PUBLIC = ("/", "/index.html", "/manifest.webmanifest", "/apple-touch-icon.png", "/favicon.ico", "/ca.crt", "/pair",
+              "/api/unlock", "/api/phone", "/api/phone/forget")  # the two /api/phone routes answer 403 to phones themselves
+
     def _local_only(self, write=False):
-        if self.client_address[0] not in ("127.0.0.1", "::1") and not config.HUB_ALLOW_LAN:
+        """Who may talk to the hub. This computer: always. A phone on the office network: only with
+        HUB_ALLOW_LAN and once it has been paired (QR code or PIN); until then it only gets the page itself."""
+        path = self.path.split("?")[0]
+        if not self._local and not config.HUB_ALLOW_LAN:
             self._send(403, {"error": "The hub only answers this computer."})
             return False
         # Block other websites (and DNS rebinding) from driving the hub through your browser.
-        host = (self.headers.get("Host") or "").split(":")[0].lower()
-        if not config.HUB_ALLOW_LAN and host not in ("localhost", "127.0.0.1", "[::1]"):
-            self._send(403, {"error": "Open the hub at http://localhost:%d" % config.HUB_PORT})
+        host = phone.host_of(self.headers.get("Host"))
+        if host not in phone.allowed_hosts():
+            self._send(403, {"error": "Open the hub at http://localhost:%d (or its network address on a phone)" % config.HUB_PORT})
             return False
         origin = self.headers.get("Origin")
-        if write and origin and re.sub(r"^https?://", "", origin).split(":")[0] != host:
+        if write and origin and phone.host_of(re.sub(r"^https?://", "", origin)) != host:
             self._send(403, {"error": "Cross-site request blocked"})
             return False
         if write and "application/json" not in (self.headers.get("Content-Type") or "") and self.command == "POST":
             self._send(415, {"error": "JSON only"})
+            return False
+        if not self._local and path not in self.PUBLIC and not path.startswith("/static/") and not self._paired():
+            self._send(401, {"error": "locked", "pin": True})
             return False
         return True
 
@@ -143,6 +172,27 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, (config.HUB_PAGE or STATIC / "hub.html").read_bytes(), "text/html")
         if path == "/api/state":
             return self._send(200, workers.snapshot())
+        if path == "/manifest.webmanifest":
+            return self._send(200, json.dumps(phone.manifest()).encode(), "application/manifest+json", cache=True)
+        if path in ("/apple-touch-icon.png", "/apple-touch-icon-precomposed.png"):
+            return self._send(200, (STATIC / "icon-180.png").read_bytes(), "image/png", cache=True)
+        if path == "/favicon.ico":
+            return self._send(200, (STATIC / "icon-192.png").read_bytes(), "image/png", cache=True)
+        if path == "/pair":
+            q = dict(x.split("=", 1) for x in self.path.partition("?")[2].split("&") if "=" in x)
+            if phone.redeem_pair_token(q.get("t", "")):
+                return self._send(303, b"", "text/plain", headers={"Location": "/", **self._pair_cookie()})
+            return self._send(303, b"", "text/plain", headers={"Location": "/#code-expired"})
+        if path == "/ca.crt":
+            files = getattr(self.server, "ca_file", None)
+            if not files:
+                return self._send(404, {"error": "The hub is not running its secure address (HUB_HTTPS=true)"})
+            return self._send(200, Path(files).read_bytes(), "application/x-x509-ca-cert",
+                              headers={"Content-Disposition": 'attachment; filename="boss-hub-ca.crt"'})
+        if path == "/api/phone":
+            if not self._local:
+                return self._send(403, {"error": "Pair this phone from the office computer"})
+            return self._send(200, phone.info(getattr(self.server, "ca_file", None) is not None))
         m = re.fullmatch(r"/api/drafts/([\w-]+)", path)
         if m:
             d = store.draft(m.group(1))
@@ -250,6 +300,19 @@ class Handler(BaseHTTPRequestHandler):
             if path == "/api/settings":
                 if body.get("tts_voice"):
                     store.put("tts_voice", re.sub(r"[^A-Za-z0-9-]", "", str(body["tts_voice"]))[:60])
+            if path == "/api/unlock":
+                ok, retry = phone.check_pin(body.get("pin"))
+                if not ok and retry:
+                    return self._send(429, {"error": "Too many attempts", "retry_in": retry})
+                if not ok:
+                    return self._send(401, {"error": "Wrong PIN"})
+                return self._send(200, {"ok": True}, headers=self._pair_cookie())
+            if path == "/api/phone/forget":
+                if not self._local:
+                    return self._send(403, {"error": "Only from the office computer"})
+                phone.forget_sessions()
+                store.activity("director", "Signed every phone out of the hub")
+                return self._send(200, {"ok": True})
             if path == "/api/run":
                 workers.RUN_NOW.set()
                 store.activity("director", "Started a pass now")
@@ -264,11 +327,22 @@ class Handler(BaseHTTPRequestHandler):
             self._send(500, {"error": str(e)})
 
 
-def serve(demo=False, open_browser=True):
+class _Server(ThreadingHTTPServer):
+    daemon_threads = True
+    tls = False
+    ca_file = None
+
+    def handle_error(self, request, client_address):
+        log.debug("Connection from %s dropped", client_address[0])
+
+
+def serve(demo=False, open_browser=True, allow_phone=False, https=False):
     if demo:
         store.use_db(config.DATA_DIR / "demo.db")
         from . import demo as demo_data
         demo_data.seed()
+    if allow_phone:
+        config.HUB_ALLOW_LAN = True
     logging.getLogger("agents").addHandler(workers.ActivityHandler())
     if not demo and workers.mailbox_ready():
         threading.Thread(target=agent_loop, daemon=True, name="agents").start()
@@ -276,9 +350,33 @@ def serve(demo=False, open_browser=True):
         log.warning("MAIL_PASSWORD not set: the hub runs, but the agents can't read the mailbox yet.")
     threading.Thread(target=task_loop, daemon=True, name="tasks").start()
     host = "0.0.0.0" if config.HUB_ALLOW_LAN else "127.0.0.1"
-    httpd = ThreadingHTTPServer((host, config.HUB_PORT), Handler)
+    httpd = _Server((host, config.HUB_PORT), Handler)
     url = f"http://localhost:{config.HUB_PORT}"
     log.info("Boss Hub running at %s%s", url, "  (demo data)" if demo else "")
+    if config.HUB_ALLOW_LAN:
+        ips = phone.local_ips()
+        if ips:
+            log.info("On your phone (same Wi-Fi):  http://%s:%d   PIN %s%s", ips[0], config.HUB_PORT, phone.pin(),
+                     "" if phone.pin_fixed() else "   (set HUB_PIN in .env to choose your own)")
+            log.info("Settings -> Phone in the hub shows a QR code that pairs the phone in one scan.")
+        else:
+            log.warning("Phones allowed, but no network address was found. Is this computer on the Wi-Fi?")
+        if https or config.HUB_HTTPS:
+            files = phone.tls_files()
+            if not files:
+                log.warning("The secure address needs the 'cryptography' package:  pip install cryptography")
+            else:
+                ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+                ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+                ctx.load_cert_chain(files[0], files[1])
+                tls_server = _Server((host, config.HUB_HTTPS_PORT), Handler)
+                tls_server.socket = ctx.wrap_socket(tls_server.socket, server_side=True, do_handshake_on_connect=False)
+                tls_server.tls = True
+                tls_server.ca_file = httpd.ca_file = str(files[2])
+                threading.Thread(target=tls_server.serve_forever, daemon=True, name="https").start()
+                if ips:
+                    log.info("Secure address for the microphone:  https://%s:%d   (trust http://%s:%d/ca.crt on the phone first)",
+                             ips[0], config.HUB_HTTPS_PORT, ips[0], config.HUB_PORT)
     if open_browser:
         threading.Timer(1.0, lambda: webbrowser.open(url)).start()
     try:
