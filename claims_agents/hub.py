@@ -140,7 +140,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         path = self.path.split("?")[0]
         if path in ("/", "/index.html"):
-            return self._send(200, (STATIC / "hub.html").read_bytes(), "text/html")
+            return self._send(200, (config.HUB_PAGE or STATIC / "hub.html").read_bytes(), "text/html")
         if path == "/api/state":
             return self._send(200, workers.snapshot())
         m = re.fullmatch(r"/api/drafts/([\w-]+)", path)

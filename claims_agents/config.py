@@ -69,7 +69,8 @@ LOGO_FILE = Path(_get("LOGO_FILE", str(ROOT / "print" / "courtesy-cars-uk-logo-p
 HUB_PORT = int(_get("HUB_PORT", "8765"))
 HUB_ALLOW_LAN = _bool("HUB_ALLOW_LAN", "false")  # true = other devices on the office network can open it
 
-DATA_DIR = ROOT / "data"
+DATA_DIR = Path(_get("HUB_DATA_DIR", str(ROOT / "data")))   # override only for side-by-side testing
 REPORTS_DIR = ROOT / "reports"
+HUB_PAGE = Path(_get("HUB_PAGE", "")) if _get("HUB_PAGE") else None  # alternate hub.html, testing only
 DATA_DIR.mkdir(exist_ok=True)
 REPORTS_DIR.mkdir(exist_ok=True)
