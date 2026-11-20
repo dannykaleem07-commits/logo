@@ -39,6 +39,16 @@ python -m claims_agents hub --demo
 
 The hub only answers the computer it runs on.
 
+### The assistant, the deck and the Logic page
+
+- **Command deck.** When the hub opens, the assistant greets you by name with what matters right now (drafts, decisions, overdue files) and, if you allow it, says it out loud. The particle orb reacts to your voice and hers. **Talk** opens full-screen voice mode; **Brief me** gives a spoken briefing; **Again** repeats the greeting. You can also say "say that again".
+- **Natural voice (ElevenLabs).** Add `ELEVENLABS_API_KEY` to `.env`, restart, then pick a voice in Settings. Without it, the browser's built-in voice is used.
+- **Announcements.** When a new draft, decision or task result arrives while the hub is open, the assistant tells you (on screen, and out loud if that's on in Settings).
+- **Logic page: how the team thinks.**
+  - **Decisions.** When an agent meets a situation your orders don't cover (a regulator contact, a complaint about the firm, an unusual settlement condition), it stops and asks you here instead of guessing. The assistant works out a recommendation and alternatives, with the risk of getting it wrong. Pick an option or type your own instruction, and the employee gets it as a task.
+  - **Standing orders.** Your decisions are saved as "When X, do Y" rules (tick "Remember"), and you can add orders directly or just tell the assistant "From now on, when X happens, do Y." Every agent reads every active order on every job, so the team learns from each ruling. Orders can be paused or deleted.
+  - Orders are followed within the law and the playbooks. An order that would need a false statement or an unlawful step is refused, and the assistant tells you why.
+
 ## Nothing leaves without Shahzaib
 
 Agents never send anything to an outside party. Each draft lands in the IONOS folder **`Awaiting Shahzaib`**, and Shahzaib gets an email listing it. In IONOS webmail, Shahzaib then does one of three things:
