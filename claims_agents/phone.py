@@ -195,7 +195,9 @@ def device_name(user_agent):
 
 
 def cookie_header(token, secure):
-    return (f"{SESSION_COOKIE}={token}; Path=/; Max-Age={SESSION_DAYS * 86400}; HttpOnly; SameSite=Strict"
+    # Lax, not Strict: Safari withholds Strict cookies on the navigation that follows a QR-code open from the
+    # Camera app and on Home Screen launches. Writes are still protected by the Origin check in the hub.
+    return (f"{SESSION_COOKIE}={token}; Path=/; Max-Age={SESSION_DAYS * 86400}; HttpOnly; SameSite=Lax"
             + ("; Secure" if secure else ""))
 
 
@@ -249,7 +251,8 @@ def info(https_on):
     hint = ""
     if not lan:
         hint = ("The hub is only answering this computer. Start it with  python -m claims_agents hub --phone  "
-                "(or set HUB_ALLOW_LAN=true in .env) and come back here.")
+                "(or set HUB_ALLOW_LAN=true in .env) and come back here. Pair the phone in Safari: only Safari can "
+                "install the certificate for voice, and only a Safari tab can use the microphone.")
     elif not ips:
         hint = "No network address found. Is this computer connected to the office Wi-Fi or network?"
     return {

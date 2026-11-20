@@ -56,16 +56,18 @@ The hub works on your iPhone over the office Wi-Fi, as an app on your Home Scree
 
 1. **Start the hub so phones can reach it.** On the office computer run `python -m claims_agents hub --phone` (or put `HUB_ALLOW_LAN=true` in `.env`). If Windows Firewall asks, allow Python on **private** networks. The terminal prints the phone address and a PIN.
 2. **Pair the phone.** In the hub on the office computer open **Settings → Phone** and scan the QR code with the iPhone camera. The hub opens in Safari already signed in. (Or type the address shown and enter the PIN.)
-3. **Make it an app.** In Safari tap **Share → Add to Home Screen**. Open it from the Home Screen and enter the PIN once; it stays signed in for 90 days.
+3. **Make it an app.** In Safari tap **Share → Add to Home Screen**. Open it from the Home Screen; if it asks for the PIN, enter it once. It stays signed in for 90 days.
 
 Everything works on the phone exactly as on the computer: approvals (press and hold **Approve** to send), decisions, standing orders, switching staff on and off, tasks, the files, Hemant's reports and the spoken assistant.
 
-**The microphone on the phone** needs a secure address, which the hub can provide itself:
+**Talking to the assistant on the phone.** Spoken replies, "Brief me" and "Again" work everywhere. The microphone is stricter: iPhones only allow it on a secure address, and Apple does not allow it inside Home Screen web apps at all, so voice *input* is for a Safari tab on the hub's secure address. The hub can make that address itself:
 
 1. Start the hub with `python -m claims_agents hub --phone --https` (or set `HUB_HTTPS=true`). The first time, it makes its own certificate authority in `data/tls/`.
-2. On the iPhone, open the `ca.crt` address shown in **Settings → Phone**, then go to **Settings → Profile Downloaded → Install**.
+2. On the iPhone, in **Safari** (not Chrome), open the `ca.crt` address shown in **Settings → Phone** and allow the download, then go to **Settings → Profile Downloaded → Install**.
 3. Go to **Settings → General → About → Certificate Trust Settings** and switch on **Boss Hub Local CA**.
-4. Open the **https** address from Settings → Phone and add *that* one to the Home Screen. "Talk" now works on the phone.
+4. Open the **https** address from Settings → Phone in Safari. "Talk" now works there. Keep it as a Safari bookmark; use the Home Screen app for everything else.
+
+Lockdown Mode on the iPhone blocks step 2, and the dictation service must be on (Settings → General → Keyboard → Enable Dictation).
 
 Safety: a phone only gets in after the QR code or the PIN, the sign-in is a secure cookie the page cannot read, five wrong PINs lock the PIN for 30 seconds (doubling each time), and **Settings → Phone → Sign every phone out** removes every phone at once. The hub still refuses any address it does not recognise, and other websites cannot drive it. Choose your own PIN with `HUB_PIN` in `.env` (4 to 8 digits).
 
