@@ -343,7 +343,6 @@ def serve(demo=False, open_browser=True, allow_phone=False, https=False):
         demo_data.seed()
     if allow_phone:
         config.HUB_ALLOW_LAN = True
-    logging.getLogger("agents").addHandler(workers.ActivityHandler())
     if not demo and workers.mailbox_ready():
         threading.Thread(target=agent_loop, daemon=True, name="agents").start()
     elif not demo:
@@ -379,6 +378,8 @@ def serve(demo=False, open_browser=True, allow_phone=False, https=False):
                              ips[0], config.HUB_HTTPS_PORT, ips[0], config.HUB_PORT)
     if open_browser:
         threading.Timer(1.0, lambda: webbrowser.open(url)).start()
+    # From here on, what the team logs shows in the hub's activity feed (the start-up lines above stay in the terminal).
+    logging.getLogger("agents").addHandler(workers.ActivityHandler())
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
