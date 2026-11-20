@@ -556,14 +556,25 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 var(--r-xl) var(--r-xl);
 /* =========================================================
    TOUCH (iPhone, iPad, Android): hit targets, 16px fields, press feedback, no tilt
    ========================================================= */
+/* hold to send (touch screens): the ring that fills while Approve is held */
+.hold{position:relative;display:inline-flex;touch-action:none;border-radius:16px}
+.hold .btn{position:relative;z-index:1;transition:transform .9s var(--out),filter .2s}
+.hold.holding .btn{transform:scale(.96);filter:brightness(1.08)}
+.hold-ring{position:absolute;inset:-6px;border-radius:18px;padding:3px;pointer-events:none;background:conic-gradient(var(--accent) calc(var(--p,0)*1turn),transparent 0);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .15s var(--soft)}
+.hold.holding .hold-ring{opacity:1}
+.hold.sent .btn{transform:scale(1.02)}
+.hold-hint{font-size:12px;color:var(--ink-3);margin-left:auto}
+
 @media (pointer:coarse){
   input,select,textarea,.in,.search input,.composer textarea,.v-opt select{font-size:16px}
   .search input{height:44px}
   .btn{min-height:44px} .btn.sm{min-height:40px}
   .icon-btn,.round{width:44px;height:44px}
-  .chip{min-height:40px;padding:0 15px}
-  .seg button{min-height:38px}
+  .chip{min-height:44px;padding:0 15px}
+  .seg button{min-height:44px}
   .hues button{width:36px;height:36px}
+  .sw{width:48px;height:44px}
+  .sw span{inset:auto;top:50%;left:4px;width:40px;height:23px;margin-top:-11.5px}
   .link{padding:10px 0;display:inline-block}
   .sw input{inset:-11px -8px}
   .remember input{width:22px;height:22px}
@@ -680,13 +691,6 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 var(--r-xl) var(--r-xl);
   .sheet .letter-b .subj{margin:4px 0 10px;font-size:21px}
   .sheet .letter-b .letter{padding:18px 0 10px;font-size:15.5px}
   .sheet .letter-b .note{margin:14px 0 0}
-  .hold{position:relative;display:inline-flex;touch-action:none;border-radius:16px}
-  .hold .btn{position:relative;z-index:1;transition:transform .9s var(--out),filter .2s}
-  .hold.holding .btn{transform:scale(.96);filter:brightness(1.08)}
-  .hold-ring{position:absolute;inset:-6px;border-radius:18px;padding:3px;pointer-events:none;background:conic-gradient(var(--accent) calc(var(--p,0)*1turn),transparent 0);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .15s var(--soft)}
-  .hold.holding .hold-ring{opacity:1}
-  .hold.sent .btn{transform:scale(1.02)}
-  .hold-hint{font-size:12px;color:var(--ink-3);margin-left:auto}
   .conf{display:inline-flex;align-items:center;gap:8px;font-size:13.5px;color:var(--ink-2);animation:rise .3s var(--out) both}
   /* logic / team / files */
   .dcard{padding:20px 18px}
@@ -1129,8 +1133,8 @@ function vApprovals(){
       ${noteHtml(d.note)}
       <div class="letter">${d.body_html||`<p class="muted">Preview unavailable. Open it in the mailbox's Awaiting folder.</p>`}
         <div class="extras"><span>+ firm footer</span><span>High priority</span><span>Read receipt requested</span></div></div>
-      <div class="decide"><button class="btn accent" data-approve="${h(d.id)}">${ic("check")}Approve &amp; send</button><button class="btn quiet" data-reject="${h(d.id)}">Reject</button>
-        <span class="hint" style="margin-left:auto"><kbd>A</kbd> approve <kbd>R</kbd> reject <kbd>J</kbd><kbd>K</kbd> move</span></div>
+      <div class="decide">${coarse?`<span class="hold"><button class="btn accent" data-approve="${h(d.id)}">${ic("check")}Approve &amp; send</button><i class="hold-ring" aria-hidden="true"></i></span>`:`<button class="btn accent" data-approve="${h(d.id)}">${ic("check")}Approve &amp; send</button>`}<button class="btn quiet" data-reject="${h(d.id)}">Reject</button>
+        ${coarse?`<span class="hold-hint">Hold to send</span>`:`<span class="hint" style="margin-left:auto"><kbd>A</kbd> approve <kbd>R</kbd> reject <kbd>J</kbd><kbd>K</kbd> move</span>`}</div>
     </article></div>`
   :`<div class="card empty rv" style="padding:80px 20px"><b>You're all caught up</b>The team's drafts will appear here for your decision.</div>`}</div>`;
 }
@@ -1390,8 +1394,8 @@ document.addEventListener("click",async ev=>{
     if(d.close!==undefined){ if($("#modal").classList.contains("on")) return closeModal(); return closeSheet(); }
     if(d.hue){ hireHue=+d.hue; $$(".hues button").forEach(b=>b.classList.toggle("sel",b===t)); return; }
     if(d.ask!==undefined) return askText(d.ask);
-    if(d.approve){ if(PH) return; return decide(d.approve,true,t); }   /* on phone approve is hold-to-send (pointer events below) */
-    if(d.reject){ if(!PH) return decide(d.reject,false,t); return confirmInline(t,"Reject this draft?",()=>decide(d.reject,false,t)); }
+    if(d.approve){ if(PH||coarse) return; return decide(d.approve,true,t); }   /* on touch screens approve is hold-to-send (pointer events below) */
+    if(d.reject){ if(!(PH||coarse)) return decide(d.reject,false,t); return confirmInline(t,"Reject this draft?",()=>decide(d.reject,false,t)); }
     if(d.give){ const title=$("#tTitle").value.trim(); if(!title) return toast("What's the task?");
       await api("/api/tasks",{employee:d.give,title,details:$("#tDetails").value,folder:$("#tFile").value}); toast(`Task given to ${first(emp(d.give).name)}`,1); $("#tTitle").value="";$("#tDetails").value=""; document.activeElement.blur(); return refresh(true); }
     if(d.giveFile){ const title=$("#tTitle").value.trim(); if(!title) return toast("What's the task?"); const e=$("#fEmp").value;
@@ -1429,9 +1433,9 @@ function confirmInline(btn,label,onYes){
   c.querySelector("[data-no]").onclick=ev=>{ ev.stopPropagation(); back(); };
   btn.after(c); btn.classList.add("gone");
 }
-/* hold to send (phone): press and hold 900ms, a ring fills around the button; letting go early cancels */
+/* hold to send (touch screens): press and hold 900ms, a ring fills around the button; letting go early cancels */
 document.addEventListener("pointerdown",ev=>{
-  if(!PH) return; const btn=ev.target.closest("[data-approve]"); if(!btn||btn.disabled||(ev.pointerType==="mouse"&&ev.button!==0)) return;
+  if(!(PH||coarse)) return; const btn=ev.target.closest("[data-approve]"); if(!btn||btn.disabled||(ev.pointerType==="mouse"&&ev.button!==0)) return;
   const wrap=btn.closest(".hold")||btn, ring=wrap.querySelector(".hold-ring"), t0=performance.now(), D=900; let raf=0, done=false;
   wrap.classList.add("holding"); if(ring) ring.style.setProperty("--p","0");
   const off=()=>{ ["pointerup","pointercancel","pointerleave"].forEach(k=>btn.removeEventListener(k,cancel)); };
