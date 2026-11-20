@@ -134,7 +134,7 @@ def snapshot():
         "decisions": store.decisions("open"),
         "decisions_open": len(store.decisions("open")),
         "rules": store.rules()[:100],
-        "eleven_ready": bool(os.getenv("ELEVENLABS_API_KEY")),
+        "tts_ready": __import__("claims_agents.logic", fromlist=["tts_ready"]).tts_ready(),
         "recent_sent": [d for d in _drafts_any(20) if d["status"] != "awaiting"],
         "claims": claims[:200],
         "tasks": store.tasks(80),

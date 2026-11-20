@@ -150,10 +150,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/greeting":
             return self._send(200, {"text": logic.greeting(workers.snapshot())})
         if path == "/api/voices":
-            try:
-                return self._send(200, logic.eleven_voices() if logic.eleven_ready() else [])
-            except Exception as e:
-                return self._send(502, {"error": str(e)})
+            return self._send(200, {"current": logic.current_voice(), "voices": logic.tts_voices()})
         if path == "/api/reports":
             files = sorted(config.REPORTS_DIR.glob("*.html"), reverse=True)[:30]
             return self._send(200, [f.name for f in files])
@@ -226,9 +223,13 @@ class Handler(BaseHTTPRequestHandler):
                 reply, actions = workers.assistant(body.get("history") or [], bool(body.get("voice")))
                 return self._send(200, {"reply": reply, "actions": actions})
             if path == "/api/tts":
-                if not logic.eleven_ready():
-                    return self._send(404, {"error": "ElevenLabs not configured"})
-                audio = logic.eleven_speak((body.get("text") or "")[:2500], body.get("voice_id"))
+                if not logic.tts_ready():
+                    return self._send(404, {"error": "Install edge-tts (pip install -r requirements.txt)"})
+                try:
+                    audio = logic.tts_speak((body.get("text") or "")[:2500], body.get("voice"))
+                except Exception as e:
+                    log.warning("Voice failed: %s", e)
+                    return self._send(502, {"error": "Voice service unavailable"})
                 return self._send(200, audio, "audio/mpeg")
             if path == "/api/rules":
                 if not (body.get("situation") or "").strip() or not (body.get("instruction") or "").strip():
@@ -247,8 +248,8 @@ class Handler(BaseHTTPRequestHandler):
                 store.close_decision(int(m.group(1)), "", status="dismissed")
                 return self._send(200, {"ok": True})
             if path == "/api/settings":
-                if body.get("eleven_voice"):
-                    store.put("eleven_voice", str(body["eleven_voice"])[:80])
+                if body.get("tts_voice"):
+                    store.put("tts_voice", re.sub(r"[^A-Za-z0-9-]", "", str(body["tts_voice"]))[:60])
             if path == "/api/run":
                 workers.RUN_NOW.set()
                 store.activity("director", "Started a pass now")

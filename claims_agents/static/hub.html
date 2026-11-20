@@ -770,13 +770,14 @@ function hireModal(){
     <div class="field"><label for="hBrief">Brief</label><textarea class="in" id="hBrief" placeholder="What they own, how they work, and what to escalate to you" style="min-height:120px"></textarea></div>
     <div class="foot"><button class="btn quiet" data-close>Cancel</button><button class="btn primary" id="hSave">Hire</button></div>`);
 }
-let elevenVoices=null;
+let ttsVoices=null;
 async function settingsModal(){
-  if(S.eleven_ready&&elevenVoices===null){ try{ elevenVoices=await api("/api/voices"); }catch{ elevenVoices=[]; } }
+  if(S.tts_ready){ try{ ttsVoices=await api("/api/voices"); }catch{ ttsVoices={voices:[],current:""}; } }
   modal(`<h3>Settings</h3><p class="sub">Mailbox, keys and timings live in <code>.env</code> on this computer.</p>
     <div class="field"><label for="sName">Assistant's name</label><input class="in" id="sName" value="${h(S.assistant)}"></div>
-    ${S.eleven_ready?`<div class="field"><label for="sEleven">ElevenLabs voice</label><select class="in" id="sEleven">${(elevenVoices||[]).map(v=>`<option value="${h(v.id)}" ${v.id===ls.get("hub.eleven","")?"selected":""}>${h(v.name)}${v.labels?.accent?` · ${h(v.labels.accent)}`:""}</option>`).join("")||"<option>No voices found</option>"}</select></div>`
-      :`<div class="banner" style="margin:0 0 12px">${ic("info")}<span>Add <code>ELEVENLABS_API_KEY</code> to <code>.env</code> for a natural voice. The browser voice is used for now.</span></div>`}
+    ${S.tts_ready?`<div class="field"><label for="sTts">Voice</label><select class="in" id="sTts">${(ttsVoices?.voices||[]).map(v=>`<option value="${h(v.id)}" ${v.id===ttsVoices.current?"selected":""}>${h(v.name)} · ${h(v.note)}</option>`).join("")}</select>
+      <div class="spoken-hint">Microsoft neural voices, free. <button class="link" id="sPreview" type="button">Preview</button></div></div>`
+      :`<div class="banner" style="margin:0 0 12px">${ic("info")}<span>Run <code>pip install -r requirements.txt</code> for the natural voice. The browser voice is used for now.</span></div>`}
     <label class="remember" style="margin-bottom:10px"><input type="checkbox" id="sGreet" ${greetAloud?"checked":""}> Greet me out loud when the hub opens</label>
     <label class="remember" style="margin-bottom:14px"><input type="checkbox" id="sAnn" ${announce?"checked":""}> Tell me out loud when new drafts, decisions or results arrive</label>
     ${voices.length?`<div class="field"><label for="sVoice">Assistant's voice</label><select class="in" id="sVoice">${voices.map(v=>`<option ${v.name===ls.get("hub.voice","")?"selected":""}>${h(v.name)}</option>`).join("")}</select></div>`:""}
@@ -829,7 +830,7 @@ document.addEventListener("click",async ev=>{
       case "hSave": { const name=$("#hName").value.trim(); if(!name) return toast("Give them a name");
         await api("/api/employees",{name,title:$("#hTitle").value.trim(),role_prompt:$("#hBrief").value,hue:hireHue}); closeModal(); toast(`${name} has joined the team`,1); return refresh(true); }
       case "sSave": { if($("#sVoice")) ls.set("hub.voice",$("#sVoice").value); greetAloud=$("#sGreet").checked; announce=$("#sAnn").checked; ls.set("hub.greet",greetAloud); ls.set("hub.announce",announce);
-        const body={assistant_name:$("#sName").value}; if($("#sEleven")){ body.eleven_voice=$("#sEleven").value; ls.set("hub.eleven",body.eleven_voice); }
+        const body={assistant_name:$("#sName").value}; if($("#sTts")) body.tts_voice=$("#sTts").value;
         await api("/api/settings",body); closeModal(); toast("Saved",1); return refresh(true); }
     }
   }catch(e){ toast(e.message); }
@@ -918,7 +919,9 @@ function loadVoices(){
 }
 if(canSpeak){loadVoices();speechSynthesis.onvoiceschanged=loadVoices} else $("#voiceSel").style.display="none";
 $("#voiceSel").onchange=e=>ls.set("hub.voice",e.target.value);
-/* ---- speech out: ElevenLabs sentence by sentence (fast start), browser voice as fallback ---- */
+/* ---- speech out: natural voice sentence by sentence (fast start), browser voice as fallback ---- */
+let previewVoice=null;
+document.addEventListener("click",ev=>{ if(ev.target.id==="sPreview"){ gestured=true; previewVoice=$("#sTts").value; speak(`Hello ${S.director}. This is how I'll sound.`,{replay:true}).finally?.(()=>{}); setTimeout(()=>previewVoice=null,15000); } });
 const ttsEl=$("#ttsAudio"); let ttsCtx=null, ttsAn=null, lastSaid="", speakSeq=0;
 function clean(t){return t.replace(/\*\*|[#*_`]/g,"").replace(/^\s*[-•]\s*/gm,"").replace(/\s+/g," ").trim()}
 function sentences(t){const out=[];let buf="";for(const part of t.split(/(?<=[.!?])\s+(?=[A-Z0-9£"'])/)){buf=buf?buf+" "+part:part;if(buf.length>=40){out.push(buf);buf=""}}if(buf)out.push(buf);return out.length?out:[t]}
@@ -928,11 +931,11 @@ function onSpeakEnd(){speaking=false;$("#vOrb").classList.remove("live");vSet();
 function stopSpeaking(){ speakSeq++; if(canSpeak) speechSynthesis.cancel(); try{ttsEl.pause();ttsEl.removeAttribute("src");ttsEl.load()}catch{} if(speaking) onSpeakEnd(); }
 async function speak(text,{replay=false}={}){
   text=clean(text); if(!text) return; stopSpeaking(); const seq=speakSeq; if(!replay) lastSaid=text;
-  if(S?.eleven_ready){
+  if(S?.tts_ready){
     try{
       ttsAnalyser(); if(ttsCtx?.state==="suspended") await ttsCtx.resume();
       const parts=sentences(text);
-      const fetches=parts.map(p=>fetch("/api/tts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:p})}).then(r=>r.ok?r.blob():null).catch(()=>null));
+      const fetches=parts.map(p=>fetch("/api/tts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:p,voice:previewVoice||undefined})}).then(r=>r.ok?r.blob():null).catch(()=>null));
       onSpeakStart();
       for(const f of fetches){ if(seq!==speakSeq) return; const b=await f; if(!b){ throw new Error("tts"); }
         await new Promise(res=>{ ttsEl.src=URL.createObjectURL(b); ttsEl.onended=ttsEl.onerror=()=>res(); ttsEl.play().catch(()=>res()); }); }

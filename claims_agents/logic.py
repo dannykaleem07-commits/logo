@@ -6,7 +6,7 @@ Decisions        - when an agent meets a situation the orders don't cover, it st
                    and, if the Director says so, saved as a new standing order. That is how the
                    team learns.
 Greeting         - a short, human spoken greeting for the hub, built from live state.
-ElevenLabs       - natural voice for the assistant (optional; the browser voice is the fallback).
+Voice            - natural speech for the assistant (Microsoft neural voices; the browser voice is the fallback).
 """
 
 import json
@@ -147,37 +147,70 @@ def greeting(s):
     return text
 
 
-# ---------------------------------------------------------------- ElevenLabs
+# ---------------------------------------------------------------- voice (Microsoft neural voices, free, no key)
 
-ELEVEN_KEY = os.getenv("ELEVENLABS_API_KEY", "")
-ELEVEN_VOICE = os.getenv("ELEVENLABS_VOICE_ID", "")
-ELEVEN_MODEL = os.getenv("ELEVENLABS_MODEL", "eleven_multilingual_v2")
+import asyncio
+
+DEFAULT_VOICE = os.getenv("TTS_VOICE", "en-GB-SoniaNeural")
+VOICE_RATE = os.getenv("TTS_RATE", "+4%")
+_voice_cache = {"at": 0, "list": []}
+
+# A short, good list for the Settings picker; any Microsoft voice name also works in .env
+VOICES = [
+    ("en-GB-SoniaNeural", "Sonia", "British, warm"),
+    ("en-GB-LibbyNeural", "Libby", "British, bright"),
+    ("en-GB-MaisieNeural", "Maisie", "British, soft"),
+    ("en-GB-RyanNeural", "Ryan", "British, calm"),
+    ("en-GB-ThomasNeural", "Thomas", "British, steady"),
+    ("en-IE-EmilyNeural", "Emily", "Irish"),
+    ("en-AU-NatashaNeural", "Natasha", "Australian"),
+    ("en-US-AriaNeural", "Aria", "American, expressive"),
+    ("en-US-JennyNeural", "Jenny", "American, friendly"),
+    ("en-US-GuyNeural", "Guy", "American, newsreader"),
+]
 
 
-def eleven_ready():
-    return bool(ELEVEN_KEY)
-
-
-def eleven_voices():
-    req = urllib.request.Request("https://api.elevenlabs.io/v1/voices", headers={"xi-api-key": ELEVEN_KEY})
-    with urllib.request.urlopen(req, timeout=20) as r:
-        data = json.loads(r.read())
-    return [{"id": v["voice_id"], "name": v["name"], "labels": v.get("labels", {})} for v in data.get("voices", [])]
-
-
-def eleven_speak(text, voice_id=None):
-    """Returns MP3 bytes."""
-    vid = voice_id or ELEVEN_VOICE or store.get("eleven_voice") or "EXAVITQu4vr4xnSDxMaL"
-    body = json.dumps({
-        "text": text[:2500],
-        "model_id": ELEVEN_MODEL,
-        "voice_settings": {"stability": 0.45, "similarity_boost": 0.8, "style": 0.25, "use_speaker_boost": True},
-    }).encode()
-    req = urllib.request.Request(
-        f"https://api.elevenlabs.io/v1/text-to-speech/{vid}?output_format=mp3_44100_128", data=body,
-        headers={"xi-api-key": ELEVEN_KEY, "Content-Type": "application/json", "Accept": "audio/mpeg"})
+def tts_ready():
     try:
-        with urllib.request.urlopen(req, timeout=60) as r:
-            return r.read()
-    except urllib.error.HTTPError as e:
-        raise RuntimeError(f"ElevenLabs {e.code}: {e.read()[:200].decode(errors='ignore')}")
+        import edge_tts  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+def current_voice():
+    return store.get("tts_voice") or DEFAULT_VOICE
+
+
+def tts_voices():
+    return [{"id": i, "name": n, "note": d} for i, n, d in VOICES]
+
+
+def _run(coro):
+    try:
+        loop = asyncio.get_running_loop()
+    except RuntimeError:
+        loop = None
+    if loop and loop.is_running():
+        import concurrent.futures
+        with concurrent.futures.ThreadPoolExecutor(1) as ex:
+            return ex.submit(asyncio.run, coro).result()
+    return asyncio.run(coro)
+
+
+def tts_speak(text, voice=None):
+    """Returns MP3 bytes from Microsoft's neural voices (via edge-tts). Raises on failure."""
+    import edge_tts
+
+    async def go():
+        comm = edge_tts.Communicate(text[:2500], voice or current_voice(), rate=VOICE_RATE)
+        chunks = []
+        async for ch in comm.stream():
+            if ch["type"] == "audio":
+                chunks.append(ch["data"])
+        return b"".join(chunks)
+
+    data = _run(asyncio.wait_for(go(), timeout=30))
+    if not data:
+        raise RuntimeError("No audio returned")
+    return data
