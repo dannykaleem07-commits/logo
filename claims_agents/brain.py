@@ -61,11 +61,15 @@ def knowledge(extra=()):
     return _knowledge
 
 
-def _system(role_prompt, with_knowledge):
+def _system(role_prompt, with_knowledge, with_orders=True):
     blocks = []
     if with_knowledge:
         blocks.append({"type": "text", "text": knowledge(), "cache_control": {"type": "ephemeral"}})
-    blocks.append({"type": "text", "text": FIRM_RULES + "\n" + role_prompt})
+    orders = ""
+    if with_orders:
+        from .logic import orders_text  # the Director's standing orders, live
+        orders = orders_text()
+    blocks.append({"type": "text", "text": FIRM_RULES + orders + "\n" + role_prompt})
     return blocks
 
 

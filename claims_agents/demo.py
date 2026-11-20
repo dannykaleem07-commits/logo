@@ -97,6 +97,22 @@ def seed():
     with store.db() as c:
         c.execute("UPDATE tasks SET status='running', started_at=? WHERE id=?", (_t(minutes=14), t2))
     store.add_task("danny", "Draft a letter before claim on the Begum file if they miss Friday's deadline", "", f"{config.CLIENTS_PARENT}/Sara Begum - CC10271")
+    for sit, ins, src in [
+        ("An insurer's fraud desk sends a 'concerns' letter with no particulars", "Send the particularisation demand the same day, raise a DSAR to the insurer in parallel, and do not offer any discount while the allegation is unparticularised.", "director"),
+        ("A third-party insurer offers a 50/50 liability split", "Never accept on the call. Take it to the Director with the dashcam or witness position and the full-value figure before any counter.", "director"),
+        ("A Carflex engineer report says the repair is uneconomic", "Forward to the Director the same hour and start a pre-accident valuation challenge from three market comparables.", "learned"),
+        ("A client asks for an update and we have nothing new", "Reply the same day anyway: what we did last, what we are waiting on, the date we will chase it.", "director"),
+    ]:
+        store.add_rule(sit, ins, src)
+    store.add_decision("danny", f"{config.CLIENTS_PARENT}/Leah Kowalski - CC10280",
+        "The insurer has offered £6,100 against £9,800 of hire charges but only if we accept within 48 hours and agree not to pursue the storage invoice. We have no standing order on time-limited offers tied to dropping another head.",
+        {"situation": "Time-limited settlement offer conditional on dropping the storage head",
+         "why_new": "Standing orders cover split liability and rate disputes, but not an offer that trades one head of loss against speed.",
+         "recommended": "Reject the condition, not the money: accept £6,100 on hire as an interim payment without prejudice to the balance, and keep storage open with its invoice and daily log.",
+         "options": ["Accept in full to close the file quickly", "Counter at £8,200 hire with storage kept open", "Hold out for full value and issue a letter before claim"],
+         "risk_if_wrong": "Accepting the condition releases £1,320 of storage for nothing; refusing everything risks the 48-hour window closing with no money in.",
+         "proposed_order": {"situation": "A settlement offer is time-limited and conditional on dropping another head of loss",
+                            "instruction": "Never trade a head of loss for speed. Accept the sum offered as an interim payment without prejudice and keep the other head open; escalate to the Director before any reply."}})
     from .hemant import render
     sample = [dict(client="Mohammed Rafiq", reference="CC10252", stage="Fraud desk, no particulars", rag="red",
                    headline="Generic 'concerns' letter. Hold them to particulars and run the DSAR now.",

@@ -54,6 +54,11 @@ claim reference if one appears (e.g. CC12345); if only the other side's referenc
 use that. If you can match an existing folder from the list, return it exactly in
 matched_folder. If you cannot identify the client with reasonable confidence, leave
 client_full_name empty.
+Set new_situation=true ONLY when the email raises something the standing orders and normal claims
+practice do not cover and a wrong move would matter (e.g. a police or regulator contact, a complaint
+about the firm, a settlement demand with unusual terms, a threat of costs against us, press, a
+conflict of interest). Put the question for the Director in new_situation_question. Routine
+insurer pushback, chasers and document requests are NOT new situations.
 """
 
 TRIAGE_SCHEMA = obj({
@@ -71,6 +76,8 @@ TRIAGE_SCHEMA = obj({
     "handler": enum("danny", "harry", "none"),
     "harry_role": enum(*HARRY_ROLES, "none"),
     "urgency": enum("high", "normal", "low"),
+    "new_situation": B,
+    "new_situation_question": S,
 })
 
 DRAFT_SCHEMA = obj({
@@ -240,6 +247,11 @@ def _queue(box, agent, kind, folder, d, docs, in_reply_to=None, references=None,
 
 
 def draft_reply(box, mail, t, folder, dry_run=False):
+    if t.get("new_situation") and not dry_run:
+        from .logic import raise_decision
+        who = "harry" if t["handler"] == "harry" else "danny"
+        raise_decision(who, folder, t.get("new_situation_question") or t["summary"], mail.brief(4000))
+        return None  # Danny waits for the Director rather than guessing
     if not t["needs_response"] or t["handler"] == "none" or store.pending_draft(folder):
         return None
     if t["handler"] == "harry" and not store.enabled("harry"):

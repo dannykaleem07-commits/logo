@@ -1,5 +1,6 @@
 """Local memory: emails handled, claims, drafts, employees, tasks and the activity feed."""
 
+import json
 import sqlite3
 from datetime import datetime, timezone
 
@@ -38,6 +39,12 @@ def db():
             created_at TEXT, started_at TEXT, finished_at TEXT);
         CREATE TABLE IF NOT EXISTS activity (
             id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT, employee TEXT, text TEXT);
+        CREATE TABLE IF NOT EXISTS rules (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, situation TEXT, instruction TEXT, source TEXT,
+            decision_id INTEGER, active INTEGER DEFAULT 1, uses INTEGER DEFAULT 0, created_at TEXT);
+        CREATE TABLE IF NOT EXISTS decisions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, employee TEXT, folder TEXT, situation TEXT,
+            suggestion TEXT, status TEXT, answer TEXT, created_at TEXT, decided_at TEXT);
         """
     )
     cols = {r[1] for r in conn.execute("PRAGMA table_info(drafts)")}
@@ -264,3 +271,64 @@ def recent_activity(limit=60):
 def count(sql, *args):
     with db() as c:
         return c.execute(sql, args).fetchone()[0]
+
+
+# ---------------------------------------------------------------- standing orders
+
+def rules(active_only=False):
+    with db() as c:
+        q = "SELECT * FROM rules" + (" WHERE active=1" if active_only else "") + " ORDER BY id DESC"
+        return [dict(r) for r in c.execute(q)]
+
+
+def add_rule(situation, instruction, source, decision_id=None):
+    with db() as c:
+        return c.execute("INSERT INTO rules (situation, instruction, source, decision_id, created_at) VALUES (?,?,?,?,?)",
+                         (situation, instruction, source, decision_id, now())).lastrowid
+
+
+def set_rule(rule_id, **fields):
+    allowed = {k: v for k, v in fields.items() if k in ("situation", "instruction", "active")}
+    if allowed:
+        with db() as c:
+            c.execute(f"UPDATE rules SET {', '.join(k + '=?' for k in allowed)} WHERE id=?", (*allowed.values(), rule_id))
+
+
+def delete_rule(rule_id):
+    with db() as c:
+        c.execute("DELETE FROM rules WHERE id=?", (rule_id,))
+
+
+# ---------------------------------------------------------------- decisions
+
+def add_decision(employee, folder, situation, suggestion):
+    with db() as c:
+        return c.execute(
+            "INSERT INTO decisions (employee, folder, situation, suggestion, status, created_at) VALUES (?,?,?,?,?,?)",
+            (employee, folder or "", situation, json.dumps(suggestion) if suggestion else None, "open", now())).lastrowid
+
+
+def _dec(r):
+    d = dict(r)
+    try:
+        d["suggestion"] = json.loads(d["suggestion"]) if d["suggestion"] else None
+    except ValueError:
+        d["suggestion"] = None
+    return d
+
+
+def decisions(status=None, limit=50):
+    with db() as c:
+        q = "SELECT * FROM decisions" + (" WHERE status=?" if status else "") + " ORDER BY id DESC LIMIT ?"
+        return [_dec(r) for r in c.execute(q, ((status, limit) if status else (limit,)))]
+
+
+def decision(decision_id):
+    with db() as c:
+        r = c.execute("SELECT * FROM decisions WHERE id=?", (decision_id,)).fetchone()
+        return _dec(r) if r else None
+
+
+def close_decision(decision_id, answer, status="decided"):
+    with db() as c:
+        c.execute("UPDATE decisions SET status=?, answer=?, decided_at=? WHERE id=?", (status, answer, now(), decision_id))

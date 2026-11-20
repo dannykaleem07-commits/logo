@@ -15,7 +15,7 @@ from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
-from . import config, store, workers
+from . import config, logic, store, workers
 
 log = logging.getLogger("agents")
 STATIC = Path(__file__).parent / "static"
@@ -147,6 +147,13 @@ class Handler(BaseHTTPRequestHandler):
         if m:
             d = store.draft(m.group(1))
             return self._send(200 if d else 404, d or {"error": "not found"})
+        if path == "/api/greeting":
+            return self._send(200, {"text": logic.greeting(workers.snapshot())})
+        if path == "/api/voices":
+            try:
+                return self._send(200, logic.eleven_voices() if logic.eleven_ready() else [])
+            except Exception as e:
+                return self._send(502, {"error": str(e)})
         if path == "/api/reports":
             files = sorted(config.REPORTS_DIR.glob("*.html"), reverse=True)[:30]
             return self._send(200, [f.name for f in files])
@@ -167,6 +174,10 @@ class Handler(BaseHTTPRequestHandler):
         m = re.fullmatch(r"/api/employees/([\w-]+)", self.path)
         if m:
             store.fire(m.group(1))
+            return self._send(200, {"ok": True})
+        m = re.fullmatch(r"/api/rules/(\d+)", self.path)
+        if m:
+            store.delete_rule(int(m.group(1)))
             return self._send(200, {"ok": True})
         self._send(404, {"error": "not found"})
 
@@ -214,6 +225,30 @@ class Handler(BaseHTTPRequestHandler):
                                             "to the .env file on this computer and restart the hub.", "actions": []})
                 reply, actions = workers.assistant(body.get("history") or [], bool(body.get("voice")))
                 return self._send(200, {"reply": reply, "actions": actions})
+            if path == "/api/tts":
+                if not logic.eleven_ready():
+                    return self._send(404, {"error": "ElevenLabs not configured"})
+                audio = logic.eleven_speak((body.get("text") or "")[:2500], body.get("voice_id"))
+                return self._send(200, audio, "audio/mpeg")
+            if path == "/api/rules":
+                if not (body.get("situation") or "").strip() or not (body.get("instruction") or "").strip():
+                    return self._send(400, {"error": "Both 'when' and 'do' are needed"})
+                return self._send(200, {"ok": True, "id": logic.add_order(body["situation"], body["instruction"])})
+            m = re.fullmatch(r"/api/rules/(\d+)", path)
+            if m:
+                store.set_rule(int(m.group(1)), **body)
+                return self._send(200, {"ok": True})
+            m = re.fullmatch(r"/api/decisions/(\d+)/answer", path)
+            if m:
+                r = logic.answer_decision(int(m.group(1)), body.get("answer", ""), bool(body.get("remember", True)), body.get("chosen"))
+                return self._send(200 if r else 409, r or {"error": "That decision is no longer open"})
+            m = re.fullmatch(r"/api/decisions/(\d+)/dismiss", path)
+            if m:
+                store.close_decision(int(m.group(1)), "", status="dismissed")
+                return self._send(200, {"ok": True})
+            if path == "/api/settings":
+                if body.get("eleven_voice"):
+                    store.put("eleven_voice", str(body["eleven_voice"])[:80])
             if path == "/api/run":
                 workers.RUN_NOW.set()
                 store.activity("director", "Started a pass now")

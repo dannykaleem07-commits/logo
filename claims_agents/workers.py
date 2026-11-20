@@ -131,6 +131,10 @@ def snapshot():
                            and c["last_outbound_at"] < (datetime.now(timezone.utc) - timedelta(hours=config.FOLLOWUP_HOURS)).isoformat()),
         },
         "drafts": store.drafts("awaiting"),
+        "decisions": store.decisions("open"),
+        "decisions_open": len(store.decisions("open")),
+        "rules": store.rules()[:100],
+        "eleven_ready": bool(os.getenv("ELEVENLABS_API_KEY")),
         "recent_sent": [d for d in _drafts_any(20) if d["status"] != "awaiting"],
         "claims": claims[:200],
         "tasks": store.tasks(80),
@@ -186,6 +190,8 @@ def _brief():
         "awaiting_approval": [{"subject": d["subject"], "to": d["recipients"], "by": d["agent"], "note": d["note"]} for d in s["drafts"][:15]],
         "recent_tasks": [{"id": t["id"], "for": t["employee"], "title": t["title"], "status": t["status"], "summary": t["summary"]} for t in s["tasks"][:12]],
         "recent_activity": [f"{a['ts'][11:16]} {a['employee']}: {a['text']}" for a in s["activity"][:25]],
+        "open_decisions": [{"id": d["id"], "asked_by": d["employee"], "situation": d["situation"]} for d in s["decisions"][:10]],
+        "standing_orders_count": len(s["rules"]),
         "mailbox_connected": s["mailbox_ready"], "last_pass": s["last_pass"],
     })
 
@@ -203,6 +209,15 @@ TOOLS = [
           {"employee": S, "title": S, "details": S, "claim_folder": S}),
     _tool("run_now", "Start an immediate pass: send approved drafts, scan the inbox, draft replies and chase.", {}),
     _tool("get_task_result", "Read the full result of a task by id.", {"task_id": {"type": "integer"}}),
+    _tool("list_standing_orders", "The Director's standing orders (rules the whole team follows) and the open "
+          "decisions waiting on him.", {}),
+    _tool("add_standing_order", "Save a direct order from the Director as a standing order the whole team follows "
+          "from now on. situation = when it applies (the general pattern), instruction = what to do.",
+          {"situation": S, "instruction": S}),
+    _tool("remove_standing_order", "Retire a standing order by id.", {"rule_id": {"type": "integer"}}),
+    _tool("answer_decision", "Record the Director's decision on an open decision by id. The employee who asked is "
+          "told what to do, and if remember=true it is saved as a standing order.",
+          {"decision_id": {"type": "integer"}, "answer": S, "remember": B}),
 ]
 
 
@@ -233,6 +248,22 @@ def _run_tool(name, args):
     if name == "get_task_result":
         t = next((t for t in store.tasks(500) if t["id"] == args.get("task_id")), None)
         return json.dumps(t) if t else "No such task."
+    from . import logic
+    if name == "list_standing_orders":
+        return json.dumps({"standing_orders": store.rules(active_only=True)[:40],
+                           "open_decisions": [{k: d[k] for k in ("id", "employee", "folder", "situation", "suggestion")}
+                                              for d in store.decisions("open")]})
+    if name == "add_standing_order":
+        rid = logic.add_order(args.get("situation", ""), args.get("instruction", ""))
+        return f"Standing order #{rid} saved. The whole team follows it from the next job."
+    if name == "remove_standing_order":
+        store.set_rule(args.get("rule_id"), active=0)
+        return f"Standing order #{args.get('rule_id')} retired."
+    if name == "answer_decision":
+        r = logic.answer_decision(args.get("decision_id"), args.get("answer", ""), bool(args.get("remember", True)))
+        if not r:
+            return "That decision is not open."
+        return f"Decision recorded. Task #{r['task_id']} created" + (f" and standing order #{r['rule_id']} saved." if r["rule_id"] else ".")
     return "Unknown tool."
 
 
@@ -243,10 +274,13 @@ def assistant(history, voice=False):
         f"You are {name}, the personal assistant to {config.DIRECTOR_NAME}, the Director of Courtesy Cars "
         "Group UK (credit hire and motor claims). You run his AI claims team: Danny Kaleem (Claims Manager), "
         "Harry (Claims Handler, 6 helpers), Hemant (Head of Legal & Audit) and any staff he has hired. "
-        "Use your tools for facts; never invent figures, claims or emails. You can switch employees on or off, "
-        "assign tasks and start a pass when he asks. You cannot approve or send emails: tell him to tap "
-        "Approve on the draft in the hub. Be warm, brisk and specific, like a sharp chief of staff: lead with "
-        "what needs his decision, then what's moving, then risks. "
+        "Use your tools for facts; never invent figures, claims or emails. You follow the Director's direct "
+        "orders: when he tells you how something should be handled from now on, save it with add_standing_order "
+        "(confirm in one line what you saved); when he decides an open decision, record it with answer_decision; "
+        "when he asks for work to be done, assign it. Switch employees on or off and start a pass when asked. "
+        "You cannot approve or send emails yourself: he taps Approve on the draft in the hub. If an order would be "
+        "unlawful or dishonest, say so plainly and do not save it. Be warm, brisk and specific, like a sharp chief "
+        "of staff: lead with what needs his decision, then what's moving, then risks. "
         + ("You are speaking out loud: plain sentences only, no markdown, no lists or symbols, at most about "
            "90 words unless he asks for detail." if voice else
            "Keep it tight. Light markdown (bold, short bullet lists) is fine.")
