@@ -19,7 +19,9 @@ from pathlib import Path
 from . import config, logic, phone, store, workers
 
 log = logging.getLogger("agents")
+hublog = logging.getLogger("claims_agents.hub")   # plumbing: never shown as staff activity
 STATIC = Path(__file__).parent / "static"
+ASSISTANT_TIMEOUT = {"voice": 25, "text": 60}
 
 
 # ---------------------------------------------------------------- background workers
@@ -99,6 +101,13 @@ def decide_draft(draft_id, approve):
 
 # ---------------------------------------------------------------- HTTP
 
+class _Reject(Exception):
+    """A request the hub answers with a plain client error instead of a traceback."""
+    def __init__(self, code, msg):
+        super().__init__(msg)
+        self.code, self.msg = code, msg
+
+
 class Handler(BaseHTTPRequestHandler):
     server_version = "BossHub"
 
@@ -110,7 +119,8 @@ class Handler(BaseHTTPRequestHandler):
         self.send_response(code)
         self.send_header("Content-Type", ctype + ("; charset=utf-8" if ctype.startswith(("text", "application/json")) else ""))
         self.send_header("Content-Length", str(len(data)))
-        self.send_header("Cache-Control", "public, max-age=86400" if cache else "no-store")
+        if "Cache-Control" not in (headers or {}):
+            self.send_header("Cache-Control", "public, max-age=86400" if cache else "no-store")
         for k, v in (headers or {}).items():
             self.send_header(k, v)
         self.end_headers()
@@ -133,9 +143,25 @@ class Handler(BaseHTTPRequestHandler):
         store.activity("director", f"Paired a {phone.device_name(self.headers.get('User-Agent', ''))} with the hub")
         return {"Set-Cookie": phone.cookie_header(token, self._tls)}
 
+    MAX_BODY = 256 * 1024   # the biggest honest request (a chat history) is a few tens of KB
+
     def _body(self):
-        n = int(self.headers.get("Content-Length") or 0)
-        return json.loads(self.rfile.read(n) or b"{}") if n else {}
+        """The JSON object in the request body. Bad JSON is a 400, an oversized body a 413 (unread, connection closed)."""
+        try:
+            n = int(self.headers.get("Content-Length") or 0)
+        except ValueError:
+            raise _Reject(400, "Bad Content-Length")
+        if n > self.MAX_BODY:
+            self.close_connection = True
+            raise _Reject(413, "Request body too large")
+        raw = self.rfile.read(n) if n > 0 else b""
+        try:
+            body = json.loads(raw or b"{}")
+        except ValueError:
+            raise _Reject(400, "Bad JSON")
+        if not isinstance(body, dict):
+            raise _Reject(400, "Bad JSON")
+        return body
 
     PUBLIC = ("/", "/index.html", "/manifest.webmanifest", "/apple-touch-icon.png", "/favicon.ico", "/ca.crt", "/pair",
               "/api/unlock", "/api/phone", "/api/phone/forget")  # the two /api/phone routes answer 403 to phones themselves
@@ -200,7 +226,11 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/api/greeting":
             return self._send(200, {"text": logic.greeting(workers.snapshot())})
         if path == "/api/voices":
-            return self._send(200, {"current": logic.current_voice(), "voices": logic.tts_voices()})
+            st = logic.tts_status()
+            return self._send(200, {"current": logic.current_voice(), "voices": logic.tts_voices(), "provider": st["provider"],
+                                    "ok": st["ok"], "hint": workers.tts_hint(st)})
+        if path == "/api/reminders":
+            return self._send(200, {"open": store.reminders("open"), "due": store.due_reminders()})
         if path == "/api/reports":
             files = sorted(config.REPORTS_DIR.glob("*.html"), reverse=True)[:30]
             return self._send(200, [f.name for f in files])
@@ -214,6 +244,65 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/logo.png" and config.LOGO_FILE.exists():
             return self._send(200, config.LOGO_FILE.read_bytes(), "image/png")
         self._send(404, {"error": "not found"})
+
+    def _assistant(self, body):
+        """The assistant: session memory on the server, a time budget, and a short setup reply when there is no key."""
+        voice = bool(body.get("voice"))
+        if not workers.ai_ready():
+            return self._send(200, {"reply": workers.SETUP_REPLY_SHORT if voice else workers.SETUP_REPLY_LONG,
+                                    "speak": workers.SETUP_REPLY_SHORT, "show": workers.SETUP_REPLY_LONG,
+                                    "suggestions": [], "followups": [], "actions": [], "ui": {}, "setup": "api_key",
+                                    "needs_confirmation": False})
+        history = body.get("history") or []
+        text = body.get("text") or body.get("message") or next(
+            (m.get("content") for m in reversed(history) if m.get("role") == "user" and m.get("content")), "")
+        session = str(body.get("session_id") or "default")
+        anchors = body.get("anchors") if isinstance(body.get("anchors"), dict) else {}
+        client_time = str(body.get("client_time") or "")[:40]
+        result, err = {}, {}
+
+        def go():
+            try:
+                result.update(workers.assistant(session, text, voice, anchors, client_time, history=history))
+            except Exception as ex:
+                err["ex"] = ex
+        t = threading.Thread(target=go, daemon=True, name="assistant")
+        t.start()
+        t.join(ASSISTANT_TIMEOUT["voice" if voice else "text"])
+        if t.is_alive():
+            hublog.warning("Assistant took too long (%s)", "voice" if voice else "text")
+            msg = "That's taking too long; try again in a moment."
+            return self._send(200, {"reply": msg, "speak": msg, "show": "", "suggestions": ["Try again"], "followups": ["Try again"],
+                                    "actions": [], "ui": {}, "setup": None, "timeout": True, "needs_confirmation": False})
+        if err:
+            hublog.warning("Assistant failed: %s", err["ex"])
+            msg = "I couldn't reach Claude just now. Try again in a moment."
+            return self._send(200, {"reply": msg, "speak": msg, "show": "", "suggestions": [], "followups": [], "actions": [],
+                                    "ui": {}, "setup": None, "error": str(err["ex"])[:200], "needs_confirmation": False})
+        result.setdefault("setup", None)
+        return self._send(200, result)
+
+    def _tts(self, body):
+        """Speech for one chunk of text: disk cache first (ETag = cache key), then Microsoft's voice."""
+        if not logic.tts_ready():
+            return self._send(404, {"error": "Install edge-tts (pip install -r requirements.txt)"})
+        text = re.sub(r"\s+", " ", str(body.get("text") or "")).strip()[:2500]
+        if not text:
+            return self._send(400, {"error": "Nothing to say"})
+        voice = logic.clean_voice(body.get("voice"))
+        if voice is None:
+            return self._send(400, {"error": "Unknown voice"})
+        key = logic.tts_key(text, voice)
+        if self.headers.get("If-None-Match", "").strip('"') == key and logic.cache_get(key):
+            return self._send(304, b"", "audio/mpeg")
+        try:
+            audio, bounds, key, hit = logic.tts_speak_full(text, voice)
+        except Exception as e:
+            hublog.info("Voice unavailable: %s", logic._human_error(e))
+            return self._send(502, {"error": "Voice service unavailable", "detail": logic.tts_status()["error"]})
+        return self._send(200, audio, "audio/mpeg", headers={
+            "ETag": f'"{key}"', "Cache-Control": "private, max-age=604800", "X-TTS-Cache": "hit" if hit else "miss",
+            "X-Word-Boundaries": logic.boundaries_header(bounds)})
 
     def do_DELETE(self):
         if not self._local_only(write=True):
@@ -267,20 +356,12 @@ class Handler(BaseHTTPRequestHandler):
                 ok, msg = decide_draft(m.group(1), m.group(2) == "approve")
                 return self._send(200 if ok else 409, {"ok": ok, "message": msg})
             if path == "/api/assistant":
-                if not workers.ai_ready():
-                    return self._send(200, {"reply": "I need a Claude API key before I can help. Add ANTHROPIC_API_KEY "
-                                            "to the .env file on this computer and restart the hub.", "actions": []})
-                reply, actions = workers.assistant(body.get("history") or [], bool(body.get("voice")))
-                return self._send(200, {"reply": reply, "actions": actions})
+                return self._assistant(body)
             if path == "/api/tts":
-                if not logic.tts_ready():
-                    return self._send(404, {"error": "Install edge-tts (pip install -r requirements.txt)"})
-                try:
-                    audio = logic.tts_speak((body.get("text") or "")[:2500], body.get("voice"))
-                except Exception as e:
-                    log.warning("Voice failed: %s", e)
-                    return self._send(502, {"error": "Voice service unavailable"})
-                return self._send(200, audio, "audio/mpeg")
+                return self._tts(body)
+            m = re.fullmatch(r"/api/reminders/(\d+)/dismiss", path)
+            if m:
+                return self._send(200, {"ok": store.dismiss_reminder(int(m.group(1)))})
             if path == "/api/rules":
                 if not (body.get("situation") or "").strip() or not (body.get("instruction") or "").strip():
                     return self._send(400, {"error": "Both 'when' and 'do' are needed"})
@@ -299,7 +380,14 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, {"ok": True})
             if path == "/api/settings":
                 if body.get("tts_voice"):
-                    store.put("tts_voice", re.sub(r"[^A-Za-z0-9-]", "", str(body["tts_voice"]))[:60])
+                    v = logic.clean_voice(body["tts_voice"])
+                    if not v:
+                        return self._send(400, {"error": "Unknown voice"})
+                    store.put("tts_voice", v)
+                    try:   # re-warm the greeting in the new voice, from the cached text only
+                        logic.warm_voice(json.loads(store.get("greeting") or "{}").get("text"))
+                    except ValueError:
+                        pass
             if path == "/api/unlock":
                 ok, retry = phone.check_pin(body.get("pin"))
                 if not ok and retry:
@@ -322,6 +410,8 @@ class Handler(BaseHTTPRequestHandler):
                     store.put("assistant_name", body["assistant_name"].strip()[:30])
                 return self._send(200, {"ok": True})
             self._send(404, {"error": "not found"})
+        except _Reject as e:
+            self._send(e.code, {"error": e.msg})
         except Exception as e:
             log.exception("Hub request failed")
             self._send(500, {"error": str(e)})
@@ -348,6 +438,9 @@ def serve(demo=False, open_browser=True, allow_phone=False, https=False):
     elif not demo:
         log.warning("MAIL_PASSWORD not set: the hub runs, but the agents can't read the mailbox yet.")
     threading.Thread(target=task_loop, daemon=True, name="tasks").start()
+    logic.voice_startup()   # voice list + fixed lines into the cache, in the background
+    if not workers.ai_ready():
+        log.info("No ANTHROPIC_API_KEY: the hub shows the team, but the assistant and tasks wait for the key.")
     host = "0.0.0.0" if config.HUB_ALLOW_LAN else "127.0.0.1"
     httpd = _Server((host, config.HUB_PORT), Handler)
     url = f"http://localhost:{config.HUB_PORT}"

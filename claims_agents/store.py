@@ -2,7 +2,7 @@
 
 import json
 import sqlite3
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from . import config
 
@@ -45,11 +45,20 @@ def db():
         CREATE TABLE IF NOT EXISTS decisions (
             id INTEGER PRIMARY KEY AUTOINCREMENT, employee TEXT, folder TEXT, situation TEXT,
             suggestion TEXT, status TEXT, answer TEXT, created_at TEXT, decided_at TEXT);
+        CREATE TABLE IF NOT EXISTS turns (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, session TEXT, role TEXT, content TEXT,
+            actions TEXT, anchors TEXT, voice INTEGER DEFAULT 0, ts TEXT);
+        CREATE INDEX IF NOT EXISTS turns_session ON turns(session, id);
+        CREATE TABLE IF NOT EXISTS reminders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, due_ts TEXT, text TEXT, session TEXT,
+            status TEXT DEFAULT 'open', created_at TEXT, done_at TEXT);
         """
     )
     cols = {r[1] for r in conn.execute("PRAGMA table_info(drafts)")}
     if "body_html" not in cols:
         conn.execute("ALTER TABLE drafts ADD COLUMN body_html TEXT")
+    if "gist" not in cols:
+        conn.execute("ALTER TABLE drafts ADD COLUMN gist TEXT")
     if conn.execute("SELECT COUNT(*) FROM employees").fetchone()[0] == 0:
         for i, (eid, name, title, hue) in enumerate(CORE_EMPLOYEES):
             conn.execute("INSERT INTO employees VALUES (?,?,?,?,?,?,?,?,?)",
@@ -122,12 +131,12 @@ def bump_chase(folder):
         c.execute("UPDATE claims SET chase_level=chase_level+1 WHERE folder=?", (folder,))
 
 
-def add_draft(draft_id, folder, agent, kind, recipients, subject, note, body_html=""):
+def add_draft(draft_id, folder, agent, kind, recipients, subject, note, body_html="", gist=""):
     with db() as c:
         c.execute(
-            "INSERT INTO drafts (id, folder, agent, kind, recipients, subject, status, note, created_at, body_html)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?)",
-            (draft_id, folder, agent, kind, ", ".join(recipients), subject, "awaiting", note, now(), body_html),
+            "INSERT INTO drafts (id, folder, agent, kind, recipients, subject, status, note, created_at, body_html, gist)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (draft_id, folder, agent, kind, ", ".join(recipients), subject, "awaiting", note, now(), body_html, gist or ""),
         )
 
 
@@ -332,3 +341,103 @@ def decision(decision_id):
 def close_decision(decision_id, answer, status="decided"):
     with db() as c:
         c.execute("UPDATE decisions SET status=?, answer=?, decided_at=? WHERE id=?", (status, answer, now(), decision_id))
+
+
+# ---------------------------------------------------------------- assistant memory (conversation turns)
+
+def add_turn(session, role, content, actions=None, anchors=None, voice=False):
+    """One line of the conversation with the assistant. `anchors` carries the ids it referred to."""
+    with db() as c:
+        rid = c.execute(
+            "INSERT INTO turns (session, role, content, actions, anchors, voice, ts) VALUES (?,?,?,?,?,?,?)",
+            (session or "default", role, (content or "")[:6000],
+             json.dumps(actions) if actions else None, json.dumps(anchors) if anchors else None,
+             1 if voice else 0, now())).lastrowid
+        c.execute("DELETE FROM turns WHERE session=? AND id < (SELECT MAX(id) - 400 FROM turns WHERE session=?)",
+                  (session or "default", session or "default"))
+        return rid
+
+
+def _turn(r):
+    d = dict(r)
+    for k in ("actions", "anchors"):
+        try:
+            d[k] = json.loads(d[k]) if d[k] else None
+        except ValueError:
+            d[k] = None
+    return d
+
+
+def turns(session, limit=40, after_id=0):
+    """The last `limit` turns of a session, oldest first (only those after `after_id`)."""
+    with db() as c:
+        rows = c.execute("SELECT * FROM turns WHERE session=? AND id>? ORDER BY id DESC LIMIT ?",
+                         (session or "default", after_id, limit)).fetchall()
+        return [_turn(r) for r in reversed(rows)]
+
+
+def turns_before(session, before_id, limit=20):
+    """The `limit` oldest turns of a session with id <= before_id (for the summariser), oldest first."""
+    with db() as c:
+        rows = c.execute("SELECT * FROM turns WHERE session=? AND id<=? ORDER BY id ASC LIMIT ?",
+                         (session or "default", before_id, limit)).fetchall()
+        return [_turn(r) for r in rows]
+
+
+def turn_count(session, after_id=0):
+    return count("SELECT COUNT(*) FROM turns WHERE session=? AND id>?", session or "default", after_id)
+
+
+def memory(session):
+    """{"summary": str, "upto_turn_id": int, "facts": [str]} for a session (empty when none)."""
+    try:
+        m = json.loads(get(f"memory:{session or 'default'}") or "{}")
+    except ValueError:
+        m = {}
+    return {"summary": m.get("summary") or "", "upto_turn_id": int(m.get("upto_turn_id") or 0),
+            "facts": [f for f in (m.get("facts") or []) if isinstance(f, str)][:40]}
+
+
+def put_memory(session, mem):
+    put(f"memory:{session or 'default'}", json.dumps({
+        "summary": (mem.get("summary") or "")[:1200], "upto_turn_id": int(mem.get("upto_turn_id") or 0),
+        "facts": [f[:200] for f in (mem.get("facts") or []) if isinstance(f, str)][:40]}))
+
+
+# ---------------------------------------------------------------- reminders (the assistant's own diary)
+
+def add_reminder(due_ts, text, session="default"):
+    with db() as c:
+        return c.execute("INSERT INTO reminders (due_ts, text, session, status, created_at) VALUES (?,?,?,?,?)",
+                         (due_ts, (text or "")[:300], session or "default", "open", now())).lastrowid
+
+
+def reminders(status="open", limit=50):
+    with db() as c:
+        return [dict(r) for r in c.execute("SELECT * FROM reminders WHERE status=? ORDER BY due_ts LIMIT ?", (status, limit))]
+
+
+def due_reminders():
+    """Open reminders whose time has come (oldest first)."""
+    return [r for r in reminders("open") if r["due_ts"] <= now()]
+
+
+def dismiss_reminder(reminder_id, status="done"):
+    with db() as c:
+        c.execute("UPDATE reminders SET status=?, done_at=? WHERE id=? AND status='open'", (status, now(), reminder_id))
+        return c.execute("SELECT changes()").fetchone()[0] > 0
+
+
+def search_activity(query="", employee="", days=7, limit=15):
+    """Activity lines matching a word or phrase, newest first."""
+    since = (datetime.now(timezone.utc) - timedelta(days=max(1, int(days or 7)))).isoformat()
+    q = f"%{(query or '').strip()}%"
+    with db() as c:
+        sql = "SELECT * FROM activity WHERE ts>=? AND text LIKE ?"
+        args = [since, q]
+        if employee:
+            sql += " AND employee=?"
+            args.append(employee)
+        sql += " ORDER BY id DESC LIMIT ?"
+        args.append(limit)
+        return [dict(r) for r in c.execute(sql, args)]

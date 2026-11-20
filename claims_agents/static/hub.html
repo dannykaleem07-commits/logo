@@ -141,6 +141,8 @@ svg.i{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.75;str
 .pulse{width:7px;height:7px;border-radius:50%;background:var(--green);position:relative}
 .pulse::after{content:"";position:absolute;inset:0;border-radius:50%;background:inherit;animation:ping 2.4s var(--out) infinite}
 .pulse.amber{background:var(--amber)}
+.pulse.red{background:var(--red)}
+.status.off{color:var(--red);border-color:rgba(255,123,123,.35)}
 @keyframes ping{0%{transform:scale(1);opacity:.7}80%,100%{transform:scale(2.8);opacity:0}}
 .icon-btn{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;color:var(--ink-2);transition:background var(--d-fast) var(--soft),color var(--d-fast) var(--soft),transform var(--d-fast) var(--spring)}
 @media (hover:hover) and (pointer:fine){.icon-btn:hover{background:var(--glass-2);color:var(--ink)}}
@@ -330,6 +332,9 @@ kbd{font:500 11px var(--sans);padding:2px 6px;border-radius:6px;border:1px solid
 .seg button{height:30px;padding:0 12px;border-radius:9px;font-size:13px;color:var(--ink-2);font-weight:500;transition:color var(--d-fast),background var(--d-base) var(--soft)}
 .seg button.on{background:var(--glass-3);color:var(--ink);box-shadow:inset 0 1px 0 var(--hi),0 1px 2px rgba(0,0,0,.15),0 0 0 1px var(--hair)}
 .frow{display:grid;grid-template-columns:minmax(0,1.1fr) 150px minmax(0,2fr) 90px 80px;gap:18px;align-items:center;padding:16px 22px;cursor:pointer;transition:background var(--d-fast) var(--soft);position:relative}
+.fhead{display:grid;grid-template-columns:minmax(0,1.1fr) 150px minmax(0,2fr) 90px 80px;gap:18px;padding:12px 22px 10px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600;border-bottom:1px solid var(--hair)}
+.fhead span:last-child{text-align:right}
+@media (max-width:980px){.fhead{display:none}}
 .frow+.frow::before{content:"";position:absolute;left:22px;right:22px;top:0;height:1px;background:var(--hair)}
 @media (hover:hover) and (pointer:fine){.frow:hover{background:var(--glass-2)}}
 .frow .c b{display:block;font-weight:500}
@@ -422,6 +427,8 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 var(--r-xl) var(--r-xl);
 /* ---------- voice overlay ---------- */
 .voice{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:24px;background:rgba(var(--bg-rgb),.76);backdrop-filter:blur(40px) saturate(1.4);-webkit-backdrop-filter:blur(40px) saturate(1.4);opacity:0;pointer-events:none;visibility:hidden;transition:opacity .5s var(--soft),visibility .5s}
 .voice.on{opacity:1;pointer-events:auto;visibility:visible}
+/* opened from the chat sheet on a desktop: the stage docks to the left of the sheet so the live captions in the chat stay in view */
+@media (min-width:761px) and (pointer:fine){.voice.docked{right:var(--dock,500px);transition:opacity .5s var(--soft),visibility .5s,right .3s var(--out)}.voice.docked .v-cap{width:min(640px,100%)}}
 .voice>*{transition:transform .7s var(--spring),opacity .4s var(--soft);transform:translateY(18px) scale(.97);opacity:0}
 .voice.on>*{transform:none;opacity:1}
 .voice.on>:nth-child(2){transition-delay:.04s}.voice.on>:nth-child(3){transition-delay:.1s}.voice.on>:nth-child(4){transition-delay:.16s}.voice.on>:nth-child(5){transition-delay:.22s}
@@ -439,8 +446,49 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 var(--r-xl) var(--r-xl);
 .v-state{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
 .voice[data-state="listening"] .v-state{color:var(--green)}
 .voice[data-state="speaking"] .v-state{color:var(--accent)}
-.v-text{font-size:23px;line-height:1.45;letter-spacing:-.02em;text-align:center;max-width:640px;min-height:68px;color:var(--ink);text-wrap:balance}
-.v-text.user{color:var(--ink-2);font-family:var(--serif);font-style:italic;font-size:26px;letter-spacing:0}
+/* captions: what he said (sans, live words settle as they are confirmed) above what she says (serif, one line per spoken chunk, the current one lit) */
+.v-cap{width:min(760px,100%);display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;min-height:110px;justify-content:center}
+.cap-user{font-size:22px;line-height:1.4;letter-spacing:-.015em;color:var(--ink-2);max-width:100%;text-wrap:balance;overflow-wrap:anywhere}
+.cap-user:empty{display:none}
+.cap-user .w{display:inline;transition:opacity .12s var(--soft)}
+.cap-user .w.dim{opacity:.55}
+.cap-user .live{opacity:.65;transition:opacity .12s var(--soft)}
+.cap-user .caret{display:none;width:2px;height:.9em;background:var(--accent);vertical-align:-2px;margin-left:3px;animation:bl 1s steps(1) infinite}
+.voice[data-state="listening"] .cap-user .caret{display:inline-block}
+.cap-user.final{color:var(--ink)}
+.cap-list{list-style:none;margin:0;padding:0 6px;display:flex;flex-direction:column;gap:4px;width:100%;max-height:36vh;overflow:auto;overscroll-behavior:contain;scrollbar-width:none;mask:linear-gradient(transparent,#000 10%,#000 90%,transparent);-webkit-mask:linear-gradient(transparent,#000 10%,#000 90%,transparent)}
+.cap-list::-webkit-scrollbar{display:none}
+.cap-list:empty{display:none}
+.cap-list li{font-family:var(--serif);font-size:29px;line-height:1.3;letter-spacing:-.005em;color:var(--ink);opacity:.32;position:relative;padding:4px 0 8px;text-wrap:balance;overflow-wrap:anywhere;transition:opacity .35s var(--soft)}
+.cap-list li.now{opacity:1}
+.cap-list li.done{opacity:.68}
+.cap-list li.cut{opacity:.35;text-decoration:line-through;text-decoration-color:var(--ink-3)}
+.cap-list li.now::after{content:"";position:absolute;left:50%;bottom:2px;width:min(180px,60%);height:2px;border-radius:2px;background:var(--accent);transform:translateX(-50%) scaleX(var(--p,0));transform-origin:50% 50%;transition:transform .1s linear}
+.cap-cue{font-size:14px;color:var(--ink-3);max-width:560px;line-height:1.45;text-wrap:balance}
+.cap-cue:empty{display:none}
+.cap-cue.warn{color:var(--amber)}
+.cap-follow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:0}
+.cap-follow:empty{display:none}
+.v-strip{list-style:none;margin:0;padding:0;width:min(760px,100%);display:flex;flex-direction:column;gap:2px;font-size:13.5px;color:var(--ink-3);max-height:92px;overflow:hidden}
+.v-strip:empty{display:none}
+.v-strip li{display:flex;gap:10px;justify-content:center;align-items:baseline;opacity:.55;min-width:0;max-width:100%}
+.v-strip li:last-child{opacity:1}
+.v-strip .u,.v-strip .a{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;max-width:48%}
+.v-strip .u{color:var(--ink-2)}
+.v-strip .a{font-family:var(--serif);font-size:15px;color:var(--ink-2);cursor:pointer;border-radius:6px}
+@media (hover:hover) and (pointer:fine){.v-strip .a:hover{color:var(--ink)}}
+.v-strip .sep{color:var(--ink-3);opacity:.6}
+/* the same captions inside the chat sheet while voice is on */
+.msg.a .cap-list{max-height:none;mask:none;-webkit-mask:none;gap:2px;padding:0}
+.msg.a .cap-list li{font-family:var(--sans);font-size:14.5px;line-height:1.6;letter-spacing:-.006em;padding:0 0 3px;text-wrap:initial;opacity:.45}
+.msg.a .cap-list li.now{opacity:1}.msg.a .cap-list li.done{opacity:.8}
+.msg.a .cap-list li.now::after{left:0;transform:scaleX(var(--p,0));transform-origin:0 50%;width:60px;bottom:0}
+.msg.u.live{opacity:.6}
+.chips.follow{margin:8px 0 0;justify-content:flex-start}
+.chips.follow .chip{height:28px;font-size:12.5px}
+.ai-off{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-3);padding:6px 12px;border-radius:999px;border:1px dashed var(--hair-2);margin:-28px auto 20px;position:relative;z-index:3}
+.ai-off i{width:7px;height:7px;border-radius:50%;background:var(--amber);flex:none}
+.chips.dim .chip{opacity:.55}
 .v-ctl{display:flex;gap:10px;align-items:center}
 .v-ctl .round{width:50px;height:50px;border:1px solid var(--hair-2);background:var(--glass-2);box-shadow:inset 0 1px 0 var(--hi)}
 @media (hover:hover) and (pointer:fine){.v-ctl .round:hover{background:var(--glass-3)}}
@@ -556,6 +604,10 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 var(--r-xl) var(--r-xl);
 /* =========================================================
    TOUCH (iPhone, iPad, Android): hit targets, 16px fields, press feedback, no tilt
    ========================================================= */
+/* any touch screen (incl. an iPad on the desktop layout, where the media queries can miss): fields never zoom, targets never under 44px */
+html.touch input,html.touch select,html.touch textarea,html.touch .in,html.touch .search input{font-size:16px!important}
+html.touch .btn,html.touch .chip,html.touch .seg button{min-height:44px}
+html.touch .sw{width:48px;height:44px} html.touch .sw span{inset:auto;top:50%;left:4px;width:40px;height:23px;margin-top:-11.5px} html.touch .sw input{inset:-11px -8px}
 /* hold to send (touch screens): the ring that fills while Approve is held */
 .hold{position:relative;display:inline-flex;touch-action:none;border-radius:16px}
 .hold .btn{position:relative;z-index:1;transition:transform .9s var(--out),filter .2s}
@@ -565,10 +617,10 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 var(--r-xl) var(--r-xl);
 .hold.sent .btn{transform:scale(1.02)}
 .hold-hint{font-size:12px;color:var(--ink-3);margin-left:auto}
 
-@media (pointer:coarse){
-  input,select,textarea,.in,.search input,.composer textarea,.v-opt select{font-size:16px}
+@media (pointer:coarse),(hover:none){
+  input,select,textarea,.in,.search input,.composer textarea,.v-opt select,.ask input,#fileQ{font-size:16px!important}
   .search input{height:44px}
-  .btn{min-height:44px} .btn.sm{min-height:40px}
+  .btn{min-height:44px} .btn.sm{min-height:40px} .deck-act .btn{min-height:44px}
   .icon-btn,.round{width:44px;height:44px}
   .chip{min-height:44px;padding:0 15px}
   .seg button{min-height:44px}
@@ -738,10 +790,14 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 var(--r-xl) var(--r-xl);
   .msg{font-size:15px}
   .welcome{padding:28px 6px 6px}
   /* voice: full-bleed stage, near-opaque (no blur under the particle canvas) */
-  .voice{height:100vh;height:100dvh;padding:calc(20px + env(safe-area-inset-top,0px)) var(--gxr) calc(22px + env(safe-area-inset-bottom,0px)) var(--gx);background:rgba(var(--bg-rgb),.94);backdrop-filter:none;-webkit-backdrop-filter:none;gap:18px}
-  .v-orb{flex:none;width:min(260px,64vw,44vh);height:auto;aspect-ratio:1}
-  .v-text{font-size:20px;min-height:58px;line-height:1.4}
-  .v-text.user{font-size:23px}
+  .voice{height:100vh;height:100dvh;padding:calc(20px + env(safe-area-inset-top,0px)) var(--gxr) calc(22px + env(safe-area-inset-bottom,0px)) var(--gx);background:radial-gradient(90% 60% at 50% 0%,var(--bg-2),var(--bg) 70%);backdrop-filter:none;-webkit-backdrop-filter:none;gap:14px}
+  .v-orb{flex:none;width:min(240px,60vw,36vh);height:auto;aspect-ratio:1}
+  .v-cap{min-height:84px;gap:8px}
+  .cap-user{font-size:18px}
+  .cap-list{max-height:26vh}
+  .cap-list li{font-size:23px;padding:2px 0 7px}
+  .cap-cue{font-size:13px}
+  .v-strip{max-height:46px;font-size:12.5px}
   .v-ctl{gap:14px}
   .v-ctl .round{width:56px;height:56px}
   .v-ctl .round svg{width:20px;height:20px}
@@ -771,7 +827,11 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 var(--r-xl) var(--r-xl);
   .readout{grid-template-columns:repeat(4,1fr);padding:10px 18px 46px}
   .voice{justify-content:flex-start;overflow:auto;gap:10px;padding-top:calc(10px + env(safe-area-inset-top,0px))}
   .v-orb{width:min(190px,34vh)}
-  .v-text{min-height:0;font-size:17px}
+  .v-cap{min-height:0}
+  .cap-user{font-size:16px}
+  .cap-list{max-height:22vh}
+  .cap-list li{font-size:19px;padding:1px 0 6px}
+  .v-strip{display:none}
   .v-ctl .round{width:48px;height:48px}
   .lock{gap:10px;flex-direction:row;flex-wrap:wrap;align-content:center;justify-content:center;column-gap:40px}
   .lock .pad{margin-top:0}
@@ -779,9 +839,10 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 var(--r-xl) var(--r-xl);
 }
 @media (max-height:700px) and (max-width:760px){
   .lock{gap:12px}
-  .lock .orb{width:64px;height:64px}
-  .lock .pad button{height:60px}
-  .lock .pad{gap:10px 16px}
+  .lock .orb{width:56px;height:56px}
+  .lock .pad button{height:64px}
+  .lock .pad{gap:8px 14px;margin-top:0}
+  .lock h2{font-size:22px}
 }
 
 /* =========================================================
@@ -826,6 +887,10 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 var(--r-xl) var(--r-xl);
 .steps li::marker{color:var(--ink-3);font-weight:600}
 .psec .foot{justify-content:center;margin-top:12px}
 .psec code{font-size:12px;background:var(--glass-2);padding:1px 6px;border-radius:6px;border:1px solid var(--hair)}
+.rep-act{display:flex;gap:6px;flex:none}
+.key-arm{display:inline-flex;gap:6px;align-items:center}
+details.it{margin-top:10px;font-size:12.5px;color:var(--ink-3)} details.it summary{cursor:pointer;color:var(--ink-3)} details.it code{font-size:12px}
+.badge.queued.wait{background:rgba(var(--amber-rgb),.14);color:var(--amber)}
 .tap-chip{position:fixed;left:50%;bottom:calc(var(--tabs-h,0px) + 70px);transform:translateX(-50%)}
 @media (prefers-reduced-motion:reduce){
   :root{--d-fast:0ms;--d-base:0ms;--d-slow:0ms;--d-sheet:0ms}
@@ -863,13 +928,19 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 var(--r-xl) var(--r-xl);
 <div class="voice" id="voice" role="dialog" aria-label="Voice assistant" data-state="idle">
   <div class="v-state" id="vState">Tap to talk</div>
   <button class="v-orb" id="vOrb" aria-label="Talk"><span class="v-ring"></span><span class="v-ring"></span><canvas id="vCanvas"></canvas></button>
-  <div class="v-text" id="vText"></div>
+  <div class="v-cap" id="vCap" aria-live="polite">
+    <div class="cap-user" id="capUser"><span class="settled"></span><span class="live"></span><span class="caret" aria-hidden="true"></span></div>
+    <ol class="cap-list" id="capList"></ol>
+    <div class="cap-cue" id="capCue"></div>
+    <div class="chips cap-follow" id="capFollow"></div>
+  </div>
+  <ol class="v-strip" id="vStrip" aria-label="Recent exchanges"></ol>
   <div class="v-ctl">
     <button class="round" id="vSpeak" title="Speak replies aloud" aria-label="Speak replies aloud"><svg class="i"><use href="#volume"/></svg></button>
     <button class="round" id="vHands" title="Hands-free: listen again after each reply" aria-label="Hands-free"><svg class="i"><use href="#loop"/></svg></button>
     <button class="round v-end" id="vEnd" aria-label="End voice"><svg class="i"><use href="#x"/></svg></button>
   </div>
-  <div class="v-opt"><span id="vHint">Space to talk · Esc to close</span><select id="voiceSel" aria-label="Voice"></select></div>
+  <div class="v-opt"><span id="vHint">Space to talk · Esc to close</span><select id="voiceSel" aria-label="Voice"></select><span id="vNoVoice" class="gone">Browser voice unavailable</span></div>
 </div>
 
 <div class="lock" id="lock" role="dialog" aria-modal="true" aria-label="Boss Hub is locked">
@@ -947,7 +1018,7 @@ function ago(ts){if(!ts)return"";const s=(Date.now()-new Date(ts))/1e3;if(s<50)r
 function agoText(ts){const a=ago(ts);return a==="now"?"just now":a?a+" ago":""}
 function plural(n,w){return `${n} ${w}${n===1?"":"s"}`}
 async function api(path,body,method){
-  const r=await fetch(path,{method:method||(body?"POST":"GET"),headers:body?{"Content-Type":"application/json"}:{},body:body?JSON.stringify(body):undefined});
+  let r; try{ r=await fetch(path,{method:method||(body?"POST":"GET"),headers:body?{"Content-Type":"application/json"}:{},body:body?JSON.stringify(body):undefined}); }catch(e){ const err=new Error("Can't reach the hub right now"); err.network=true; throw err; }
   const j=await r.json().catch(()=>({}));
   if(r.status===401&&j.error==="locked"){ showLock(j.pin!==false); const e=new Error("locked"); e.locked=true; throw e; }
   if(!r.ok) throw new Error(j.error||j.message||`Request failed (${r.status})`); return j;
@@ -989,9 +1060,10 @@ function renderBar(){
   if(!tabs.children.length) tabs.innerHTML=`<span class="tab-ind" id="ind"></span>`+TABS.map(([id,l])=>`<button class="tab" data-view="${id}" aria-label="${l}"><svg class="i ti" aria-hidden="true"><use href="#t-${id}"/></svg><span>${l}</span><span class="bd"></span></button>`).join("");
   $$("#tabs .tab").forEach(b=>{ b.classList.toggle("on",b.dataset.view===view); const bd=b.querySelector(".bd"), want=badge(b.dataset.view); if(bd.dataset.v!==want){bd.innerHTML=want;bd.dataset.v=want} });
   requestAnimationFrame(moveInd);
-  const live=S.demo?["amber","Demo"]:S.mailbox_ready&&S.ai_ready?["","Live"]:["amber","Setup needed"];
-  $("#status").innerHTML=`<span class="pulse ${live[0]}"></span><span class="lbl">${live[1]}${S.last_pass&&!S.demo?` · scanned ${ago(S.last_pass)} ago`:""}</span>`;
-  $("#themeBtn").innerHTML=ic(theme()==="dark"?"sun":"moon");
+  const live=offline?["red","Offline"]:S.demo?["amber","Demo"]:S.mailbox_ready&&S.ai_ready?["","Live"]:["amber","Setup needed"];
+  $("#status").classList.toggle("off",offline); $("#status").title=offline?"The hub is not answering; retrying every few seconds":"";
+  $("#status").innerHTML=`<span class="pulse ${live[0]}"></span><span class="lbl">${live[1]}${S.last_pass&&!S.demo&&!offline?` · scanned ${ago(S.last_pass)} ago`:""}</span>`;
+  $("#themeBtn").innerHTML=ic(theme()==="dark"?"sun":"moon"); $("#themeBtn").setAttribute("aria-label",theme()==="dark"?"Switch to light mode":"Switch to dark mode");
 }
 /* the pill indicator morphs: it first stretches to cover both tabs, then settles on the new one */
 let indPrev=null;
@@ -1053,8 +1125,8 @@ function deck(){
     <div class="readout" aria-label="Readout">
       <div>${cnt("d-aw",k.awaiting,k.awaiting?"hl":"")}Awaiting you</div>
       <div>${cnt("d-de",S.decisions_open||0,S.decisions_open?"warn":"")}Decisions</div>
-      <div>${cnt("d-ov",k.overdue,k.overdue?"warn":"")}Overdue</div>
-      <div>${cnt("d-fi",k.filed_today)}Filed today</div>
+      <div>${cnt("d-ov",k.overdue,k.overdue?"warn":"")}Waiting on them</div>
+      <div>${cnt("d-se",k.sent_week)}Sent this week</div>
     </div></section>`;
 }
 function vToday(){
@@ -1074,14 +1146,15 @@ function vToday(){
     <kbd>⌘K</kbd>
     <button type="button" class="ask-mic" data-mic aria-label="Talk to ${h(S.assistant)}">${ic("mic")}</button>
   </form>
-  <div class="chips">${["Brief me","What needs my approval?","Which files are overdue?","Switch Harry off"].map(c=>`<button class="chip" data-ask="${h(c)}">${h(c)}</button>`).join("")}</div>
+  <div class="chips ${S.ai_ready===false?"dim":""}">${["Brief me","What needs my approval?","Which files are overdue?","Switch Harry off"].map(c=>`<button class="chip" data-ask="${h(c)}">${h(c)}</button>`).join("")}</div>
+  ${S.ai_ready===false?`<div style="text-align:center;margin:-30px 0 30px"><span class="ai-off" style="margin:0"><i></i>${h(S.assistant)} is off until the Claude key is added on this computer</span></div>`:""}
   </div>
 
   <div class="card metrics tilt rv">
     <div class="metric">${spark(S.hourly)}<div class="v">${cnt("m-fi",k.filed_today)}</div><div class="l">Filed today</div></div>
     <div class="metric ${k.awaiting?"hl":""}"><div class="v">${cnt("m-aw",k.awaiting)}</div><div class="l">Awaiting you</div></div>
     <div class="metric"><div class="v">${cnt("m-se",k.sent_week)}</div><div class="l">Sent this week</div></div>
-    <div class="metric ${k.overdue?"warn":""}"><div class="v">${cnt("m-ov",k.overdue)}</div><div class="l">Waiting on others</div></div>
+    <div class="metric ${k.overdue?"warn":""}"><div class="v">${cnt("m-ov",k.overdue)}</div><div class="l">Waiting on them</div></div>
   </div>
 
   <div class="grid">
@@ -1105,7 +1178,7 @@ function a2hsHint(){
   return `<div class="a2hs rv" id="a2hs"><span class="shr">${ic("share")}</span><div><b>Add Boss Hub to your Home Screen</b><span>Tap Share ${ic("share")} then “Add to Home Screen”.</span></div><button class="icon-btn" data-a2hs aria-label="Dismiss">${ic("x")}</button></div>`;
 }
 function banner(){
-  if(S.demo) return `<div class="subtle">${ic("info")}<span>Sample data, nothing is emailed. Run <code>python -m claims_agents hub</code> for the real team.</span></div>`;
+  if(S.demo) return `<div class="subtle">${ic("info")}<span>Sample data, nothing is emailed.${S.ai_ready?"":` ${h(S.assistant)} and tasks are off in demo mode.`} Run <code>python -m claims_agents hub</code> for the real team.</span></div>`;
   if(!S.mailbox_ready) return `<div class="subtle">${ic("info")}<span>Add <code>MAIL_PASSWORD</code> to <code>.env</code> and restart, and the team starts on ${h(S.mailbox)}.</span></div>`;
   if(!S.ai_ready) return `<div class="subtle">${ic("info")}<span>Add <code>ANTHROPIC_API_KEY</code> to <code>.env</code> and restart to switch the team on.</span></div>`;
   return "";
@@ -1116,7 +1189,8 @@ function personRow(e){
   const now=!e.enabled?"Off":e.last?e.last.text:"Ready";
   return `<div class="person ri">${avatar(e,34)}<div class="main" data-person="${e.id}" role="button" tabindex="0"><div class="t">${h(e.name)}</div><div class="s">${h(now)}</div></div><label class="sw" title="${e.enabled?"Switch off":"Switch on"}"><input type="checkbox" data-toggle="${e.id}" ${e.enabled?"checked":""} aria-label="${h(e.name)}"><span></span></label></div>`;
 }
-function taskItem(t){const e=emp(t.employee);return `<button class="item ri" data-person="${e.id}">${avatar(e,34,false)}<span class="main"><span class="t">${h(t.title)}</span><span class="s">${h(first(e.name))} · ${t.status==="running"?"working on it":"queued"}</span></span><span class="badge ${t.status}">${t.status==="running"?"Working":"Queued"}</span></button>`}
+const waitKey=()=>S&&S.ai_ready===false;
+function taskItem(t){const e=emp(t.employee), w=t.status==="queued"&&waitKey();return `<button class="item ri" data-person="${e.id}">${avatar(e,34,false)}<span class="main"><span class="t">${h(t.title)}</span><span class="s">${h(first(e.name))} · ${t.status==="running"?"working on it":w?"waiting for the Claude key":"queued"}</span></span><span class="badge ${t.status} ${w?"wait":""}" title="${w?"Starts once ANTHROPIC_API_KEY is in .env and the hub restarts":""}">${t.status==="running"?"Working":w?"Waiting":"Queued"}</span></button>`}
 function tl(a){const e=who(a.employee);return `<div class="tl ri"><div class="when">${ago(a.ts)}</div><div class="node"><span style="background:hsl(${e.hue??220} 70% 55%);color:hsl(${e.hue??220} 70% 55%)"></span></div><div class="txt"><b>${h(first(e.name))}</b> ${h(a.text)}</div></div>`}
 
 /* ============ Approvals ============ */
@@ -1192,8 +1266,8 @@ function vTeam(){
 
 /* ============ Files ============ */
 function fileRowsHtml(){
-  const q=fileQ.toLowerCase(), rows=S.claims.filter(c=>(!q||c.folder.toLowerCase().includes(q)||(c.last_summary||"").toLowerCase().includes(q))&&(fileF==="all"||fileState(c)[0]===fileF));
-  return rows.map(c=>{const [k,l]=fileState(c), last=ago([c.last_inbound_at,c.last_outbound_at].filter(Boolean).sort().pop());return `<div class="frow ri" data-file="${h(c.folder)}" tabindex="0" role="button">
+  const q=fileQ.toLowerCase(), rows=S.claims.filter(c=>(!q||c.folder.toLowerCase().includes(q)||(c.client_name||"").toLowerCase().includes(q)||(c.reference||"").toLowerCase().includes(q)||(c.last_summary||"").toLowerCase().includes(q))&&(fileF==="all"||fileState(c)[0]===fileF));
+  return (PH||!rows.length?"":`<div class="fhead" aria-hidden="true"><span>Client</span><span>Status</span><span>Latest</span><span>Chase</span><span>Last move</span></div>`)+rows.map(c=>{const [k,l]=fileState(c), last=ago([c.last_inbound_at,c.last_outbound_at].filter(Boolean).sort().pop());return `<div class="frow ri" data-file="${h(c.folder)}" tabindex="0" role="button">
       <div class="c"><b>${h(c.client_name)}</b><span>${h(c.reference)}</span></div><div><span class="state ${k}"><i></i>${l}</span></div>
       <div class="sum">${h(c.last_summary||"")}</div><div class="ld"><div class="ladder" title="Chase step ${c.chase_level} of 5" aria-label="Chase step ${c.chase_level} of 5">${[1,2,3,4,5].map(i=>`<i class="${c.chase_level>=i?"on":""}"></i>`).join("")}</div></div>
       <div class="w num" style="text-align:right">${PH?`Last move ${last||"—"}`:last}</div></div>`}).join("")||`<div class="empty">No files match.</div>`;
@@ -1203,7 +1277,7 @@ function patchFiles(){ const r=$("#fileRows"); if(!r) return render(); r.classLi
 function vFiles(){
   const F=[["all","All"],["owe","We owe"],["wait","Waiting"],["draft","Drafted"]];
   const seg=`<div class="seg">${F.map(([k,l])=>`<button class="${fileF===k?"on":""}" data-filter="${k}">${l}</button>`).join("")}</div>`;
-  const search=`<div class="search">${ic("search")}<input id="fileQ" type="search" placeholder="Search" value="${h(fileQ)}" aria-label="Search files" autocomplete="off" autocorrect="off" enterkeyhint="search"></div>`;
+  const search=`<div class="search">${ic("search")}<input id="fileQ" type="search" placeholder="${PH?"Search name or reference":"Search name, reference or summary"}" value="${h(fileQ)}" aria-label="Search files" autocomplete="off" autocorrect="off" enterkeyhint="search"></div>`;
   return `<div class="view"><div class="page-h rv"><div><h1>Files</h1><p class="lede">${plural(S.claims.length,"open claim file")}, each a folder in the mailbox.</p></div>
     ${PH?"":`<div class="act">${seg}${search}</div>`}</div>
   ${PH?`<div class="ftools rv">${search}${seg}</div>`:""}
@@ -1232,15 +1306,18 @@ function countUps(root){
   });
 }
 let lastKey="";
-let lockedUntil=0;
+let lockedUntil=0, pollFails=0, offline=false;
+const NOISE=/^(Voice failed|Task \d+ failed|Traceback|Error:|WARNING)/i;   /* plumbing warnings are never staff activity */
 async function refresh(force){
   if(locked&&!force&&Date.now()<lockedUntil) return;   /* while the lock screen is up, poll gently */
   try{const n=await api("/api/state");try{n.reports=await api("/api/reports")}catch(e){n.reports=[]; if(e.locked) throw e;}
+    pollFails=0; if(offline){ offline=false; toast("Back online",1); if(S) renderBar(); }
     if(locked) hideLock();
+    n.activity=(n.activity||[]).filter(a=>!NOISE.test(a.text||"")); (n.employees||[]).forEach(e=>{ if(e.last&&NOISE.test(e.last.text||"")) e.last=null; });
     const key=JSON.stringify(n); if(!force&&key===lastKey)return;
     const typing=!force&&document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
     noteChanges(n); S=n; lastKey=key; if(typing){renderBar();return} render(!$("#main .view"));
-  }catch(e){ if(e&&e.locked){ lockedUntil=Date.now()+15000; return; } console.warn(e) }
+  }catch(e){ if(e&&e.locked){ lockedUntil=Date.now()+15000; return; } if(++pollFails>=2&&!offline){ offline=true; if(S) renderBar(); toast("Can't reach the hub, retrying"); } console.warn(e) }
 }
 /* view change: the old view fades up and away as a ghost while the new one rises in, staggered */
 function go(v){
@@ -1253,12 +1330,16 @@ function go(v){
 /* ============ sheets & modals ============ */
 function depth(){ const on=!!sheetFor||$("#modal").classList.contains("on"), root=document.documentElement; if(root.classList.contains("depth")===on) return; root.classList.toggle("depth",on);
   if(PH){ const st=$("#stage"); st.classList.add("moving"); clearTimeout(st._m); st._m=setTimeout(()=>st.classList.remove("moving"),720); } }
+let sheetOpener=null, modalOpener=null;
+function setInert(){ const on=!!sheetFor||$("#modal").classList.contains("on"); try{ $("#stage").inert=on; if(!PH){ const fab=$("#fab"); if(fab&&fab.parentElement===document.body) fab.inert=on; } }catch{} }
+function refocus(el){ if(el&&document.contains(el)&&!coarse&&!(el.closest&&el.closest("#sheet,#modal"))) try{ el.focus({preventScroll:true}); }catch{} }
 function openSheet(kind,id){
+  if(!sheetFor) sheetOpener=document.activeElement;
   sheetFor={kind,id}; const el=$("#sheet"); el.classList.toggle("tall",kind==="chat"||kind==="report"); renderSheet(true); el.classList.add("on","fresh"); el.querySelectorAll(".blk").forEach((b,j)=>b.style.setProperty("--j",j));
   clearTimeout(el._f); el._f=setTimeout(()=>el.classList.remove("fresh"),1000);
-  $("#scrim").classList.add("on"); $("#fab").classList.add("hidden"); depth();
+  $("#scrim").classList.add("on"); $("#fab").classList.add("hidden"); depth(); setInert();
 }
-function closeSheet(){sheetFor=null;$("#sheet").classList.remove("on","wide","fresh");if(!$("#modal").classList.contains("on"))$("#scrim").classList.remove("on");$("#fab").classList.remove("hidden");depth();if(document.activeElement&&$("#sheet").contains(document.activeElement))document.activeElement.blur()}
+function closeSheet(){const op=sheetOpener; sheetOpener=null; sheetFor=null; if(V.docked) dockVoice();$("#sheet").classList.remove("on","wide","fresh");if(!$("#modal").classList.contains("on"))$("#scrim").classList.remove("on");$("#fab").classList.remove("hidden");depth();setInert();if(document.activeElement&&$("#sheet").contains(document.activeElement))document.activeElement.blur();refocus(op)}
 function renderSheet(force){
   const el=$("#sheet"), {kind,id}=sheetFor; el.classList.toggle("wide",kind==="report");
   if(!force && el.querySelector("textarea:focus,input:focus,select:focus")) return;
@@ -1274,8 +1355,8 @@ function renderSheet(force){
         <div class="field"><input class="in" id="tTitle" placeholder="What do you need done?"></div>
         <div class="field"><textarea class="in" id="tDetails" placeholder="Details, deadlines, what you want back (optional)" style="min-height:70px"></textarea></div>
         <div class="row2"><select class="in" id="tFile" aria-label="Claim file"><option value="">No claim file</option>${S.claims.map(c=>`<option value="${h(c.folder)}">${h(label(c.folder))}</option>`).join("")}</select>
-        <button class="btn primary" data-give="${e.id}">${ic("arrow")}Give task</button></div></div>
-      <div class="blk"><h4>Tasks</h4>${tasks.length?tasks.map(t=>`<div class="task"><div class="t">${h(t.title)}<span class="badge ${t.status}">${t.status[0].toUpperCase()+t.status.slice(1)}</span></div>
+        <button class="btn primary" data-give="${e.id}">${ic("arrow")}Give task</button></div>${waitKey()?`<div class="spoken-hint" style="margin:10px 0 0">Waiting: the team needs the Claude key (<code>ANTHROPIC_API_KEY</code> in <code>.env</code>) before anyone can start.</div>`:""}</div>
+      <div class="blk"><h4>Tasks</h4>${tasks.length?tasks.map(t=>`<div class="task"><div class="t">${h(t.title)}<span class="badge ${t.status} ${t.status==="queued"&&waitKey()?"wait":""}" title="${t.status==="queued"&&waitKey()?"Starts once the Claude key is added":""}">${t.status==="queued"&&waitKey()?"Waiting":t.status[0].toUpperCase()+t.status.slice(1)}</span></div>
           <div class="s">${t.summary?h(t.summary):`<span class="muted">#${t.id} · ${agoText(t.created_at)}${t.folder?` · ${h(label(t.folder))}`:""}</span>`}</div>
           ${t.result?`<button class="link" data-open-task="${t.id}">${openTask===t.id?"Hide result":"Show result"}</button>${openTask===t.id?`<div class="result">${t.result}</div>`:""}`:""}
           ${t.status==="queued"?`<button class="link" data-cancel="${t.id}">Cancel</button>`:""}</div>`).join(""):`<div class="muted">No tasks yet.</div>`}</div>
@@ -1291,7 +1372,7 @@ function renderSheet(force){
         <dt>Chase step</dt><dd><div style="display:flex;align-items:center;gap:10px"><div class="ladder" aria-hidden="true">${[1,2,3,4,5].map(i=>`<i class="${c.chase_level>=i?"on":""}"></i>`).join("")}</div><span class="muted" style="font-size:12.5px">${c.chase_level} of 5</span></div></dd>
         <dt>Mailbox folder</dt><dd>${h(c.folder)}</dd></dl></div>
       <div class="blk"><h4>Give a task on this file</h4><div class="field"><select class="in" id="fEmp" aria-label="Employee">${S.employees.map(e=>`<option value="${e.id}">${h(e.name)}</option>`).join("")}</select></div>
-        <div class="field"><input class="in" id="tTitle" placeholder="e.g. Draft a letter before claim"></div><div class="foot"><button class="btn primary" data-give-file="${h(c.folder)}">${ic("arrow")}Give task</button></div></div>
+        <div class="field"><input class="in" id="tTitle" placeholder="e.g. Draft a letter before claim"></div><div class="foot"><button class="btn primary" data-give-file="${h(c.folder)}">${ic("arrow")}Give task</button></div>${waitKey()?`<div class="spoken-hint" style="margin:10px 0 0">Waiting: the team needs the Claude key before anyone can start.</div>`:""}</div>
       <div class="blk"><button class="btn" data-ask="Talk me through the ${h(c.client_name)} file (${h(c.reference)}) and what we should do next.">Ask ${h(S.assistant)} about this file</button></div></div>`;
   } else if(kind==="draft"){
     const d=S.drafts.find(x=>x.id===id); if(!d) return closeSheet(); const e=emp(d.agent);
@@ -1300,7 +1381,7 @@ function renderSheet(force){
       ${noteHtml(d.note)}<div class="letter">${d.body_html||`<p class="muted">Preview unavailable. Open it in the mailbox's Awaiting folder.</p>`}<div class="extras"><span>+ firm footer</span><span>High priority</span><span>Read receipt requested</span></div></div></div>
     <div class="decide"><span class="hold"><button class="btn accent" data-approve="${h(d.id)}">${ic("check")}Approve &amp; send</button><i class="hold-ring" aria-hidden="true"></i></span><button class="btn quiet" data-reject="${h(d.id)}">Reject</button><span class="hold-hint">Hold to send</span></div>`;
   } else if(kind==="report"){
-    el.innerHTML=`<div class="sheet-h">${avatar(emp("hemant"),36,false)}<div style="flex:1"><div class="t">Daily claims audit</div><div class="s">${h(reportDate(id))}</div></div>${coarse?`<a class="btn sm quiet" href="/reports/${encodeURIComponent(id)}" target="_blank" rel="noopener">Open</a>`:""}<button class="icon-btn" data-close aria-label="Close">${ic("x")}</button></div>
+    el.innerHTML=`<div class="sheet-h">${avatar(emp("hemant"),36,false)}<div style="flex:1"><div class="t">Daily claims audit</div><div class="s">${h(reportDate(id))}</div></div><span class="rep-act"><a class="btn sm quiet" href="/reports/${encodeURIComponent(id)}" target="_blank" rel="noopener">Open</a>${coarse?"":`<button class="btn sm quiet" data-print="${h(id)}">Print</button>`}</span><button class="icon-btn" data-close aria-label="Close">${ic("x")}</button></div>
       <div class="rep-wrap"><iframe class="rep" sandbox src="/reports/${encodeURIComponent(id)}" title="Hemant's report"></iframe></div>`;
   } else if(kind==="chat"){ renderChat(); }
 }
@@ -1321,15 +1402,15 @@ function attachDrag(el,getScroller,onDismiss){
 }
 attachDrag($("#sheet"),t=>t.closest(".sheet-b,.rep-wrap"),()=>closeSheet());
 attachDrag($("#modal"),()=>$("#modal"),()=>closeModal());
-function modal(html){$("#modal").innerHTML=html;$("#modal").classList.add("on");$("#scrim").classList.add("on");depth();$("#modal").scrollTop=0;if(!coarse)setTimeout(()=>$("#modal input,#modal textarea")?.focus(),80)}
-function closeModal(){$("#modal").classList.remove("on");if(!sheetFor)$("#scrim").classList.remove("on");depth()}
-const HUES=[222,162,268,342,24,196,46,300];
+function modal(html){if(!$("#modal").classList.contains("on")) modalOpener=document.activeElement;$("#modal").innerHTML=html;$("#modal").classList.add("on");$("#scrim").classList.add("on");depth();setInert();$("#modal").scrollTop=0;if(!coarse)setTimeout(()=>$("#modal input,#modal textarea")?.focus(),80)}
+function closeModal(){const op=modalOpener; modalOpener=null;$("#modal").classList.remove("on");if(!sheetFor)$("#scrim").classList.remove("on");depth();setInert();if(document.activeElement&&$("#modal").contains(document.activeElement))document.activeElement.blur();refocus(op)}
+const HUES=[222,162,268,342,24,196,46,300], HUE_NAMES={222:"Blue",162:"Teal",268:"Violet",342:"Rose",24:"Orange",196:"Sky",46:"Gold",300:"Magenta"};
 let hireHue=HUES[0];
 function hireModal(){
   hireHue=HUES[Math.floor(Math.random()*HUES.length)];
   modal(`<h3>Hire an employee</h3><p class="sub">They follow the firm's playbooks and your brief. Anything they draft comes to you first.</p>
     <div class="row2"><div class="field"><label for="hName">Name</label><input class="in" id="hName" placeholder="Sophie"></div><div class="field"><label for="hTitle">Role</label><input class="in" id="hTitle" placeholder="Total Loss Specialist"></div></div>
-    <div class="field"><label>Colour</label><div class="hues">${HUES.map(x=>`<button type="button" data-hue="${x}" class="${x===hireHue?"sel":""}" style="background:linear-gradient(140deg,hsl(${x} 80% 68%),hsl(${(x+28)%360} 65% 42%))" aria-label="Colour ${x}"></button>`).join("")}</div></div>
+    <div class="field"><label>Colour</label><div class="hues">${HUES.map(x=>`<button type="button" data-hue="${x}" class="${x===hireHue?"sel":""}" style="background:linear-gradient(140deg,hsl(${x} 80% 68%),hsl(${(x+28)%360} 65% 42%))" aria-label="${HUE_NAMES[x]||"Colour "+x}" title="${HUE_NAMES[x]||""}"></button>`).join("")}</div></div>
     <div class="field"><label for="hBrief">Brief</label><textarea class="in" id="hBrief" placeholder="What they own, how they work, and what to escalate to you" style="min-height:120px"></textarea></div>
     <div class="foot"><button class="btn quiet" data-close>Cancel</button><button class="btn primary" id="hSave">Hire</button></div>`);
 }
@@ -1339,7 +1420,8 @@ async function fetchPhone(){ try{ const r=await fetch("/api/phone",{cache:"no-st
 function phoneSection(p){
   if(!p) return "";
   if(p.phone) return `<div class="psec"><h4>Phone</h4><div class="muted" style="font-size:13.5px;line-height:1.5">Pair this phone from the office computer: open Settings → Phone there and scan the code, or enter the PIN it shows.</div></div>`;
-  if(!p.lan||!p.urls?.length) return `<div class="psec"><h4>Phone</h4><div class="subtle" style="margin:0">${ic("info")}<span>${h(p.hint||"No network address found. Is this computer on the office Wi-Fi?")}</span></div></div>`;
+  if(!p.lan||!p.urls?.length) return `<div class="psec"><h4>Phone</h4><div class="subtle" style="margin:0">${ic("info")}<span>Phones can't connect yet. Ask whoever set the hub up to start it with phone access on, then come back here for the pairing code.</span></div>
+    <div class="small muted" style="text-align:left;margin-top:10px"><b style="font-weight:600">For IT:</b> ${h(p.hint||"Start the hub with python -m claims_agents hub --phone, or set HUB_ALLOW_LAN=true in .env.")}</div></div>`;
   return `<div class="psec" id="phoneSec"><h4>Phone</h4>
     <div class="qr-tile" id="qrTile">${p.qr_svg||`<span class="small">Run <code>pip install segno</code> for a scannable code</span>`}</div>
     <div class="urls mono">${p.urls.map(u=>`<div>${h(u)}</div>`).join("")}</div>
@@ -1356,10 +1438,10 @@ function phoneSection(p){
 async function settingsModal(){
   const [tv,ph]=await Promise.all([S.tts_ready?api("/api/voices").catch(()=>({voices:[],current:""})):Promise.resolve(null),fetchPhone()]);
   if(tv) ttsVoices=tv;
-  modal(`<h3>Settings</h3><p class="sub">Mailbox, keys and timings live in <code>.env</code> on this computer.</p>
+  modal(`<h3>Settings</h3><p class="sub">Your assistant's name and voice. The mailbox and keys are set up by whoever installed the hub (the <code>.env</code> file on this computer).</p>
     <div class="field"><label for="sName">Assistant's name</label><input class="in" id="sName" value="${h(S.assistant)}"></div>
     ${S.tts_ready?`<div class="field"><label for="sTts">Voice</label><select class="in" id="sTts">${(ttsVoices?.voices||[]).map(v=>`<option value="${h(v.id)}" ${v.id===ttsVoices.current?"selected":""}>${h(v.name)} · ${h(v.note)}</option>`).join("")}</select>
-      <div class="spoken-hint" style="margin-left:0">Microsoft neural voices, free. <button class="link" id="sPreview" type="button">Preview</button></div></div>`
+      <div class="spoken-hint" style="margin-left:0">${ttsFails>=2||(ttsFails&&!ttsEverOk)?"The natural voice service is unreachable right now; the browser voice is used.":"Natural voices, free."} <button class="link" id="sPreview" type="button">Preview</button></div></div>`
       :`<div class="subtle" style="margin:0 0 12px">${ic("info")}<span>Run <code>pip install -r requirements.txt</code> for the natural voice. The browser voice is used for now.</span></div>`}
     <label class="remember" style="margin-bottom:10px"><input type="checkbox" id="sGreet" ${greetAloud?"checked":""}> Greet me out loud when the hub opens</label>
     <label class="remember" style="margin-bottom:14px"><input type="checkbox" id="sAnn" ${announce?"checked":""}> Tell me out loud when new drafts, decisions or results arrive</label>
@@ -1371,7 +1453,7 @@ async function settingsModal(){
 /* ============ events ============ */
 document.addEventListener("click",async ev=>{
   if(ev.target.closest(".sw")) return;  // switches are handled on change
-  const t=ev.target.closest("[data-opt],[data-decide],[data-dismiss],[data-rule-del],[data-ask-voice],[data-mic],#rAdd,#replayBtn,#deckOrb,[data-view],[data-person],[data-file],[data-draft],[data-approve],[data-reject],[data-hire],[data-close],[data-hue],[data-give],[data-give-file],[data-brief],[data-fire],[data-cancel],[data-open-task],[data-report],[data-filter],[data-ask],[data-a2hs],#themeBtn,#setBtn,#hSave,#sSave,#askMic,#fab,#newCode,#forgetPhones");
+  const t=ev.target.closest("[data-opt],[data-decide],[data-dismiss],[data-rule-del],[data-ask-voice],[data-mic],#rAdd,#replayBtn,#deckOrb,[data-view],[data-person],[data-file],[data-draft],[data-approve],[data-reject],[data-hire],[data-close],[data-hue],[data-give],[data-give-file],[data-brief],[data-fire],[data-cancel],[data-open-task],[data-report],[data-print],[data-filter],[data-ask],[data-a2hs],#themeBtn,#setBtn,#hSave,#sSave,#askMic,#fab,#newCode,#forgetPhones");
   if(!t)return; const d=t.dataset;
   try{
     if(d.view) return go(d.view);
@@ -1381,13 +1463,14 @@ document.addEventListener("click",async ev=>{
       const typed=$("#dAns"+id).value.trim(), chosen=opts[chosenOpt[id]??0]||""; if(!typed&&!chosen) return toast("Pick an option or type what to do");
       t.disabled=true; const r=await api(`/api/decisions/${id}/answer`,{answer:typed,chosen,remember:$("#dRem"+id).checked});
       toast(r.rule_id?"Decided. Saved as a standing order.":"Decided.",1); return refresh(true); }
-    if(d.dismiss){ await api(`/api/decisions/${d.dismiss}/dismiss`,{}); return refresh(true); }
-    if(d.ruleDel) return confirmInline(t,"Delete this order?",async()=>{ await api("/api/rules/"+d.ruleDel,null,"DELETE"); refresh(true); });
+    if(d.dismiss) return confirmInline(t,"Dismiss without deciding?",async()=>{ await api(`/api/decisions/${d.dismiss}/dismiss`,{}); toast("Dismissed"); refresh(true); });
+    if(d.ruleDel) return confirmInline(t,"Delete this order?",async()=>{ await api("/api/rules/"+d.ruleDel,null,"DELETE"); toast("Order deleted"); refresh(true); });
     if(d.askVoice!==undefined){ openVoice(false); return askText(d.askVoice,true); }
     if(d.mic!==undefined) return openVoice(true);
     if(d.person!==undefined) return openSheet("person",d.person);
     if(d.file) return openSheet("file",d.file);
     if(d.report) return openSheet("report",d.report);
+    if(d.print){ const w=window.open("/reports/"+encodeURIComponent(d.print),"_blank"); if(w) w.addEventListener("load",()=>{ try{ w.print(); }catch{} }); return; }
     if(d.draft){ selDraft=d.draft; if(PH) return openSheet("draft",d.draft); if(view!=="approvals") return go("approvals"); return render(); }
     if(d.filter){ fileF=d.filter; return patchFiles(); }
     if(d.hire) return hireModal();
@@ -1397,12 +1480,12 @@ document.addEventListener("click",async ev=>{
     if(d.approve){ if(PH||coarse) return; return decide(d.approve,true,t); }   /* on touch screens approve is hold-to-send (pointer events below) */
     if(d.reject){ if(!(PH||coarse)) return decide(d.reject,false,t); return confirmInline(t,"Reject this draft?",()=>decide(d.reject,false,t)); }
     if(d.give){ const title=$("#tTitle").value.trim(); if(!title) return toast("What's the task?");
-      await api("/api/tasks",{employee:d.give,title,details:$("#tDetails").value,folder:$("#tFile").value}); toast(`Task given to ${first(emp(d.give).name)}`,1); $("#tTitle").value="";$("#tDetails").value=""; document.activeElement.blur(); return refresh(true); }
+      await api("/api/tasks",{employee:d.give,title,details:$("#tDetails").value,folder:$("#tFile").value}); toast(S.ai_ready?`Task given to ${first(emp(d.give).name)}`:"Task saved; it starts once the team is switched on",1); $("#tTitle").value="";$("#tDetails").value=""; document.activeElement.blur(); return refresh(true); }
     if(d.giveFile){ const title=$("#tTitle").value.trim(); if(!title) return toast("What's the task?"); const e=$("#fEmp").value;
-      await api("/api/tasks",{employee:e,title,details:"",folder:d.giveFile}); toast(`Task given to ${first(emp(e).name)}`,1); $("#tTitle").value=""; return refresh(true); }
+      await api("/api/tasks",{employee:e,title,details:"",folder:d.giveFile}); toast(S.ai_ready?`Task given to ${first(emp(e).name)}`:"Task saved; it starts once the team is switched on",1); $("#tTitle").value=""; return refresh(true); }
     if(d.brief){ await api("/api/employees/"+d.brief,{role_prompt:$("#brief").value}); toast("Brief saved",1); document.activeElement.blur(); return refresh(true); }
     if(d.fire) return confirmInline(t,`Remove ${first(emp(d.fire).name)} from the team?`,async()=>{ await api("/api/employees/"+d.fire,null,"DELETE"); closeSheet(); toast("Removed"); refresh(true); });
-    if(d.cancel){ await api(`/api/tasks/${d.cancel}/cancel`,{}); return refresh(true); }
+    if(d.cancel){ await api(`/api/tasks/${d.cancel}/cancel`,{}); toast("Task cancelled"); return refresh(true); }
     if(d.openTask){ openTask=openTask===+d.openTask?null:+d.openTask; return renderSheet(true); }
     switch(t.id){
       case "fab": return openChat();
@@ -1454,9 +1537,9 @@ async function decide(id,approve,btn){
 }
 document.addEventListener("change",async ev=>{
   const t=ev.target;
-  if(t.dataset.ruleToggle){ try{ await api("/api/rules/"+t.dataset.ruleToggle,{active:t.checked?1:0}); refresh(true);}catch(e){toast(e.message)} return; }
+  if(t.dataset.ruleToggle){ try{ await api("/api/rules/"+t.dataset.ruleToggle,{active:t.checked?1:0}); toast(t.checked?"Order active again":"Order retired",1); refresh(true);}catch(e){ t.checked=!t.checked; toast(e.message); } return; }
   if(!t.dataset.toggle) return;
-  try{ await api(`/api/employees/${t.dataset.toggle}/toggle`,{on:t.checked}); toast(`${first(emp(t.dataset.toggle).name)} is ${t.checked?"on":"off"}`,1); t.blur(); refresh(true);}catch(e){toast(e.message)}
+  try{ await api(`/api/employees/${t.dataset.toggle}/toggle`,{on:t.checked}); toast(`${first(emp(t.dataset.toggle).name)} is ${t.checked?"on":"off"}`,1); t.blur(); refresh(true);}catch(e){ t.checked=!t.checked; toast(e.message); }
 });
 document.addEventListener("input",ev=>{ if(ev.target.id==="fileQ"){ fileQ=ev.target.value; patchFiles(); } });
 document.addEventListener("touchstart",()=>{},{passive:true});  /* WebKit only applies :active to touches once a touchstart listener exists */
@@ -1466,19 +1549,29 @@ document.addEventListener("keydown",ev=>{
   const voiceOn=$("#voice").classList.contains("on");
   if((ev.metaKey||ev.ctrlKey)&&ev.key.toLowerCase()==="k"){ ev.preventDefault(); return openChat(); }
   if(locked){ if(/^[0-9]$/.test(ev.key)) return lockKey(ev.key); if(ev.key==="Backspace") return lockKey("del"); if(ev.key==="Enter") return lockKey("ok"); return; }
-  if(ev.key==="Escape"){ if(voiceOn) return closeVoice(); if($("#modal").classList.contains("on")) return closeModal(); if(sheetFor) return closeSheet(); }
-  if(voiceOn&&ev.code==="Space"&&!typing){ ev.preventDefault(); if(!micOK()){ closeVoice(); return openChat(); } return listening?stopListening():startListening(); }
+  if(ev.key==="Tab"&&!voiceOn){ const box=$("#modal").classList.contains("on")?$("#modal"):sheetFor?$("#sheet"):null; if(box) trapTab(ev,box); }
+  if(ev.key==="Escape"){ if(keyArm){ clearTimeout(keyArm.t); toast(keyArm.cancelMsg); keyArm=null; return; } if(voiceOn) return closeVoice(); if($("#modal").classList.contains("on")) return closeModal(); if(sheetFor) return closeSheet(); }
+  if(voiceOn&&ev.code==="Space"&&!typing){ ev.preventDefault(); if(ev.repeat) return; if(!micOK()){ closeVoice(); return openChat(); } return spaceKeyDown(); }
   if(typing||sheetFor||voiceOn||$("#modal").classList.contains("on")) return;
   if(/^[1-5]$/.test(ev.key)) return go(TABS[+ev.key-1][0]);
   if(view==="approvals"&&S?.drafts.length){
     const L=S.drafts,i=L.findIndex(x=>x.id===selDraft);
     if(ev.key==="j"||ev.key==="ArrowDown"){ev.preventDefault();selDraft=(L[i+1]||L[i]).id;render()}
     if(ev.key==="k"||ev.key==="ArrowUp"){ev.preventDefault();selDraft=(L[i-1]||L[i]).id;render()}
-    if(ev.key==="a") decide(selDraft,true); if(ev.key==="r") decide(selDraft,false);
+    if(keyArm&&ev.key.toLowerCase()===keyArm.key){ const k=keyArm; keyArm=null; clearTimeout(k.t); if(k.go) k.go(); else toast(k.cancelMsg); return; }
+    if(ev.key==="a"&&!keyArm){ const id=selDraft; keyArm={key:"u",cancelMsg:"Not sent.",t:setTimeout(()=>{ keyArm=null; decide(id,true); },1800)}; toast("Sending in a moment… press U to undo"); }
+    if(ev.key==="r"&&!keyArm){ const id=selDraft; keyArm={key:"u",cancelMsg:"Kept.",t:setTimeout(()=>{ keyArm=null; decide(id,false); },1000)}; toast("Rejected in a moment… press U to keep it"); }
   }
   const f=document.activeElement?.dataset; if(ev.key==="Enter"&&f?.person) openSheet("person",f.person); if(ev.key==="Enter"&&f?.file) openSheet("file",f.file);
   if((ev.key==="Enter"||ev.code==="Space")&&document.activeElement?.id==="deckOrb"){ ev.preventDefault(); openVoice(true); }
 });
+document.addEventListener("keyup",ev=>{ if(ev.code==="Space"&&spaceDown){ const typing=/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName); if(!typing) ev.preventDefault(); spaceKeyUp(); } });
+let keyArm=null;
+/* dialogs keep the keyboard inside them, and the page behind is inert while one is open */
+function trapTab(ev,box){ const f=[...box.querySelectorAll("a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex='-1']),iframe")].filter(e=>e.offsetParent!==null||e.tagName==="IFRAME"); if(!f.length) return;
+  const first=f[0], last=f[f.length-1], inside=box.contains(document.activeElement);
+  if(!inside){ ev.preventDefault(); (ev.shiftKey?last:first).focus(); return; }
+  if(ev.shiftKey&&document.activeElement===first){ ev.preventDefault(); last.focus(); } else if(!ev.shiftKey&&document.activeElement===last){ ev.preventDefault(); first.focus(); } }
 $("#scrim").addEventListener("click",()=>{ if($("#modal").classList.contains("on")) closeModal(); else closeSheet(); });
 
 /* ---- cursor materials: cards tilt toward the pointer (≤3°), the stage layers parallax ---- */
@@ -1509,10 +1602,16 @@ function openChat(){ openSheet("chat"); if(!coarse) setTimeout(()=>$("#chatIn")?
 function md(t){const L=h(t).split("\n");let o="",ul=false;for(const l of L){const m=l.match(/^\s*[-•*]\s+(.*)/);if(m){if(!ul){o+="<ul>";ul=true}o+=`<li>${m[1]}</li>`}else{if(ul){o+="</ul>";ul=false}if(l.trim())o+=`<p>${l}</p>`}}if(ul)o+="</ul>";return o.replace(/\*\*(.+?)\*\*/g,"<strong>$1</strong>")}
 /* the chat sheet is built once; replies and the thinking dots only patch #chatBody, so the composer (and the iPhone keyboard) stay put */
 let chatDraft="", lastChatHtml="";
+const aiOffPill=()=>S&&S.ai_ready===false?`<div class="ai-off" style="margin:0 0 14px"><i></i>${h(S.assistant)} is off until the Claude key is added on this computer</div>`:"";
 function chatBodyHtml(){
-  return history.length?`<div class="chat">${history.map(m=>`<div class="msg ${m.role==="user"?"u":"a"}">${m.role==="user"?h(m.content):md(m.content)}${(m.actions||[]).map(a=>`<span class="done-tag">${ic("check")}${h(a)}</span>`).join("")}</div>`).join("")}${thinking?`<div class="msg a"><span class="dots"><i></i><i></i><i></i></span></div>`:""}</div>`
-    :`<div class="welcome"><div class="orb"><i></i><i></i><i></i></div><h3>How can I help, ${h(S.director)}?</h3><p>I watch the whole team. Ask for a briefing, or tell me to switch someone off or hand out a task.</p>
-      <div class="chips">${["Brief me","What needs my approval?","Which files are overdue?","Give Hemant an audit of the Rafiq file"].map(c=>`<button class="chip" data-ask="${h(c)}">${h(c)}</button>`).join("")}</div></div>`;
+  const voiceOn=V.mode!=="off", last=history.length-1;
+  const liveUser=voiceOn&&(V.state==="listening"||V.state==="ending")&&(capSettled.length||capLive)?`<div class="msg u live">${h((capSettled.map(w=>w.text).join(" ")+" "+capLive).trim())}</div>`:"";
+  const dots=thinking?`<div class="msg a"><span class="dots"><i></i><i></i><i></i></span></div>`:"";
+  return (history.length||liveUser||(voiceOn&&dots))?`<div class="chat">${history.map((m,i)=>{
+      const caps=voiceOn&&i===last&&m.role==="assistant"&&V.plan&&V.plan.length?`<ol class="cap-list">${V.plan.map((c,k)=>`<li class="${c.st||"queued"}" data-ci="${k}">${h(c.text)}</li>`).join("")}</ol>`:null;
+      return `<div class="msg ${m.role==="user"?"u":"a"}">${m.role==="user"?h(m.content):(caps||md(m.content))}${(m.actions||[]).map(a=>`<span class="done-tag">${ic("check")}${h(a)}</span>`).join("")}${i===last&&m.role==="assistant"&&(m.followups||[]).length?`<div class="chips follow">${m.followups.slice(0,3).map(c=>`<button class="chip" data-ask="${h(c)}">${h(c)}</button>`).join("")}</div>`:""}</div>`; }).join("")}${liveUser}${dots}</div>`
+    :`<div class="welcome"><div class="orb"><i></i><i></i><i></i></div><h3>How can I help, ${h(S.director)}?</h3><p>I watch the whole team. Ask for a briefing, or tell me to switch someone off or hand out a task.</p>${aiOffPill()}
+      <div class="chips ${S.ai_ready===false?"dim":""}">${["Brief me","What needs my approval?","Which files are overdue?","Give Hemant an audit of the Rafiq file"].map(c=>`<button class="chip" data-ask="${h(c)}">${h(c)}</button>`).join("")}</div></div>`;
 }
 function renderChat(){
   const el=$("#sheet"), had=el.querySelector("#chatIn");
@@ -1535,17 +1634,32 @@ function renderChatBody(){
   const b=$("#chatBody"); if(!b) return; const html=chatBodyHtml(); if(html===lastChatHtml) return; lastChatHtml=html;
   b.innerHTML=html; b.scrollTop=b.scrollHeight; $("#clearChat")?.classList.toggle("gone",!history.length);
 }
+const humanErr=e=>e&&e.locked?"The hub is locked":(e&&/Failed to fetch|NetworkError|Load failed|network/i.test(e.message||""))?"Can't reach the hub right now":(e&&e.message)||"Something went wrong";
 async function askText(text,spoken){
   text=(text||"").trim(); if(!text||thinking) return;
   if(!spoken && sheetFor?.kind!=="chat") openSheet("chat");
-  history.push({role:"user",content:text}); thinking=true; if(sheetFor?.kind==="chat") renderChat(); orbs.forEach(o=>o.set("thinking"));
-  if(spoken) vSet("Thinking",undefined,text);
+  if(spoken){ if(V.state!=="thinking"&&!vGo("thinking","ask")) return; V.lastUser=text; V.turns.push({role:"user",text,ts:Date.now()}); trimTurns(); renderStrip(); cueStart(); if(V.mode==="overlay"&&!capFinal){ capSettled=[{text}]; capLive=""; capFinal=true; captionUser(); } }
+  else thinking=true;
+  history.push({role:"user",content:text}); if(sheetFor?.kind==="chat") renderChat(); orbs.forEach(o=>o.set("thinking"));
+  const seq=V.seq, session=sessionId();
   try{
-    const r=await api("/api/assistant",{history:history.map(({role,content})=>({role,content})),voice:!!spoken});
-    history.push({role:"assistant",content:r.reply,actions:r.actions}); if(r.actions?.length) refresh(true);
-    thinking=false; if(sheetFor?.kind==="chat") renderChat(); orbs.forEach(o=>o.set("idle"));
-    if(spoken){ vSet("", r.reply); if(speakOn) speak(r.reply); else if(handsFree) setTimeout(startListening,400); }
-  }catch(e){ thinking=false; orbs.forEach(o=>o.set("idle")); history.push({role:"assistant",content:"I couldn't reach the team: "+e.message}); if(sheetFor?.kind==="chat") renderChat(); if(spoken) vSet("","Sorry, something went wrong."); }
+    const r=await api("/api/assistant",{history:history.map(({role,content})=>({role,content})),voice:!!spoken,session,session_id:session,client_time:new Date().toISOString(),
+      anchors:{view,open_sheet:sheetFor?{kind:sheetFor.kind,id:sheetFor.id}:null,selected_draft:selDraft}});
+    const reply=String(r.reply||""), setup=r.setup==="api_key"||/^I need a Claude API key/i.test(reply), follow=r.followups||r.suggestions||[];
+    history.push({role:"assistant",content:r.show||reply,actions:r.actions,followups:follow}); if(r.actions?.length) refresh(true);
+    if(!spoken){ thinking=false; if(sheetFor?.kind==="chat") renderChat(); orbs.forEach(o=>o.set("idle")); }
+    else{
+      if(V.seq!==seq||V.state!=="thinking"){ if(sheetFor?.kind==="chat") renderChat(); history=history.slice(-40); ls.set("hub.chat",history); return; }   /* cancelled or closed meanwhile */
+      clearTimeout(cueT); V.setupNeeded=setup;
+      const say=setup?"I'm not connected to Claude yet. The setup note is in the chat.":String(r.speak||reply);
+      V.turns.push({role:"assistant",text:say,ts:Date.now()}); trimTurns(); renderStrip();
+      if(sheetFor?.kind==="chat") renderChat();
+      if(setup) capCue(NOKEY,true);
+      if(speakOn){ const how=await speakReply(say,{kind:"reply"}); if(how!=="cut"&&(setup||follow.length)){ if(setup) capCue(NOKEY,true); capFollowups(follow); } }
+      else { lastSaid=V.lastSaid=say; captionReply(splitSpeech(say),{done:true}); capFollowups(follow); afterSpeech(); }
+    }
+  }catch(e){ const msg=humanErr(e); history.push({role:"assistant",content:"I couldn't reach the team: "+msg}); if(sheetFor?.kind==="chat") renderChat();
+    if(spoken){ if(V.seq===seq&&V.state==="thinking"){ clearTimeout(cueT); V.noRearm=true; vGo("idle","failed"); capCue("Sorry, "+msg.toLowerCase()+". Try again in a moment.",true); } } else { thinking=false; orbs.forEach(o=>o.set("idle")); } }
   history=history.slice(-40); ls.set("hub.chat",history);
 }
 
@@ -1561,33 +1675,151 @@ function micProblem(){
   return coarse?"This browser has no speech recognition. Typing works here.":"Voice needs Chrome or Edge on this computer. Typing works here.";
 }
 let micTold=false;
-function vSet(state,text,user){
-  $("#vState").textContent=state||(listening?"Listening":speaking?"Speaking":thinking?"Thinking":micOK()?"Tap to talk":"Tap to type");
-  $("#voice").dataset.state=listening?"listening":speaking?"speaking":thinking?"thinking":"idle";
-  const t=$("#vText"); if(user!==undefined){t.textContent=user;t.classList.add("user")} else if(text!==undefined){t.textContent=text.length>260?text.slice(0,260)+"…":text;t.classList.remove("user")}
+const sessionId=()=>{ let v=ls.get("hub.session",""); if(!v){ v=(crypto.randomUUID?crypto.randomUUID():Date.now().toString(36)+Math.random().toString(36).slice(2)); ls.set("hub.session",v); } return v; };
+
+/* ---- one state machine for the whole voice surface ----
+   mode : off | overlay | chat        state: idle | listening | ending | thinking | speaking
+   vGo() is the only place the state changes; every async continuation (fetch loops, timers, recogniser callbacks) captures
+   V.seq and bails when it moved, which is what makes cancel / barge-in / close safe. */
+const NOKEY="Add your Claude API key on the office computer to talk to me.";
+const V={mode:"off",state:"idle",seq:0,timer:null,idleCycles:0,lastSaid:"",lastUser:"",turns:ls.get("hub.vturns",[]),log:[],vadOff:false,setupNeeded:false,netFail:false,noRearm:false,rearming:false,idleSince:Date.now(),ptt:false,opener:null,label:"",barges:0,plan:null,cur:-1,kind:""};
+const VOK={idle:["listening","thinking","speaking"],listening:["ending","idle"],ending:["thinking","idle"],thinking:["speaking","listening","idle"],speaking:["listening","idle"]};
+function vGo(next,why){
+  const prev=V.state;
+  if(next!==prev&&!(VOK[prev]||[]).includes(next)){ V.log.push(`${prev}->${next} refused (${why||""})`); if(V.log.length>80) V.log.shift(); return false; }
+  if(next==="idle"||next==="listening") V.seq++;                    /* leaving an interruptible state: stale loops stop themselves */
+  clearTimeout(V.timer); V.timer=null; V.rearming=false; V.label="";
+  V.state=next; if(next==="idle") V.idleSince=Date.now();
+  listening=next==="listening"||next==="ending"; speaking=next==="speaking"; if(V.mode!=="off"||next==="thinking"||prev==="thinking") thinking=next==="thinking";
+  V.log.push(`${prev}->${next} ${why||""}`); if(V.log.length>80) V.log.shift();
+  vRender(); if(sheetFor?.kind==="chat"&&V.mode!=="off") renderChatBody();   /* the chat mirror follows the machine (thinking dots go when she speaks) */
+  return true;
+}
+const orbState=()=>({idle:"idle",listening:"listening",ending:"listening",thinking:"thinking",speaking:"speaking"}[V.state]);
+function vRender(){
+  const v=$("#voice"); v.dataset.state=V.state==="ending"?"listening":V.state;
+  $("#vState").textContent=V.label||(V.rearming?"Listening":{listening:"Listening",ending:"Got it",thinking:"Thinking",speaking:"Speaking"}[V.state]||(micOK()?"Tap to talk":"Tap to type"));
+  $("#vOrb").classList.toggle("live",V.state==="listening"||V.state==="speaking");
+  orbs.forEach(o=>o.set(orbState()));
+  const st=$("#deckState"); if(st){ const s=V.state==="idle"?"online":V.state==="ending"?"listening":V.state; if(st.textContent!==s) st.textContent=s; }
+}
+function vLabel(t){ V.label=t||""; vRender(); }
+/* kept for the old call sites and the test harness: it now only reads the machine */
+function vSet(state){ if(state!==undefined) V.label=state||""; vRender(); }
+
+/* ---- captions ---- */
+let capSettled=[], capLive="", lastInterim="", capFinal=false;
+function captionUser(){
+  const el=$("#capUser"), s=el.querySelector(".settled"), l=el.querySelector(".live");
+  s.innerHTML=capSettled.map(w=>`<span class="w ${w.conf!==undefined&&w.conf!==null&&w.conf!==0&&w.conf<.6?"dim":""}">${h(w.text)}</span>`).join(" ");
+  l.textContent=(capSettled.length&&capLive?" ":"")+capLive; el.classList.toggle("final",capFinal);
+  if(sheetFor?.kind==="chat"&&V.mode!=="off") renderChatBody();
+}
+function clearCaptions(){ capSettled=[]; capLive=""; lastInterim=""; capFinal=false; captionUser(); V.plan=null; V.chunks=null; V.cur=-1; curChunk=-1; $("#capList").innerHTML=""; $("#capFollow").innerHTML=""; }
+function captionReply(chunks,{done=false}={}){
+  V.chunks=chunks; V.plan=[]; V.cur=-1; curChunk=-1; chunkFrac=0;
+  chunks.forEach((c,k)=>{ c.first=V.plan.length; (c.sents||[{text:c.text,from:0,to:1}]).forEach(x=>V.plan.push({text:x.text,from:x.from,to:x.to,chunk:k,st:done?"done":"queued"})); });
+  const plan=V.plan;
+  $("#capList").innerHTML=plan.map((c,i)=>`<li class="${c.st}" data-ci="${i}">${h(c.text)}</li>`).join("");
+  if(V.setupNeeded) capCue(NOKEY,true); else capCue("");
+  if(sheetFor?.kind==="chat") renderChatBody();
+}
+function capMark(i,st){
+  if(!V.plan||!V.plan[i]) return; V.plan[i].st=st; if(st==="now") V.cur=i; else if(V.cur===i) V.cur=-1;
+  $$(`.cap-list li[data-ci="${i}"]`).forEach(li=>{ li.className=st; li.style.removeProperty("--p"); });
+  if(st==="now"){ const li=$(`#capList li[data-ci="${i}"]`); if(li&&li.scrollIntoView&&$("#capList").scrollHeight>$("#capList").clientHeight+4) try{ li.scrollIntoView({block:"center",behavior:reduced?"auto":"smooth"}); }catch{} }
+}
+function capProgress(p){ if(V.cur<0) return; $$(`.cap-list li[data-ci="${V.cur}"]`).forEach(li=>li.style.setProperty("--p",Math.max(0,Math.min(1,p)).toFixed(3))); }
+/* a chunk is one TTS request holding one or more caption lines: the lit line advances inside it from the audio clock
+   (word boundaries from the server when it sends them, otherwise time in proportion to the text) */
+let curChunk=-1, curBounds=null, chunkFrac=0;
+function chunkSents(k){ const c=V.chunks&&V.chunks[k]; if(!c) return []; const n=(c.sents||[1]).length; return V.plan.slice(c.first,c.first+n).map((x,j)=>c.first+j); }
+function chunkStart(k,bounds){ curChunk=k; curBounds=bounds||null; chunkFrac=0; chunkStartAt=performance.now(); const first=chunkSents(k)[0]; if(first!==undefined&&V.plan[first].st!=="cut") capMark(first,"now"); }
+function chunkDone(k){ chunkSents(k).forEach(i=>{ if(V.plan[i].st!=="cut"&&V.plan[i].st!=="done") capMark(i,"done"); }); if(curChunk===k) curChunk=-1; }
+function chunkSpoken(frac){
+  if(curChunk<0||!V.plan) return; frac=Math.max(chunkFrac,Math.max(0,Math.min(1,frac||0))); chunkFrac=frac;
+  for(const i of chunkSents(curChunk)){ const x=V.plan[i]; if(x.st==="cut") continue;
+    if(frac>=x.to&&x.to<1){ if(x.st!=="done") capMark(i,"done"); continue; }
+    if(x.st!=="now") capMark(i,"now"); capProgress((frac-x.from)/Math.max(.01,x.to-x.from)); break; }
+}
+/* X-Word-Boundaries: [[offset_ms,duration_ms,text],...] -> the fraction of the chunk's text spoken at t seconds */
+function boundsFrac(bounds,t){
+  if(!bounds||!bounds.length) return null; const ms=t*1000; let total=0; for(const b of bounds) total+=String(b[2]||"").length+1; if(!total) return null;
+  let cum=0, frac=0; for(const b of bounds){ const len=String(b[2]||"").length+1; if(ms<b[0]) break; frac=(cum+len*Math.min(1,(ms-b[0])/Math.max(1,b[1]||1)))/total; cum+=len; }
+  return frac;
+}
+function parseBounds(hdr){ if(!hdr) return null; try{ const raw=atob(hdr); const j=JSON.parse(("TextDecoder" in window)?new TextDecoder().decode(Uint8Array.from(raw,c=>c.charCodeAt(0))):raw); return Array.isArray(j)?j:null; }catch{ return null; } }
+function capCue(text,warn){ const c=$("#capCue"); c.textContent=text||""; c.classList.toggle("warn",!!warn); }
+function capFollowups(list){ $("#capFollow").innerHTML=(list||[]).slice(0,3).map(t=>`<button class="chip" data-say="${h(t)}">${h(t)}</button>`).join(""); }
+const CUES=["One moment.","Checking the files.","Let me look.","Just a second."]; let lastCue=-1, cueT=null;
+function cueStart(){ let i; do{ i=Math.floor(Math.random()*CUES.length); }while(i===lastCue); lastCue=i; const seq=V.seq;
+  clearTimeout(cueT); cueT=setTimeout(()=>{ if(V.seq===seq&&V.state==="thinking") capCue(CUES[i]); },700); }
+function trimTurns(){ V.turns=V.turns.slice(-12); ls.set("hub.vturns",V.turns); }
+function renderStrip(){
+  const pairs=[]; for(let i=0;i<V.turns.length;i++){ const t=V.turns[i]; if(t.role==="user"){ const a=V.turns[i+1]&&V.turns[i+1].role==="assistant"?V.turns[i+1]:null; pairs.push([t,a]); if(a) i++; } }
+  const busy=V.state==="thinking"||V.state==="speaking"||V.state==="ending"||(V.turns.length&&V.turns[V.turns.length-1].role==="user"&&V.state!=="idle");
+  const last=pairs.slice(-3), cur=busy?last.slice(0,-1):last;   /* the exchange in progress is on the captions, not the strip */
+  $("#vStrip").innerHTML=cur.map(([u,a])=>`<li><span class="u">${h(u.text)}</span>${a?`<span class="sep">·</span><button class="a" data-replay="${h(a.text)}" title="Hear it again">${h(firstSentence(a.text))}</button>`:""}</li>`).join("");
+}
+function firstSentence(t){ const m=String(t||"").match(/^.*?[.!?](\s|$)/); return (m?m[0]:t).trim(); }
+
+/* ---- open / close ---- */
+function dockVoice(){
+  /* beside the chat sheet (desktop only): the captions the sheet mirrors must be visible, not under the overlay */
+  const on=!coarse&&innerWidth>760&&sheetFor?.kind==="chat"&&V.mode==="overlay"; const v=$("#voice");
+  if(on){ const w=$("#sheet").getBoundingClientRect().width||480; v.style.setProperty("--dock",Math.round(w+20)+"px"); }
+  v.classList.toggle("docked",on); V.docked=on;
 }
 function openVoice(listen){
-  $("#voice").classList.add("on"); $("#fab").classList.add("hidden"); vSet("",""); syncVoiceBtns();
-  $("#vHint").textContent=coarse?"Tap the orb to talk":"Space to talk · Esc to close";
-  if(!micOK()){ vSet("Microphone unavailable",micProblem()); $("#vHint").textContent=coarse?"Tap the orb to type instead":"Tap the orb to type instead · Esc to close"; if(!micTold){ micTold=true; toast(micProblem()); } return; }
-  if(listen) startListening();
+  if(V.mode!=="overlay"){ V.opener=document.activeElement; V.mode="overlay"; V.idleCycles=0; V.barges=0; }
+  dockVoice();
+  if(V.state!=="idle"){ recAbort(); audioStop(); }   /* a greeting or announcement in flight gives way to him */
+  $("#voice").classList.add("on"); $("#fab").classList.add("hidden"); syncVoiceBtns(); vGo("idle","open"); clearCaptions(); renderStrip(); vadStart();
+  $("#vHint").textContent=coarse?"Tap the orb to talk":"Space to talk · hold it to push-to-talk · Esc to close";
+  if(!micOK()){ $("#vHint").textContent=coarse?"Tap the orb to type instead":"Tap the orb to type instead · Esc to close";
+    if(!micTold){ micTold=true; toast(micProblem()); if(canSpeak) speakReply(iOS&&standalone()?"Voice input works in Safari on this phone. You can type here.":"I can't hear you in this browser, but you can type to me.",{kind:"line"}); }
+    vLabel("Microphone unavailable"); capCue(micProblem(),true); return; }
+  if(S&&S.ai_ready===false){ V.setupNeeded=true; capCue(NOKEY,true); }
+  if(listen) recStart("open");
 }
-function closeVoice(){ stopListening(); stopSpeaking(); $("#voice").classList.remove("on"); if(!sheetFor) $("#fab").classList.remove("hidden"); }
-$("#vEnd").onclick=closeVoice; $("#vOrb").onclick=()=>{ if(!micOK()){ closeVoice(); return openChat(); } listening?stopListening():startListening(); };
+function closeVoice(){
+  const was=V.mode; V.mode="off"; V.seq++; clearTimeout(V.timer); V.timer=null; V.ptt=false; recAbort(); audioStop(); micClose();
+  vGo("idle","close"); clearTimeout(cueT);
+  $("#voice").classList.remove("on","docked"); V.docked=false; if(!sheetFor) $("#fab").classList.remove("hidden");
+  if(sheetFor?.kind==="chat") renderChatBody();
+  if(was==="overlay"&&V.opener&&document.contains(V.opener)&&!coarse){ try{ V.opener.focus({preventScroll:true}); }catch{} } V.opener=null;
+}
+function orbTap(){
+  if(!micOK()){ closeVoice(); return openChat(); }
+  if(V.state==="listening") return recFinish("tap");
+  if(V.state==="speaking"||V.state==="idle") return recStart("tap");
+}
+$("#vEnd").onclick=closeVoice; $("#vOrb").onclick=orbTap;
 $("#vSpeak").onclick=()=>{speakOn=!speakOn;ls.set("hub.speak",speakOn);syncVoiceBtns();if(!speakOn)stopSpeaking()};
-$("#vHands").onclick=()=>{handsFree=!handsFree;ls.set("hub.hands",handsFree);syncVoiceBtns()};
+$("#vHands").onclick=()=>{handsFree=!handsFree;ls.set("hub.hands",handsFree);syncVoiceBtns(); if(handsFree&&V.mode==="overlay"&&V.state==="idle") recStart("hands-free on"); };
+$("#voice").addEventListener("click",ev=>{ const r=ev.target.closest("[data-replay]"); if(r){ replayText(r.dataset.replay); return; } const f=ev.target.closest("[data-say]"); if(f){ if(V.state==="speaking") audioStop(); if(V.state!=="idle") vGo("idle","chip"); askText(f.dataset.say,true); } });
+function replayText(t){ if(!t) return; if(V.state==="speaking") audioStop(); if(V.state!=="idle") vGo("idle","replay"); captionReply(splitSpeech(t)); speakReply(t,{kind:"replay"}); }
 function loadVoices(){
   if(!canSpeak) return; voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
   const rank=v=>(/natural|neural|online|premium|enhanced/i.test(v.name)?0:4)+(/en-GB/i.test(v.lang)?0:2)+(/libby|sonia|maisie|serena|kate|martha|female/i.test(v.name)?0:/daniel|arthur|oliver/i.test(v.name)?.5:1);
   voices.sort((a,b)=>rank(a)-rank(b)); const sel=$("#voiceSel"), saved=ls.get("hub.voice","");
-  sel.innerHTML=voices.map(v=>`<option ${v.name===saved?"selected":""}>${h(v.name)}</option>`).join(""); sel.style.display=voices.length?"":"none";
+  sel.innerHTML=voices.map(v=>`<option ${v.name===saved?"selected":""}>${h(v.name)}</option>`).join(""); sel.style.display=voices.length?"":"none"; $("#vNoVoice").classList.toggle("gone",!!voices.length||!!S?.tts_ready);
 }
-if(canSpeak){loadVoices();speechSynthesis.onvoiceschanged=loadVoices} else $("#voiceSel").style.display="none";
+if(canSpeak){loadVoices();speechSynthesis.onvoiceschanged=loadVoices} else { $("#voiceSel").style.display="none"; $("#vNoVoice").classList.remove("gone"); }
 $("#voiceSel").onchange=e=>ls.set("hub.voice",e.target.value);
-/* ---- speech out: natural voice sentence by sentence (fast start), browser voice as fallback ---- */
+
+/* ---- speech out: the natural voice chunk by chunk (short first sentence, one fetch ahead, cached), browser voice as fallback ---- */
 let previewVoice=null;
-document.addEventListener("click",ev=>{ if(ev.target.id==="sPreview"){ gestured=true; previewVoice=$("#sTts").value; speak(`Hello ${S.director}. This is how I'll sound.`,{replay:true}).finally?.(()=>{}); setTimeout(()=>previewVoice=null,15000); } });
-const ttsEl=$("#ttsAudio"); let ttsCtx=null, ttsAn=null, lastSaid="", speakSeq=0, pendingSay=null;
+document.addEventListener("click",async ev=>{ if(ev.target.id!=="sPreview") return; const b=ev.target; if(b.disabled) return; b.disabled=true; b.textContent="Playing…"; gestured=true; previewVoice=$("#sTts")?.value||null;
+  try{ const how=await speakReply(`Hello ${S.director}. This is how I'll sound.`,{kind:"preview"});
+    toast(how==="neural"?"That's the natural voice":how==="browser"?"The natural voice is unreachable right now; that was the browser voice":how==="none"?"No voice is available on this computer":"Stopped"); }
+  finally{ previewVoice=null; b.disabled=false; b.textContent="Preview"; } });
+const ttsEl=$("#ttsAudio"); let actx=null, ttsAn=null, ttsGain=null, lastSaid="", speakSeq=0, pendingSay=null;
+let ttsFails=0, ttsRetryAt=0, ttsEverOk=false, ttsToldOffline=false, noVoiceTold=false;
+const ttsHealthy=()=>{ if(ttsFails>=2&&Date.now()<ttsRetryAt) return false; if(ttsFails>=2) ttsFails=0; return true; };
+function ttsFail(){ ttsFails++; if(!ttsToldOffline){ ttsToldOffline=true; const have=canSpeak&&(voices.length||speechSynthesis.getVoices().length); if(have) toast("Natural voice offline, using the browser voice"); else if(!noVoiceTold){ noVoiceTold=true; toast("No voice available on this device, reading it here"); } } if(ttsFails>=2) ttsRetryAt=Date.now()+5*60*1000; }
+/* one AudioContext for the page: created inside a gesture and reused by the mic analyser and the TTS analyser */
+function getCtx(){ if(!actx){ try{ actx=new(window.AudioContext||window.webkitAudioContext)(); }catch{} } return actx; }
 /* iOS unlocks audio per element, inside a real gesture (touchend/pointerup/keydown, never pointerdown): play a silent clip through the ONE
    <audio> element that every sentence reuses, and start the AudioContext while we are still inside the gesture */
 const SILENT="data:audio/wav;base64,UklGRjQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YRAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -1597,54 +1829,238 @@ function unlockAudio(){
   if(!unlocked){ unlocked=true;
     try{ if(navigator.audioSession&&navigator.audioSession.type!=="playback") navigator.audioSession.type="playback"; }catch{}
     try{ if(!speaking){ ttsEl.src=SILENT; const p=ttsEl.play(); if(p&&p.catch) p.catch(()=>{}); } }catch{}
-    try{ ttsAnalyser(); if(ttsCtx&&ttsCtx.state!=="running") ttsCtx.resume().catch(()=>{}); }catch{}
+    try{ const c=getCtx(); if(c&&c.state!=="running") c.resume().catch(()=>{}); ttsAnalyser(); }catch{}
   }
   if(pendingGreeting){ pendingGreeting=false; if(greetAloud) speak(greetingText); }
   else if(pendingSay){ const t=pendingSay; pendingSay=null; speak(t,{replay:true}); }
 }
 ["touchend","pointerup","keydown"].forEach(t=>addEventListener(t,unlockAudio,{passive:true,capture:true}));
-function clean(t){return t.replace(/\*\*|[#*_`]/g,"").replace(/^\s*[-•]\s*/gm,"").replace(/\s+/g," ").trim()}
-/* no regex lookbehind here: it is a parse-time SyntaxError on iOS < 16.4 and would stop the whole page */
-function sentences(t){const out=[];let buf="";for(const part of t.replace(/([.!?])\s+(?=[A-Z0-9£"'])/g,"$1\u0001").split("\u0001")){buf=buf?buf+" "+part:part;if(buf.length>=40){out.push(buf);buf=""}}if(buf)out.push(buf);return out.length?out:[t]}
-/* the analyser only wires the <audio> into Web Audio once the context is really running, and never on phones: Web Audio output obeys the
-   iPhone silent switch and can go quiet after an interruption, while the plain element keeps playing. The orb then animates from the envelope. */
-function ttsAnalyser(){ if(ttsAn) return ttsAn; if(coarse) return null;
-  try{ if(!ttsCtx) ttsCtx=new(window.AudioContext||window.webkitAudioContext)(); if(ttsCtx.state!=="running") return null;
-    const src=ttsCtx.createMediaElementSource(ttsEl); ttsAn=ttsCtx.createAnalyser(); ttsAn.fftSize=256; ttsAn.smoothingTimeConstant=.8; src.connect(ttsAn); ttsAn.connect(ttsCtx.destination);}catch{} return ttsAn; }
-function onSpeakStart(){speaking=true;vSet();$("#vOrb").classList.add("live");orbs.forEach(o=>o.set("speaking"))}
-function onSpeakEnd(){speaking=false;$("#vOrb").classList.remove("live");vSet();orbs.forEach(o=>o.set(listening?"listening":"idle")); if(handsFree&&$("#voice").classList.contains("on")) setTimeout(startListening,300)}
-function stopSpeaking(){ speakSeq++; if(canSpeak) speechSynthesis.cancel(); try{const u=ttsEl.currentSrc||ttsEl.src;ttsEl.pause();ttsEl.removeAttribute("src");ttsEl.load();if(u&&u.startsWith("blob:"))URL.revokeObjectURL(u)}catch{} if(speaking) onSpeakEnd(); }
-async function speak(text,{replay=false}={}){
-  text=clean(text); if(!text) return; stopSpeaking(); const seq=speakSeq; if(!replay) lastSaid=text;
-  if(S?.tts_ready){
-    try{
-      ttsAnalyser(); if(ttsCtx&&ttsCtx.state!=="running") await Promise.race([ttsCtx.resume().catch(()=>{}),new Promise(r=>setTimeout(r,300))]);  /* a locked context never hangs speech */
-      const parts=sentences(text);
-      const fetches=parts.map(p=>fetch("/api/tts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:p,voice:previewVoice||undefined})}).then(r=>r.ok?r.blob():null).catch(()=>null));
-      onSpeakStart(); let blocked=false;
-      for(const f of fetches){ if(seq!==speakSeq) return; const b=await f; if(!b){ throw new Error("tts"); }
-        await new Promise(res=>{ const url=URL.createObjectURL(b), done=()=>{ URL.revokeObjectURL(url); res(); }; ttsEl.src=url; ttsEl.onended=ttsEl.onerror=done;
-          const p=ttsEl.play(); if(p&&p.catch) p.catch(err=>{ if(err&&err.name==="NotAllowedError") blocked=true; done(); }); });
-        if(blocked) break; }
-      if(seq!==speakSeq) return; onSpeakEnd();
-      if(blocked){ pendingSay=text; unlocked=false; toast(`Tap anywhere to hear ${S.assistant}`); }   /* iOS refused to play outside a gesture: the next tap replays it */
-      return;
-    }catch{ if(seq!==speakSeq) return; /* fall through to the browser voice */ }
-  }
-  if(!canSpeak){ onSpeakEnd(); return; }
-  const u=new SpeechSynthesisUtterance(text);
-  const v=voices.find(v=>v.name===ls.get("hub.voice",""))||voices[0]; if(v){u.voice=v;u.lang=v.lang} u.rate=1.03;
-  let iv=null; u.onstart=()=>{ onSpeakStart(); clearInterval(iv); iv=setInterval(()=>{energy=1},120); };   /* iOS never fires onboundary: keep the orb moving anyway */
-  u.onboundary=()=>{energy=1}; u.onend=u.onerror=()=>{ clearInterval(iv); if(seq===speakSeq) onSpeakEnd(); };
-  setTimeout(()=>{ if(seq===speakSeq) speechSynthesis.speak(u); },60);   /* WebKit drops an utterance queued in the same tick as cancel() */
+/* text -> speech text: markdown off, money and symbols as words, identifiers and references readable; never deletes underscores inside words */
+function speakify(t){
+  t=String(t||"").replace(/\r/g,"").replace(/```[\s\S]*?```/g," ").replace(/`([^`]*)`/g,"$1");
+  t=t.replace(/\*\*(.+?)\*\*/g,"$1").replace(/(^|\s)[*_]([^*_\n]+)[*_](?=[\s.,;:!?)]|$)/g,"$1$2").replace(/^\s*#{1,6}\s*/gm,"").replace(/^\s*[-•*]\s+/gm,"").replace(/^\s*\d+\.\s+/gm,"");
+  t=t.replace(/\bhttps?:\/\/([^\s/]+)[^\s]*/gi,(m,host)=>host.replace(/^www\./,"")).replace(/\b[\w.-]+@[\w.-]+\.\w+\b/g,"their email");
+  t=t.replace(/£\s?(\d[\d,]*)\.(\d{2})\b/g,(m,a,b)=>`${a} pounds ${+b?+b+" pence":""}`.trim()).replace(/£\s?(\d[\d,]*)\b/g,"$1 pounds").replace(/\bGBP\b/g,"pounds");
+  t=t.replace(/\b(ref(?:erence)?\.?)\s+([A-Z]{2,}[\w/-]*)/gi,(m,r,id)=>r+" "+id.replace(/[-/]/g," ").replace(/([A-Z])(?=[A-Z])/g,"$1 "));
+  t=t.replace(/pounds\/(day|week|month|year|hour|mile)\b/g,"pounds a $1").replace(/(\d)\s?%/g,"$1 percent").replace(/\s&\s/g," and ").replace(/(\w)\/(\w)/g,(m,a,b)=>/^\d+$/.test(a)&&/^\d+$/.test(b)?m:`${a} or ${b}`);
+  t=t.replace(/\s-\s/g," — ").replace(/\.\.\./g,"…");
+  return t.replace(/[ \t]+/g," ").replace(/\n{2,}/g,"\n").trim();
 }
+function clean(t){ return speakify(t).replace(/\s+/g," ").trim(); }
+const ABBR=/\b(Mr|Mrs|Ms|Dr|Prof|Sgt|St|Ltd|Co|No|Ref|approx|vs?|i\.e|e\.g|etc|cf|Inc|Jr|Sr)\./g;
+function fnv(s){ let x=2166136261; for(let i=0;i<s.length;i++){ x^=s.charCodeAt(i); x=Math.imul(x,16777619); } return (x>>>0).toString(16); }
+/* abbreviation-aware splitter: chunk 1 is one short sentence (fast first sound), later chunks group up to ~140 chars, never across a
+   line break. Each chunk is one TTS request; its sentences (with their character span inside the chunk) are the caption lines. */
+function splitSpeech(text,voice){
+  const t=speakify(text); if(!t) return []; const out=[]; const vid=voice||previewVoice||ttsVoices?.current||"";
+  const push=list=>{ list=list.map(x=>x.replace(/․/g,".").trim()).filter(Boolean); if(!list.length) return;
+    const text=list.join(" "), sents=[]; let at=0; for(const x of list){ sents.push({text:x,from:at/text.length,to:Math.min(1,(at+x.length)/text.length)}); at+=x.length+1; }
+    out.push({text,id:fnv(vid+"|"+text.toLowerCase()),sents}); };
+  for(const line of t.split("\n")){
+    const prot=line.replace(ABBR,m=>m.replace(".","․")).replace(/(\d)\.(\d)/g,"$1․$2");
+    const parts=prot.replace(/([.!?…]+["')\]]?)\s+/g,"$1\u0001").split("\u0001").filter(p=>p.trim()); let buf=[], len=0;   /* no lookbehind: a parse-time SyntaxError on old WebKit would stop the whole page */
+    for(const p of parts){
+      if(!out.length&&!buf.length){ push([p]); continue; }                   /* first sentence alone */
+      if(buf.length&&(len+p.length+1>140)){ push(buf); buf=[p]; len=p.length; } else { buf.push(p); len+=p.length+1; } }
+    if(buf.length) push(buf);
+  }
+  return out;
+}
+const sentences=t=>splitSpeech(t).map(c=>c.text);
+/* the analyser only wires the <audio> into Web Audio once the context is really running, and never on phones: Web Audio output obeys the
+   iPhone silent switch and can go quiet after an interruption, while the plain element keeps playing. The orb then animates from an envelope. */
+function ttsAnalyser(){ if(ttsAn) return ttsAn; if(coarse) return null;
+  try{ const c=getCtx(); if(!c||c.state!=="running") return null;
+    const src=c.createMediaElementSource(ttsEl); ttsAn=c.createAnalyser(); ttsAn.fftSize=256; ttsAn.smoothingTimeConstant=.8; ttsGain=c.createGain(); ttsGain.gain.value=ls.get("hub.gain",1.15); src.connect(ttsAn); ttsAn.connect(ttsGain); ttsGain.connect(c.destination);}catch{} return ttsAn; }
+function setGain(d){ let g=Math.max(.6,Math.min(1.4,(ls.get("hub.gain",1.15)+d))); g=Math.round(g*10)/10; ls.set("hub.gain",g); if(ttsGain) ttsGain.gain.value=g; ttsEl.volume=ttsAn?1:Math.min(1,g); return g; }
+const blobCache=new Map();
+function cacheGet(id){ const b=blobCache.get(id); if(b){ blobCache.delete(id); blobCache.set(id,b); } return b; }
+function cachePut(id,b){ blobCache.set(id,b); while(blobCache.size>60) blobCache.delete(blobCache.keys().next().value); }
+function fetchChunk(chunk,ms){
+  const hit=cacheGet(chunk.id); if(hit) return Promise.resolve(hit);
+  const ac=("AbortController" in window)?new AbortController():null, t=setTimeout(()=>ac&&ac.abort(),ms);
+  return fetch("/api/tts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:chunk.text,voice:previewVoice||undefined}),signal:ac?ac.signal:undefined})
+    .then(r=>r.ok?r.blob().then(b=>({blob:b,bounds:parseBounds(r.headers.get("X-Word-Boundaries"))})):null)
+    .then(e=>{ if(e&&e.blob&&e.blob.size>0){ cachePut(chunk.id,e); ttsEverOk=true; ttsFails=0; return e; } return null; }).catch(()=>null).finally(()=>clearTimeout(t));
+}
+let chunkStartAt=0, chunkEst=0, browserStart=0;
+let ttsResolve=null;
+function audioStop(){ speakSeq++; clearInterval(keepAlive); keepAlive=null; if(ttsResolve){ const r=ttsResolve; ttsResolve=null; r("cut"); } if(canSpeak) try{ speechSynthesis.cancel(); }catch{} try{ const u=ttsEl.currentSrc||ttsEl.src; ttsEl.onended=ttsEl.onerror=ttsEl.onplaying=null; ttsEl.pause(); ttsEl.removeAttribute("src"); ttsEl.load(); if(u&&u.startsWith("blob:")) URL.revokeObjectURL(u); }catch{} }
+function stopSpeaking(){ audioStop(); if(V.state==="speaking") vGo("idle","stop"); }
+let speechStartAt=0;
+function onSpeakStart(){ if(V.state!=="speaking"){ speechStartAt=performance.now(); vGo("speaking","audio"); if(V.mode==="overlay") vadStart(); } }
+function onSpeakEnd(){ afterSpeech(); }
+/* what happens once she has finished: hands-free re-arms the mic (checked again when the timer fires), otherwise she waits */
+function afterSpeech(){
+  if(V.state!=="idle") vGo("idle","done");
+  const skip=V.noRearm; V.noRearm=false;
+  if(V.mode==="overlay"&&handsFree&&!skip&&!V.setupNeeded&&!V.netFail&&micOK()){ V.rearming=true; vRender(); V.timer=setTimeout(()=>{ V.rearming=false; if(V.mode==="overlay"&&V.state==="idle") recStart("hands-free"); else vRender(); },coarse?700:300); }
+}
+let keepAlive=null;
+/* speakReply: kinds reply|greeting set "say that again"; replay|announce|line|preview do not. Resolves with how it was spoken: neural|browser|none|cut */
+async function speakReply(text,{kind="reply"}={}){
+  const plan=splitSpeech(text); audioStop(); const playSeq=speakSeq, seq=V.seq; V.kind=kind;
+  if(!plan.length){ afterSpeech(); return "none"; }
+  if(kind==="reply"||kind==="greeting") lastSaid=V.lastSaid=plan.map(c=>c.text).join(" ");
+  if(V.mode==="overlay") captionReply(plan);
+  const live=()=>speakSeq===playSeq&&V.seq===seq;
+  let i=0, how="neural";
+  if(S?.tts_ready&&ttsHealthy()){
+    try{ const c=getCtx(); if(c&&c.state!=="running") await Promise.race([c.resume().catch(()=>{}),new Promise(r=>setTimeout(r,300))]); ttsAnalyser(); }catch{}
+    if(!live()) return "cut";
+    let next=fetchChunk(plan[0],4000);
+    for(;i<plan.length;i++){
+      const entry=await next; if(!live()) return "cut";
+      if(!entry){ ttsFail(); break; }
+      if(i+1<plan.length) next=fetchChunk(plan[i+1],9000);
+      const r=await playBlob(entry,i,live); if(!live()) return "cut";
+      if(r==="blocked"){ pendingSay=text; unlocked=false; toast(`Tap anywhere to hear ${S.assistant}`); vGo("idle","blocked"); return "cut"; }
+      chunkDone(i);
+    }
+    if(i>=plan.length){ afterSpeech(); return "neural"; }
+  }
+  const have=canSpeak&&(voices.length||speechSynthesis.getVoices().length);
+  if(!have){ how="none"; if(!noVoiceTold){ noVoiceTold=true; toast("No voice available on this device, reading it here"); }
+    if(V.mode==="overlay"){ onSpeakStart(); for(let k=i;k<plan.length;k++){ for(const si of chunkSents(k)){ capMark(si,"now"); await new Promise(r=>setTimeout(r,Math.min(2600,400+V.plan[si].text.length*45))); if(!live()) return "cut"; capMark(si,"done"); } } }
+    afterSpeech(); return how; }
+  how="browser"; const ok=await playBrowser(plan,i,live); if(!live()) return "cut";
+  afterSpeech(); return ok?how:"none";
+}
+function playBlob(entry,i,live){
+  const blob=entry.blob||entry, bounds=entry.bounds||null;
+  return new Promise(res=>{ const url=URL.createObjectURL(blob); let done=false; const fin=r=>{ if(done) return; done=true; if(ttsResolve===fin) ttsResolve=null; URL.revokeObjectURL(url); res(r); }; ttsResolve=fin;
+    ttsEl.onplaying=()=>{ if(!live()) return; onSpeakStart(); chunkStart(i,bounds); };
+    ttsEl.onended=()=>fin("ok"); ttsEl.onerror=()=>fin("err"); ttsEl.volume=ttsAn?1:Math.min(1,ls.get("hub.gain",1.15)); ttsEl.src=url;
+    const p=ttsEl.play(); if(p&&p.catch) p.catch(err=>fin(err&&err.name==="NotAllowedError"?"blocked":"err")); });
+}
+/* browser voice: one utterance per chunk queued back to back (Chrome cuts a single long utterance at ~15s), with the pause/resume keepalive */
+function playBrowser(plan,from,live){
+  return new Promise(res=>{
+    const v=voices.find(v=>v.name===ls.get("hub.voice",""))||voices[0]; let started=false, k=from, iv=null;
+    const watchdog=setTimeout(()=>{ if(!started&&live()){ clearInterval(iv); if(!noVoiceTold){ noVoiceTold=true; toast("No voice available on this device, reading it here"); } for(let k=from;k<plan.length;k++) chunkDone(k); res(false); } },3500);
+    const next=()=>{ if(!live()){ clearInterval(iv); clearTimeout(watchdog); res(false); return; } if(k>=plan.length){ clearInterval(iv); clearTimeout(watchdog); res(true); return; }
+      const idx=k++, u=new SpeechSynthesisUtterance(plan[idx].text); if(v){u.voice=v;u.lang=v.lang} u.rate=1.0; u.pitch=1.0; u.volume=Math.min(1,ls.get("hub.gain",1.15));
+      u.onstart=()=>{ if(!live()) return; started=true; clearTimeout(watchdog); browserStart=performance.now(); chunkEst=Math.max(900,plan[idx].text.length*62); onSpeakStart(); chunkStart(idx,null); energy=1; clearInterval(iv); iv=setInterval(()=>{energy=1},120); };
+      u.onboundary=e=>{ energy=1; if(live()&&e&&typeof e.charIndex==="number"&&plan[idx].text.length) chunkSpoken(e.charIndex/plan[idx].text.length); };
+      u.onend=()=>{ clearInterval(iv); if(live()) chunkDone(idx); next(); }; u.onerror=()=>{ clearInterval(iv); if(!live()){ clearTimeout(watchdog); res(false); return; } chunkDone(idx); next(); };
+      speechSynthesis.speak(u); };
+    if(!iOS){ clearInterval(keepAlive); keepAlive=setInterval(()=>{ if(!live()){ clearInterval(keepAlive); return; } try{ speechSynthesis.pause(); speechSynthesis.resume(); }catch{} },10000); }
+    setTimeout(()=>{ if(live()) next(); else res(false); },60);   /* WebKit drops an utterance queued in the same tick as cancel() */
+  });
+}
+async function speak(text,{replay=false}={}){ return speakReply(text,{kind:replay?"replay":"greeting"}); }
+/* orb energy: the mic while listening, her audio while speaking (desktop analyser, synthetic envelope on phones and for the browser voice) */
+let micAn=null, micStream=null, micBuf=null, noiseFloor=0, vadFrames=0, vadSince=0, vadTimer=null;
+/* no voice barge-in on iOS: capturing the mic there moves playback to the receiver at a whisper; he taps the orb instead */
+const vadAllowed=!iOS;
+function micRms(){ if(!micAn) return 0; if(!micBuf) micBuf=new Uint8Array(micAn.fftSize); micAn.getByteTimeDomainData(micBuf); let s=0; for(let i=0;i<micBuf.length;i++){ const d=(micBuf[i]-128)/128; s+=d*d; } return Math.sqrt(s/micBuf.length); }
 function audioLevel(){
   let lvl=0; const bins=new Uint8Array(64);
-  if(analyser){analyser.getByteFrequencyData(bins);lvl=bins.reduce((a,b)=>a+b,0)/64/255}
-  else if(speaking&&ttsAn&&!ttsEl.paused){ttsAn.getByteFrequencyData(bins);lvl=bins.slice(0,24).reduce((a,b)=>a+b,0)/24/255}
+  if(V.state==="listening"&&micAn){ micAn.getByteFrequencyData(bins); const r=micRms(); lvl=Math.min(1,r*4.5); if(r>Math.max(.03,noiseFloor*2.5)) energy=1; }
+  else if(speaking&&reduced) lvl=.4;
+  else if(speaking&&ttsAn&&!ttsEl.paused&&ttsEl.src){ ttsAn.getByteFrequencyData(bins); lvl=bins.slice(0,24).reduce((a,b)=>a+b,0)/24/255; }
+  else if(speaking&&!ttsEl.paused&&ttsEl.src&&!reduced){ const t=ttsEl.currentTime||0, edge=t<.12||(ttsEl.duration&&ttsEl.duration-t<.12); lvl=edge?0:.35+.45*Math.abs(Math.sin(t*11))*(.6+.4*Math.abs(Math.sin(t*2.3))); }
   else if(speaking||listening){energy*=.92;lvl=.12+.22*energy}
   return {lvl,bins};
 }
+function speechProgress(){
+  if(V.state!=="speaking"||curChunk<0) return;
+  if(ttsEl.src&&ttsEl.duration&&!ttsEl.paused){ const t=ttsEl.currentTime||0; const f=boundsFrac(curBounds,t); chunkSpoken(f!==null?f:t/ttsEl.duration); }
+  else if(browserStart) chunkSpoken((performance.now()-browserStart)/chunkEst);
+}
+/* barge-in: voice energy above the noise floor for 120 ms of wall time while she speaks stops her and opens the mic. The detector
+   samples the analyser on its own 20 ms clock, so a slow frame rate (the orb at 13 fps on a weak machine) does not slow it down. */
+const VAD_MS=120, VAD_TICK=15;
+function vadTick(){
+  if(!micAn||!vadAllowed) return; const r=micRms(), now=performance.now();
+  if(V.state!=="speaking"){ if(noiseFloor===0) noiseFloor=r; else if(r<noiseFloor*1.5) noiseFloor=noiseFloor*.98+r*.02; vadSince=0; return; }
+  if(V.vadOff||now-speechStartAt<350){ vadSince=0; return; }   /* her first third of a second: the echo canceller is still converging */
+  if(r>Math.max(coarse?0.08:0.06,noiseFloor*3.2)){ if(!vadSince) vadSince=now; else if(now-vadSince>=VAD_MS) bargeIn(); } else vadSince=0;
+}
+function vadStart(){ if(!vadTimer&&vadAllowed) vadTimer=setInterval(vadTick,VAD_TICK); }   /* runs while the overlay is open; a no-op tick until the mic is open */
+function vadFrame(){ vadStart(); }
+function bargeIn(){ vadSince=0; vadFrames=0; V.barges++; V.bargeCheck=true; recStart("barge-in"); }
+
+/* ---- hearing: one recogniser per utterance, our own 2s end-point on desktop (continuous), the browser's on iOS ---- */
+let recGen=0, endT=null, recNoSpeech=false, noSpeechTold=false;
+function micOpen(){ if(!vadAllowed||micAn||micOpen.busy||!navigator.mediaDevices?.getUserMedia) return; micOpen.busy=true;
+  navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}}).then(st=>{ micOpen.busy=false; if(V.mode!=="overlay"||micAn){ st.getTracks().forEach(t=>t.stop()); return; } const c=getCtx(); if(!c){ st.getTracks().forEach(t=>t.stop()); return; } micStream=st; mic=st; micAn=c.createAnalyser(); micAn.fftSize=512; micAn.smoothingTimeConstant=.6; c.createMediaStreamSource(st).connect(micAn); analyser=micAn; noiseFloor=0; vadSince=0; vadStart(); }).catch(()=>{ micOpen.busy=false; }); }
+function micClose(){ clearInterval(vadTimer); vadTimer=null; vadSince=0; try{ micStream?.getTracks().forEach(t=>t.stop()); }catch{} micStream=null; mic=null; micAn=null; analyser=null; micBuf=null; }
+function recStart(why){
+  if(!micOK()) return false;
+  if(V.state==="speaking"){ audioStop(); if(V.cur>=0) capMark(V.cur,"cut"); if(V.plan) V.plan.forEach((c,i)=>{ if(c.st==="queued"||c.st==="now") capMark(i,"cut"); }); }
+  else if(V.state!=="idle") return false;
+  if(!vGo("listening",why)) return false;
+  if(why!=="barge-in") V.bargeCheck=false;
+  capSettled=[]; capLive=""; lastInterim=""; capFinal=false; recNoSpeech=false; captionUser(); if(V.setupNeeded) capCue(NOKEY,true); else capCue(""); $("#capFollow").innerHTML="";
+  if(V.plan&&V.plan.every(c=>c.st==="done")) { $("#capList").innerHTML=""; V.plan=null; V.cur=-1; }
+  renderStrip();
+  const r=rec=new SR(), gen=++recGen; r.lang="en-GB"; r.interimResults=true; r.continuous=!iOS&&!coarse; r.maxAlternatives=1;
+  r.onresult=e=>{ if(gen===recGen) onRecResult(e); }; r.onend=()=>{ if(gen===recGen) onRecEnd(); }; r.onerror=e=>{ if(gen===recGen) onRecError(e); };
+  r.onaudiostart=r.onsoundstart=r.onspeechstart=()=>{energy=1};
+  try{ r.start(); }catch(e){ vGo("idle","rec start failed"); toast(e.message); return false; }
+  micOpen(); return true;
+}
+function onRecResult(e){
+  energy=1; const settled=[]; let live="";
+  for(let i=0;i<e.results.length;i++){ const r=e.results[i], a=r&&r[0]; if(!a) continue; if(r.isFinal) settled.push({text:String(a.transcript||"").trim(),conf:a.confidence}); else live+=a.transcript||""; }
+  capSettled=settled.filter(s=>s.text); capLive=live.trim(); const all=(capSettled.map(s=>s.text).join(" ")+" "+capLive).trim(); if(all) lastInterim=all;
+  captionUser();
+  const cmd=capSettled.length?cmdIntent(capSettled.map(s=>s.text).join(" ")):null;
+  if(cmd==="stop"||cmd==="cancel"){ recAbort(); handleCmd(cmd); return; }
+  clearTimeout(endT); if(all&&V.state==="listening") endT=setTimeout(()=>recFinish("silence"),coarse?1500:2000);
+}
+function recFinish(why){ clearTimeout(endT); if(V.state!=="listening") return; vGo("ending",why); const gen=recGen; try{ rec&&rec.stop(); }catch{} setTimeout(()=>{ if(gen===recGen&&V.state==="ending") onRecEnd(); },1500); }
+function recAbort(){ clearTimeout(endT); recGen++; try{ rec&&rec.abort(); }catch{} rec=null; }
+function onRecEnd(){
+  clearTimeout(endT); recGen++; rec=null; if(V.state!=="listening"&&V.state!=="ending") return;
+  const text=(capSettled.map(s=>s.text).join(" ").trim()||lastInterim).trim();
+  if(!text){
+    const check=V.bargeCheck; V.bargeCheck=false;
+    if(check){ V.emptyBarges=(V.emptyBarges||0)+1; if(V.emptyBarges>=2&&!V.vadOff){ V.vadOff=true; toast("Tap the orb to interrupt me"); } }
+    if(V.mode==="overlay"&&handsFree&&!V.setupNeeded&&!V.netFail&&++V.idleCycles<3){ vGo("idle","empty"); V.rearming=true; vRender(); V.timer=setTimeout(()=>{ V.rearming=false; if(V.mode==="overlay"&&V.state==="idle") recStart("re-arm"); else vRender(); },250); return; }
+    vGo("idle","empty");
+    if(V.mode==="overlay"&&handsFree&&V.idleCycles>=3){ V.idleCycles=0; V.noRearm=true; capCue("Still here when you need me."); speakReply("Still here when you need me.",{kind:"line"}); return; }
+    if(V.mode==="overlay"&&(recNoSpeech||!noSpeechTold)){ noSpeechTold=true; capCue("I didn't hear anything. Tap the orb and try again."); }
+    return;
+  }
+  V.idleCycles=0; V.emptyBarges=0; capFinal=true; captionUser();
+  const cmd=cmdIntent(text); if(cmd){ handleCmd(cmd,text); return; }
+  if(V.state==="listening") vGo("ending","final");
+  askText(text,true);
+}
+function onRecError(e){
+  const M={"not-allowed":"Allow the microphone for this page. On an iPhone, check Siri & Dictation is on in Settings.","service-not-allowed":"Speech recognition is switched off here: enable Siri & Dictation in Settings (and check Lockdown Mode).","audio-capture":"No microphone found. Plug one in or check it is allowed.","network":"Speech recognition needs a connection to the internet; typing works here.","language-not-supported":"Speech recognition is not available in English here."};
+  if(e.error==="no-speech"){ recNoSpeech=true; return; } if(e.error==="aborted") return;
+  const msg=M[e.error]; if(!msg) return; toast(msg); capCue(msg,true); vLabel("Microphone problem");
+  if(e.error==="network"){ if(!V.netFail&&canSpeak) speakReply("I can't hear you without a connection. Typing works here.",{kind:"line"}); V.netFail=true; }
+}
+/* voice commands handled here, never sent to the model */
+function cmdIntent(text){
+  let t=String(text||"").toLowerCase().replace(/[.!?,]+$/,"").trim(); if(S?.assistant) t=t.replace(new RegExp("^"+S.assistant.toLowerCase().replace(/[^a-z0-9 ]/g,"")+"[,]?\\s+"),"");
+  t=t.replace(/^(please|hey|ok|okay)[,]?\s+/,"").replace(/[,]?\s+please$/,"");
+  if(/^(?:can you |could you |would you )?(?:say|repeat) (?:that|it)(?: again)?$|^(?:again|pardon|sorry|what was that|say again|come again)$/.test(t)) return "again";
+  if(/^(?:stop|stop talking|stop it|be quiet|quiet|shush|hush|that's enough|thats enough|enough|shut up)$/.test(t)) return "stop";
+  if(/^(?:cancel|cancel that|never mind|nevermind|forget it|forget that|scrap that|scratch that|ignore that|leave it)$/.test(t)) return "cancel";
+  const hf=t.match(/^hands[- ]?free (on|off)$/); if(hf) return "hf-"+hf[1];
+  if(/^(?:louder|speak up|turn it up|volume up)$/.test(t)) return "louder";
+  if(/^(?:quieter|softer|turn it down|volume down|not so loud)$/.test(t)) return "quieter";
+  if(/^(?:close|goodbye|good bye|bye|bye bye|that's all|thats all|that will be all|that'll be all|that is all|we're done|were done|i'm done|im done)$/.test(t)) return "close";
+  return null;
+}
+function handleCmd(cmd,text){
+  if(cmd==="stop"){ audioStop(); vGo("idle","stop"); capCue("Stopped."); return; }
+  if(cmd==="cancel"){ audioStop(); vGo("idle","cancel"); capCue("Cancelled."); return; }
+  if(cmd==="close"){ closeVoice(); return; }
+  vGo("idle","cmd");
+  if(cmd==="again"){ if(V.lastSaid){ captionReply(splitSpeech(V.lastSaid)); speakReply(V.lastSaid,{kind:"replay"}); } else speakReply("I haven't said anything yet.",{kind:"line"}); return; }
+  if(cmd==="hf-on"||cmd==="hf-off"){ handsFree=cmd==="hf-on"; ls.set("hub.hands",handsFree); syncVoiceBtns(); speakReply(handsFree?"Hands-free on.":"Hands-free off.",{kind:"line"}); return; }
+  if(cmd==="louder"||cmd==="quieter"){ const g=setGain(cmd==="louder"?.2:-.2); speakReply(cmd==="louder"?(g>=1.4?"That's as loud as I go.":"Louder."):(g<=.6?"That's as quiet as I go.":"Quieter."),{kind:"line"}); }
+}
+/* Space: tap toggles, hold (350ms+) is push-to-talk and release ends the utterance */
+let spaceT=null, spaceDown=false;
+function spaceKeyDown(){ if(spaceDown) return; spaceDown=true; V.ptt=false; clearTimeout(spaceT); spaceT=setTimeout(()=>{ if(!spaceDown) return; if(V.state==="idle"||V.state==="speaking"){ if(recStart("push-to-talk")) V.ptt=true; } },350); }
+function spaceKeyUp(){ if(!spaceDown) return; spaceDown=false; clearTimeout(spaceT); if(V.ptt){ V.ptt=false; recFinish("release"); return; } orbTap(); }
 
 /* ---- greeting ---- */
 let greetingText="", greeted=false, greetAloud=ls.get("hub.greet",true), announce=ls.get("hub.announce",true), gestured=false;
@@ -1660,8 +2076,8 @@ async function sayGreeting(force){
 let pendingGreeting=false;
 /* lifecycle: iOS suspends background pages, puts the AudioContext into "interrupted" and throttles timers; come back fresh */
 document.addEventListener("visibilitychange",()=>{
-  if(document.visibilityState==="visible"){ unlocked=false; if(S) refresh(true); try{ if(ttsCtx&&ttsCtx.state!=="running") ttsCtx.resume().catch(()=>{}); }catch{} }
-  else { stopSpeaking(); stopListening(); }
+  if(document.visibilityState==="visible"){ unlocked=false; if(S) refresh(true); try{ if(actx&&actx.state!=="running") actx.resume().catch(()=>{}); }catch{} }
+  else { clearTimeout(V.timer); recAbort(); audioStop(); micClose(); if(V.state!=="idle") vGo("idle","hidden"); }
 });
 addEventListener("pageshow",e=>{ if(e.persisted&&S) refresh(true); });
 
@@ -1678,8 +2094,8 @@ function noteChanges(n){
   if(annQueue.length){ clearTimeout(annTimer); annTimer=setTimeout(flushAnnouncements,3000); }
 }
 function flushAnnouncements(){
-  if(!annQueue.length) return; if(speaking||listening||thinking){ annTimer=setTimeout(flushAnnouncements,3000); return; }
-  const line=annQueue.splice(0,3).join(" "); annQueue=[]; toast(line); if(announce&&gestured&&document.visibilityState==="visible") speak(line);
+  if(!annQueue.length) return; if(V.state!=="idle"||V.rearming||(V.mode==="overlay"&&Date.now()-V.idleSince<2000)){ annTimer=setTimeout(flushAnnouncements,1500); return; }
+  const line=annQueue.splice(0,3).join(" "); annQueue=[]; toast(line); if(announce&&gestured&&document.visibilityState==="visible") speakReply(line,{kind:"announce"});
 }
 
 /* ---- particle orb (own implementation): a thin cloud of light that reacts to voice ---- */
@@ -1698,8 +2114,9 @@ class Orb{
     if(cv.width!==Math.round(r.width*dpr)||cv.height!==Math.round(r.height*dpr)){cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr)}
     const c=this.c,W=cv.width,H=cv.height,R=Math.min(W,H)*(this.gain>1?.42:.36); c.clearRect(0,0,W,H);
     for(const k in this.tgt) this.cur[k]+=(this.tgt[k]-this.cur[k])*.03;
-    const slow=reduced?.35:1;
-    this.energy*=.985; this.t+=.016*this.cur.speed*slow; this.rot[0]+=(.0025*this.cur.speed+this.energy*.01)*slow; this.rot[1]+=.0012*this.cur.speed*slow;
+    this.energy*=.985;
+    if(reduced){ this.rot[0]+=this.energy*.004+level*.003; }   /* reduced motion: no drift or spin, only a nudge from real audio or a state change */
+    else { this.t+=.016*this.cur.speed; this.rot[0]+=.0025*this.cur.speed+this.energy*.01; this.rot[1]+=.0012*this.cur.speed; }
     const bass=level, radius=this.cur.r*(1+bass*.18)*(1+Math.sin(this.t*2.2)*.012), cx=W/2, cy=H/2, cosY=Math.cos(this.rot[0]),sinY=Math.sin(this.rot[0]),cosX=Math.cos(this.rot[1]),sinX=Math.sin(this.rot[1]);
     const pts=new Array(this.n);
     for(let i=0;i<this.n;i++){ const p=this.p[i], v=this.v[i];
@@ -1722,30 +2139,17 @@ class Orb{
   }
 }
 let deckOrb=null, deckVisible=true, deckIO=null, voiceOrb=new Orb($("#vCanvas"),coarse?280:760);
-function mountDeck(){ const cv=$("#deckCanvas"); if(cv&&(!deckOrb||deckOrb.cv!==cv)){ if(deckOrb) orbs.splice(orbs.indexOf(deckOrb),1); deckOrb=new Orb(cv,coarse?260:560,1.7); deckOrb.set(listening?"listening":speaking?"speaking":thinking?"thinking":"idle");
+function mountDeck(){ const cv=$("#deckCanvas"); if(cv&&(!deckOrb||deckOrb.cv!==cv)){ if(deckOrb) orbs.splice(orbs.indexOf(deckOrb),1); deckOrb=new Orb(cv,coarse?260:560,1.7); deckOrb.set(orbState()); vRender();
   if("IntersectionObserver" in window){ deckIO?.disconnect(); deckIO=new IntersectionObserver(([en])=>{deckVisible=en.isIntersecting},{threshold:0}); deckIO.observe(cv); } } }
 function orbColour(){ return theme()==="dark"?"140,196,255":"37,99,235"; }
-function startListening(){
-  if(!micOK()||listening) return; stopSpeaking();
-  rec=new SR(); rec.lang="en-GB"; rec.interimResults=true; rec.continuous=false; let fin="";
-  rec.onresult=e=>{energy=1;let tmp="";for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)fin+=r[0].transcript;else tmp+=r[0].transcript}vSet("Listening",undefined,(fin+tmp).trim())};
-  rec.onaudiostart=rec.onsoundstart=rec.onspeechstart=()=>{energy=1};
-  rec.onend=()=>{listening=false;$("#vOrb").classList.remove("live");stopMic();orbs.forEach(o=>o.set("idle"));const t=fin.trim();
-    if(/^(say that again|repeat that|again please|pardon)\.?$/i.test(t)&&lastSaid){ vSet("",lastSaid); speak(lastSaid,{replay:true}); return; }
-    if(t)askText(t,true);else vSet()};
-  rec.onerror=e=>{ const M={"not-allowed":"Allow the microphone for this page. On an iPhone, check Siri & Dictation is on in Settings.","service-not-allowed":"Speech recognition is switched off here: enable Siri & Dictation in Settings (and check Lockdown Mode).","audio-capture":"No microphone found.","network":"Speech recognition needs a connection.","language-not-supported":"Speech recognition is not available in English here."};
-    const msg=M[e.error]; if(msg){ toast(msg); vSet("",msg); } };
-  try{rec.start();listening=true;$("#vOrb").classList.add("live");vSet("Listening",undefined,"");if(!coarse)startMic();orbs.forEach(o=>o.set("listening"))}catch(e){toast(e.message)}
-}
-function stopListening(){try{rec&&rec.stop()}catch{}}
-async function startMic(){try{if(!navigator.mediaDevices?.getUserMedia)return;mic=await navigator.mediaDevices.getUserMedia({audio:true});const ctx=new(window.AudioContext||window.webkitAudioContext)();analyser=ctx.createAnalyser();analyser.fftSize=256;ctx.createMediaStreamSource(mic).connect(analyser);analyser._c=ctx}catch{}}
-function stopMic(){try{mic?.getTracks().forEach(t=>t.stop());analyser?._c.close()}catch{}analyser=null;mic=null}
+function startListening(){ return recStart("tap"); }
+function stopListening(){ if(V.state==="listening") recFinish("stop"); else recAbort(); }
 /* the draw loop only runs hot while an orb is actually on screen; otherwise it idles on a slow timer */
 const voiceEl=$("#voice");
 (function draw(){
   const vis=document.visibilityState==="visible", voiceOn=vis&&voiceEl.classList.contains("on"), deckOn=!!(vis&&deckOrb&&deckVisible&&document.contains(deckOrb.cv));
   if(voiceOn||deckOn){ const {lvl,bins}=audioLevel(), col=orbColour(); if(voiceOn) voiceOrb.frame(lvl,bins,col); if(deckOn) deckOrb.frame(lvl,bins,"150,204,255"); }
-  const st=$("#deckState"); if(st){ const s=listening?"listening":speaking?"speaking":thinking?"thinking":"online"; if(st.textContent!==s) st.textContent=s; }
+  if(voiceOn){ vadFrame(); speechProgress(); }
   if(voiceOn||deckOn) requestAnimationFrame(draw); else setTimeout(draw,250);
 })();
 /* pull to refresh (phone, Today only): from the very top, a clearly vertical pull past 70px re-fetches the state; instant under reduced motion */
@@ -1797,7 +2201,7 @@ function lockCountdown(sec){ lockWait=Date.now()+sec*1000; $("#pad").setAttribut
 $("#pad").addEventListener("click",ev=>{ const b=ev.target.closest("[data-key]"); if(b) lockKey(b.dataset.key); });
 
 /* ============ boot ============ */
-(()=>{const t=ls.get("hub.theme",null); if(t) document.documentElement.dataset.theme=t; if(!TABS.some(x=>x[0]===view)) view="today"; setThemeMeta(); placeChrome(); vvUpdate(); $("#vHint").textContent=coarse?"Tap the orb to talk":"Space to talk · Esc to close";
+(()=>{const t=ls.get("hub.theme",null); if(t) document.documentElement.dataset.theme=t; if(coarse||navigator.maxTouchPoints>0) document.documentElement.classList.add("touch"); if(!TABS.some(x=>x[0]===view)) view="today"; setThemeMeta(); placeChrome(); vvUpdate(); $("#vHint").textContent=coarse?"Tap the orb to talk":"Space to talk · Esc to close";
   try{ matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{ if(S) renderBar(); setThemeMeta(); }); }catch{} })();
 refresh(true).then(loadGreeting); setInterval(()=>refresh(false),5000); setInterval(()=>{ if(S) renderBar(); },30000);
 setInterval(()=>{ if(view==="today"&&!document.querySelector("input:focus,textarea:focus")) loadGreetingQuiet(); },20*60*1000);

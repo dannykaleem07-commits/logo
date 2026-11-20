@@ -40,6 +40,13 @@ DRAFTS = [
      "<p>Photos taken on your phone are fine. Reply to this email with them attached and we will take it from there.</p><p>Kind regards</p>"),
 ]
 
+# One spoken line per draft: what the assistant says when the Director asks what a letter is about.
+GISTS = [
+    "Final chaser to the insurer on the Begum claim: acknowledge, state liability and preserve the dashcam by 4pm on the 21st, or a formal complaint follows.",
+    "Reply to the fraud desk on the Rafiq file: put the allegation distinctly with the facts relied on by the 26th; no discount while it is unparticularised.",
+    "Document request to Priya Patel: PCO licence, V5C and twelve weeks of platform statements by Friday the 21st.",
+]
+
 ACTIVITY = [
     (dict(minutes=1), "danny", "Read and filed 3 new emails"),
     (dict(minutes=1), "danny", "handler@insurer-a.example | Re: CC10231 hire rate -> Clients/Amir Hussain - CC10231"),
@@ -79,9 +86,9 @@ def seed():
         for n in range(14):
             c.execute("INSERT OR REPLACE INTO processed VALUES (?,?,?,?)", (f"<demo-{n}>", "INBOX", "", _t(minutes=n * 37)))
         for n, (eid, agent, kind, label, subject, to, note, body) in enumerate(DRAFTS):
-            c.execute("INSERT INTO drafts (id, folder, agent, kind, recipients, subject, status, note, created_at, body_html)"
-                      " VALUES (?,?,?,?,?,?,?,?,?,?)",
-                      (f"demo{n}", f"{config.CLIENTS_PARENT}/{label}", agent, kind, to, subject, "awaiting", note, _t(minutes=6 + n * 30), body))
+            c.execute("INSERT INTO drafts (id, folder, agent, kind, recipients, subject, status, note, created_at, body_html, gist)"
+                      " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                      (f"demo{n}", f"{config.CLIENTS_PARENT}/{label}", agent, kind, to, subject, "awaiting", note, _t(minutes=6 + n * 30), body, GISTS[n]))
         for n in range(9):
             c.execute("INSERT INTO drafts (id, folder, agent, kind, recipients, subject, status, note, created_at, decided_at)"
                       " VALUES (?,?,?,?,?,?,?,?,?,?)",
