@@ -315,6 +315,8 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 24px 24px;background:#ff
 .voice.on{opacity:1;pointer-events:auto}
 .voice .orb{width:min(240px,56vw);height:min(240px,56vw);box-shadow:0 40px 120px -20px rgba(37,99,235,.6),inset 0 -14px 30px rgba(8,16,60,.45),inset 0 8px 20px rgba(255,255,255,.35);cursor:pointer;transition:transform .5s var(--ease)}
 .voice .orb i{filter:blur(16px)}
+#vOrb{background:none!important;box-shadow:none!important;overflow:visible!important}
+#vOrb::after{display:none}
 .v-state{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);font-weight:600}
 .v-text{font-size:22px;line-height:1.45;letter-spacing:-.02em;text-align:center;max-width:620px;min-height:64px;color:var(--ink)}
 .v-text.user{color:var(--ink2)}
@@ -326,12 +328,77 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 24px 24px;background:#ff
 .v-opt{font-size:13px;color:var(--ink3);display:flex;gap:16px;align-items:center}
 .v-opt select{border:1px solid var(--hair2);border-radius:9px;background:var(--surface);padding:5px 8px;max-width:220px}
 
+/* ---------- command deck (Jarvis) ---------- */
+.deck{position:relative;overflow:hidden;border-radius:26px;background:radial-gradient(120% 140% at 0% 0%,#0E1A3A 0,#070B16 45%,#05070C 100%);color:#DCE8F5;border:1px solid rgba(124,196,255,.14);box-shadow:0 30px 80px -30px rgba(10,30,80,.55),inset 0 1px 0 rgba(255,255,255,.05);display:grid;grid-template-columns:300px minmax(0,1fr);min-height:300px;margin-top:30px;isolation:isolate}
+.deck::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(124,196,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(124,196,255,.045) 1px,transparent 1px);background-size:44px 44px;mask:radial-gradient(70% 90% at 30% 50%,#000 20%,transparent 80%);pointer-events:none}
+.deck::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(0,0,0,.14) 0 1px,transparent 1px 3px);opacity:.45;pointer-events:none;mix-blend-mode:multiply}
+.deck .brk{position:absolute;width:14px;height:14px;border:1px solid rgba(155,216,255,.55);pointer-events:none}
+.deck .brk.tl{left:14px;top:14px;border-right:0;border-bottom:0}.deck .brk.tr{right:14px;top:14px;border-left:0;border-bottom:0}
+.deck .brk.bl{left:14px;bottom:14px;border-right:0;border-top:0}.deck .brk.br{right:14px;bottom:14px;border-left:0;border-top:0}
+.deck-orb{position:relative;display:grid;place-items:center;cursor:pointer}
+.deck-orb canvas{width:100%;height:100%;display:block}
+.deck-orb .st{position:absolute;bottom:18px;left:0;right:0;text-align:center;font-size:10.5px;letter-spacing:.3em;text-transform:uppercase;color:rgba(155,216,255,.6);font-weight:600}
+.deck-body{position:relative;padding:34px 36px 30px 10px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.deck-name{font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:rgba(155,216,255,.55);font-weight:600;display:flex;align-items:center;gap:10px}
+.deck-name .live{width:6px;height:6px;border-radius:50%;background:#3EE0A6;box-shadow:0 0 0 0 rgba(62,224,166,.6);animation:livep 2.2s infinite}
+@keyframes livep{70%{box-shadow:0 0 0 9px rgba(62,224,166,0)}100%{box-shadow:0 0 0 0 rgba(62,224,166,0)}}
+.deck-say{font-family:var(--serif);font-size:30px;line-height:1.28;letter-spacing:-.01em;color:#F2F6FB;min-height:78px;text-wrap:pretty}
+.deck-say .cur{display:inline-block;width:2px;height:.9em;background:#9BD8FF;vertical-align:-2px;margin-left:3px;animation:bl 1s infinite}
+.deck-now{display:flex;align-items:center;gap:12px;font-size:13px;color:rgba(220,232,245,.72);min-height:22px;overflow:hidden;white-space:nowrap}
+.deck-now .who{color:#9BD8FF;font-weight:600;flex:none}
+.deck-now .txt{overflow:hidden;text-overflow:ellipsis}
+.deck-now .k{flex:none;margin-left:auto;font-variant-numeric:tabular-nums;font-size:11px;letter-spacing:.14em;color:rgba(155,216,255,.5);text-transform:uppercase}
+.deck-act{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+.deck .btn{background:rgba(124,196,255,.08);border-color:rgba(124,196,255,.22);color:#DCE8F5}
+.deck .btn:hover{background:rgba(124,196,255,.16)}
+.deck .btn.glow{background:#9BD8FF;color:#06101F;border-color:transparent;box-shadow:0 8px 24px -8px rgba(155,216,255,.8)}
+.deck .btn.glow:hover{background:#B8E4FF}
+.deck-read{display:grid;grid-template-columns:repeat(4,auto);gap:22px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(155,216,255,.5)}
+.deck-read b{display:block;font:500 22px/1.1 var(--sans);letter-spacing:-.03em;color:#F2F6FB;margin-bottom:3px}
+.deck-read b.hl{color:#9BD8FF}.deck-read b.warn{color:#FFB648}
+
+/* ---------- logic ---------- */
+.dcard{padding:24px 26px;display:grid;gap:16px;border-left:3px solid var(--amber)}
+.dcard .ask-by{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink3)}
+.dcard .ask-by b{color:var(--ink);font-weight:500}
+.dcard .sit{font-size:17px;line-height:1.45;letter-spacing:-.015em}
+.dcard .rec{padding:14px 16px;border-radius:14px;background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent)}
+.dcard .rec .lbl{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:6px}
+.dcard .opts{display:grid;gap:8px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;padding:12px 14px;border-radius:12px;border:1px solid var(--hair2);background:var(--surface);transition:all .15s;font-size:14px;line-height:1.45}
+.opt:hover{border-color:var(--ink3)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt .n{width:22px;height:22px;border-radius:50%;border:1px solid var(--hair2);display:grid;place-items:center;font-size:11.5px;font-weight:600;color:var(--ink3);flex:none}
+.opt.sel .n{background:var(--accent);color:var(--on-accent);border-color:transparent}
+.dcard .risk{font-size:13px;color:var(--ink2)}
+.dcard .risk b{color:var(--amber);font-weight:500}
+.remember{display:flex;gap:10px;align-items:center;font-size:13.5px;color:var(--ink2);cursor:pointer}
+.remember input{width:16px;height:16px;accent-color:var(--accent)}
+.rule{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px 16px;padding:16px 22px;border-top:1px solid var(--hair);align-items:start}
+.rule:first-child{border-top:0}
+.rule .w{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);font-weight:600}
+.rule .w+div{margin:3px 0 10px;font-weight:500}
+.rule .d{color:var(--ink2);line-height:1.55}
+.rule .src{font-size:11.5px;color:var(--ink3);margin-top:8px;display:flex;gap:8px;align-items:center}
+.rule.off{opacity:.5}
+.rule .ctl{display:flex;gap:4px;align-items:center}
+.src-tag{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border-radius:999px;border:1px solid var(--hair2)}
+.src-tag.learned{color:var(--green);border-color:color-mix(in srgb,var(--green) 40%,transparent)}
+.addrule{padding:20px 22px;display:grid;gap:10px;grid-template-columns:1fr 1fr auto;align-items:end}
+.addrule .field{margin:0}
+.spoken-hint{font-size:12px;color:var(--ink3);margin-top:6px}
+
 .toast{position:fixed;left:50%;bottom:28px;z-index:90;transform:translate(-50%,16px);opacity:0;transition:all .35s var(--ease);background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:12px;font-weight:500;font-size:13.5px;box-shadow:var(--float);display:flex;gap:8px;align-items:center;max-width:90vw}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 .banner{display:flex;gap:10px;align-items:center;margin-top:22px;padding:10px 14px;border-radius:12px;border:1px solid var(--hair);background:color-mix(in srgb,var(--surface) 70%,transparent);font-size:13px;color:var(--ink2);width:fit-content;max-width:100%}
 .banner code{font-size:12px;background:var(--sunk);padding:1px 6px;border-radius:6px;border:1px solid var(--hair)}
 
 @media (max-width:980px){
+  .deck{grid-template-columns:minmax(0,1fr)}
+  .deck-orb{height:220px}
+  .deck-body{padding:0 26px 28px}
+  .deck-read{grid-template-columns:repeat(2,auto)}
+  .addrule{grid-template-columns:1fr}
   .grid,.reader{grid-template-columns:minmax(0,1fr)}
   .queue{position:static}
   .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -350,6 +417,7 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 24px 24px;background:#ff
   .lede{font-size:15.5px}
   .ask{height:58px}
   .ask kbd{display:none}
+  .deck-say{font-size:24px}
   .metric svg.spark{display:none}
   .fab{bottom:84px;right:16px;width:50px;height:50px}
   .search input{width:100%}
@@ -382,7 +450,7 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 24px 24px;background:#ff
 
 <div class="voice" id="voice" role="dialog" aria-label="Voice assistant">
   <div class="v-state" id="vState">Tap to talk</div>
-  <button class="orb" id="vOrb" aria-label="Talk"><i></i><i></i><i></i><canvas id="vCanvas"></canvas></button>
+  <button class="orb" id="vOrb" aria-label="Talk" style="background:transparent;box-shadow:none;overflow:visible"><canvas id="vCanvas" style="position:absolute;inset:-30%;width:160%;height:160%"></canvas></button>
   <div class="v-text" id="vText"></div>
   <div class="v-ctl">
     <button class="round" id="vSpeak" title="Speak replies aloud"><svg class="i"><use href="#volume"/></svg></button>
@@ -393,6 +461,7 @@ iframe.rep{width:100%;flex:1;border:0;border-radius:0 0 24px 24px;background:#ff
 </div>
 
 <div class="toast" id="toast"></div>
+<audio id="ttsAudio" preload="auto"></audio>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
@@ -421,6 +490,7 @@ const ls={get(k,d){try{const v=localStorage.getItem(k);return v===null?d:JSON.pa
 const first=n=>String(n||"").split(" ")[0];
 const label=f=>String(f||"").split("/").pop();
 function ago(ts){if(!ts)return"";const s=(Date.now()-new Date(ts))/1e3;if(s<50)return"now";if(s<3600)return Math.round(s/60)+"m";if(s<86400)return Math.round(s/3600)+"h";return Math.round(s/86400)+"d"}
+function agoText(ts){const a=ago(ts);return a==="now"?"just now":a?a+" ago":""}
 function plural(n,w){return `${n} ${w}${n===1?"":"s"}`}
 async function api(path,body,method){
   const r=await fetch(path,{method:method||(body?"POST":"GET"),headers:body?{"Content-Type":"application/json"}:{},body:body?JSON.stringify(body):undefined});
@@ -430,7 +500,7 @@ function toast(t,ok){const el=$("#toast");el.innerHTML=(ok?ic("check"):"")+h(t);
 
 /* ============ state ============ */
 let S=null, view=ls.get("hub.view","today"), selDraft=null, fileQ="", fileF="all", sheetFor=null, openTask=null;
-const TABS=[["today","Today"],["approvals","Approvals"],["team","Team"],["files","Files"]];
+const TABS=[["today","Today"],["approvals","Approvals"],["logic","Logic"],["team","Team"],["files","Files"]];
 const emp=id=>S?.employees.find(e=>e.id===id||e.name===id||first(e.name)===id)||{id,name:id||"System",hue:220,enabled:1,title:""};
 const who=id=>id==="director"?{name:S?.director||"You",hue:28,enabled:1}:emp(id);
 
@@ -449,7 +519,8 @@ const fileState=c=>S.drafts.some(d=>d.folder===c.folder)?["draft","Draft waiting
 /* ============ chrome ============ */
 function renderBar(){
   const n=S.kpis.awaiting;
-  $("#tabs").innerHTML=`<span class="tab-ind" id="ind"></span>`+TABS.map(([id,l])=>`<button class="tab ${view===id?"on":""}" data-view="${id}">${l}${id==="approvals"&&n?`<span class="count num">${n}</span>`:""}</button>`).join("");
+  const dn=S.decisions_open||0;
+  $("#tabs").innerHTML=`<span class="tab-ind" id="ind"></span>`+TABS.map(([id,l])=>`<button class="tab ${view===id?"on":""}" data-view="${id}">${l}${id==="approvals"&&n?`<span class="count num">${n}</span>`:""}${id==="logic"&&dn?`<span class="count num" style="background:var(--amber)">${dn}</span>`:""}</button>`).join("");
   requestAnimationFrame(moveInd);
   const live=S.demo?["amber","Demo"]:S.mailbox_ready&&S.ai_ready?["","Live"]:["amber","Setup needed"];
   $("#status").innerHTML=`<span class="pulse ${live[0]}"></span><span class="lbl">${live[1]}${S.last_pass&&!S.demo?` · scanned ${ago(S.last_pass)} ago`:""}</span>`;
@@ -465,8 +536,36 @@ function greet(){const hr=new Date().getHours();return hr<12?"Good morning":hr<1
 function summary(){
   const k=S.kpis, on=S.employees.filter(e=>e.enabled).length, parts=[];
   parts.push(k.awaiting?`<b>${plural(k.awaiting,"draft")}</b> ${k.awaiting===1?"needs":"need"} your approval`:"Nothing needs your approval");
+  if(S.decisions_open) parts.push(`<b>${plural(S.decisions_open,"decision")}</b> only you can make`);
   if(k.overdue) parts.push(`<b>${plural(k.overdue,"file")}</b> waiting on the other side`);
   return `${parts.join(", ")}. The team has filed ${plural(k.filed_today,"email")} today, with ${on} of ${S.employees.length} staff on.`;
+}
+function nowLine(){
+  const a=S.activity[0]; if(!a) return {who:"Team",txt:"Standing by."};
+  const e=who(a.employee); return {who:first(e.name),txt:a.text,ts:a.ts};
+}
+function deck(){
+  const k=S.kpis, nl=nowLine(), on=S.employees.filter(e=>e.enabled).length;
+  return `<section class="deck" id="deck" aria-label="${h(S.assistant)}">
+    <span class="brk tl"></span><span class="brk tr"></span><span class="brk bl"></span><span class="brk br"></span>
+    <div class="deck-orb" id="deckOrb" title="Talk to ${h(S.assistant)}"><canvas id="deckCanvas"></canvas><div class="st" id="deckState">online</div></div>
+    <div class="deck-body">
+      <div class="deck-name"><span class="live"></span>${h(S.assistant)} · ${new Date().toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"})} · ${on}/${S.employees.length} staff on</div>
+      <div class="deck-say" id="deckSay">${h(greetingText||"")}${greetingText?"":'<span class="cur"></span>'}</div>
+      <div class="deck-now"><span class="who">${h(nl.who)}</span><span class="txt">${h(nl.txt)}</span><span class="k">${agoText(nl.ts)}</span></div>
+      <div class="deck-read">
+        <div><b class="num ${k.awaiting?"hl":""}">${k.awaiting}</b>Awaiting you</div>
+        <div><b class="num ${S.decisions_open?"warn":""}">${S.decisions_open||0}</b>Decisions</div>
+        <div><b class="num ${k.overdue?"warn":""}">${k.overdue}</b>Overdue</div>
+        <div><b class="num">${k.filed_today}</b>Filed today</div>
+      </div>
+      <div class="deck-act">
+        <button class="btn glow" id="askMic">${ic("mic")}Talk</button>
+        <button class="btn" data-ask-voice="Brief me: what needs my decision, what is moving, and any risks.">${ic("volume")}Brief me</button>
+        <button class="btn" id="replayBtn" title="Hear the greeting again">${ic("loop")}Again</button>
+        ${S.decisions_open?`<button class="btn" data-view="logic">${ic("flag")}${plural(S.decisions_open,"decision")} waiting</button>`:""}
+      </div>
+    </div></section>`;
 }
 function vToday(){
   const k=S.kpis, running=S.tasks.filter(t=>t.status==="running"||t.status==="queued");
@@ -475,11 +574,12 @@ function vToday(){
   <h1>${greet()}, <em>${h(S.director)}</em></h1>
   <p class="lede">${summary()}</p>
   ${banner()}
-  <form class="ask" id="askForm" autocomplete="off">
+  ${deck()}
+  <form class="ask" id="askForm" autocomplete="off" style="margin-top:18px">
     <div class="orb"><i></i><i></i><i></i></div>
     <input id="askIn" placeholder="Ask ${h(S.assistant)} anything, or tell the team what to do" aria-label="Ask your assistant">
     <kbd>⌘K</kbd>
-    <button type="button" class="ask-mic" id="askMic" aria-label="Talk to ${h(S.assistant)}">${ic("mic")}</button>
+    <button type="button" class="ask-mic" data-mic aria-label="Talk to ${h(S.assistant)}">${ic("mic")}</button>
   </form>
   <div class="chips">${["Brief me","What needs my approval?","Which files are overdue?","Switch Harry off"].map(c=>`<button class="chip" data-ask="${h(c)}">${h(c)}</button>`).join("")}</div>
 
@@ -492,7 +592,8 @@ function vToday(){
 
   <div class="grid">
     <div class="stack">
-      <section><div class="section-t">Needs your decision <a data-view="approvals">View all</a></div>
+      ${S.decisions.length?`<section><div class="section-t">Only you can decide <a data-view="logic">Open</a></div>${S.decisions.slice(0,1).map(decisionCard).join("")}</section>`:""}
+      <section><div class="section-t">Needs your approval <a data-view="approvals">View all</a></div>
         <div class="card list">${S.drafts.slice(0,4).map(d=>draftItem(d)).join("")||`<div class="empty"><b>All clear</b>New drafts from the team land here.</div>`}</div></section>
       <section><div class="section-t">Activity</div><div class="card timeline">${S.activity.slice(0,7).map(tl).join("")||`<div class="empty">Quiet so far.</div>`}</div></section>
     </div>
@@ -526,7 +627,7 @@ function vApprovals(){
   return `<div class="view"><div class="page-h"><div><h1>Approvals</h1><p class="lede">Nothing reaches an outside party until you approve it.</p></div></div>
   ${L.length?`<div class="reader"><div class="card list queue">${L.map(x=>draftItem(x,x.id===selDraft)).join("")}</div>
     <article class="card paper">
-      <div class="paper-h"><div class="by">${avatar(emp(d.agent),26,false)}<span><b>${h(first(emp(d.agent).name))}</b> drafted this ${ago(d.created_at)} ago${d.folder?` · ${h(label(d.folder))}`:""}</span></div>
+      <div class="paper-h"><div class="by">${avatar(emp(d.agent),26,false)}<span><b>${h(first(emp(d.agent).name))}</b> drafted this ${agoText(d.created_at)}${d.folder?` · ${h(label(d.folder))}`:""}</span></div>
         <div class="subj">${h(d.subject)}</div>
         <div class="to">To ${d.recipients.split(",").map(r=>`<span class="tag">${h(r.trim())}</span>`).join("")}</div></div>
       ${noteHtml(d.note)}
@@ -544,6 +645,37 @@ function noteHtml(n){
   for(const p of parts){ const m=p.match(/^(step|deadline):\s*(.+)$/i); if(m&&m[2]) meta.push(`<b style="font-weight:500;color:var(--ink)">${m[1][0].toUpperCase()+m[1].slice(1)}</b> ${h(m[2])}`); else if(/^NOTE:/i.test(p)) extra.push(h(p.replace(/^NOTE:\s*/i,""))); else if(p) extra.push(h(p)); }
   if(!meta.length&&!extra.length) return "";
   return `<div class="note">${ic("flag")}<span>${meta.join(" &nbsp;·&nbsp; ")}${extra.length?`${meta.length?"<br>":""}${extra.join("<br>")}`:""}</span></div>`;
+}
+
+/* ============ Logic: decisions + standing orders ============ */
+let chosenOpt={};
+function decisionCard(d){
+  const e=emp(d.employee), sg=d.suggestion||{}, opts=[sg.recommended,...(sg.options||[])].filter(Boolean), sel=chosenOpt[d.id]??0;
+  return `<article class="card dcard" data-decision="${d.id}">
+    <div class="ask-by">${avatar(e,26,false)}<span><b>${h(first(e.name))}</b> needs a decision · ${agoText(d.created_at)}${d.folder?` · ${h(label(d.folder))}`:""}</span></div>
+    <div class="sit">${h(d.situation)}</div>
+    ${sg.why_new?`<div class="muted" style="font-size:13.5px">${h(sg.why_new)}</div>`:""}
+    ${opts.length?`<div class="opts">${opts.map((o,i)=>`<button class="opt ${sel===i?"sel":""}" data-opt="${d.id}:${i}"><span class="n">${i?i:"★"}</span><span>${h(o)}${i?"":`<span class="muted" style="display:block;font-size:12px;margin-top:3px">${h(S.assistant)}'s recommendation</span>`}</span></button>`).join("")}</div>`:""}
+    ${sg.risk_if_wrong?`<div class="risk"><b>If we get it wrong:</b> ${h(sg.risk_if_wrong)}</div>`:""}
+    <div class="field" style="margin:0"><textarea class="in" id="dAns${d.id}" placeholder="Or tell ${h(first(e.name))} exactly what to do, in your own words" style="min-height:64px"></textarea></div>
+    <label class="remember"><input type="checkbox" id="dRem${d.id}" checked> Remember this as a standing order, so the team handles it the same way next time</label>
+    <div style="display:flex;gap:8px;align-items:center"><button class="btn accent" data-decide="${d.id}">${ic("check")}Decide</button><button class="btn quiet" data-dismiss="${d.id}">Dismiss</button>
+      <button class="btn quiet" style="margin-left:auto" data-ask="Talk me through decision #${d.id}: ${h(d.situation.slice(0,120))}">Ask ${h(S.assistant)}</button></div>
+  </article>`;
+}
+function vLogic(){
+  const open=S.decisions, rules=S.rules||[];
+  return `<div class="view"><div class="page-h"><div><h1>Logic</h1><p class="lede">How the team thinks. New situations come to you first; your answers become standing orders the whole team follows and learns from.</p></div></div>
+  <div class="section-t">Waiting on you <span class="muted">${open.length||""}</span></div>
+  ${open.length?`<div class="stack" style="margin-bottom:34px">${open.map(decisionCard).join("")}</div>`:`<div class="card empty" style="margin-bottom:34px"><b>Nothing to decide</b>When an agent meets something your orders don't cover, it asks here instead of guessing.</div>`}
+  <div class="section-t">Standing orders <span class="muted">${rules.filter(r=>r.active).length} active</span></div>
+  <div class="card addrule"><div class="field"><label for="rWhen">When</label><input class="in" id="rWhen" placeholder="e.g. An insurer offers less than 70% of the hire charges"></div>
+    <div class="field"><label for="rDo">Do</label><input class="in" id="rDo" placeholder="e.g. Counter at full value with the GTA benchmark; never accept on the call"></div>
+    <button class="btn primary" id="rAdd">${ic("plus")}Add order</button></div>
+  <div class="spoken-hint">You can also just tell ${h(S.assistant)}: "From now on, when X happens, do Y."</div>
+  <div class="card" style="margin-top:14px">${rules.map(r=>`<div class="rule ${r.active?"":"off"}"><div><div class="w">When</div><div>${h(r.situation)}</div><div class="w">Do</div><div class="d">${h(r.instruction)}</div>
+      <div class="src">#${r.id} <span class="src-tag ${r.source}">${r.source==="learned"?"Learned from a decision":"Your order"}</span> ${new Date(r.created_at).toLocaleDateString("en-GB",{day:"numeric",month:"short"})}</div></div>
+      <div class="ctl"><label class="sw" style="margin:0" title="${r.active?"Active":"Retired"}"><input type="checkbox" data-rule-toggle="${r.id}" ${r.active?"checked":""}><span></span></label><button class="icon-btn" data-rule-del="${r.id}" aria-label="Delete">${ic("x")}</button></div></div>`).join("")||`<div class="empty">No standing orders yet.</div>`}</div></div>`;
 }
 
 /* ============ Team ============ */
@@ -572,14 +704,14 @@ function vFiles(){
       <div class="w" style="text-align:right">${ago([c.last_inbound_at,c.last_outbound_at].filter(Boolean).sort().pop())}</div></div>`}).join("")||`<div class="empty">No files match.</div>`}</div></div>`;
 }
 
-const VIEWS={today:vToday,approvals:vApprovals,team:vTeam,files:vFiles};
-function render(){ if(!S)return; renderBar(); $("#main").innerHTML=VIEWS[view](); if(sheetFor) renderSheet(); }
+const VIEWS={today:vToday,approvals:vApprovals,logic:vLogic,team:vTeam,files:vFiles};
+function render(){ if(!S)return; renderBar(); $("#main").innerHTML=VIEWS[view](); if(sheetFor) renderSheet(); mountDeck(); }
 let lastKey="";
 async function refresh(force){
   try{const n=await api("/api/state");try{n.reports=await api("/api/reports")}catch{n.reports=[]}
     const key=JSON.stringify(n); if(!force&&key===lastKey)return;
     const typing=!force&&document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName);
-    S=n; lastKey=key; if(typing){renderBar();return} render();
+    noteChanges(n); S=n; lastKey=key; if(typing){renderBar();return} render();
   }catch(e){console.warn(e)}
 }
 function go(v){if(v===view)return;view=v;ls.set("hub.view",v);render();scrollTo({top:0})}
@@ -596,7 +728,7 @@ function renderSheet(force){
     el.innerHTML=`<div class="sheet-h">${avatar(e,44)}<div style="flex:1;min-width:0"><div class="t">${h(e.name)}</div><div class="s">${h(e.title)}</div></div>
       <label class="sw"><input type="checkbox" data-toggle="${e.id}" ${e.enabled?"checked":""} aria-label="On or off"><span></span></label><button class="icon-btn" data-close aria-label="Close">${ic("x")}</button></div>
     <div class="sheet-b">
-      <div class="blk"><h4>Now</h4><div style="color:var(--ink2)">${!e.enabled?"Switched off. Tasks wait until they're back on.":e.last?`${h(e.last.text)} <span class="muted">· ${ago(e.last.ts)} ago</span>`:"Ready for work."}</div>
+      <div class="blk"><h4>Now</h4><div style="color:var(--ink2)">${!e.enabled?"Switched off. Tasks wait until they're back on.":e.last?`${h(e.last.text)} <span class="muted">· ${agoText(e.last.ts)}</span>`:"Ready for work."}</div>
         ${e.id==="harry"?`<div class="helpers" style="margin-top:12px">${Object.keys(S.harry_helpers).map(k=>`<span class="tag">${h(k.replace(/_/g," "))}</span>`).join("")}</div>`:""}</div>
       <div class="blk"><h4>Give ${h(first(e.name))} a task</h4>
         <div class="field"><input class="in" id="tTitle" placeholder="What do you need done?"></div>
@@ -604,7 +736,7 @@ function renderSheet(force){
         <div class="row2"><select class="in" id="tFile" aria-label="Claim file"><option value="">No claim file</option>${S.claims.map(c=>`<option value="${h(c.folder)}">${h(label(c.folder))}</option>`).join("")}</select>
         <button class="btn primary" data-give="${e.id}">${ic("arrow")}Give task</button></div></div>
       <div class="blk"><h4>Tasks</h4>${tasks.length?tasks.map(t=>`<div class="task"><div class="t">${h(t.title)}<span class="badge ${t.status}">${t.status[0].toUpperCase()+t.status.slice(1)}</span></div>
-          <div class="s">${t.summary?h(t.summary):`<span class="muted">#${t.id} · ${ago(t.created_at)} ago${t.folder?` · ${h(label(t.folder))}`:""}</span>`}</div>
+          <div class="s">${t.summary?h(t.summary):`<span class="muted">#${t.id} · ${agoText(t.created_at)}${t.folder?` · ${h(label(t.folder))}`:""}</span>`}</div>
           ${t.result?`<button class="link" data-open-task="${t.id}">${openTask===t.id?"Hide result":"Show result"}</button>${openTask===t.id?`<div class="result">${t.result}</div>`:""}`:""}
           ${t.status==="queued"?`<button class="link" data-cancel="${t.id}">Cancel</button>`:""}</div>`).join(""):`<div class="muted">No tasks yet.</div>`}</div>
       <div class="blk"><h4>Brief</h4><textarea class="in" id="brief" placeholder="Standing instructions, on top of the firm's playbooks">${h(e.role_prompt||"")}</textarea>
@@ -638,9 +770,15 @@ function hireModal(){
     <div class="field"><label for="hBrief">Brief</label><textarea class="in" id="hBrief" placeholder="What they own, how they work, and what to escalate to you" style="min-height:120px"></textarea></div>
     <div class="foot"><button class="btn quiet" data-close>Cancel</button><button class="btn primary" id="hSave">Hire</button></div>`);
 }
-function settingsModal(){
+let elevenVoices=null;
+async function settingsModal(){
+  if(S.eleven_ready&&elevenVoices===null){ try{ elevenVoices=await api("/api/voices"); }catch{ elevenVoices=[]; } }
   modal(`<h3>Settings</h3><p class="sub">Mailbox, keys and timings live in <code>.env</code> on this computer.</p>
     <div class="field"><label for="sName">Assistant's name</label><input class="in" id="sName" value="${h(S.assistant)}"></div>
+    ${S.eleven_ready?`<div class="field"><label for="sEleven">ElevenLabs voice</label><select class="in" id="sEleven">${(elevenVoices||[]).map(v=>`<option value="${h(v.id)}" ${v.id===ls.get("hub.eleven","")?"selected":""}>${h(v.name)}${v.labels?.accent?` · ${h(v.labels.accent)}`:""}</option>`).join("")||"<option>No voices found</option>"}</select></div>`
+      :`<div class="banner" style="margin:0 0 12px">${ic("info")}<span>Add <code>ELEVENLABS_API_KEY</code> to <code>.env</code> for a natural voice. The browser voice is used for now.</span></div>`}
+    <label class="remember" style="margin-bottom:10px"><input type="checkbox" id="sGreet" ${greetAloud?"checked":""}> Greet me out loud when the hub opens</label>
+    <label class="remember" style="margin-bottom:14px"><input type="checkbox" id="sAnn" ${announce?"checked":""}> Tell me out loud when new drafts, decisions or results arrive</label>
     ${voices.length?`<div class="field"><label for="sVoice">Assistant's voice</label><select class="in" id="sVoice">${voices.map(v=>`<option ${v.name===ls.get("hub.voice","")?"selected":""}>${h(v.name)}</option>`).join("")}</select></div>`:""}
     <div class="foot"><button class="btn quiet" data-close>Close</button><button class="btn primary" id="sSave">Save</button></div>`);
 }
@@ -648,10 +786,19 @@ function settingsModal(){
 /* ============ events ============ */
 document.addEventListener("click",async ev=>{
   if(ev.target.closest(".sw")) return;  // switches are handled on change
-  const t=ev.target.closest("[data-view],[data-person],[data-file],[data-draft],[data-approve],[data-reject],[data-hire],[data-close],[data-hue],[data-give],[data-give-file],[data-brief],[data-fire],[data-cancel],[data-open-task],[data-report],[data-filter],[data-ask],#themeBtn,#setBtn,#hSave,#sSave,#askMic,#fab");
+  const t=ev.target.closest("[data-opt],[data-decide],[data-dismiss],[data-rule-del],[data-ask-voice],[data-mic],#rAdd,#replayBtn,#deckOrb,[data-view],[data-person],[data-file],[data-draft],[data-approve],[data-reject],[data-hire],[data-close],[data-hue],[data-give],[data-give-file],[data-brief],[data-fire],[data-cancel],[data-open-task],[data-report],[data-filter],[data-ask],#themeBtn,#setBtn,#hSave,#sSave,#askMic,#fab");
   if(!t)return; const d=t.dataset;
   try{
     if(d.view) return go(d.view);
+    if(d.opt){ const [id,i]=d.opt.split(":"); chosenOpt[id]=+i; return render(); }
+    if(d.decide){ const id=+d.decide, dec=S.decisions.find(x=>x.id===id), sg=dec?.suggestion||{}, opts=[sg.recommended,...(sg.options||[])].filter(Boolean);
+      const typed=$("#dAns"+id).value.trim(), chosen=opts[chosenOpt[id]??0]||""; if(!typed&&!chosen) return toast("Pick an option or type what to do");
+      t.disabled=true; const r=await api(`/api/decisions/${id}/answer`,{answer:typed,chosen,remember:$("#dRem"+id).checked});
+      toast(r.rule_id?"Decided. Saved as a standing order.":"Decided.",1); return refresh(true); }
+    if(d.dismiss){ await api(`/api/decisions/${d.dismiss}/dismiss`,{}); return refresh(true); }
+    if(d.ruleDel){ if(!confirm("Delete this standing order?")) return; await api("/api/rules/"+d.ruleDel,null,"DELETE"); return refresh(true); }
+    if(d.askVoice!==undefined){ openVoice(false); return askText(d.askVoice,true); }
+    if(d.mic!==undefined) return openVoice(true);
     if(d.person!==undefined) return openSheet("person",d.person);
     if(d.file) return openSheet("file",d.file);
     if(d.report) return openSheet("report",d.report);
@@ -673,12 +820,17 @@ document.addEventListener("click",async ev=>{
     if(d.openTask){ openTask=openTask===+d.openTask?null:+d.openTask; return renderSheet(true); }
     switch(t.id){
       case "fab": return openChat();
-      case "askMic": return openVoice(true);
+      case "askMic": case "deckOrb": return openVoice(true);
+      case "replayBtn": return sayGreeting(true);
+      case "rAdd": { const w=$("#rWhen").value.trim(), dd=$("#rDo").value.trim(); if(!w||!dd) return toast("Fill in both When and Do");
+        await api("/api/rules",{situation:w,instruction:dd}); toast("Standing order saved. The team follows it from the next job.",1); return refresh(true); }
       case "themeBtn": { const n=theme()==="dark"?"light":"dark"; document.documentElement.dataset.theme=n; ls.set("hub.theme",n); return renderBar(); }
       case "setBtn": return settingsModal();
       case "hSave": { const name=$("#hName").value.trim(); if(!name) return toast("Give them a name");
         await api("/api/employees",{name,title:$("#hTitle").value.trim(),role_prompt:$("#hBrief").value,hue:hireHue}); closeModal(); toast(`${name} has joined the team`,1); return refresh(true); }
-      case "sSave": { if($("#sVoice")) ls.set("hub.voice",$("#sVoice").value); await api("/api/settings",{assistant_name:$("#sName").value}); closeModal(); toast("Saved",1); return refresh(true); }
+      case "sSave": { if($("#sVoice")) ls.set("hub.voice",$("#sVoice").value); greetAloud=$("#sGreet").checked; announce=$("#sAnn").checked; ls.set("hub.greet",greetAloud); ls.set("hub.announce",announce);
+        const body={assistant_name:$("#sName").value}; if($("#sEleven")){ body.eleven_voice=$("#sEleven").value; ls.set("hub.eleven",body.eleven_voice); }
+        await api("/api/settings",body); closeModal(); toast("Saved",1); return refresh(true); }
     }
   }catch(e){ toast(e.message); }
 });
@@ -689,7 +841,9 @@ async function decide(id,approve,btn){
   refresh(true);
 }
 document.addEventListener("change",async ev=>{
-  const t=ev.target; if(!t.dataset.toggle) return;
+  const t=ev.target;
+  if(t.dataset.ruleToggle){ try{ await api("/api/rules/"+t.dataset.ruleToggle,{active:t.checked?1:0}); refresh(true);}catch(e){toast(e.message)} return; }
+  if(!t.dataset.toggle) return;
   try{ await api(`/api/employees/${t.dataset.toggle}/toggle`,{on:t.checked}); toast(`${first(emp(t.dataset.toggle).name)} is ${t.checked?"on":"off"}`,1); t.blur(); refresh(true);}catch(e){toast(e.message)}
 });
 document.addEventListener("input",ev=>{ if(ev.target.id==="fileQ"){ fileQ=ev.target.value; const p=ev.target.selectionStart; render(); const q=$("#fileQ"); q.focus(); q.setSelectionRange(p,p);} });
@@ -701,7 +855,7 @@ document.addEventListener("keydown",ev=>{
   if(ev.key==="Escape"){ if(voiceOn) return closeVoice(); if($("#modal").classList.contains("on")) return closeModal(); if(sheetFor) return closeSheet(); }
   if(voiceOn&&ev.code==="Space"&&!typing){ ev.preventDefault(); return listening?stopListening():startListening(); }
   if(typing||sheetFor||voiceOn||$("#modal").classList.contains("on")) return;
-  if(/^[1-4]$/.test(ev.key)) return go(TABS[+ev.key-1][0]);
+  if(/^[1-5]$/.test(ev.key)) return go(TABS[+ev.key-1][0]);
   if(view==="approvals"&&S?.drafts.length){
     const L=S.drafts,i=L.findIndex(x=>x.id===selDraft);
     if(ev.key==="j"||ev.key==="ArrowDown"){ev.preventDefault();selDraft=(L[i+1]||L[i]).id;render()}
@@ -735,14 +889,14 @@ function renderChat(){
 async function askText(text,spoken){
   text=(text||"").trim(); if(!text||thinking) return;
   if(!spoken && sheetFor?.kind!=="chat") openSheet("chat");
-  history.push({role:"user",content:text}); thinking=true; if(sheetFor?.kind==="chat") renderChat();
+  history.push({role:"user",content:text}); thinking=true; if(sheetFor?.kind==="chat") renderChat(); orbs.forEach(o=>o.set("thinking"));
   if(spoken) vSet("Thinking",undefined,text);
   try{
     const r=await api("/api/assistant",{history:history.map(({role,content})=>({role,content})),voice:!!spoken});
     history.push({role:"assistant",content:r.reply,actions:r.actions}); if(r.actions?.length) refresh(true);
-    thinking=false; if(sheetFor?.kind==="chat") renderChat();
-    if(spoken){ vSet("", r.reply); if(speakOn&&canSpeak) speak(r.reply); else if(handsFree) setTimeout(startListening,400); }
-  }catch(e){ thinking=false; history.push({role:"assistant",content:"I couldn't reach the team: "+e.message}); if(sheetFor?.kind==="chat") renderChat(); if(spoken) vSet("","Sorry, something went wrong."); }
+    thinking=false; if(sheetFor?.kind==="chat") renderChat(); orbs.forEach(o=>o.set("idle"));
+    if(spoken){ vSet("", r.reply); if(speakOn) speak(r.reply); else if(handsFree) setTimeout(startListening,400); }
+  }catch(e){ thinking=false; orbs.forEach(o=>o.set("idle")); history.push({role:"assistant",content:"I couldn't reach the team: "+e.message}); if(sheetFor?.kind==="chat") renderChat(); if(spoken) vSet("","Sorry, something went wrong."); }
   history=history.slice(-40); ls.set("hub.chat",history);
 }
 
@@ -752,9 +906,9 @@ let speakOn=ls.get("hub.speak",true), handsFree=ls.get("hub.hands",false), voice
 function syncVoiceBtns(){ $("#vSpeak").classList.toggle("on",speakOn); $("#vHands").classList.toggle("on",handsFree); }
 function vSet(state,text,user){ $("#vState").textContent=state||(listening?"Listening":speaking?"Speaking":thinking?"Thinking":"Tap to talk"); const t=$("#vText"); if(user!==undefined){t.textContent=user;t.classList.add("user")} else if(text!==undefined){t.textContent=text.length>260?text.slice(0,260)+"…":text;t.classList.remove("user")} }
 function openVoice(listen){ if(!canHear){ toast("Voice needs Chrome or Edge on this computer"); return openChat(); } $("#voice").classList.add("on"); $("#fab").classList.add("hidden"); vSet("", ""); syncVoiceBtns(); if(listen) startListening(); }
-function closeVoice(){ stopListening(); if(canSpeak) speechSynthesis.cancel(); speaking=false; $("#voice").classList.remove("on"); if(!sheetFor) $("#fab").classList.remove("hidden"); }
+function closeVoice(){ stopListening(); stopSpeaking(); $("#voice").classList.remove("on"); if(!sheetFor) $("#fab").classList.remove("hidden"); }
 $("#vEnd").onclick=closeVoice; $("#vOrb").onclick=()=>listening?stopListening():startListening();
-$("#vSpeak").onclick=()=>{speakOn=!speakOn;ls.set("hub.speak",speakOn);syncVoiceBtns();if(!speakOn&&canSpeak)speechSynthesis.cancel()};
+$("#vSpeak").onclick=()=>{speakOn=!speakOn;ls.set("hub.speak",speakOn);syncVoiceBtns();if(!speakOn)stopSpeaking()};
 $("#vHands").onclick=()=>{handsFree=!handsFree;ls.set("hub.hands",handsFree);syncVoiceBtns()};
 function loadVoices(){
   if(!canSpeak) return; voices=speechSynthesis.getVoices().filter(v=>/^en/i.test(v.lang));
@@ -764,41 +918,136 @@ function loadVoices(){
 }
 if(canSpeak){loadVoices();speechSynthesis.onvoiceschanged=loadVoices} else $("#voiceSel").style.display="none";
 $("#voiceSel").onchange=e=>ls.set("hub.voice",e.target.value);
-function speak(text){
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text.replace(/\*\*|[#*_`]/g,"").replace(/^\s*[-•]\s*/gm,""));
+/* ---- speech out: ElevenLabs sentence by sentence (fast start), browser voice as fallback ---- */
+const ttsEl=$("#ttsAudio"); let ttsCtx=null, ttsAn=null, lastSaid="", speakSeq=0;
+function clean(t){return t.replace(/\*\*|[#*_`]/g,"").replace(/^\s*[-•]\s*/gm,"").replace(/\s+/g," ").trim()}
+function sentences(t){const out=[];let buf="";for(const part of t.split(/(?<=[.!?])\s+(?=[A-Z0-9£"'])/)){buf=buf?buf+" "+part:part;if(buf.length>=40){out.push(buf);buf=""}}if(buf)out.push(buf);return out.length?out:[t]}
+function ttsAnalyser(){ if(ttsAn) return ttsAn; try{ ttsCtx=new(window.AudioContext||window.webkitAudioContext)(); const src=ttsCtx.createMediaElementSource(ttsEl); ttsAn=ttsCtx.createAnalyser(); ttsAn.fftSize=256; ttsAn.smoothingTimeConstant=.8; src.connect(ttsAn); ttsAn.connect(ttsCtx.destination);}catch{} return ttsAn; }
+function onSpeakStart(){speaking=true;vSet();$("#vOrb").classList.add("live");orbs.forEach(o=>o.set("speaking"))}
+function onSpeakEnd(){speaking=false;$("#vOrb").classList.remove("live");vSet();orbs.forEach(o=>o.set(listening?"listening":"idle")); if(handsFree&&$("#voice").classList.contains("on")) setTimeout(startListening,300)}
+function stopSpeaking(){ speakSeq++; if(canSpeak) speechSynthesis.cancel(); try{ttsEl.pause();ttsEl.removeAttribute("src");ttsEl.load()}catch{} if(speaking) onSpeakEnd(); }
+async function speak(text,{replay=false}={}){
+  text=clean(text); if(!text) return; stopSpeaking(); const seq=speakSeq; if(!replay) lastSaid=text;
+  if(S?.eleven_ready){
+    try{
+      ttsAnalyser(); if(ttsCtx?.state==="suspended") await ttsCtx.resume();
+      const parts=sentences(text);
+      const fetches=parts.map(p=>fetch("/api/tts",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:p})}).then(r=>r.ok?r.blob():null).catch(()=>null));
+      onSpeakStart();
+      for(const f of fetches){ if(seq!==speakSeq) return; const b=await f; if(!b){ throw new Error("tts"); }
+        await new Promise(res=>{ ttsEl.src=URL.createObjectURL(b); ttsEl.onended=ttsEl.onerror=()=>res(); ttsEl.play().catch(()=>res()); }); }
+      if(seq===speakSeq) onSpeakEnd(); return;
+    }catch{ if(seq!==speakSeq) return; /* fall through to the browser voice */ }
+  }
+  if(!canSpeak){ onSpeakEnd(); return; }
+  const u=new SpeechSynthesisUtterance(text);
   const v=voices.find(v=>v.name===ls.get("hub.voice",""))||voices[0]; if(v){u.voice=v;u.lang=v.lang} u.rate=1.03;
-  u.onstart=()=>{speaking=true;vSet();$("#vOrb").classList.add("live")};
-  u.onboundary=()=>{energy=1};
-  u.onend=u.onerror=()=>{speaking=false;$("#vOrb").classList.remove("live");vSet(); if(handsFree&&$("#voice").classList.contains("on")) setTimeout(startListening,300)};
+  u.onstart=onSpeakStart; u.onboundary=()=>{energy=1}; u.onend=u.onerror=onSpeakEnd;
   speechSynthesis.speak(u);
 }
+function audioLevel(){
+  let lvl=0; const bins=new Uint8Array(64);
+  if(analyser){analyser.getByteFrequencyData(bins);lvl=bins.reduce((a,b)=>a+b,0)/64/255}
+  else if(speaking&&ttsAn&&!ttsEl.paused){ttsAn.getByteFrequencyData(bins);lvl=bins.slice(0,24).reduce((a,b)=>a+b,0)/24/255}
+  else if(speaking){energy*=.92;lvl=.12+.22*energy}
+  return {lvl,bins};
+}
+
+/* ---- greeting ---- */
+let greetingText="", greeted=false, greetAloud=ls.get("hub.greet",true), announce=ls.get("hub.announce",true), gestured=false;
+async function loadGreeting(){
+  try{ const g=await api("/api/greeting"); greetingText=g.text; typeInto($("#deckSay"),g.text); if(greetAloud&&!greeted){ greeted=true; sayGreeting(); } }catch{}
+}
+function typeInto(el,text){ if(!el) return; let i=0; el.innerHTML='<span class="cur"></span>'; const step=()=>{ i+=2; el.innerHTML=h(text.slice(0,i))+(i<text.length?'<span class="cur"></span>':""); if(i<text.length) setTimeout(step,14); }; step(); }
+async function sayGreeting(force){
+  if(!greetingText) return;
+  if(!gestured&&!force){ pendingGreeting=true; return; }  // browsers need a click before audio can play
+  speak(greetingText);
+}
+let pendingGreeting=false;
+addEventListener("pointerdown",()=>{ gestured=true; if(pendingGreeting){ pendingGreeting=false; if(greetAloud) speak(greetingText); } },{once:true});
+
+/* ---- proactive announcements: what changed since you last looked ---- */
+let seenDrafts=null, seenDecisions=null, seenDone=null, annQueue=[], annTimer=null;
+function noteChanges(n){
+  const dr=new Set(n.drafts.map(d=>d.id)), de=new Set(n.decisions.map(d=>d.id)), done=new Set(n.tasks.filter(t=>t.status==="done").map(t=>t.id));
+  if(seenDrafts){
+    const nd=n.drafts.filter(d=>!seenDrafts.has(d.id)); if(nd.length) annQueue.push(nd.length===1?`${first(emp(nd[0].agent).name)} has a draft for you: ${nd[0].subject}.`:`${nd.length} new drafts are waiting for you.`);
+    const nq=n.decisions.filter(d=>!seenDecisions.has(d.id)); if(nq.length) annQueue.push(`${first(emp(nq[0].employee).name)} needs a decision from you${nq.length>1?`, and ${nq.length-1} more`:""}.`);
+    const nt=n.tasks.filter(t=>t.status==="done"&&!seenDone.has(t.id)); if(nt.length) annQueue.push(nt.length===1?`${first(emp(nt[0].employee).name)} has finished: ${nt[0].title}.`:`${nt.length} tasks have finished.`);
+  }
+  seenDrafts=dr; seenDecisions=de; seenDone=done;
+  if(annQueue.length){ clearTimeout(annTimer); annTimer=setTimeout(flushAnnouncements,3000); }
+}
+function flushAnnouncements(){
+  if(!annQueue.length) return; if(speaking||listening||thinking){ annTimer=setTimeout(flushAnnouncements,3000); return; }
+  const line=annQueue.splice(0,3).join(" "); annQueue=[]; toast(line); if(announce&&gestured&&document.visibilityState==="visible") speak(line);
+}
+
+/* ---- particle orb (own implementation): a thin cloud of light that reacts to voice ---- */
+const orbs=[];
+class Orb{
+  constructor(cv,n=640){ this.cv=cv; this.c=cv.getContext("2d"); this.n=n; this.p=[]; this.v=[];
+    for(let i=0;i<n;i++){ const u=Math.random()*2-1, th=Math.random()*Math.PI*2, r=Math.cbrt(Math.random()); const s=Math.sqrt(1-u*u); this.p.push([r*s*Math.cos(th),r*s*Math.sin(th),r*u]); this.v.push([0,0,0]); }
+    this.cur={r:1,speed:.2,bright:.5,lines:.15,size:1}; this.tgt={...this.cur}; this.rot=[0,0]; this.energy=0; this.state="idle"; this.t=0; orbs.push(this); }
+  set(state){ if(state===this.state) return; this.state=state; this.energy=1;
+    this.tgt={idle:{r:1,speed:.2,bright:.5,lines:.15,size:1},listening:{r:.82,speed:.3,bright:.7,lines:.4,size:1.1},thinking:{r:.62,speed:.55,bright:.75,lines:1,size:.9},speaking:{r:.7,speed:.25,bright:.8,lines:.8,size:1.1}}[state]||this.tgt; }
+  frame(level,bins,colour){
+    const cv=this.cv, r=cv.getBoundingClientRect(); if(!r.width) return; const dpr=Math.min(2,devicePixelRatio||1);
+    if(cv.width!==Math.round(r.width*dpr)||cv.height!==Math.round(r.height*dpr)){cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr)}
+    const c=this.c,W=cv.width,H=cv.height,R=Math.min(W,H)*.36; c.clearRect(0,0,W,H);
+    for(const k in this.tgt) this.cur[k]+=(this.tgt[k]-this.cur[k])*.03;
+    this.energy*=.985; this.t+=.016*this.cur.speed; this.rot[0]+=.0025*this.cur.speed+this.energy*.01; this.rot[1]+=.0012*this.cur.speed;
+    const bass=level, radius=this.cur.r*(1+bass*.18), cx=W/2, cy=H/2, cosY=Math.cos(this.rot[0]),sinY=Math.sin(this.rot[0]),cosX=Math.cos(this.rot[1]),sinX=Math.sin(this.rot[1]);
+    const pts=new Array(this.n);
+    for(let i=0;i<this.n;i++){ const p=this.p[i], v=this.v[i];
+      v[0]+=Math.sin(this.t*1.3+p[1]*4)*.0006*this.cur.speed; v[1]+=Math.cos(this.t*1.1+p[2]*4)*.0006*this.cur.speed; v[2]+=Math.sin(this.t*.9+p[0]*4)*.0006*this.cur.speed;
+      const d=Math.hypot(p[0],p[1],p[2])||1, pull=(d-1)*.004; v[0]-=p[0]/d*pull; v[1]-=p[1]/d*pull; v[2]-=p[2]/d*pull;
+      p[0]+=v[0];p[1]+=v[1];p[2]+=v[2]; v[0]*=.99;v[1]*=.99;v[2]*=.99;
+      let x=p[0]*cosY-p[2]*sinY, z=p[0]*sinY+p[2]*cosY, y=p[1]*cosX-z*sinX; z=p[1]*sinX+z*cosX;
+      const pulse=this.state==="speaking"?1+Math.sin(this.t*9+i)*bass*.08:1, sc=R*radius*pulse, pr=1/(1.9-z*.6);
+      pts[i]=[cx+x*sc*pr,cy+y*sc*pr,pr,z];
+    }
+    c.globalCompositeOperation="lighter"; c.lineWidth=Math.max(1,dpr*.8);
+    const la=this.cur.lines*.14+bass*.08, th2=Math.pow(R*(.17+bass*.06),2); let drawn=0;
+    if(la>.01){ c.strokeStyle=`rgba(${colour},${la})`; c.beginPath();
+      for(let i=0;i<this.n&&drawn<2400;i+=3){ const a=pts[i]; for(let j=i+1;j<this.n;j+=2){ const b=pts[j]; const dx=a[0]-b[0],dy=a[1]-b[1]; if(dx*dx+dy*dy<th2*((a[2]+b[2])/2)){ c.moveTo(a[0],a[1]); c.lineTo(b[0],b[1]); if(++drawn>=2400) break; } } }
+      c.stroke(); }
+    for(let i=0;i<this.n;i++){ const q=pts[i], a=(this.cur.bright*.5+bass*.3)*(.45+q[2]*.4), sz=(this.cur.size*1.1+bass*.6)*q[2]*dpr; c.fillStyle=`rgba(${colour},${a})`; c.beginPath(); c.arc(q[0],q[1],sz,0,6.283); c.fill(); }
+    // core glow
+    const g=c.createRadialGradient(cx,cy,0,cx,cy,R*radius*.9); g.addColorStop(0,`rgba(${colour},${.18+bass*.25})`); g.addColorStop(1,`rgba(${colour},0)`); c.fillStyle=g; c.fillRect(0,0,W,H);
+    c.globalCompositeOperation="source-over";
+  }
+}
+let deckOrb=null, voiceOrb=new Orb($("#vCanvas"),760);
+function mountDeck(){ const cv=$("#deckCanvas"); if(cv&&(!deckOrb||deckOrb.cv!==cv)){ if(deckOrb) orbs.splice(orbs.indexOf(deckOrb),1); deckOrb=new Orb(cv,520); deckOrb.set(listening?"listening":speaking?"speaking":thinking?"thinking":"idle"); } }
+function orbColour(){ return theme()==="dark"?"140,196,255":"37,99,235"; }
 function startListening(){
-  if(!canHear||listening) return; if(canSpeak) speechSynthesis.cancel();
+  if(!canHear||listening) return; stopSpeaking();
   rec=new SR(); rec.lang="en-GB"; rec.interimResults=true; let fin="";
   rec.onresult=e=>{let tmp="";for(let i=e.resultIndex;i<e.results.length;i++){const r=e.results[i];if(r.isFinal)fin+=r[0].transcript;else tmp+=r[0].transcript}vSet("Listening",undefined,(fin+tmp).trim())};
-  rec.onend=()=>{listening=false;$("#vOrb").classList.remove("live");stopMic();const t=fin.trim();if(t)askText(t,true);else vSet()};
+  rec.onend=()=>{listening=false;$("#vOrb").classList.remove("live");stopMic();orbs.forEach(o=>o.set("idle"));const t=fin.trim();
+    if(/^(say that again|repeat that|again please|pardon)\.?$/i.test(t)&&lastSaid){ vSet("",lastSaid); speak(lastSaid,{replay:true}); return; }
+    if(t)askText(t,true);else vSet()};
   rec.onerror=e=>{if(e.error==="not-allowed")toast("Allow the microphone for this page to talk")};
-  try{rec.start();listening=true;$("#vOrb").classList.add("live");vSet("Listening",undefined,"");startMic()}catch(e){toast(e.message)}
+  try{rec.start();listening=true;$("#vOrb").classList.add("live");vSet("Listening",undefined,"");startMic();orbs.forEach(o=>o.set("listening"))}catch(e){toast(e.message)}
 }
 function stopListening(){try{rec&&rec.stop()}catch{}}
 async function startMic(){try{mic=await navigator.mediaDevices.getUserMedia({audio:true});const ctx=new(window.AudioContext||window.webkitAudioContext)();analyser=ctx.createAnalyser();analyser.fftSize=256;ctx.createMediaStreamSource(mic).connect(analyser);analyser._c=ctx}catch{}}
 function stopMic(){try{mic?.getTracks().forEach(t=>t.stop());analyser?._c.close()}catch{}analyser=null;mic=null}
 (function draw(){
-  if($("#voice").classList.contains("on")){
-    const cv=$("#vCanvas"),r=cv.getBoundingClientRect(),dpr=devicePixelRatio||1; if(cv.width!==Math.round(r.width*dpr)){cv.width=r.width*dpr;cv.height=r.height*dpr}
-    const c=cv.getContext("2d"),W=cv.width,H=cv.height; c.clearRect(0,0,W,H);
-    let lvl=0,bins=new Uint8Array(64); if(analyser){analyser.getByteFrequencyData(bins);lvl=bins.reduce((a,b)=>a+b,0)/64/255} else if(speaking){energy*=.92;lvl=.12+.22*energy}
-    $("#vOrb").style.transform=`scale(${1+lvl*.12})`;
-    if(lvl>.01){ c.lineWidth=W/90; c.lineCap="round"; c.strokeStyle="rgba(255,255,255,.7)"; const n=48,R=W*.3;
-      c.beginPath(); for(let i=0;i<=n;i++){const a=i/n*Math.PI*2,v=analyser?bins[(i*3)%48]/255:lvl*(.5+.5*Math.sin(Date.now()/110+i*.7));const rr=R+v*W*.09;const x=W/2+Math.cos(a)*rr,y=H/2+Math.sin(a)*rr;i?c.lineTo(x,y):c.moveTo(x,y)} c.closePath(); c.stroke(); }
-  }
+  const {lvl,bins}=audioLevel(), col=orbColour();
+  if($("#voice").classList.contains("on")) voiceOrb.frame(lvl,bins,col);
+  if(deckOrb&&document.contains(deckOrb.cv)&&document.visibilityState==="visible") deckOrb.frame(lvl,bins,"150,204,255");
+  const st=$("#deckState"); if(st){ const s=listening?"listening":speaking?"speaking":thinking?"thinking":"online"; if(st.textContent!==s) st.textContent=s; }
   requestAnimationFrame(draw);
 })();
 
 /* ============ boot ============ */
 (()=>{const t=ls.get("hub.theme",null); if(t) document.documentElement.dataset.theme=t; if(!TABS.some(x=>x[0]===view)) view="today";})();
-refresh(true); setInterval(()=>refresh(false),5000); setInterval(()=>{ if(S) renderBar(); },30000);
+refresh(true).then(loadGreeting); setInterval(()=>refresh(false),5000); setInterval(()=>{ if(S) renderBar(); },30000);
+setInterval(()=>{ if(view==="today"&&!document.querySelector("input:focus,textarea:focus")) loadGreetingQuiet(); },20*60*1000);
+async function loadGreetingQuiet(){ try{ const g=await api("/api/greeting"); if(g.text!==greetingText){ greetingText=g.text; const el=$("#deckSay"); if(el) el.textContent=g.text; } }catch{} }
 </script>
 </body>
 </html>
